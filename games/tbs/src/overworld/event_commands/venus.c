@@ -31,7 +31,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   effectWork = gFieldEffectWork;
   // Tint the screen green: PALETTE_TINT_CUSTOM | RGB(4, 16, 4), the form
   // mercury.c spells out for its blue.
-  Shop_SaveAndTintFieldPaletteFar(0x201204);
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 16, 4));
   wait(30);
   // Unpause the Djinni (its paused flag).
   djinni->paused = 0;
@@ -48,14 +48,14 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
   djinni->update = FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar(djinni, 3);
-  // The leader turns to face the camera (angle 0x4000).
+  // The leader turns to face the camera (FACING_SOUTH).
   wait(90);
   Actor_ArmCallback(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(30);
-  MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
+  MapGrid_SetScreenShakeFar(0x19999, 0x19999, Q16_ONE);
 
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
@@ -105,7 +105,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   // 24 motes, evenly spread round a circle, 120 pixels above the leader.
   for (remaining = 0; remaining <= 23; remaining++) {
     position.x = leader->x.fixed;
-    position.y = leader->y.fixed + 0x780000;
+    position.y = leader->y.fixed + PIXELS(120);
     position.z = leader->z.fixed;
     djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni != NULL) {
@@ -126,7 +126,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   wait(1);
   Sound_PlayFar(SE_LIGHT_APPEAR);
   position.x = leader->x.fixed;
-  position.y = leader->y.fixed + 0x120000;
+  position.y = leader->y.fixed + PIXELS(18);
   position.z = leader->z.fixed;
   // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
   // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
@@ -139,10 +139,10 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     djinni->scaleY = 0x9999;
     djinni->scaleX = 0x9999;
     djinni->motionFlags = 2;
-    djinni->velocityY = 0x50000;
+    djinni->velocityY = PIXELS(5);
     djinni->groundHeight = djinni->y.fixed;
     djinni->speedLimit = Random16() + 0x16666;
-    Actor_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
+    Actor_SetTargetPositionFromMagnitudeAngle(djinni, PIXELS(32), Random16());
     Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
     Actor_StartScriptFar(djinni, gFieldEffect_SharedParticleScript);
@@ -172,17 +172,17 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
 
   if (state == MERCURY_DROPLET_AIM) {
     position.x = source->x.fixed;
-    position.y = source->y.fixed + Random16() * 5 + 0xf0000;
+    position.y = source->y.fixed + Random16() * 5 + PIXELS(15);
     position.z = source->z.fixed;
     Camera_WorldToScreen(&position);
-    Vector_AddPolarOffset(Random16() * 6 + 0x20000, Random16(), &position);
+    Vector_AddPolarOffset(Random16() * 6 + PIXELS(2), Random16(), &position);
 
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->x = position.x;
-    effect->z = position.z - 0x640000;
-    effect->acceleration = 0x30000;
-    effect->speedMax = Random16() * 3 + 0x30000;
+    effect->z = position.z - PIXELS(100);
+    effect->acceleration = PIXELS(3);
+    effect->speedMax = Random16() * 3 + PIXELS(3);
     effect->scaleX = Q16_ONE;
     effect->scaleY = Q16_ONE;
     effect->turnStepLimited = state;
@@ -193,7 +193,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
-      Vector_AddPolarOffset(0xc0000, Random16(), &position);
+      Vector_AddPolarOffset(PIXELS(12), Random16(), &position);
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;

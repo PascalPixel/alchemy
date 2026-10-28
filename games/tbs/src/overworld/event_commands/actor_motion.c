@@ -69,16 +69,16 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   target = actor->watchedActor;
   if (target != NULL) {
     // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
-    actor->steeringFlags &= 0xfe;
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
     targetAngle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
                                target->x.fixed - actor->x.fixed);
     currentAngle = actor->facing;
     turnStep = targetAngle - currentAngle;
     if (turnStep != 0) {
-      if (turnStep > 0x1000)
-        turnStep = 0x1000;
-      if (turnStep < -0x1000)
-        turnStep = -0x1000;
+      if (turnStep > FACING_STEP)
+        turnStep = FACING_STEP;
+      if (turnStep < -FACING_STEP)
+        turnStep = -FACING_STEP;
       actor->facing = (currentAngle + turnStep);
     }
   }

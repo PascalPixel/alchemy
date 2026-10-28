@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "oam.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
@@ -33,6 +34,6 @@ struct Window *Func_0804128c(void) {
     Func_08041268(gData_080aa170[3][i], window, 176, y);
   }
   WORD_AT(work, 1444) = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000, window, 0, 0);
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
   return window;
 }

@@ -31,7 +31,8 @@ void Func_08014b70(void) {
     blank = 0xf000f000;
   } while (0);
   fill = blank;
-  Dma_Set((const void *)&fill, (void *)0x06002000, 0x85000140, REG_DMA3);
+  Dma_Set((const void *)&fill, (void *)0x06002000,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 320, REG_DMA3);
   /* FAKEMATCH(one-pass): the cursor store in a block of its own, so BG0CNT's
    * address is built after it; as a plain store, 4 of 22 instructions differ
    * in tla-en. */
@@ -41,15 +42,15 @@ void Func_08014b70(void) {
   {
     s32 control = 0x400;
 
-    *(volatile u16 *)0x04000008 = control;
+    REG_BG0CNT = control;
   }
 }
 
 void Window_LoadGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           (void *)0x06000000, 0x84000800, REG_DMA3);
-  Dma_Set((const void *)gWindow_Palette, (void *)0x050001e0, 0x80000010,
-          REG_DMA3);
+  Dma_Set((const void *)gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   /* FAKEMATCH: the do-while keeps the backdrop store's value before its
    * address. */
   do {
@@ -82,13 +83,13 @@ void Window_LoadGraphics(void) {
     pal++;
     *pal = color;
   }
-  Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200,
-          0x800000e0, REG_DMA3);
+  Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
+          DMA_COPY_HALFWORDS(224), REG_DMA3);
 }
 
 void Palette_LoadBasicObjColors(void) {
-  Dma_Set((const void *)gSystem_BasicColorPalette, (void *)0x05000200,
-          0x800000e0, REG_DMA3);
+  Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
+          DMA_COPY_HALFWORDS(224), REG_DMA3);
 }
 
 void Heap_Initialize(void) {

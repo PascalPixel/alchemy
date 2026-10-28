@@ -44,14 +44,16 @@ void SoundInit(struct SoundWork *work) {
   u32 zero;
 
   work->lock = 0;
-  if (REG_DMA1CNT & 0x02000000)
-    REG_DMA1CNT = 0x84400004;
-  if (REG_DMA2CNT & 0x02000000)
-    REG_DMA2CNT = 0x84400004;
-  REG_DMA1CNT_H = 0x400;
-  REG_DMA2CNT_H = 0x400;
-  REG_SOUNDCNT_X = 0x8F;
-  REG_SOUNDCNT_H = 0xA90E;
+  if (REG_DMA1CNT & DMA_REPEAT << 16)
+    REG_DMA1CNT = (DMA_ENABLE | DMA_DEST_FIXED | DMA_32BIT) << 16 | 4;
+  if (REG_DMA2CNT & DMA_REPEAT << 16)
+    REG_DMA2CNT = (DMA_ENABLE | DMA_DEST_FIXED | DMA_32BIT) << 16 | 4;
+  REG_DMA1CNT_H = DMA_32BIT;
+  REG_DMA2CNT_H = DMA_32BIT;
+  REG_SOUNDCNT_X = SOUNDCNT_X_ENABLE | SOUNDCNT_X_ALL_TONES_ON;
+  REG_SOUNDCNT_H = SOUND_B_FIFO_RESET | SOUND_B_TIMER_0 | SOUND_B_LEFT_OUTPUT |
+                   SOUND_A_FIFO_RESET | SOUND_A_TIMER_0 | SOUND_A_RIGHT_OUTPUT |
+                   SOUND_ALL_MIX_FULL;
   REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & 0x3F) | 0x40;
   REG_DMA1SAD = (u32)work->buffers[0];
   REG_DMA1DAD = (u32)&REG_FIFO_A;
@@ -59,7 +61,8 @@ void SoundInit(struct SoundWork *work) {
   REG_DMA2DAD = (u32)&REG_FIFO_B;
   SOUND_WORK = work;
   zero = 0;
-  Bios_CpuSet(&zero, work, 0x050003EC);
+  Bios_CpuSet(&zero, work,
+              CPU_SET_32BIT | CPU_SET_SRC_FIXED | (sizeof(*work) / 4));
   work->pcmNoteCount = 8;
   work->volume = 15;
   work->noteOn = ply_note;
@@ -89,11 +92,11 @@ void SampleFreqSet(u32 mode) {
   timer = &REG_TM0CNT_L;
   *timer = -__divsi3(0x44940, samples);
   m4aSoundVSyncOn();
-  while (*(volatile u8 *)0x04000006 == 159)
+  while (*(volatile u8 *)&REG_VCOUNT == 159)
     ;
-  while (*(volatile u8 *)0x04000006 != 159)
+  while (*(volatile u8 *)&REG_VCOUNT != 159)
     ;
-  REG_TM0CNT_H = 0x80;
+  REG_TM0CNT_H = TIMER_ENABLE;
 }
 
 void m4aSoundMode(u32 mode) {
@@ -171,14 +174,15 @@ void m4aSoundVSyncOff(void) {
   if (work->lock - SOUND_LOCK > 1)
     return;
   work->lock += 10;
-  if (REG_DMA1CNT & 0x02000000)
-    REG_DMA1CNT = 0x84400004;
-  if (REG_DMA2CNT & 0x02000000)
-    REG_DMA2CNT = 0x84400004;
-  REG_DMA1CNT_H = 0x400;
-  REG_DMA2CNT_H = 0x400;
+  if (REG_DMA1CNT & DMA_REPEAT << 16)
+    REG_DMA1CNT = (DMA_ENABLE | DMA_DEST_FIXED | DMA_32BIT) << 16 | 4;
+  if (REG_DMA2CNT & DMA_REPEAT << 16)
+    REG_DMA2CNT = (DMA_ENABLE | DMA_DEST_FIXED | DMA_32BIT) << 16 | 4;
+  REG_DMA1CNT_H = DMA_32BIT;
+  REG_DMA2CNT_H = DMA_32BIT;
   zero = 0;
-  Bios_CpuSet(&zero, work->buffers, 0x05000318);
+  Bios_CpuSet(&zero, work->buffers,
+              CPU_SET_32BIT | CPU_SET_SRC_FIXED | (sizeof(work->buffers) / 4));
 }
 
 void m4aSoundVSyncOn(void) {
@@ -187,8 +191,8 @@ void m4aSoundVSyncOn(void) {
 
   if (lock == SOUND_LOCK)
     return;
-  REG_DMA1CNT_H = 0xB600;
-  REG_DMA2CNT_H = 0xB600;
+  REG_DMA1CNT_H = DMA_ENABLE | DMA_START_SPECIAL | DMA_REPEAT | DMA_32BIT;
+  REG_DMA2CNT_H = DMA_ENABLE | DMA_START_SPECIAL | DMA_REPEAT | DMA_32BIT;
   work->transferCountdown = 0;
   work->lock = lock - 10;
 }

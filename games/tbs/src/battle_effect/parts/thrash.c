@@ -116,7 +116,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   // The step: three quarters of the way in 16 steps, a hop of 8 pixels a
   // frame up for Quick Strike.
   if (mode == FLASHING_STRIKE_QUICK_STRIKE)
-    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0x80000);
+    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 8 << 16);
   else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
   wait(16);

@@ -69,7 +69,8 @@ void DisplayBlend_StartScript(u16 *script) {
   started = 0;
   zero = 0;
   state = &Ram_HeapSlots->mapWork->blend;
-  Dma_Set((const void *)&zero, state, 0x85000003, REG_DMA3);
+  Dma_Set((const void *)&zero, state,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
   first = *script;
   /* FAKEMATCH: the plain order builds 0xffff before loading the first command.
    */

@@ -121,7 +121,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work->sheet, 1, 1);
   }
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x7000; // 112 pixels right
+    REG_BG2X = -(112 << 8); // 112 pixels right
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
@@ -468,7 +468,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work->sheet, 1, 1);
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x7000; // 112 pixels right
+    REG_BG2X = -(112 << 8); // 112 pixels right
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);

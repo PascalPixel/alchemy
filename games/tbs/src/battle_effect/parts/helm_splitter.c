@@ -88,7 +88,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     actor->acceleration = distance;
     actor->speedLimit = distance;
     actor->snapToTarget = 1;
-    actor->velocityY = 0x70000;
+    actor->velocityY = 7 << 16;
     actor->gravity = 0xdeb8;
     actor->bounce = 0;
     actor->steeringFlags = 1;
@@ -137,11 +137,11 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       work->shakeFrames = 4;
       for (i = 0; i != HELM_SPLITTER_SPARKS; i++) {
         s32 force = (Random16() & 63) + 256;
-        s32 angle = Random16() & 0xffff;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
 
         spark = &sparks[i];
-        spark->x = 0x400000;
-        spark->y = 0x500000;
+        spark->x = 64 << 16;
+        spark->y = 80 << 16;
         spark->velocityX = (Trig_Sin(angle) * force) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
         spark->variant = (Random16() & 15) + 16;
@@ -156,9 +156,10 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         Particle_AdvanceWithGravity2D(spark, 60, 0);
-        if (spark->y > 0x680000) {
+        if (spark->y > (104 << 16)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
+        } else if ((spark->x >= 0 && spark->x <= (127 << 16) - 1) &&
+                   spark->y >= 0) {
           s32 sx = spark->x >> 16;
           s32 sy = spark->y >> 16;
 
@@ -188,7 +189,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 ///            places nothing.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   static struct SpriteScale normalScale = {{{Q16_ONE, Q16_ONE}}};
-  static struct SpriteScale largeScale = {{{0x14000, 0x14000}}};
+  static struct SpriteScale largeScale = {{{Q16_ONE * 5 / 4, Q16_ONE * 5 / 4}}};
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct SpriteScale normal = normalScale;
   struct SpriteScale big = largeScale;
@@ -301,7 +302,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   // drawn.
   for (i = 0; i != IMPACT_BURST_LARGE_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 256;
-    s32 angle = Random16() & 0xffff;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
     work->particles[i].x = x;
     work->particles[i].y = y;
@@ -317,16 +318,16 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
-        (Trig_Sin(i * 0x5555) * 32) >> 6;
+        (Trig_Sin(i * (TRIG_TURN / 3)) * 32) >> 6;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
-        -((Trig_Cos(i * 0x5555) * 32) >> 5);
+        -((Trig_Cos(i * (TRIG_TURN / 3)) * 32) >> 5);
   }
 
   // Small sparks fly in random directions at half a pixel to 4.5 a frame,
   // the vertical part doubled, and live 20 to 35 frames.
   for (i = 0; i != IMPACT_BURST_SMALL_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 32;
-    s32 angle = Random16() & 0xffff;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
     PARTICLES[i].x = x;
     PARTICLES[i].y = y;

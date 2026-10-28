@@ -249,14 +249,14 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
             point = &work->particles[member * 32 + j];
             Transform_Reset();
             if (memberFrame <= 63) {
-              scale.x = 0x2a000 - (memberFrame * 3 << 9);
-              scale.y = 0x2a000 - (memberFrame * 3 << 9);
-              scale.z = 0x2a000 - (memberFrame * 3 << 9);
+              scale.x = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              scale.y = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              scale.z = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               Transform_ApplyScale(Vector3_Coordinates(&scale));
               Transform_ApplyRoll((64 - memberFrame) << 9);
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * 0x5555);
+            Transform_ApplyRoll(j * (TRIG_TURN / 3));
             Projection_Point(gBind_Vertex, &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;
@@ -395,14 +395,14 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
             point = &work->particles[member * 32 + j];
             Transform_Reset();
             if (memberFrame <= 63) {
-              scale.x = 0x2a000 - (memberFrame * 3 << 9);
-              scale.y = 0x2a000 - (memberFrame * 3 << 9);
-              scale.z = 0x2a000 - (memberFrame * 3 << 9);
+              scale.x = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              scale.y = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              scale.z = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               Transform_ApplyScale(Vector3_Coordinates(&scale));
               Transform_ApplyRoll((64 - memberFrame) << 9);
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * 0x5555);
+            Transform_ApplyRoll(j * (TRIG_TURN / 3));
             Projection_Point(gBind_TriangleStrikeVertex, &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;

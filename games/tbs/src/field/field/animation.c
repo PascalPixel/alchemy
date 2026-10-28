@@ -153,9 +153,9 @@ s32 Sprite_ResetAnimations(struct Sprite *sprite) {
     layer->pictures = pictures;
     layer->scripts = metadata->animation;
     layer->mode = metadata->pictureCodec;
-    // Picture 255 and no script: Sprite_ComposePicture skips the sprite
+    // SPRITE_PICTURE_NONE and no script: Sprite_ComposePicture skips the sprite
     // animation until an animation is selected on it.
-    layer->picture = 0xff;
+    layer->picture = SPRITE_PICTURE_NONE;
     layer->script = 0;
     layer->scriptOffset = 0;
   }
@@ -184,7 +184,7 @@ void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
       layer->pictures = pictures;
       layer->mode = metadata->pictureCodec;
       zero = 0;
-      layer->picture = 0xff;
+      layer->picture = SPRITE_PICTURE_NONE;
       layer->script = (u8 *)zero;
       layer->scriptOffset = zero;
     }
@@ -289,21 +289,22 @@ void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   }
 }
 
-// Unlike Sprite_StartAnimation it does not mask bit 7 off, so with bit 7 set
-// the index would pass animationCount only in a set of more than 128
-// animations. Nothing sets it: the 309 play commands in the sprites' animation
-// scripts all name animations below 128, and the battle passes 0 or 1.
+// Unlike Sprite_StartAnimation it does not mask SPRITE_ANIMATION_KEEP_PLACE
+// off, so with it set the index would pass animationCount only in a set of more
+// than 128 animations. Nothing sets it: the 309 play commands in the sprites'
+// animation scripts all name animations below 128, and the battle passes 0
+// or 1.
 /// Starts the indexed animation on a sprite animation when its metadata
-/// contains it. Bit 7 preserves the command cursor and timer; it remains part
-/// of the index. Reached through the animation script's play command
-/// (Sprite_ComposePicture) and, as SpriteAnimation_StartFar, from the battle's
-/// motion and objects.
+/// contains it. SPRITE_ANIMATION_KEEP_PLACE preserves the command cursor and
+/// timer; it remains part of the index. Reached through the animation script's
+/// play command (Sprite_ComposePicture) and, as SpriteAnimation_StartFar, from
+/// the battle's motion and objects.
 void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
   s32 keepPlace;
   struct AnimationMetadata *metadata;
   s32 scriptAddress;
 
-  keepPlace = 0x80 & animation;
+  keepPlace = SPRITE_ANIMATION_KEEP_PLACE & animation;
   if (layer->scripts != 0) {
     metadata = Resource_GetMetadataRecordFar(layer->animationId);
     if (animation < metadata->animationCount) {
@@ -319,19 +320,20 @@ void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
   }
 }
 
-/// Starts animation flags & 0x7f on every sprite animation of a sprite (bit 7
-/// keeps each sprite animation's place and timer), unless the sprite plays it
-/// already. The first sprite animation's animation also sets the sprite's
-/// offsets. Returns 0. The field's usual way to change what a sprite plays:
-/// called by the actor dispatch and the player control, and as
-/// Sprite_StartAnimationFar by the battle, the shops, the menus,
-/// the battle effects, field Psynergy and the events.
+/// Starts animation flags & SPRITE_ANIMATION_INDEX_MASK on every sprite
+/// animation of a sprite (SPRITE_ANIMATION_KEEP_PLACE keeps each sprite
+/// animation's place and timer), unless the sprite plays it already. The first
+/// sprite animation's animation also sets the sprite's offsets. Returns 0. The
+/// field's usual way to change what a sprite plays: called by the actor
+/// dispatch and the player control, and as Sprite_StartAnimationFar by the
+/// battle, the shops, the menus, the battle effects, field Psynergy and the
+/// events.
 s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation) {
   s32 keepPlace;
   s32 i;
 
-  keepPlace = animation & 0x80;
-  animation &= 0x7f;
+  keepPlace = animation & SPRITE_ANIMATION_KEEP_PLACE;
+  animation &= SPRITE_ANIMATION_INDEX_MASK;
 
   // The loop is written with goto, which keeps an 8-byte stack frame: as for (i
   // = 0; i < sprite->count; i++), loop.c strength-reduces entries[i] into a
@@ -497,7 +499,7 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
       layer->scripts = scripts;
       layer->pictures = pictures;
       layer->mode = metadata->pictureCodec;
-      layer->picture = 0xff;
+      layer->picture = SPRITE_PICTURE_NONE;
       layer->script = scripts[0];
       layer->scriptOffset = 0;
       layer->kind = metadata->drawKind;

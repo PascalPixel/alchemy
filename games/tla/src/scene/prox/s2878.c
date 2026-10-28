@@ -26,8 +26,8 @@ void Func_02002878(void) {
   s32 t16;
   s32 t20;
 
-  Call2(Actor_SetSpritePriority, 0x13, 1);
-  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, 0x13), 0xf);
+  Call2(Actor_SetSpritePriority, 19, 1);
+  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, 19), 0xf);
   t3 = Value1(GameFlag_Test, 0xa3d);
   if (t3 == 0) {
     t4 = Value1(GameFlag_Test, 0x9c0);
@@ -40,7 +40,7 @@ void Func_02002878(void) {
     }
     t8 = Value1(GameFlag_Test, 0x9c1);
     if (t8 != 0) {
-      t9 = Value1(Actor_GetById, 0xa);
+      t9 = Value1(Actor_GetById, 10);
       FIELD_AT(t9, u16, 6) = 0xb000;
       Call1(wait, 1);
     }
@@ -50,7 +50,7 @@ void Func_02002878(void) {
     Call6(Func_02004404, 0x48, 3, 0x45, 3, 3, 3);
     Call6(Func_02004404, 0x30, 0x24, 0x45, 8, 3, 2);
     Call6(Func_0200442c, 0x48, 0xd, 1, 3, 0x46, 0x14);
-    Call3(Func_020044cc, 0x14, 0, 0);
+    Call3(Func_020044cc, 20, 0, 0);
   } else {
     t16 = Value1(GameFlag_Test, 0xa2d);
     if (t16 != 0) {
@@ -59,7 +59,7 @@ void Func_02002878(void) {
       Call6(Func_0200442c, 0x48, 0xd, 1, 3, 0x46, 0x14);
       t20 = Value1(GameFlag_Test, 0x40);
       if (t20 == 0) {
-        Call3(Func_020044cc, 0x14, 0, 0);
+        Call3(Func_020044cc, 20, 0, 0);
       }
     }
   }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "lib/call.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -71,7 +72,7 @@ s32 Func_02002020(void) {
     object = Actor_GetById(9);
     object->motionFlags = 0;
     if (GameFlag_Test(0x95c)) {
-      Call3((void (*)())Func_02003ddc, 9, 0x2780000, 0x980000);
+      Call3((void (*)())Func_02003ddc, 9, PIXELS(632), PIXELS(152));
       Call6((void (*)())Func_02003d1c, 41, 9, 1, 1, 39, 9);
       object->y = 0;
       object->terrainHeight = 0;

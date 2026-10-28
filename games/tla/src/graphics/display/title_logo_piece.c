@@ -30,5 +30,6 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   oam.tile = tile;
   oam.x = x - 32;
   oam.y = y + 224;
-  Dma_Set(&oam, (void *)(0x07000000 + ((u32)tile >> 4)), 0x84000002, REG_DMA3);
+  Dma_Set(&oam, (void *)((u32)OAM + ((u32)tile >> 4)), DMA_COPY_WORDS(2),
+          REG_DMA3);
 }

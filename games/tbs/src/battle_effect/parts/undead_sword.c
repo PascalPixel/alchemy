@@ -59,9 +59,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   // to 7 frames old, so they die at different times.
   for (i = 0, spark = work->particles; i != 16; i++) {
     speed = (Random16() & 0x1ff) + 128;
-    angle = Random16() & 0xffff;
-    spark->x = 0x400000;
-    spark->y = 0x700000;
+    angle = Random16() & TRIG_ANGLE_MASK;
+    spark->x = 64 << 16;
+    spark->y = 112 << 16;
     spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
     spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
     spark->variant = Random16() & 7;
@@ -131,7 +131,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, src, px - size / 2, py - size / 2, size, size);
         particle->variant++;
-        Particle_AdvanceWithGravity2D(particle, 62, -0x2000);
+        Particle_AdvanceWithGravity2D(particle, 62, -Q16_ONE / 8);
       }
       particle++;
     }

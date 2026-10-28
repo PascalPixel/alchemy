@@ -42,7 +42,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// background colour 0 at each horizontal blank, so the backdrop colour
 /// changes line by line.
 ///
-/// Runs each VBlank as a task (priority TASK_PASS_VBLANK + 0x7e) that
+/// Runs each VBlank as a task (priority TASK_PASS_VBLANK + 126) that
 /// BattleEffect_RunParticleStreams adds for its rise and removes after it; the
 /// rise rewrites the 160 colours, its heat lines, every VBlank. Stops DMA 0
 /// and sets it up again, so the table is read from line 0.
@@ -178,7 +178,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
     // The leap: 10 pixels a frame upwards, against a gravity of 0x91eb, about
     // 0.57 pixels a frame lost each frame.
-    actor->velocityY = 0xa0000;
+    actor->velocityY = 10 << 16;
     actor->gravity = 0x91eb;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlayFar(SE_CRASH);
@@ -222,7 +222,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // The map picture, 32x16 tiles of 8x8 pixels (256x128, 0x2000 words), all
   // colour 1; its first BATTLE_BACKGROUND_BYTES are what BG1 shows.
   fill = CANVAS_FILL_WORD(1);
-  Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(0x2000),
+  Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(256 * 128 / 4),
           REG_DMA3);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
                   BATTLE_BACKGROUND_BYTES);
@@ -241,7 +241,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     ((u16 *)&BG_PLTT_COLOR(8, 0))[i] = RGB(red, green, blue);
   }
   fill = 0;
-  Dma_Set((void *)&fill, canvas, DMA_FILL_WORDS(0x1000), REG_DMA3);
+  Dma_Set((void *)&fill, canvas, DMA_FILL_WORDS(CANVAS_BYTES / 4), REG_DMA3);
   for (i = 0; i != 256; i++) {
     s32 x = Random16() & 127;
     s32 y = Random16() & 127;
@@ -264,7 +264,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_VBLANK + 0x7f);
+  Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_VBLANK + 127);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
   for (i = 0; i != 128; i++)
     offsets[i] = Random16() & 63;
@@ -318,7 +318,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
     // in one word, as the other darkening effects write theirs).
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
-    Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 0x7e);
+    Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
     view->busy = 1;
     work->frame = 0;
@@ -406,22 +406,22 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       // stream and growing each frame: its 16.16 scale starts at 0.625 in
       // Outer Space and 1 otherwise, and gains 1/256 a frame.
       position.groundHeight = 0;
-      position.height = 0xff0000;
+      position.height = 255 << 16;
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        size = angle + 0xa000;
+        size = angle + Q16_ONE * 5 / 8;
         scale.x = size;
         scale.y = size;
-        position.x = (x << 16) + 0x500000;
+        position.x = (x << 16) + (80 << 16);
         position.y = (64 - y) << 16;
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
         Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale,
                                          0);
       } else {
-        size = angle + 0x10000;
+        size = angle + Q16_ONE;
         scale.x = size;
         scale.y = size;
-        position.x = (x << 16) + 0x600000;
+        position.x = (x << 16) + (96 << 16);
         position.y = (96 - y) << 16;
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
@@ -432,7 +432,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         struct Particle *mote = &work->particles[i];
 
         if (mote->variant == -1) {
-          s32 angle = (Random16() & 0x7fff) + 0x4000;
+          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           mote->variant = 0;
           mote->x = ((x + 96) << 16) + Trig_Sin(angle) * 30 / 65536 * size;
@@ -449,10 +449,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       // leaves the transformed point, read back as 16.16 and centred by hand.
       screen.x = 0;
       screen.y = 0;
-      screen.depth = 0x2000000;
+      screen.depth = 512 << 16;
       Transform_Reset();
       Transform_ApplyPosition(ScreenPoint_Coordinates(&screen));
-      Transform_ApplyRoll(0x800);
+      Transform_ApplyRoll(TRIG_TURN / 32);
       Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
         SET_VECTOR(vector, (gParticleStreams_OrbitPoints[i][0] / 2) << 16,
@@ -491,8 +491,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           draw(Ram_MapGridCellBuffer, work->sheet + (mote->variant << 10),
                Q_16_16_TO_INT(mote->x) - 16, Q_16_16_TO_INT(mote->y) - 16, 32,
                32);
-          mote->x -= direction * 0x14000;
-          mote->y -= 0x50000;
+          mote->x -= direction * (Q16_ONE * 5 / 4);
+          mote->y -= 5 << 16;
           mote->variant++;
           if (mote->variant == 6)
             mote->variant = -1;
@@ -518,7 +518,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   BattleEffect_SetupBlendedDisplay();
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
-  REG_BG2Y = 0xfffff000;
+  REG_BG2Y = -(16 << 8);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
@@ -559,7 +559,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // background brightens from frame 36; on frame 48 Outer Space's sprites are
   // released and the battle shows the damage.
   for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
-    s32 size = (frame + 0x1d0) << 8;
+    s32 size = (frame + 464) << 8;
     struct BattleCamera *camera = gBattleCamera;
     s32 elapsed = frame - 16;
     struct SpriteScale scale;
@@ -608,11 +608,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                 (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
                 PARTICLE_STREAMS_MOTE_OFFSETS,
             screen.x - size / 2, screen.y - size, size, size * 2);
-        Particle_AdvanceWithGravity3D(ember, 64, -0x2000);
-        if (ember->y <= 0x140000) {
+        Particle_AdvanceWithGravity3D(ember, 64, -Q16_ONE / 8);
+        if (ember->y <= (20 << 16)) {
           ember->x = 0;
           ember->z = 0;
-          ember->y = 0x140000;
+          ember->y = 20 << 16;
           SET_VELOCITY(ember, ((Random16() & 63) - 32) << 15,
                        (Random16() & 63) << 13, ((Random16() & 63) - 32) << 15);
         }
@@ -656,7 +656,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         }
         flash->variant++;
         if (flash->variant == 14) {
-          flash->y = 0x140000;
+          flash->y = 20 << 16;
           flash->x = 0;
           flash->z = ((Random16() & 255) - 127) << 16;
           SET_VELOCITY(flash, 0, (Random16() & 255) << 11, 0);
@@ -674,20 +674,20 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     y = 64 - frame * 2;
     // The formation keeps growing by 1/256 a frame, from a 16.16 scale of
     // about 1.81 in Outer Space (size) and 2 otherwise (grow).
-    grow = (frame << 8) + 0x20000;
+    grow = (frame << 8) + (2 << 16);
     position.groundHeight = 0;
-    position.height = 0xff0000;
+    position.height = 255 << 16;
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
       scale.x = size;
       scale.y = size;
-      position.x = (x << 16) + 0x600000;
+      position.x = (x << 16) + (96 << 16);
       position.y = (96 - y) << 16;
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
       Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
-      position.x = (x << 16) + 0x600000;
+      position.x = (x << 16) + (96 << 16);
       position.y = (96 - y) << 16;
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
     }

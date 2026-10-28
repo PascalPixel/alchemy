@@ -77,13 +77,13 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   // Each ring reaches the target in 12 frames; the second and third aim
   // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
-    SET_POSITION(point, source->x.fixed, source->y.fixed + 0x280000,
+    SET_POSITION(point, source->x.fixed, source->y.fixed + (40 << 16),
                  source->z.fixed);
     if (i == 0)
       point->velocityX = (target->x.fixed - point->x) / 12;
     else
       point->velocityX = (target->x.fixed * 2 - point->x) / 12;
-    point->velocityY = (target->y.fixed - point->y + 0x280000) / 12;
+    point->velocityY = (target->y.fixed - point->y + (40 << 16)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = 0;
     point++;
@@ -100,7 +100,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
       if (frame <= 39)
         speed = 128;
       else
-        speed = 0x300 - frame * 16;
+        speed = 768 - frame * 16;
       if (work->args->side == EFFECT_SIDE_ENEMIES)
         view->yaw -= speed;
       else
@@ -125,8 +125,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 
           Transform_Push();
           Transform_ApplyRoll((frame - start) << 10);
-          Transform_ApplyYaw(0x4000);
-          scale.x = ((frame - start) << 12) + 0x1000;
+          Transform_ApplyYaw(TRIG_TURN / 4);
+          scale.x = ((frame - start) << 12) + Q16_ONE / 16;
           if (scale.x > Q16_ONE)
             scale.x = Q16_ONE;
           scale.y = scale.x;
@@ -174,17 +174,17 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         // The target hops at 5 pixels a frame under the usual gravity and
         // slides at up to 8 pixels a frame.
         if (frame == start + i + 10) {
-          target->acceleration = 0x20000;
-          target->speedLimit = 0x80000;
-          target->velocityY = 0x50000;
-          target->gravity = 0xab85;
+          target->acceleration = 2 << 16;
+          target->speedLimit = 8 << 16;
+          target->velocityY = 5 << 16;
+          target->gravity = BATTLE_UNIT_GRAVITY;
           target->steeringFlags = 0;
           Actor_StartIdleFar(target);
           if (target->x.fixed < 0)
-            Actor_SetMoveTargetFar(target, target->x.fixed - 0x280000, 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed - (40 << 16), 0,
                                    target->z.fixed);
           else
-            Actor_SetMoveTargetFar(target, target->x.fixed + 0x280000, 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed + (40 << 16), 0,
                                    target->z.fixed);
           if (i == 2) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -263,13 +263,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   for (i = 0, point = work->particles; i != 8; i++) {
     s32 delay = i * 8;
 
-    SET_POSITION(point, source->x.fixed / 2, source->y.fixed + 0x780000,
+    SET_POSITION(point, source->x.fixed / 2, source->y.fixed + (120 << 16),
                  source->z.fixed);
     // The signed -64..63 pixel offset scales without a negative left shift.
     point->velocityX = (target->x.fixed +
                         ((s32)((Random16() & 0x7f) - 64) * 65536) - point->x) /
                        12;
-    point->velocityY = (target->y.fixed - point->y + 0x140000) / 12;
+    point->velocityY = (target->y.fixed - point->y + (20 << 16)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = (Random16() & 15) + delay;
     point++;
@@ -325,7 +325,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
         }
         // Bounce below 30 pixels up, losing half the speed across. There is
         // no gravity: after a bounce a star rises as fast as it fell.
-        if (step->y <= 0x1dffff) {
+        if (step->y <= (30 << 16) - 1) {
           step->velocityY = -step->velocityY;
           step->velocityX /= 2;
           step->velocityZ /= 2;

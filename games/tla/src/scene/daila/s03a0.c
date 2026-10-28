@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "field_event.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
@@ -79,9 +80,9 @@ void Func_020003a0(void) {
   Func_02000ca8_(27, 472 << 16, 264 << 16);
   Import_EventWait(30);
   Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 504, 296);
-  Actor_ArmCallback_(gMainRoutineWork.currentOwner, 0xa000, 0);
+  Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_SetPositionAndCommit_(27, 472, 280);
-  Actor_ArmCallback_(27, 0x2000, 0);
+  Actor_ArmCallback_(27, FACING_SOUTHEAST, 0);
   Import_EventWait(30);
   Func_02000d08_(27, 256, 0);
   Import_EventWait(60);
@@ -96,13 +97,13 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Import_EventShowMessageAndWait(5, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, 0, 0);
+  Actor_ArmCallback_(27, FACING_EAST, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, 0x2000, 0);
+  Actor_ArmCallback_(27, FACING_SOUTHEAST, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, 0x4000, 0);
+  Actor_ArmCallback_(27, FACING_SOUTH, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, 0x2000, 0);
+  Actor_ArmCallback_(27, FACING_SOUTHEAST, 0);
   Import_EventWait(30);
   Import_EventShowMessageAndWait(27, 0);
   Import_EventWait(30);
@@ -124,7 +125,7 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, 0xc000, 0);
+  Actor_ArmCallback_(27, FACING_NORTH, 0);
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
   Actor_SetAngleToward(27, gMainRoutineWork.currentOwner, 0);
@@ -207,7 +208,7 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Actor_SetAngleToward(28, gMainRoutineWork.currentOwner, 0);
   Import_EventWait(60);
-  Actor_ArmCallback_(28, 0x4000, 0);
+  Actor_ArmCallback_(28, FACING_SOUTH, 0);
   Import_EventWait(30);
   Import_EventShowMessageAndWait(28, 0);
   Import_EventWait(60);

@@ -6,6 +6,7 @@
 #include "module/field/field.h"
 #include "field.h"
 #include "types.h"
+#include "fixed_math.h"
 
 /// Ground height functions, by enum TerrainKind, called with (the remaining
 /// samples, x within the cell, y within the cell). Each reads only the
@@ -31,14 +32,14 @@ const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
 };
 
 /// World map battle environments (enum BattleEnvironment), indexed by the
-/// collision value plus 0x10 when the block word's top bit is set, or plus
-/// 0x20 (whatever that bit) for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD. Read only
+/// collision value plus 16 when the block word's top bit is set, or plus
+/// 32 (whatever that bit) for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD. Read only
 /// by WorldMap_GetBattleEnvironment.
 // clang-format off
 const u8 gWorldMap_BattleEnvironments[48] = {
     0, 0, 0, 0, 0, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,
-    0, 0, 0, 0, 0, 4, 7, 1, 1, 6, 1, 1, 1, 1, 0, 0, // 0x10
-    0, 0, 0, 0, 0, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 0x20: the snowfield
+    0, 0, 0, 0, 0, 4, 7, 1, 1, 6, 1, 1, 1, 1, 0, 0, // 16
+    0, 0, 0, 0, 0, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 32: the snowfield
 };
 // clang-format on
 
@@ -52,6 +53,6 @@ const s8 gWorldMap_DirectionOffsets[8][2] = {
 /// Two 1.0s (Q16). No code in The Broken Seal names it; The Lost Age's
 /// battle effects read its copy as a unit scale.
 const u32 gWorldMap_UnitScale[2] = {
-    0x10000,
-    0x10000,
+    Q16_ONE,
+    Q16_ONE,
 };

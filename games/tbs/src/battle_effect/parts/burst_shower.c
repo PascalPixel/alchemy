@@ -6,7 +6,7 @@
 
 /// Where the burst, lightning or face pictures start in the sheet: after the
 /// six glints that open the tornado sheet, over its tornado strips.
-#define BURST_SHOWER_OFFSETS 0xC56
+#define BURST_SHOWER_OFFSETS GLINT_SET_BYTES
 #define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
 #define BURST_SHOWER_BURST_LIFE 24 ///< frames each burst lives
 

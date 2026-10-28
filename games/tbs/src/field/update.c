@@ -107,7 +107,7 @@ void Actor_UpdateAll(void) {
         deltaX = (object->targetX - x) / 65536;
         deltaZ = (object->targetZ - z) / 65536;
         distance = IwramSqrt(deltaX * deltaX + deltaZ * deltaZ) << 16;
-        if (distance <= 0xffffff) {
+        if (distance <= (256 << 16) - 1) {
           deltaX = object->targetX - x;
           deltaZ = object->targetZ - z;
           distance = IwramSqrt(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))

@@ -20,6 +20,27 @@
 
 #define SOUND_INFO_PTR (*(struct SoundInfo **)0x03007FF0)
 
+/// The PCM buffer's size in samples, one byte each; pret calls it
+/// PCM_DMA_BUF_SIZE. It holds transferPeriod VBlanks of samples (this /
+/// pcmSamplesPerVBlank, rounded down: 4 of 352 at the game's rate), after which
+/// m4aSoundVSync starts the DMAs again from its start; the mixer
+/// (sound_mixer_render.s) reaches the left buffer this far past the right one.
+#define SOUND_PCM_BUFFER_SIZE 1584
+
+// A sound mode word, as m4aSoundMode and a song header's mode byte take it,
+// under pret's names (include/gba/m4a_internal.h); a zero field leaves its
+// setting unchanged.
+#define SOUND_MODE_REVERB_VAL 0x0000007F ///< the reverb level
+#define SOUND_MODE_REVERB_SET 0x00000080 ///< sets the reverb level
+#define SOUND_MODE_MAXCHN 0x00000F00     ///< PCM notes in use
+#define SOUND_MODE_MAXCHN_SHIFT 8
+#define SOUND_MODE_MASVOL 0x0000F000 ///< PCM volume
+#define SOUND_MODE_MASVOL_SHIFT 12
+#define SOUND_MODE_FREQ_13379 0x00040000 ///< rate 4: 13379 samples a second
+#define SOUND_MODE_FREQ 0x000F0000       ///< the rate
+#define SOUND_MODE_FREQ_SHIFT 16
+#define SOUND_MODE_DA_BIT 0x00B00000 ///< the sound bias's resolution
+
 #define REG_NR10 (*(volatile u8 *)0x04000060)
 #define REG_NR11 (*(volatile u8 *)0x04000062)
 #define REG_NR12 (*(volatile u8 *)0x04000063)
@@ -466,7 +487,8 @@ struct SoundInfo {
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
   u8 c15;
-  u8 transferPeriod; ///< VBlanks the buffers hold: 0x630 / pcmSamplesPerVBlank.
+  u8 transferPeriod; ///< VBlanks the buffers hold: SOUND_PCM_BUFFER_SIZE /
+                     ///< pcmSamplesPerVBlank.
   /// Nonzero: the mixer stops taking notes once the scanline passes this
   /// many lines after its start. gMaxLines, 0.
   u8 lineLimit;
@@ -496,7 +518,7 @@ struct SoundInfo {
   struct SoundChannel pcmNotes[12]; ///< pcmNoteCount of them play.
   /// Right (0, DMA 1 to FIFO A) and left (1, DMA 2 to FIFO B) samples,
   /// transferPeriod VBlanks of pcmSamplesPerVBlank each.
-  s8 buffers[2][0x630];
+  s8 buffers[2][SOUND_PCM_BUFFER_SIZE];
 };
 
 /// An entry of the music player table: a music player, its tracks and track

@@ -47,14 +47,14 @@ struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
   slot = Resource_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
-    icon = WindowSprite_CreateFar(slot, 0x40000000, window, 84, -4);
+    icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->active = 13;
     work->arrows[0] = icon;
   }
   slot = Resource_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
-    icon = WindowSprite_CreateFar(slot, 0x40000000, window, 84, 8);
+    icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->active = 13;
     work->arrows[1] = icon;
   }

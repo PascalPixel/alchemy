@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "scene.h"
 #include "scene_ids.h"
 
@@ -51,5 +52,5 @@ void Func_020003ec(void) {
   z = object->z >> 20;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov685Room4 && x == 41 &&
       (u32)(z - 13) <= 4)
-    Func_020034d4(gMainRoutineWork.currentOwner, 0x2980000, 0x1180000);
+    Func_020034d4(gMainRoutineWork.currentOwner, PIXELS(664), PIXELS(280));
 }

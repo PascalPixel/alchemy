@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "airs_rock_inside.h"
 #include "text/msg_ids.h"
 
@@ -50,31 +51,30 @@ void Func_02004534(void) {
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
     Call2(Func_02005e74, 6, gMainRoutineWork.currentOwner);
     Call1(FieldEvent_Wait, 1);
-    Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner,
-          0x100, 0x88);
-    Call3(Actor_ResetAndSetPositionInMode2, 6, 0x110, 0x88);
+    Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner, 256,
+          136);
+    Call3(Actor_ResetAndSetPositionInMode2, 6, 272, 136);
     Call1(Actor_WaitForMoveById,
           gMainRoutineWork.currentOwner);
     Call1(Actor_WaitForMoveById, 6);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
-    Call3(Actor_ArmCallback, 6, 0x8000, 0);
-    Call1(FieldEvent_Wait, 0xa);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Call3(Actor_ArmCallback, 6, FACING_WEST, 0);
+    Call1(FieldEvent_Wait, 10);
     Call2(Func_02005eac, 6, 0);
     Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 0x1e);
-    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 0x100,
-          0x98);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
-    Call1(FieldEvent_Wait, 0x14);
-    Call3(Actor_ArmCallback, 6, 0x4000, 0);
-    Call1(FieldEvent_Wait, 0x14);
+    Call1(FieldEvent_Wait, 30);
+    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 256, 152);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Call1(FieldEvent_Wait, 20);
+    Call3(Actor_ArmCallback, 6, FACING_SOUTH, 0);
+    Call1(FieldEvent_Wait, 20);
     Call2(Actor_SetModeById, 6, 3);
-    Call1(FieldEvent_Wait, 0x1e);
-    Call3(Actor_ArmCallback, 6, 0xc000, 0);
-    Call1(FieldEvent_Wait, 0x14);
-    Call3(Actor_SetPositionAndReset, 6, 0x108, 0x89);
-    Call3(Actor_ArmCallback, 6, 0xc000, 0);
-    Call1(FieldEvent_Wait, 0x14);
+    Call1(FieldEvent_Wait, 30);
+    Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
+    Call1(FieldEvent_Wait, 20);
+    Call3(Actor_SetPositionAndReset, 6, 264, 137);
+    Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
+    Call1(FieldEvent_Wait, 20);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(Func_02005dcc, 0x50000, 0x70000, 0x10000);
     Call3(Func_02005dcc, -1, -1, 0xe666);
@@ -86,10 +86,10 @@ void Func_02004534(void) {
     Call2(Party_LearnAbility, 6, 0x90);
     Call1(GameFlag_SetBit, 0x8d4);
     Call3(Actor_TurnToFaceEachOther, gMainRoutineWork.currentOwner, 6, 0);
-    Call1(FieldEvent_Wait, 0xa);
+    Call1(FieldEvent_Wait, 10);
     Call2(Actor_SetModeById, 6, 3);
     Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 0x14);
+    Call1(FieldEvent_Wait, 20);
     Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2(Actor_SetModeById, 6, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -113,7 +113,7 @@ void Func_02004740(void) {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 107);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_02004534();
   }
@@ -128,7 +128,7 @@ void Func_020047b0(void) {
   } else {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 280, 136);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_02004534();
   }
@@ -143,7 +143,7 @@ void Func_02004818(void) {
   } else {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_02004534();
   }

@@ -643,10 +643,10 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
 /// as the timer climbs to 100 the water flickers away.
 static void Water_FlickerOut(void) {
   volatile u16 *reg = &REG_DISPCNT;
-  s16 v = *reg & 0xfdff;
+  s16 v = *reg & ~DISPCNT_BG1_ON;
 
   if ((u32)(Import_RandomNext() * 100) >> 16 >= gAltinPeak_FlickerTimer) {
-    s32 k = 0x200;
+    s32 k = DISPCNT_BG1_ON;
 
     v |= k;
   }
@@ -695,7 +695,7 @@ static void AltinPeak_DrainFirstWater(void) {
     wait(1);
     timer = gAltinPeak_FlickerTimer + 1;
     gAltinPeak_FlickerTimer = timer;
-  } while ((u32)(timer << 16) <= 0x640000);
+  } while ((u32)(timer << 16) <= 100 << 16);
   wait(1);
   Irq_SetHandler(1, 0, 0);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -731,7 +731,7 @@ static void AltinPeak_DrainSecondWater(void) {
     wait(1);
     timer = gAltinPeak_FlickerTimer + 1;
     gAltinPeak_FlickerTimer = timer;
-  } while ((u32)(timer << 16) <= 0x640000);
+  } while ((u32)(timer << 16) <= 100 << 16);
   wait(1);
   Irq_SetHandler(1, 0, 0);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -768,7 +768,7 @@ static void AltinPeak_DrainThirdWater(void) {
     wait(1);
     timer = gAltinPeak_FlickerTimer + 1;
     gAltinPeak_FlickerTimer = timer;
-  } while ((u32)(timer << 16) <= 0x640000);
+  } while ((u32)(timer << 16) <= 100 << 16);
   wait(1);
   Irq_SetHandler(1, 0, 0);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -1616,7 +1616,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     grid = gMapGridWork[0];
     Import_ActorSetPosition(ACTOR_FIRST_WATER_BEAST, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
-    grid->flags &= 0xfdff;
+    grid->flags &= ~DISPCNT_BG1_ON;
     AltinPeak_MarkActorTerrainCell(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
     if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
       Import_ActorSetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE,
@@ -1642,7 +1642,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
 /// while the water is up the beast spits it; the switch is restored.
 static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~0x200;
+    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
     Actor_SetPosition(ACTOR_SECOND_WATER_BEAST, 0, 0);
   } else {
     AltinPeak_StartPaletteAnimation();
@@ -1675,7 +1675,7 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
 /// name.
 static void AltinPeak_RestoreSouthEntranceRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~0x200;
+    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
   } else {
     MapGrid_CopyCellAttributes(52, 42, 1, 1, 53, 42);
   }
@@ -1684,7 +1684,7 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
     // after ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST.
     if ((u32)(((u16)gMainRoutineWork.entrance -
                ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST)
-              << 16) <= 0x10000) {
+              << 16) <= 1 << 16) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
   }
@@ -1696,7 +1696,7 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
 static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
 
   if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~0x200;
+    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
     Actor_SetPosition(ACTOR_THIRD_WATER_BEAST, 0, 0);
   } else {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1752,7 +1752,7 @@ static void AltinPeak_RestorePoolRoom(void) {
     }
   }
   if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~0x200;
+    ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
   }
   if (GameFlag_Get(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(17, 93, 1, 1, 16, 92);
@@ -2300,10 +2300,11 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_End();
 }
 
-/// Unused: asks the field to use Frost (psynergy 0x1018, party member 4 and
-/// ABILITY_FROST); nothing calls it.
+/// Unused: asks the field to have Felix use Frost; nothing calls it.
 UNUSED static void AltinPeak_RequestPsynergy(void) {
-  gFieldWork->psynergy = 0x1018;
+  // XXX (no evidence): why the user is Felix, who never joins the party in
+  // this game; nothing calls this, so no caller shows what it was for.
+  gFieldWork->psynergy = (FELIX << 10) | ABILITY_FROST;
 }
 
 /// Task in AltinPeakSpritz: while the leader stands higher than 48
@@ -3033,7 +3034,7 @@ struct ActorPlacement gAltinPeak_FallingRocksActorPlacements[] = {
 };
 
 struct ActorPlacement gAltinPeak_HydrosStatueActorPlacements[] = {
-    {0xc7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
+    {199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
         TALK_FACING_KEEP, 0},

@@ -82,15 +82,16 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   // before the next actor is chosen.
   void PartyStatus_ClearHighlights(void) {
     u16 data[2];
-    data[0] = 0xff;
+    data[0] = BATTLE_UNIT_LIST_END;
     PartyStatus_HighlightMembers(data);
     BattleHighlight_SetModesFar(data, 1);
   }
 
   // Set up the shared command UI before the optional link handshake: VRAM
   // for the chosen command's 32x32 icon (1 KB) and the party member's portrait,
-  // the lists' page numbers (tile 0x300), page arrows (0x334) and range
-  // icons (0x314), and no Djinni chosen yet (0x80000000).
+  // the lists' page numbers (LIST_PAGE_DIGITS_TILE), page arrows
+  // (LIST_PAGE_ARROW_VRAM) and range icons (RANGE_ICON_FIRST_TILE), and no
+  // Djinni chosen yet (BATTLE_MENU_NO_DJINNI).
   target = 256;
   commandKind = 0;
   parameter = 0;
@@ -98,12 +99,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   smallIconSlot = VramCache_AllocEntry(512);
   state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
-  Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
-  Link_DrawPageArrows(0x06006680);
+  Graphics_ExpandVramTilesByColorTable(
+      (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
+  Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
   battle = gBattleWork;
   for (k = 0; k < 8; k++) {
-    state->chosenDjinn[k] = 0x80000000;
+    state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
   }
   for (k = 0; k < 3; k++) {
     state->iconShown[k] = 0;
@@ -256,14 +258,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.f.tile = Portrait_Load(unit->id, smallIconSlot);
       iconSprite->oam.f.x = BATTLE_CLASS_ICON_X;
-      iconSprite->oam.f.y = 0x80;
-      iconSprite->oam.f.palette = 14;
+      iconSprite->oam.f.y = 128;
+      iconSprite->oam.f.palette = PORTRAIT_PALETTE;
       state->iconShown[2] = 1;
 
     mark_visible:
       Window_MarkVisibleTextTiles();
       gBattleMenuWork->iconShown[0] = 0;
-      gBattleMenuWork->chosenDjinn[commandIndex] = 0x80000000;
+      gBattleMenuWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
       /* FAKEMATCH(dead): twelve dead stores restore the native stack frame's
        * spill slots at sp+24 to sp+32; without them, 26 of 1727 instructions
        * differ in tbs-en. */
@@ -279,10 +281,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
-      // signatureHeader is the party member alone, 0xff-ended: marked in the
-      // battle and highlighted in the party status window.
+      // signatureHeader is the party member alone, ended by
+      // BATTLE_UNIT_LIST_END: marked in the battle and highlighted in the party
+      // status window.
       signatureHeader[0] = (u16)unitId;
-      signatureHeader[1] = 255;
+      signatureHeader[1] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(signatureHeader, 1);
       PartyStatus_HighlightMembers(signatureHeader);
       wait(1);
@@ -378,7 +381,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         entryValue = unit->psynergy[k].encodedAction & ACTION_ID_MASK;
         if (entryValue != 0) {
           do {
-            if ((Ability_Get(entryValue)->flags & 0x80) != 0) {
+            if ((Ability_Get(entryValue)->flags & BATTLE_OK) != 0) {
               pick[cnt] = k;
               list[cnt] = entryValue;
               cnt++;
@@ -565,7 +568,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       summon_menu:
         state->icons[0].oam.f.x = 144;
-        gBattleMenuWork->chosenDjinn[commandIndex] = 0x80000000;
+        gBattleMenuWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
         mode = BattleDjinnMenu_Run(unitId, 1);
         command->range = 0;
         if (mode == -1) {
@@ -709,9 +712,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->iconShown[1] = 1;
-        Text_DrawMessageAsTiles((unit->inventory[selection] & 0x1ff) +
-                                    MsgItemName,
-                                commandWindow, 24, 0);
+        Text_DrawMessageAsTiles(
+            (unit->inventory[selection] & INVENTORY_ITEM_ID_MASK) + MsgItemName,
+            commandWindow, 24, 0);
         command->range = cost;
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(

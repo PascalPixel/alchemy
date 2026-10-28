@@ -90,7 +90,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position.vector.x = leader->x.fixed;
   position.vector.y = leader->y.fixed;
   position.vector.z = leader->z.fixed;
-  Vector_AddPolarOffset(0x100000, leader->facing, position.coordinates);
+  Vector_AddPolarOffset(PIXELS(16), leader->facing, position.coordinates);
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // World Map cell pictures are 32 pixels square, 32 to a row.
@@ -237,15 +237,15 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     previousHp[i] = Unit_GetFar(gMainRoutineWork.party[i])->hp;
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    tile =
-        &((struct MapGridCell *)Ram_CellPictures)[((x / 0x200000) & 31) +
-                                                  (((z / 0x200000) & 31) << 5)];
+    tile = &(
+        (struct MapGridCell *)Ram_CellPictures)[((x / PIXELS(32)) & 31) +
+                                                (((z / PIXELS(32)) & 31) << 5)];
   } else {
     if ((u32)layer <= MAPGRID_LAYER_OVERHEAD)
       tile = gridState->layers[layer].cells;
     else
       tile = (struct MapGridCell *)gMapGridCellBuffer;
-    tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
+    tile = &tile[(x / PIXELS(16)) + ((z / PIXELS(16)) << 7)];
   }
   event = tile->behavior;
   work->previousCell = work->currentCell;
@@ -329,9 +329,9 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
 
   // With HAZARD_COUNT_FRAMES, which no ☀️ code sets, the count rises by one each
   // call, that is each frame the field sequence runs. Half way,
-  // SPRITE_ATTACHED_EFFECT is attached to the leader until removed (0x101, at
-  // sprite priority 1); at the limit it is removed (0x100) and the party takes
-  // the hazard's damage.
+  // SPRITE_ATTACHED_EFFECT is attached to the leader until removed
+  // (ATTACHED_EFFECT_ATTACH, at sprite priority 1); at the limit it is removed
+  // (ATTACHED_EFFECT_REMOVE) and the party takes the hazard's damage.
   if (gMainRoutineWork.hazardMode == HAZARD_COUNT_FRAMES) {
     gMainRoutineWork.hazardSteps++;
     if (gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit / 2)
@@ -356,7 +356,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
-    leader->velocityY = 0x40000;
+    leader->velocityY = PIXELS(4);
     FieldEffect_SetAttached(leaderId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {

@@ -31,11 +31,12 @@ void Func_081a0a70(void) {
   void **cell = (void **)&gDisplayScroll_Objects;
   *cell = objects;
   fill = 0;
-  Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800,
-          (volatile u32 *)0x040000d4);
+  Dma_Set((void *)&fill, (void *)OBJ_VRAM0,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x6000 / 4),
+          REG_DMA3);
   fill = 0x11111111;
-  Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040,
-          (volatile u32 *)0x040000d4);
+  Dma_Set((void *)&fill, (void *)0x06016000,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
 
   entry = *(u32 **)cell;
   {

@@ -12,5 +12,5 @@ s32 GameFlag_IsConditionActive(s32 condition) {
     return GameFlag_Test();
   }
   flag_state = GameFlag_Test();
-  return 1 - ((u32)((0 - flag_state) | flag_state) >> 0x1F);
+  return 1 - ((u32)((0 - flag_state) | flag_state) >> 31);
 }

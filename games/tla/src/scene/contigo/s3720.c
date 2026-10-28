@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -68,7 +69,7 @@ void Func_02003720(void) {
     *(void **)((u8 *)object + 108) = Func_020006d0;
   }
   if (GameFlag_Test(0x9e7) != 0 && GameFlag_Test(0x9e6) == 0) {
-    Func_020040d4_(17, 0x200000, 0x2c40000);
+    Func_020040d4_(17, PIXELS(32), PIXELS(708));
   } else {
     Actor_SetPartAttribute(Actor_GetById(17), 15);
     Actor_SetSingleChildFlags(Actor_GetById(17), 0);

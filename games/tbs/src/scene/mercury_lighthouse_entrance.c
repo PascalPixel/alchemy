@@ -330,7 +330,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
       speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
       velocityY =
-          Math_Divide((((speedRoll << 4) - speedRoll) << 16) + 0x3c0000, 100);
+          Math_Divide((((speedRoll << 4) - speedRoll) << 16) + PIXELS(60), 100);
       FieldEffect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                             EFFECT_USE_SCRIPT | EFFECT_SCRIPT_MEDIUM,
@@ -495,7 +495,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     MapGrid_CenterOnFollowedPoint();
     wait(1);
     Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
-    Actor_Get(ACTOR_PARTY_LEADER)->gravity = 0x8000;
+    Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
     Actor_Get(ACTOR_PARTY_LEADER)->bounce = arrivalSeen;
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = arrivalSeen;
     Event_StartScreenTransition();
@@ -525,7 +525,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     MapGrid_WaitForShakeToSettle();
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-    Actor_Get(ACTOR_PARTY_LEADER)->gravity = 0x10000;
+    Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
     Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0x4000;
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);

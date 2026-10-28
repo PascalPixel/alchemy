@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "fixed_math.h"
 
 struct MenuFlagWork {
   u8 unk000[0x506];
@@ -77,9 +78,9 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
         continue;
       }
 
-      dx = (obj->x - src->x) / 0x10000;
-      dy = (obj->y - src->y) / 0x10000;
-      dz = (obj->z - src->z) / 0x10000;
+      dx = (obj->x - src->x) / Q16_ONE;
+      dy = (obj->y - src->y) / Q16_ONE;
+      dz = (obj->z - src->z) / Q16_ONE;
 
       xx = dx * dx;
       yy = dy * dy;

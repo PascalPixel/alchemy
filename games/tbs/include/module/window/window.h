@@ -146,8 +146,29 @@ enum {
   WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT = WINDOW_TILE(0x80),
   WINDOW_TILE_BATTLE_BORDER_BOTTOM = WINDOW_TILE(0x81),
   WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(0x82),
+  /// In battle, the tile the command row fills its empty panels with
+  /// (screens/command_row.c), and Window_EraseBorderRect below row 16.
+  WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(0x7f),
+  /// The HP and PP labels before a number (Text_DrawPrefixedNumberAtOffset)
+  /// or a Psynergy's cost: each label's first tile, and the second tile the
+  /// HP label always takes.
+  WINDOW_TILE_HP_LABEL = WINDOW_TILE(0x1d),
+  WINDOW_TILE_HP_LABEL_END = WINDOW_TILE(0x1e),
+  WINDOW_TILE_PP_LABEL = WINDOW_TILE(0x1f),
 };
 
+/// The PP label's second tile: the HP label's in English, German and
+/// Japanese, a tile of its own in Spanish, French and Italian.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define WINDOW_TILE_PP_LABEL_END WINDOW_TILE(0x05)
+#else
+#define WINDOW_TILE_PP_LABEL_END WINDOW_TILE_HP_LABEL_END
+#endif
+
+/// A tilemap entry's tile number, the bits below its flip bits and palette
+/// number in the hardware's screen entry.
+#define TILE_NUMBER_MASK 0x3ff
 /// The tilemap entry flip bits.
 #define TILE_HFLIP 0x400
 #define TILE_VFLIP 0x800
@@ -225,6 +246,19 @@ enum CommandIcon {
   COMMAND_ICON_CHANGE = 31,
   COMMAND_ICON_COINS = 32,
   COMMAND_ICON_LUCKY_MEDALS = 33,
+  // The settings menu's choices and the Pause menu's entries
+  // (gSettingsMenu_SpeedIcons to gPauseMenu_Icons), whose command names are
+  // placeholders.
+  COMMAND_ICON_SPEED_SLOW = 34,
+  COMMAND_ICON_SPEED_NORMAL = 35,
+  COMMAND_ICON_SPEED_FAST = 36,
+  COMMAND_ICON_SPEECH_OFF = 37,
+  COMMAND_ICON_SPEECH_ON = 38,
+  COMMAND_ICON_AUTO_SLEEP_OFF = 39,
+  COMMAND_ICON_AUTO_SLEEP_ON = 40,
+  COMMAND_ICON_SAVE_QUEST = 41,
+  COMMAND_ICON_SLEEP = 42,
+  COMMAND_ICON_CHANGE_SETTINGS = 43,
   COMMAND_ICON_PASSWORD = 44,
   COMMAND_ICON_CABLE = 45,
   COMMAND_ICON_GOLD = 46,
@@ -288,6 +322,22 @@ enum IconKind {
   /// The one tile Resource_LoadTableEntry loads.
   ICON_KIND_TABLE_ENTRY = 9
 };
+
+// The layers ItemIcon_Compose draws over an item's icon. Callers combine them:
+// the count above one, equipped and broken in Resource_LoadByMode and
+// ItemIcon_LoadIntoSlot; those and the artifact mark for
+// Resource_LoadByModeIntoSlot's ICON_KIND_ITEM, and all but the equipped mark
+// for its ICON_KIND_EQUIPMENT_ITEM.
+#define ICON_BASE 1            ///< the base under the icon
+#define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
+#define ICON_COUNT 4           ///< the count, always
+/// Mark 1, the cross, on an item with INVENTORY_BROKEN.
+#define ICON_BROKEN 8
+/// Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED.
+#define ICON_EQUIPPED 16
+/// Mark 2, Icon_MarkPhi, on a cursed item that cannot be unequipped
+/// (ITEM_CURSED and ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
+#define ICON_ARTIFACT 32
 
 /// The kinds of message argument (MessageArgument_Push), which the message
 /// codes such as {argument_item_name} read.

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 struct EventWork {
   u8 unk00[20];
@@ -16,7 +17,7 @@ struct Actor *Func_080eaf28(s32 *position, s32 checkY) {
 
     if (checkY) {
       if (position[0] >> 20 == object->x >> 20 &&
-          position[1] / 0x10000 == object->y / 0x10000 &&
+          position[1] / Q16_ONE == object->y / Q16_ONE &&
           position[2] >> 20 == object->z >> 20)
         return object;
     } else {

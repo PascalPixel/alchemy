@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -17,8 +18,7 @@ void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
 void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);
@@ -164,7 +164,7 @@ void Func_020029c8(void) {
   next = 16;
   if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154) > 34)
     next = 15;
-  Actor_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;
   Actor_OffsetPositionAndResetMotion(4, 0, 4);

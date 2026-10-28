@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Func_020056b4(struct Actor *object);
@@ -33,7 +34,7 @@ void Func_020019d0(void) {
   FieldEvent_Wait(40);
   Func_02005854(582);
   actor->motionFlags = 0;
-  actor->y = 0x80000;
+  actor->y = PIXELS(8);
   FieldEvent_Wait(10);
   actor->y = 0;
   FieldEvent_Wait(10);

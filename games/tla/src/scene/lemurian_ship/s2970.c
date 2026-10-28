@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "scene_tables.h"
 
 void Func_02001464(void);
 void Func_0200155c(void);
@@ -21,10 +22,10 @@ void Func_02002970(void) {
     LemurianShip_MapCopy(35, 68, 35, 69, 1, 1);
     LemurianShip_BlendStart(35, 0, 1, 1, 35, 9);
     object->motionFlags = 0;
-    LemurianShip_ObjSetPos(object, 0x2380000, 0xfff00000, 0x980000);
+    LemurianShip_ObjSetPos(object, PIXELS(568), PIXELS(-16), PIXELS(152));
     Actor_SetSpritePriority(8, 3);
     LemurianShip_FlagSet(0x204);
-    LemurianShip_ObjPlace(10, 0x2380000, 0x980000);
+    LemurianShip_ObjPlace(10, PIXELS(568), PIXELS(152));
   }
   if (LemurianShip_FlagCheck(0x204)) {
     if (LemurianShip_FlagCheck(0x202))
@@ -43,7 +44,7 @@ void Func_02002970(void) {
     object->y = 0xfff00000;
     Actor_SetSpritePriority(9, 3);
     LemurianShip_FlagSet(0x205);
-    LemurianShip_ObjPlace(11, 0x1d80000, 0x980000);
+    LemurianShip_ObjPlace(11, PIXELS(472), PIXELS(152));
   }
   if (LemurianShip_FlagCheck(0x205)) {
     if (LemurianShip_FlagCheck(0x203))

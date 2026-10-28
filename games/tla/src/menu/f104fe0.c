@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "task.h"
+#include "fixed_math.h"
 
 struct MenuEntryWindow {
   u8 unk00[12];
@@ -33,7 +34,7 @@ void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
     if (menu->objects[i] != NULL) {
       menu->x[i] = (i * 3 + (window->x + originX)) * 8;
       menu->y[i] = (window->y + originY) * 8 + 16;
-      menu->scale[i] = 0x10000;
+      menu->scale[i] = Q16_ONE;
     }
   }
   menu->active = 1;

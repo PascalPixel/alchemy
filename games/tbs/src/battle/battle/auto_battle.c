@@ -328,7 +328,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   for (index = 0; index != sideCount; index++) {
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_OPAQUE);
   }
-  BattleCamera_SetView(0, 0, 0, 0x64);
+  BattleCamera_SetView(0, 0, 0, 100);
   wait(3);
   return 0;
 }
@@ -576,5 +576,5 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action) {
     return TARGET_SIDE_DEFEATED;
   }
 
-  return (s16)livingUnits[(Random16() * livingCount) >> 0x10];
+  return (s16)livingUnits[(Random16() * livingCount) >> 16];
 }

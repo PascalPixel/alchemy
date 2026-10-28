@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "bg_scroll.h"
@@ -73,19 +74,19 @@ void Func_02001f7c(void) {
 
   Func_02003bc8();
   Func_02003c88(0);
-  REG_DISPCNT &= ~0x100;
+  REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(one-pass): BG0CNT's value in a block of its own, built before
    * its address; as a plain block, 2 of 520 instructions differ in tla-en. */
   do {
-    s32 control = 0x400;
+    s32 control = BGCNT_SCREEN_BASE(4);
 
     REG_BG0CNT = control;
   } while (0);
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
-  Dma_Set(buffer, (void *)0x6000000, 0x84000200, (volatile u32 *)0x040000d4);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)0x6002000, 0x800);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   i = 0;
@@ -99,8 +100,8 @@ mask:
   cell = buffer;
   i = 0;
 row:
-  Dma_Set(cell, (void *)(0x6002000 + (i << 6)), 0x84000002,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + (i << 6)), DMA_COPY_WORDS(2),
+          REG_DMA3);
   i++;
   cell += 4;
   if (i != 16)
@@ -144,12 +145,12 @@ row:
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   Func_02003c20(0x10000, 0x2000);
-  Camera_MoveWithinMapBounds(0x2180000, -1, 0xd80000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(536), -1, PIXELS(216), 1);
   Func_02003c30();
   Actor_GetById(14)->update = 0;
   Actor_SetPartAttribute(Actor_GetById(14), 6);
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f41;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = 0xff88;
   gBgScroll[0].y = 0x10;
   wait(30);
@@ -157,18 +158,18 @@ row:
   Call2((void (*)())Func_02003c58, 0x10003, 0);
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
-  Actor_GetById(gMainRoutineWork.currentOwner)->angle = 0x4000;
+  Actor_GetById(gMainRoutineWork.currentOwner)->angle = FACING_SOUTH;
   wait(1);
   Func_02003c58(0x7fff, 0);
   Func_02003c50(0x10003, 0);
   Func_02003c60(8);
-  REG_DISPCNT |= 0x100;
+  REG_DISPCNT |= DISPCNT_BG0_ON;
   Func_02003b68(52, 12, 29, 9, 9, 9);
   Func_02003b68(52, 76, 29, 73, 9, 9);
   Func_02001dc4(0x2280000, 0xe40000);
   i = 0;
 fade1:
-  REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
   wait(1);
   i++;
   if (i != 32)
@@ -184,13 +185,13 @@ fade1:
   Func_02003c58(0x7fff, 0);
   Func_02003c50(0x10003, 0);
   Func_02003c60(8);
-  REG_DISPCNT |= 0x100;
+  REG_DISPCNT |= DISPCNT_BG0_ON;
   Func_02003b68(52, 22, 29, 9, 9, 9);
   Func_02003b68(52, 86, 29, 73, 9, 9);
   Func_02001dc4(0x2080000, 0xf20000);
   i = 0;
 fade2:
-  REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
   wait(1);
   i++;
   if (i != 32)
@@ -199,7 +200,7 @@ fade2:
   Call2((void (*)())Func_02003c58, 0x10003, 0);
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
-  REG_DISPCNT &= ~0x100;
+  REG_DISPCNT &= ~DISPCNT_BG0_ON;
   FieldEvent_Wait(20);
   Func_02001dc4(0x2000000, 0xc60000);
   Func_02001dc4(0x2320000, 0xf20000);
@@ -219,7 +220,7 @@ fade2:
   Func_02003af8();
   Func_02003bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   REG_BLDCNT = 0;
-  REG_DISPCNT |= 0x100;
+  REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   GameFlag_SetBit(0x87b);

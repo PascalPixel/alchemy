@@ -23,23 +23,23 @@ void Func_080d5c70(s32 unused) {
   Sound_PlayFar(298);
   Sound_PlayFar(147);
   if (work->controlMode == 3) {
-    Io_Write16(0x7fff, (u16 *)0x050001e6);
+    Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(0x401, 16);
     work->screenStatus = 0;
     wait(16);
     for (i = 0; i < 16; i++) {
       c = 30 - i * 2;
-      Io_Write16((c << 10) | (c << 5) | c, (u16 *)0x050001e6);
+      Io_Write16(RGB(c, c, c), (u16 *)&BG_PLTT_COLOR(15, 3));
       wait(1);
     }
   } else {
-    Io_Write16(0x7fff, &PLTT_BACKDROP);
+    Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
     ScreenTransition_Finish(0x207, 16);
     work->screenStatus = 0;
     wait(16);
     for (i = 0; i < 16; i++) {
       c = 30 - i * 2;
-      Io_Write16((c << 10) | (c << 5) | c, &PLTT_BACKDROP);
+      Io_Write16(RGB(c, c, c), &PLTT_BACKDROP);
       wait(1);
     }
   }

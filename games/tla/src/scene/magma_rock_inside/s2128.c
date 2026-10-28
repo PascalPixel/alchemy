@@ -12,7 +12,7 @@ void Func_02002128(void) {
   *(work + 0xd38) = 1;
   if (!GameFlag_Test(0x304)) {
     Actor_SetPartAttribute(Actor_GetById(22), 15);
-    Func_02004da0(22, 632 << 16, 312 << 16);
+    Func_02004da0(22, PIXELS(632), PIXELS(312));
     Actor_GetById(22)->scaleX = Actor_GetById(22)->scaleY = 0x1000;
   }
 }

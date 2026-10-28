@@ -1,5 +1,6 @@
 #include "room.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 extern s16 gData_02005b5c[];
 
@@ -48,7 +49,7 @@ void Func_02000280(s32 unused, s32 id) {
     kind = gData_02005b5c[id - 18];
   } while (0);
   Func_02005598(kind, S16_AT(object, 100) << 16,
-                (S16_AT(object, 102) << 16) - 0x80000);
+                (S16_AT(object, 102) << 16) - PIXELS(8));
 }
 
 void Func_020002b8(s32 unused, s32 id) {

@@ -8,6 +8,6 @@ void Func_08016dd0(s32 flag, s32 value) {
   s32 mask = fieldMask << shift;
   u8 *bytes = gGameFlagBytes;
 
-  flag = ((u32)flag << 0x14) >> 0x17;
+  flag = ((u32)flag << 20) >> 23;
   bytes[flag] = (bytes[flag] & ~mask) | ((value & fieldMask) << shift);
 }

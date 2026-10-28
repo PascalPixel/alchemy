@@ -10,7 +10,7 @@
 #define TILE_SIZE 32
 
 /// The canvas in words, as one 32-bit DMA.
-#define CANVAS_DMA ((DMA_ENABLE | DMA_32BIT) << 16 | CANVAS_SIZE / 4)
+#define CANVAS_DMA DMA_COPY_WORDS(CANVAS_SIZE / 4)
 
 void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count);
 void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count);
@@ -66,8 +66,7 @@ void Func_080eb594(void) {
     ColorBuffer_MapToFadeStep3(canvas, CANVAS_SIZE);
     break;
   case CANVAS_UPLOAD_TO_BG:
-    Dma_Set(canvas, BG_VRAM,
-            (DMA_ENABLE | DMA_32BIT) << 16 | CANVAS_SIZE * 2 / 4, REG_DMA3);
+    Dma_Set(canvas, BG_VRAM, DMA_COPY_WORDS(CANVAS_SIZE * 2 / 4), REG_DMA3);
     break;
   }
   work->command = 0;

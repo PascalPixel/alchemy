@@ -118,7 +118,7 @@ const struct Trigger *KolimaForestFloodgate_GetTriggers(void) {
 /// ahead, and the cells of the logs are marked again where they now lie.
 static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_RollLog(gKolimaForestFloodgateRecords);
-  MapGrid_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
+  MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
   KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
                                       CELL_BEHAVIOR_WALL);
   KolimaForestFloodgate_MarkShortLogCells();
@@ -239,9 +239,9 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
   *destination++ = *source++;
   *destination = *source;
   scroll = (u16 *)gKolimaForestFloodgate_ShakeScroll;
-  scroll[1] += 0xb0;
-  scroll[3] += 0xb0;
-  scroll[5] += 0xb0;
+  scroll[1] += 176;
+  scroll[3] += 176;
+  scroll[5] += 176;
 }
 
 /// Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
@@ -416,8 +416,8 @@ s32 KolimaForestFloodgate_Initialize(void) {
   MapGrid_CopyCellAttributes(32, 0, 32, 32, 0, 32);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Dma_Set(gKolimaForestFloodgate_DefaultRecords,
-            gKolimaForestFloodgateRecords,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x12, REG_DMA3);
+            gKolimaForestFloodgateRecords, (DMA_ENABLE | DMA_32BIT) << 16 | 18,
+            REG_DMA3);
     *gKolimaForestFloodgateReturned = 0;
     *gKolimaForestFloodgateMap = 1;
   }
@@ -429,8 +429,8 @@ s32 KolimaForestFloodgate_Initialize(void) {
   Actor_GetById(ACTOR_FLOODGATE_SPRAY)->motionFlags = 0;
   actor = Actor_GetById(ACTOR_SIGN);
   actor->radius = 8;
-  actor->scaleX = 0xc000;
-  actor->scaleY = 0xc000;
+  actor->scaleX = 3 * Q16_ONE / 4;
+  actor->scaleY = 3 * Q16_ONE / 4;
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0)
@@ -447,11 +447,11 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
 
   for (; entry->sprite != -1; entry++) {
     if (entry->vertical == 0) {
-      x = (entry->x << 20) + 0x200000;
-      z = (entry->z << 20) + 0x80000;
+      x = (entry->x << 20) + PIXELS(32);
+      z = (entry->z << 20) + PIXELS(8);
     } else {
-      x = (entry->x << 20) + 0x80000;
-      z = (entry->z << 20) + 0x200000;
+      x = (entry->x << 20) + PIXELS(8);
+      z = (entry->z << 20) + PIXELS(32);
     }
     actor = FieldActor_Create(entry->sprite, x, 0, z);
     if (actor == NULL)
@@ -556,36 +556,36 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   moved = 0;
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   facing = (actor->facing + 0x2000) & 0xc000;
-  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + 0x80000, actor->y.fixed,
-             (actor->z.fixed & 0xfff00000) + 0x80000);
-  Vector_AddPolarOffset(0x100000, facing, point);
-  run = KolimaForestFloodgate_FindLogAt(runs, point[0] / 0x100000,
-                                        point[2] / 0x100000);
+  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + PIXELS(8), actor->y.fixed,
+             (actor->z.fixed & 0xfff00000) + PIXELS(8));
+  Vector_AddPolarOffset(PIXELS(16), facing, point);
+  run = KolimaForestFloodgate_FindLogAt(runs, point[0] / PIXELS(16),
+                                        point[2] / PIXELS(16));
   if (run == 0)
     return;
   for (i = 0; i <= 10; i++) {
     point[0] = run->x << 20;
     point[2] = run->z << 20;
-    Vector_AddPolarOffset(0x100000, facing, point);
+    Vector_AddPolarOffset(PIXELS(16), facing, point);
     if (KolimaForestFloodgate_CheckLogFits(
-            point[0] / 0x100000, point[2] / 0x100000, run->vertical) != 0)
+            point[0] / PIXELS(16), point[2] / PIXELS(16), run->vertical) != 0)
       break;
     moved = 1;
     if (run->vertical == 0) {
-      x = point[0] + 0x200000;
-      z = point[2] + 0x80000;
+      x = point[0] + PIXELS(32);
+      z = point[2] + PIXELS(8);
     } else {
-      x = point[0] + 0x80000;
-      z = point[2] + 0x200000;
+      x = point[0] + PIXELS(8);
+      z = point[2] + PIXELS(32);
     }
-    run->x = point[0] / 0x100000;
-    run->z = point[2] / 0x100000;
+    run->x = point[0] / PIXELS(16);
+    run->z = point[2] / PIXELS(16);
   }
   if (moved == 0)
     return;
-  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + 0x80000, actor->y.fixed,
-             (actor->z.fixed & 0xfff00000) + 0x80000);
-  Vector_AddPolarOffset(0x80000, facing, point);
+  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + PIXELS(8), actor->y.fixed,
+             (actor->z.fixed & 0xfff00000) + PIXELS(8));
+  Vector_AddPolarOffset(PIXELS(8), facing, point);
   actor = run->actor;
   quarter = facing / 0x4000;
   Event_Start();
@@ -677,6 +677,7 @@ struct Trigger gKolimaForestFloodgateTriggers[] = {
     {EXAMINE_TRIGGER(EXAMINE_SILENT),
      CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH, CONDITION_ALWAYS,
      EVENT(KolimaForestFloodgate_FlipFloodgateSwitch)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_KOLIMA_FOREST_FUR_COAT,
+     FIND_ITEM(ITEM_FUR_COAT)},
     {TRIGGERS_END},
 };

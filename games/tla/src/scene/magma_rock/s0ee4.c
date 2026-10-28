@@ -2,6 +2,7 @@
 // side, gives it Func_02000dc0 and faces it along the pair first and first + 1.
 #include "types.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -43,14 +44,14 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
     a = Actor_GetById(left);
     b = Actor_GetById(next);
     if (a->x < b->x)
-      object->angle = 0x8000;
+      object->angle = FACING_WEST;
     else
       object->angle = 0;
   } else {
     a = Actor_GetById(left);
     b = Actor_GetById(next);
     if (a->x > b->x)
-      object->angle = 0x8000;
+      object->angle = FACING_WEST;
     else
       object->angle = 0;
   }

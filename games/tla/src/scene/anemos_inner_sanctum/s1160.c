@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -98,7 +99,7 @@ void Func_02001160(void) {
         s32 fromX = (Actor_GetById(12)->x >> 16) << 16;
 
         Func_020033e0(13, fromX, (Actor_GetById(12)->z >> 16) << 16);
-        MoveObject(12, 0x2d80000, 0x1d80000);
+        MoveObject(12, PIXELS(728), PIXELS(472));
       }
       GameFlag_SetBit(0xa85);
     }

@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -34,8 +35,7 @@ void FieldEvent_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetMovementTypeById(s32 id, const void *script);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
@@ -115,8 +115,7 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
 }
 
 void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
-                                      s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 
 void Func_02000dcc(void) {
   s32 a;
@@ -149,10 +148,10 @@ void Func_02000dcc(void) {
     Actor_SetPositionAndResetMotion(object, x, y, z << 16);
   }
   if (Flag_Test(0x8ca) != 0)
-    Actor_Place(12, 712 << 16, 424 << 16);
+    Actor_Place(12, PIXELS(712), PIXELS(424));
   Func_020011dc(gData_020013c0);
   if (Flag_Test(0x9ef) != 0)
-    Actor_Place(8, 568 << 16, 280 << 16);
+    Actor_Place(8, PIXELS(568), PIXELS(280));
   Actor_GetById(8)->priorityFlags &= 0xfe;
   Func_02000038(gData_020013ca);
   Func_020011c4(gData_020013c4);
@@ -200,8 +199,8 @@ void Func_02000fd8(void) {
     object = Actor_GetById(64);
     object->collisionFlags = 8;
     object->motionFlags = 2;
-    object->y = 0x200000;
-    object->terrainHeight = 0x200000;
+    object->y = PIXELS(32);
+    object->terrainHeight = PIXELS(32);
     object->update = Func_02000a28;
     Actor_GetById(8)->scaleY = 0xcccc;
   }

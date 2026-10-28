@@ -9,6 +9,14 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512
+/// colours.
+#define TITLE_PALETTE_FADE_CHANNELS (512 * 3)
+
+/// The colour channels a PaletteFade moves: B, G and R for each of its 448
+/// colours.
+#define PALETTE_FADE_CHANNELS (448 * 3)
+
 /// A palette fade for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
 /// The title intro's form of HEAP_SLOT_PALETTE_FADE, allocated by
@@ -18,9 +26,11 @@ struct TitlePaletteFade {
   u16 palette[512];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
-  u16 current[0x600];
-  u16 target[0x600]; ///< the colours current moves toward, as current
-  u16 delta[0x600];  ///< added to each current channel each frame
+  u16 current[TITLE_PALETTE_FADE_CHANNELS];
+  u16 target[TITLE_PALETTE_FADE_CHANNELS]; ///< the colours current moves
+                                           ///< toward, as current
+  u16 delta[TITLE_PALETTE_FADE_CHANNELS];  ///< added to each current channel
+                                           ///< each frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
   u16 packed[2][512];
   u8 page;        ///< the packed page queued this frame
@@ -44,14 +54,16 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 0x3000);
 struct PaletteFade {
   /// The source palette, RGB555: 224 BG colours, then 224 sprite colours;
   /// palette[0] is the backdrop.
-  u16 palette[0x1c0];
+  u16 palette[448];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
-  u16 current[0x540];
-  u16 target[0x540]; ///< the colours current moves toward, as current
-  u16 delta[0x540];  ///< added to each current channel each frame
+  u16 current[PALETTE_FADE_CHANNELS];
+  u16 target[PALETTE_FADE_CHANNELS]; ///< the colours current moves toward, as
+                                     ///< current
+  u16 delta[PALETTE_FADE_CHANNELS];  ///< added to each current channel each
+                                     ///< frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
-  u16 packed[2][0x1c0];
+  u16 packed[2][448];
   u8 page;        ///< the packed page queued this frame
   s8 duration;    ///< frames; 0 when the colours are not moving
   s8 step;        ///< frames

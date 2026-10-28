@@ -1,4 +1,5 @@
 #include "room.h"
+#include "scene_tables.h"
 
 extern char SceneId_Ov6aaRoom1;
 extern char SceneId_Ov6aaRoom2;
@@ -56,7 +57,7 @@ void Func_0200096c(s32 unused, s32 id) {
     object->speedLimit = 0x4000;
     object->acceleration = 0x2000;
     y = object->y;
-    Func_02004bf8(object, 0x980000, y, 0x3180000);
+    Func_02004bf8(object, PIXELS(152), y, PIXELS(792));
   }
   /* FAKEMATCH: a volatile read of x and pins on r0, r1 and r3 reload x on both
    * paths and keep the argument order; as plain reads and constants, 14

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -41,7 +42,7 @@ void Func_02000640(void) {
   } while (0);
   Func_02001070(18, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Call3(Actor_SetSpeedParameters, 18, 0xcccc, 0x6666);
   Actor_SetPositionAndReset(18, 532, 248);
   Func_020010b8(18, 0x3000);

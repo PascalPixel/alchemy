@@ -1,4 +1,5 @@
 #include "shaman_village.h"
+#include "scene_tables.h"
 
 void Func_02000d08(void) {
   Func_020048c4();
@@ -29,7 +30,7 @@ void Func_02000d68(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
-    ShamanVillage_CamMove(0xe00000, -1, 0x1180000, 1);
+    ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(280), 1);
     ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 246, 292);
     ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 204, 292);
@@ -53,7 +54,7 @@ void Func_02000e3c(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
-    ShamanVillage_CamMove(0xe00000, -1, 0x1180000, 1);
+    ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(280), 1);
     ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 182, 280);
     ShamanVillage_ObjTurn(gMainRoutineWork.currentOwner, 0);

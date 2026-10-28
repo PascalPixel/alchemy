@@ -187,7 +187,7 @@ void Palette_StepTowardResource(s32 resource) {
   s32 i;
 
   Dma_Set(Resource_GetTableEntry(resource), dst,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x20, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | sizeof dst / 4, REG_DMA3);
   for (i = 0; i != 64; i++, col++) {
     s32 r = *col & 0x1f;
     s32 g = (*col >> 5) & 0x1f;
@@ -379,7 +379,7 @@ void LuckyWheels_Update(void) {
            gBattleEffectWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
   fx = gBattleEffectWork[0];
   sprite = 0;
-  objMode = 0x400;
+  objMode = OBJ_MODE_SEMI_TRANSPARENT << 10;
 
   Random16();
 
@@ -794,11 +794,11 @@ void LuckyWheels_Update(void) {
       p->y += p->velocityY;
       p->velocityY += 0x4000;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = 0x60000;
+        p->velocityY = 6 << 16;
         p->variant = 0;
       }
-      if (p->y > 0x400000) {
-        p->y = 0x400000;
+      if (p->y > (64 << 16)) {
+        p->y = 64 << 16;
         if (p->variant <= 1)
           p->velocityY = -p->velocityY / 2;
         p->variant++;
@@ -916,11 +916,11 @@ void LuckyWheels_InitializeTitle(void) {
            gBattleEffectWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
   work = gBattleEffectWork[0];
   left = 0;
-  for (i = 0; i != 0x800; i++)
+  for (i = 0; i != 2048; i++)
     LUCKY_WHEELS_SPARKS[i].variant = 0;
 
   letter = work->particles;
-  y = -0x200000;
+  y = -(32 << 16);
   width = gLuckyWheels_TitleLetterWidths;
   for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
     letter[i].x = (left + LUCKY_WHEELS_TITLE_X) << 16;
@@ -930,7 +930,7 @@ void LuckyWheels_InitializeTitle(void) {
     letter[i].y = y;
     letter[i].velocityY = 0;
     letter[i].variant = 0;
-    y += -0x80000;
+    y += -(8 << 16);
   }
 
   for (i = 0; i != DISPLAY_HEIGHT; i++)
@@ -1130,10 +1130,11 @@ void LuckyWheels_Run(void) {
     Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
             (DMA_ENABLE | DMA_32BIT) << 16 | LUCKY_WHEELS_CANVAS_SIZE / 4,
             REG_DMA3);
-    Dma_Set((void *)BG_PLTT, work, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
-            REG_DMA3);
-    Dma_Set((void *)OBJ_PLTT, shade, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
-            REG_DMA3);
+    // Each palette RAM half: 256 colours of two bytes, counted in words.
+    Dma_Set((void *)BG_PLTT, work,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 256 * sizeof(u16) / 4, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, shade,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 256 * sizeof(u16) / 4, REG_DMA3);
     LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
     LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 0x100);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
@@ -1277,9 +1278,9 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != 17; j++) {
-      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0x10000 - (j << 12),
+      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, Q16_ONE - (j << 12),
                               0x100);
-      LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0x10000 - (j << 12),
+      LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, Q16_ONE - (j << 12),
                               0x100);
       wait(1);
     }
@@ -1307,12 +1308,12 @@ void LzPack_ResetSlotBuckets(void) {
   s32 index;
   struct LzPackNode **bucket;
 
-  for (index = 0; index < 0x400; index++) {
+  for (index = 0; index < 1024; index++) {
     gWaitForFlashWrite->nodes[index].slot = index;
     gWaitForFlashWrite->nodes[index].previous = NULL;
   }
   bucket = gWaitForFlashWrite->bucket;
-  for (index = 0xFF; index >= 0; index--) {
+  for (index = 255; index >= 0; index--) {
     *bucket++ = NULL;
   }
 }

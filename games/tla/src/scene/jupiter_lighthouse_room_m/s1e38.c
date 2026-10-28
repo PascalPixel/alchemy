@@ -1,10 +1,10 @@
 #include "jupiter_lighthouse_room_m.h"
+#include "scene_tables.h"
 
 extern u32 gData_02005548[];
 
 void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
@@ -22,14 +22,14 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   }
 
 void Func_02001e38(void) {
-  PLACE(0, 761, 219, 0xa000);
-  PLACE(2, 741, 232, 0xa000);
+  PLACE(0, 761, 219, FACING_NORTHWEST);
+  PLACE(2, 741, 232, FACING_NORTHWEST);
   Actor_SetSingleChildFlags(Actor_GetById(0), 0);
   Actor_SetModeById(0, 39);
   Actor_SetSingleChildFlags(Actor_GetById(2), 0);
   Actor_SetModeById(2, 32);
-  PLACE(5, 761, 203, 0x4000);
-  PLACE(6, 725, 232, 0);
-  PLACE(28, 729, 203, 0x2000);
+  PLACE(5, 761, 203, FACING_SOUTH);
+  PLACE(6, 725, 232, FACING_EAST);
+  PLACE(28, 729, 203, FACING_SOUTHEAST);
   Actor_SetMovementTypeById(3, gData_02005548);
 }

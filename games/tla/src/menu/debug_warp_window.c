@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "oam.h"
 
 struct RenderInput;
 
@@ -51,6 +52,6 @@ struct RenderInput *Func_08041068(void) {
     i++;
   }
   work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                                     0x40000000, window, 0, 0);
+                                     OUTPUT_SIZE_16X16, window, 0, 0);
   return window;
 }

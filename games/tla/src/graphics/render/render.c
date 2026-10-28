@@ -26,7 +26,7 @@
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
 // Iwram_TransformMatrix multiplies the supplied matrix into the current one.
 
-#define MTX_DMA ((DMA_ENABLE | DMA_32BIT) << 16 | 12) ///< DMA for one matrix.
+#define MTX_DMA DMA_COPY_WORDS(12) ///< DMA for one matrix.
 
 /// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
 #define COS(a) Trig_Sin((a) + 0x4000)

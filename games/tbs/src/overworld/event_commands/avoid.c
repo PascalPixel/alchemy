@@ -78,9 +78,9 @@ void Event_ShowStatusMessage(void) {
 /// Avoid.
 ///
 /// The caster spins shedding falling arcs and flashes 20 times, then blinks for
-/// 55 frames; encounters are kept away (avoidDistance 0x9600000) until it wears
-/// off, and the game says "Monsters won't attack so often now.". FLAG_ITEM_USE
-/// marks it as cast from the Sacred Feather.
+/// 55 frames; encounters are kept away (avoidDistance 2,400 pixels) until it
+/// wears off, and the game says "Monsters won't attack so often now.".
+/// FLAG_ITEM_USE marks it as cast from the Sacred Feather.
 ///
 /// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch. Sets
 /// gMainRoutineWork.avoidDistance and avoidByItem; the leader's walking
@@ -109,7 +109,7 @@ void FieldPsynergy_Avoid(void) {
     // distance is 2,400 pixels in 16.16.
     *tileSlot = slot;
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
-    gMainRoutineWork.avoidDistance = 0x09600000;
+    gMainRoutineWork.avoidDistance = PIXELS(2400);
     gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
     Actor_SetSpriteColorModeFar(actor, zero);
     actor->update = FieldEffect_UpdatePairedArcSpawner;

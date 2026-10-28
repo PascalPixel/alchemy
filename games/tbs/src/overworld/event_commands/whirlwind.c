@@ -80,7 +80,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
   s32 dz;
 
   // Random16 is 0 to 1 in 16.16, so 2 to 3 pixels.
-  len = Random16() + 0x20000;
+  len = Random16() + PIXELS(2);
   angle = effect->facing;
   dx = Iwram_MulQ16(len, Trig_Cos(angle));
   dz = Iwram_MulQ16(len, Trig_Sin(angle));
@@ -127,7 +127,7 @@ void FieldEffect_CircleAnchor(struct Actor *actor) {
     effect->swirlFrames = 0;
     effect->turnFrames = 0;
     effect->gravity = 0x1999;
-    effect->velocityY = 0x30000;
+    effect->velocityY = PIXELS(3);
     effect->facing = Random16();
   }
 }
@@ -189,7 +189,7 @@ void FieldPsynergy_Whirlwind(void) {
   to.y = effectWork->y - (4 << 16);
   to.z = effectWork->z;
   // Include both endpoints of the ten-frame interpolation.
-  ball = Actor_Spawn(0xda, 0, 0, 0);
+  ball = Actor_Spawn(218, 0, 0, 0);
   if (ball == 0) {
     return;
   }
@@ -228,7 +228,7 @@ void FieldPsynergy_Whirlwind(void) {
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = Actor_Spawn(0xf9, pos.x, pos.y, pos.z);
+      particle = Actor_Spawn(249, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_CircleAnchor;
         particle->watchedActor = ball;

@@ -39,7 +39,9 @@ void Func_0803fc38(void) {
 
   work = (struct OptionWork *)HeapSlot_AllocEwram(208, 0x628);
   zero = 0;
-  Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
+  Dma_Set((const void *)&zero, work,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x628 / 4),
+          REG_DMA3);
   work->option[0] = gMainRoutineWork.paletteGlow[0];
   work->optionCount[0] = 24;
   work->option[1] = gMainRoutineWork.paletteGlow[1];

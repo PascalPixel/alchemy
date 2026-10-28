@@ -97,7 +97,7 @@ receive_loop:
     start = 0x80;
     asm volatile("" : "+r"(start));
     *sio |= start;
-    REG_TM3CNT_H = 0xc0;
+    REG_TM3CNT_H = TIMER_INTR_ENABLE | TIMER_ENABLE;
   }
 }
 
@@ -113,7 +113,7 @@ u32 Serial_WaitForStatusMask(s32 mask) {
       wait(1);
     } while ((mask & gLinkStatus) != mask);
   }
-  return (REG_SIOCNT << 0x1A) >> 0x1E;
+  return (REG_SIOCNT << 26) >> 30;
 }
 
 s32 Serial_StartSend(void *source, s32 size) {

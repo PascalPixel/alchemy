@@ -30,12 +30,12 @@ void Func_020027e4(void) {
       Func_0200279c(0x11, 0x218, 0x1a8, 1);
       Call4(Func_0200279c, 0x12, 0x244, 0x1a4, 2);
       Call1(wait, 1);
-      Call2(Actor_SetMovementTypeById, 0x10, (s32)gData_020047ac);
-      Call2(Actor_SetMovementTypeById, 0x11, (s32)gData_02004848);
-      Call2(Actor_SetMovementTypeById, 0x12, (s32)gData_020048e4);
+      Call2(Actor_SetMovementTypeById, 16, (s32)gData_020047ac);
+      Call2(Actor_SetMovementTypeById, 17, (s32)gData_02004848);
+      Call2(Actor_SetMovementTypeById, 18, (s32)gData_020048e4);
       Call1(wait, 1);
     }
   }
-  Call2(Actor_SetSpritePriority, 0x14, 1);
-  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, 0x14), 0xf);
+  Call2(Actor_SetSpritePriority, 20, 1);
+  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, 20), 0xf);
 }

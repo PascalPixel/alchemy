@@ -13,7 +13,8 @@ struct WorldMapView {
   s32 *origin; ///< the followed point, as in MapGridScrollWork
   s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapGridScrollWork
   u8 *script;                     ///< NULL at load
-  u16 fade;    ///< MapGridScrollWork's flags: REG_DISPCNT bits, 0x1f00 at load
+  u16 fade; ///< MapGridScrollWork's flags: REG_DISPCNT bits, BG0 to BG3 and the
+            ///< sprites at load
   u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
   /// As MapGridScrollWork: footprints, tileset animations and blend script.
   u8 animationsAndBlend[0xe4 - 0x17];
@@ -50,10 +51,10 @@ struct WorldMapView {
   /// The tile each quarter of each layer's block buffer shows, so an unchanged
   /// quarter is not decoded again.
   u16 quarterTiles[8];
-  s32 farPlane;             ///< 0x1fe0000 at load
+  s32 farPlane;             ///< 510 pixels at load
   s32 distance;             ///< farPlane scaled by the zoom
   s32 previousZoom;         ///< the zoom a transition starts from
-  s32 zoom;                 ///< 16.16 fixed point, 0x10000 full size
+  s32 zoom;                 ///< 16.16 fixed point, Q16_ONE full size
   u16 zoomTransitionFrames; ///< a zoom transition's length; 0 when none
   s16 zoomTransitionStep;   ///< frames of the transition done
 };

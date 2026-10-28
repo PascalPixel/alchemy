@@ -6,8 +6,8 @@
 
 #define HAIL_CHIP_COUNT 64 ///< ice chips
 
-#define HAIL_CHIP_OFFSETS 0x400    ///< the ice chips, after the 32x32 wave
-#define HAIL_DJINNI_OFFSETS 0x65c0 ///< the small Mercury Djinni
+#define HAIL_CHIP_OFFSETS (32 * 32) ///< the ice chips, after the 32x32 wave
+#define HAIL_DJINNI_OFFSETS 0x65c0  ///< the small Mercury Djinni
 
 #define HAIL_FRAMES 64
 
@@ -62,8 +62,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     s32 angle;
     s32 speed;
 
-    angle = (Random16() & 0x7fff) + 0x4000;
-    speed = (Random16() & 0x1ff) + 0x80;
+    angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+    speed = (Random16() & 0x1ff) + 128;
     PARTICLES[i].x = ((origin.x / 2 + (Random16() & 0xf)) - 8) << 16;
     PARTICLES[i].y = (origin.y + 8) << 16;
     PARTICLES[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
@@ -127,7 +127,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
             Q_16_16_TO_INT(chip->y) - (height = gHail_CellHeights[cell]) / 2,
             width, height);
 #endif
-        Particle_AdvanceWithGravity3D(chip, 63, 0x1000);
+        Particle_AdvanceWithGravity3D(chip, 63, Q16_ONE / 16);
       }
     }
 
@@ -229,8 +229,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   for (i = 0; i != GROUND_LAUNCHED; i++) {
     struct Particle *rock = &work->particles[i];
 
-    SET_POSITION(rock, user->x.fixed, 0x420000, user->z.fixed);
-    SET_VELOCITY(rock, (i * 0x500000) >> 5,
+    SET_POSITION(rock, user->x.fixed, 66 << 16, user->z.fixed);
+    SET_VELOCITY(rock, (i * (80 << 16)) >> 5,
                  (s32)(((Random16() & 127) - 64) << 16) >> 6,
                  (s32)(((Random16() & 255) - 127) << 16) >> 5);
     if (rock->x > 0)
@@ -332,13 +332,13 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         // frames after it launched; it hits once below that height.
         if (frame > i * 2 + 16) {
           rock->velocityX += (target->x.fixed - rock->x) >> 8;
-          rock->velocityY += (0x140000 - rock->y) >> 8;
+          rock->velocityY += ((20 << 16) - rock->y) >> 8;
           rock->velocityZ += (target->z.fixed - rock->z) >> 8;
           if (frame < i * 2 + 85) {
             SET_VELOCITY(rock, rock->velocityX * 60 / 64,
                          rock->velocityY * 60 / 64, rock->velocityZ * 60 / 64);
           }
-          if (rock->y < 0x140000) {
+          if (rock->y < (20 << 16)) {
             work->shakeFrames = 8;
             rock->variant = 0;
             Sound_PlayFar(SE_HEAVY_IMPACT);

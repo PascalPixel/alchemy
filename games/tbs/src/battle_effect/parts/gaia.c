@@ -7,7 +7,7 @@
 /// The standing wall's top in the rebuilt sheet, 48x96 (stretched from 48x32).
 #define GAIA_WALL_TOP_OFFSETS 0x13c0
 /// The standing wall's foot in the rebuilt sheet, 48x21.
-#define GAIA_WALL_FOOT_OFFSETS 0x25c0
+#define GAIA_WALL_FOOT_OFFSETS (GAIA_WALL_TOP_OFFSETS + 48 * 96)
 #define GAIA_WALL_FOOT_BYTES (48 * 21)
 #define GAIA_FRAMES 192
 #define GAIA_ROCKS 11 ///< rocks that tumble up the wall
@@ -268,7 +268,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                            Q_16_16_TO_INT(dust->y), size);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
-            dust->y = 0x600000;
+            dust->y = 96 << 16;
         } else {
           dust->variant--;
         }
@@ -291,16 +291,16 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         if (rock->variant == 0) {
           scale = unitScale;
           if (frame > 71) {
-            scale.x = (k << 12) + 0x8000;
+            scale.x = (k << 12) + Q16_ONE / 2;
             scale.x += work->args->variant << 14;
           } else {
-            scale.x = 0x8000;
+            scale.x = Q16_ONE / 2;
           }
           scale.y = scale.x;
           position.groundHeight = 0;
           position.x = (rock->x + rockX * 2) << 16;
-          position.height = 0x2000000 - (rock->y << 16);
-          position.y = 0x2000000;
+          position.height = (512 << 16) - (rock->y << 16);
+          position.y = 512 << 16;
           slot = (frame / 2 + k) % GAIA_ROCKS;
           // DEAD: always true, as slot is a remainder of a positive count; the
           // ROM keeps the test.

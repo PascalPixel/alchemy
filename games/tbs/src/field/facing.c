@@ -1,6 +1,7 @@
 #include "module/field/facing.h"
 #include "types.h"
 #include "actor_script.h"
+#include "fixed_math.h"
 
 /// Facing tables: for each enum AnimationFacingKind, the picture to draw for
 /// each sector of the facing angle. Sprite_ComposePicture adds the low
@@ -78,9 +79,9 @@ const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 /// The fixed camera's view matrix (Q16): identity with a -0.8 shear of y by x.
 /// ActorSystem_ProjectSprites applies it while battle commands are chosen.
 const s32 gCamera_FixedViewMatrix[12] = {
-    0x10000, 0, 0,
-    -0xcccc, 0x10000, 0,
-    0, 0, 0x10000,
+    Q16_ONE, 0, 0,
+    -0xcccc, Q16_ONE, 0,
+    0, 0, Q16_ONE,
     0, 0, 0,
 };
 
@@ -108,12 +109,14 @@ const s16 gActorScript_EndScriptTail[8] = {
 
 /// The heading for each state of the direction pad (bits 4-7 of the keys:
 /// Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down 0x4000, Left
-/// 0x8000 and Up 0xc000; 0xffff means no direction is held, or only an
-/// opposite pair. Read by Actor_UpdatePlayerControl,
+/// 0x8000 and Up 0xc000; WORLD_MAP_KEY_HEADING_NONE means no direction is
+/// held, or only an opposite pair. Read by Actor_UpdatePlayerControl,
 /// Actor_MoveOnWorldMap and Actor_MoveByKeys.
 const u16 gWorldMap_KeyHeadings[16] = {
-    0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
-    0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
+    WORLD_MAP_KEY_HEADING_NONE, 0x0000, 0x8000, WORLD_MAP_KEY_HEADING_NONE,
+    0xc000, 0xe000, 0xa000, 0xc000,
+    0x4000, 0x2000, 0x6000, 0x4000,
+    WORLD_MAP_KEY_HEADING_NONE, 0x0000, 0x8000, WORLD_MAP_KEY_HEADING_NONE,
 };
 
 /// Two scripts for the world map's footprint and dust effects: wait 120 or 30

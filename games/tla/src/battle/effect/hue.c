@@ -20,7 +20,7 @@ void BattleEffect_ArmBg0HBlankDma(void) {
      * barrier, so the stopped control word is stored first; as
      * work->lines[work->page], 2 instructions differ in tla-en. */
     s32 line = work->page * 81;
-    volatile u16 *dma = (volatile u16 *)0x040000b0;
+    volatile u16 *dma = REG_DMA0;
 
     dma[5] &= 0xc5ff; // Clear start timing and repeat.
     dma[5] &= 0x7fff; // Stop.
@@ -29,7 +29,7 @@ void BattleEffect_ArmBg0HBlankDma(void) {
     line *= 4;
     (void)dma[5];
     // One halfword per HBlank, repeating with destination reload.
-    Dma_Set((u8 *)work + line, (void *)0x04000010, 0xa2600001,
+    Dma_Set((u8 *)work + line, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
             (volatile u32 *)dma);
   }
 }

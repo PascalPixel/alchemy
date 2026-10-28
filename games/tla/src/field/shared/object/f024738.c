@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "iwram_call.h"
 #include "lib.h"
+#include "fixed_math.h"
 
 #define TARGET_UNSET ((s32)0x80000000)
 
@@ -13,9 +14,9 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 dy;
   u8 *arrivalAxis;
 
-  dx = (x - object->x) / 0x10000;
-  dy = (y - object->y) / 0x10000;
-  dz = (z - object->z) / 0x10000;
+  dx = (x - object->x) / Q16_ONE;
+  dy = (y - object->y) / Q16_ONE;
+  dz = (z - object->z) / Q16_ONE;
   squaredZ = dz * dz;
   distance = Iwram_Sqrt(dx * dx + dy * dy + squaredZ) << 16;
   if (distance < 0x100000) {

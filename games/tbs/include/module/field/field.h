@@ -81,6 +81,9 @@ enum ActorSpriteKind {
   ACTOR_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
 };
 
+/// Actor.spriteStorageKind's low four bits, its enum ActorSpriteKind.
+#define ACTOR_SPRITE_KIND_MASK 15
+
 /// Actor_Create's id / 4096: what sprites the actor is made with.
 enum ActorCreateKind {
   ACTOR_CREATE_ONE_SPRITE = 0, ///< the id's sprite (ACTOR_SPRITE_ONE)
@@ -90,6 +93,10 @@ enum ActorCreateKind {
   /// takes.
   ACTOR_CREATE_NO_SPRITE = 8
 };
+
+/// The sprite id in Actor_Create's id, below its enum ActorCreateKind (id /
+/// 4096).
+#define ACTOR_CREATE_SPRITE_MASK 0xfff
 
 /// The world map's collision values (WorldMap_GetCollision), 1 to 15; each
 /// indexes a row of gWorldMap_BattleEnvironments. Values not named here

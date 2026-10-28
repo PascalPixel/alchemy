@@ -84,10 +84,10 @@ struct MainRoutineWork {
   s8 shopGifts;   ///< indexes the Game Ticket's credit cost
   /// Lucky Wheels' prize weights, three prizes to each of 4, 8, 16, 32
   /// and 64 on a new game; not read by name in TBS.
-  s8 prizeWeights[0x0f];
+  s8 prizeWeights[15];
   /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
   /// awarded); 8 on the last variant given of each category.
-  s8 wonPrizes[0x10];
+  s8 wonPrizes[16];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
   /// The destination: the sequence the main routine runs next, a
   /// SceneId_ row of gScenes or a SEQUENCE_ value above the table's rows.

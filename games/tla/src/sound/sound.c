@@ -1,6 +1,7 @@
 #include "types.h"
 #include "sound_driver.h"
 #include "ram_buffer.h"
+#include "../../include/system/io_reg.h"
 
 u32 umul3232H32(u32 left, u32 right);
 extern u8 gSound_PcmPitchCodes[];
@@ -105,7 +106,8 @@ void m4aSoundInit(void) {
   s32 playerIndex;
 
   // Copy the mixer's executable block to its RAM buffer.
-  Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), Ram_SoundMixer, 0x04000100);
+  Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), Ram_SoundMixer,
+              CPU_SET_32BIT | 256);
   SoundInit(&gSound_Work);
   MPlayExtender(gSound_CgbNotes);
   m4aSoundMode(AUDIO_INITIAL_MODE);
@@ -279,7 +281,8 @@ void MPlayExtender(struct CgbNote *notes) {
     u32 zero = 0;
 
     Bios_CpuSet((void *)&zero, notes,
-                0x05000000 | (sizeof(struct CgbNote) * 4 / 4));
+                CPU_SET_32BIT | CPU_SET_SRC_FIXED |
+                    (sizeof(struct CgbNote) * 4 / 4));
   }
   notes[0].kind = 1;
   notes[0].channelBits = 0x11;

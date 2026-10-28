@@ -99,7 +99,7 @@ extern struct SaveWork *gSaveWork;
 
 /// DMA 3's enable bit in its count and control word, which the hardware
 /// clears when the transfer is done.
-#define DMA3_BUSY 0x80000000
+#define DMA3_BUSY ((u32)DMA_ENABLE << 16)
 
 /// Starts a DMA 3 transfer; control_ is the unit count with the DMA_ flags
 /// << 16.

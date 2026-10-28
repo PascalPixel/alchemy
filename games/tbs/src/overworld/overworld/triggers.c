@@ -59,8 +59,8 @@ found:
 }
 
 /// Returns whether an event condition holds: -1 always holds; a condition with
-/// bit 0x1000 holds while that flag is set, any other while its flag is clear.
-/// The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
+/// CONDITION_FLAG_SET holds while that flag is set, any other while its flag is
+/// clear. The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
 ///
 /// Used for every condition column of a scene's tables: triggers
 /// (Scene_FindTrigger, Field_ExamineCell), actor placements
@@ -72,7 +72,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   if (condition == -1) {
     return 1;
   }
-  if (0x1000 & condition) {
+  if (CONDITION_FLAG_SET & condition) {
     return GameFlag_GetFar(condition);
   }
   flagSet = GameFlag_GetFar(condition);
@@ -81,7 +81,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 
 /// Returns 1 for an examine trigger (TRIGGER_EXAMINE) that holds whatever its
 /// condition: one with more flags than its kind, unless its result is a mimic
-/// battle (type 0x005 in its top 12 bits).
+/// battle (FIND_MIMIC).
 ///
 /// Called by Scene_FindTrigger. Field_ExamineCell tests such an event's
 /// condition itself (a chest's flag is set once it is opened), so the event is
@@ -92,12 +92,12 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
   s32 searchFlags;
   u32 ignoresCondition;
 
-  if ((flags & 0xf) != TRIGGER_EXAMINE)
+  if ((flags & TRIGGER_KIND_MASK) != TRIGGER_EXAMINE)
     return 0;
-  searchFlags = flags & 0x1ff;
+  searchFlags = flags & EXAMINE_TRIGGER_MASK;
   ignoresCondition = 0;
   if (searchFlags != TRIGGER_EXAMINE) {
-    mimicDifference = (result & 0xfff00000) ^ FIND_MIMIC;
+    mimicDifference = (result & FIND_TYPE_MASK) ^ FIND_MIMIC;
     ignoresCondition = mimicDifference | (0U - mimicDifference);
     // 1 when mimicDifference is not 0.
     ignoresCondition >>= 31;
@@ -123,7 +123,7 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   flags = trigger->flags;
   // Preserve the full control word: direction and push-delay bits refine kind.
   while (flags != -1) {
-    if ((flags & 0xf) == kind && trigger->value == target &&
+    if ((flags & TRIGGER_KIND_MASK) == kind && trigger->value == target &&
         (Scene_ExamineTriggerIgnoresCondition(flags, trigger->result) != 0 ||
          (GameFlag_IsConditionActive(trigger->condition) != 0 &&
           (flags = trigger->flags, 1)))) {
@@ -148,12 +148,12 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
       case TRIGGER_FLAG_FACING:
         // Bits 15 to 12 are a facing in sixteenths of a turn; the leader's
         // facing must be within 0x1fff (an eighth of a turn) of it.
-        flags &= 0xf000;
+        flags &= TRIGGER_FACING_MASK;
         matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         break;
       case STEP_TRIGGER_FLAG_WALKING | TRIGGER_FLAG_FACING:
         if (work->blockedSteps > minimumPushFrames) {
-          flags &= 0xf000;
+          flags &= TRIGGER_FACING_MASK;
           matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         }
         break;
@@ -230,7 +230,7 @@ s32 Scene_TalkToActor(s32 id) {
       // A function talk trigger is not run for a stopped actor: it says
       // one of two lines picked at random from the pair its definition flags
       // choose.
-      if (trigger->result >= 0x10000) {
+      if (trigger->result >= TRIGGER_RESULT_MESSAGE_END) {
         s32 definitionFlags = Speaker_GetIdleFlags(id);
         u32 random = Random16();
         s32 message =
@@ -266,8 +266,9 @@ s32 Scene_TalkToActor(s32 id) {
         Actor_TurnToFaceEachOther(id, gMainRoutineWork.leaderActorId, 0);
       }
     }
-    // A result below 0x10000 is a message; above, a function to call.
-    if (trigger->result < 0x10000) {
+    // A result below TRIGGER_RESULT_MESSAGE_END is a message; above, a function
+    // to call.
+    if (trigger->result < TRIGGER_RESULT_MESSAGE_END) {
       Message_SetDecodeFlagsFar(usePausedDialogue);
       Event_Start();
       Event_SetMessageId(trigger->result);
@@ -319,7 +320,7 @@ s32 Scene_RunRaisedTrigger(s32 value) {
   if (trigger != NULL) {
     result = trigger->result;
     if (result != 0) {
-      if (result < 0x10000) {
+      if (result < TRIGGER_RESULT_MESSAGE_END) {
         Event_Start();
         Event_SetMessageId(trigger->result);
         Event_ShowMessageAndWait(-1, 0);
@@ -357,7 +358,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
     if (touch->flags & STEP_TRIGGER_FLAG_WALKING) {
       work->blockedSteps = 0;
     }
-    if (touch->result < 0x10000) {
+    if (touch->result < TRIGGER_RESULT_MESSAGE_END) {
       Event_Start();
       Event_SetMessageId(touch->result);
       Event_ShowMessageAndWait(-1, 0);
@@ -485,9 +486,9 @@ s32 Field_ExamineCell(s32 tile) {
       // whose top 12 bits give its type: an item, coins, a Psynergy Stone, a
       // message or a mimic.
       searchResult = trigger->value;
-      if ((searchResult & 0x0f000000) != 0 ||
-          (searchResult & 0xfff00000) == FIND_MESSAGE(0)) {
-        if ((searchResult & 0x0f000000) != 0) {
+      if ((searchResult & FIND_FUNCTION_BITS) != 0 ||
+          (searchResult & FIND_TYPE_MASK) == FIND_MESSAGE(0)) {
+        if ((searchResult & FIND_FUNCTION_BITS) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
             ((void (*)(s32))trigger->value)(gMainRoutineWork.leaderActorId);
@@ -505,23 +506,26 @@ s32 Field_ExamineCell(s32 tile) {
         // A chest; its condition flag is set once it has been opened.
         Event_Start();
         if (GameFlag_IsConditionActive(condition) != 0) {
-          // Bit 16 of the value marks a chest the party's own characters
+          // FIND_CHEST_LOCKED marks a chest the party's own characters
           // cannot open ("Can't open it").
           searchResult = trigger->value;
           canOpen = 1;
-          if ((searchResult & 0xf0000) == 0x10000 && leader <= 7)
+          if ((searchResult & FIND_CHEST_LOCK_MASK) == FIND_CHEST_LOCKED &&
+              leader <= ALLY_MAX)
             canOpen = 0;
           if (canOpen != 0) {
             // A EXAMINE_TRIGGER(EXAMINE_CHEST) event is a chest the map shows
             // as a treasure spot.
-            if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
+            if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
+                EXAMINE_TRIGGER(EXAMINE_CHEST))
               TreasureSpot_OpenChest(tile);
-            rewardType = trigger->value & 0xfff00000;
+            rewardType = trigger->value & FIND_TYPE_MASK;
             if (rewardType == FIND_PSYNERGY_STONE) {
               // A Psynergy Stone: restores all PP.
               void *object;
 
-              if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
+              if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
+                  EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_ShowOpened(tile);
               object = TreasureSpot_GetActor(tile);
               ItemDisplay_RaiseAboveLeader(object);
@@ -547,13 +551,15 @@ s32 Field_ExamineCell(s32 tile) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
               struct FieldWork *work = gFieldWork;
 
-              if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
+              if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
+                  EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_LaunchMimic(tile);
-              // The chest's flag (with 0x1000) waits in pendingDjinni,
-              // which FieldSequence_Run resolves when the scene is entered
-              // again after the battle.
+              // The chest's flag (with CONDITION_FLAG_SET) waits in
+              // pendingDjinni, which FieldSequence_Run resolves when the scene
+              // is entered again after the battle.
               if (condition != -1) {
-                condition = gMainRoutineWork.pendingDjinni = condition | 0x1000;
+                condition = gMainRoutineWork.pendingDjinni =
+                    condition | CONDITION_FLAG_SET;
               }
               // BATTLE_TYPE_NO_ESCAPE (battle/battle/turn.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
@@ -573,7 +579,8 @@ s32 Field_ExamineCell(s32 tile) {
               object = FieldEffect_StartRandomParticleEmitter(
                   gMainRoutineWork.leaderActorId, 0);
               wait(30);
-              if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
+              if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
+                  EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
               Sound_PlayFar(MUS_TREASURE_FOUND);
@@ -603,10 +610,12 @@ s32 Field_ExamineCell(s32 tile) {
                 FieldMessage_ShowFar(MsgFoundItem, FIELD_MESSAGE_ZOOM);
                 FieldMessage_ShowFar(MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
                 Actor_ReleaseIfPresent(object);
-                if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
+                if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
+                    EXAMINE_TRIGGER(EXAMINE_CHEST))
                   TreasureSpot_CloseChest(tile);
               } else {
-                if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
+                if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==
+                    EXAMINE_TRIGGER(EXAMINE_CHEST))
                   TreasureSpot_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
                 Sound_PlayFar(MUS_TREASURE_FOUND);

@@ -4,6 +4,7 @@
 #include "actor.h"
 #include "fx_scene.h"
 #include "ram_buffer.h"
+#include "fixed_math.h"
 
 struct EffectVector {
   s32 x;
@@ -59,7 +60,7 @@ void Func_080e0134(void) {
     obj->x = from.x + (to.x - from.x) * step / 10;
     obj->y = from.y + (to.y - from.y) * step / 10;
     obj->z = from.z + (to.z - from.z) * step / 10;
-    scale = BattleEffect_Interpolate(0x10000, 0x4000, step);
+    scale = BattleEffect_Interpolate(Q16_ONE, 0x4000, step);
     obj->scaleX = scale;
     obj->scaleY = scale;
     wait(1);

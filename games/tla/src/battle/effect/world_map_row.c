@@ -41,7 +41,7 @@ void Func_080ecf74(u32 column, s32 row) {
   for (i = 0; i <= 30 && column + i <= 63; i++) {
 #endif
     Dma_Set(Ram_MapCellBuffer + (cell << 6), (void *)(BG_VRAM + (tile << 6)),
-            (DMA_ENABLE | DMA_32BIT) << 16 | 16, REG_DMA3);
+            DMA_COPY_WORDS(16), REG_DMA3);
     cell++;
     tile++;
     if (i + column == 31)
@@ -83,7 +83,7 @@ void Func_080ed030(s32 column, s32 row) {
      * (u8 *)BG_VRAM + (256 << 6) + tile, 6 of 51 instructions differ in
      * tla-en. */
     line = BG_VRAM + (256 << 6);
-    Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 16, REG_DMA3);
+    Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile, DMA_COPY_WORDS(16),
+            REG_DMA3);
   }
 }

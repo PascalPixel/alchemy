@@ -50,7 +50,7 @@ s32 BattleCommandRow_Run(s32 mode) {
 
   work = WINDOW_WORK;
   // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
-  iconSlot = VramCache_AllocEntry(0x400);
+  iconSlot = VramCache_AllocEntry(32 * 32);
   stripDirty = 1;
   tradeCount = 0;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
@@ -131,9 +131,9 @@ s32 BattleCommandRow_Run(s32 mode) {
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     // Draw the strip once, six panels of 3x3 tiles ending at the name
-    // window: the panels left empty as WINDOW_TILE(0x7f) in the UI tilemap,
-    // then each icon's top-left 3x3 tiles in BG1's map (screen block 31 at
-    // 0x0600f800), the UI tilemap cleared to 0 over them.
+    // window: the panels left empty as WINDOW_TILE_COMMAND_PANEL in the UI
+    // tilemap, then each icon's top-left 3x3 tiles in BG1's map (screen block
+    // 31), the UI tilemap cleared to 0 over them.
     if (stripDirty != 0) {
       stripDirty = 0;
       work->holdTilemapUpload = 1;
@@ -145,7 +145,7 @@ s32 BattleCommandRow_Run(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++)
               *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + WINDOW_X -
-                18 + (col & 3)) = WINDOW_TILE(0x7f);
+                18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -160,7 +160,7 @@ s32 BattleCommandRow_Run(s32 mode) {
                * loop's index and tile pattern; as constants in place, 6 of
                * 1037 instructions differ in tbs-en. */
               volatile u16 *vram =
-                  (volatile u16 *)0x0600f800 + 21 * 32 + WINDOW_X;
+                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
               s32 offset = 0x100;
               s32 mask = 3;
               /* FAKEMATCH(temporary): tmp, set twice, is no induction variable,
@@ -182,7 +182,7 @@ s32 BattleCommandRow_Run(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++)
               *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 2 +
-                (col & 3)) = WINDOW_TILE(0x7f);
+                (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -201,7 +201,8 @@ s32 BattleCommandRow_Run(s32 mode) {
               /* FAKEMATCH(temporary): vram, offset and mask, as in the party
                * member's row; as constants in place, 6 of 1037 instructions
                * differ in tbs-en. */
-              volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
+              volatile u16 *vram =
+                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
               s32 offset = 0x100;
               s32 mask = 3;
               /* FAKEMATCH(temporary): tmp, as in the party member's row; as the
@@ -232,7 +233,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     selectionUi->affineIndex =
         OamMatrix_AllocFromTransform(&selectionUi->affine);
     // Only the selected icon is drawn as a sprite: double-size affine (mode
-    // 3), on layer 0xf1, moved with the pulse. The others are BG1 tiles.
+    // 3), on layer 241, moved with the pulse. The others are BG1 tiles.
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
       struct BattleCommandRowIcon *entry = &selectionUi->entries[entryIndex];
       if (entryIndex == selectionUi->selectedIndex) {
@@ -240,7 +241,7 @@ s32 BattleCommandRow_Run(s32 mode) {
         entry->sprite.oam.f.affine = 3;
         entry->sprite.oam.f.x = entry->positionX + pulseScale * 7 / 512 - 14;
         entry->sprite.oam.f.y = entry->positionY + pulseScale * 3 / 256 - 20;
-        Oam_AddSpriteAtDepth(entry, 0xf1);
+        Oam_AddSpriteAtDepth(entry, 241);
       } else {
         entry->sprite.oam.f.x = entry->positionX;
         entry->sprite.oam.f.y = entry->positionY;
@@ -340,7 +341,8 @@ s32 BattleCommandRow_Run(s32 mode) {
     VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
   work->holdTilemapUpload = 1;
   Window_Close(selectionUi->window, 1);
-  // Cover the strip again: seven panels of WINDOW_TILE(0x7f) from column 5.
+  // Cover the strip again: seven panels of WINDOW_TILE_COMMAND_PANEL from
+  // column 5.
   {
     s32 panel;
     for (panel = 0; panel <= 6; panel++) {
@@ -351,7 +353,7 @@ s32 BattleCommandRow_Run(s32 mode) {
          * tbs-en. */
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
-                            5 + (col & 3)) = WINDOW_TILE(0x7f);
+                            5 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
       }
     }
   }
@@ -421,11 +423,11 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 
 /// Clears the highlight from the party status window's party member columns,
 /// then highlights the columns of the units in `ids` (up to four, ended by
-/// 0xff): the party member whose commands are being chosen. A unit not in the
-/// party is skipped. The window is right-aligned on the 30-tile row, so its
-/// party member columns start at column 29 - 6 * members (the Djinn column,
-/// when shown, lies left of them). Returns 0. Battle_CollectPartyCommands calls
-/// it.
+/// BATTLE_UNIT_LIST_END): the party member whose commands are being chosen. A
+/// unit not in the party is skipped. The window is right-aligned on the 30-tile
+/// row, so its party member columns start at column 29 - 6 * members (the Djinn
+/// column, when shown, lies left of them). Returns 0.
+/// Battle_CollectPartyCommands calls it.
 s32 PartyStatus_HighlightMembers(u16 *ids) {
   struct BattleWork *battle = gBattleWork;
   s32 count;
@@ -436,19 +438,19 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
   // The loop over ids is written with goto (MATCHING.md): as
-  // for (i = 0; i < 4 && ids[i] != 0xff; i++), or as a do-while loop inside
-  // this test, 49 of 74 instructions differ in tbs-en.
-  if (ids[0] != 0xff) {
+  // for (i = 0; i < 4 && ids[i] != BATTLE_UNIT_LIST_END; i++), or as a do-while
+  // loop inside this test, 49 of 74 instructions differ in tbs-en.
+  if (ids[0] != BATTLE_UNIT_LIST_END) {
   next_id:
     for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {
-      if (battle->partyUnits[j] == 0xff) {
+      if (battle->partyUnits[j] == BATTLE_UNIT_LIST_END) {
         j = 4;
         break;
       }
     }
     if (j != 4)
       Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, HIGHLIGHT_PALETTE);
-    if (++i < 4 && ids[i] != 0xff)
+    if (++i < 4 && ids[i] != BATTLE_UNIT_LIST_END)
       goto next_id;
   }
   return 0;

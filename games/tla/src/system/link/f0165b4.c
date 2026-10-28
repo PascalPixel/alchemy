@@ -32,7 +32,7 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
       sum += packet[k];
     if (flags[i] == 1 && (s16)sum == -1) {
       Dma_Set(gSerialWork.pendingBuffer[i] + 2, (u8 *)payload + i * 24,
-              0x84000006, REG_DMA3);
+              DMA_COPY_WORDS(6), REG_DMA3);
       gSerialWork.currentMask |= 1 << i;
     }
     if ((s16)sum == -1)

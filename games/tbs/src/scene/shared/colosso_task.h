@@ -25,8 +25,8 @@
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// the large lettering a race starts with. It reads "Match 1", "3", "2", "1",
 /// "Go!", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv
-/// (enum ColossoLetteringPicture). Each picture is 0x400 bytes of tiles after
-/// the palettes.
+/// (enum ColossoLetteringPicture). Each picture is
+/// COLOSSO_LETTERING_PICTURE_BYTES of tiles after the palettes.
 ///
 /// The lettering moves by a script of 16-bit words, a command and its values:
 enum ColossoLetteringCommand {
@@ -57,6 +57,10 @@ enum ColossoLetteringPicture {
   COLOSSO_PICTURE_WON_LOSE_FOR_LOSS = 8
 };
 
+/// The bytes of one lettering picture's tiles: 2,048 pixels at 4 bits each, as
+/// four 32x16 pieces or two 32x32 ones (lettering.tsv).
+#define COLOSSO_LETTERING_PICTURE_BYTES (4 * 32 * 16 / 2)
+
 /// How Colosso_UpdateLettering lays a picture out (gColosso_LetteringMode);
 /// gColosso_LetteringParameter picks the second half of a picture.
 enum ColossoLetteringShape {
@@ -68,7 +72,7 @@ enum ColossoLetteringShape {
 };
 
 static __inline__ void Dma_Wait(volatile u32 *dma) {
-  while (dma[2] & 0x80000000)
+  while (dma[2] & DMA_ENABLE << 16)
     ;
 }
 
@@ -96,8 +100,9 @@ static void Colosso_LoadLettering(s32 id) {
                            buf);
   Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-  Vram_Load(gColosso_LetteringSlot, 0x400,
-            (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
+  Vram_Load(gColosso_LetteringSlot, COLOSSO_LETTERING_PICTURE_BYTES,
+            (u8 *)((id * COLOSSO_LETTERING_PICTURE_BYTES) + (s32)buf +
+                   COLOSSO_PALETTE_BYTES));
   Dma_Wait(REG_DMA3);
   Heap_Release(buf);
 }

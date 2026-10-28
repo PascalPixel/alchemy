@@ -1,5 +1,6 @@
 #include "izumo.h"
 #include "flag_call.h"
+#include "scene_tables.h"
 
 void Func_02000038(void) { Func_02000de8(gData_02000e10); }
 
@@ -25,7 +26,7 @@ void Func_02000048(void) {
       Func_02000da0();
       Func_02000d88(22, 257, 0);
       FieldEvent_Wait(60);
-      Actor_ArmCallback(22, 0x8000, 0);
+      Actor_ArmCallback(22, FACING_WEST, 0);
       FieldEvent_Wait(60);
       Func_02000d88(22, 256, 0);
       FieldEvent_Wait(60);
@@ -35,7 +36,7 @@ void Func_02000048(void) {
       Func_02000d88(22, 262, 0);
       FieldEvent_Wait(30);
       Func_02000d70(22, 0);
-      Actor_ArmCallback(22, 0x4000, 0);
+      Actor_ArmCallback(22, FACING_SOUTH, 0);
       Func_02000d08();
       Flag_Set(0x924);
     }

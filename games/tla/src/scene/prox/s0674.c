@@ -34,7 +34,7 @@ void Func_02000674(void) {
     } else {
       Call1(Func_0200451c, (s32)MsgProx56);
     }
-    Call2(Func_02004534, 0x16, 0);
+    Call2(Func_02004534, 22, 0);
     Func_0200446c();
   }
 }

@@ -315,10 +315,10 @@ s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
 void Menu_ReservedNoOp(void) {}
 
 /// Sets the Djinni's collected flag, then adds it to the specified party
-/// member. The flag is FLAG_DJINN_FIRST + 20 * element + index. Nothing calls
-/// it.
+/// member. The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index.
+/// Nothing calls it.
 void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
-  GameFlag_SetFar((element * 0x14) + index + FLAG_DJINN_FIRST);
+  GameFlag_SetFar((element * DJINN_PER_ELEMENT) + index + FLAG_DJINN_FIRST);
   Djinn_GiveFar(member, element, index);
 }
 

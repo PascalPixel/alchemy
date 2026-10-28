@@ -50,9 +50,9 @@ struct ActorArmView {
   /// Added toward the target each frame, or taken off the speed when there is
   /// none, in 16.16 fixed-point pixels per frame.
   s32 acceleration;
-  s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  s32 targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  s32 targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetX; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  s32 targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  s32 targetZ; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
   union {
     /// The share of the falling speed kept on landing, 16.16 fixed point.
     s32 bounce;

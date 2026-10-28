@@ -19,13 +19,12 @@ void Func_02003684(void) {
   wait_(1);
   leader->motionFlags = 0;
   Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                    0x1b80000, -0x140000, 0xc80000);
-  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                      0);
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(13), 0x1b80000, -0x140000,
-                                    0xcc0000);
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(15), 0x1b80000, -0x140000,
-                                    0xc80000);
+                                   PIXELS(440), PIXELS(-20), PIXELS(200));
+  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(13), PIXELS(440), PIXELS(-20),
+                                   PIXELS(204));
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(15), PIXELS(440), PIXELS(-20),
+                                   PIXELS(200));
   Actor_SetSpritePriority_(13, 2);
   Actor_SetSpritePriority_(15, 3);
   {
@@ -42,8 +41,8 @@ void Func_02003684(void) {
   Event_WaitTransitionFrames();
   // A goto loop, as in Func_0200393c.
 rise:
-  first->y += 0x40000;
-  leader->y += 0x40000;
+  first->y += PIXELS(4);
+  leader->y += PIXELS(4);
   Func_02000cd8(15, 0x4ccc, 0x4ccc);
   wait_(1);
   /* FAKEMATCH: as in Func_0200393c, a volatile read for the test. */
@@ -69,13 +68,12 @@ void Func_020037e0(void) {
   wait_(1);
   leader->motionFlags = 0;
   Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                    0x2580000, -0x140000, 0xe80000);
-  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                      0);
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(14), 0x2580000, -0x140000,
-                                    0xec0000);
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(16), 0x2580000, -0x140000,
-                                    0xe80000);
+                                   PIXELS(600), PIXELS(-20), PIXELS(232));
+  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(14), PIXELS(600), PIXELS(-20),
+                                   PIXELS(236));
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(16), PIXELS(600), PIXELS(-20),
+                                   PIXELS(232));
   Actor_SetSpritePriority_(14, 2);
   Actor_SetSpritePriority_(16, 3);
   {
@@ -92,8 +90,8 @@ void Func_020037e0(void) {
   Event_WaitTransitionFrames();
   // A goto loop, as in Func_0200393c.
 rise:
-  first->y += 0x40000;
-  leader->y += 0x40000;
+  first->y += PIXELS(4);
+  leader->y += PIXELS(4);
   Func_02000cd8(16, 0x4ccc, 0x4ccc);
   wait_(1);
   /* FAKEMATCH: as in Func_0200393c, a volatile read for the test. */
@@ -114,7 +112,7 @@ void Func_0200393c(void) {
   // A goto loop: as a do-while, loop.c hoists the scale constant into r6
   // (differ 19).
 rise:
-  object->y -= 0x40000;
+  object->y -= PIXELS(4);
   Func_02000cf8(15, 0x4ccc, 0x4ccc);
   wait(1);
   /* FAKEMATCH: a volatile read for the test keeps GCSE from carrying y around
@@ -136,7 +134,7 @@ void Func_020039a8(void) {
   Func_02005370(0);
   // A goto loop, as in Func_0200393c.
 rise:
-  object->y -= 0x40000;
+  object->y -= PIXELS(4);
   Func_02000cf8(16, 0x4ccc, 0x4ccc);
   wait(1);
   /* FAKEMATCH: as in Func_0200393c, a volatile read for the test (differ 13

@@ -286,7 +286,7 @@ void WindowSystem_StartFieldUpdate(void) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
-  // 200 << 4 is 0xc80, TASK_PASS_FRAME: the update runs in the frame
+  // 200 << 4 is TASK_PASS_FRAME: the update runs in the frame
   // pass.
   priority = 200;
   priority <<= 4;
@@ -502,9 +502,9 @@ void FieldMessage_Show(s32 message, s32 flags) {
   s32 zero;
 
   y = x = 0;
-  zoom = flags & 1;
+  zoom = flags & FIELD_MESSAGE_ZOOM;
 
-  if (flags & 2) {
+  if (flags & FIELD_MESSAGE_WAITING_FOR_SOUND) {
     state->waitingForSound = 1;
   }
 
@@ -514,9 +514,9 @@ void FieldMessage_Show(s32 message, s32 flags) {
   x = (30 - width) >> 1;
   y = (12 - height) >> 1;
 
-  if (flags & 8) {
+  if (flags & FIELD_MESSAGE_LOWER) {
     y += 4;
-  } else if (flags & 0x40) {
+  } else if (flags & FIELD_MESSAGE_LOWEST) {
     y += 12;
   } else {
     s32 actorTileY;
@@ -539,11 +539,11 @@ void FieldMessage_Show(s32 message, s32 flags) {
       wait(1);
     }
 
-    if (flags & 0x20) {
+    if (flags & FIELD_MESSAGE_HOLD_UPLOAD) {
       WINDOW_WORK->holdTilemapUpload = 1;
     }
 
-    if (!(flags & 4)) {
+    if (!(flags & FIELD_MESSAGE_KEEP_OPEN)) {
       Window_Close(window, zoom);
       while (Window_IsClosed(window) == 0) {
         wait(1);

@@ -192,7 +192,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       // removes it before returning, so this table is never read and the
       // canvas does not ripple.
       for (k = 0; k != 160; k++)
-        *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
+        *row++ = ((8 << 16) - Trig_Sin((frame + k) << 12) * 2) >> 10;
       // Fade the canvas out over the last 16 frames.
       if (frame > totalFrames - 16)
         REG_BLDALPHA = BLEND_ALPHA(totalFrames - frame, 16);
@@ -246,9 +246,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                 gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]
                 << 16;
             if (struck->x.fixed > 0)
-              struck->x.fixed += 0x8000;
+              struck->x.fixed += Q16_ONE / 2;
             else
-              struck->x.fixed -= 0x8000;
+              struck->x.fixed -= Q16_ONE / 2;
             BattleEffect_TintBattler(work->args->targets[k], -1, POSE_DAMAGE,
                                      -1, 0);
           }
@@ -377,8 +377,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     // Masked in place, the mask assigned first; as Random16() & mask, 3
     // instructions differ.
     speed &= Random16();
-    angle = Random16() & 0xffff;
-    SET_POSITION(mote, source->x.fixed, source->y.fixed + 0x50000,
+    angle = Random16() & TRIG_ANGLE_MASK;
+    SET_POSITION(mote, source->x.fixed, source->y.fixed + (5 << 16),
                  source->z.fixed);
     SET_VELOCITY(mote, Trig_Sin(angle) * (speed + 32) >> 8,
                  ((Random16() & 255) - 32) << 9,
@@ -414,14 +414,14 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
         // Damped by 62/64 a frame, with a slight lift (y grows upwards) of
         // 1/64 pixel a frame each frame.
-        Particle_AdvanceWithGravity3D(mote, 62, 0x400);
+        Particle_AdvanceWithGravity3D(mote, 62, Q16_ONE / 64);
         // The drifting mode pushes every mote towards the other side of the
         // field, 1/8 pixel a frame faster each frame.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x.fixed < 0)
-            mote->velocityX += 0x2000;
+            mote->velocityX += Q16_ONE / 8;
           else
-            mote->velocityX -= 0x2000;
+            mote->velocityX -= Q16_ONE / 8;
         }
         mote->variant--;
       }

@@ -8,8 +8,8 @@
 /// cell (MapGridCell.behavior), or of a 4-byte gCellPictures entry on the
 /// World Map.
 #define CLOAK_TILE 0xfb
-/// The Psynergy request that ends Cloak: ACT_PACKED (0x2000, no PP) |
-/// ABILITY_CLOAK (0x92).
+/// The Psynergy request that ends Cloak: ACT_PACKED (no PP) |
+/// ABILITY_CLOAK.
 #define CLOAK_END 0x2092
 
 /// Task of Cloak: when the cell under the leader is not

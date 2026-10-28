@@ -1,5 +1,6 @@
 #include "types.h"
 #include "io_write_queue.h"
+#include "io_reg.h"
 
 extern u32 gFrameCount;
 extern u16 gData_02003dbc;
@@ -13,8 +14,9 @@ void Func_0200005c(void) {
   u16 value;
   u32 reg;
 
-  QueueIoWriteDelay2(0x04000050, 0x3f41);
-  reg = 0x04000052;
+  QueueIoWriteDelay2((u32)&REG_BLDCNT,
+                     BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
+  reg = (u32)&REG_BLDALPHA;
   blink = gFrameCount & 2;
   blend = &gData_02003dbc;
   if (blink && gData_02003dbe == 0) {

@@ -37,7 +37,7 @@ void Func_02000378(void) {
       *line += 64;
   }
   line = gData_02006350;
-  scroll = (volatile u16 *)0x04000010;
+  scroll = (volatile u16 *)REG_BG0HOFS;
   *scroll = *line;
   dma = REG_DMA0;
   /* FAKEMATCH: the one-pass block reads the control before its mask is built,

@@ -354,7 +354,7 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
   u32 nextTimer;
 
   if ((s16)actor->userValue == 0) {
-    action = (u32)(Import_RandomNext() * 8) >> 0x10;
+    action = (u32)(Import_RandomNext() * 8) >> 16;
     switch (action) {
     case 0:
       Actor_SelectAnimation(actor, 3);
@@ -364,10 +364,10 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
       break;
     case 3:
     case 4:
-      actor->facing += (u32)(Import_RandomNext() << 0xF) >> 0x10;
+      actor->facing += (u32)(Import_RandomNext() << 15) >> 16;
       break;
     }
-    nextTimer = (u32)(Import_RandomNext() * 0x50) >> 0x10;
+    nextTimer = (u32)(Import_RandomNext() * 80) >> 16;
     actor->userValue = nextTimer;
   }
   if ((s16)actor->userValue != 0) {
@@ -1428,7 +1428,7 @@ static void Kalay_PrepareTunnel(void) {
     Actor_SetPosition(ACTOR_WAITING_MAN, PIXELS(426), PIXELS(730));
     actor = Actor_Get(ACTOR_WAITING_MAN);
     {
-      u16 shown = 0x5000;
+      u16 shown = FACING_SOUTH + FACING_STEP;
 
       actor->facing = shown;
     }

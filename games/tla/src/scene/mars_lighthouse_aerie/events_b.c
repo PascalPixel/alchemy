@@ -1,4 +1,5 @@
 #include "mars_lighthouse_aerie.h"
+#include "scene_tables.h"
 
 void Func_02000610(s32 id) {
   struct Actor *object = Actor_GetById(id);
@@ -10,5 +11,5 @@ void Func_02000610(s32 id) {
 
 void Func_02000640(s32 id) {
   Actor_GetById(id)->update = NULL;
-  Actor_ArmCallback(id, 0xc000, 0);
+  Actor_ArmCallback(id, FACING_NORTH, 0);
 }

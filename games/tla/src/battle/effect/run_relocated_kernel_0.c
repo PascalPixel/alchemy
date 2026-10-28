@@ -22,7 +22,7 @@ void RamCode_RunKernel0(s32 arg0, s32 arg1) {
     size = (u32)Data_081380acCodeSize;
   } while (0);
   routine = (void (*)(s32, s32))Heap_Alloc(size);
-  Dma_Set((const void *)Data_081380ac, routine, 0x84000000 | (size >> 2),
+  Dma_Set((const void *)Data_081380ac, routine, DMA_COPY_WORDS(size >> 2),
           REG_DMA3);
   routine(arg0, arg1);
   Heap_Release(routine);

@@ -26,7 +26,7 @@ void Serial_DisableTransfer(void) {
     mask = *ie & mask;
     *ie = mask;
     REG_IME = 1;
-    REG_SIOCNT16 = 0x2003;
+    REG_SIOCNT16 = SIO_MULTI_MODE | SIO_115200_BPS;
     REG_TM3CNT = 0x0000c963;
     REG_IF = 0xc0;
     gSerialWork.transferEnabled = 0;

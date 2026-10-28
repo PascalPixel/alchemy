@@ -75,7 +75,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
 
   buf = HeapSlot_AllocEwram(56, 0x400);
   sprite = 0;
-  Dma_Set(gShop_PriceTiles, buf, 0x84000040, REG_DMA3);
+  Dma_Set(gShop_PriceTiles, buf, DMA_COPY_WORDS(64), REG_DMA3);
   Shop_CopyGlyphs(value % 10, buf, 0);
   value = value / 10;
   if (value != 0) {
@@ -97,7 +97,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
   slot = Resource_FindFreeEntry();
   if (slot != 96) {
     VramCache_Load(slot, 0x100, buf);
-    sprite = WindowSprite_CreateFar(slot, 0x80008000,
+    sprite = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X32,
                                     (struct RenderInput *)window, x, y);
   }
   HeapSlot_Release(56);
@@ -109,8 +109,8 @@ void Shop_RestoreSceneTiles(s32 layer) {
   u8 *work = Ram_HeapSlots->block32;
   u8 *saved = work + 0xe00;
 
-  Dma_Set(saved, map + 0x222, 0x84000150, REG_DMA3);
-  Dma_Set(saved, work + 0x380, 0x840002a0, REG_DMA3);
+  Dma_Set(saved, map + 0x222, DMA_COPY_WORDS(336), REG_DMA3);
+  Dma_Set(saved, work + 0x380, DMA_COPY_WORDS(672), REG_DMA3);
   BattleEffect_ApplyColorToTargetBufferFar(layer, 1);
   BattleEffect_StartBufferInterpolationFar(16);
 }

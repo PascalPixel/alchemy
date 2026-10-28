@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -83,8 +84,8 @@ void Func_02000714(void) {
   asm("");
   FIELD_AT(v8, s32, 24) = 0x4000;
   FIELD_AT(v8, s32, 28) = 0x4000;
-  Call4(Camera_MoveWithinMapBounds, 0x2a80000, -1, 0xe40000, 0);
-  Call3(Func_0200432c, gMainRoutineWork.currentOwner, 0x2a80000, 0x1080000);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(680), -1, PIXELS(228), 0);
+  Call3(Func_0200432c, gMainRoutineWork.currentOwner, PIXELS(680), PIXELS(264));
   Call1(wait, 1);
   Func_020041fc();
   Call1(wait, 1);
@@ -152,7 +153,8 @@ void Func_02000714(void) {
   Call3(Func_0200438c, 14, 0, 40);
   Value3((s32 (*)())Func_020043b4, 13, 0x100, 20);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 13, 0);
-  t87 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
+  t87 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+               0);
   if (t87 != 0)
     goto L_02008a04;
   Call1(Actor_WaitForAnimationChange, gMainRoutineWork.currentOwner);

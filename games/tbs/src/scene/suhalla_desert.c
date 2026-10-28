@@ -409,8 +409,8 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   // Grow over 16 frames and, the first time, fade the haze in with it.
   frame = 0;
   do {
-    storm->scaleX = ((frame << 11) + 0x800);
-    storm->scaleY = ((frame << 12) + 0x1000);
+    storm->scaleX = ((frame << 11) + Q16_ONE / 32);
+    storm->scaleY = ((frame << 12) + Q16_ONE / 16);
     if (appearanceRestored == 0) {
       nextFrame = frame + 1;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,

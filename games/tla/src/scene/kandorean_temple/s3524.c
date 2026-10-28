@@ -29,8 +29,7 @@ void Func_02003584(void) {
   Func_02005370(0);
   object->motionFlags = 0;
   Actor_SetActionVariantValue(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   object->angle = 0;
   {
     s32 *owner = &gMainRoutineWork.currentOwner;
@@ -44,12 +43,12 @@ void Func_02003584(void) {
   }
   for (i = 0; i <= 7; i++) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y,
-                                     object->z + 0x30000);
+                                    object->z + PIXELS(3));
     wait_(1);
   }
   FieldEvent_Wait_(20);
   party = &gMainRoutineWork;
-  object->angle = 0x4000;
+  object->angle = FACING_SOUTH;
   /* FAKEMATCH: the barrier loads gMainRoutineWork's address among the angle's
    * stores and builds the owner's offset after them; as plain C, 4
    * instructions differ in tla-en. */

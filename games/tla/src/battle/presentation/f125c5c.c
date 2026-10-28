@@ -19,8 +19,9 @@ void BattleStaging_UpdateHBlankScroll(void) {
     records = Ram_HeapSlots->unk28[0];
     record = records->lines[records->page];
     Io_Write16(record[0], &REG_BG2CNT);
-    Dma_Set(record + 1, (void *)0x0400000c, 0xa2600001, &REG_DMA0SAD);
-    Dma_Set(&records->affine, (void *)0x04000020, 0x84000004, REG_DMA3);
+    Dma_Set(record + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE,
+            &REG_DMA0SAD);
+    Dma_Set(&records->affine, (void *)&REG_BG2PA, DMA_COPY_WORDS(4), REG_DMA3);
   }
 }
 
@@ -28,8 +29,8 @@ void Func_08125c5c(void) {
   u32 index = *(s32 *)Ram_HeapSlots->unk84[9] - 1;
 
   if (index <= 31)
-    Dma_Set(gData_0812cc74 + (index >> 2) * 32, (void *)0x06005000, 0x84000008,
-            REG_DMA3);
+    Dma_Set(gData_0812cc74 + (index >> 2) * 32, (void *)0x06005000,
+            DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 void BattleTransition_AdvanceTimer(void) {

@@ -48,7 +48,7 @@ static inline s32 *SpritePlacement_Values(struct SpritePlacement *placement) {
 #endif
 }
 
-/// Horizontal and vertical sprite scale; 0x10000 is the original size.
+/// Horizontal and vertical sprite scale; Q16_ONE is the original size.
 struct SpriteScale {
   union {
     struct {

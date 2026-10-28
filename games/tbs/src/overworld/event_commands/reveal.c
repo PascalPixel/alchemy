@@ -59,8 +59,8 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   distanceZ = work->revealCenterY - (actor->z.fixed - actor->y.fixed) / Q16_ONE;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
       work->revealFrames == 0) {
-    // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED 0x2000
-    // | ABILITY_REVEAL 0x90), which runs its ending events.
+    // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED
+    // | ABILITY_REVEAL), which runs its ending events.
     u16 *slot = (u16 *)&work->psynergy;
     u32 request = 0x2090;
 
@@ -93,8 +93,8 @@ void FieldPsynergy_Reveal(void) {
   target = Actor_Lookup(gMainRoutineWork.leaderActorId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
-  // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG palettes
-  // turn grey (PALETTE_TINT_GRAYSCALE, 0x10001) in one frame.
+  // From the plain colours (PALETTE_TINT_NONE) the BG palettes
+  // turn grey (PALETTE_TINT_GRAYSCALE) in one frame.
   PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
   PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   PaletteFade_StartInterpolation(1);

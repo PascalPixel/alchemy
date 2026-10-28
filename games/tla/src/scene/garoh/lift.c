@@ -1,5 +1,6 @@
 #include "garoh.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 extern struct MainRoutineWork gMainRoutineWork;
 
@@ -21,7 +22,7 @@ void Func_02000e78(s32 id, struct Actor *object) {
     saved = arg;
   }
   for (i = 16; i > 0; i--) {
-    object->y -= 0x20000;
+    object->y -= PIXELS(2);
     FieldEvent_Wait(1);
   }
   Func_02005394(136);

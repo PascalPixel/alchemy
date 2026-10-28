@@ -14,36 +14,37 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(204),
-    SCENE_EXIT_IF(1, 202, 11, 0xffffffff),
-    SCENE_EXIT_IF(2, 204, 6, 0xffffffff),
-    SCENE_EXIT_IF(3, 204, 7, 0xffffffff),
-    SCENE_EXIT_IF(4, 204, 8, 0xffffffff),
-    SCENE_EXIT_IF(5, 204, 9, 0xffffffff),
-    SCENE_EXIT_IF(6, 204, 2, 0xffffffff),
-    SCENE_EXIT_IF(7, 204, 3, 0xffffffff),
-    SCENE_EXIT_IF(8, 204, 4, 0xffffffff),
-    SCENE_EXIT_IF(9, 204, 5, 0xffffffff),
-    SCENE_EXIT_IF(10, 202, 10, 0xffffffff),
-    SCENE_EXIT_IF(11, 204, 13, 0xffffffff),
-    SCENE_EXIT_IF(12, 204, 14, 0xffffffff),
-    SCENE_EXIT_IF(13, 204, 11, 0xffffffff),
-    SCENE_EXIT_IF(14, 204, 12, 0xffffffff),
-    SCENE_EXIT_IF(15, 204, 16, 0xffffffff),
-    SCENE_EXIT_IF(16, 204, 15, 0xffffffff),
-    SCENE_EXIT_IF(17, 202, 17, 0xffffffff),
+    SCENE_EXIT_IF(1, 202, 11, -1),
+    SCENE_EXIT_IF(2, 204, 6, -1),
+    SCENE_EXIT_IF(3, 204, 7, -1),
+    SCENE_EXIT_IF(4, 204, 8, -1),
+    SCENE_EXIT_IF(5, 204, 9, -1),
+    SCENE_EXIT_IF(6, 204, 2, -1),
+    SCENE_EXIT_IF(7, 204, 3, -1),
+    SCENE_EXIT_IF(8, 204, 4, -1),
+    SCENE_EXIT_IF(9, 204, 5, -1),
+    SCENE_EXIT_IF(10, 202, 10, -1),
+    SCENE_EXIT_IF(11, 204, 13, -1),
+    SCENE_EXIT_IF(12, 204, 14, -1),
+    SCENE_EXIT_IF(13, 204, 11, -1),
+    SCENE_EXIT_IF(14, 204, 12, -1),
+    SCENE_EXIT_IF(15, 204, 16, -1),
+    SCENE_EXIT_IF(16, 204, 15, -1),
+    SCENE_EXIT_IF(17, 202, 17, -1),
     SCENE_EXITS_END,
 };
 
+// clang-format off
 struct ActorPlacement gActorPlacements[] = {
-    {157, CONDITION_ALWAYS, 1, PIXELS(912), 0, PIXELS(624), 0x5000, 1, 0},
-    {156, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(520), 0x3000, 1, 0},
+    {157, CONDITION_ALWAYS, 1, PIXELS(912), 0, PIXELS(624), FACING_SOUTH + FACING_STEP, 1, 0},
+    {156, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(520), FACING_SOUTHEAST + FACING_STEP, 1, 0},
     {160, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(456), FACING_EAST, 3, 0},
     {165, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(360), FACING_EAST, 1, 0},
-    {164, CONDITION_ALWAYS, 1, PIXELS(80), 0, PIXELS(136), 0xd000, 1, 0},
-    {31, CONDITION_ALWAYS, 1, PIXELS(864), 0, PIXELS(392), 0x3000, 1, 0},
-    {43, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(408), 0x3000, 1, 0},
+    {164, CONDITION_ALWAYS, 1, PIXELS(80), 0, PIXELS(136), FACING_NORTH + FACING_STEP, 1, 0},
+    {31, CONDITION_ALWAYS, 1, PIXELS(864), 0, PIXELS(392), FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {43, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, 1, 0},
     {34, CONDITION_ALWAYS, 1, PIXELS(888), 0, PIXELS(392), FACING_WEST, 1, 0},
-    {231, CONDITION_ALWAYS, 1, PIXELS(888), 0, PIXELS(560), 0x5000, 1, 0},
+    {231, CONDITION_ALWAYS, 1, PIXELS(888), 0, PIXELS(560), FACING_SOUTH + FACING_STEP, 1, 0},
     {56, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_NORTH, 2, 0},
     {5, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_NORTH, 2, 0},
     {6, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_NORTH, 2, 0},
@@ -51,6 +52,7 @@ struct ActorPlacement gActorPlacements[] = {
      0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
 // clang-format off
 s16 gData_0200233c[] = {

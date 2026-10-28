@@ -1,5 +1,6 @@
 #include "jupiter_lighthouse_room_m.h"
 #include "scene_ids.h"
+#include "scene_tables.h"
 
 extern const u8 MsgIMSorry[];
 
@@ -13,11 +14,9 @@ void Func_0200489c(s32 actor, s32 a, s32 b);
 struct Actor *Func_020048cc(s32 actor, s32 emote, s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Func_020048f4(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020048b4(s32 actor, s32 a);
-void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset,
-                                         s32 z_offset);
+void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_RemoveActiveOwner(s32 owner);
@@ -66,10 +65,10 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
 void Func_02001c7c(void) {
   Func_020047d4();
   Func_0200494c(0);
-  PLACE(0, 776, 202, 0x8000);
-  PLACE(2, 731, 232, 0xa000);
-  PLACE(27, 731, 213, 0x4000);
-  PLACE(26, 737, 202, 0);
+  PLACE(0, 776, 202, FACING_WEST);
+  PLACE(2, 731, 232, FACING_NORTHWEST);
+  PLACE(27, 731, 213, FACING_SOUTH);
+  PLACE(26, 737, 202, FACING_EAST);
   Actor_SetModeById(0, 1);
   Actor_SetModeById(2, 1);
   Actor_SetModeById(26, 1);
@@ -79,13 +78,13 @@ void Func_02001c7c(void) {
   Func_0200488c(MsgIMSorry);
   Func_0200489c(2, 0, 5);
   Func_020048cc(4, 0x100, 30);
-  Camera_MoveWithinMapBounds(705 << 16, 0, 177 << 16, 1);
+  Camera_MoveWithinMapBounds(PIXELS(705), 0, PIXELS(177), 1);
   Func_020048f4();
   FieldEvent_Wait(30);
   Actor_SetSingleChildFlags(Actor_GetById(2), 0);
   Actor_SetModeById(2, 32);
   FieldEvent_Wait(10);
-  JupiterLighthouseRoomM_Func_020048b4(0, 0x6000);
+  JupiterLighthouseRoomM_Func_020048b4(0, FACING_SOUTHWEST);
   Func_0200489c(0, 0, 5);
   Func_020048cc(26, 0x107, 30);
   Func_0200489c(26, 0, 5);

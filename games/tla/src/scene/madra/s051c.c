@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "flag_call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -51,12 +52,12 @@ void Func_0200051c(void) {
   } else if (!Flag_IsSet(0x280)) {
     Func_02002b28();
     Func_02002c58(0);
-    PLACE(26, 744 << 16, 0x01010000, 0x4000);
-    Actor_GetById(4)->velocityY = 0x50000;
+    PLACE(26, PIXELS(744), PIXELS(257), FACING_SOUTH);
+    Actor_GetById(4)->velocityY = PIXELS(5);
     ObjSpeed(4, 0x20000, 0x10000);
     ObjSetPos(4, 720, 244);
-    ObjCall2bf8(4, 0x2000);
-    PLACE(4, 720 << 16, 244 << 16, 0x2000);
+    ObjCall2bf8(4, FACING_SOUTHEAST);
+    PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
     Flag_Set(0x280);
     Func_02000404();
     Func_02002b30();
@@ -67,12 +68,12 @@ void Func_020005b8(void) {
   if (!Flag_IsSet(0x280)) {
     Func_02002b28();
     Func_02002c58(0);
-    PLACE(26, 744 << 16, 256 << 16, 0x4000);
-    Actor_GetById(4)->velocityY = 0x50000;
+    PLACE(26, PIXELS(744), PIXELS(256), FACING_SOUTH);
+    Actor_GetById(4)->velocityY = PIXELS(5);
     ObjSpeed(4, 0x20000, 0x10000);
     ObjSetPos(4, 720, 244);
-    ObjCall2bf8(4, 0x2000);
-    PLACE(4, 720 << 16, 244 << 16, 0x2000);
+    ObjCall2bf8(4, FACING_SOUTHEAST);
+    PLACE(4, PIXELS(720), PIXELS(244), FACING_SOUTHEAST);
     Flag_Set(0x280);
     Func_02000490();
     Func_02002b30();

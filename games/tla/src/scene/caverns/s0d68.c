@@ -1,13 +1,14 @@
+#include "scene_tables.h"
 #include "caverns.h"
 
 void Func_02000d68(void) {
   s32 value = HALF_AT(Ram_HeapSlots->eventWork, 340);
 
   if (value == 2)
-    Call3((void (*)())Func_0200110c, 8, 0x900000, 0xe00000);
+    Call3((void (*)())Func_0200110c, 8, PIXELS(144), PIXELS(224));
   else
-    Call3((void (*)())Func_0200110c, 8, 0xe00000, 0xe00000);
-  Actor_ArmCallback(4, 0xc000, 0);
+    Call3((void (*)())Func_0200110c, 8, PIXELS(224), PIXELS(224));
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   BYTE_AT(Actor_GetById(4), 90) &= ~1;
   Call6((void (*)())Func_02001094, 96, 14, 72, 14, 2, 1);

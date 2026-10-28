@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "scene_tables.h"
 
 void Func_02000b84(s32 x, s32 y, s32 z);
 void Func_02001c5c(void);
@@ -9,7 +10,7 @@ void Func_02000c34(void) {
   Func_020021d4();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
   Func_02004118(0x26666, 0x4ccc);
-  Scene_CamBounds(0x12c0000, -1, 0xf80000, 1);
+  Scene_CamBounds(PIXELS(300), -1, PIXELS(248), 1);
   Scene_SetPositionAndCommit(16, 254, 248);
   Scene_SetPositionAndCommit(16, 352, 240);
   Task_RemoveFar(Func_02002180);
@@ -40,7 +41,7 @@ void Func_02000d50(void) {
   Func_020021d4();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
   Func_02004118(0x26666, 0x4ccc);
-  Scene_CamBounds(0xf60000, -1, 0x2680000, 1);
+  Scene_CamBounds(PIXELS(246), -1, PIXELS(616), 1);
   Scene_SetPositionAndCommit(21, 248, 648);
   Scene_SetPositionAndCommit(21, 248, 576);
   Task_RemoveFar(Func_02002180);

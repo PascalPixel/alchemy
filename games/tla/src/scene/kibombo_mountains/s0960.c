@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 extern u8 MsgIsTheWay[];
 extern const u8 gData_020017f8[];
@@ -33,9 +34,9 @@ void Func_02000960(void) {
   Func_02001084();
   Func_02001164(0);
   Func_02001104(MsgIsTheWay);
-  Call3((void (*)())Func_020010d4, 27, 0x1380000, 0x1300000);
+  Call3((void (*)())Func_020010d4, 27, PIXELS(312), PIXELS(304));
   Func_0200110c(27, 0);
-  Camera_MoveWithinMapBounds(0x1000000, -1, 0x1880000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(256), -1, PIXELS(392), 1);
   Func_02001134();
   Actor_ResetTargetsAndVelocity(11);
   Actor_SetAngleToward(11, 27, 0);

@@ -9,7 +9,7 @@
 // (Battle_AdjustDebugValue), which the international editions
 // changed.
 #if TBS_PATCH_1
-#define DEBUG_SELECT_VALUE 0x18f
+#define DEBUG_SELECT_VALUE 399
 #else
 #define DEBUG_SELECT_VALUE 480
 #endif
@@ -50,7 +50,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
    * local, which keep it in its pointer's register; as a plain block, 4 of 43
    * instructions differ in tbs-en. */
   do {
-    u16 *interruptEnable = (u16 *)0x04000208;
+    u16 *interruptEnable = (u16 *)&REG_IME;
     s32 once = 0;
 
     do {
@@ -75,10 +75,10 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 
 /// Switches the background's display mode, optionally sets its palette, and
 /// rebuilds both its maps.
-/// fade 0x80 restores the saved palette, another nonzero fade takes that
-/// much from each colour channel, and 0 leaves the palette alone;
-/// BATTLE_BACKGROUND_FIXED queues BATTLE_BG1CNT for BG1. Called with
-/// BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the battle effects'
+/// fade BATTLE_BACKGROUND_FADE_RESTORE restores the saved palette, another
+/// nonzero fade takes that much from each colour channel, and 0 leaves the
+/// palette alone; BATTLE_BACKGROUND_FIXED queues BATTLE_BG1CNT for BG1. Called
+/// with BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the battle effects'
 /// canvas layers (canvas.c), and with BATTLE_BACKGROUND_ZOOMED by
 /// BattleStaging_DispatchAction and Battle_ProcessTurnEnd. Sets
 /// BattleBackgroundWork.mode (enum BattleBackgroundMode), adds
@@ -108,7 +108,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
-  if (fade == 0x80) {
+  if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE, DMA_COPY_HALFWORDS(128),
             REG_DMA3);
   } else if (fade != 0) {
@@ -255,11 +255,11 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
 
   // The sideways pan, 8.8 pixels: 8 when zoomed out, else 104 less three
   // times the yaw, so the picture turns with the camera.
-  panX = 0x800;
+  panX = 8 << 8;
   wrap = 0;
   if (scale >= Q16_ONE) {
     wrap = BGCNT_WRAP;
-    panX = 0x6800 + -(s16)camera->yaw * 3;
+    panX = (104 << 8) + -(s16)camera->yaw * 3;
   }
   if (scanlines == NULL)
     return;
@@ -280,15 +280,15 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   affine->pb = 0;
   affine->pc = 0;
   affine->pd = step;
-  x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - 0x10000));
-  y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - 0x10000));
+  x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - Q16_ONE));
+  y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - Q16_ONE));
   affine->x = ((x + 0x7fff) >> 8) + offsetX + panX;
-  y = ((y + 0x7fff) >> 8) + offsetY - 0x1000;
+  y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
   affine->y = y;
 
-  // The picture's lower half starts at map row 8, 64 pixels (0x4000 in 8.8)
-  // down the plane: the first screen line that reaches it at this zoom.
-  lowerHalfLine = (Iwram_RatioMulQ14((s16)step, 0x4000 - y) >> 16) + 1;
+  // The picture's lower half starts at map row 8, 64 pixels down the plane
+  // in 8.8 (64 << 8): the first screen line that reaches it at this zoom.
+  lowerHalfLine = (Iwram_RatioMulQ14((s16)step, (64 << 8) - y) >> 16) + 1;
 
   // Each line's BG2CNT. The plane covers lines 0 to 135, above the status
   // window; its top 16 lines are left off except while commands are chosen.
@@ -317,7 +317,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  s32 span = 0x01fe0000;
+  s32 span = 510 << 16;
   // BUG: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
 #ifndef UBFIX
   s32 zoom;
@@ -355,9 +355,9 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   Transform_SetLookAt(camera->eye, focus);
   Transform_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
+  BattleCamera_SetRange(120 << 16, 120 << 16, (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
-  half = scale * 0xff;
+  half = scale * 255;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);
@@ -380,7 +380,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 span = 0x01fe0000;
+  s32 span = 510 << 16;
   s32 alpha;
   s32 half;
   s32 width;
@@ -412,11 +412,11 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Transform_SetLookAt(camera->eye, focus);
   Transform_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
+  BattleCamera_SetRange(120 << 16, 120 << 16, (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
   // The zoom then scales the focal length (510 pixels at 100 percent) and
   // the far depth, twice it.
-  half = scale * 0xff;
+  half = scale * 255;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);

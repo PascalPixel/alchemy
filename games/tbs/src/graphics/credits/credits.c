@@ -1195,13 +1195,13 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     u32 *words = (u32 *)linePixels + row;
 
     *(u32 *)(OBJ_VRAM0 + tileIndex * 32) = words[0x000];
-    *(u32 *)(0x06010004 + tileIndex * 32) = words[0x040];
-    *(u32 *)(0x06010008 + tileIndex * 32) = words[0x080];
-    *(u32 *)(0x0601000c + tileIndex * 32) = words[0x0c0];
-    *(u32 *)(0x06010010 + tileIndex * 32) = words[0x100];
-    *(u32 *)(0x06010014 + tileIndex * 32) = words[0x140];
-    *(u32 *)(0x06010018 + tileIndex * 32) = words[0x180];
-    *(u32 *)(0x0601001c + tileIndex * 32) = words[0x1c0];
+    *(u32 *)(OBJ_VRAM0 + 4 + tileIndex * 32) = words[0x040];
+    *(u32 *)(OBJ_VRAM0 + 8 + tileIndex * 32) = words[0x080];
+    *(u32 *)(OBJ_VRAM0 + 12 + tileIndex * 32) = words[0x0c0];
+    *(u32 *)(OBJ_VRAM0 + 16 + tileIndex * 32) = words[0x100];
+    *(u32 *)(OBJ_VRAM0 + 20 + tileIndex * 32) = words[0x140];
+    *(u32 *)(OBJ_VRAM0 + 24 + tileIndex * 32) = words[0x180];
+    *(u32 *)(OBJ_VRAM0 + 28 + tileIndex * 32) = words[0x1c0];
   }
   Heap_Release(linePixels);
   return 0;

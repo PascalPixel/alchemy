@@ -50,8 +50,8 @@ struct Actor {
   union FieldCoordinate y; ///< 16.16 fixed-point pixels
   union FieldCoordinate z; ///< 16.16 fixed-point pixels
   s32 groundHeight;        ///< 16.16 fixed-point pixels
-  s32 scaleX;              ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;              ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleX;              ///< 16.16 fixed point, Q16_ONE full size
+  s32 scaleY;              ///< 16.16 fixed point, Q16_ONE full size
   /// Collision radius in pixels: 16, or half the sprite metadata's boxY, when
   /// created; the overlap checks use it less 2.
   u16 radius;
@@ -67,7 +67,7 @@ struct Actor {
   s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
   s32 speedLimit; ///< 16.16 fixed-point pixels per frame
   /// Added toward the target each frame, or taken off the speed when there is
-  /// none, in 16.16 fixed-point pixels per frame; 0x10000 when created.
+  /// none, in 16.16 fixed-point pixels per frame; Q16_ONE when created.
   s32 acceleration;
   s32 targetX; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
   s32 targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
@@ -76,7 +76,7 @@ struct Actor {
   /// fixed point (0x4000 when created); a floating actor's phase instead.
   s32 bounce;
   /// Taken off velocityY each frame while it is above the ground, in 16.16
-  /// fixed-point pixels per frame (0x10000 when created); also scales a
+  /// fixed-point pixels per frame (Q16_ONE when created); also scales a
   /// floating actor's bob.
   s32 gravity;
   /// Zeroed by FieldActor_Create and not read by the field; scene code keeps a

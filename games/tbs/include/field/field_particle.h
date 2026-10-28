@@ -32,8 +32,8 @@ struct FieldParticle {
   s32 speed;    ///< 16.16 fixed-point pixels per frame
   s32 speedMax; ///< 16.16 fixed-point pixels per frame
   s32 acceleration;        ///< 16.16 fixed-point pixels per frame, each frame
-  s32 scaleX;              ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;              ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleX;              ///< 16.16 fixed point, Q16_ONE full size
+  s32 scaleY;              ///< 16.16 fixed point, Q16_ONE full size
   u16 heading;             ///< 1/65536 turns
   s16 turnStepMax;         ///< 1/65536 turns a frame
   EffectCallback callback; ///< run each frame once callbackDelay is 0

@@ -46,7 +46,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   ((u32 *)&sprite->oam)[1] =
       ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
 #endif
-  sprite->sentinel = 0xff;
+  sprite->sentinel = 255;
   sprite->next = NULL;
   sprite->x = x;
   sprite->y = y;
@@ -273,8 +273,8 @@ void ScanlineWindow_FillSpans(void *spans) {
   }
 }
 
-/// Fills the top-left `width` x `height` tiles of the 32-tile-wide BG screen
-/// block at 0x06002000 with the tilemap entry `value`. The first two
+/// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, 32
+/// tiles wide, with the tilemap entry `value`. The first two
 /// parameters are ignored.
 void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
                        s32 value) {

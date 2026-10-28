@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "scene.h"
 
 /// The byte at 0x5a of an actor, as the field its bit 0 is set through.
@@ -19,7 +20,7 @@ static __inline__ void Actor_CommitPositionAndActivate_(s32 actor,
 
 void Func_020005e8(s32 actor) {
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 648, 200);
-  Func_02003534(gMainRoutineWork.currentOwner, 0);
+  Func_02003534(gMainRoutineWork.currentOwner, FACING_EAST);
   FieldEvent_Wait(5);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 6);
   FieldEvent_Wait(7);
@@ -32,7 +33,7 @@ void Func_020005e8(s32 actor) {
    * store aliases the owner's load that follows, which the scheduler then puts
    * before the zero (differ 2). */
   ((struct ActorSolid *)Actor_GetById(gMainRoutineWork.currentOwner))->solid |= 1;
-  Func_02003534(gMainRoutineWork.currentOwner, 0);
+  Func_02003534(gMainRoutineWork.currentOwner, FACING_EAST);
   FieldEvent_Wait(10);
 }
 

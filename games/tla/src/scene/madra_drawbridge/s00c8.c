@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Func_020002a8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -56,7 +57,7 @@ void Func_020000c8(void) {
     Func_02000340(0);
     if (FlagCheck(0x301) == 0) {
       Func_02000328(0x18000, 0x3000);
-      Camera_MoveWithinMapBounds(0xa40000, -1, 0x1040000, 1);
+      Camera_MoveWithinMapBounds(PIXELS(164), -1, PIXELS(260), 1);
       ObjPlace(gMainRoutineWork.currentOwner, 158, 316);
     }
     Actor_GetById(8)->actionFlags &= ~1;
@@ -66,10 +67,10 @@ void Func_020000c8(void) {
     Actor_WaitForMoveById(9);
     Actor_GetById(8)->actionFlags |= 1;
     Actor_GetById(9)->actionFlags |= 1;
-    ObjArm(8, 0x4000, 0);
-    ObjArm(9, 0x4000, 0);
+    ObjArm(8, FACING_SOUTH, 0);
+    ObjArm(9, FACING_SOUTH, 0);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FlagSet(0x200);
     Func_02000338();
     MapCopyAttr(11, 9, 4, 1, 8, 14);

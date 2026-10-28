@@ -1,5 +1,6 @@
 #include "shrine_of_the_sea_god.h"
 #include "scene_ids.h"
+#include "scene_tables.h"
 
 struct ShrineOfTheSeaGodSpot {
   s32 x;
@@ -219,7 +220,7 @@ void Func_0200320c(void) {
   Actor_SetSpritePriority(14, 1);
   ShrineOfTheSeaGod_TaskAdd(Func_02001088, 0x480);
   if (GameFlag_Test(0x230)) {
-    ShrineOfTheSeaGod_ObjSetPos(block, 408 << 16, -0xd0000, 336 << 16);
+    ShrineOfTheSeaGod_ObjSetPos(block, 408 << 16, -(13 << 16), 336 << 16);
     ((struct ShrineOfTheSeaGodSprite *)block->sprite)->rotation = 0x1000;
     Actor_SetSpritePriority(14, 3);
     block->priorityFlags |= 2;

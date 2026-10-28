@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
@@ -43,7 +44,7 @@ void Func_02001518(void) {
 
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x, z);
   }
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 10);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
   object->motionFlags = 0;
   /* FAKEMATCH: through Call4 each -1 is built on its own, as in the native;

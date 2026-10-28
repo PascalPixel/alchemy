@@ -41,8 +41,9 @@ void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
   Dma_Fill32(0, work, 0x298);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
   FieldEffect_AdvanceHueCycle();
-  // 0x200000 is PALETTE_TINT_CUSTOM: the BG colours tinted by the hue.
-  PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000, 1);
+  // PALETTE_TINT_CUSTOM: the BG colours tinted by the hue.
+  PaletteFade_SetTarget(
+      RGB(work->red, work->green, work->blue) | PALETTE_TINT_CUSTOM, 1);
   PaletteFade_StartInterpolation(8);
   work->sourceId = x;
   work->targetId = y;
@@ -97,8 +98,8 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   work->page ^= 1;
   // Every other frame the tint takes the next hue, in one frame.
   if (work->page != 0) {
-    PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000,
-                          1);
+    PaletteFade_SetTarget(
+        RGB(work->red, work->green, work->blue) | PALETTE_TINT_CUSTOM, 1);
     PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
@@ -243,7 +244,7 @@ void FieldEffect_SetCallbackWhenTargetUnset(struct Actor *actor) {
   s32 targetX;
 
   targetX = object->targetX;
-  if (targetX == 0x80000000) // no destination
+  if (targetX == ACTOR_NO_TARGET) // no destination
   {
     targetY = object->targetY;
     if ((targetY == targetX) && (object->targetZ == targetY)) {
@@ -282,7 +283,6 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
-  // 0x480 is TASK_PASS_VBLANK.
   Task_Add(FieldEffect_ArmBg0HBlankDma, TASK_PASS_VBLANK);
 }
 

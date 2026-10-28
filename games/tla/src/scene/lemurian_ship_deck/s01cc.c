@@ -1,8 +1,9 @@
 #include "types.h"
+#include "io_reg.h"
 
 extern u32 gFrameCount;
 
-#define OBJ_PALETTE ((volatile u16 *)0x05000160)
+#define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
 void Func_020001cc(void) {
   if ((gFrameCount & 7) == 0) {

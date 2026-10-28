@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "ankohl_ruins.h"
 #include "lib/call.h"
 
@@ -31,7 +32,8 @@ void Func_02000c24(s32 unused, s32 id) {
   Func_02002e44();
   Call1((void (*)())Func_02002edc, 0);
   Call3((void (*)())Func_02002e24, 0x20000, 0x20000, 0x10000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xd80000, -1, 0x3020000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(216), -1, PIXELS(770),
+        1);
   Call1((void (*)())FieldEvent_Wait, 15);
   Call1((void (*)())Func_02002eec, 202);
   toColumn = 12;
@@ -81,7 +83,7 @@ void Func_02000e60(s32 unused, s32 id) {
   FieldEvent_Wait(15);
   Func_02002eec(202);
   AnkohlRuins_Call2df4(29, 70, 3, 1, 12, 71);
-  AnkohlRuins_CamBounds(0xd80000, -1, 0x780000, 1);
+  AnkohlRuins_CamBounds(PIXELS(216), -1, PIXELS(120), 1);
   AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
   FieldEvent_Wait(60);
   Func_02002eec(0x23f);

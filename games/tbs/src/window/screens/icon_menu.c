@@ -531,7 +531,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   IconMenu_AddIcon(COMMAND_ICON_DJINN);
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
-  IconMenu_Center(0x11, ANIMATE_ENTRIES_ROW, 0);
+  IconMenu_Center(17, ANIMATE_ENTRIES_ROW, 0);
   command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
   PartyStatus_CloseWithMenu();
@@ -569,9 +569,9 @@ s32 FileList_SelectAction(void) {
   }
   if (fileState == 3) {
     group = 1;
-  } else if (fileState == 0x67) {
+  } else if (fileState == SAVE_SCAN_ALL_CLEARED + 3) {
     group = 2;
-  } else if (fileState > 0x64) {
+  } else if (fileState > SAVE_SCAN_ALL_CLEARED) {
     group = 3;
   } else {
     initial = 1;
@@ -593,7 +593,7 @@ s32 FileList_SelectAction(void) {
   if (gTitleSendOptionEnabled != 0) {
     IconMenu_AddIcon(COMMAND_ICON_SEND);
   }
-  IconMenu_Center(0x11, TYPE_MENU_WIDTH, 0);
+  IconMenu_Center(17, TYPE_MENU_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
   if (result >= 0) {

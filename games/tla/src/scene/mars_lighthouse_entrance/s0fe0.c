@@ -1,6 +1,7 @@
 #include "room.h"
 #include "call.h"
 #include "io_reg.h"
+#include "scene_tables.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02000df0(void);
@@ -18,14 +19,13 @@ void Func_02000fe0(const u8 *event) {
   GameFlag_SetByte(0x348, z >> 20);
   Func_02004ca8();
   Func_02004da0(0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   leader->update = 0;
   Func_02004d00(gMainRoutineWork.currentOwner, 0x100, 0);
   Func_02004bc0(leader, 27);
   Actor_SetAnimationSpeed(leader, 48);
   wait(30);
-  leader->angle = 0x4000;
+  leader->angle = FACING_SOUTH;
   leader->motionFlags = 0;
   if ((event[3] & 64) == 0) {
     {

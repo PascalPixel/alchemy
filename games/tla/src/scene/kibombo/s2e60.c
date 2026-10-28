@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
@@ -43,7 +44,7 @@ void Func_02002e60(void) {
     Func_02005b0c(29, 0, 0);
     Actor_SetSpritePriority(30, 2);
   } else {
-    Kibombo_ObjSetPos(Actor_GetById(29), 0x780000, 0, 0xa80000);
+    Kibombo_ObjSetPos(Actor_GetById(29), PIXELS(120), 0, PIXELS(168));
     Actor_SetSpritePriority(30, 3);
   }
 }
@@ -53,6 +54,6 @@ void Func_02002eb0(void) {
     struct KibomboObject *object = Actor_GetById(27);
 
     Actor_SetPositionAndResetMotion(gData_02007950, object->x,
-                                     object->y + 0xc0000, object->z);
+                                    object->y + PIXELS(12), object->z);
   }
 }

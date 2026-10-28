@@ -58,5 +58,5 @@ struct WindowSprite *WindowSprite_CreateFromResource(s32 arg0, s32 arg1,
   if (no < 0) {
     return NULL;
   }
-  return WindowSprite_Create(no, 0x40000000, arg2, arg3, arg4);
+  return WindowSprite_Create(no, OUTPUT_SIZE_16X16, arg2, arg3, arg4);
 }

@@ -29,7 +29,7 @@ struct SolSanctumRingEntry {
   s32 speedX;
   s32 speedY;
   s32 speedZ;
-  s32 scale;     ///< 16.16 fixed point, where 0x10000 is full size
+  s32 scale;     ///< 16.16 fixed point, where Q16_ONE is full size
   s32 scaleStep; ///< 16.16 fixed point
   u8 timer;
   u8 hold;
@@ -91,9 +91,9 @@ static void SolSanctum_UpdateRing(void) {
         scale += step;
         if (scale >= gSolSanctumRing_MaxScales[i]) {
           step = -gSolSanctumRing_ScaleSteps[i];
-        } else if (scale <= 0x1999) {
+        } else if (scale <= Q16_ONE / 10) {
           step = gSolSanctumRing_ScaleSteps[i];
-          scale = 0x1999;
+          scale = Q16_ONE / 10;
           hold = 24;
           x = actor->x.fixed;
           y = actor->y.fixed;

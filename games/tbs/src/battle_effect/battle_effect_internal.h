@@ -212,6 +212,13 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The bytes of one set of the ten mote cells: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
 
+/// The bytes of the six glint cells that open the tornado sheet, the sum of
+/// their pictures in gBattleEffect_GlintCells' order (its widths by its
+/// heights). The tornado strips, and the bolts or bursts some effects decode
+/// over them, follow.
+#define GLINT_SET_BYTES                                                        \
+  (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
+
 /// Particle sheets hold ten mote cells, 1x2 to 10x20 pixels. Draws mote cell
 /// `size` (size pixels wide, twice that tall) of `sheet` through blitter
 /// `draw`, centred across x and standing on y: the motes, sparks and dust of
@@ -273,7 +280,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// BG2 shows the canvas from screen line 16 down (BG2Y is -16.0), stretched to
 /// twice its width: the 128x128 canvas across the battle view.
 #define EFFECT_SET_CANVAS_AFFINE()                                             \
-  (REG_BG2X = 0, REG_BG2Y = -0x1000, REG_BG2PA = Q_8_8(0.5), REG_BG2PB = 0,    \
+  (REG_BG2X = 0, REG_BG2Y = -(16 << 8), REG_BG2PA = Q_8_8(0.5), REG_BG2PB = 0, \
    REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
 
 /// Writes one row of BG2's map for the canvas: its 16 tiles of row `row` in

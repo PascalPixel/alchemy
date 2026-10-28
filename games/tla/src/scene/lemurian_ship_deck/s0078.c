@@ -4,6 +4,7 @@
 #include "actor.h"
 
 #include "flag_call.h"
+#include "scene_tables.h"
 struct Actor *Actor_GetById(s32 id);
 void Func_02001f5c(void);
 void Func_02001f64(void);
@@ -42,7 +43,7 @@ void Func_02000078(void) {
 
       if (object != 0) {
         object->motionFlags = 0;
-        object->y = 0x200000;
+        object->y = PIXELS(32);
       }
     }
     i++;

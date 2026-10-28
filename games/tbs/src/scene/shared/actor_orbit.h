@@ -43,12 +43,12 @@ void Scene_FloatNut(s32 id) {
   actor->mode = zero;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
-    actor->y += 0x200000;
+    actor->y += PIXELS(32);
 
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
 
-  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_NUT);
   transfer += 0x400;
   VramCache_Load(sprite->palette, 128, transfer);

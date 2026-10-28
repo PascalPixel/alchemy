@@ -203,7 +203,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     }
   }
   {
-    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    volatile u16 *channel = REG_DMA0;
     u16 control;
 
     /* FAKEMATCH: the one-pass blocks read the control word before the mask is
@@ -217,7 +217,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
      * address (differ 2 without the barrier). */
     __asm__("");
     (void)channel[5];
-    Dma_Set(gMapCellBuffer + 0x82, (void *)0x04000040, 0xa2600001,
-            (volatile u32 *)channel);
+    Dma_Set(gMapCellBuffer + 0x82, (void *)&REG_WIN0H,
+            DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }
 }

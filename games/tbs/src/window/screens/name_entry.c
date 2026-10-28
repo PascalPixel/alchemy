@@ -15,6 +15,9 @@ UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 // letter before them.
 #define NAME_VOICED_MARK 0xde     ///< dakuten
 #define NAME_SEMIVOICED_MARK 0xdf ///< handakuten
+// The keyboard's keys for them, as its tilemap's low bytes hold them.
+#define NAME_VOICED_KEY 0xfe
+#define NAME_SEMIVOICED_KEY 0xff
 
 /// Returns whether `mark` may follow `letter` in a Japanese name: any
 /// character but a voicing mark may, and a voicing mark only after a letter
@@ -51,7 +54,7 @@ s32 NameEntry_CountLetters(const u8 *name) {
 #endif
 
 /// Decompresses the type-01 tilemap `source` and copies it over `window`'s
-/// rectangle, both into the BG screen block at 0x06002000 and into the UI
+/// rectangle, both into WINDOW_TILEMAP_VRAM and into the UI
 /// tilemap that mirrors it.
 void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
   struct WindowWork *work = WINDOW_WORK;
@@ -136,7 +139,7 @@ void NameEntry_LoadPointingHandTiles(s32 slot) {
 
 /// Loads the 16x16 sprite gNameEntry_CaretTiles into VRAM slot `slot`.
 void NameEntry_LoadCaretTiles(s32 slot) {
-  VramCache_Load(slot, 0x80, gNameEntry_CaretTiles);
+  VramCache_Load(slot, 2 * 2 * TILE_SIZE_4BPP, gNameEntry_CaretTiles);
 }
 
 // The name entry screen: a keyboard window of letter keys, with a column of
@@ -322,7 +325,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY32(8),
           REG_DMA3);
-  palette[4] = 0x6318;
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   end = (u8 *)(originalLength + (s32)editedName);
   while (1) {
     s32 width = 1;
@@ -596,7 +599,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY32(8),
           REG_DMA3);
-  palette[4] = 0x6318;
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   while (1) {
     s32 width = 1;
 
@@ -800,10 +803,10 @@ s32 NameEntry_EditMemberName(s32 member) {
       // Key glyphs use the low byte of the mirrored tilemap entries.
       letter = ((u8 *)&work->tilemap)[cell * 2];
       // The keyboard's dakuten key.
-      if (letter == 0xfe)
+      if (letter == NAME_VOICED_KEY)
         letter = NAME_VOICED_MARK;
       // The keyboard's handakuten key.
-      if (letter == 0xff)
+      if (letter == NAME_SEMIVOICED_KEY)
         letter = NAME_SEMIVOICED_MARK;
       // A full name still takes a voicing mark on its last letter.
       if (letterCount == NAME_MAX_LETTERS &&

@@ -51,7 +51,8 @@ restart:
       } while (delay >= 0);
     }
     if (gSerialReceiveDest == 0) {
-      Dma_Set(gMapCellBuffer, (void *)0x06001000, 0x840000a0, REG_DMA3);
+      Dma_Set(gMapCellBuffer, (void *)0x06001000, DMA_COPY_WORDS(160),
+              REG_DMA3);
       goto restart;
     }
     wait(1);

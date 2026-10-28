@@ -39,7 +39,7 @@ void Func_02001bb0(void) {
   }
   Call1(Actor_WaitForMoveById, 8);
   Call3(Func_0200290c, 8, 0, 0);
-  Call1(FieldEvent_Wait, 0xa);
+  Call1(FieldEvent_Wait, 10);
   Call3(Actor_CommitPositionAndActivate, 5, -16, 0);
   Func_020028bc();
 }

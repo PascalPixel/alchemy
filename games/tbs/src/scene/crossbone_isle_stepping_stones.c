@@ -95,7 +95,7 @@
 enum CrossboneIsleSteppingStonesActorId {
   /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
-  /// sprite 0x100), the only actors those rooms place.
+  /// SPRITE_SPIRAL_PILLAR), the only actors those rooms place.
   /// ★ Named from what the player sees: tan stone pillars over the pit,
   /// pillars of ice on the spikes, and grey carved pillars stacked two high
   /// (its render)
@@ -107,8 +107,8 @@ enum CrossboneIsleSteppingStonesActorId {
   /// ★ Named from what the player sees: logs lying on the cave floor (its
   /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  /// CrossboneIsleDragonStatue's boulder for Move, sprite 0x125, which sinks
-  /// into place at column 16.
+  /// CrossboneIsleDragonStatue's boulder for Move, SPRITE_TURNING_ROCK, which
+  /// sinks into place at column 16.
   /// ★ Named from what the player sees: a round grey boulder below the logs
   /// (its render)
   ACTOR_SINKING_BOULDER = ACTOR_FIRST_LOG + 2,
@@ -123,12 +123,12 @@ enum CrossboneIsleSteppingStonesActorId {
   /// ★ Named from what the player sees: the puddle by the dragon statue,
   /// drawn frozen around its pillar (its render)
   ACTOR_THIRD_PUDDLE,
-  /// The pillar in CrossboneIsleDragonStatue's third puddle, sprite 0x122,
+  /// The pillar in CrossboneIsleDragonStatue's third puddle, sprite 290,
   /// which rises 32 pixels as Frost freezes the puddle.
   /// ★ Named from what the player sees: a narrow dark pillar standing in the
   /// third puddle (its render)
   ACTOR_RISING_PILLAR,
-  /// CrossboneIsleFloodgate's water, sprite 0xd6, raised behind the closed
+  /// CrossboneIsleFloodgate's water, SPRITE_SPLASH, raised behind the closed
   /// floodgate.
   /// ★ Named from what the player sees: the stream's green water, which the
   /// closed floodgate backs up (its render)
@@ -780,9 +780,9 @@ static void CrossboneIsleSteppingStones_PrepareWaterScroll(void) {
   *destination++ = *source++;
   *destination = *source;
   coordinates = (u16 *)sShakenScroll;
-  coordinates[1] += 0xc0;
-  coordinates[3] += 0xc0;
-  coordinates[5] += 0xc0;
+  coordinates[1] += 192;
+  coordinates[3] += 192;
+  coordinates[5] += 192;
 }
 
 /// Reveals the alternate water tiles through a gradually randomized scroll
@@ -1886,15 +1886,15 @@ struct ActorPlacement gCrossboneIsleSteppingStonesActorPlacements[] = {
 };
 
 struct ActorPlacement gCrossboneIsleIcePillarsActorPlacements[] = {
-    { 0x12a, CONDITION_ALWAYS, 7,
+    { SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(144), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x12a, CONDITION_ALWAYS, 7,
+    { SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(256), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x12a, CONDITION_ALWAYS, 7,
+    { SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(224), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x129, CONDITION_ALWAYS, 7,
+    { SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(280), 0, PIXELS(160), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x129, CONDITION_ALWAYS, 7,
+    { SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(184), 0, PIXELS(240), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
@@ -1916,19 +1916,19 @@ struct ActorPlacement gCrossboneIsleFloodgateActorPlacements[] = {
         PIXELS(272), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(352), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0xd6, CONDITION_ALWAYS, 7,
+    { SPRITE_SPLASH, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ActorPlacement gCrossboneIsleSteppingStonesActorPlacementsOther[] = {
-    { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(184), FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(680), 0, PIXELS(392), FACING_NORTH, TALK_FACING_KEEP, 0 },
-    { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
@@ -1938,7 +1938,7 @@ struct ActorPlacement gCrossboneIsleDragonStatueActorPlacements[] = {
         PIXELS(208), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(224), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x125, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(136), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -1946,7 +1946,7 @@ struct ActorPlacement gCrossboneIsleDragonStatueActorPlacements[] = {
         PIXELS(296), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x122, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };

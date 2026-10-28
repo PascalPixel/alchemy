@@ -6,8 +6,7 @@
 
 /// The smoke trails behind the spray, after the 128 spray particles in
 /// PARTICLES (28 bytes each, 0xe00 in all).
-#define BOREAS_ICE_BLOCK_TRAILS                                                \
-  ((struct Particle *)(Ram_MapGridCellBuffer + 0xe00))
+#define BOREAS_ICE_BLOCK_TRAILS (PARTICLES + 128)
 #define BOREAS_BIG_BLOCK_OFFSETS 0xc46      ///< the dropping 24x48 ice block
 #define BOREAS_FALLING_BLOCK_OFFSETS 0x14f9 ///< the diagonal 40x80 ice block
 
@@ -304,7 +303,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
                   gBoreas_DebrisHeights[cell]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
-          PARTICLES[i].velocityY += 0x2000;
+          PARTICLES[i].velocityY += Q16_ONE / 8;
         }
       }
     }

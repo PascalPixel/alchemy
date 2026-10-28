@@ -2,6 +2,7 @@
 #include "main_routine_work.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 void Func_0200120c(void);
 void Func_020012e4(s32 skip);
@@ -22,8 +23,9 @@ void Func_0200131c(s32 cue);
 void Func_020012bc(s32 countdown);
 
 static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer; as direct
-   * calls the coordinates are kept in callee-saved registers (79 differ). */
+  /* FAKEMATCH: scene calls reach the main image through one inline layer; as
+   * direct calls the coordinates are kept in callee-saved registers (79
+   * differ). */
   Actor_SetPositionAndReset(actor, x, z);
 }
 
@@ -65,7 +67,7 @@ void Func_020007d8(void) {
   Func_0200128c((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
   Func_02001294(22, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x8000, 10);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 10);
   Actor_Jump(5, 6, 15);
   Actor_Jump(5, 6, 23);
   Func_02001294(5, 0);

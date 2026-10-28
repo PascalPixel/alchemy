@@ -23,7 +23,7 @@ void Func_02000438(void) {
     sound = 3;
     drop = 9;
   }
-  Actor_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_GetById(4)->actionFlags &= ~1;
   Func_02000618_(96, 14, 72, 14, 2, 1);

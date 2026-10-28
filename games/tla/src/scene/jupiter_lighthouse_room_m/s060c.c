@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_room_m.h"
+#include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -16,8 +17,8 @@ void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_SetSpritePriority(u32 id, s32 variant);
 void Func_02004844(s32 id, s32 a, s32 b);
 
-static __inline__ void
-Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
+                                                           s32 dz) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 2 of 292
    * instructions differ in tla-en. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
@@ -56,7 +57,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
-                                                        s32 acceleration) {
+                                                 s32 acceleration) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 2 of 292
    * instructions differ in tla-en. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
@@ -78,7 +79,7 @@ void Func_0200060c(void) {
   Func_020047d4();
   Func_0200494c(0);
   Func_020049c4(124);
-  Camera_MoveWithinMapBounds_(194 << 18, -1, 208 << 16, 1);
+  Camera_MoveWithinMapBounds_(194 << 18, -1, PIXELS(208), 1);
   Func_020048f4();
   FieldEvent_Wait(6);
   Func_020049c4(217);
@@ -107,7 +108,7 @@ void Func_0200060c(void) {
     Func_020049c4(310);
     object->gravity = 0x8000;
     object->motionFlags = 2;
-    object->terrainHeight = -0x500000;
+    object->terrainHeight = PIXELS(-80);
     i = 0;
     if (object->y > object->terrainHeight) {
       do {
@@ -120,7 +121,7 @@ void Func_0200060c(void) {
     Func_0200475c_(0x30000, 0x30000, 0xf333);
     Func_020049c4(134);
     object->gravity = 0x10000;
-    object->velocityY = 0x60000;
+    object->velocityY = PIXELS(6);
     Actor_SetSpeedParameters_(23, 0x18000, 0xc000);
     if (spot == 2)
       Actor_OffsetPositionAndResetMotion_(23, -32, 0);
@@ -129,7 +130,7 @@ void Func_0200060c(void) {
     FieldEvent_Wait(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     object->gravity = 0x8000;
-    object->terrainHeight = -0xf00000;
+    object->terrainHeight = PIXELS(-240);
     FieldEvent_Wait(80);
     Func_0200475c_(0x50000, 0x50000, 0x10000);
     Func_020049c4(144);
@@ -145,7 +146,7 @@ void Func_0200060c(void) {
     Func_020049c4(310);
     object->gravity = 0x8000;
     object->motionFlags = 2;
-    object->terrainHeight = -0xf00000;
+    object->terrainHeight = PIXELS(-240);
     FieldEvent_Wait(20);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     FieldEvent_Wait(60);

@@ -27,7 +27,7 @@ s32 Func_0200008c(void) {
   } else {
     Call1(Func_02000a18, (s32)MsgYallamInteriors33);
   }
-  Call2(Func_02000a28, 0xe, 0);
+  Call2(Func_02000a28, 14, 0);
   Func_020009b8();
   return 0;
 }

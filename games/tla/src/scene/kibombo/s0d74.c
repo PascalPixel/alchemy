@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Func_02005c7c(void);
 void Func_02002eb0(void);
@@ -12,26 +13,26 @@ void Func_02000d74(void) {
   Func_020032c8();
   Func_02005c9c(0);
   Func_02005b64(17, 0);
-  Kibombo_ObjArm(7, 0, 0);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0, 0);
-  Kibombo_ObjArm(26, 0, 0);
-  Kibombo_ObjArm(5, 0, 0);
-  Kibombo_ObjArm(6, 0, 10);
+  Kibombo_ObjArm(7, FACING_EAST, 0);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Kibombo_ObjArm(26, FACING_EAST, 0);
+  Kibombo_ObjArm(5, FACING_EAST, 0);
+  Kibombo_ObjArm(6, FACING_EAST, 10);
   Func_02005ba4(0x4cccc, 0x9999);
-  Kibombo_CamMove(0x1080000, -1, 0x1840000, 1);
+  Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
   Func_02005bb4();
   FieldEvent_Wait(40);
-  Kibombo_ObjArm(17, 0x3000, 20);
+  Kibombo_ObjArm(17, FACING_SOUTHEAST + FACING_STEP, 20);
   Motion_SetModeAndWaitAnimation(17, 3);
   Func_02005b64(0x4011, 0);
   Func_02005c9c(26);
   Actor_SetSingleChildFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
-  Kibombo_ObjSetPos(Actor_GetById(27), 0x1090000, 0x180000, 0x1580000);
+  Kibombo_ObjSetPos(Actor_GetById(27), PIXELS(265), PIXELS(24), PIXELS(344));
   Func_02005ba4(0x6666, 0xccc);
-  Kibombo_CamMove(0x1080000, -1, 0x1540000, 1);
+  Kibombo_CamMove(PIXELS(264), -1, PIXELS(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
-  Kibombo_ObjWalk(17, 0x108, 0x176);
+  Kibombo_ObjWalk(17, 264, 374);
   Kibombo_TaskAdd(Func_02002eb0, 0x480);
   FieldEvent_Wait(20);
   Task_RemoveFar(Func_02002ccc);
@@ -56,30 +57,30 @@ void Func_02000d74(void) {
   Task_RemoveFar(Func_02002eb0);
   wait(1);
   Func_02005b0c(27, 0, 0);
-  Kibombo_ObjArm(17, 0xd000, 0);
+  Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
   if (gData_02007950 != 0) {
     if (gData_02007950->y > 0x240000) {
     wait:
-      Kibombo_ObjArm(17, 0xd000, 0);
+      Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
       gData_02007950->y += 0xffffc000;
       wait_(1);
       if (gData_02007950->y > 0x240000)
         goto wait;
     }
   }
-  Kibombo_ObjTurn(17, 0x3000);
+  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Func_02005b64(17, 0);
   Func_02005ba4(0x4cccc, 0x9999);
-  Kibombo_CamMove(0x1080000, 0x100000, 0x1a40000, 1);
+  Kibombo_CamMove(PIXELS(264), PIXELS(16), PIXELS(420), 1);
   Kibombo_ObjSpeed(17, 0x19999, 0xcccc);
-  Kibombo_ObjWalk(17, 0x108, 0x188);
+  Kibombo_ObjWalk(17, 264, 392);
   FieldEvent_Wait(20);
   Func_02005b64(0x8011, 0);
   Func_02005c9c(148);
   Func_02005c9c(11);
   Func_020032b0();
   FieldEvent_Wait(80);
-  Kibombo_CamMove(0x580000, 0x200000, 0x1880000, 1);
+  Kibombo_CamMove(PIXELS(88), PIXELS(32), PIXELS(392), 1);
   Func_02005bb4();
   FieldEvent_Wait(40);
   Func_02005b64(7, 0);
@@ -89,34 +90,34 @@ void Func_02000d74(void) {
   Func_02005b64(7, 0);
   Actor_SetSpritePriority(7, 2);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
-  Kibombo_ObjWalk(7, 152, 0x182);
-  Kibombo_ObjArm(7, 0xe000, 40);
-  Kibombo_ObjArm(7, 0x2000, 20);
-  Kibombo_ObjArm(7, 0xe000, 20);
-  Kibombo_ObjArm(7, 0x2000, 40);
+  Kibombo_ObjWalk(7, 152, 386);
+  Kibombo_ObjArm(7, FACING_NORTHEAST, 40);
+  Kibombo_ObjArm(7, FACING_SOUTHEAST, 20);
+  Kibombo_ObjArm(7, FACING_NORTHEAST, 20);
+  Kibombo_ObjArm(7, FACING_SOUTHEAST, 40);
   Func_02005b64(7, 0);
-  Kibombo_ObjWalk(7, 124, 0x164);
-  Kibombo_ObjArm(7, 0xe000, 20);
-  Kibombo_ObjArm(7, 0xa000, 20);
-  Kibombo_ObjArm(7, 0xe000, 20);
+  Kibombo_ObjWalk(7, 124, 356);
+  Kibombo_ObjArm(7, FACING_NORTHEAST, 20);
+  Kibombo_ObjArm(7, FACING_NORTHWEST, 20);
+  Kibombo_ObjArm(7, FACING_NORTHEAST, 20);
   Func_02005b64(0x2007, 0);
-  Kibombo_ObjArm(5, 0x2000, 0);
+  Kibombo_ObjArm(5, FACING_SOUTHEAST, 0);
   Func_02005b64(5, 0);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0xe000, 40);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 40);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
-  Actor_ResetAndSetPositionInMode2(26, 104, 0x170);
+  Actor_ResetAndSetPositionInMode2(26, 104, 368);
   FieldEvent_Wait(20);
   Func_02005ba4(0xcccc, 0x1999);
-  Kibombo_CamMove(0x6f0000, -1, 0x1640000, 1);
+  Kibombo_CamMove(PIXELS(111), -1, PIXELS(356), 1);
   Actor_WaitForMoveById(26);
   Actor_SetModeById(26, 1);
-  Kibombo_ObjArm(26, 0xd000, 40);
+  Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 40);
   Func_02005b94(26, 0x100, 20);
   Func_02005b64(26, 0);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0xc000, 0);
-  Kibombo_ObjArm(5, 0xc000, 0);
-  Kibombo_ObjArm(6, 0xc000, 0);
-  Kibombo_ObjArm(26, 0x5000, 20);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Kibombo_ObjArm(5, FACING_NORTH, 0);
+  Kibombo_ObjArm(6, FACING_NORTH, 0);
+  Kibombo_ObjArm(26, FACING_SOUTH + FACING_STEP, 20);
   Kibombo_MessageOpen(0x601a, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Kibombo_MessagePut(0x601a, 0);

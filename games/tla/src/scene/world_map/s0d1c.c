@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -39,6 +40,6 @@ void Func_02000d4c(void) {
    * loads the two positions; a direct call and a forwarding inline load the
    * positions first. */
   __asm__ volatile("" : "+r"(a), "+r"(id));
-  Func_02004c90(id, 0x27b80000, 0x25b00000, a);
+  Func_02004c90(id, PIXELS(10168), PIXELS(9648), a);
   GameFlag_SetBit(0xa77);
 }

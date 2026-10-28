@@ -3,6 +3,7 @@
 #include "motobj.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "fixed_math.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -85,7 +86,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
     FieldParticle_SetCallback(slot, Func_080d7b04);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
-    scale = Random16() / 3 + 0x10000;
+    scale = Random16() / 3 + Q16_ONE;
     slot->scaleY = scale;
     slot->scaleX = scale;
     count--;

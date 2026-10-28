@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "fixed_math.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -34,7 +35,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->velocityY = 0x60000;
       object->scaleX = 0x6666;
       object->scaleY = 0x6666;
-      while (object->scaleX < 0x10000) {
+      while (object->scaleX < Q16_ONE) {
         wait(1);
         scale = object->scaleX + 0x51e;
         {
@@ -49,8 +50,8 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
         object->scaleX = scale;
         object->scaleY = scale;
       }
-      object->scaleX = 0x10000;
-      object->scaleY = 0x10000;
+      object->scaleX = Q16_ONE;
+      object->scaleY = Q16_ONE;
       object->angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x8000;
       Func_02000e20(scene, entrance);
     }

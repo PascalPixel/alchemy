@@ -54,7 +54,7 @@ void Func_0200322c(void) {
   Func_02005880();
   Func_020059e8(0);
   Func_02005970_(0x20000, 0x4000);
-  Camera_MoveWithinMapBounds_(0x1000000, -1, 0x1080000, 1);
+  Camera_MoveWithinMapBounds_(PIXELS(256), -1, PIXELS(264), 1);
   Func_020058f0(5, 4);
   Func_020058f0(6, 4);
   Func_020058f0(7, 4);

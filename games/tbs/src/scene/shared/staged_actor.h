@@ -62,7 +62,7 @@ PushedActor_FindAtTile(const struct FieldPosition *position,
       continue;
 #endif
     if ((position->x >> 20) == (actor->x.fixed >> 20) &&
-        (position->y / 0x10000) == (actor->y.fixed / 0x10000) &&
+        (position->y / PIXELS(1)) == (actor->y.fixed / PIXELS(1)) &&
         (position->z >> 20) == (actor->z.fixed >> 20)) {
       return actor;
     }
@@ -104,7 +104,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
     return;
 
   dst.x = next->x.fixed;
-  dst.y = next->y.fixed + 0x100000;
+  dst.y = next->y.fixed + PIXELS(16);
   dst.z = next->z.fixed;
   blocker = PushedActor_FindAtTile(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
@@ -123,7 +123,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
     return;
 
   Actor_SelectAnimation(lead, 8);
-  rate = 0x3333;
+  rate = PIXELS(1) / 5;
   wait(15);
   Sound_Play(SE_PUSH);
   next->speedLimit = rate;
@@ -372,9 +372,9 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
         if (FieldActor_CheckMovementCollision(actor, &probe->position) == 2) {
           goto found;
         }
-        probe->position.x += 0x100000;
+        probe->position.x += PIXELS(16);
       }
-      probe->position.z += 0x100000;
+      probe->position.z += PIXELS(16);
     }
     steps++;
     position.x += gPushedActor_DirectionSteps[direction] & 0xffff0000;
@@ -439,8 +439,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     horizontalExtent = (extentA + extentB) >> 4;
   }
 
-  actor->speedLimit = 0x8000;
-  actor->acceleration = 0x1999;
+  actor->speedLimit = PIXELS(1) / 2;
+  actor->acceleration = PIXELS(1) / 10;
   originalPosition.x = actor->x.fixed;
   originalPosition.z = actor->z.fixed;
   {
@@ -457,19 +457,19 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   PushedActor_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                          horizontalExtent, verticalExtent,
                                          CELL_BEHAVIOR_NORMAL);
-  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
+  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
 
   {
     s32 horizontalDelta = probe.position.x - originalPosition.x;
     if (horizontalDelta < 0)
-      horizontalDelta += 0x1ffff;
+      horizontalDelta += PIXELS(2) - 1;
     horizontalDelta >>= 17;
     {
       s32 verticalDelta = probe.position.z - originalPosition.z;
       if (verticalDelta < 0)
-        verticalDelta += 0x1ffff;
+        verticalDelta += PIXELS(2) - 1;
       verticalDelta >>= 17;
       Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, horizontalDelta,
                                          verticalDelta);
@@ -493,7 +493,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
                            probe.position.z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x1999);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(1) / 10);
 
   {
     s32 packedOrientation = gPushedActor_DirectionSteps[direction];

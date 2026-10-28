@@ -89,8 +89,8 @@ void Func_02003900(void) {
 
   Func_02005880();
   Func_020059e8(0);
-  Func_020058e0_(gMainRoutineWork.currentOwner, 0, 0x3f80000);
-  Func_020058e0_(8, 0x3f80000, 0x3f80000);
+  Func_020058e0_(gMainRoutineWork.currentOwner, 0, PIXELS(1016));
+  Func_020058e0_(8, PIXELS(1016), PIXELS(1016));
   for (i = 9; i < 80; i++) {
     struct Actor *object = Actor_GetById(i);
 
@@ -143,22 +143,22 @@ void Func_02003900(void) {
   FieldEvent_Wait(1);
   ((struct ActorSolid *)Actor_GetById(13))->solid |= 1;
   FieldEvent_Wait(60);
-  Actor_ArmCallback_(13, 0x4000, 0);
+  Actor_ArmCallback_(13, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(13, 4);
   Func_02005940(8, 0);
-  Actor_ArmCallback_(13, 0xa000, 0);
+  Actor_ArmCallback_(13, FACING_NORTHWEST, 0);
   Motion_SetModeAndWaitAnimation(13, 3);
   FieldEvent_Wait(10);
   Actor_SetSpeedParameters_(13, 0x10000, 0x8000);
   Actor_CommitPositionAndActivate_(13, -16, -16);
-  Actor_ArmCallback_(13, 0x8000, 0);
+  Actor_ArmCallback_(13, FACING_WEST, 0);
   Func_02005a68(124);
   Actor_SetModeById(9, 6);
   FieldEvent_Wait(30);
   Func_02005940(8, 0);
   Actor_SetPositionAndReset_(13, 200, 168);
-  Actor_ArmCallback_(13, 0xc000, 0);
+  Actor_ArmCallback_(13, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   Func_02005a68(125);
   Actor_SetModeById(9, 5);
@@ -176,7 +176,7 @@ void Func_02003900(void) {
   Func_02005980();
   Func_02005940(8, 0);
   Func_02005940(8, 0);
-  Actor_ArmCallback_(14, 0xe000, 0);
+  Actor_ArmCallback_(14, FACING_NORTHEAST, 0);
   Motion_SetModeAndWaitAnimation(14, 3);
   FieldEvent_Wait(10);
   Actor_SetSpeedParameters_(14, 0x10000, 0x8000);
@@ -187,13 +187,13 @@ void Func_02003900(void) {
   Actor_SetModeById(12, 6);
   FieldEvent_Wait(30);
   Actor_SetPositionAndReset_(14, 350, 168);
-  Actor_ArmCallback_(14, 0xc000, 0);
+  Actor_ArmCallback_(14, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   Func_02005a68(125);
   Actor_SetModeById(11, 5);
   FieldEvent_Wait(40);
   Actor_SetPositionAndReset_(14, 364, 168);
-  Actor_ArmCallback_(14, 0xc000, 0);
+  Actor_ArmCallback_(14, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   Func_02005a68(125);
   Actor_SetModeById(12, 5);
@@ -202,7 +202,7 @@ void Func_02003900(void) {
   Map_Stamp(127, 3, 1, 2, 53, 3);
   Map_CopyCells(0, 127, 1, 1, 19, 8);
   FieldEvent_Wait(30);
-  Actor_ArmCallback_(14, 0xa000, 0);
+  Actor_ArmCallback_(14, FACING_NORTHWEST, 0);
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
   Func_02005940(8, 0);

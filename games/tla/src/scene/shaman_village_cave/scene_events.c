@@ -44,9 +44,9 @@ void Func_020003cc(void) {
   s32 angle;
 
   angle = 0x5000;
-  Call4((void (*)())Func_020010f0, 19, 0xe70000, 0xc70000, angle);
-  Call4((void (*)())Func_020010f0, 20, 0xdc0000, 0xbf0000, angle);
-  Call4((void (*)())Func_020010f0, 21, 0xcc0000, 0xbf0000, angle);
+  Call4((void (*)())Func_020010f0, 19, PIXELS(231), PIXELS(199), angle);
+  Call4((void (*)())Func_020010f0, 20, PIXELS(220), PIXELS(191), angle);
+  Call4((void (*)())Func_020010f0, 21, PIXELS(204), PIXELS(191), angle);
   return;
 }
 
@@ -55,7 +55,7 @@ void Func_02000404(void) {
 
   Call2((void (*)())Func_02001200, 22, 0x190);
   angle = 0xc000;
-  Call4((void (*)())Func_020010f0, 22, 0xd40000, 0xc70000, angle);
+  Call4((void (*)())Func_020010f0, 22, PIXELS(212), PIXELS(199), angle);
   Call1((void (*)())GameFlag_SetBit, 0xa73);
   return;
 }

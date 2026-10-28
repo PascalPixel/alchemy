@@ -54,7 +54,7 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   Func_02001014();
   SetFade(0, 0x100000, 0x10000);
   SetFade(-1, -1, 0xe666);
-  Func_0200106c(0x237);
+  Func_0200106c(567);
   options.startScaleX = 0x13333;
   options.startScaleY = 0x18000;
   options.priority = 1;

@@ -41,7 +41,7 @@ struct WindowSprite *RenderResource_CreateCommandIcon(s32 arg0, s32 arg1,
   entity = NULL;
   if (index != 0x60) {
     RenderResource_LoadCommandIcon(arg0, index, arg1);
-    entity = WindowSprite_Create(index, 0x80000000, arg2, arg3, arg4);
+    entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, arg2, arg3, arg4);
     entity->oam.palette256 = 1;
     entity->sentinel = 0xfb;
   }

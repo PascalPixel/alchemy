@@ -1,4 +1,5 @@
 #include "izumo.h"
+#include "scene_tables.h"
 
 const u8 *Func_020001ac(void) {
   if (GameFlag_Test(2343))
@@ -15,13 +16,12 @@ void Func_020001ec(void) {
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Test(3999)) {
-    Call3((void (*)())Func_02000d40, 64, 0x1c80000, 0x2480000);
+    Call3((void (*)())Func_02000d40, 64, PIXELS(456), PIXELS(584));
     if (object->x >> 20 == 28 && object->z >> 20 == 36) {
       Func_02000d00();
       Func_02000dd0(0);
       Func_02000d90(gMainRoutineWork.currentOwner, 258);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16, 0);
       object->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02000d08();
@@ -34,7 +34,7 @@ void Func_0200027c(void) {
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Test(4000)) {
-    Call3((void (*)())Func_02000d40, 65, 0x1d80000, 0x2280000);
+    Call3((void (*)())Func_02000d40, 65, PIXELS(472), PIXELS(552));
     if (object->x >> 20 == 29 && object->z >> 20 == 34) {
       Func_02000d00();
       Func_02000dd0(0);
@@ -65,13 +65,12 @@ void Func_0200036c(void) {
 
   Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Test(4001)) {
-    Call3((void (*)())Func_02000d40, 66, 0xa80000, 0x1480000);
+    Call3((void (*)())Func_02000d40, 66, PIXELS(168), PIXELS(328));
     if (object->x >> 20 == 10 && object->z >> 20 == 20) {
       Func_02000d00();
       Func_02000dd0(0);
       Func_02000d90(gMainRoutineWork.currentOwner, 258);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       object->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02000d08();

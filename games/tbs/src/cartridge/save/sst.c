@@ -21,19 +21,19 @@ u16 EraseFlashChip(void) {
 
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
 
-  *(volatile u8 *)0x0E005555 = 0xAA;
-  *(volatile u8 *)0x0E002AAA = 0x55;
-  *(volatile u8 *)0x0E005555 = 0x80;
-  *(volatile u8 *)0x0E005555 = 0xAA;
-  *(volatile u8 *)0x0E002AAA = 0x55;
-  *(volatile u8 *)0x0E005555 = 0x10;
+  FLASH_WRITE(0x5555, 0xAA);
+  FLASH_WRITE(0x2AAA, 0x55);
+  FLASH_WRITE(0x5555, 0x80);
+  FLASH_WRITE(0x5555, 0xAA);
+  FLASH_WRITE(0x2AAA, 0x55);
+  FLASH_WRITE(0x5555, 0x10);
 
   CopyFlashReadRoutineToRam(savedCode);
 
   waitForWrite = &gWaitForFlashWrite;
-  result = _call_via_r3(3, (u8 *)0x0E000000, 255, *waitForWrite);
+  result = _call_via_r3(3, (u8 *)FLASH_BASE, 255, *waitForWrite);
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 
   return result;
 }
@@ -64,11 +64,11 @@ u16 EraseFlashSector(u16 sector) {
   chip = gFlash;
   *waitcnt = setting | chip->wait[0];
 
-  target = (volatile u8 *)((sector << chip->sector.shift) + 0x0E000000);
+  target = (volatile u8 *)((sector << chip->sector.shift) + FLASH_BASE);
 
-  command = (volatile u8 *)0x0E005555;
+  command = (volatile u8 *)(FLASH_BASE + 0x5555);
   *command = 0xAA;
-  unlock = (volatile u8 *)0x0E002AAA;
+  unlock = (volatile u8 *)(FLASH_BASE + 0x2AAA);
   *unlock = 0x55;
   *command = 0x80;
   *command = 0xAA;
@@ -80,7 +80,7 @@ u16 EraseFlashSector(u16 sector) {
   waitForWrite = &gWaitForFlashWrite;
   result = _call_via_r3(2, (u8 *)target, 255, *waitForWrite);
 
-  *waitcnt = (*waitcnt & 0xFFFC) | 3;
+  *waitcnt = (*waitcnt & 0xFFFC) | WAITCNT_SRAM_8;
 
   return result;
 }
@@ -91,9 +91,9 @@ u16 EraseFlashSector(u16 sector) {
 u16 ProgramFlashByte(u8 *source, u8 *destination) {
   FlashWaitProc *waitForWrite;
 
-  *(volatile u8 *)0x0e005555 = 0xaa;
-  *(volatile u8 *)0x0e002aaa = 0x55;
-  *(volatile u8 *)0x0e005555 = 0xa0;
+  FLASH_WRITE(0x5555, 0xaa);
+  FLASH_WRITE(0x2AAA, 0x55);
+  FLASH_WRITE(0x5555, 0xa0);
   *destination = *source;
   waitForWrite = &gWaitForFlashWrite;
   return (*waitForWrite)(1, destination, *source);
@@ -126,7 +126,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
     return 0x80FF;
   }
 
-  destination = (u8 *)((sector << gFlash->sector.shift) + 0x0E000000);
+  destination = (u8 *)((sector << gFlash->sector.shift) + FLASH_BASE);
 
   // Run the blank check from a copy in ramCode; the byte reader replaces it
   // there once the sector is blank.
@@ -191,7 +191,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
     destination++;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | 3;
+  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
 
   return status;
 }

@@ -6,6 +6,7 @@
 #include "scene_ids.h"
 #include "frame.h"
 #include "field_sprite.h"
+#include "scene_tables.h"
 
 struct EventWork1ac {
   u8 unk000[0x1ac];
@@ -26,8 +27,7 @@ void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 s32 Math_Cosine(s32 angle);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Map_EnableUpdateCallback(void);
@@ -57,10 +57,10 @@ void Func_020015cc(void) {
   x >>= 20;
   z >>= 20;
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                                    (z << 4) + 8);
+                             (z << 4) + 8);
   wait(1);
-  Actor_SetPositionAndResetMotion(leader, (x << 20) + 0x80000, leader->y,
-                                   (z << 20) + 0x80000);
+  Actor_SetPositionAndResetMotion(leader, (x << 20) + PIXELS(8), leader->y,
+                                  (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_02001cdc()->y -= 0x80000;
 }

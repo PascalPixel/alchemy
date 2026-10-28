@@ -124,7 +124,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     // lines long that moves up a line each frame.
     row = work->bg2xLines;
     for (i = 0; i != 160; i++)
-      *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
+      *row++ = ((16 << 16) - Trig_Sin((frame + i) << 10) * 16) >> 10;
 
     EFFECT_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =

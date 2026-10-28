@@ -89,11 +89,11 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   // past that.
   for (frame = 0; frame != (gFire_Counts[work->args->variant] >> 1) + 132;
        frame++) {
-    // The camera turns 0x100 of yaw (1/256 of a turn) a frame over frames
-    // 17 to 79, about a quarter turn in all, while each frame takes one
-    // VBlank (BattleCamera_ApplyPhasedDelta).
+    // The camera turns 1/256 of a turn of yaw a frame over frames 17 to 79,
+    // about a quarter turn in all, while each frame takes one VBlank
+    // (BattleCamera_ApplyPhasedDelta).
     if (frame > 16 && frame < 80)
-      work->cameraDelta = 0x100;
+      work->cameraDelta = TRIG_TURN / 256;
     else
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[work->args->variant] >> 1) + 108)

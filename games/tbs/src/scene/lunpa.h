@@ -140,7 +140,7 @@ enum GateActorId {
 };
 
 /// How the switch's sparkle is stretched while Reveal shows it.
-enum { SPARKLE_SCALE_X = 0x13333, SPARKLE_SCALE_Y = 0x18000 };
+enum { SPARKLE_SCALE_X = 6 * Q16_ONE / 5, SPARKLE_SCALE_Y = 3 * Q16_ONE / 2 };
 
 /// Where Retreat at the gates sends the party
 /// (MainRoutineWork.retreatEntrance).

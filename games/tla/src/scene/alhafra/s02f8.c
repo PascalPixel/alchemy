@@ -29,16 +29,16 @@ void Func_020002f8(void) {
   Func_02001be4();
   Call1(Func_02001cfc, 0);
   Call1(Func_02001c74, (s32)MsgAlhafra69);
-  Call1(FieldEvent_Wait, 0xa);
-  Call3(Actor_SetAngleToward, 0x1b, FIELD_AT(gMainRoutineWork, s32, 532), 0);
-  Call1(FieldEvent_Wait, 0xa);
+  Call1(FieldEvent_Wait, 10);
+  Call3(Actor_SetAngleToward, 27, FIELD_AT(gMainRoutineWork, s32, 532), 0);
+  Call1(FieldEvent_Wait, 10);
   Call3(Func_02001c84, 0x1b, 0, 0xa);
   Call3(Func_02001c84, -1, 0, 0xa);
-  Call2(Actor_SetModeById, 0x1b, 1);
-  Call3(Actor_Jump, 0x1b, 6, 0xf);
-  Call3(Actor_Jump, 0x1b, 6, 0x17);
+  Call2(Actor_SetModeById, 27, 1);
+  Call3(Actor_Jump, 27, 6, 15);
+  Call3(Actor_Jump, 27, 6, 23);
   Call3(Func_02001c84, 0x1b, 0, 0);
   Call1(Func_02000398, 0x1b);
-  Call3(Actor_ArmCallback, 0x1b, 0x4000, 0);
+  Call3(Actor_ArmCallback, 27, 0x4000, 0);
   Func_02001bec();
 }

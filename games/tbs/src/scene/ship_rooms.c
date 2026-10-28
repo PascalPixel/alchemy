@@ -2477,7 +2477,7 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     actor = Actor_GetById(ACTOR_QUARTERS_KAJA);
     ShipRooms_RunEventCommand(SHIP_HIDE_QUARTERS_CREW, 0, 0);
     ShipRooms_PlaceActor(ACTOR_QUARTERS_CAPTAIN, 456, 652, FACING_EAST);
-    x = 0x1e0;
+    x = 480;
     ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, x, 600,
                          FACING_NORTHWEST + FACING_STEP);
     Actor_SetSpeed(ACTOR_QUARTERS_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2887,24 +2887,24 @@ static void ShipRooms_ShowRowing(void) {
   ShipRooms_InstallRowingDeckActors(0);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
   FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
-  FieldCamera_MoveWithinMapBounds(0x1b80000, -1, 0xb00000, 1);
+  FieldCamera_MoveWithinMapBounds(PIXELS(440), -1, PIXELS(176), 1);
   Event_Wait(20);
   Import_ActorSetAnimation(ACTOR_ROWING_DRUMMER, 7);
   Event_Wait(30);
   Sound_Play(SE_THUMP);
   Event_Wait(30);
   ShipRooms_InstallRowingDeckActors(16);
-  Event_Wait(0x50);
+  Event_Wait(80);
   ShipRooms_InstallRowingDeckActors(0);
-  Event_Wait(0x3c);
+  Event_Wait(60);
   Import_ActorSetAnimation(ACTOR_ROWING_DRUMMER, 7);
   Event_Wait(30);
   Sound_Play(SE_THUMP);
   Event_Wait(30);
   ShipRooms_InstallRowingDeckActors(16);
-  Event_Wait(0x50);
+  Event_Wait(80);
   ShipRooms_InstallRowingDeckActors(0);
-  Event_Wait(0x5a);
+  Event_Wait(90);
   Sound_Play(SE_THUMP);
   Event_Wait(30);
 
@@ -3009,7 +3009,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
-  x = 0x1b0;
+  x = 432;
   halfStep = PIXELS(1) / 2;
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 134, FACING_WEST);
   ShipRooms_PlaceFoundActors(1);
@@ -3084,7 +3084,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
       Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 164);
     }
     Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 134);
-    Actor_ResetAndSetPositionInMode2(ACTOR_ROWING_KAJA, 0x1b8, 134);
+    Actor_ResetAndSetPositionInMode2(ACTOR_ROWING_KAJA, 440, 134);
     Event_Wait(40);
     ShipRooms_RunEventCommand(
         SHIP_CLOSE_SCREEN, SHIP_ROOMS_ROWING_DECK_TO_TOLBI_SHIP_DECK_READY, 0);
@@ -3123,14 +3123,14 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   if (set != 0) {
     return gShipRooms_AnchorObject;
   }
-  actor = FieldActor_Create(SPRITE_BLANK, 0x1c70000, 0x40000, 0x2200000);
+  actor = FieldActor_Create(SPRITE_BLANK, PIXELS(455), PIXELS(4), PIXELS(544));
   actor->motionFlags = set;
   actor->retainSpriteCache = 1;
   sprite = actor->sprite;
   sprite->count = set;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
   VramCache_Load(sprite->slot, 128, buffer + 0x400);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
@@ -3652,9 +3652,9 @@ static void ShipRooms_ReportMonstersBelowdecks(void) {
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
-  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x198, 134);
-  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x198, 152);
-  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x1b0, 166);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 408, 134);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 408, 152);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 432, 166);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -3753,8 +3753,8 @@ static void ShipRooms_ReactToMonsterAttack(void) {
   Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_EAST, 40);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
   Import_ActorSetAnimation(ACTOR_ROWING_KAJA, 2);
-  Actor_MoveToAndWait(ACTOR_ROWING_KAJA, 0x1b0, 0x10c);
-  Actor_MoveToAndWait(ACTOR_ROWING_KAJA, 0x1c4, 0x10c);
+  Actor_MoveToAndWait(ACTOR_ROWING_KAJA, 432, 268);
+  Actor_MoveToAndWait(ACTOR_ROWING_KAJA, 452, 268);
   Import_ActorSetAnimation(ACTOR_ROWING_KAJA, 1);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_NORTH + FACING_STEP);
   Actor_StartRepeatedMotion(ACTOR_ROWING_KAJA, 2);
@@ -4352,16 +4352,16 @@ s32 gShipRooms_FollowersRejoinBySeats[] = {
 s32 gShipRooms_Shiver[] = {
     SC_SET(SW_SCALE_X, Q16_ONE),
     SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_ADD(SW_SCALE_X, -0x5000),
-    SC_ADD(SW_SCALE_Y, 0x1000),
+    SC_ADD(SW_SCALE_X, -5 * Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2800),
+    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 32),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1400),
+    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1400),
+    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(2),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -4370,7 +4370,7 @@ s32 gShipRooms_Shiver[] = {
 /// A monster in the hold bobs in place.
 s32 gShipRooms_MonsterBob[] = {
     SC_SET(SW_MOTION, 0),
-    SC_SET(0x24, 0),
+    SC_SET(SW_USER_VALUE, 0),
     SC_CALL(ShipRooms_Bob),
 };
 
@@ -4542,7 +4542,7 @@ struct ActorPlacement gShipRooms_CaptainsQuartersActorPlacementsArrived[] = {
 
 /// The hold before the party hears of the delay at Kalay.
 struct ActorPlacement gShipRooms_HoldActorPlacementsEmpty[] = {
-    { 0xf4, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
+    { SPRITE_BLUE_ORB, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
@@ -4567,7 +4567,7 @@ struct ActorPlacement gShipRooms_HoldActorPlacements[] = {
         PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { 0xf4, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
+    { SPRITE_BLUE_ORB, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
@@ -4596,7 +4596,7 @@ struct ActorPlacement gShipRooms_HoldActorPlacementsAtSea[] = {
         PIXELS(184), 0, PIXELS(586), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { 0xf4, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
+    { SPRITE_BLUE_ORB, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };

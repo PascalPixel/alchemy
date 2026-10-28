@@ -237,6 +237,13 @@ enum AbilityUse {
 /// Unit ids from 128 are the enemies'.
 #define FIRST_ENEMY_UNIT 128
 
+/// A full HP or PP gauge (Unit.hpGauge, Unit.ppGauge): the gauge is the
+/// current value over the maximum in 2.14 fixed point, as Unit_Calculate
+/// multiplies a maximum by it and divides by this, and the cap
+/// Unit_ClampGauge puts on hp / hpMax shifted up UNIT_GAUGE_SHIFT bits.
+#define UNIT_GAUGE_SHIFT 14
+#define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
+
 /// Unit.poison: the poison takes a tenth of the maximum HP at the end of
 /// each of the unit's actions, deadly poison a fifth.
 #define POISON_NORMAL 1
@@ -265,12 +272,12 @@ struct Unit {
   /// The name, one byte a character, ending in 0. An enemy's is its message
   /// name cut to 14 characters, with the suffix letter BattleUnit_Set is given
   /// (a digit in Japanese); name[14] is always 0.
-  u8 name[0x0f];
+  u8 name[15];
   u8 level;        ///< 1 to 99 for a character
   s16 baseHp;      ///< before equipment, Djinn and class (Unit_Calculate)
   s16 basePp;      ///< before equipment, Djinn and class (Unit_Calculate)
-  s16 hpGauge;     ///< hp / hpMax in 0..0x4000; 1 while any HP remains
-  s16 ppGauge;     ///< pp / ppMax in 0..0x4000; 1 while any PP remains
+  s16 hpGauge;     ///< hp / hpMax in 0..UNIT_GAUGE_FULL; 1 while any HP remains
+  s16 ppGauge;     ///< pp / ppMax in 0..UNIT_GAUGE_FULL; 1 while any PP remains
   u16 baseAttack;  ///< before equipment, Djinn, class and stages
   u16 baseDefense; ///< before equipment, Djinn, class and stages
   u16 baseAgility; ///< before equipment, Djinn, class and stages
@@ -426,12 +433,12 @@ STATIC_ASSERT(offsetof(struct Unit, haunt) == 0x140);
 
 STATIC_ASSERT(offsetof(struct Unit, enemyId) == 0x14a);
 
-/// Clamps a gauge ratio to 0..0x4000, where 0x4000 means full.
+/// Clamps a gauge ratio to 0..UNIT_GAUGE_FULL.
 static __inline__ s32 Unit_ClampGauge(s32 ratio) {
   s32 clamped;
 
-  if (ratio > 0x4000)
-    clamped = 0x4000;
+  if (ratio > UNIT_GAUGE_FULL)
+    clamped = UNIT_GAUGE_FULL;
   else if (ratio < 0)
     clamped = 0;
   else
@@ -445,10 +452,12 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
 // are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
-    (unit)->hpGauge = Unit_ClampGauge(((unit)->hp << 14) / (unit)->hpMax);     \
+    (unit)->hpGauge =                                                          \
+        Unit_ClampGauge(((unit)->hp << UNIT_GAUGE_SHIFT) / (unit)->hpMax);     \
     if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
       (unit)->hpGauge = 1;                                                     \
-    (unit)->ppGauge = Unit_ClampGauge(((unit)->pp << 14) / (unit)->ppMax);     \
+    (unit)->ppGauge =                                                          \
+        Unit_ClampGauge(((unit)->pp << UNIT_GAUGE_SHIFT) / (unit)->ppMax);     \
     if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
       (unit)->ppGauge = 1;                                                     \
   } while (0)

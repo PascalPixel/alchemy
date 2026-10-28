@@ -52,7 +52,7 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   do {
     REG_DMA2SAD = (u32)buffer;
   } while (0);
-  vcount = (volatile u8 *)0x04000006;
+  vcount = (volatile u8 *)&REG_VCOUNT;
   while (*vcount == 159)
     ;
   while (*vcount != 159)

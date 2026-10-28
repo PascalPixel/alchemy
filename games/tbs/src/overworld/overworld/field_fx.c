@@ -122,7 +122,7 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
   struct Actor *picture;
 
   s32 work = (s32)gFieldWork;
-  u32 actorOffset = (actorId * 4) + 0x14; // FieldWork's actors
+  u32 actorOffset = (actorId * 4) + offsetof(struct FieldWork, actors);
 
   s32 srcZ = (s32)*(struct Actor **)(work + actorOffset);
   union PolarOffsetPosition picturePosition;
@@ -136,9 +136,9 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
   picturePosition.vector.z = ((struct Actor *)srcZ)->z.fixed;
   Vector_AddPolarOffset(16 << 16, ((struct Actor *)srcZ)->facing,
                         picturePosition.coordinates);
-  pictureX = (picturePosition.vector.x & 0xfff00000) + (8 << 16);
+  pictureX = (picturePosition.vector.x & FIELD_CELL_MASK) + (8 << 16);
   // srcZ now holds the cell's z.
-  srcZ = (picturePosition.vector.z & 0xfff00000) + (8 << 16);
+  srcZ = (picturePosition.vector.z & FIELD_CELL_MASK) + (8 << 16);
 
   if (((struct FieldWork *)work)->revealActive != 0) {
     // Stop both the marker emitters and the sparkle actors they already made.
@@ -179,7 +179,7 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
     sprite->image.palette = 0;
     sprite->image.priority = 1;
 
-    picture->velocityY = 0x20000;
+    picture->velocityY = PIXELS(2);
     picture->gravity = 0x4000;
 
     // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
@@ -225,7 +225,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   wait(3);
   Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
   Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
-  // Angle 0x4000, a quarter turn, faces the screen.
+  // FACING_SOUTH, a quarter turn, faces the screen.
   leader->facing = FACING_SOUTH;
 }
 
@@ -241,7 +241,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
-      ((struct Actor *)object)->velocityY = 0x20000;
+      ((struct Actor *)object)->velocityY = PIXELS(2);
       ((struct Actor *)object)->gravity = 0x4000;
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
     }
@@ -416,7 +416,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
         continue;
       do {
         if (entry->subject == id && (entry->kind & 15) == TRIGGER_EXAMINE) {
-          switch (entry->value & 0xfff00000) {
+          switch (entry->value & FIND_TYPE_MASK) {
           case 0:
           case FIND_ITEM(0):
           case FIND_COINS(0):

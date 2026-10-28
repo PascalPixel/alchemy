@@ -35,9 +35,12 @@ void Func_080230e0(s32 mode) {
   buffer = HeapSlot_AllocEwram(20, 0x2000);
   ObjectSystem_Configure(mode);
   zero = 0;
-  Dma_Set((const void *)&zero, buffer, 0x85000000 | (0x2000 / 4), REG_DMA3);
+  Dma_Set((const void *)&zero, buffer,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x2000 / 4),
+          REG_DMA3);
   zero = 0;
-  Dma_Set((const void *)&zero, work, 0x85000000 | (sizeof(*work) / 4),
+  Dma_Set((const void *)&zero, work,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
           REG_DMA3);
   if (mode == 4) {
     Task_Add(Func_0802493c, TASK_PASS_VBLANK + 10);

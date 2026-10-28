@@ -1,4 +1,5 @@
 #include "mars_lighthouse_aerie.h"
+#include "scene_tables.h"
 
 extern const u8 MsgWillYouCast[];
 
@@ -12,31 +13,31 @@ void wait(s32 frames);
 void Func_02004bc4(void) {
   Func_0200560c();
   Func_02005784(0);
-  Func_02005704(19, 0x5000);
+  Func_02005704(19, FACING_SOUTH + FACING_STEP);
   Func_020056dc(MsgDoNotLet);
   Func_020056f4(0x8013, 0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 480, 348);
-  MarsLighthouseAerie_ObjTurn(19, 0xb000);
+  MarsLighthouseAerie_ObjTurn(19, FACING_NORTHWEST + FACING_STEP);
   Func_02005614();
 }
 
 void Func_02004c2c(void) {
   Func_0200560c();
   Func_02005784(0);
-  Func_02005704(19, 0x3000);
+  Func_02005704(19, FACING_SOUTHEAST + FACING_STEP);
   Func_020056dc(MsgDoNotLet);
   Func_020056f4(0x8013, 0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 544, 348);
-  MarsLighthouseAerie_ObjTurn(19, 0xb000);
+  MarsLighthouseAerie_ObjTurn(19, FACING_NORTHWEST + FACING_STEP);
   Func_02005614();
 }
 
 void Func_02004c94(void) {
   Func_0200560c();
   Func_02005784(0);
-  Func_0200567c(18, 0x2000000, 0xe80000);
+  Func_0200567c(18, PIXELS(512), PIXELS(232));
   wait(1);
   Func_020056dc(MsgWillYouCast);
   FieldMessage_ShowAtActor(18, 0);

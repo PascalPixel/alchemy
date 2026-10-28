@@ -10,8 +10,7 @@
 /// The strike sparks, 512 of them, from PARTICLES[512] (0x3800 bytes in);
 /// the motes use PARTICLES 0 to 127. Only the first 128 sparks are drawn,
 /// though a heavy hit lights all 512.
-#define TARGET_STRIKE_SPARKS                                                   \
-  ((struct Particle *)(Ram_MapGridCellBuffer + 0x3800))
+#define TARGET_STRIKE_SPARKS (PARTICLES + 512)
 
 /// The smoke pictures in the sheet: six 24x48 puffs.
 #define TARGET_STRIKE_SMOKE_OFFSETS 0x3200
@@ -205,7 +204,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *step = &work->particles[i];
 
       Projection_Unit(work->args->targets[k], &ground);
-      SET_POSITION(step, (ground.x / 2) << 16, 0x500000, 0);
+      SET_POSITION(step, (ground.x / 2) << 16, 80 << 16, 0);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 9,
                    ((Random16() & 255) - 128) << 9, 0);
       step->variant = -1;
@@ -217,7 +216,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != 128; i++) {
       struct Particle *step = &PARTICLES[k * 128 + i];
 
-      SET_POSITION(step, target->x.fixed, 0x140000, target->z.fixed);
+      SET_POSITION(step, target->x.fixed, 20 << 16, target->z.fixed);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 11,
                    ((Random16() & 255) - 128) << 11,
                    ((Random16() & 255) - 128) << 11);
@@ -225,7 +224,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     }
     for (i = 0; i != 512; i++) {
       TARGET_STRIKE_SPARKS[i].x = target->x.fixed;
-      TARGET_STRIKE_SPARKS[i].y = 0x140000;
+      TARGET_STRIKE_SPARKS[i].y = 20 << 16;
       TARGET_STRIKE_SPARKS[i].z = target->z.fixed;
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_COLUMN) {
         TARGET_STRIKE_SPARKS[i].velocityX = ((Random16() & 255) - 128) << 11;
@@ -446,7 +445,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         glint) {
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
-        s32 angle = Random16() & 0xffff;
+        s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 range = 31;
         s32 radius = Random16() & range;
         s32 x;
@@ -489,7 +488,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             draw[i & 1](canvas, work->sheet + picture * (24 * 48) + wispSheet,
                         Q_16_16_TO_INT(step->x) - 12,
                         Q_16_16_TO_INT(step->y) - 24, 24, 48);
-            Particle_AdvanceWithGravity2D(step, 62, -0x400);
+            Particle_AdvanceWithGravity2D(step, 62, -Q16_ONE / 64);
             step->variant++;
           }
         }
@@ -521,7 +520,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             step->variant++;
             if (step->variant > 10) {
               s32 dx = (source->x.fixed - step->x) >> 8;
-              s32 dy = (source->y.fixed - step->y + 0x140000) >> 8;
+              s32 dy = (source->y.fixed - step->y + (20 << 16)) >> 8;
               s32 dz = (source->z.fixed - step->z) >> 8;
 
               step->velocityX += dx;

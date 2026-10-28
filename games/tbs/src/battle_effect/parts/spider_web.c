@@ -121,12 +121,13 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     // Spinning Beat throws the target up at 12 pixels a frame on frame 13, and
     // shows the damage as it lands on frame 65. Its gravity, 0x7851, takes
     // about 0.47 pixel a frame off its speed each frame, and
-    // verticalMotionPhase 0x4000 is the quarter of its speed a bounce keeps.
+    // verticalMotionPhase Q16_ONE / 4 is the quarter of its speed a bounce
+    // keeps.
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
-        actor->velocityY = 0xc0000;
+        actor->velocityY = 12 << 16;
         actor->gravity = 0x7851;
-        actor->bounce = 0x4000;
+        actor->bounce = Q16_ONE / 4;
       }
       if (frame == 65) {
         work->shakeFrames = 4;
@@ -202,7 +203,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
     if (frame <= 8)
       REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
     if (frame > 53)
-      REG_BLDALPHA = BLEND_ALPHA(0x7c - (frame << 1), 16);
+      REG_BLDALPHA = BLEND_ALPHA(124 - (frame << 1), 16);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, transparent);
     EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41, size,
                                         size);

@@ -27,6 +27,6 @@ void Func_0802a650(s32 map, void *destination) {
   Resource_DecodeType01(
       Resource_GetTableEntry(entry[1] + (u32)&ResourceId_Map000), buffer);
   buffer[0] = backdrop;
-  Dma_Set(buffer, destination, 0x84000070, REG_DMA3);
+  Dma_Set(buffer, destination, DMA_COPY_WORDS(112), REG_DMA3);
   Heap_Release(buffer);
 }

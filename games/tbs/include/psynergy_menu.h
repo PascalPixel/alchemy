@@ -51,7 +51,7 @@ struct PsynergyMenuWork {
   struct Sprite *tabSprites[8]; ///< the party members' figures
   s16 tabX[8];                  ///< screen pixels
   s16 rowPositions[8];          ///< screen pixels
-  s32 memberScale[8];           ///< 16.16 fixed point, 0x10000 full size
+  s32 memberScale[8];           ///< 16.16 fixed point, Q16_ONE full size
   u16 sideRow[2];               ///< each side's Psynergy row chosen
   u16 sideAction[2]; ///< each side's Psynergy chosen, as a party member action
                      ///< entry

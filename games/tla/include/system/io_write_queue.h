@@ -13,6 +13,21 @@ struct IoWriteQueue {
 
 extern struct IoWriteQueue gIoWriteQueue;
 
+// A control word's bits 16 and 17 give a register write's width and bits 18
+// and 19 its operation, as Resource_ExecuteTransfer reads them
+// (system/resource/execute_transfer.s); a word with no width is a DMA.
+
+/// Writes a byte.
+#define IO_WRITE_8 (1 << 16)
+/// Writes a halfword.
+#define IO_WRITE_16 (2 << 16)
+/// Writes a word.
+#define IO_WRITE_32 (3 << 16)
+/// ORs the value into the register instead of storing it.
+#define IO_WRITE_SET (4 << 16)
+/// Clears the value's bits in the register instead of storing it.
+#define IO_WRITE_CLEAR (8 << 16)
+
 void QueueIoWriteDelay1(u32 address, u32 value);
 void QueueIoWriteDelay2(u32 address, u32 value);
 void QueueIoWriteDelay3(u32 address, u32 value);

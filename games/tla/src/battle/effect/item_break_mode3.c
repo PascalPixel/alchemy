@@ -2,6 +2,7 @@
 #include "system.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "fixed_math.h"
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
@@ -29,7 +30,7 @@ struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
     /* FAKEMATCH: ⚓️ loads the scale before it builds the limit; the plain test
      * starts the constant first (one pair of instructions swapped). */
     asm volatile("");
-    if (scale < 0x10000) {
+    if (scale < Q16_ONE) {
       do {
         scale += 0x800;
         object->scaleY = scale;

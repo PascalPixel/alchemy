@@ -8,7 +8,7 @@
 /// linear congruential one), stores the new seed and returns its bits 8 to
 /// 23, 0 to 0xffff. Called throughout the game.
 u32 Random16(void) {
-  enum { MULTIPLIER = 0x41c64e6d, INCREMENT = 0x3039 };
+  enum { MULTIPLIER = 1103515245, INCREMENT = 12345 };
   u32 value = gRandomSeed * MULTIPLIER + INCREMENT;
 
   gRandomSeed = value;
@@ -133,7 +133,7 @@ s32 Math_IntegerSqrt(s32 value) {
   // cost of setting the next bit, preserving the higher bits already chosen.
   remainder = value;
   result = 0;
-  bit = 0xf;
+  bit = 15;
   do {
     trial = (result << (bit + 1)) + (1 << (bit * 2));
     if (trial <= remainder) {

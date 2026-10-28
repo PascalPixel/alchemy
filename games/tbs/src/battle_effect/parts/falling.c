@@ -36,7 +36,7 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
 /// A falling shard or bolt keeps falling while its y (in eighths of a pixel)
 /// is at most this, just above 80 pixels.
-#define FALLING_LAND_Y 0x27f
+#define FALLING_LAND_Y (80 * 8 - 1)
 
 /// Ice shards rain down diagonally onto the targets' side of the field and
 /// shatter into puffs of sparkle, flashing and shaking each target as they
@@ -124,11 +124,11 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   // fixed span down to line 135.
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     line = (u16 *)Ram_MapGridCellBuffer;
-    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (240 - i) | ((112 - i) << 8),
                                  WIN_RANGE(8, 136));
   } else {
     line = (u16 *)Ram_MapGridCellBuffer;
-    FALLING_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 0x18) << 8),
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 24) << 8),
                                  WIN_RANGE(120, 248));
   }
 
@@ -182,12 +182,12 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 y = shard->y / 8;
 
         // Shattering: frames 1 to 14 step through the sheet's 32x32 images
-        // 1 to 5, three frames each (0x400 bytes a picture); frame 15 ends
+        // 1 to 5, three frames each (32 * 32 bytes a picture); frame 15 ends
         // it.
         if (shard->variant >= 1 && shard->variant <= 14) {
           draw[work->args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
-              canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
-              32, 32);
+              canvas, work->sheet + 32 * 32 + ((shard->variant / 3) << 10), x,
+              y, 32, 32);
         }
         // Frames 9 to 11 each start a puff in the first free slot, near
         // the shard.
@@ -254,9 +254,13 @@ struct BoltSparkBuffer {
 /// Ram_MapGridCellBuffer seen as Douse's struct BoltSparkBuffer.
 #define FALLING_BOLT_SPARKS ((struct BoltSparkBuffer *)Ram_MapGridCellBuffer)
 
-#define DOUSE_FALLING_CELL 0x604 ///< the falling bolt picture in the sheet
-#define DOUSE_FLASH_CELL 0x844   ///< the landing flash picture in the sheet
-#define DOUSE_BURST_CELL 0xa84   ///< the 42x42 burst picture in the sheet
+/// The falling bolt picture in the sheet, after ParticleSpritesD's ten flare
+/// cells (2 * MOTE_SET_BYTES).
+#define DOUSE_FALLING_CELL (2 * MOTE_SET_BYTES)
+/// The 24x24 landing flash picture in the sheet, after the 24x24 bolt.
+#define DOUSE_FLASH_CELL (DOUSE_FALLING_CELL + 24 * 24)
+/// The 42x42 burst picture in the sheet, after the flash.
+#define DOUSE_BURST_CELL (DOUSE_FLASH_CELL + 24 * 24)
 
 /// Blue bolts streak down diagonally onto the targets' side of the field, each
 /// bursting into a fountain of falling sparks where it lands, while the targets
@@ -328,9 +332,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   // pixel a line, as the bolts fall, then a fixed span down to line 135.
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     line = (u16 *)Ram_MapGridCellBuffer;
-    FALLING_BUILD_SLANTED_WINDOW(line, i, 103,
-                                 ((0x34 - i / 2) << 8) | (0xb4 - i / 2),
-                                 WIN_RANGE(0, 128));
+    FALLING_BUILD_SLANTED_WINDOW(
+        line, i, 103, ((52 - i / 2) << 8) | (180 - i / 2), WIN_RANGE(0, 128));
   } else {
     line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(
@@ -394,7 +397,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
             spark->y = y << 16;
             spark->velocityX = ((Random16() & 255) - 128) << 9;
             if (work->args->variant == EFFECT_VARIANT_STRONGEST)
-              spark->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;
+              spark->velocityY = ((Random16() & 0x1ff) - 384) << 10;
             else
               spark->velocityY = ((Random16() & 255) - 255) << 10;
             spark->variant = (Random16() & 15) + 16;
@@ -430,7 +433,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet,
                           Q_16_16_TO_INT(spark->x), Q_16_16_TO_INT(spark->y),
                           size);
-        Particle_AdvanceWithGravity2D(spark, 60, 0x2000);
+        Particle_AdvanceWithGravity2D(spark, 60, Q16_ONE / 8);
         spark->variant--;
       }
     }

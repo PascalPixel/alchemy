@@ -2,6 +2,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 wait(s32 frames);
@@ -23,7 +24,7 @@ void Func_020024c8(void) {
     object->velocityY = zero;
     object->terrainHeight = height;
     object->y = height;
-    object->targetY = 0x80000000;
+    object->targetY = PIXELS(-32768);
     {
       s64 flags = zero;
 

@@ -4,6 +4,7 @@
 #include "module/window/scales.h"
 #include "types.h"
 #include "character_ids.h"
+#include "module/window/window.h"
 
 /// A sprite's pulse, as a scale where 256 is its normal size: it swells to
 /// 1.5 times and back over 32 steps. The swelling sprites loop over it, the
@@ -50,15 +51,19 @@ const u8 gWindowColor_WaveTable[121] = {
 /// Each is a command icon number for CommandIcon_Create, in the order of the
 /// setting's values.
 const s8 gSettingsMenu_SpeedIcons[3] = {
-    0x22, 0x23, 0x24,
+    COMMAND_ICON_SPEED_SLOW,
+    COMMAND_ICON_SPEED_NORMAL,
+    COMMAND_ICON_SPEED_FAST,
 };
 
 const s8 gSettingsMenu_SpeechIcons[2] = {
-    0x25, 0x26,
+    COMMAND_ICON_SPEECH_OFF,
+    COMMAND_ICON_SPEECH_ON,
 };
 
 const s8 gSettingsMenu_SleepIcons[2] = {
-    0x27, 0x28,
+    COMMAND_ICON_AUTO_SLEEP_OFF,
+    COMMAND_ICON_AUTO_SLEEP_ON,
 };
 
 /// The window colour presets SELECT cycles through on the settings menu: the
@@ -75,7 +80,9 @@ const u8 gSettingsMenu_BrightnessPresets[6] = {
 /// Sleep, Change settings, and the debug entries after them). The menu shows
 /// at most six; nothing reads the last two.
 const s8 gPauseMenu_Icons[8] = {
-    0x29, 0x2a, 0x2b, 0x0b, 0x0b, 0x0b, 0x00, 0x00,
+    COMMAND_ICON_SAVE_QUEST, COMMAND_ICON_SLEEP, COMMAND_ICON_CHANGE_SETTINGS,
+    COMMAND_ICON_DROP,       COMMAND_ICON_DROP,  COMMAND_ICON_DROP,
+    0,                       0,
 };
 
 /// {character, portrait} pairs of the playable characters, ending in -1, which

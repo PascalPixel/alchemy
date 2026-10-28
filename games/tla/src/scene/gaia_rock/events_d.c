@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "frame.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
@@ -26,7 +27,7 @@ void Func_02000670(void) {
       object->scaleY = 0x1999;
       object->priorityFlags = phase;
       Func_02000e24(object, 2);
-      Func_02000e3c(object, object->x - 0x200000, object->y, object->z);
+      Func_02000e3c(object, object->x - PIXELS(32), object->y, object->z);
       Func_02000e2c(object, gData_020015c4);
       Func_02000e5c(object, 2);
     }

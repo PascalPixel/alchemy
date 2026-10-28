@@ -14,10 +14,10 @@
 #define ENEMY_SUFFIX_LAST 25   ///< the last suffix shown, 'Z'
 #endif
 
-/// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats, name
-/// with its suffix letter, the items it carries, rewards and elements. The
-/// Djinn the party fights (ENEMY_VENUS_DJINNI_QUARTZ to
-/// ENEMY_JUPITER_DJINNI_LUFF) are put on the party's side, so that a beaten
+/// Fills battle unit `unitId` (FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT + 6) with
+/// enemy `enemyId`: stats, name with its suffix letter, the items it carries,
+/// rewards and elements. The Djinn the party fights (ENEMY_VENUS_DJINNI_QUARTZ
+/// to ENEMY_JUPITER_DJINNI_LUFF) are put on the party's side, so that a beaten
 /// Djinni is not felled as an enemy is: the battle gives the downed pose, greys
 /// out and releases only BATTLE_SIDE_ENEMY units (BattleMotion_ShowDowned,
 /// BattlePlayback_Run, BattleObject_DestroyTemporaryObject), so the Djinni
@@ -56,8 +56,8 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->basePp = enemy->pp;
   unit->pp = enemy->pp;
   unit->ppMax = enemy->pp;
-  unit->hpGauge = 0x4000;
-  unit->ppGauge = 0x4000;
+  unit->hpGauge = UNIT_GAUGE_FULL;
+  unit->ppGauge = UNIT_GAUGE_FULL;
   unit->baseAttack = enemy->atk;
   unit->baseDefense = enemy->def;
   unit->baseAgility = enemy->agi;

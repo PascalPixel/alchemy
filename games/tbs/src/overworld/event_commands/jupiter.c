@@ -25,7 +25,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   FieldEffect_InitializeSlots();
   effectWork = gFieldEffectWork;
   // Tint the screen yellow: PALETTE_TINT_CUSTOM | RGB(12, 12, 4).
-  Shop_SaveAndTintFieldPaletteFar(0x20118c);
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(12, 12, 4));
   Sound_PlayFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_MID);
@@ -98,8 +98,8 @@ void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   u32 step;
 
   step = spin->spinRampFrames * 0x50;
-  spin->facing = spin->facing + step + 0x1000;
-  if (step < 0x1000U) {
+  spin->facing = spin->facing + step + FACING_STEP;
+  if (step < FACING_STEP) {
     spin->spinRampFrames = spin->spinRampFrames + 1;
   }
 }
@@ -126,14 +126,14 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     effect->z = effect->originZ;
     position.x = effect->x;
     position.z = effect->z;
-    Vector_AddPolarOffset(0x780000,
+    Vector_AddPolarOffset(PIXELS(120),
                           ((Random16() * 3 << 11) >> 16) -
-                              ((Random16() * 3 << 11) >> 16) + 0xc000,
+                              ((Random16() * 3 << 11) >> 16) + FACING_NORTH,
                           &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = 0x50000;
-    effect->speedMax = 0x50000;
+    effect->acceleration = PIXELS(5);
+    effect->speedMax = PIXELS(5);
     effect->turnStepLimited = state;
     effect->state++;
 
@@ -169,10 +169,10 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     effect->x = effect->originX;
     effect->z = effect->originZ;
     position.x = owner->x.fixed;
-    position.y = owner->y.fixed + 0x140000;
+    position.y = owner->y.fixed + PIXELS(20);
     position.z = owner->z.fixed;
     Camera_WorldToScreen(&position);
-    Vector_AddPolarOffset(0x40000, Random16(), &position);
+    Vector_AddPolarOffset(PIXELS(4), Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;

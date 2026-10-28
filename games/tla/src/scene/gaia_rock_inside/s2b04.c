@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(u32 id);
 
@@ -10,7 +11,7 @@ void Func_02002b04(u32 id, s8 mode) {
   object->priorityFlags |= 0x80;
   object->acceleration = 0x1000;
   object->speedLimit = 0x10000;
-  object->y = 0x100000;
+  object->y = PIXELS(16);
   object->action = object->x >> 16;
   {
     s32 z = object->z >> 16;

@@ -7,6 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
+#include "scene_tables.h"
 #include "main_routine_work.h"
 #include "field_event.h"
 
@@ -62,7 +63,7 @@ void Func_020007ac(void) {
     Actor_Jump(14, 4, 10);
     GameFlag_SetBit(0x300);
     if (moved)
-      Func_020010b8(gMainRoutineWork.currentOwner, 0);
+      Func_020010b8(gMainRoutineWork.currentOwner, FACING_EAST);
     Func_02001018();
   }
 }

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct GateEventWork {
   u8 unk000[362];
@@ -30,8 +31,7 @@ void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void Func_0200193c(void);
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
   if (value == 1)
@@ -80,7 +80,7 @@ next:
 
     Func_02001adc(id);
     object->motionFlags = 0;
-    object->y = 0x240000;
+    object->y = PIXELS(36);
     i++;
   }
   if (i < 1)
@@ -98,7 +98,7 @@ next:
 
     Func_02001adc(id);
     object->motionFlags = 0;
-    object->y = 0x240000;
+    object->y = PIXELS(36);
     i++;
   }
   if (i < 2)

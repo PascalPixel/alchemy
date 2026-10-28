@@ -85,10 +85,10 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
       VramCache_Load(slot, 0x100, 0);
-      WindowSprite_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 0,
-                             0);
+      WindowSprite_CreateFar(slot, OUTPUT_SIZE_32X8,
+                             (struct RenderInput *)window, 0, 0);
       sprite = (struct UiSprite *)WindowSprite_CreateFar(
-          slot, 0x40004000, (struct RenderInput *)window, 32, 0);
+          slot, OUTPUT_SIZE_32X8, (struct RenderInput *)window, 32, 0);
       sprite->tile += 4;
       for (;;) {
         if (gInput.pressed & 1) {
@@ -114,7 +114,7 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
         if (changed) {
           changed = 0;
           count = (count + maximum) % maximum;
-          Dma_Set(gShop_QuantityTiles, buffer, 0x84000040, REG_DMA3);
+          Dma_Set(gShop_QuantityTiles, buffer, DMA_COPY_WORDS(64), REG_DMA3);
           Shop_FillSelector(30, 14, buffer);
           Shop_FillSelector(minimum + maximum, 0, buffer);
           Shop_FillSelector(minimum + count + 1, 10, buffer);

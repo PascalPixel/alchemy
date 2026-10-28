@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "task.h"
+#include "io_reg.h"
 
 struct EventWork {
   u8 unk000[0x1ac];
@@ -66,7 +67,7 @@ void Func_020029a4(void) {
   Func_02004df8(0x16666, 300);
   FieldEvent_Wait(270);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->transitionFrames = 16;
-  *(u16 *)0x05000000 = 0x7fff;
+  *(u16 *)BG_PLTT = RGB(31, 31, 31);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004d40(77);

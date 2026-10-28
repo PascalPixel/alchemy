@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Func_02005a4c(void);
 void Func_02005be4(s32 frames);
@@ -29,7 +30,7 @@ void Func_02003c84(void) {
     Func_02005be4(1);
   } while (0);
   wait(1);
-  Kibombo_CamMove(146 << 18, -1, 248 << 16, 0);
+  Kibombo_CamMove(146 << 18, -1, PIXELS(248), 0);
   Func_02005a4c();
   wait(1);
   Kibombo_FadeTo(0x10000, 0);
@@ -47,7 +48,7 @@ void Func_02003c84(void) {
     Func_02005be4(1);
   } while (0);
   wait(1);
-  Kibombo_CamMove(248 << 16, -1, 134 << 18, 0);
+  Kibombo_CamMove(PIXELS(248), -1, 134 << 18, 0);
   Func_02005a4c();
   wait(1);
   Kibombo_FadeTo(0x10000, 0);

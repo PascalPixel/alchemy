@@ -327,7 +327,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
                 Q_16_16_TO_INT(spark->y) - size, size, size * 2);
         spark->x += spark->velocityX * dir;
         spark->y += spark->velocityY;
-        spark->velocityY += -0x400;
+        spark->velocityY += -Q16_ONE / 64;
         spark->variant++;
         if (spark->variant == 48)
           spark->variant = -1;
@@ -353,11 +353,11 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
           grain->y += grain->velocityY;
           if (frame > 128) {
             if (i & 1)
-              grain->velocityX += -0x8000;
+              grain->velocityX += -Q16_ONE / 2;
             else
-              grain->velocityX += -0x2000;
+              grain->velocityX += -Q16_ONE / 8;
           } else {
-            grain->velocityY += -0x400;
+            grain->velocityY += -Q16_ONE / 64;
           }
           grain->variant++;
           if (grain->variant == 256)

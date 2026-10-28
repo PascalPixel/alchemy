@@ -30,7 +30,7 @@ void WindowSystem_UploadTilemap(void) {
       flags >>= 1;
       do {
         if (flags & 1)
-          Dma_Set(src, dst, 0x84000040, REG_DMA3);
+          Dma_Set(src, dst, DMA_COPY_WORDS(64), REG_DMA3);
         flags >>= 1;
         src += 256;
         dst += 256;

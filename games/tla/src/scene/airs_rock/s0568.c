@@ -26,13 +26,13 @@ void Func_02000568(void) {
   Func_02003bc8();
   Call1(Func_02003c88, 0);
   Call1(Func_02003cd8, 0x9e);
-  Call6(Func_02003b68, 0x40, 0x40, 0x53, 0x23, 1, 2);
+  Call6(Func_02003b68, 64, 64, 83, 35, 1, 2);
   Call1(Func_02003b70, 0);
-  Call1(FieldEvent_Wait, 0x2d);
+  Call1(FieldEvent_Wait, 45);
   Call3(Actor_SetSpeedParameters, FIELD_AT(gMainRoutineWork, s32, 532),
         0x8000, 0x4000);
-  Call3(Actor_ResetAndSetPositionInMode2,
-        FIELD_AT(gMainRoutineWork, s32, 532), 0x138, 0x2a8);
+  Call3(Actor_ResetAndSetPositionInMode2, FIELD_AT(gMainRoutineWork, s32, 532),
+        312, 680);
   Call1(FieldEvent_Wait, 5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -40,7 +41,7 @@ void Func_02001ec0(void) {
   Call3(Actor_ArmCallback, 10, 0, 0);
   Call3(Actor_ArmCallback, 9, 0x3000, 0);
   Call3(Actor_ArmCallback, 11, 0x5000, 0);
-  Call2(Func_02002548, gMainRoutineWork.currentOwner, 0x6000);
+  Call2(Func_02002548, gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
   Call1(Func_02002520, (s32)&MsgIfYouWantTo);
   v5 = v6;
   Call2(Func_02002538, 8, 0);
@@ -107,7 +108,7 @@ L_02009f9c:
   Call3(Actor_Jump, 10, 4, 0);
   Call4(Func_02002450, v6, v7, 0, v8);
   Call1(FieldEvent_Wait, 5);
-  Call2(Func_02002548, 9, 0x8000);
+  Call2(Func_02002548, 9, FACING_WEST);
   t42 = Value1(Actor_GetById, 9);
   FIELD_AT(t42, u8, 90) = (254 & FIELD_AT(t42, u8, 90));
   t43 = Value1(Actor_GetById, 9);
@@ -136,9 +137,9 @@ L_02009f9c:
   Call1(Actor_WaitForMoveById, 11);
   Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
         0x6666);
-  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 184, 0x2ae);
-  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 186, 0x2a2);
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xe000, 0);
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 184, 686);
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 186, 674);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   t63 = Value1(Actor_GetById, 8);
   FIELD_AT(t63, u8, 90) = (FIELD_AT(t63, u8, 90) | 1);
   t64 = Value1(Actor_GetById, 10);
@@ -149,9 +150,9 @@ L_02009f9c:
   v5 = (1 | FIELD_AT(t66, u8, 90));
   FIELD_AT(t66, u8, 90) = v5;
   Call3(Actor_ArmCallback, 8, 0x5000, 0);
-  Call3(Actor_ArmCallback, 10, 0x8000, 0);
-  Call3(Actor_ArmCallback, 9, 0x8000, 0);
-  Call3(Actor_ArmCallback, 11, 0x8000, 20);
+  Call3(Actor_ArmCallback, 10, FACING_WEST, 0);
+  Call3(Actor_ArmCallback, 9, FACING_WEST, 0);
+  Call3(Actor_ArmCallback, 11, FACING_WEST, 20);
   Call3(Func_02002530, 8, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

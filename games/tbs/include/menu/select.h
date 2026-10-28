@@ -45,9 +45,9 @@ struct SelectionNode {
   s16 homeX;     ///< screen pixels, where it stood when chosen
   s16 homeY;     ///< screen pixels, where it stood when chosen
   u16 message;   ///< its name, shown in the screen's window
-  s16 scale;     ///< 8.8 fixed point, 0x100 full size
+  s16 scale;     ///< 8.8 fixed point, Q_8_8(1) full size
   s16 scaleStep; ///< 8.8 fixed point a frame
-  s16 scaleEnd;  ///< 8.8 fixed point, 0x100 full size
+  s16 scaleEnd;  ///< 8.8 fixed point, Q_8_8(1) full size
   struct SelectionSprite sprite;
 };
 
@@ -70,8 +70,8 @@ struct SelectionMenuWork {
   u16 baseY;  ///< screen pixels
   u16 unread; ///< cleared with the list and on each step down; nothing reads it
   u16 top;    ///< the first listed entry shown
-  /// The entry under the hand, from top; bit 7 asks the next list to start
-  /// again from its first entry.
+  /// The entry under the hand, from top; SELECTION_CURSOR_RESET asks the next
+  /// list to start again from its first entry.
   u16 cursorIndex;
   u16 verticalScroll; ///< pixels added to the icons' y; 32 at setup
   u16 status;     ///< 1 shown, 33 while scrolling; counts up each frame drawn
@@ -82,6 +82,11 @@ struct SelectionMenuWork {
   u16 locked;
   u8 unused[42]; ///< no code names it
 };
+
+/// The bit of SelectionMenuWork.cursorIndex set as an entry is chosen, on
+/// which SelectionMenu_Clear puts the next list's top and cursor back to its
+/// first entry.
+#define SELECTION_CURSOR_RESET 0x80
 
 STATIC_ASSERT(sizeof(struct SelectionSprite) == 0x0c);
 STATIC_ASSERT(sizeof(struct SelectionNode) == 0x34);

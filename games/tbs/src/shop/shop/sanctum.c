@@ -87,7 +87,7 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
       Speaker_GetVoiceFar(((struct ShopWork *)gMenuWork)->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   messageId = Shop_MessageByMode(messageId);
-  Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 0x10) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0) {
     wait(1U);
   }
@@ -413,15 +413,15 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
   if (state == SANCTUM_SPARKLE_START) {
     position.x = effect->originX;
     position.z = effect->originZ;
-    Vector_AddPolarOffset(0x280000, Random16(), &position);
+    Vector_AddPolarOffset(40 << 16, Random16(), &position);
     FieldParticle_SetPositionFar(effect, position.x, position.z);
     position.x = effect->originX;
     position.z = effect->originZ;
-    Vector_AddPolarOffset(0x40000, Random16(), &position);
+    Vector_AddPolarOffset(4 << 16, Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     // 16.16 pixels: at most 2 a frame, gaining 0.4 a frame
-    effect->speedMax = 0x20000;
+    effect->speedMax = 2 << 16;
     effect->acceleration = 0x6666;
     effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
@@ -496,13 +496,14 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
   // The burst's centre, in 16.16 pixels: 12 above the party member's icon
   position.x = shop->partyMemberX[member] << 16;
-  position.z = (shop->partyMemberY[member] << 16) + 0xfff40000;
+  position.z = (shop->partyMemberY[member] << 16) - (12 << 16);
 
   // Spawn eighteen particles while the task continues updating all twenty-four.
   effectIndex = 0;
   effect = shop->effects;
   do {
-    FieldParticle_InitializeFar(effect, 0x11c, position.x, position.z);
+    FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
+                                position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
@@ -543,7 +544,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
       flag <<= 24;
 
-      flagEntry += 0x48;
+      flagEntry += sizeof(struct FieldParticle);
       if (flag != 0) {
         FieldEffect_ClearOwnedSlotFar(effectSlot);
       }

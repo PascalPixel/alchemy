@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -42,16 +43,16 @@ void Func_02002c1c(void) {
   if (t1 == 0)
     goto L_0200acd2;
   t2 = Value1((s32 (*)())Actor_GetById, 9);
-  Call4((void (*)())Actor_SetPositionAndResetMotion, t2, 0xd80000, 0,
-        0xd80000);
+  Call4((void (*)())Actor_SetPositionAndResetMotion, t2, PIXELS(216), 0,
+        PIXELS(216));
   Call3((void (*)())Func_02005230, 11, 0, 0);
   Call3((void (*)())Func_02005230, 13, 0, 0);
   Call3((void (*)())Func_02005230, 14, 0, 0);
   Call3((void (*)())Func_02005230, 15, 0, 0);
   Call3((void (*)())Func_02005230, 16, 0, 0);
   t9 = Value1((s32 (*)())Actor_GetById, 10);
-  Call4((void (*)())Actor_SetPositionAndResetMotion, t9, 0x1780000, 0,
-        0xf80000);
+  Call4((void (*)())Actor_SetPositionAndResetMotion, t9, PIXELS(376), 0,
+        PIXELS(248));
   Call3((void (*)())Func_02005230, 12, 0, 0);
   Call3((void (*)())Func_02005230, 17, 0, 0);
   Call3((void (*)())Func_02005230, 18, 0, 0);
@@ -64,13 +65,13 @@ L_0200acd2:
   t19 = Value1((s32 (*)())GameFlag_Test, 0x300);
   if (t19 == 0)
     goto L_0200acee;
-  Call3((void (*)())Func_02005230, 8, 0xd80000, 0xd80000);
+  Call3((void (*)())Func_02005230, 8, PIXELS(216), PIXELS(216));
   goto L_0200ad0a;
 L_0200acee:
   t21 = Value1((s32 (*)())GameFlag_Test, 0x301);
   if (t21 == 0)
     goto L_0200ad0a;
-  Call3((void (*)())Func_02005230, 8, 0x1780000, 0xf80000);
+  Call3((void (*)())Func_02005230, 8, PIXELS(376), PIXELS(248));
 L_0200ad0a:
   (*(s16 *)0x4000052) = 0xc08;
   (*(s16 *)0x4000050) = 0x3f10;

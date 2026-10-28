@@ -32,8 +32,7 @@ void PaletteFade_Update(void) {
     for (i = 0; i <= 0x5ff; i++)
       *current++ += *delta++;
   } else {
-    Dma_Set(work->target, work->current, (DMA_ENABLE | DMA_32BIT) << 16 | 0x300,
-            REG_DMA3);
+    Dma_Set(work->target, work->current, DMA_COPY_WORDS(768), REG_DMA3);
     work->duration = 0;
   }
   packed = work->packed[work->page ^ 1];
@@ -63,5 +62,5 @@ void PaletteFade_Update(void) {
                         }),
                         (u32)front, 0x84000080);
   }
-  IO_WRITE_QUEUE_PUSH(0x05000200, (u32)(bank + 256), 0x84000080);
+  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + 256), DMA_COPY_WORDS(128));
 }

@@ -81,13 +81,16 @@ s32 Func_080fe274(void) {
   *page = 0;
   state->partyCount = Party_ListActiveOwnersFar(state->ownerIds);
   Func_080fee04(0, 3, 0, 7);
-  CopyWords_(palette, (void *)0x05000000, 64);
+  CopyWords_(palette, (void *)BG_PLTT, 64);
   CopyWords_(tiles, (void *)0x06004000, 0x2800);
   Palette_LightenHighlight(14);
-  Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, REG_DMA3);
-  Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, REG_DMA3);
-  Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, REG_DMA3);
-  Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
   Text_UseExtraTilesFar(1);
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   if (Party_SumDjinnCountsFar(result) != 0)
@@ -108,7 +111,7 @@ s32 Func_080fe274(void) {
   wait(1);
   Func_08038290();
   Text_UseExtraTilesFar(0);
-  CopyWords_((void *)0x05000000, palette, 64);
+  CopyWords_((void *)BG_PLTT, palette, 64);
   CopyWords_((void *)0x06004000, tiles, 0x2800);
   Heap_Release(tiles);
   Heap_Release(palette);

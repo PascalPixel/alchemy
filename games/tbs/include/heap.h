@@ -29,7 +29,7 @@ extern void *gHeapSlots[64];
 /// IWRAM addresses.
 union HeapState {
   struct {
-    void *nextEwram;  ///< the EWRAM pool's next free byte, up to 0x02040000
+    void *nextEwram;  ///< the EWRAM pool's next free byte, up to EWRAM_END
     void *nextIwram;  ///< the IWRAM pool's next free byte, up to the heap's end
     void *blocks[62]; ///< heap slots 2 to 63; not named by TBS code
   } heap;

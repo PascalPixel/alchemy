@@ -1,5 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "objcmd.h"
 
 void Func_02000078(void);
 void Func_02000168(void);
@@ -23,31 +24,50 @@ u32 gData_020020e4[] = {
 };
 
 u32 gData_02002120[] = {
-    39, 2, 4, 0x1700000, 0, 0x1c00000,
-    1, 39, 1, 0, 10, 22,
-    3, 0, 0, 10, 22, 3,
-    0xe000, 0, 10, 22, 3, 0xc000,
-    0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(368), 0, PIXELS(448)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_0200218c[] = {
-    22, 3, 0x4000, 0, 30, 22,
-    3, 0x6000, 0, 50, 22, 3,
-    0x4000, 0, 10, 22, 3, 0x2000,
-    0, 70, 13, 0xffff, 0,
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(30),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(50),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(70),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 u32 gData_020021e8[] = {
-    22, 3, 0, 0, 50, 22,
-    3, 0x2000, 0, 70, 13, 0xffff,
-    0,
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(50),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(70),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 u32 gData_0200221c[] = {
-    22, 3, 0xd000, 0, 70, 22,
-    3, 0xb000, 0, 50, 22, 3,
-    0xd000, 0, 10, 22, 3, 0,
-    0, 30, 13, 0xffff, 0,
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_WAIT(70),
+    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
+    SC_WAIT(50),
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(30),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -67,62 +87,40 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-u32 gData_020022cc[] = {
-    0xffff0122, 1, 0x880000, 0, 0x1380000, 0x24000,
-    0xffff0038, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff0005, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff0006, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff0007, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gData_020022cc[] = {
+    {290, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(312), FACING_SOUTH, 2, 0},
+    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {6, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {7, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
 };
 
-u32 gData_0200235c[] = {
-    0xffff0122, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff0038, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff0005, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff0006, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff0007, 1, 0x80000, 0, 0x80000, 0x24000,
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gData_0200235c[] = {
+    {290, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {6, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {7, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
 };
 
-s32 gData_020023ec[] = {
-    -1, 0, 0,
+struct Trigger gData_020023ec[] = {
+    {TRIGGERS_END},
 };
 
-s32 gData_020023f8[] = {
-    0xc602,
-    (s32)0xffff0001,
-    (s32)Func_02000078,
-    1,
-    (s32)0xffff0002,
-    2,
-    2,
-    0x980000a,
-    (s32)Func_02000ce0,
-    2,
-    0x981000b,
-    (s32)Func_020014c0,
-    2,
-    0x989000c,
-    (s32)Func_02001da0,
-    2,
-    0x9850001,
-    (s32)Func_0200128c,
-    3,
-    0x985000e,
-    (s32)Func_02000168,
-    2,
-    0x985000f,
-    (s32)Func_02001074,
-    2,
-    0x9850010,
-    (s32)Func_02001178,
-    0x1815,
-    0x2000008,
-    (s32)Func_02001064,
-    -1,
-    0,
-    0,
+struct Trigger gData_020023f8[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000078)},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {2, 10, 0x980, EVENT(Func_02000ce0)},
+    {2, 11, 0x981, EVENT(Func_020014c0)},
+    {2, 12, 0x989, EVENT(Func_02001da0)},
+    {2, 1, 0x985, EVENT(Func_0200128c)},
+    {3, 14, 0x985, EVENT(Func_02000168)},
+    {2, 15, 0x985, EVENT(Func_02001074)},
+    {2, 16, 0x985, EVENT(Func_02001178)},
+    {0x1815, 8, 0x200, EVENT(Func_02001064)},
+    {TRIGGERS_END},
 };
 
 u32 gData_0200247c[] = {

@@ -15,8 +15,7 @@ struct DmaRegisters {
   {                                                                            \
     volatile u16 fill_ = (value);                                              \
     Dma_Set((const void *)&fill_, (destination),                               \
-            (DMA_ENABLE | DMA_SRC_FIXED) << 16 | ((size) / 2),                 \
-            (volatile u32 *)0x040000d4);                                       \
+            (DMA_ENABLE | DMA_SRC_FIXED) << 16 | ((size) / 2), REG_DMA3);      \
   }
 
 #define Dma_Fill32(value, destination, size)                                   \
@@ -24,7 +23,7 @@ struct DmaRegisters {
     volatile u32 fill_ = (value);                                              \
     Dma_Set((const void *)&fill_, (destination),                               \
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | ((size) / 4),     \
-            (volatile u32 *)0x040000d4);                                       \
+            REG_DMA3);                                                         \
   }
 
 /// Dma_Fill32 with the caller's word, a volatile local the function declares
@@ -39,7 +38,7 @@ struct DmaRegisters {
     (cell) = (value);                                                          \
     Dma_Set((const void *)&(cell), (destination),                              \
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | ((size) / 4),     \
-            (volatile u32 *)0x040000d4);                                       \
+            REG_DMA3);                                                         \
   }
 
 /// pret's CpuFill32: repeats one word through the BIOS CpuSet service.

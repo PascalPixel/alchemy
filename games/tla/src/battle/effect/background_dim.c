@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "io_reg.h"
 
 struct BattleFxFadeWork {
   s32 unk00;
@@ -20,7 +21,7 @@ void BattleEffect_DimBackgroundStep(void) {
 
   if (work->framesLeft > 0) {
     work->step++;
-    ColorBuffer_ScaleFar(battle + 0x56c, (void *)0x050000c0,
+    ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
                          0x10000 - work->step * 1092, 128);
     work->framesLeft--;
   }

@@ -45,7 +45,7 @@ void Func_02001b14(void) {
   if (GameFlag_Test(0x8fd)) {
     Func_02001010();
     Func_02001064();
-    GabombaStatueChamber_ObjPosSet(8, 0x1a80000, 0x980000);
+    GabombaStatueChamber_ObjPosSet(8, PIXELS(424), PIXELS(152));
     wait(1);
     Func_02000f00();
   } else {
@@ -64,7 +64,8 @@ void Func_02001b14(void) {
   {
     /* FAKEMATCH(pin): a hard register is outside global CSE, so the party
      * state's address is loaded again here, as the native does; as a plain
-     * read of gMainRoutineWork.entrance, 30 of 58 instructions differ in tla-en. */
+     * read of gMainRoutineWork.entrance, 30 of 58 instructions differ in
+     * tla-en. */
     register struct MainRoutineWork *party asm("r3") = &gMainRoutineWork;
 
     if (party->entrance == 3) {

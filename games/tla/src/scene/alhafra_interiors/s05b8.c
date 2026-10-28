@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -39,8 +40,8 @@ s32 Func_020005b8(void) {
     else
       GameFlag_ClearBit(0x200);
     if (GameFlag_Test(0x200) && GameFlag_Test(0x823) && !GameFlag_Test(0x903)) {
-      Call3(Func_02000aec, 31, 0x1780000, 0x13c0000);
-      Call3(Func_02000aec, 32, 0x1880000, 0x1580000);
+      Call3(Func_02000aec, 31, PIXELS(376), PIXELS(316));
+      Call3(Func_02000aec, 32, PIXELS(392), PIXELS(344));
     } else {
       Call3(Func_02000aec, 31, 0, 0);
       Call3(Func_02000aec, 32, 0, 0);

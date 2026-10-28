@@ -1,13 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 extern const u8 gData_020017d8[];
 extern const u8 gData_020017a4[];
 extern const u8 gData_0200171c[];
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_Wait(s32 frames);
@@ -60,7 +60,7 @@ void Func_0200102c(void) {
 void Func_0200105c(void) {
   Func_020012e0();
   Func_020013f8(0);
-  Actor_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Func_02000f38();
 }

@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
 #include "call.h"
+#include "scene_tables.h"
 
 extern s32 gData_0200559c[];
 extern s32 gData_02005610[];
@@ -52,20 +53,20 @@ void Func_02001048(void) {
   Call2(Func_02004f14, 10, 0);
   Call3(Actor_ResetAndSetPositionInMode2, 10, 496, 456);
   Call1(Actor_WaitForMoveById, 10);
-  Call3(Actor_ArmCallback, 10, 0x1000, 0);
+  Call3(Actor_ArmCallback, 10, FACING_EAST + FACING_STEP, 0);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_02004f14, 10, 0);
   Value3(Func_02004f2c, 10, 261, 0);
   Call1(FieldEvent_Wait, 45);
   Call2(Func_02004f14, 10, 0);
-  Call3(Actor_ArmCallback, 10, 0xd000, 0);
+  Call3(Actor_ArmCallback, 10, FACING_NORTH + FACING_STEP, 0);
   Call1(FieldEvent_Wait, 30);
-  Call4(Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1880000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(488), -1, PIXELS(392), 1);
   Func_02004f54();
   Call2(Func_02004f14, 10, 0);
   Call2(Camera_FollowActor, 10, 1);
   Func_02004f54();
-  Call3(Actor_ArmCallback, 10, 0x1000, 0);
+  Call3(Actor_ArmCallback, 10, FACING_EAST + FACING_STEP, 0);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_02004f14, 10, 0);
   Call2(Motion_SetModeAndWaitAnimation, 10, 3);

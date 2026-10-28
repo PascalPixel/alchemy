@@ -138,7 +138,7 @@ redraw:
         if (!(gKeysHeld & KEY_START))
           break;
         if (red == 0)
-          *paletteColor = 0x7fff;
+          *paletteColor = RGB(31, 31, 31);
         if (red == 10)
           *paletteColor = rgb555;
         if (red == 20)

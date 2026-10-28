@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "scene_tables.h"
 
 void Func_02001d90(void) {
   Value2((s32 (*)())Task_Add, (s32)Func_02001cfc, 0x480);
@@ -42,8 +43,8 @@ void Func_02001db0(void) {
   Call1((void (*)())Func_02003f24, (s32)MsgThankYouSo);
   Call3((void (*)())Actor_Jump, 9, 2, 10);
   Call3((void (*)())Actor_Jump, 9, 4, 10);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x8000, 10);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_WEST, 10);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Actor_GetById(9)->actionFlags &= ~1;
   Call3((void (*)())Actor_SetPositionAndReset, 9, 222, 186);
@@ -53,14 +54,14 @@ void Func_02001db0(void) {
   Call3((void (*)())Actor_SetPositionAndReset, 9, 232, 186);
   Call1((void (*)())FieldEvent_Wait, 1);
   Actor_GetById(9)->actionFlags |= 1;
-  Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, 0x4000);
+  Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTH);
   Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 28);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   item = Actor_GetById(20);
   item->motionFlags = 0;
   Call2((void (*)())Func_02003e3c, (s32)item, 0x1c4);
   Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)item, leader->x,
-        leader->y + 0x180000, leader->z);
+        leader->y + PIXELS(24), leader->z);
   Call1((void (*)())FieldEvent_Wait, 20);
   ((void (*)())Func_02003fc4)();
   Value2((s32 (*)())PartyInventory_GiveItem, 0x1c4, 0);
@@ -68,7 +69,7 @@ void Func_02001db0(void) {
   Call3((void (*)())Func_02003edc, 20, 0, 0);
   Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 1);
   ((void (*)())Func_02003fb4)();
-  Call2((void (*)())Func_02003f3c, 9, 0xb000);
+  Call2((void (*)())Func_02003f3c, 9, FACING_NORTHWEST + FACING_STEP);
   Call1((void (*)())GameFlag_SetBit, 0xaa2);
   ((void (*)())Func_02003e6c)();
 }

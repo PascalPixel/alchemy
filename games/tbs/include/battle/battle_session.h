@@ -26,7 +26,7 @@ struct BattleObject {
   /// The unit sprite's SpriteColorMode: an enemy's own, 1 for a
   /// character on the enemy side (a link opponent), else 0.
   s32 palette;
-  s32 scale;          ///< 16.16 fixed point, 0x10000 full size
+  s32 scale;          ///< 16.16 fixed point, Q16_ONE full size
   u16 activeStatuses; ///< a bit per status with an icon (ICON_)
   u8 shownStatus;     ///< the status whose icon is shown
   s8 cycleTimer;      ///< frames until the next status icon

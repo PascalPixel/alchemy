@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "frame.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct RideEntry {
   s16 a;
@@ -42,8 +43,7 @@ struct RideWork {
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 s32 GameFlag_Test(s32 flag);
 void Func_02003130(void *handle);
@@ -74,7 +74,7 @@ void Func_02000058(s32 id, s32 value) {
   struct Actor *object = Actor_GetById(id);
 
   object->motionFlags = 0;
-  object->y = 0xe0000;
+  object->y = PIXELS(14);
   Actor_SetSingleChildFlags(object, 0);
   Func_02003118(object, value);
 }

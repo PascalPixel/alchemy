@@ -71,11 +71,9 @@ s32 AutoBattle_BuildActions(
 
     for (pos = count - 1; pos > 0; pos--) {
       if (entries[pos].value > entries[pos - 1].value) {
-        Dma_Set(&entries[pos], &swap, 0x84000004, (volatile u32 *)0x040000d4);
-        Dma_Set(&entries[pos - 1], &entries[pos], 0x84000004,
-                (volatile u32 *)0x040000d4);
-        Dma_Set(&swap, &entries[pos - 1], 0x84000004,
-                (volatile u32 *)0x040000d4);
+        Dma_Set(&entries[pos], &swap, DMA_COPY_WORDS(4), REG_DMA3);
+        Dma_Set(&entries[pos - 1], &entries[pos], DMA_COPY_WORDS(4), REG_DMA3);
+        Dma_Set(&swap, &entries[pos - 1], DMA_COPY_WORDS(4), REG_DMA3);
         swaps++;
       }
     }

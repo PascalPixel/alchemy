@@ -35,8 +35,8 @@
 /// Map temp flags, by stage number: a friend cheers at the stage, and its
 /// description was heard. When a friend cheers there, the guide says
 /// "Unfortunately, we have a full house."
-#define COLOSSO_STAGE_CHEERED 0x200
-#define COLOSSO_STAGE_DESCRIBED 0x208
+#define COLOSSO_STAGE_CHEERED FLAG_SCENE_TEMP_00
+#define COLOSSO_STAGE_DESCRIBED FLAG_SCENE_TEMP_08
 
 /// Puts Garet, Ivan and Mia back at the cells where they chose to cheer, at the
 /// centre of each cell.
@@ -48,9 +48,9 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
         FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(GARET));
 
     x <<= 20;
-    x += 0x80000;
+    x += PIXELS(8);
     y <<= 20;
-    y += 0x80000;
+    y += PIXELS(8);
     Import_ActorSetPosition(ACTOR_GARET, x, y);
   }
   {
@@ -59,9 +59,9 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(IVAN));
 
     x <<= 20;
-    x += 0x80000;
+    x += PIXELS(8);
     y <<= 20;
-    y += 0x80000;
+    y += PIXELS(8);
     Import_ActorSetPosition(ACTOR_IVAN, x, y);
   }
   {
@@ -70,16 +70,17 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(MIA));
 
     x <<= 20;
-    x += 0x80000;
+    x += PIXELS(8);
     y <<= 20;
-    y += 0x80000;
+    y += PIXELS(8);
     Import_ActorSetPosition(ACTOR_MIA, x, y);
   }
 }
 
 /// Makes the character the only party member, the one the player moves and
 /// the camera follows, with full HP and PP and no poison. The gauges are the
-/// battle's (0x4000 full; a character with any HP or PP left shows at least 1).
+/// battle's (1 << 14 full; a character with any HP or PP left shows at
+/// least 1).
 void Colosso_ControlCharacterAlone(s32 id) {
   struct Unit *unit;
   s32 v;
@@ -98,8 +99,8 @@ void Colosso_ControlCharacterAlone(s32 id) {
   unit->pp = unit->ppMax;
   unit->poison = 0;
   v = (unit->hp << 14) / unit->hpMax;
-  t = 0x4000;
-  if (v <= 0x4000) {
+  t = 1 << 14;
+  if (v <= 1 << 14) {
     t = 0;
     if (v >= 0)
       t = v;
@@ -109,8 +110,8 @@ void Colosso_ControlCharacterAlone(s32 id) {
     unit->hpGauge = 1;
   }
   v = (unit->pp << 14) / unit->ppMax;
-  t = 0x4000;
-  if (v <= 0x4000) {
+  t = 1 << 14;
+  if (v <= 1 << 14) {
     t = 0;
     if (v >= 0)
       t = v;
@@ -146,7 +147,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 static void Colosso_TakePlaceForMatch(void) {
   struct FieldWork *work = gFieldWork;
   s32 speakerId = 8;
-  s32 nearestDistance = 0x100000;
+  s32 nearestDistance = PIXELS(16);
   s32 supporterId = gMainRoutineWork.leaderActorId;
   struct Actor *supporter = Actor_GetById(supporterId);
   s32 actorId;

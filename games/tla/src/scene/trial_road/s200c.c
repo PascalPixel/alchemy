@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -63,6 +64,6 @@ L_0200a07c:
   t16 = Value1(GameFlag_Test, 0x9fc);
   if (t16 == 0)
     goto L_0200a0bc;
-  Call3(Func_020058e0, 10, 0x880000, 0x1480000);
+  Call3(Func_020058e0, 10, PIXELS(136), PIXELS(328));
 L_0200a0bc:
 }

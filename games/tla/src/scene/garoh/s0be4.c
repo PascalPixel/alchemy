@@ -1,6 +1,7 @@
 #include "garoh.h"
 #include "main_routine_work.h"
 #include "event_work.h"
+#include "io_reg.h"
 void Event_StartScreenTransition(void);
 void Func_02000a68(void);
 void Func_0200538c(void);
@@ -19,8 +20,8 @@ void Func_02000be4(void) {
     {
       u8 *palette = *(u8 **)((u8 *)Ram_HeapSlots + 0x80);
 
-      *(volatile u16 *)0x0500003c = 0x7fff;
-      *(u16 *)(palette + 60) = *(volatile u16 *)0x0500003c;
+      *(volatile u16 *)&BG_PLTT_COLOR(1, 14) = 0x7fff;
+      *(u16 *)(palette + 60) = *(volatile u16 *)&BG_PLTT_COLOR(1, 14);
     }
     Func_020052cc(0x10000, 1);
   } else {

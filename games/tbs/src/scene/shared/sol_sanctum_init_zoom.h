@@ -12,9 +12,9 @@
 s32 SolSanctumRooms_Initialize(void) {
   struct FieldWork *work;
 
-  s32 shakeX = 0x10000;
-  s32 shakeY = 0x10000;
-  s32 shakeDecay = 0x10000;
+  s32 shakeX = PIXELS(1);
+  s32 shakeY = PIXELS(1);
+  s32 shakeDecay = Q16_ONE;
 
   work = gFieldWork;
   work->transition =

@@ -1230,7 +1230,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Actor_SetPosition(ACTOR_LIFT_STATUE, PIXELS(104), PIXELS(264));
     Actor_Get(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
     Actor_GetById(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
-    MapGrid_CopyCellsTo(0x1D, 0x4A, 4, 0x4A, 5, 4);
+    MapGrid_CopyCellsTo(29, 74, 4, 74, 5, 4);
     Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
     Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
     MercuryLighthouseAerie_RaiseLift();
@@ -1462,7 +1462,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   }
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  MapGrid_CopyCellsTo(4, 0x46, 4, 0x4A, 5, 4);
+  MapGrid_CopyCellsTo(4, 70, 4, 74, 5, 4);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED);
   GameFlag_Set(FLAG_SATUROS_BEATEN_AT_MERCURY);
   Event_End();
@@ -1667,7 +1667,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   struct Actor *actor;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  speed = 0x1999;
+  speed = PIXELS(1) / 10;
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
@@ -1688,9 +1688,9 @@ static void MercuryLighthouseAerie_LowerLift(void) {
       actor->targetZ = Actor_GetById(ids[j])->z.fixed;
     }
     if ((i & 3) == 3)
-      speed += 0x1999;
-    if (speed > 0x17fff)
-      speed = 0x18000;
+      speed += PIXELS(1) / 10;
+    if (speed >= PIXELS(3) / 2)
+      speed = PIXELS(3) / 2;
     wait(1);
   }
   for (i = 0; i < n; i++)
@@ -1708,7 +1708,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   struct Actor *actor;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  speed = 0x18000;
+  speed = PIXELS(3) / 2;
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
@@ -1728,9 +1728,9 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
       actor->targetZ = Actor_GetById(ids[j])->z.fixed;
     }
     if ((i & 3) == 3 && i > 75)
-      speed += -0x3333;
-    if (speed < 0xccc)
-      speed = 0xccc;
+      speed += -PIXELS(1) / 5;
+    if (speed < PIXELS(1) / 20)
+      speed = PIXELS(1) / 20;
     wait(1);
   }
   lift->offsetY = PIXELS(1024);

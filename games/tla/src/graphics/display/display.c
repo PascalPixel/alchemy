@@ -68,7 +68,7 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   offset = tile * 64;
   /* FAKEMATCH: keeps the offset in r1 and the base in r2 (differ 6 without) */
   __asm__("" : : "r"(offset));
-  Dma_Set(remapped, (void *)(offset + vram), 0x84000100, REG_DMA3);
+  Dma_Set(remapped, (void *)(offset + vram), DMA_COPY_WORDS(256), REG_DMA3);
   Heap_Release(remapped);
   HeapSlot_Release(68);
 }

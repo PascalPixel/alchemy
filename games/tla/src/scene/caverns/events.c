@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -40,7 +41,7 @@ void Func_02000e44(void) {
 }
 
 void Func_02000e6c(void) {
-  Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
+  Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);
   Call1((void (*)())FieldEvent_Wait, 10);
   ((void (*)())Func_02000d68)();
   return;

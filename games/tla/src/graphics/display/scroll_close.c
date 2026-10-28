@@ -19,6 +19,5 @@ void Func_081a0fb8(void) {
   objects = gDisplayScroll_Objects;
   for (i = 0; i != 0x100; i++)
     *objects++ = 0;
-  Dma_Set(gDisplayScroll_Objects, (void *)0x07000000, 0x84000100,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
 }

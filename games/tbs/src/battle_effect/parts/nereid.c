@@ -123,7 +123,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         velocity.x = velocity.x * 58 / 64;
         velocity.y = velocity.y * 56 / 64;
         if (focus.x < 120 << 16)
-          velocity.x += 0x8000;
+          velocity.x += Q16_ONE / 2;
       }
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
@@ -138,7 +138,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           spark = &sparks[k];
           if (spark->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             spark->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             spark->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
@@ -155,7 +155,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           spark = &sparks[k];
           if (spark->variant == -1) {
             s32 radius = Random16() & 63;
-            s32 angle = Random16() & 0xffff;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
 
             spark->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
             spark->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
@@ -227,7 +227,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
           if (frame > 80)
-            spark->velocityY += -0x8000;
+            spark->velocityY += -Q16_ONE / 2;
           else
             spark->velocityY += gNereid_Gravity[k & 3];
           spark->velocityX = spark->velocityX * 62 / 64;
@@ -241,7 +241,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       // The targets bounce and flash white on frames 36, 48, 60 and 72,
       // getting their colours back 6 frames later. Each bounce starts at 4.5
       // pixels a frame up under the gravity BattleMotion_ReturnToSpot also
-      // gives a unit (0xab85, about 0.67 pixel a frame each frame).
+      // gives a unit (BATTLE_UNIT_GRAVITY, about 0.67 pixel a frame each
+      // frame).
       if (frame <= 79) {
         EFFECT_FOR_EACH_TARGET(k, work->args) {
           if (frame > 29) {
@@ -253,8 +254,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 
               BattleEffect_TintBattler(work->args->targets[k],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, -1, 0);
-              actor->velocityY = 0x48000;
-              actor->gravity = 0xab85;
+              actor->velocityY = Q16_ONE * 9 / 2;
+              actor->gravity = BATTLE_UNIT_GRAVITY;
             }
             if (phase == 6)
               BattleEffect_TintBattler(work->args->targets[k], 0, POSE_DAMAGE,

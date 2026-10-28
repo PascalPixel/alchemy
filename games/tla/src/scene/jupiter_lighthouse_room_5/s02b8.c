@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 extern s32 gData_02003274;
 extern s32 gData_02003278;
@@ -16,8 +17,7 @@ void Func_020029a8(s32 value);
 void Func_02002940(s32 id, s32 angle);
 void Func_02002a40(s32 sound);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02001718(const s32 *from, const s32 *to);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
@@ -76,7 +76,7 @@ void Func_020002b8(void) {
     return;
   GameFlag_SetBit(2560);
   Func_020029a8(0);
-  Func_02002940(gMainRoutineWork.currentOwner, 0xc000);
+  Func_02002940(gMainRoutineWork.currentOwner, FACING_NORTH);
   /* FAKEMATCH(temporary): the pulse state 3 held from the turn on, so its
    * register spans the quickening loop and the pulse's address and zero take
    * r9 and r11; as a plain 3, 30 of 395 instructions differ in tla-en. */
@@ -141,8 +141,7 @@ quicken:
   wait(1);
   leader->update = 0;
   Actor_SetAnimationSpeed(leader, 16);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   Actor_SetMovementTypeById(23, gData_02002f94);
   Actor_SetMovementTypeById(24, gData_02002f94);
   gData_02003274 = 2;
@@ -168,10 +167,10 @@ quicken:
   d->motionFlags = 0;
   i = 15;
 rise:
-  a->y += 0x20000;
-  b->y += 0x20000;
-  c->y += 0x20000;
-  d->y += 0x20000;
+  a->y += PIXELS(2);
+  b->y += PIXELS(2);
+  c->y += PIXELS(2);
+  d->y += PIXELS(2);
   wait(1);
   if (--i >= 0)
     goto rise;

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
 
 void Func_02000054(void);
 void Func_02000064(void);
@@ -15,31 +16,47 @@ extern u32 gData_02002f34[];
 
 // clang-format off
 u32 gData_02002ebc[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_02002ef8[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_02002f34[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_02002f70[] = {
-    23, 9, 0x1000, 0, 1, 13,
-    32, 0, 17,
+    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_WAIT(1),
+    SC_LOOP(32, SC_TOP),
+    SC_END,
 };
 
 s32 gData_02002f94[] = {
-    23, 9, -960, 0, 1, 13,
-    140, 0, 17,
+    SC_ADD(SW_SCALE_X, -960),
+    SC_WAIT(1),
+    SC_LOOP(140, SC_TOP),
+    SC_END,
 };
 
 s16 gData_02002fb8[] = {
@@ -90,10 +107,16 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 u32 gData_02003214[] = {
-    22, 9, 0xcccc, 22, 10, 0xcccc,
-    39, 1, 0x80010000, 23, 6, 0x10000,
-    0, 1, 13, 16, 0xc0010000, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_SET(SW_SCALE_X, 0xcccc),
+    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_ARG(1),
+    SC_LABEL(1),
+    SC_ADD(SW_Y, PIXELS(1)),
+    SC_WAIT(1),
+    SC_LOOP(16, SC_TO(1)),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gData_02003274[] = {

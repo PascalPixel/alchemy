@@ -128,8 +128,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
           // Element 4 is none: no element icon.
           if (action->element != ELEMENT_NONE) {
-            Window_SetTilemapEntry(window, action->element + 0x5001, 15, i * 2,
-                                   0);
+            Window_SetTilemapEntry(window,
+                                   action->element + LIST_TILE_SUMMON_ELEMENT,
+                                   15, i * 2, 0);
           }
 
           rangePattern = action->range;
@@ -146,9 +147,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
       if (count > BATTLE_LIST_ROWS) {
         for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-          iconTile = i + 0xf301;
+          iconTile = i + LIST_TILE_PAGE_NUMBER;
           if (i == firstEntry / BATTLE_LIST_ROWS) {
-            iconTile = i + 0xf30b;
+            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
           }
           Window_SetTilemapEntry(
               window, iconTile,
@@ -166,10 +167,10 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     // page arrows on the window's top edge (y -1).
     if (count > BATTLE_LIST_ROWS) {
       for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-        iconTile = i + 0xf301;
+        iconTile = i + LIST_TILE_PAGE_NUMBER;
         if ((gFrameCount & 15) <= 11) {
           if (i == firstEntry / BATTLE_LIST_ROWS) {
-            iconTile = i + 0xf30b;
+            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
           }
         }
         Window_SetTilemapEntry(

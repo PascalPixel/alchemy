@@ -4,6 +4,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 void FieldEvent_Wait();
 void Event_StartScreenTransition();
@@ -57,16 +58,16 @@ void Func_0200087c(void) {
 
   Func_02001080();
   Call1(Func_020011e0, 0);
-  Call4(Camera_MoveWithinMapBounds, 0xc70000, -1, 0x1110000, 0);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(199), -1, PIXELS(273), 0);
   Call1(Func_02001138, (s32)MsgHeyTheseGuys);
-  Call4(Func_020010f0, 4, 0xb80000, 0xe50000, angle);
-  Call4(Func_020010f0, 0, 0xc80000, 0xdd0000, angle);
+  Call4(Func_020010f0, 4, PIXELS(184), PIXELS(229), angle);
+  Call4(Func_020010f0, 0, PIXELS(200), PIXELS(221), angle);
   {
     /* FAKEMATCH: the local starts the facing before the other arguments, as the
      * native has (one reordered row as a plain argument). */
     s32 turn = 0xc000;
 
-    Call4(Func_020010f0, 18, 0xda0000, 0x1400000, turn);
+    Call4(Func_020010f0, 18, PIXELS(218), PIXELS(320), turn);
   }
   Call2(Actor_SetModeById, 4, 19);
   Call2(Actor_SetModeById, 0, 39);
@@ -97,7 +98,7 @@ void Func_0200087c(void) {
   Call1(FieldEvent_Wait, 10);
   Call3(Func_02001148, 19, 0, 5);
   Call2(Func_02001170, 0x8000, 0x1000);
-  Call4(Camera_MoveWithinMapBounds, 0xc70000, -1, 0x1750000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(199), -1, PIXELS(373), 1);
   Call1(FieldEvent_Wait, 100);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */

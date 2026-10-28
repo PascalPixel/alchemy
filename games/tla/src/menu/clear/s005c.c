@@ -60,10 +60,11 @@ void Func_0200005c(void) {
   gBgScroll[2].y = 0;
   blank = 0x1ff;
   res = Resource_GetTableEntry(id);
-  Dma_Set(res, (void *)0x05000000, 0x84000070, REG_DMA3);
+  Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   res += 0x1c0;
   Decode_(res, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, REG_DMA3);
+  Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800,
+          DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
   /* FAKEMATCH: a one-pass block ends the scheduling block, so the tilemap
    * address loads before the first tile number is built (one reordered row
    * without it). */
@@ -95,7 +96,7 @@ scroll_pair:
   y++;
   if (y <= 3)
     goto scroll_pair;
-  Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   ((struct ClearWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
   {
     struct Actor *leader;
@@ -121,9 +122,13 @@ void Func_0200015c(void) {
   frame = gData_020024f4[0] + 1;
   gData_020024f4[0] = frame;
   level = (u16)frame >> 1;
-  IO_WRITE_QUEUE_PUSH(0x4000050, 0x2e51, 0x20000);
-  IO_WRITE_QUEUE_PUSH(0x4000052, ((16 - (u16)level) << 8) | (u16)level,
-                      0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                      BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
+                          BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
+                          BLDCNT_TGT2_BD,
+                      IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - (u16)level) << 8) | (u16)level,
+                      IO_WRITE_16);
   if (level > 15)
     Task_RemoveFar(Func_0200015c);
 }

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 u32 Random16Far(void);
 
@@ -20,11 +21,11 @@ void Func_02000060(struct Actor *object) {
   state = (u8 *)object + 99;
   switch (*state) {
   case 0:
-    object->angle = 0x8000;
+    object->angle = FACING_WEST;
     *state = 1;
     break;
   case 1:
-    object->angle = 0xb000;
+    object->angle = FACING_NORTHWEST + FACING_STEP;
     *state = 0;
     break;
   case 2:
@@ -32,7 +33,7 @@ void Func_02000060(struct Actor *object) {
     *state = 3;
     break;
   case 3:
-    object->angle = 0xd000;
+    object->angle = FACING_NORTH + FACING_STEP;
     *state = 2;
     break;
   }

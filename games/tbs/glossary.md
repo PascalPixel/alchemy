@@ -451,6 +451,8 @@ it with six veneers the field calls to ask the scene its questions
 (`struct SceneEntryPoints`), and the import table ends it with one veneer for
 each main-image function it calls
 ([System code](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+The scenes' tables are in `src/scene/entry/` and `src/scene/import/`, and the
+debug menus' in `src/debug/entry/` and `src/debug/import/`.
 
 Evidence: plain English.
 
@@ -815,10 +817,14 @@ Evidence: Camelot: the menus' labels ("Rough menu", "Recovery test",
 ### Battle
 
 The fight between the party and a formation of enemies, a sequence of its own
-([Battle](battle.md)). Its code is in `src/battle/`, and the opening
-transition's curtain pictures in `battle/transition/`.
+([Battle](battle.md)). Its code is in `src/battle/`, and the curtain pictures
+of its opening transition in `battle/transition/`. That transition is how a
+battle opens, with the curtain or the Venus Lighthouse storm
+(`BattleTransition_Run`), not the handover between sequences
+([Transition and next sequence](#transition-and-next-sequence)).
 
-Evidence: Camelot: the credits' "Battle".
+Evidence: Camelot: the credits' "Battle"; `battle/transition/` takes the name of
+the code that draws it.
 
 ### Unit
 
@@ -919,7 +925,10 @@ Evidence: Camelot: the settings label メッセージスピード ("Message" in 
 The Title; the File Screen, where a file is chosen, copied or erased; the
 Pause menu, which Start opens on the field; the field menu with its
 Psynergy, Djinn, Item and Status screens; the settings menu; name entry; and
-the world picture ([User Interface](user_interface.md)).
+the world picture ([User Interface](user_interface.md)). The Pause menu, the
+file list saving and the File Screen share, name entry, the command icon menus
+and the battle's command menus are in `src/window/screens/`; the field menu's
+screens are in `src/menu/`.
 
 Evidence: Camelot: "To the File Screen", "The Pause menu is not..."
 (`MsgFieldPauseUnavailable`), the scene label TITLE; the rest plain English.

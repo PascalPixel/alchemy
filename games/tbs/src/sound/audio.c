@@ -269,7 +269,7 @@ UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
         Clear64byte(track);
         track->flags = MPT_FLG_EXIST;
         track->bendRange = 2;
-        track->volumeScale = 0x40;
+        track->volumeScale = 64;
         track->lfoSpeed = 22;
         track->voice.kind = 1;
       }

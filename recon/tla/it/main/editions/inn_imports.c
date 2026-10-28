@@ -23,8 +23,8 @@ void Party_AdjustCoinsFar(s32);
 void Unit_UpdateRatiosFar(s32);
 void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
-void Audio_PlayCue(s32);
-void AudioCommand_WaitForStateByteClear(void);
+void Sound_PlayFar(s32);
+void Sound_WaitForFanfare(void);
 void Event_StartScreenTransitionFar(void);
 
 void Inn_PlaySleep(s32 roomPrice) {
@@ -52,8 +52,8 @@ void Inn_PlaySleep(s32 roomPrice) {
   WaitFrames(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  Audio_PlayCue(86);
-  AudioCommand_WaitForStateByteClear();
+  Sound_PlayFar(86);
+  Sound_WaitForFanfare();
   WaitFrames(10);
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();

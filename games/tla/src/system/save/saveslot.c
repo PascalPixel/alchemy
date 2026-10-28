@@ -19,7 +19,7 @@ void SaveState_ReleaseWorkspace(void);
 s32 SaveState_BuildSummaryHeader(void);
 s32 Func_08042f10(s32 slot, void *buffer);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void ObjectTable_SnapshotFar(void);
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
@@ -37,7 +37,7 @@ s32 SaveState_SaveToSlot(u32 slot) {
   } else {
     SaveState_LoadSummaryRecords();
     gData_020036d0 = slot;
-    Audio_PlayCue(85);
+    Sound_PlayFar(85);
     UiText_ShowPositionedMessageAndWait((s32)&MsgSaving, 13);
     SaveState_BuildSummaryHeader();
     ObjectTable_SnapshotFar();

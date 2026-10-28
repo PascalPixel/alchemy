@@ -331,7 +331,7 @@ Func_0810106c:
 	b .L_0810159c
 .L_081012f0:
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #128
 	movs r1, #128
 	lsls r2, r2, #2
@@ -450,7 +450,7 @@ Func_0810106c:
 	b .L_0810159c
 .L_081013e2:
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #128
 	movs r1, #128
 	lsls r2, r2, #2
@@ -500,7 +500,7 @@ Func_0810106c:
 	b .L_0810159c
 .L_08101448:
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #128
 	movs r1, #128
 	lsls r2, r2, #2
@@ -625,7 +625,7 @@ Func_0810106c:
 	blt .L_0810159c
 .L_08101544:
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #128
 	movs r1, #128
 	lsls r2, r2, #2

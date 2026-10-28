@@ -1065,7 +1065,7 @@ Func_0812381c:
 	ldrsh r1, [r3, r2]
 	bl BattleEvent_Push
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r4, r10
 	ldr r3, [r4]
 	movs r1, #0
@@ -1109,7 +1109,7 @@ Func_0812381c:
 	adds r0, r7, #0
 	bl UiText_DrawQuantity
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, .L_08124438
 	bl UiText_ShowMessageAndWaitCoreFar
 	movs r0, #60

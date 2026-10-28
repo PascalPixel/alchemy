@@ -74,7 +74,7 @@ extern u16 gData_0819747a[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
@@ -157,7 +157,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     member++;
   } while (member != PUFF_COUNT);
 
-  Audio_PlayCue(0x88);
+  Sound_PlayFar(0x88);
   frame = 0;
   diveY = -172;
   do {
@@ -182,7 +182,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     }
     // It lands: the ember sheet replaces the Djinn's.
     if (frame == 32) {
-      Audio_PlayCue(0x91);
+      Sound_PlayFar(0x91);
       work->shakeFrames = 8;
       Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
                                  1, 1);

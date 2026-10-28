@@ -19,9 +19,9 @@ void Func_080d5c70(s32 unused) {
   s32 c;
 
   work = Ram_HeapSlots->eventWork;
-  Audio_PlayCue(gAdventure.sceneCue);
-  Audio_PlayCue(298);
-  Audio_PlayCue(147);
+  Sound_PlayFar(gAdventure.sceneCue);
+  Sound_PlayFar(298);
+  Sound_PlayFar(147);
   if (work->controlMode == 3) {
     Io_Write16(0x7fff, (u16 *)0x050001e6);
     DisplayTransition_Finish(0x401, 16);

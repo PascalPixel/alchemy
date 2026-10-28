@@ -932,19 +932,19 @@ BattleEffect_RunThor:
 	cmp r3, #16
 	bne .L_081594fa
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081594fa:
 	ldr r6, [sp, #100]
 	cmp r6, #132
 	bne .L_08159506
 	movs r0, #131
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08159506:
 	ldr r0, [sp, #100]
 	cmp r0, #151
 	bne .L_08159512
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08159512:
 	ldr r3, .L_081595d0
 	movs r2, #3
@@ -1098,7 +1098,7 @@ BattleEffect_RunThor:
 	movs r3, #50
 	movs r0, #145
 	str r3, [r2]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #0
 	str r0, [sp, #100]
 .L_0815965c:
@@ -1125,7 +1125,7 @@ BattleEffect_RunThor:
 	cmp r3, #0
 	bne .L_0815968e
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815968e:
 	ldr r6, [sp, #100]
 	cmp r6, #120

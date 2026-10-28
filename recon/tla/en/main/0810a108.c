@@ -40,7 +40,7 @@ s32 Shop_GetSellPrice(s32 item);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void Func_0810857c(s32 message);
 s32 Func_08108630(s32 value);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Inventory_DiscardFar(s32 unitId, s32 slot);
 void Unit_RefreshPsynergyFar(s32 unitId);
 void Unit_CalculateFar(s32 unitId);
@@ -102,7 +102,7 @@ void Func_0810a108(s32 unitId, s32 slot, s32 count) {
     Func_0810857c(message);
     return;
   }
-  Audio_PlayCue(102);
+  Sound_PlayFar(102);
   for (i = 0; i < count; i++)
     Inventory_DiscardFar(unitId, slot);
   Unit_RefreshPsynergyFar(unitId);

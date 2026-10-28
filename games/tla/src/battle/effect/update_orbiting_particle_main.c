@@ -134,7 +134,7 @@ void FieldEffect_RunFrost(void) {
   scene = Ram_HeapSlots->effectWork;
   target = scene->child;
   BattleEffect_InitializeSharedScene();
-  Audio_PlayCue(115);
+  Sound_PlayFar(115);
 
   p = &pos;
   cnt = 15;
@@ -170,11 +170,11 @@ void FieldEffect_RunFrost(void) {
   } while (cnt >= 0);
 
   WaitFrames(10);
-  Audio_PlayCue(115);
+  Sound_PlayFar(115);
   WaitFrames(50);
 
   if (target != NULL && scene->enabled == 0) {
-    Audio_PlayCue(212);
+    Sound_PlayFar(212);
 
     cnt = 7;
     do {
@@ -186,7 +186,7 @@ void FieldEffect_RunFrost(void) {
     } while (cnt >= 0);
 
     if (scene->childOption == 0) {
-      Audio_PlayCue(220);
+      Sound_PlayFar(220);
       Object_SetMode(target, 2);
     }
 

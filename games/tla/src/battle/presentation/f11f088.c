@@ -46,7 +46,7 @@ void Func_0811ddd8(struct BattlePlan *plan,
                    struct BattlePresentationWork *work);
 void Func_0811e7dc(void *saved);
 void Func_0811e830(void *saved);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_0812756c(void);
 void Func_08138008(struct BattlePresentationWork *work);
@@ -108,7 +108,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   object = BattleObject_Get(work.actor)->object;
   Object_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
-  Audio_PlayCue(154);
+  Sound_PlayFar(154);
   if (mode & 2)
     Func_08127308(work.actor, plan->element, 1, 0);
   else if (!isDjinni)

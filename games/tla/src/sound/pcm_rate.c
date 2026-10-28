@@ -5,7 +5,7 @@
 extern u8 gData_02003a90[];
 
 s32 __divsi3(s32 numerator, s32 denominator);
-void AudioEngine_ResumeDirectSound(void);
+void m4aSoundVSyncOn(void);
 
 static __inline__ s32 Sound_ClearWords(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
@@ -46,7 +46,7 @@ void AudioEngine_SetFixedPcmRate(u32 mode) {
    * ☀️'s IWRAM call layer, so the entry's pool load comes after the size's shift
    * (differ 2 called directly). */
   Sound_ClearWords(buffer, 0x18c0);
-  AudioEngine_ResumeDirectSound();
+  m4aSoundVSyncOn();
   REG_DMA1SAD = (u32)buffer;
   buffer += 0xc60;
   do {

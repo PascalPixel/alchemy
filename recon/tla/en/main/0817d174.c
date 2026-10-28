@@ -82,7 +82,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -261,7 +261,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         drop->variant = (Random16() & 15) + 16;
       }
       Func_081180e8(134);
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       BattleEffect_StartActorMotion(effect->actors[member], 1, 0x20000, 0x80000,
                                 0x20000, i * 5 + 110);
       Func_0814cd48(effect->actors[member], 7, 5, member, 16);

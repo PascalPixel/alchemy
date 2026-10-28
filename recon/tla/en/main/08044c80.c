@@ -29,9 +29,9 @@ void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
 s32 UiText_QueueRenderEntries(struct UiWindow *, s32, s32, s32, s32);
-void Audio_PlayCue(s32);
+void Sound_PlayFar(s32);
 void WaitFrames(s32);
-s32 Audio_Check(void);
+s32 Sound_GetBgmRestoreDelayFar(void);
 void UiWork_Finalize(struct UiWindow *, s32);
 
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
@@ -84,13 +84,13 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
         window, UiText_BuildRenderEntriesMode1((s32)MsgPairJoinedParty), 68, 2,
         zero);
 
-    Audio_PlayCue(81);
+    Sound_PlayFar(81);
 
     do {
-      Runtime_PushSlotEntry(entry1, 250);
-      Runtime_PushSlotEntry(entry2, 250);
+      Oam_AddSpriteAtDepth(entry1, 250);
+      Oam_AddSpriteAtDepth(entry2, 250);
       WaitFrames(1);
-    } while (Audio_Check() != 0 &&
+    } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     UiWork_Finalize(window, 2);

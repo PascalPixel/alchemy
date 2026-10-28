@@ -153,7 +153,7 @@ void BattleEffect_FetchRectangleBlitters(s32, void **);
 u32 Random16(void);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
-void Audio_PlayCue(s32);
+void Sound_PlayFar(s32);
 void Func_0815f0a0(s32);
 void BattleEffectKernels_IntegrateVector2(Particle *, s32, s32);
 void BattleEffectKernels_IntegrateVector3(Particle *, s32, s32);
@@ -569,17 +569,17 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
     for (i = 0; i != 5; i++) {
       if (frame == gUlysses_WaveCueFrames[i]) {
         work->shake = 23;
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
       }
     }
     if (frame == 510)
-      Audio_PlayCue(186);
+      Sound_PlayFar(186);
     if (frame == 568) {
       work->shake = 10;
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     }
     if (frame == 578)
-      Audio_PlayCue(163);
+      Sound_PlayFar(163);
     for (i = 0; i != 16; i++) {
       p = &work->particles[32 + i];
       if (p->timer != 0) {
@@ -600,7 +600,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
         q->vy = 0;
       }
       if (work->particles[20].timer == (i & 7) * 6 + 10) {
-        Audio_PlayCue(138);
+        Sound_PlayFar(138);
         p->timer = 1;
         p->x += swayX;
         p->y += swayY - (gUlysses_Shake[work->shake] << 16);
@@ -1035,7 +1035,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg) {
             q->vy = speed * Trig_Cos(angle) >> 4;
             q->timer = 0;
           }
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
           for (j = 0; j < arg->count; j++) {
             BattleEffect_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000, 100);
             Func_0814cd48(arg->actors[j], 7, 5, j, 7);

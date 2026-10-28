@@ -1,6 +1,6 @@
 #include "audio_engine.h"
 
-void AudioCommand_UpdateToggleMask(u32 command) {
+void Sound_UpdateCommandMask(u32 command) {
   u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
   command &= AUDIO_COMMAND_MASK;

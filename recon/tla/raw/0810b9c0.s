@@ -141,7 +141,7 @@ Func_0810b9c0:
 	cmp r0, #0
 	bne .L_0810baea
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r5, r7, #0
 	b .L_0810bc6a
 .L_0810baea:
@@ -167,7 +167,7 @@ Func_0810b9c0:
 	bl UiText_OpenMessageWindowFar
 .L_0810bb14:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0810bb22
 .L_0810bb1c:
 	movs r0, #1
@@ -186,7 +186,7 @@ Func_0810b9c0:
 	beq .L_0810bb46
 	movs r0, #113
 	movs r5, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r5, r5
 	b .L_0810bc6a
 .L_0810bb46:
@@ -203,7 +203,7 @@ Func_0810b9c0:
 	ldrh r5, [r1, r3]
 	str r2, [sp, #12]
 	str r4, [sp, #4]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #12]
 	movs r3, #10
 	str r2, [sp, #0]
@@ -262,7 +262,7 @@ Func_0810b9c0:
 	movs r0, #111
 	str r4, [sp, #4]
 	subs r7, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r11
 	adds r0, r7, r1
 	bl __modsi3
@@ -279,7 +279,7 @@ Func_0810b9c0:
 	movs r0, #111
 	str r4, [sp, #4]
 	adds r7, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r3, r11
 	adds r0, r7, r3
 	mov r1, r11
@@ -307,7 +307,7 @@ Func_0810b9c0:
 	bge .L_0810bc2e
 .L_0810bc34:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #1
 	mov r10, r2
 .L_0810bc3e:
@@ -332,7 +332,7 @@ Func_0810b9c0:
 	blt .L_0810bc58
 .L_0810bc5e:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0810bc64:
 	movs r3, #1
 	mov r10, r3

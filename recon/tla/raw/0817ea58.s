@@ -1665,7 +1665,7 @@ BattleEffect_RunDaedalus:
 	bne .L_0817f726
 	str r7, [r6]
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817f726:
 	movs r2, #1
 	add r8, r2
@@ -1678,7 +1678,7 @@ BattleEffect_RunDaedalus:
 	cmp r4, r7
 	bne .L_0817f740
 	movs r0, #186
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817f740:
 	ldr r0, [sp, #140]
 	movs r1, #142
@@ -1692,7 +1692,7 @@ BattleEffect_RunDaedalus:
 	movs r3, #10
 	str r3, [r2]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817f75c:
 	movs r3, #128
 	ldr r2, [sp, #140]
@@ -1701,7 +1701,7 @@ BattleEffect_RunDaedalus:
 	cmp r2, r3
 	bne .L_0817f76e
 	movs r0, #163
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817f76e:
 	movs r5, #224
 	movs r7, #146
@@ -1783,7 +1783,7 @@ BattleEffect_RunDaedalus:
 	cmp r3, r2
 	bne .L_0817f854
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	str r3, [r5, #24]
 	ldr r1, [sp, #76]
@@ -4116,7 +4116,7 @@ BattleEffect_RunDaedalus:
 	cmp r1, #2
 	bne .L_081809b0
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r7, [sp, #148]
 	movs r2, #0
 	ldr r3, [r7, #20]

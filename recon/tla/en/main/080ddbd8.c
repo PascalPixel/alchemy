@@ -114,7 +114,7 @@ void Func_080ddbd8(void) {
       Vector_AddPolarOffset(dist, Random16(), pos);
       Object_SetPosition((struct ObjectRuntime *)obj, pos[0], pos[1], pos[2]);
     }
-    Audio_PlayCue(131);
+    Sound_PlayFar(131);
     WaitFrames(2);
   }
   WaitFrames(8);

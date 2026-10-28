@@ -174,7 +174,7 @@ Func_080e5a64:
 	movs r0, #156
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #192
 	lsls r3, r3, #5
 	adds r3, #176

@@ -100,14 +100,14 @@ Func_080feec0:
 	b .L_080fefaa
 .L_080fef86:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	str r3, [sp, #20]
 	str r3, [sp, #32]
 	b .L_080ff1a2
 .L_080fef94:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	movs r4, #1
 	negs r0, r0
@@ -266,7 +266,7 @@ Func_080feec0:
 	cmp r2, #0
 	beq .L_080ff0e0
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	mov r10, r1
 	subs r7, #1
@@ -277,7 +277,7 @@ Func_080feec0:
 	cmp r2, #0
 	beq .L_080ff0f6
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #1
 	mov r10, r2
 	adds r7, #1
@@ -288,7 +288,7 @@ Func_080feec0:
 	cmp r2, #0
 	beq .L_080ff10c
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	mov r10, r3
 	add r8, r3
@@ -299,7 +299,7 @@ Func_080feec0:
 	cmp r2, #0
 	beq .L_080ff126
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	movs r4, #1
 	negs r0, r0
@@ -320,7 +320,7 @@ Func_080feec0:
 	beq .L_080ff194
 .L_080ff13e:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [r5, #12]
 	ldr r1, [sp, #36]
 	ands r3, r6

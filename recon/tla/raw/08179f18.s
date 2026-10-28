@@ -1877,7 +1877,7 @@ BattleEffect_RunFlora:
 	cmp r2, #114
 	bne .L_0817ad56
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817ad56:
 	movs r0, #128
 	lsls r0, r0, #2
@@ -2000,19 +2000,19 @@ BattleEffect_RunFlora:
 	cmp r5, #156
 	bne .L_0817ae66
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817ae66:
 	ldr r6, [sp, #160]
 	cmp r6, #223
 	bne .L_0817ae72
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817ae72:
 	ldr r0, [sp, #160]
 	cmp r0, #252
 	bne .L_0817ae7e
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817ae7e:
 	ldr r2, [sp, #160]
 	subs r2, #156
@@ -2891,7 +2891,7 @@ BattleEffect_RunFlora:
 	movs r3, #4
 	str r3, [r2]
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #180]
 	movs r1, #0
 	ldrsh r0, [r6, r2]

@@ -27,7 +27,7 @@ struct UiWindow *Func_08041068(void);
 void Func_08108048(void *panel, s32 x, s32 y);
 void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void UiWork_Finalize(struct UiWindow *window, s32 release);
 
 /// Shows the nine debug warp presets with the cursor on row index, lets Up
@@ -61,18 +61,18 @@ s32 DebugWarp_Run(s32 index) {
     }
     WaitFrames(1);
     if (gInput.pressed & KEY_B) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       index = -1;
       goto done;
     }
     if (gInput.pressed & KEY_A) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       goto done;
     }
     if (gInput.repeat & KEY_UP) {
       index--;
       moved = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
     /* FAKEMATCH(temporary): the Down mask kept in a variable; as
      * gInput.repeat & KEY_DOWN, 32 of 115 instructions differ in tla-en. */
@@ -80,7 +80,7 @@ s32 DebugWarp_Run(s32 index) {
     if (gInput.repeat & down) {
       index++;
       moved = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
   } while (1);
 done:

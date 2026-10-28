@@ -54,7 +54,7 @@ void UiWindow_DrawDividerLine(struct UiWindow *window, s32 x0, s32 y0, s32 x1,
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
                               s32 height);
 void Func_08045018(void *pair);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Messages 0 to 4 and 3672, the first area name.
 extern u8 MsgSaveNoData[];
@@ -234,7 +234,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
     Func_08045018(modePicture);
     WaitFrames(1);
     if (gInput.repeat & 0x40) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT;
@@ -246,7 +246,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
     } else if (gInput.repeat & 0x80) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT;
@@ -260,11 +260,11 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
       /* FAKEMATCH: the native reads the pressed keys again for each test;
        * read plainly the second test reuses the first load (differ 26). */
     } else if (((volatile struct InputState *)&gInput)->pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     } else if (((volatile struct InputState *)&gInput)->pressed & 1) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = selectedFile;
       break;
     }

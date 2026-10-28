@@ -372,13 +372,13 @@ BattleEffect_RunJudgment:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081675a0:
 	ldr r4, [sp, #72]
 	cmp r4, #80
 	bne .L_081675ac
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081675ac:
 	ldr r5, [sp, #72]
 	cmp r5, #72
@@ -1344,25 +1344,25 @@ BattleEffect_RunJudgment:
 	cmp r4, #66
 	bne .L_08167d24
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08167d24:
 	ldr r5, [sp, #72]
 	cmp r5, #88
 	bne .L_08167d30
 	movs r0, #230
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08167d30:
 	ldr r6, [sp, #72]
 	cmp r6, #155
 	bne .L_08167d3c
 	movs r0, #162
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08167d3c:
 	ldr r0, [sp, #72]
 	cmp r0, #217
 	bne .L_08167d48
 	movs r0, #156
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08167d48:
 	ldr r1, [sp, #72]
 	movs r2, #140
@@ -1370,7 +1370,7 @@ BattleEffect_RunJudgment:
 	cmp r1, r2
 	bne .L_08167d58
 	movs r0, #157
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08167d58:
 	ldr r3, [sp, #72]
 	movs r4, #150

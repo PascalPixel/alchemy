@@ -86,7 +86,7 @@ void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Func_08158ce0(s32 randomMask, u32 range);
 void ObjectGroup_CountDownMemberTimers(void);
 void Func_081180e8(s32 phase);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
@@ -151,7 +151,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != SUMMON16_FRAMES; frame++) {
     if ((gInput.repeat & 3) && frame <= 231 && frame > 15) {
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
       frame = SUMMON16_SKIP_TO;
     }
 
@@ -377,15 +377,15 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
       work->shakeFrames = 2;
 
     if (frame == 32)
-      Audio_PlayCue(246);
+      Sound_PlayFar(246);
     if (frame == 90)
-      Audio_PlayCue(225);
+      Sound_PlayFar(225);
     if (frame == 140)
-      Audio_PlayCue(154);
+      Sound_PlayFar(154);
     if (frame == 200)
-      Audio_PlayCue(208);
+      Sound_PlayFar(208);
     if (frame == 232)
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
 
     // Frames 256-271 brighten the whole screen to white; at 272 the battle
     // phase resumes and the canvas fades back.

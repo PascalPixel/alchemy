@@ -69,7 +69,7 @@ Func_08044b98:
 	str r6, [sp, #0]
 	bl UiText_QueueRenderEntries
 	movs r0, #81
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r5, #129
 	ldr r6, .L_08044c7c
 	lsls r5, r5, #2
@@ -77,10 +77,10 @@ Func_08044b98:
 .L_08044c38:
 	movs r1, #250
 	adds r0, r7, #0
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	movs r0, #1
 	bl WaitFrames
-	bl Audio_Check
+	bl Sound_GetBgmRestoreDelayFar
 	cmp r0, #0
 	beq .L_08044c56
 	ldr r3, [r6, #4]

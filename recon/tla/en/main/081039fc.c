@@ -101,7 +101,7 @@ extern u8 MsgDjinnCompareConfirm[];
 extern u8 gMenu_BackdropBorderTile[];
 
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 Party_ListActiveOwnersFar(u16 *owners);
 void Func_08104e38(s32 first, s32 second);
 void RenderOutput_ClearListFar(s32 window);
@@ -550,36 +550,36 @@ s32 Func_081039fc(u32 mode) {
         result = 1;
         break;
       }
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
     if ((pressed & 8) != 0) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -2;
       break;
     } else if ((pressed & 2) != 0) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     } else if ((pressed & 0x100) != 0) {
       if (mode <= 1) {
         page = (page + 1) % 3;
         redraw = 2;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
       }
     } else if ((repeat & 0x20) != 0) {
       if (page <= 1) {
         selectedPages[page]--;
         selectedPages[page] =
             Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         redraw = 1;
       }
     } else if ((repeat & 0x10) != 0) {
       if (page <= 1) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         selectedPages[page]++;
         redraw = 1;

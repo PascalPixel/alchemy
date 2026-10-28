@@ -34,7 +34,7 @@ FieldEffect_RunDouse:
 .L_080dee22:
 	bl BattleEffect_InitializeSharedScene
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r8
 	ldr r3, [r2, #20]
 	cmp r3, #0
@@ -260,7 +260,7 @@ FieldEffect_RunDouse:
 	strb r3, [r2]
 .L_080deff0:
 	movs r0, #132
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #6
 	bl WaitFrames
 	mov r3, r10

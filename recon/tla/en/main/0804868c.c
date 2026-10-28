@@ -137,10 +137,10 @@ void UiText_DrawCharacterAtOffset(s32 message, struct DjinnMenuWindow *window,
                                   s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32 value, s32 digits,
                                struct DjinnMenuWindow *window, s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void RenderOutput_ClearList(struct DjinnMenuWindow *window);
 void Input_ResetKeyRepeat(void);
-void Runtime_PushSlotEntry(void *sprite, s32 depth);
+void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Resource_ResetEntry(s32 slot);
 void Func_08041b68(void);
 void MemFree(void *block);
@@ -421,7 +421,7 @@ s32 Func_0804868c(s32 member) {
     }
     navigation = NAVIGATION;
     if (navigation->timer == 0 || (pressed & 2)) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       encodedDjinn = -1;
       break;
     }
@@ -447,7 +447,7 @@ s32 Func_0804868c(s32 member) {
           UiText_CopyMessageString((s32)Msg_0cf8, messageText, 52);
           UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
       } else {
         encodedDjinn = -1;
         break;
@@ -456,13 +456,13 @@ s32 Func_0804868c(s32 member) {
 
     if (djinnCount != 0) {
       if (repeated & 0x80) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         selectedRow++;
         if (selectedRow == 5 || firstEntry + selectedRow == djinnCount)
           selectedRow = 0;
         preferredRow = selectedRow;
       } else if (repeated & 0x40) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (djinnCount - 1) / 5 * 5)
@@ -499,13 +499,13 @@ s32 Func_0804868c(s32 member) {
             previewPage = previewPages;
           if (previewPage != 0) {
             if (repeated & 0x10) {
-              Audio_PlayCue(111);
+              Sound_PlayFar(111);
               previewPage++;
               if (previewPage > previewPages)
                 previewPage = 1;
               redraw = 1;
             } else if (repeated & 0x20) {
-              Audio_PlayCue(111);
+              Sound_PlayFar(111);
               previewPage--;
               if (previewPage <= 0)
                 previewPage = previewPages;
@@ -520,7 +520,7 @@ s32 Func_0804868c(s32 member) {
         redraw = 1;
         redrawList = 1;
       } else if (repeated & 0x10) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         if (firstEntry + 5 >= djinnCount) {
           if (firstEntry != 0) {
@@ -537,7 +537,7 @@ s32 Func_0804868c(s32 member) {
           }
         }
       } else if (repeated & 0x20) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= 5;
@@ -571,7 +571,7 @@ s32 Func_0804868c(s32 member) {
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0)
-      Runtime_PushSlotEntry(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, 242);
 
     partyStatus = Ram_HeapSlots->windowLayout;
     blinkPhase = gFrameCount & 4;

@@ -469,7 +469,7 @@ BattleEffect_RunGaia:
 	cmp r1, #0
 	bne .L_0815ad80
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0815ad80
 	.2byte 0x0000
 .L_0815ad74:
@@ -483,13 +483,13 @@ BattleEffect_RunGaia:
 	cmp r2, #40
 	bne .L_0815ad8c
 	movs r0, #141
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815ad8c:
 	ldr r3, [sp, #40]
 	cmp r3, #96
 	bne .L_0815ad98
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815ad98:
 	ldr r4, [sp, #40]
 	cmp r4, #120

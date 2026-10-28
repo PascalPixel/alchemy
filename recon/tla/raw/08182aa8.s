@@ -525,7 +525,7 @@ BattleEffect_RunCoatlicue:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182ebc:
 	mov r2, r11
 	cmp r2, #210
@@ -538,70 +538,70 @@ BattleEffect_RunCoatlicue:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182ed6:
 	movs r3, #137
 	lsls r3, r3, #1
 	cmp r11, r3
 	bne .L_08182ee4
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182ee4:
 	movs r4, #155
 	lsls r4, r4, #1
 	cmp r11, r4
 	bne .L_08182ef2
 	movs r0, #206
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182ef2:
 	movs r7, #158
 	lsls r7, r7, #1
 	cmp r11, r7
 	bne .L_08182f00
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182f00:
 	movs r0, #233
 	lsls r0, r0, #1
 	cmp r11, r0
 	bne .L_08182f0e
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182f0e:
 	movs r1, #249
 	lsls r1, r1, #1
 	cmp r11, r1
 	bne .L_08182f1c
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182f1c:
 	movs r2, #248
 	adds r2, #255
 	cmp r11, r2
 	bne .L_08182f2a
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182f2a:
 	movs r3, #254
 	lsls r3, r3, #1
 	cmp r11, r3
 	bne .L_08182f38
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182f38:
 	movs r4, #130
 	lsls r4, r4, #2
 	cmp r11, r4
 	bne .L_08182f46
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182f46:
 	movs r7, #135
 	lsls r7, r7, #2
 	cmp r11, r7
 	bne .L_08182f54
 	movs r0, #186
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08182f54:
 	ldr r0, .L_08182fe0
 	cmp r11, r0
@@ -3047,7 +3047,7 @@ BattleEffect_RunCoatlicue:
 	movs r0, #126
 	bl Func_081180e8
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #80]
 	ldr r2, [r3, #20]
 	b .L_081842b8
@@ -3095,7 +3095,7 @@ BattleEffect_RunCoatlicue:
 	.4byte 0xffffc000
 .L_0818429c:
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #80]
 	movs r2, #1
 	ldrsh r0, [r5, r4]

@@ -204,7 +204,7 @@ Func_080ddbd8:
 	bl Object_SetPosition
 .L_080ddd70:
 	movs r0, #131
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #2
 	bl WaitFrames
 	ldr r2, [sp, #0]

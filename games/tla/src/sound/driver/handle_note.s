@@ -3,7 +3,7 @@
 @ that starts a note on a free or the weakest channel. Handwritten (S1):
 @ SoundDriver_CalculateStereoVolume takes its channel and track in r4 and
 @ r5, a linkage no procedure-call standard produces, with its two clamps
-@ placed before its entry; MusicTrack_HandleNote picks its channel with
+@ placed before its entry; ply_note picks its channel with
 @ adcs on a shift's carry. Func_081c08a4 is a label inside it that
 @ leftover_handle_note.s branches to.
 
@@ -40,9 +40,9 @@ SoundDriver_CalculateStereoVolume:
 .L_081c079e:
 	strb	r0, [r4, #3]
 	bx	lr
-	.global MusicTrack_HandleNote
+	.global ply_note
 	.thumb_func
-MusicTrack_HandleNote:
+ply_note:
 	push	{r4, r5, r6, r7, lr}
 	mov	r4, r8
 	mov	r5, r9
@@ -273,7 +273,7 @@ Func_081c08a4:
 .L_081c0938:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	MusicTrack_CalculateOutput
+	bl	TrkVolPitSet
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]

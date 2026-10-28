@@ -193,7 +193,7 @@ Func_080e4730:
 	bne .L_080e48d4
 	movs r0, #136
 	lsls r0, r0, #2
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e48d4:
 	mov r6, r9
 	cmp r6, #64
@@ -247,7 +247,7 @@ Func_080e4730:
 	movs r0, #142
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #36]
 	movs r1, #197
 	lsls r1, r1, #1

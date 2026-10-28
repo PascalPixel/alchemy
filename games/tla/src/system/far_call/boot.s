@@ -149,9 +149,9 @@ DebugText_ClearFar:
 	.thumb_func
 AffineMatrix_BuildForEffectFar:
 	overlay_veneer AffineMatrix_BuildForEffect
-	.global Runtime_PushSlotEntryFar
+	.global Oam_AddSpriteAtDepthFar
 	.thumb_func
-Runtime_PushSlotEntryFar:
+Oam_AddSpriteAtDepthFar:
 	overlay_veneer Func_080140d8
 	.global Ui_LoadWindowGraphicsFar
 	.thumb_func

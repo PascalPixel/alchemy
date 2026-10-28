@@ -110,7 +110,7 @@ BattleEffect_RunMercury:
 	cmp r10, r2
 	bne .L_0815770a
 	movs r0, #162
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #0
 	str r0, [sp, #24]
 .L_08157720:
@@ -156,7 +156,7 @@ BattleEffect_RunMercury:
 	cmp r3, #5
 	bne .L_081577ec
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #168

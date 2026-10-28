@@ -16,7 +16,7 @@ void Ui_LoadWindowGraphics(void);
 void Func_08014b70(void);
 void VramCache_Reset(void);
 void Func_0801399c(void);
-void Audio_InitializeRuntimeDefaultsFar(void);
+void Sound_InitializeFar(void);
 void ParentSequence_RunFar(s32);
 void WaitFrames(s32 frames);
 void Iwram_Halt(void);
@@ -44,7 +44,7 @@ void Func_0801319c(void) {
   Runtime_SetIrqHandler(0, 1, Func_0801399c);
   Runtime_SetIrqHandler(13, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
-  Audio_InitializeRuntimeDefaultsFar();
+  Sound_InitializeFar();
   VramCache_Reset();
   Scheduler_ResetTaskTable();
   gCartridgeResetMarker = 0;

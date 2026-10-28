@@ -138,7 +138,7 @@ void Func_080150e4(s32 angle);
 void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void MemFree(void *block);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
@@ -525,20 +525,20 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
 
     if (mode == BREATH_BEAM) {
       if (frame == 0)
-        Audio_PlayCue(140);
+        Sound_PlayFar(140);
     } else if (mode == BREATH_PIKE) {
       if (frame == 2)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
     }
 
     if (mode == BREATH_BLAST) {
       // Blast Breath strikes each target in turn, every fourth frame.
       if (frame == 0) {
         work->shakeFrames = 8;
-        Audio_PlayCue(221);
+        Sound_PlayFar(221);
       }
       if (frame == 16) {
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
         Func_081180e8(134);
       }
       for (i = 0; i != effect->count; i++) {

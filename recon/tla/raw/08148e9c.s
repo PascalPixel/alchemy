@@ -99,7 +99,7 @@ BattleEffect_RunWhirlwind:
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #141
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #0
 	mov r11, r1
 .L_08148f70:

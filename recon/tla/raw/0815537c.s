@@ -94,7 +94,7 @@ BattleEffect_RunBolt:
 	ldr r0, .L_08155630
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #0
 	str r0, [sp, #36]
 	mov r1, r11

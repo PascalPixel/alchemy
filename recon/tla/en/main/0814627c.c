@@ -59,7 +59,7 @@ void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
 void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale);    // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_RuneSheet;
 extern char ResourceId_Data134;
@@ -124,7 +124,7 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  Audio_PlayCue(142);
+  Sound_PlayFar(142);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     if (frame == 64)

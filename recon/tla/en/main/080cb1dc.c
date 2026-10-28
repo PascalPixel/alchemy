@@ -32,7 +32,7 @@ struct MapRegion {
 extern void *gOverlayArea[];
 
 s32 GameFlag_IsConditionActive(s32 condition);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 struct MapFocusObject {
   u8 padding00[6];
@@ -84,7 +84,7 @@ void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ) {
         x < REGION_FIXED(maxX) && z >= REGION_FIXED(minZ) &&
         z < REGION_FIXED(maxZ)) {
       runtime->countdown = (u16)selectedValue;
-      Audio_PlayCue(123);
+      Sound_PlayFar(123);
       EventRuntime_PrepareCurrentObject();
       return;
     }

@@ -418,7 +418,7 @@ BattleEffect_RunCrystal:
 	cmp r9, r5
 	bne .L_0816c5e6
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #56]
 	movs r1, #7
 	ldrsh r0, [r6, r2]

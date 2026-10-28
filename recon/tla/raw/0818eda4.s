@@ -227,13 +227,13 @@ BattleEffect_RunLiquifier:
 	cmp r0, #0
 	bne .L_0818ef72
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818ef72:
 	ldr r1, [sp, #36]
 	cmp r1, #16
 	bne .L_0818ef7e
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818ef7e:
 	ldr r2, [sp, #36]
 	cmp r2, #15
@@ -932,7 +932,7 @@ BattleEffect_RunLiquifier:
 	b .L_0818f51a
 .L_0818f514:
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818f51a:
 	ldr r1, [sp, #48]
 	movs r2, #0

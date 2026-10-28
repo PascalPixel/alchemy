@@ -83,7 +83,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -230,7 +230,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         if (effect->variant == 0) {
           Func_081180e8(144);
         } else {
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
         }
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
                                   0x40000, 150);

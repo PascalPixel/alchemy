@@ -67,7 +67,7 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct GlowParticle *particle);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
 
@@ -167,7 +167,7 @@ void Func_080e4d9c(void) {
     switch (work->phase) {
     case 0:
       if (work->timer == 0)
-        Audio_PlayCue(140);
+        Sound_PlayFar(140);
       if (work->timer == 10)
         GLOW_NEXT_PHASE(work);
       break;
@@ -186,7 +186,7 @@ void Func_080e4d9c(void) {
       if (work->timer == 0)
         work->paletteMode = 2;
       if (work->timer == 0)
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
       if ((work->timer & 7) == 0) {
         Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
         work->newBursts = 1;
@@ -198,7 +198,7 @@ void Func_080e4d9c(void) {
       break;
     case 4:
       if ((work->timer & 15) == 0)
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
       if ((work->timer & 7) == 0) {
         Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
         work->newBursts = 1;
@@ -218,7 +218,7 @@ void Func_080e4d9c(void) {
         work->newBursts = 10;
       if (work->timer == 0) {
         Map_SetScreenShakeFar(0xc0000, 0xc0000, 0xe666);
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
         if (work->timer == 0)
           work->shake = 3;
       }
@@ -287,7 +287,7 @@ void Func_080e4d9c(void) {
     switch (work->phase) {
     case 0:
       if (work->timer == 0)
-        Audio_PlayCue(140);
+        Sound_PlayFar(140);
       if (work->timer == 10)
         GLOW_NEXT_PHASE(work);
       break;
@@ -304,7 +304,7 @@ void Func_080e4d9c(void) {
         if (work->timer == 0) {
           Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
           work->newBursts = 1;
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
         }
       }
       canvas->command = CANVAS_UPLOAD_AND_FADE3;

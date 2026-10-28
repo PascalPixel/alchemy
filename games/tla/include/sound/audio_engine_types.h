@@ -48,12 +48,12 @@ typedef void (*SoundCommand)(struct SoundPlayer *player,
 /// song byte from 0xB1 to 0xCE runs entry (byte - 0xB1) for its track; bytes
 /// from 0xCF up start notes through the work's noteOn instead, so entries 30
 /// to 35 are the driver's helper tail, reached only by its own calls. Unused
-/// entries hold MusicTrack_FinishSequence.
+/// entries hold ply_fine.
 ///@{
 /// Byte 0xB1: ends the track, releasing and unlinking its notes.
 #define SOUND_COMMAND_FINISH 0
 #define SOUND_COMMAND_GOTO 1 ///< Byte 0xB2: jumps to the address after it.
-/// Byte 0xB9, installed by CgbAudio_Initialize: an operation, a work byte and
+/// Byte 0xB9, installed by MPlayExtender: an operation, a work byte and
 /// an operand; sets, adds to or compares a byte of the player's workBytes
 /// (SoundTrackWorkOperation), jumping like GOTO when a comparison holds.
 #define SOUND_COMMAND_WORK_BYTE 8
@@ -61,32 +61,32 @@ typedef void (*SoundCommand)(struct SoundPlayer *player,
 #define SOUND_COMMAND_LFO_SPEED 17
 /// Byte 0xC4: sets modDepth from the next byte; 0 clears the modulation.
 #define SOUND_COMMAND_MODULATION 19
-/// Byte 0xCD, installed by CgbAudio_Initialize: runs the entry of
+/// Byte 0xCD, installed by MPlayExtender: runs the entry of
 /// gSound_ExtendedCommandTable the next byte names (voice fields, tail level
 /// and length).
 #define SOUND_COMMAND_EXTENDED 28
 /// Byte 0xCE: releases the track's sounding note of the key given (or of its
 /// last key when no key byte follows).
 #define SOUND_COMMAND_RELEASE_KEY 29
-#define SOUND_COMMAND_PCM_RATE 30 ///< AudioEngine_SetPcmRate.
-/// MusicTrack_Stop: silences the track's notes and empties its list.
+#define SOUND_COMMAND_PCM_RATE 30 ///< SampleFreqSet.
+/// TrackStop: silences the track's notes and empties its list.
 #define SOUND_COMMAND_STOP_TRACK 31
-#define SOUND_COMMAND_FADE 32 ///< MusicPlayer_StepFade: a fade's step a VBlank.
-#define SOUND_COMMAND_CALCULATE_OUTPUT 33 ///< MusicTrack_CalculateOutput.
+#define SOUND_COMMAND_FADE 32 ///< FadeOutBody: a fade's step a VBlank.
+#define SOUND_COMMAND_CALCULATE_OUTPUT 33 ///< TrkVolPitSet.
 /// SoundNote_Detach: unlinks a note from its track's list
-/// (AudioCommand_InvokeSlot34).
+/// (ClearChain).
 #define SOUND_COMMAND_DETACH_NOTE 34
 /// SoundDriver_ClearBuffer: zeroes the first 64 bytes of a player or track
-/// (AudioCommand_InvokeSlot35).
+/// (Clear64byte).
 #define SOUND_COMMAND_CLEAR_WORK 35
 ///@}
 
 enum SoundDriverLimit {
   /// The PCM notes in SoundWork.pcmNotes; mode changes and
-  /// AudioEngine_StopAllChannels clear all 12, though only pcmNoteCount play.
+  /// SoundClear clear all 12, though only pcmNoteCount play.
   SOUND_PCM_NOTE_CAPACITY = 12,
   SOUND_CGB_CHANNEL_COUNT = 4, ///< CGB channels, numbered 1 to 4.
-  /// Most tracks a player takes; MusicPlayer_Initialize caps its count here,
+  /// Most tracks a player takes; MPlayOpen caps its count here,
   /// and the track masks of the MusicPlayer_Set routines are 16 bits.
   SOUND_PLAYER_TRACK_LIMIT = 16
 };
@@ -203,7 +203,7 @@ struct CgbNote {
   u8 modified;     ///< CgbNoteModified: what to write to the channel.
   u8 length;       ///< The voice's length.
   u8 sweep;        ///< Channel 1's NR10 sweep; 8 when none.
-  /// Tone frequency from Cgb_KeyToFrequency (2048 added), or channel 4's
+  /// Tone frequency from MidiKeyToCgbFreq (2048 added), or channel 4's
   /// NR43 value.
   u32 frequency;
   /// Channel 3: the 16-byte wave pattern. Channels 1 and 2: the duty, into
@@ -281,9 +281,9 @@ struct SoundTrack {
   /// pitch to the key-to-frequency step.
   u8 pitchLo;
   s8 keyOffsetA; ///< Semitones, from the song's key-shift command.
-  s8 keyOffsetB; ///< Semitones, from MusicPlayer_SetPitch.
+  s8 keyOffsetB; ///< Semitones, from m4aMPlayPitchControl.
   s8 tune;       ///< The tune command's byte - 64: 1/64 semitone.
-  u8 fine;       ///< 1/256 semitone, from MusicPlayer_SetPitch.
+  u8 fine;       ///< 1/256 semitone, from m4aMPlayPitchControl.
   s8 bend;       ///< The bend command's byte - 64: full bend is bendRange.
   u8 bendRange;  ///< Semitones a full bend reaches; 2 at reset.
   u8 outVolumeA; ///< Right volume: (pan + 128) * scaled volume / 256.
@@ -293,11 +293,11 @@ struct SoundTrack {
   /// 0x100 divided by 4.
   u8 volumeScale;
   s8 pan;       ///< The pan command's byte - 64, -64 to 63; doubled for output.
-  s8 panOffset; ///< Added to the doubled pan, from MusicPlayer_SetPan.
+  s8 panOffset; ///< Added to the doubled pan, from m4aMPlayPanpotControl.
   /// The LFO's output, modDepth * wave / 64: added to the pitch in 1/16
   /// semitone, to the pan, or scaling the volume by (amount + 128) / 128.
   s8 modAmount;
-  /// 0 to 255, from the modulation command or MusicPlayer_SetModulationDepth;
+  /// 0 to 255, from the modulation command or m4aMPlayModDepthSet;
   /// 0 stops the LFO and clears modAmount.
   u8 modDepth;
   u8 modTarget; ///< SoundModulationTarget.
@@ -333,7 +333,7 @@ struct SongHeader {
   u8 trackCount; ///< At most 16; 0 in the empty songs.
   u8 unk01;      ///< 0 in every song; ags-music refuses another block count.
   u8 priority;   ///< Becomes the player's priority.
-  /// With bit 7 set, passed to AudioEngine_SetMode (bits 6..0 the reverb);
+  /// With bit 7 set, passed to m4aSoundMode (bits 6..0 the reverb);
   /// ags-music's reverb field.
   u8 mode;
   const struct SoundVoice *voices; ///< The voice table its tracks choose from.
@@ -385,7 +385,7 @@ struct SoundWork {
   /// VBlanks until the DMA restart, which reloads it from
   /// transferPeriod; also picks which VBlank's part of the buffers is mixed.
   /* FAKEMATCH: volatile steers library C only: without it
-   * AudioEngine_ResumeDirectSound: differ 9 in tbs-en, 22 instructions for 23.
+   * m4aSoundVSyncOn: differ 9 in tbs-en, 22 instructions for 23.
    */
   volatile u8 transferCountdown;
   u8 reverb;       ///< 0 to 127 (mode bits 6..0); 0 skips the reverb pass.
@@ -410,16 +410,16 @@ struct SoundWork {
   struct CgbNote *cgbNotes; ///< gSound_CgbNotes; NULL before CGB setup.
   /// First of the chain of MPlayMain routines run each VBlank; NULL for none.
   void (*MPlayMainHead)(struct SoundPlayer *player);
-  struct SoundPlayer *musicPlayerHead; ///< Passed to MPlayMainHead.
-  void (*cgbUpdate)(void);             ///< Run each VBlank: Cgb_UpdateChannels.
-  void (*cgbMute)(u8 channel);         ///< CgbChannel_Mute, channel 1 to 4.
-  s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine); ///< Cgb_KeyToFrequency.
+  struct SoundPlayer *musicPlayerHead;           ///< Passed to MPlayMainHead.
+  void (*cgbUpdate)(void);                       ///< Run each VBlank: CgbSound.
+  void (*cgbMute)(u8 channel);                   ///< CgbOscOff, channel 1 to 4.
+  s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine); ///< MidiKeyToCgbFreq.
   SoundCommand *commands;                        ///< gSound_CommandTable.
-  /// MusicTrack_HandleNote, run for song bytes from 0xCF up with the byte
+  /// ply_note, run for song bytes from 0xCF up with the byte
   /// - 0xCF.
   void (*noteOn)(u32 command, struct SoundPlayer *player,
                  struct SoundTrack *track);
-  /// Set to Audio_EmptyCallback by AudioEngine_Initialize; no TLA code reads
+  /// Set to DummyFunc by SoundInit; no TLA code reads
   /// it by name.
   void (*unk3c)(void);
   u8 unk40[0x10];                ///< Not named by TLA code.
@@ -443,7 +443,7 @@ struct PlayerSlot {
 /// that plays it.
 struct SongEntry {
   const struct SongHeader *header;
-  /// Index into gSound_PlayerSlots; AudioCommand_Play gives slot 7's songs
+  /// Index into gSound_PlayerSlots; Sound_Play gives slot 7's songs
   /// the first player from 7 down to 4 with no active track, else 7.
   u16 slot;
   u16 unk06; ///< The same value as slot in every entry; not named by TLA code.
@@ -461,27 +461,22 @@ STATIC_ASSERT(sizeof(struct SoundPlayer) == 64);
 STATIC_ASSERT(offsetof(struct SoundWork, cgbNotes) == 0x1c);
 STATIC_ASSERT(sizeof(struct SoundWork) == 0xfb0);
 
-void CgbAudio_Initialize(struct CgbNote *notes);
-void CgbNote_UpdatePanEnvelope(struct CgbNote *note);
-void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player,
-                                struct SoundTrack *track);
-void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player,
-                                      struct SoundTrack *track);
-void AudioCommand_InvokeSlot34(struct SoundNote *note);
-void AudioCommand_InvokeSlot35(void *block);
+void MPlayExtender(struct CgbNote *notes);
+void CgbModVol(struct CgbNote *note);
+void ply_xwave(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xcmd(struct SoundPlayer *player, struct SoundTrack *track);
+void ClearChain(struct SoundNote *note);
+void Clear64byte(void *block);
 
-void MusicPlayer_StartSong(struct SoundPlayer *player,
-                           const struct SongHeader *header);
-void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
-void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
-                                            u16 scale);
-void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume);
-void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch);
-void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan);
-void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask,
-                                    s32 value);
-void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 mask, u32 value);
-void MusicTrack_ClearModulation(struct SoundTrack *track);
+void MPlayStart(struct SoundPlayer *player, const struct SongHeader *header);
+void m4aMPlayFadeOut(struct SoundPlayer *player, u16 speed);
+void m4aMPlayTempoControl(struct SoundPlayer *player, u16 scale);
+void m4aMPlayVolumeControl(struct SoundPlayer *player, u16 mask, u16 volume);
+void m4aMPlayPitchControl(struct SoundPlayer *player, u16 mask, s16 pitch);
+void m4aMPlayPanpotControl(struct SoundPlayer *player, u16 mask, s8 pan);
+void m4aMPlayModDepthSet(struct SoundPlayer *player, s32 mask, s32 value);
+void m4aMPlayLFOSpeedSet(struct SoundPlayer *player, u32 mask, u32 value);
+void ClearModM(struct SoundTrack *track);
 
 extern const struct PlayerSlot gSound_PlayerSlots[];
 extern const struct SongEntry gSound_SongTable[];

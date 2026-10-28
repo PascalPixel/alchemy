@@ -259,7 +259,7 @@ BattleEffect_RunCool:
 	movs r1, #0
 	bl Func_08118088
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #238
 	lsls r3, r3, #7
 	adds r3, #168

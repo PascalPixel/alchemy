@@ -40,7 +40,7 @@ s32 Inventory_CountItemFar(s32 member, s32 item);
 void Inventory_DiscardFar(s32 member, s32 slot);
 void Unit_RefreshPsynergyFar(s32 member);
 void Unit_CalculateFar(s32 member);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 s32 PartyInventory_GiveItem(s32 item) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -92,7 +92,7 @@ s32 PartyInventory_GiveItem(s32 item) {
       Unit_RefreshPsynergyFar(member);
       Unit_CalculateFar(member);
       owner = PartyInventory_AddFar(item);
-      Audio_PlayCue(83);
+      Sound_PlayFar(83);
       if (owner == gAdventure.currentOwner) {
         UiText_DrawQuantity(item, 2);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived, 3);
@@ -106,7 +106,7 @@ s32 PartyInventory_GiveItem(s32 item) {
     work->messageId = saved;
     return owner;
   }
-  Audio_PlayCue(83);
+  Sound_PlayFar(83);
   UiText_DrawQuantity(item, 2);
   UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemReceived, 3);
   if (owner != gAdventure.currentOwner) {

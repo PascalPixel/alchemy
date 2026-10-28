@@ -140,7 +140,7 @@ BattleEvent_Playback:
 	lsls r3, r6, #2
 	adds r3, #64
 	ldr r0, [r7, r3]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08122ff0
 .L_08122e34:
 	lsls r3, r6, #2
@@ -241,7 +241,7 @@ BattleEvent_Playback:
 	ldrsh r0, [r3, r1]
 	cmp r0, #0
 	ble .L_08122ef6
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08122ef6:
 	movs r3, #178
 	lsls r3, r3, #1
@@ -588,7 +588,7 @@ BattleEvent_Playback:
 	beq .L_081231c6
 .L_081231aa:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #164
 	lsls r0, r0, #1
 	movs r1, #168
@@ -604,7 +604,7 @@ BattleEvent_Playback:
 .L_081231c6:
 	mov r0, r9
 	movs r1, #240
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	b .L_08123494
 .L_081231d0:
 	cmp r3, #10
@@ -733,7 +733,7 @@ BattleEvent_Playback:
 	movs r0, #0
 .L_081232c8:
 	adds r0, #146
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081232ce:
 	movs r3, #168
 	lsls r3, r3, #1
@@ -769,7 +769,7 @@ BattleEvent_Playback:
 	cmp r0, #0
 	blt .L_08123316
 	adds r0, #146
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08123316:
 	movs r4, #168
 	lsls r4, r4, #1

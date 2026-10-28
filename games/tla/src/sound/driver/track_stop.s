@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global MusicTrack_Stop
+	.global TrackStop
 	.thumb_func
-MusicTrack_Stop:
+TrackStop:
 	push	{r4, r5, r6, lr}
 	adds	r5, r1, #0
 	ldrb	r1, [r5, #0]

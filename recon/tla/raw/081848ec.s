@@ -305,15 +305,15 @@ Func_081848ec:
 	b .L_08184b7e
 .L_08184b1e:
 	movs r0, #227
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08184b7e
 .L_08184b26:
 	movs r0, #171
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08184b7e
 .L_08184b2e:
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08184b7e
 	.2byte 0x0000
 .L_08184b38:
@@ -350,7 +350,7 @@ Func_081848ec:
 	.4byte Data_0819978c
 .L_08184b78:
 	movs r0, #172
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08184b7e:
 	ldr r2, [sp, #120]
 	cmp r2, #0
@@ -1311,14 +1311,14 @@ Func_081848ec:
 	cmp r11, r2
 	bne .L_081852ae
 	movs r0, #206
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081852ae:
 	movs r3, #140
 	lsls r3, r3, #2
 	cmp r11, r3
 	bne .L_081852bc
 	movs r0, #220
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081852bc:
 	movs r4, #128
 	lsls r4, r4, #2
@@ -1326,7 +1326,7 @@ Func_081848ec:
 	cmp r11, r4
 	bne .L_081852cc
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081852cc:
 	movs r3, #5
 	add r5, sp, #192
@@ -1510,7 +1510,7 @@ Func_081848ec:
 	movs r0, #222
 	str r4, [sp, #8]
 .L_08185420:
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #8]
 .L_08185426:
 	lsrs r3, r5, #31
@@ -2839,7 +2839,7 @@ Func_08185b9c:
 	movs r2, #8
 	str r2, [r3]
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, .L_08185f1c
 	movs r1, #128
 	ldr r0, [sp, #168]
@@ -2852,7 +2852,7 @@ Func_08185b9c:
 	cmp r3, #96
 	bne .L_08185ee4
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08185ee4:
 	mov r4, r11
 	cmp r4, #128
@@ -3396,7 +3396,7 @@ Func_08185b9c:
 	cmp r11, r5
 	bne .L_08186340
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08186340:
 	movs r6, #1
 	add r9, r6
@@ -4006,7 +4006,7 @@ Func_08185b9c:
 	movs r3, #16
 	str r3, [r2]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08186820:
 	mov r3, r11
 	subs r3, #72
@@ -4469,19 +4469,19 @@ Func_08185b9c:
 	b .L_08186bfa
 .L_08186bdc:
 	movs r0, #227
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08186bfa
 .L_08186be4:
 	movs r0, #171
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08186bfa
 .L_08186bec:
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08186bfa
 .L_08186bf4:
 	movs r0, #172
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08186bfa:
 	movs r2, #7
 	mov r0, r9

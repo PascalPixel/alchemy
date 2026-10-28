@@ -68,7 +68,7 @@ void Func_080decb8(void) {
   void (*check)(void);
   u32 order;
 
-  Audio_PlayCue(SE_CLOAK);
+  Sound_PlayFar(SE_CLOAK);
   Object_SetMode((struct ObjectRuntime *)caster, 0);
   caster->hook = 0;
 

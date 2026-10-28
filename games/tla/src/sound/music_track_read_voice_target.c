@@ -18,7 +18,7 @@ void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player,
   func(player, track);
 }
 
-void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player,
+void ply_xwave(struct SoundPlayer *player,
                                 struct SoundTrack *track) {
   const u8 *pos = track->cursor;
   union PackedWord word;

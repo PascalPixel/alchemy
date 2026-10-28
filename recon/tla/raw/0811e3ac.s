@@ -257,7 +257,7 @@ Func_0811e3ac:
 	adds r0, #80
 	bl QueueIoWriteDelay2
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #10
 	bl WaitFrames
 	ldr r1, [sp, #4]

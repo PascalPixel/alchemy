@@ -294,7 +294,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 0)
-      Audio_PlayCue(142);
+      Sound_PlayFar(142);
     if (mode == 6 && (frame & 3) == 0)
       Func_0815f0a0((s32)&ResourceId_EffectPalette01);
     if (mode == 11 && (frame & 3) == 0)
@@ -326,7 +326,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
           BattleUnit_GetEffectHeightFar(effect->actors[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
       // The lights turn about two thirds of the target's height.

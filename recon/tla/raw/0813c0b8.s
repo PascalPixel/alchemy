@@ -475,7 +475,7 @@ BattleEffect_RunDouse:
 	cmp r3, #0
 	bne .L_0813c444
 	movs r0, #132
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0813c444:
 	mov r5, r10
 	ldr r3, [r5, #20]

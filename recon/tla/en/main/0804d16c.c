@@ -20,7 +20,7 @@
 #include "io_reg.h"
 #include "text/msg_ids.h"
 
-void Audio_PlayCue(u32);
+void Sound_PlayFar(u32);
 void RenderOutput_PrepareForRedraw(struct UiWindow *);
 void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
 
@@ -42,24 +42,24 @@ redraw:
   for (;;) {
     WaitFrames(1);
     if (INPUT->pressed & KEY_A) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       return work->selection;
     }
     if (INPUT->pressed & KEY_B) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       return -1;
     }
     if (INPUT->pressed & KEY_START) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       return -1;
     }
     if ((INPUT->repeat & KEY_LEFT) || (INPUT->repeat & KEY_UP)) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       work->selection--;
       if (work->selection < 0)
         work->selection = work->count - 1;
     } else if ((INPUT->repeat & KEY_RIGHT) || (INPUT->repeat & KEY_DOWN)) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       work->selection++;
       if (work->selection >= work->count)
         work->selection = 0;

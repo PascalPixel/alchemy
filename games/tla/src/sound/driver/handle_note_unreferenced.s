@@ -184,7 +184,7 @@ MusicTrack_HandleNoteUnreferenced:
 	beq.n	.L_081c1dee
 .L_081c1d48:
 	adds	r0, r4, #0
-	bl	AudioCommand_InvokeSlot34
+	bl	ClearChain
 	movs	r1, #0
 	str	r1, [r4, #48]
 	ldr	r3, [r5, #32]
@@ -200,11 +200,11 @@ MusicTrack_HandleNoteUnreferenced:
 	cmp	r0, r1
 	beq.n	.L_081c1d6e
 	adds	r1, r5, #0
-	bl	MusicTrack_ClearModulationState
+	bl	clear_modM
 .L_081c1d6e:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	MusicTrack_CalculateOutput
+	bl	TrkVolPitSet
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]
@@ -258,7 +258,7 @@ MusicTrack_HandleNoteUnreferenced:
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
 	adds	r0, r7, #0
-	bl	Pcm_KeyToFrequency
+	bl	MidiKeyToFreq
 .L_081c1de0:
 	str	r0, [r4, #32]
 	movs	r0, #128

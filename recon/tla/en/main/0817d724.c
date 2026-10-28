@@ -72,7 +72,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -205,7 +205,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     if (frame == 4) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 8;
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     }
     if (frame == 163) {
       REG_BG1CNT = 0x784;
@@ -272,7 +272,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       height = 220;
     }
     if (frame == 134) {
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame > 59) {

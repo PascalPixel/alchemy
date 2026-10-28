@@ -121,7 +121,7 @@ Func_08021a84:
 	b .L_08021afe
 .L_08021b84:
 	adds r0, r5, #0
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08021afe
 .L_08021b8c:
 	ldrb r3, [r6, #20]

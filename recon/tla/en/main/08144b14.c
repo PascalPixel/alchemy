@@ -62,7 +62,7 @@ void BattleEffect_FetchRectangleBlitters(
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
 void SceneTransform_ApplyPosition(s32 *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_CrescentMoonSheet;
@@ -157,7 +157,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
     s32 prelude;
 
     if (frame == 64)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 80)
       Func_081180e8(0);
 

@@ -39,7 +39,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
                           u16 *spacing, u32 flags);
 void UiWindow_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 s32 Resource_ResetEntry(u32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 #define TEXT_SPEED gAdventure.eventMode
 #define ENTRY_MASK (UI_TEXT_ENTRY_COUNT - 1)
@@ -277,7 +277,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
       if (work->speakerVoiceSound != 0) {
         if (work->speakerVoiceCountdown == 0) {
           if (code != 32) {
-            Audio_PlayCue(work->speakerVoiceSound + (code & 3));
+            Sound_PlayFar(work->speakerVoiceSound + (code & 3));
             work->speakerVoiceCountdown = voiceGap;
           }
         } else {

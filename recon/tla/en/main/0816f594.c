@@ -95,7 +95,7 @@ struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderModel *model);
 void MemFree(void *block);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Radiant Fire: eight bursts of fire bloom one after another around the
 // target, each a shaded disc that swells and shrinks under a spinning
@@ -200,7 +200,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
       for (i = 0; i != 8; i++, flame++) {
         flame->variant++;
         if (flame->variant == 8) {
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
           work->shakeFrames = 8;
           Func_08118088(effect->actors[0], 0);
           Func_0814cd48(effect->actors[0], 7, 5, 0, 8);

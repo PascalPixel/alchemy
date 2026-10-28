@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global MusicTrack_ClearModulationState
+	.global clear_modM
 	.thumb_func
-MusicTrack_ClearModulationState:
+clear_modM:
 	movs	r2, #0
 	strb	r2, [r1, #22]
 	strb	r2, [r1, #26]

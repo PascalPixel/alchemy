@@ -171,7 +171,7 @@ void Func_08151ff0(struct BattleEffectArgument *effect, s32 mode) {
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 2)
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
     if (frame == Data_081983a2[variant][FIELD_FRAMES] - 48)
       Func_081180e8(133);
 

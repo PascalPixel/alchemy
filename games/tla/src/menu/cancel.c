@@ -33,8 +33,8 @@ static __inline__ void FillWords(FillFn fill, void *dst, s32 size, u32 value) {
   fill(dst, size, value);
 }
 
-s32 Audio_PlayCueReturnOne(s32 cue) {
-  Audio_PlayCue(cue);
+s32 Sound_PlayReturnOne(s32 cue) {
+  Sound_PlayFar(cue);
   return 1;
 }
 
@@ -54,7 +54,7 @@ void Menu_UpdateCancelSound(void) {
   input = &gInput;
   mask = 8;
   if (input->pressed & mask) {
-    Audio_PlayCue(113);
+    Sound_PlayFar(113);
     GameFlag_SetBit(0x150);
     Scheduler_RemoveCallback((u32)((s32)Menu_UpdateCancelSound));
   }

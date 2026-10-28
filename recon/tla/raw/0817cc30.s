@@ -128,7 +128,7 @@ BattleEffect_RunOceanFist:
 	movs r3, #0
 	bl Resource_LoadAndDecompress
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #238
 	ldr r4, [sp, #24]
 	lsls r0, r0, #7

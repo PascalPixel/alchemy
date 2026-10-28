@@ -58,8 +58,8 @@ void Inn_PlaySleep(s32 roomPrice) {
   WaitFrames(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  Audio_PlayCue(86);
-  AudioCommand_WaitForStateByteClear();
+  Sound_PlayFar(86);
+  Sound_WaitForFanfare();
   WaitFrames(10);
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();

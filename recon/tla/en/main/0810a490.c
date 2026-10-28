@@ -43,7 +43,7 @@ void Func_081095b0(void *window, s32 unitId, s32 item);
 s32 Inventory_AddItemFar(s32 unitId, s32 item);
 void Inventory_RemoveFar(s32 unitId, s32 slot);
 s32 Inventory_CountFar(s32 unitId);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Party_AdjustShopCreditFar(s32 amount);
 void Party_AdjustShopGiftsFar(s32 amount);
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
@@ -83,7 +83,7 @@ void Func_0810a490(void *window, void *itemWindow) {
     if (gInput.pressed & 1) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         UiText_DrawQuantity(unitId, 1);
         UiText_DrawQuantity(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
@@ -93,7 +93,7 @@ void Func_0810a490(void *window, void *itemWindow) {
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
-      Audio_PlayCue(101);
+      Sound_PlayFar(101);
       Func_0810857c((s32)MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
       Party_AdjustShopCreditFar(-creditCost);
@@ -101,7 +101,7 @@ void Func_0810a490(void *window, void *itemWindow) {
       break;
     } else if (gInput.pressed & 2) {
       Func_0810857c((s32)MsgDontWantIt);
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       break;
     } else {
       redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);

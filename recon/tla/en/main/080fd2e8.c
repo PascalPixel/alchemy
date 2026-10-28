@@ -86,7 +86,7 @@ void Menu_HighlightPageEntry(struct MenuWindow *window, s32 selection, s32 count
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void UiIcon_PrepareObject(struct MenuIcon *icon);
 
@@ -136,12 +136,12 @@ s32 Func_080fd2e8(s32 browseOnly) {
     Func_080f8a44((selection % 4) * 24 - 10, 16);
     WaitFrames(1);
     if (KEYS_PRESSED & 1) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = menu->ownerIds[selection];
       break;
     }
     if (KEYS_PRESSED & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }

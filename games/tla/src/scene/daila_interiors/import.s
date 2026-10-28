@@ -197,4 +197,4 @@ Func_02000df4:
 	.global Func_02000dfc
 	.thumb_func
 Func_02000dfc:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

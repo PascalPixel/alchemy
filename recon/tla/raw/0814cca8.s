@@ -68,7 +68,7 @@ Func_0814cca8:
 	movs r0, #195
 	str r3, [r2, #16]
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0814cd40
 .L_0814cd30:
 	.4byte 0x0000100e

@@ -85,7 +85,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -235,10 +235,10 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
     phase = 0;
     do {
       if (frame == 0) {
-        Audio_PlayCue(199);
+        Sound_PlayFar(199);
       }
       if (frame == 32) {
-        Audio_PlayCue(206);
+        Sound_PlayFar(206);
       }
       if (frame == 0) {
         target[2] = work->particles[63].x;
@@ -518,14 +518,14 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
       } else if (mode == 3) {
         EffectPosition_ProjectScaledBattler(effect->actor, &spos);
         if (frame == 8) {
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
         }
         if (frame == 16) {
           Func_081180e8(134);
         }
         for (i = 0; i != effect->count; i++) {
           if (frame == i * 4 + 16) {
-            Audio_PlayCue(134);
+            Sound_PlayFar(134);
             BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0, 0x70000, 100);
             Func_0814cd48(effect->actors[i], 7, 5, i, 8);
             work->shakeFrames = 8;

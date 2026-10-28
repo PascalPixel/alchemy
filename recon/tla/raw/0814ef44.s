@@ -907,7 +907,7 @@ BattleEffect_RunHealingMotes:
 	cmp r11, r3
 	bne .L_0814f636
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814f636:
 	cmp r7, #8
 	bne .L_0814f652

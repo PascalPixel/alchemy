@@ -60,7 +60,7 @@ extern const u16 gData_08197410[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
@@ -127,7 +127,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
   for (i = 0; i != DOT_COUNT; i++)
     DOTS[i].variant = -1;
 
-  Audio_PlayCue(171);
+  Sound_PlayFar(171);
   frame = 0;
   angle = 0x8000;
   do {
@@ -166,7 +166,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
             // Each dot lives 32 to 47 frames.
             dot->variant = (Random16() & 15) + 32;
           }
-          Audio_PlayCue(133);
+          Sound_PlayFar(133);
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != effect->count; j++) {

@@ -187,7 +187,7 @@ BattleEffect_RunQuake:
 	adds r2, r1, r3
 	movs r3, #128
 	str r3, [r2]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #0
 	str r4, [sp, #60]
 	mov r5, r8

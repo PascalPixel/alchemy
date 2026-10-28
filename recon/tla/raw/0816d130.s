@@ -83,7 +83,7 @@ BattleEffect_RunNirvana:
 	ldr r0, .L_0816d3d0
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #24]
 	movs r4, #0
 	adds r0, #12

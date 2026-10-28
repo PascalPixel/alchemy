@@ -253,4 +253,4 @@ Field_StartPaletteTransition:
 	.global Func_02002124
 	.thumb_func
 Func_02002124:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

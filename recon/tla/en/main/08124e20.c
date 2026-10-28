@@ -69,7 +69,7 @@ void BattleEventRuntime_WaitForReady(void);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_0812628c(s32 mode, s32 background, s32 value);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattlePresentation_WaitForAdvance(void);
 void BattlePres_SetActorModeAndAction(s32 unitId);
 s32 sub_08124af8(s32 id);
@@ -135,7 +135,7 @@ void Func_08124e20(void) {
             BattleEvent_Push(10, 0);
             BattleEvent_Push(4, (u32)&MsgDjinnIsSet);
             BattleEvent_Push(11, unitId);
-            Audio_PlayCue(212);
+            Sound_PlayFar(212);
             if (BattleParty_IsUnitListed(unitId)) {
               Object_SetMode(BattleObject_Get(unitId)->object, 3);
               ObjectDispatch_SetAnimationSpeedFar(
@@ -210,7 +210,7 @@ void Func_08124e20(void) {
             } else {
               UiText_ShowMessageAndWaitCoreFar((s32)&MsgHpRecover);
             }
-            Audio_PlayCue(175);
+            Sound_PlayFar(175);
             BattlePresentation_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->maxPp) {
@@ -226,7 +226,7 @@ void Func_08124e20(void) {
             } else {
               UiText_ShowMessageAndWaitCoreFar((s32)&MsgPpRecover);
             }
-            Audio_PlayCue(175);
+            Sound_PlayFar(175);
             BattlePresentation_WaitForAdvance();
           }
         }

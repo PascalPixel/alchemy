@@ -95,7 +95,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 void Func_08158ce0(s32 randomMask, u32 range);
 void ObjectGroup_CountDownMemberTimers(void);
 void Func_081180e8(s32 phase);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)
 // and burst from it toward the target (16-110); eight flat flashes turn about
@@ -169,9 +169,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame == 0)
-      Audio_PlayCue(139);
+      Sound_PlayFar(139);
     if (frame == 16)
-      Audio_PlayCue(134);
+      Sound_PlayFar(134);
 
     if (frame > 15) {
       // The burst: sparks fly out of the caster, upward and forward.
@@ -349,7 +349,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         if (k == 7)
           Func_081180e8(144);
         else
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 5);
         work->shakeFrames = 4;

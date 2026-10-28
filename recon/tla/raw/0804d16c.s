@@ -39,7 +39,7 @@ Menu_RunResourceSelectionLoop:
 	b .L_0804d1cc
 .L_0804d1b0:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	negs r0, r0
 	b .L_0804d278
@@ -93,7 +93,7 @@ Menu_RunResourceSelectionLoop:
 	beq .L_0804d238
 .L_0804d21a:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldrh r3, [r7]
 	subs r3, #1
 	strh r3, [r7]
@@ -119,7 +119,7 @@ Menu_RunResourceSelectionLoop:
 	beq .L_0804d1e2
 .L_0804d24c:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldrh r3, [r7]
 	mov r1, r9
 	adds r3, #1
@@ -135,7 +135,7 @@ Menu_RunResourceSelectionLoop:
 	b .L_0804d194
 .L_0804d26c:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r10
 	movs r3, #0
 	ldrsh r0, [r1, r3]

@@ -39,7 +39,7 @@ struct Effect_080b2f4c {
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 sound_id);
+void Sound_PlayFar(s32 sound_id);
 
 void Shop_RestoreSceneTiles(s32 address);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 flags);
@@ -48,7 +48,7 @@ void Func_0808a520(struct Effect_080b2f4c *effect,
                    void (*callback)(struct Effect_080b2f4c *));
 void Func_0808a518(struct Effect_080b2f4c *effect, s32 value);
 void Func_08009248(s32 object, u32 frame_offset);
-void AudioCommand_WaitForStateByteClear(void);
+void Sound_WaitForFanfare(void);
 void Func_0808a530(struct Effect_080b2f4c *effect);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Func_08009280(s32 object, s32 arg);
@@ -104,7 +104,7 @@ void Func_0810b1b4(s32 member) {
   savedCursorMode = shop->cursor.anchor->active;
   shop->burstMember = -1;
   shop->cursor.anchor->active = 13;
-  Audio_PlayCue(Data_0810cf28[shop->action]);
+  Sound_PlayFar(Data_0810cf28[shop->action]);
   Shop_RestoreSceneTiles(0x00202108);
   Func_08009280(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
@@ -133,7 +133,7 @@ void Func_0810b1b4(s32 member) {
     effect++;
   } while (effectIndex <= 17);
 
-  AudioCommand_WaitForStateByteClear();
+  Sound_WaitForFanfare();
   {
     u8 activeMode = 2;
     u8 *entry = (u8 *)&shop->effects[0].state;
@@ -146,7 +146,7 @@ void Func_0810b1b4(s32 member) {
   }
 
   WaitFrames(20);
-  Audio_PlayCue(126);
+  Sound_PlayFar(126);
   shop->burstMember = -1;
   Func_08009248(shop->partyMemberIcons[member], 0);
   WaitFrames(20);

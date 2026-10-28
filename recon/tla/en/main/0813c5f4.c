@@ -79,7 +79,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -201,13 +201,13 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
         // Each target's streaks set out with the mode's cry.
         if (frame == k * 32) {
           if (mode == 1)
-            Audio_PlayCue(192);
+            Sound_PlayFar(192);
           if (mode == 2)
-            Audio_PlayCue(189);
+            Sound_PlayFar(189);
           if (mode == 3)
-            Audio_PlayCue(148);
+            Sound_PlayFar(148);
           if (mode == 4)
-            Audio_PlayCue(138);
+            Sound_PlayFar(138);
         }
         if (frame >= k * 32) {
           for (j = 0; j != streaks; j++) {
@@ -264,7 +264,7 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
           // hit lets the battle show its results.
           if (RECORD(mode, RECORD_HIT)) {
             if (frame == k * 32 + 24) {
-              Audio_PlayCue(133);
+              Sound_PlayFar(133);
               if (k == 0)
                 Func_081180e8(-1);
               Func_0814cd48(effect->actors[k], 7, 5, k, 8);

@@ -87,7 +87,7 @@ Func_081284c0:
 	b .L_081286bc
 .L_0812856a:
 	movs r0, #89
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl UiWork_ClearValueNameTablesFar
 	movs r3, #42
 	adds r3, #255
@@ -159,7 +159,7 @@ Func_081284c0:
 	adds r0, r5, #0
 	bl UiText_DrawQuantity
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, .L_08128798
 	bl UiText_ShowMessageAndWaitCoreFar
 	bl BattlePresentation_WaitForAdvance

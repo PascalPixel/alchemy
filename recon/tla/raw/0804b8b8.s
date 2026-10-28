@@ -47,7 +47,7 @@ Func_0804b8b8:
 	ldrsh r0, [r0, r3]
 	mov r10, r0
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #0
 	add r3, sp, #32
 	str r2, [sp, #0]
@@ -68,11 +68,11 @@ Func_0804b8b8:
 	cmp r0, #0
 	bne .L_0804b942
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0804ba46
 .L_0804b942:
 	movs r0, #110
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #8]
 	movs r2, #130
 	lsls r2, r2, #1
@@ -119,7 +119,7 @@ Func_0804b8b8:
 	bl __modsi3
 	str r0, [sp, #20]
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #20]
 	movs r0, #1
 	lsls r1, r1, #1
@@ -138,7 +138,7 @@ Func_0804b8b8:
 	bl __modsi3
 	str r0, [sp, #20]
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #20]
 	movs r2, #1
 	lsls r3, r3, #1
@@ -220,7 +220,7 @@ Func_0804b8b8:
 	negs r0, r0
 	str r0, [sp, #12]
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0804ba78:
 	movs r3, #255
 	mov r1, r8

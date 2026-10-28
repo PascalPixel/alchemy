@@ -65,7 +65,7 @@ s32 BattleEffect_ProcessPendingGraphicsTransfer(
 s32 Scheduler_AddOrUpdateCallback(void *func, s32 order);
 s32 Scheduler_RemoveCallback(void *func);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -149,7 +149,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(SLOT_BLITTER,
                            BLITTER(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Audio_PlayCue(140);
+  Sound_PlayFar(140);
 
   for (frame = 0; frame != 56; frame++) {
     EffectPosition_ProjectScaledBattler(effect->actor, &ground);
@@ -157,7 +157,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
     if (frame > 49)
       REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
     if (frame == 26) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
       Func_0814cd48(effect->actors[0], 7, -1, 0, 20);
     }
 

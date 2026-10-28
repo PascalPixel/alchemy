@@ -46,7 +46,7 @@ void Func_080f8058(s32 first);
 void WaitFrames(s32 frames);
 void Shop_DrawServiceParty(void *window, s32 memberIndex);
 void Shop_DrawSelectMsg(void *window, s32 unitId);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void RenderOutput_PrepareForRedrawFar(void *window);
 void UiText_DrawQuantity(s32 value, s32 slot);
 s32 Func_08108660(s32 value);
@@ -113,7 +113,7 @@ s32 Func_0810abf0(void) {
       WaitFrames(1);
       price = Shop_ServicePrice(unitId, serviceKind);
       if (Shop_CanServe(unitId, serviceKind) == 0) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         continue;
       }
       RenderOutput_PrepareForRedrawFar(listWindow);
@@ -127,7 +127,7 @@ s32 Func_0810abf0(void) {
         continue;
       }
       if ((u32)price > gAdventure.coins) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         Func_0810a9fc(messageBase + 1);
         chooseAgain = 1;
         continue;
@@ -147,7 +147,7 @@ s32 Func_0810abf0(void) {
       }
       break;
     } else if (gInput.pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       break;
     } else {
       redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);

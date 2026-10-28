@@ -151,7 +151,7 @@ BattleEffect_RunSabreDance:
 	movs r3, #4
 	str r3, [r2]
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r11
 	movs r3, #6
 	movs r1, #36

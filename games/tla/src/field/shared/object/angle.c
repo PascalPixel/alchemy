@@ -8,7 +8,7 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 count);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            u32 flags);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 mode);
 void Func_080d3378(struct ObjectRuntime *source, s32 attribute);
 void Event_NoOp(void);
@@ -41,7 +41,7 @@ void Object_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   object->velocityY = 0x40000;
   Object_SetPosition(object, x, object->y, z + 0xc0000);
   WaitFrames(6);
-  Audio_PlayCue(217);
+  Sound_PlayFar(217);
   ObjectMotion_ArmCallback(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {

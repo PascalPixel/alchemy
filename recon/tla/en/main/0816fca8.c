@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -209,7 +209,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       }
       ball->velocityX = distance / frames;
       ball->velocityY = (((target.y - 32) << 16) - ball->y) / frames;
-      Audio_PlayCue(221);
+      Sound_PlayFar(221);
       for (i = 0, bolt = &work->particles[1]; i != 63; i++, bolt++) {
         bolt->z = Random16();
         bolt->velocityZ = (Random16() & 255) + 128;
@@ -245,7 +245,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         Func_081180e8(145);
       } else {
         Func_081180e8(-1);
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
       }
     }
 

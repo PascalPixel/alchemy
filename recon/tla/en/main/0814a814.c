@@ -95,7 +95,7 @@ void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Motes swirl around each target in turn, eight frames apart, over a
 // rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
@@ -178,7 +178,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
-  Audio_PlayCue(142);
+  Sound_PlayFar(142);
 
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;

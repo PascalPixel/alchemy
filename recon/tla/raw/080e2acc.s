@@ -158,7 +158,7 @@ Func_080e2acc:
 	cmp r3, #95
 	ble .L_080e2b7a
 	movs r0, #220
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #144
 	lsls r1, r1, #3
 	ldr r0, .L_080e2c34

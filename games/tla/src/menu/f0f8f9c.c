@@ -4,7 +4,7 @@
 #include "input.h"
 
 void Link_DrawShiftedTilePairFar(s32 addr);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 
 s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
@@ -34,7 +34,7 @@ s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
     page_forward = gInput.repeat & KEY_RIGHT;
   }
   if (horizontal) {
-    Audio_PlayCue(111);
+    Sound_PlayFar(111);
     if (--*page < 0)
       *page = pages - 1;
     if (*cursor + *page * per_page > count - 1) {
@@ -47,7 +47,7 @@ s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
     goto done;
   }
   if (page_forward) {
-    Audio_PlayCue(111);
+    Sound_PlayFar(111);
     if (++*page > pages - 1)
       *page = 0;
     if (*cursor + *page * per_page > count - 1) {
@@ -60,7 +60,7 @@ s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
     goto done;
   }
   if (previous) {
-    Audio_PlayCue(111);
+    Sound_PlayFar(111);
     if (--*cursor < 0) {
       *cursor = per_page - 1;
       *cursor = count - *page * per_page - 1;
@@ -73,7 +73,7 @@ s32 Func_080f8f9c(s32 horizontal, s32 count, s32 per_page, s32 *cursor,
   if (next == 0)
     goto done;
   {
-    Audio_PlayCue(111);
+    Sound_PlayFar(111);
     result = 0;
     if (++*cursor == count - *page * per_page)
       *cursor = result;

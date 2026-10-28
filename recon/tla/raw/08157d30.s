@@ -114,7 +114,7 @@ BattleEffect_RunVenus:
 	cmp r10, r2
 	bne .L_08157e08
 	movs r0, #141
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #128
 	movs r7, #0
 	lsls r0, r0, #8
@@ -248,7 +248,7 @@ BattleEffect_RunVenus:
 	cmp r3, #0
 	beq .L_08157f2e
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08157f2e:
 	movs r3, #238
 	lsls r3, r3, #7

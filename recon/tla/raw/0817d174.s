@@ -467,7 +467,7 @@ BattleEffect_RunStarMine:
 	movs r0, #134
 	bl Func_081180e8
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r5, [sp, #28]
 	ldr r3, [sp, #52]
 	adds r5, #36

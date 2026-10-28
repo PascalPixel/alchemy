@@ -54,12 +54,12 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   EventRuntime_Wait(32);
   object->gravity = 0x10000;
   object->velocityY = 0x60000;
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   EventRuntime_Wait(15);
   object->velocityY = 0x60000;
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   EventRuntime_Wait(23);
-  Audio_PlayCue(146);
+  Sound_PlayFar(146);
 
   from[0] = object->x;
   from[1] = object->y;

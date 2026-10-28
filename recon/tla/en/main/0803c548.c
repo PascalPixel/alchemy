@@ -63,7 +63,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
-void Runtime_PushSlotEntry(void *entry, s32 priority);
+void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 void Func_0803c40c(struct AnimOutput *output);
 
 void UiWork_AnimateSpriteSlots(void) {
@@ -180,15 +180,15 @@ void UiWork_AnimateSpriteSlots(void) {
       }
       if (output->active == 2) {
         if (work->glyphResource != 0x60)
-          Runtime_PushSlotEntry(sprite, 255);
+          Oam_AddSpriteAtDepth(sprite, 255);
       } else if (output->active == 19) {
         s32 x = (s16)output->x;
         s32 y = (s16)output->y;
 
         if ((u32)(x + 64) < 304 && (u32)(y + 64) < 224)
-          Runtime_PushSlotEntry(sprite, output->sentinel);
+          Oam_AddSpriteAtDepth(sprite, output->sentinel);
       } else if (output->active != 13) {
-        Runtime_PushSlotEntry(sprite, output->sentinel);
+        Oam_AddSpriteAtDepth(sprite, output->sentinel);
       }
       output = output->next;
     }

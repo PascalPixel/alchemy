@@ -139,7 +139,7 @@ void Func_080dcb44(void) {
 
   if (work->counter != 99) {
     if (work->counter == 0)
-      Audio_PlayCue(130);
+      Sound_PlayFar(130);
     if (++work->counter > 60)
       work->counter = 0;
   }

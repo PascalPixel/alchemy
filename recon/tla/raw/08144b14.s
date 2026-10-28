@@ -201,7 +201,7 @@ Func_08144b14:
 	cmp r3, #64
 	bne .L_08144ca2
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08144ca2:
 	ldr r5, [sp, #48]
 	cmp r5, #80

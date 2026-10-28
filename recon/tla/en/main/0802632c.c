@@ -237,7 +237,7 @@ s32 Func_0802632c(struct ObjectRuntime *object) {
       (gInput.pressed & gAdventure.keys23a))
     pressed = 1;
   if (pressed) {
-    Audio_PlayCue(113);
+    Sound_PlayFar(113);
   } else {
     object->terrainHeight =
         Func_0802d45c(object->terrainId, object->x, object->z);

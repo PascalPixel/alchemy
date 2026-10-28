@@ -65,7 +65,7 @@ Resource_FindFreeEntry:
 	.global Func_02004b80
 	.thumb_func
 Func_02004b80:
-	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Unit_Get
 	.thumb_func
 Unit_Get:
@@ -369,4 +369,4 @@ Func_02004dd8:
 	.global Func_02004de0
 	.thumb_func
 Func_02004de0:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

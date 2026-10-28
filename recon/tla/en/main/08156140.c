@@ -138,7 +138,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -451,7 +451,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         seWait--;
       if (mode == 6 || mode == 12 || mode == 13 || mode == 14) {
         if (frame == 4)
-          Audio_PlayCue(CUE_FIRE);
+          Sound_PlayFar(CUE_FIRE);
         if (frame == 32)
           Func_081180e8(PHASE_LATE_RESULTS);
       } else if (mode == 2) {
@@ -563,7 +563,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               } else if (mode != 6 && mode != 12 && mode != 13 && mode != 14 &&
                          seWait == 0) {
                 seWait = 8;
-                Audio_PlayCue(CUE_IMPACT);
+                Sound_PlayFar(CUE_IMPACT);
               }
               if (mode == 2) {
                 // The pellet bounces off.

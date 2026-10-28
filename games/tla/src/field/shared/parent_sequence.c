@@ -11,7 +11,7 @@ extern u8 gRenderOamEnabled;
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_080ad090(void);
 void Func_08038348(s32 first, s32 second);
 void VramCache_Reset(void);
@@ -94,7 +94,7 @@ void ParentSequence_Run(s32 mode) {
     if (GameFlag_Test(0x101))
       GameFlag_ClearBit(0x101);
     else
-      Audio_PlayCue(0x120);
+      Sound_PlayFar(0x120);
     record = &table[gAdventure.scene];
     entrance = gAdventure.entrance;
     {
@@ -138,7 +138,7 @@ void ParentSequence_Run(s32 mode) {
       else
         Party_PlaySavedMusic();
     } else if (gAdventure.returnCue != -1) {
-      Audio_PlayCue(gAdventure.returnCue);
+      Sound_PlayFar(gAdventure.returnCue);
     } else {
       Party_PlaySavedMusic();
     }

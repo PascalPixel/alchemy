@@ -590,7 +590,7 @@ Func_0804a85c:
 	subs r3, #16
 	strb r3, [r5, #4]
 	ldr r0, [sp, #24]
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	ldr r7, [sp, #84]
 	cmp r7, #255
 	bne .L_0804acec
@@ -1683,7 +1683,7 @@ Func_0804a85c:
 	adds r0, r5, #0
 	movs r1, #240
 	str r4, [sp, #8]
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	ldr r0, [sp, #12]
 	ldr r1, [sp, #64]
 	adds r0, #2
@@ -1800,7 +1800,7 @@ Func_0804a85c:
 	cmp r3, #0
 	beq .L_0804b5ea
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0804b5c8:
 	ldr r1, [sp, #68]
 	adds r1, #1
@@ -1824,7 +1824,7 @@ Func_0804a85c:
 	cmp r3, #0
 	beq .L_0804b61c
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0804b5f8:
 	ldr r0, [sp, #68]
 	ldr r1, [sp, #60]
@@ -1857,7 +1857,7 @@ Func_0804a85c:
 	beq .L_0804b640
 .L_0804b632:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r5, #1
 	negs r5, r5
 	str r5, [sp, #68]

@@ -79,7 +79,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -154,7 +154,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
       }
       Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet,
                                  1, 0);
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       work->shakeFrames = 4;
     }
     if (frame == 32) {

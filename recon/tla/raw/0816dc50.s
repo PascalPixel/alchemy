@@ -642,25 +642,25 @@ BattleEffect_RunSerac:
 	cmp r6, #4
 	bne .L_0816e150
 	movs r0, #156
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816e150:
 	ldr r0, [sp, #52]
 	cmp r0, #30
 	bne .L_0816e15c
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816e15c:
 	ldr r1, [sp, #52]
 	cmp r1, #60
 	bne .L_0816e168
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816e168:
 	ldr r2, [sp, #52]
 	cmp r2, #64
 	bne .L_0816e17c
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	negs r0, r0
 	bl Func_081180e8

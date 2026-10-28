@@ -57,7 +57,7 @@ STATIC_ASSERT(offsetof(struct SelectionScreen, status) == 0x3a2);
 extern struct SelectionScreen *gResQueueWork;
 extern u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-void Audio_PlayCue(u32);
+void Sound_PlayFar(u32);
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *screen, u32 index);
 void Menu_StepRight(struct SelectionScreen *screen);
 void Menu_StepLeft(struct SelectionScreen *screen);

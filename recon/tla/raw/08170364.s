@@ -236,7 +236,7 @@ BattleEffect_RunMegaera:
 	cmp r6, #107
 	bne .L_08170554
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08170554:
 	ldr r7, [sp, #76]
 	cmp r7, #148
@@ -692,7 +692,7 @@ BattleEffect_RunMegaera:
 	cmp r0, #64
 	bne .L_081708e2
 	movs r0, #163
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081708e2:
 	movs r1, #0
 	mov r9, r1
@@ -702,7 +702,7 @@ BattleEffect_RunMegaera:
 	cmp r2, r5
 	bne .L_081708f4
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081708f4:
 	movs r3, #1
 	add r9, r3
@@ -876,7 +876,7 @@ BattleEffect_RunMegaera:
 	cmp r6, r3
 	bne .L_08170a46
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08170a46:
 	ldr r7, [sp, #76]
 	mov r3, r8
@@ -898,7 +898,7 @@ BattleEffect_RunMegaera:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08170a72:
 	ldr r2, [sp, #76]
 	cmp r2, r8

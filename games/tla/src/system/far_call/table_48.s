@@ -1,27 +1,27 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Audio_SetMusicVolumeTargetAndStepFar
+	.global Sound_SetBgmVolumeTargetFar
 	.thumb_func
-Audio_SetMusicVolumeTargetAndStepFar:
-	overlay_veneer Audio_SetMusicVolumeTargetAndStep
-	.global Audio_Check
+Sound_SetBgmVolumeTargetFar:
+	overlay_veneer Sound_SetBgmVolumeTarget
+	.global Sound_GetBgmRestoreDelayFar
 	.thumb_func
-Audio_Check:
-	overlay_veneer AudioCommand_GetStateByte
+Sound_GetBgmRestoreDelayFar:
+	overlay_veneer Sound_GetBgmRestoreDelay
 	.global Func_081c0050
 	.thumb_func
 Func_081c0050:
 	overlay_veneer Func_081c1014
-	.global AudioCommand_StopAllPlayersFar
+	.global Sound_StopAllMusicPlayersFar
 	.thumb_func
-AudioCommand_StopAllPlayersFar:
-	overlay_veneer AudioCommand_StopAllPlayers
-	.global AudioCommand_ResumeAllPlayersFar
+Sound_StopAllMusicPlayersFar:
+	overlay_veneer Sound_StopAllMusicPlayers
+	.global Sound_ResumeAllMusicPlayersFar
 	.thumb_func
-AudioCommand_ResumeAllPlayersFar:
-	overlay_veneer AudioCommand_ResumeAllPlayers
-	.global AudioCommand_UpdateToggleMaskFar
+Sound_ResumeAllMusicPlayersFar:
+	overlay_veneer Sound_ResumeAllMusicPlayers
+	.global Sound_UpdateCommandMaskFar
 	.thumb_func
-AudioCommand_UpdateToggleMaskFar:
-	overlay_veneer AudioCommand_UpdateToggleMask
+Sound_UpdateCommandMaskFar:
+	overlay_veneer Sound_UpdateCommandMask

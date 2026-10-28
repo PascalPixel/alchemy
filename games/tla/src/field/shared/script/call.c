@@ -12,7 +12,7 @@
 #include "edition.h"
 
 s32 Script_PlaySound(struct ScriptInterpreter *interpreter) {
-  Audio_PlayCue(interpreter->script[interpreter->cursor + 1]);
+  Sound_PlayFar(interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;
 }

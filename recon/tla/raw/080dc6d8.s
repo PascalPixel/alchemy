@@ -44,7 +44,7 @@ Func_080dc6d8:
 	cmp r3, #0
 	beq .L_080dc738
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl BattleEffect_SetObjectUpdateMode

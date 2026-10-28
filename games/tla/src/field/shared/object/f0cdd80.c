@@ -40,7 +40,7 @@ void Func_080cdd80(void) {
   if (result <= 0) {
     Object_SetMode(owner, 8);
     WaitFrames(15);
-    Audio_PlayCue(185);
+    Sound_PlayFar(185);
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
     Object_SetPosition(target, position[0], position[1], position[2]);

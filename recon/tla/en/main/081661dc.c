@@ -75,7 +75,7 @@ struct EffectCamera {
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleEffect_FetchRectangleBlitters(
@@ -163,7 +163,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == HIT_FRAME)
       Func_081180e8(PHASE_RESULTS);
     if (effect->variant != 0 && frame == HIT_FRAME)
-      Audio_PlayCue(SE_HIT);
+      Sound_PlayFar(SE_HIT);
 
     // The streak, drawn from the user toward the target.
     EffectPosition_ProjectScaledBattler(effect->actor, &user);

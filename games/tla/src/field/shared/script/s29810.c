@@ -57,7 +57,7 @@ s32 Func_08029838(s32 arg) {
   }
   if (pressed) {
     if (Func_080c8828(arg)) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
     } else if (!GameFlag_Test(0x146)) {
       work->unk166 = 0x208b;
       return 1;

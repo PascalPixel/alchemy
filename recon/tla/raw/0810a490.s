@@ -136,7 +136,7 @@ Func_0810a490:
 	cmp r1, #0
 	bge .L_0810a5d0
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r8
 	movs r1, #1
 	bl UiText_DrawQuantity
@@ -158,7 +158,7 @@ Func_0810a490:
 	mov r0, r8
 	bl Inventory_RemoveFar
 	movs r0, #101
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, .L_0810a664
 	bl Func_0810857c
 	ldrh r1, [r5]
@@ -179,7 +179,7 @@ Func_0810a490:
 	ldr r0, .L_0810a668
 	bl Func_0810857c
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0810a630
 .L_0810a612:
 	movs r2, #160

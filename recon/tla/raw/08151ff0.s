@@ -216,7 +216,7 @@ Func_08151ff0:
 	cmp r1, #2
 	bne .L_081521a0
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081521a0:
 	ldr r3, [sp, #24]
 	ldr r2, [sp, #12]

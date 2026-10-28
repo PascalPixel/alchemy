@@ -154,7 +154,7 @@ extern const u8 Data_0819861b[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
@@ -325,7 +325,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
     for (i = 0; i != 160; i++)
       work->bg2xLines[i] = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
     if (variant == 10 && frame == 8)
-      Audio_PlayCue(221);
+      Sound_PlayFar(221);
     blows = RECORD(RECORD_BLOWS);
     EffectPosition_ProjectScaledBattler(effect->actor, &actorPos);
     actorPos.x /= 2;
@@ -384,7 +384,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           if (i & 1)
             Func_08118088(effect->actors[0], 7);
           work->shakeFrames = 4;
-          Audio_PlayCue(134);
+          Sound_PlayFar(134);
         }
         for (j = 0; j != RECORD(RECORD_MOTES); j++)
           MOTES[i * 32 + j].variant = (Random16() & 7) + 15;

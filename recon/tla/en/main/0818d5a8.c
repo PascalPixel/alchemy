@@ -104,7 +104,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
 void Func_08158ce0(s32 randomMask, u32 range);
 void ObjectGroup_CountDownMemberTimers(void);
 void Func_081180e8(s32 phase);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // The leaping strike family (BattleEffect_RunPlanetDiver is mode 0, BattleEffect_RunPlanetary mode
 // 1; effect kinds 60 and 128). The caster flashes and sixteen flames ring
@@ -219,7 +219,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
         caster->velocityX = -caster->velocityX;
       Object_SetMode(caster, 2);
       work->shakeFrames = 4;
-      Audio_PlayCue(136);
+      Sound_PlayFar(136);
     }
 
     // Frame 16: down at the target's depth, then sliding to it over 16
@@ -271,7 +271,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
             Func_08118088(effect->actors[0], 4);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
           } else {
-            Audio_PlayCue(145);
+            Sound_PlayFar(145);
             for (i = 0; i != effect->count; i++) {
               Func_08118088(effect->actors[i], 3);
               Func_0814cd48(effect->actors[i], 7, 5, i, 16);

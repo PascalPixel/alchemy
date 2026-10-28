@@ -213,7 +213,7 @@ BattleEffect_RunLegend:
 	cmp r4, r3
 	bne .L_08189cba
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08189cba:
 	ldr r3, [sp, #12]
 	ldr r5, [sp, #40]
@@ -245,7 +245,7 @@ BattleEffect_RunLegend:
 	.4byte Data_02014018
 .L_08189cf4:
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08189cfa:
 	ldr r2, [sp, #52]
 	movs r3, #0

@@ -60,7 +60,7 @@ s32 Func_08108690(s32 *cursor, s32 count, s32 columns) {
       pos = count - 1;
   }
   if (old != pos) {
-    Audio_PlayCue(111);
+    Sound_PlayFar(111);
     changed = 1;
   }
   if (old / columns * columns != pos / columns * columns)

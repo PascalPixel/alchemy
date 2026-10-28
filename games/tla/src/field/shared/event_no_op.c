@@ -7,7 +7,7 @@
 void Event_NoOp(void) {}
 
 #if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 void Func_080d2c9c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -16,7 +16,7 @@ void Func_080d2c9c(void) {
     s16 cue = *(s16 *)(work + 0xcb8);
 
     if (cue != -1)
-      Audio_PlayCue(cue);
+      Sound_PlayFar(cue);
   }
 }
 
@@ -65,7 +65,7 @@ void Func_080d2d08(struct CueObject *object, s32 cue) {
     return;
   if (ABS((focus->top - focus->base) - (object->top - object->base)) > 0x700000)
     return;
-  Audio_PlayCue(cue);
+  Sound_PlayFar(cue);
 }
 
 void Func_080d2d70(void) { gAdventure.counter274++; }

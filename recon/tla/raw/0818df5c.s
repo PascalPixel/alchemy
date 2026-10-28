@@ -464,13 +464,13 @@ BattleEffect_RunMeteorBlow:
 	str r6, [sp, #56]
 	movs r0, #162
 	str r3, [r2]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818e314:
 	mov r2, r11
 	cmp r2, #120
 	bne .L_0818e320
 	movs r0, #163
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818e320:
 	mov r1, r11
 	subs r1, #96
@@ -1432,7 +1432,7 @@ BattleEffect_RunMeteorBlow:
 	movs r2, #4
 	str r2, [r3]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #104]
 	movs r7, #0
 	ldr r3, [r0, #20]

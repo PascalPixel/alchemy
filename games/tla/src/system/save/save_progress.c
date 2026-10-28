@@ -18,8 +18,8 @@ extern const u8 gUi_ProgressBarTiles[];
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
-void Audio_SetMusicVolumeTargetAndStepFar(s32 target, s32 step);
-void Audio_PlayCue(s32 cue);
+void Sound_SetBgmVolumeTargetFar(s32 target, s32 step);
+void Sound_PlayFar(s32 cue);
 void Func_080c8698(void);
 
 // Heading x coordinate: only French differs.
@@ -57,8 +57,8 @@ struct UiWindow *SaveProgress_Open(u32 kind) {
   message = (s32)&MsgDoNotTurnThePower;
   UiText_DrawResource(message, window, 40, 88);
   UiText_DrawResource(message + 1, window, 40, 104);
-  Audio_SetMusicVolumeTargetAndStepFar(0, 30);
-  Audio_PlayCue(298);
+  Sound_SetBgmVolumeTargetFar(0, 30);
+  Sound_PlayFar(298);
   WaitFrames(10);
   MemFree(tiles);
   return window;
@@ -68,7 +68,7 @@ struct UiWindow *SaveProgress_Open(u32 kind) {
 struct UiWindow *SaveProgress_Close(struct UiWindow *window) {
   WaitFrames(10);
   Func_080c8698();
-  Audio_SetMusicVolumeTargetAndStepFar(0x100, 30);
+  Sound_SetBgmVolumeTargetFar(0x100, 30);
   UiWork_Finalize(window, 0);
   return window;
 }

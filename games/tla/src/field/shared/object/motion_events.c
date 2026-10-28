@@ -58,9 +58,9 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 eventId) {
     *objectFlags = updatedFlags;
     object->velocityY = verticalVelocity;
     if (speed > 5) {
-      Audio_PlayCue(0x99);
+      Sound_PlayFar(0x99);
     } else {
-      Audio_PlayCue(0x98);
+      Sound_PlayFar(0x98);
     }
     EventRuntime_Wait(eventId);
   }

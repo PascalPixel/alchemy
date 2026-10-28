@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -597,30 +597,30 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       break;
 
     if (frame == 0)
-      Audio_PlayCue(206);
+      Sound_PlayFar(206);
     for (i = 0; i != 11; i++)
       if (frame == Data_08199fbc[i])
-        Audio_PlayCue(130);
+        Sound_PlayFar(130);
     if (frame == 175)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     for (i = 0; i != 5; i++)
       if (frame == Data_08199fc8[i])
-        Audio_PlayCue(209);
+        Sound_PlayFar(209);
     for (i = 0; i != 6; i++)
       if (frame == Data_08199fd2[i])
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
     if (frame == 369)
-      Audio_PlayCue(206);
+      Sound_PlayFar(206);
     for (i = 0; i != 6; i++)
       if (frame == 644 + i * 12)
-        Audio_PlayCue(104);
+        Sound_PlayFar(104);
     if (frame == 755)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     for (i = 0; i != 6; i++)
       if (frame == 759 + i * 9)
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
     if (frame == 820)
-      Audio_PlayCue(208);
+      Sound_PlayFar(208);
 
     // The opening: the circle and the streaks.
     if (frame == 0) {

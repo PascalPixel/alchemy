@@ -40,7 +40,7 @@ s32 BattleParty_ListLivingUnits(s32 side, u16 *units);
 s32 Func_0811a24c(s32 side, u16 *units);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct BattleUnit *Unit_Get(s32 unitId);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void UiWork_ClearValueNameTablesFar(void);
 s32 Func_080ad0b0(s32 unitId, s16 *gains);
 void Party_AdjustCoinsFar(s32 amount);
@@ -86,7 +86,7 @@ void Battle_AwardSpoils(void) {
       unit->experience += spoils->experience;
     while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
            Func_080ad0b0(unitId, gains) != 0) {
-      Audio_PlayCue(89);
+      Sound_PlayFar(89);
       UiWork_ClearValueNameTablesFar();
       UiText_DrawQuantity(unit->classIndex, 3);
       UiText_DrawQuantity(list[i], 1);
@@ -105,7 +105,7 @@ void Battle_AwardSpoils(void) {
             UiText_DrawQuantity(unit->classIndex, 3);
             UiText_DrawQuantity(unitId, 1);
             UiText_DrawQuantity(learned & ACTION_ID_MASK, 4);
-            Audio_PlayCue(154);
+            Sound_PlayFar(154);
             UiText_ShowMessageAndWaitCoreFar((s32)Msg03323);
             BattlePresentation_WaitForAdvance();
           }

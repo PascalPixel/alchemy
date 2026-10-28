@@ -55,7 +55,7 @@ Func_08044dc8:
 	str r6, [sp, #0]
 	bl UiText_QueueRenderEntries
 	movs r0, #81
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r5, #129
 	ldr r6, .L_08044f40
 	lsls r5, r5, #2
@@ -63,7 +63,7 @@ Func_08044dc8:
 .L_08044e42:
 	movs r0, #1
 	bl WaitFrames
-	bl Audio_Check
+	bl Sound_GetBgmRestoreDelayFar
 	cmp r0, #0
 	beq .L_08044e58
 	ldr r3, [r6, #4]

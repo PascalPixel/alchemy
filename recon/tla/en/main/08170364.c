@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -203,7 +203,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       frame = 107;
     }
     if (frame == 107) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
   skipped:
     if (frame == 148) {
@@ -310,11 +310,11 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 64) {
-      Audio_PlayCue(163);
+      Sound_PlayFar(163);
     }
     for (i = 0, j = 75; i != 8; i++, j += 4) {
       if (frame == j) {
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
       }
     }
     if (frame == 10) {
@@ -358,12 +358,12 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         s32 column = bolt * 32 + 24;
 
         if (frame == start + 5) {
-          Audio_PlayCue(212);
+          Sound_PlayFar(212);
         }
         if (frame == start + 9) {
           work->shakeFrames = 8;
           Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
         }
         if (frame < start) {
           continue;

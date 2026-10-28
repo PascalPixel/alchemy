@@ -33,12 +33,12 @@ Func_080d7524:
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #173
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	mov r0, r9
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	mov r0, r9
 	bl Motion_SetVarCbAndRefresh
@@ -75,7 +75,7 @@ Func_080d7524:
 	ldr r3, .L_080d7774
 	movs r0, #152
 	str r3, [r7, #108]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #128
 	lsls r3, r3, #7
 	str r3, [r7, #72]
@@ -91,13 +91,13 @@ Func_080d7524:
 	ands r3, r2
 	strb r3, [r1, #9]
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, .L_080d7778
 	movs r0, #35
 	str r3, [r7, #40]
 	bl WaitFrames
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, .L_080d777c
 	movs r0, #38
 	str r3, [r7, #40]
@@ -210,7 +210,7 @@ Func_080d7524:
 	adds r0, r7, #0
 	bl Motion_SetTargetPositionFromMagnitudeAngle
 	movs r0, #153
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r9
 	movs r1, #6
 	movs r2, #5

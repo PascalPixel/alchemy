@@ -365,7 +365,7 @@ Func_081548d0:
 	bne .L_08154b94
 	movs r0, #133
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #8]
 .L_08154b94:
 	ldr r3, [sp, #44]

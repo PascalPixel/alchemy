@@ -103,7 +103,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Whether b lies on the same side of x = 0 as a.
 static inline s32 SameSide(s32 a, s32 b) {
@@ -195,10 +195,10 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     // The cues: the burst, the target thrown up 32 pixels, the user's
     // glow, the drain and the target's fall.
     if (frame == 4)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 10) {
       work->shakeFrames = 8;
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 80);
       target->verticalMotionStrength = 0;
       target->y = 32 << 16;
@@ -208,7 +208,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     if (frame == 24)
       Func_0814cd48(effect->actor, -1, 3, -1, 0);
     if (frame == 40)
-      Audio_PlayCue(142);
+      Sound_PlayFar(142);
     if (frame == 32)
       Func_081180e8(134);
     if (frame == 64)

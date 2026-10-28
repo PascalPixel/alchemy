@@ -896,7 +896,7 @@ Func_080f9644:
 	b .L_080fa0a6
 .L_080f9dbc:
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r9
 	ldr r0, [r1, #48]
 	bl RenderOutput_ClearListFar
@@ -1230,7 +1230,7 @@ Func_080f9644:
 	cmp r3, #0
 	beq .L_080fa09a
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r9
 	ldr r0, [r1, #48]
 	bl RenderOutput_ClearListFar
@@ -1343,7 +1343,7 @@ Func_080f9644:
 	b .L_080fa276
 .L_080fa170:
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r9
 	ldr r0, [r1, #48]
 	bl RenderOutput_ClearListFar

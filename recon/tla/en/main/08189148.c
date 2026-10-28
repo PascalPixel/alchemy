@@ -76,7 +76,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Func_081180e8(s32 phase);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
@@ -216,9 +216,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         Func_081180e8(145);
     }
     if (frame == 0)
-      Audio_PlayCue(136);
+      Sound_PlayFar(136);
     if (frame == 50)
-      Audio_PlayCue(136);
+      Sound_PlayFar(136);
 
     // For 64 frames the camera turns away from the user's side.
     if (effect->side == 0) {

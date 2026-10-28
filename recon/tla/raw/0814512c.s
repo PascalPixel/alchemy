@@ -315,7 +315,7 @@ Func_0814512c:
 	lsls r3, r3, #3
 	adds r2, r2, r3
 	str r2, [sp, #24]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #24]
 	movs r0, #0
 	str r0, [sp, #36]

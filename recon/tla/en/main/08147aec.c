@@ -67,7 +67,7 @@ void Func_0816442c(s32 formation, s32 x, s32 y);  // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y);  // ..RunImpactBurst
 void Func_08164a4c(s32 blue, s32 green, s32 red); // Palette_BrightenBgEntries
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 struct Point2D {
   s32 x;
@@ -285,9 +285,9 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 48)
-        Audio_PlayCue(141);
+        Sound_PlayFar(141);
       if (frame == 128)
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
 
       // Flashes fly out sideways, one a frame from 129.
       if (frame >= 129 && frame <= 175) {
@@ -444,7 +444,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
             streak->x -= dir * 6;
             streak->y += 6;
             if (frame <= 47 && streak->y > 55)
-              Audio_PlayCue(136);
+              Sound_PlayFar(136);
             draw[0](canvas, sheet + gData_08197410[size - 1],
                     streak->x - size / 2, streak->y + 30, size, size * 2);
           } else {

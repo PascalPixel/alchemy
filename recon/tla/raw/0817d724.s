@@ -266,7 +266,7 @@ BattleEffect_RunRisingDragonEnemy:
 	movs r3, #8
 	str r3, [r2]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817d948:
 	mov r7, r11
 	cmp r7, #163
@@ -490,7 +490,7 @@ BattleEffect_RunRisingDragonEnemy:
 	cmp r2, #134
 	bne .L_0817db04
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #128
 	ldr r3, .L_0817db8c
 	ldr r0, [sp, #72]

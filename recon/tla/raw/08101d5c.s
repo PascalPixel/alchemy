@@ -146,7 +146,7 @@ Func_08101d5c:
 	bl Menu_GetModuloOfSum
 	adds r6, r0, #0
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08101f30
 .L_08101e9e:
 	ldr r2, [r7, #4]
@@ -155,7 +155,7 @@ Func_08101d5c:
 	cmp r2, #0
 	beq .L_08101eb6
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #2
 	negs r2, r2
 	str r2, [sp, #16]
@@ -167,7 +167,7 @@ Func_08101d5c:
 	cmp r2, #0
 	beq .L_08101ece
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	negs r3, r3
 	str r3, [sp, #16]
@@ -187,11 +187,11 @@ Func_08101d5c:
 	bl Menu_GetModuloOfSum
 	adds r6, r0, #0
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08101f30
 .L_08101ef4:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08101efa:
 	mov r2, r8
 	movs r3, #14
@@ -215,7 +215,7 @@ Func_08101d5c:
 	bl Menu_GetModuloOfSum
 	adds r6, r0, #0
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08101f30:
 	ldr r3, [sp, #20]
 	movs r2, #152

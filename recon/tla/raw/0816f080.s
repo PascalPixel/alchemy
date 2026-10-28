@@ -558,7 +558,7 @@ BattleEffect_RunWyrdCurse:
 	cmp r6, #64
 	bne .L_0816f4f0
 	movs r0, #147
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816f4f0:
 	movs r6, #0
 	movs r7, #2
@@ -592,7 +592,7 @@ BattleEffect_RunWyrdCurse:
 	b .L_0816f536
 .L_0816f530:
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816f536:
 	adds r6, #1
 	adds r5, #4

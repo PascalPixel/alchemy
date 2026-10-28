@@ -44,7 +44,7 @@ void WaitFrames(s32 frames);
 void Func_0810928c(void *window, s32 memberIndex, s32 item);
 void Shop_DrawItemCount(void *window, s32 unitId);
 s32 Inventory_CountFar(s32 unitId);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void RenderOutput_PrepareForRedrawFar(void *window);
 void Func_08109cac(s32 unitId);
 void Func_0810a2d0(s32 unitId);
@@ -90,11 +90,11 @@ s32 Func_08109ad8(void) {
     if (input->pressed & 1) {
       WaitFrames(1);
       if (Inventory_CountFar(unitId) == 0) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         continue;
       }
       RenderOutput_PrepareForRedrawFar(listWindow);
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       if (shop->partyAction == 1) {
         Func_08109cac(unitId);
       } else if (shop->partyAction == 3) {
@@ -108,7 +108,7 @@ s32 Func_08109ad8(void) {
       shop->mode = 12;
       redraw = 2;
     } else if (input->pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     } else {

@@ -132,7 +132,7 @@ Func_08181ed4:
 	cmp r5, #0
 	bne .L_08181fea
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r7, [sp, #28]
 	movs r0, #238
 	lsls r0, r0, #7

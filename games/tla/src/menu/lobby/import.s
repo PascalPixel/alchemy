@@ -265,7 +265,7 @@ DebugParty_LoadPreset:
 	.global Func_02001ad4
 	.thumb_func
 Func_02001ad4:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar
 	.global Func_02001adc
 	.thumb_func
 Func_02001adc:

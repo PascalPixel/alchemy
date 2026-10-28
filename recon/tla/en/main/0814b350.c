@@ -69,7 +69,7 @@ void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Transform_Pop(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // A Djinn rides a swarm of sparks from the caster to the first target: 32
 // sparks spin around it in four planes while it travels, then it hovers
@@ -140,9 +140,9 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 8)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 80)
-      Audio_PlayCue(142);
+      Sound_PlayFar(142);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 30 && frame < 70) {
@@ -259,7 +259,7 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
       position[2] = object->z;
       SceneTransform_ApplyPosition(position);
       if (frame == start + 30)
-        Audio_PlayCue(126);
+        Sound_PlayFar(126);
       if (frame == start + 40)
         Func_0814cd48(effect->actors[member], 7, -1, -1, 0);
       if (frame == start + 64)

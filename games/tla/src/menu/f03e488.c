@@ -66,7 +66,7 @@ void Func_0803e488(struct MenuSelection *state, s32 index) {
     else
       entry->mode = 0;
   }
-  Runtime_PushSlotEntry((s32 *)entry, 238);
+  Oam_AddSpriteAtDepth((s32 *)entry, 238);
   if (state->nodes[index].offset != 0)
     state->nodes[index].offset--;
 }

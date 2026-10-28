@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -237,7 +237,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else {
       if (frame == 17) {
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
         for (i = 0; i != effect->count; i++) {
           Func_08118088(effect->actors[i], 0);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);

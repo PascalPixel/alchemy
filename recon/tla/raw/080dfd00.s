@@ -151,7 +151,7 @@ FieldEffect_RunWhirlwind:
 	lsls r3, r3, #9
 	adds r3, #204
 	str r3, [r7, #28]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r3, r11
 	cmp r3, #0
 	beq .L_080dfed6
@@ -235,7 +235,7 @@ FieldEffect_RunWhirlwind:
 	movs r0, #30
 	bl WaitFrames
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r7, #0
 	bl Func_08020340
 	adds r0, r7, #0

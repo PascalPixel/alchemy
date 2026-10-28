@@ -278,19 +278,19 @@ BattleEffect_RunRamses:
 	cmp r1, #94
 	bne .L_08165cea
 	movs r0, #156
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08165cea:
 	ldr r2, [sp, #52]
 	cmp r2, #136
 	bne .L_08165cf6
 	movs r0, #156
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08165cf6:
 	ldr r3, [sp, #52]
 	cmp r3, #178
 	bne .L_08165d02
 	movs r0, #156
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08165d02:
 	ldr r6, [sp, #52]
 	movs r0, #130
@@ -298,7 +298,7 @@ BattleEffect_RunRamses:
 	cmp r6, r0
 	bne .L_08165d12
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08165d12:
 	ldr r3, .L_08165f84
 	ldr r4, [r3, #4]

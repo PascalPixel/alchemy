@@ -75,7 +75,7 @@ Func_080e7238:
 	cmp r3, #99
 	ble .L_080e7290
 	movs r0, #200
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #20
 	bl WaitFrames
 	movs r3, #0

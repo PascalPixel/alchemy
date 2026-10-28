@@ -226,7 +226,7 @@ BattleEffect_RunBreak:
 	cmp r9, r6
 	bne .L_0814e92e
 	movs r0, #143
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r10
 	mov r3, r11
 	ldrsh r0, [r1, r3]

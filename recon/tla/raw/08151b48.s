@@ -209,7 +209,7 @@ BattleEffect_RunRay:
 	ldr r0, .L_08151ed8
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #0
 	str r1, [sp, #28]
 .L_08151cea:

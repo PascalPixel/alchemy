@@ -24,7 +24,7 @@ static __inline__ void System_Reset(void) {
    * this register carries the native ARM restart target in r4. */
   register u32 entry __asm__("r4");
   gCartridgeResetMarker = 0x19670704;
-  AudioEngine_SuspendDirectSoundFar();
+  m4aSoundVSyncOffFar();
   entry = Cart_Restart;
   Io_Write16(0, &REG_IME);
   CAMELOT_ASM("the cartridge restart transfers control without returning.")

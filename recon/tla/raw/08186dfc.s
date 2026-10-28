@@ -639,31 +639,31 @@ BattleEffect_RunHaures:
 	cmp r2, #48
 	bne .L_081872f2
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081872f2:
 	ldr r3, [sp, #76]
 	cmp r3, #74
 	bne .L_081872fe
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081872fe:
 	ldr r4, [sp, #76]
 	cmp r4, #100
 	bne .L_0818730a
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818730a:
 	ldr r5, [sp, #76]
 	cmp r5, #126
 	bne .L_08187316
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08187316:
 	ldr r7, [sp, #76]
 	cmp r7, #140
 	bne .L_08187322
 	movs r0, #141
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08187322:
 	ldr r0, [sp, #76]
 	movs r1, #133
@@ -1318,7 +1318,7 @@ BattleEffect_RunHaures:
 	cmp r7, r5
 	bne .L_0818783e
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818783e:
 	ldr r0, [sp, #76]
 	movs r1, #16
@@ -1326,7 +1326,7 @@ BattleEffect_RunHaures:
 	cmp r0, r1
 	bne .L_0818784e
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818784e:
 	ldr r2, [sp, #12]
 	cmp r2, #9
@@ -2637,13 +2637,13 @@ BattleEffect_RunHaures:
 	cmp r3, #10
 	bne .L_081882a4
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081882a4:
 	ldr r4, [sp, #76]
 	cmp r4, #14
 	bne .L_08188306
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r7, [sp, #100]
 	movs r5, #0
 	ldr r3, [r7, #20]
@@ -2691,13 +2691,13 @@ BattleEffect_RunHaures:
 	cmp r5, #30
 	bne .L_08188312
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08188312:
 	ldr r7, [sp, #76]
 	cmp r7, #34
 	bne .L_08188374
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #100]
 	movs r0, #0
 	ldr r3, [r1, #20]
@@ -2745,7 +2745,7 @@ BattleEffect_RunHaures:
 	cmp r1, #58
 	bne .L_081883d6
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #100]
 	movs r2, #0
 	ldr r3, [r4, #20]

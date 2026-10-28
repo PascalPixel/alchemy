@@ -85,7 +85,7 @@ void BattleEffect_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀�
 void Func_0816442c(s32 formation, s32 x, s32 y); // ☀️ PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ☀️ RunImpactBurst
 void Func_08118088(s32 actor, s32 motion);       // ☀️ ApplyVariantMotionFar
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Animation_ApplyChildArgumentFar(void *, s32);
 void *GetMotionRecordFar(void *object, s32 index);
 void Render_ResetTransformState(void);
@@ -208,14 +208,14 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 31) {
       work->shakeFrames = 8;
-      Audio_PlayCue(157);
+      Sound_PlayFar(157);
       for (i = 0; i != effect->count; i++)
         Func_08118088(effect->actors[i], 6);
     }
     if (frame == 72)
-      Audio_PlayCue(136);
+      Sound_PlayFar(136);
     if (frame == 140)
-      Audio_PlayCue(156);
+      Sound_PlayFar(156);
 
     // Drop the formation's objects to 64 pixels up.
     speed += 0x4000;
@@ -466,7 +466,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       }
       if (frame == i * 5 + 302) {
         Func_0814cd48(effect->actors[i], 7, -1, i, 8);
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
         work->shakeFrames = 8;
       }
     }

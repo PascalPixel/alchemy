@@ -187,4 +187,4 @@ Func_02000bd4:
 	.global Func_02000bdc
 	.thumb_func
 Func_02000bdc:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

@@ -23,7 +23,7 @@ Func_080dd950:
 	cmp r3, #0
 	beq .L_080dda28
 	movs r0, #167
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, .L_080dda24
 	bl Scheduler_RemoveCallback
 	movs r1, #192

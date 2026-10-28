@@ -93,7 +93,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 #define SHAPE(n) Data_081979de[effect->variant * 5 + (n)]
 #define SPARK_COUNT SHAPE(0)
@@ -209,12 +209,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
 
     if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
       if (frame == 2) {
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
         Func_081180e8(145);
       }
     } else {
       if (frame == 2)
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
       if (frame == 24)
         Func_081180e8(134);
     }

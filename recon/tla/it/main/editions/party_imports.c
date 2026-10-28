@@ -8,7 +8,7 @@
 s32 Party_CountActiveOwnersFar(void);
 void BattleEffect_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
   s32 count;
@@ -19,11 +19,11 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
     BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
     BattleEffect_StartBufferInterpolation(4);
     if (amount < -10)
-      Audio_PlayCue(134);
+      Sound_PlayFar(134);
     else
-      Audio_PlayCue(133);
+      Sound_PlayFar(133);
   } else {
-    Audio_PlayCue(126);
+    Sound_PlayFar(126);
   }
   count = Party_CountActiveOwnersFar();
   for (i = 0; i < count; i++) {
@@ -88,7 +88,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
   if (result != 0) {
     BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
     BattleEffect_StartBufferInterpolation(4);
-    Audio_PlayCue(133);
+    Sound_PlayFar(133);
   }
 
   return result;

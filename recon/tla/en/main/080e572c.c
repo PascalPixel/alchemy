@@ -74,7 +74,7 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
@@ -165,7 +165,7 @@ void Func_080e572c(void) {
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
                         Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
-  Audio_PlayCue(130);
+  Sound_PlayFar(130);
   WaitFrames(1);
   work->phase = 0;
   work->timer = 0;

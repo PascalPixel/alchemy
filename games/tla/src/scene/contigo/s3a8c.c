@@ -17,7 +17,7 @@ s32 Func_02001a60(s32 topic);
 void Func_0200403c(s32 value, s32 digits);
 void Func_020041fc(s32 item, s32 count);
 s32 PartyInventory_GiveItem(s32 item, s32 mode);
-void AudioCommand_WaitForStateByteClear(void);
+void Sound_WaitForFanfare(void);
 
 void Func_02003a8c(void) {
   s32 diff;
@@ -55,7 +55,7 @@ void Func_02003a8c(void) {
       Func_0200412c((s32)MsgContigo04);
       Func_0200403c(diff, 5);
       Func_02004144(14, 0);
-      AudioCommand_WaitForStateByteClear();
+      Sound_WaitForFanfare();
     } else if (diff < 0) {
       Func_0200412c((s32)MsgContigo05);
       Func_0200403c(-diff, 5);
@@ -79,7 +79,7 @@ void Func_02003a8c(void) {
       Func_0200412c((s32)MsgContigo04);
       Func_0200403c(diff, 5);
       Func_02004144(14, 0);
-      AudioCommand_WaitForStateByteClear();
+      Sound_WaitForFanfare();
     } else if (diff < 0) {
       Func_0200412c((s32)MsgContigo05);
       Func_0200403c(-diff, 5);

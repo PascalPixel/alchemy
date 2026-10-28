@@ -1125,7 +1125,7 @@ BattleEffect_RunProjectileVolley:
 	cmp r6, #4
 	bne .L_081569d0
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081569d0:
 	ldr r7, [sp, #128]
 	cmp r7, #32
@@ -1469,7 +1469,7 @@ BattleEffect_RunProjectileVolley:
 	movs r0, #132
 	str r2, [sp, #12]
 	str r4, [sp, #108]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08156c6a:
 	ldr r2, [sp, #12]
 .L_08156c6c:

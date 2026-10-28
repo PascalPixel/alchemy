@@ -87,7 +87,7 @@ Func_080cb1dc:
 	ldrh r2, [r2]
 	movs r0, #123
 	strh r2, [r3]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl EventRuntime_PrepareCurrentObject
 	b .L_080cb2a4
 .L_080cb28e:

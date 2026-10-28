@@ -20,7 +20,7 @@ Func_080de21c:
 	str r0, [sp, #8]
 	bl BattleEffect_InitializeSharedScene
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	add r1, sp, #12
 	mov r5, r9
 	mov r10, r1

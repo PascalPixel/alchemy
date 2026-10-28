@@ -615,7 +615,7 @@ BattleEffect_RunVengeance:
 	str r2, [sp, #0]
 	bl BattleEffect_StartActorMotion
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818165c:
 	mov r3, r10
 	movs r2, #36

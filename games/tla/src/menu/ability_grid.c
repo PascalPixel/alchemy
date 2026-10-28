@@ -13,7 +13,7 @@ struct RenderInput *Func_0804128c(void);
 void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 s32 Party_FindOwnerWithActionFar(s32 action);
 void *Unit_Get(s32 owner);
@@ -70,44 +70,44 @@ s32 Func_08041350(void) {
     }
     WaitFrames(1);
     if (KEYS_PRESSED & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       goto done;
     }
     if (KEYS_PRESSED & 1) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = 0;
       goto done;
     }
     if (KEYS_PRESSED & 0x200) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = 1;
       goto done;
     }
     if (KEYS_PRESSED & 0x100) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = 2;
       goto done;
     }
     if (gInput.repeat & 0x20) {
       column--;
       result = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
     if (gInput.repeat & 0x10) {
       column++;
       result = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
     if (gInput.repeat & 0x40) {
       row--;
       result = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
     if (gInput.repeat & 0x80) {
       row++;
       result = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
   } while (1);
 done:

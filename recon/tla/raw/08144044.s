@@ -90,7 +90,7 @@ BattleEffect_RunHaunt:
 	cmp r10, r3
 	bne .L_081440ca
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #0
 	str r1, [sp, #28]
 	ldr r2, [sp, #40]

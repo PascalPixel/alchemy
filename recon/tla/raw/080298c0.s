@@ -389,7 +389,7 @@ Func_080298c0:
 	bne .L_08029bdc
 	movs r0, #149
 	lsls r0, r0, #2
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08029bdc:
 	movs r3, #160
 	lsls r3, r3, #4
@@ -996,7 +996,7 @@ Func_080298c0:
 	strb r0, [r3]
 	movs r0, #149
 	lsls r0, r0, #2
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	cmp r6, #0
 	beq .L_0802a0f4
 	movs r3, #192

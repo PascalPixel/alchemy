@@ -763,7 +763,7 @@ Func_08039864:
 	ands r3, r7
 	adds r0, r0, r3
 	str r4, [sp, #12]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r10
 	strh r1, [r5]
 	ldr r4, [sp, #12]

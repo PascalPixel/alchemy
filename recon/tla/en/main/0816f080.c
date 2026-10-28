@@ -68,7 +68,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -261,7 +261,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     MemFree(vertices);
 
     if (frame == 64) {
-      Audio_PlayCue(147);
+      Sound_PlayFar(147);
     }
     for (i = 0; i != 6; i++) {
       if (frame == i * 4 + 80) {
@@ -271,7 +271,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         if (i == 0) {
           Func_081180e8(134);
         } else {
-          Audio_PlayCue(133);
+          Sound_PlayFar(133);
         }
       }
     }

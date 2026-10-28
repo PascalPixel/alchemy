@@ -275,8 +275,8 @@ Func_020032b0:
 	.global Func_020032b8
 	.thumb_func
 Func_020032b8:
-	overlay_veneer Audio_PlayCue
-	.global AudioCommand_WaitForCompletion
+	overlay_veneer Sound_PlayFar
+	.global Sound_WaitForBgmRestore
 	.thumb_func
-AudioCommand_WaitForCompletion:
-	overlay_veneer AudioCommand_WaitForCompletionFar
+Sound_WaitForBgmRestore:
+	overlay_veneer Sound_WaitForBgmRestoreFar

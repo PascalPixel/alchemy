@@ -145,7 +145,7 @@ Func_08022318:
 	orrs r3, r2
 	strh r3, [r0, #6]
 	ldr r1, [sp, #96]
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	b .L_08022440
 	.2byte 0x0000
 .L_08022434:
@@ -282,7 +282,7 @@ Func_08022318:
 .L_08022534:
 	.4byte 0xfffffe00
 .L_08022538:
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 .L_0802253c:
 	add sp, #64
 	pop {r3, r5, r6, r7}

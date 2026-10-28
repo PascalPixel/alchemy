@@ -80,7 +80,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -191,14 +191,14 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       Func_0814cd48(effect->actor, 6, 4, 0, -1);
     }
     if (frame == 8) {
-      Audio_PlayCue(103);
+      Sound_PlayFar(103);
     }
     if (frame == 100) {
       Func_0814cd48(effect->actor, 0, 0, 0, -1);
     }
     if (frame == 54) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
       Func_081180e8(212);
       work->shakeFrames = 8;
       for (i = 0; i != effect->count; i++) {

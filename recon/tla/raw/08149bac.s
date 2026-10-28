@@ -397,7 +397,7 @@ BattleEffect_RunSparkGroups:
 	cmp r5, #2
 	bne .L_08149ee0
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #145
 	bl Func_081180e8
 	b .L_08149ee0
@@ -406,7 +406,7 @@ BattleEffect_RunSparkGroups:
 	cmp r1, #2
 	bne .L_08149ed4
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08149ed4:
 	ldr r2, [sp, #36]
 	cmp r2, #24

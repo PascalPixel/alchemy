@@ -257,7 +257,7 @@ Func_0814ea58:
 	ldr r0, .L_0814ee78
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #0
 	str r2, [sp, #44]
 	mov r3, r10

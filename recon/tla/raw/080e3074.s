@@ -155,7 +155,7 @@ Func_080e3074:
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #207
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r7, #0
 .L_080e31bc:
 	lsls r0, r7, #16
@@ -631,7 +631,7 @@ Func_080e3074:
 	cmp r2, #1
 	bne .L_080e3624
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r11
 	movs r1, #6
 	bl Object_SetMode
@@ -714,7 +714,7 @@ Func_080e3074:
 	.4byte 0xfffffe00
 .L_080e3624:
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r11
 	movs r1, #6
 	bl Object_SetMode
@@ -745,7 +745,7 @@ Func_080e3074:
 	.4byte 0x00001000
 .L_080e3664:
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r11
 	bl Object_Destroy
 	mov r0, r10

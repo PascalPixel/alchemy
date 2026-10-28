@@ -149,7 +149,7 @@ BattleEffect_RunHurricane:
 	cmp r2, #0
 	bne .L_0816fac2
 	movs r0, #170
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, .L_0816fa74
 	movs r1, #1
 	movs r2, #128
@@ -295,7 +295,7 @@ BattleEffect_RunHurricane:
 	movs r3, #0
 	bl Func_0814cd48
 	movs r0, #132
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816fb6c:
 	adds r7, #1
 	adds r5, #4

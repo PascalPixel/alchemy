@@ -80,7 +80,7 @@ void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Cool: ice columns burst up around the targets one after another, leaning
 // as they grow, and stand until they sink back; sparks of frost fly up
@@ -171,7 +171,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
 
           Func_0814cd48(effect->actors[member], 7, 5, member, 3);
           Func_08118088(effect->actors[member], 0);
-          Audio_PlayCue(212);
+          Sound_PlayFar(212);
           work->shakeFrames = 3;
         }
 

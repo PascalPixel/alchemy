@@ -70,7 +70,7 @@ void Object_SetPosition(struct FxObject *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FxObject *object);
 void ObjectGroup_ApplyRandomChildValues(void);
 void BattleEffect_SpawnFallingParticles(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Object_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct FxPosition *position);
@@ -145,7 +145,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   right->velocityX = 0;
   target->callback = ObjectGroup_ApplyRandomChildValues;
   Scheduler_AddOrUpdateCallback((s32)BattleEffect_SpawnFallingParticles, 0x480);
-  Audio_PlayCue(130);
+  Sound_PlayFar(130);
   target->flag = 4;
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
@@ -205,7 +205,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       Object_SetMode(anchors[0], 4);
       Object_SetMode(anchors[1], 4);
       if ((gData_0300122c & 15) == 0)
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
       continue;
     }
     {
@@ -213,7 +213,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       s32 x;
       s32 z;
 
-      Audio_PlayCue(175);
+      Sound_PlayFar(175);
       x = p->x;
       z = p->z;
       Object_SetMode(anchors[0], 4);
@@ -242,9 +242,9 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   Object_SetMode(anchors[0], 4);
   Object_SetMode(anchors[1], 4);
   Scheduler_RemoveCallback((u32)BattleEffect_SpawnFallingParticles);
-  Audio_PlayCue(135);
+  Sound_PlayFar(135);
   WaitFrames(15);
-  Audio_PlayCue(135);
+  Sound_PlayFar(135);
   WaitFrames(15);
   p->x = target->x;
   p->y = target->y + 0x100000;
@@ -267,7 +267,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       }
     }
   }
-  Audio_PlayCue(131);
+  Sound_PlayFar(131);
   Object_Destroy(anchors[0]);
   Object_Destroy(anchors[1]);
   Animation_ApplyChildValuesFar((struct DispatchObject *)target, work->palette);

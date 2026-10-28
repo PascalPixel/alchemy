@@ -164,13 +164,13 @@ Func_0810b7b4:
 	cmp r0, #0
 	bne .L_0810b90c
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0810b87e
 .L_0810b90c:
 	mov r0, r10
 	bl RenderOutput_PrepareForRedrawFar
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r9
 	bl Func_0810b9c0
 	movs r3, #1
@@ -204,7 +204,7 @@ Func_0810b7b4:
 	cmp r3, #0
 	beq .L_0810b96c
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #8]
 	movs r3, #1
 	negs r3, r3

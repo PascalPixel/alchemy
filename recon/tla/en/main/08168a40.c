@@ -96,7 +96,7 @@ void ResourceObject_ReleaseFar(void *object);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void EffectPosition_ProjectBattler(
@@ -199,15 +199,15 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 120; frame++) {
     wave = 0;
     if (frame == 0)
-      Audio_PlayCue(SE_GALLOP);
+      Sound_PlayFar(SE_GALLOP);
     if (frame == 26)
-      Audio_PlayCue(SE_EMBERS);
+      Sound_PlayFar(SE_EMBERS);
     if (frame == 40)
-      Audio_PlayCue(SE_FLAMES);
+      Sound_PlayFar(SE_FLAMES);
     if (frame == 72)
-      Audio_PlayCue(SE_FLAMES);
+      Sound_PlayFar(SE_FLAMES);
     if (frame == 104)
-      Audio_PlayCue(SE_FLAMES);
+      Sound_PlayFar(SE_FLAMES);
     if ((gInput.repeat & 3) != 0 && frame > 16)
       break;
 
@@ -412,12 +412,12 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
 
       if (frame == 8) {
         work->shakeFrames = frame;
-        Audio_PlayCue(SE_CHARGE);
+        Sound_PlayFar(SE_CHARGE);
       }
       if (frame == 11)
-        Audio_PlayCue(SE_CHARGE);
+        Sound_PlayFar(SE_CHARGE);
       if (frame == 46)
-        Audio_PlayCue(SE_FADE);
+        Sound_PlayFar(SE_FADE);
 
       // Each target the row passes is struck once, in a burst of sparks.
       for (i = 0; i != effect->count; i++) {
@@ -443,7 +443,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
               k++;
             } while (k != 32);
             Func_08118088(effect->actors[i], 1);
-            Audio_PlayCue(SE_HIT);
+            Sound_PlayFar(SE_HIT);
           }
         }
       }
@@ -465,7 +465,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       } while (i != 192);
 
       if (frame == 48)
-        Audio_PlayCue(SE_GALLOP);
+        Sound_PlayFar(SE_GALLOP);
 
       // The wall of flame slides across after the row.
       if (frame > 40) {

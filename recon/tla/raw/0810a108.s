@@ -143,7 +143,7 @@ Func_0810a108:
 	b .L_0810a270
 .L_0810a21e:
 	movs r0, #102
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	cmp r7, #0
 	ble .L_0810a238
 	adds r5, r7, #0

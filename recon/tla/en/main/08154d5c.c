@@ -57,7 +57,7 @@ extern char ResourceId_GreenVineSheet;
 extern const s8 Data_08198422[];
 
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
                    struct EffectPosition *screen, struct EffectPosition *world);
@@ -148,7 +148,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == CUE_FRAME) {
-      Audio_PlayCue(CUE_VINES);
+      Sound_PlayFar(CUE_VINES);
       for (i = 0; i != effect->count; i++)
         Func_0814cd48(effect->actors[i], 7, 5, i, 16);
     }

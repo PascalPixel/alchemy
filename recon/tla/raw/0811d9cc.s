@@ -470,7 +470,7 @@ Func_0811d9cc:
 	bl Func_0812628c
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #4]
 .L_0811ddb2:
 	add sp, #12

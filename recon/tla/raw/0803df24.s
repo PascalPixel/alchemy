@@ -208,7 +208,7 @@ Func_0803df24:
 .L_0803e0a6:
 	adds r0, r6, #0
 	ldr r1, [sp, #4]
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 .L_0803e0ae:
 	ldr r7, [r7, #4]
 	movs r3, #1
@@ -367,7 +367,7 @@ Func_0803df24:
 .L_0803e1e2:
 	adds r0, r5, #0
 	movs r1, #248
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 .L_0803e1ea:
 	mov r0, r10
 	movs r1, #0
@@ -546,7 +546,7 @@ Func_0803df24:
 .L_0803e33e:
 	adds r0, r6, #0
 	movs r1, #240
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	ldr r7, [r7, #4]
 	cmp r7, #0
 	beq .L_0803e34e
@@ -700,7 +700,7 @@ Func_0803df24:
 .L_0803e464:
 	ldr r0, [sp, #8]
 	movs r1, #248
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 .L_0803e46c:
 	movs r2, #192
 	lsls r2, r2, #2

@@ -100,8 +100,8 @@ void UiText_DrawNumberAtOffset(s32 value, s32 digits,
                                struct PsynergyMenuWindow *window, s32 x, s32 y);
 void UiWindow_DrawThreeTileColumn(struct PsynergyMenuWindow *window, s32 x,
                                   s32 y, s32 pattern, s32 flags);
-void Runtime_PushSlotEntry(void *sprite, s32 depth);
-void Audio_PlayCue(s32 cue);
+void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
+void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 void WaitFrames(s32 frames);
 void UiWork_Finalize(void *window, s32 mode);
@@ -249,7 +249,7 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
     }
 
     for (i = 0; i < iconCount; i++)
-      Runtime_PushSlotEntry(&sprites[i], 240);
+      Oam_AddSpriteAtDepth(&sprites[i], 240);
 
     cursorX = window->x * 8 - 4;
     cursorY = (selectedRow * 2 + window->y) * 8 + 20;
@@ -259,7 +259,7 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
     cursor.x = cursorX + ((gFrameCount & 4) >> 1) - 4;
     cursor.y = cursorY - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
-      Runtime_PushSlotEntry(&cursor, 242);
+      Oam_AddSpriteAtDepth(&cursor, 242);
 
     navigation = NAVIGATION;
     navigation->page = firstEntry;
@@ -275,20 +275,20 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
         break;
       }
     } else if (navigation->timer == 0 || (gInput.pressed & 2)) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
 
     if (count != 0) {
       if (gInput.repeat & 0x80) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         selectedRow++;
         if (selectedRow == 5 || firstEntry + selectedRow == count)
           selectedRow = 0;
         preferredRow = selectedRow;
       } else if (gInput.repeat & 0x40) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (count - 1) / 5 * 5)
@@ -298,7 +298,7 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
         }
         preferredRow = selectedRow;
       } else if (gInput.repeat & 0x10) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         if (firstEntry + 5 >= count) {
           if (firstEntry != 0) {
@@ -315,7 +315,7 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           }
         }
       } else if (gInput.repeat & 0x20) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           selectedRow = preferredRow;

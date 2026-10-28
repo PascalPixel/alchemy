@@ -469,7 +469,7 @@ SummonEffect_RunCanvasEffect:
 	cmp r1, #24
 	bne .L_0815086a
 	movs r0, #143
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815086a:
 	ldr r2, [sp, #16]
 	cmp r2, #36

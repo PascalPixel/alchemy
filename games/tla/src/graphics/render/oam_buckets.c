@@ -32,7 +32,7 @@ void Func_080140d8(void *entry, s32 slot) {
 }
 
 /// Link entry at the head of its priority bucket.
-void Runtime_PushSlotEntry(void *entry, s32 slot) {
+void Oam_AddSpriteAtDepth(void *entry, s32 slot) {
   u8 *mask;
   void **head;
   s32 bit;

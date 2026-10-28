@@ -38,7 +38,7 @@ extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerReady; ///< 1 once the task table is set up
 extern struct SchedulerTask gSchedulerTaskTable[];
 
-void Runtime_PushSlotEntry(void *entry, s32 priority);
+void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
 void Scheduler_RunPass(s32 key);
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1);

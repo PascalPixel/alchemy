@@ -628,7 +628,7 @@ BattleEffect_RunDeathPlunge:
 	cmp r1, #0
 	bne .L_08188c2e
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #52]
 	movs r4, #238
 	lsls r4, r4, #7

@@ -160,7 +160,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed);
 void PartyStatus_Draw(s32 flags);
 void BattleActor_CommitPlacementFar(void);
 void Func_08118158(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind);
 s32 Func_0804b8b8(s32 slot);
 void *MemAlloc(s32 size);
@@ -369,7 +369,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     }
     // Command 49: choose a party place, then the reserve member for it.
     if (mode == 49) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       for (;;) {
         mode = Func_0804a85c(0, 2, 1, 8);
         if (mode == -1)
@@ -420,7 +420,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     }
     if (mode != 14)
       break;
-    Audio_PlayCue(154);
+    Sound_PlayFar(154);
     commandIndex = 0;
     if (commandIndex >= commandCount)
       break;
@@ -502,7 +502,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         commandWindow = UiWindow_Create(11, 17, 11, 3, 6);
         UiText_DrawCharacterAtOffset((s32)MsgCommandName, commandWindow, 16, 0);
         COMMAND_ICON_X(state) = 64;
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, 1, 1, 0);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1)
@@ -523,7 +523,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         s32 cnt;
         s32 entryValue;
 
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         mode = 0;
         NAVIGATION->page = mode;
         NAVIGATION->row = mode;
@@ -583,7 +583,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           UiWindow_SetTilemapEntry(commandWindow, ability->element + 0x5001, 15,
                                    0, 0);
         command->range = cost;
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, ability->targetMode, cost,
                              Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
@@ -605,7 +605,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         s32 j;
         s32 n;
 
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         NAVIGATION->page = 0;
         NAVIGATION->row = 0;
         NAVIGATION->preferredRow = 0;
@@ -653,9 +653,9 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           }
         }
         if (ok != 0)
-          Audio_PlayCue(112);
+          Sound_PlayFar(112);
         else
-          Audio_PlayCue(114);
+          Sound_PlayFar(114);
         mode = Func_0804a85c(actorId, ability->targetMode, ability->range,
                              Battle_ClassifyEntryKind(ability));
         command->range = ability->range;
@@ -681,7 +681,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         s32 element;
         s32 index;
 
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         NAVIGATION->page = 0;
         NAVIGATION->row = 0;
         NAVIGATION->preferredRow = 0;
@@ -708,7 +708,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                                        commandWindow, 16, 0);
           command->range = cost;
           WaitFrames(1);
-          Audio_PlayCue(112);
+          Sound_PlayFar(112);
           mode = Func_0804a85c(actorId, ability->targetMode, cost,
                                Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
@@ -736,7 +736,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         Func_08041f70(15);
         command->range = 1;
         WaitFrames(1);
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, 4, 0, 7);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1)
@@ -756,7 +756,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         s32 entryValue;
         s32 selection;
 
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         mode = 0;
         NAVIGATION->page = mode;
         NAVIGATION->row = mode;
@@ -819,7 +819,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                                          (s32)MsgItemName,
                                      commandWindow, 24, 0);
         command->range = cost;
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, ability->targetMode, cost,
                              Battle_ClassifyEntryKind(ability));
         state->iconShown[1] = 0;
@@ -837,7 +837,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         break;
       }
 
-      Audio_PlayCue(110);
+      Sound_PlayFar(110);
       command->unitId = actorId;
       {
         s32 priority = unit->agi;

@@ -361,7 +361,7 @@ BattleEffect_RunThorn:
 	cmp r1, r8
 	bne .L_08155244
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #52]
 	movs r1, #7
 	ldrsh r0, [r5, r2]

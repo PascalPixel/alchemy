@@ -85,7 +85,7 @@ extern const u8 Data_08198531[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Prepares the canvas around an anchor and returns its screen point.
 void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
@@ -283,7 +283,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
             if (rock->y < 0x140000) {
               work->shakeFrames = 8;
               rock->variant = 0;
-              Audio_PlayCue(134);
+              Sound_PlayFar(134);
               Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
               Func_08118088(effect->actors[0], 4);
             }

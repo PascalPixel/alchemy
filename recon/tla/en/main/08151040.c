@@ -203,9 +203,9 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
           ember->x = screen.x;
           ember->y = screen.y;
           if (effect->variant == 2)
-            Audio_PlayCue(134);
+            Sound_PlayFar(134);
           else
-            Audio_PlayCue(136);
+            Sound_PlayFar(136);
           Func_0814cd48(effect->actors[i % effect->count], 10, 5,
                         i % effect->count, 4);
           work->shakeFrames = 2;

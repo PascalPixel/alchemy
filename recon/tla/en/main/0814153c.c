@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -292,13 +292,13 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 48) {
-      Audio_PlayCue(139);
+      Sound_PlayFar(139);
     }
     if (frame == 136) {
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
     }
     if (frame == 172) {
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
     }
     for (i = 0; i != 17; i++) {
       if (frame == Data_0819774f[i]) {
@@ -548,11 +548,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       work->transferValue = 0x04040404;
     }
     if (frame == 16) {
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
     }
     if (frame == 18) {
       work->shakeFrames = 90;
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       for (i = 0; i != effect->count; i++) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 4);
@@ -707,7 +707,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       s32 angle = 0;
       s32 offset = 0;
 
-      Audio_PlayCue(208);
+      Sound_PlayFar(208);
       Func_0818de3c(Data_02011000, 16, 8, 8, 8);
       for (i = 0; i != 8; i++, angle += 0x888, offset += 64) {
         s32 y = -Trig_Cos(angle) * 96 >> 16;

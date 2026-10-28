@@ -288,7 +288,7 @@ Func_0818ad40:
 	cmp r2, #0
 	bne .L_0818afe4
 	movs r0, #190
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #48]
 	add r6, sp, #72
 	ldr r0, [r3, #8]
@@ -366,7 +366,7 @@ Func_0818ad40:
 	cmp r6, #1
 	bne .L_0818b020
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0818b020
 .L_0818b01c:
 	.4byte 0x00000010
@@ -808,7 +808,7 @@ Func_0818ad40:
 	cmp r3, #48
 	bne .L_0818b384
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818b384:
 	mov r4, r11
 	cmp r4, #64
@@ -941,7 +941,7 @@ Func_0818ad40:
 	movs r5, #1
 	movs r0, #212
 	negs r5, r5
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r5, #0
 	bl Func_081180e8
 	movs r2, #238
@@ -1133,13 +1133,13 @@ Func_0818ad40:
 	cmp r3, #60
 	bne .L_0818b606
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818b606:
 	mov r4, r11
 	cmp r4, #64
 	bne .L_0818b654
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	negs r0, r0
 	bl Func_081180e8

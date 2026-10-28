@@ -3,7 +3,7 @@
 #include "adventure.h"
 #include "system.h"
 
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void ReelGame_Run(void);
 
 /// Blanks the display but for 1D objects, seeds the random state from the
@@ -12,7 +12,7 @@ void ReelGame_Run(void);
 s32 Runtime_BlankDisplayLoadValueAndRun(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomState = gAdventure.playTime;
-  Audio_PlayCue(709);
+  Sound_PlayFar(709);
   ReelGame_Run();
   return 0;
 }

@@ -243,7 +243,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           if (i == 2) {
             Func_081180e8(134);
           } else {
-            Audio_PlayCue(134);
+            Sound_PlayFar(134);
             Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
           }
           work->shakeFrames = 4;

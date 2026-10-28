@@ -43,7 +43,7 @@ STATIC_ASSERT(offsetof(struct SelectionScreen, downArrow) == 0x3e);
 STATIC_ASSERT(offsetof(struct SelectionScreen, node) == 0x348);
 STATIC_ASSERT(offsetof(struct SelectionScreen, status) == 0x3a2);
 
-void Audio_PlayCue(u32);
+void Sound_PlayFar(u32);
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *screen, u32 index);
 void Menu_StepRight(struct SelectionScreen *screen);
 void Menu_StepLeft(struct SelectionScreen *screen);
@@ -92,10 +92,10 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
 
     if (mode != SELECTION_FIXED) {
       if (gInput.repeat & KEY_RIGHT) {
-        Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
         Menu_StepRight(screen);
       } else if (gInput.repeat & KEY_LEFT) {
-        Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
         Menu_StepLeft(screen);
       }
 
@@ -103,18 +103,18 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
         result = screen->top + screen->cursor;
         if (screen->node->kind == NODE_KIND_YES_NO) {
           if (result == 0)
-            Audio_PlayCue(SOUND_MENU_CONFIRM);
+            Sound_PlayFar(SOUND_MENU_CONFIRM);
           else
-            Audio_PlayCue(SOUND_MENU_CANCEL);
+            Sound_PlayFar(SOUND_MENU_CANCEL);
         } else {
-          Audio_PlayCue(SOUND_MENU_CONFIRM);
+          Sound_PlayFar(SOUND_MENU_CONFIRM);
         }
         return result;
       }
     }
 
     if (mode != 0 && (gInput.pressed & KEY_B)) {
-      Audio_PlayCue(SOUND_MENU_CANCEL);
+      Sound_PlayFar(SOUND_MENU_CANCEL);
       return -1;
     }
   }

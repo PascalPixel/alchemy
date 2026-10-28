@@ -78,7 +78,7 @@ Func_080fdad4:
 .L_080fdb64:
 	movs r0, #113
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	negs r0, r0
 	movs r1, #1
@@ -89,7 +89,7 @@ Func_080fdad4:
 .L_080fdb7a:
 	movs r0, #130
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #8]
 	movs r2, #226
 	ldr r3, [r4, #24]
@@ -108,7 +108,7 @@ Func_080fdad4:
 .L_080fdba0:
 	movs r0, #130
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #8]
 	movs r0, #226
 	ldr r3, [r4, #24]
@@ -340,7 +340,7 @@ Func_080fdad4:
 	cmp r3, #0
 	bne .L_080fdd84
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fddba
 	.2byte 0x0000
 .L_080fdd7c:
@@ -350,7 +350,7 @@ Func_080fdad4:
 .L_080fdd84:
 	movs r0, #174
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	str r1, [sp, #28]
 	movs r2, #135
@@ -471,7 +471,7 @@ Func_080fdad4:
 	cmp r2, r3
 	ble .L_080fde90
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, .L_080fde8c
 	ldr r4, [sp, #8]
 	b .L_080fdeae
@@ -483,7 +483,7 @@ Func_080fdad4:
 	movs r0, #173
 .L_080fde92:
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #8]
 	movs r2, #226
 	ldr r3, [r4, #24]
@@ -548,7 +548,7 @@ Func_080fdad4:
 	subs r2, r3, r2
 	mov r9, r2
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #52]
 	ldr r2, [sp, #16]
 	movs r1, #133
@@ -673,7 +673,7 @@ Func_080fdad4:
 	cmp r3, #0
 	bne .L_080fe028
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, .L_080fe024
 	ldr r4, [sp, #8]
 	b .L_080fe052
@@ -733,7 +733,7 @@ Func_080fdad4:
 	bne .L_080fe09c
 .L_080fe088:
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #8]
 	b .L_080fe0c4
 	.2byte 0x0000

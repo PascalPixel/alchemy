@@ -79,7 +79,7 @@ s32 Encounter_RollWorldMap(s32 *position, s32 speed);
 s32 Encounter_RollTerrain(s32 zone, s32 speed);
 void BattleParty_ApplyDrain(s32 amount, s32 unused);
 s32 DjinnRecovery_CountDownFar(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Event_ClearValidPackedIds(void);
 s32 BattleParty_ApplyStatusDamage(void);
 void Func_080d489c(s32 owner, s32 mode);
@@ -159,7 +159,7 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
       work->walkingDistance = distance & 0xffff;
       BattleParty_ApplyDrain(amount, 0);
       if (DjinnRecovery_CountDownFar())
-        Audio_PlayCue(139);
+        Sound_PlayFar(139);
       Event_ClearValidPackedIds();
       partyHurt = BattleParty_ApplyStatusDamage();
     }

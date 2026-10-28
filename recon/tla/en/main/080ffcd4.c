@@ -68,7 +68,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                struct MenuResult *state);
 s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
 void Func_080f8a44(s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
                                            s32 ownerId);
 void RenderOutput_PrepareForRedrawFar(s32 window);
@@ -125,17 +125,17 @@ s32 Func_080ffcd4(void) {
     if (navigation == -1)
       refresh = 0;
     if (KEYS_PRESSED & 1) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = 1;
       break;
     }
     if (KEYS_PRESSED & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
     if ((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       ownerIndex = menu->tabIndex;
       menu->selectedIndexByOwner[menu->ownerTable[ownerIndex]] =
           state.selectedIndex;

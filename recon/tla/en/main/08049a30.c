@@ -122,8 +122,8 @@ void UiText_DrawCharacterAtOffset(s32 message, struct ItemMenuWindow *window,
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 void UiWindow_SetTilemapEntry(struct ItemMenuWindow *window, s32 entry, s32 x,
                               s32 y, s32 flags);
-void Runtime_PushSlotEntry(void *sprite, s32 depth);
-void Audio_PlayCue(s32 cue);
+void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
+void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 void WaitFrames(s32 frames);
 void UiWork_Finalize(void *window, s32 mode);
@@ -262,7 +262,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
     for (i = 0; i < iconCount; i++)
       {
       iconSprite = &sprites[i];
-      Runtime_PushSlotEntry(iconSprite, 240);
+      Oam_AddSpriteAtDepth(iconSprite, 240);
     }
 
     cursorPosition.x = window->x * 8 - 2;
@@ -275,7 +275,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
     sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
-      Runtime_PushSlotEntry(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, 242);
 
     do {
       NAVIGATION->page = firstEntry;
@@ -293,7 +293,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
           if (unusableReason == 0)
             break;
         }
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
         if (unusableReason == 2)
           UiText_CopyMessageString((s32)Msg_0d4f, messageText, 32);
         else if (entries[result] & ITEM_BROKEN)
@@ -307,20 +307,20 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         break;
       }
     } else if (navigation->timer == 0 || (gInput.pressed & 2)) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
 
     if (count != 0) {
       if (gInput.repeat & 0x80) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         selectedRow++;
         if (selectedRow == 5 || firstEntry + selectedRow == count)
           selectedRow = 0;
         preferredRow = selectedRow;
       } else if (gInput.repeat & 0x40) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (count - 1) / 5 * 5)
@@ -330,7 +330,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         }
         preferredRow = selectedRow;
       } else if (gInput.repeat & 0x10) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         if (firstEntry + 5 >= count) {
           if (firstEntry != 0) {
@@ -347,7 +347,7 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
           }
         }
       } else if (gInput.repeat & 0x20) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= 5;

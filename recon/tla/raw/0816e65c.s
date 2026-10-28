@@ -129,7 +129,7 @@ Func_0816e65c:
 	str r2, [sp, #24]
 .L_0816e752:
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #24]
 	movs r3, #0
 	str r3, [sp, #32]

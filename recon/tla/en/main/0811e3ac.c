@@ -50,7 +50,7 @@ void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 void BattleObject_Reset();
 void Object_SetMode(struct MotionObject *object, s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
@@ -191,7 +191,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   Object_SetMode(actor, 3);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)actor, 16);
   QueueIoWriteDelay2(0x04000050, 0x3f40);
-  Audio_PlayCue(154);
+  Sound_PlayFar(154);
   WaitFrames(10);
   if (single) {
     BattlePres_SetActorRecordMode(saved->unitId, 1);

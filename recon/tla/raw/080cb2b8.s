@@ -262,7 +262,7 @@ Func_080cb2b8:
 	cmp r0, #0
 	beq .L_080cb4a8
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080cb4a8:
 	bl Event_ClearValidPackedIds
 	bl BattleParty_ApplyStatusDamage

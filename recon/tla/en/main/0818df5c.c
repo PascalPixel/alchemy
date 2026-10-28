@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -271,10 +271,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       size = 0x400;
       pitch = 0xd00;
       yaw = 0x2500;
-      Audio_PlayCue(162);
+      Sound_PlayFar(162);
     }
     if (frame == 120) {
-      Audio_PlayCue(163);
+      Sound_PlayFar(163);
     }
     if ((u32)(frame - 96) <= 16) {
       REG_BLDALPHA = (16 - (frame - 96)) | 0x1000;
@@ -543,7 +543,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         p->variant = (Random16() & 7) + 24;
       }
       work->shakeFrames = 4;
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       for (i = 0; i != effect->count; i++) {
         Func_08118088(effect->actors[i], 4);
         Func_0814cd48(effect->actors[i], 7, 5, i, 8);

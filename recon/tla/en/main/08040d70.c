@@ -26,7 +26,7 @@ struct UiWindow *Func_08040cc4(void);
 void Func_08108048(void *panel, s32 x, s32 y);
 void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
 void UiWork_Finalize(struct UiWindow *window, s32 release);
@@ -57,23 +57,23 @@ s32 Func_08040d70(s32 index) {
     }
     WaitFrames(1);
     if (PRESSED & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       index = -1;
       goto done;
     }
     if (PRESSED & 1) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       goto done;
     }
     if (gInput.repeat & 64) {
       index--;
       moved = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
     if (gInput.repeat & 128) {
       index++;
       moved = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
   } while (1);
 done:

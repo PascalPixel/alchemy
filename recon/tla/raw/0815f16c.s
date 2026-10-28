@@ -967,7 +967,7 @@ Func_0815f16c:
 	adds r3, r3, r2
 	asrs r3, r3, #1
 	str r3, [r5]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #0
 	movs r1, #204
 	str r0, [sp, #112]
@@ -2851,7 +2851,7 @@ Func_0815f16c:
 	cmp r3, #12
 	bne .L_08160898
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08160898:
 	ldr r5, [sp, #124]
 	cmp r5, #78
@@ -3194,7 +3194,7 @@ Func_0815f16c:
 	cmp r5, #8
 	bne .L_08160b42
 	movs r0, #221
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08160b42:
 	ldr r0, [sp, #124]
 	cmp r0, #6
@@ -3592,7 +3592,7 @@ Func_0815f16c:
 	bl .L_0816342a
 .L_08160e68:
 	movs r0, #221
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl .L_0816342a
 	.2byte 0x0000
 .L_08160e74:
@@ -4921,19 +4921,19 @@ Func_0815f16c:
 	movs r3, #16
 	str r3, [r2]
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081618b4:
 	ldr r5, [sp, #112]
 	cmp r5, #11
 	bne .L_081618c0
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081618c0:
 	ldr r0, [sp, #112]
 	cmp r0, #15
 	bne .L_081618cc
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081618cc:
 	movs r0, #188
 	bl Runtime_ReleaseHeapBlock
@@ -5699,7 +5699,7 @@ Func_0815f16c:
 	bne .L_08161ea8
 .L_08161e8e:
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #128]
 	movs r1, #7
 	movs r2, #36
@@ -5942,7 +5942,7 @@ Func_0815f16c:
 	bl .L_0816342a
 .L_08162062:
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #238
 	ldr r5, [sp, #120]
 	lsls r0, r0, #7
@@ -6105,7 +6105,7 @@ Func_0815f16c:
 	bl .L_0816342a
 .L_0816219c:
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r5, #238
 	ldr r3, [sp, #120]
 	lsls r5, r5, #7
@@ -6355,7 +6355,7 @@ Func_0815f16c:
 	movs r1, #1
 	bl BattleEffect_StartActorMotion
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r5, #238
 	ldr r3, [sp, #120]
 	lsls r5, r5, #7
@@ -6531,14 +6531,14 @@ Func_0815f16c:
 	cmp r1, #6
 	bne .L_0816250a
 	movs r0, #221
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816250a:
 	ldr r2, [sp, #112]
 	cmp r2, #24
 	bne .L_08162518
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08162518:
 	ldr r3, [sp, #112]
 	subs r3, #8
@@ -6864,7 +6864,7 @@ Func_0815f16c:
 	cmp r3, #8
 	bne .L_081627c2
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081627c2:
 	movs r5, #63
 	negs r5, r5
@@ -7633,7 +7633,7 @@ Func_0815f16c:
 	cmp r2, r3
 	bne .L_08162e08
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08162e08:
 	ldr r3, [sp, #112]
 	cmp r3, r5
@@ -8119,7 +8119,7 @@ Func_0815f16c:
 	b .L_0816342a
 .L_081631c0:
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0816342a
 .L_081631c8:
 	.4byte gMapCellBuffer
@@ -8216,7 +8216,7 @@ Func_0815f16c:
 	bne .L_08163288
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08163288:
 	ldr r6, .L_08163400
 	movs r1, #0
@@ -8227,7 +8227,7 @@ Func_0815f16c:
 	cmp r2, r5
 	bne .L_081632a8
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #128
 	ldr r0, [sp, #116]
 	lsls r1, r1, #7
@@ -8250,7 +8250,7 @@ Func_0815f16c:
 	cmp r2, #8
 	bne .L_081632c8
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081632c8:
 	movs r5, #192
 	movs r0, #128
@@ -8632,7 +8632,7 @@ Func_0815f16c:
 	adds r3, r2, r0
 	str r6, [r3]
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081635b8:
 	movs r1, #1
 	add r11, r1
@@ -8701,7 +8701,7 @@ Func_0815f16c:
 	cmp r3, #91
 	bne .L_08163642
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0816365e
 .L_08163642:
 	ldr r5, [sp, #124]
@@ -8713,11 +8713,11 @@ Func_0815f16c:
 	bne .L_08163658
 .L_08163650:
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0816365e
 .L_08163658:
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816365e:
 	ldr r0, [sp, #112]
 	cmp r0, #6

@@ -49,7 +49,7 @@ Func_080e9090:
 	cmp r3, #15
 	bne .L_080e90fa
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e90fa:
 	ldr r0, [sp, #24]
 	movs r1, #197

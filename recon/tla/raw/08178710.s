@@ -297,7 +297,7 @@ BattleEffect_RunRisingDragon:
 	b .L_08178974
 .L_0817896e:
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08178974:
 	ldr r2, [sp, #84]
 	movs r3, #128

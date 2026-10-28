@@ -163,7 +163,7 @@ Func_08144628:
 	ldr r0, .L_081449b4
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #146
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #68]
 	movs r0, #0
 	lsls r1, r1, #1
@@ -296,14 +296,14 @@ Func_08144628:
 	cmp r0, #0
 	bne .L_0814487e
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0814488a
 .L_0814487e:
 	ldr r1, [sp, #68]
 	cmp r1, #3
 	beq .L_0814488a
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814488a:
 	ldr r3, [sp, #20]
 	adds r3, #70
@@ -496,7 +496,7 @@ Func_08144628:
 	cmp r2, #80
 	beq .L_08144a02
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08144a02:
 	ldr r2, .L_08144aa0
 .L_08144a04:

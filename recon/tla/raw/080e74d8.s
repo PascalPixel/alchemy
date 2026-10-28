@@ -96,11 +96,11 @@ Func_080e74d8:
 	ldr r3, .L_080e75d8
 	movs r0, #131
 	str r3, [r7, #108]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #30
 	bl WaitFrames
 	movs r0, #220
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r6, .L_080e75d0
 	movs r1, #3
 	adds r0, r7, #0
@@ -292,7 +292,7 @@ Func_080e74d8:
 	cmp r1, #10
 	bne .L_080e7740
 	movs r0, #198
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e7740:
 	ldrh r3, [r7, #6]
 	movs r2, #128

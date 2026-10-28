@@ -259,7 +259,7 @@ Func_0813cb34:
 	cmp r1, #0
 	bne .L_0813cd40
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0813cd40:
 	ldr r6, .L_0813ce9c
 	movs r2, #0
@@ -468,7 +468,7 @@ Func_0813cb34:
 	cmp r11, r5
 	bne .L_0813cef0
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r7, #0
 	bl Func_081180e8
 	mov r1, r9

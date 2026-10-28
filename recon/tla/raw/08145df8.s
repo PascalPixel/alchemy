@@ -117,7 +117,7 @@ BattleEffect_RunBind:
 	adds r2, #40
 	lsls r3, r3, #8
 	str r3, [r2]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #0
 	ldr r3, [sp, #76]
 	str r2, [sp, #64]

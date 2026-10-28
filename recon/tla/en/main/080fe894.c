@@ -64,7 +64,7 @@ void Func_08104ef8(s32 first);
 void WaitFrames(s32 frames);
 void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 Func_080fecfc(s32 selection, s32 direction);
 void Func_080fe638(void);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
@@ -122,33 +122,33 @@ s32 Func_080fe894(void) {
     Func_080f8a44((ownerIndex % 4) * 24 - 10, 16);
     WaitFrames(1);
     if (KEYS_PRESSED & 1) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = 1;
       break;
     }
     if (KEYS_PRESSED & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
     if (gInput.repeat & 0x100) {
       if (Func_080fecfc(ownerIndex, 1)) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         ownerIndex++;
         Func_08104ef8(ownerIndex / 4 * 4);
         Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       } else {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
       }
       WaitFrames(1);
     } else if (gInput.repeat & 0x200) {
       if (Func_080fecfc(ownerIndex, 0)) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         ownerIndex--;
         Func_08104ef8(ownerIndex / 4 * 4);
         Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
       } else {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
       }
       WaitFrames(1);
     } else if ((KEYS_PRESSED & 4) && GameFlag_Test(55)) {

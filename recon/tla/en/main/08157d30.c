@@ -75,7 +75,7 @@ extern const u16 gData_08197410[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
@@ -150,7 +150,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
   for (i = 0; i != DOT_COUNT; i++)
     DOTS[i].variant = -1;
 
-  Audio_PlayCue(141);
+  Sound_PlayFar(141);
   frame = 0;
   angle = 0x8000;
   do {
@@ -187,7 +187,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
             dot->variant = (Random16() & 15) + 32;
           }
           if (i & 1)
-            Audio_PlayCue(133);
+            Sound_PlayFar(133);
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != effect->count; j++) {

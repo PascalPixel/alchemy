@@ -196,7 +196,7 @@ Func_080e92b4:
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #238
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #128
 	movs r2, #0
 	lsls r3, r3, #10
@@ -639,7 +639,7 @@ Func_080e92b4:
 .L_080e9790:
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Func_080e8c9c
 	bl BattleEffect_PrepareBufferInterpolation
 	ldr r0, [sp, #72]

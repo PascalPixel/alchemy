@@ -279,7 +279,7 @@ Func_0816a2d8:
 	adds r3, #188
 	movs r0, #212
 	ldr r7, [r3]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #0
 	movs r3, #120
 	movs r1, #60

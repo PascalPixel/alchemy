@@ -98,16 +98,16 @@ Func_080e28d4:
 	lsls r5, r5, #11
 	movs r0, #152
 	str r5, [r7, #40]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #15
 	bl EventRuntime_Wait
 	movs r0, #152
 	str r5, [r7, #40]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #23
 	bl EventRuntime_Wait
 	movs r0, #146
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [r7, #8]
 	add r1, sp, #12
 	str r3, [r1]

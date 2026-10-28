@@ -657,7 +657,7 @@ Func_02003a8c:
 	movs r0, #14
 	movs r1, #0
 	bl Func_02004144
-	bl AudioCommand_WaitForStateByteClear
+	bl Sound_WaitForFanfare
 	b .L_es_0200bbce
 .L_es_0200bbb4:
 	cmp r5, #0

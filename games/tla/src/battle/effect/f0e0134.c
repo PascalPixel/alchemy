@@ -70,13 +70,13 @@ void Func_080e0134(void) {
 
   WaitFrames(5);
   Object_SetMode(obj, 1);
-  Audio_PlayCue(108);
+  Sound_PlayFar(108);
   WaitFrames(10);
-  Audio_PlayCue(108);
+  Sound_PlayFar(108);
   WaitFrames(10);
-  Audio_PlayCue(108);
+  Sound_PlayFar(108);
   WaitFrames(10);
-  Audio_PlayCue(109);
+  Sound_PlayFar(109);
 
   slot = &((struct FallbackScene *)scene)->slots[0];
   for (i = 0; i < 16; i++) {

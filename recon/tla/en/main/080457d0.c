@@ -104,12 +104,12 @@ void Func_08045780(void);
 void RenderOutput_PrepareForRedraw(void *window);
 void UiText_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
 s32 AffineMatrix_BuildForEffect(struct CommandRowAffine *affine);
-void Runtime_PushSlotEntry(void *sprite, s32 depth);
+void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 s32 Func_0804519c(void);
 void *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y);
 void Func_08118128(s32 x, s32 y);
 void UiWork_Finalize(void *window, s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void QueueIoWriteDelay2(u32 address, u32 value);
 void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 resource);
@@ -302,7 +302,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
         entry->objMode = 3;
         entry->x = entry->positionX + pulseScale * 7 / 512 - 14;
         entry->y = entry->positionY + pulseScale * 3 / 256 - 20;
-        Runtime_PushSlotEntry(entry, 241);
+        Oam_AddSpriteAtDepth(entry, 241);
       } else {
         entry->x = entry->positionX;
         entry->y = entry->positionY;
@@ -366,16 +366,16 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
       break;
     }
     if (keys & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       command = -1;
       break;
     }
     if (repeat & 0x90) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + 1) % selectionUi->iconCount;
     } else if (repeat & 0x60) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;

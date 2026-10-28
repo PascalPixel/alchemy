@@ -57,7 +57,7 @@ Func_020046a4:
 	.global Func_020046ac
 	.thumb_func
 Func_020046ac:
-	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Func_020046b4
 	.thumb_func
 Func_020046b4:
@@ -448,11 +448,11 @@ Func_020049ac:
 	.thumb_func
 Func_020049b4:
 	overlay_veneer Func_080c8848
-	.global AudioCommand_WaitForStateByteClear
+	.global Sound_WaitForFanfare
 	.thumb_func
-AudioCommand_WaitForStateByteClear:
-	overlay_veneer AudioCommand_WaitForStateByteClearFar
+Sound_WaitForFanfare:
+	overlay_veneer Sound_WaitForFanfareFar
 	.global Func_020049c4
 	.thumb_func
 Func_020049c4:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

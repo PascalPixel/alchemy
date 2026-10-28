@@ -307,7 +307,7 @@ BattleEffect_RunCybele:
 	movs r2, #8
 	str r2, [r3]
 	movs r0, #157
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #68]
 	movs r0, #0
 	ldr r3, [r1, #20]
@@ -332,13 +332,13 @@ BattleEffect_RunCybele:
 	cmp r1, #72
 	bne .L_0814d0d0
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814d0d0:
 	ldr r2, [sp, #56]
 	cmp r2, #140
 	bne .L_0814d0dc
 	movs r0, #156
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814d0dc:
 	ldr r3, [sp, #48]
 	ldr r0, [sp, #52]
@@ -1223,7 +1223,7 @@ BattleEffect_RunCybele:
 	str r7, [sp, #0]
 	bl Func_0814cd48
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #238
 	ldr r4, [sp, #64]
 	lsls r0, r0, #7

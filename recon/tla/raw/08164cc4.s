@@ -57,7 +57,7 @@ BattleEffect_RunParticleStreams:
 	adds r3, r5, #0
 	bl Func_0814cd48
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [r6, #4]
 	ldr r4, [sp, #76]
 	str r4, [sp, #64]
@@ -615,7 +615,7 @@ BattleEffect_RunParticleStreams:
 	bne .L_08165192
 	movs r0, #141
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #8]
 .L_08165192:
 	movs r3, #0
@@ -1310,13 +1310,13 @@ BattleEffect_RunParticleStreams:
 	cmp r2, #0
 	bne .L_081656f4
 	movs r0, #156
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081656f4:
 	mov r3, r11
 	cmp r3, #40
 	bne .L_08165700
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08165700:
 	mov r4, r11
 	cmp r4, #48

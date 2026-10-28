@@ -150,7 +150,7 @@ Func_080ffcd4:
 	cmp r3, #0
 	beq .L_080ffe14
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #1
 	str r2, [sp, #16]
 	b .L_080ffeb8
@@ -161,7 +161,7 @@ Func_080ffcd4:
 	cmp r3, #0
 	beq .L_080ffe2c
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	negs r3, r3
 	str r3, [sp, #16]
@@ -182,7 +182,7 @@ Func_080ffcd4:
 .L_080ffe44:
 	movs r0, #111
 	str r1, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #28
 	ldrsb r0, [r7, r0]
 	movs r4, #129

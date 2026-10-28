@@ -165,13 +165,13 @@ BattleEffect_RunFrost:
 	cmp r3, #0
 	bne .L_0815160e
 	movs r0, #115
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815160e:
 	ldr r3, [sp, #36]
 	cmp r3, #85
 	bne .L_0815161a
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815161a:
 	ldr r6, [sp, #48]
 	movs r4, #0

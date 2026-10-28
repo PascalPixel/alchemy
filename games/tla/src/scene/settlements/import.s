@@ -297,4 +297,4 @@ Func_020021a8:
 	.global Func_020021b0
 	.thumb_func
 Func_020021b0:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

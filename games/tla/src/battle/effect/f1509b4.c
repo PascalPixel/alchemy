@@ -101,7 +101,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   else
     work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Audio_PlayCue(136);
+  Sound_PlayFar(136);
   frame = 0;
   do {
     if (frame == 24)

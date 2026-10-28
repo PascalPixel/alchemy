@@ -22,7 +22,7 @@
 void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 
 s32 GameFlag_Test(s32 flag);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Lightning: selects the palette according to the remaining duration.
 void BattleEffect_UpdateStormFlash(void) {
@@ -41,9 +41,9 @@ void BattleEffect_UpdateStormFlash(void) {
       u32 b = Random16();
       work->timer = ((a * 400) >> 16) - ((b * 100) >> 16) + 150;
       if (work->loud != 0)
-        Audio_PlayCue(172);
+        Sound_PlayFar(172);
       else
-        Audio_PlayCue(171);
+        Sound_PlayFar(171);
     }
   case 5:
   case 10:

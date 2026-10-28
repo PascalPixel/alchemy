@@ -67,7 +67,7 @@ void Func_0811d914(struct BattlePlan *plan);
 void Func_0812561c(struct BattlePlan *plan);
 void Func_0811d9a4(void);
 void Func_0812628c(s32 mode, s32 background, s32 value);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char MsgAttacksAlly;
 extern char MsgStopHittingYourself;
@@ -240,6 +240,6 @@ finish:
   Func_0812628c(
       2, ((struct DispatchBattleWork *)Ram_HeapSlots->battleWork)->background,
       0);
-  Audio_PlayCue(390);
+  Sound_PlayFar(390);
   return fled;
 }

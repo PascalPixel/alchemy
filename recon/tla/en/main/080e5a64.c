@@ -108,7 +108,7 @@ void Func_080e5a64(void) {
       blend->scaleX = 0x2000;
       blend->scaleY = 0x2000;
       Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
-      Audio_PlayCue(567);
+      Sound_PlayFar(567);
       work->sparkles = 1;
       work->fading = 1;
     }

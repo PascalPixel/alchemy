@@ -62,7 +62,7 @@ void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_RuneSheet;
 extern char ResourceId_Data134;
@@ -137,7 +137,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectScaledBattler(effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  Audio_PlayCue(142);
+  Sound_PlayFar(142);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     if (frame == 64)

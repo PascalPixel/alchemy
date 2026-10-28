@@ -222,7 +222,7 @@ BattleEffect_RunSpire:
 	b .L_08159e66
 .L_08159e60:
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08159e66:
 	ldr r3, [sp, #28]
 	movs r4, #238

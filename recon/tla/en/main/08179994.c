@@ -68,7 +68,7 @@ void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
 void Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void EffectPosition_ProjectSprite(s32 id,
@@ -144,7 +144,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   spin = 0;
   for (frame = 0; frame != RING_FRAMES; frame++) {
     if (frame == RING_CUE_FRAME)
-      Audio_PlayCue(104);
+      Sound_PlayFar(104);
     if (frame == 0)
       lift = 0;
 

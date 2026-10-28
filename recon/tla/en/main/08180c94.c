@@ -89,7 +89,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -186,7 +186,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
                       128);
     }
     if (frame == 56) {
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
     }
     for (i = 0; i != 7; i++) {
       if (frame == Data_081995ec[i]) {
@@ -196,7 +196,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           Func_0814cd48(effect->actors[j], 7, 5, j, 7);
         }
         work->shakeFrames = 4;
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
       }
     }
 

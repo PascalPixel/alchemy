@@ -295,7 +295,7 @@ BattleEffect_RunOdyssey:
 	cmp r6, #84
 	bne .L_08190dea
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #2
 	ldr r0, [sp, #44]
 	bl Object_SetMode
@@ -321,7 +321,7 @@ BattleEffect_RunOdyssey:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r7, [sp, #60]
 	movs r3, #16
 	movs r6, #36
@@ -561,7 +561,7 @@ BattleEffect_RunOdyssey:
 	cmp r11, r3
 	bne .L_08190fe6
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08190fe6:
 	adds r3, r5, #0
 	adds r3, #32
@@ -667,7 +667,7 @@ BattleEffect_RunOdyssey:
 	cmp r2, #16
 	bne .L_08191002
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r6, [sp, #60]
 	movs r2, #5
 	movs r3, #36
@@ -851,7 +851,7 @@ BattleEffect_RunOdyssey:
 	cmp r11, r6
 	bne .L_0819121e
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0819121e:
 	cmp r11, r6
 	blt .L_08191292
@@ -915,7 +915,7 @@ BattleEffect_RunOdyssey:
 	cmp r11, r3
 	bne .L_081912a8
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081912a8:
 	adds r3, r5, #0
 	adds r3, #72

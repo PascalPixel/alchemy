@@ -98,7 +98,7 @@ void Func_080e9af4(void) {
   Object_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
   BattleEffect_SetObjectUpdateMode(player, 0);
   Object_SetMode(player, 5);
-  Audio_PlayCue(130);
+  Sound_PlayFar(130);
   WaitFrames(1);
   work->unk1030 = 0;
   work->phase = 0;
@@ -127,7 +127,7 @@ void Func_080e9af4(void) {
 
   if (found) {
     WaitFrames(5);
-    Audio_PlayCue(246);
+    Sound_PlayFar(246);
     for (i = 0; i < 32; i++) {
       work->scale = i << 11;
       WaitFrames(1);
@@ -154,7 +154,7 @@ void Func_080e9af4(void) {
     asm("");
     for (i = 0; i < 32; i++) {
       if (i == 10)
-        Audio_PlayCue(246);
+        Sound_PlayFar(246);
       player->y += 0x10000;
       work->scale = i << 11;
       WaitFrames(1);

@@ -75,7 +75,7 @@ BattleEffect_RunCruelRuin:
 	str r5, [r6, #72]
 	bl Graphics_LoadGreyRamp
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #0
 	movs r1, #224
 	lsls r1, r1, #3
@@ -405,43 +405,43 @@ BattleEffect_RunCruelRuin:
 	cmp r3, #4
 	bne .L_081400cc
 	movs r0, #220
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081400cc:
 	ldr r4, [sp, #116]
 	cmp r4, #40
 	bne .L_081400d8
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081400d8:
 	ldr r5, [sp, #116]
 	cmp r5, #64
 	bne .L_081400e4
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081400e4:
 	ldr r0, [sp, #116]
 	cmp r0, #74
 	bne .L_081400f0
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081400f0:
 	ldr r1, [sp, #116]
 	cmp r1, #84
 	bne .L_081400fc
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081400fc:
 	ldr r2, [sp, #116]
 	cmp r2, #94
 	bne .L_08140108
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08140108:
 	ldr r3, [sp, #116]
 	cmp r3, #124
 	bne .L_08140114
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08140114:
 	movs r4, #0
 	mov r10, r4
@@ -451,7 +451,7 @@ BattleEffect_RunCruelRuin:
 	cmp r0, r5
 	bne .L_08140126
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08140126:
 	movs r1, #1
 	add r10, r1
@@ -463,7 +463,7 @@ BattleEffect_RunCruelRuin:
 	cmp r3, #169
 	bne .L_0814014a
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #168
@@ -1839,11 +1839,11 @@ BattleEffect_RunCruelRuin:
 	cmp r4, #5
 	bne .L_08140bf8
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08140bfe
 .L_08140bf8:
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08140bfe:
 	movs r3, #238
 	lsls r3, r3, #7
@@ -2514,7 +2514,7 @@ BattleEffect_RunCruelRuin:
 	str r3, [r2, #16]
 	lsls r0, r0, #1
 	lsls r5, r5, #7
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r5, #220
 	movs r1, #0
 	mov r10, r1
@@ -2722,7 +2722,7 @@ BattleEffect_RunCruelRuin:
 	cmp r2, #32
 	bne .L_081412d0
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081412d0:
 	ldr r3, [sp, #116]
 	cmp r3, #48
@@ -2734,13 +2734,13 @@ BattleEffect_RunCruelRuin:
 	movs r3, #90
 	str r3, [r2]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081412e8:
 	ldr r4, [sp, #116]
 	cmp r4, #72
 	bne .L_081412f4
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081412f4:
 	ldr r5, [sp, #116]
 	cmp r5, #109

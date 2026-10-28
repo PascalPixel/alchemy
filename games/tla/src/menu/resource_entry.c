@@ -34,7 +34,7 @@ extern u8 MsgCommandName;
 
 void RenderOutput_PrepareForRedraw(void *work);
 void UiText_DrawCharacterAtOffset(s32 resourceId, void *work, s32 x, s32 y);
-void Audio_PlayCue(s32 sound_id);
+void Sound_PlayFar(s32 sound_id);
 
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
   if (diff >= 0)
@@ -85,13 +85,13 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
       break;
 
     state->selection = (s16)((u16)state->selection + step);
-    Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
+    Sound_PlayFar(SOUND_MENU_CURSOR_MOVE);
     delay = 0;
     pos += step;
   }
 
   WaitFrames(48);
-  Audio_PlayCue(SOUND_MENU_CONFIRM);
+  Sound_PlayFar(SOUND_MENU_CONFIRM);
   return goal;
 }
 

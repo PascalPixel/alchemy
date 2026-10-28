@@ -148,7 +148,7 @@ Func_080feb58:
 	cmp r3, #0
 	beq .L_080fec9e
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	b .L_080fecc2
 .L_080fec9e:
@@ -158,7 +158,7 @@ Func_080feb58:
 	cmp r3, #0
 	beq .L_080fecb4
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	negs r0, r0
 	b .L_080fecc2

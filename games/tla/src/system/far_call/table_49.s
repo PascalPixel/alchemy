@@ -5,7 +5,7 @@
 	.thumb_func
 Audio_GetBackgroundCueFar:
 	overlay_veneer Audio_GetBackgroundCue
-	.global AudioCommand_WaitForCompletionFar
+	.global Sound_WaitForBgmRestoreFar
 	.thumb_func
-AudioCommand_WaitForCompletionFar:
-	overlay_veneer AudioCommand_WaitForCompletion
+Sound_WaitForBgmRestoreFar:
+	overlay_veneer Sound_WaitForBgmRestore

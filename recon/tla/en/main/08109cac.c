@@ -57,7 +57,7 @@ s32 Shop_GetItemPrice(s32 item);
 s32 Forge_GetMaterialChance(s32 item);
 void Func_081091cc(void *window, s32 itemId, s32 value, s32 kind);
 void Shop_DrawMsg(void *window, s32 message);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
 void WaitFrames(s32 frames);
 void UiWork_FinalizeFar(void *window, s32 style);
@@ -117,19 +117,19 @@ s32 Func_08109cac(s32 unitId) {
         Shop_DrawMsg(nameWindow, itemId + (s32)MsgItemPlainName);
       }
       if (gInput.pressed & 1) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         result = 0;
         break;
       }
       if (gInput.pressed & 2) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         result = -1;
         break;
       }
       if (gInput.held & 4) {
         u32 item = unit->inventory[slot];
 
-        Audio_PlayCue(126);
+        Sound_PlayFar(126);
         window = UiWindow_CreateFar(0, 9, 16, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
         shop->detailsHidden = 0;
@@ -147,13 +147,13 @@ s32 Func_08109cac(s32 unitId) {
         continue;
       }
       if (gInput.repeat & 32) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         slot--;
         slot = (inventoryCount + slot) % inventoryCount;
         redraw = 1;
       }
       if (gInput.repeat & 16) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         slot++;
         slot = (inventoryCount + slot) % inventoryCount;
         redraw = 1;
@@ -164,7 +164,7 @@ s32 Func_08109cac(s32 unitId) {
           slot += 15;
         while (slot >= inventoryCount)
           slot -= 5;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         redraw = 1;
       }
       if (gInput.repeat & 128) {
@@ -173,7 +173,7 @@ s32 Func_08109cac(s32 unitId) {
           slot -= 15;
         while (slot < 0)
           slot += 5;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         redraw = 1;
       }
       WaitFrames(1);

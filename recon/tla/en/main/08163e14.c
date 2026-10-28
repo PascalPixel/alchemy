@@ -83,7 +83,7 @@ void BattleEffect_SelectLivingTargets(
 void BattleEffect_SpawnObjects(s32 count, s32 resource,
                    s32 priority); // BattleEffect_SpawnObjects
 void Func_081180e8(s32 phase);    // BattleEventRuntime_StartPhaseFar
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Func_0816442c(s32 formation, s32 x,
@@ -230,11 +230,11 @@ void Func_08163e14(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 0)
-        Audio_PlayCue(SE_SUMMON);
+        Sound_PlayFar(SE_SUMMON);
       if (frame == SPOUT_FRAME)
-        Audio_PlayCue(SE_SPOUT);
+        Sound_PlayFar(SE_SPOUT);
       if (frame == SPOUT_END_FRAME)
-        Audio_PlayCue(SE_FADE);
+        Sound_PlayFar(SE_FADE);
 
       // The pillars stream upward, each a 104-pixel picture drawn twice to
       // wrap.

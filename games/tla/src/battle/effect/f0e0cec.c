@@ -25,7 +25,7 @@ extern u32 gFrameCount;
 void Camera_WorldToScreen(struct LaunchVector *position);
 void Vector_AddPolarOffset(s32 distance, s32 angle, void *position);
 u32 Random16(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_ClearOwnedSlot(struct EffectSlot *slot);
 
 void Func_080e0cec(struct EffectSlot *slot) {
@@ -62,7 +62,7 @@ void Func_080e0cec(struct EffectSlot *slot) {
     slot->state++;
 
     if ((gFrameCount & 2) != 0)
-      Audio_PlayCue(246);
+      Sound_PlayFar(246);
   } else if (state == 1) {
     if (EffectSlot_HasPendingTarget(slot) == 0)
       slot->state--;

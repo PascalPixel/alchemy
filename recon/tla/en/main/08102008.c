@@ -89,7 +89,7 @@ extern u8 MsgDjinnNowRecovering[];
 extern u8 gDjinnMenu_TextLevel[];
 
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 Func_08104928(s8 *table, s32 self);
 void Func_080f8a44(s32 x, s32 y);
 void Func_080f8ab4(s32 x, s32 y);
@@ -523,24 +523,24 @@ s32 Func_08102008(s32 mode) {
     // R on a Djinni: put it on standby or set it at once.
     if (mode == 0 && (pressed & 0x100)) {
       if (selectedRow == -1) {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
         continue;
       }
       groupMode = 1;
       gInput.pendingPressed = 0;
       switch (state) {
       case 0:
-        Audio_PlayCue(139);
+        Sound_PlayFar(139);
         Djinn_ActivateFar(owner, element, number);
         DjinnRecovery_RemoveFar(owner, element, number);
         break;
       case 1:
-        Audio_PlayCue(175);
+        Sound_PlayFar(175);
         Djinn_DeactivateFar(owner, element, number);
         DjinnRecovery_AddStandbyFar(owner, element, number);
         break;
       default:
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
         redraw = 1;
         continue;
       }
@@ -549,13 +549,13 @@ s32 Func_08102008(s32 mode) {
       redraw = 1;
     }
     if (mode == 0 && (pressed & 0x200)) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = 7;
       break;
     }
     if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
       if (selectedRow != -1 && state == 2) {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
         RenderOutput_ClearListFar(listWindow);
         UiWindow_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
         UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnNowRecovering, listWindow,
@@ -576,16 +576,16 @@ s32 Func_08102008(s32 mode) {
       } else {
         result = 1;
       }
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       break;
     }
     if (pressed & 8) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -2;
       break;
     }
     if (pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
@@ -595,9 +595,9 @@ s32 Func_08102008(s32 mode) {
       if (groupMode) {
         setAll ^= 1;
         if (setAll)
-          Audio_PlayCue(139);
+          Sound_PlayFar(139);
         else
-          Audio_PlayCue(175);
+          Sound_PlayFar(175);
         for (i = 0; i < menu->memberCount; i++) {
           for (j = 0; j < backdrop->counts[i]; j++) {
             u32 entry = backdrop->ids[i][j];
@@ -628,7 +628,7 @@ s32 Func_08102008(s32 mode) {
         redraw = 1;
       } else {
         UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         result = 10;
         break;
       }
@@ -639,7 +639,7 @@ s32 Func_08102008(s32 mode) {
       if (backdrop->counts[memberColumn] == 0)
         continue;
       UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       if (columnFlags[memberColumn] & 1) {
         columnFlags[memberColumn] &= ~1;
         djinnRow = 0;
@@ -660,7 +660,7 @@ s32 Func_08102008(s32 mode) {
       if (backdrop->counts[memberColumn] == 0)
         continue;
       UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       djinnRow++;
       djinnRow = Menu_GetModuloOfSum(djinnRow, backdrop->counts[memberColumn]);
       if (columnFlags[memberColumn] & 1) {
@@ -676,7 +676,7 @@ s32 Func_08102008(s32 mode) {
     if (repeat & 0x30) {
       s32 oldColumn;
 
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       oldColumn = memberColumn;
       if (!(columnFlags[memberColumn] & 4))
         UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);

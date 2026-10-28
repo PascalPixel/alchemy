@@ -81,7 +81,7 @@ AffineMatrix_BuildForEffect:
 	.global Func_020047cc
 	.thumb_func
 Func_020047cc:
-	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Func_020047d4
 	.thumb_func
 Func_020047d4:
@@ -441,4 +441,4 @@ Func_02004a94:
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

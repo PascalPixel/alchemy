@@ -259,7 +259,7 @@ Func_0817e698:
 .L_0817e884:
 	str r3, [r2]
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0817e89a
 .L_0817e88e:
 	movs r2, #238
@@ -317,7 +317,7 @@ Func_0817e698:
 	cmp r3, #0
 	bne .L_0817e8fc
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817e8fc:
 	mov r0, r8
 	cmp r0, #31

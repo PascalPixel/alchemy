@@ -125,7 +125,7 @@ extern u16 gData_08197410[];   // ☀️ gBattleEffect_MoteCells
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void BattleEffect_ProcessPendingGraphicsTransfer(void); // BattleEffect_ProcessPendingGraphicsTransfer
 void Func_08163c2c(s32 mode, s32 value); // Func_08163c2c
@@ -238,7 +238,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     user->velocityY = 0xa0000;
     user->verticalMotionStrength = 0x91eb;
     Func_0814cd48(effect->actor, -1, 2, -1, 0);
-    Audio_PlayCue(SE_RISE);
+    Sound_PlayFar(SE_RISE);
     direction = effect->side == 1 ? mode : -1;
   } else {
     direction = -1;
@@ -399,7 +399,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         /* FAKEMATCH: see hold. */
         asm("" : : : "r6");
         if (frame == 0)
-          Audio_PlayCue(SE_STREAMS);
+          Sound_PlayFar(SE_STREAMS);
         /* FAKEMATCH: see hold. */
         asm("" : : "r"(hold));
       }
@@ -597,9 +597,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     if (elapsed > 19)
       Func_08164a4c(2, 2, 2);
     if (frame == 0)
-      Audio_PlayCue(SE_BLAST);
+      Sound_PlayFar(SE_BLAST);
     if (frame == 40)
-      Audio_PlayCue(SE_RISE);
+      Sound_PlayFar(SE_RISE);
     if (frame == BLAST_HIT_FRAME) {
       if (mode == 1) {
         ResourceObject_ReleaseFar(work->objects[0]);

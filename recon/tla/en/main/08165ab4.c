@@ -107,7 +107,7 @@ void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                 // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -221,13 +221,13 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != SCENE_FRAMES && !(gInput.repeat & 3); frame++) {
     if (frame == FIRST_DROP + 3)
-      Audio_PlayCue(SE_DROP);
+      Sound_PlayFar(SE_DROP);
     if (frame == FIRST_DROP + 45)
-      Audio_PlayCue(SE_DROP);
+      Sound_PlayFar(SE_DROP);
     if (frame == FIRST_DROP + 87)
-      Audio_PlayCue(SE_DROP);
+      Sound_PlayFar(SE_DROP);
     if (frame == HIT_FRAME)
-      Audio_PlayCue(SE_HIT);
+      Sound_PlayFar(SE_HIT);
     scale = gData_08196e6c;
     if (frame >= ROCKS_FALL && frame <= 251)
       work->shakeFrames = 1;

@@ -79,7 +79,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -219,7 +219,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Audio_PlayCue(140);
+  Sound_PlayFar(140);
 
   for (frame = 0, scroll = 0; frame != VOID_BEAM_FRAMES; frame++, scroll += 8) {
     s32 traced;

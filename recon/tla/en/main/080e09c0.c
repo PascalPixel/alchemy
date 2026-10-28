@@ -93,7 +93,7 @@ void Func_080e09c0(void) {
     if (caster->priorityFlags & 0x20)
       object->priorityFlags |= 0x20;
     Object_SetMode(object, 0);
-    Audio_PlayCue(138);
+    Sound_PlayFar(138);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
                           work);
     slotA = Resource_FindFreeEntry();
@@ -128,7 +128,7 @@ void Func_080e09c0(void) {
       object->y += -0x20000;
       WaitFrames(1);
     }
-    Audio_PlayCue(132);
+    Sound_PlayFar(132);
     if (scene->enabled != 0) {
       for (i = 15; i >= 0; i--)
         BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
@@ -144,10 +144,10 @@ void Func_080e09c0(void) {
       Scheduler_AddOrUpdateCallback(Func_080e0618, 0x480);
       while (work->phase != 999) {
         if (work->flash == 1) {
-          Audio_PlayCue(0x200);
+          Sound_PlayFar(0x200);
           Func_080d92d4(event->target, event->targetY, event->targetZ);
           work->hit = 1;
-          Audio_PlayCue(395);
+          Sound_PlayFar(395);
         }
         WaitFrames(1);
       }

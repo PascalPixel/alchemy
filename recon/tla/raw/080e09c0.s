@@ -75,7 +75,7 @@ Func_080e09c0:
 	mov r0, r8
 	bl Object_SetMode
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, .L_080e0a64
 	bl Resource_GetTableEntry
 	b .L_080e0a68
@@ -193,7 +193,7 @@ Func_080e09c0:
 	cmp r7, #0
 	bge .L_080e0b40
 	movs r0, #132
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r3, r9
 	adds r3, #32
 	movs r6, #0
@@ -270,7 +270,7 @@ Func_080e09c0:
 	bne .L_080e0c32
 	movs r0, #128
 	lsls r0, r0, #2
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #208
 	ldr r2, [sp, #12]
 	lsls r4, r4, #4
@@ -296,7 +296,7 @@ Func_080e09c0:
 	movs r0, #140
 	strh r5, [r3]
 	adds r0, #255
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e0c32:
 	movs r0, #1
 	bl WaitFrames

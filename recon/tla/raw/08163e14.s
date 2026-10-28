@@ -390,19 +390,19 @@ Func_08163e14:
 	cmp r3, #0
 	bne .L_08164134
 	movs r0, #164
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08164134:
 	mov r6, r9
 	cmp r6, #32
 	bne .L_08164140
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08164140:
 	mov r7, r9
 	cmp r7, #80
 	bne .L_0816414c
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816414c:
 	ldr r0, [sp, #8]
 	cmp r0, #47

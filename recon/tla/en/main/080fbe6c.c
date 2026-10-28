@@ -62,7 +62,7 @@ void UiText_DrawStringAtOffsetFar(void *text, void *window, s32 x, s32 y);
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void *Unit_Get(s32 owner);
 s32 GameFlag_Test(s32 flag);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 
 s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
@@ -117,24 +117,24 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
                                        16);
       }
       if (gInput.pressed & 1) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         break;
       }
       if (gInput.pressed & 2) {
         value = -1;
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         break;
       }
       Func_080f8a44(128, 40);
       if (gInput.repeat & 32) {
         value--;
         changed = 1;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
       }
       if (gInput.repeat & 16) {
         value++;
         changed = 1;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
       }
       WaitFrames(1);
     }

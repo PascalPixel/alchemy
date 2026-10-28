@@ -53,7 +53,7 @@ void Map_CopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                      s32 height);
 void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width, s32 height,
                             s32 destX, s32 destY);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 void Engine_EventStart(void);
 void Engine_EventEnd(void);

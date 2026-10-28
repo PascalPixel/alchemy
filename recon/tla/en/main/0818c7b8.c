@@ -69,7 +69,7 @@ s32 Scheduler_RemoveCallback(void (*callback)(void));
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
@@ -143,7 +143,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
       EffectPosition_ProjectBattler(
           effect->actors[0], (struct EffectPosition *)position);
     if (frame == 8)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
 
     // Frame 12: the hit. Echo Cut throws the target up.
     if (frame == 12) {

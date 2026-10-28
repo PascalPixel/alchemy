@@ -96,7 +96,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 Func_080f8f9c(s32 horizontal, s32 count, s32 perPage, s32 *row, s32 *page);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 GameFlag_Test(s32 flag);
 void Func_08104ef8(s32 first);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
@@ -192,23 +192,23 @@ s32 Func_080fc6bc(s32 pane) {
         changed = 0;
 
       if ((gInput.pressed & 1) != 0 && menu->items[state.selectedIndex] != 0) {
-        Audio_PlayCue(173);
+        Sound_PlayFar(173);
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
       }
       if ((gInput.pressed & 2) != 0) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         result = -1;
         done = 1;
         break;
       }
       if ((gInput.repeat & 0x100) != 0 || (gInput.repeat & 0x200) != 0) {
         if (pane == 1) {
-          Audio_PlayCue(114);
+          Sound_PlayFar(114);
           WaitFrames(1);
         } else {
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           menu->selectedIndexByOwner[menu->paneOwner[pane]] =
               state.selectedIndex;
           member = menu->paneIndex[pane];

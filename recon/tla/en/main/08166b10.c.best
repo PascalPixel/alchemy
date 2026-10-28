@@ -76,7 +76,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildB
                                                 // 7, 7, flags, mode)
 void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
 void Func_0815b634(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
@@ -215,9 +215,9 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
       work->shakeFrames = 16;
 
     if (frame == 4)
-      Audio_PlayCue(SE_SWING);
+      Sound_PlayFar(SE_SWING);
     if (frame == 32)
-      Audio_PlayCue(SE_SPRAY);
+      Sound_PlayFar(SE_SPRAY);
     if (frame == 60) {
       if (mode == 1)
         Func_081180e8(144);

@@ -109,7 +109,7 @@ void Func_080151e4(s32 x, s32 y, s32 z); // scale
 void Func_080150e4(s32 angle);           // roll
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_ResetTransformState(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Sixteen textured quads tumble down over the targets (or, from the first
 // target, rise), three frames apart, for 64 frames; with a prelude a Djinn
@@ -175,7 +175,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
 
   for (frame = 0; frame != QUAD_FRAMES; frame++) {
     if (frame == 8)
-      Audio_PlayCue(246);
+      Sound_PlayFar(246);
 
     // The quads start above the screen (or at the target for mode 2), each
     // with its own heading, spin and size.
@@ -198,7 +198,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
 
     // Frame 56: the next phase, and every target flashes.
     if (frame == 56) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
       Func_081180e8(-1);
       for (i = 0; i != effect->count; i++)
         Func_0814cd48(effect->actors[i], 7, -1, i, 8);

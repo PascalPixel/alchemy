@@ -146,7 +146,7 @@ void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);             // BattleEventRuntime_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 u32 Random16(void);
@@ -371,7 +371,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
                 RECORD(mode, RECORD_RATE) * 4 - 4 &&
             (RECORD(mode, RECORD_FLAGS) & FLAG_STAR))
-          Audio_PlayCue(212);
+          Sound_PlayFar(212);
 
         // The hit, on the strike's fifth picture.
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
@@ -380,17 +380,17 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 > 2)
               Func_081180e8(133);
             else
-              Audio_PlayCue(133);
+              Sound_PlayFar(133);
           } else if (mode == 7) {
             if (frame > 8)
               Func_081180e8(133);
             else
-              Audio_PlayCue(133);
+              Sound_PlayFar(133);
           } else if (mode == 13) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 > 6)
               Func_081180e8(134);
             else
-              Audio_PlayCue(134);
+              Sound_PlayFar(134);
           } else if ((RECORD(mode, RECORD_FLAGS) & FLAG_STAR) ||
                      (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)) {
             Func_081180e8(144);
@@ -470,7 +470,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
                              RECORD(mode, RECORD_RATE))
           Func_081180e8(133);
         else
-          Audio_PlayCue(133);
+          Sound_PlayFar(133);
         if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
           work->shakeFrames = 8;
           Func_0814cd48(effect->actors[0], 7, 5, 0, 12);

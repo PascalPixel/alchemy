@@ -137,4 +137,4 @@ ItemMenu_DrawItemDetails:
 	.global Func_0200073c
 	.thumb_func
 Func_0200073c:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

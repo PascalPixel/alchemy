@@ -129,19 +129,19 @@ Func_0810a2d8:
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #100
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #110
 	bl WaitFrames
 	movs r0, #100
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #110
 	bl WaitFrames
 	movs r0, #100
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #110
 	bl WaitFrames
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #20
 	bl WaitFrames
 	mov r2, r8

@@ -296,7 +296,7 @@ Func_080e3d04:
 	movs r1, #2
 	bl Object_SetMode
 	movs r0, #186
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #50
 	b .L_080e3f96
 .L_080e3f4a:
@@ -334,7 +334,7 @@ Func_080e3d04:
 	movs r1, #2
 	bl Object_SetMode
 	movs r0, #186
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #45
 .L_080e3f96:
 	bl WaitFrames
@@ -345,7 +345,7 @@ Func_080e3d04:
 	b .L_080e4222
 .L_080e3fa8:
 	movs r0, #207
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r10
 	ldr r0, [r1, #16]
 	movs r1, #0
@@ -608,7 +608,7 @@ Func_080e3d04:
 .L_080e41c4:
 	movs r0, #140
 	adds r0, #255
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #192
 	lsls r2, r2, #5
 	adds r2, #151

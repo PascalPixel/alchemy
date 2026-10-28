@@ -78,7 +78,7 @@ void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
 void Render_ResetTransformState(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
@@ -166,7 +166,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     for (i = 0, strikeFrame = 20; i != 8; i++, strikeFrame += 6) {
       if (frame == strikeFrame) {
         work->shakeFrames = 4;
-        Audio_PlayCue(133);
+        Sound_PlayFar(133);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
       }

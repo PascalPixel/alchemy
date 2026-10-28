@@ -80,7 +80,7 @@ void Func_080e87c4(void) {
   event->unkcae = 0;
   Scheduler_RemoveCallback(Func_080e807c);
   WaitFrames(1);
-  Audio_PlayCue(167);
+  Sound_PlayFar(167);
   Iwram_FillWords((void *)0x06002000, 0x500, 0xf000f000);
   Ui_LoadWindowGraphics();
   {

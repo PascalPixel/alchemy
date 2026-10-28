@@ -1266,11 +1266,11 @@ BattleEffect_RunProjectileVolleyB:
 	bne .L_08152fda
 .L_08152fd2:
 	movs r0, #92
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08152fe0
 .L_08152fda:
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08152fe0:
 	mov r6, r11
 	cmp r6, #8

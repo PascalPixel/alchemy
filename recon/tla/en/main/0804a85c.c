@@ -124,7 +124,7 @@ void BattleMotion_ProjectConditionalPositionFar(s32 unit,
 struct TargetWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                      s32 flags);
 s32 Trig_Sin(s32 angle);
-void Runtime_PushSlotEntry(void *sprite, s32 depth);
+void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine);
 void BattlePres_SetActorModesFar(u16 *units, s32 mode);
 void UiWork_Finalize(void *window, s32 mode);
@@ -140,7 +140,7 @@ s32 UiText_GetWideStringWidth(u16 *text);
 void Ui_ClearVramBlock(void);
 void UiText_RenderWideStringAtOffset(u16 *text, struct TargetWindow *window,
                                      s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 slot);
 
@@ -322,7 +322,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = selectedPosition.y - 16;
-    Runtime_PushSlotEntry(firstSprite, 240);
+    Oam_AddSpriteAtDepth(firstSprite, 240);
     if (spread == 255) {
       effect.scaleX = 256;
       effect.scaleY = 256;
@@ -608,7 +608,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
         else
           marker->affine = 1;
         marker->matrix = matrix;
-        Runtime_PushSlotEntry(marker, 240);
+        Oam_AddSpriteAtDepth(marker, 240);
       }
     }
 
@@ -648,7 +648,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetIndex = result;
     } else if (spread != 255) {
       if (repeated & 0x90) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         do {
           targetIndex++;
           targetIndex %= candidateCount;
@@ -656,7 +656,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
       if (repeated & 0x60) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         do {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
@@ -665,7 +665,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
     }
     if (NAVIGATION->timer == 0 || (pressed & 2)) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       targetIndex = -1;
       break;
     }

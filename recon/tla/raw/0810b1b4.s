@@ -42,7 +42,7 @@ Func_0810b1b4:
 	asrs r3, r3, #24
 	sub sp, #12
 	ldrsb r0, [r2, r3]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, .L_0810b368
 	bl Shop_RestoreSceneTiles
 	mov r0, r10
@@ -122,7 +122,7 @@ Func_0810b1b4:
 	adds r5, #72
 	cmp r7, #17
 	ble .L_0810b25e
-	bl AudioCommand_WaitForStateByteClear
+	bl Sound_WaitForFanfare
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #76
@@ -143,7 +143,7 @@ Func_0810b1b4:
 	movs r0, #20
 	bl WaitFrames
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #161
 	lsls r2, r2, #3
 	add r2, r8

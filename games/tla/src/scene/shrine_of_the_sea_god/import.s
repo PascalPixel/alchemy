@@ -285,4 +285,4 @@ Func_02003b40:
 	.global Func_02003b48
 	.thumb_func
 Func_02003b48:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

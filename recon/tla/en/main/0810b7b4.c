@@ -50,7 +50,7 @@ void WaitFrames(s32 frames);
 void Func_0810928c(void *window, s32 memberIndex, s32 item);
 void Shop_DrawItemCount(void *window, s32 unitId);
 s32 Inventory_CountFar(s32 unitId);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void RenderOutput_PrepareForRedrawFar(void *window);
 s32 Func_0810b9c0(s32 unitId);
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
@@ -99,11 +99,11 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
     WaitFrames(1);
     if (gInput.pressed & 1) {
       if (Inventory_CountFar(unitId) == 0) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         continue;
       }
       RenderOutput_PrepareForRedrawFar(listWindow);
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       slot = Func_0810b9c0(unitId);
       if (slot == -1) {
         shop->cursor.anchor->active = 4;
@@ -116,7 +116,7 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
       result = 0;
       break;
     } else if (gInput.pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       *outUnit = -1;
       *outSlot = -1;
       result = -1;

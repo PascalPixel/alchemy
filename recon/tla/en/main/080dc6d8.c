@@ -59,7 +59,7 @@ void Func_080dc6d8(void) {
     object->velocityZ = 0;
   } while (0);
   if (work->sound != 0) {
-    Audio_PlayCue(212);
+    Sound_PlayFar(212);
     BattleEffect_SetObjectUpdateMode(object, 1);
   }
   if (work->showQuantity != 0) {

@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -491,21 +491,21 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       posX += d;
     }
     if (frame == 78) {
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
     }
     if (frame == 138) {
-      Audio_PlayCue(104);
+      Sound_PlayFar(104);
     }
     if (frame == 152) {
-      Audio_PlayCue(163);
+      Sound_PlayFar(163);
     }
     if (frame == 7) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 10) {
       const u8 *piece = Data_081986f2;
 
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
       p = work->particles;
       for (i = 0; i != 31; i++, piece += 10, p++) {
         s32 cx = piece[0] >> 1;
@@ -761,7 +761,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 16);
         Func_08118088(effect->actors[i], 4);
       }
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       work->shakeFrames = 16;
     }
     if (frame == 214) {

@@ -16,7 +16,7 @@ void UiTextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1,
   obj->kind = arg2;
   /* FAKEMATCH: the native stores the index before it loads the slot kind. */
   __asm__("");
-  Runtime_PushSlotEntry((s32 *)obj, 0xFC);
+  Oam_AddSpriteAtDepth((s32 *)obj, 0xFC);
 }
 
 void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }

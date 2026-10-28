@@ -85,7 +85,7 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
 void Camera_WorldToScreen(s32 *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -195,7 +195,7 @@ loaded:
     sprite++;
     particle++;
   }
-  Audio_PlayCue(130);
+  Sound_PlayFar(130);
   WaitFrames(1);
   scale = &work->discScaleX;
   next = 0;
@@ -289,7 +289,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 10)
-          Audio_PlayCue(542);
+          Sound_PlayFar(542);
         work->discScaleX += 0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0x3fff) {
@@ -316,7 +316,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 30)
-          Audio_PlayCue(140);
+          Sound_PlayFar(140);
         *scale += 0x300;
         work->discScaleY = *scale;
         if (*scale > 0xbfff) {
@@ -351,7 +351,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 40)
-          Audio_PlayCue(140);
+          Sound_PlayFar(140);
         *scale += 0x300;
         work->discScaleY = *scale;
         if (*scale > 0xbfff) {

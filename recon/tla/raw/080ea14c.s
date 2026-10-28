@@ -215,7 +215,7 @@ Func_080ea14c:
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #2
 	ldr r0, [sp, #40]
 	bl Object_SetMode
@@ -229,7 +229,7 @@ Func_080ea14c:
 	ldr r3, .L_080ea388
 	movs r0, #142
 	str r3, [r1, #108]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #80
 	bl EventRuntime_Wait
 	ldr r1, .L_080ea38c
@@ -303,7 +303,7 @@ Func_080ea14c:
 	cmp r3, #0
 	bne .L_080ea3dc
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080ea3dc:
 	movs r2, #1
 	str r2, [sp, #8]
@@ -312,7 +312,7 @@ Func_080ea14c:
 	cmp r3, #40
 	bne .L_080ea3fc
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #25
 	ldr r0, [sp, #40]
 	str r1, [sp, #8]
@@ -447,7 +447,7 @@ Func_080ea14c:
 	cmp r3, #0
 	bne .L_080ea4e8
 	movs r0, #246
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080ea4e8:
 	mov r1, r10
 	cmp r1, #56
@@ -579,19 +579,19 @@ Func_080ea14c:
 	cmp r2, #0
 	bne .L_080ea5e0
 	movs r0, #187
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080ea5e0:
 	mov r3, r10
 	cmp r3, #48
 	bne .L_080ea5ec
 	movs r0, #187
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080ea5ec:
 	mov r1, r10
 	cmp r1, #96
 	bne .L_080ea5f8
 	movs r0, #187
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080ea5f8:
 	mov r2, r10
 	cmp r2, #100
@@ -685,7 +685,7 @@ Func_080ea14c:
 	cmp r3, #0
 	bne .L_080ea6ac
 	movs r0, #167
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080ea6ac:
 	movs r3, #232
 	lsls r3, r3, #5

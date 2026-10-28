@@ -71,7 +71,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 layer, s32 background,
 s32 ArcTan2(s32 x, s32 y);
 u32 Math_UnsignedMulHigh(u32 value, u32 magic);
 s32 Math_UnsignedMulHighAdd(s32 value, u32 magic, s32 multiplier);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 struct Point2D {
   s32 x;
@@ -207,17 +207,17 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera, (s32 *)((u8 *)camera + 12));
 
     if (frame == 16)
-      Audio_PlayCue(141);
+      Sound_PlayFar(141);
     if (frame == 256)
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
     if (frame == 334)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 347)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 359)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 372)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
 
     // The enemies, one every 16 frames, spiral in toward the centre and
     // rise, spinning faster; each comet strike knocks them down.

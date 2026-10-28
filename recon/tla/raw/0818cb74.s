@@ -351,25 +351,25 @@ BattleEffect_RunTrident:
 	cmp r7, #0
 	bne .L_0818ce42
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818ce42:
 	mov r0, r11
 	cmp r0, #4
 	bne .L_0818ce4e
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818ce4e:
 	mov r1, r11
 	cmp r1, #16
 	bne .L_0818ce5a
 	movs r0, #164
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818ce5a:
 	mov r2, r11
 	cmp r2, #64
 	bne .L_0818ce66
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818ce66:
 	mov r3, r11
 	cmp r3, #63

@@ -1,6 +1,6 @@
 // Draft, differ 26 of 13 with the game profile, and identical with old_agbcc
 // -O2 -mthumb-interwork (2026-10-24): the work copy of the sound library's
-// MPlayFadeOut, as ☀️'s MusicPlayer_StartFadeOut (games/tbs/src/sound/audio.c),
+// MPlayFadeOut, as in ☀️ (games/tbs/src/sound/audio.c),
 // in pret's form; old_agbcc drops the lock's raise and restore, as the
 // listing does (without them it narrows speed into r3, not r1). The listing's
 // pool word is followed by the next function's first instructions, from

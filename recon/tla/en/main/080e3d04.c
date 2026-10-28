@@ -95,7 +95,7 @@ struct ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void Object_Destroy(struct ObjectRuntime *object);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 void BattleEffect_SetObjectUpdateMode(struct ObjectRuntime *object, s32 mode);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -208,7 +208,7 @@ void Func_080e3d04(void) {
     object->scaleX = 0x14000;
     object->scaleY = 0x14000;
     Object_SetMode(object, 2);
-    Audio_PlayCue(186);
+    Sound_PlayFar(186);
     WaitFrames(50);
     Object_Destroy(object);
     WaitFrames(10);
@@ -223,14 +223,14 @@ void Func_080e3d04(void) {
       goto end;
     ((u8 *)object)[85] = work->mode;
     Object_SetMode(object, 2);
-    Audio_PlayCue(186);
+    Sound_PlayFar(186);
     WaitFrames(45);
     Object_Destroy(object);
     WaitFrames(10);
     goto end;
   }
 
-  Audio_PlayCue(207);
+  Sound_PlayFar(207);
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   work->angle = scene->angle;
   work->targetAngle = scene->angle;
@@ -302,7 +302,7 @@ void Func_080e3d04(void) {
     if (gInput.pressed & 2)
       break;
   }
-  Audio_PlayCue(395);
+  Sound_PlayFar(395);
   work->emitting = 0;
   for (i = 0; i < 60; i++) {
     particle = work->dropMotion;

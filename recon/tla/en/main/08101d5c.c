@@ -45,7 +45,7 @@ void *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Func_08038290(void);
 struct UiChannelSlot *Func_080383d8(void *window, s32 message);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 UiWork_IsCompleteFar(void);
 void Func_080f8a44(s32 x, s32 y);
 s32 Resource_ResetEntry(u32 entry);
@@ -113,30 +113,30 @@ s32 Func_08101d5c(void) {
       if (input->repeat & 0x90) {
         selection++;
         selection = Menu_GetModuloOfSum(selection, 7);
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         break;
       }
       if (input->repeat & 0x60) {
         selection--;
         selection = Menu_GetModuloOfSum(selection, 7);
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         break;
       } else if (input->pressed & 8) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         result = -2;
         break;
       } else if (input->pressed & 6) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         result = -1;
         break;
       } else if (input->pressed & 1) {
         if (UiWork_IsCompleteFar()) {
           selection++;
           selection = Menu_GetModuloOfSum(selection, 7);
-          Audio_PlayCue(112);
+          Sound_PlayFar(112);
           break;
         }
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
       }
     }
     if (render->glyphResource != 99) {

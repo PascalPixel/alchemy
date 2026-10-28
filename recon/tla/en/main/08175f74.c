@@ -230,7 +230,7 @@ void BattleEffect_FetchRectangleBlitters(s32, DrawRectangleFn *);
 struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
 struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
-void Audio_PlayCue(s32);
+void Sound_PlayFar(s32);
 u32 Random16(void);
 s32 Func_0800206c(s32, s32);
 void Render_ApplyProjectedPlacementFar(struct SpriteObject *, s32 *, s32 *,
@@ -407,37 +407,37 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       Func_08164b2c(0, -10, -20);
     }
     if (frame == 4) {
-      Audio_PlayCue(107);
+      Sound_PlayFar(107);
     }
     if (frame == 55) {
-      Audio_PlayCue(208);
+      Sound_PlayFar(208);
     }
     if (frame == 78) {
-      Audio_PlayCue(219);
+      Sound_PlayFar(219);
     }
     if (frame == 127) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 131) {
-      Audio_PlayCue(149);
+      Sound_PlayFar(149);
     }
     if (frame == 206) {
-      Audio_PlayCue(142);
+      Sound_PlayFar(142);
     }
     if (frame == 244) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 302) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 308) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 312) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 350) {
-      Audio_PlayCue(104);
+      Sound_PlayFar(104);
     }
     if (frame == 0) {
       work->transferMode = 2;
@@ -1251,7 +1251,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     WaitFrames(1);
   }
 
-  Audio_PlayCue(162);
+  Sound_PlayFar(162);
   if (frame < 132) {
     ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[0]);
   } else {
@@ -1350,7 +1350,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame == 0) {
       s32 x;
 
-      Audio_PlayCue(162);
+      Sound_PlayFar(162);
       work->wave = 160;
       shake = 0;
       for (i = 0; i != arg->count; i++) {
@@ -1409,7 +1409,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           PARTICLES[128 + i].timer = (Random16() & 15) + 16;
         }
         Resource_LoadAndDecompress((s32)&Value_0000013e, SPRITE_BUFFER, 1, 0);
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
         CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
         REG_BG2CNT = 0x784;
         work->transferMode = 2;
@@ -1543,7 +1543,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           if (landed == 1) {
             member->timer = 0;
             EffectPosition_ProjectScaledBattler(arg->actors[i], member);
-            Audio_PlayCue(103);
+            Sound_PlayFar(103);
             for (j = 0; j != 16; j++) {
               s32 angle = Random16() & 0x7fff;
               s32 speed = Random16() & 255;

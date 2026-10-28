@@ -112,7 +112,7 @@ BattleEffect_RunJupiter:
 	cmp r10, r2
 	bne .L_08157aa4
 	movs r0, #171
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #128
 	movs r0, #0
 	lsls r1, r1, #8
@@ -244,7 +244,7 @@ BattleEffect_RunJupiter:
 	cmp r4, #32
 	bne .L_08157b5e
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #238
 	lsls r3, r3, #7
 	adds r3, #168

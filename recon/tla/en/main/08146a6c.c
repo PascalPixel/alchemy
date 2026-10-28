@@ -61,7 +61,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // ObjectGroup_UpdateMembers
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
                    s32 bluePhase); // Graphics_UpdatePhasePalette
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_RuneSheet;
 extern char ResourceId_Data134;
@@ -187,7 +187,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
           star->velocityX /= 2;
           star->velocityZ /= 2;
           work->shakeFrames = 4;
-          Audio_PlayCue(134);
+          Sound_PlayFar(134);
           for (j = 0; j != effect->count; j++)
             Func_0814cd48(effect->actors[j], 7, 5, j, 8);
         }

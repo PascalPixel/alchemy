@@ -161,7 +161,7 @@ Func_0811df70:
 	cmp r3, #0
 	bne .L_0811e0b4
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r8
 	mov r3, r10
 	ldr r0, [r2, #8]

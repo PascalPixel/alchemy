@@ -474,7 +474,7 @@ Func_0815585c:
 	cmp r2, #8
 	bne .L_08155c00
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08155c00:
 	bl Render_ResetTransformState
 	adds r1, r5, #0

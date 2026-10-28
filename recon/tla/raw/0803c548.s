@@ -501,7 +501,7 @@ UiWork_AnimateSpriteSlots:
 	beq .L_0803c974
 	adds r0, r7, #0
 	movs r1, #255
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	b .L_0803c974
 .L_0803c940:
 	cmp r3, #19
@@ -521,14 +521,14 @@ UiWork_AnimateSpriteSlots:
 	bhi .L_0803c974
 	ldrb r1, [r6, #15]
 	adds r0, r7, #0
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	b .L_0803c974
 .L_0803c968:
 	cmp r3, #13
 	beq .L_0803c974
 	ldrb r1, [r6, #15]
 	adds r0, r7, #0
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 .L_0803c974:
 	ldr r3, .L_0803c9a8
 	ldr r6, [r6]

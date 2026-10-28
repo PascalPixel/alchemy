@@ -78,7 +78,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -259,10 +259,10 @@ void BattleEffect_RunJudgment(void) {
     }
     if (frame == 143) {
       Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     }
     if (frame == 80) {
-      Audio_PlayCue(142);
+      Sound_PlayFar(142);
     }
     if (frame == 72) {
       work->fadeFrames = 24;
@@ -518,19 +518,19 @@ void BattleEffect_RunJudgment(void) {
   // The strike: the beam, the shockwave rings and the debris.
   for (frame = 0; frame != 336; frame++) {
     if (frame == 66) {
-      Audio_PlayCue(208);
+      Sound_PlayFar(208);
     }
     if (frame == 88) {
-      Audio_PlayCue(230);
+      Sound_PlayFar(230);
     }
     if (frame == 155) {
-      Audio_PlayCue(162);
+      Sound_PlayFar(162);
     }
     if (frame == 217) {
-      Audio_PlayCue(156);
+      Sound_PlayFar(156);
     }
     if (frame == 280) {
-      Audio_PlayCue(157);
+      Sound_PlayFar(157);
     }
     if (frame == 300) {
       for (i = 0; i != effect->count; i++) {

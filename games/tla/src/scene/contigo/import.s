@@ -426,11 +426,11 @@ Func_0200429c:
 	.thumb_func
 Func_020042a4:
 	overlay_veneer Func_08108018
-	.global AudioCommand_WaitForStateByteClear
+	.global Sound_WaitForFanfare
 	.thumb_func
-AudioCommand_WaitForStateByteClear:
-	overlay_veneer AudioCommand_WaitForStateByteClearFar
+Sound_WaitForFanfare:
+	overlay_veneer Sound_WaitForFanfareFar
 	.global Func_020042b4
 	.thumb_func
 Func_020042b4:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

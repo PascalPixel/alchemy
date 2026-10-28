@@ -290,7 +290,7 @@ Func_0812561c:
 	movs r0, #11
 	bl BattleEvent_Push
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r8
 	bl BattleObject_Get
 	movs r1, #3

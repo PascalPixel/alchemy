@@ -87,11 +87,11 @@ Func_080d67e8:
 	cmp r3, #0
 	beq .L_080d68ac
 	movs r0, #172
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080d68b2
 .L_080d68ac:
 	movs r0, #171
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080d68b2:
 	adds r0, r6, #0
 	movs r1, #1

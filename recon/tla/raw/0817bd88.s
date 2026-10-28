@@ -185,7 +185,7 @@ BattleEffect_RunFirePuppet:
 	cmp r0, #8
 	bne .L_0817bf06
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817bf06:
 	ldr r1, [sp, #56]
 	cmp r1, #100
@@ -211,7 +211,7 @@ BattleEffect_RunFirePuppet:
 	mov lr, r3
 	.2byte 0xf800
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #212
 	bl Func_081180e8
 	movs r1, #238

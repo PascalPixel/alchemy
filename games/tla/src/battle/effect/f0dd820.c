@@ -67,7 +67,7 @@ void Func_080dd820(void) {
    * so active is stored before the centre is reloaded; as plain statements,
    * 4 of 137 instructions differ in tla-en. */
   do {
-    Audio_PlayCue(SE_REVEAL);
+    Sound_PlayFar(SE_REVEAL);
     event->active = 1;
   } while (0);
   event->centreX = transition->centreX / 0x10000;

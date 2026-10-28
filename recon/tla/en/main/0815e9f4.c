@@ -82,7 +82,7 @@ extern char ResourceId_ParticleSpritesD;
 extern const u16 Data_08197424[];
 
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
@@ -233,7 +233,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
     Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer, 0x480);
-    Audio_PlayCue(212);
+    Sound_PlayFar(212);
     for (frame = 0; frame != 32; frame++) {
       BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
                                                   effect->firstTarget, 130);

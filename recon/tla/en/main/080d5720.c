@@ -33,7 +33,7 @@ struct Work9cItemPosition {
 };
 
 struct Work9cItemPosition *Func_080d5670(s32 *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 struct GrabSave {
   u8 unk00[98];
@@ -54,7 +54,7 @@ s32 Func_080d5720(void) {
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
   if (item == NULL)
     return 0;
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;

@@ -150,7 +150,7 @@ void Func_080db0b0(s32 id) {
   slot->active = 0;
   Object_SetMode(leader, 6);
   WaitFrames(6);
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   Object_SetMode(leader, 7);
   leader->speedLimit = 0x30000;
   leader->acceleration = 0x20000;

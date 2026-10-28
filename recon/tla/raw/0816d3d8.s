@@ -97,13 +97,13 @@ BattleEffect_RunStoneJustice:
 	cmp r1, #0
 	bne .L_0816d4a2
 	movs r0, #157
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816d4a2:
 	mov r2, r9
 	cmp r2, #64
 	bne .L_0816d4ae
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816d4ae:
 	mov r3, r9
 	cmp r3, #0
@@ -345,7 +345,7 @@ BattleEffect_RunStoneJustice:
 	movs r3, #8
 	movs r0, #134
 	str r3, [sp, #24]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816d688:
 	mov r5, r10
 	movs r3, #150

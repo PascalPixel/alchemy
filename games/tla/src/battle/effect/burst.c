@@ -13,7 +13,7 @@ struct BurstParticleVector {
 extern u8 gData_080f0ee8[];
 
 void Func_080ddbd8(void);
-void Audio_PlayCue(s32 no);
+void Sound_PlayFar(s32 no);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct BurstParticleVector *position);
 void *Object_Spawn(s32 id, s32 x, s32 y, s32 z);
@@ -58,7 +58,7 @@ void Func_080dda30(s32 unused) {
     asm("");
     target->priorityFlags |= 2;
     WaitFrames(10);
-    Audio_PlayCue(126);
+    Sound_PlayFar(126);
     WaitFrames(40);
   } else if (kind == 1) {
     struct BurstParticleVector position;
@@ -86,7 +86,7 @@ void Func_080dda30(s32 unused) {
     Func_080daecc(scene->secondObjectId, 1);
   } else {
     WaitFrames(10);
-    Audio_PlayCue(126);
+    Sound_PlayFar(126);
   }
   BattleEffect_PrepareBufferInterpolation();
 }
@@ -98,7 +98,7 @@ void FieldEffect_RunGrowth(void) {
   s32 entryCount;
 
   Func_080ddbd8();
-  Audio_PlayCue(134);
+  Sound_PlayFar(134);
   p = &position;
   entryCount = 4;
   do {

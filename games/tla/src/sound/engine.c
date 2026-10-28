@@ -4,31 +4,31 @@
 
 s32 __divsi3(s32 numerator, s32 denominator);
 void Sound_LoadCommandTable(SoundCommand *table);
-void MusicTrack_HandleNote(u32 command, struct SoundPlayer *player,
+void ply_note(u32 command, struct SoundPlayer *player,
                            struct SoundTrack *track);
-void Audio_EmptyCallback(void);
-void AudioEngine_SetPcmRate(u32 mode);
-void AudioEngine_SuspendDirectSound(void);
-void AudioEngine_ResumeDirectSound(void);
+void DummyFunc(void);
+void SampleFreqSet(u32 mode);
+void m4aSoundVSyncOff(void);
+void m4aSoundVSyncOn(void);
 extern const u16 gSound_PcmSamplesPerVBlank[];
 extern SoundCommand gSound_CommandTable[36];
 
-void AudioCommand_InvokeSlot34(struct SoundNote *note) {
+void ClearChain(struct SoundNote *note) {
   void (*func)(struct SoundNote *) =
       (void (*)(struct SoundNote *)) * (&gSound_CommandTable[34]);
 
   func(note);
 }
 
-void AudioCommand_InvokeSlot35(void *block) {
+void Clear64byte(void *block) {
   void (*func)(void *) = (void (*)(void *)) * (&gSound_CommandTable[35]);
 
   func(block);
 }
 
 void MPlayMain(struct SoundPlayer *player);
-void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
-void AudioEngine_SetMode(u32 mode);
+void TrackStop(struct SoundPlayer *player, struct SoundTrack *track);
+void m4aSoundMode(u32 mode);
 
 struct SoundPlayer;
 
@@ -36,11 +36,11 @@ extern const u8 gSound_CgbPitchCodes[];
 extern const s16 gSound_CgbFrequencySteps[];
 extern const u8 gSound_NoisePitchCodes[];
 
-void CgbChannel_Mute(u8 channel);
+void CgbOscOff(u8 channel);
 
 extern const u8 gSound_Cgb3LevelCodes[];
 
-void AudioEngine_Initialize(struct SoundWork *work) {
+void SoundInit(struct SoundWork *work) {
   u32 zero;
 
   work->lock = 0;
@@ -62,18 +62,18 @@ void AudioEngine_Initialize(struct SoundWork *work) {
   Bios_CpuSet(&zero, work, 0x050003EC);
   work->pcmNoteCount = 8;
   work->volume = 15;
-  work->noteOn = MusicTrack_HandleNote;
-  work->cgbUpdate = Audio_EmptyCallback;
-  work->cgbMute = (void (*)(u8))Audio_EmptyCallback;
-  work->cgbFrequency = (s32 (*)(u8, u8, u8))Audio_EmptyCallback;
-  work->unk3c = Audio_EmptyCallback;
+  work->noteOn = ply_note;
+  work->cgbUpdate = DummyFunc;
+  work->cgbMute = (void (*)(u8))DummyFunc;
+  work->cgbFrequency = (s32 (*)(u8, u8, u8))DummyFunc;
+  work->unk3c = DummyFunc;
   Sound_LoadCommandTable(gSound_CommandTable);
   work->commands = gSound_CommandTable;
-  AudioEngine_SetPcmRate(0x40000);
+  SampleFreqSet(0x40000);
   work->lock = SOUND_LOCK;
 }
 
-void AudioEngine_SetPcmRate(u32 mode) {
+void SampleFreqSet(u32 mode) {
   struct SoundWork *work = SOUND_WORK;
   u32 samples;
   volatile u16 *timer;
@@ -88,7 +88,7 @@ void AudioEngine_SetPcmRate(u32 mode) {
   REG_TM0CNT_H = 0;
   timer = &REG_TM0CNT_L;
   *timer = -__divsi3(0x44940, samples);
-  AudioEngine_ResumeDirectSound();
+  m4aSoundVSyncOn();
   while (*(volatile u8 *)0x04000006 == 159)
     ;
   while (*(volatile u8 *)0x04000006 != 159)
@@ -96,7 +96,7 @@ void AudioEngine_SetPcmRate(u32 mode) {
   REG_TM0CNT_H = 0x80;
 }
 
-void AudioEngine_SetMode(u32 mode) {
+void m4aSoundMode(u32 mode) {
   struct SoundWork *work = SOUND_WORK;
   u32 value;
   struct SoundNote *note;
@@ -129,13 +129,13 @@ void AudioEngine_SetMode(u32 mode) {
   }
   value = mode & 0xF0000;
   if (value != 0) {
-    AudioEngine_SuspendDirectSound();
-    AudioEngine_SetPcmRate(value);
+    m4aSoundVSyncOff();
+    SampleFreqSet(value);
   }
   work->lock = SOUND_LOCK;
 }
 
-void AudioEngine_StopAllChannels(void) {
+void SoundClear(void) {
   struct SoundWork *work = SOUND_WORK;
   s32 i;
   void *channel;
@@ -164,7 +164,7 @@ void AudioEngine_StopAllChannels(void) {
   work->lock = SOUND_LOCK;
 }
 
-void AudioEngine_SuspendDirectSound(void) {
+void m4aSoundVSyncOff(void) {
   struct SoundWork *work = SOUND_WORK;
   u32 zero;
 
@@ -181,7 +181,7 @@ void AudioEngine_SuspendDirectSound(void) {
   Bios_CpuSet(&zero, work->buffers, 0x05000318);
 }
 
-void AudioEngine_ResumeDirectSound(void) {
+void m4aSoundVSyncOn(void) {
   struct SoundWork *work = SOUND_WORK;
   u32 lock = work->lock;
 
@@ -193,7 +193,7 @@ void AudioEngine_ResumeDirectSound(void) {
   work->lock = lock - 10;
 }
 
-void MusicPlayer_Initialize(struct SoundPlayer *player,
+void MPlayOpen(struct SoundPlayer *player,
                             struct SoundTrack *tracks, u8 count) {
   struct SoundWork *work;
 
@@ -206,7 +206,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
     return;
   work->lock++;
 
-  AudioCommand_InvokeSlot35(player);
+  Clear64byte(player);
   player->tracks = tracks;
   player->trackCount = count;
   player->status = SOUND_PLAYER_PAUSED;
@@ -226,7 +226,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
   player->lock = SOUND_LOCK;
 }
 
-void MusicPlayer_StartSong(struct SoundPlayer *player,
+void MPlayStart(struct SoundPlayer *player,
                            const struct SongHeader *header) {
   s32 i;
   struct SoundTrack *track;
@@ -260,7 +260,7 @@ start:
   i = 0;
   track = player->tracks;
   while (i < header->trackCount && i < player->trackCount) {
-    MusicTrack_Stop(player, track);
+    TrackStop(player, track);
     track->flags = SOUND_TRACK_ACTIVE | SOUND_TRACK_RESET;
     track->notes = NULL;
     track->cursor = header->tracks[i];
@@ -268,17 +268,17 @@ start:
     track++;
   }
   while (i < player->trackCount) {
-    MusicTrack_Stop(player, track);
+    TrackStop(player, track);
     track->flags = 0;
     i++;
     track++;
   }
   if (header->mode & 0x80)
-    AudioEngine_SetMode(header->mode);
+    m4aSoundMode(header->mode);
   player->lock = SOUND_LOCK;
 }
 
-void MusicPlayer_Stop(struct SoundPlayer *player) {
+void m4aMPlayStop(struct SoundPlayer *player) {
   s32 i;
   struct SoundTrack *track;
 
@@ -289,14 +289,14 @@ void MusicPlayer_Stop(struct SoundPlayer *player) {
   i = player->trackCount;
   track = player->tracks;
   while (i > 0) {
-    MusicTrack_Stop(player, track);
+    TrackStop(player, track);
     i--;
     track++;
   }
   player->lock = SOUND_LOCK;
 }
 
-void MusicPlayer_StepFade(struct SoundPlayer *player) {
+void FadeOutBody(struct SoundPlayer *player) {
   s32 count;
   struct SoundTrack *track;
 
@@ -316,7 +316,7 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
       count = player->trackCount;
       track = player->tracks;
       while (count > 0) {
-        MusicTrack_Stop(player, track);
+        TrackStop(player, track);
         if (!(player->fadeVolume & 1))
           track->flags = 0;
         count--;
@@ -343,7 +343,7 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
   }
 }
 
-void MusicTrack_CalculateOutput(struct SoundPlayer *player,
+void TrkVolPitSet(struct SoundPlayer *player,
                            struct SoundTrack *track) {
   u32 volume;
   s32 pan;
@@ -376,7 +376,7 @@ void MusicTrack_CalculateOutput(struct SoundPlayer *player,
   track->flags &= ~(SOUND_TRACK_VOLUME_DIRTY | SOUND_TRACK_PITCH_DIRTY);
 }
 
-s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
+s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine) {
   s32 low;
   s32 high;
 
@@ -408,7 +408,7 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
   return low + ((fine * (high - low)) >> 8) + 2048;
 }
 
-void CgbChannel_Mute(u8 channel) {
+void CgbOscOff(u8 channel) {
   switch (channel) {
   case 1:
     REG_NR12 = 8;
@@ -428,7 +428,7 @@ void CgbChannel_Mute(u8 channel) {
   }
 }
 
-void CgbNote_UpdatePanEnvelope(struct CgbNote *note) {
+void CgbModVol(struct CgbNote *note) {
   u32 right = note->outRight;
   u32 left = note->outLeft;
 
@@ -453,7 +453,7 @@ scale:
   note->panBits &= note->channelBits;
 }
 
-void Cgb_UpdateChannels(void) {
+void CgbSound(void) {
   s32 channel;
   s32 prevC15;
   struct SoundWork *work = SOUND_WORK;
@@ -513,7 +513,7 @@ void Cgb_UpdateChannels(void) {
       if (!(note->state & CGB_NOTE_STOP)) {
         note->state = CGB_PHASE_ATTACK;
         note->modified = CGB_NOTE_VOLUME_DIRTY | CGB_NOTE_PITCH_DIRTY;
-        CgbNote_UpdatePanEnvelope(note);
+        CgbModVol(note);
         switch (channel) {
         case 1:
           *reg0 = note->sweep;
@@ -560,7 +560,7 @@ void Cgb_UpdateChannels(void) {
       if ((s8)(note->echoLength & byteMask) > 0)
         goto write;
     off:
-      CgbChannel_Mute(channel);
+      CgbOscOff(channel);
       note->state = 0;
       goto done;
     } else if ((note->state & CGB_NOTE_STOP) &&
@@ -579,7 +579,7 @@ void Cgb_UpdateChannels(void) {
       if (note->counter == 0) {
         if (channel == 3)
           note->modified |= CGB_NOTE_VOLUME_DIRTY;
-        CgbNote_UpdatePanEnvelope(note);
+        CgbModVol(note);
         if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_RELEASE) {
           note->level--;
           if ((s8)(note->level & byteMask) <= 0) {
@@ -680,7 +680,7 @@ void Cgb_UpdateChannels(void) {
   }
 }
 
-void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
+void m4aMPlayTempoControl(struct SoundPlayer *player,
                                             u16 scale) {
   if (player->lock == SOUND_LOCK) {
     player->lock++;
@@ -690,7 +690,7 @@ void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
   }
 }
 
-void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume) {
+void m4aMPlayVolumeControl(struct SoundPlayer *player, u16 mask, u16 volume) {
   s32 i;
   struct SoundTrack *track;
   u32 bit;
@@ -715,7 +715,7 @@ void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume) {
   player->lock = SOUND_LOCK;
 }
 
-void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch) {
+void m4aMPlayPitchControl(struct SoundPlayer *player, u16 mask, s16 pitch) {
   s32 i;
   struct SoundTrack *track;
   u32 bit;
@@ -741,7 +741,7 @@ void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch) {
   player->lock = SOUND_LOCK;
 }
 
-void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan) {
+void m4aMPlayPanpotControl(struct SoundPlayer *player, u16 mask, s8 pan) {
   s32 i;
   struct SoundTrack *track;
   u32 bit;
@@ -766,7 +766,7 @@ void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan) {
   player->lock = SOUND_LOCK;
 }
 
-void MusicTrack_ClearModulation(struct SoundTrack *track) {
+void ClearModM(struct SoundTrack *track) {
   track->lfoPhase = 0;
   track->modAmount = 0;
   if (track->modTarget == 0)
@@ -775,7 +775,7 @@ void MusicTrack_ClearModulation(struct SoundTrack *track) {
     track->flags |= SOUND_TRACK_UPDATE_VOLUME;
 }
 
-void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 maskArg,
+void m4aMPlayModDepthSet(struct SoundPlayer *player, s32 maskArg,
                                     s32 valueArg) {
   u16 mask = maskArg;
   u8 value = valueArg;
@@ -795,7 +795,7 @@ void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 maskArg,
       if (track->flags & SOUND_TRACK_ACTIVE) {
         track->modDepth = value;
         if (!track->modDepth)
-          MusicTrack_ClearModulation(track);
+          ClearModM(track);
       }
     }
     count--;
@@ -805,7 +805,7 @@ void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 maskArg,
   player->lock = SOUND_LOCK;
 }
 
-void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selected,
+void m4aMPlayLFOSpeedSet(struct SoundPlayer *player, u32 selected,
                              u32 value) {
   u16 mask = selected;
   u8 speed = value;
@@ -825,7 +825,7 @@ void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selected,
       if (track->flags & SOUND_TRACK_ACTIVE) {
         track->lfoSpeed = speed;
         if (!track->lfoSpeed)
-          MusicTrack_ClearModulation(track);
+          ClearModM(track);
       }
     }
     count--;

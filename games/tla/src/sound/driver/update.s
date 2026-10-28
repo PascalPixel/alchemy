@@ -76,7 +76,7 @@ AlchemyUncreditedEnd_081c1922:
 	ldr	r0, [r0, #0]
 	mov	r8, r0
 	adds	r0, r7, #0
-	bl	MusicPlayer_StepFade
+	bl	FadeOutBody
 	ldr	r0, [r7, #4]
 	cmp	r0, #0
 	bge.n	.L_081c1974
@@ -121,7 +121,7 @@ AlchemyUncreditedEnd_081c1922:
 	b.n	.L_081c19bc
 .L_081c19b6:
 	adds	r0, r4, #0
-	bl	AudioCommand_InvokeSlot34
+	bl	ClearChain
 .L_081c19bc:
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
@@ -132,7 +132,7 @@ AlchemyUncreditedEnd_081c1922:
 	tst	r0, r3
 	beq.n	.L_081c1a40
 	adds	r0, r5, #0
-	bl	AudioCommand_InvokeSlot35
+	bl	Clear64byte
 	movs	r0, #128
 	strb	r0, [r5, #0]
 	movs	r0, #2
@@ -287,7 +287,7 @@ AlchemyUncreditedEnd_081c1922:
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	MusicTrack_CalculateOutput
+	bl	TrkVolPitSet
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L_081c1b60
@@ -297,7 +297,7 @@ AlchemyUncreditedEnd_081c1922:
 	tst	r0, r1
 	bne.n	.L_081c1afe
 	adds	r0, r4, #0
-	bl	AudioCommand_InvokeSlot34
+	bl	ClearChain
 	b.n	.L_081c1b5a
 .L_081c1afe:
 	ldrb	r0, [r4, #1]
@@ -344,7 +344,7 @@ AlchemyUncreditedEnd_081c1922:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	ldr	r0, [r4, #36]
-	bl	Pcm_KeyToFrequency
+	bl	MidiKeyToFreq
 	str	r0, [r4, #32]
 .L_081c1b5a:
 	ldr	r4, [r4, #52]

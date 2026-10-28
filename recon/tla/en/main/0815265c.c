@@ -507,9 +507,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       Func_0815f0a0((s32)&ResourceId_BlastSheet);
     if (frame == 4) {
       if (mode == 9 || mode == 17)
-        Audio_PlayCue(92);
+        Sound_PlayFar(92);
       else
-        Audio_PlayCue(136);
+        Sound_PlayFar(136);
     }
     if (mode == 8) {
     } else if (mode == 6) {

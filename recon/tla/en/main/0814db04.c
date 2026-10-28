@@ -104,7 +104,7 @@ void BattleEffect_SelectLivingTargets(
 void BattleEffect_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
 void BattleBackground_LoadFar(s32, s32, s32);
 void BattleEffect_BuildWindowEdgeTable(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Animation_ApplyChildArgumentFar(void *, s32);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
@@ -193,7 +193,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     pts[i][1] = Data_08198260[i][1];
   }
 
-  Audio_PlayCue(141);
+  Sound_PlayFar(141);
 
   // The first half: rocks, the great ice block and its spray.
   for (frame = 0; frame != 288; frame++) {
@@ -300,15 +300,15 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 32)
-      Audio_PlayCue(134);
+      Sound_PlayFar(134);
     if (frame == 64)
-      Audio_PlayCue(134);
+      Sound_PlayFar(134);
     if (frame == 104)
-      Audio_PlayCue(134);
+      Sound_PlayFar(134);
     if (frame == 176)
-      Audio_PlayCue(134);
+      Sound_PlayFar(134);
     if (frame == 226)
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     Render_ResetTransformState();
 
     // Each time rocks crumble, 32 pieces of debris fly up.
@@ -421,7 +421,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   Func_0814cca8();
   REG_BLDALPHA = 0x1010;
-  Audio_PlayCue(390);
+  Sound_PlayFar(390);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;
@@ -450,9 +450,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         count = 16;
     }
     if (frame >= 9 && frame < 72 && (frame & 3) == 0)
-      Audio_PlayCue(132);
+      Sound_PlayFar(132);
     if (frame == 72)
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     // A block (40x80) falls in from the upper right.
     if (frame > 64)
       draw(canvas, work->sheet + 0x14f9, (64 - frame) * 7 + 88,

@@ -27,7 +27,7 @@ s32 Func_080de154(struct ObjectRuntime *src) {
   struct ObjectRuntime *frag;
   s32 i;
 
-  Audio_PlayCue(134);
+  Sound_PlayFar(134);
   pos.x = src->x;
   pos.y = src->y;
   pos.z = src->z;

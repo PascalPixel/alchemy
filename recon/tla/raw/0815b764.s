@@ -999,7 +999,7 @@ BattleEffect_RunUlysses:
 	cmp r7, #76
 	bne .L_0815bf14
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815bf14:
 	ldr r0, [sp, #88]
 	movs r1, #133
@@ -1007,7 +1007,7 @@ BattleEffect_RunUlysses:
 	cmp r0, r1
 	bne .L_0815bf24
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815bf24:
 	ldr r3, [sp, #88]
 	subs r3, #133
@@ -1072,19 +1072,19 @@ BattleEffect_RunUlysses:
 	cmp r3, #0
 	bne .L_0815bfa6
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815bfa6:
 	ldr r5, [r6, #24]
 	cmp r5, #60
 	bne .L_0815bfb4
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r5, [r6, #24]
 .L_0815bfb4:
 	cmp r5, #64
 	bne .L_0815bfc0
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r5, [r6, #24]
 .L_0815bfc0:
 	cmp r5, #35
@@ -2065,7 +2065,7 @@ BattleEffect_RunUlysses:
 	str r7, [r2, #16]
 	lsls r0, r0, #1
 	ldr r6, [r6, #36]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #238
 	lsls r3, r3, #7
 	adds r3, #160

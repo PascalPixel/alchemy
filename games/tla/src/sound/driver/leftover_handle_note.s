@@ -204,7 +204,7 @@ MusicTrack_HandleNoteLeftover:
 .L_081c02fe:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	MusicPlayer_StepVolumeAndPitchTowardTargets + 0x40
+	bl	Sound_UpdateBgmRamps + 0x40
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]

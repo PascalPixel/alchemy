@@ -115,7 +115,7 @@ BattleEffect_RunMoloch:
 	cmp r1, #15
 	ble .L_08191e56
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #232
 	mov r9, r2
 .L_08191e56:
@@ -858,31 +858,31 @@ BattleEffect_RunMoloch:
 	cmp r1, #32
 	bne .L_08192404
 	movs r0, #246
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08192404:
 	mov r2, r9
 	cmp r2, #90
 	bne .L_08192410
 	movs r0, #225
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08192410:
 	mov r3, r9
 	cmp r3, #140
 	bne .L_0819241c
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0819241c:
 	mov r4, r9
 	cmp r4, #200
 	bne .L_08192428
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08192428:
 	mov r0, r9
 	cmp r0, #232
 	bne .L_08192434
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08192434:
 	movs r1, #136
 	lsls r1, r1, #1

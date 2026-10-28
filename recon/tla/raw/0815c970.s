@@ -207,7 +207,7 @@ Func_0815c970:
 	b .L_0815cb1c
 .L_0815cb02:
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r8
 	movs r3, #36
 	ldrsh r0, [r2, r3]

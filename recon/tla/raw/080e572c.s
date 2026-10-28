@@ -278,7 +278,7 @@ Func_080e572c:
 	adds r2, #193
 	strb r3, [r2]
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #168

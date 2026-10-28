@@ -680,7 +680,7 @@ SceneSequence_Run:
 	bl Object_SetMode
 .L_080cbeac:
 	movs r0, #59
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	ldr r0, .L_080cbeec
 	bl UiText_ShowPositionedMessageAndWaitFar
@@ -1145,7 +1145,7 @@ SceneSequence_Run:
 	bl UiTimedNotice_CloseIfActiveFar
 	bl EventRuntime_PrepareCurrentObject
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Func_080cb82c
 	movs r0, #131
 	lsls r0, r0, #1
@@ -1295,7 +1295,7 @@ SceneSequence_Run:
 	cmp r3, #0
 	beq .L_080cc47e
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl EventRuntime_PrepareCurrentObject
 	bl Func_080cb82c
 	movs r0, #131

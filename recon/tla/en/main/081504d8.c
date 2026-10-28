@@ -216,7 +216,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
                     40, 40);
         }
         if (time == 24)
-          Audio_PlayCue(143);
+          Sound_PlayFar(143);
 
         // The shards fly for 36 frames, a shade darker every four.
         if (time >= 24 && time <= 60) {

@@ -80,7 +80,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -231,7 +231,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 4 + 64) {
-          Audio_PlayCue(126);
+          Sound_PlayFar(126);
           Func_0814cd48(effect->actors[i], 7, -1, i, 24);
         }
       }

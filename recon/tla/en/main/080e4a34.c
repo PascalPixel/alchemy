@@ -67,7 +67,7 @@ void Animation_SetIndexAndInitializeObjectsFar(struct ObjectRuntime *object,
                                                s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 struct ObjectRuntime *Object_GetById(u32 actor);
 void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
@@ -129,7 +129,7 @@ void Func_080e4a34(void) {
     if (frame > 0)
       owner->y += 0x3999;
     if (frame & 31)
-      Audio_PlayCue(566);
+      Sound_PlayFar(566);
     owner->angle += 0x2000;
     WaitFrames(1);
   }
@@ -155,7 +155,7 @@ void Func_080e4a34(void) {
     if (frame == 16)
       Animation_ApplyChildValueToFirstFar(owner->animation, 15);
     if (frame == 45)
-      Audio_PlayCue(136);
+      Sound_PlayFar(136);
     if (frame == 60) {
       Animation_SetIndexAndInitializeObjectsFar(owner, 251);
       animation = owner->animation;

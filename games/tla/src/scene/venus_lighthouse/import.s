@@ -245,4 +245,4 @@ Func_02001cd4:
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

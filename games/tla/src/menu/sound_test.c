@@ -16,7 +16,7 @@ void Func_080409dc(void);
 struct RenderInput *Func_080409f0(void);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 Sound_LoadPresetParameters(s32 preset);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 void RenderOutput_RedrawSavedRect(struct RenderInput *window);
@@ -71,11 +71,11 @@ s32 Func_08040a48(void) {
       if (cursor == 3)
         Sound_LoadPresetParameters(test.values[3]);
       else
-        Audio_PlayCue(test.values[cursor]);
+        Sound_PlayFar(test.values[cursor]);
     }
     if (gInput.pressed & 8) {
-      Audio_PlayCue(390);
-      Audio_PlayCue(0);
+      Sound_PlayFar(390);
+      Sound_PlayFar(0);
     }
     if (gInput.repeat & 0x100) {
       test.values[cursor] += 10;

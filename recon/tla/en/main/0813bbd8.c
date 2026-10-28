@@ -67,7 +67,7 @@ void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -205,7 +205,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
           shard->y += 64;
         } else {
           if ((i & 3) == 0)
-            Audio_PlayCue(115);
+            Sound_PlayFar(115);
           work->shakeFrames = 2;
           shard->variant = 0;
           for (k = 0; k != effect->count; k++)

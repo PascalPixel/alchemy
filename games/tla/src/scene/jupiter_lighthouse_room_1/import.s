@@ -53,7 +53,7 @@ Resource_FindFreeEntry:
 	.global Func_02001a64
 	.thumb_func
 Func_02001a64:
-	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global GameFlag_Test
 	.thumb_func
 GameFlag_Test:
@@ -237,4 +237,4 @@ Func_02001bcc:
 	.global Func_02001bd4
 	.thumb_func
 Func_02001bd4:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

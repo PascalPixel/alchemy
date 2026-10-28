@@ -86,7 +86,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -225,7 +225,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         work->particles[i].variant = -1;
       }
       if (mode == 1) {
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
       }
     }
     Render_ResetTransformState();
@@ -258,7 +258,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         work->particles[63].y = work->particles[63].y * 56 / 64;
         work->particles[63].z = work->particles[63].z * 56 / 64;
         if (frame == 31) {
-          Audio_PlayCue(138);
+          Sound_PlayFar(138);
         }
       } else if (frame <= 45) {
         // ...drive in...
@@ -279,7 +279,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
           Func_081180e8(134);
           work->shakeFrames = 8;
         } else {
-          Audio_PlayCue(138);
+          Sound_PlayFar(138);
           work->shakeFrames = 2;
         }
         Func_0814cd48(effect->actors[0], 7, 5, 0, 6);

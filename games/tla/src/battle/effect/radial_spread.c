@@ -16,7 +16,7 @@ u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
 void Camera_WorldToScreen(struct EffectVector *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_ClearOwnedSlot(struct EffectSlot *slot);
 
 /// Places a spark at random around the current owner and sends it 120 pixels
@@ -70,7 +70,7 @@ void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect) {
     effect->state++;
 
     if ((gVBlankCount & 1) != 0)
-      Audio_PlayCue(0x90);
+      Sound_PlayFar(0x90);
   } else if (state == 1) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;

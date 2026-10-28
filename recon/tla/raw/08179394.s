@@ -173,7 +173,7 @@ BattleEffect_RunRagingHeat:
 	cmp r8, r2
 	bne .L_081794e2
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081794f4:
 	ldr r3, [sp, #56]
 	subs r3, #40
@@ -186,7 +186,7 @@ BattleEffect_RunRagingHeat:
 	cmp r1, #56
 	bne .L_0817950e
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817950e:
 	ldr r2, [sp, #56]
 	cmp r2, #55

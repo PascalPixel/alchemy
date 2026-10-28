@@ -208,7 +208,7 @@ Func_0810abf0:
 	cmp r0, #0
 	bne .L_0810ad98
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0810acac
 .L_0810ad98:
 	mov r0, r11
@@ -237,7 +237,7 @@ Func_0810abf0:
 	cmp r5, r3
 	bls .L_0810ade6
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r6, #1
 	bl Func_0810a9fc
 	movs r3, #1
@@ -284,7 +284,7 @@ Func_0810abf0:
 	cmp r3, #0
 	beq .L_0810ae4c
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0810ae6a
 .L_0810ae4c:
 	movs r1, #160

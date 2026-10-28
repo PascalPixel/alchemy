@@ -59,7 +59,7 @@ void FieldEffect_RunPly(void) {
   }
 
   marker = last->vramBlock;
-  Audio_PlayCue(130);
+  Sound_PlayFar(130);
   WaitFrames(110);
 
   target = Object_Spawn(296, 0, 0, 0);
@@ -72,7 +72,7 @@ void FieldEffect_RunPly(void) {
     Animation_ApplyChildValuesFar(target, 7);
   }
 
-  Audio_PlayCue(131);
+  Sound_PlayFar(131);
   WaitFrames(12);
   if (target != 0) {
     for (i = 0; i < 30; i++) {
@@ -89,7 +89,7 @@ void FieldEffect_RunPly(void) {
   }
 
   Animation_ApplyChildValuesFar(object, 0);
-  Audio_PlayCue(84);
+  Sound_PlayFar(84);
   if (object != 0) {
     target->update = (void (*)(void))Func_080de8d0;
     target->action = 0;

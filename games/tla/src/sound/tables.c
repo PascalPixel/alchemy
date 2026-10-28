@@ -11,92 +11,82 @@ typedef void (*SoundFunc)(void);
 typedef void (*SoundCommand)(struct SoundPlayer *player,
                              struct SoundTrack *track);
 
-void MusicTrack_FinishSequence(void);
-void MusicTrack_Goto(void);
-void MusicTrack_CallPattern(void);
-void MusicTrack_ReturnFromPattern(void);
-void MusicTrack_Repeat(void);
-void MusicTrack_SetPriorityFromCommand(void);
-void MusicPlayer_SetTempoFromCommand(void);
-void MusicTrack_SetKeyOffsetFromCommand(void);
-void MusicTrack_SetVoiceFromCommand(void);
-void MusicTrack_SetVolumeFromCommand(void);
-void MusicTrack_SetPanFromCommand(void);
-void MusicTrack_SetBendFromCommand(void);
-void MusicTrack_SetBendRangeFromCommand(void);
-void MusicTrack_SetLfoSpeedFromCommand(void);
-void MusicTrack_SetLfoDelayFromCommand(void);
-void MusicTrack_SetModulationFromCommand(void);
-void MusicTrack_SetModulationTargetFromCommand(void);
-void MusicTrack_SetTuneFromCommand(void);
-void MusicTrack_WriteSoundRegisterFromCommand(void);
-void MusicTrack_ReleaseKey(void);
-void AudioEngine_SetPcmRate(void);
-void MusicTrack_Stop(void);
-void MusicPlayer_StepFade(void);
-void MusicTrack_CalculateOutput(void);
+void ply_fine(void);
+void ply_goto(void);
+void ply_patt(void);
+void ply_pend(void);
+void ply_rept(void);
+void ply_prio(void);
+void ply_tempo(void);
+void ply_keysh(void);
+void ply_voice(void);
+void ply_vol(void);
+void ply_pan(void);
+void ply_bend(void);
+void ply_bendr(void);
+void ply_lfos(void);
+void ply_lfodl(void);
+void ply_mod(void);
+void ply_modt(void);
+void ply_tune(void);
+void ply_port(void);
+void ply_endtie(void);
+void SampleFreqSet(void);
+void TrackStop(void);
+void FadeOutBody(void);
+void TrkVolPitSet(void);
 void SoundNote_Detach(void);
 void SoundDriver_ClearBuffer(void);
 
-void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player,
-                                struct SoundTrack *track);
-void MusicTrack_SetVoiceKind(struct SoundPlayer *player,
-                             struct SoundTrack *track);
-void MusicTrack_SetVoiceAttack(struct SoundPlayer *player,
-                               struct SoundTrack *track);
-void MusicTrack_SetVoiceDecay(struct SoundPlayer *player,
-                              struct SoundTrack *track);
-void MusicTrack_SetVoiceSustain(struct SoundPlayer *player,
-                                struct SoundTrack *track);
-void MusicTrack_SetVoiceRelease(struct SoundPlayer *player,
-                                struct SoundTrack *track);
-void MusicTrack_SetTailLevel(struct SoundPlayer *player,
-                             struct SoundTrack *track);
-void MusicTrack_SetTailLength(struct SoundPlayer *player,
-                              struct SoundTrack *track);
-void MusicTrack_SetVoiceLength(struct SoundPlayer *player,
-                               struct SoundTrack *track);
-void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player,
-                                   struct SoundTrack *track);
+void ply_xwave(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xtype(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xatta(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xdeca(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xsust(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xrele(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xiecv(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xiecl(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xleng(struct SoundPlayer *player, struct SoundTrack *track);
+void ply_xswee(struct SoundPlayer *player, struct SoundTrack *track);
 void Runtime_CallWorkEntryWithArgs();
 
 /// Sequence commands copied for each player, and driver entry points.
 // clang-format off
 const SoundFunc gSound_CommandTableTemplate[] = {
-    MusicTrack_FinishSequence,
-    MusicTrack_Goto,
-    MusicTrack_CallPattern,
-    MusicTrack_ReturnFromPattern,
-    MusicTrack_Repeat,
-    MusicTrack_FinishSequence,
-    MusicTrack_FinishSequence,
-    MusicTrack_FinishSequence,
-    MusicTrack_FinishSequence,
-    MusicTrack_SetPriorityFromCommand,
-    MusicPlayer_SetTempoFromCommand,
-    MusicTrack_SetKeyOffsetFromCommand,
-    MusicTrack_SetVoiceFromCommand,
-    MusicTrack_SetVolumeFromCommand,
-    MusicTrack_SetPanFromCommand,
-    MusicTrack_SetBendFromCommand,
-    MusicTrack_SetBendRangeFromCommand,
-    MusicTrack_SetLfoSpeedFromCommand,
-    MusicTrack_SetLfoDelayFromCommand,
-    MusicTrack_SetModulationFromCommand,
-    MusicTrack_SetModulationTargetFromCommand,
-    MusicTrack_FinishSequence,
-    MusicTrack_FinishSequence,
-    MusicTrack_SetTuneFromCommand,
-    MusicTrack_FinishSequence,
-    MusicTrack_FinishSequence,
-    MusicTrack_FinishSequence,
-    MusicTrack_WriteSoundRegisterFromCommand,
-    MusicTrack_FinishSequence,
-    MusicTrack_ReleaseKey,
-    AudioEngine_SetPcmRate,
-    MusicTrack_Stop,
-    MusicPlayer_StepFade,
-    MusicTrack_CalculateOutput,
+    ply_fine,
+    ply_goto,
+    ply_patt,
+    ply_pend,
+    ply_rept,
+    ply_fine,
+    ply_fine,
+    ply_fine,
+    ply_fine,
+    ply_prio,
+    ply_tempo,
+    ply_keysh,
+    ply_voice,
+    ply_vol,
+    ply_pan,
+    ply_bend,
+    ply_bendr,
+    ply_lfos,
+    ply_lfodl,
+    ply_mod,
+    ply_modt,
+    ply_fine,
+    ply_fine,
+    ply_tune,
+    ply_fine,
+    ply_fine,
+    ply_fine,
+    ply_port,
+    ply_fine,
+    ply_endtie,
+    SampleFreqSet,
+    TrackStop,
+    FadeOutBody,
+    TrkVolPitSet,
     SoundNote_Detach,
     SoundDriver_ClearBuffer
 };
@@ -177,16 +167,16 @@ const u8 gSound_ClockLengths[] = {
 /// Extended commands; entries zero and three do nothing.
 const SoundCommand gSound_ExtendedCommandTable[] = {
     (SoundCommand)Runtime_CallWorkEntryWithArgs,
-    MusicTrack_ReadVoiceTarget,
-    MusicTrack_SetVoiceKind,
+    ply_xwave,
+    ply_xtype,
     (SoundCommand)Runtime_CallWorkEntryWithArgs,
-    MusicTrack_SetVoiceAttack,
-    MusicTrack_SetVoiceDecay,
-    MusicTrack_SetVoiceSustain,
-    MusicTrack_SetVoiceRelease,
-    MusicTrack_SetTailLevel,
-    MusicTrack_SetTailLength,
-    MusicTrack_SetVoiceLength,
-    MusicTrack_SetVoicePanOrSweep
+    ply_xatta,
+    ply_xdeca,
+    ply_xsust,
+    ply_xrele,
+    ply_xiecv,
+    ply_xiecl,
+    ply_xleng,
+    ply_xswee
 };
 // clang-format on

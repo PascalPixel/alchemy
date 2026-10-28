@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Audio_UmulHigh32
+	.global umul3232H32
 	.thumb_func
-Audio_UmulHigh32:
+umul3232H32:
 	add	r2, pc, #0
 	bx	r2
 	.arm

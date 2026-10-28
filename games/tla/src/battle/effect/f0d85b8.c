@@ -38,7 +38,7 @@ struct ObjectRuntime *Object_GetById(u32 actor);
 void BattleEffect_ClearOwnedSlot(struct EffectSlot *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh();
 void Camera_WorldToScreen();
 void BattleEffect_InitializeSlots(void);
@@ -71,7 +71,7 @@ struct SpreadPosition {
   s32 z;
 };
 
-void Audio_PlayCue(s32);
+void Sound_PlayFar(s32);
 
 extern const s32 gBattleEffect_SharedParticleScript[];
 
@@ -181,7 +181,7 @@ void Func_080d85b8(struct EffectSlot *effect) {
       effect->maxSpeed = Random16() + 0x23333;
       effect->scaleX = 0x8000;
       effect->scaleY = 0x8000;
-      Audio_PlayCue(143);
+      Sound_PlayFar(143);
 
       if (*statePointer == 1)
         (*statePointer)--;

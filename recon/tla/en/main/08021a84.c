@@ -66,7 +66,7 @@ extern const u8 gData_0802eae4[16];
 extern const u8 gData_0802eb04[64];
 extern const u8 gData_0802eb44[8];
 void Animation_SetWorkEntry(struct AnimationEntry *entry, s32 animation);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 
 s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
@@ -123,7 +123,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
         layer->pos = arg;
         break;
       case 252:
-        Audio_PlayCue(arg);
+        Sound_PlayFar(arg);
         break;
       case 241:
         layer->pos -= 2;

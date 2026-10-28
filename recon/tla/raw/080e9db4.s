@@ -43,7 +43,7 @@ Func_080e9db4:
 	bgt .L_080e9df2
 .L_080e9e06:
 	movs r0, #132
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	bl WaitFrames
 	ldr r2, [r5, #12]

@@ -83,7 +83,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
@@ -231,20 +231,20 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = 0;
   IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
   FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
-  Audio_PlayCue(212);
+  Sound_PlayFar(212);
   Func_0814cd48(effect->actors[0], 7, 3, 0, 30);
 
   for (frame = 0; frame != 128; frame++) {
     if (frame == 2)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 3)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 28)
       Func_0814cd48(effect->actors[0], -1, 3, -1, 0);
     if (frame == 32)
-      Audio_PlayCue(149);
+      Sound_PlayFar(149);
     if (frame == 5)
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     if (frame == 5) {
       gBgScroll[1].x = work->savedBg1X;
       BattleBackground_LoadFar(1, BACKGROUND(battle), -1);

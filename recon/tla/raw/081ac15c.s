@@ -507,7 +507,7 @@ LuckyDice_Run:
 	adds r0, #255
 	str r1, [sp, #16]
 	str r2, [sp, #12]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #12]
 	ldr r1, [sp, #16]
 .L_081ac586:
@@ -693,7 +693,7 @@ LuckyDice_Run:
 	cmp r3, #0
 	beq .L_081ac70a
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #80]
 	cmp r4, #0
 	ble .L_081ac702
@@ -915,7 +915,7 @@ LuckyDice_Run:
 	cmp r5, #0
 	beq .L_081ac8b6
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #128
 	ldr r0, [sp, #108]
 	lsls r1, r1, #3
@@ -934,7 +934,7 @@ LuckyDice_Run:
 	beq .L_081ac980
 	movs r0, #151
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #128
 	ldr r2, [sp, #108]
 	lsls r4, r4, #3
@@ -1978,7 +1978,7 @@ LuckyDice_Run:
 	str r3, [sp, #0]
 	bl UiText_DrawNumberInWindowFar
 	movs r0, #93
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081ad1ce
 	.2byte 0x0000
 .L_081ad0bc:
@@ -2085,7 +2085,7 @@ LuckyDice_Run:
 	movs r7, #2
 	movs r0, #91
 	str r7, [sp, #84]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081ad18a:
 	mov r0, r8
 	cmp r0, #3
@@ -2117,7 +2117,7 @@ LuckyDice_Run:
 	movs r7, #1
 	movs r0, #92
 	str r7, [sp, #84]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081ad1ce:
 	ldr r0, [sp, #68]
 	cmp r0, #128

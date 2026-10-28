@@ -252,7 +252,7 @@ Func_0815e9f4:
 	lsls r1, r1, #3
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815ec16:
 	mov r3, r11
 	ldr r0, [r3, #8]

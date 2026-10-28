@@ -111,7 +111,7 @@ extern u8 Data_0812996c[];
 struct BattleUnit *Unit_Get(s32 unitId);
 s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 void BattleEvent_GrantDjinnBonus(struct PlaybackEvents *events, u32 value);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_080381d0(s32 message);
 s32 UiWork_IsCompleteFar(void);
 void Object_SetMode(struct MotionObject *object, s32 mode);
@@ -124,7 +124,7 @@ s32 BattleMotion_GetSlotPalette(s32 id);
 void BattlePres_SetActorModeAndAction(s32 id);
 s32 VramCache_Reload(s32 slot, s32 source);
 s32 Trig_Sin(s32 angle);
-void Runtime_PushSlotEntry(void *entry, s32 priority);
+void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 s32 BattleClass_GetDefeatSoundKind(s32 classId);
 void Map_RenderAnimatedTilePictureFar(void *record, s32 step);
 
@@ -171,7 +171,7 @@ void BattleEvent_Playback(void) {
           }
           switch (events->queue.opcodes[eventIndex]) {
           case BATTLE_EVENT_SOUND:
-            Audio_PlayCue(events->queue.operands[eventIndex]);
+            Sound_PlayFar(events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_DJINN_BONUS:
             BattleEvent_GrantDjinnBonus(events,
@@ -213,7 +213,7 @@ void BattleEvent_Playback(void) {
             break;
           case BATTLE_EVENT_HIT:
             if (events->pendingCue > 0)
-              Audio_PlayCue(events->pendingCue);
+              Sound_PlayFar(events->pendingCue);
             events->actorId = events->queue.operands[eventIndex];
             Object_SetMode(BattleObject_Get(events->actorId)->object, 5);
             events->phase = 10;
@@ -305,11 +305,11 @@ void BattleEvent_Playback(void) {
                   (offset->y >> 8) + 6;
       if ((KEYS_HELD & 2) || (gInput.pendingPressed & 0x303) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
         events->timer = 0;
       } else {
-        Runtime_PushSlotEntry(prompt, 240);
+        Oam_AddSpriteAtDepth(prompt, 240);
         return;
       }
     } else if (events->phase == 10) {
@@ -348,7 +348,7 @@ void BattleEvent_Playback(void) {
             kind--;
             if (kind < 0)
               kind = 0;
-            Audio_PlayCue(146 + kind);
+            Sound_PlayFar(146 + kind);
           }
           events->timer = 0x400;
         }
@@ -359,7 +359,7 @@ void BattleEvent_Playback(void) {
               Unit_Get(events->actorId)->enemyId);
 
           if (kind >= 0)
-            Audio_PlayCue(146 + kind);
+            Sound_PlayFar(146 + kind);
         }
         if (events->timer >= 0x400)
           colorMode = (events->timer - 0x400) / 8 % 5 + 1;

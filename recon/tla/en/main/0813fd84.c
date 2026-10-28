@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -228,7 +228,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   actor = *GetBattleObjectSlotFar(effect->actor);
   actor[18] = phase;
   Graphics_LoadGreyRamp();
-  Audio_PlayCue(140);
+  Sound_PlayFar(140);
   for (frame = 0; frame != 36; frame++) {
     s32 size;
 
@@ -300,33 +300,33 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       frame = 169;
     }
     if (frame == 4) {
-      Audio_PlayCue(220);
+      Sound_PlayFar(220);
     }
     if (frame == 40) {
-      Audio_PlayCue(154);
+      Sound_PlayFar(154);
     }
     if (frame == 64) {
-      Audio_PlayCue(139);
+      Sound_PlayFar(139);
     }
     if (frame == 74) {
-      Audio_PlayCue(139);
+      Sound_PlayFar(139);
     }
     if (frame == 84) {
-      Audio_PlayCue(139);
+      Sound_PlayFar(139);
     }
     if (frame == 94) {
-      Audio_PlayCue(139);
+      Sound_PlayFar(139);
     }
     if (frame == 124) {
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
     }
     for (i = 0; i != 6; i++) {
       if (frame == 140 + i * 4) {
-        Audio_PlayCue(104);
+        Sound_PlayFar(104);
       }
     }
     if (frame == 169) {
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       work->shakeFrames = 16;
     }
     if (frame == 0) {
@@ -717,9 +717,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
 
       if (d == 0) {
         if (i == 5) {
-          Audio_PlayCue(145);
+          Sound_PlayFar(145);
         } else {
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
         }
         work->shakeFrames = 8;
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -886,7 +886,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
                            24);
   WaitFrames(1);
   gCameraSceneParameters[4] = 120;
-  Audio_PlayCue(390);
+  Sound_PlayFar(390);
   for (i = 0; i != 18; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
@@ -938,14 +938,14 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         Func_08164b2c(0, 0, 0);
       }
       if (frame == 32) {
-        Audio_PlayCue(140);
+        Sound_PlayFar(140);
       }
       if (frame == 48) {
         work->shakeFrames = 90;
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
       }
       if (frame == 72) {
-        Audio_PlayCue(208);
+        Sound_PlayFar(208);
       }
       if (frame <= 109) {
         if (frame > 31) {

@@ -203,7 +203,7 @@ Func_080e68d0:
 	bl Func_080dba5c
 .L_080e6a58:
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r10
 	ldr r2, [r0, #8]
 	movs r3, #128
@@ -240,7 +240,7 @@ Func_080e68d0:
 	movs r1, #2
 	bl Object_SetMode
 	movs r0, #132
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #0
 	str r4, [sp, #8]
 	mov r7, r10
@@ -349,7 +349,7 @@ Func_080e68d0:
 	cmp r4, #0
 	bge .L_080e6b70
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	bl WaitFrames
 	b .L_080e70ce
@@ -973,7 +973,7 @@ Func_080e68d0:
 	ldr r0, .L_080e70f4
 	bl Scheduler_RemoveCallback
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r11
 	mov r4, r11
 	ldr r1, [r2, #8]

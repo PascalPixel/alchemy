@@ -348,7 +348,7 @@ BattleEffect_RunShiningStar:
 	adds r2, r1, r3
 	movs r3, #4
 	str r3, [r2]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r5, [sp, #52]
 	movs r4, #0
 	ldr r3, [r5, #20]

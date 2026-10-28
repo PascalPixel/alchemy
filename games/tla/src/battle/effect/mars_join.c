@@ -27,7 +27,7 @@ struct DjinniObject {
 void *Object_GetById(s32 id);
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void WaitFrames(s32 frames);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
@@ -71,14 +71,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   WaitFrames(30);
   ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
   WaitFrames(20);
-  Audio_PlayCue(173);
+  Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Audio_PlayCue(174);
+  Sound_PlayFar(174);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Audio_PlayCue(175);
+  Sound_PlayFar(175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
-  Audio_PlayCue(140);
+  Sound_PlayFar(140);
   djinni->update = BattleEffect_SpinUpAngle;
   djinni->timer = 0;
   WaitFrames(80);

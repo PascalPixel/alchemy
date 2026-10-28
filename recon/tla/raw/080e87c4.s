@@ -50,7 +50,7 @@ Func_080e87c4:
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #167
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, .L_080e897c
 	movs r1, #160
 	lsls r1, r1, #3

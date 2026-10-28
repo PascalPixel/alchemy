@@ -30,7 +30,7 @@ struct BattleEffectWatchedObject {
 
 struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetMode(struct BattleEffectWatchedObject *object, s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void EventRuntime_Wait(s32 state);
 void BattleEffect_CopyWatchedObjectPosition(void);
 extern const u8 gData_080f3310[];
@@ -44,7 +44,7 @@ struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
   struct BattleEffectWatchedObject *object;
 
   if ((flags & 0xff) == 6) {
-    Audio_PlayCue(110);
+    Sound_PlayFar(110);
   }
 
   resource = ObjectTable_Get(resourceId);

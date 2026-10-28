@@ -358,7 +358,7 @@ Func_080400e8:
 	cmp r2, #0
 	beq .L_0804040c
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #126
@@ -408,7 +408,7 @@ Func_080400e8:
 	cmp r2, #0
 	beq .L_08040440
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	negs r1, r1
 	movs r2, #1
@@ -422,7 +422,7 @@ Func_080400e8:
 	cmp r2, #0
 	beq .L_08040458
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	add r9, r3
 	mov r11, r3
@@ -434,7 +434,7 @@ Func_080400e8:
 	cmp r3, #0
 	beq .L_0804047a
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #148
@@ -453,7 +453,7 @@ Func_080400e8:
 	b .L_0804014e
 .L_08040486:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #148
@@ -536,12 +536,12 @@ Func_080400e8:
 	movs r6, #1
 	movs r0, #113
 	negs r6, r6
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080404a0
 .L_08040536:
 	movs r0, #112
 	movs r6, #0
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080404a0
 .L_08040540:
 	.4byte gOptionMenu_SpeedIcons

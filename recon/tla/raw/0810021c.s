@@ -205,7 +205,7 @@ Func_0810021c:
 	cmp r3, #0
 	beq .L_081003d2
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #1
 	str r4, [sp, #16]
 	b .L_0810048c
@@ -216,7 +216,7 @@ Func_0810021c:
 	cmp r3, #0
 	beq .L_081003ea
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	negs r1, r1
 	str r1, [sp, #16]
@@ -236,7 +236,7 @@ Func_0810021c:
 	beq .L_0810047e
 .L_08100402:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #28
 	ldrsb r0, [r7, r0]
 	movs r2, #129

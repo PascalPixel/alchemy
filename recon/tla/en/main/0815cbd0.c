@@ -74,7 +74,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 extern char ResourceId_SpiderWebSheet;
 
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // The middle between the first and the last target.
 void Func_0815e22c(struct EffectPosition *middle);
@@ -131,7 +131,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Audio_PlayCue(143);
+  Sound_PlayFar(143);
   blend = &REG_BLDALPHA;
 
   frame = 0;

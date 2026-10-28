@@ -101,7 +101,7 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -314,7 +314,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     if (anchor == ANCHOR_BRIGHTEN && frame > 23)
       Func_08164abc(2, 2, 2);
     if (frame == 8)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame >= 6 && frame <= 45) {

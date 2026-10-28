@@ -382,7 +382,7 @@ BattleEffect_RunBurstScene:
 	cmp r2, #8
 	bne .L_0815a410
 	movs r0, #221
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815a410:
 	ldr r3, [sp, #40]
 	ldr r2, .L_0815a504
@@ -702,7 +702,7 @@ BattleEffect_RunBurstScene:
 	adds r3, r0, r1
 	str r5, [r3]
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815a684:
 	ldr r3, [sp, #40]
 	ldr r2, .L_0815a9a8

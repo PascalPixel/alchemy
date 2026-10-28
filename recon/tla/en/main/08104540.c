@@ -69,7 +69,7 @@ void Func_08103218(s32 window, s32 x, s32 y, s32 owner, s32 a, s32 b, s32 c,
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
 void Input_ResetKeyRepeat(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
 void WaitFrames(s32 frames);
@@ -180,12 +180,12 @@ s32 Func_08104540(void) {
         Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
     }
     if (pressedKeys & 8) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -2;
       break;
     }
     if (pressedKeys & 0x303) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
@@ -193,14 +193,14 @@ s32 Func_08104540(void) {
       selectedPages[side]--;
       selectedPages[side] =
           Menu_GetModuloOfSum(selectedPages[side], *pageCount);
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & 0x10) {
       selectedPages[side]++;
       selectedPages[side] =
           Menu_GetModuloOfSum(selectedPages[side], *pageCount);
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       redraw = 1;
     }

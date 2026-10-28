@@ -66,7 +66,7 @@ void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -220,7 +220,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
             splash->variant = (Random16() & 15) + 16;
           }
           if ((i & 3) == 0)
-            Audio_PlayCue(132);
+            Sound_PlayFar(132);
           for (k = 0; k != effect->count; k++)
             Func_0814cd48(effect->actors[k], 7, 5, k, 2);
         }

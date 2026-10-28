@@ -53,7 +53,7 @@ void Djinn_DeactivateFar(s32 unitId, s32 element, s32 index);
 u32 BattleEventRuntime_Reset(void);
 void BattleEventRuntime_SchedulePhase(s32 phase);
 void BattleEventRuntime_WaitForReady(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void Func_08127308(s32 unitId, s32 element, s32 kind, s32 level);
 s32 BattleUnit_KeepsOneHp(s32 unitId);
@@ -155,7 +155,7 @@ void Func_0812561c(struct BattlePlan *plan) {
         BattleEvent_Push(BATTLE_EVENT_SOUND, 175);
         BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)MsgEarthPowerUp + i);
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
         Object_SetMode(BattleObject_Get(unitId)->object, 3);
         ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObject_Get(unitId)->object, 32);

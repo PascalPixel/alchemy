@@ -1391,7 +1391,7 @@ Func_08102008:
 	cmp r1, r2
 	bne .L_08102b2a
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl .L_08102188
 .L_08102b2a:
 	movs r3, #1
@@ -1405,14 +1405,14 @@ Func_08102008:
 	cmp r0, #1
 	beq .L_08102b6a
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	str r1, [sp, #68]
 	bl .L_08102188
 .L_08102b4c:
 	movs r0, #139
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
 	ldr r0, [sp, #32]
@@ -1425,7 +1425,7 @@ Func_08102008:
 .L_08102b6a:
 	movs r0, #175
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #24]
 	ldr r0, [sp, #32]
@@ -1464,7 +1464,7 @@ Func_08102008:
 	beq .L_08102bd0
 	movs r0, #112
 	movs r5, #7
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08102fd4
 	.2byte 0x0000
 .L_08102bc8:
@@ -1494,7 +1494,7 @@ Func_08102008:
 	cmp r2, #2
 	bne .L_08102c24
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #72]
 	bl RenderOutput_ClearListFar
 	movs r3, #104
@@ -1546,7 +1546,7 @@ Func_08102008:
 	subs r5, r3, r5
 .L_08102c64:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08102fd4
 .L_08102c6c:
 	movs r3, #8
@@ -1564,7 +1564,7 @@ Func_08102008:
 	movs r0, #113
 	movs r5, #1
 .L_08102c86:
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r5, r5
 	b .L_08102fd4
 .L_08102c8e:
@@ -1589,11 +1589,11 @@ Func_08102008:
 	cmp r4, #0
 	beq .L_08102cba
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08102cc0
 .L_08102cba:
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08102cc0:
 	ldr r0, [sp, #80]
 	movs r1, #139
@@ -1716,7 +1716,7 @@ Func_08102008:
 	bl UiPanel_HighlightGridCell
 	movs r0, #112
 	movs r5, #10
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08102fd4
 .L_08102db4:
 	ldr r0, [sp, #16]
@@ -1747,7 +1747,7 @@ Func_08102008:
 	movs r3, #0
 	bl UiPanel_HighlightGridCell
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r7, [sp, #12]
 	mov r0, r11
 	ldrb r2, [r7, r0]
@@ -1821,7 +1821,7 @@ Func_08102008:
 	movs r3, #0
 	bl UiPanel_HighlightGridCell
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #52]
 	mov r3, r10
 	adds r2, #1
@@ -1872,7 +1872,7 @@ Func_08102008:
 	bl .L_08102188
 .L_08102eea:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #12]
 	mov r1, r11
 	ldrb r2, [r0, r1]

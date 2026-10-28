@@ -1,8 +1,8 @@
 # The Lost Age: sound
 
-This folder holds The Lost Age's cue layer and its MusicPlayer2000 sound
+This folder holds The Lost Age's sound layer and its MusicPlayer2000 sound
 driver, with the driver's handwritten routines under `driver/`. ☀️'s
-[Sound](../../../tbs/src/sound/README.md) explains what a cue number means,
+[Sound](../../../tbs/src/sound/README.md) explains what a sound number means,
 the fanfare's return to the music and the driver's lock; this page says only
 what differs here.
 
@@ -17,8 +17,8 @@ what differs here.
   `engine.c` and `audio.c` whole; the song commands' handlers are the
   `music_track_*.c` files, and the handwritten ARM and Thumb routines are one
   file each under `driver/`.
-- **Songs.** ⚓️ has its own song table (`games/tla/sound/songs.s`), so its
-  cue numbers are not ☀️'s, and it has no `sounds.h` of names yet.
+- **Sounds.** ⚓️ has its own song table (`games/tla/sound/songs.s`), so its
+  sound numbers are not ☀️'s, and it has no `sounds.h` of names yet.
 - **Names.** Routines that do what their ☀️ twins do take their names.
 
 ## Status
@@ -29,8 +29,10 @@ the counts.
 
 ## Function prefixes
 
-Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
-`Audio_`, `AudioCommand_`, `AudioEngine_`, `Cgb_`, `CgbAudio_`, `CgbChannel_`,
-`CgbNote_`, `LzPack_`, `MusicCommand_`, `MusicPlayer_`, `MusicTrack_`, `Pcm_`,
-`Runtime_` and `Sound_`. Only `SongFlag_`, setting, clearing and testing a
-song's flags, is The Lost Age's own so far.
+Functions take their ☀️ twins' names, which ☀️'s guides explain: the
+driver's routines pret's MusicPlayer2000 names (`m4aSongNumStart`, `MPlayMain`,
+`ply_note`), the sound layer `Sound_`. A few copies The Lost Age keeps beside
+the driver still carry older prefixes (`MusicTrack_`, `AudioEngine_`, `Audio_`,
+`Pcm_`) with their own suffixes, and `LzPack_` and `Runtime_` remain. Only
+`SongFlag_`, setting, clearing and testing a sound's flags, is The Lost Age's
+own so far.

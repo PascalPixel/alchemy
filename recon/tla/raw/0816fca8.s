@@ -256,7 +256,7 @@ Func_0816fca8:
 	mov r2, r11
 	str r0, [r2, #16]
 	movs r0, #221
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r5, r11
 	movs r3, #0
 	mov r9, r3
@@ -386,7 +386,7 @@ Func_0816fca8:
 	negs r0, r0
 	bl Func_081180e8
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816ffb0:
 	ldr r3, [sp, #48]
 	ldr r7, [sp, #28]

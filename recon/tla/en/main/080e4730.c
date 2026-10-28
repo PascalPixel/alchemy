@@ -119,7 +119,7 @@ void Func_080e4730(void) {
   ripple = 0;
   for (frame = 0; frame < 78; frame++) {
     if (frame == 0)
-      Audio_PlayCue(544);
+      Sound_PlayFar(544);
     if (frame <= 64) {
       Func_080e446c(work, work + 0x400, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
@@ -132,7 +132,7 @@ void Func_080e4730(void) {
       ObjectDispatch_SetSingleChildFlagsFar(
           Object_GetById(*(s16 *)(effect + 24)), 1);
       Camera_FollowActor(*(s16 *)(effect + 24), 1);
-      Audio_PlayCue(539);
+      Sound_PlayFar(539);
       if (*(s8 *)(event + 394) == 3) {
         Data_02000452 = 1;
         *motionFlags = 2;

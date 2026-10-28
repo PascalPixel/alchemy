@@ -263,14 +263,14 @@ Func_080dd054:
 	cmp r3, #0
 	bne .L_080dd34c
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080dd34c
 .L_080dd282:
 	movs r3, #1
 	str r3, [sp, #24]
 .L_080dd286:
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #1
 	str r4, [sp, #8]
 	ldr r4, [sp, #28]

@@ -97,7 +97,7 @@ struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderModel *model);
 void MemFree(void *block);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Rime and Haze: the Djinni rises swaying through the canvas over the
 // party while its sign turns in the air: for Rime a crystal that spins in
@@ -190,7 +190,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
       Func_081180e8(-1);
     if (mode == 0) {
       if (frame == 32)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
     } else {
       if (frame > 7)
         Func_0815f0a0((s32)&ResourceId_StarCrossSheet);
@@ -259,7 +259,7 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
       star = work->particles;
       for (i = 0; i != 16; i++, star++) {
         if (star->variant == 4 && (i & 3) == 0)
-          Audio_PlayCue(130);
+          Sound_PlayFar(130);
         if (star->variant >= 0 && star->variant < 16) {
           s32 size = Trig_Sin(star->variant << 11) * star->z;
 

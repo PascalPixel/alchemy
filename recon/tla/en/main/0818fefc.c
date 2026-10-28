@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -209,19 +209,19 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 188; frame++) {
     if (frame == 4) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 28) {
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
     }
     if (frame == 84) {
-      Audio_PlayCue(104);
+      Sound_PlayFar(104);
     }
     if (frame == 143) {
-      Audio_PlayCue(191);
+      Sound_PlayFar(191);
     }
     if (frame == 171) {
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     }
     if ((gInput.repeat & 3) && frame > 3 && frame <= 142) {
       frame = 143;
@@ -361,7 +361,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 171) {
       work->shakeFrames = 8;
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
       Func_08118088(effect->actors[0], 0);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);

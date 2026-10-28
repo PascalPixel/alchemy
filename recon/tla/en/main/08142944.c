@@ -104,7 +104,7 @@ void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
@@ -194,12 +194,12 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
             (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_EffectPalette03), 128);
       if (frame == 0)
-        Audio_PlayCue(140);
+        Sound_PlayFar(140);
     }
     if (frame == 48)
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
     if (frame == 56)
-      Audio_PlayCue(148);
+      Sound_PlayFar(148);
     if (frame == 32)
       Func_0814cd48(effect->actor, 7, -1, -1, -1);
     if (frame == 68)
@@ -363,7 +363,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   if (kind == KIND_FINALE) {
     // Put the scene's view back by hand.
-    Audio_PlayCue(390);
+    Sound_PlayFar(390);
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
     gCameraSceneParameters[3] = 120;

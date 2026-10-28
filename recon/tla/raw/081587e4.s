@@ -567,7 +567,7 @@ BattleEffect_RunGround:
 	movs r3, #0
 	str r3, [r6, #24]
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #56]
 	movs r3, #4
 	movs r1, #36

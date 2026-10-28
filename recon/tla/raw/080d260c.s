@@ -135,7 +135,7 @@ PartyInventory_GiveItem:
 	bl PartyInventory_AddFar
 	mov r8, r0
 	movs r0, #83
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, .L_080d27e4
 	movs r2, #133
 	lsls r2, r2, #2
@@ -171,7 +171,7 @@ PartyInventory_GiveItem:
 	b .L_080d27c8
 .L_080d2782:
 	movs r0, #83
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r6, #0
 	movs r1, #2
 	bl UiText_DrawQuantity

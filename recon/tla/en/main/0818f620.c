@@ -61,7 +61,7 @@ void Func_08118088(s32 actor, s32 mode);
 void Func_08158ce0(s32 randomMask, u32 range);
 void ObjectGroup_CountDownMemberTimers(void);
 void Func_081180e8(s32 phase);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
@@ -159,7 +159,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     else
       EffectPosition_ProjectBattler(effect->actors[0], &to);
     if (mode == 0 && frame == 0)
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
 
     if (frame == 0) {
       if (mode == 0) {
@@ -356,7 +356,7 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     // fade off and the backgrounds on again.
     struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
-    Audio_PlayCue(390);
+    Sound_PlayFar(390);
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
     REG_BG2CNT = 0x787;

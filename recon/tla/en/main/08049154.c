@@ -118,8 +118,8 @@ void UiText_DrawCharacterAtOffset(s32 message, struct SummonMenuWindow *window,
                                   s32 x, s32 y);
 void Func_0803c274(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
                    s32 mode);
-void Runtime_PushSlotEntry(void *sprite, s32 depth);
-void Audio_PlayCue(s32 cue);
+void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
+void Sound_PlayFar(s32 cue);
 void Input_ResetKeyRepeat(void);
 void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 slot);
@@ -330,7 +330,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
     for (index = 0; index <= 3; index++) {
       if (visibleSummons[index] != 0)
-        Runtime_PushSlotEntry(&sprites[index], 240);
+        Oam_AddSpriteAtDepth(&sprites[index], 240);
     }
 
     cursorPosition.x = window->x * 8 - 2;
@@ -342,7 +342,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
     cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     sprite = (struct SummonMenuSprite *)&cursorStorage;
-    Runtime_PushSlotEntry(sprite, 242);
+    Oam_AddSpriteAtDepth(sprite, 242);
 
     {
       s32 element;
@@ -398,18 +398,18 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
       break;
     }
     if (NAVIGATION->timer == 0 || (pressed & 2)) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
     if (repeated & 0x80) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       selectedRow++;
       if (selectedRow == 4 || firstEntry + selectedRow == count)
         selectedRow = 0;
       preferredRow = selectedRow;
     } else if (repeated & 0x40) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       selectedRow--;
       if (selectedRow < 0) {
         if (firstEntry == (count - 1) / 4 * 4)
@@ -419,7 +419,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
       }
       preferredRow = selectedRow;
     } else if (repeated & 0x10) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       if (firstEntry + 4 >= count) {
         if (firstEntry != 0) {
@@ -436,7 +436,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
         }
       }
     } else if (repeated & 0x20) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       if (firstEntry != 0) {
         firstEntry -= 4;

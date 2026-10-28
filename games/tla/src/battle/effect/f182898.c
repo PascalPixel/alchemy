@@ -43,7 +43,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_081180e8(s32 phase);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void ObjectGroup_CountDownMemberTimers(void);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -132,9 +132,9 @@ void Func_08182898(struct BattleEffectArgument *effect) {
         if (i == 0) {
           Func_0814cd48(effect->actors[i], 7, -1, i, 16);
           Func_081180e8(BUBBLE_HIT_CUE);
-          Audio_PlayCue(BUBBLE_HIT_CUE);
+          Sound_PlayFar(BUBBLE_HIT_CUE);
         } else {
-          Audio_PlayCue(BUBBLE_HIT_CUE);
+          Sound_PlayFar(BUBBLE_HIT_CUE);
           Func_0814cd48(effect->actors[i], 7, -1, i, 16);
         }
       }

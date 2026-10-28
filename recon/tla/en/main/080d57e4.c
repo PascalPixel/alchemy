@@ -17,7 +17,7 @@
 #include "adventure.h"
 #include "ram_buffer.h"
 
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_080201d0(s32 layer, s32 x, s32 z);
 s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
@@ -55,7 +55,7 @@ s32 Func_080d57e4(void) {
   leader->motionFlags = leader->action;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   leader->speedLimit = 0x20000;
   leader->velocityY = 0x40000;
   leader->acceleration = 0x10000;

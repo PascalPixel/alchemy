@@ -147,7 +147,7 @@ BattleEffect_RunBackstab:
 	cmp r2, #32
 	bne .L_0817ba94
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817baec:
 	ldr r3, [sp, #24]
 	cmp r3, #0

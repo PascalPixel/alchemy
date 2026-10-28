@@ -12,7 +12,7 @@ struct MenuIconWork {
   s8 active;
 };
 
-void Runtime_PushSlotEntry(struct MenuSlotEntry *slot, s32 value);
+void Oam_AddSpriteAtDepth(struct MenuSlotEntry *slot, s32 value);
 
 void MenuIcon_PushSlots(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
@@ -24,7 +24,7 @@ void MenuIcon_PushSlots(void) {
   if (menu->active != 0) {
     slot = menu->slots;
     for (i = 4; i >= 0; i--) {
-      Runtime_PushSlotEntry(slot, 240);
+      Oam_AddSpriteAtDepth(slot, 240);
       slot++;
     }
   }

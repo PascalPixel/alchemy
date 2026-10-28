@@ -230,7 +230,7 @@ Func_08173aac:
 	movs r3, #80
 	movs r0, #84
 	str r3, [sp, #32]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08174094
 .L_08173c86:
 	ldr r4, [sp, #52]
@@ -1323,13 +1323,13 @@ Func_08173aac:
 	cmp r6, #0
 	bne .L_08174502
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08174502:
 	mov r7, r11
 	cmp r7, #62
 	bne .L_0817450e
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817450e:
 	mov r0, r11
 	cmp r0, #0
@@ -1600,7 +1600,7 @@ Func_08173aac:
 	cmp r6, #0
 	bne .L_0817472a
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817472a:
 	mov r7, r11
 	cmp r7, #55
@@ -1765,7 +1765,7 @@ Func_08173aac:
 	cmp r4, #4
 	bne .L_0817487c
 	movs r0, #147
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817487c:
 	mov r5, r11
 	cmp r5, #48
@@ -2451,7 +2451,7 @@ Func_08173aac:
 	cmp r2, #14
 	bne .L_08174e0c
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08174e0c:
 	mov r3, r11
 	cmp r3, #24
@@ -2966,7 +2966,7 @@ Func_08173aac:
 	cmp r6, #32
 	bne .L_0817519c
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #238
 	ldr r7, [sp, #48]
 	lsls r0, r0, #7
@@ -3160,7 +3160,7 @@ Func_08173aac:
 	movs r0, #182
 	lsls r0, r0, #1
 	adds r0, #255
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081753ae:
 	ldr r7, [sp, #8]
 	mov r0, sp
@@ -3271,7 +3271,7 @@ Func_08173aac:
 	movs r1, #0
 	bl ObjectDispatch_SetAnimationSpeedFar
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817549e:
 	mov r3, r11
 	cmp r3, #14
@@ -3287,7 +3287,7 @@ Func_08173aac:
 	cmp r5, #22
 	bne .L_081754c0
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081754c0:
 	mov r6, r11
 	cmp r6, #26
@@ -3781,7 +3781,7 @@ Func_08173aac:
 	cmp r4, #8
 	bne .L_081758ea
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r6, #238
 	ldr r5, [sp, #48]
 	lsls r6, r6, #7
@@ -3834,7 +3834,7 @@ Func_08173aac:
 	cmp r1, #0
 	bne .L_08175908
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08175908:
 	ldr r3, [sp, #56]
 	mov r4, sp
@@ -4216,7 +4216,7 @@ Func_08173aac:
 	cmp r6, #16
 	bne .L_08175c38
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #56]
 	movs r3, #30
 	movs r2, #1
@@ -4375,7 +4375,7 @@ Func_08173aac:
 	cmp r1, #16
 	bne .L_08175d88
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #56]
 	movs r1, #7
 	movs r2, #36

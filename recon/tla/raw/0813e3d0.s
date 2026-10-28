@@ -195,7 +195,7 @@ Func_0813e3d0:
 	str r3, [r1, #24]
 .L_0813e550:
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #12]
 	movs r3, #60
 	adds r4, #12

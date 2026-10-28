@@ -156,7 +156,7 @@ Func_0818c7b8:
 	cmp r2, #8
 	bne .L_0818c8ee
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818c8ee:
 	mov r3, r9
 	cmp r3, #12

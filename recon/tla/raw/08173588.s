@@ -260,7 +260,7 @@ Func_08173588:
 	cmp r2, #32
 	bne .L_081737c0
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081737c0
 .L_08173798:
 	mov r3, r9
@@ -451,7 +451,7 @@ Func_08173588:
 	cmp r3, #0
 	bne .L_08173914
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [r7, #24]
 .L_08173914:
 	cmp r0, #15

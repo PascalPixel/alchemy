@@ -13,7 +13,7 @@ void Func_0810bdb0(void) {
 
     for (i = ICON_COUNT - 1; i >= 0; i--) {
       if (*resource++ != ICON_NONE)
-        Runtime_PushSlotEntry(sprite, 240);
+        Oam_AddSpriteAtDepth(sprite, 240);
       sprite++;
     }
   }

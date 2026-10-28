@@ -112,7 +112,7 @@ BattleEffect_RunJuggle:
 	cmp r2, #16
 	bne .L_08179a74
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08179a74:
 	ldr r3, [sp, #56]
 	cmp r3, #0

@@ -94,7 +94,7 @@ void Func_080de21c(void) {
   scene = Ram_HeapSlots->effectWork;
   target = scene->child;
   BattleEffect_InitializeSharedScene();
-  Audio_PlayCue(130);
+  Sound_PlayFar(130);
   slot = scene->slots;
 
   for (i = 0; i <= 11; i++) {

@@ -107,7 +107,7 @@ BattleEffect_RunLifeShear:
 	cmp r1, #0
 	bne .L_08181a40
 	movs r0, #206
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r10
 	ldr r3, [r2, #4]
 	cmp r3, #0
@@ -315,7 +315,7 @@ BattleEffect_RunLifeShear:
 	movs r1, #0
 	movs r0, #133
 	str r1, [sp, #20]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r3, r10
 	movs r2, #36
 	ldrsh r0, [r3, r2]
@@ -422,7 +422,7 @@ BattleEffect_RunLifeShear:
 	cmp r3, r4
 	bne .L_08181c32
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08181c32:
 	ldr r1, [sp, #8]
 	cmp r1, #0

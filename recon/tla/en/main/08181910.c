@@ -75,7 +75,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -179,7 +179,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     shift = 0;
     scythe = (struct Scythe *)work->particles;
     if (frame == 0) {
-      Audio_PlayCue(206);
+      Sound_PlayFar(206);
       if (effect->side == 0) {
         scythe->x = 0x200000;
       } else {
@@ -255,7 +255,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         scythe->velocityY = -0x80000;
         work->shakeFrames = 4;
         speed = 0;
-        Audio_PlayCue(133);
+        Sound_PlayFar(133);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       }
       if (scythe->timer == 35) {
@@ -286,7 +286,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     scythe = (struct Scythe *)work->particles;
     phase = frame - 50;
     if (phase == -4) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (phase == 0) {
       Func_081180e8(134);

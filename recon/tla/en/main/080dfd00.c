@@ -129,7 +129,7 @@ void FieldEffect_RunWhirlwind(void) {
   }
   orb->scaleX = 0x1b333; // 1.7 wide
   orb->scaleY = 0x14ccc; // 1.3 high
-  Audio_PlayCue(SE_ORB_ARRIVES);
+  Sound_PlayFar(SE_ORB_ARRIVES);
 
   switch (kind) {
   case ORB_ORBITING:
@@ -163,7 +163,7 @@ void FieldEffect_RunWhirlwind(void) {
   case ORB_PLAIN:
     Object_SetMode(orb, 1);
     WaitFrames(30);
-    Audio_PlayCue(SE_ORB_FADES);
+    Sound_PlayFar(SE_ORB_FADES);
     Func_08020340(orb);
     Object_Destroy(orb);
     break;

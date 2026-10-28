@@ -66,7 +66,7 @@ void Func_080e03cc(void) {
   if (object == 0)
     return;
   BattleEffect_InitializeSharedScene();
-  Audio_PlayCue(138);
+  Sound_PlayFar(138);
   object->angle = mainObject->angle;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
@@ -93,7 +93,7 @@ void Func_080e03cc(void) {
     WaitFrames(1);
   }
   Object_SetMode(object, 5);
-  Audio_PlayCue(132);
+  Sound_PlayFar(132);
   if (secondary != 0)
     Object_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
                                         -0x90000);
@@ -103,7 +103,7 @@ void Func_080e03cc(void) {
     WaitFrames(1);
   }
   WaitFrames(10);
-  Audio_PlayCue(114);
+  Sound_PlayFar(114);
   step = 0;
   do {
     s32 scale;

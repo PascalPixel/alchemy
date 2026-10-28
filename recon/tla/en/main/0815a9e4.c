@@ -133,7 +133,7 @@ s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 // BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 u32 Random16(void);
@@ -307,11 +307,11 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 192; frame++) {
     if (frame == 0)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 40)
-      Audio_PlayCue(141);
+      Sound_PlayFar(141);
     if (frame == 96)
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     // The battle resumes and resolves the targets, hit cue 134.
     if (frame == 120)
       Func_081180e8(134);

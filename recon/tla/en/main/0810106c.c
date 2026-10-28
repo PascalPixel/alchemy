@@ -58,7 +58,7 @@ s32 Func_08102008(s32 mode);
 s32 Func_08104540(void);
 s32 Func_08101d5c(void);
 s32 Func_081039fc(s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
 void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
@@ -199,7 +199,7 @@ s32 Func_0810106c(void) {
       if (result < 0)
         break;
     case 13:
-      Audio_PlayCue(126);
+      Sound_PlayFar(126);
       result = Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
                                  menu->pairIndex[0], menu->shownOwner[1]);
       Unit_CalculateFar(menu->shownOwner[0]);
@@ -221,7 +221,7 @@ s32 Func_0810106c(void) {
       if (result < 0)
         break;
     case 12:
-      Audio_PlayCue(175);
+      Sound_PlayFar(175);
       Djinn_DeactivateFar(menu->shownOwner[0], menu->pairElement[0],
                           menu->pairIndex[0]);
       result = DjinnRecovery_AddStandbyFar(
@@ -242,7 +242,7 @@ s32 Func_0810106c(void) {
       if (result < 0)
         break;
     case 14:
-      Audio_PlayCue(126);
+      Sound_PlayFar(126);
       Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0], menu->shownOwner[1]);
       result = Djinn_TransferFar(menu->shownOwner[1], menu->pairElement[1],
@@ -264,7 +264,7 @@ s32 Func_0810106c(void) {
       if (result < 0)
         break;
     case 11:
-      Audio_PlayCue(139);
+      Sound_PlayFar(139);
       Djinn_ActivateFar(menu->shownOwner[0], menu->pairElement[0],
                         menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(

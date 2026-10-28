@@ -14,7 +14,7 @@ void Func_02002b68(s32 sound);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void Func_0200105c(struct ObjectRuntime *object);
-void AudioCommand_WaitForStateByteClear(void);
+void Sound_WaitForFanfare(void);
 
 void Func_02000054(s32 mode) {
   struct ObjectRuntime *left = Object_GetById(9);
@@ -59,7 +59,7 @@ void Func_02000054(s32 mode) {
   FieldEvent_WaitFrames(40);
   Func_02002b68(80);
   FieldEvent_WaitFrames(10);
-  AudioCommand_WaitForStateByteClear();
+  Sound_WaitForFanfare();
   left->motionFlags = 4;
   right->motionFlags = 4;
   rider->motionFlags = 4;

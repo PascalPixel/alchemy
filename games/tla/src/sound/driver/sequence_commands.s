@@ -45,9 +45,9 @@ AlchemyUncredited_081c175a:
 	.2byte	0x0000
 .L_081c175c:
 AlchemyUncreditedEnd_081c175a:
-	.global MusicTrack_Goto
+	.global ply_goto
 	.thumb_func
-MusicTrack_Goto:
+ply_goto:
 	push	{lr}
 .L_081c175e:
 	ldr	r2, [r1, #64]
@@ -64,9 +64,9 @@ MusicTrack_Goto:
 	str	r0, [r1, #64]
 	pop	{r0}
 	bx	r0
-	.global MusicTrack_CallPattern
+	.global ply_patt
 	.thumb_func
-MusicTrack_CallPattern:
+ply_patt:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #3
 	bcs.n	.L_081c1794
@@ -80,13 +80,13 @@ MusicTrack_CallPattern:
 	strb	r2, [r1, #2]
 	b.n	.L_081c175c
 .L_081c1794:
-	b.n	MusicTrack_FinishSequence
+	b.n	ply_fine
 AlchemyUncredited_081c1796:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c1796:
-	.global MusicTrack_ReturnFromPattern
+	.global ply_pend
 	.thumb_func
-MusicTrack_ReturnFromPattern:
+ply_pend:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #0
 	beq.n	.L_081c17aa
@@ -98,9 +98,9 @@ MusicTrack_ReturnFromPattern:
 	str	r2, [r1, #64]
 .L_081c17aa:
 	bx	lr
-	.global MusicTrack_Repeat
+	.global ply_rept
 	.thumb_func
-MusicTrack_Repeat:
+ply_rept:
 	push	{lr}
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -128,9 +128,9 @@ MusicTrack_Repeat:
 AlchemyUncredited_081c17da:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c17da:
-	.global MusicTrack_SetPriorityFromCommand
+	.global ply_prio
 	.thumb_func
-MusicTrack_SetPriorityFromCommand:
+ply_prio:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #29]
@@ -138,9 +138,9 @@ MusicTrack_SetPriorityFromCommand:
 AlchemyUncredited_081c17e6:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c17e6:
-	.global MusicPlayer_SetTempoFromCommand
+	.global ply_tempo
 	.thumb_func
-MusicPlayer_SetTempoFromCommand:
+ply_tempo:
 	mov	ip, lr
 	bl	.L_081c1750
 	lsls	r3, r3, #1
@@ -150,9 +150,9 @@ MusicPlayer_SetTempoFromCommand:
 	lsrs	r3, r3, #8
 	strh	r3, [r0, #32]
 	bx	ip
-	.global MusicTrack_SetKeyOffsetFromCommand
+	.global ply_keysh
 	.thumb_func
-MusicTrack_SetKeyOffsetFromCommand:
+ply_keysh:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #10]
@@ -164,9 +164,9 @@ MusicTrack_SetKeyOffsetFromCommand:
 AlchemyUncredited_081c180e:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c180e:
-	.global MusicTrack_SetVoiceFromCommand
+	.global ply_voice
 	.thumb_func
-MusicTrack_SetVoiceFromCommand:
+ply_voice:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -190,9 +190,9 @@ MusicTrack_SetVoiceFromCommand:
 AlchemyUncredited_081c183e:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c183e:
-	.global MusicTrack_SetVolumeFromCommand
+	.global ply_vol
 	.thumb_func
-MusicTrack_SetVolumeFromCommand:
+ply_vol:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #18]
@@ -204,9 +204,9 @@ MusicTrack_SetVolumeFromCommand:
 AlchemyUncredited_081c1852:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c1852:
-	.global MusicTrack_SetPanFromCommand
+	.global ply_pan
 	.thumb_func
-MusicTrack_SetPanFromCommand:
+ply_pan:
 	mov	ip, lr
 	bl	.L_081c1750
 	subs	r3, #64
@@ -216,9 +216,9 @@ MusicTrack_SetPanFromCommand:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	ip
-	.global MusicTrack_SetBendFromCommand
+	.global ply_bend
 	.thumb_func
-MusicTrack_SetBendFromCommand:
+ply_bend:
 	mov	ip, lr
 	bl	.L_081c1750
 	subs	r3, #64
@@ -228,9 +228,9 @@ MusicTrack_SetBendFromCommand:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	ip
-	.global MusicTrack_SetBendRangeFromCommand
+	.global ply_bendr
 	.thumb_func
-MusicTrack_SetBendRangeFromCommand:
+ply_bendr:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #15]
@@ -242,9 +242,9 @@ MusicTrack_SetBendRangeFromCommand:
 AlchemyUncredited_081c188e:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c188e:
-	.global MusicTrack_SetLfoDelayFromCommand
+	.global ply_lfodl
 	.thumb_func
-MusicTrack_SetLfoDelayFromCommand:
+ply_lfodl:
 	mov	ip, lr
 	bl	.L_081c1750
 	strb	r3, [r1, #27]
@@ -252,9 +252,9 @@ MusicTrack_SetLfoDelayFromCommand:
 AlchemyUncredited_081c189a:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c189a:
-	.global MusicTrack_SetModulationTargetFromCommand
+	.global ply_modt
 	.thumb_func
-MusicTrack_SetModulationTargetFromCommand:
+ply_modt:
 	mov	ip, lr
 	bl	.L_081c1750
 	ldrb	r0, [r1, #24]
@@ -267,9 +267,9 @@ MusicTrack_SetModulationTargetFromCommand:
 	strb	r3, [r1, #0]
 .L_081c18b2:
 	bx	ip
-	.global MusicTrack_SetTuneFromCommand
+	.global ply_tune
 	.thumb_func
-MusicTrack_SetTuneFromCommand:
+ply_tune:
 	mov	ip, lr
 	bl	.L_081c1750
 	subs	r3, #64
@@ -279,9 +279,9 @@ MusicTrack_SetTuneFromCommand:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	ip
-	.global MusicTrack_WriteSoundRegisterFromCommand
+	.global ply_port
 	.thumb_func
-MusicTrack_WriteSoundRegisterFromCommand:
+ply_port:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]

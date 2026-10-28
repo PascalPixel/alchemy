@@ -314,13 +314,13 @@ Func_08166b10:
 	cmp r5, #4
 	bne .L_08166d8e
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08166d8e:
 	ldr r6, [sp, #32]
 	cmp r6, #32
 	bne .L_08166d9a
 	movs r0, #164
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08166d9a:
 	ldr r0, [sp, #32]
 	cmp r0, #60

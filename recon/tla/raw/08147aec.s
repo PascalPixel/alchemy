@@ -590,13 +590,13 @@ Func_08147aec:
 	cmp r3, #48
 	bne .L_08147f88
 	movs r0, #141
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08147f88:
 	ldr r6, [sp, #48]
 	cmp r6, #128
 	bne .L_08147f94
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08147f94:
 	ldr r3, [sp, #48]
 	subs r3, #129
@@ -1107,7 +1107,7 @@ Func_08147aec:
 	ble .L_0814837a
 	movs r0, #136
 	str r4, [sp, #8]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #8]
 .L_0814837a:
 	ldr r2, .L_08148450

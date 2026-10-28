@@ -73,7 +73,7 @@ Func_02001f74:
 	.global Func_02001f7c
 	.thumb_func
 Func_02001f7c:
-	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Render_ProjectPoint
 	.thumb_func
 Render_ProjectPoint:
@@ -229,4 +229,4 @@ Func_020020ac:
 	.global Func_020020b4
 	.thumb_func
 Func_020020b4:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

@@ -14,7 +14,7 @@
 #include "ram_buffer.h"
 #include "callback_scheduler.h"
 
-void Audio_PlayCue(s32 no);
+void Sound_PlayFar(s32 no);
 void FieldEffect_WatchLeaderDistance(void);
 void BattleEffect_RunBusyWaitDelay(s32 value);
 void BattleEffect_ApplyColorToTargetBuffer(u32 value, s32 enabled);
@@ -55,7 +55,7 @@ void Func_080dd950(void) {
     scene = loaded;
   }
   if (*flag != 0) {
-    Audio_PlayCue(167);
+    Sound_PlayFar(167);
     Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
     zero = 0;
     *flag = zero;

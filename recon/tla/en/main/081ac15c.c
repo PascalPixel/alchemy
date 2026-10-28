@@ -89,7 +89,7 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 width,
                                   struct RenderInput *window, s32 x, s32 y);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -304,7 +304,7 @@ void LuckyDice_Run(void) {
     if (state == 2 || state == 3) {
       for (index = 0; index != 4; index++) {
         if (resultTimer == index * 5) {
-          Audio_PlayCue(303);
+          Sound_PlayFar(303);
         }
         if (resultTimer >= index * 5) {
           sprites->oam[spriteCount].attr01 =
@@ -357,7 +357,7 @@ void LuckyDice_Run(void) {
         payoutTimer--;
       }
       if (resultTimer > 19 && (gInput.repeat & 1)) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         if (winnings > 0) {
           state = 3;
           payoutTimer = 0;
@@ -413,12 +413,12 @@ void LuckyDice_Run(void) {
         break;
       }
       if (gInput.repeat & 2) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         break;
       }
       if (gInput.repeat & 1) {
-        Audio_PlayCue(302);
+        Sound_PlayFar(302);
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         state = 1;
         bet = Party_GetAverageLevelFar() * 10;
@@ -668,7 +668,7 @@ void LuckyDice_Run(void) {
           }
           UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, 0);
-          Audio_PlayCue(93);
+          Sound_PlayFar(93);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -691,7 +691,7 @@ void LuckyDice_Run(void) {
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            Audio_PlayCue(91);
+            Sound_PlayFar(91);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -699,7 +699,7 @@ void LuckyDice_Run(void) {
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            Audio_PlayCue(92);
+            Sound_PlayFar(92);
           }
         }
       }

@@ -57,7 +57,7 @@ Resource_FindFreeEntry:
 	.global Func_02000a10
 	.thumb_func
 Func_02000a10:
-	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -221,4 +221,4 @@ Func_02000b50:
 	.global Func_02000b58
 	.thumb_func
 Func_02000b58:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

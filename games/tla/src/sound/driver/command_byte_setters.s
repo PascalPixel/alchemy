@@ -1,28 +1,28 @@
 .syntax unified
 	.thumb
-	.global MusicTrack_SetLfoSpeedFromCommand
+	.global ply_lfos
 	.thumb_func
-MusicTrack_SetLfoSpeedFromCommand:
+ply_lfos:
 	mov	ip, lr
-	bl	MusicTrack_ReadCommandByte
+	bl	ld_r3_tp_adr_i_unchecked
 	strb	r3, [r1, #25]
 	cmp	r3, #0
 	bne.n	.L_081c1e80
-	bl	MusicTrack_ClearModulationState
+	bl	clear_modM
 .L_081c1e80:
 	bx	ip
 AlchemyUncredited_081c1e82:
 	.2byte	0x0000
-	.global MusicTrack_SetModulationFromCommand
+	.global ply_mod
 	.thumb_func
-MusicTrack_SetModulationFromCommand:
+ply_mod:
 AlchemyUncreditedEnd_081c1e82:
 	mov	ip, lr
-	bl	MusicTrack_ReadCommandByte
+	bl	ld_r3_tp_adr_i_unchecked
 	strb	r3, [r1, #23]
 	cmp	r3, #0
 	bne.n	.L_081c1e94
-	bl	MusicTrack_ClearModulationState
+	bl	clear_modM
 .L_081c1e94:
 	bx	ip
 AlchemyUncredited_081c1e96:

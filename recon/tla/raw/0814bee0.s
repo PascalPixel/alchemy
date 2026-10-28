@@ -245,7 +245,7 @@ BattleEffect_RunZagan:
 	cmp r6, #0
 	bne .L_0814c100
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0814c100
 .L_0814c0d0:
 	.4byte 0x00000080
@@ -276,7 +276,7 @@ BattleEffect_RunZagan:
 	cmp r0, #32
 	bne .L_0814c10c
 	movs r0, #191
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814c10c:
 	mov r2, r9
 	subs r2, #78

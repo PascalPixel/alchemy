@@ -53,7 +53,7 @@ void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Sways the view from side to side, with a sound every 16 frames: the swing
 // grows from 2 to 6 pixels, holds, shrinks back to 2 and stops. While the
@@ -87,7 +87,7 @@ void Func_080e9090(void) {
   frames = 0;
   do {
     if ((frameCount & 15) == 15)
-      Audio_PlayCue(SE_SWAY);
+      Sound_PlayFar(SE_SWAY);
 
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {

@@ -92,22 +92,22 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
       sprite->tile += 4;
       for (;;) {
         if (gInput.pressed & 1) {
-          Audio_PlayCue(112);
+          Sound_PlayFar(112);
           result = count + 1;
           break;
         }
         if (gInput.pressed & 2) {
-          Audio_PlayCue(113);
+          Sound_PlayFar(113);
           result = -1;
           break;
         }
         if (gInput.repeat & 0x20) {
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           changed = 1;
           count--;
         }
         if (gInput.repeat & 0x10) {
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           changed = 1;
           count++;
         }

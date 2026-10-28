@@ -260,7 +260,7 @@ BattleEffect_RunRadiantFire:
 	cmp r5, #8
 	bne .L_0816f7dc
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #238
 	lsls r3, r3, #7
 	adds r3, #168

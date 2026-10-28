@@ -558,7 +558,7 @@ Func_0802632c:
 	cmp r4, #0
 	beq .L_0802678a
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080267a0
 .L_0802678a:
 	adds r3, r6, #0

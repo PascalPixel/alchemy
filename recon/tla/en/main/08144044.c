@@ -57,7 +57,7 @@ void BattleEffect_FetchRectangleBlitters(
 void BattleEffect_ArmBg2AffineHBlankDma(void); // BattleEffect_ArmBg2AffineHBlankDma
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyPitch(s32 angle);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_SkullSheet;
 extern char ResourceId_PinkBurstSheet;
@@ -103,7 +103,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
     PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
     PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
   }
-  Audio_PlayCue(142);
+  Sound_PlayFar(142);
 
   for (frame = 0; frame != effect->count * 32 + 64; frame++) {
     s32 *row;

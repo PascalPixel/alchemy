@@ -353,4 +353,4 @@ Func_02005f8c:
 	.global Func_02005f94
 	.thumb_func
 Func_02005f94:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

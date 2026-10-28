@@ -332,7 +332,7 @@ Func_0818d5a8:
 	movs r3, #4
 	str r3, [r2]
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818d83c:
 	mov r4, r11
 	cmp r4, #16
@@ -513,7 +513,7 @@ Func_0818d5a8:
 	.4byte Data_02016000
 .L_0818d9a8:
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #68]
 	movs r5, #0
 	ldr r3, [r0, #20]

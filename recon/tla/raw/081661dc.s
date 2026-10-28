@@ -156,7 +156,7 @@ BattleEffect_RunAnnihilation:
 	cmp r3, #8
 	bne .L_08166320
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08166320:
 	mov r1, r9
 	ldr r0, [r1, #8]

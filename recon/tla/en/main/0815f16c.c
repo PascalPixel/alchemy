@@ -257,7 +257,7 @@ void Func_08196404(s32, s32, s32, s32, s32);
 void Render_TransformVertices(const void *, void *, s32);
 struct Model *Render_AllocateModelList(s32);
 void Render_DrawModelList(struct Model *);
-void Audio_PlayCue(s32);
+void Sound_PlayFar(s32);
 
 struct IoRegisters {
   u8 unk00[0x20];
@@ -617,7 +617,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   object->unk48 = 0;
   EffectPosition_ProjectScaledBattler(action->target, base);
   base[0] = base[0] / 2;
-  Audio_PlayCue(212);
+  Sound_PlayFar(212);
 
   for (frame = 0; frame != 32; frame++) {
     count = 0;
@@ -1036,7 +1036,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         kind == 78 || kind == 49 || kind == 12 || kind == 82) {
       start = 12;
       if (frame == 12)
-        Audio_PlayCue(142);
+        Sound_PlayFar(142);
       if (kind == 78)
         start = 0;
       if (frame == 50)
@@ -1109,7 +1109,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame == 4)
           work->unk77a8 = 12;
         if (frame == 8)
-          Audio_PlayCue(221);
+          Sound_PlayFar(221);
       }
       if (kind == 6 || kind == 57) {
         if (frame >= 6 && frame < 20) {
@@ -1183,7 +1183,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       if (frame == 6)
-        Audio_PlayCue(221);
+        Sound_PlayFar(221);
     } else if (kind == 44) {
       Runtime_ReleaseHeapBlock(188);
       Runtime_ReleaseHeapBlock(104);
@@ -1443,12 +1443,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       work->unk7784 = 0;
       if (frame == 7) {
         work->unk77a8 = 16;
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
       }
       if (frame == 11)
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
       if (frame == 15)
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
       Runtime_ReleaseHeapBlock(188);
       Runtime_ReleaseHeapBlock(104);
       if (action->side == 0)
@@ -1579,7 +1579,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                             point[1] - 4, 8, 8);
           p->x -= 6;
           if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
-            Audio_PlayCue(133);
+            Sound_PlayFar(133);
             Func_0814cd48(action->actor, 7, 5, 0, 4);
           }
         }
@@ -1627,7 +1627,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0x4000);
       }
       if (frame == 11) {
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
         work->unk77a8 = 16;
       }
     } else if (kind == 63 || kind == 64) {
@@ -1652,7 +1652,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         y = target[1] - (14 - frame) * 12 + 24;
         drawFuncs.draw[1](screen, EWRAM_BUF, x - 16, y - 32, 32, 64);
         if (frame == 13) {
-          Audio_PlayCue(134);
+          Sound_PlayFar(134);
           work->unk77a8 = 8;
           BattleEffect_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000,
                                     150);
@@ -1702,7 +1702,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 14) {
         BattleEffect_StartActorMotion(action->actor, 1, 0x20000, 0x80000, 0x30000,
                                   150);
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
         work->unk77a8 = 8;
       }
       i = 0;
@@ -1742,9 +1742,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 4)
         work->unk77a8 = 8;
       if (frame == 6)
-        Audio_PlayCue(221);
+        Sound_PlayFar(221);
       if (frame == 24)
-        Audio_PlayCue(390);
+        Sound_PlayFar(390);
       if (frame >= 8 && frame < 24) {
         for (i = 0; i != 3; i++) {
           angle = Random16() & 0xffff;
@@ -1814,7 +1814,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16, 0);
       Func_080151e4(0x8000, 0x10000, 0x8000);
       if (frame == 8)
-        Audio_PlayCue(104);
+        Sound_PlayFar(104);
       if (fade >= -63) {
         angle = frame << 12;
         if (kind == 82) {
@@ -2023,7 +2023,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         start = gData_0819895e[i] + 4;
         model->frame = (frame * 8 + i * 32) & 127;
         if (frame == start + 4)
-          Audio_PlayCue(104);
+          Sound_PlayFar(104);
         if (frame > start) {
           fade = (start - frame) * 8 + 56;
           if (fade > -16)
@@ -2099,7 +2099,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 4)
         work->unk77a8 = 12;
       if (frame == 8)
-        Audio_PlayCue(103);
+        Sound_PlayFar(103);
     } else if (kind == 10) {
       if (frame == 0) {
         work->unk7780 = 1;
@@ -2123,7 +2123,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 4)
         work->unk77a8 = 12;
       if (frame == 8)
-        Audio_PlayCue(103);
+        Sound_PlayFar(103);
     } else if (kind == 42) {
       if (frame > 47)
         REG_BLDALPHA = (64 - frame) | 0x1000;
@@ -2139,16 +2139,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       }
     } else if (kind == 76) {
       if (frame == 18)
-        Audio_PlayCue(390);
+        Sound_PlayFar(390);
       for (i = 0; i != 3; i++) {
         if (frame == i * 3 + 3) {
-          Audio_PlayCue(212);
+          Sound_PlayFar(212);
           ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x2f2f2f2f);
         }
       }
     } else if (kind == 74) {
       if (frame == 8)
-        Audio_PlayCue(103);
+        Sound_PlayFar(103);
       p = SPARKS;
       for (i = 0; i != 32; i++, p++) {
         if (frame >= i / 2 + 4) {
@@ -2226,7 +2226,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame == i * 4 + 8) {
           Func_0814cd48(action->actor, 7, 5, 0, 2);
           work->unk77a8 = 2;
-          Audio_PlayCue(133);
+          Sound_PlayFar(133);
         }
       }
     }
@@ -2243,11 +2243,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Func_081180e8(-1);
     if (frame == 4) {
       if (kind == 91)
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
       else if (kind == 78 || kind == 81 || kind == 98)
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
       else
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
     }
     if (frame == 6) {
       if (kind == 4 || kind == 5 || kind == 7 || kind == 43 || kind == 48 ||

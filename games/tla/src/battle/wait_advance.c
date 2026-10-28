@@ -43,8 +43,8 @@ s32 Resource_ResetEntry(u32 slot);
 void QueueIoWriteDelay10(u32 address, u32 value);
 void QueueIoWriteDelay6(u32 address, u32 value);
 s32 Trig_Sin(s32 angle);
-void Runtime_PushSlotEntry(void *entry, s32 priority);
-void Audio_PlayCue(s32 cue);
+void Oam_AddSpriteAtDepth(void *entry, s32 priority);
+void Sound_PlayFar(s32 cue);
 
 /// Waits for the player to advance a battle message: once the window has
 /// finished printing, shows the bobbing arrow at its corner until B is held,
@@ -84,7 +84,7 @@ void BattlePresentation_WaitForAdvance(void) {
     // Bob up and down by up to 2 pixels, once every 16 frames.
     prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                 (offset->y >> 8) + 6;
-    Runtime_PushSlotEntry(prompt, 240);
+    Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
     /* FAKEMATCH(volatile): held read afresh for the third test, as the
@@ -95,7 +95,7 @@ void BattlePresentation_WaitForAdvance(void) {
       break;
     WaitFrames(1);
   }
-  Audio_PlayCue(111);
+  Sound_PlayFar(111);
   Resource_ResetEntry(tileSlot);
   WaitFrames(1);
 }

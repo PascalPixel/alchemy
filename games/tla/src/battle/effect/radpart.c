@@ -24,7 +24,7 @@ extern u32 gData_080f0bfc[];
 void *Object_GetById(s32 id);
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void WaitFrames(s32 frames);
 void BattleEffect_AdvanceSpinAngle();
@@ -56,19 +56,19 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   BattleEffect_InitializeSlots();
   scene = Ram_HeapSlots->effectWork;
   Shop_RestoreSceneTilesFar(0x20118c);
-  Audio_PlayCue(173);
+  Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(id, 1);
-  Audio_PlayCue(174);
+  Sound_PlayFar(174);
   Motion_SetVarCbAndRefresh(id, 1);
-  Audio_PlayCue(175);
+  Sound_PlayFar(175);
   Motion_SetVarCbAndRefresh(id, 1);
   WaitFrames(20);
 
   // Spin, then leap high.
-  Audio_PlayCue(140);
+  Sound_PlayFar(140);
   object->update = BattleEffect_AdvanceSpinAngle;
   WaitFrames(40);
-  Audio_PlayCue(153);
+  Sound_PlayFar(153);
   ObjectMotion_Launch(id, 12, 22);
 
   // 24 sparks from the object's place on screen, one a frame.
@@ -77,7 +77,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   position.z = object->z;
   Camera_WorldToScreen(&position);
   Object_Destroy(object);
-  Audio_PlayCue(164);
+  Sound_PlayFar(164);
   slot = scene->slots;
   count = 23;
   do {
@@ -99,7 +99,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   WaitFrames(20);
   Object_SetMode(Object_GetById(gAdventure.currentOwner), 28);
   WaitFrames(40);
-  Audio_PlayCue(164);
+  Sound_PlayFar(164);
   WaitFrames(100);
   Shop_InitializeEffectFar();
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();

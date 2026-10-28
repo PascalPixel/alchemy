@@ -130,7 +130,7 @@ BattleEffect_RunSleep:
 	ldr r0, .L_0814b154
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #0
 	mov r11, r4
 .L_0814afcc:

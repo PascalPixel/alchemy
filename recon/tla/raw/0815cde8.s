@@ -1404,31 +1404,31 @@ BattleEffect_RunAzul:
 	cmp r0, #78
 	bne .L_0815d878
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815d878:
 	ldr r1, [sp, #64]
 	cmp r1, #138
 	bne .L_0815d884
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815d884:
 	ldr r2, [sp, #64]
 	cmp r2, #152
 	bne .L_0815d890
 	movs r0, #163
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815d890:
 	ldr r3, [sp, #64]
 	cmp r3, #7
 	bne .L_0815d89c
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0815d89c:
 	ldr r4, [sp, #64]
 	cmp r4, #10
 	bne .L_0815d942
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r6, #0
 	mov r8, r6
 	ldr r5, [sp, #76]
@@ -2413,7 +2413,7 @@ BattleEffect_RunAzul:
 	bne .L_0815e054
 .L_0815e07e:
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #238
 	ldr r0, [sp, #76]
 	lsls r1, r1, #7

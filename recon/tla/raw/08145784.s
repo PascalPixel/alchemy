@@ -553,7 +553,7 @@ BattleEffect_RunCondemn:
 	cmp r6, #68
 	bne .L_08145bae
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08145bae:
 	mov r1, r8
 	cmp r1, #72

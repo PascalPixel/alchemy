@@ -89,7 +89,7 @@ BattleEffect_UpdatePhasedRadialParticle:
 	cmp r3, #0
 	beq .L_080d7f6a
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080d7f6a
 .L_080d7e76:
 	cmp r6, #1
@@ -187,7 +187,7 @@ BattleEffect_UpdatePhasedRadialParticle:
 	cmp r3, #0
 	beq .L_080d7f6a
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080d7f6a
 .L_080d7f3e:
 	cmp r6, #4

@@ -227,7 +227,7 @@ BattleEffect_RunSoulShatter:
 	cmp r4, #4
 	bne .L_0816d902
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816d902:
 	mov r0, r9
 	cmp r0, #10
@@ -239,7 +239,7 @@ BattleEffect_RunSoulShatter:
 	movs r3, #8
 	str r3, [r2]
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #36]
 	movs r1, #7
 	movs r2, #36
@@ -282,7 +282,7 @@ BattleEffect_RunSoulShatter:
 	cmp r0, #40
 	bne .L_0816d970
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816d970:
 	mov r2, r9
 	cmp r2, #32

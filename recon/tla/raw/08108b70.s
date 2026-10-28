@@ -158,7 +158,7 @@ Func_08108b70:
 	bl Item_Get
 	str r0, [sp, #8]
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #10
 	movs r1, #3
 	movs r2, #17
@@ -378,7 +378,7 @@ Func_08108b70:
 	cmp r1, #0
 	bge .L_08108ebe
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity
@@ -429,7 +429,7 @@ Func_08108b70:
 	lsls r5, r5, #3
 	movs r0, #112
 	adds r5, #252
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	add r5, r10
 	movs r0, #1
 	bl WaitFrames
@@ -549,12 +549,12 @@ Func_08108b70:
 .L_08109000:
 	movs r0, #113
 	movs r5, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r5, r5
 	b .L_08108f84
 .L_0810900c:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r5, #1
 	ldr r0, .L_08109064
 	bl Func_0810857c
@@ -563,7 +563,7 @@ Func_08108b70:
 .L_0810901e:
 	movs r0, #113
 	movs r5, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r5, r5
 	b .L_08108d2c
 .L_0810902a:
@@ -571,7 +571,7 @@ Func_08108b70:
 	movs r0, #112
 	str r3, [sp, #20]
 	movs r5, #0
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08108d2c
 .L_08109038:
 	ldr r0, [sp, #32]

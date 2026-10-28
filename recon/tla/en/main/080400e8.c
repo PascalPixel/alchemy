@@ -58,7 +58,7 @@ void UiIcon_PrepareObjectFar(struct RenderOutput *icon);
 void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 void UiWindow_ClearInteriorTiles(struct RenderInput *window, s32 x0, s32 y0,
                                  s32 x1, s32 y1);
@@ -175,7 +175,7 @@ s32 Func_080400e8(void) {
     WaitFrames(1);
 
     if (PRESSED & 4) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       redraw = 1;
       work->preset++;
       if (work->preset > 5)
@@ -186,30 +186,30 @@ s32 Func_080400e8(void) {
     }
     if (PRESSED & 9) {
       result = 0;
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       break;
     }
     if (PRESSED & 2) {
       result = -1;
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       break;
     }
     if (gInput.repeat & 64) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       selectedOption--;
       redraw = 1;
     } else if (gInput.repeat & 128) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       selectedOption++;
       redraw = 1;
     } else {
       if (gInput.repeat & 32) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         work->option[selectedOption]--;
         redraw = 1;
       }
       if (gInput.repeat & 16) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         work->option[selectedOption]++;
         redraw = 1;
       }

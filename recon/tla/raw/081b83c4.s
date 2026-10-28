@@ -635,7 +635,7 @@ Func_081b83c4:
 	movs r3, #24
 	bl UiText_DrawNumberInWindowFar
 	movs r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #0
 	str r0, [sp, #108]
 	ldr r1, [sp, #116]
@@ -650,7 +650,7 @@ Func_081b83c4:
 	cmp r3, #0
 	beq .L_081b8932
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #128
 	ldr r2, [sp, #120]
 	lsls r4, r4, #3
@@ -671,7 +671,7 @@ Func_081b83c4:
 	movs r5, #151
 	lsls r5, r5, #1
 	adds r0, r5, #0
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #128
 	ldr r6, [sp, #120]
 	lsls r0, r0, #3
@@ -681,7 +681,7 @@ Func_081b83c4:
 	movs r1, #1
 	bl UiWork_FinalizeFar
 	adds r0, r5, #0
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r6, .L_081b8bfc
 	ldr r5, [sp, #124]
 	movs r1, #0
@@ -810,7 +810,7 @@ Func_081b83c4:
 .L_081b8a6a:
 	movs r0, #151
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r6, .L_081b8bfc
 	ldr r5, [sp, #124]
 	movs r0, #0
@@ -873,7 +873,7 @@ Func_081b83c4:
 	cmp r3, #0
 	ble .L_081b8afa
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b8c70
 .L_081b8afa:
 	ldr r4, [sp, #120]
@@ -905,7 +905,7 @@ Func_081b83c4:
 	movs r3, #8
 	bl UiText_DrawCharacterAtOffsetFar
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r6, #0
 	str r6, [sp, #96]
 	b .L_081b8c70
@@ -916,7 +916,7 @@ Func_081b83c4:
 	cmp r3, #0
 	beq .L_081b8bc6
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	ldr r2, [sp, #120]
 	movs r4, #128
@@ -1006,7 +1006,7 @@ Func_081b83c4:
 	ldr r6, .L_081b8f10
 .L_081b8c06:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #0
 	str r3, [sp, #72]
 	b .L_081b8c46
@@ -1024,7 +1024,7 @@ Func_081b83c4:
 	bne .L_081b8c30
 .L_081b8c28:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b8c46
 .L_081b8c30:
 	ldr r6, [sp, #88]
@@ -1036,7 +1036,7 @@ Func_081b83c4:
 	ldr r6, .L_081b8f18
 .L_081b8c3c:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	str r0, [sp, #72]
 .L_081b8c46:
@@ -1547,13 +1547,13 @@ Func_081b83c4:
 	cmp r2, #24
 	bne .L_081b901a
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081b901a:
 	ldr r3, [sp, #84]
 	cmp r3, #70
 	bne .L_081b9026
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081b9026:
 	ldr r4, [sp, #84]
 	cmp r4, #40
@@ -1562,7 +1562,7 @@ Func_081b83c4:
 	cmp r5, #1
 	bls .L_081b903a
 	movs r0, #55
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b904a
 .L_081b903a:
 	ldr r6, [sp, #52]
@@ -1571,7 +1571,7 @@ Func_081b83c4:
 	cmp r6, r0
 	beq .L_081b904a
 	adds r0, r6, #0
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081b904a:
 	movs r1, #1
 	negs r1, r1
@@ -1777,7 +1777,7 @@ Func_081b83c4:
 	bl UiText_DrawNumberInWindowFar
 	movs r0, #1
 	str r5, [sp, #60]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #6
 	str r3, [sp, #0]
 	movs r1, #16
@@ -1907,9 +1907,9 @@ Func_081b83c4:
 	ldr r0, [r6]
 	bl UiWork_FinalizeFar
 	movs r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #0
 	movs r3, #6
 	str r0, [sp, #96]
@@ -1959,7 +1959,7 @@ Func_081b83c4:
 	b .L_081b9550
 .L_081b9348:
 	movs r0, #105
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #76]
 	bl Party_AdjustCoinsFar
 	ldr r3, .L_081b9510
@@ -1987,7 +1987,7 @@ Func_081b83c4:
 	cmp r4, #0
 	bne .L_081b9388
 	movs r0, #105
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081b9388:
 	movs r0, #1
 	bl Party_AdjustCoinsFar
@@ -2027,7 +2027,7 @@ Func_081b83c4:
 	cmp r6, #4
 	bne .L_081b93da
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081b93da:
 	ldr r0, [sp, #80]
 	cmp r0, #7
@@ -2125,7 +2125,7 @@ Func_081b83c4:
 	beq .L_081b949e
 	movs r0, #112
 	str r2, [sp, #84]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b94d4
 .L_081b949e:
 	ldr r3, [r1, #12]
@@ -2137,7 +2137,7 @@ Func_081b83c4:
 	cmp r0, #1
 	bne .L_081b94ba
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #0
 	str r1, [sp, #68]
 	b .L_081b94d4
@@ -2151,7 +2151,7 @@ Func_081b83c4:
 	cmp r2, #0
 	bne .L_081b9528
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	str r3, [sp, #68]
 .L_081b94d4:

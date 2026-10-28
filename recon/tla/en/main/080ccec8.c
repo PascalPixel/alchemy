@@ -65,7 +65,7 @@ struct ObjectRuntime *ObjectEvent_GetObject(s32 id);
 void ObjectEvent_Remove(s32 id);
 void ObjectEvent_Spring(s32 id);
 void Func_080cf350(struct ObjectRuntime *object);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleParty_ApplyDrain(s32 amount, s32 unused);
 void UiWindow_CreateWithLayoutBoundsFar(s32 layout);
 s32 Party_CountActiveOwnersFar(void);
@@ -186,12 +186,12 @@ s32 Func_080ccec8(s32 id) {
         shown = ObjectEvent_GetObject(index);
         shown->update = Marker_MoveLeaderAwayFromEmitter;
         Func_080cf350(shown);
-        Audio_PlayCue(83);
+        Sound_PlayFar(83);
         UiText_DrawQuantity(contents, 5);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerTrap, 3);
         BattleParty_ApplyDrain(1999, 0);
         UiWindow_CreateWithLayoutBoundsFar(1);
-        Audio_PlayCue(126);
+        Sound_PlayFar(126);
         if (Party_CountActiveOwnersFar() == 1)
           UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerTrap + 6, 1);
         else
@@ -199,7 +199,7 @@ s32 Func_080ccec8(s32 id) {
         PartyStatus_CloseFar();
         shown->update = NULL;
         Object_SetMode(shown, 2);
-        Audio_PlayCue(246);
+        Sound_PlayFar(246);
         EventRuntime_Wait(30);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerTrapEnd, 1);
         ObjectEvent_Remove(index);
@@ -231,7 +231,7 @@ s32 Func_080ccec8(s32 id) {
           *(u16 *)(work + 356) = Encounter_GetEnemyGroupAtSlot(104, contents);
         gAdventure.battleRule24b = 2;
         BattleEffect_SelectBattleCue(104, contents);
-        Audio_PlayCue(gAdventure.sceneCue);
+        Sound_PlayFar(gAdventure.sceneCue);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgContainerMonster, 1);
         goto done;
       }
@@ -254,7 +254,7 @@ s32 Func_080ccec8(s32 id) {
             ObjectEvent_SetMode2(index);
         }
         Func_080cf350(shown);
-        Audio_PlayCue(83);
+        Sound_PlayFar(83);
         contents &= 0x7fff;
         UiText_DrawQuantity(contents, 5);
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgFoundCoins, 3);
@@ -295,7 +295,7 @@ s32 Func_080ccec8(s32 id) {
       if (type == 128)
         ObjectEvent_SetMode2(index);
       Func_080cf350(shown);
-      Audio_PlayCue(83);
+      Sound_PlayFar(83);
       UiText_DrawQuantity(contents, 2);
       if (slot == gAdventure.currentOwner) {
         UiText_ShowPositionedMessageAndWaitFar((s32)&MsgFoundItem, 3);

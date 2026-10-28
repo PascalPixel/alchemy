@@ -563,7 +563,7 @@ Func_0804a134:
 	adds r0, r5, #0
 	movs r1, #240
 	subs r7, #1
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	adds r5, #12
 	cmp r7, #0
 	bne .L_0804a5a0
@@ -641,7 +641,7 @@ Func_0804a134:
 	beq .L_0804a646
 	ldr r0, [sp, #12]
 	movs r1, #242
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 .L_0804a646:
 	movs r3, #192
 	lsls r3, r3, #18
@@ -698,7 +698,7 @@ Func_0804a134:
 .L_0804a6a8:
 	movs r0, #113
 	movs r6, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r6, r6
 	b .L_0804a816
 .L_0804a6b4:
@@ -714,7 +714,7 @@ Func_0804a134:
 	cmp r3, #0
 	beq .L_0804a6f2
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	add r8, r0
 	mov r1, r8
@@ -742,7 +742,7 @@ Func_0804a134:
 	cmp r3, #0
 	beq .L_0804a73c
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #1
 	negs r2, r2
 	add r8, r2
@@ -780,7 +780,7 @@ Func_0804a134:
 	cmp r3, #0
 	beq .L_0804a79c
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Input_ResetKeyRepeat
 	ldr r1, [sp, #68]
 	mov r3, r11
@@ -827,7 +827,7 @@ Func_0804a134:
 	cmp r3, #0
 	beq .L_0804a80e
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Input_ResetKeyRepeat
 	mov r0, r11
 	cmp r0, #0

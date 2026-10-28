@@ -2,7 +2,7 @@
 
 extern SoundCommand gSound_JumpCommand;
 
-void MusicTrack_OperateWorkByte(struct SoundPlayer *player,
+void ply_memacc(struct SoundPlayer *player,
                                 struct SoundTrack *track) {
   u32 op;
   u8 *byte;

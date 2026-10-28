@@ -97,7 +97,7 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 width,
                                   struct RenderInput *window, s32 x, s32 y);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -334,7 +334,7 @@ void Func_081b83c4(void) {
   if ((u32)bet > (u32)gAdventure.coins)
     bet = gAdventure.coins;
   UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
-  Audio_PlayCue(1);
+  Sound_PlayFar(1);
 
   frame = 0;
   for (;;) {
@@ -355,14 +355,14 @@ void Func_081b83c4(void) {
           break;
         }
         if (gInput.repeat & 2) {
-          Audio_PlayCue(113);
+          Sound_PlayFar(113);
           UiWork_FinalizeFar(sprites->helpWindow, 1);
           break;
         }
         if (gInput.repeat & 1) {
-          Audio_PlayCue(302);
+          Sound_PlayFar(302);
           UiWork_FinalizeFar(sprites->helpWindow, 1);
-          Audio_PlayCue(302);
+          Sound_PlayFar(302);
           DICE_GAME_THROW(dice, spinRate);
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gAdventure.coins)
@@ -383,13 +383,13 @@ void Func_081b83c4(void) {
         slide++;
       } else if (timer > 0) {
         if (++timer == 16) {
-          Audio_PlayCue(302);
+          Sound_PlayFar(302);
           DICE_GAME_THROW(dice, spinRate);
           state = 2;
         }
       } else if (gInput.repeat & 2) {
         if (round > 0) {
-          Audio_PlayCue(114);
+          Sound_PlayFar(114);
         } else {
           UiWork_FinalizeFar(sprites->helpWindow, 1);
           window = UiWindow_CreateFar(22, 16, 8, 4, 6);
@@ -397,11 +397,11 @@ void Func_081b83c4(void) {
           UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
           UiText_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
                                           sprites->helpWindow, 0, 8);
-          Audio_PlayCue(113);
+          Sound_PlayFar(113);
           state = 0;
         }
       } else if (gInput.repeat & state) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         timer = 1;
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         if (round == 0) {
@@ -422,18 +422,18 @@ void Func_081b83c4(void) {
             message = (s32)&MsgDiceGameHigher;
           else
             message = (s32)&MsgDiceGameHigherAgain;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           lower = 0;
         } else if ((gInput.repeat & 0x80) && lower == 0) {
           if (target == 4) {
           refuse:
-            Audio_PlayCue(113);
+            Sound_PlayFar(113);
           } else {
             if (round == 0)
               message = (s32)&MsgDiceGameLower;
             else
               message = (s32)&MsgDiceGameLowerAgain;
-            Audio_PlayCue(111);
+            Sound_PlayFar(111);
             lower = 1;
           }
         }
@@ -552,14 +552,14 @@ void Func_081b83c4(void) {
     } else if (state == 3) {
       timer++;
       if (timer == 24)
-        Audio_PlayCue(152);
+        Sound_PlayFar(152);
       if (timer == 70)
-        Audio_PlayCue(103);
+        Sound_PlayFar(103);
       if (timer == 40) {
         if ((u32)resultKind > 1)
-          Audio_PlayCue(55);
+          Sound_PlayFar(55);
         else if (fanfare != -1)
-          Audio_PlayCue(fanfare);
+          Sound_PlayFar(fanfare);
         fanfare = -1;
       }
       if (timer == 1) {
@@ -631,7 +631,7 @@ void Func_081b83c4(void) {
           bet = Party_GetAverageLevelFar() * 10;
           UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           multiplier = 0;
-          Audio_PlayCue(1);
+          Sound_PlayFar(1);
           state = 0;
           window = UiWindow_CreateFar(22, 16, 8, 4, 6);
           sprites->helpWindow = window;
@@ -669,8 +669,8 @@ void Func_081b83c4(void) {
       if (timer > 19) {
         if (gInput.repeat & 1) {
           UiWork_FinalizeFar(sprites->helpWindow, 1);
-          Audio_PlayCue(1);
-          Audio_PlayCue(112);
+          Sound_PlayFar(1);
+          Sound_PlayFar(112);
           state = 0;
           window = UiWindow_CreateFar(22, 16, 8, 4, 6);
           sprites->helpWindow = window;
@@ -683,14 +683,14 @@ void Func_081b83c4(void) {
           bet = Party_GetAverageLevelFar() * 10;
           UiText_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           if (winnings > 0) {
-            Audio_PlayCue(105);
+            Sound_PlayFar(105);
             Party_AdjustCoinsFar(winnings);
             UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                          sprites->coinsWindow, 0, state);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
-            Audio_PlayCue(105);
+            Sound_PlayFar(105);
           Party_AdjustCoinsFar(1);
           UiText_DrawNumberInWindowFar(gAdventure.coins, 6,
                                        sprites->coinsWindow, 0, 0);
@@ -700,7 +700,7 @@ void Func_081b83c4(void) {
       }
     } else if (state == 5) {
       if (slide == 4)
-        Audio_PlayCue(175);
+        Sound_PlayFar(175);
       if (slide <= 7) {
         slide++;
       } else if (timer > 0) {
@@ -735,12 +735,12 @@ void Func_081b83c4(void) {
         }
       } else if (gInput.repeat & 1) {
         timer = 1;
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
       } else if ((gInput.repeat & 0x40) && cashOut == 1) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         cashOut = 0;
       } else if ((gInput.repeat & 0x80) && cashOut == 0) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         cashOut = 1;
       }
       if (cashOut == 0) {

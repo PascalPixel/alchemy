@@ -56,7 +56,7 @@ void Func_080e3698(s32 actor) {
     WaitFrames(1);
   }
   Object_SetPositionAndResetMotionFar(object, x, y, z);
-  Audio_PlayCue(136);
+  Sound_PlayFar(136);
   Object_SetMode(ring, 6);
   EventRuntime_Wait(15);
   Object_Destroy(ring);

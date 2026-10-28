@@ -100,7 +100,7 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
 void Func_0815e22c(struct EffectPosition *middle);
@@ -246,7 +246,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 0: find the user and the targets' middle (the Death Card's 32
     // pixels toward the user), and scroll the background to the user.
     if (frame == 0) {
-      Audio_PlayCue(190);
+      Sound_PlayFar(190);
       EffectPosition_ProjectSprite(effect->actor, &card);
       Func_0815e22c(&middle);
       if (mode == CARD_DEATH) {
@@ -269,7 +269,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       REG_BLDALPHA = ((fade + 8) << 8) | (16 - fade * 2);
     }
     if (frame == 48 && mode == CARD_BAFFLE)
-      Audio_PlayCue(138);
+      Sound_PlayFar(138);
 
     // Frames 0-47: the card flies to the middle, rising and growing; the
     // background follows it as far as it can scroll.
@@ -401,7 +401,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == CARD_SLEEP) {
       // Frame 48: a sheep a frame for 32 frames jumps from the card.
       if (frame == 48)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       if (frame == 64)
         Func_081180e8(-1);
       if (frame >= 48 && frame <= 79) {
@@ -433,7 +433,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
       // Frame 72: it strikes; the screen flashes and 64 shards burst.
       if (time == 24) {
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
         Func_081180e8(-1);
         work->shakeFrames = 4;
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -481,9 +481,9 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     if (mode == CARD_DEATH) {
       // The reaper rises in seven panels and swings at frame 64.
       if (frame == 60)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       if (frame == 64) {
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
         Func_081180e8(-1);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
                                   0x20000, 110);

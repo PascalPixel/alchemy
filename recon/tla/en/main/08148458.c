@@ -61,7 +61,7 @@ void BattleEffect_SelectLivingTargets(
 void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority); // ..SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 struct Point2D {
   s32 x;
@@ -207,11 +207,11 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 0)
-        Audio_PlayCue(164);
+        Sound_PlayFar(164);
       if (frame == 32)
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
       if (frame == 80)
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
 
       // Three columns of fire scroll up while the sparks burst.
       if (frame >= 32 && frame < 80) {

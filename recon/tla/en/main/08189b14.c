@@ -86,7 +86,7 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
@@ -194,7 +194,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
     for (i = 0; i != effect->variant + 1; i++) {
       step = &work->particles[i];
       if (frame == i * 16 + 54)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
 
       // The strike: the target reels and flashes, and 128 sparks fly up
       // from it. The last sword ends the action.
@@ -202,7 +202,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         if (i == effect->variant)
           Func_081180e8(144);
         else
-          Audio_PlayCue(144);
+          Sound_PlayFar(144);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;

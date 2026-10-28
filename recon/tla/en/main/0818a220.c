@@ -112,7 +112,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectSprite(s32 id,
                                              struct EffectPosition *position);
 void Func_0815f0a0(s32 resource);
@@ -211,7 +211,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 0: clear the particles, give each member a strike countdown, and
     // find the user and every target.
     if (frame == 0) {
-      Audio_PlayCue(190);
+      Sound_PlayFar(190);
       for (i = 0; i != 56; i++)
         work->particles[i].variant = -1;
       for (i = 0; i != effect->count; i++)
@@ -243,13 +243,13 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 48: the card shows its picture.
     if (frame == 48) {
       if (mode == CARD_BRAMBLE)
-        Audio_PlayCue(148);
+        Sound_PlayFar(148);
       if (mode == CARD_FROST)
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
       if (mode == CARD_FLAME)
-        Audio_PlayCue(104);
+        Sound_PlayFar(104);
       if (mode == CARD_THUNDER)
-        Audio_PlayCue(221);
+        Sound_PlayFar(221);
       if (mode != CARD_BRAMBLE) {
         work->transferMode = 2;
         work->transferValue = 50;
@@ -344,11 +344,11 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
           step->variant = 5;
           work->shakeFrames = 4;
           if (mode == CARD_FROST)
-            Audio_PlayCue(134);
+            Sound_PlayFar(134);
           else if (mode == CARD_THUNDER)
-            Audio_PlayCue(177);
+            Sound_PlayFar(177);
           else
-            Audio_PlayCue(133);
+            Sound_PlayFar(133);
           if (i == 0)
             Func_081180e8(134);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,

@@ -71,7 +71,7 @@ Func_08040d70:
 	beq .L_08040e06
 	movs r0, #113
 	movs r5, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r5, r5
 	b .L_08040e42
 .L_08040e06:
@@ -81,7 +81,7 @@ Func_08040d70:
 	cmp r3, #0
 	beq .L_08040e18
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08040e42
 .L_08040e18:
 	ldr r3, [r6, #12]
@@ -92,7 +92,7 @@ Func_08040d70:
 	movs r0, #111
 	subs r5, #1
 	movs r7, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08040e2c:
 	ldr r3, [r6, #12]
 	movs r2, #128
@@ -102,7 +102,7 @@ Func_08040d70:
 	movs r0, #111
 	adds r5, #1
 	movs r7, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08040d98
 .L_08040e42:
 	mov r0, r8

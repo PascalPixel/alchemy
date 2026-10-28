@@ -3,7 +3,7 @@
 /// Jupiter and Mars Lighthouse overlays and overlay 6B0, each of which lists
 /// the cells its map watches in a table of its own. The including file names
 /// the table (CELL_TABLE), the function (CELL_SPRITE_DRAW) and its overlay's
-/// import of Runtime_PushSlotEntry (CELL_PUSH_SLOT_ENTRY).
+/// import of Oam_AddSpriteAtDepth (CELL_PUSH_SLOT_ENTRY).
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -34,7 +34,7 @@ struct CellTarget {
   s16 shown;   ///< nonzero draws the sprite
   s16 tile;    ///< resource entry of the sprite's tiles
   u16 unk12;
-  u32 oam[3]; ///< the sprite's attributes, as Runtime_PushSlotEntry takes them
+  u32 oam[3]; ///< the sprite's attributes, as Oam_AddSpriteAtDepth takes them
   struct CellTargetEntry entries[1];
 };
 

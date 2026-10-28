@@ -47,7 +47,7 @@ struct DjinnMenuWork {
 
 extern u8 Msg01046[], Msg01047[], MsgDjinnName[];
 
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void UiText_DrawResourceFar(u8 *message, s32 window, s32 x, s32 y);
@@ -76,7 +76,7 @@ void Func_080fe638(void) {
 
   page = 0;
   pages = 2;
-  Audio_PlayCue(112);
+  Sound_PlayFar(112);
   redraw = 1;
   RenderOutput_RedrawSavedRectFar(menu->messageWindow);
   UiText_DrawCharacterAtOffsetFar(Msg01046, menu->messageWindow, 0, 16);
@@ -123,7 +123,7 @@ void Func_080fe638(void) {
       else
         page--;
       page = (page + pages) % pages;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       redraw = 1;
     }
@@ -137,5 +137,5 @@ void Func_080fe638(void) {
   menu->cursor->active = 1;
   menu->selector->active = 1;
   MenuIcon_SetActive(1);
-  Audio_PlayCue(113);
+  Sound_PlayFar(113);
 }

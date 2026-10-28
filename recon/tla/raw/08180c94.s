@@ -127,7 +127,7 @@ BattleEffect_RunDaedalusAlt:
 	cmp r0, #56
 	bne .L_08180d96
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08180d96:
 	movs r6, #0
 .L_08180d98:
@@ -178,7 +178,7 @@ BattleEffect_RunDaedalusAlt:
 	movs r3, #4
 	str r3, [r2]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08180dfa:
 	adds r6, #1
 	cmp r6, #7

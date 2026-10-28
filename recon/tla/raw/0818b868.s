@@ -237,7 +237,7 @@ BattleEffect_RunTripleChomp:
 	b .L_0818ba4e
 .L_0818ba48:
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818ba4e:
 	ldr r1, [sp, #60]
 	ldr r2, [sp, #16]

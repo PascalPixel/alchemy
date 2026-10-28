@@ -149,7 +149,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   heights = Data_08196e1c;
   work->shakeFrames = 128;
-  Audio_PlayCue(141);
+  Sound_PlayFar(141);
 
   for (frame = 0; frame != Data_081982f7[effect->variant][TIMING_FRAMES];
        frame++) {

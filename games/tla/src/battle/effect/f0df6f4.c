@@ -50,7 +50,7 @@ void Func_080df6f4(void) {
   }
 
   Object_CommitPosition(pair[0]);
-  Audio_PlayCue(134);
+  Sound_PlayFar(134);
   for (n = 0; n < 24; n++) {
     pos.x = work->x;
     pos.y = work->y + 0x100000;

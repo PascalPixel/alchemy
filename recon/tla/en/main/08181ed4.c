@@ -112,7 +112,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 void Func_0815e22c(struct EffectPosition *midpoint);
 void Func_0815f0a0(s32 resourceId);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_08118088(s32 actor, s32 motion);
 u32 Random16(void);
@@ -195,7 +195,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
       if (frame < GEYSER_PEAK_FRAME)
         Func_0815e22c(&midpoint);
       if (frame == 0) {
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
         work->shakeFrames = 16;
       }
       if (frame == GEYSER_PEAK_FRAME) {

@@ -187,7 +187,7 @@ Func_080fd2e8:
 	cmp r3, #0
 	beq .L_080fd476
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #0]
 	movs r1, #129
 	lsls r3, r3, #1
@@ -203,7 +203,7 @@ Func_080fd2e8:
 	cmp r3, #0
 	beq .L_080fd48e
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #1
 	negs r2, r2
 	mov r9, r2

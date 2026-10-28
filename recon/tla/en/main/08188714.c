@@ -103,7 +103,7 @@ void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void MemFree(void *block);
 void Func_081180e8(s32 phase);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -330,7 +330,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
         Func_081180e8(145);
     }
     if (frame == 0) {
-      Audio_PlayCue(136);
+      Sound_PlayFar(136);
   __asm__("");
       work->shakeFrames = 6;
     }

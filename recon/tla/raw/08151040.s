@@ -414,11 +414,11 @@ BattleEffect_RunFire:
 	cmp r3, #2
 	bne .L_0815137e
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08151384
 .L_0815137e:
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08151384:
 	mov r5, r10
 	ldr r1, [r5, #20]

@@ -459,7 +459,7 @@ BattleEffect_RunAstralBlast:
 	.4byte 0xffd80000
 .L_081469d0:
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #80]
 	movs r1, #7
 	movs r2, #36

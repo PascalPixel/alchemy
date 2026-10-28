@@ -229,7 +229,7 @@ BattleEffect_RunTargetMotes:
 	ldr r0, .L_0814aa68
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #60]
 	movs r2, #0
 	str r2, [sp, #64]

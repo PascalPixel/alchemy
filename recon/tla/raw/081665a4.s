@@ -237,7 +237,7 @@ BattleEffect_RunRagnarok:
 	cmp r2, #4
 	bne .L_08166790
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08166790:
 	mov r3, r9
 	cmp r3, #8
@@ -254,7 +254,7 @@ BattleEffect_RunRagnarok:
 	cmp r1, #18
 	bne .L_081667b0
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081667b0:
 	mov r2, r9
 	cmp r2, #40

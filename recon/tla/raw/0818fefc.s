@@ -191,31 +191,31 @@ BattleEffect_RunMegiddo:
 	cmp r2, #4
 	bne .L_08190088
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08190088:
 	ldr r3, [sp, #84]
 	cmp r3, #28
 	bne .L_08190094
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08190094:
 	ldr r4, [sp, #84]
 	cmp r4, #84
 	bne .L_081900a0
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081900a0:
 	ldr r0, [sp, #84]
 	cmp r0, #143
 	bne .L_081900ac
 	movs r0, #191
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081900ac:
 	ldr r1, [sp, #84]
 	cmp r1, #171
 	bne .L_081900b8
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081900b8:
 	ldr r3, .L_0819017c
 	movs r2, #3
@@ -760,7 +760,7 @@ BattleEffect_RunMegiddo:
 	movs r3, #8
 	str r3, [r2]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #240
 	ldr r2, .L_08190790
 	ldr r0, [sp, #88]

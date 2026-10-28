@@ -172,11 +172,11 @@ Func_081b243c:
 	adds r3, #1
 	str r3, [r0]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b259a
 .L_081b2594:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081b259a:
 	ldrh r2, [r6]
 	movs r3, #128
@@ -190,7 +190,7 @@ Func_081b243c:
 	subs r3, #1
 	str r3, [r1]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b25c6
 .L_081b25b8:
 	.4byte gDebugPaused
@@ -198,7 +198,7 @@ Func_081b243c:
 	.4byte Data_0200024c
 .L_081b25c0:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081b25c6:
 	ldr r3, .L_081b25e8
 	movs r2, #128
@@ -260,7 +260,7 @@ Func_081b243c:
 	bl UiWork_FinalizeFar
 	movs r0, #152
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b2dca
 .L_081b2644:
 	cmp r5, #5
@@ -347,7 +347,7 @@ Func_081b243c:
 	bgt .L_081b26f8
 	movs r0, #50
 	adds r0, #255
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [r5]
 	movs r1, #1
 	lsls r3, r2, #3
@@ -365,7 +365,7 @@ Func_081b243c:
 	bne .L_081b2730
 	movs r0, #152
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #28]
 	mov r1, r9
 	movs r3, #1
@@ -390,7 +390,7 @@ Func_081b243c:
 	b .L_081b278a
 .L_081b2730:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b278a
 .L_081b2738:
 	mov r3, r10
@@ -407,7 +407,7 @@ Func_081b243c:
 	bl __modsi3
 	str r0, [r5]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r10
 	ldrh r2, [r0]
 .L_081b275e:
@@ -423,7 +423,7 @@ Func_081b243c:
 	bl __modsi3
 	str r0, [r5]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #148
 	adds r1, r1, r7
 	mov r10, r1
@@ -631,7 +631,7 @@ Func_081b243c:
 	movs r3, #3
 	str r3, [r2]
 	movs r0, #93
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #32]
 	mov r0, r8
 	str r3, [r0]
@@ -696,7 +696,7 @@ Func_081b243c:
 	movs r3, #10
 	str r3, [r0]
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b29ee
 .L_081b299e:
 	cmp r5, #11
@@ -731,7 +731,7 @@ Func_081b243c:
 	mov r3, r9
 	str r3, [r5]
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #153
 	lsls r0, r0, #3
 	adds r3, r7, r0
@@ -772,7 +772,7 @@ Func_081b243c:
 	strb r0, [r5, #2]
 	movs r0, #52
 	adds r0, #255
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_081b2ac2
 .L_081b2a32:
 	cmp r5, #10
@@ -809,7 +809,7 @@ Func_081b243c:
 	bne .L_081b2a7e
 	movs r0, #153
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r8
 	ldr r3, [r1]
 .L_081b2a7e:
@@ -1027,7 +1027,7 @@ Func_081b243c:
 	movs r3, #2
 	str r3, [r2]
 	movs r0, #171
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #36]
 	movs r0, #239
 	lsls r0, r0, #7

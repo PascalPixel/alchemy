@@ -72,7 +72,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -243,16 +243,16 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 0) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 4) {
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
     }
     if (frame == 16) {
-      Audio_PlayCue(164);
+      Sound_PlayFar(164);
     }
     if (frame == 64) {
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     }
 
     // Poseidon rises.

@@ -59,7 +59,7 @@ void Func_080fabe0(void);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 s32 Func_080fb104(void) {
   struct CommandMenu *menu;
@@ -151,25 +151,25 @@ s32 Func_080fb104(void) {
 
     if ((gInput.pressed & 1) != 0) {
       if (commandStates[commandIndex] == -1) {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
       } else {
         switch (commandIndex) {
         case ITEM_COMMAND_USE:
-          Audio_PlayCue(174);
+          Sound_PlayFar(174);
           break;
         case ITEM_COMMAND_EQUIP:
-          Audio_PlayCue(175);
+          Sound_PlayFar(175);
           break;
         case ITEM_COMMAND_INSPECT:
         case ITEM_COMMAND_GIVE:
         case ITEM_COMMAND_DROP:
-          Audio_PlayCue(112);
+          Sound_PlayFar(112);
           break;
         case ITEM_COMMAND_REMOVE:
-          Audio_PlayCue(117);
+          Sound_PlayFar(117);
           break;
         default:
-          Audio_PlayCue(112);
+          Sound_PlayFar(112);
           break;
         }
         menu->listMode = commandIndex;
@@ -177,7 +177,7 @@ s32 Func_080fb104(void) {
       }
     }
     if ((gInput.pressed & 2) != 0) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       commandIndex = -1;
       menu->listMode = commandIndex;
       break;
@@ -186,19 +186,19 @@ s32 Func_080fb104(void) {
     if ((gInput.repeat & 64) != 0) {
       row -= 1;
       redraw = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     } else if ((gInput.repeat & 128) != 0) {
       row += 1;
       redraw = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     } else if ((gInput.repeat & 16) != 0) {
       column += 1;
       redraw = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     } else if ((gInput.repeat & 32) != 0) {
       column -= 1;
       redraw = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
   }
 

@@ -487,43 +487,43 @@ BattleEffect_RunCharon:
 	cmp r7, #4
 	bne .L_08176356
 	movs r0, #107
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08176356:
 	ldr r0, [sp, #80]
 	cmp r0, #55
 	bne .L_08176362
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08176362:
 	ldr r1, [sp, #80]
 	cmp r1, #78
 	bne .L_0817636e
 	movs r0, #219
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817636e:
 	ldr r2, [sp, #80]
 	cmp r2, #127
 	bne .L_0817637a
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817637a:
 	ldr r3, [sp, #80]
 	cmp r3, #131
 	bne .L_08176386
 	movs r0, #149
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08176386:
 	ldr r4, [sp, #80]
 	cmp r4, #206
 	bne .L_08176392
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08176392:
 	ldr r5, [sp, #80]
 	cmp r5, #244
 	bne .L_0817639e
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817639e:
 	ldr r6, [sp, #80]
 	movs r7, #151
@@ -531,7 +531,7 @@ BattleEffect_RunCharon:
 	cmp r6, r7
 	bne .L_081763ae
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081763ae:
 	ldr r0, [sp, #80]
 	movs r1, #154
@@ -539,7 +539,7 @@ BattleEffect_RunCharon:
 	cmp r0, r1
 	bne .L_081763be
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081763be:
 	ldr r2, [sp, #80]
 	movs r3, #156
@@ -547,7 +547,7 @@ BattleEffect_RunCharon:
 	cmp r2, r3
 	bne .L_081763ce
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081763ce:
 	ldr r4, [sp, #80]
 	movs r5, #175
@@ -555,7 +555,7 @@ BattleEffect_RunCharon:
 	cmp r4, r5
 	bne .L_081763de
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081763de:
 	ldr r6, [sp, #80]
 	cmp r6, #0
@@ -3344,7 +3344,7 @@ BattleEffect_RunCharon:
 	bl .L_08176320
 .L_08177932:
 	movs r0, #162
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #80]
 	cmp r0, #131
 	bgt .L_0817798c
@@ -3741,7 +3741,7 @@ BattleEffect_RunCharon:
 	cmp r3, #0
 	bne .L_08177cd2
 	movs r0, #162
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r5, #192
 	ldr r4, [sp, #92]
 	lsls r5, r5, #3
@@ -3959,7 +3959,7 @@ BattleEffect_RunCharon:
 	ldr r0, .L_08177e84
 	bl Resource_LoadAndDecompress
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #240
 	ldr r3, .L_08177e54
 	lsls r1, r1, #6
@@ -4513,7 +4513,7 @@ BattleEffect_RunCharon:
 	mov r1, r8
 	bl EffectPosition_ProjectScaledBattler
 	movs r0, #103
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, .L_081782a8
 	ldr r2, [sp, #12]
 	str r5, [sp, #84]

@@ -107,7 +107,7 @@ Func_080d57e4:
 	mov r3, r8
 	strh r0, [r3, #18]
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #128
 	lsls r3, r3, #10
 	str r3, [r6, #48]

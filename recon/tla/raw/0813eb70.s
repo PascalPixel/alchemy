@@ -375,7 +375,7 @@ Func_0813eb70:
 	mov lr, r5
 	.2byte 0xf800
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #52]
 	movs r3, #30
 	movs r1, #36
@@ -392,13 +392,13 @@ Func_0813eb70:
 	cmp r4, #2
 	bne .L_0813ee82
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0813ee82:
 	ldr r5, [sp, #40]
 	cmp r5, #3
 	bne .L_0813ee8e
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0813ee8e:
 	ldr r7, [sp, #40]
 	cmp r7, #28
@@ -418,13 +418,13 @@ Func_0813eb70:
 	cmp r3, #32
 	bne .L_0813eeb6
 	movs r0, #149
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0813eeb6:
 	ldr r4, [sp, #40]
 	cmp r4, #5
 	bne .L_0813eee6
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r5, [sp, #48]
 	movs r7, #238
 	lsls r7, r7, #7

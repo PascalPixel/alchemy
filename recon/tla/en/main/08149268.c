@@ -73,7 +73,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Crystals fall one after another, eight frames apart, onto the targets'
 // ground and shatter into sixteen spinning shards each; the screen darkens
@@ -188,7 +188,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
               shard->variant = 0;
             }
             work->shakeFrames = 8;
-            Audio_PlayCue(144);
+            Sound_PlayFar(144);
             for (j = 0; j != effect->count; j++)
               Func_0814cd48(effect->actors[j], 7, 5, j, 4);
           }

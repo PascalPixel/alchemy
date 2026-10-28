@@ -21,7 +21,7 @@ void Item_Get(s32);
 s32 GameFlag_Test(s32);
 void Func_080f8a44(s32, s32);
 void Func_080f8ab4(s32, s32);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 /// Asks whether to drop item (an inventory entry): its name, the question, and
 /// Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start. The twin of
@@ -56,11 +56,11 @@ s32 Func_080fc1ac(s32 item) {
       selection = (selection + rows) % rows;
     }
     if (gInput.pressed & 1) {
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       break;
     }
     if (gInput.pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       selection = 1;
       break;
     }
@@ -68,12 +68,12 @@ s32 Func_080fc1ac(s32 item) {
     if (gInput.repeat & 0x40) {
       selection--;
       changed = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
     if (gInput.repeat & 0x80) {
       selection++;
       changed = 1;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
     }
     WaitFrames(1);
   }

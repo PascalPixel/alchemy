@@ -124,7 +124,7 @@ Func_080df1fc:
 	ldr r0, .L_080df544
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r1, r7, #0
 	adds r1, #85
 	movs r3, #4
@@ -315,11 +315,11 @@ Func_080df1fc:
 	cmp r3, #0
 	bne .L_080df550
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080df550
 .L_080df49c:
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #20]
 	mov r2, r10
 	movs r1, #4
@@ -421,11 +421,11 @@ Func_080df1fc:
 	ldr r0, .L_080df6ec
 	bl Scheduler_RemoveCallback
 	movs r0, #135
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #15
 	bl WaitFrames
 	movs r0, #135
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #15
 	bl WaitFrames
 	ldr r3, [r7, #8]
@@ -494,7 +494,7 @@ Func_080df1fc:
 	cmp r2, #0
 	bge .L_080df5ba
 	movs r0, #131
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #20]
 	bl Object_Destroy
 	ldr r0, [sp, #24]

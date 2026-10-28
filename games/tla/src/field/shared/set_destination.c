@@ -21,6 +21,6 @@ void Func_080d2c64(s32 cue) {
   event->cueState = state;
   if ((s16)state == -1)
     state = 0x186;
-  Audio_PlayCue(0x12a);
-  Audio_PlayCue(state);
+  Sound_PlayFar(0x12a);
+  Sound_PlayFar(state);
 }

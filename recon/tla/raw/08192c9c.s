@@ -440,7 +440,7 @@ BattleEffect_RunIris:
 	cmp r3, #0
 	bne .L_08193010
 	movs r0, #206
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08193010:
 	ldr r5, .L_08193300
 	adds r6, r5, #0
@@ -453,7 +453,7 @@ BattleEffect_RunIris:
 	cmp r3, r2
 	bne .L_08193028
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08193028:
 	cmp r5, r6
 	bne .L_08193016
@@ -462,7 +462,7 @@ BattleEffect_RunIris:
 	cmp r3, #175
 	bne .L_0819303a
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0819303a:
 	ldr r5, .L_08193304
 	movs r2, #0
@@ -475,7 +475,7 @@ BattleEffect_RunIris:
 	cmp r3, r2
 	bne .L_08193052
 	movs r0, #209
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08193052:
 	movs r6, #1
 	add r10, r6
@@ -493,7 +493,7 @@ BattleEffect_RunIris:
 	cmp r3, r2
 	bne .L_08193074
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08193074:
 	movs r6, #1
 	add r10, r6
@@ -507,7 +507,7 @@ BattleEffect_RunIris:
 	cmp r3, r2
 	bne .L_08193090
 	movs r0, #206
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08193090:
 	movs r3, #0
 	movs r5, #161
@@ -519,7 +519,7 @@ BattleEffect_RunIris:
 	cmp r3, r5
 	bne .L_081930a6
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081930a6:
 	movs r6, #1
 	add r10, r6
@@ -535,7 +535,7 @@ BattleEffect_RunIris:
 	cmp r3, r2
 	bne .L_081930c6
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081930c6:
 	movs r5, #252
 	movs r3, #0
@@ -548,7 +548,7 @@ BattleEffect_RunIris:
 	cmp r3, r5
 	bne .L_081930de
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081930de:
 	movs r6, #1
 	add r10, r6
@@ -563,7 +563,7 @@ BattleEffect_RunIris:
 	cmp r3, r2
 	bne .L_08193100
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #168]
 	ldr r3, [r4]
 .L_08193100:

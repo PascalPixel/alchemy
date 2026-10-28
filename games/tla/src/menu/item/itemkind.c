@@ -8,16 +8,16 @@ s32 Func_08100d40(s32 item) {
 }
 
 u8 *BattleAction_Get(s32 actionId);
-s32 Audio_PlayCueReturnOne(s32 cue);
+s32 Sound_PlayReturnOne(s32 cue);
 
 s32 Func_08100d58(s32 kind) {
   u8 *action = BattleAction_Get(kind);
 
   switch (action[1] & 15) {
   case 1:
-    Audio_PlayCueReturnOne(126);
+    Sound_PlayReturnOne(126);
   case 11:
-    Audio_PlayCueReturnOne(126);
+    Sound_PlayReturnOne(126);
     break;
   default:
     switch (action[3]) {
@@ -27,13 +27,13 @@ s32 Func_08100d58(s32 kind) {
     case 32:
       break;
     case 5:
-      Audio_PlayCueReturnOne(82);
+      Sound_PlayReturnOne(82);
       break;
     case 3:
-      Audio_PlayCueReturnOne(84);
+      Sound_PlayReturnOne(84);
       break;
     default:
-      Audio_PlayCueReturnOne(91);
+      Sound_PlayReturnOne(91);
       break;
     }
     break;

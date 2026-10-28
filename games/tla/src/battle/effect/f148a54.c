@@ -40,7 +40,7 @@ void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 BattleUnit_GetEffectHeightFar(s32 id);
 
 // Thirty motes rise from the caster, swirl, and home in on the targets; each
@@ -107,7 +107,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
-  Audio_PlayCue(164);
+  Sound_PlayFar(164);
 
   for (frame = 0; frame != gData_081979a8[effect->variant * 2 + 1]; frame++) {
     // The camera turns between frames 17 and 63.
@@ -159,7 +159,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
                         i % effect->count, 4);
           Func_08118088(effect->actors[i % effect->count], 0);
           work->shakeFrames = 4;
-          Audio_PlayCue(132);
+          Sound_PlayFar(132);
         }
       }
 

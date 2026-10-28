@@ -90,7 +90,7 @@ void Func_081084f4(s32 message);
 void Func_0810857c(s32 message);
 s32 Func_08108630(s32 mode);
 void Menu_ReleaseEntryObjectsFar(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 
 s32 Func_08108b70(void) {
@@ -144,12 +144,12 @@ next_page:
     }
     if (gInput.pressed & 1) {
       selected = selectionIndex;
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       selectionResult = 0;
       break;
     }
     if (gInput.pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       selectionResult = -1;
       break;
     }
@@ -160,7 +160,7 @@ next_page:
       itemId = stockIds[selectionIndex];
       held = PartyInventory_CountItemFar(itemId);
       stockDefinition = Item_Get(itemId);
-      Audio_PlayCue(126);
+      Sound_PlayFar(126);
       window = UiWindow_CreateFar(13, 3, 17, 10, 2);
       Func_080f8040(window, itemId, held);
       while (gInput.held & 4)
@@ -221,7 +221,7 @@ next_page:
       RenderOutput_PrepareForRedrawFar(partyWindow);
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         UiText_DrawQuantity(unitId, 1);
         UiText_DrawQuantity(shop->selectedItem, 2);
         if (Inventory_CountFar(unitId) == 15)
@@ -232,7 +232,7 @@ next_page:
       }
       Inventory_RemoveFar(unitId, capacitySlot);
       if (selectedDefinition->price > gAdventure.coins) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         Func_0810857c((s32)MsgBuyNotEnoughMoney);
         selectionResult = -1;
         break;
@@ -245,7 +245,7 @@ next_page:
           continue;
         }
       }
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       WaitFrames(1);
       quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
@@ -257,7 +257,7 @@ next_page:
       break;
     }
     if (gInput.pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       selectionResult = -1;
       break;
     }

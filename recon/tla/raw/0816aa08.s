@@ -203,7 +203,7 @@ BattleEffect_RunPlumeEdge:
 	movs r3, #4
 	str r3, [r2]
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816abb0:
 	ldr r3, [sp, #28]
 	cmp r3, #32

@@ -50,7 +50,7 @@ void Func_080e9db4(void) {
         break;
     test:;
     } while (object->y > object->terrainHeight);
-    Audio_PlayCue(132);
+    Sound_PlayFar(132);
     WaitFrames(1);
     for (i = 0; i < 20; i++) {
       if (object->y <= object->terrainHeight)

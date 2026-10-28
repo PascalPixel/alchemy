@@ -353,7 +353,7 @@ Func_0804bc08:
 	cmp r6, #49
 	bne .L_0804bef2
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0804bebe:
 	movs r0, #0
 	movs r1, #2
@@ -456,7 +456,7 @@ Func_0804bc08:
 	bl .L_0804cc30
 .L_0804bf8c:
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r4, [sp, #80]
 	movs r3, #0
 	str r3, [sp, #44]
@@ -779,7 +779,7 @@ Func_0804bc08:
 	ldr r2, .L_0804c274
 	orrs r3, r2
 	strh r3, [r1, #6]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	ldr r0, [sp, #64]
 	movs r2, #1
@@ -810,7 +810,7 @@ Func_0804bc08:
 	.4byte 0xfffffe00
 .L_0804c280:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r6, #0
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1071,7 +1071,7 @@ Func_0804bc08:
 	mov r0, r8
 	strh r0, [r1, #12]
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r6, #0
 	bl Battle_ClassifyEntryKind
 	ldrb r1, [r6]
@@ -1107,7 +1107,7 @@ Func_0804bc08:
 	.4byte 0x000005a7
 .L_0804c4e0:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #228
@@ -1343,11 +1343,11 @@ Func_0804bc08:
 	cmp r4, #0
 	beq .L_0804c6ca
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0804c6d0
 .L_0804c6ca:
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0804c6d0:
 	mov r0, r10
 	bl Battle_ClassifyEntryKind
@@ -1423,7 +1423,7 @@ Func_0804bc08:
 	b .L_0804c4d4
 .L_0804c760:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r3, #228
@@ -1548,7 +1548,7 @@ Func_0804bc08:
 	.4byte 0x000006d3
 .L_0804c864:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r5, #0
 	bl Battle_ClassifyEntryKind
 	adds r2, r6, #0
@@ -1655,7 +1655,7 @@ Func_0804bc08:
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #4
 	ldr r0, [sp, #64]
 	movs r2, #0
@@ -1672,7 +1672,7 @@ Func_0804bc08:
 	b .L_0804c4d4
 .L_0804c970:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r6, #0
 	movs r3, #192
 	lsls r3, r3, #18
@@ -1909,7 +1909,7 @@ Func_0804bc08:
 .L_0804cb4c:
 	.4byte 0x0000025f
 .L_0804cb50:
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r8
 	bl Battle_ClassifyEntryKind
 	mov r4, r8
@@ -1941,7 +1941,7 @@ Func_0804bc08:
 	str r3, [sp, #60]
 .L_0804cb92:
 	movs r0, #110
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	add r4, sp, #64
 	ldrh r4, [r4]
 	ldr r0, [sp, #76]

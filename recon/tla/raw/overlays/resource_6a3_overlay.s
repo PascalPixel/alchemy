@@ -564,7 +564,7 @@ Func_020003b8:
 	movs r0, #80
 	str r5, [r6, #108]
 	bl Func_020049c4
-	bl AudioCommand_WaitForStateByteClear
+	bl Sound_WaitForFanfare
 	movs r0, #10
 	bl FieldEvent_WaitFrames
 	movs r0, #246

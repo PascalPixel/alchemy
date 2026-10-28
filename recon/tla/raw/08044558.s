@@ -347,7 +347,7 @@ Func_08044558:
 	.4byte gInput
 .L_08044824:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	movs r0, #1
 	negs r1, r1
@@ -382,7 +382,7 @@ Func_08044558:
 	cmp r2, #0
 	beq .L_08044896
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	mov r11, r0
 	add r8, r0
@@ -414,7 +414,7 @@ Func_08044558:
 	cmp r2, #0
 	beq .L_080448d6
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	movs r2, #1
 	subs r7, #1
@@ -450,7 +450,7 @@ Func_08044558:
 	cmp r2, #0
 	beq .L_08044914
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r7, #1
 	movs r1, #1
 	mov r11, r1
@@ -485,7 +485,7 @@ Func_08044558:
 	cmp r2, #0
 	beq .L_08044930
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	movs r1, #5
 	mov r11, r0
@@ -498,7 +498,7 @@ Func_08044558:
 	cmp r6, #0
 	beq .L_08044972
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08044940:
 	ldr r2, [sp, #32]
 	cmp r2, #0
@@ -533,7 +533,7 @@ Func_08044558:
 	b .L_0804472a
 .L_0804497e:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	cmp r7, #18
 	bne .L_080449b6
 	mov r1, r8

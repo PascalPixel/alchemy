@@ -194,7 +194,7 @@ Func_080fe894:
 	cmp r2, #0
 	beq .L_080fea2e
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	str r3, [sp, #0]
 	b .L_080feaf6
@@ -205,7 +205,7 @@ Func_080fe894:
 	cmp r2, #0
 	beq .L_080fea46
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	negs r1, r1
 	str r1, [sp, #0]
@@ -223,7 +223,7 @@ Func_080fe894:
 	cmp r0, #0
 	beq .L_080feab0
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #4]
 	adds r3, r2, #1
 	str r3, [sp, #4]
@@ -244,7 +244,7 @@ Func_080fe894:
 	cmp r0, #0
 	beq .L_080feab0
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #4]
 	subs r3, r2, #1
 	str r3, [sp, #4]
@@ -262,7 +262,7 @@ Func_080fe894:
 	b .L_080feab6
 .L_080feab0:
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080feab6:
 	movs r0, #1
 	bl WaitFrames

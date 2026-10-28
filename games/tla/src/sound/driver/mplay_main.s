@@ -44,7 +44,7 @@ MPlayMain:
 	ldr r0, [r0]
 	mov r8, r0
 	adds r0, r7, #0
-	bl MusicPlayer_StepFade
+	bl FadeOutBody
 	ldr r0, [r7, #4]
 	cmp r0, #0
 	bge .L_081c0a18
@@ -134,7 +134,7 @@ Func_081c0a68:
 	subs r0, #207
 	adds r1, r7, #0
 	adds r2, r5, #0
-	bl MusicTrack_HandleNote
+	bl ply_note
 	b .L_081c0ad8
 .L_081c0ab0:
 	ldr r0, .L_081c0ab8
@@ -249,7 +249,7 @@ Func_081c0a68:
 	mov r9, r2
 	adds r0, r7, #0
 	adds r1, r5, #0
-	bl MusicTrack_CalculateOutput
+	bl TrkVolPitSet
 	ldr r4, [r5, #32]
 	cmp r4, #0
 	beq .L_081c0bee

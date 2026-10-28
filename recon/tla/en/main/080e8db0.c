@@ -87,7 +87,7 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void Func_080e43a4(void *source, void *buffer, s32 size);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Sways the view from side to side around the chosen object, as kind 19 does
 // with no object: the swing grows from 2 to 12 pixels, holds 40 frames,
@@ -153,7 +153,7 @@ void Func_080e8db0(void) {
   frames = 0;
   do {
     if ((frameCount & 15) == 15)
-      Audio_PlayCue(SE_SWAY);
+      Sound_PlayFar(SE_SWAY);
 
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {

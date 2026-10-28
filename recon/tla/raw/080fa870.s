@@ -318,11 +318,11 @@ Func_080fa870:
 	cmp r3, r2
 	bne .L_080faafc
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fab36
 .L_080faafc:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #12]
 	movs r1, #129
 	lsls r3, r3, #1
@@ -338,7 +338,7 @@ Func_080fa870:
 	cmp r3, #0
 	beq .L_080fab28
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #255
 	str r2, [sp, #8]
 	b .L_080fab44

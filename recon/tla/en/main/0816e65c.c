@@ -89,7 +89,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -186,7 +186,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_AxeSheet, work->sheet, 1, 1);
     frames = 64;
   }
-  Audio_PlayCue(212);
+  Sound_PlayFar(212);
 
   for (frame = 0; frame != frames; frame++) {
     if (frame == 0) {

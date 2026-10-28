@@ -67,7 +67,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_MemberBurstImage;
 extern char ResourceId_PinkBurstSheet;
@@ -142,7 +142,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Audio_PlayCue(146);
+  Sound_PlayFar(146);
 
   for (frame = 0; frame != Data_08197864[mode * 2 + 1] + effect->count * 20;
        frame++) {
@@ -184,9 +184,9 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
 
       if (frame == k * 20 + 71) {
         if (mode == 0)
-          Audio_PlayCue(134);
+          Sound_PlayFar(134);
         else if (mode != 3)
-          Audio_PlayCue(133);
+          Sound_PlayFar(133);
       }
       if (frame == k * 20 + 70)
         Func_0814cd48(effect->actors[k], 7, 5, k, 26);
@@ -233,7 +233,7 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
                   BattleEffect_StartActorMotion(effect->actors[k], 1, 0x20000,
                                             0x20000, 0x20000, i * 8 + 100);
                   if ((i & 1) && frame != 80)
-                    Audio_PlayCue(134);
+                    Sound_PlayFar(134);
                 }
               }
             }

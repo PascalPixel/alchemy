@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -391,10 +391,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       Resource_LoadAndDecompress(0xc8, gMapCellBuffer, 0, 0);
     }
     if (frame == 76) {
-      Audio_PlayCue(138);
+      Sound_PlayFar(138);
     }
     if (frame == 266) {
-      Audio_PlayCue(138);
+      Sound_PlayFar(138);
     }
 
     if ((u32)(frame - 133) <= 132) {
@@ -417,13 +417,13 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         s32 t = ++p->variant;
 
         if (t == 0) {
-          Audio_PlayCue(138);
+          Sound_PlayFar(138);
         }
         if (p->variant == 60) {
-          Audio_PlayCue(212);
+          Sound_PlayFar(212);
         }
         if (p->variant == 64) {
-          Audio_PlayCue(134);
+          Sound_PlayFar(134);
         }
         t = p->variant;
         if ((u32)t <= 35) {
@@ -649,7 +649,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   Runtime_ReleaseHeapBlock(SLOT_BLITTER);
   transition[4] = 0;
   battle = Ram_HeapSlots->battleWork;
-  Audio_PlayCue(390);
+  Sound_PlayFar(390);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;

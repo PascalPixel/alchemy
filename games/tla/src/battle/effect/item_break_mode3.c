@@ -15,7 +15,7 @@ struct ObjectRuntime *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
    * in; as a free temporary it takes r3 and the scale r2 (differ 30). */
   register s32 limit asm("r2");
 
-  Audio_PlayCue(138);
+  Sound_PlayFar(138);
   object = Object_Spawn(278, x, y, z);
   if (object != NULL) {
     object->scaleX = object->scaleY = 0x4000;

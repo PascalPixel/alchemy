@@ -7,7 +7,7 @@ s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
 s32 Party_AdjustCoinsFar(s32 amount);
 s32 Party_AdjustShopCreditFar(s32 amount);
 extern u8 MsgHereYouGo[];
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_0810857c(s32 messageId);
 void Func_08109188(void);
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
@@ -23,7 +23,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   item = Item_Get(itemId);
   addedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
-  Audio_PlayCue(101);
+  Sound_PlayFar(101);
   if (addedSlot < remaining) {
     do {
       addedSlot = Inventory_AddItemFar(unitId, itemId);
@@ -104,7 +104,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     Shop_DrawItemCount(window, unitId);
 
   if (info->flags & 1) {
-    Audio_PlayCue(103);
+    Sound_PlayFar(103);
     UiWork_FinalizePendingCoreFar();
     {
       s32 x = 8;

@@ -141,7 +141,7 @@ void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
 void BattleEffect_BuildWindowEdgeTable(void);
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
@@ -296,13 +296,13 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 24)
-      Audio_PlayCue(SE_RISE);
+      Sound_PlayFar(SE_RISE);
     if (frame == 76)
-      Audio_PlayCue(SE_SPRAY);
+      Sound_PlayFar(SE_SPRAY);
     if (frame == 154)
-      Audio_PlayCue(SE_GATHER);
+      Sound_PlayFar(SE_GATHER);
     if (frame == 222)
-      Audio_PlayCue(SE_BREATH);
+      Sound_PlayFar(SE_BREATH);
 
     // The window opens: each column's edge from its own noise, the edge
     // moving faster each frame.
@@ -576,7 +576,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
-  Audio_PlayCue(SE_PILLARS);
+  Sound_PlayFar(SE_PILLARS);
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;
 
@@ -588,7 +588,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     for (i = 0; i != 5; i++) {
       pillar = &work->particles[i];
       if (frame == i * 16 + 7)
-        Audio_PlayCue(SE_PILLAR);
+        Sound_PlayFar(SE_PILLAR);
       if (frame >= i * 16 && pillar->variant <= 31) {
         s32 wobble = frame * 16 % 104;
 

@@ -22,9 +22,9 @@ void UiWork_PushValueSlot(s32 value, s32 kind);
 s32 UiText_BuildRenderEntriesMode1(s32 message);
 s32 UiText_QueueRenderEntries(struct UiWindow *window, s32 entries, s32 x,
                               s32 y, s32 flags);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
-s32 Audio_Check(void);
+s32 Sound_GetBgmRestoreDelayFar(void);
 void Func_0803cf6c(s32 message);
 s32 Resource_ResetEntry(u32 slot);
 
@@ -52,10 +52,10 @@ void Func_08044dc8(s32 summon) {
   UiWork_PushValueSlot(Data_0805f676[summon & 31], 4);
   entries = UiText_BuildRenderEntriesMode1((s32)Msg_0032);
   UiText_QueueRenderEntries(window, entries, 0, 2, 0);
-  Audio_PlayCue(81);
+  Sound_PlayFar(81);
   do
     WaitFrames(1);
-  while (Audio_Check() != 0 && (gInput.pressed & 0x303) == 0);
+  while (Sound_GetBgmRestoreDelayFar() != 0 && (gInput.pressed & 0x303) == 0);
   UiWork_Finalize(window, 2);
   WaitFrames(1);
 

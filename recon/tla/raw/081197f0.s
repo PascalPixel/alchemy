@@ -225,20 +225,20 @@ Func_081197f0:
 	ldrsh r0, [r3, r1]
 	cmp r0, #0
 	beq .L_081199ea
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #182
 	lsls r0, r0, #1
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_081199f0
 	movs r0, #55
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #4
 	bl Sound_LoadPresetParameters
 	b .L_081199f0
 .L_081199ea:
 	movs r0, #50
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081199f0:
 	bl Func_08118c68
 	bl BattleUnit_RefreshPlacement
@@ -849,7 +849,7 @@ Func_081197f0:
 	cmp r3, #0
 	beq .L_08119ee4
 	movs r0, #58
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08119ee4:
 	movs r3, #171
 	lsls r3, r3, #3
@@ -858,7 +858,7 @@ Func_081197f0:
 	cmp r3, #0
 	beq .L_08119f2a
 	movs r0, #58
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r9
 	ldrh r3, [r1, #62]
 	cmp r3, #1
@@ -884,7 +884,7 @@ Func_081197f0:
 	bl Func_081284c0
 .L_08119f2e:
 	movs r0, #78
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08119f34:
 	movs r0, #30
 	bl Fade_ToBlack
@@ -932,7 +932,7 @@ Func_081197f0:
 	cmp r3, #76
 	beq .L_08119fba
 	movs r0, #59
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl UiWork_ClearValueNameTablesFar
 	movs r0, #0
 	bl BattleParty_PrepareActiveOwners
@@ -948,7 +948,7 @@ Func_081197f0:
 	bl BattlePresentation_WaitForAdvance
 .L_08119fba:
 	movs r0, #78
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08119fc0:
 	movs r0, #30
 	movs r7, #1
@@ -958,7 +958,7 @@ Func_081197f0:
 	b .L_08119fea
 .L_08119fd0:
 	movs r0, #78
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #30
 	bl Fade_ToBlack
 	bl Fade_Wait

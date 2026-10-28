@@ -336,7 +336,7 @@ Func_08172b00:
 	cmp r1, #1
 	bne .L_08172da6
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08172da6:
 	bl Render_ResetTransformState
 	ldr r0, [sp, #72]
@@ -469,7 +469,7 @@ Func_08172b00:
 	b .L_08173118
 .L_08172e9c:
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08173118
 .L_08172ea4:
 	ldr r0, [sp, #76]
@@ -566,7 +566,7 @@ Func_08172b00:
 	b .L_08172f68
 .L_08172f58:
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #168

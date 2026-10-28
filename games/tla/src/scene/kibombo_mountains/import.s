@@ -197,4 +197,4 @@ ObjectMotion_ResetTargetsAndVelocity:
 	.global Func_0200119c
 	.thumb_func
 Func_0200119c:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

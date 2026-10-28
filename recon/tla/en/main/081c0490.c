@@ -1,6 +1,6 @@
 // Draft, differ 18 of 10 with the game profile, and identical with old_agbcc
 // -O2 -mthumb-interwork (2026-10-24): the work copy of the sound library's
-// MPlayContinue, as ☀️'s Audio_ResumePlayer (games/tbs/src/sound/audio.c),
+// MPlayContinue, as in ☀️ (games/tbs/src/sound/audio.c),
 // in pret's form; old_agbcc drops the lock's raise and restore, as the
 // listing does. Adopting it needs a file the sound route (SOUND_C) compiles
 // at this place, between noop_stub_work_copy.c and the driver's

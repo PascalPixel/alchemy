@@ -191,7 +191,7 @@ Func_0818f620:
 	cmp r3, #0
 	bne .L_0818f814
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818f79c:
 	ldr r4, [sp, #44]
 	cmp r4, #0
@@ -1011,7 +1011,7 @@ Func_0818f620:
 	lsls r3, r3, #18
 	lsls r0, r0, #1
 	ldr r7, [r3, #36]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #238
 	ldr r0, [sp, #52]
 	lsls r1, r1, #7

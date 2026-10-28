@@ -35,31 +35,31 @@ Func_080d8740:
 	adds r2, #91
 	strb r3, [r2]
 	movs r0, #173
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	adds r0, r5, #0
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	adds r0, r5, #0
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #20
 	bl WaitFrames
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #3
 	movs r2, #14
 	adds r0, r5, #0
 	bl ObjectMotion_Launch
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #5
 	movs r2, #16
 	adds r0, r5, #0
 	bl ObjectMotion_Launch
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #7
 	movs r2, #18
 	adds r0, r5, #0
@@ -135,7 +135,7 @@ Func_080d8740:
 	ldrb r2, [r2, #16]
 	movs r0, #153
 	mov r8, r2
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r2, r6, #0
 	adds r2, #85
 	movs r3, #0

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "input.h"
 
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   struct InputState *input = &gInput;
@@ -28,7 +28,7 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
       pos = count - 1;
   }
   if (old != pos) {
-    Audio_PlayCue(111);
+    Sound_PlayFar(111);
     result = 1;
   }
   if (old / columns * columns != pos / columns * columns)

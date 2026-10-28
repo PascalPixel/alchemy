@@ -24,7 +24,7 @@ void Projection_Set(u32 value0, u32 value1, u32 value2);
 
 s32 Runtime_BlankDisplayAndRun(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  Audio_PlayCue(2);
+  Sound_PlayFar(2);
   LuckyDice_Run();
   return 0;
 }

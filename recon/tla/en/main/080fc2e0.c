@@ -42,7 +42,7 @@ void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
 void Func_080f8ab4(s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Unit_CalculateFar(s32 unit);
 void Unit_RefreshPsynergyFar(s32 unit);
 void WaitFrames(s32 frames);
@@ -85,11 +85,11 @@ s32 Func_080fc2e0(s32 unused) {
         selection = (selection + rows) % rows;
       }
       if (gInput.pressed & 1) {
-        Audio_PlayCue(175);
+        Sound_PlayFar(175);
         break;
       }
       if (gInput.pressed & 2) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         selection = 1;
         break;
       }
@@ -97,12 +97,12 @@ s32 Func_080fc2e0(s32 unused) {
       if (gInput.repeat & 64) {
         selection--;
         changed = 1;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
       }
       if (gInput.repeat & 128) {
         selection++;
         changed = 1;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
       }
       WaitFrames(1);
     }

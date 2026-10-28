@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -190,7 +190,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress(0x153, FIGURE(work), 1, 1);
     Resource_LoadAndDecompress(0xd7, work->sheet, 0, 0);
     frames = 80;
-    Audio_PlayCue(84);
+    Sound_PlayFar(84);
   } else if (mode == 11) {
     Resource_LoadAndDecompress(0xd7, work->sheet, 0, 0);
     Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x151), 128);
@@ -418,9 +418,9 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           draw(canvas, FIGURE(work), x, y, 20, 40);
       }
       if (frame == 0)
-        Audio_PlayCue(142);
+        Sound_PlayFar(142);
       if (frame == 62)
-        Audio_PlayCue(139);
+        Sound_PlayFar(139);
       if (frame == 0) {
         for (i = 0; i != 63; i++) {
           struct EffectStep *p = &work->particles[i];
@@ -494,7 +494,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       ball->y = pos.y;
       draw(canvas, FIGURE(work), pos.x - 10, pos.y - 20, 20, 40);
       if (frame == 0)
-        Audio_PlayCue(140);
+        Sound_PlayFar(140);
       if (frame == 55) {
         work->particles[61].x = pos.x;
         work->particles[61].y = pos.y;
@@ -537,7 +537,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 4)
-        Audio_PlayCue(147);
+        Sound_PlayFar(147);
       if (frame == 48)
         Func_081180e8(-1);
       texture.logWidth = 5;
@@ -744,7 +744,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 14)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       if (frame == 24)
         Func_0814cd48(effect->actors[0], 7, -1, 0, 12);
     } else if (mode == 9) {
@@ -867,7 +867,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           p->y = (pos.y - (Random16() & 31) + 16) << 16;
           p->z = Random16();
         }
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
         work->shakeFrames = 16;
         Func_0814cd48(effect->actors[0], 10, -1, 0, 32);
       }
@@ -920,7 +920,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           p->y = (pos.y - (Random16() & 31) - 16) << 16;
           p->z = Random16();
         }
-        Audio_PlayCue(619);
+        Sound_PlayFar(619);
       }
       texture.logWidth = 5;
       texture.logHeight = 5;
@@ -961,13 +961,13 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Object_SetMode(user, 0);
         Object_SetMode(user, 2);
         ObjectDispatch_SetAnimationSpeedFar(user, 0);
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       }
       if (frame == 14)
         ObjectDispatch_SetAnimationSpeedFar(
             *GetBattleObjectSlotFar(effect->actor), 16);
       if (frame == 22)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       if (frame == 26) {
         Func_081180e8(144);
         work->shakeFrames = 8;
@@ -1094,7 +1094,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame == 8) {
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
         work->shakeFrames = 8;
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
         for (i = 0; i != effect->count; i++)
@@ -1108,7 +1108,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       s32 wobble;
 
       if (frame == 0)
-        Audio_PlayCue(104);
+        Sound_PlayFar(104);
       EffectPosition_ProjectBattler(effect->actors[0], &pos);
       shade = frame * 4 - 64;
       if (shade >= -16)
@@ -1208,7 +1208,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Func_0815f0a0((s32)&ResourceId_Data152);
       }
       if (frame == 16) {
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
         Func_0814cd48(effect->actors[0], 7, -1, 0, 30);
       }
       if (frame == 28)
@@ -1255,7 +1255,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 0)
         Graphics_LoadGreyRamp();
       if (frame == 16) {
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
         Func_0814cd48(effect->actors[0], 7, -1, 0, 30);
       }
       if (frame == 28)

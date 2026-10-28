@@ -80,7 +80,7 @@ extern const u8 gReelGame_MachineSpriteY[];
 
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 PartyInventory_CountItemFar(s32 item);
 void PartyInventory_RemoveFar(s32 item);
 void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
@@ -157,17 +157,17 @@ void Func_081b243c(void) {
         if (work->pressed & KEY_UP) {
           if (work->bet <= 3 && tickets > work->bet) {
             work->bet++;
-            Audio_PlayCue(111);
+            Sound_PlayFar(111);
           } else {
-            Audio_PlayCue(113);
+            Sound_PlayFar(113);
           }
         }
         if (work->pressed & KEY_DOWN) {
           if (work->bet > 1) {
             work->bet--;
-            Audio_PlayCue(111);
+            Sound_PlayFar(111);
           } else {
-            Audio_PlayCue(113);
+            Sound_PlayFar(113);
           }
         }
         REG_BLDCNT = 0x3fd0;
@@ -179,7 +179,7 @@ void Func_081b243c(void) {
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(228);
           UiWork_FinalizeFar(work->subWindow, 1);
-          Audio_PlayCue(304);
+          Sound_PlayFar(304);
         }
       }
     } else if (work->state == 5) {
@@ -201,26 +201,26 @@ void Func_081b243c(void) {
             work->reels[i].stop = -1;
           }
         } else if (work->cursor <= 4) {
-          Audio_PlayCue(305);
+          Sound_PlayFar(305);
           work->reels[work->cursor].held ^= 1;
         } else if (allHeld == 0) {
-          Audio_PlayCue(304);
+          Sound_PlayFar(304);
           work->state = 1;
           work->cursor = 0;
           for (i = 0; i != 5; i++)
             work->reels[i].stop = -1;
           work->spins++;
         } else {
-          Audio_PlayCue(113);
+          Sound_PlayFar(113);
         }
       } else {
         if (work->direction & KEY_RIGHT) {
           work->cursor = (work->cursor + 1) % 6;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
         }
         if (work->direction & KEY_LEFT) {
           work->cursor = (work->cursor + 5) % 6;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
         }
       }
 
@@ -267,7 +267,7 @@ void Func_081b243c(void) {
       objMode = 0;
       if (work->timer == 60) {
         work->state = 3;
-        Audio_PlayCue(93);
+        Sound_PlayFar(93);
         work->timer = 0;
         REG_BLDCNT = 0x3f44;
         REG_BLDALPHA = 0x1010;
@@ -279,7 +279,7 @@ void Func_081b243c(void) {
       objMode = 0;
       if (work->pressed & KEY_A) {
         work->state = 10;
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
       }
     } else if (work->state == 11) {
       if (work->phase == 0) {
@@ -289,7 +289,7 @@ void Func_081b243c(void) {
       if (work->pressed & KEY_A) {
         work->state = 5;
         work->phase = 0;
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         UiWork_FinalizeFar(work->window, 1);
       }
     } else if (work->state == 20) {
@@ -302,14 +302,14 @@ void Func_081b243c(void) {
         UiText_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
-        Audio_PlayCue(306);
+        Sound_PlayFar(306);
       if (work->timer > 56) {
         if (fx->frame > 31 || (work->pressed & KEY_R)) {
           fx->frame = 0;
           for (i = 0; i != 5; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
               work->reels[i].stop = (Random16() & 3) + 4;
-              Audio_PlayCue(307);
+              Sound_PlayFar(307);
               break;
             }
           }
@@ -375,7 +375,7 @@ void Func_081b243c(void) {
         if (hits != 0) {
           save->wonPrizes[hits] = -1;
           work->state = 2;
-          Audio_PlayCue(171);
+          Sound_PlayFar(171);
           fx->transferMode = 1;
           fx->transferValue = 0;
           REG_BLDCNT = 0;

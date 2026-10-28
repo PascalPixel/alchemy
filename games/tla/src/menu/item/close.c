@@ -120,7 +120,7 @@ void Func_08104ef8(s32 first);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
 void InventoryMenu_SortByListOrder(u16 *inventory, s32 order);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 ItemMenu_CountItems(s32 owner);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
@@ -209,17 +209,17 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         InventoryMenu_SortByListOrder(owner->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
       } else if (ItemMenu_CountItems(ownerIds[selection])) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         result = ownerIds[selection];
         break;
       } else {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
       }
     }
     if (gInput.pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }

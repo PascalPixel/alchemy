@@ -190,7 +190,7 @@ Func_080fd000:
 	cmp r3, #0
 	beq .L_080fd19e
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #20]
 	mov r1, r8
 	lsls r3, r2, #1
@@ -199,7 +199,7 @@ Func_080fd000:
 	b .L_080fd250
 .L_080fd19e:
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, .L_080fd290
 .L_080fd1a6:
 	mov r2, r9
@@ -253,11 +253,11 @@ Func_080fd000:
 	mov r3, r10
 	strb r5, [r3]
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fd21a
 .L_080fd212:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fd24e
 .L_080fd21a:
 	mov r1, r9
@@ -267,7 +267,7 @@ Func_080fd000:
 	cmp r3, #0
 	beq .L_080fd234
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #1
 	negs r2, r2
 	str r2, [sp, #12]

@@ -61,7 +61,7 @@ u32 Random16(void);
 struct ObjectRuntime *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_Initialize(struct ObjectRuntime *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_08029810(void);
 s32 Func_08029838(struct ObjectRuntime *object);
 
@@ -221,7 +221,7 @@ s32 Func_080298c0(struct ObjectRuntime *object) {
         effect->update = Func_08029810;
         effect->motionFlags = 2;
         if (collision == 0)
-          Audio_PlayCue(596);
+          Sound_PlayFar(596);
         effect->gravity = 0xa3d;
         effect->velocityY = frame;
         effect->scaleX = 0x4ccc;
@@ -418,7 +418,7 @@ counted:
       effect->priorityFlags = 8;
       ((u8 *)effect)[99] = 100;
       effect->motionFlags = collision;
-      Audio_PlayCue(596);
+      Sound_PlayFar(596);
       if (sprite != NULL) {
         struct ClimbEventWork *work = Ram_HeapSlots->eventWork;
 

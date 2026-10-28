@@ -237,7 +237,7 @@ BattleEffect_RunVoidBeam:
 	ldr r0, .L_08171010
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #238
 	ldr r0, [sp, #52]
 	ldr r2, [sp, #72]

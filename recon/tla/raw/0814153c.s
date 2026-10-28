@@ -437,19 +437,19 @@ BattleEffect_RunEclipse:
 	cmp r2, #48
 	bne .L_081418b2
 	movs r0, #139
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081418b2:
 	ldr r3, [sp, #84]
 	cmp r3, #136
 	bne .L_081418be
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081418be:
 	ldr r4, [sp, #84]
 	cmp r4, #172
 	bne .L_081418ca
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081418ca:
 	movs r7, #0
 	mov r8, r7
@@ -1560,7 +1560,7 @@ BattleEffect_RunEclipse:
 	cmp r1, #16
 	bne .L_0814218e
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814218e:
 	ldr r2, [sp, #84]
 	cmp r2, #18
@@ -1573,7 +1573,7 @@ BattleEffect_RunEclipse:
 	movs r3, #90
 	str r3, [r2]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #128
 	ldr r3, .L_081422fc
 	ldr r0, [sp, #100]
@@ -2106,7 +2106,7 @@ BattleEffect_RunEclipse:
 	cmp r7, #0
 	bne .L_0814267c
 	movs r0, #208
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #8
 	ldr r0, .L_08142754
 	movs r1, #16

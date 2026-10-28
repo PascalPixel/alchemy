@@ -39,13 +39,13 @@ Func_080d82e0:
 	adds r2, #91
 	strb r3, [r2]
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r5, #0
 	movs r1, #4
 	movs r2, #15
 	bl ObjectMotion_Launch
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #4
 	movs r2, #15
 	adds r0, r5, #0
@@ -55,13 +55,13 @@ Func_080d82e0:
 	ldr r3, .L_080d8470
 	movs r0, #153
 	str r3, [r6, #108]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r5, #0
 	movs r1, #8
 	movs r2, #22
 	bl ObjectMotion_Launch
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #166
 	lsls r1, r1, #9
 	movs r5, #128
@@ -237,11 +237,11 @@ Func_080d82e0:
 	bl WaitFrames
 	movs r0, #149
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #151
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r10
 	ldr r3, [r2, #8]
 	mov r0, r8

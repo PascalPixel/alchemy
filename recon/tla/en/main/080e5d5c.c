@@ -73,7 +73,7 @@ void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_080cda84(s32 id, struct ObjectRuntime *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void BattleEffect_InitializeSharedScene(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void Object_Destroy(struct ObjectRuntime *object);
@@ -155,7 +155,7 @@ void Func_080e5d5c(void) {
   }
 
   BattleEffect_InitializeSharedScene();
-  Audio_PlayCue(138);
+  Sound_PlayFar(138);
   shine = Object_Spawn(352, 0, 0, 0);
   work->object = shine;
   if (shine == NULL)
@@ -256,7 +256,7 @@ void Func_080e5d5c(void) {
     Scheduler_RemoveCallback(BattleEffect_SinkAndShrinkObject);
     for (i = 15; i >= 0; i--)
       BattleEffect_SpawnScatterParticle(shine->x, shine->y, shine->z);
-    Audio_PlayCue(114);
+    Sound_PlayFar(114);
     WaitFrames(1);
   } else {
     pending = Func_080ce458(0x50000005, scene->fieldKind,
@@ -274,7 +274,7 @@ void Func_080e5d5c(void) {
     }
     Scheduler_RemoveCallback(Func_080e5a64);
     WaitFrames(10);
-    Audio_PlayCue(114);
+    Sound_PlayFar(114);
     Func_080dbf94(shine, shine->x, shine->y, shine->z);
   }
   Object_Destroy(shine);

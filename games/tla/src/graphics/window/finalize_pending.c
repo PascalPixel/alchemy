@@ -5,7 +5,7 @@
 #include "input.h"
 #include "io_reg.h"
 
-s32 Audio_Check(void);
+s32 Sound_GetBgmRestoreDelayFar(void);
 
 /// Ends a message wait (clearing the channel's countdown and returning 1) when
 /// the window's voice has finished or A, B or a shoulder button is held.
@@ -20,7 +20,7 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
    * starts the busy flag's offset 0x1389; as plain C, 2 instructions differ in
    * tla-en. */
   asm("" : "+l"(work) : : "r2");
-  if (work->busy != 0 && Audio_Check() == 0)
+  if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancel = 1;
   held = &gInput.held;
   if (*held & (KEY_A | KEY_B | KEYS_SHOULDERS))
@@ -49,7 +49,7 @@ s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch) {
    * 0x1389 in r2; the empty asm holds r2 until the work is loaded. Plainly the
    * offset is started first (differ 2). */
   asm("" : "+l"(work) : : "r2");
-  if (work->busy != 0 && Audio_Check() == 0)
+  if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancel = 1;
   keys = gInput.pressed;
   if (work->mode != 0)

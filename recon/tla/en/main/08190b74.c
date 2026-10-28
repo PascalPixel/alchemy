@@ -110,7 +110,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Camera_ApplyVerticalShake(s32 range);
 void ObjectGroup_CountDownMemberTimers(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Effect kind 125, 114 frames. The screen turns to a scrolling red haze
 // with only the caster and the target on it (frame 2); two textured flashes
@@ -219,7 +219,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
       Object_SetMode(caster, 2);
       ObjectDispatch_SetAnimationSpeedFar(caster, 48);
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 7, 80);
@@ -228,7 +228,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     // Frame 90: the hit, and 128 shards scatter away from the caster.
     if (frame == 90) {
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       step = Data_02016000;
@@ -295,7 +295,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       s32 start = k * 16 + 24;
 
       if (frame == k * 16 + 28)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       if (frame == k * 16 + 32) {
         step = &work->particles[k * 32];
         for (i = 0; i != 16; i++) {
@@ -318,7 +318,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           step->variant = (Random16() & 7) + 17;
           step++;
         }
-        Audio_PlayCue(133);
+        Sound_PlayFar(133);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 64);
         work->shakeFrames = 4;
       }
@@ -368,7 +368,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       // Two flashes rise from the caster (frames 2 and 8).
       start = k * 6 + 2;
       if (frame == start)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       if (frame >= start && frame < k * 6 + 18) {
         s32 age = frame - start;
         s32 shade = 64 - age * 8;
@@ -391,7 +391,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
       // Frames 64-82: the caster gathers itself, flashing.
       if (frame == k * 8 + 68)
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       if (frame == k * 8 + 72)
         Func_0814cd48(effect->actor, 7, -1, 0, 0);
       else if (frame == k * 8 + 76)

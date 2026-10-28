@@ -80,7 +80,7 @@ void EffectPosition_ProjectBattler(
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
@@ -161,7 +161,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
         step->velocityX = (Trig_Sin(angle) * speed) >> 5;
         step->velocityY = (Trig_Cos(angle) * speed) >> 5;
       }
-      Audio_PlayCue(136);
+      Sound_PlayFar(136);
     }
 
     // The smoke rises through its six 24x48 cels, slowing; the caster

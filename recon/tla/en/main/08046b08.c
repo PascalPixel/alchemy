@@ -216,13 +216,13 @@ void BattleActor_CommitPlacementFar(void);
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
 void UiWork_Finalize(void *window, s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 struct SummaryWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                       s32 flags);
 void Func_08041b68(void);
 void Func_0804537c(u32 address);
 void Func_08045528(s32 member, s32 slot);
-void Runtime_PushSlotEntry(void *sprite, s32 depth);
+void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void ReleaseBattleObjectRecordsFar(s32 member);
 void Func_08118148(u16 *list, s32 count, s32 mode);
@@ -348,7 +348,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     UiWork_Finalize(navigation->timerWindow, 1);
     navigation->timerWindow = (void *)page;
   }
-  Audio_PlayCue(112);
+  Sound_PlayFar(112);
 
   for (i = 4; i >= 0; i--)
     cursor.groupPositions[i] = 0;
@@ -393,7 +393,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     nameSprite.x = 8;
     nameSprite.y = 24;
     nameSprite.palette = 14;
-    Runtime_PushSlotEntry(&nameSprite, 240);
+    Oam_AddSpriteAtDepth(&nameSprite, 240);
 
     switch (cursor.helpEntry) {
     case 0 ... 9:
@@ -439,7 +439,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       else
         cursor.helpEntry = page;
       redraw = 1;
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
     }
 
     if (statusCount != 0) {
@@ -447,7 +447,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         groupPosition = cursor.groupPositions[cursor.group];
         if (keys & 0x80) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
             groupPosition = 0;
@@ -458,7 +458,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           }
         } else if (keys & 0x40) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           groupPosition--;
           if (groupPosition < 0) {
             groupPosition = cursor.groupSize - 1;
@@ -469,7 +469,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           }
         } else if (keys & 0x30) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           cursor.group ^= 2;
           groupPosition = statusCount - 1;
           if (!(gInput.repeat & 0x20))
@@ -490,7 +490,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             cursor.group = 0;
             groupPosition = cursor.groupPositions[0];
           }
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
         } else if (keys & 0x20) {
           keys = 0;
           groupPosition--;
@@ -498,12 +498,12 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             cursor.group = 0;
             groupPosition = cursor.groupPositions[0];
           }
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
         } else if (keys & 0xc0) {
           keys = 0;
           cursor.group = 0;
           groupPosition = cursor.groupPositions[0];
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
         }
         cursor.groupPositions[cursor.group] = groupPosition;
       } else if (cursor.group == 3 || cursor.group == 5) {
@@ -511,21 +511,21 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         groupPosition = cursor.groupPositions[cursor.group];
         if (keys & 0x80) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           redraw |= 2;
           groupPosition++;
           if (groupPosition >= cursor.groupSize)
             groupPosition = 0;
         } else if (keys & 0x40) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           redraw |= 2;
           groupPosition--;
           if (groupPosition < 0)
             groupPosition = cursor.groupSize - 1;
         } else if (keys & 0x10) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           redraw |= 2;
           groupPosition += 4;
           if (groupPosition >= cursor.groupSize) {
@@ -536,7 +536,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           }
         } else if (keys & 0x20) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           redraw |= 2;
           groupPosition -= 4;
           if (groupPosition < 0)
@@ -552,28 +552,28 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         groupPosition = cursor.groupPositions[cursor.group];
         if (keys & 0x80) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           redraw |= 2;
           groupPosition++;
           if (groupPosition >= cursor.groupSize)
             groupPosition = 0;
         } else if (keys & 0x40) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           redraw |= 2;
           groupPosition--;
           if (groupPosition < 0)
             groupPosition = cursor.groupSize - 1;
         } else if (keys & 0x10) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           redraw |= 2;
           groupPosition += 3;
           if (groupPosition >= cursor.groupSize)
             groupPosition = groupPosition % 3;
         } else if (keys & 0x20) {
           keys = 0;
-          Audio_PlayCue(111);
+          Sound_PlayFar(111);
           redraw |= 2;
           groupPosition -= 3;
           if (groupPosition < 0)
@@ -665,7 +665,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         portraitSprite.x = 0xac;
         portraitSprite.y = 56;
         if (figureShown != 0)
-          Runtime_PushSlotEntry(&portraitSprite, 240);
+          Oam_AddSpriteAtDepth(&portraitSprite, 240);
         figureShown = 1;
       }
     }
@@ -686,7 +686,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       cursorSprite.affineIndex = 0;
     else
       cursorSprite.affineIndex = 8;
-    Runtime_PushSlotEntry(&cursorSprite, 241);
+    Oam_AddSpriteAtDepth(&cursorSprite, 241);
 
     if (redraw == 0)
       goto place_sprites;
@@ -1202,7 +1202,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       statusSprites[i].x = 112 + i * 15;
       statusSprites[i].y = statusWindow->y * 8 + 8;
       if (statusKinds[i] > 0)
-        Runtime_PushSlotEntry(&statusSprites[i], 240);
+        Oam_AddSpriteAtDepth(&statusSprites[i], 240);
     }
     if (page == 1 || page == 3) {
       for (i = 0; i <= 3; i++) {
@@ -1214,7 +1214,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         else
           iconSprites[i].x = 8;
         iconSprites[i].y = (i * 2 + statusWindow->y) * 8 + 68;
-        Runtime_PushSlotEntry(&iconSprites[i], 240);
+        Oam_AddSpriteAtDepth(&iconSprites[i], 240);
       }
     }
     if (NAVIGATION->timer == 0 || (gInput.pressed & 2))
@@ -1226,14 +1226,14 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           memberIndex = 0;
         member = list[memberIndex];
         redraw = 1;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
       } else if (keys & 0x200) {
         memberIndex--;
         if (memberIndex < 0)
           memberIndex = listCount - 1;
         member = list[memberIndex];
         redraw = 1;
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
       }
     }
     WaitFrames(1);

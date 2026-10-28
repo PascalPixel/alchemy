@@ -49,7 +49,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct SparkParticle *particle);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 void Func_080e74d8(void) {
   struct SparkWork *work = Runtime_AllocateHeapBlock(92, sizeof(*work));
@@ -89,9 +89,9 @@ void Func_080e74d8(void) {
   WaitFrames(20);
   Object_SetMode(object, 28);
   object->update = ObjectGroup_ApplyRandomChildValues;
-  Audio_PlayCue(131);
+  Sound_PlayFar(131);
   WaitFrames(30);
-  Audio_PlayCue(220);
+  Sound_PlayFar(220);
   Object_SetMode(object, 3);
   for (frame = 49, spin = 0; frame >= 0; frame--, spin += 60) {
     object->angle += spin + 0x1000;
@@ -145,7 +145,7 @@ void Func_080e74d8(void) {
     switch (state) {
     case 0:
       if (frame == 10)
-        Audio_PlayCue(198);
+        Sound_PlayFar(198);
       object->angle += 0x2000;
       if (frame == 40)
         count = 3;

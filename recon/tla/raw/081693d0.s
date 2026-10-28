@@ -432,25 +432,25 @@ BattleEffect_RunNeptune:
 	cmp r3, #24
 	bne .L_0816974e
 	movs r0, #162
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816974e:
 	mov r4, r8
 	cmp r4, #76
 	bne .L_0816975a
 	movs r0, #164
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816975a:
 	mov r5, r8
 	cmp r5, #154
 	bne .L_08169766
 	movs r0, #142
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08169766:
 	mov r6, r8
 	cmp r6, #222
 	bne .L_08169772
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08169772:
 	mov r7, r8
 	cmp r7, #15
@@ -1494,7 +1494,7 @@ BattleEffect_RunNeptune:
 	bl Resource_LoadAndDecompress
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, .L_08169f78
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1537,7 +1537,7 @@ BattleEffect_RunNeptune:
 	cmp r8, r3
 	bne .L_08169f94
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08169f94:
 	cmp r8, r5
 	bge .L_08169f9a

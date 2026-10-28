@@ -70,7 +70,7 @@ void RenderOutput_ClearListFar(s32 window);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void UiText_DrawWorkValueWithLabel(s32 window);
 void Func_080f8a44(s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void *MemAlloc(s32 size);
 void MemFree(void *block);
 s32 Func_080fd6f0(void *unit, u16 *actions, s32 mode);
@@ -130,11 +130,11 @@ s32 Func_080fd000(u16 *ownerIds) {
     WaitFrames(1);
     if (KEYS_PRESSED & 1) {
       if (menu->psynergyCount) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         result = ownerIds[selection];
         break;
       }
-      Audio_PlayCue(114);
+      Sound_PlayFar(114);
     }
     if ((KEYS_PRESSED & 0x200) || (KEYS_PRESSED & 0x100)) {
       result = ownerIds[selection];
@@ -148,14 +148,14 @@ s32 Func_080fd000(u16 *ownerIds) {
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
         menu->mode = shortcutCount;
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
       } else {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         break;
       }
     }
     if (KEYS_PRESSED & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }

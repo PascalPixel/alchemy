@@ -10,7 +10,7 @@
 
 extern const u8 gData_02003fb8[];
 
-void AudioCommand_WaitForCompletion(void);
+void Sound_WaitForBgmRestore(void);
 void Func_020007a8(void);
 void Func_02003d44(s32 a, s32 b, s32 c);
 void Func_02003ebc(void);
@@ -77,7 +77,7 @@ cell:
   Func_02003ef4(390);
   FieldEvent_WaitFrames(30);
   Func_02003ef4(80);
-  AudioCommand_WaitForCompletion();
+  Sound_WaitForBgmRestore();
   Func_02003d84();
   Func_02003ebc();
   GameFlag_SetBit(0x95d);

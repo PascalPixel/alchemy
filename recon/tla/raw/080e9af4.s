@@ -97,7 +97,7 @@ Func_080e9af4:
 	adds r0, r7, #0
 	bl Object_SetMode
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	bl WaitFrames
 	movs r3, #128
@@ -187,7 +187,7 @@ Func_080e9af4:
 	movs r0, #5
 	bl WaitFrames
 	movs r0, #246
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r6, #128
 	lsls r6, r6, #5
 	adds r6, #40
@@ -276,7 +276,7 @@ Func_080e9af4:
 	cmp r5, #10
 	bne .L_080e9d3a
 	movs r0, #246
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e9d3a:
 	ldr r3, [r7, #12]
 	movs r0, #128

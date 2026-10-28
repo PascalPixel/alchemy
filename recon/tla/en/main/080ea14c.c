@@ -61,7 +61,7 @@ s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void EventRuntime_Wait(s32 frames);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
                                   const void *script);
@@ -148,12 +148,12 @@ void Func_080ea14c(s32 targetId) {
     mote++;
   }
   WaitFrames(1);
-  Audio_PlayCue(139);
+  Sound_PlayFar(139);
   Object_SetMode(target, 2);
   EventRuntime_Wait(60);
   target->action = 0;
   target->update = Func_080e9e8c;
-  Audio_PlayCue(142);
+  Sound_PlayFar(142);
   EventRuntime_Wait(80);
   ObjectDispatch_InitializeFar(target, Data_080f1040);
   work->moving = 0;
@@ -166,11 +166,11 @@ void Func_080ea14c(s32 targetId) {
       work->state = 0;
       if (timer <= 39) {
         if ((timer & 7) == 0)
-          Audio_PlayCue(133);
+          Sound_PlayFar(133);
         sparks = 1;
       }
       if (timer == 40) {
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
         sparks = 25;
         Object_ResetMotion(target);
         target->scaleX = 0;
@@ -199,7 +199,7 @@ void Func_080ea14c(s32 targetId) {
         sprite++;
       }
       if (timer == 0)
-        Audio_PlayCue(246);
+        Sound_PlayFar(246);
       if (timer == 56) {
         state++;
         timer = -1;
@@ -244,12 +244,12 @@ void Func_080ea14c(s32 targetId) {
         work->spacing = 0x40000;
         work->state = 2;
         if (timer == 0)
-          Audio_PlayCue(187);
+          Sound_PlayFar(187);
       }
       if (timer == 48)
-        Audio_PlayCue(187);
+        Sound_PlayFar(187);
       if (timer == 96)
-        Audio_PlayCue(187);
+        Sound_PlayFar(187);
       if (timer == 100) {
         state++;
         timer = -1;
@@ -277,7 +277,7 @@ void Func_080ea14c(s32 targetId) {
       if (timer == 0)
         ObjectDispatch_InitializeFar(owner, gData_080f3614);
       if ((timer & 3) == 0)
-        Audio_PlayCue(167);
+        Sound_PlayFar(167);
       work->state = 3;
       if (timer == 60)
         state = 999;

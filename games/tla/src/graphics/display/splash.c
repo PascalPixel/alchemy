@@ -10,7 +10,7 @@
 
 extern char ResourceId_NintendoLogo;
 
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Scheduler_ResetTaskTable(void);
 void Fade_ToBlack(s32 vblanks);
 void Fade_FromBlack(s32 vblanks);
@@ -32,7 +32,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
   s32 blank;
   s32 resource;
 
-  Audio_PlayCue(110);
+  Sound_PlayFar(110);
   gRenderOamEnabled = 1;
   resource = (s32)&ResourceId_NintendoLogo;
   blank = 0x1ff;

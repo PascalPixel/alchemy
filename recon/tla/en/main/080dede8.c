@@ -83,7 +83,7 @@ void FieldEffect_RunDouse(void) {
   if (orb == 0)
     return;
   BattleEffect_InitializeSharedScene();
-  Audio_PlayCue(138);
+  Sound_PlayFar(138);
   if (work->anchor == 0) {
     work->x = target->x;
     work->z = target->z;
@@ -163,7 +163,7 @@ void FieldEffect_RunDouse(void) {
         mote->motionFlags = 2;
         mote->priorityFlags = 5;
       }
-      Audio_PlayCue(132);
+      Sound_PlayFar(132);
       WaitFrames(6);
       if (n == 12) {
         ev = Func_080ce458(0x50000005, 5, Func_080ce31c(5));

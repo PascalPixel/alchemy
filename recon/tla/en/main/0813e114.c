@@ -54,7 +54,7 @@ s32 BattleEffect_ProcessPendingGraphicsTransfer(void); // the canvas transfer ca
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ObjectGroup_UpdateMembers
@@ -130,7 +130,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
     dagger->velocityY = 8 << 16;
     dagger->x <<= 16;
   }
-  Audio_PlayCue(212);
+  Sound_PlayFar(212);
 
   for (frame = 0; frame != 120; frame++) {
     if (frame <= 16) {
@@ -176,7 +176,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
       Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
-        Audio_PlayCue(133);
+        Sound_PlayFar(133);
     }
     Func_08158ce0(8, 8);
     ObjectGroup_CountDownMemberTimers();

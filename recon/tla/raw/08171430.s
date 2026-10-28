@@ -642,7 +642,7 @@ BattleEffect_RunLightSurge:
 	movs r3, #4
 	str r3, [r2]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #68]
 	movs r1, #36
 	ldrsh r0, [r2, r1]

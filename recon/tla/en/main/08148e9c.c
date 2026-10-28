@@ -73,7 +73,7 @@ void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // One to four funnels of wind sway across the targets for 80 frames, each
 // drawn as three stacked segments with glints swirling around it; the canvas
@@ -119,7 +119,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, CALLBACK_ORDER);
   REG_BLDALPHA = 0x1000;
   WaitFrames(1);
-  Audio_PlayCue(141);
+  Sound_PlayFar(141);
 
   for (frame = 0; frame != TORNADO_FRAMES; frame++) {
     wave = Trig_Sin(frame << 10) << 4;

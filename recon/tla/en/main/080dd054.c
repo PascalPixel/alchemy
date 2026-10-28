@@ -152,7 +152,7 @@ void Func_080dd054(void) {
     if (Func_08020210(target, &position) > 0) {
       Object_SetMode(pusher, 4);
       if ((gFrameCount & 15) == 0)
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
       continue;
     }
     hit = ScriptObject_FindOverlappingEntryFar(target, &position);
@@ -160,7 +160,7 @@ void Func_080dd054(void) {
       if (hit != user) {
         Object_SetMode(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          Audio_PlayCue(114);
+          Sound_PlayFar(114);
         continue;
       }
       cellZ = user->z & MOVE_CELL_MASK;
@@ -169,7 +169,7 @@ void Func_080dd054(void) {
           cellZ == (position.z & MOVE_CELL_MASK)) {
         Object_SetMode(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          Audio_PlayCue(114);
+          Sound_PlayFar(114);
         continue;
       }
       value = MOVE_CELL_MASK;
@@ -177,14 +177,14 @@ void Func_080dd054(void) {
         if (Func_080202f0(user->terrainId) != 0) {
           Object_SetMode(pusher, 4);
           if ((gFrameCount & 15) == 0)
-            Audio_PlayCue(114);
+            Sound_PlayFar(114);
           continue;
         }
         moved = 1;
       }
     }
 
-    Audio_PlayCue(175);
+    Sound_PlayFar(175);
     pushed = 1;
     x = position.x;
     z = position.z;

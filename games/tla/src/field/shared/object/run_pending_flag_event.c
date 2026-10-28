@@ -45,7 +45,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         while (object->y + object->velocityY > object->terrainHeight) {
           WaitFrames(1);
         }
-        Audio_PlayCue(159);
+        Sound_PlayFar(159);
         object->y = object->terrainHeight;
         Object_SetMode(object, 22);
         EventRuntime_Wait(15);

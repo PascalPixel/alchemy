@@ -173,7 +173,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     work->transferValue = 0x04040404;
   }
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Audio_PlayCue(142);
+  Sound_PlayFar(142);
 
   for (frame = 0; frame != effect->count * 20 + 72; frame++) {
     struct MotionObject *user;

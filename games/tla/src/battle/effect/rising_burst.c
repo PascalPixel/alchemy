@@ -24,7 +24,7 @@ void UpdateRisingParticleBurst(void *object) {
   /* FAKEMATCH: ⚓️ loads the hoisted shrink step before the cue's argument;
    * as a constant it loads after the call (differ 2). */
   asm volatile("" : "+r"(shrink));
-  Audio_PlayCue(154);
+  Sound_PlayFar(154);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
     /* FAKEMATCH: ⚓️ loads the angle before it builds the 1/8 turn; without
@@ -58,6 +58,6 @@ void UpdateRisingParticleBurst(void *object) {
       Motion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }
-  Audio_PlayCue(131);
+  Sound_PlayFar(131);
   Object_Destroy(src);
 }

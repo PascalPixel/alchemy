@@ -23,15 +23,15 @@ extern u16 gData_0200580c;
 extern struct SoundPlayer gMusicPlayerFanfare;
 
 void SongFlag_Set(s32 cue);
-void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
-void MusicPlayer_StartSong(struct SoundPlayer *player,
+void m4aMPlayFadeOut(struct SoundPlayer *player, u16 speed);
+void MPlayStart(struct SoundPlayer *player,
                            const struct SongHeader *header);
-void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume);
-void Audio_PlaySound(u16 cue);
+void m4aMPlayVolumeControl(struct SoundPlayer *player, u16 mask, u16 volume);
+void m4aSongNumStart(u16 cue);
 void Sound_LoadPresetParameters(s32 preset);
-void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
+void m4aMPlayTempoControl(struct SoundPlayer *player,
                                             u16 scale);
-void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch);
+void m4aMPlayPitchControl(struct SoundPlayer *player, u16 mask, s16 pitch);
 
 s32 Func_081c0cac(s32 cue) { return 3; }
 
@@ -40,7 +40,7 @@ s32 Func_081c0cac(s32 cue) { return 3; }
 /// the first idle one of 7 down to 4), 80 to 99 play over silenced music,
 /// and the rest (79 aside) become the background music.
 // As The Broken Seal's, with ⚓️'s ranges.
-void AudioCommand_Play(s32 id) {
+void Sound_Play(s32 id) {
   s32 flags;
   s32 player;
 
@@ -53,17 +53,17 @@ void AudioCommand_Play(s32 id) {
   if (id == 78) {
     if (gData_02005814 != 0)
       return;
-    MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
+    m4aMPlayFadeOut(&gMusicPlayerBgm, 7);
     gData_02005814++;
     gData_02005830 = 0;
   } else if (id == 390) {
     gData_02005820[3] = 0;
-    MusicPlayer_FadeOut(&gSound_Player3, 3);
+    m4aMPlayFadeOut(&gSound_Player3, 3);
     gData_02005820[5] = 0;
-    MusicPlayer_FadeOut(&gSound_Player5, 3);
+    m4aMPlayFadeOut(&gSound_Player5, 3);
   } else if (id == 395) {
     gData_02005820[5] = 0;
-    MusicPlayer_FadeOut(&gSound_Player5, 3);
+    m4aMPlayFadeOut(&gSound_Player5, 3);
   } else if (id >= 700) {
     goto background;
   } else if (id > 99) {
@@ -77,14 +77,14 @@ void AudioCommand_Play(s32 id) {
         player = 7;
       }
     }
-    MusicPlayer_StartSong(gSound_PlayerSlots[player].player,
+    MPlayStart(gSound_PlayerSlots[player].player,
                           gSound_SongTable[id].header);
     gData_02005820[player] = id;
   } else if (id > 79) {
-    MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
+    m4aMPlayVolumeControl(&gMusicPlayerBgm, 255, 0);
     gMusicVolumeTarget = 0;
     gMusicVolume = 0;
-    Audio_PlaySound(id);
+    m4aSongNumStart(id);
     gMusicRestoreDelay = 10;
   } else {
     if (id == 79)
@@ -94,7 +94,7 @@ void AudioCommand_Play(s32 id) {
       return;
     gData_02005830 = id;
     Sound_LoadPresetParameters(Func_081c0cac(id));
-    Audio_PlaySound(id);
+    m4aSongNumStart(id);
     if (flags & 0x1000)
       gMusicVolume = 0;
     else
@@ -108,7 +108,7 @@ void AudioCommand_Play(s32 id) {
 /// Steps the music volume toward its target and the pitch toward its target,
 /// each by its step, after the jingle's restore delay runs out, as The Broken
 /// Seal's without the DMA restart count.
-void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
+void Sound_UpdateBgmRamps(void) {
   s32 delta;
 
   if (gMusicRestoreDelay != 0) {
@@ -129,7 +129,7 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
       gMusicVolume -= gMusicVolumeStep;
     if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0)
       gMusicVolume = gMusicVolumeTarget;
-    MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, gMusicVolume);
+    m4aMPlayVolumeControl(&gMusicPlayerBgm, 255, gMusicVolume);
   }
   if ((s16)gData_02005834 != (s16)gData_0200583c) {
     delta = (s16)gData_02005834 - (s16)gData_0200583c;
@@ -139,8 +139,8 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
       gData_0200583c -= gData_0200580c;
     if ((((s16)gData_02005834 - (s16)gData_0200583c) ^ delta) < 0)
       gData_0200583c = gData_02005834;
-    MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gData_0200583c);
-    MusicPlayer_SetPitch(&gMusicPlayerBgm, 255,
+    m4aMPlayTempoControl(&gMusicPlayerBgm, gData_0200583c);
+    m4aMPlayPitchControl(&gMusicPlayerBgm, 255,
                          (s16)gData_0200583c * 12 - 3072);
   }
 }

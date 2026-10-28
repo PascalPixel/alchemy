@@ -23,9 +23,9 @@ SoundNote_Detach:
 	str	r1, [r0, #44]
 .L_081c16ea:
 	bx	lr
-	.global MusicTrack_FinishSequence
+	.global ply_fine
 	.thumb_func
-MusicTrack_FinishSequence:
+ply_fine:
 	push	{r4, r5, lr}
 	adds	r5, r1, #0
 	ldr	r4, [r5, #32]

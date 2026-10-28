@@ -89,7 +89,7 @@ s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
 struct BattleAct *BattleAction_Get(s32 action);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
                                     s32 height);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
@@ -188,9 +188,9 @@ s32 Func_080fdad4(s32 paneIndex) {
           ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->unk04[2] == 0) {
-            Audio_PlayCue(114);
+            Sound_PlayFar(114);
           } else {
-            Audio_PlayCue(174);
+            Sound_PlayFar(174);
             shortcutHelp = 1;
             menu->flags |= 2;
             UiWindow_ClearInteriorTilesFar(window, 0, 88, 120, 96);
@@ -208,7 +208,7 @@ s32 Func_080fdad4(s32 paneIndex) {
 
       if (KEYS_PRESSED & 1) {
         if (menu->mode != 0) {
-          Audio_PlayCue(130);
+          Sound_PlayFar(130);
           result = menu->psynergies[state.selectedIndex];
           done = 1;
           break;
@@ -216,15 +216,15 @@ s32 Func_080fdad4(s32 paneIndex) {
         if (menu->psynergies[state.selectedIndex] != 0) {
           if (PsynergyMenu_IsActionRestricted(
                   menu->psynergies[state.selectedIndex]) != 0) {
-            Audio_PlayCue(114);
+            Sound_PlayFar(114);
             continue;
           }
           ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                  OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
-            Audio_PlayCue(114);
+            Sound_PlayFar(114);
           } else {
-            Audio_PlayCue(173);
+            Sound_PlayFar(173);
             result = menu->psynergies[state.selectedIndex];
             done = 1;
             break;
@@ -233,7 +233,7 @@ s32 Func_080fdad4(s32 paneIndex) {
       }
 
       if (KEYS_PRESSED & 2) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         result = -1;
         done = 1;
         break;
@@ -244,7 +244,7 @@ s32 Func_080fdad4(s32 paneIndex) {
         ownerCount = menu->ownerCount;
         listMode = menu->mode != 0 ? 1 : 2;
         member = menu->tabIndex[paneIndex];
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         menu->selectedIndexByOwner[menu->ownerIds[paneIndex]] =
             state.selectedIndex;
         do {
@@ -273,11 +273,11 @@ s32 Func_080fdad4(s32 paneIndex) {
         ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
-          Audio_PlayCue(114);
+          Sound_PlayFar(114);
         } else if (Party_SetPackedEvent(menu->ownerIds[paneIndex],
                                         menu->psynergies[state.selectedIndex],
                                         0) != 0) {
-          Audio_PlayCue(130);
+          Sound_PlayFar(130);
           result = menu->psynergies[state.selectedIndex];
           menu->mode = 1;
           done = 1;
@@ -289,11 +289,11 @@ s32 Func_080fdad4(s32 paneIndex) {
         ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
                                OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
-          Audio_PlayCue(114);
+          Sound_PlayFar(114);
         } else if (Party_SetPackedEvent(menu->ownerIds[paneIndex],
                                         menu->psynergies[state.selectedIndex],
                                         1) != 0) {
-          Audio_PlayCue(130);
+          Sound_PlayFar(130);
           result = menu->psynergies[state.selectedIndex];
           menu->mode = 2;
           done = 1;

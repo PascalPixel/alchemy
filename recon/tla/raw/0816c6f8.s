@@ -1043,7 +1043,7 @@ BattleEffect_RunGeode:
 	cmp r1, #48
 	bne .L_0816cf14
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #128
 	ldr r3, .L_0816d10c
 	ldr r0, [sp, #76]

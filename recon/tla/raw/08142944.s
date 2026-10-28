@@ -205,19 +205,19 @@ Func_08142944:
 	cmp r3, #0
 	bne .L_08142ae0
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08142ae0:
 	mov r4, r9
 	cmp r4, #48
 	bne .L_08142aec
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08142aec:
 	mov r0, r9
 	cmp r0, #56
 	bne .L_08142af8
 	movs r0, #148
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08142af8:
 	mov r1, r9
 	cmp r1, #32
@@ -798,7 +798,7 @@ Func_08142944:
 	bne .L_08142fcc
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #238
 	ldr r1, [sp, #48]
 	lsls r4, r4, #7

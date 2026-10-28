@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -407,19 +407,19 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         Func_08164b2c(8 - (frame - 360) / 4, -12, (frame - 360) / 8 - 12);
       }
       if (frame == 48) {
-        Audio_PlayCue(136);
+        Sound_PlayFar(136);
       }
       if (frame == 74) {
-        Audio_PlayCue(136);
+        Sound_PlayFar(136);
       }
       if (frame == 100) {
-        Audio_PlayCue(136);
+        Sound_PlayFar(136);
       }
       if (frame == 126) {
-        Audio_PlayCue(136);
+        Sound_PlayFar(136);
       }
       if (frame == 140) {
-        Audio_PlayCue(141);
+        Sound_PlayFar(141);
       }
       if (frame <= 266) {
         if (frame <= 639) {
@@ -609,10 +609,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 267) {
-        Audio_PlayCue(212);
+        Sound_PlayFar(212);
       }
       if (frame == 271) {
-        Audio_PlayCue(144);
+        Sound_PlayFar(144);
       }
       if ((u32)cut <= 9) {
         s32 s;
@@ -956,10 +956,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 10) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 14) {
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                   0x40000, 150);
@@ -968,10 +968,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 30) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 34) {
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                   0x40000, 50);
@@ -980,7 +980,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 58) {
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                   0x40000, 200);

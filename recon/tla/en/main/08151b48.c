@@ -162,7 +162,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Audio_PlayCue(138);
+  Sound_PlayFar(138);
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)

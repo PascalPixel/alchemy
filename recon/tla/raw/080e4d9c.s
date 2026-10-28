@@ -466,7 +466,7 @@ Func_080e4d9c:
 	cmp r3, #0
 	bne .L_080e519a
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldrh r2, [r5]
 .L_080e519a:
 	movs r1, #160
@@ -533,7 +533,7 @@ Func_080e4d9c:
 	cmp r3, #0
 	bne .L_080e5212
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e5212:
 	movs r1, #168
 	lsls r1, r1, #5
@@ -591,7 +591,7 @@ Func_080e4d9c:
 	cmp r3, #0
 	bne .L_080e5284
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldrh r2, [r5]
 .L_080e5284:
 	movs r3, #7
@@ -686,7 +686,7 @@ Func_080e4d9c:
 	adds r0, r1, #0
 	bl Map_SetScreenShakeFar
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #0
 	ldrsh r3, [r5, r2]
 	cmp r3, #0
@@ -1023,7 +1023,7 @@ Func_080e4d9c:
 	cmp r3, #0
 	bne .L_080e5602
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldrh r2, [r5]
 .L_080e5602:
 	movs r1, #160
@@ -1101,7 +1101,7 @@ Func_080e4d9c:
 	movs r3, #1
 	strh r3, [r2]
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e5698:
 	mov r2, r11
 	adds r2, #193

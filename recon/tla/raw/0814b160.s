@@ -129,7 +129,7 @@ BattleEffect_RunCurse:
 	cmp r8, r6
 	bne .L_0814b25e
 	movs r0, #143
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814b25e:
 	cmp r8, r6
 	blt .L_0814b2f0

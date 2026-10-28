@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -333,38 +333,38 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     if (frame == 82) {
       Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
-      Audio_PlayCue(130);
+      Sound_PlayFar(130);
     }
     if (frame == 210) {
       Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
-      Audio_PlayCue(130);
+      Sound_PlayFar(130);
     }
     if (frame == 274) {
-      Audio_PlayCue(139);
+      Sound_PlayFar(139);
     }
     if (frame == 310) {
-      Audio_PlayCue(206);
+      Sound_PlayFar(206);
     }
     if (frame == 316) {
-      Audio_PlayCue(154);
+      Sound_PlayFar(154);
     }
     if (frame == 466) {
-      Audio_PlayCue(142);
+      Sound_PlayFar(142);
     }
     if (frame == 498) {
-      Audio_PlayCue(154);
+      Sound_PlayFar(154);
     }
     if (frame == 503) {
-      Audio_PlayCue(154);
+      Sound_PlayFar(154);
     }
     if (frame == 508) {
-      Audio_PlayCue(154);
+      Sound_PlayFar(154);
     }
     if (frame == 520) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 540) {
-      Audio_PlayCue(186);
+      Sound_PlayFar(186);
     }
     if (frame <= 1999999) {
       table = (u16 *)(work->unk7300 + 0x340);
@@ -1004,9 +1004,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         if (i == 0) {
           Func_0814cd48(effect->actors[0], 7, -1, 0, 16);
           Func_081180e8(126);
-          Audio_PlayCue(126);
+          Sound_PlayFar(126);
         } else {
-          Audio_PlayCue(126);
+          Sound_PlayFar(126);
           Func_0814cd48(effect->actors[i], 7, -1, i, 16);
         }
       }

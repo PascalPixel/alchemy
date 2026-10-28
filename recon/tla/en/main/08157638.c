@@ -61,7 +61,7 @@ extern const u16 gData_08197410[];
 
 u32 Random16(void);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
@@ -131,7 +131,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   for (i = 0; i != 512; i++)
     DOTS[i].variant = -1;
 
-  Audio_PlayCue(162);
+  Sound_PlayFar(162);
   frame = 0;
   do {
     // The battle resumes and resolves the targets, hit cue 133.
@@ -147,7 +147,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
-          Audio_PlayCue(133);
+          Sound_PlayFar(133);
           work->shakeFrames = 4;
           for (j = 0; j != DOTS_PER_FLAME; j++) {
             s32 direction;

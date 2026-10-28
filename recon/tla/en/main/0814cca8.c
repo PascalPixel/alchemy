@@ -58,7 +58,7 @@ void *Unit_Get(s32 owner);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 typedef s32 (*FillWordsFunc)(void *destination, s32 size, u32 value);
 
@@ -88,5 +88,5 @@ void Func_0814cca8(void) {
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
   gCameraSceneParameters[4] = 120;
-  Audio_PlayCue(390);
+  Sound_PlayFar(390);
 }

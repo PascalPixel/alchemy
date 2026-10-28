@@ -1037,7 +1037,7 @@ Func_02000b64:
 	bl GameFlag_SetBit
 	movs r0, #80
 	bl Func_020032b8
-	bl AudioCommand_WaitForCompletion
+	bl Sound_WaitForBgmRestore
 	bl Func_02003290
 	bl Func_020031e8
 .L_02008e76:

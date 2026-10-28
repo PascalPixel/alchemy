@@ -48,7 +48,7 @@ void Func_080e37e0(s32 actor) {
   }
   ring->scaleX = 0x18000;
   ring->scaleY = 0x10000;
-  Audio_PlayCue(136);
+  Sound_PlayFar(136);
   Object_SetMode(ring, 6);
   object->scaleY = object->scaleX = 0x8000;
   for (i = 0; i < 16; i++) {

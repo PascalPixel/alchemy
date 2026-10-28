@@ -82,7 +82,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor,
                                                  struct EffectPosition *out);
@@ -162,7 +162,7 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
     effect->variant = 1;
   if (effect->variant > 4)
     effect->variant = 4;
-  Audio_PlayCue(212);
+  Sound_PlayFar(212);
 
   for (frame = 0; frame != 56; frame++) {
     EffectPosition_ProjectBattler(effect->actor, &ground);

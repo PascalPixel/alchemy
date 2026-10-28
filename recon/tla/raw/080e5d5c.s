@@ -138,7 +138,7 @@ Func_080e5d5c:
 .L_080e5e5e:
 	bl BattleEffect_InitializeSharedScene
 	movs r0, #138
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #176
 	movs r1, #0
 	movs r3, #0
@@ -556,7 +556,7 @@ Func_080e5d5c:
 	cmp r1, #0
 	bge .L_080e61c0
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	bl WaitFrames
 	b .L_080e62bc
@@ -653,7 +653,7 @@ Func_080e5d5c:
 	movs r0, #10
 	bl WaitFrames
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r11
 	mov r4, r11
 	ldr r1, [r2, #8]

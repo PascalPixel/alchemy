@@ -379,19 +379,19 @@ BattleEffect_RunNereid:
 	cmp r2, #0
 	bne .L_0814875c
 	movs r0, #164
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814875c:
 	mov r3, r9
 	cmp r3, #32
 	bne .L_08148768
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08148768:
 	mov r6, r9
 	cmp r6, #80
 	bne .L_08148774
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08148774:
 	ldr r7, [sp, #8]
 	cmp r7, #47

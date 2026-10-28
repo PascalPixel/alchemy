@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global AudioEngine_SuspendDirectSoundFar
+	.global m4aSoundVSyncOffFar
 	.thumb_func
-AudioEngine_SuspendDirectSoundFar:
+m4aSoundVSyncOffFar:
 	overlay_veneer AudioEngine_SuspendDirectSoundWrapper
 	.global Func_081c0088
 	.thumb_func
 Func_081c0088:
-	overlay_veneer MusicPlayer_StepVolumeAndPitchTowardTargets
+	overlay_veneer Sound_UpdateBgmRamps
 	.global SongFlag_TestFar
 	.thumb_func
 SongFlag_TestFar:

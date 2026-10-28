@@ -50,7 +50,7 @@ extern struct LinkSignature gLinkPeerSignatures[];
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3,
                                s32 arg4);
 
-void Audio_PlayCue(s32 soundId);
+void Sound_PlayFar(s32 soundId);
 
 void UpdateLinkSessionCountdown(void) {
   struct LinkCountdownState *state =
@@ -90,7 +90,7 @@ void UpdateLinkSessionCountdown(void) {
     i = 2;
     do {
       if (*active++ != 0)
-        Runtime_PushSlotEntry(entry, 240);
+        Oam_AddSpriteAtDepth(entry, 240);
       i--;
       entry++;
     } while (i >= 0);
@@ -144,7 +144,7 @@ void UpdateLinkSessionCountdown(void) {
 
     seconds = __divsi3(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-      Audio_PlayCue(108);
+      Sound_PlayFar(108);
 
     if (state->displayHandle != 0)
       UiText_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);

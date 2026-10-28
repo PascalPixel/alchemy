@@ -79,7 +79,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -185,13 +185,13 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       for (i = 0; i != 256; i++) {
         gData_02015000[i].variant = -1;
       }
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
     }
     if ((u32)(frame - 40) <= 15) {
       Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
     }
     if (frame == 56) {
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
     }
 
     // The pillar falls eight lines a frame and bursts where it lands.

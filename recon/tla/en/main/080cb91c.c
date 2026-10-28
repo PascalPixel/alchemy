@@ -147,7 +147,7 @@ struct ObjectRuntime *Func_080cb8e8(void);
 void EventRuntime_PrepareCurrentObject(void);
 void UiText_DrawQuantity(s32 value, s32 kind);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 struct FieldUnit *Unit_Get(s32 unitId);
 void Func_080ca3f4(s32 scene, s32 entrance);
 s32 Func_080ed2a4(s32 mode);
@@ -374,7 +374,7 @@ s32 SceneSequence_Run(void) {
               Object_SetMode(leader, 36);
             else
               Object_SetMode(leader, 19);
-            Audio_PlayCue(59);
+            Sound_PlayFar(59);
             UiText_ShowPositionedMessageAndWaitFar(0xd93, 1);
             unit = Unit_Get(Data_02000454);
             unit->hp = 1;
@@ -498,7 +498,7 @@ s32 SceneSequence_Run(void) {
       } else if (work->menu != 0) {
         UiTimedNotice_CloseIfActiveFar();
         EventRuntime_PrepareCurrentObject();
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         Func_080cb82c();
         GameFlag_SetBit(262);
         if (gDebugMode && (gInput.held & 2) && (gInput.held & 4)) {
@@ -542,7 +542,7 @@ s32 SceneSequence_Run(void) {
         Func_080cb8a4();
         work->item = 0;
       } else if (work->start != 0) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         EventRuntime_PrepareCurrentObject();
         Func_080cb82c();
         GameFlag_SetBit(262);

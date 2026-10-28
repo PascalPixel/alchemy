@@ -656,31 +656,31 @@ BattleEffect_RunKirin:
 	cmp r7, #0
 	bne .L_08168f4e
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08168f4e:
 	mov r1, r11
 	cmp r1, #26
 	bne .L_08168f5a
 	movs r0, #141
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08168f5a:
 	mov r2, r11
 	cmp r2, #40
 	bne .L_08168f66
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08168f66:
 	mov r3, r11
 	cmp r3, #72
 	bne .L_08168f72
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08168f72:
 	mov r4, r11
 	cmp r4, #104
 	bne .L_08168f7e
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08168f7e:
 	ldr r3, .L_08168fcc
 	movs r2, #3
@@ -910,19 +910,19 @@ BattleEffect_RunKirin:
 	adds r3, r7, r0
 	str r4, [r3]
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08169138:
 	mov r1, r11
 	cmp r1, #11
 	bne .L_08169144
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08169144:
 	mov r2, r11
 	cmp r2, #46
 	bne .L_08169150
 	movs r0, #137
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08169150:
 	ldr r4, [sp, #84]
 	movs r3, #0
@@ -1002,7 +1002,7 @@ BattleEffect_RunKirin:
 	movs r1, #1
 	bl Func_08118088
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #84]
 	ldr r2, [r3, #20]
 	b .L_08169200
@@ -1069,7 +1069,7 @@ BattleEffect_RunKirin:
 	cmp r2, #48
 	bne .L_08169274
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08169274:
 	mov r3, r11
 	cmp r3, #40

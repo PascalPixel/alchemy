@@ -89,7 +89,7 @@ void ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Stone Justice: 21 boulders rise in a column beside the user and tumble
 // across the screen into the target, while the battle background slides
@@ -150,9 +150,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     EffectPosition_ProjectScaledBattler(effect->actor, &userPosition);
     EffectPosition_ProjectScaledBattler(effect->actors[0], &targetPosition);
     if (frame == 0)
-      Audio_PlayCue(157);
+      Sound_PlayFar(157);
     if (frame == 64)
-      Audio_PlayCue(104);
+      Sound_PlayFar(104);
 
     // Frame 0: the boulders stand in a column 2 pixels apart, on the
     // user's side of the canvas, and are thrown upward at random speeds.
@@ -239,7 +239,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     if (hit == 1) {
       if (cueTimer == 0) {
         cueTimer = 8;
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
       }
       BattleEffect_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16, 2 << 16,
                                 150);

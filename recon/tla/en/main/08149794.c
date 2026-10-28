@@ -78,7 +78,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Pillars of lightning strike the targets' row one after another, eight
 // frames apart; each flashes the screen, throws a fan of sparks up from its
@@ -155,7 +155,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
     for (i = 0; i != count; i++) {
       start = i * 8;
       if (frame == start) {
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
         Iwram_FillWords(canvas, 0x4000, 0x10101010);
       }
       if (frame >= start && frame < start + 9) {

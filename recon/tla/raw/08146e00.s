@@ -198,7 +198,7 @@ BattleEffect_RunProcne:
 	cmp r5, #16
 	bne .L_08146f92
 	movs r0, #141
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08146f92:
 	ldr r6, [sp, #84]
 	movs r7, #128
@@ -206,7 +206,7 @@ BattleEffect_RunProcne:
 	cmp r6, r7
 	bne .L_08146fa2
 	movs r0, #140
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08146fa2:
 	ldr r0, [sp, #84]
 	movs r1, #167
@@ -214,7 +214,7 @@ BattleEffect_RunProcne:
 	cmp r0, r1
 	bne .L_08146fb2
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08146fb2:
 	ldr r2, [sp, #84]
 	movs r3, #92
@@ -222,7 +222,7 @@ BattleEffect_RunProcne:
 	cmp r2, r3
 	bne .L_08146fc2
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08146fc2:
 	ldr r5, [sp, #84]
 	movs r6, #104
@@ -230,7 +230,7 @@ BattleEffect_RunProcne:
 	cmp r5, r6
 	bne .L_08146fd2
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08146fd2:
 	ldr r7, [sp, #84]
 	movs r0, #186
@@ -238,7 +238,7 @@ BattleEffect_RunProcne:
 	cmp r7, r0
 	bne .L_08146fe2
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08146fe2:
 	ldr r2, [sp, #100]
 	movs r1, #0

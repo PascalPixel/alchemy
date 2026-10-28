@@ -285,7 +285,7 @@ Func_080e1f2c:
 	cmp r1, #15
 	ble .L_080e2174
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #128

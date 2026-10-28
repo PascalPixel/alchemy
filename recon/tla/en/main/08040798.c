@@ -37,7 +37,7 @@ void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
 void Func_08108048(void *cursor, s32 x, s32 y);
 void Func_08108040(void *cursor, s32 x, s32 y, s32 mode);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void UiWork_Finalize(struct RenderInput *window, s32 release);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
@@ -112,22 +112,22 @@ s32 Func_08040798(s32 selected) {
     WaitFrames(1);
     if (PRESSED & 1) {
       result = selected;
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       break;
     }
     if (PRESSED & 10) {
       result = -1;
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       break;
     }
     if (gInput.repeat & 64) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       selected--;
       redraw = 1;
       continue;
     }
     if (gInput.repeat & 128) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       selected++;
       redraw = 1;
       continue;
@@ -135,12 +135,12 @@ s32 Func_08040798(s32 selected) {
     if (gDebugMode != 0) {
       if (PRESSED & 0x100) {
         result = 20;
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         break;
       }
       if (PRESSED & 0x200) {
         result = 21;
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         break;
       }
     }

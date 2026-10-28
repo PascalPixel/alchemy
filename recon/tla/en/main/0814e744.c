@@ -151,7 +151,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
       offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
       // The target's cue: a chime and a flash.
       if (frame == member * 20) {
-        Audio_PlayCue(143);
+        Sound_PlayFar(143);
         Func_0814cd48(effect->actors[member], 7, -1, member, 20);
       }
       // Its shards fly, and go out once they fall past y = 112.

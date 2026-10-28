@@ -51,7 +51,7 @@ Func_080fc6bc:
 	b .L_080fc9e0
 .L_080fc71a:
 	movs r0, #173
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r8
 	ldr r3, [r1, #24]
 	movs r2, #226
@@ -65,7 +65,7 @@ Func_080fc6bc:
 	b .L_080fc9e0
 .L_080fc736:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #1
 	str r5, [sp, #32]
 	str r4, [sp, #24]
@@ -299,13 +299,13 @@ Func_080fc6bc:
 	cmp r3, #1
 	bne .L_080fc912
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #1
 	bl WaitFrames
 	b .L_080fc9d2
 .L_080fc912:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #133
 	ldr r2, [sp, #12]
 	mov r4, r11

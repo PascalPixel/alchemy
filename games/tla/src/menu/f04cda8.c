@@ -93,7 +93,7 @@ void Func_0804cda8(void) {
       *attr = base >> 5;
       slot = 245;
     }
-    Runtime_PushSlotEntry(sprite, slot);
+    Oam_AddSpriteAtDepth(sprite, slot);
   }
   if (buffers == 0 || TRANSITION_BUSY(buffers) != 0 || work->count == 0)
     return;

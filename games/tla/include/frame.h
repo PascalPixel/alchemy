@@ -21,6 +21,6 @@ extern u32 gCartridgeResetMarker;
 extern u32 gFrameCount;
 extern u32 gFrameWaitCount;
 
-void AudioEngine_SuspendDirectSoundFar(void);
+void m4aSoundVSyncOffFar(void);
 
 #endif

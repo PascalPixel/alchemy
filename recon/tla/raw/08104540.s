@@ -360,7 +360,7 @@ Func_08104540:
 	movs r0, #113
 	movs r7, #1
 .L_0810481e:
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r7, r7
 	b .L_08104888
 .L_08104826:
@@ -379,7 +379,7 @@ Func_08104540:
 	mov r1, r11
 	str r0, [r1]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Input_ResetKeyRepeat
 	movs r2, #1
 	str r2, [sp, #60]
@@ -400,7 +400,7 @@ Func_08104540:
 	mov r3, r11
 	str r0, [r3]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Input_ResetKeyRepeat
 	movs r0, #1
 	str r0, [sp, #60]

@@ -79,7 +79,7 @@ void EffectPosition_ProjectBattler(
     s32 actor, struct EffectPosition *position);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Plume Edge: the user dashes at the target, which a fan of white flashes
 // throws back; a pillar of light scrolls up through it for half a second and
@@ -148,7 +148,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
       pillarY = position.y;
       Func_0814cd48(effect->actors[0], -1, 5, 0, -1);
       work->shakeFrames = 4;
-      Audio_PlayCue(144);
+      Sound_PlayFar(144);
     }
 
     // Frame 32: the pillar bursts into 256 sparks, the target is knocked

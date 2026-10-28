@@ -14,7 +14,7 @@ extern s32 Data_03000ee4;
 extern s32 gIwramHi_Data1;
 
 void Sound_LoadPresetParameters(s32 preset);
-void AudioCommand_Play(s32 id);
+void Sound_Play(s32 id);
 void WaitFrames(s32 frames);
 
 struct AudioTestCues {
@@ -22,7 +22,7 @@ struct AudioTestCues {
 };
 
 /// The three cues the test starts with: the object's .rodata, which the
-/// object list places after Audio_EmptyCallback.
+/// object list places after DummyFunc.
 // As ☀️'s sound.c has its .rodata in the sound tail.
 static const struct AudioTestCues sAudioTestCues = {{0, 80, 100}};
 
@@ -86,13 +86,13 @@ void Func_081c1014(void) {
         row++;
     }
     if (gInput.repeat & KEY_A)
-      AudioCommand_Play(cues.cue[row]);
+      Sound_Play(cues.cue[row]);
     if (gInput.repeat & KEY_B)
-      AudioCommand_Play(0);
+      Sound_Play(0);
     if (gInput.repeat & KEY_START)
-      AudioCommand_Play(78);
+      Sound_Play(78);
     if (gInput.repeat & KEY_SELECT)
-      AudioCommand_Play(390);
+      Sound_Play(390);
 
     WaitFrames(1);
   }

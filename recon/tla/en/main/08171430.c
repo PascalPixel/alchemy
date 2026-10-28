@@ -82,7 +82,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -335,7 +335,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         flash->velocityX = (Random16() & 7) + 24;
         flash->variant = 0;
         work->shakeFrames = 4;
-        Audio_PlayCue(145);
+        Sound_PlayFar(145);
         Func_08118088(effect->actors[0], 0);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
       }

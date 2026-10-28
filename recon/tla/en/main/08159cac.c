@@ -97,7 +97,7 @@ s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 // BattleEventRuntime_StartPhase through its far call.
 void Func_081180e8(s32 hitCue);
 u32 Random16(void);
@@ -180,7 +180,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
         if (i == 0)
           Func_081180e8(134);
         else
-          Audio_PlayCue(134);
+          Sound_PlayFar(134);
         work->shakeFrames = 4;
       }
       // The shards fly, each tumbling through its kind's three cels more

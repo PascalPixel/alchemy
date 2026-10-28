@@ -36,7 +36,7 @@ void *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(void *object, s32 magnitude,
                                                 s32 angle);
 void Object_CommitPosition(void *object);
-void Audio_PlayCue(s32 sound);
+void Sound_PlayFar(s32 sound);
 void ObjectGroup_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -82,7 +82,7 @@ void FieldEffect_RunLiftOnTarget(void) {
 
   Object_CommitPosition(anchors[0]);
   ((struct EffectChild *)child)->callback = ObjectGroup_ApplyRandomChildValues;
-  Audio_PlayCue(130);
+  Sound_PlayFar(130);
   ((struct EffectChild *)child)->flag = 4;
 
   startY = ((struct EffectChild *)child)->y;

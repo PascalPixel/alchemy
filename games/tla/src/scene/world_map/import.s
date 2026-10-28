@@ -65,7 +65,7 @@ Func_02004ac8:
 	.global Func_02004ad0
 	.thumb_func
 Func_02004ad0:
-	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Func_02004ad8
 	.thumb_func
 Func_02004ad8:
@@ -497,4 +497,4 @@ Func_02004e28:
 	.global Func_02004e30
 	.thumb_func
 Func_02004e30:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

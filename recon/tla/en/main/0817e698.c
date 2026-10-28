@@ -102,7 +102,7 @@ s32 Scheduler_RemoveCallback(s32 callback);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
@@ -169,10 +169,10 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   Scheduler_AddOrUpdateCallback((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2) {
     work->shakeFrames = 0;
-    Audio_PlayCue(212);
+    Sound_PlayFar(212);
   } else if (mode == 1 || mode == 3) {
     work->shakeFrames = 8;
-    Audio_PlayCue(212);
+    Sound_PlayFar(212);
   } else {
     work->shakeFrames = 32;
   }
@@ -187,7 +187,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 24)
       Func_081180e8(0);
     if (frame == 8 && mode == 0)
-      Audio_PlayCue(126);
+      Sound_PlayFar(126);
 
     // Cels 0, 1 and 2 four frames each, then 1 and 2 by turns.
     if (frame < 32) {

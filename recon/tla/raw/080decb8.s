@@ -22,7 +22,7 @@ Func_080decb8:
 	ldr r7, [r5, #80]
 	ldr r3, [r7, #40]
 	mov r10, r3
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r5, #0
 	movs r1, #0
 	bl Object_SetMode

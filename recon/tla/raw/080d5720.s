@@ -30,7 +30,7 @@ Func_080d5720:
 	cmp r6, #0
 	beq .L_080d57dc
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #128
 	lsls r3, r3, #9
 	str r3, [r5, #52]

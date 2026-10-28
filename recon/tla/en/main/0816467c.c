@@ -48,7 +48,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 kind);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_0816442c(s32 formation, s32 x, s32 y);
 
 void Func_0816467c(s32 formation, s32 x, s32 y) {
@@ -115,9 +115,9 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
 
   for (frame = 0; frame != 72; frame++) {
     if (frame == 4)
-      Audio_PlayCue(154);
+      Sound_PlayFar(154);
     if (frame == 32)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
 
     if (frame <= 47) {
       s32 cell = (frame - 8) / 5;

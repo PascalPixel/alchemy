@@ -144,9 +144,9 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
-      Audio_PlayCue(115);
+      Sound_PlayFar(115);
     if (frame == 85)
-      Audio_PlayCue(136);
+      Sound_PlayFar(136);
     for (i = 0; i != effect->count; i++) {
       if (frame == i * 4 + 40)
         Func_0814cd48(effect->actors[i], 9, 5, -1, 0);

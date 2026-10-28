@@ -180,7 +180,7 @@ BattleEffect_RunPlasma:
 	cmp r11, r5
 	bne .L_081498fc
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #128
 	ldr r3, .L_08149b78
 	ldr r0, [sp, #32]

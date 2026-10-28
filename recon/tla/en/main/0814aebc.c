@@ -74,7 +74,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
 void Func_0815e22c(struct EffectPosition *middle); // the targets' middle
 void SceneTransform_ApplyPosition(s32 *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // A flock of sheep cards drops in over the targets, one every four frames,
 // and bounces on the ground, tumbling through eight cels; at frame 80 the
@@ -143,7 +143,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
                                 CALLBACK_ORDER);
-  Audio_PlayCue(142);
+  Sound_PlayFar(142);
 
   for (frame = 0; frame != SHEEP_FRAMES; frame++) {
     struct BattleCamera *camera;

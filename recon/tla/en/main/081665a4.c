@@ -75,7 +75,7 @@ void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Func_081180e8(s32 phase);      // BattleEventRuntime_StartPhaseFar
 void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
@@ -173,11 +173,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
   frame = 0;
   do {
     if (frame == 4)
-      Audio_PlayCue(SE_SWING);
+      Sound_PlayFar(SE_SWING);
     if (frame == 8)
       work->shakeFrames = frame;
     if (frame == 18)
-      Audio_PlayCue(SE_STRIKE);
+      Sound_PlayFar(SE_STRIKE);
     if (frame == RESULTS_FRAME)
       Func_081180e8(PHASE_RESULTS);
 

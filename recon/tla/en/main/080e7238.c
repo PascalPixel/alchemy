@@ -42,7 +42,7 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_080dc954(void);
 
 void Func_080e7238(void) {
@@ -75,7 +75,7 @@ void Func_080e7238(void) {
     sprite->depth = 240;
     spark->age = -1;
   }
-  Audio_PlayCue(200);
+  Sound_PlayFar(200);
   WaitFrames(20);
   object->scaleX = 0;
   object->scaleY = 0;

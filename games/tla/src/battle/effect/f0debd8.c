@@ -40,7 +40,7 @@ void Func_080debd8(void) {
   struct AnimationEntry *entry = sprite->entries[0];
   u32 i;
 
-  Audio_PlayCue(SE_CLOAK_END);
+  Sound_PlayFar(SE_CLOAK_END);
   Scheduler_RemoveCallback(FieldEffect_CheckCloakTile);
   Object_SetMode((struct ObjectRuntime *)caster, 0);
   caster->hook = 0;

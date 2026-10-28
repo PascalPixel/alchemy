@@ -256,7 +256,7 @@ Func_080db0b0:
 	movs r0, #6
 	bl WaitFrames
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r8
 	movs r1, #7
 	bl Object_SetMode

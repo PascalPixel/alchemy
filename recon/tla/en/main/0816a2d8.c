@@ -84,7 +84,7 @@ void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void ObjectGroup_CountDownMemberTimers(void);         // ObjectGroup_CountDownMemberTimers
 void BattleEffect_EndCanvasLayer(void);         // BattleEffect_EndCanvasLayer
 void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *effect);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 s32 ObjectDispatch_SetAnimationSpeedFar(struct MotionObject *object,
                                            s32 value);
@@ -196,7 +196,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
                                              COMPOSITE_FLIP_Y));
   mirror = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
-  Audio_PlayCue(SE_REVEAL);
+  Sound_PlayFar(SE_REVEAL);
   for (frame = 0; frame != REVEAL_FRAMES; frame++) {
     if (variant == 5) {
       // Half the picture, then its reflection below it.

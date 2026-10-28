@@ -192,7 +192,7 @@ BattleEffect_RunBoreas:
 	cmp r6, #32
 	bne .L_0814dc7a
 	movs r0, #141
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r7, #0
 	str r7, [sp, #40]
 	ldr r3, .L_0814dd00
@@ -521,31 +521,31 @@ BattleEffect_RunBoreas:
 	cmp r5, #32
 	bne .L_0814df0e
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814df0e:
 	ldr r6, [sp, #40]
 	cmp r6, #64
 	bne .L_0814df1a
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814df1a:
 	ldr r7, [sp, #40]
 	cmp r7, #104
 	bne .L_0814df26
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814df26:
 	ldr r0, [sp, #40]
 	cmp r0, #176
 	bne .L_0814df32
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814df32:
 	ldr r1, [sp, #40]
 	cmp r1, #226
 	bne .L_0814df3e
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814df3e:
 	bl Render_ResetTransformState
 	ldr r2, [sp, #40]
@@ -1011,7 +1011,7 @@ BattleEffect_RunBoreas:
 	movs r0, #195
 	strh r2, [r3]
 	lsls r0, r0, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r5, [sp, #44]
 	movs r4, #0
 	mov r8, r4
@@ -1153,13 +1153,13 @@ BattleEffect_RunBoreas:
 	cmp r3, #0
 	bne .L_0814e3fc
 	movs r0, #132
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814e3fc:
 	ldr r2, [sp, #40]
 	cmp r2, #72
 	bne .L_0814e408
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0814e408:
 	ldr r3, [sp, #40]
 	cmp r3, #64

@@ -88,7 +88,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -200,7 +200,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 8, 60);
     }
     if (frame == 2) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
 
     // The berg: it drops, then each blow drives it eight lines down.
@@ -214,12 +214,12 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         s32 beat = t % 8;
 
         if (beat == 4) {
-          Audio_PlayCue(212);
+          Sound_PlayFar(212);
         }
         if (beat == 7) {
           work->shakeFrames = 4;
           if (frame <= 79) {
-            Audio_PlayCue(144);
+            Sound_PlayFar(144);
             BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16,
                                        70);
           } else {
@@ -249,7 +249,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
     }
     if (frame == 7) {
       work->shakeFrames = 8;
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
       for (k = 0, shard = work->particles; k != 32; k++, shard++) {
         shard->y = 0x600000;
         shard->x = centerX << 16;

@@ -68,7 +68,7 @@ extern const s8 gData_081986ec[];
 extern const u8 gData_081986ce[];
 
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
@@ -163,7 +163,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
         Func_081180e8(0x85);
         Func_08118088(effect->actors[0], 1);
       } else {
-        Audio_PlayCue(0x86);
+        Sound_PlayFar(0x86);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
       }
       work->shakeFrames = 8;

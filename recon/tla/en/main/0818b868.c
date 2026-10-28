@@ -105,7 +105,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Func_081180e8(s32 phase);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
@@ -217,7 +217,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
         if (i == 2)
           Func_081180e8(134);
         else
-          Audio_PlayCue(134);
+          Sound_PlayFar(134);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
                                   i * 20 + 120);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);

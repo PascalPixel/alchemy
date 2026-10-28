@@ -152,7 +152,7 @@ Func_080e8db0:
 	cmp r3, #15
 	bne .L_080e8eee
 	movs r0, #152
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e8eee:
 	ldr r2, [sp, #48]
 	movs r1, #197

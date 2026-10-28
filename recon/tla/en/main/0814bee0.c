@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -219,10 +219,10 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       skip = 1;
     }
     if (frame == 0) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if (frame == 32) {
-      Audio_PlayCue(191);
+      Sound_PlayFar(191);
     }
     if ((u32)(frame - 78) <= 31) {
       REG_BLDALPHA = (16 - (frame - 78) / 2) | 0x1000;

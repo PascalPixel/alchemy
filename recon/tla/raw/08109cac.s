@@ -178,7 +178,7 @@ Func_08109cac:
 	movs r0, #126
 	ldrh r5, [r2, r3]
 	str r4, [sp, #4]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #10
 	movs r1, #9
 	movs r2, #16
@@ -238,7 +238,7 @@ Func_08109cac:
 	beq .L_08109eac
 	movs r0, #111
 	str r4, [sp, #4]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	ldr r0, [sp, #8]
 	negs r3, r3
@@ -258,7 +258,7 @@ Func_08109cac:
 	beq .L_08109ed4
 	movs r0, #111
 	str r4, [sp, #4]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #8]
 	movs r2, #1
 	add r10, r2
@@ -296,7 +296,7 @@ Func_08109cac:
 	bge .L_08109ef4
 .L_08109f00:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #1
 	mov r9, r1
 .L_08109f0a:
@@ -326,7 +326,7 @@ Func_08109cac:
 	blt .L_08109f2c
 .L_08109f36:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #1
 	mov r9, r2
 .L_08109f40:
@@ -368,12 +368,12 @@ Func_08109cac:
 .L_08109f8e:
 	movs r0, #113
 	movs r5, #1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r5, r5
 	b .L_08109f48
 .L_08109f9a:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r5, #0
 	b .L_08109f48
 .L_08109fa4:

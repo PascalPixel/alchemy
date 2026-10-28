@@ -26,7 +26,7 @@ extern u8 gData_0805c9c4[];
 s32 BattleMotion_ProjectScaledPositionFar(s32 id,
                                           struct EffectPosition *projected);
 s32 GameFlag_Test(s32 flag);
-void Runtime_PushSlotEntry(s32 *entry, s32 slot);
+void Oam_AddSpriteAtDepth(s32 *entry, s32 slot);
 struct SelectionNode *NodeChain_GetNodeAtCount(struct SelectionScreen *screen);
 s32 VramCache_Load(s32 slot, s32 size, void *source);
 void Func_0803e488(struct SelectionScreen *state, s32 index);
@@ -94,7 +94,7 @@ void SelectionMenu_Draw(void) {
           e->mode = 1;
         }
       }
-      Runtime_PushSlotEntry((s32 *)e, slot);
+      Oam_AddSpriteAtDepth((s32 *)e, slot);
     }
     node = node->next;
     cnt++;
@@ -126,7 +126,7 @@ void SelectionMenu_Draw(void) {
     if (GameFlag_Test(0x103) != 0) {
       te->mode = 1;
     }
-    Runtime_PushSlotEntry((s32 *)te, 248);
+    Oam_AddSpriteAtDepth((s32 *)te, 248);
   }
   Func_0803e488(state, 0);
   Func_0803e488(state, 1);
@@ -164,7 +164,7 @@ void SelectionMenu_Draw(void) {
         e->mode = 1;
       }
     }
-    Runtime_PushSlotEntry((s32 *)e, 240);
+    Oam_AddSpriteAtDepth((s32 *)e, 240);
     node = node->next;
   }
   if (cursor->kind != 0) {
@@ -199,7 +199,7 @@ void SelectionMenu_Draw(void) {
         cursorEntry->mode = 0;
       }
     }
-    Runtime_PushSlotEntry((s32 *)cursorEntry, 248);
+    Oam_AddSpriteAtDepth((s32 *)cursorEntry, 248);
   }
   state->status += 1;
 }

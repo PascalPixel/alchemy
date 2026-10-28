@@ -95,7 +95,7 @@ void BattleParty_AssignMemberSlots(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Scheduler_SuspendTasks(s32 mode);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Sound_LoadPresetParameters(s32 preset);
 void Func_08118c68(void);
 void BattleUnit_RefreshPlacement(void);
@@ -236,13 +236,13 @@ s32 Func_081197f0(s32 enemyGroup) {
 
   cue = gAdventure.sceneCue;
   if (cue != 0) {
-    Audio_PlayCue(cue);
+    Sound_PlayFar(cue);
     if (GameFlag_Test(0x16c) != 0) {
-      Audio_PlayCue(55);
+      Sound_PlayFar(55);
       Sound_LoadPresetParameters(4);
     }
   } else {
-    Audio_PlayCue(50);
+    Sound_PlayFar(50);
   }
 
   Func_08118c68();
@@ -405,9 +405,9 @@ won_scripted:
   if ((u32)scripted > 1) {
     if (enemyGroup != 80 && GameFlag_Test(0x16e) == 0) {
       if (battle->twoSided != 0)
-        Audio_PlayCue(58);
+        Sound_PlayFar(58);
       if (battle->defeated != 0) {
-        Audio_PlayCue(58);
+        Sound_PlayFar(58);
         if (battle->defeatState <= 1) {
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                            26);
@@ -419,7 +419,7 @@ won_scripted:
       }
       Func_081284c0();
     }
-    Audio_PlayCue(78);
+    Sound_PlayFar(78);
   }
   Fade_ToBlack(30);
   Fade_Wait();
@@ -441,7 +441,7 @@ party_lost:
   scripted = enemyGroup - 74;
   if ((u32)scripted > 1 && enemyGroup != 638) {
     if (enemyGroup != 76) {
-      Audio_PlayCue(59);
+      Sound_PlayFar(59);
       UiWork_ClearValueNameTablesFar();
       if (BattleParty_PrepareActiveOwners(0) == 1)
         UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDownInDefeat);
@@ -449,7 +449,7 @@ party_lost:
         UiText_ShowMessageAndWaitCoreFar((s32)MsgPartyDefeated);
       BattlePresentation_WaitForAdvance();
     }
-    Audio_PlayCue(78);
+    Sound_PlayFar(78);
   }
   Fade_ToBlack(30);
   result = -1;
@@ -457,7 +457,7 @@ party_lost:
   goto finished;
 
 fled:
-  Audio_PlayCue(78);
+  Sound_PlayFar(78);
   Fade_ToBlack(30);
   Fade_Wait();
   scripted = enemyGroup - 74;

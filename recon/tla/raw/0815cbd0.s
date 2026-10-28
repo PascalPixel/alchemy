@@ -71,7 +71,7 @@ BattleEffect_RunSpiderWeb:
 	ldr r0, .L_0815cc98
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #143
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #32
 	movs r7, #0
 	mov r8, r3

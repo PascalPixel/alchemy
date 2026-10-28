@@ -83,7 +83,7 @@ extern u8 MsgItemUseResult[];
 
 s32 GameFlag_Test(s32 flag);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void *Unit_Get(s32 member);
 void Unit_CalculateFar(s32 member);
 s16 Unit_AddPpFar(s32 unit, s32 amount);
@@ -287,7 +287,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         InventoryMenu_ShowModalMessage(menu->useResult + (s32)MsgItemUseResult,
                                        0, -1);
       } else {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
         RenderOutput_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(menu->useResult + (s32)MsgItemUseResult,
                                        useResult, useResult);

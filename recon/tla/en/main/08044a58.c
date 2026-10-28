@@ -34,9 +34,9 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 void UiWork_PushValueSlot(u32 value, u32 kind);
 s32 UiText_BuildRenderEntriesMode1(s32 arg0);
 s32 UiText_QueueRenderEntries(struct UiWindow *, s32, s32, s32, s32);
-void Audio_PlayCue(u32);
-s32 Audio_Check(void);
-void Runtime_PushSlotEntry(void *entry, s32 priority);
+void Sound_PlayFar(u32);
+s32 Sound_GetBgmRestoreDelayFar(void);
+void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 void UiWork_Finalize(struct UiWindow *work, s32 release);
 s32 Resource_ResetEntry(u32 slot);
 
@@ -81,12 +81,12 @@ void Func_08044a58(s32 pc, s32 element, s32 djinn) {
 
     UiText_QueueRenderEntries(window, text, 36, 2, zero);
 
-    Audio_PlayCue(81);
+    Sound_PlayFar(81);
 
     do {
-      Runtime_PushSlotEntry(entry, 250);
+      Oam_AddSpriteAtDepth(entry, 250);
       WaitFrames(1);
-    } while (Audio_Check() != 0 &&
+    } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | 0x300)) == 0);
 
     UiWork_Finalize(window, 2);

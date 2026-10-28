@@ -544,7 +544,7 @@ BattleEffect_RunAtalanta:
 	cmp r1, r3
 	bne .L_08154314
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08154314:
 	ldr r2, [sp, #44]
 	adds r3, r6, #0
@@ -1194,7 +1194,7 @@ BattleEffect_RunAtalanta:
 	movs r3, #2
 	str r3, [r2]
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #6
 	ldr r0, [sp, #48]
 	bl __modsi3

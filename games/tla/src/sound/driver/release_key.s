@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global MusicTrack_ReleaseKey
+	.global ply_endtie
 	.thumb_func
-MusicTrack_ReleaseKey:
+ply_endtie:
 	push	{r4, r5}
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]

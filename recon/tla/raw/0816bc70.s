@@ -161,7 +161,7 @@ BattleEffect_RunDiamondBerg:
 	cmp r3, #2
 	bne .L_0816bdba
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816bdba:
 	mov r4, r9
 	cmp r4, #127
@@ -195,7 +195,7 @@ BattleEffect_RunDiamondBerg:
 	cmp r5, #4
 	bne .L_0816bdf6
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816bdf6:
 	cmp r5, #7
 	bne .L_0816bee4
@@ -210,7 +210,7 @@ BattleEffect_RunDiamondBerg:
 	cmp r0, #79
 	bgt .L_0816be44
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #40]
 	movs r3, #70
 	ldr r0, [r1, #8]
@@ -350,7 +350,7 @@ BattleEffect_RunDiamondBerg:
 	movs r3, #8
 	movs r0, #145
 	str r3, [r2]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, [sp, #20]
 	ldr r5, [sp, #36]
 	movs r4, #0

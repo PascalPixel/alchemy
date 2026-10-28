@@ -8,7 +8,7 @@
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 AudioCommand_WaitForCompletion();
+s32 Sound_WaitForBgmRestore();
 s32 Camera_MoveWithinMapBounds();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
@@ -160,7 +160,7 @@ L_02008d00:
   Call1((void (*)())FieldEvent_WaitFrames, 40);
   Call1((void (*)())GameFlag_SetBit, 0xa31);
   Call1((void (*)())Func_020032b8, 80);
-  AudioCommand_WaitForCompletion();
+  Sound_WaitForBgmRestore();
   Func_02003290();
   Func_020031e8();
 L_02008e76:

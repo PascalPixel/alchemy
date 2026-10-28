@@ -160,7 +160,7 @@ Func_080e4a34:
 	movs r0, #128
 	lsls r0, r0, #2
 	adds r0, #54
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e4b80:
 	mov r0, r8
 	ldrh r3, [r0, #6]
@@ -263,7 +263,7 @@ Func_080e4a34:
 	cmp r2, #45
 	bne .L_080e4c5c
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080e4c5c:
 	mov r3, r10
 	cmp r3, #60

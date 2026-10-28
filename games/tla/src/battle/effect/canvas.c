@@ -24,7 +24,7 @@ struct CanvasWork {
 
 extern u32 gCameraSceneParameters[];
 
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void BattleEffect_ClearActorTimers(void);
 void Palette_StepFadeTransfer(void);
 void Func_0814355c(void);
@@ -151,7 +151,7 @@ void BattleEffect_EndCanvasLayer(void) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 
-  Audio_PlayCue(390);
+  Sound_PlayFar(390);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;

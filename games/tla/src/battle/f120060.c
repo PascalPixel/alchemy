@@ -34,7 +34,7 @@ s32 VramCache_Reload(s32 slot, s32 source);
 s32 Resource_ResetEntry(u32 slot);
 void QueueIoWriteDelay10(u32 address, u32 value);
 void QueueIoWriteDelay6(u32 address, u32 value);
-void Runtime_PushSlotEntry(void *entry, s32 priority);
+void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
 /// The Broken Seal's BattlePresentation_WaitForPromptAt: shows the cursor
 /// bobbing at (x, y) and waits for A, B, L or R; returns 1.
@@ -61,7 +61,7 @@ s32 Func_08120060(s32 x, s32 y) {
     prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
-    Runtime_PushSlotEntry(prompt, 240);
+    Oam_AddSpriteAtDepth(prompt, 240);
     if (gInput.pressed & 0x303)
       break;
     WaitFrames(1);

@@ -122,7 +122,7 @@ Func_08124e20:
 	adds r1, r5, #0
 	bl BattleEvent_Push
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r5, #0
 	bl BattleParty_IsUnitListed
 	cmp r0, #0
@@ -324,7 +324,7 @@ Func_08124e20:
 	bl UiText_ShowMessageAndWaitCoreFar
 .L_081250b6:
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl BattlePresentation_WaitForAdvance
 .L_081250c0:
 	adds r0, r7, #0
@@ -377,7 +377,7 @@ Func_08124e20:
 	bl UiText_ShowMessageAndWaitCoreFar
 .L_08125126:
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl BattlePresentation_WaitForAdvance
 .L_08125130:
 	adds r0, r6, #0

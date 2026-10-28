@@ -138,7 +138,7 @@ BattleEffect_RunVine:
 	cmp r7, #32
 	bne .L_08154ea4
 	movs r0, #143
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r9
 	ldr r3, [r2, #20]
 	movs r6, #0

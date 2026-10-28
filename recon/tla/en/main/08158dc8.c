@@ -71,7 +71,7 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
 void ResourceObject_ReleaseFar(void *object);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -223,13 +223,13 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
-      Audio_PlayCue(140);
+      Sound_PlayFar(140);
     }
     if (frame == 132) {
-      Audio_PlayCue(131);
+      Sound_PlayFar(131);
     }
     if (frame == 151) {
-      Audio_PlayCue(145);
+      Sound_PlayFar(145);
     }
     if (gInput.repeat & 3) {
       break;
@@ -429,7 +429,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     }
     work->transferMode = 2;
     work->transferValue = 50;
-    Audio_PlayCue(145);
+    Sound_PlayFar(145);
     pillarX = 60;
     pillarY = 112;
 
@@ -441,7 +441,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
-        Audio_PlayCue(134);
+        Sound_PlayFar(134);
       }
       if (frame == 120) {
         Func_081180e8(134);

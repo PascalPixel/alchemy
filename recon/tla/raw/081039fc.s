@@ -1222,7 +1222,7 @@ Func_081039fc:
 	movs r0, #113
 	movs r7, #1
 .L_081043d8:
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	negs r7, r7
 	b .L_08104490
 .L_081043e0:
@@ -1253,7 +1253,7 @@ Func_081039fc:
 	str r0, [sp, #88]
 	movs r0, #111
 	str r2, [sp, #96]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_08104488
 .L_0810441c:
 	ldr r0, [sp, #32]
@@ -1275,7 +1275,7 @@ Func_081039fc:
 	bl Menu_GetModuloOfSum
 	str r0, [r5]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Input_ResetKeyRepeat
 	movs r3, #1
 	str r3, [sp, #96]
@@ -1290,7 +1290,7 @@ Func_081039fc:
 	cmp r1, #1
 	bgt .L_08104488
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Input_ResetKeyRepeat
 	ldr r2, [sp, #88]
 	ldr r0, [sp, #24]

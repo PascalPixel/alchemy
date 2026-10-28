@@ -90,7 +90,7 @@ void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_WaitForAnimationChange(u32);
 void Object_SetModeById(u32, s32);
 void Object_RefreshSelectorById(u32);
-void Audio_PlayCue(s32);
+void Sound_PlayFar(s32);
 
 extern const u8 gObject_LinkedMotionScript[];
 extern const u8 gObject_OffsetMotionScript[];

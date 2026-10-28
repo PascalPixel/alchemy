@@ -361,13 +361,13 @@ Func_08171bb0:
 	cmp r1, #0
 	bne .L_08171e7c
 	movs r0, #199
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08171e7c:
 	ldr r2, [sp, #68]
 	cmp r2, #32
 	bne .L_08171e88
 	movs r0, #206
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08171e88:
 	ldr r3, [sp, #68]
 	cmp r3, #0
@@ -1616,7 +1616,7 @@ Func_08171bb0:
 	cmp r5, #8
 	bne .L_0817280a
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0817280a:
 	ldr r0, [sp, #68]
 	cmp r0, #16
@@ -1638,7 +1638,7 @@ Func_08171bb0:
 	cmp r4, r6
 	bne .L_0817286c
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #92]
 	movs r3, #224
 	lsls r3, r3, #11

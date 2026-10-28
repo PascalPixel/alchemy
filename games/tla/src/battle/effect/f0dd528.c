@@ -57,6 +57,6 @@ void *BattleEffect_StartItemBreak(void *object) {
           child, radius, ((jitter - Random16()) >> 3) + source->angle);
     }
   }
-  Audio_PlayCue(SE_ITEM_BREAK);
+  Sound_PlayFar(SE_ITEM_BREAK);
   return parent;
 }

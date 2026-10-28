@@ -78,7 +78,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -139,7 +139,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Audio_PlayCue(CUE_THUNDER);
+  Sound_PlayFar(CUE_THUNDER);
 
   for (frame = 0; frame != effect->count * BOLT_INTERVAL + 40; frame++) {
     if (frame == 24)

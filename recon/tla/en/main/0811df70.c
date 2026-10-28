@@ -51,7 +51,7 @@ extern char MsgPsynergyBlocked;
 
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void PartyStatus_DrawFar(s32 flags);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void Func_0812756c(void);
 void Func_08138008(struct BattlePresentationWork *work);
@@ -109,7 +109,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
     }
   }
   if (!(mode & 2)) {
-    Audio_PlayCue(154);
+    Sound_PlayFar(154);
     Func_08127308(work.actor, plan->element, 0, 0);
   }
   if (mode & 1)

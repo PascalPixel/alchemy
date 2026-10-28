@@ -303,7 +303,7 @@ Func_080dcb44:
 	cmp r2, #0
 	bne .L_080dcda8
 	movs r0, #130
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldrb r3, [r5]
 .L_080dcda8:
 	adds r3, #1

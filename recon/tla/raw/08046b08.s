@@ -68,7 +68,7 @@ Func_08046b08:
 	str r3, [r5, #68]
 .L_08046b90:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r6, #4
 	movs r2, #0
 	add r3, sp, #440
@@ -251,7 +251,7 @@ Func_08046b08:
 	movs r2, #224
 	orrs r3, r2
 	strb r3, [r5, #9]
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	ldr r3, [sp, #444]
 	cmp r3, #24
 	bhi .L_08046d9c
@@ -401,7 +401,7 @@ Func_08046b08:
 	movs r1, #1
 	movs r0, #112
 	str r1, [sp, #132]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08046e4c:
 	ldr r2, [sp, #104]
 	cmp r2, #0
@@ -424,7 +424,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r1, r8
 	ldr r3, [r1, #20]
 	adds r5, #1
@@ -452,7 +452,7 @@ Func_08046b08:
 	movs r0, #111
 	subs r5, #1
 	str r3, [sp, #68]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	cmp r5, #0
 	blt .L_08046eb2
 	b .L_0804707c
@@ -480,7 +480,7 @@ Func_08046b08:
 	movs r1, #0
 	movs r0, #111
 	str r1, [sp, #68]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r2, r8
 	ldr r3, [r2, #16]
 	movs r2, #2
@@ -549,7 +549,7 @@ Func_08046b08:
 	ldrsb r5, [r4, r5]
 .L_08046f58:
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0804707c
 .L_08046f60:
 	ldr r0, [sp, #68]
@@ -566,7 +566,7 @@ Func_08046b08:
 	movs r0, #111
 	movs r5, #0
 	ldrsb r5, [r2, r5]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0804707c
 .L_08046f80:
 	cmp r0, #3
@@ -584,7 +584,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #132]
 	movs r3, #2
 	orrs r1, r3
@@ -605,7 +605,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #132]
 	movs r3, #2
 	orrs r1, r3
@@ -626,7 +626,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #132]
 	movs r3, #2
 	orrs r1, r3
@@ -667,7 +667,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #132]
 	movs r3, #2
 	orrs r1, r3
@@ -721,7 +721,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #132]
 	movs r3, #2
 	orrs r1, r3
@@ -742,7 +742,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #132]
 	movs r3, #2
 	orrs r1, r3
@@ -763,7 +763,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #132]
 	movs r3, #2
 	orrs r1, r3
@@ -790,7 +790,7 @@ Func_08046b08:
 	movs r0, #0
 	str r0, [sp, #68]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #132]
 	movs r3, #2
 	orrs r1, r3
@@ -1087,7 +1087,7 @@ Func_08046b08:
 	beq .L_08047370
 	ldr r0, [sp, #28]
 	movs r1, #240
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 .L_08047370:
 	movs r4, #1
 	str r4, [sp, #88]
@@ -1216,7 +1216,7 @@ Func_08046b08:
 .L_0804745a:
 	ldr r0, [sp, #32]
 	movs r1, #241
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	ldr r4, [sp, #132]
 	cmp r4, #0
 	bne .L_0804746c
@@ -3339,7 +3339,7 @@ Func_08046b08:
 	adds r0, r5, #0
 	movs r1, #240
 	str r4, [sp, #4]
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	ldr r4, [sp, #4]
 .L_080484e6:
 	movs r2, #15
@@ -3408,7 +3408,7 @@ Func_08046b08:
 	adds r3, #68
 	strb r3, [r5, #4]
 	str r4, [sp, #4]
-	bl Runtime_PushSlotEntry
+	bl Oam_AddSpriteAtDepth
 	adds r6, #1
 	adds r5, #12
 	adds r7, #2
@@ -3457,7 +3457,7 @@ Func_08046b08:
 	movs r0, #111
 	str r3, [sp, #144]
 	str r2, [sp, #132]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080485f8
 .L_080485c8:
 	ldr r4, [sp, #68]
@@ -3483,7 +3483,7 @@ Func_08046b08:
 	str r0, [sp, #132]
 	movs r0, #111
 	str r3, [sp, #144]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080485f8:
 	movs r0, #1
 	bl WaitFrames

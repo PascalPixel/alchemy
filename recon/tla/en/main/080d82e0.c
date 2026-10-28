@@ -47,7 +47,7 @@ struct ObjectRuntime *Object_GetById(u32 actor);
 void BattleEffect_ClearOwnedSlot(struct EffectSlot *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh();
 void Camera_WorldToScreen();
 void BattleEffect_InitializeSlots(void);
@@ -80,7 +80,7 @@ struct SpreadPosition {
   s32 z;
 };
 
-void Audio_PlayCue(s32);
+void Sound_PlayFar(s32);
 
 extern const s32 gBattleEffect_SharedParticleScript[];
 
@@ -159,15 +159,15 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   Shop_RestoreSceneTilesFar(0x201204);
   WaitFrames(30);
   djinni->visible = 0;
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   ObjectMotion_Launch(arg, 4, 15);
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   ObjectMotion_Launch(arg, 4, 15);
   WaitFrames(30);
   djinni->callback = (void *)BattleEffect_AdvanceSpinAngle;
-  Audio_PlayCue(153);
+  Sound_PlayFar(153);
   ObjectMotion_Launch(arg, 8, 22);
-  Audio_PlayCue(140);
+  Sound_PlayFar(140);
   Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = (void *)BattleEffect_ShrinkObjectAndDestroyFast;
   Object_SetMode((struct ObjectRuntime *)djinni, 3);
@@ -237,9 +237,9 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   }
 
   WaitFrames(100);
-  Audio_PlayCue(298);
+  Sound_PlayFar(298);
   WaitFrames(1);
-  Audio_PlayCue(151);
+  Sound_PlayFar(151);
   position[0] = leader->x;
   position[1] = leader->y + 0x120000;
   position[2] = leader->z;

@@ -55,7 +55,7 @@ void WaitFrames(s32 frames);
 void CharacterMenu_DrawSelectionLabels(s32 window, s32 selected, u8 *entries);
 void Func_080ff2e8(s32 window, s32 selected, s32 hasDjinn);
 void Func_080f8a44(s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(struct CharacterMenuState *menu,
                                            s32 ownerId);
 void RenderOutput_PrepareForRedrawFar(s32 window);
@@ -143,39 +143,39 @@ s32 Func_080feec0(void) {
       if (gInput.repeat & 0xf0)
         CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
       if (KEYS_PRESSED & 1) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         done = 1;
         result = 1;
         break;
       }
       if (KEYS_PRESSED & 2) {
-        Audio_PlayCue(113);
+        Sound_PlayFar(113);
         done = 1;
         result = -1;
         break;
       }
       if (gInput.repeat & 0x40) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         redraw = 1;
         selected--;
       }
       if (gInput.repeat & 0x80) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         redraw = 1;
         selected++;
       }
       if (gInput.repeat & 0x10) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         redraw = 1;
         pane++;
       }
       if (gInput.repeat & 0x20) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         redraw = 1;
         pane--;
       }
       if ((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) {
-        Audio_PlayCue(111);
+        Sound_PlayFar(111);
         member = menu->ownerIndex;
         if (gInput.repeat & 0x100)
           member++;

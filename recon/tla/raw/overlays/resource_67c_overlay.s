@@ -398,7 +398,7 @@ Func_020007d4:
 	bl FieldEvent_WaitFrames
 	movs r0, #80
 	bl Func_02003ef4
-	bl AudioCommand_WaitForCompletion
+	bl Sound_WaitForBgmRestore
 	bl Func_02003d84
 	bl Func_02003ebc
 	movs r0, #144

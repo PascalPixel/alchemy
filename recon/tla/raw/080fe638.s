@@ -20,7 +20,7 @@ Func_080fe638:
 	str r0, [sp, #28]
 	movs r0, #112
 	str r3, [sp, #32]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r1, [sp, #32]
 	movs r5, #13
 	adds r1, #240
@@ -238,7 +238,7 @@ Func_080fe638:
 	bl __modsi3
 	str r0, [sp, #28]
 	movs r0, #111
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Input_ResetKeyRepeat
 	movs r6, #1
 .L_080fe826:
@@ -285,7 +285,7 @@ Func_080fe638:
 	strb r2, [r3, #5]
 	bl MenuIcon_SetActive
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	add sp, #36
 	pop {r3, r5, r6, r7}
 	mov r8, r3

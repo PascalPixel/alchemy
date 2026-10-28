@@ -56,7 +56,7 @@ void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void WaitFrames(s32 frames);
 void UiWindow_SetTilemapFlagRect(struct UiWindow *window, s32 x, s32 y,
                                  s32 width, s32 height, s32 palette);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_0803d450(s32 member);
 
 s32 Func_08044558(s32 member) {
@@ -161,7 +161,7 @@ s32 Func_08044558(s32 member) {
       output->oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     if (gInput.repeat & 0x40) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       cursorDirty = 1;
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -173,7 +173,7 @@ s32 Func_08044558(s32 member) {
       }
     }
     if (gInput.repeat & 0x80) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -185,7 +185,7 @@ s32 Func_08044558(s32 member) {
       }
     }
     if (gInput.repeat & 0x20) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
@@ -197,7 +197,7 @@ s32 Func_08044558(s32 member) {
       }
     }
     if (gInput.repeat & 0x10) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -208,13 +208,13 @@ s32 Func_08044558(s32 member) {
         keyColumn = 0;
     }
     if (gInput.pressed & 8) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 5;
     }
     if (gInput.repeat & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
     remove_character:
       if (letterCount != 0) {
         letterCount--;
@@ -229,7 +229,7 @@ s32 Func_08044558(s32 member) {
     }
     if (!(gInput.repeat & 1))
       continue;
-    Audio_PlayCue(112);
+    Sound_PlayFar(112);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
         if (letterCount == 0) {

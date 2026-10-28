@@ -81,7 +81,7 @@ s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Scheduler_AddOrUpdateCallback(s32 (*callback)(void), s32 order);
 s32 Scheduler_RemoveCallback(s32 (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 u32 Random16(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -233,7 +233,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       // The targets flinch as the thorn reaches them.
       for (j = 0; j != effect->count; j++) {
         if (frame == start + 4) {
-          Audio_PlayCue(CUE_THORN);
+          Sound_PlayFar(CUE_THORN);
           Func_0814cd48(effect->actors[j], 7, 5, j, 3);
         }
       }

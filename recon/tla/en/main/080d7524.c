@@ -59,9 +59,9 @@ void Func_080d7524(s32 djinniId) {
   dir = (leader->angle + 0x2000) & 0xc000;
   EventRuntime_Start();
   WaitFrames(10);
-  Audio_PlayCue(173);
+  Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  Audio_PlayCue(175);
+  Sound_PlayFar(175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(10);
   back = dir + 0x8000;
@@ -72,15 +72,15 @@ void Func_080d7524(s32 djinniId) {
   Object_GetById(djinniId)->actionFlags &= ~1;
   djinni->motionFlags = 2;
   djinni->update = (void (*)(void))ObjectMotion_AdvanceSpinAngle;
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   djinni->gravity = 0x4000;
   djinni->velocityY = 0x48000;
   WaitFrames(33);
   ((struct DjinniSprite *)djinni->animation)->priority = 0;
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   djinni->velocityY = 0x4cccc;
   WaitFrames(35);
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   djinni->velocityY = 0x4e666;
   WaitFrames(38);
 
@@ -120,7 +120,7 @@ void Func_080d7524(s32 djinniId) {
   djinni->speedLimit = 0x4ccc;
   djinni->acceleration = 0x4ccc;
   Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x100000, dir + 0x8000);
-  Audio_PlayCue(153);
+  Sound_PlayFar(153);
   ObjectMotion_Launch(djinniId, 6, 5);
   WaitFrames(24);
   for (i = 0; i < 120; i++) {

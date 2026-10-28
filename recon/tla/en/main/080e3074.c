@@ -45,7 +45,7 @@ void BattleEffect_SpinObject(void);
 void Camera_WorldToScreen(s32 *position);
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
 void BattleEffect_PrepareBufferInterpolation(void);
@@ -112,7 +112,7 @@ void Func_080e3074(void) {
   ring->scaleX = 0x18000;
   ring->scaleY = 0;
   WaitFrames(1);
-  Audio_PlayCue(207);
+  Sound_PlayFar(207);
   for (i = 0; i < 20; i++) {
     ring->scaleY = (i << 16) / 20;
     WaitFrames(1);
@@ -219,7 +219,7 @@ void Func_080e3074(void) {
     if (work->kind)
       BattleEffect_EndX();
   } else if (mode == 1) {
-    Audio_PlayCue(136);
+    Sound_PlayFar(136);
     Object_SetMode(ring, 6);
     if (work->kind)
       Func_080e2acc();
@@ -240,7 +240,7 @@ void Func_080e3074(void) {
     if (work->kind)
       BattleEffect_EndX();
   } else {
-    Audio_PlayCue(136);
+    Sound_PlayFar(136);
     Object_SetMode(ring, 6);
     for (i = 0; i < 16; i++) {
       owner->angle += 0x1000;
@@ -249,7 +249,7 @@ void Func_080e3074(void) {
       WaitFrames(1);
     }
   }
-  Audio_PlayCue(136);
+  Sound_PlayFar(136);
   Object_Destroy(ring);
   owner->update = NULL;
   owner->angle = owner->action;

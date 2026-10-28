@@ -3,18 +3,18 @@
 	.include "games/tla/src/system/overlay.inc"
 	.global Resource_FarCall010
 Resource_FarCall010:
-	.global AudioEngine_RunMixerFar
+	.global m4aSoundMainFar
 	.thumb_func
-AudioEngine_RunMixerFar:
-	overlay_veneer AudioEngine_RunMixer
-	.global Audio_InitializeRuntimeDefaultsFar
+m4aSoundMainFar:
+	overlay_veneer m4aSoundMain
+	.global Sound_InitializeFar
 	.thumb_func
-Audio_InitializeRuntimeDefaultsFar:
-	overlay_veneer Audio_InitializeRuntimeDefaults
-	.global Audio_PlayCue
+Sound_InitializeFar:
+	overlay_veneer Sound_Initialize
+	.global Sound_PlayFar
 	.thumb_func
-Audio_PlayCue:
-	overlay_veneer AudioCommand_Play
+Sound_PlayFar:
+	overlay_veneer Sound_Play
 	.global Func_081c0018
 	.thumb_func
 Func_081c0018:
@@ -22,16 +22,16 @@ Func_081c0018:
 	.global Func_081c0020
 	.thumb_func
 Func_081c0020:
-	overlay_veneer MusicCommand_SetPitchAndUpdateFrequency
-	.global MusicCommand_SetPitchFar
+	overlay_veneer Sound_SetBgmTempo
+	.global Sound_SetBgmPitchFar
 	.thumb_func
-MusicCommand_SetPitchFar:
-	overlay_veneer MusicCommand_SetPitch
-	.global Audio_SetWorkPairBFar
+Sound_SetBgmPitchFar:
+	overlay_veneer Sound_SetBgmPitch
+	.global Sound_SetBgmTempoPitchTargetFar
 	.thumb_func
-Audio_SetWorkPairBFar:
+Sound_SetBgmTempoPitchTargetFar:
 	overlay_veneer Func_081c0f70
-	.global MusicCommand_SetVolumeFar
+	.global Sound_SetBgmVolumeFar
 	.thumb_func
-MusicCommand_SetVolumeFar:
-	overlay_veneer MusicCommand_SetVolume
+Sound_SetBgmVolumeFar:
+	overlay_veneer Sound_SetBgmVolume

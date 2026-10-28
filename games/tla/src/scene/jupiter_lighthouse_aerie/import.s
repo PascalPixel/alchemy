@@ -69,7 +69,7 @@ Resource_FindFreeEntry:
 	.global Func_020029c0
 	.thumb_func
 Func_020029c0:
-	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer Oam_AddSpriteAtDepthFar
 	.global Resource_GetTableEntry
 	.thumb_func
 Resource_GetTableEntry:
@@ -274,11 +274,11 @@ Func_02002b50:
 	.thumb_func
 Func_02002b58:
 	overlay_veneer Func_080c8848
-	.global AudioCommand_WaitForStateByteClear
+	.global Sound_WaitForFanfare
 	.thumb_func
-AudioCommand_WaitForStateByteClear:
-	overlay_veneer AudioCommand_WaitForStateByteClearFar
+Sound_WaitForFanfare:
+	overlay_veneer Sound_WaitForFanfareFar
 	.global Func_02002b68
 	.thumb_func
 Func_02002b68:
-	overlay_veneer Audio_PlayCue
+	overlay_veneer Sound_PlayFar

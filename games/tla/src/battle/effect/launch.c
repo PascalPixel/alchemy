@@ -41,7 +41,7 @@ void Camera_MoveWithinMapBounds(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void WaitFrames(s32 frames);
 void ObjectMotion_ArmCallback(s32 actor, s32 angle, s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Object_SetMode(struct SpinObject *object, s32 mode);
 void Animation_ApplyChildValuesFar(void *object, s32 value);
 void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 flags);
@@ -71,11 +71,11 @@ void FieldEffect_RunRetreat(void) {
   ObjectMotion_ArmCallback(scene->firstObjectId, 0x4000, 0);
   WaitFrames(30);
   obj->update = ObjectGroup_ApplyRandomChildValues;
-  Audio_PlayCue(131);
+  Sound_PlayFar(131);
   Object_SetMode(obj, 28);
   WaitFrames(40);
 
-  Audio_PlayCue(220);
+  Sound_PlayFar(220);
   Animation_ApplyChildValuesFar(obj, 0);
   Object_SetMode(obj, 3);
   obj->update = BattleEffect_AdvanceAngleWithRamp;

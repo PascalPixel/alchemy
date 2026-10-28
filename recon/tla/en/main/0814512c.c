@@ -63,7 +63,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode3(void *action);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_GoldShellSheet;
 extern char ResourceId_SmokeSheet;
@@ -194,7 +194,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   }
   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   total = Data_08197880[mode * 4 + RECORD_FRAMES] + effect->count * 8;
-  Audio_PlayCue(103);
+  Sound_PlayFar(103);
 
   for (frame = 0; frame != total; frame++) {
     struct EffectStep *burst;

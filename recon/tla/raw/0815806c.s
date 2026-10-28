@@ -160,7 +160,7 @@ BattleEffect_RunMars:
 	cmp r7, #9
 	bne .L_081580f6
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r4, #172
 	movs r3, #0
 	negs r4, r4
@@ -257,7 +257,7 @@ BattleEffect_RunMars:
 	cmp r1, #32
 	bne .L_08158292
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #168

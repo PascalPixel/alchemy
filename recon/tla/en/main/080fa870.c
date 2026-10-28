@@ -89,7 +89,7 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 s32 ItemMenu_IsSpecial(s32 item);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
 void Func_080f8a44(s32 x, s32 y);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 u8 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void UiIcon_PrepareObject(struct TargetMarker *icon);
 void Func_080fac58(void);
@@ -171,15 +171,15 @@ s32 Func_080fa870(s32 mode) {
     WaitFrames(1);
     if (gInput.pressed & 1) {
       if (mode == 1 && selection == menu->paneIndex[0]) {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
         continue;
       }
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       result = menu->ownerIds[selection];
       break;
     }
     if (gInput.pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = 255;
       break;
     }

@@ -12,7 +12,7 @@
 // in the confirm and redraw paths. A pointer to owners declared first puts
 // the owners slot right but re-reads the new id with ldrsh (differ 79);
 // reserve declared after result moves the other slots (differ 59).
-// Devices: a once-only block after the first Audio_PlayCue and an empty asm
+// Devices: a once-only block after the first Sound_PlayFar and an empty asm
 // after the target object's read reach 14 (instruction order in the redraw).
 #include "types.h"
 #include "battle_work.h"
@@ -57,15 +57,15 @@ s32 Func_0804b8b8(s32 slot) {
     return -1;
   slot &= 0xff;
   current = battle->partyUnits[slot];
-  Audio_PlayCue(112);
+  Sound_PlayFar(112);
   goto test;
   for (;;) {
     if ((INPUT->pressed & 1) && !redraw) {
       if (Func_08118140(1, 0) == 0) {
-        Audio_PlayCue(114);
+        Sound_PlayFar(114);
         goto test;
       }
-      Audio_PlayCue(110);
+      Sound_PlayFar(110);
       reserve[65] = current;
       reserve[66] = slot;
       for (i = 0; i < 8; i++) {
@@ -78,11 +78,11 @@ s32 Func_0804b8b8(s32 slot) {
     }
     if (INPUT->repeat & 0x20) {
       sel = (sel + count - 1) % count;
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       redraw = 1;
     } else if (INPUT->repeat & 0x10) {
       sel = (sel + 1) % count;
-      Audio_PlayCue(112);
+      Sound_PlayFar(112);
       redraw = 1;
     }
     if (redraw) {
@@ -115,7 +115,7 @@ s32 Func_0804b8b8(s32 slot) {
   }
   battle->partyUnits[slot] = current;
   result = -1;
-  Audio_PlayCue(113);
+  Sound_PlayFar(113);
 done:
   selected[0] = 0xff;
   BattlePres_SetActorModesFar(selected, 0);

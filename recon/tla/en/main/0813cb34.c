@@ -80,7 +80,7 @@ void Palette_StepFadeTransfer(void); // Palette_StepFadeTransfer
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 s32 Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattleEventRuntime_StartPhaseFar
 u32 Random16(void);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -201,7 +201,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     Render_ResetTransformState();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (mode == POOL_SLAVER && frame == 0)
-      Audio_PlayCue(103);
+      Sound_PlayFar(103);
 
     for (i = 0; i != 128; i++) {
       mote = &gMotes[i];
@@ -253,7 +253,7 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
     } else if (mode == POOL_SOOTHE) {
       for (i = 0; i != effect->count; i++) {
         if (frame == i * 8 + 48) {
-          Audio_PlayCue(126);
+          Sound_PlayFar(126);
           Func_081180e8(-1);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
         }

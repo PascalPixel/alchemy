@@ -111,6 +111,6 @@ void Func_080e2acc(void) {
       particle->spin = -particle->spin;
     particle->delay = -i / 2;
   }
-  Audio_PlayCue(220);
+  Sound_PlayFar(220);
   Scheduler_AddOrUpdateCallback(Func_080e2c38, 0x480);
 }

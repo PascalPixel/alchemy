@@ -288,7 +288,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         s32 y = HI(slash->y);
 
         if (frame == i * 8 + 84)
-          Audio_PlayCue(212);
+          Sound_PlayFar(212);
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
@@ -427,7 +427,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
             slash->variant = 0;
             work->shakeFrames = 2;
-            Audio_PlayCue(134);
+            Sound_PlayFar(134);
             member = i % 6;
             if (member < effect->count) {
               Func_0814cd48(effect->actors[member], 7, 5, member, 8);

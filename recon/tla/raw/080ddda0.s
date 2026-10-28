@@ -67,7 +67,7 @@ Func_080ddda0:
 	ldr r3, .L_080ddea4
 	movs r0, #130
 	str r3, [r7, #108]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r2, r7, #0
 	ldr r0, [sp, #0]
 	adds r2, #85

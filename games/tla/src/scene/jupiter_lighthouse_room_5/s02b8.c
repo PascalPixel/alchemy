@@ -33,7 +33,7 @@ void Func_02000d80(s32 value);
 void Object_RefreshSelectorById(u32 id);
 void Func_0200185c(void);
 void Func_02000e04(s32 id);
-void AudioCommand_WaitForStateByteClear(void);
+void Sound_WaitForFanfare(void);
 void Func_02000120(void);
 void Func_020000c8(void);
 void Func_02000294(void);
@@ -180,5 +180,5 @@ rise:
   Func_02000e04(15);
   Func_02000e04(16);
   Func_02002a40(80);
-  AudioCommand_WaitForStateByteClear();
+  Sound_WaitForFanfare();
 }

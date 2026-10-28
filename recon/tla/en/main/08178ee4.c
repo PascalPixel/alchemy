@@ -78,7 +78,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 s32 Scheduler_RemoveCallback(s32 callback);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
@@ -251,7 +251,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
     if (frame == FIGURE_SWING_FRAME) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       work->shakeFrames = 3;
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
     }
 

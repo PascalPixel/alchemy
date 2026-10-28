@@ -4,7 +4,7 @@
 // locals to function scope changes nothing.
 // The sibling of Render_ApplyProjectedPlacement (0x080220f0) that
 // takes the draw slot: the shadow is 16 by 8 pixels (32 by 16 at double
-// size) and both sprites go into Runtime_PushSlotEntry's slot depth.
+// size) and both sprites go into Oam_AddSpriteAtDepth's slot depth.
 #include "types.h"
 #include <affine.h>
 #include "animspr.h"
@@ -31,7 +31,7 @@ struct PlacedObject {
 #define OBJECT_SHADOW 1
 
 s32 Func_08021a84(struct PlacedObject *object, s32 mode);
-void Runtime_PushSlotEntry(void *entry, s32 slot);
+void Oam_AddSpriteAtDepth(void *entry, s32 slot);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
@@ -97,7 +97,7 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
     shadow->affine = 0;
     shadow->x = (px >> 16) - shadowHalfWidth;
     shadow->y = y;
-    Runtime_PushSlotEntry(shadow, depth);
+    Oam_AddSpriteAtDepth(shadow, depth);
   }
 
   if (scaleX == 0 || scaleY == 0)
@@ -126,6 +126,6 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
     part->y = y;
     part->affine = affine;
     part->affineIndex = matrix;
-    Runtime_PushSlotEntry(part, depth);
+    Oam_AddSpriteAtDepth(part, depth);
   }
 }

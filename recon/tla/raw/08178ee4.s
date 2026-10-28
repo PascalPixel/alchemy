@@ -523,7 +523,7 @@ BattleEffect_RunHeartbreak:
 	movs r3, #3
 	str r3, [r2]
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #12]
 	movs r3, #16
 	movs r1, #36

@@ -191,7 +191,7 @@ Func_0818a220:
 	cmp r3, #0
 	bne .L_0818a468
 	movs r0, #190
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r3, [sp, #80]
 	movs r4, #0
 	movs r2, #1
@@ -333,25 +333,25 @@ Func_0818a220:
 	cmp r1, #0
 	bne .L_0818a4b2
 	movs r0, #148
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818a4b2:
 	mov r2, r9
 	cmp r2, #1
 	bne .L_0818a4be
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818a4be:
 	mov r3, r9
 	cmp r3, #2
 	bne .L_0818a4ca
 	movs r0, #104
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818a4ca:
 	mov r4, r9
 	cmp r4, #3
 	bne .L_0818a4d6
 	movs r0, #221
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818a4d6:
 	mov r0, r9
 	cmp r0, #0
@@ -710,14 +710,14 @@ Func_0818a220:
 	cmp r2, #1
 	bne .L_0818a78a
 	movs r0, #134
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0818a7b2
 .L_0818a78a:
 	mov r3, r9
 	cmp r3, #3
 	bne .L_0818a7ac
 	movs r0, #177
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_0818a7b2
 .L_0818a798:
 	.4byte 0x00000149
@@ -731,7 +731,7 @@ Func_0818a220:
 	.4byte gData_08197826
 .L_0818a7ac:
 	movs r0, #133
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0818a7b2:
 	mov r4, r8
 	cmp r4, #0

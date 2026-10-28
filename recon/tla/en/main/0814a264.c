@@ -78,7 +78,7 @@ void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ ObjectGroup_UpdateMembers
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // One, two or four pillars of fire rise in front of the targets, one after
 // another; each burns for the rest of the first 64 frames, scrolling its
@@ -164,7 +164,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
         screen.x /= 2;
         screen.y -= 8;
         if (frame == Data_08197a2f[pillar])
-          Audio_PlayCue(145);
+          Sound_PlayFar(145);
 
         // Four frames after it starts the pillar burns: its flames scroll
         // up through two copies, and its base flickers between two cels.

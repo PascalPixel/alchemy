@@ -52,7 +52,7 @@ struct CaptureObject *Object_GetById(s32 id);
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 struct CaptureObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
@@ -98,16 +98,16 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   Shop_RestoreSceneTilesFar(0x204084);
   WaitFrames(30);
   djinni->visible = 0;
-  Audio_PlayCue(173);
+  Sound_PlayFar(173);
   Motion_SetVarCbAndRefresh(arg, 1);
-  Audio_PlayCue(175);
+  Sound_PlayFar(175);
   Motion_SetVarCbAndRefresh(arg, 1);
   WaitFrames(20);
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   ObjectMotion_Launch(arg, 3, 14);
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   ObjectMotion_Launch(arg, 5, 16);
-  Audio_PlayCue(152);
+  Sound_PlayFar(152);
   ObjectMotion_Launch(arg, 7, 18);
   WaitFrames(20);
 
@@ -136,7 +136,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   }
 
   resourceId = resource->id;
-  Audio_PlayCue(153);
+  Sound_PlayFar(153);
   djinni->mode = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
     djinni->y += 0x80000;

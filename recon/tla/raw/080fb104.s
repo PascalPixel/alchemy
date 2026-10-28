@@ -114,7 +114,7 @@ Func_080fb104:
 	b .L_080fb218
 .L_080fb1e4:
 	movs r0, #113
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #1
 	movs r1, #177
 	negs r3, r3
@@ -252,7 +252,7 @@ Func_080fb104:
 	cmp r3, r1
 	bne .L_080fb30c
 	movs r0, #114
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fb368
 .L_080fb30c:
 	mov r2, r8
@@ -272,23 +272,23 @@ Func_080fb104:
 	.4byte .L_080fb344
 .L_080fb334:
 	movs r0, #174
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fb35a
 .L_080fb33c:
 	movs r0, #175
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fb35a
 .L_080fb344:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fb35a
 .L_080fb34c:
 	movs r0, #117
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fb35a
 .L_080fb354:
 	movs r0, #112
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080fb35a:
 	movs r1, #177
 	lsls r1, r1, #1
@@ -316,7 +316,7 @@ Func_080fb104:
 	movs r0, #111
 	add r10, r3
 	mov r9, r1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fb3d4
 .L_080fb38e:
 	ldr r2, [r5, #12]
@@ -328,7 +328,7 @@ Func_080fb104:
 	movs r0, #111
 	add r10, r2
 	mov r9, r2
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fb3d4
 .L_080fb3a6:
 	ldr r2, [r5, #12]
@@ -340,7 +340,7 @@ Func_080fb104:
 	movs r0, #111
 	adds r7, #1
 	mov r9, r3
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	b .L_080fb3d4
 .L_080fb3be:
 	ldr r3, [r5, #12]
@@ -352,7 +352,7 @@ Func_080fb104:
 	movs r0, #111
 	subs r7, #1
 	mov r9, r1
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_080fb3d4:
 	movs r0, #168
 	lsls r0, r0, #1

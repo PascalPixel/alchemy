@@ -51,7 +51,7 @@ void Shop_DrawMsg(void *window, s32 message);
 void WaitFrames(s32 frames);
 s32 Func_080ad268(s32 unitId, s32 slot);
 s32 Func_080ad270(s32 unitId, s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizePendingCoreFar(void);
@@ -96,7 +96,7 @@ s32 Func_0810b9c0(s32 unitId) {
       else
         flags = Func_080ad270(unitId, slot);
       if (flags == 0) {
-        Audio_PlayCue(112);
+        Sound_PlayFar(112);
         result = slot;
         break;
       }
@@ -104,21 +104,21 @@ s32 Func_0810b9c0(s32 unitId) {
         UiText_OpenMessageWindowFar((s32)Msg04676, 8, 1, 0);
       else if (flags & 2)
         UiText_OpenMessageWindowFar((s32)Msg04675, 8, 1, 0);
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
       UiWork_FinalizePendingCoreFar();
       continue;
     }
     if (gInput.pressed & 2) {
-      Audio_PlayCue(113);
+      Sound_PlayFar(113);
       result = -1;
       break;
     }
     if (gInput.held & 4) {
       u32 item = unit->inventory[slot];
 
-      Audio_PlayCue(126);
+      Sound_PlayFar(126);
       window = UiWindow_CreateFar(0, 9, 16, 10, 2);
       ItemMenu_DrawItemDetailsFar(window, item);
       shop->detailsHidden = 0;
@@ -132,13 +132,13 @@ s32 Func_0810b9c0(s32 unitId) {
       continue;
     }
     if (gInput.repeat & 32) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       slot--;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
     if (gInput.repeat & 16) {
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       slot++;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
@@ -149,7 +149,7 @@ s32 Func_0810b9c0(s32 unitId) {
         slot += 15;
       while (slot >= inventoryCount)
         slot -= 5;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       redraw = 1;
     }
     if (gInput.repeat & 128) {
@@ -158,7 +158,7 @@ s32 Func_0810b9c0(s32 unitId) {
         slot -= 15;
       while (slot < 0)
         slot += 5;
-      Audio_PlayCue(111);
+      Sound_PlayFar(111);
       redraw = 1;
     }
   }

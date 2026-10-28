@@ -11,8 +11,8 @@
 #include "scene.h"
 #include "system.h"
 
-void AudioCommand_WaitForStateByteClear(void) {
-  while (Audio_Check() != 0) {
+void Sound_WaitForFanfare(void) {
+  while (Sound_GetBgmRestoreDelayFar() != 0) {
     WaitFrames(1);
   }
 }

@@ -82,7 +82,7 @@ void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void Object_Destroy(struct ObjectRuntime *object);
 void Animation_ApplyChildValuesFar(struct ObjectRuntime *object, s32 value);
 void Func_080dba5c(void);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void Func_080dbed0(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void Func_080dbf94(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void WaitFrames(s32 frames);
@@ -171,7 +171,7 @@ void Func_080e68d0(void) {
   other->scaleX = 0;
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
     Func_080dba5c();
-  Audio_PlayCue(138);
+  Sound_PlayFar(138);
   Func_080dbed0(object, scene->x, scene->y + 0x200000, scene->z);
   WaitFrames(10);
   Object_SetMode(object, 1);
@@ -181,7 +181,7 @@ void Func_080e68d0(void) {
     WaitFrames(1);
   }
   Object_SetMode(object, 2);
-  Audio_PlayCue(132);
+  Sound_PlayFar(132);
 
   failed = 0;
   for (i = 0; i < 80; i++) {
@@ -204,7 +204,7 @@ void Func_080e68d0(void) {
     WaitFrames(2);
     for (i = 15; i >= 0; i--)
       BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
-    Audio_PlayCue(114);
+    Sound_PlayFar(114);
     WaitFrames(1);
     goto end;
   }
@@ -361,7 +361,7 @@ void Func_080e68d0(void) {
     EventRuntime_RunPendingEvent(pending, 999, i);
   }
   Scheduler_RemoveCallback(Func_080e6400);
-  Audio_PlayCue(114);
+  Sound_PlayFar(114);
   Func_080dbf94(object, object->x, object->y, object->z);
   if (particleEntry != 96)
     Resource_ResetEntry(particleEntry);

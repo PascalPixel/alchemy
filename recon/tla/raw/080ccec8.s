@@ -194,7 +194,7 @@ Func_080ccec8:
 	str r3, [r5, #108]
 	bl Func_080cf350
 	movs r0, #83
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	adds r0, r7, #0
 	movs r1, #5
 	bl UiText_DrawQuantity
@@ -210,7 +210,7 @@ Func_080ccec8:
 	movs r0, #1
 	bl UiWindow_CreateWithLayoutBoundsFar
 	movs r0, #126
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	bl Party_CountActiveOwnersFar
 	cmp r0, #1
 	bne .L_080cd086
@@ -230,7 +230,7 @@ Func_080ccec8:
 	adds r0, r5, #0
 	bl Object_SetMode
 	movs r0, #246
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r0, #30
 	bl EventRuntime_Wait
 	ldr r0, .L_080cd178
@@ -355,7 +355,7 @@ Func_080ccec8:
 	adds r5, r5, r1
 	movs r2, #0
 	ldrsh r0, [r5, r2]
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r0, .L_080cd4a0
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
@@ -423,7 +423,7 @@ Func_080ccec8:
 	adds r0, r6, #0
 	bl Func_080cf350
 	movs r0, #83
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r3, #254
 	lsls r3, r3, #7
 	adds r3, #255
@@ -526,7 +526,7 @@ Func_080ccec8:
 	adds r0, r6, #0
 	bl Func_080cf350
 	movs r0, #83
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	movs r1, #2
 	adds r0, r7, #0
 	bl UiText_DrawQuantity

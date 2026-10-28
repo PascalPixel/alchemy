@@ -9,7 +9,7 @@ extern u8 gData_02005814;
 extern u8 gData_02005804;
 extern s16 gData_02005820[8];
 
-void Audio_Initialize(void);
+void m4aSoundInit(void);
 void AudioEngine_SetFixedPcmRate(u32 mode);
 
 void Func_081c0c18(void) {}
@@ -17,11 +17,11 @@ void Func_081c0c18(void) {}
 /// Initializes the sound driver and sets the music state to its defaults:
 /// full volume and pitch, steps of 4 and the eight player volumes cleared.
 // As The Broken Seal's.
-void Audio_InitializeRuntimeDefaults(void) {
+void Sound_Initialize(void) {
   s16 *playerVolume;
   s32 remaining;
 
-  Audio_Initialize();
+  m4aSoundInit();
   gData_02005830 = 0;
   gMusicRestoreDelay = 0;
   gMusicVolumeTarget = 0x100;

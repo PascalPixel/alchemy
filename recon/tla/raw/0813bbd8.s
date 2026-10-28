@@ -376,7 +376,7 @@ BattleEffect_RunIce:
 	cmp r3, #0
 	bne .L_0813bea4
 	movs r0, #115
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0813bea4:
 	movs r2, #238
 	lsls r2, r2, #7

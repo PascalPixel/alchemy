@@ -223,12 +223,12 @@ Func_0816467c:
 	cmp r7, #4
 	bne .L_08164852
 	movs r0, #154
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_08164852:
 	cmp r7, #32
 	bne .L_0816485c
 	movs r0, #212
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_0816485c:
 	cmp r7, #47
 	bgt .L_081648a4

@@ -56,7 +56,7 @@ void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_ArmBg2AffineHBlankDma(void);                      // BattleEffect_ArmBg2AffineHBlankDma
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_CounterRevealSheet;
 extern char ResourceId_RedCrescentSheetA;
@@ -247,7 +247,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     // The strike: a cue at 68; at 72 the target is thrown, the screen
     // shakes and the results begin.
     if (frame == 68)
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     if (frame == 72) {
       Func_08118088(effect->actors[0], 0);
       work->shakeFrames = 8;

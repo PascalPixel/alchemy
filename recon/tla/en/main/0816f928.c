@@ -71,7 +71,7 @@ void EffectPosition_ProjectBattler(
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void SummonEffect_RunCanvasMode3(struct BattleEffectArgument *effect);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // Hurricane: driving rain slants down over the target, each drop bursting
 // into a splash where it lands, while the target is struck eight times; the
@@ -126,7 +126,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 68; frame++) {
     // Frame 0: the streaks wait above the screen, drifting with the wind.
     if (frame == 0) {
-      Audio_PlayCue(170);
+      Sound_PlayFar(170);
       for (i = 0; i != 256; i++)
         PARTICLES[i].variant = -1;
       streak = work->particles;
@@ -168,7 +168,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
     for (i = 0; i != 8; i++) {
       if (frame == i * 4 + 6) {
         Func_0814cd48(effect->actors[0], 7, 5, 0, 3);
-        Audio_PlayCue(132);
+        Sound_PlayFar(132);
       }
     }
 

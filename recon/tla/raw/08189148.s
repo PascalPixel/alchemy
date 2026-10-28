@@ -323,13 +323,13 @@ BattleEffect_RunDragonCloud:
 	cmp r7, #0
 	bne .L_081893da
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081893da:
 	ldr r0, [sp, #44]
 	cmp r0, #50
 	bne .L_081893e6
 	movs r0, #136
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 .L_081893e6:
 	ldr r1, [sp, #52]
 	ldr r3, [r1, #4]

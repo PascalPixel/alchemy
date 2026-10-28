@@ -71,7 +71,7 @@ void *Resource_GetTableEntry(s32 resource);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -609,7 +609,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
                                         (s32 *)&req, 0);
     }
     if (frame == 114) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     verts = Runtime_BumpAllocateAlternatePool(512);
     model = Render_AllocateModelList(1);
@@ -654,13 +654,13 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     Func_080150e4(angle);
     if (frame == 156) {
-      Audio_PlayCue(142);
+      Sound_PlayFar(142);
     }
     if (frame == 223) {
-      Audio_PlayCue(104);
+      Sound_PlayFar(104);
     }
     if (frame == 252) {
-      Audio_PlayCue(212);
+      Sound_PlayFar(212);
     }
     if ((u32)(frame - 156) <= 74) {
       s32 r = 80 - (frame - 156) / 2;
@@ -878,7 +878,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         if (--work->particles[i].variant == 0) {
           work->particles[i].variant = 15;
           work->shakeFrames = 4;
-          Audio_PlayCue(133);
+          Sound_PlayFar(133);
           Func_08118088(effect->actors[i], 0);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
         }

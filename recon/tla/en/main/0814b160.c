@@ -52,7 +52,7 @@ void BattleEffect_EndCanvasLayer(void);               // ☀️ BattleEffect_End
 void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase);          // ☀️ BattleEvent_StartPhaseFar
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 
 // A spinning star marks each target in turn, sixteen frames apart: a post
 // under the target and the star turning above it, each for 72 frames.
@@ -105,7 +105,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
       do {
         start = i << 4;
         if (frame == start) {
-          Audio_PlayCue(143);
+          Sound_PlayFar(143);
         }
         if (frame >= start && frame < start + MARKER_FRAMES) {
           // The post under the target, then the star, six frames a cel.

@@ -448,7 +448,7 @@ BattleEffect_RunPrism:
 	movs r2, #8
 	str r2, [r3]
 	movs r0, #144
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	mov r0, r9
 	ldr r3, [r0, #20]
 	movs r7, #0

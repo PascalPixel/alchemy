@@ -93,7 +93,7 @@ s32 Resource_ResetEntry(u32 entry);
 void VramCache_Load(s32 slot, s32 size, const u8 *tiles);
 s32 GameFlag_Test(s32 flag);
 void Animation_ApplyChildValuesFar(void *object, s32 value);
-void Audio_PlayCue(s32 cue);
+void Sound_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 
 /// Psynergy effect 16: the user spins, rains arc particles, then flashes.
@@ -143,7 +143,7 @@ void BattleEffect_RunEffect16(void) {
     object->phase = zero;
     object->step = zero;
   }
-  Audio_PlayCue(140);
+  Sound_PlayFar(140);
   WaitFrames(15);
   object->phase = 1;
   WaitFrames(10);
@@ -171,7 +171,7 @@ void BattleEffect_RunEffect16(void) {
       entry->param = 0;
     }
     if (count == 15)
-      Audio_PlayCue(174);
+      Sound_PlayFar(174);
     WaitFrames(1);
   }
   {

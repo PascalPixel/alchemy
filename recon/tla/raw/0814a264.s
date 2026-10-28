@@ -248,7 +248,7 @@ BattleEffect_RunVolcano:
 	cmp r1, r3
 	bne .L_0814a452
 	movs r0, #145
-	bl Audio_PlayCue
+	bl Sound_PlayFar
 	ldr r2, [sp, #12]
 	ldrb r3, [r2]
 .L_0814a452:

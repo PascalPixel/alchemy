@@ -727,7 +727,7 @@ static s32 VenusLighthouse_EmitRisingParticles(struct Actor *updated) {
     particleY =
         actor->y.fixed + ((32 - ((u32)(Import_RandomNext() * 32) >> 16)) << 16);
     riseSpeed = Math_Divide(
-        (((u32)(Import_RandomNext() * 5) >> 16) << 16) + 0x00050000, 10);
+        (((u32)(Import_RandomNext() * 5) >> 16) << 16) + PIXELS(5), 10);
     FieldEffect_Spawn(
         particleX, particleY, actor->z.fixed, 0, riseSpeed, framePhase,
         EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
@@ -765,7 +765,7 @@ static s32 VenusLighthouse_EmitPassageSparkTrail(struct Actor *updated) {
   options.startScaleY = 4 * Q16_ONE / 5;
   options.priority = 0;
 
-  fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * 0x3333;
+  fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * (PIXELS(1) / 5);
   framePhase = gFrameCount & 15;
 
   FieldEffect_Spawn(actor->x.fixed +
@@ -833,7 +833,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     FieldCamera_MoveTo(-1, -1, -1, 0);
     leader->motionFlags = 0;
     Actor_SetPosition(ACTOR_PARTY_LEADER, leader->x.part.pixel << 16,
-                      (leader->z.part.pixel << 16) - 0x100000);
+                      (leader->z.part.pixel << 16) - PIXELS(16));
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Event_StartScreenTransition();
@@ -1842,9 +1842,11 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
         dustX -= PIXELS(1) / 5;
         options.priority = 2;
         options.startScaleX =
-            ((u32)(Import_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+            ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+            4 * Q16_ONE / 5;
         options.startScaleY =
-            ((u32)(Import_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+            ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+            4 * Q16_ONE / 5;
         options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
         FieldEffect_Spawn(
             dustX, 0, PIXELS(528), 0, -(((gFrameCount & 1) * 3) << 16), 0,
@@ -2394,9 +2396,11 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
           dustX -= PIXELS(1) / 5;
           options.priority = 2;
           options.startScaleX =
-              ((u32)(Import_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              4 * Q16_ONE / 5;
           options.startScaleY =
-              ((u32)(Import_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              4 * Q16_ONE / 5;
           options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
           FieldEffect_Spawn(
               dustX, 0, PIXELS(288), 0, -(((gFrameCount & 1) * 3) << 16), 0,
@@ -2467,9 +2471,11 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
         if (dustX >= PIXELS(712) && dustX < PIXELS(752)) {
           options.priority = 2;
           options.startScaleX =
-              ((u32)(Import_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              4 * Q16_ONE / 5;
           options.startScaleY =
-              ((u32)(Import_RandomNext() * 3) >> 16) * 0x3333 + 0xcccc;
+              ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
+              4 * Q16_ONE / 5;
           options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
           FieldEffect_Spawn(
               dustX, 0, PIXELS(288), 0, -(((gFrameCount & 1) * 3) << 16), 0,
@@ -3326,14 +3332,16 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   if (framePhase == 0) {
     options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     particleX = actor->x.fixed +
-                (((u32)(Import_RandomNext() * 12) >> 16) << 16) - 0x60000;
+                (((u32)(Import_RandomNext() * 12) >> 16) << 16) - PIXELS(6);
     FieldEffect_Spawn(
         particleX, actor->y.fixed, actor->z.fixed,
-        (((u32)(Import_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd) *
+        (((u32)(Import_RandomNext() * 5) >> 16) * (PIXELS(1) / 10) +
+         5 * (PIXELS(1) / 10)) *
             direction->x,
         framePhase,
         direction->z *
-            (((u32)(Import_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd),
+            (((u32)(Import_RandomNext() * 5) >> 16) * (PIXELS(1) / 10) +
+             5 * (PIXELS(1) / 10)),
         EFFECT_USE_SPIN, &options);
   }
   // A drop uses the fall animation; solid terrain instead constrains each step.
@@ -3360,20 +3368,22 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   if (collision > 0) {
     return;
   }
-  nextPosition.x =
-      actor->x.fixed + direction->x * 0x5b333 - direction->z * 0x5b333;
+  nextPosition.x = actor->x.fixed + direction->x * (PIXELS(57) / 10) -
+                   direction->z * (PIXELS(57) / 10);
   nextPosition.y = actor->y.fixed;
-  nextPosition.z =
-      actor->z.fixed + direction->z * 0x5b333 - direction->x * 0x5b333;
+  nextPosition.z = actor->z.fixed + direction->z * (PIXELS(57) / 10) -
+                   direction->x * (PIXELS(57) / 10);
   collision = FieldActor_CheckMovementCollision(actor, &nextPosition);
   if (collision > 0) {
     actor->x.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
     actor->z.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
     return;
   }
-  nextPosition.x = (direction->x + direction->z) * 0x5b333 + actor->x.fixed;
+  nextPosition.x =
+      (direction->x + direction->z) * (PIXELS(57) / 10) + actor->x.fixed;
   nextPosition.y = actor->y.fixed;
-  nextPosition.z = (direction->x + direction->z) * 0x5b333 + actor->z.fixed;
+  nextPosition.z =
+      (direction->x + direction->z) * (PIXELS(57) / 10) + actor->z.fixed;
   collision = FieldActor_CheckMovementCollision(actor, &nextPosition);
   if (collision > 0) {
     actor->x.fixed -= VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
@@ -3423,8 +3433,8 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     for (;;) {
       for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
         FieldEffect_Spawn(
-            (((u32)(Import_RandomNext() * 7) >> 16) << 19) + 0x3600000, 0,
-            0x300000 + row * 0x100000 + particleIndex * 0x40000, 0, 0, 0,
+            (((u32)(Import_RandomNext() * 7) >> 16) << 19) + PIXELS(864), 0,
+            PIXELS(48) + row * PIXELS(16) + particleIndex * PIXELS(4), 0, 0, 0,
             EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
       }
       wait(3);
@@ -3443,8 +3453,8 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     VenusLighthouse_RubbleSetScaleAndSpin(&options);
     for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
       FieldEffect_Spawn(
-          (((u32)(Import_RandomNext() * 7) >> 16) << 19) + 0x3000000, 0,
-          0x300000 + row * 0x100000 + particleIndex * 0x40000, 0, 0, 0,
+          (((u32)(Import_RandomNext() * 7) >> 16) << 19) + PIXELS(768), 0,
+          PIXELS(48) + row * PIXELS(16) + particleIndex * PIXELS(4), 0, 0, 0,
           EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
     wait(3);
@@ -3469,11 +3479,12 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
       FieldEffect_Spawn(
           (x + (((u32)(Import_RandomNext() << 1) >> 16) << 4)) << 16, 0,
           z << 19, 0, 0,
-          (s32)((((u32)(Import_RandomNext() * 5) >> 16) << 16) + 0x70000) / 10,
+          (s32)((((u32)(Import_RandomNext() * 5) >> 16) << 16) + PIXELS(7)) /
+              10,
           EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     } else {
       FieldEffect_Spawn((x + ((u32)(Import_RandomNext() * 17) >> 16)) << 16, 0,
-                        (x << 19) - 0x40000, 0, 0, 0,
+                        (x << 19) - PIXELS(4), 0, 0, 0,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
   }
@@ -3484,7 +3495,7 @@ static void VenusLighthouse_EmitWestPassageParticles(void) {
 }
 
 static void VenusLighthouse_EmitEastPassageParticles(void) {
-  VenusLighthouse_SpawnRandomParticles(0x230, 44);
+  VenusLighthouse_SpawnRandomParticles(560, 44);
 }
 
 /// Animates the western tile wave VenusLighthouse_StepOnWestWallSwitch sets off
@@ -3520,14 +3531,14 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
     VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
   // Repeat particle bursts on the fourth row before advancing the copied tiles.
   again:
-    particleZ = 0xc00000;
+    particleZ = PIXELS(192);
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
       FieldEffect_Spawn((((u32)(Import_RandomNext() * 7) >> 16) << 19) +
-                            0x1a00000,
+                            PIXELS(416),
                         0, particleZ, 0, zero, zero,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
-      particleZ += 0x40000;
+      particleZ += PIXELS(4);
     }
     wait(3);
     if (row == 3) {
@@ -3540,7 +3551,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
                       TASK_PASS_FRAME);
     }
     MapGrid_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
-    rowOffset += 0x100000;
+    rowOffset += PIXELS(16);
     row++;
   } while (row <= 12);
   MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
@@ -3586,14 +3597,14 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
   // Keep this route task scheduling after each completed row.
   again:
-    particleZ = 0xc00000;
+    particleZ = PIXELS(192);
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
       FieldEffect_Spawn((((u32)(Import_RandomNext() * 7) >> 16) << 19) +
-                            0x2200000,
+                            PIXELS(544),
                         0, particleZ, 0, zero, zero,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, options);
-      particleZ += 0x40000;
+      particleZ += PIXELS(4);
     }
     wait(3);
     if (row == 3 && extraBursts <= 2) {
@@ -3602,7 +3613,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     }
     Task_AddFrame(VenusLighthouse_EmitEastPassageParticles, TASK_PASS_FRAME);
     MapGrid_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
-    rowOffset += 0x100000;
+    rowOffset += PIXELS(16);
     row++;
   } while (row <= 12);
   MapGrid_CopyCellsTo(86, 41, 97, 14, 5, 2);
@@ -3645,7 +3656,7 @@ static s32 VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
         actor->y.fixed + ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
     particleZ =
         actor->z.fixed + ((((u32)(Import_RandomNext() * 49) >> 16) - 24) << 16);
-    riseSpeed = (((u32)(Import_RandomNext() * 4) >> 16) << 15) + 0x8000;
+    riseSpeed = (((u32)(Import_RandomNext() * 4) >> 16) << 15) + PIXELS(1) / 2;
     FieldEffect_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
@@ -3892,7 +3903,7 @@ struct SwitchCell gVenusThirdFloorSockets[] = {
 /// The heights of a balance platform by the weight on it (its timer, from 0
 /// to 6): the more floating pillars stand on its side, the lower it sinks.
 u32 gVenusBalancePlatformHeights[] = {
-    0xfff00000, 0xfff00000, 0xffe00000, 0xffd00000, 0xffc00000, 0xffb00000, 0xffb00000,
+    -PIXELS(16), -PIXELS(16), -PIXELS(32), -PIXELS(48), -PIXELS(64), -PIXELS(80), -PIXELS(80),
 };
 
 /// The fourth floor's eight sockets, by cell: northwest, northeast, west,
@@ -4743,7 +4754,7 @@ struct Trigger gVenusLighthouseEntryTriggers[] = {
     { TRIGGER_TALK, ACTOR_SOLDIER_OPENED_DOOR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseHowHowDidTheyOpenThe) },
     { TRIGGER_TALK, ACTOR_SOLDIER_HEADED_FOR_BABI, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheyAreAlreadyHeadedForBabi) },
     { TRIGGER_TALK, ACTOR_SOLDIER_COLOSSO_VICTORS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseBabisSoldiersAreAllColossoVictors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, CONDITION_ALWAYS, EVENT(VenusLighthouse_HearOfTheAttack) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, CONDITION_ALWAYS, EVENT(VenusLighthouse_HearOfTheAttack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_LIGHTHOUSE_OPEN, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseUhnnnIfOnlyICouldMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_BARBARIANS, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheirPowersWereSoStrangeWho) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WAITING_SCHOLAR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIMustGetInsideVenusLighthouse) },

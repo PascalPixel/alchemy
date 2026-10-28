@@ -2461,8 +2461,8 @@ s8 gSolSanctum_RingDirection[][3] = {
 };
 
 s32 gSolSanctumRing_MaxScales[] = {
-    0x9999, 0xcccc, 0xb333, 0x9999, 0xcccc, 0x9999, 0xb333, 0x9999,
-    0x9999, 0xb333,
+    3 * Q16_ONE / 5, 4 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5, 4 * Q16_ONE / 5, 3 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5,
+    3 * Q16_ONE / 5, 7 * Q16_ONE / 10,
 };
 
 s32 gSolSanctumRing_ScaleSteps[] = {

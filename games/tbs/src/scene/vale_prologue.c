@@ -921,11 +921,11 @@ static void ValePrologue_FirstRockFalls(void) {
           // stands.
           leader = Actor_GetById(ACTOR_PARTY_LEADER);
           if (leader->y.fixed > PIXELS(128)) {
-            walkZ = 0x396;
-            ValePrologue_GaretCommentsOnBlockedPath(0x146, walkZ);
+            walkZ = 918;
+            ValePrologue_GaretCommentsOnBlockedPath(326, walkZ);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 291, walkZ);
           } else {
-            ValePrologue_GaretCommentsOnBlockedPath(0x14f, 0x3bd);
+            ValePrologue_GaretCommentsOnBlockedPath(335, 957);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
         }
@@ -995,10 +995,10 @@ static void ValePrologue_SecondRockFalls(void) {
           // stands.
           leader = Actor_GetById(ACTOR_PARTY_LEADER);
           if (leader->y.fixed > PIXELS(128)) {
-            ValePrologue_GaretCommentsOnBlockedPath(219, 0x34b);
+            ValePrologue_GaretCommentsOnBlockedPath(219, 843);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 829);
           } else {
-            ValePrologue_GaretCommentsOnBlockedPath(214, 0x38c);
+            ValePrologue_GaretCommentsOnBlockedPath(214, 908);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 219, 911);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -1070,11 +1070,11 @@ static void ValePrologue_ThirdRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed <= 0x2b4ffff) {
-            ValePrologue_GaretCommentsOnBlockedPath(62, 0x29d);
+          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed <= PIXELS(693) - 1) {
+            ValePrologue_GaretCommentsOnBlockedPath(62, 669);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 627);
           } else {
-            ValePrologue_GaretCommentsOnBlockedPath(75, 0x2cb);
+            ValePrologue_GaretCommentsOnBlockedPath(75, 715);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 67, 757);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -1139,11 +1139,11 @@ static void ValePrologue_FourthRockFalls(void) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           leader = Actor_GetById(ACTOR_PARTY_LEADER);
-          if (leader->z.fixed <= 0x479ffff) {
-            ValePrologue_GaretCommentsOnBlockedPath(0x19c, 0x460);
+          if (leader->z.fixed <= PIXELS(1146) - 1) {
+            ValePrologue_GaretCommentsOnBlockedPath(412, 1120);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 414, 1068);
           } else {
-            ValePrologue_GaretCommentsOnBlockedPath(0x1bd, 0x494);
+            ValePrologue_GaretCommentsOnBlockedPath(445, 1172);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 447, 1227);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -2382,8 +2382,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetSpriteFlags(currentActor, 0);
   currentActor = Actor_Get(ACTOR_BOULDER_SHADOW);
   Actor_SetSpriteFlags(currentActor, 0);
-  boulderShadow->scaleX = 0xcccc;
-  boulderShadow->scaleY = 0xcccc;
+  boulderShadow->scaleX = 4 * Q16_ONE / 5;
+  boulderShadow->scaleY = 4 * Q16_ONE / 5;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   boulderShadowSprite->image.priority = 1;
   ValePrologue_PlaceActor(actor, PIXELS(200), PIXELS(898));
@@ -2439,10 +2439,10 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_Stop(ACTOR_BOULDER);
   wait(1);
   Actor_SetAnimation(ACTOR_BOULDER, ANIM_STILL);
-  boulderShadow->scaleX = 0x14000;
-  boulderShadow->scaleY = 0x14000;
+  boulderShadow->scaleX = 5 * Q16_ONE / 4;
+  boulderShadow->scaleY = 5 * Q16_ONE / 4;
   boulderShadowSprite->offsetY = 2;
-  boulderShadowSprite->scale = 0x14000;
+  boulderShadowSprite->scale = 5 * Q16_ONE / 4;
   actor->scaleX = 2 * Q16_ONE;
   actor->scaleY = 2 * Q16_ONE;
   actor->x.fixed = resetValue;
@@ -2677,12 +2677,12 @@ static void ValePrologue_UpdateBoulderShadow(void) {
     switch ((s16)source->userValue) {
     case 1:
     case 5:
-      shadow->scaleX += 0xa3d;
-      shadow->scaleY += 0xa3d;
+      shadow->scaleX += Q16_ONE / 25;
+      shadow->scaleY += Q16_ONE / 25;
       break;
     case 4:
-      shadow->scaleX += 0x51e;
-      shadow->scaleY += 0x51e;
+      shadow->scaleX += Q16_ONE / 50;
+      shadow->scaleY += Q16_ONE / 50;
       break;
     case 2:
     case 3:
@@ -2690,8 +2690,8 @@ static void ValePrologue_UpdateBoulderShadow(void) {
     case 7:
     case 8:
     case 9:
-      shadow->scaleX += -0x7ae;
-      shadow->scaleY += -0x7ae;
+      shadow->scaleX += -3 * Q16_ONE / 100;
+      shadow->scaleY += -3 * Q16_ONE / 100;
       break;
     }
     sprite->scale = shadow->scaleX;
@@ -3405,7 +3405,7 @@ struct ActorPlacement gValePrologue_ActorPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

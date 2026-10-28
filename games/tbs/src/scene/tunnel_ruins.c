@@ -491,7 +491,8 @@ static void TunnelRuins_HopDownStep(void) {
       s32 velocityX = horizontalRoll * 0x3332;
       s32 velocityZ;
 
-      velocityZ = (u32)Import_RandomNext() % 10 * -0x1999 - 0x7ffd;
+      velocityZ = (u32)Import_RandomNext() % 10 * -(PIXELS(1) / 10) -
+                  5 * (PIXELS(1) / 10);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocityX, 0, velocityZ,
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);

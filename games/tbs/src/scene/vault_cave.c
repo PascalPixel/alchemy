@@ -109,7 +109,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source);
 
 #include "io_write_queue.h"
 
-#define TILE(position) ((position) / 0x100000)
+#define TILE(position) ((position) / PIXELS(16))
 
 /// The cell behaviors of the cells the events answer.
 enum VaultCaveCellBehavior {
@@ -383,11 +383,11 @@ static void VaultCave_PushPillarAhead(void) {
   Actor_SelectAnimation(leader, ANIM_PUSH);
   wait(15);
   Sound_Play(SE_PUSH_STEP);
-  pillar->speedLimit = 0x3333;
-  pillar->acceleration = 0x3333;
+  pillar->speedLimit = PIXELS(1) / 5;
+  pillar->acceleration = PIXELS(1) / 5;
   FieldActor_SetMoveTarget(pillar, destination.x, destination.y, destination.z);
-  leader->speedLimit = 0x3333;
-  leader->acceleration = 0x3333;
+  leader->speedLimit = PIXELS(1) / 5;
+  leader->acceleration = PIXELS(1) / 5;
   FieldActor_SetMoveTarget(leader, destination.x, destination.y, destination.z);
   Actor_WaitForMove(pillar);
   Sound_Play(SE_STOP_ACTION_SE);
@@ -442,12 +442,12 @@ static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
   s32 column;
 
   if (fixedZ < 0) {
-    fixedZ += 0x000FFFFF;
+    fixedZ += PIXELS(16) - 1;
   }
   fixedX = pillar->x.fixed;
   row = fixedZ >> 20;
   if (fixedX < 0) {
-    fixedX += 0x000FFFFF;
+    fixedX += PIXELS(16) - 1;
   }
   column = fixedX >> 20;
   if (column == 15 && row == 54) {
@@ -507,12 +507,12 @@ static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
   s32 column;
 
   if (fixedZ < 0) {
-    fixedZ += 0x000FFFFF;
+    fixedZ += PIXELS(16) - 1;
   }
   fixedX = pillar->x.fixed;
   row = fixedZ >> 20;
   if (fixedX < 0) {
-    fixedX += 0x000FFFFF;
+    fixedX += PIXELS(16) - 1;
   }
   column = fixedX >> 20;
   if (column == 16 && row == 12) {
@@ -705,8 +705,8 @@ static void VaultCave_RunRumble(void) {
     layer->speedX = -1;
     layer->speedY = -1;
   }
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Event_PlaySound(SE_RUSH);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 479; frame >= 0; frame--) {
@@ -777,7 +777,7 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
     struct Actor *fallingActor =
         Actor_GetById(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
-    if ((u32)(fallingActor->y.fixed - 1) <= 0x000ffffe) {
+    if ((u32)(fallingActor->y.fixed - 1) <= PIXELS(16) - 2) {
       s32 fallingRow = TILE(fallingActor->z.fixed);
       s32 fallingColumn = TILE(fallingActor->x.fixed);
       s32 subjectRow = TILE(subject->z.fixed);
@@ -814,7 +814,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
     scheduleIndex = gVaultCave_ScheduleIndex;
     if (gVaultCave_ScheduleFrames[scheduleIndex] == gVaultCave_ScheduleTimer) {
       fallingActor = Actor_Get((scheduleIndex + ACTOR_FIRST_TIMED_WATER_DROP));
-      fallingActor->gravity = 0xa3d;
+      fallingActor->gravity = PIXELS(1) / 25;
       if (++gVaultCave_ScheduleIndex > 3) {
         gVaultCave_ScheduleIndex = 0;
       }
@@ -823,7 +823,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
     for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
       fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       if (fallingActor->velocityY >= 0) {
-        if (fallingActor->y.fixed <= 0xffff) {
+        if (fallingActor->y.fixed <= PIXELS(1) - 1) {
           VaultCave_SpawnPuffs(fallingActor);
           fallingActor->y.fixed = PIXELS(255);
           fallingActor->gravity = 0;
@@ -868,7 +868,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
       stateValue = Math_RemainderUnsigned(stateValue, 6);
       *selectedIndex = stateValue;
       fallingActor = Actor_GetById((stateValue + ACTOR_FIRST_WATER_DROP));
-      fallingActor->gravity = 0xa3d;
+      fallingActor->gravity = PIXELS(1) / 25;
     }
     // Each actor's paired Frost flag selects its reset height.
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
@@ -877,7 +877,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
           (fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
       if (stateValue != 0) {
         if (fallingActor->velocityY <= 0) {
-          if (fallingActor->y.fixed > 0x20ffff) {
+          if (fallingActor->y.fixed > PIXELS(33) - 1) {
             continue;
           }
         }
@@ -887,7 +887,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
         Sound_Play(SE_DRIP);
       } else {
         if (fallingActor->velocityY <= 0) {
-          if (fallingActor->y.fixed > 0xffff) {
+          if (fallingActor->y.fixed > PIXELS(1) - 1) {
             continue;
           }
         }
@@ -924,13 +924,13 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
                              source->z.fixed);
     if (puff == 0)
       break;
-    puff->scaleY = 0x8ccc;
-    puff->scaleX = 0x8ccc;
+    puff->scaleY = 11 * Q16_ONE / 20;
+    puff->scaleX = 11 * Q16_ONE / 20;
     puff->motionFlags = ACTOR_FALLS;
-    puff->velocityY = -0x10000;
-    puff->speedLimit = Import_RandomNext() + 0xcccc;
+    puff->velocityY = -PIXELS(1);
+    puff->speedLimit = Import_RandomNext() + PIXELS(4) / 5;
     puff->collisionFlags = 1;
-    VaultCave_OffsetActorRadially(puff, 0x200000, Import_RandomNext());
+    VaultCave_OffsetActorRadially(puff, PIXELS(32), Import_RandomNext());
     {
       u16 *timer = &puff->wait;
       s32 frames = 8;
@@ -1014,7 +1014,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.sceneId == (s32)&SceneId_VaultCaveVambrace) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
-      Actor_GetById(ACTOR_IVY)->scaleY = 0x18000;
+      Actor_GetById(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
     }
     switch (gMainRoutineWork.entrance) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
@@ -1257,21 +1257,21 @@ struct ActorPlacement gVaultCavePassage_ActorPlacements[] = {
 };
 
 struct ActorPlacement gVaultCaveVambrace_ActorPlacements[] = {
-    { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 299, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(876), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 299, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(892), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(372), 0, PIXELS(512), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(372), 0, PIXELS(544), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(388), 0, PIXELS(544), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(420), 0, PIXELS(512), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(420), 0, PIXELS(544), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(452), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(376), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -1291,19 +1291,19 @@ struct ActorPlacement gVaultCaveVambrace_ActorPlacements[] = {
 };
 
 struct ActorPlacement gVaultCaveMouth_ActorPlacements[] = {
-    { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 299, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(296), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 299, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(236), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 299, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(300), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xf0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 240, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

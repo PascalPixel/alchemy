@@ -1298,7 +1298,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
       FieldActor_Create(ACTOR_ELEMENTAL_STAR, starOrigin->x.fixed,
                         starOrigin->y.fixed + PIXELS(36), starOrigin->z.fixed);
   if (star != NULL) {
-    iconPixels = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    iconPixels =
+        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     starSprite = star->sprite;
     starSprite->flags = 0;
     starSprite->count = 0;
@@ -1510,11 +1511,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Import_EventSetExitRequest(
       SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
-  // Flag 0x100 marks nothing: it is set nowhere else and read nowhere, by no
-  // table, script or function, and render probe flag-reads, watching every
-  // flag test and every byte and nibble read in the maps after the
+  // FLAG_SYSTEM_FIRST marks nothing: it is set nowhere else and read nowhere,
+  // by no table, script or function, and render probe flag-reads, watching
+  // every flag test and every byte and nibble read in the maps after the
   // eruption, sees none.
-  GameFlag_Set(0x100);
+  GameFlag_Set(FLAG_SYSTEM_FIRST);
 }
 
 /// Places an actor before the star, facing south, and draws it above the
@@ -1917,39 +1918,39 @@ struct ActorPlacement gSolSanctumEruption_ActorPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xfc, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 252, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xd8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

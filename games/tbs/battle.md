@@ -9,7 +9,7 @@ standing or the party runs away. Two kinds of code share the work: the rules
 decide who acts when, who is hit and for how much, and the
 [battle effects](glossary.md#battle-effect) draw it.
 [Battles](src/battle/README.md) goes through the rules,
-[Game rules](src/game/README.md) holds their tables and arithmetic, and
+[Game rules](glossary.md#game-rules) holds their tables and arithmetic, and
 [Battle effects](src/battle_effect/README.md) draws what they decide.
 
 ## Starting a battle

@@ -53,7 +53,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   // pixels a frame.
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &PARTICLES[i];
-    s32 heading = Random16() & 0xffff;
+    s32 heading = Random16() & EFFECT_ANGLE_MASK;
     s32 speed = (Random16() & 0xff) + 128;
 
     SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
@@ -160,7 +160,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     // The Djinni sways 40 pixels either way in depth every 32 frames, and
     // flies up 4 pixels a frame for the last 32.
     if (frame >= work->args->targetCount * 8 + 40)
-      target[1] += 0x40000;
+      target[1] += 4 << 16;
     SET_VECTOR(point, target[0], target[1],
                target[2] + Trig_Sin(frame << 11) * 40);
     Projection_Point(point, &view);

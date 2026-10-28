@@ -69,7 +69,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
       s32 lift;
 
       radius = Random16() & 0xff;
-      angle = Random16() & 0xffff;
+      angle = Random16() & EFFECT_ANGLE_MASK;
       shard->x = ((Trig_Sin(angle) * radius) >> 7) + (screen.x << 16);
       shard->y = ((Trig_Cos(angle) * radius) >> 3) + (screen.y << 16);
       shard->velocityX = (128 - (Random16() & 0xff)) << 9;

@@ -125,14 +125,14 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
       }
     }
     // Frame 4: the user leaps, heading out past its own position: 20 pixels
-    // a frame upwards against a gravity of 0xab85 (about 0.67 pixels a frame
-    // lost each frame), and outwards at up to 3 pixels a frame towards three
-    // times its x, away from the middle (x 0).
+    // a frame upwards against a gravity of BATTLE_UNIT_GRAVITY (about 0.67
+    // pixels a frame lost each frame), and outwards at up to 3 pixels a frame
+    // towards three times its x, away from the middle (x 0).
     if (frame == 4) {
       actor->velocityY = 20 << 16;
       actor->acceleration = 1 << 16;
       actor->speedLimit = 3 << 16;
-      actor->gravity = 0xab85;
+      actor->gravity = BATTLE_UNIT_GRAVITY;
       actor->steeringFlags = 0;
       actor->snapToTarget = 0;
       Actor_SetMoveTargetFar(actor, actor->x.fixed * 3, 0, actor->z.fixed);
@@ -191,7 +191,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
           // Masked in place, the mask assigned first; as Random16() & mask, 3
           // instructions differ.
           speed &= Random16();
-          angle = Random16() & 0xffff;
+          angle = Random16() & EFFECT_ANGLE_MASK;
           chip->x = screenPosition.x << 16;
           chip->y = (screenPosition.y - 24) << 16;
           chip->velocityX = Trig_Sin(angle) * (speed + 32) >> 6;
@@ -219,7 +219,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         chip->life--;
         chip->y = y;
         chip->velocityX = chip->velocityX * 56 / 64;
-        chip->velocityY = chip->velocityY * 56 / 64 + 0x2000;
+        chip->velocityY = chip->velocityY * 56 / 64 + Q16_ONE / 8;
         if (chip->y > 112 << 16) {
           chip->velocityY = -chip->velocityY / 2;
         } else if ((chip->x >= 0 && chip->x < 127 << 16) && chip->y >= 0) {
@@ -317,7 +317,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 160; i++)
-        *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
+        *row++ = ((6 << 16) - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
       for (i = 0; i != 160; i++)
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
@@ -428,7 +428,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   // VBlank, so this 104 can reach at most the top line before the DMA first
   // runs; and no row reaches this effect.
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x6800;
+    REG_BG2X = -(104 << 8);
     offsetX = -112;
   } else {
     offsetX = 0;
@@ -448,7 +448,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
       s32 base;
 
-      for (i = 0, base = 0x80000, angle = frame << 10; i != 160; i++) {
+      for (i = 0, base = 8 << 16, angle = frame << 10; i != 160; i++) {
         *row++ = (base - ((Trig_Sin(angle) * 8))) >> 10;
         angle += 1024;
       }
@@ -456,7 +456,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
 
       for (i = 0, angle = frame << 10; i != 160; i++) {
-        *row++ = (((Trig_Sin(angle) * 8)) >> 10) - 0x7000;
+        *row++ = (((Trig_Sin(angle) * 8)) >> 10) - (112 << 8);
         angle += 1024;
       }
     }

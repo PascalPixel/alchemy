@@ -15,7 +15,7 @@
 
 #define PLASMA_SPACING 8 ///< frames between pillars
 /// The second picture in the sheet, after the first 48x112 one.
-#define PLASMA_SECOND_IMAGE 0x1500
+#define PLASMA_SECOND_IMAGE (48 * 112)
 
 /// gPlasma_Columns has seven pillars for each side.
 #define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
@@ -138,7 +138,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - 0x4000;
+              angle = (Random16() & 0x7fff) - EFFECT_TURN / 4;
 
               spark->x = PLASMA_COLUMN_X(work->args->side, i) << 16;
               spark->y = 104 << 16;
@@ -171,7 +171,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
-        Particle_AdvanceWithGravity2D(spark, 60, 0x1000);
+        Particle_AdvanceWithGravity2D(spark, 60, Q16_ONE / 16);
         if (spark->y > 104 << 16) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
@@ -309,7 +309,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
 
       point = &work->particles[i * SPARK_GROUPS_FLASHES + j];
       radius = j * 2;
-      angle = Random16() & 0xffff;
+      angle = Random16() & EFFECT_ANGLE_MASK;
       point->x = Trig_Sin(angle) * radius;
       point->y = -(Trig_Cos(angle) * radius);
       point->variant = j / 2 + 25;
@@ -324,7 +324,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
                   gPlasma_Shapes[work->args->variant][SPARK_GROUPS_SPARKS]] +
           j;
       speed = (Random16() & 0x3ff) + 32;
-      angle = Random16() & 0xffff;
+      angle = Random16() & EFFECT_ANGLE_MASK;
       if (work->args->side == EFFECT_SIDE_PARTY)
         spark->x =
             (originX -
@@ -439,9 +439,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
         s32 gravity;
 
         if (mode == SPARK_GROUPS_RISING)
-          gravity = -0x1000;
+          gravity = -Q16_ONE / 16;
         else
-          gravity = 0x1000;
+          gravity = Q16_ONE / 16;
         for (j = 0;
              j != gPlasma_Shapes[work->args->variant][SPARK_GROUPS_SPARKS];
              j++) {
@@ -451,9 +451,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           if (spark->variant > 0) {
             Particle_AdvanceWithGravity2D(spark, 60, gravity);
             spark->variant--;
-            if (spark->y > 0x6c0000) {
+            if (spark->y > (108 << 16)) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {
+            } else if (spark->x >= 0 && spark->x < (127 << 16) &&
+                       spark->y >= 0) {
               s32 y = spark->y >> 16;
               s32 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;

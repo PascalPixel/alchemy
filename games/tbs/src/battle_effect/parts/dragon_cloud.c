@@ -101,9 +101,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
     if (work->args->side == EFFECT_SIDE_ENEMIES)
-      ember->x = -0x380000;
+      ember->x = -(56 << 16);
     else
-      ember->x = 0x380000;
+      ember->x = 56 << 16;
     ember->y = 0;
     ember->z = 0;
     SET_VELOCITY(ember, ((Random16() & 63) - 32) << 14, (Random16() & 63) << 13,
@@ -114,16 +114,17 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct Particle *flash = &work->particles[DRAGON_CLOUD_FIRST_FLASH + j];
 
     if (work->args->side == EFFECT_SIDE_ENEMIES)
-      flash->x = -0x380000;
+      flash->x = -(56 << 16);
     else
-      flash->x = 0x380000;
-    flash->y = 0x140000;
+      flash->x = 56 << 16;
+    flash->y = 20 << 16;
     flash->z = 0;
     SET_VELOCITY(flash, ((Random16() & 63) - 32) << 14, (Random16() & 63) << 12,
                  ((Random16() & 63) - 32) << 14);
     flash->variant = 0;
   }
-  for (i = 0, j = -0x4000; i != DRAGON_CLOUD_PUFFS; i++, j += 0x1000) {
+  for (i = 0, j = -EFFECT_TURN / 4; i != DRAGON_CLOUD_PUFFS;
+       i++, j += EFFECT_TURN / 16) {
     struct Particle *puff = &work->particles[i];
 
     if (work->args->side == EFFECT_SIDE_PARTY)
@@ -147,10 +148,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     // centre at 100% zoom, which also moves the battle background's plane.
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       if (frame <= 63)
-        camera->yaw -= 0x100;
+        camera->yaw -= EFFECT_TURN / 256;
     } else {
       if (frame <= 63)
-        camera->yaw += 0x100;
+        camera->yaw += EFFECT_TURN / 256;
     }
     BattleCamera_SetViewFar(0, 0, 0, 100);
     if (frame <= 17) {
@@ -235,8 +236,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HOP);
     }
     // After the strike the embers rise and fall back under a gravity of 1/8
-    // pixel a frame per frame (0x2000), undamped, until they drop below the
-    // ground.
+    // pixel a frame per frame (Q16_ONE / 8), undamped, until they drop below
+    // the ground.
     if (frame > DRAGON_CLOUD_STRIKE_FRAME) {
       // Embers are motes sized by depth. Only entries 56 to 63 play the
       // six flash pictures, two frames each; the first eight flashes, at 48
@@ -272,7 +273,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           ember->z += ember->velocityZ;
-          ember->velocityY -= 0x2000;
+          ember->velocityY -= Q16_ONE / 8;
         }
       }
     }

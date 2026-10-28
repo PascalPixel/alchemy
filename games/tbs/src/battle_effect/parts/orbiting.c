@@ -82,7 +82,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         Transform_Pop();
         // Size 9 to 3 over depths 250 to 634, from the star's own mote set
         // (i & 3).
-        CLAMP(screen.depth, 250, 0x27a);
+        CLAMP(screen.depth, 250, 634);
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
                 work->sheet + ((i & 3) * MOTE_SET_BYTES +
@@ -207,11 +207,13 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
           s32 y;
 
           x = screen.x +
-              (((Trig_Sin(spark->velocityX + i * 0x5555) * 8)) >> 16);
+              (((Trig_Sin(spark->velocityX + i * (EFFECT_TURN / 3)) * 8)) >>
+               16);
           y = screen.y +
-              (((Trig_Cos(spark->velocityX + i * 0x5555) * 8)) >> 16);
-          spark->velocityX += 0x200;
-          draw[0](canvas, work->sheet + i * 0x240, x - 12, y - 28, 24, 24);
+              (((Trig_Cos(spark->velocityX + i * (EFFECT_TURN / 3)) * 8)) >>
+               16);
+          spark->velocityX += EFFECT_TURN / 128;
+          draw[0](canvas, work->sheet + i * (24 * 24), x - 12, y - 28, 24, 24);
         }
       }
     }
@@ -221,7 +223,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
 }
 
 /// The burst picture in the sheet, after the smoke.
-#define TARGET_BURSTS_OFFSETS 0x1b00
+#define TARGET_BURSTS_OFFSETS (6 * (24 * 48))
 
 #define TARGET_BURSTS_FRAMES 96
 
@@ -268,7 +270,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     s32 speed;
 
     puff = &work->particles[i];
-    angle = Random16() & 0xffff;
+    angle = Random16() & EFFECT_ANGLE_MASK;
     speed = Random16() & 0xff;
     SET_POSITION(puff, 0, 0, 0);
     if (i % 6 == 5) {
@@ -312,13 +314,13 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           Projection_Point(puff, &screen);
           screen.x >>= 1;
           if (i == 5) {
-            Particle_AdvanceWithGravity3D(puff, 62, 0x800);
+            Particle_AdvanceWithGravity3D(puff, 62, Q16_ONE / 32);
             drawBurst(canvas,
-                      work->sheet + cell * 0x480 + TARGET_BURSTS_OFFSETS,
+                      work->sheet + cell * (24 * 48) + TARGET_BURSTS_OFFSETS,
                       screen.x - 12, screen.y - 36, 24, 48);
           } else {
-            Particle_AdvanceWithGravity3D(puff, 60, 0x200);
-            drawSmoke(canvas, work->sheet + cell * 0x480, screen.x - 12,
+            Particle_AdvanceWithGravity3D(puff, 60, Q16_ONE / 128);
+            drawSmoke(canvas, work->sheet + cell * (24 * 48), screen.x - 12,
                       screen.y - 36, 24, 48);
           }
           puff->variant += 1;

@@ -13,7 +13,7 @@
 /// The tornado pictures follow the six glint cells (gBattleEffect_GlintCells)
 /// in the sheet: 40x32 sections, the top and bottom ones' three frames
 /// interleaved, then the middle one's.
-#define WHIRLWIND_TORNADO_OFFSETS 0xc56
+#define WHIRLWIND_TORNADO_OFFSETS GLINT_SET_BYTES
 #define WHIRLWIND_SECTION_BYTES (40 * 32)
 
 /// Motes fly out of the top of the user, hang, and from 48 frames after each
@@ -95,10 +95,11 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != gVortices_Counts[work->args->variant][FROTH_FRAMES];
        frame++) {
-    // The camera swings 0x180 of yaw a frame over frames 17 to 63.
+    // The camera swings EFFECT_TURN * 3 / 512 of yaw a frame over frames 17
+    // to 63.
     camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
     if (frame >= 17 && frame < 64)
-      work->cameraDelta = 0x180;
+      work->cameraDelta = EFFECT_TURN * 3 / 512;
     else
       work->cameraDelta = 0;
     // 16 frames before the end the battle shows the damage, with sound 132
@@ -112,7 +113,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       if (frame > i * 2 && flags[i] == 0) {
         Projection_Point(point, &screenPosition);
         screenPosition.x >>= 1;
-        CLAMP(screenPosition.depth, 160, 0x31f);
+        CLAMP(screenPosition.depth, 160, 799);
         draw[0](canvas, work->sheet + FROTH_MOTE_CELL, screenPosition.x - 6,
                 screenPosition.y - 12, 12, 24);
         point->x += point->velocityX;
@@ -249,14 +250,14 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     // point 32 pixels right of the canvas's x 40 when the targets are the
     // party, left otherwise.
     if (work->args->side == EFFECT_SIDE_PARTY)
-      wave += 0x200000;
+      wave += 32 << 16;
     else
-      wave -= 0x200000;
+      wave -= 32 << 16;
     // Fade in over 16 frames and out over the last 16.
     if (frame <= 16)
       REG_BLDALPHA = BLEND_ALPHA(frame, 16);
     if (frame > 63)
-      REG_BLDALPHA = BLEND_ALPHA(0x4f - frame, 16);
+      REG_BLDALPHA = BLEND_ALPHA(79 - frame, 16);
     // Each tornado: three sections stacked, swaying about the sweep by its
     // row's WHIRLWIND_SWAY pixels once every 32 frames, a quarter turn apart
     // and bobbing 2 pixels, with four glints; the sections change picture
@@ -264,11 +265,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
       x = ((gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
-                Trig_Sin((frame << 11) + i * 0x4000) +
+                Trig_Sin((frame << 11) + i * (EFFECT_TURN / 4)) +
             wave) >>
            16) +
           40;
-      y = (Trig_Cos((frame << 11) + i * 0x4000) * 2) >> 16;
+      y = (Trig_Cos((frame << 11) + i * (EFFECT_TURN / 4)) * 2) >> 16;
       segment = (frame / 2) % 3;
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +

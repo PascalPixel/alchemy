@@ -48,9 +48,9 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// turns both on their side after its Djinni, Venus draws the second.
 #define DJINN_ATTACKS_FLAME2_OFFSETS (17 * 104)
 /// The first flame turned, 104x17, after the 20x34 Djinni; never drawn.
-#define MERCURY_TALL_FLAME_OFFSETS 0x2a8
-#define MERCURY_FLAME_OFFSETS 0x990 ///< 65x34
-#define MERCURY_FLAMES 5            ///< flames thrown
+#define MERCURY_TALL_FLAME_OFFSETS (20 * 34)
+#define MERCURY_FLAME_OFFSETS (MERCURY_TALL_FLAME_OFFSETS + 104 * 17) ///< 65x34
+#define MERCURY_FLAMES 5 ///< flames thrown
 /// The mote slots Mercury walks: room for more than MERCURY_FLAMES *
 /// DJINN_ATTACKS_MOTES_PER_FLAME.
 #define MERCURY_MOTE_SLOTS 256
@@ -59,7 +59,7 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // PARTICLES (Venus's columns fill 16 of them), and the motes move through all
 // DJINN_ATTACKS_MOTE_SLOTS. A mote's variant is its life left, -1 when free;
 // at life 0 it still draws once before its slot is freed. Each frame a mote
-// falls under a gravity of 1/8 pixel a frame per frame (0x2000), its speed
+// falls under a gravity of 1/8 pixel a frame per frame (Q16_ONE / 8), its speed
 // damped to 62/64, and it shrinks a size every 16 frames of life it loses.
 #define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
 #define DJINN_ATTACKS_MOTE_SLOTS 512
@@ -137,7 +137,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
             s32 speed;
 
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
-            angle = Random16() & 0xffff;
+            angle = Random16() & EFFECT_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = flame->x << 16;
             mote->y = flame->y << 16;
@@ -189,7 +189,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
                          Q_16_16_TO_INT(mote->y), size);
-        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
+        Particle_AdvanceWithGravity2D(mote, 62, Q16_ONE / 8);
         mote->variant--;
       }
     }
@@ -201,9 +201,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 }
 
 #define JUPITER_FRAMES 96
-#define JUPITER_FLAMEBALLS 8            ///< flameballs that fall
-#define JUPITER_GROUND_Y 95             ///< where the flameballs land
-#define JUPITER_FLAMEBALL_OFFSETS 0x320 ///< after the 20x40 Djinni
+#define JUPITER_FLAMEBALLS 8                ///< flameballs that fall
+#define JUPITER_GROUND_Y 95                 ///< where the flameballs land
+#define JUPITER_FLAMEBALL_OFFSETS (20 * 40) ///< after the 20x40 Djinni
 
 /// The small Jupiter Djinni spirals while eight flameballs fall from the top
 /// right to the bottom left, 4 frames apart; each shatters into 32 motes below
@@ -256,7 +256,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_THUNDER);
   frame = 0;
-  angle = 0x8000; // 180 degrees
+  angle = EFFECT_TURN / 2; // 180 degrees
   do {
     if (frame == 56)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -287,7 +287,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
             s32 speed;
 
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
-            direction = Random16() & 0xffff;
+            direction = Random16() & EFFECT_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = ball->x << 16;
             mote->y = ball->y << 16;
@@ -312,13 +312,13 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
 
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
                          Q_16_16_TO_INT(mote->y), size);
-        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
+        Particle_AdvanceWithGravity2D(mote, 62, Q16_ONE / 8);
         mote->variant--;
       }
     }
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
-    angle -= 0x800; // 11.25 degrees
+    angle -= EFFECT_TURN / 32; // 11.25 degrees
     frame++;
   } while (frame != JUPITER_FRAMES);
   EFFECT_FINISH_CANVAS();
@@ -347,7 +347,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 #define VENUS_FRAMES 96
 #define VENUS_COLUMNS 10 ///< columns of flame that rise
 /// The blue flame sheet, after the 20x38 Djinni, and its second flame.
-#define VENUS_FLAME_SHEET 0x2f8
+#define VENUS_FLAME_SHEET (20 * 38)
 #define VENUS_COLUMN_OFFSETS (VENUS_FLAME_SHEET + DJINN_ATTACKS_FLAME2_OFFSETS)
 
 /// The small Venus Djinni sways while ten columns of flame in its colours rise
@@ -402,7 +402,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_RUMBLE);
   frame = 0;
-  angle = 0x8000;
+  angle = EFFECT_TURN / 2;
   do {
     // Until frame 79 the Djinni sways 24 pixels from side to side, a turn
     // every 32 frames, while its height swings on a radius that shrinks
@@ -430,7 +430,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
             s32 speed;
 
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
-            direction = (Random16() & 0x7fff) + 0x4000;
+            direction = (Random16() & 0x7fff) + EFFECT_TURN / 4;
             speed = (Random16() & 0x1ff) + 256;
             mote->x = column->x << 16;
             mote->y = (column->y + 16) << 16;
@@ -456,23 +456,23 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
                          Q_16_16_TO_INT(mote->y), size);
-        Particle_AdvanceWithGravity2D(mote, 62, 0x2000);
+        Particle_AdvanceWithGravity2D(mote, 62, Q16_ONE / 8);
         mote->variant--;
       }
     }
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
-    angle -= 0x800;
+    angle -= EFFECT_TURN / 32;
     frame++;
   } while (frame != VENUS_FRAMES);
   EFFECT_FINISH_CANVAS();
 }
 
 #define MARS_FRAMES 112
-#define MARS_STRIKE_FRAME 32     ///< the Djinni strikes the ground
-#define MARS_FLAMES 9            ///< flames along the arc
-#define MARS_EMBERS_PER_FLAME 16 ///< embers in each flame
-#define MARS_ORB_OFFSETS 0x320   ///< six 40x40 orb pictures, after the Djinni
+#define MARS_STRIKE_FRAME 32       ///< the Djinni strikes the ground
+#define MARS_FLAMES 9              ///< flames along the arc
+#define MARS_EMBERS_PER_FLAME 16   ///< embers in each flame
+#define MARS_ORB_OFFSETS (20 * 40) ///< six 40x40 orb pictures, after the Djinni
 
 /// A glowing orb flares, the small Mars Djinni dives to the ground, and nine
 /// flames erupt in a row while embers rise.
@@ -546,8 +546,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       mote->y = ((Random16() & 7) + 96) << 16;
       mote->velocityX = ((Random16() & 127) - 64) << 11;
       mote->velocityY = ((Random16() & 127) - 64) << 10;
-      mote->z = Random16() & 0xffff;
-      mote->velocityZ = Random16() & 0xffff;
+      mote->z = Random16() & EFFECT_ANGLE_MASK;
+      mote->velocityZ = Random16() & EFFECT_ANGLE_MASK;
     }
     step++;
     index++;
@@ -635,11 +635,11 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                 x - ((u32)size >> 1), Q_16_16_TO_INT(step->y) - size, size,
                 size * 2);
-        Particle_AdvanceWithGravity2D(step, 64, -0x2000);
+        Particle_AdvanceWithGravity2D(step, 64, -Q16_ONE / 8);
         angle = step->z;
-        step->z = angle + 0x800;
-        if (step->z > 0xffff)
-          step->z = angle + 0x800 - 0xffff;
+        step->z = angle + EFFECT_TURN / 32;
+        if (step->z > EFFECT_ANGLE_MASK)
+          step->z = angle + EFFECT_TURN / 32 - EFFECT_ANGLE_MASK;
       }
       index++;
       step++;

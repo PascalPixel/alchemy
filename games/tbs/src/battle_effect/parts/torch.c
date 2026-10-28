@@ -130,7 +130,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
       wave = frame * 2;
     }
     if (frame > 88)
-      REG_BLDALPHA = BLEND_ALPHA(0xc0 - frame * 2, 16);
+      REG_BLDALPHA = BLEND_ALPHA(192 - frame * 2, 16);
 
     // BG2's x reference for each of the 160 scanlines, in 20.8 texels: line
     // i starts i + 1 texels in, slanting the picture a texel a line, swayed
@@ -138,8 +138,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     // phase moves 1/64 turn a frame. The HBlank DMA applies it.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != 160; i++) {
-      *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + 0x40000) >> 10;
-      angle += 0x200;
+      *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + (4 << 16)) >> 10;
+      angle += EFFECT_TURN / 128;
     }
 
     // Rotate colours 2 to 63 up by one, so the rings run outward: colour 63

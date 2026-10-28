@@ -166,7 +166,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
       CLAMP(rightEdge, 0, 240);
       scanlineEdges[scanline] = rightEdge;
     } else {
-      scanlineEdges[scanline] = 0xfff1;
+      scanlineEdges[scanline] = WIN_RANGE(255, 241);
     }
   }
   {

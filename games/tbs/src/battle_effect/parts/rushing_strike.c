@@ -32,8 +32,8 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   } while (row != rows);
 }
 
-#define RUSHING_STRIKE_SPARK_COUNT 64   ///< sparks
-#define RUSHING_STRIKE_RING_BYTES 0x3c0 ///< one 20x48 ring picture
+#define RUSHING_STRIKE_SPARK_COUNT 64       ///< sparks
+#define RUSHING_STRIKE_RING_BYTES (20 * 48) ///< one 20x48 ring picture
 
 /// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each
 /// named for the effect that plays it.
@@ -165,7 +165,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &work->particles[i];
     newSpark->x = target->x.fixed;
-    newSpark->y = target->y.fixed + 0xa0000; // 10 pixels up
+    newSpark->y = target->y.fixed + (10 << 16); // 10 pixels up
     newSpark->z = target->z.fixed;
     SET_VELOCITY(newSpark, (Random16() & 0x1ff) << 11,
                  ((Random16() & 255) - 64) << 11,
@@ -214,7 +214,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
           sparkScreen.x >>= 1;
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, sparkScreen.x, sparkScreen.y,
                            size);
-          Particle_AdvanceWithGravity3D(spark, 60, -0x200);
+          Particle_AdvanceWithGravity3D(spark, 60, -Q16_ONE / 128);
           spark->variant--;
         }
       }

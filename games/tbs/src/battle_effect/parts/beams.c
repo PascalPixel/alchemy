@@ -256,7 +256,7 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
           size += 2;
           EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, screen.x, screen.y,
                             size);
-          Particle_AdvanceWithGravity3D(spark, 60, -0x400);
+          Particle_AdvanceWithGravity3D(spark, 60, -Q16_ONE / 64);
           spark->variant--;
         }
       }
@@ -388,8 +388,9 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
       struct Particle *mote = &work->particles[i];
 
       SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
-      SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
-                   Random16() & 0xffff);
+      SET_VELOCITY(mote, Random16() & EFFECT_ANGLE_MASK,
+                   Random16() & EFFECT_ANGLE_MASK,
+                   Random16() & EFFECT_ANGLE_MASK);
     }
     Actor_SetAnimationSpeedFar(actor, 0);
     velocityX = actor->velocityX;
@@ -512,7 +513,7 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
           spot.y += 16;
           EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, spot.x, spot.y,
                             size);
-          Particle_AdvanceWithGravity3D(spark, 60, -0x400);
+          Particle_AdvanceWithGravity3D(spark, 60, -Q16_ONE / 64);
           spark->variant--;
         }
       }

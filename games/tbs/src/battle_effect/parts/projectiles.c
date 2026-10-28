@@ -97,7 +97,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   // pixels a frame (speed / 32).
   for (i = 0; i != 64; i++) {
     struct Particle *spark = &PARTICLES[i];
-    s32 angle = Random16() & 0xffff;
+    s32 angle = Random16() & EFFECT_ANGLE_MASK;
     s32 speed = (Random16() & 255) + 128;
 
     SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
@@ -113,19 +113,19 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   // interpolation starts; none passes DJINNI_ANCHOR_USER_X.
   switch (anchor) {
   case DJINNI_ANCHOR_OVER_TARGET:
-    SET_VECTOR(goal, target->x.fixed, 0x3c0000, target->z.fixed);
+    SET_VECTOR(goal, target->x.fixed, 60 << 16, target->z.fixed);
     break;
   case DJINNI_ANCHOR_TARGET_X:
-    SET_VECTOR(goal, target->x.fixed, 0x3c0000, 0);
+    SET_VECTOR(goal, target->x.fixed, 60 << 16, 0);
     break;
   case DJINNI_ANCHOR_OVER_USER:
-    SET_VECTOR(goal, user->x.fixed, 0x3c0000, user->z.fixed);
+    SET_VECTOR(goal, user->x.fixed, 60 << 16, user->z.fixed);
     break;
   case DJINNI_ANCHOR_USER_X:
-    SET_VECTOR(goal, user->x.fixed, 0x3c0000, 0);
+    SET_VECTOR(goal, user->x.fixed, 60 << 16, 0);
     break;
   case DJINNI_ANCHOR_CENTRE:
-    SET_VECTOR(goal, 0, 0x3c0000, 0);
+    SET_VECTOR(goal, 0, 60 << 16, 0);
     break;
   }
   SET_VECTOR(step, (goal[0] - center[0]) / 40, (goal[1] - center[1]) / 40,
@@ -220,7 +220,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     if (frame == 64) {
       for (i = 0; i != 64; i++) {
         struct Particle *mote = &work->particles[i];
-        s32 angle = Random16() & 0xffff;
+        s32 angle = Random16() & EFFECT_ANGLE_MASK;
         s32 speed = (Random16() & 255) + 128;
 
         mote->x = *outX << 15;
@@ -569,7 +569,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
         shot->x = user->x.fixed;
         if (mode == PROJECTILE_VOLLEY_SLEET)
-          shot->y = user->y.fixed + ((Random16() & 15) << 16) + 0x3a0000;
+          shot->y = user->y.fixed + ((Random16() & 15) << 16) + (58 << 16);
         else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
           shot->y = user->y.fixed + height / 2;
         else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
@@ -591,11 +591,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         shot->velocityX = (target->x.fixed - shot->x) / steps;
         if (mode == PROJECTILE_VOLLEY_SLEET)
           shot->velocityY = (s32)(target->y.fixed + ((Random16() & 63) << 16) -
-                                  shot->y - 0xc0000) /
+                                  shot->y - (12 << 16)) /
                             steps;
         else if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
           shot->velocityY = (s32)(target->y.fixed + ((Random16() & 7) << 16) -
-                                  shot->y + 0x160000) /
+                                  shot->y + (22 << 16)) /
                             steps;
         else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
           shot->velocityY = (s32)(target->y.fixed +
@@ -603,7 +603,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                             steps;
         else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
           shot->velocityY = (s32)(target->y.fixed + ((Random16() & 31) << 16) -
-                                  shot->y + 0x40000) /
+                                  shot->y + (4 << 16)) /
                             steps;
         else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1 ||
                  mode == PROJECTILE_VOLLEY_WING_STROKE ||
@@ -957,8 +957,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
                            Q_16_16_TO_INT(particle->y), size);
-          Particle_AdvanceWithGravity2D(particle, 60, 0x1000);
-          if (particle->y > 0x700000)
+          Particle_AdvanceWithGravity2D(particle, 60, Q16_ONE / 16);
+          if (particle->y > (112 << 16))
             particle->velocityY = -particle->velocityY / 2;
           particle->variant--;
         }
@@ -975,7 +975,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
                            Q_16_16_TO_INT(particle->y), size);
-          Particle_AdvanceWithGravity2D(particle, 60, -0x4000);
+          Particle_AdvanceWithGravity2D(particle, 60, -Q16_ONE / 4);
           particle->variant--;
         }
       }
@@ -997,10 +997,10 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct Actor *actor = slot->actor;
 
-  actor->acceleration = 0x20000;
-  actor->speedLimit = 0x80000;
-  actor->velocityY = 0x40000;
-  actor->gravity = 0xab85;
+  actor->acceleration = 2 << 16;
+  actor->speedLimit = 8 << 16;
+  actor->velocityY = 4 << 16;
+  actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   actor->snapToTarget = 1;
@@ -1039,7 +1039,7 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   actor->acceleration = speed;
   actor->speedLimit = speed;
   actor->snapToTarget = 1;
-  actor->gravity = 0xab85;
+  actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->velocityY = 0;
   actor->bounce = 0;
   actor->steeringFlags = 1;

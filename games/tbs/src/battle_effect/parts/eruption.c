@@ -156,7 +156,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
                 (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
                 ERUPTION_FIELD_MOTE_OFFSETS,
             screen.x - size / 2, screen.y - size, size, size * 2);
-        Particle_AdvanceWithGravity3D(mote, 64, -0x2000);
+        Particle_AdvanceWithGravity3D(mote, 64, -Q16_ONE / 8);
       }
     }
 
@@ -188,7 +188,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
           }
           if (puff->variant <= 20)
             puff->variant++;
-          Particle_AdvanceWithGravity3D(puff, 64, -0x2000);
+          Particle_AdvanceWithGravity3D(puff, 64, -Q16_ONE / 8);
         }
       }
     }

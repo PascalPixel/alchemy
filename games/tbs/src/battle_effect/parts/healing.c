@@ -245,7 +245,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     // but the frame loop moves the motes only along the line to the centre.
     for (i = 0; i != HEALING_MOTES; i++) {
       struct Particle *spark = &PARTICLES[i];
-      s32 heading = Random16() & 0xffff;
+      s32 heading = Random16() & EFFECT_ANGLE_MASK;
       s32 radius = (Random16() & 63) + 32;
 
       SET_POSITION(spark, Trig_Sin(heading) * radius, -50 << 16,

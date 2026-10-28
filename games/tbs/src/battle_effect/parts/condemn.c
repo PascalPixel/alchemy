@@ -79,11 +79,11 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // pass high up on the near side.
   drawPanel = 1;
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    swing[0] = -0x500000;
+    swing[0] = -(80 << 16);
   } else {
-    swing[0] = 0x700000;
+    swing[0] = 112 << 16;
   }
-  swing[1] = -0x200000;
+  swing[1] = -(32 << 16);
   for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
     s32 screenX;
@@ -106,11 +106,11 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // a frame while it moves, and comes back opaque on frame 33.
     if (frame == 32) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
-        swing[0] = -0x200000;
+        swing[0] = -(32 << 16);
       } else {
-        swing[0] = 0x480000;
+        swing[0] = 72 << 16;
       }
-      swing[1] = 0x180000;
+      swing[1] = 24 << 16;
       drawPanel = 0;
     }
     if (frame == 33) {
@@ -159,7 +159,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     angle = frame << 11;
     for (; i != 160; i++) {
       *scanline++ = lineOffset - ((Trig_Sin(angle) * ripple) >> 10);
-      angle += 0x800;
+      angle += EFFECT_TURN / 32;
     }
     if (drawPanel != 0) {
       if (work->args->side == EFFECT_SIDE_ENEMIES) {
@@ -227,9 +227,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // to twice its x at up to 2 pixels a frame.
     if (frame == CONDEMN_BREAK_FRAME) {
       target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-      target->velocityY = 0x10000;
-      target->acceleration = 0x20000;
-      target->speedLimit = 0x20000;
+      target->velocityY = 1 << 16;
+      target->acceleration = 2 << 16;
+      target->speedLimit = 2 << 16;
       target->gravity = 0;
       target->steeringFlags = 0;
       target->snapToTarget = 0;
@@ -237,10 +237,11 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(work->args->targets[0], -1, POSE_DAMAGE, -1, 0);
     }
     // Frame 120: the target, sent up at a pixel a frame with no gravity on
-    // frame 88, gets the battle units' usual gravity back (0xab85, as
-    // battle/motion.c sets).
+    // frame 88, gets the battle units' usual gravity back (BATTLE_UNIT_GRAVITY,
+    // as battle/motion.c sets).
     if (frame == CONDEMN_BOUNCE_FRAME) {
-      GetBattleObjectSlotFar(work->args->targets[0])->actor->gravity = 0xAB85;
+      GetBattleObjectSlotFar(work->args->targets[0])->actor->gravity =
+          BATTLE_UNIT_GRAVITY;
     }
     EFFECT_PRESENT_CANVAS(work);
   }

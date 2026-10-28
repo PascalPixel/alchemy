@@ -497,7 +497,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   // On EFFECT_SIDE_PARTY the canvas moves 112 pixels right, so everything is
   // drawn 112 pixels further left on it.
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -0x7000;
+    REG_BG2X = -(112 << 8);
     xOffset = -112;
   } else {
     REG_BG2X = 0;
@@ -514,7 +514,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     s32 radius = 192;
     s32 angle;
 
-    angle = Random16() & 0xffff;
+    angle = Random16() & EFFECT_ANGLE_MASK;
     shard->x = 0;
     if (mode == STAT_REDUCTION_DULL) {
       shard->y = ((i & 31) / 4 * 6 - 10) << 16;
@@ -524,10 +524,10 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       shard->z = (i % 4 * 8 - 16) << 16;
     }
     if (work->args->side == EFFECT_SIDE_PARTY)
-      shard->velocityX = 0x20000;
+      shard->velocityX = 2 << 16;
     else
-      shard->velocityX = -0x20000;
-    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + 0x10000;
+      shard->velocityX = -(2 << 16);
+    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + (1 << 16);
     shard->velocityZ = (Trig_Sin(angle) * radius) >> 6;
     shard->variant = Random16() & 0xff;
   }

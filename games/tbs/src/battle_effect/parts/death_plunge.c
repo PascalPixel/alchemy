@@ -97,7 +97,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     // down, raised by their own heights so they flip about their middles.
     // Actor.gravity is taken off velocityY each frame the actor is above
     // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame: 0x91eb
-    // here is about 0.57, the bounce's 0xab85 and 0x7851 about 0.67 and 0.47.
+    // here is about 0.57, the bounce's BATTLE_UNIT_GRAVITY and 0x7851 about
+    // 0.67 and 0.47.
     if (frame == 0) {
       target->velocityY = 15 << 16;
       target->gravity = 0x91eb;
@@ -117,7 +118,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
       target->velocityY = 8 << 16;
-      target->gravity = 0xab85;
+      target->gravity = BATTLE_UNIT_GRAVITY;
       user->velocityY = 5 << 16;
       user->gravity = 0x7851;
       user->acceleration = 1 << 16;
@@ -413,7 +414,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   // pixels; mote i waits i frames before it starts to rise.
   for (i = 0; i != 128; i++) {
     PARTICLES[i].y = 0;
-    PARTICLES[i].x = Random16() & 0xffff;
+    PARTICLES[i].x = Random16() & EFFECT_ANGLE_MASK;
     PARTICLES[i].z = (Random16() & 0x1ff) + i * 2;
     PARTICLES[i].variant = -i;
   }
@@ -479,8 +480,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The first 32 motes, each starting i frames in: each frame a mote
-    // turns 0x400 (about 5.6 degrees), rises 5 pixels and moves 4 pixels
-    // further out. The other 96 are placed but never drawn.
+    // turns EFFECT_TURN / 64 (about 5.6 degrees), rises 5 pixels and moves 4
+    // pixels further out. The other 96 are placed but never drawn.
     for (i = 0; i != 32; i++) {
       struct Particle *fleck = &PARTICLES[i];
 
@@ -490,7 +491,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
         point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
-        fleck->x += 0x400;
+        fleck->x += EFFECT_TURN / 64;
         fleck->y += 5 << 16;
         fleck->z += 64;
         Projection_Point(point, &screenPosition);
@@ -617,7 +618,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
 
-  // BG2's affine map, at 0x06003800 (screen block 7), shows tiles 0 to 255
+  // BG2's affine map, at BG_CANVAS_MAP (screen block 7), shows tiles 0 to 255
   // in order, so the canvas appears as one picture; each halfword holds two
   // one-byte tile numbers.
   i = 0;
@@ -626,7 +627,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       s16 entry;
 
       entry = ((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
-      *(volatile s16 *)(0x06003800 + i) = entry;
+      *(volatile s16 *)((u8 *)BG_CANVAS_MAP + i) = entry;
     }
   }
 
@@ -660,8 +661,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     y = *startY++ << 16;
     piece->x = x;
     piece->y = y;
-    vx = (x - 0x200000) >> 2;
-    vy = (y - 0x3c0000) >> 2;
+    vx = (x - (32 << 16)) >> 2;
+    vy = (y - (60 << 16)) >> 2;
     piece->velocityX = vx;
     piece->velocityY = vy;
     piece++;
@@ -683,7 +684,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                       BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) |
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
                       IO_WRITE_16);
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100,
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 256,
                   RGB(31, 31, 31) << 16 | RGB(31, 31, 31));
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
@@ -830,7 +831,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                 Q_16_16_TO_INT(piece->x), Q_16_16_TO_INT(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
-          Particle_AdvanceWithGravity2D(piece, 64, 0x4000);
+          Particle_AdvanceWithGravity2D(piece, 64, Q16_ONE / 4);
       }
     }
 
@@ -866,7 +867,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
         piece = &work->particles[i];
         piece->x = ((Random16() & 31) + 32) << 16;
         piece->y = ((Random16() & 31) + 80) << 16;
-        piece->velocityX = ((Random16() & 0x1ff) - 0x100) << 12;
+        piece->velocityX = ((Random16() & 0x1ff) - 256) << 12;
         piece->velocityY = 0;
         piece->variant = 0;
       }
@@ -890,7 +891,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           draw[1](canvas, work->sheet + (cell << 11),
                   Q_16_16_TO_INT(piece->x) - 16, Q_16_16_TO_INT(piece->y) - 32,
                   32, 64);
-          Particle_AdvanceWithGravity2D(piece, 60, -0x1000);
+          Particle_AdvanceWithGravity2D(piece, 60, -Q16_ONE / 16);
           piece->variant++;
         }
       }
@@ -990,13 +991,13 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   // (y) at a random angle (x) and close in 2 pixels a frame for 16 to 31
   // frames (variant).
   for (i = 0; i != 128; i++) {
-    PARTICLES[i].y = 0x800000;
-    PARTICLES[i].x = Random16() & 0xffff;
-    PARTICLES[i].z = (Random16() & 0x1ff) + 0x400;
+    PARTICLES[i].y = 128 << 16;
+    PARTICLES[i].x = Random16() & EFFECT_ANGLE_MASK;
+    PARTICLES[i].z = (Random16() & 0x1ff) + 1024;
     PARTICLES[i].variant = -i;
   }
   for (i = 0; i != 64; i++) {
-    work->particles[i].x = Random16() & 0xffff;
+    work->particles[i].x = Random16() & EFFECT_ANGLE_MASK;
     work->particles[i].y = (Random16() & 31) + 16;
     work->particles[i].variant = (i & 15) + 16;
   }
@@ -1013,7 +1014,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     Projection_ScaledUnit(args->user, &ground);
     REG_BG2X = (64 - ground.x) << 8;
     if (frame > 49)
-      REG_BLDALPHA = BLEND_ALPHA(0x70 - frame * 2, 16);
+      REG_BLDALPHA = BLEND_ALPHA(112 - frame * 2, 16);
     if (frame == 26) {
       Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE, -1,
@@ -1100,9 +1101,9 @@ void BattleEffect_DrawStreaks(void) {
 
       seed->head = r + 48;
       seed->tail = r + 40;
-      seed->pitch = Random16() & 0xffff;
-      seed->yaw = Random16() & 0xffff;
-      seed->roll = Random16() & 0xffff;
+      seed->pitch = Random16() & EFFECT_ANGLE_MASK;
+      seed->yaw = Random16() & EFFECT_ANGLE_MASK;
+      seed->roll = Random16() & EFFECT_ANGLE_MASK;
     }
   }
   point.y = 0;

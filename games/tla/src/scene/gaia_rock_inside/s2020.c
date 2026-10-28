@@ -49,7 +49,7 @@ void Func_02002020(void) {
   v_r5 = (s32)&gMainRoutineWork;
   v_r5 = (v_r5 + 0x214);
   Call2((void (*)())Func_02004ec4, 13, FIELD_AT(v_r5, s32, 0));
-  Call3((void (*)())Actor_ResetAndSetPosition, 13, 0x1f0, 0x2c8);
+  Call3((void (*)())Actor_ResetAndSetPosition, 13, 496, 712);
   FIELD_AT(v_r10, s32, 40) = 0x60000;
   Call1((void (*)())Actor_WaitForMoveById, 13);
   Call1((void (*)())FieldEvent_Wait, 45);

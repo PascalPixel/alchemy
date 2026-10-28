@@ -15,7 +15,7 @@ void Func_02001cac(void) {
   /* FAKEMATCH: keeps the first line's load before the register address is built
    */
   __asm__("" : : "r"(first));
-  scroll = (volatile u16 *)0x04000014;
+  scroll = &REG_BG1HOFS;
   *scroll = first;
   dma = REG_DMA0;
 
@@ -29,5 +29,5 @@ void Func_02001cac(void) {
     __asm__("" : : "r"(lines));
   } while (0);
   (void)dma[5];
-  Dma_Set(lines, (void *)scroll, 0xa2600001, (volatile u32 *)dma);
+  Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
 }

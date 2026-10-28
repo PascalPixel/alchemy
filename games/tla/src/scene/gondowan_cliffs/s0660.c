@@ -4,6 +4,7 @@
 #include "call.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -41,7 +42,7 @@ void Func_02000660(void) {
     Actor_TurnToFaceEachOther(16, gMainRoutineWork.currentOwner, 0);
     Func_0200128c((s32)MsgRrruffRrruff2);
     Func_02001294(16, 0);
-    Call3(Actor_ArmCallback, 16, 0x8000, 0);
+    Call3(Actor_ArmCallback, 16, FACING_WEST, 0);
     Func_02001214();
   }
 }

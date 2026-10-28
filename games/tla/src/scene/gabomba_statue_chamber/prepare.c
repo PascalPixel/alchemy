@@ -45,7 +45,7 @@ void Func_02001b14(void) {
   if (GameFlag_Test(0x8fd)) {
     Func_02001010();
     Func_02001064();
-    GabombaStatueChamber_ObjPosSet(8, 0x1a80000, 0x980000);
+    GabombaStatueChamber_ObjPosSet(8, PIXELS(424), PIXELS(152));
     wait(1);
     Func_02000f00();
   } else {

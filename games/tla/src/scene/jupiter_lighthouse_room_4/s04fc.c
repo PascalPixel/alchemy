@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -30,7 +31,7 @@ s32 Func_020004fc(void) {
   }
   Actor_SetSingleChildFlags(Actor_GetById(19), 0);
   if (GameFlag_Test(0xa06)) {
-    Func_02001e70(15, 0xa80000, 0x2080000);
+    Func_02001e70(15, PIXELS(168), PIXELS(520));
     Func_02000724(15);
   }
   return 0;

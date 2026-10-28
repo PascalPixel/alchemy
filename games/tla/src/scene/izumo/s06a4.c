@@ -1,4 +1,5 @@
 #include "izumo.h"
+#include "scene_tables.h"
 
 void Func_020006a4(void) {
   /* FAKEMATCH: the Call3 and Value calls of call.h set each call's arguments up
@@ -13,7 +14,7 @@ void Func_020006a4(void) {
   Func_02000d70(32, 0);
   FieldEvent_Wait(15);
   Value3((s32 (*)())Func_02000d88, gMainRoutineWork.currentOwner, 256, 30);
-  Call3((void (*)())Func_02000d40, 32, 200 << 16, 216 << 16);
+  Call3((void (*)())Func_02000d40, 32, PIXELS(200), PIXELS(216));
   Actor_ResetAndSetPositionInMode2(32, 200, 248);
   Actor_WaitForMoveById(32);
   FieldEvent_Wait(30);
@@ -36,7 +37,7 @@ void Func_020006a4(void) {
     Actor_WaitForMoveById(32);
     Func_02000da8(32, 1);
     FieldEvent_Wait(60);
-    Call3((void (*)())Actor_ArmCallback, 32, 0x4000, 0);
+    Call3((void (*)())Actor_ArmCallback, 32, FACING_SOUTH, 0);
     Func_02000d88(32, 265, 30);
     Func_02000d70(32, 0);
     Actor_SetSpritePriority(32, 3);
@@ -52,7 +53,7 @@ void Func_02000814(void) {
   Func_02000d60(MsgThisTokenIsn);
   Func_02000d88(32, 264, 30);
   Func_02000d70(32, 0);
-  Actor_ArmCallback(32, 0x2000, 0);
+  Actor_ArmCallback(32, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Func_02000d70(32, 0);
   Actor_SetAngleToward(32, gMainRoutineWork.currentOwner, 0);

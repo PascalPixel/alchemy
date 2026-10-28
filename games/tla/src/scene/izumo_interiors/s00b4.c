@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -203,7 +204,7 @@ void Func_02000378(void) {
     if (PartyInventory_FindOwner(451) != -1)
       FIELD_AT(work, u16, 346) = 1;
   }
-  ActorTurn(15, 0x4000, 0);
+  ActorTurn(15, FACING_SOUTH, 0);
   Func_020021cc();
 }
 
@@ -247,6 +248,6 @@ void Func_02000458(void) {
     }
     FlagSet(0x92b);
   }
-  ActorTurn(15, 0x4000, 0);
+  ActorTurn(15, FACING_SOUTH, 0);
   Func_020021cc();
 }

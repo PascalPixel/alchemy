@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "scene_tables.h"
 
 void Func_02002c38(void) {
   struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapWork;
@@ -24,7 +25,7 @@ void Func_02002c38(void) {
       spawned->collisionFlags = 9;
       spawned->unk5c[0] = 1;
     }
-    Actor_GetById(11)->angle = 0xd000;
+    Actor_GetById(11)->angle = FACING_NORTH + FACING_STEP;
   } else {
     Actor_SetModeById(11, 5);
   }

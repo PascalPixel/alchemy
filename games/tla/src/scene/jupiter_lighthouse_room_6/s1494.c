@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void wait(s32 frames);
@@ -24,8 +25,8 @@ void Func_02001494(void) {
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   wait(1);
-  Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
-                                   (z << 20) + 0x80000);
+  Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
+                                   (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_02001b9c()->y -= 0x80000;
 }

@@ -2,6 +2,7 @@
 #include "main_routine_work.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 void Func_0200120c(void);
 void Func_020012e4(s32 skip);
@@ -65,7 +66,7 @@ void Func_020007d8(void) {
   Func_0200128c((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
   Func_02001294(22, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x8000, 10);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 10);
   Actor_Jump(5, 6, 15);
   Actor_Jump(5, 6, 23);
   Func_02001294(5, 0);

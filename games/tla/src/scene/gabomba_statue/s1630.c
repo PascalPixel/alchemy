@@ -3,6 +3,7 @@
 #include "input.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -64,12 +65,12 @@ void Func_02001630(void) {
   leader->motionFlags = 0;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
   Actor_Walk(gMainRoutineWork.currentOwner, 472, 144);
-  Actor_Turn(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_Turn(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
-  Actor_Place(leader, 472 << 16, 0, 156 << 16);
+  Actor_Place(leader, PIXELS(472), 0, PIXELS(156));
   Func_02005664(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Func_02005854(123);

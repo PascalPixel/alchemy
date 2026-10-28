@@ -7,6 +7,7 @@
 #include "main_routine_work.h"
 #include "call.h"
 #include "field_sprite.h"
+#include "scene_tables.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
@@ -69,18 +70,18 @@ void Func_020010d4(void) {
   Func_02001da0();
   Call1(Func_02001ee8, 0);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call4(Actor_SetPositionAndResetMotion, Value1(Actor_GetById, 13), 0x1880000,
-        0, 0x10c0000);
+  Call4(Actor_SetPositionAndResetMotion, Value1(Actor_GetById, 13), PIXELS(392),
+        0, PIXELS(268));
   Call1(wait, 1);
   /* FAKEMATCH(temporary): the leader read before the first turn is built; as
    * gMainRoutineWork.currentOwner in the call, 34 of 640 instructions differ in
    * tla-en. */
   owner = gMainRoutineWork.currentOwner;
-  Call4(Func_02001e18, owner, 0x1680000, 0xb80000, turnA = 0xe000);
-  Call4(Func_02001e18, 7, 0x1780000, 0xb80000, turnA);
-  Call4(Func_02001e18, 11, 0x1680000, 0xa80000, turnA);
-  Call4(Func_02001e18, 6, 0x1a70000, 0xa80000, turnB = 0xa000);
-  Call4(Func_02001e18, 5, 0x1980000, 0xb80000, turnB);
+  Call4(Func_02001e18, owner, PIXELS(360), PIXELS(184), turnA = 0xe000);
+  Call4(Func_02001e18, 7, PIXELS(376), PIXELS(184), turnA);
+  Call4(Func_02001e18, 11, PIXELS(360), PIXELS(168), turnA);
+  Call4(Func_02001e18, 6, PIXELS(423), PIXELS(168), turnB = 0xa000);
+  Call4(Func_02001e18, 5, PIXELS(408), PIXELS(184), turnB);
   if (statue != 0) {
     sprite = statue->animation;
     sprite->nextFrame = 0;
@@ -103,12 +104,12 @@ void Func_020010d4(void) {
   Call1(Func_02001e48, MsgTheBlackOrb);
   Call2(Func_02001e60, 7, 0);
   Call2(Func_02001e90, 6, 258);
-  Call2(Func_02001e70, 6, 0x8000);
+  Call2(Func_02001e70, 6, FACING_WEST);
   Call2(Func_02001e60, 0x4006, 0);
   Value3(Func_02001e88, 5, 265, 20);
   Call2(Func_02001e60, 5, 0);
-  Call4(Actor_SetPositionAndResetMotion, Value1(Actor_GetById, 13), 0x1880000,
-        0, 0x1540000);
+  Call4(Actor_SetPositionAndResetMotion, Value1(Actor_GetById, 13), PIXELS(392),
+        0, PIXELS(340));
   Call1(Func_02001f10, 78);
   Value2(Func_02001eb8, 0x10002, 0);
   Value1(Func_02001ec8, 40);
@@ -122,19 +123,19 @@ void Func_020010d4(void) {
   Call2(Actor_WatchAndSetScript, 11, 13);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_02001e98, 0xcccc, 0x1999);
-  Call4(Camera_MoveWithinMapBounds, 0x1880000, -1, 0xf60000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(392), -1, PIXELS(246), 1);
   Call3(Actor_SetSpeedParameters, 13, 0xcccc, 0x6666);
   Call3(Actor_SetPositionAndCommit, 13, 392, 246);
   Call2(Actor_SetModeById, 9, 1);
   Call2(Actor_SetModeById, 10, 1);
-  statue->velocityY = 0x30000;
+  statue->velocityY = PIXELS(3);
   statue->gravity = 0x8000;
   Call3(Actor_SetSpeedParameters, 13, 0x19999, 0xcccc);
   Call3(Actor_SetPositionAndCommit, 13, 392, 234);
   Call1(FieldEvent_Wait, 10);
-  Call4(Camera_MoveWithinMapBounds, 0x1880000, -1, 0xa80000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(392), -1, PIXELS(168), 1);
   Call3(Actor_SetSpeedParameters, 13, 0xcccc, 0x6666);
-  Call3(Actor_SetPositionAndCommit, 13, 392, 0xa0);
+  Call3(Actor_SetPositionAndCommit, 13, 392, 160);
   Call1(Actor_Stop, gMainRoutineWork.currentOwner);
   Call1(Actor_Stop, 5);
   Call1(Actor_Stop, 6);
@@ -153,9 +154,9 @@ void Func_020010d4(void) {
   Call2(Func_02001e60, 0x4006, 0);
   Call2(Func_02001e70, 5, turnA);
   Call2(Func_02001e60, 0x1005, 0);
-  Call3(Actor_ArmCallback, 5, 0xa000, 0);
+  Call3(Actor_ArmCallback, 5, FACING_NORTHWEST, 0);
   Call3(Actor_SetSpeedParameters, 6, 0xcccc, 0x6666);
-  Call3(Actor_SetPositionAndReset, 6, 0x190, 172);
+  Call3(Actor_SetPositionAndReset, 6, 400, 172);
   Call2(Actor_SetModeById, 6, 9);
   Call1(FieldEvent_Wait, 20);
   Call2(Func_02001e60, 0x4006, 0);
@@ -164,7 +165,7 @@ void Func_020010d4(void) {
   Call2(Func_02001e60, 0x4006, 0);
   Value3(Func_02001e88, 11, 0x100, 0);
   Call2(Func_02001e60, 0x400b, 0);
-  Call2(Func_02001e70, 11, 0x3000);
+  Call2(Func_02001e70, 11, FACING_SOUTHEAST + FACING_STEP);
   Call2(Func_02001e60, 0x400b, 0);
   Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
   Call1(Func_02001f10, 0);
@@ -172,19 +173,19 @@ void Func_020010d4(void) {
     /* FAKEMATCH(temporary): the turn built before the other arguments; as a
      * plain 0xd000 argument, 2 of 640 instructions differ in tla-en. */
     s32 turn = 0xd000;
-    Call4(Func_02001e18, 12, 0x1900000, 0x1400000, turn);
+    Call4(Func_02001e18, 12, PIXELS(400), PIXELS(320), turn);
   }
   Call1(wait, 1);
   Call2(Func_02001e60, 12, 0);
   Call2(Actor_SetModeById, 6, 1);
   Call1(wait, 1);
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
-  Call3(Actor_ArmCallback, 5, 0x4000, 0);
-  Call3(Actor_ArmCallback, 6, 0x4000, 0);
-  Call3(Actor_ArmCallback, 7, 0x4000, 0);
-  Call3(Actor_ArmCallback, 11, 0x3000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Call3(Actor_ArmCallback, 5, FACING_SOUTH, 0);
+  Call3(Actor_ArmCallback, 6, FACING_SOUTH, 0);
+  Call3(Actor_ArmCallback, 7, FACING_SOUTH, 0);
+  Call3(Actor_ArmCallback, 11, FACING_SOUTHEAST + FACING_STEP, 0);
   Call2(Func_02001e98, 0x19999, 0x3333);
-  Call4(Camera_MoveWithinMapBounds, 0x1880000, -1, 0xc80000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(392), -1, PIXELS(200), 1);
   Call3(Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call3(Actor_SetPositionAndReset, 12, 404, 220);
   Call3(Actor_Jump, 12, 4, 10);
@@ -219,7 +220,7 @@ void Func_020010d4(void) {
   Value3(Func_02001e88, 5, 261, 20);
   Call3(Actor_SetSpeedParameters, 5, 0xcccc, 0x6666);
   Call3(Actor_SetPositionAndReset, 5, 420, 228);
-  Call2(Func_02001e70, 5, 0xa000);
+  Call2(Func_02001e70, 5, FACING_NORTHWEST);
   Call1(FieldEvent_Wait, 10);
   Call3(Actor_SetSpeedParameters, 5, 0x19999, 0xcccc);
   Call3(Actor_SetPositionAndReset, 5, 412, 222);

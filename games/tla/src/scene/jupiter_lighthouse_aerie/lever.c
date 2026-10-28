@@ -1,5 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct JupiterLighthouseAerieObject {
   u8 unk00[8];
@@ -29,7 +30,7 @@ void Func_020001b4(void) {
   Func_02002a88();
   Func_02002b18(0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Func_020017a8(11, 9, 0);
   FieldEvent_Wait(40);
   if (GameFlag_Test(0xa0b) == 0) {
@@ -53,7 +54,7 @@ void Func_02000264(void) {
   Func_02002a88();
   Func_02002b18(0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x8000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Func_020017a8(12, 10, 1);
   FieldEvent_Wait(40);
   if (GameFlag_Test(0xa0a) == 0) {

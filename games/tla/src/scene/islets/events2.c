@@ -5,6 +5,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 void Func_02003e64();
 void Func_02003e6c();
@@ -191,9 +192,9 @@ void Func_02000440(void) {
   Call1((void (*)())Func_02003f24, (s32)MsgWeLikeThis);
   Call2((void (*)())Func_02003f2c, 8, 0);
   Call2((void (*)())Func_02003f5c, 9, 0x102);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x8000, 0);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_WEST, 0);
   Call2((void (*)())Func_02003f2c, 9, 0);
-  Call2((void (*)())Func_02003f3c, 8, 0);
+  Call2((void (*)())Func_02003f3c, 8, FACING_EAST);
   Call3((void (*)())Actor_Jump, 9, 4, 10);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Call2((void (*)())Func_02003f5c, 9, 0x102);
@@ -204,7 +205,7 @@ L_020084b6:
         0);
   Call1((void (*)())Func_02003f24, (s32)MsgLookWeRe);
   Call2((void (*)())Func_02003f2c, 8, 0);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
   ((void (*)())Func_02003e6c)();
   return;
 }
@@ -265,10 +266,10 @@ void Func_02000568(void) {
     Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)object,
           (leader->x + object->x) / 2, leader->y, (leader->z + object->z) / 2);
     Call1((void (*)())wait, 20);
-    Actor_SetPositionAndResetMotion(object, 0x780000, 0x800000, 0x1380000);
+    Actor_SetPositionAndResetMotion(object, PIXELS(120), PIXELS(128), PIXELS(312));
     Call2((void (*)())Actor_SetModeById, 10, 5);
     Call1((void (*)())wait, 10);
-    Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, 0x4000);
+    Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTH);
     spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 0x1e9,
                                              leader->x, 0x980000, leader->z);
     if (spawned != 0) {
@@ -288,7 +289,7 @@ void Func_02000568(void) {
       Func_02003dfc(spawned);
       Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 1);
     }
-    Call2((void (*)())Func_02003f3c, 10, 0);
+    Call2((void (*)())Func_02003f3c, 10, FACING_EAST);
     Call1((void (*)())GameFlag_SetBit, 0xaa4);
   }
   ((void (*)())Func_02003e6c)();

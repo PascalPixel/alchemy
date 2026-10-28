@@ -4,6 +4,7 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Import_ActorSetAnimation(s32 actor, s32 animation);
@@ -21,11 +22,11 @@ void Func_02000098(s32 id) {
 
   Import_ActorSetAnimation(id, 1);
   Actor_SetSingleChildFlags(Actor_GetById(id), 1);
-  object->x -= 0xc0000;
+  object->x -= PIXELS(12);
   ((struct ActorSprite *)object->animation)->rotation = 0;
   Task_Wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(id), 1);
-  object->velocityY = 0x40000;
+  object->velocityY = PIXELS(4);
   object->motionFlags = 3;
   Task_Wait(40);
 }
@@ -76,7 +77,7 @@ void Func_020000f0(void) {
   Actor_SetSingleChildFlags(Actor_GetById(8), 1);
   Task_Wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(8), 1);
-  actor->velocityY = 0x40000;
+  actor->velocityY = PIXELS(4);
   actor->motionFlags = 3;
   Task_Wait(40);
   Call2(Import_EventShowMessageAndWait, 8, 0);
@@ -86,14 +87,14 @@ void Func_020000f0(void) {
   Call3(Func_02003298, 8, 0, 20);
   Import_ActorShowEmote(8, 0x101, 20);
   Call2(Import_EventShowMessageAndWait, 8, 0);
-  Call3(Actor_ArmCallback, 8, 0x5000, 40);
-  Call3(Actor_ArmCallback, 8, 0xb000, 40);
-  Call3(Actor_ArmCallback, 8, 0x8000, 40);
+  Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 40);
+  Call3(Actor_ArmCallback, 8, FACING_NORTHWEST + FACING_STEP, 40);
+  Call3(Actor_ArmCallback, 8, FACING_WEST, 40);
   Import_ActorShowEmote(8, 0x100, 20);
   Call3(Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
-  Call3(Actor_SetPositionAndReset, 8, 0x1a0, 0x2a8);
+  Call3(Actor_SetPositionAndReset, 8, 416, 680);
   Call2(Import_EventShowMessageAndWait, 8, 0);
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x8000, 20);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 20);
   Call2(Import_ActorSetAttachedEffect, gMainRoutineWork.currentOwner, 0x102);
   Call1(FieldEvent_Wait, 20);
   Call2(Import_EventShowMessageAndWait, 8, 0);
@@ -134,14 +135,14 @@ void Func_020002b4(void) {
   Actor_SetSingleChildFlags(Actor_GetById(5), 1);
   Task_Wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(5), 1);
-  actor->velocityY = 0x40000;
+  actor->velocityY = PIXELS(4);
   actor->motionFlags = 3;
   Task_Wait(40);
   Import_ActorShowEmote(5, 0x100, 20);
   Import_EventShowMessageAndWait(5, 0);
-  Call3(Actor_ArmCallback, 5, 0x6000, 20);
-  Call3(Actor_ArmCallback, 5, 0xa000, 20);
-  Call3(Actor_ArmCallback, 5, 0x8000, 40);
+  Call3(Actor_ArmCallback, 5, FACING_SOUTHWEST, 20);
+  Call3(Actor_ArmCallback, 5, FACING_NORTHWEST, 20);
+  Call3(Actor_ArmCallback, 5, FACING_WEST, 40);
   Actor_Jump(5, 4, 20);
   Import_EventShowMessageAndWait(5, 0);
   Actor_SetAngleToward(5, gMainRoutineWork.currentOwner, 0);

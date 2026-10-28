@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "scene_tables.h"
 
 void Func_02002780(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
@@ -21,7 +22,7 @@ void Func_02002780(void) {
   Func_02003e0c(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z);
   Func_02003e14(object);
-  object->angle = 0xc000;
+  object->angle = FACING_NORTH;
   Actor_SetMovementTypeById(party->currentOwner, gData_02004028);
   wait(12);
   Func_02003ffc(123);

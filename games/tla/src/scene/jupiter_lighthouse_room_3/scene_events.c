@@ -60,17 +60,17 @@ s32 Func_02000250(void) {
   if (GameFlag_Test(0xa04)) {
     object = Actor_GetById(14);
     object->motionFlags = 0;
-    object->terrainHeight = -0x200000;
-    object->y = -0x200000;
-    Func_020023b0_(14, 0x1480000, 0x2480000);
+    object->terrainHeight = PIXELS(-32);
+    object->y = PIXELS(-32);
+    Func_020023b0_(14, PIXELS(328), PIXELS(584));
     Func_02002368(object->x, object->z, 0, 0);
   }
   if (GameFlag_Test(0xa05)) {
     object = Actor_GetById(15);
     object->motionFlags = 0;
-    object->terrainHeight = -0x200000;
-    object->y = -0x200000;
-    Func_020023b0_(15, 0x2080000, 0x2480000);
+    object->terrainHeight = PIXELS(-32);
+    object->y = PIXELS(-32);
+    Func_020023b0_(15, PIXELS(520), PIXELS(584));
     Func_02002368(object->x, object->z, 0, 0);
   }
   Actor_GetById(8)->priorityFlags |= 32;

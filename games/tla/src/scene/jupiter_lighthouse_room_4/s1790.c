@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_event.h"
+#include "scene_tables.h"
 
 void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
@@ -26,8 +27,8 @@ void Func_02001790(void) {
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   wait(1);
-  Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
-                                   (z << 20) + 0x80000);
+  Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
+                                   (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_02001ea8()->y += 0xfff80000;
 }

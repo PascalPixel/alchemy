@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct GateEventWork {
   u8 unk000[362];
@@ -80,7 +81,7 @@ next:
 
     Func_02001adc(id);
     object->motionFlags = 0;
-    object->y = 0x240000;
+    object->y = PIXELS(36);
     i++;
   }
   if (i < 1)
@@ -98,7 +99,7 @@ next:
 
     Func_02001adc(id);
     object->motionFlags = 0;
-    object->y = 0x240000;
+    object->y = PIXELS(36);
     i++;
   }
   if (i < 2)

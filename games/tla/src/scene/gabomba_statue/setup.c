@@ -4,6 +4,7 @@
 #include "input.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Func_02005714(s32 id, s32 a, s32 b);
@@ -68,7 +69,7 @@ void Func_02000fc0(void) {
   FieldEvent_Wait(40);
   Func_02005754(MsgGabombaAcceptOffering);
   Func_02005764(24, 0);
-  Camera_MoveWithinMapBounds(0x1880000, -1, 0x1000000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(392), -1, PIXELS(256), 1);
   Func_020057b4();
   Func_02005854(220);
   wait(1);

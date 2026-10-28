@@ -4,6 +4,8 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "call.h"
+#include "scene_tables.h"
+#include "io_reg.h"
 
 struct MapLayerBits {
   u8 unk00[23];
@@ -79,7 +81,7 @@ s32 Func_02000988(void) {
     if (GameFlag_Test(0x886)) {
       actor = Actor_GetById(17);
       Call6(Func_020011dc, 124, 1, 1, 1, 119, 43);
-      Call3(Func_0200124c, 17, 0x7780000, 0x2d80000);
+      Call3(Func_0200124c, 17, PIXELS(1912), PIXELS(728));
       height = Map_GetTerrainHeight(0, actor->x, actor->z);
       actor->y = height;
       actor->terrainHeight = height;
@@ -88,14 +90,14 @@ s32 Func_02000988(void) {
   Actor_SetModeById(16, 4);
   if (GameFlag_Test(0x884)) {
     Call6(Func_020011d4, 74, 31, 1, 1, 74, 33);
-    Func_0200124c(15, 0x4a90000, 0x2120000);
+    Func_0200124c(15, PIXELS(1193), PIXELS(530));
     Actor_GetById(15)->priorityFlags |= 2;
     Actor_GetById(15)->collisionFlags = 0;
     Actor_SetModeById(15, 2);
   } else {
     Actor_GetById(15)->collisionFlags |= 16;
   }
-  Iwram_CopyWords(gData_02001ae0, (void *)0x05000018, 8);
+  Iwram_CopyWords(gData_02001ae0, (void *)&BG_PLTT_COLOR(0, 12), 8);
   Task_Add(Func_02000738, 0x480);
   ((struct MapLayerBits *)Ram_HeapSlots->mapWork)->priority = 1;
 done:

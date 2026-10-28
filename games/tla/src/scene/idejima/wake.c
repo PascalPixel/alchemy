@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -56,15 +57,15 @@ void Func_02002c64(void) {
   Func_02003310(0);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Task_Wait(1);
-  Call4(Camera_MoveWithinMapBounds, 0x1800000, -1, 0x2d80000, 0);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(384), -1, PIXELS(728), 0);
   Task_Wait(1);
   Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 41);
   Task_Wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Task_Wait(1);
-  Call3(Func_02003228, gMainRoutineWork.currentOwner, 0x1800000, 0x2d80000);
-  Call3(Func_02003228, 11, 0x1800000, 0x2be0000);
+  Call3(Func_02003228, gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
+  Call3(Func_02003228, 11, PIXELS(384), PIXELS(702));
   Task_Wait(1);
   Func_02003180();
   Task_Wait(1);

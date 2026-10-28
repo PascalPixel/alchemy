@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 s32 Math_Cosine(s32 angle);
 
@@ -11,7 +12,7 @@ s32 Func_020003d4(struct Actor *object) {
   object->motionFlags = 3;
   if (step < 32) {
     if (step == 0)
-      object->velocityY = 0x10000;
+      object->velocityY = PIXELS(1);
     animation[9] = Math_Cosine(step << 12) / 128;
   }
   (*phase)++;

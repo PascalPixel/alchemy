@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "scene_tables.h"
 
 void Func_02003fbc(void);
 void Func_02003fc4(void);
@@ -38,7 +39,7 @@ void Func_02001a68(void) {
     Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
           0x19999, 0xcccc);
     Call3((void (*)())Actor_SetPositionAndCommit,
-          gMainRoutineWork.currentOwner, 152, 0x300);
+          gMainRoutineWork.currentOwner, 152, 768);
     leader->update = (void (*)(void))Func_02001278;
     Call2((void (*)())Actor_SetPartAttribute,
           Actor_GetById(gMainRoutineWork.currentOwner), 15);
@@ -75,7 +76,7 @@ void Func_02001a68(void) {
     Func_02003fbc();
     Call1((void (*)())Func_02003f24, (s32)MsgYouAllSet + 4);
     Call2((void (*)())Func_02003f2c, 9, 0);
-    Call2((void (*)())Func_02003f3c, 9, 0x4000);
+    Call2((void (*)())Func_02003f3c, 9, FACING_SOUTH);
   }
   Func_02003e6c();
 }
@@ -86,7 +87,7 @@ void Func_02001bf4(void) {
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
   Func_02003f24((s32)MsgMyPopS);
   Func_02003f2c(9, 0);
-  Call2((void (*)())Func_02003f3c, 9, 0xb000);
+  Call2((void (*)())Func_02003f3c, 9, FACING_NORTHWEST + FACING_STEP);
   Func_02003e6c();
 }
 

@@ -25,8 +25,8 @@ void Func_02001bc4();
 void Func_02000384(s32 mode) {
   gData_02002230 = 1;
   if (mode != 2) {
-    Iwram_CopyWords(gData_02002258, (void *)0x05000180, 32);
-    Iwram_CopyWords(gData_02002278, (void *)0x050001a0, 32);
+    Iwram_CopyWords(gData_02002258, (void *)&BG_PLTT_COLOR(12, 0), 32);
+    Iwram_CopyWords(gData_02002278, (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (GameFlag_Test(0xa00) || mode == 1) {
     s32 zero = 0; /* FAKEMATCH: ⚓️ builds the zero in r2 and the counter address
@@ -35,7 +35,7 @@ void Func_02000384(s32 mode) {
     gData_0200222c = zero;
     Task_Add(Func_020002c8, 1152);
   } else {
-    Dma_Set(gData_0200227c, (void *)0x05000184, 0x84000002, REG_DMA3);
+    Dma_Set(gData_0200227c, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2), REG_DMA3);
   }
 }
 

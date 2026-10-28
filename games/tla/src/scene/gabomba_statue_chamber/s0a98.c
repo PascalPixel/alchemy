@@ -1,4 +1,5 @@
 #include "gabomba_statue_chamber.h"
+#include "scene_tables.h"
 
 void Actor_RefreshSelectorById(u32 id);
 
@@ -12,12 +13,12 @@ void Func_02000a98(s32 x, s32 z) {
   object->motionFlags = 0;
   GabombaStatueChamber_ObjSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
   GabombaStatueChamber_ObjWalk(gMainRoutineWork.currentOwner, x, z);
-  GabombaStatueChamber_ObjArm(gMainRoutineWork.currentOwner, 0xc000, 0);
+  GabombaStatueChamber_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
-  Func_02001d48(object, x << 16, -0xc0000, z << 16);
+  Func_02001d48(object, x << 16, PIXELS(-12), z << 16);
   Func_02001d50(object);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   GabombaStatueChamber_SePlay(123);

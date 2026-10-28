@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "scene_tables.h"
 
 void Func_0200267c(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
@@ -22,7 +23,7 @@ void Func_0200267c(void) {
   Func_02003e0c(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z);
   Func_02003e14(object);
-  object->angle = 0xc000;
+  object->angle = FACING_NORTH;
   exit = &work->exit;
   index = *exit;
   /* FAKEMATCH: the listing loads the exit before it builds the cue number */

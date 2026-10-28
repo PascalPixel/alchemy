@@ -6,6 +6,7 @@
 #include "scene_ids.h"
 #include "frame.h"
 #include "field_sprite.h"
+#include "scene_tables.h"
 
 struct EventWork1ac {
   u8 unk000[0x1ac];
@@ -59,8 +60,8 @@ void Func_020015cc(void) {
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   wait(1);
-  Actor_SetPositionAndResetMotion(leader, (x << 20) + 0x80000, leader->y,
-                                   (z << 20) + 0x80000);
+  Actor_SetPositionAndResetMotion(leader, (x << 20) + PIXELS(8), leader->y,
+                                   (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_02001cdc()->y -= 0x80000;
 }

@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "flag_call.h"
 #include "call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
@@ -17,9 +18,9 @@ void Func_0200115c(void) {
     s32 other;
 
     Flag_Set(0x230);
-    Call3((void (*)())Func_0200129c, 9, 296 << 16, 160 << 16);
+    Call3((void (*)())Func_0200129c, 9, PIXELS(296), PIXELS(160));
     object->speedLimit = 0x18000;
-    object->velocityY = 0xf0000;
+    object->velocityY = PIXELS(15);
     Call3((void (*)())Actor_SetPositionAndCommit, 9, 344,
           ((owner->z >> 19) << 3) + 24);
     Actor_Stop(8);

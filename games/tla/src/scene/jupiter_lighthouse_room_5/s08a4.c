@@ -3,6 +3,7 @@
 #include "call.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 struct JupiterLighthouseRoom5EventWork {
   u8 unk000[0x1c4];
@@ -53,21 +54,21 @@ void Func_020008a4(void) {
   Func_02002938(22, 0, 5);
   Call3((void (*)())Actor_SetPositionAndReset, 4, 68, 280);
   Actor_SetPositionAndReset(4, 68, 272);
-  Call2((void (*)())Func_02002940, 4, 0x8000);
+  Call2((void (*)())Func_02002940, 4, FACING_WEST);
   FieldEvent_Wait(20);
-  Call2((void (*)())Func_02002940, 4, 0xc000);
+  Call2((void (*)())Func_02002940, 4, FACING_NORTH);
   FieldEvent_Wait(20);
-  Call2((void (*)())Func_02002940, 4, 0);
+  Call2((void (*)())Func_02002940, 4, FACING_EAST);
   FieldEvent_Wait(20);
-  Call2((void (*)())Func_02002940, 4, 0xc000);
+  Call2((void (*)())Func_02002940, 4, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_SetSingleChildFlags(Actor_GetById(22), 0);
   Actor_SetPartAttribute(Actor_GetById(22), 15);
   angle = 0x4000;
-  Func_02002900(22, 0x400000, 0xe10000, angle);
+  Func_02002900(22, PIXELS(64), PIXELS(225), angle);
   Func_02000734();
   FieldEvent_Wait(40);
-  Camera_MoveWithinMapBounds(0x440000, -1, 0xf00000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(68), -1, PIXELS(240), 1);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 22, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Motion_SetModeAndWaitAnimation(22, 4);
@@ -89,7 +90,7 @@ void Func_020008a4(void) {
   Func_02002938(22, 0, 5);
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_Wait(30);
-  Camera_MoveWithinMapBounds(0x440000, -1, 0x1000000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(68), -1, PIXELS(256), 1);
   Actor_CommitPositionAndActivate(22, 0, 16);
   FieldEvent_Wait(30);
   Func_02000810(22, 4);

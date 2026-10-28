@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_event.h"
 #include "call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -16,26 +17,26 @@ void Func_02002fd4(void) {
   if (!GameFlag_Test(0x863)) {
     struct Actor *actor;
 
-    Call3(Func_02003228, 8, 0x1a00000, 0x2a80000);
+    Call3(Func_02003228, 8, PIXELS(416), PIXELS(680));
     Call6(Func_02003190, 38, 32, 2, 1, 25, 42);
     actor = Actor_GetById(8);
     Actor_SetSingleChildFlags(Actor_GetById(8), 0);
-    actor->angle = 0x4000;
+    actor->angle = FACING_SOUTH;
     actor->motionFlags = 0;
-    actor->y = 0xc0000;
+    actor->y = PIXELS(12);
     actor->collisionFlags = 0;
     Import_ActorSetAnimation(8, 5);
   }
   if (!GameFlag_Test(0x864)) {
     struct Actor *actor;
 
-    Call3(Func_02003228, 5, 0x1200000, 0x2e80000);
+    Call3(Func_02003228, 5, PIXELS(288), PIXELS(744));
     Call6(Func_02003190, 38, 33, 2, 1, 17, 46);
     actor = Actor_GetById(5);
     Actor_SetSingleChildFlags(Actor_GetById(5), 0);
-    actor->angle = 0x4000;
+    actor->angle = FACING_SOUTH;
     actor->motionFlags = 0;
-    actor->y = 0xc0000;
+    actor->y = PIXELS(12);
     actor->collisionFlags = 0;
     Import_ActorSetAnimation(5, 18);
   }
@@ -44,12 +45,12 @@ void Func_02002fd4(void) {
     struct Actor *actor;
 
     actor = Actor_GetById(6);
-    Call3(Func_02003228, 6, 0xf00000, 0x2880000);
+    Call3(Func_02003228, 6, PIXELS(240), PIXELS(648));
     Call6(Func_02003190, 38, 34, 2, 1, 14, 40);
     Import_ActorSetAnimation(6, 19);
     Actor_SetSingleChildFlags(Actor_GetById(6), 0);
     actor->motionFlags = 0;
-    actor->y = 0xc0000;
+    actor->y = PIXELS(12);
   }
   Import_MapCopyCellPictureIndicesRect(72, 42, 75, 40, 1, 1);
   Task_Wait(1);

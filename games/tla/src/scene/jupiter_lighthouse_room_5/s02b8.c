@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 extern s32 gData_02003274;
 extern s32 gData_02003278;
@@ -76,7 +77,7 @@ void Func_020002b8(void) {
     return;
   GameFlag_SetBit(2560);
   Func_020029a8(0);
-  Func_02002940(gMainRoutineWork.currentOwner, 0xc000);
+  Func_02002940(gMainRoutineWork.currentOwner, FACING_NORTH);
   /* FAKEMATCH(temporary): the pulse state 3 held from the turn on, so its
    * register spans the quickening loop and the pulse's address and zero take
    * r9 and r11; as a plain 3, 30 of 395 instructions differ in tla-en. */
@@ -168,10 +169,10 @@ quicken:
   d->motionFlags = 0;
   i = 15;
 rise:
-  a->y += 0x20000;
-  b->y += 0x20000;
-  c->y += 0x20000;
-  d->y += 0x20000;
+  a->y += PIXELS(2);
+  b->y += PIXELS(2);
+  c->y += PIXELS(2);
+  d->y += PIXELS(2);
   wait(1);
   if (--i >= 0)
     goto rise;

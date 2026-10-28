@@ -5,6 +5,7 @@
 #include "call.h"
 #include "macros.h"
 #include "task.h"
+#include "scene_tables.h"
 
 struct JupiterLighthouseRoom5EventWork1ac {
   u8 unk000[0x1ac];
@@ -34,7 +35,7 @@ s32 Func_02000ae8(void) {
     Flag_Clear(0xa22);
   if (Flag_IsSet(0xa22)) {
     angle = 0x4000;
-    Call4((void (*)())Func_02002900, 22, 0x400000, 0xe10000, angle);
+    Call4((void (*)())Func_02002900, 22, PIXELS(64), PIXELS(225), angle);
   }
   Func_020029c8(gData_02002fb8);
   Actor_SetActionCallback(Actor_GetById(64), 9);

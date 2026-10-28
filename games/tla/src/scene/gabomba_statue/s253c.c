@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "scene_tables.h"
 
 struct Wanderer {
   u8 unk00[98];
@@ -148,20 +149,20 @@ void Func_0200253c(void) {
   Actor_SetSpeed(23, 0x13333, 0x9999);
   Actor_SetMovementTypeAndWaitById(23, gData_02005be8);
   FieldEvent_Wait(40);
-  Func_02005774_(23, 0xd000);
+  Func_02005774_(23, FACING_NORTH + FACING_STEP);
   Func_02005764_(23, 0);
   Camera_SetSpeed(0x4cccc, 0x9999);
-  Camera_SetBounds(217 << 17, -1, 168 << 16, 1);
+  Camera_SetBounds(217 << 17, -1, PIXELS(168), 1);
   Func_020057b4();
   FieldEvent_Wait(20);
-  Actor_Turn(6, 0x2000, 0);
-  Actor_Turn(5, 0xa000, 0);
-  Actor_Turn(gMainRoutineWork.currentOwner, 0xa000, 0);
-  Actor_Turn(7, 0x2000, 40);
-  Actor_GetById(7)->angle = 0x4000;
+  Actor_Turn(6, FACING_SOUTHEAST, 0);
+  Actor_Turn(5, FACING_NORTHWEST, 0);
+  Actor_Turn(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_Turn(7, FACING_SOUTHEAST, 40);
+  Actor_GetById(7)->angle = FACING_SOUTH;
   Actor_GetById(gMainRoutineWork.currentOwner)->angle = 0x4000;
-  Actor_GetById(6)->angle = 0x4000;
-  Actor_GetById(5)->angle = 0x4000;
+  Actor_GetById(6)->angle = FACING_SOUTH;
+  Actor_GetById(5)->angle = FACING_SOUTH;
   Actor_GetById(7)->actionFlags &= 0xfe;
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
   Actor_GetById(6)->actionFlags &= 0xfe;
@@ -216,11 +217,11 @@ void Func_020027cc(void) {
   Func_0200578c_ArgsFirst(6, 256, 0);
   Func_0200578c_ArgsFirst(7, 256, 0);
   Func_0200578c_ArgsFirst(23, 256, 0);
-  Actor_Turn(gMainRoutineWork.currentOwner, 0xc000, 0);
-  Actor_Turn(5, 0xc000, 0);
-  Actor_Turn(6, 0xc000, 0);
-  Actor_Turn(7, 0xc000, 0);
-  Actor_Turn(23, 0xb000, 60);
+  Actor_Turn(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_Turn(5, FACING_NORTH, 0);
+  Actor_Turn(6, FACING_NORTH, 0);
+  Actor_Turn(7, FACING_NORTH, 0);
+  Actor_Turn(23, FACING_NORTHWEST + FACING_STEP, 60);
   Func_02005854(130);
   Actor_SetPartAttribute(Actor_GetById(9), 7);
   Actor_SetPartAttribute(Actor_GetById(10), 7);

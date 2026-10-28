@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_room_m.h"
+#include "scene_tables.h"
 
 extern u32 gData_02005548[];
 
@@ -169,21 +170,21 @@ void Func_02000cac(s32 arg) {
     I_Func_020048bc(0, 5, 9, 0, 8, 2, 5, 2, 0, 1, 0);
   }
   Actor_Stop(4);
-  I_Actor_ArmCallback(4, 0x4000, 0);
-  I_Func_02004964(7, 16, 0, 0x8000);
-  I_Func_02004964(28, -16, 0, 0);
-  I_Func_02004964(6, 16, 24, 0x8000);
-  I_Func_02004964(5, -16, 24, 0);
+  I_Actor_ArmCallback(4, FACING_SOUTH, 0);
+  I_Func_02004964(7, 16, 0, FACING_WEST);
+  I_Func_02004964(28, -16, 0, FACING_EAST);
+  I_Func_02004964(6, 16, 24, FACING_WEST);
+  I_Func_02004964(5, -16, 24, FACING_EAST);
   Camera_FollowActor(5, 1);
   Actor_WaitForMoveById(5);
   I_Func_020048cc(28, 0x102, 30);
   Func_0200489c(28, 0, 5);
-  I_Actor_ArmCallback(5, 0xc000, 0);
-  I_Actor_ArmCallback(6, 0xb000, 0);
+  I_Actor_ArmCallback(5, FACING_NORTH, 0);
+  I_Actor_ArmCallback(6, FACING_NORTHWEST + FACING_STEP, 0);
   I_Func_020048cc(7, 0x101, 30);
-  I_Actor_ArmCallback(5, 0xd000, 0);
+  I_Actor_ArmCallback(5, FACING_NORTH + FACING_STEP, 0);
   FieldMessage_ShowAtActor(7, 0);
-  I_Actor_ArmCallback(4, 0, 0);
+  I_Actor_ArmCallback(4, FACING_EAST, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Actor_SetModeById(28, 3);
     FieldEvent_Wait(20);
@@ -197,7 +198,7 @@ void Func_02000cac(s32 arg) {
     Func_0200489c(28, 0, 5);
   }
   Motion_SetVarCbAndRefresh(5, 2);
-  I_Actor_ArmCallback(4, 0x4000, 0);
+  I_Actor_ArmCallback(4, FACING_SOUTH, 0);
   FieldEvent_Wait(5);
   Func_0200489c(5, 0, 5);
   I_Func_020048cc(6, 0x101, 30);
@@ -207,10 +208,10 @@ void Func_02000cac(s32 arg) {
   Actor_SetMovementTypeById(4, arg != 0 ? gData_02005748
                                                       : gData_0200578c);
   FieldEvent_Wait(30);
-  I_Actor_ArmCallback(6, 0x8000, 0);
-  I_Actor_ArmCallback(5, 0, 0);
-  I_Actor_ArmCallback(28, 0, 0);
-  I_Actor_ArmCallback(7, 0x8000, 0);
+  I_Actor_ArmCallback(6, FACING_WEST, 0);
+  I_Actor_ArmCallback(5, FACING_EAST, 0);
+  I_Actor_ArmCallback(28, FACING_EAST, 0);
+  I_Actor_ArmCallback(7, FACING_WEST, 0);
   FieldEvent_Wait(10);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
@@ -231,10 +232,10 @@ void Func_02000cac(s32 arg) {
                                                       : gData_02005950);
   Func_020048e4(0x8000, 0x1000);
   if (arg != 0) {
-    I_Motion_CamBounds(0x02a50000, 0xffc00000, 0x011f0000, 1);
+    I_Motion_CamBounds(PIXELS(677), PIXELS(-64), PIXELS(287), 1);
     Func_020048f4();
   } else {
-    I_Motion_CamBounds(0x03b60000, 0xffc00000, 0x011f0000, 1);
+    I_Motion_CamBounds(PIXELS(950), PIXELS(-64), PIXELS(287), 1);
     Func_020048f4();
   }
   Actor_RefreshSelectorById(4);
@@ -244,16 +245,16 @@ void Func_02000cac(s32 arg) {
   Actor_RefreshSelectorById(28);
   FieldEvent_Wait(20);
   angle = 0x2000;
-  I_Func_0200484c(2, 0x02e50000, 0xe80000, angle);
+  I_Func_0200484c(2, PIXELS(741), PIXELS(232), angle);
   Func_020048e4(0x40000, 0x8000);
-  I_Motion_CamBounds(0x3200000, 0, 0x10e0000, 1);
+  I_Motion_CamBounds(PIXELS(800), 0, PIXELS(270), 1);
   Func_020048f4();
   Func_020049c4(39);
   FieldEvent_Wait(50);
   Motion_SetVarCbAndRefresh(0, 2);
   Func_0200489c(0, 0, 5);
   Actor_SetModeById(3, 0);
-  I_Func_020048b4(3, 0xa000);
+  I_Func_020048b4(3, FACING_NORTHWEST);
   Func_0200489c(3, 0, 5);
   I_Func_020048b4(3, angle);
   Actor_SetModeById(3, 9);
@@ -305,7 +306,7 @@ void Func_02000cac(s32 arg) {
   I_Actor_OffsetPositionAndResetMotion(3, -2, -8);
   Actor_WaitForMoveById(3);
   Actor_SetModeById(3, 1);
-  I_Func_020048b4(3, 0xa000);
+  I_Func_020048b4(3, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   Func_0200489c(3, 0, 5);
   Actor_SetModeById(0, 1);
@@ -322,16 +323,16 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
   Actor_SetMovementTypeById(3, gData_02005548);
-  I_Func_0200484c(26, 0x02990000, 0x800000, angle);
-  I_Func_0200484c(27, 0x02810000, 0x800000, angle);
+  I_Func_0200484c(26, PIXELS(665), PIXELS(128), angle);
+  I_Func_0200484c(27, PIXELS(641), PIXELS(128), angle);
   Func_020049c4(78);
   Func_0200489c(26, 0, 5);
   I_Func_020048cc(0, 0x100, 0);
   I_Func_020048cc(2, 0x100, 30);
-  I_Actor_ArmCallback(0, 0xa000, 0);
-  I_Func_020048b4(2, 0xa000);
+  I_Actor_ArmCallback(0, FACING_NORTHWEST, 0);
+  I_Func_020048b4(2, FACING_NORTHWEST);
   FieldEvent_Wait(10);
-  I_Motion_CamBounds(0x2d00000, 0, 0xd20000, 1);
+  I_Motion_CamBounds(PIXELS(720), 0, PIXELS(210), 1);
   I_Actor_SetSpeedParameters(26, 0x4000, angle);
   I_Actor_SetSpeedParameters(27, 0x4000, angle);
   I_Actor_ResetAndSetPositionInMode2(26, 714, 193);
@@ -366,8 +367,8 @@ void Func_02000cac(s32 arg) {
   Actor_TurnToFaceEachOther(0, 2, 0);
   FieldEvent_Wait(10);
   I_Func_020048cc(0, 0x106, 30);
-  I_Actor_ArmCallback(2, 0xa000, 0);
-  I_Func_020048b4(0, 0xa000);
+  I_Actor_ArmCallback(2, FACING_NORTHWEST, 0);
+  I_Func_020048b4(0, FACING_NORTHWEST);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 4 of 1568 instructions differ in tla-en. */
   do {
@@ -379,7 +380,7 @@ void Func_02000cac(s32 arg) {
   Func_0200489c(27, 0, 5);
   I_Func_020048cc(2, 0x102, 30);
   Func_0200489c(2, 0, 5);
-  I_Func_020048b4(26, 0xa000);
+  I_Func_020048b4(26, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   Func_0200489c(26, 0, 5);
   Motion_SetVarCbAndRefresh(26, 2);
@@ -428,13 +429,13 @@ void Func_02000cac(s32 arg) {
   I_Func_020048cc(0, 0x100, 30);
   I_Func_020048b4(0, angle);
   Actor_SetModeById(0, 38);
-  I_Motion_CamBounds(0x3100000, 0, 0x1120000, 1);
+  I_Motion_CamBounds(PIXELS(784), 0, PIXELS(274), 1);
   Func_020048f4();
   FieldEvent_Wait(60);
-  I_Motion_CamBounds(0x2d00000, 0, 0xd20000, 1);
+  I_Motion_CamBounds(PIXELS(720), 0, PIXELS(210), 1);
   Func_020048f4();
   Actor_SetModeById(0, 1);
-  I_Func_020048b4(0, 0xa000);
+  I_Func_020048b4(0, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   Func_0200489c(0, 0, 5);
   Actor_TurnToFaceEachOther(26, 27, 0);
@@ -479,7 +480,7 @@ void Func_02000cac(s32 arg) {
   Func_0200489c(0, 0, 5);
   I_Func_020048cc(27, 0x108, 30);
   Func_0200489c(27, 0, 5);
-  I_Func_020048b4(2, 0xe000);
+  I_Func_020048b4(2, FACING_NORTHEAST);
   FieldEvent_Wait(10);
   Func_0200489c(2, 0, 5);
   I_Func_020048cc(26, 0x109, 30);
@@ -495,19 +496,19 @@ void Func_02000cac(s32 arg) {
     FieldEvent_Wait(33);
   } while (0);
   Func_0200489c(27, 0, 5);
-  I_Func_020048b4(27, 0xa000);
+  I_Func_020048b4(27, FACING_NORTHWEST);
   FieldEvent_Wait(20);
   I_Func_020048cc(27, 0x101, 30);
   I_Actor_SetSpeedParameters(27, 0x20000, 0x10000);
   I_Actor_CommitPositionAndActivate(27, -24, -24);
   FieldEvent_Wait(5);
-  I_Func_020048b4(27, 0x8000);
+  I_Func_020048b4(27, FACING_WEST);
   FieldEvent_Wait(10);
-  I_Func_020048b4(27, 0xc000);
+  I_Func_020048b4(27, FACING_NORTH);
   FieldEvent_Wait(10);
-  I_Func_020048b4(27, 0);
+  I_Func_020048b4(27, FACING_EAST);
   FieldEvent_Wait(10);
-  I_Func_020048b4(27, 0xc000);
+  I_Func_020048b4(27, FACING_NORTH);
   FieldEvent_Wait(10);
   I_Func_020048cc(27, 0x102, 30);
   Func_0200489c(27, 0, 5);
@@ -515,14 +516,14 @@ void Func_02000cac(s32 arg) {
   I_Func_020048b4(27, angle);
   FieldEvent_Wait(10);
   Func_0200489c(27, 0, 5);
-  I_Func_020048b4(26, 0xa000);
+  I_Func_020048b4(26, FACING_NORTHWEST);
   FieldEvent_Wait(10);
   Func_0200489c(26, 0, 5);
   Actor_TurnToFaceEachOther(0, 2, 0);
   FieldEvent_Wait(10);
   I_Func_020048bc(0, 20, 7, 15, 6, 2, 17, 13, 12, 12, 0);
-  I_Actor_ArmCallback(0, 0xa000, 0);
-  I_Actor_ArmCallback(2, 0xa000, 0);
+  I_Actor_ArmCallback(0, FACING_NORTHWEST, 0);
+  I_Actor_ArmCallback(2, FACING_NORTHWEST, 0);
   I_Func_020048cc(27, 0x103, 30);
   Func_0200489c(27, 0, 5);
   I_Func_020048cc(26, 0x107, 30);
@@ -576,7 +577,7 @@ void Func_02000cac(s32 arg) {
   Func_0200489c(7, 0, 5);
   I_Func_020048cc(5, 0x109, 30);
   Func_0200489c(5, 0, 5);
-  I_Func_020048b4(28, 0x4000);
+  I_Func_020048b4(28, FACING_SOUTH);
   FieldEvent_Wait(10);
   /* FAKEMATCH(one-pass): the native starts a scheduling region here; as
    * plain statements, 4 of 1568 instructions differ in tla-en. */

@@ -4,6 +4,7 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -73,9 +74,9 @@ void Func_0200049c(void) {
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Import_ActorShowEmote(6, 0x105, 20);
   Import_EventShowMessageAndWait(6, 0);
-  Call3(Actor_ArmCallback, 6, 0xe000, 20);
-  Call3(Actor_ArmCallback, 6, 0xa000, 40);
-  Call3(Actor_ArmCallback, 6, 0x6000, 0);
+  Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 20);
+  Call3(Actor_ArmCallback, 6, FACING_NORTHWEST, 40);
+  Call3(Actor_ArmCallback, 6, FACING_SOUTHWEST, 0);
   Import_ActorShowEmote(6, 0x100, 20);
   Import_EventShowMessageAndWait(6, 0);
   Actor_SetAngleToward(6, gMainRoutineWork.currentOwner, 0);
@@ -86,7 +87,7 @@ void Func_0200049c(void) {
   Import_EventShowMessageAndWait(6, 0);
   Call3(Actor_SetSpeedParameters, 6, 0x19999, 0xcccc);
   Call3(Actor_SetPositionAndReset, 6, 212, 680);
-  Call3(Actor_ArmCallback, 6, 0xe000, 20);
+  Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 20);
   Import_EventShowMessageAndWait(6, 0);
   Import_ActorSetAnimation(6, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -146,16 +147,16 @@ void Func_020006a8(void) {
     Call3(Func_02003228, 5, 0, 0);
     Call3(Func_02003228, 6, 0, 0);
     Call2(Import_CameraSetSpeed, 0x9999, 0x1333);
-    Call4(Camera_MoveWithinMapBounds, 0xa80000, -1, 0x2d10000, 1);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xe000, 0);
+    Call4(Camera_MoveWithinMapBounds, PIXELS(168), -1, PIXELS(721), 1);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     Call6(Func_02003190, 38, 31, 2, 1, 25, 42);
     Call1(Func_02000098, 8);
-    Call3(Func_02003228, 8, 0x1380000, 0x29a0000);
+    Call3(Func_02003228, 8, PIXELS(312), PIXELS(666));
     Call1(Task_Wait, 1);
     Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
     Call3(Actor_SetPositionAndReset, 8, 212, 680);
     Call3(Actor_SetPositionAndReset, 8, 192, 712);
-    Call3(Actor_ArmCallback, 8, 0x5000, 0);
+    Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 0);
     Call1(Actor_RefreshSelectorById, 8);
     Call2(Actor_SetMovementTypeAndWaitById, 8, (s32)gData_02003650);
     Call3(Actor_Jump, 8, 4, 20);
@@ -164,9 +165,9 @@ void Func_020006a8(void) {
     Call2(Import_EventShowMessageAndWait, 8, 0);
     Value3(Import_ActorShowEmote, 8, 0x100, 20);
     Call2(Import_EventShowMessageAndWait, 8, 0);
-    Call3(Actor_ArmCallback, 8, 0xd000, 0);
+    Call3(Actor_ArmCallback, 8, FACING_NORTH + FACING_STEP, 0);
     Call2(Import_EventShowMessageAndWait, 8, 0);
-    Call3(Actor_ArmCallback, 8, 0x5000, 0);
+    Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 0);
     Call2(Import_EventShowMessageAndWait, 8, 0);
     Call2(Import_ActorSetAnimation, 8, 4);
     Call2(Import_EventShowMessageAndWait, 8, 0);
@@ -182,7 +183,7 @@ void Func_020006a8(void) {
     Call1(Actor_WaitForMoveById, 8);
     Call3(Func_02003228, 8, 0, 0);
     Call2(FieldMessage_Show, (s32)MsgIdejimaHeyFelix + 8, 1);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 20);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     FlagSet(0x863);
     Import_EventEnd();
   }
@@ -190,22 +191,22 @@ void Func_020006a8(void) {
     Import_EventStart();
     Call1(Func_02003310, 0);
     Func_02000664();
-    Call3(Func_02003228, 5, 0x1380000, 0x29a0000);
+    Call3(Func_02003228, 5, PIXELS(312), PIXELS(666));
     Call1(Task_Wait, 1);
     Call1(Import_EventSetMessageId, (s32)MsgIdejimaCantBelieveYouTwo);
     Call2(Import_EventShowMessageAndWait, 5, 0);
     Call3(Func_02003228, 6, 0, 0);
     Call2(Import_CameraSetSpeed, 0x9999, 0x1333);
-    Call4(Camera_MoveWithinMapBounds, 0xa80000, -1, 0x2d10000, 1);
+    Call4(Camera_MoveWithinMapBounds, PIXELS(168), -1, PIXELS(721), 1);
     Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
     Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003734);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xe000, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     Call6(Func_02003190, 38, 31, 2, 1, 17, 46);
     Call1(Func_02000098, 5);
     Call3(Actor_SetSpeedParameters, 5, 0x19999, 0xcccc);
     Call3(Actor_SetPositionAndReset, 5, 212, 680);
     Call3(Actor_SetPositionAndReset, 5, 192, 712);
-    Call3(Actor_ArmCallback, 5, 0x6000, 0);
+    Call3(Actor_ArmCallback, 5, FACING_SOUTHWEST, 0);
     Call1(Actor_RefreshSelectorById, 5);
     Value3(Import_ActorShowEmote, 5, 259, 0);
     Call3(Actor_Jump, 5, 4, 20);
@@ -221,22 +222,22 @@ void Func_020006a8(void) {
     Call3(Func_02003298, 8, 0, 40);
     Value3(Import_ActorShowEmote, 5, 261, 40);
     Call2(Import_EventShowMessageAndWait, 5, 0);
-    Call3(Actor_ArmCallback, 5, 0xe000, 40);
+    Call3(Actor_ArmCallback, 5, FACING_NORTHEAST, 40);
     Call2(Import_EventShowMessageAndWait, 0x4005, 0);
-    Call3(Actor_ArmCallback, 8, 0x3000, 0);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xa000, 20);
+    Call3(Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHWEST, 20);
     Call2(Import_ActorSetAnimation, 8, 3);
     Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
     Call3(Actor_SetPositionAndReset, 5, 178, 728);
-    Call3(Actor_ArmCallback, 5, 0x6000, 0);
+    Call3(Actor_ArmCallback, 5, FACING_SOUTHWEST, 0);
     Call2(Import_EventShowMessageAndWait, 0x4005, 0);
-    Call3(Actor_ArmCallback, 8, 0xd000, 0);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xe000, 20);
+    Call3(Actor_ArmCallback, 8, FACING_NORTH + FACING_STEP, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 20);
     Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
     Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003790);
     Call2(Actor_SetMovementTypeAndWaitById, 5, (s32)gData_02003790);
     Call2(Event_PrepareObjectAndApplyValue, 5, 1);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 20);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     FlagSet(0x864);
     Import_EventEnd();
   }
@@ -244,15 +245,15 @@ void Func_020006a8(void) {
     Import_EventStart();
     Call1(Func_02003310, 0);
     Func_02000664();
-    Call3(Func_02003228, 6, 0x1380000, 0x29a0000);
+    Call3(Func_02003228, 6, PIXELS(312), PIXELS(666));
     Call1(Task_Wait, 1);
     Call1(Import_EventSetMessageId, (s32)MsgIdejimaWaitForMe);
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Call2(Import_CameraSetSpeed, 0x9999, 0x1333);
-    Call4(Camera_MoveWithinMapBounds, 0xa80000, -1, 0x2d10000, 1);
+    Call4(Camera_MoveWithinMapBounds, PIXELS(168), -1, PIXELS(721), 1);
     Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
     Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003734);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xe000, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
     Call6(Func_02003190, 38, 31, 2, 1, 14, 40);
     Actor_GetById(6)->motionFlags = 3;
     Call3(Actor_Jump, 6, 4, 0);
@@ -262,7 +263,7 @@ void Func_020006a8(void) {
     Call3(Actor_SetSpeedParameters, 6, 0x19999, 0xcccc);
     Call3(Actor_SetPositionAndReset, 6, 212, 680);
     Call3(Actor_SetPositionAndReset, 6, 192, 712);
-    Call3(Actor_ArmCallback, 6, 0x6000, 0);
+    Call3(Actor_ArmCallback, 6, FACING_SOUTHWEST, 0);
     Call1(Actor_RefreshSelectorById, 6);
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Call2(Import_ActorSetAttachedEffect, gMainRoutineWork.currentOwner, 258);
@@ -278,9 +279,9 @@ void Func_020006a8(void) {
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Call2(Import_ActorSetAnimation, 8, 3);
     Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
-    Call3(Actor_ArmCallback, 6, 0x8000, 40);
-    Call3(Actor_ArmCallback, 6, 0x2000, 40);
-    Call3(Actor_ArmCallback, 6, 0x6000, 0);
+    Call3(Actor_ArmCallback, 6, FACING_WEST, 40);
+    Call3(Actor_ArmCallback, 6, FACING_SOUTHEAST, 40);
+    Call3(Actor_ArmCallback, 6, FACING_SOUTHWEST, 0);
     Call2(Import_EventShowMessageAndWait, 6, 0);
     Value3(Import_ActorShowEmote, 6, 257, 20);
     Call2(Import_EventShowMessageAndWait, 6, 0);
@@ -294,7 +295,7 @@ void Func_020006a8(void) {
     Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003790);
     Call2(Actor_SetMovementTypeAndWaitById, 6, (s32)gData_02003790);
     Call2(Event_PrepareObjectAndApplyValue, 6, 1);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 20);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     FlagSet(0x865);
     Import_EventEnd();
   }

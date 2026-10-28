@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "event_work.h"
+#include "scene_tables.h"
 
 void wait(s32 frames);
 void FieldEvent_Wait(s32 frames);
@@ -44,7 +45,7 @@ void Func_02000508(void) {
   } while (0);
   gMainRoutineWork.unk2c2 = 1;
   FieldEvent_Wait(40);
-  Func_0200129c(gMainRoutineWork.currentOwner, 232 << 16, 136 << 16);
+  Func_0200129c(gMainRoutineWork.currentOwner, PIXELS(232), PIXELS(136));
   Func_020004ac();
 }
 
@@ -57,6 +58,6 @@ void Func_02000544(void) {
   } while (0);
   gMainRoutineWork.unk2c2 = 1;
   FieldEvent_Wait(40);
-  Func_0200129c(gMainRoutineWork.currentOwner, 240 << 16, 480 << 16);
+  Func_0200129c(gMainRoutineWork.currentOwner, PIXELS(240), PIXELS(480));
   Func_020004ac();
 }

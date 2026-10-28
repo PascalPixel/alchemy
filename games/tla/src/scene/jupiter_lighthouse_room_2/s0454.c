@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void wait(s32 frames);
@@ -31,7 +32,7 @@ void Func_02000454(void) {
     Actor_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
-      object->y += 0x30000;
+      object->y += PIXELS(3);
       /* FAKEMATCH: the one-pass block loads the angle before its 0x1800 step is
        * built (one reordered row without it; as one statement loop.c hoists the
        * step out of the loop, differ 20). */

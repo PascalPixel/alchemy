@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_room_m.h"
+#include "scene_tables.h"
 
 void Func_020040b4(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -15,8 +16,8 @@ void Func_020040b4(void) {
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   wait(1);
-  Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
-                                   (z << 20) + 0x80000);
+  Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
+                                   (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_020048fc()->y -= 0x80000;
 }

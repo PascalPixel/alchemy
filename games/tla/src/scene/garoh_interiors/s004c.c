@@ -1,4 +1,5 @@
 #include "garoh_interiors.h"
+#include "scene_tables.h"
 
 const u8 *Func_0200004c(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -129,5 +130,5 @@ void Func_02000298(void) {
       Func_02000844((s32)MsgGarohInteriors31);
     Func_0200085c(8, 0);
   }
-  Actor_Turn(8, 0x4000, 0);
+  Actor_Turn(8, FACING_SOUTH, 0);
 }

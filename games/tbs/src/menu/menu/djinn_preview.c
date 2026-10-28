@@ -49,12 +49,12 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   // The party figures go below the screen (y 200), except the two party members
   // concerned: the first over the left window, the second over the right.
   for (memberIndex = 3; memberIndex >= 0; memberIndex--) {
-    menu->memberY[memberIndex] = 0xc8;
+    menu->memberY[memberIndex] = 200;
   }
-  menu->memberX[menu->selectedColumn[1]] = 0x78;
-  menu->memberY[menu->selectedColumn[1]] = 0x20;
-  menu->memberX[menu->selectedColumn[0]] = 0x10;
-  menu->memberY[menu->selectedColumn[0]] = 0x20;
+  menu->memberX[menu->selectedColumn[1]] = 120;
+  menu->memberY[menu->selectedColumn[1]] = 32;
+  menu->memberX[menu->selectedColumn[0]] = 16;
+  menu->memberY[menu->selectedColumn[0]] = 32;
 
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
@@ -232,7 +232,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
-    Window_SetTilemapEntryFar(menu->helpWindow, 0xf296, 7, 1, zero);
+    Window_SetTilemapEntryFar(menu->helpWindow, WINDOW_TILE(0x296), 7, 1, zero);
   }
 
   for (;;) {
@@ -405,8 +405,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
 
     // The Psynergy list's page numbers on the right window's top border:
-    // 0xf031 + n is the window font's digit n + 1 in WINDOW_PALETTE ('0' past
-    // the tenth page); less 0x1000, HIGHLIGHT_PALETTE for the page shown.
+    // WINDOW_TILE('1') + n is the window font's digit n + 1 in WINDOW_PALETTE
+    // ('0' past the tenth page), in HIGHLIGHT_PALETTE for the page shown.
     if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
       list = menu->secondWindow;
       if (pageCounts[page] > 1) {
@@ -415,12 +415,12 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         for (index = 0; index < pageCounts[page]; index++) {
           s32 tile;
 
-          tile = 0xf031 + index;
+          tile = WINDOW_TILE('1') + index;
           if (index > 9) {
-            tile = 0xf030;
+            tile = WINDOW_TILE('0');
           }
           if (index == selectedPages[page]) {
-            tile -= 0x1000;
+            tile -= (WINDOW_PALETTE - HIGHLIGHT_PALETTE) << 12;
           }
           Window_SetTilemapEntryFar(
               list, tile, list->width - pageCounts[page] + index - 2, -1, 0);
@@ -478,14 +478,14 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
     MenuCursor_Position(confirmationChoice * 56 + 80, 16);
 
-    // Blink the backdrop's border tile: 0x060052c0 is tile 150 of BG character
-    // block 1 (DJINN_BACKDROP_BORDER_TILE), drawn and filled with colour 4 in
+    // Blink the backdrop's border tile (DJINN_BACKDROP_BORDER_TILE of BG
+    // character block 1), drawn and filled with colour 4 in
     // turn every 4 frames.
     if ((frame & 3) == 0) {
       void *tile;
       u32 fill;
 
-      tile = (void *)0x060052c0;
+      tile = (void *)DJINN_BACKDROP_BORDER_VRAM;
       fill = TEXT_CANVAS_BACKGROUND_WORD;
       if ((frame & 4) != 0) {
         Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
@@ -648,11 +648,11 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     if (counts[side] > 1) {
       window = menu->secondWindow;
       for (pageIndex = 0; pageIndex < counts[side]; pageIndex++) {
-        tile = 0xf031 + pageIndex;
+        tile = WINDOW_TILE('1') + pageIndex;
         if (pageIndex > 9)
-          tile = 0xf030;
+          tile = WINDOW_TILE('0');
         if (pageIndex == selectedPages[side])
-          tile -= 0x1000;
+          tile -= (WINDOW_PALETTE - HIGHLIGHT_PALETTE) << 12;
         Window_SetTilemapEntryFar(
             window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
       }
@@ -674,9 +674,11 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     if ((frame & 3) == 0) {
       if (frame & 4)
-        Iwram_CopyWords((void *)0x060052c0, gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWords((void *)DJINN_BACKDROP_BORDER_VRAM,
+                        gMenu_BackdropBorderTile, 32);
       else
-        Iwram_FillWords((void *)0x060052c0, 32, TEXT_CANVAS_BACKGROUND_WORD);
+        Iwram_FillWords((void *)DJINN_BACKDROP_BORDER_VRAM, 32,
+                        TEXT_CANVAS_BACKGROUND_WORD);
     }
     if (pressedKeys & KEY_START) {
       Sound_PlayFar(SE_MENU_CANCEL);

@@ -170,12 +170,11 @@ static void FileScreen_LoadBackground(void) {
   gBgScroll[2].y = 0;
   blankTile = LOGO_BLANK_TILE;
   resource = Resource_GetTableEntry(resourceId);
-  Dma_Set(resource, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
-          REG_DMA3);
-  resource += 0x1c0;
+  Dma_Set(resource, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+  resource += 224 * 2;
   FieldDecompress_TaggedLz(resource, Ram_MapGridCellBuffer);
-  Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
+  Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
+          REG_DMA3);
   // Build the visible 30-column logo map, padding to the 32-cell screen stride.
   tilemap = LOGO_MAP;
   tile = LOGO_FIRST_TILE;
@@ -471,7 +470,7 @@ s32 FileScreen_Run(void) {
     Event_Wait(60);
     Event_FinishScreenTransition();
     Sound_Play(SOUND_FADE_OUT_BGM);
-    Event_Wait(0x12c);
+    Event_Wait(300);
     Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_FILE_SCREEN);
     return 0;
   }
@@ -726,7 +725,7 @@ menu_top:;
       v5 = 0;
       requiredLinkMask = 3;
       linkConnectionOk = 1;
-      for (v7 = 0; v7 <= 0x927bf; v7++) {
+      for (v7 = 0; v7 <= 599999; v7++) {
         v5 = (v5 + 1);
         if ((requiredLinkMask & gLinkStatus) == requiredLinkMask) {
           v5 = 0;
@@ -807,9 +806,10 @@ menu_top:;
         helpWindow = (struct Window *)windowHandle;
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
-      // Copy the font's ten digit tiles to tiles 0x300 to 0x313 in two
+      // Copy the font's ten digit tiles to the 20 tiles from 0x300 in two
       // colourings, for the page numbers.
-      Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
+      Graphics_ExpandVramTilesByColorTable(
+          (u16 *)(BG_CHAR_BLOCK(0) + 0x300 * TILE_SIZE_4BPP));
       WindowSprite_PrepareForRedraw(pageWindow);
       // A turns the page, and on the last returns to the menu; Left and Right
       // turn back and forth, wrapping round; B goes back to the level choice.
@@ -876,9 +876,9 @@ menu_top:;
             if (pageCount != 0) {
               v6 = 0;
               do {
-                tileValue = v7 + 0xf301;
+                tileValue = v7 + WINDOW_TILE(0x301);
                 if (v7 == pageIndex) {
-                  tileValue = v7 + 0xf30b;
+                  tileValue = v7 + WINDOW_TILE(0x30b);
                 }
                 Window_SetTilemapEntry(pageWindow, tileValue,
                                        v7 + 18 - pageCount, -1, v6);
@@ -934,7 +934,7 @@ menu_top:;
         wait(1);
       }
     }
-    wait(0x12c);
+    wait(300);
     goto menu_top;
   }
 leave:;
@@ -962,11 +962,11 @@ UNUSED static void FileList_FillTileGrid(struct Window *window,
   decodedTiles = Heap_AllocEwram(0x300);
   FieldDecompress_TaggedLz(compressedTiles, decodedTiles);
   offset = (window->y * 32 + window->x) * 2;
-  vram = (u16 *)(0x06002000 + offset);
+  vram = (u16 *)(WINDOW_TILEMAP_VRAM + offset);
   shadow = (u16 *)((u8 *)shadow + offset);
   for (row = 0; row <= 7; row++) {
     for (col = 0; col <= 15; col++) {
-      s16 tile = (window->width * row + col) | 0xf000;
+      s16 tile = WINDOW_TILE(window->width * row + col);
 
       *vram++ = tile;
       *shadow++ = tile;
@@ -988,7 +988,7 @@ UNUSED static void FileList_FillTileBlock(const struct Window *window) {
   s32 base;
 
   cell = window->y * 32 + window->x;
-  vram = (s16 *)0x06002000 + cell;
+  vram = (s16 *)WINDOW_TILEMAP_VRAM + cell;
   mirror += cell;
   row = 0;
   base = 0;
@@ -1152,7 +1152,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     // Which of the eight Psynergy items (gFileScreen_PasswordKeyItems) any
     // party member carries.
     for (j = 0; j != 15; j++) {
-      u16 item = member->inventory[j] & 0x1ff;
+      u16 item = member->inventory[j] & INVENTORY_ITEM_ID_MASK;
 
       for (k = 0; k != 8; k++) {
         if (item == ((const u16 *)gFileScreen_PasswordKeyItems)[k]) {
@@ -1175,7 +1175,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
         // Item_GetDirect only looks the definition up; its result is not used.
         Item_GetDirect(member->inventory[n]);
-        item = member->inventory[n] & 0x1ff;
+        item = member->inventory[n] & INVENTORY_ITEM_ID_MASK;
         out[outputIndex] += item >> (bitOffset + 1);
         out[outputIndex + 1] += item << (7 - bitOffset);
         bitOffset++;
@@ -1199,9 +1199,10 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
         j = 0;
         for (n = 0; n != 15; n++) {
-          if ((member->inventory[n] & 0x1ff) ==
+          if ((member->inventory[n] & INVENTORY_ITEM_ID_MASK) ==
               ((const u16 *)gFileScreen_PasswordStackItems)[m]) {
-            j = (member->inventory[n] & 0xf800) >> 11;
+            j = (member->inventory[n] & INVENTORY_QUANTITY_MASK) >>
+                INVENTORY_QUANTITY_SHIFT;
           }
         }
         /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads,

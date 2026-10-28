@@ -66,8 +66,8 @@ s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  // 0x60 is VRAM_CACHE_ENTRY_COUNT: no slot free.
-  if (slot != 0x60) {
+  // VRAM_CACHE_ENTRY_COUNT means no slot was free.
+  if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
     WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }

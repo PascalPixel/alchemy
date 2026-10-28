@@ -585,7 +585,7 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
   for (; i < 8; i++) {
     menu->tabSprites[i] = 0;
   }
-  // 200 << 4 is 0xc80, TASK_PASS_FRAME: once a frame in the frame
+  // 200 << 4 is TASK_PASS_FRAME: once a frame in the frame
   // pass, rank 0x80.
   {
     s32 priority = 200;

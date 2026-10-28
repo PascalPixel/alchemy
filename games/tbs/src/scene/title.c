@@ -176,32 +176,31 @@ static void Title_LoadSprites(s32 unused) {
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
   u8 *encodedGraphics;
 
-  decodedSprites = Heap_AllocEwram(0x9600);
+  decodedSprites = Heap_AllocEwram(240 * 160);
   encodedGraphics = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
-  // The resource opens with 0x1c0 bytes of palette (0x70 words, 224 colours)
+  // The resource opens with 224 colours of palette (112 words)
   // before its compressed data.
-  Dma_Set(encodedGraphics, (void *)OBJ_PLTT,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
-  encodedGraphics += 0x1c0;
+  Dma_Set(encodedGraphics, (void *)OBJ_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+  encodedGraphics += 224 * 2;
   FieldDecompress_TaggedLz(encodedGraphics, decodedSprites);
   // The picture is a whole 240 x 160 screen (to_be_continued_de.png and the
-  // others). The lettering is its bottom 32 rows, the last 0x1e00 bytes: 120
-  // sprites of one 64-byte tile. The 0x7800 bytes before it are the 480 tiles
-  // of one colour above, which nothing loads.
-  Vram_Load(gTitleVramBlock, 0x1e00, decodedSprites + 0x7800);
+  // others). The lettering is its bottom 32 rows, the last 240 * 32 bytes: 120
+  // sprites of one 64-byte tile. The 240 * 128 bytes before it are the 480
+  // tiles of one colour above, which nothing loads.
+  Vram_Load(gTitleVramBlock, 240 * 32, decodedSprites + 240 * 128);
 #else
-  // The decoded data opens with its 16-colour palette (8 words), then 0x500
-  // bytes (40 4-bit tiles) of lettering.
-  decodedSprites = Heap_AllocEwram(0x520);
+  // The decoded data opens with its 16-colour palette (8 words), then 40
+  // 4-bit tiles of lettering.
+  decodedSprites = Heap_AllocEwram(32 + 40 * TILE_SIZE_4BPP);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
   FieldDecompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
                            decodedSprites);
   Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-  Vram_Load(gTitleVramBlock, 0x500, decodedSprites + 32);
+  Vram_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP, decodedSprites + 32);
 #endif
   // Wait for the final DMA transfer before releasing the decode buffer.
   dma3 = REG_DMA3;
@@ -267,7 +266,7 @@ static void Title_UpdateSpriteReveal(void) {
   attributes = gTitleSprites[0].attr;
   tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
   column = 0;
-  screenY = 0x88;
+  screenY = 136;
   do {
     screenX = 232 - (18 - column) * 8;
 #ifdef UBFIX
@@ -355,12 +354,11 @@ static void Title_LoadBackground(void) {
   gBgScroll[2].y = 0;
   blankTile = LOGO_BLANK_TILE;
   encodedGraphics = Resource_GetTableEntry(resourceId);
-  Dma_Set(encodedGraphics, (void *)BG_PLTT,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
-  encodedGraphics += 0x1c0;
+  Dma_Set(encodedGraphics, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+  encodedGraphics += 224 * 2;
   FieldDecompress_TaggedLz(encodedGraphics, Ram_MapGridCellBuffer);
-  Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
+  Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
+          REG_DMA3);
   // Fill the visible 30 columns and pad each 32-entry tilemap row.
   tilemap = LOGO_MAP;
   tileIndex = LOGO_FIRST_TILE;

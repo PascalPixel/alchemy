@@ -922,29 +922,29 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
   s32 remainingY;
 
   firstSlot = 0;
-  firstY = 0xA8;
+  firstY = 168;
   firstIcons = &menu->entryIcons[0];
   do {
     *firstIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, firstSlot, window, 0xF8, firstY);
+        ICON_KIND_ITEM, firstSlot, window, 248, firstY);
     firstSlot++;
   } while (firstSlot <= 7);
 
   secondSlot = 8;
-  secondY = 0xA8;
+  secondY = 168;
   secondIcons = &menu->entryIcons[8];
   do {
     *secondIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, secondSlot, window, 0x100, secondY);
+        ICON_KIND_ITEM, secondSlot, window, 256, secondY);
     secondSlot++;
   } while (secondSlot <= 15);
 
   remainingSlot = 16;
-  remainingY = 0xA8;
+  remainingY = 168;
   remainingIcons = &menu->entryIcons[16];
   do {
     *remainingIcons++ = WindowSprite_CreateFromResourceFar(
-        ICON_KIND_ITEM, remainingSlot, window, 0x100, remainingY);
+        ICON_KIND_ITEM, remainingSlot, window, 256, remainingY);
     remainingSlot++;
   } while (remainingSlot <= 31);
 }
@@ -2472,8 +2472,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         WindowSprite_RedrawSavedRectFar(window);
         Text_DrawMessageAsTilesFar(MsgGiveHowMany, window, ITEM_GIVE_ASK_X,
                                    ITEM_GIVE_ASK_Y);
-        Dma_Set(gMenu_QuantityTiles, tiles,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 0x40, REG_DMA3);
+        Dma_Set(gMenu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
         QuantityBar_FillFar(30, 14, tiles);
         QuantityBar_FillFar(quantityRange + baseQuantity, 0, tiles);
         QuantityBar_FillFar(baseQuantity + quantity + 1, 10, tiles);

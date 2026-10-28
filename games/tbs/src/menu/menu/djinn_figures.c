@@ -30,8 +30,8 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
       Sprite_StartAnimationFar(animation, 2);
     }
     state->animations[index] = animation;
-    state->positionsX[index] = 0x10;
-    state->positionsY[index] = 0x20;
+    state->positionsX[index] = 16;
+    state->positionsY[index] = 32;
   }
   Task_Add(DjinnFigures_UpdateAllPositions, TASK_PASS_FRAME);
 }
@@ -176,8 +176,8 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
       Sprite_StartAnimationFar(animation, 2);
     state->animations[index] = animation;
     state->phases[index] = Q16_ONE;
-    state->positionsX[index] = 0x10;
-    state->positionsY[index] = 0xc8;
+    state->positionsX[index] = 16;
+    state->positionsY[index] = 200;
   }
   Task_Add(DjinnFigures_UpdateBottomRow, TASK_PASS_FRAME);
 }

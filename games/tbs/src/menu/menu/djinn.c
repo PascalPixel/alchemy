@@ -55,12 +55,12 @@ s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
   s32 memberX;
   s32 memberIndex;
   menu = gMenuWork;
-  yOffset += 0x3D;
-  memberX = 0x20;
+  yOffset += 61;
+  memberX = 32;
   for (memberIndex = 0; memberIndex < 4; memberIndex++) {
     menu->memberX[memberIndex] = memberX;
     menu->memberY[memberIndex] = yOffset;
-    memberX += 0x38;
+    memberX += 56;
   }
   return yOffset;
 }
@@ -88,7 +88,7 @@ s32 DjinnMenu_Run(void) {
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
-  backdrop = Heap_AllocEwram(0x2130);
+  backdrop = Heap_AllocEwram(sizeof(*backdrop));
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = DJINN_TUTORIAL_OFF;
@@ -131,7 +131,7 @@ s32 DjinnMenu_Run(void) {
   gActorSystemWork->suspended = 0;
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords(BG_CHAR_BLOCK(1), backdrop->tiles, 0x2000);
+  Iwram_CopyWords(BG_CHAR_BLOCK(1), backdrop->tiles, sizeof(backdrop->tiles));
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   wait(1);
   Menu_ResumeFieldTasks();
@@ -474,10 +474,6 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   } while (copyIndex <= 2);
 }
 
-/// The tile of BG character block 1 the backdrop's border tile is copied to;
-/// the preview screens blink it.
-#define DJINN_BACKDROP_BORDER_TILE 150
-
 /// PsynergyList_Diff' marks on an action id: Psynergy the change gives,
 /// drawn in TEXT_COLOR_YELLOW, and Psynergy it takes away, in TEXT_COLOR_RED.
 #define DJINN_PREVIEW_GAINED 0x8000
@@ -499,9 +495,9 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
 
   Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
   wait(1);
-  Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
+  Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), 0x33333333);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 0x1000));
   Iwram_CopyWords(BG_CHAR_BLOCK(1) +
@@ -1796,17 +1792,18 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
         px = x * 8;
         Text_DrawMessageAsTilesFar(MsgClassName + unit->classId, window, px,
                                    y * 8 + 48);
-        Window_SetTilemapEntryFar(window, 0xf296, x + 2, 5, 0);
+        Window_SetTilemapEntryFar(window, WINDOW_TILE(0x296), x + 2, 5, 0);
       }
       column = x;
       if (originalUnit->classId != unit->classId)
         column += 5;
-      // Each element's icon and its count of set Djinn: 0xf030 + n is the
-      // window font's digit n (character 0x30 + n) in WINDOW_PALETTE.
+      // Each element's icon and its count of set Djinn: WINDOW_TILE('0') + n is
+      // the window font's digit n in WINDOW_PALETTE.
       for (i = 0; i < 4; i++) {
         Window_SetTilemapEntryFar(window, DJINN_ELEMENT_TILE + i,
                                   column + i * 2, y + 5, 0);
-        Window_SetTilemapEntryFar(window, unit->djinnSetCounts[i] + 0xf030,
+        Window_SetTilemapEntryFar(window,
+                                  unit->djinnSetCounts[i] + WINDOW_TILE('0'),
                                   column + i * 2 + 1, y + 5, 0);
       }
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -1891,9 +1888,9 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
     for (row = 0; first < count && row < rows; row++, first++) {
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
                                     actions[first] & PSYNERGY_ABILITY_MASK);
-      if (actions[first] & 0x8000)
+      if (actions[first] & DJINN_PREVIEW_GAINED)
         Text_SetColorFar(TEXT_COLOR_YELLOW);
-      else if (actions[first] & 0x4000)
+      else if (actions[first] & DJINN_PREVIEW_LOST)
         Text_SetColorFar(TEXT_COLOR_RED);
       else
         Text_SetColorFar(TEXT_COLOR_NORMAL);
@@ -1950,7 +1947,6 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
 #undef DJINN_PREVIEW_ARROW_X
 #undef DJINN_PREVIEW_PP_X
 #undef DJINN_RESELECT_PAIR_ENTRY
-#undef DJINN_BACKDROP_BORDER_TILE
 #undef DJINN_PREVIEW_GAINED
 #undef DJINN_PREVIEW_LOST
 #undef DJINN_ENTRY_SET

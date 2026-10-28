@@ -322,7 +322,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
     // 1 when kind is 2, else 0.
     targetModeDifference = kind ^ 2;
     classification = (0 - targetModeDifference) | targetModeDifference;
-    classification = (u32)classification >> 0x1f;
+    classification = (u32)classification >> 31;
     classification = 1 - classification;
   }
   return classification;

@@ -101,7 +101,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                       COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  REG_BG2X = -0x2000; // -32 in 20.8: the canvas shows 32 pixels right
+  REG_BG2X = -(32 << 8); // -32 in 20.8: the canvas shows 32 pixels right
 
   // Vines (0 to 15): x, the y of the root, the growth speed and the frames
   // before the vine starts to grow. Vines 0 to 4 stand 20 pixels apart from
@@ -172,7 +172,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // Drop the formation sprites to a height of 64 pixels, and from frame
     // 48 to 96 take the two halves of Cybele's face through three poses:
     // her mouth opens as the thorns fly and shuts again.
-    speed += 0x4000;
+    speed += Q16_ONE / 4;
     height += speed;
     if (height > 64 << 16)
       height = 64 << 16;
@@ -205,7 +205,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           tall = gCybele_ThornHeights[cellIndex];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
-          Particle_AdvanceWithGravity2D(thorn, 64, 0x1000);
+          Particle_AdvanceWithGravity2D(thorn, 64, Q16_ONE / 16);
         }
       }
     }
@@ -305,7 +305,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                   gCybele_ChipHeights[cellIndex]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
-          chip->velocityY += 0x4000;
+          chip->velocityY += Q16_ONE / 4;
           if ((chip->y < 0 || chip->y > 120 << 16) && frame <= 159) {
             chip->x = (Random16() % 96) << 16;
             chip->y = ((Random16() & 7) + 88) << 16;
@@ -433,10 +433,10 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         struct Actor *actor =
             GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
-        // 0xab85 is the battle units' usual gravity, which the lift
-        // cleared (battle/motion.c sets the same).
+        // BATTLE_UNIT_GRAVITY is the battle units' usual gravity, which the
+        // lift cleared (battle/motion.c sets the same).
         actor->y.fixed = 96 << 16;
-        actor->gravity = 0xab85;
+        actor->gravity = BATTLE_UNIT_GRAVITY;
       }
       if (frame == i * 5 + 302) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
@@ -521,7 +521,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
             }
-            Particle_AdvanceWithGravity2D(ember, 60, 0x1000);
+            Particle_AdvanceWithGravity2D(ember, 60, Q16_ONE / 16);
             ember->variant++;
           }
         }

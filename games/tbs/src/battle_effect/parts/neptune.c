@@ -14,15 +14,15 @@ void BattleEffect_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 /// 0 and from frame 152 on line 96, for its first stage.
 void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
-#define NEPTUNE_FLAME_GROUND 112   ///< where the blue flames throw sparks
-#define NEPTUNE_OBJECTS 8          ///< sprites in the formation
-#define NEPTUNE_PARTICLES 1024     ///< PARTICLES slots: spray, then sparks
-#define NEPTUNE_FLARE_SHEET 0x4e20 ///< the flare pictures, after the spray
+#define NEPTUNE_FLAME_GROUND 112  ///< where the blue flames throw sparks
+#define NEPTUNE_OBJECTS 8         ///< sprites in the formation
+#define NEPTUNE_PARTICLES 1024    ///< PARTICLES slots: spray, then sparks
+#define NEPTUNE_FLARE_SHEET 20000 ///< the flare pictures, after the spray
 /// The 48x48 light pictures (9 * 256 bytes each), after the spray sheet's
 /// 32x32 spray picture.
-#define NEPTUNE_LIGHT_OFFSETS 0x400
+#define NEPTUNE_LIGHT_OFFSETS (32 * 32)
 /// The blue flame column's 34x65 head, after its 17x104 shaft.
-#define NEPTUNE_FLAME_HEAD 0x6e8
+#define NEPTUNE_FLAME_HEAD (17 * 104)
 
 /// Over dusk clouds a formation of sprites flies in through rising spray,
 /// gathers a ring of flares into a burst of light, then five blue flame columns
@@ -57,7 +57,7 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// buffer's first 450 bytes on frames 0 to 15, over spray particles 0 to 16,
 /// which are already launched.
 void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
-  static struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
+  static struct SpriteScale unitScale = {{{Q16_ONE * 3 / 2, Q16_ONE * 3 / 2}}};
   struct SpritePlacement pos;
   struct ScreenPoint targetPosition;
   void *canvas;
@@ -127,8 +127,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   windowEdgeStep = 1;
   formationX = 140 << 17;
   formationZ = 200 << 16;
-  formationVelocityX = -0x40000;
-  formationVelocityZ = -0x80000;
+  formationVelocityX = -(4 << 16);
+  formationVelocityZ = -(8 << 16);
   savedBg1ScrollX = gBgScroll[1].x;
   view = (struct BattleBackgroundWork *)CANVAS_SLOT(
       cache, HEAP_SLOT_BATTLE_BACKGROUND);
@@ -148,10 +148,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     PARTICLES[i].variant = -1;
   }
   // Seed the flares that converge during the formation burst: each starts
-  // 64 to 95 pixels out, in the quarter turn from 0x8000 (up and to the left
-  // of the centre), and closes in over 32 frames.
+  // 64 to 95 pixels out, in the quarter turn from EFFECT_TURN / 2 (up and to
+  // the left of the centre), and closes in over 32 frames.
   for (i = 0, flareSeed = work->particles; i != 32; i++, flareSeed++) {
-    s32 a = (Random16() & 0x3fff) + 0x8000;
+    s32 a = (Random16() & 0x3fff) + EFFECT_TURN / 2;
     s32 r = (Random16() & 127) + 255;
     flareSeed->x = (Trig_Sin(a) * r) >> 2;
     flareSeed->y = (Trig_Cos(a) * r) >> 2;
@@ -164,8 +164,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   // 5 pixels a frame and up 3 to 5; the other slots stay free (variant -1).
   for (i = 0; i != 712; i++) {
     s32 r = Random16() & 255;
-    s32 a = Random16() & 0xffff;
-    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x800000;
+    s32 a = Random16() & EFFECT_ANGLE_MASK;
+    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + (128 << 16);
     PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
     PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
     PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
@@ -221,24 +221,24 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           formationVelocityX = formationVelocityX * 60 / 64;
         }
         formationVelocityZ = formationVelocityZ * 60 / 64;
-        if (formationZ > 0x840000) {
-          formationVelocityZ -= 0x2000;
+        if (formationZ > (132 << 16)) {
+          formationVelocityZ -= Q16_ONE / 8;
         } else {
-          formationVelocityZ += 0x2000;
+          formationVelocityZ += Q16_ONE / 8;
         }
         formationX += formationVelocityX;
         formationZ += formationVelocityZ;
       } else if (frame <= 170) {
         if (frame <= 107) {
-          formationVelocityX += 0x2000;
+          formationVelocityX += Q16_ONE / 8;
         }
         formationVelocityX = formationVelocityX * 60 / 64;
         formationX += formationVelocityX;
         if (frame <= 117) {
-          if (formationZ > 0x8a0000) {
-            formationVelocityZ -= 0x2000;
+          if (formationZ > (138 << 16)) {
+            formationVelocityZ -= Q16_ONE / 8;
           } else {
-            formationVelocityZ += 0x2000;
+            formationVelocityZ += Q16_ONE / 8;
           }
           formationVelocityZ = formationVelocityZ * 56 / 64;
           formationZ += formationVelocityZ;
@@ -248,9 +248,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       pos.height = 0;
       for (i = 0; i != NEPTUNE_OBJECTS; i++) {
         pos.x =
-            (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - 0x200000;
+            (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - (32 << 16);
         pos.y =
-            (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - 0x180000;
+            (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - (24 << 16);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &scale, 0);
       }
     }
@@ -261,8 +261,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         // slot, up to 2 pixels a frame either way across and 2 to 6 up.
         if (PARTICLES[i].variant == -1) {
           s32 r = Random16() & 255;
-          s32 a = Random16() & 0xffff;
-          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + 0x400000;
+          s32 a = Random16() & EFFECT_ANGLE_MASK;
+          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + (64 << 16);
           PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
           PARTICLES[i].velocityX = (32 - (Random16() & 63)) << 12;
           PARTICLES[i].velocityY = (-(Random16() & 31) - 16) << 13;
@@ -546,7 +546,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
               // Masked in place, the mask assigned first; as Random16() & mask,
               // 3 instructions differ.
               r &= Random16();
-              a = (Random16() & 0x7fff) - 0x4000;
+              a = (Random16() & 0x7fff) - EFFECT_TURN / 4;
               PARTICLES[j].x = sparkOriginX << 16;
               PARTICLES[j].y = ground << 16;
               r += 32;
@@ -577,7 +577,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         // speed below y 120; one off the canvas is not drawn. A spark's mote
         // shrinks from size 6 or 7 down to 3 as its life runs out.
         PARTICLES[i].variant--;
-        Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, 0x4000);
+        Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, Q16_ONE / 4);
         y = PARTICLES[i].y >> 16;
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;

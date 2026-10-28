@@ -13,19 +13,31 @@
 /// sizes the draws use. A flash picture's number is the frame of the flash it
 /// is drawn on.
 enum SlashSheetCell {
-  ATALANTA_SLASH_FLASH_1 = 0x0000,        ///< 14x28
-  ATALANTA_SLASH_FLASH_2 = 0x0188,        ///< 23x44
-  ATALANTA_SLASH_FLASH_3_TOP = 0x057c,    ///< 20x30
-  ATALANTA_SLASH_FLASH_3_BOTTOM = 0x07d4, ///< 22x33
-  ATALANTA_SLASH_FLASH_4_TOP = 0x0aaa,    ///< 18x27
-  ATALANTA_SLASH_FLASH_4_MIDDLE = 0x0c90, ///< 22x22
-  ATALANTA_SLASH_FLASH_4_BOTTOM = 0x0e74, ///< 19x28
-  ATALANTA_SLASH_FLASH_5_TOP = 0x1088,    ///< 16x23
-  ATALANTA_SLASH_FLASH_5_MIDDLE = 0x11f8, ///< 23x28
-  ATALANTA_SLASH_FLASH_5_BOTTOM = 0x147c, ///< 20x28
-  ATALANTA_SLASH_TOP = 0x16ac,            ///< 16x21
-  ATALANTA_SLASH_MIDDLE = 0x17fc,         ///< 29x35
-  ATALANTA_SLASH_BOTTOM = 0x1bf3          ///< 21x24
+  ATALANTA_SLASH_FLASH_1 = 0, ///< 14x28
+  /// 23x44
+  ATALANTA_SLASH_FLASH_2 = ATALANTA_SLASH_FLASH_1 + 14 * 28,
+  /// 20x30
+  ATALANTA_SLASH_FLASH_3_TOP = ATALANTA_SLASH_FLASH_2 + 23 * 44,
+  /// 22x33
+  ATALANTA_SLASH_FLASH_3_BOTTOM = ATALANTA_SLASH_FLASH_3_TOP + 20 * 30,
+  /// 18x27
+  ATALANTA_SLASH_FLASH_4_TOP = ATALANTA_SLASH_FLASH_3_BOTTOM + 22 * 33,
+  /// 22x22
+  ATALANTA_SLASH_FLASH_4_MIDDLE = ATALANTA_SLASH_FLASH_4_TOP + 18 * 27,
+  /// 19x28
+  ATALANTA_SLASH_FLASH_4_BOTTOM = ATALANTA_SLASH_FLASH_4_MIDDLE + 22 * 22,
+  /// 16x23
+  ATALANTA_SLASH_FLASH_5_TOP = ATALANTA_SLASH_FLASH_4_BOTTOM + 19 * 28,
+  /// 23x28
+  ATALANTA_SLASH_FLASH_5_MIDDLE = ATALANTA_SLASH_FLASH_5_TOP + 16 * 23,
+  /// 20x28
+  ATALANTA_SLASH_FLASH_5_BOTTOM = ATALANTA_SLASH_FLASH_5_MIDDLE + 23 * 28,
+  /// 16x21
+  ATALANTA_SLASH_TOP = ATALANTA_SLASH_FLASH_5_BOTTOM + 20 * 28,
+  /// 29x35
+  ATALANTA_SLASH_MIDDLE = ATALANTA_SLASH_TOP + 16 * 21,
+  /// 21x24
+  ATALANTA_SLASH_BOTTOM = ATALANTA_SLASH_MIDDLE + 29 * 35
 };
 
 /// Under a violet sky, a 3x3 formation of sprites flies along a stored path
@@ -130,9 +142,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     for (j = 0; j != 24; j++) {
       PARTICLES[i * 24 + j].x = (Random16() & 15) + 48;
       Transform_Reset();
-      Transform_ApplyRoll(Random16() & 0xffff);
-      Transform_ApplyPitch(Random16() & 0xffff);
-      Transform_ApplyYaw(Random16() & 0xffff);
+      Transform_ApplyRoll(Random16() & EFFECT_ANGLE_MASK);
+      Transform_ApplyPitch(Random16() & EFFECT_ANGLE_MASK);
+      Transform_ApplyYaw(Random16() & EFFECT_ANGLE_MASK);
       Transform_Store(ATALANTA_MATRICES + (i * 24 + j) * 48);
     }
   }
@@ -157,7 +169,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         path += 2;
       }
       position.groundHeight = 0;
-      position.height = 0xff0000;
+      position.height = 255 << 16;
       for (row = 0; row != 3; row++) {
         for (column = 0; column != 3; column++) {
           position.x = (pathX + 80 + column * 32) << 16;
@@ -191,8 +203,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
-          slash->velocityX -= 0x10000;
-          slash->velocityY += 0x20000;
+          slash->velocityX -= 1 << 16;
+          slash->velocityY += 2 << 16;
           draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, x + 4, y - 40, 16,
                   21);
           draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, x - 16, y - 19,

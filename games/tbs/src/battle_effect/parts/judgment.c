@@ -6,7 +6,7 @@
 #include "../battle_effect_internal.h"
 
 /// The bytes of Judgment's work block before its dimmed mote copies.
-#define JUDGMENT_SHEET_BYTES 0x2710
+#define JUDGMENT_SHEET_BYTES 10000
 
 /// Judgment's work block, laid over struct BattleEffectWork from its start.
 /// It is the HEAP_SLOT_BATTLE_EFFECT block BattleEffect_RunSummon lends
@@ -49,9 +49,10 @@ struct JudgmentWork {
 #define JUDGMENT_EXPLOSION_CELL_BYTES 1728 ///< bytes in each explosion picture
 #define JUDGMENT_WAVE_SIZE 120             ///< the wave picture is 120x120
 /// DMA word that fills the 128x128 canvas.
-#define JUDGMENT_DMA_FILL_CANVAS DMA_FILL_WORDS(0x1000)
+#define JUDGMENT_DMA_FILL_CANVAS DMA_FILL_WORDS(CANVAS_BYTES / 4)
 /// DMA word that fills the 120x120 wave picture.
-#define JUDGMENT_DMA_FILL_WAVE DMA_FILL_WORDS(0xe10)
+#define JUDGMENT_DMA_FILL_WAVE                                                 \
+  DMA_FILL_WORDS(JUDGMENT_WAVE_SIZE *JUDGMENT_WAVE_SIZE / 4)
 
 /// The battle wipes away to a violet sky where a formation flies forward while
 /// motes gather into it, bursts in a flash and sends out a ring of light.
@@ -141,8 +142,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(16);
   // The formation starts 64 pixels back and comes forward 8 pixels a frame
   // (16.16); the depth range is kept only by the dead spark stage.
-  depth = 0xffc00000;
-  zoom = 0x80000;
+  depth = -(64 << 16);
+  zoom = 8 << 16;
   minimumDepth = 0xffff;
   maximumDepth = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
@@ -176,16 +177,16 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // angles its velocities. It takes four random numbers: the fourth
     // overwrites velocityY, losing the third.
     PARTICLES[i].x = (Random16() & 15) + 72;
-    PARTICLES[i].velocityX = Random16() & 0xffff;
-    PARTICLES[i].velocityY = Random16() & 0xffff;
-    PARTICLES[i].velocityY = Random16() & 0xffff;
+    PARTICLES[i].velocityX = Random16() & EFFECT_ANGLE_MASK;
+    PARTICLES[i].velocityY = Random16() & EFFECT_ANGLE_MASK;
+    PARTICLES[i].velocityY = Random16() & EFFECT_ANGLE_MASK;
   }
 
   for (i = 0; i != 128; i++) {
     // Sparks on a ring of radius 63.75 pixels (255 / 4), 32 to 95 pixels
     // up; only the dead stage in the frame loop reads them, but their
     // random numbers still count.
-    s32 angle = Random16() & 0xffff;
+    s32 angle = Random16() & EFFECT_ANGLE_MASK;
     /* FAKEMATCH(temporary): amp holds 255, which the native hoists into sl;
      * as 255 at both multiplies, 59 of 2455 instructions differ in tbs-en. */
     s32 amp = 255;
@@ -231,7 +232,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 z;
         s32 size;
 
-        Particle_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -0x400);
+        Particle_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -Q16_ONE / 64);
         Projection_Point(&JUDGMENT_SPARKS[i], &projectedPosition);
         projectedPosition.x >>= 1;
         projectedPosition.y -= 120;
@@ -323,13 +324,13 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     depth += zoom;
     if (frame <= 47) {
-      zoom -= 0x4000;
+      zoom -= Q16_ONE / 4;
     }
     if (frame > 32) {
       zoom = zoom * 60 / 64;
     }
     if (frame == 144) {
-      zoom = -0x80000;
+      zoom = -(8 << 16);
     }
     if (frame == 146) {
       zoom = Q16_ONE;
@@ -390,7 +391,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       for (i = 0; i != 6; i++) {
         s32 k = i & 3;
-        s32 angle = Random16() & 0xffff;
+        s32 angle = Random16() & EFFECT_ANGLE_MASK;
         s32 x = ((Trig_Sin(angle) * 16) >> 16) - gJudgment_ShardWidths[k] / 2;
         s32 y = ((Trig_Cos(angle) * 16) >> 16) - gJudgment_ShardHeights[k] / 2;
         draw[0](canvas, work->sheet + gJudgment_ShardCells[k], x + 60, y + 80,
@@ -491,7 +492,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            (s32)&ResourceId_AerialViewBackdrop, 0);
   REG_BG2PA = Q_8_8(1);
-  REG_BG2X = -0x3c00;
+  REG_BG2X = -(60 << 8);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
@@ -575,7 +576,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       // Invert the battle background's colours, background palettes 6 to 13.
       u16 *pal = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != 128; i++, pal++) {
-        *pal ^= 0x7fff;
+        *pal ^= RGB(31, 31, 31);
       }
     }
 
@@ -623,7 +624,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         particle->x = ((Random16() & 63) + 32) << 16;
         particle->y = ((Random16() & 31) + 96) << 16;
         particle->velocityY = ((Random16() & 15) + 16) << 15;
-        particle->z = 0x8000 - (particle->x >> 7);
+        particle->z = Q16_ONE / 2 - (particle->x >> 7);
         particle->variant = 1;
       }
     }
@@ -893,8 +894,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // impact, a sixteenth of a turn apart from left to right, cycling their
     // four pictures every 2 frames.
     if (frame >= 86 && frame < 150) {
-      s32 angle = -0x4000;
-      for (i = 0; i != 9; i++, angle += 0x1000) {
+      s32 angle = -EFFECT_TURN / 4;
+      for (i = 0; i != 9; i++, angle += EFFECT_TURN / 16) {
         s32 x = ((frame - 86) * Trig_Sin(angle)) >> 16;
         s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
         draw[0](canvas,
@@ -957,17 +958,17 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         particle = &work->particles[i];
         if (particle->variant != 0) {
           scale.x = particle->z + (particle->y >> 7);
-          if (scale.x < 0x800) {
-            scale.x = 0x800;
+          if (scale.x < Q16_ONE / 32) {
+            scale.x = Q16_ONE / 32;
           }
           scale.y = scale.x;
           debrisPlace.x = particle->x;
-          debrisPlace.height = 0xff0000;
-          debrisPlace.y = particle->y + 0xff0000;
+          debrisPlace.height = 255 << 16;
+          debrisPlace.y = particle->y + (255 << 16);
           Actor_ApplyProjectedPlacementFar(work->sprites[i], &debrisPlace,
                                            &scale, 0);
           particle->y -= particle->velocityY;
-          if (particle->y < 0x100000) {
+          if (particle->y < (16 << 16)) {
             if (frame <= 279) {
               particle->x = ((Random16() & 63) + shift + 32) << 16;
             } else {
@@ -976,9 +977,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             if (frame > 301) {
               particle->variant = 0;
             } else if (frame > 245) {
-              particle->y = 0x600000;
+              particle->y = 96 << 16;
             } else {
-              particle->y = 0xc00000 - particle->x;
+              particle->y = (192 << 16) - particle->x;
             }
           }
         }

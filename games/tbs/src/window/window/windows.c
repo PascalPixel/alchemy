@@ -106,7 +106,7 @@ void WindowSystem_InitField(void) {
 /// Sets up the window system for battle, as
 /// WindowSystem_InitField does for the field, and marks the work
 /// block as in battle (WINDOW_BATTLE). Battle_Run's setup
-/// (battle/battle/encounter.c) passes loadGlyphTiles set only while
+/// (battle/battle/run.c) passes loadGlyphTiles set only while
 /// FLAG_DJINN_LESSON is set: it reserves the glyph sprites' tiles, which
 /// only windows other than text canvases need. Unlike the field setup it does
 /// not mark the portrait slots free (999): they stay 0 from the clear.
@@ -204,8 +204,8 @@ void WindowSystem_UploadTilemap(void) {
 /// tiles) and frees the text tiles it showed. The height is cut at the
 /// screen's 20th row, and width and height are clamped to 2 to 30 tiles. In
 /// battle the rows below row 16 take WINDOW_TILE_COMMAND_PANEL, the tile the
-/// battle command row fills its empty panels with (screens/command_row.c),
-/// instead of the blank tile.
+/// battle command row fills its empty panels with
+/// (screens/battle_command_row.c), instead of the blank tile.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);

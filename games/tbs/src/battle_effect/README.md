@@ -88,8 +88,8 @@ field's map buffer, which a battle doesn't need, as a large pool of
 particles.
 
 The doors are `BattleEffect_RunSummon`, `BattleEffect_RunByIdRange`
-and `BattleEffect_RunFromTable` ([`dispatch.c`](parts/dispatch.c) and
-[`positions.c`](parts/positions.c)); the work block is
+and `BattleEffect_RunFromTable` ([`dispatch.c`](battle_effect/dispatch.c) and
+[`positions.c`](battle_effect/positions.c)); the work block is
 `struct BattleEffectWork`.
 
 ## The canvas
@@ -110,7 +110,7 @@ level picks one of the first 64 colours; level 0 is see-through, and 63 is as
 bright as adding light can go. On the wide canvas, a point some distance
 across the screen is half that distance across the canvas.
 
-`BattleEffect_StartCanvasLayer` ([`canvas.c`](parts/canvas.c)) opens the canvas
+`BattleEffect_StartCanvasLayer` ([`canvas.c`](battle_effect/canvas.c)) opens the canvas
 and `BattleEffect_EndCanvasLayer` closes it.
 
 ### The transfer
@@ -152,7 +152,7 @@ pool is the work block's 64; the large one is the field's map buffer, room for
 1,170. Each effect sets aside its own ranges of the large pool.
 `Particle_AdvanceWithGravity2D` and `Particle_AdvanceWithGravity3D` move
 particles under gravity, and `Projection_Point` turns a battlefield position
-into a screen point ([`positions.c`](parts/positions.c)); each family spawns
+into a screen point ([`positions.c`](battle_effect/positions.c)); each family spawns
 and moves its own particles.
 
 A particle is a `struct Particle` ([`particle.h`](../../include/field/particle.h)),
@@ -173,7 +173,7 @@ combination of canvas size, mirroring, clipping at the canvas's edges and way
 of combining, and keeps it in IWRAM when it fits. An effect builds only the
 one or two it draws with. `BattleEffect_BuildBlitter` walks a template of ARM
 words, `gBlitterTemplate`, splices in the pixel fragments for the chosen way
-of combining (`battle_effect_composite.s`, `battle_effect_composite_color.s`),
+of combining (`blitter_fragments.s`, `blitter_color_fragments.s`),
 and patches in the canvas width and height and the branch distances.
 
 | Name | Meaning |
@@ -183,7 +183,7 @@ and patches in the canvas width and height and the branch distances.
 | `COMPOSITE_LIGHTEN` | keeps the brighter of the two |
 | `COMPOSITE_ADDITIVE` | adds the two, at most 63 |
 
-The builder is in [`blitter.c`](parts/blitter.c), whose opening comment describes the routine block by block;
+The builder is in [`blitter.c`](battle_effect/blitter.c), whose opening comment describes the routine block by block;
 `EFFECT_LOAD_BLITTER` builds one for the canvas.
 
 ## Pictures
@@ -216,27 +216,27 @@ Abilities that look alike share one effect drawn with different settings.
 Rockfall and Avalanche are the same glowing wall at different widths: Gaia,
 Mother Gaia, Grand Gaia, Rockfall, Rockslide and Avalanche all play one
 effect, which stretches the canvas 1.25, 1.5 or 2 times across by
-strength and draws larger rocks at the higher ones ([`gaia.c`](parts/gaia.c)).
+strength and draws larger rocks at the higher ones ([`gaia.c`](battle_effect/gaia.c)).
 
 Larger families have a runner that draws every effect of the family from a row
 of settings, chosen by its handler:
 
 | Runner | What it draws |
 | --- | --- |
-| [`BattleEffect_RunTargetStrike`](parts/target_strike.c) | repeated slashes or columns of light on the first target: twelve monster attacks, among them Cannibal Fang, Poison Tail and Twin Beaks |
-| [`BattleEffect_RunProjectileVolley`](parts/projectiles.c) | shots that fly from the user and burst on each target: Heat Wave, Sleet, Wing Flutter |
-| [`BattleEffect_RunLobbedShells`](parts/lobbed_shells.c) | shells lobbed at each target in turn, bursting into smoke |
-| [`BattleEffect_RunBurstShower`](parts/burst_shower.c) | a shower of bursts at random points near the targets |
-| [`BattleEffect_RunTargetMotes`](parts/target_motes.c) | smoke, hearts or orbs turning around each target |
-| [`BattleEffect_RunStatBoost`](parts/stat_change.c) | flares that swirl into each target and burst |
-| [`BattleEffect_RunStatReduction`](parts/stat_change.c) | a dagger (Dull) or a shield (Impair, Weaken) over each target that shatters |
-| [`BattleEffect_RunHealingMotes`](parts/healing.c) | healing motes swirling in to each target: Ply, Wish, Cure, Cure Poison, Tonic, Psy Crystal |
-| [`BattleEffect_RunStreakVolley`](parts/streaks.c) | streaks fired from above the user at its target |
-| [`BattleEffect_RunRushingStrike`](parts/rushing_strike.c) | the user rushes at the first target and strikes: Bone Charge, Brute Force, Onslaught, Headbutt |
-| [`BattleEffect_RunFlurry`](parts/flurry.c) | a flurry of strikes on the first target |
-| [`BattleEffect_RunGrowingColumns`](parts/growth.c) | vines or green pillars growing from the ground |
-| [`BattleEffect_RunSparkGroups`](parts/plasma.c) | flashes and bouncing sparks in one or three bursts: Blast, Nova, Supernova, the bombs, Dynamite |
-| [`BattleEffect_RunDjinnBeams`](parts/djinn_beams.c) | columns of light fall on the targets, after a Djinni appears when it is a Djinni's: Revive, Water of Life, Quartz, Dew |
+| [`BattleEffect_RunTargetStrike`](battle_effect/target_strike.c) | repeated slashes or columns of light on the first target: twelve monster attacks, among them Cannibal Fang, Poison Tail and Twin Beaks |
+| [`BattleEffect_RunProjectileVolley`](battle_effect/projectiles.c) | shots that fly from the user and burst on each target: Heat Wave, Sleet, Wing Flutter |
+| [`BattleEffect_RunLobbedShells`](battle_effect/lobbed_shells.c) | shells lobbed at each target in turn, bursting into smoke |
+| [`BattleEffect_RunBurstShower`](battle_effect/burst_shower.c) | a shower of bursts at random points near the targets |
+| [`BattleEffect_RunTargetMotes`](battle_effect/target_motes.c) | smoke, hearts or orbs turning around each target |
+| [`BattleEffect_RunStatBoost`](battle_effect/stat_change.c) | flares that swirl into each target and burst |
+| [`BattleEffect_RunStatReduction`](battle_effect/stat_change.c) | a dagger (Dull) or a shield (Impair, Weaken) over each target that shatters |
+| [`BattleEffect_RunHealingMotes`](battle_effect/healing.c) | healing motes swirling in to each target: Ply, Wish, Cure, Cure Poison, Tonic, Psy Crystal |
+| [`BattleEffect_RunStreakVolley`](battle_effect/streaks.c) | streaks fired from above the user at its target |
+| [`BattleEffect_RunRushingStrike`](battle_effect/rushing_strike.c) | the user rushes at the first target and strikes: Bone Charge, Brute Force, Onslaught, Headbutt |
+| [`BattleEffect_RunFlurry`](battle_effect/flurry.c) | a flurry of strikes on the first target |
+| [`BattleEffect_RunGrowingColumns`](battle_effect/growth.c) | vines or green pillars growing from the ground |
+| [`BattleEffect_RunSparkGroups`](battle_effect/plasma.c) | flashes and bouncing sparks in one or three bursts: Blast, Nova, Supernova, the bombs, Dynamite |
+| [`BattleEffect_RunDjinnBeams`](battle_effect/djinn_beams.c) | columns of light fall on the targets, after a Djinni appears when it is a Djinni's: Revive, Water of Life, Quartz, Dew |
 
 Two routines several families share have sections of their own: the prelude,
 and the casting impacts that Djinn and weapon unleashes play.
@@ -255,7 +255,7 @@ Ground the prelude only keeps the Djinni circling. The opening leaves the
 canvas open and clear, and the attack draws on the same canvas.
 
 The opening is `BattleEffect_RunDjinniEntrance`
-([`projectiles.c`](parts/projectiles.c)), and the prelude is
+([`projectiles.c`](battle_effect/projectiles.c)), and the prelude is
 `BattleEffectParams.prelude`, which `staging.c` sets for `CAST_DJINNI`.
 
 ### Casting impacts
@@ -279,7 +279,7 @@ frames: the damage shows on its third frame, the heavy impact sounds on the
 fourth, and on the sixth some impacts knock the target back. Last the canvas is released, except
 that Meltdown hands over to the shield that Impair shatters.
 
-`BattleEffect_RunCastingImpact` ([`casting_impact.c`](parts/casting_impact.c))
+`BattleEffect_RunCastingImpact` ([`casting_impact.c`](battle_effect/casting_impact.c))
 is passed an `enum CastingImpact`; the phases are marked in its body.
 
 ## Design
@@ -291,7 +291,7 @@ frame the steps run in a fixed order, each over its own range of frames, and
 whatever happens on a single frame (a sound, a shake, a change of colour) is a
 test of the frame number. The order is part of the output, since later steps
 draw over earlier ones and many draw random numbers. `BattleEffect_RunBolt`
-([`bolt.c`](parts/bolt.c)), cut down to its outline, shows the shape nearly
+([`bolt.c`](battle_effect/bolt.c)), cut down to its outline, shows the shape nearly
 every handler has:
 
 ```c

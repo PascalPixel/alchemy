@@ -416,7 +416,7 @@ void BattleUnit_RefreshPlacement(void) {
     *placementCursor-- = placementValue;
 
   // The party, at its fixed spots in pixels: x 80, z 48, 16, -16 and -48
-  // (gBattlePlacement_StepPairs, battle_data.s).
+  // (gBattlePlacement_StepPairs, battle_tables.s).
   for (unitIndex = 0; unitIndex < count; partyPlace++, unitIndex++) {
     s32 unitId = unitIds[unitIndex];
 

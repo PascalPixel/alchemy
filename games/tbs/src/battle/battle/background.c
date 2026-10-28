@@ -631,9 +631,9 @@ void BattleBackground_StepHighlightBlend(void) {
 /// semi-transparent and the selected units' stay opaque, so only they take the
 /// pulsing lightening of BattleBackground_StepHighlightBlend. Called with the
 /// acting unit by BattleStaging_DispatchAction, with the targets being chosen
-/// by the command menu (party_commands.c, targets.c, selection.c), and with 0
-/// when either is done. Sets BattleWork.highlightMode and highlightStep, and
-/// adds or removes the task.
+/// by the command menu (battle_party_commands.c, battle_targets.c,
+/// selection.c), and with 0 when either is done. Sets BattleWork.highlightMode
+/// and highlightStep, and adds or removes the task.
 void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
   s16 unitIds[14];
   struct BattleWork *battle = gBattleWork;

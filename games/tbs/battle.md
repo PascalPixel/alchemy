@@ -40,7 +40,7 @@ answers the request: it saves the scene's [actors](glossary.md#actor)
 formation as its entrance into `gMainRoutineWork`, and ends the scene. The
 main routine's next pass tears the scene down, so the battle starts cold
 ([System](system.md#the-main-routine)), and calls `Battle_RunFar`
-([far call](glossary.md#far-call)) with the formation. `Battle_Run` (`src/battle/battle/encounter.c`) plays the whole
+([far call](glossary.md#far-call)) with the formation. `Battle_Run` (`src/battle/battle/run.c`) plays the whole
 battle and returns its outcome. A loss goes to the
 [destination](glossary.md#destination) an event set for a defeat, or else to
 the restart point, which is most often the last Sanctum; a win or a flight
@@ -67,7 +67,7 @@ different arithmetic can share one battle effect: Quake, Earthquake and Quake
 Sphere share one at three strengths.
 
 A unit is a `struct Unit`, read by `Unit_Get` (`src/game/game/units.c`); the
-ability tables are `src/game/abilities.c` (`struct AbilityDefinition`, read by
+ability tables are `src/game/ability_table.c` (`struct AbilityDefinition`, read by
 `Ability_Get`), then `gAbilityBattleEffects` and `gAbilityStaging` in
 `src/battle/ability_staging.c`.
 
@@ -133,8 +133,8 @@ because Isaac's Venus Power is above Ivan's Venus Resist, and Garet and Mia,
 further along the line, take less. Before the damage the game rolls whether the
 ability's added effect, such as Sleep, takes hold, and afterwards applies it.
 
-`BattleAbility_ApplyToTarget` (`src/battle/battle/target_exec.c`) does this
-for each target; the formulas are in `src/game/game/battle_calc.c`.
+`BattleAbility_ApplyToTarget` (`src/battle/battle/ability.c`) does this
+for each target; the formulas are in `src/game/game/battle_arithmetic.c`.
 [Battles](src/battle/README.md#how-an-ability-resolves) has every kind of
 ability's formula, the fall-off tables and the added effects.
 

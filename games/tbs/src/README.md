@@ -29,8 +29,8 @@ them.
   [far-call](../glossary.md#far-call) tables, the overlay stubs, the flash
   save library and the [resource directory](../glossary.md#resource-directory),
   the numbered list through which every image, table and overlay is found.
-- [Graphics](graphics/README.md) holds most of the images, the title intro,
-  the credits and the handwritten decoders.
+- [Graphics](graphics/README.md) holds the pictures, each with the assembly
+  that only places it.
 - [Sound](sound/README.md) holds the sound layer and Nintendo's
   MusicPlayer2000 driver; the music and samples themselves are in
   [`games/tbs/sound`](../sound).
@@ -48,7 +48,9 @@ them.
   the world map: the [actors](../glossary.md#actor), walking, and loading,
   scrolling and drawing the map.
 - [Scenes](scene/README.md) holds the scenes' overlays: who stands where, the
-  [triggers](../glossary.md#trigger) and the [events](../glossary.md#event).
+  [triggers](../glossary.md#trigger) and the [events](../glossary.md#event),
+  and the three scenes that are screens: the Title, the File Screen and the
+  Battle Arena.
 - [Maps](map/README.md) holds the [maps](../glossary.md#map) as data.
 - [Debug scenes](debug/README.md) holds the ten debug scenes the cartridge
   keeps.
@@ -71,8 +73,8 @@ them.
   stored messages and types them out, and holds the screens built from
   windows, among them the battle menus, the file list and name entry.
 - [Menus](menu/README.md) holds the field menu's Psynergy, Djinn, Item and
-  Status screens, and three overlays: the Title, the File Screen and the
-  Battle Arena.
+  Status screens, and the two small banks the Title calls: the title intro
+  and the credits.
 - [Shops](shop/README.md) holds every counter that buys, sells, repairs or
   heals, and the inn.
 
@@ -100,8 +102,8 @@ far-call tables.
 | `rom_main_06` | `SHOP.S` | `shop` |
 | `rom_main_07` | `BATTLE.S` | `battle` |
 | `rom_main_08` | `BATTLE_EFFECT.S` | `battle_effect` |
-| `rom_main_09` | `CREDITS.S` | `graphics/credits` |
-| `rom_main_10` | `TITLE.S` | `graphics/title` |
+| `rom_main_09` | `CREDITS.S` | `menu` (`credits.c`) |
+| `rom_main_10` | `TITLE.S` | `menu` (`title_intro.c`) |
 | `rom_main_11` | `LUCKY_DICE.S` | `field/lucky_dice.c` |
 | `rom_main_12` | `LUCKY_WHEELS.S` | `field/lucky_wheels.c` |
 | `rom_main_13` | `SOUND.S` | `sound` |
@@ -151,6 +153,9 @@ its folder:
   the overlay calls the main image through, chosen from the list in
   `system/overlay/imports.inc`.
 
+Where an overlay's RAM variables are still assembly, `scene/bss/<scene>.s`
+holds them.
+
 Code several scenes use is in headers under `scene/shared/`, and each scene
 that includes one compiles its own copy.
 [Cartridge and memory](cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)
@@ -158,8 +163,7 @@ describes how an overlay is packed and loaded.
 
 | Folder | Overlays |
 | --- | --- |
-| `scene/` | 90 |
-| `menu/` | 3: the Title, the File Screen and the Battle Arena |
+| `scene/` | 93, with the Title, the File Screen and the Battle Arena |
 | `debug/` | 3: the test scenes, Increase item and level, and Menu test |
 
 ## Headers
@@ -202,12 +206,29 @@ compilers wrote it. Each such file states that proof in comment lines at its
 top that begin `@ Why` ([Matching](MATCHING.md#the-other-markers)). The
 proofs are instructions the compilers never emit: a branch on a shift's carry
 (`system/trig.s`, `system/decompress_byte_lz.s`), a load into `pc`
-from a table the code rewrites (`graphics/tile/decode.s`), a switch from
+from a table the code rewrites (`battle/background_decode.s`), a switch from
 Thumb to ARM inside a routine (`sound/mixer.s`), a write to the processor's
 mode (`system/entry.s`). Most of this handwritten code is decoders, the
 sound mixing and the routines copied into
 [IWRAM](../glossary.md#iwram-and-ewram). The few handwritten helpers inside
 the C are each marked `CAMELOT_ASM` with their proof.
+
+The decoders unpack tiles, sprites and text for the rest of the game. Each is
+linked into the bank of the code that calls it and written in the processor's
+32-bit instructions, which run slowly over the cartridge's 16-bit bus, so its
+caller copies it into RAM first, a [heap slot](../glossary.md#heap-slot) or the
+heap ([Field](field/README.md#routines-run-from-ram)). For the two battle
+background decoders the copy is needed: they rewrite their own table of
+commands before they start, which code in ROM cannot do.
+
+| Routine | What it unpacks | File |
+| --- | --- | --- |
+| `Text_DecodeSymbol`, `Message_FindArm` | one symbol of packed message text; where a message starts | `window/message_decode.s` |
+| `Tile_Decompress4bpp`, `Tile_ExpandMasked`, `Tile_ExpandOpaque` | window images and icons | `window/decompress_4bpp.s`, `window/expand_opaque.s` |
+| `Render_DecodePicture`, `TileMap_DrawRows` | a sprite animation's picture into its sprite; the world map's still picture | `field/picture_decode.s` |
+| `Tile_ConvertMapGrid` | a map's three decoded planes into cells | `field/map_grid_convert.s` |
+| `BitDecoder_DecodeImage` | a battle background | `battle/background_decode.s` |
+| `Credits_DecodeBackground` | a battle background, its colours moved into one half of the credits' memory | `menu/credits_background_decode.s`, `menu/credits_background_expand.s` |
 
 The rest of the assembly, about 50 KB in each edition, is stubs: the 8-byte
 entries of the far-call tables in `gamepak/far_call/` (`.S` files, which the
@@ -228,8 +249,8 @@ power-on step by step.
 
 To find the code behind something in the game, search for its English name.
 Each battle effect's comment names the abilities that play it, so searching
-`battle_effect/parts/` for Quake leads to
-[quake.c](battle_effect/parts/quake.c). Each place's code is the overlay in
+`battle_effect/battle_effect/` for Quake leads to
+[quake.c](battle_effect/battle_effect/quake.c). Each place's code is the overlay in
 `scene/` named for it, such as [scene/bilibin.c](scene/bilibin.c). The game's
 text is in [`games/tbs/text`](../text), a PO catalog for each language, where
 each message carries its linker name: "(No saved data)" is `MsgSaveNoData`,

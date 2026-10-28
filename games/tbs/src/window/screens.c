@@ -17,31 +17,33 @@
 ///   Party status    party_status.c: PartyStatus_CreateWindow,
 ///                   PartyStatus_Draw
 ///   Saving          save.c: FileList_SelectFile, Save_ToChosenFile
-///   Battle menus    party_commands.c: Battle_CollectPartyCommands, which
-///                   runs command_row.c: BattleCommandRow_Run and the menus
-///                   of djinn_menu.c, summon_menu.c, item_menu.c,
-///                   psynergy_menu.c and targets.c
+///   Battle menus    battle_party_commands.c: Battle_CollectPartyCommands,
+///   which
+///                   runs battle_command_row.c: BattleCommandRow_Run and the
+///                   menus of battle_djinn_menu.c, battle_summon_menu.c,
+///                   battle_item_menu.c, battle_psynergy_menu.c and
+///                   battle_targets.c
 ///   Icon menus      icon_menu.c: FieldMenu_SelectCommand,
 ///                   FileList_SelectAction
 
 #include "screens_internal.h"
 
 // The parts, in ROM order (src/README.md, "Objects and parts").
-#include "screens/outputs.c"
+#include "screens/window_sprites.c"
 #include "screens/party_status.c"
 #include "screens/save.c"
 #include "screens/name_entry.c"
 #include "screens/joined.c"
-#include "screens/pictures.c"
-#include "screens/command_row.c"
-#include "screens/djinn_preview.c"
-#include "screens/status.c"
-#include "screens/djinn_menu.c"
-#include "screens/summon_menu.c"
-#include "screens/item_menu.c"
-#include "screens/psynergy_menu.c"
-#include "screens/targets.c"
+#include "screens/menu_titles.c"
+#include "screens/battle_command_row.c"
+#include "screens/battle_djinn_preview.c"
+#include "screens/battle_status.c"
+#include "screens/battle_djinn_menu.c"
+#include "screens/battle_summon_menu.c"
+#include "screens/battle_item_menu.c"
+#include "screens/battle_psynergy_menu.c"
+#include "screens/battle_targets.c"
 #include "screens/link_timer.c"
-#include "screens/party_commands.c"
+#include "screens/battle_party_commands.c"
 #include "screens/icon_menu.c"
 #include "screens/debug.c"

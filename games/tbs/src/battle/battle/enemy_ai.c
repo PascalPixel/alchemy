@@ -5,7 +5,7 @@
 #include "../battle_internal.h"
 
 /// An enemy's memory of its action choice, kept in Unit.aiActionIndex (0 in
-/// every row of enemies.c, so it starts cleared). Only
+/// every row of enemy_table.c, so it starts cleared). Only
 /// ACTION_STRATEGY_RANDOM_START and ACTION_STRATEGY_IN_ORDER use it.
 /// bits: 31..4 unused | 3..1 selection | 0 initialized
 struct BattleAIState {
@@ -86,7 +86,7 @@ s32 BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
   failedChoices = 0;
   // ACTION_STRATEGY_NEXT_PICK's first pick is place 0, and
   // ACTION_STRATEGY_SAME would keep this -1 as its place; no row of
-  // enemies.c uses either.
+  // enemy_table.c uses either.
   selection = -1U;
   // A party member chooses in the menu.
   if (unit->classId != CLASS_NONE)
@@ -103,7 +103,7 @@ s32 BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
 select_again:
   strategyKind = *actionStrategy;
   switch (strategyKind) {
-  // The three weight tables are in battle_data.s.
+  // The three weight tables are in battle_tables.s.
   case ACTION_STRATEGY_EVEN:
     selection = BattleEnemy_SelectWeightedAction(
         gBattleAI_ActionWeights[ACTION_STRATEGY_EVEN]);

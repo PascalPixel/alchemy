@@ -5,8 +5,8 @@
 #include "../menu_internal.h"
 
 /// Loads each menu icon resource whose cache slot was acquired: the Djinn
-/// menu's up and down arrows (djinn/arrowup and arrowdn) into the work's
-/// resourceSlots[0] and [1], for Icon_DrawVariantWithTileOffset.
+/// menu's up and down arrows (djinn_arrow_up and djinn_arrow_down) into the
+/// work's resourceSlots[0] and [1], for Icon_DrawVariantWithTileOffset.
 /// DjinnMenu_Run calls it and IconMenu_ReleaseArrows frees them.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;

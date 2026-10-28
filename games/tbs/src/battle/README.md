@@ -50,7 +50,7 @@ plays. Then each turn goes the same way:
 When one side has nobody left, the spoils (coins, experience, items and level
 ups) are handed out.
 
-`Battle_Run` ([`battle/encounter.c`](battle/encounter.c)) runs the whole battle.
+`Battle_Run` ([`battle/run.c`](battle/run.c)) runs the whole battle.
 A turn runs `Battle_GatherActions` and `BattleActionOrder_Sort` (`turn.c`),
 then for each action `BattleActionRun_Build` (`action.c`) and
 `BattleStaging_DispatchAction` (`staging.c`), and last `Battle_ProcessTurnEnd`
@@ -85,7 +85,7 @@ The habits are these:
 | same | the entry it picked last time |
 
 `BattleAI_ChooseAction` ([`battle/enemy_ai.c`](battle/enemy_ai.c)) makes the
-choice from the enemy's row of `../game/enemies.c`; the habits are
+choice from the enemy's row of `../game/enemy_table.c`; the habits are
 `enum EnemyActionStrategy` and the random ones read `gBattleAI_ActionWeights`.
 
 ### First strikes and fleeing
@@ -150,7 +150,7 @@ place, as the Swift Sword unleashes Sonic Smash.
   again instead.
 - Item takes the item's ability; an item with none, or a broken one, makes
   the user defend.
-- Summon takes the summon's ability from `../game/summons.c` and marks the
+- Summon takes the summon's ability from `../game/summon_table.c` and marks the
   standby Djinn it uses.
 
 The action takes its [element](../../glossary.md#the-four-elements) from the
@@ -173,7 +173,7 @@ holds its place. If no one in range is left, the unit defends
 cursor wraps round. Where the units stand on screen changes none of this.
 
 `BattleActionRun_SetTargets` walks the places; the cursor is
-`BattleTarget_RunSelection` (`../window/screens/targets.c`).
+`BattleTarget_RunSelection` (`../window/screens/battle_targets.c`).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -254,7 +254,7 @@ player should see is put in a queue to be shown afterwards
 ([below](#how-outcomes-reach-the-screen)).
 
 `BattleAbility_ApplyToTarget`
-([`battle/target_exec.c`](battle/target_exec.c)) does this, its stages
+([`battle/ability.c`](battle/ability.c)) does this, its stages
 numbered in its body.
 
 ### The ability kind
@@ -286,7 +286,7 @@ for each Djinni it uses. A blow always does at least 1 damage; a critical hit
 adds a quarter, then the target's level divided by 5, plus 6.
 
 The kinds are `enum AbilityFormula`, the low four bits of an ability's
-`flags`. The formulas are in [`../game/game/battle_calc.c`](../game/game/battle_calc.c),
+`flags`. The formulas are in [`../game/game/battle_arithmetic.c`](../game/game/battle_arithmetic.c),
 called from here through their far-call names, such as
 `Battle_CalculateRecoveryFar` for `Battle_CalculateRecovery`
 ([far call](../../glossary.md#far-call)).
@@ -346,7 +346,7 @@ restores 70 to 73 HP at Power 100 and 83 to 86 at 120; the Healing Ring, which
 uses Cure's row, always restores 70 to 73, since an item's user counts as
 Power 100.
 
-The tables are in `battle_calc.s`.
+The tables are in `range_falloff.s`.
 
 ### Whether the added effect lands
 
@@ -367,7 +367,7 @@ Quartz 60 percent, Dew 90, and 100 for an effect with no rate of its own. When
 the added effect of an effect-kind ability fails, the target takes no damage
 either.
 
-`Battle_RollEffectSuccess` (`../game/game/battle_calc.c`) makes the roll.
+`Battle_RollEffectSuccess` (`../game/game/battle_arithmetic.c`) makes the roll.
 
 ### Calling an ally, and effects that change the damage
 
@@ -561,7 +561,7 @@ staging and hand back control when they finish.
   enemies take ids from 128 (`FIRST_ENEMY_UNIT`).
 - **ability**, **ability id**: anything a unit does when it acts, from Attack
   to Quake, a Djinni, a summon, an item's use or an enemy's move. The id is a
-  row number in three tables: `../game/abilities.c`, `gAbilityBattleEffects` and
+  row number in three tables: `../game/ability_table.c`, `gAbilityBattleEffects` and
   `gAbilityStaging`.
 - **ability kind**: which formula an ability's targets go through. The
   battle effect an ability plays is chosen separately.
@@ -596,7 +596,7 @@ for one of its sprites, and `plan` for the action under way.
 
 Abilities and enemies are named from the label columns of their tables,
 `ability` and `enemy`, which follow the English release's text. The formulas
-are named from what `battle_calc.c` computes, and the playback commands from
+are named from what `battle_arithmetic.c` computes, and the playback commands from
 what playback does with each. The shadow under each unit,
 `BATTLE_SHADOW_SPRITE`, is named from what the battle's recordings show.
 

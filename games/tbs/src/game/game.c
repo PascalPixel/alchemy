@@ -20,7 +20,7 @@
 ///   Enemies, party  party.c: BattleUnit_Set, Party_AddMember,
 ///                   Party_AdjustCoins
 ///   Classes         classes.c: Class_Determine, Unit_UpdateClass
-///   Battle maths    battle_calc.c: Battle_GetElementMultiplier,
+///   Battle maths    battle_arithmetic.c: Battle_GetElementMultiplier,
 ///                   Battle_Random
 ///   Djinn           djinn.c: Djinn_Give, Djinn_Set
 
@@ -33,6 +33,6 @@
 #include "game/flags.c"
 #include "game/party.c"
 #include "game/classes.c"
-#include "game/battle_calc.c"
+#include "game/battle_arithmetic.c"
 #include "game/djinn.c"
 #include "game/snapshot.c"

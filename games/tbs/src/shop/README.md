@@ -39,7 +39,7 @@ three shops have a further set of their own, whose keepers call the player
 `Shop_Run` runs a shop until the player leaves: one loop over the four
 actions. Buy and Artifacts both go through `Shop_SelectBuy` (`shop/buy.c`),
 Sell and Repair through `Shop_ChooseMember`. The stock table is `sStockTable`
-in [`shop/artifacts.c`](shop/artifacts.c), with its columns named there.
+in [`shop/stock.c`](shop/stock.c), with its columns named there.
 
 ### Buying
 
@@ -210,7 +210,7 @@ Altmiller Cave bursts (`Shop_SaveAndTintFieldPalette`).
 
 ## Words used here
 
-- **stock row**: a row of `sStockTable` in [`shop/artifacts.c`](shop/artifacts.c),
+- **stock row**: a row of `sStockTable` in [`shop/stock.c`](shop/stock.c),
   one per shop, with its columns named by `SHOP_STOCK_`.
 - **shop type**: the stock row's last column, `SHOP_TYPE_ITEMS`,
   `SHOP_TYPE_WEAPONS` or `SHOP_TYPE_ARMOR`.
@@ -224,7 +224,7 @@ Altmiller Cave bursts (`Shop_SaveAndTintFieldPalette`).
 ## Evidence
 
 The counters are named for what the player meets at them, the stock row's
-columns from what `shop/artifacts.c` reads from each, the actions and services
+columns from what `shop/stock.c` reads from each, the actions and services
 from the choices their windows offer in the English release, and the inns
 from the town scenes that open them. The item names on this page are
 `MsgItemName` plus each row's item ids.

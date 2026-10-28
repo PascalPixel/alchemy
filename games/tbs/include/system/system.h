@@ -25,7 +25,7 @@ struct FlashType;
 struct FlashSetupInfo;
 // The flash library's state, after pret's agb_flash: IdentifyFlash installs
 // the chip's routines and type. The credits borrow four of these cells while
-// no flash operation runs (graphics/credits/credits.c).
+// no flash operation runs (menu/credits.c).
 extern struct FlashSetupInfo gFlash_ChipAtmel;
 extern const struct FlashSetupInfo gFlash_ChipDefault;
 /// The chip's erase-all routine (FlashSetupInfo.handlers[1]).
@@ -126,7 +126,7 @@ extern const u8 Resource_PatchThumbBranch[];
 /// `D`, `F`, `S` or `I` (System_GetLanguage).
 extern const u8 gRom_LanguageCode;
 // The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
-// battle_effect_composite.s: Forward reads the picture left to right and
+// blitter_fragments.s: Forward reads the picture left to right and
 // Reverse right to left. None of them runs where it is.
 /// Max, four pixels (one canvas word), right to left; a full cell's row takes
 /// it twice.

@@ -45,11 +45,11 @@ next one's name.
 
 Each table is a C array of the struct that reads it, with a comment above each
 entry giving the English name its message holds: `gItem_DefinitionTable`
-(`item_table.c`), `gAbilityDefinitions` (`abilities.c`),
+(`item_table.c`), `gAbilityDefinitions` (`ability_table.c`),
 `gDjinn_DefinitionTable` (`djinn_table.c`), `gEnemy_Definitions`
-(`enemies.c`), `gSummon_DefinitionTable` (`summons.c`),
-`gClass_DefinitionTable` (`classes.c`) and `gCharacter_DefinitionTable`
-(`chars.c`). `item_ids.h`, `ability_ids.h` and `djinn_ids.h` name the ids the
+(`enemy_table.c`), `gSummon_DefinitionTable` (`summon_table.c`),
+`gClass_DefinitionTable` (`class_table.c`) and `gCharacter_DefinitionTable`
+(`character_table.c`). `item_ids.h`, `ability_ids.h` and `djinn_ids.h` name the ids the
 code uses.
 
 ## An item's row
@@ -158,7 +158,7 @@ and the party live in the
 [main routine's work](../../glossary.md#main-routines-work)
 (`gMainRoutineWork.units`, `.party`), which other code also reads directly, as
 the save file summary does. The battle folder
-reads `abilities.c` beside its own tables, which choose how an ability is
+reads `ability_table.c` beside its own tables, which choose how an ability is
 drawn ([Battle](../../battle.md)). The flags and the units are part of the
 save file.
 
@@ -183,7 +183,7 @@ save file.
   says who is in it and `gMainRoutineWork.party` lists them in order.
 - **inventory slot**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
   holding an item, its state and its count.
-- **ability**: a row of `abilities.c`. Psynergy, what a Djinni or summon does,
+- **ability**: a row of `ability_table.c`. Psynergy, what a Djinni or summon does,
   an item's use and an enemy's attack are all abilities.
 - **element**: `enum Element`, `ELEMENT_VENUS` to `ELEMENT_JUPITER`, and
   `ELEMENT_NONE`. A character's **element levels** are the Djinn set on it
@@ -207,19 +207,19 @@ in them, and the equip effect kinds (`EQUIP_EFFECT_`) from what
 `Unit_Calculate` does with each. The 80 flags from `FLAG_DJINN_FIRST` are the
 Djinn's found flags because `Djinn_GiveToParty` sets
 flag `FLAG_DJINN_FIRST` + 20 × element + index when a Djinni joins. The
-Machete's arithmetic on this page is the one multiplier in `classes.c` that
+Machete's arithmetic on this page is the one multiplier in `class_table.c` that
 gives both numbers the recording shows.
 
-`chars.c`'s first twenty words (`CharacterDefinition.reserved`) and
-`summons.c`'s two bytes after the ability (`SummonDefinition.reserved`) are 0
-in every row and read by no code. The last byte of each `classes.c` row,
+`character_table.c`'s first twenty words (`CharacterDefinition.reserved`) and
+`summon_table.c`'s two bytes after the ability (`SummonDefinition.reserved`) are 0
+in every row and read by no code. The last byte of each `class_table.c` row,
 `weakEffects[3]`, is the fourth weak effect,
 which `BattleAbility_IsWeakToEffect` stops short of; it too is 0 in every row,
 as is the enemies' fourth (`EnemyDefinition.weakEffects`).
 
 Rows 269 to 323 of `item_table.c` are 55 copies of one row: a weapon only Isaac
 can equip, priced 100 coins, with Attack 11, no icon and no name message.
-Nothing gives one: the shops' stock table (`shop/shop/artifacts.c`) and the
+Nothing gives one: the shops' stock table (`shop/shop/stock.c`) and the
 [events](../../glossary.md#event) name no item past `ITEM_CLERICS_RING` (268),
-no enemy in `enemies.c` carries or drops one, and the debug item browser
+no enemy in `enemy_table.c` carries or drops one, and the debug item browser
 covers 0 to 269 and skips items without an icon. They are filler to 324 rows.

@@ -100,7 +100,7 @@ enum EnemyTargetStrategy {
 /// EnemyDefinition.actionStrategy: how BattleAI_ChooseAction picks a
 /// place in the enemy's eight actions. The first three roll against
 /// gBattleAI_ActionWeights; the next two remember the place in
-/// Unit.aiActionIndex. No row of enemies.c has a strategy past
+/// Unit.aiActionIndex. No row of enemy_table.c has a strategy past
 /// ACTION_STRATEGY_RANDOM_START.
 enum EnemyActionStrategy {
   ACTION_STRATEGY_EVEN,           ///< 32 in 256 each
@@ -196,9 +196,9 @@ STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 0x4c);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x52);
 STATIC_ASSERT(sizeof(struct LevelUpResult) == 0x10);
 
-/// The eight characters' definitions, by character id (game/chars.c).
+/// The eight characters' definitions, by character id (game/character_table.c).
 extern const struct CharacterDefinition gCharacter_DefinitionTable[];
-/// The classes, by class index (game/classes.c, 203 entries).
+/// The classes, by class index (game/class_table.c, 203 entries).
 extern const struct ClassDefinition gClass_DefinitionTable[];
 
 #endif

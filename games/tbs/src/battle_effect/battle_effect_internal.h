@@ -55,7 +55,7 @@
 #include "battle_unit.h"
 #include "fixed_point_position.h"
 #include "irq.h"
-#include "module/battle_effect/battle_effect_bits.h"
+#include "module/battle_effect/blitter_operands.h"
 #include "call.h"
 #include "macros.h"
 #include "sprite_ids.h"

@@ -262,7 +262,7 @@ u32 BattlePlayback_RunAll(void) {
       case PLAYBACK_CLEAR_ARGUMENTS:
         MessageArgument_ClearAllFar();
         break;
-      // A negative message (MESSAGE_NONE in target_exec.c) shows nothing:
+      // A negative message (MESSAGE_NONE in ability.c) shows nothing:
       // the event only waits for the player.
       case PLAYBACK_MESSAGE:
         if ((s32)queue->operands[eventIndex] >= 0)

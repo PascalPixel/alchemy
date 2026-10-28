@@ -109,8 +109,8 @@ s32 BattleUnit_CountDownConfusion(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
   // Unit.confusion is counted down here as a u8, unlike the statuses
   // DEFINE_COUNT_DOWN_STATUS counts down, as are its reads in targeting.c and
-  // battle_calc.c; the plain s8 reads below and in turn.c match too. It runs
-  // from 0 to STATUS_TURNS, so its sign never shows.
+  // battle_arithmetic.c; the plain s8 reads below and in turn.c match too. It
+  // runs from 0 to STATUS_TURNS, so its sign never shows.
   if ((u8)unit->confusion != 0) {
     (*(u8 *)&unit->confusion)--;
     if (unit->confusion == 0)

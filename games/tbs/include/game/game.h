@@ -20,7 +20,7 @@ struct SummonDefinition;
 /// The 324 items by item id (item_table.c), read through Item_GetDirect
 /// (Item_GetDirect in the overlays).
 extern const struct ItemDefinition gItem_DefinitionTable[];
-/// The 16 summons (summons.c) by summon id, the numbers gSummon_OrderList
+/// The 16 summons (summon_table.c) by summon id, the numbers gSummon_OrderList
 /// lists; read through SummonDefinition_Get.
 extern const struct SummonDefinition gSummon_DefinitionTable[];
 
@@ -56,7 +56,7 @@ extern const struct DjinnDefinition gDjinn_DefinitionTable[];
 /// the multiplier in 256ths (256 = 1x), from 200 (+256) down to -200 (-256);
 /// Battle_GetElementMultiplier interpolates and adds 256.
 extern const s16 gElement_PowerResistCurve[5][2];
-/// The 165 enemies (enemies.c).
+/// The 165 enemies (enemy_table.c).
 extern const struct EnemyDefinition gEnemy_Definitions[];
 /// The enemies' element presets (element_table.c): attack element, levels and
 /// base power and resistance.

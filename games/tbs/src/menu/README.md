@@ -9,10 +9,9 @@ to set or trade, or a page of their stats. The field's people stand still
 behind the screen, and in most editions so does the rest of the field; when the
 player backs out the icons come back.
 
-The code here runs those four screens, the party member chooser that the
-Colosso [scenes](../../glossary.md#scene) open, and three
-[overlays](../../glossary.md#overlay) that are mostly menus: the Title, the
-File Screen and the Battle Arena.
+The code here runs those four screens and the party member chooser that the
+Colosso [scenes](../../glossary.md#scene) open. Two small banks sit beside it,
+because the Title calls them: the title intro and the credits.
 [User Interface](../../user_interface.md#the-field-menu) gives the layer in
 brief. The [windows](../../glossary.md#window) the screens are drawn in, and
 the row of icons itself, belong to [Windows](../window/README.md); the shop
@@ -155,8 +154,121 @@ what they wear, then the other equipment, then the rest; all equipment, by
 kind; and the items that aren't equipment first.
 
 Each order is a short list of item types, kept as data in
-[`menudata.c`](menudata.c) and named by `enum ListSort`. `ItemMenu_Sort` sorts
+[`menu_tables.c`](menu_tables.c) and named by `enum ListSort`. `ItemMenu_Sort` sorts
 the bag by one.
+
+## The title intro
+
+The title intro is the short scene that plays after the logos, before the File
+Screen.
+
+![The title intro: the clouds and the mountain scroll past the sun and its lens flares, ending on the Golden Sun logo](https://alchemy.pascalpixel.com/story/title.gif)
+
+At power-on the Nintendo logo shows with its jingle, then the Camelot logo for
+two seconds. If the cartridge holds a save, the intro follows: the clouds and
+the mountain scroll down while the sun and its lens flares rise along the
+mountain's slope, then the screen flashes white into the Golden Sun logo, where
+"Press Start" pulses for up to a minute. If nothing is pressed, the screen
+fades out and the game starts again from the logos. With no save the logos
+lead straight to the File Screen. After the prologue the same intro plays
+without the prompt, holds the logo five seconds and goes on to Vale. A or
+Start cuts each part short.
+
+The sense of depth comes from two
+[background layers](../../glossary.md#background-layer) scrolling at
+different speeds: the clouds at the back move a pixel every third frame, the
+mountain in front every other frame. The sun and its lens flares are
+sprites, placed by a VBlank task, `Title_UpdateIntroSprites`, which alternates
+two sets every other VBlank so twice as many show.
+
+The Title is a [scene](../../glossary.md#scene) like any other: its
+[overlay](../../glossary.md#overlay)'s entry, `Title_Run` in
+[Scenes](../scene/README.md), chooses by the entrance it was started with whether
+to show the logos and the intro, the intro after the prologue, the credits
+after the ship sails or the Golden Sun logo after the ending. The screens are
+drawn by `Title_ShowNintendoLogo`, `Title_ShowCamelotLogo` and
+`Title_ShowIntro`, in the title [bank](../../glossary.md#bank).
+
+### The title intro's own palette fade
+
+The intro fades in by changing colours, not the image: every one of the 512
+colours on screen, backgrounds and sprites alike, takes an equal step each
+frame from a dark red towards its own colour, so they all arrive together
+after 60 frames. Each colour is kept as three components, red, green and blue,
+with ten bits of fraction below each, so a small change spread over many
+frames still moves; on the last frame the fade copies the target colours
+outright. Each frame the new colours are packed into one of two pages, while
+the other page waits to reach the screen at the next VBlank.
+
+The fade can also head for a single colour or a filtered palette, but the game
+uses it only here. It is a [task](../../glossary.md#task),
+`TitlePaletteFade_Update`, set up by `TitlePaletteFade_Initialize` and started
+by `TitlePaletteFade_Start`.
+Scenes fade through the general palette fade instead, `PaletteFade_Update` in
+[palette_fade.c](../field/field_sequence/palette_fade.c), which the field sequence starts for
+every scene and which covers 224 background and 224 sprite colours.
+
+## The credits
+
+The credits are the staff names that roll over the game's battle backgrounds
+after the ending, as the Lemurian ship sails off.
+
+![The staff names scroll up over a picture of Vale's houses in the rain, which fades into a stone hall lit by torches while the names keep moving.](https://alchemy.pascalpixel.com/guides/graphics/credits.gif)
+
+The backgrounds crossfade one into the next: stormy Vale, then Sol Sanctum's
+hall, then the grassland, 32 in all, and last a fade to black, after which the
+game goes on to the File Screen. `Credits_Run` runs them; the title overlay
+calls it through the credits bank's [far-call](../../glossary.md#far-call)
+table.
+
+### Two battle backgrounds in one background memory
+
+A crossfade needs both images in memory at once, so the credits split the
+background tile memory and colours into two halves: one shows while the next
+image loads into the other, the screen blends across in 64 frames, about a
+second, and the halves swap roles. A battle background uses 128 colours,
+exactly half of what the background layers can show, so each half takes one
+image with its own 128 colours. An image loaded into the second half has its
+colour numbers moved up by 128 as it is unpacked, so the same image works in
+either. Both images drift right a pixel every fourth VBlank, and since each is
+exactly as wide as its layer, it wraps round without a seam.
+`Credits_LoadBackground` loads each image of `gCredits_Backgrounds`.
+
+### The scrolling names
+
+The list of names is far longer than the screen, and drawing it all at once
+would take more tile memory than the console can spare. Instead the names live
+in a ring of 32 rows of tiles, 16 on screen and 16 hidden: as the text scrolls
+up, each new line is drawn into the hidden half of the ring, over a line that
+left the top long before, so the credits' memory never grows.
+
+The names are sprites, not a background: six sprites side by side make each
+line of 192 pixels. They move up a pixel every fourth VBlank, so a new line
+arrives every 32 VBlanks, about half a second. Opaque strips of sprites at the
+top and bottom of the screen hide the rows that are only partly on screen. Each
+letter is drawn with a shadow a pixel down and to the right. The original game
+forgets to give back one line's buffer at the very end
+([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix)), which does no harm,
+since the [heap](../../glossary.md#heap-and-pools) is emptied before the File
+Screen starts. Each line is drawn by `Credits_DrawEnteringLine` and
+`Credits_DrawLine`, set up by `Credits_InitTextSprites`; the text is
+`gCredits_Lines`.
+
+### Taking over the screen
+
+For their length the credits run the screen themselves: they clear the task
+table and add their own tasks, stop the system's usual copy of the sprite list
+and send their own, and switch off the debug displays and the idle sleep. When
+they end they reload the windows' tiles and turn the sprite copy back on, as
+the next screen expects. The title intro does the same with its tasks and
+sprites.
+
+The credits keep their state (the sprite buffer's address, the scroll, the last
+line drawn and an end-of-text latch) in four words of memory that belong to the
+flash chip's code, which isn't running while the credits roll and sets each
+word again before it reads it. [The original](../../glossary.md#the-original)
+reaches the words in a way the C language leaves undefined (`// UB:`), and
+`UBFIX` gives them proper types.
 
 ## Design
 
@@ -194,18 +306,22 @@ counters borrow `gMenuWork` and set up their party figures through
 `PsynergyMenu_InitializeEntryActorsFar`. The Colosso scenes ask for a party
 member through `PartyMemberChooser_Open`.
 
-The Title ([`title.c`](title.c): the start screen, and the logo shown after the
-ending), the File Screen ([`file_screen.c`](file_screen.c): new game,
-continue, copy and delete, the door to the Battle Arena, and the transfer of a
-save's data by link or as a password) and the Battle Arena
-([`battle_arena.c`](battle_arena.c)) are overlays, each loaded into the
-overlay area when its scene starts
-([Cartridge and memory](../cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+The Title, the File Screen and the Battle Arena are
+[overlays](../../glossary.md#overlay) built from these screens and the window
+code; they are scenes
+([Scenes](../scene/README.md#the-title-the-file-screen-and-the-battle-arena)).
+The Title starts the title intro and the credits through the far calls of their
+banks.
 
 ## Limits
 
 - The menu work has room for eight party members and 32 listed entries.
 - A party member carries 15 items (`INVENTORY_SLOTS`).
+- A credits image has at most 128 colours and 256 by 120 pixels: half the
+  background colours, and 30 KB of its half's 32 KB of tile memory.
+- A credits line is 192 pixels wide and always centred (the drawing routine
+  can also align left or right, but nothing asks it to).
+- The credits last about 3 minutes 8 seconds, besides the time taken loading.
 
 ## Words used here
 
@@ -223,6 +339,12 @@ overlay area when its scene starts
 - **entry icons**: the item or Psynergy icons laid out in a grid
   (`entryIcons`).
 - **party figures**: the party members walking in the top window.
+- **component**: one of a colour's three five-bit levels, red, green or blue,
+  as the title intro's fade keeps it, with a fraction below it.
+- **half**: one of the two parts the credits split the background tile memory
+  and colours into (`alternate` in the code).
+- **tile ring**: the credits' 32 rows of text tiles, 16 on screen at a time,
+  reused as the text scrolls.
 - **page arrows**: the two tiles beside a paged list's page numbers
   (`PAGE_ARROW_TILE`), which each screen's loop slides back and forth.
 

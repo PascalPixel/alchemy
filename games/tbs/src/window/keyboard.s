@@ -9,18 +9,18 @@ gMenu_PartySpriteResourceIds:
 	.global gNameEntry_KeyboardTilemap
 gNameEntry_KeyboardTilemap:
 	.ifdef TBS_EDITION_JA
-	.incbin "games/tbs/src/graphics/window/keyboard_ja.table.lz"
+	.incbin "games/tbs/src/window/keyboard_ja.table.lz"
 	.global gNameEntry_AlternateKeyboardTilemap
 gNameEntry_AlternateKeyboardTilemap:
-	.incbin "games/tbs/src/graphics/window/keyboard_j2.table.lz"
+	.incbin "games/tbs/src/window/keyboard_j2.table.lz"
 	.global NameEntry_KeyboardTilemap3
 NameEntry_KeyboardTilemap3:
-	.incbin "games/tbs/src/graphics/window/keyboard_j3.table.lz"
+	.incbin "games/tbs/src/window/keyboard_j3.table.lz"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/window/keyboard_es.table.lz"
+	.incbin "games/tbs/src/window/keyboard_es.table.lz"
 	.else
-	.incbin "games/tbs/src/graphics/window/keyboard.table.lz"
+	.incbin "games/tbs/src/window/keyboard.table.lz"
 	.endif
 	.endif
 	.balign 4, 0

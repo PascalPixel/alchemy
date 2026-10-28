@@ -5,7 +5,9 @@
    row names its C file DIR/NAME.c and is three objects of text.ld: its
    entry table, the C file and its import table. The entry table is
    DIR/entry/NAME.s where that file exists and DIR/entry.s otherwise, and
-   the import table is DIR/import/NAME.s or DIR/import.s the same way. */
+   the import table is DIR/import/NAME.s or DIR/import.s the same way.
+   Where its globals are written in assembly, its .bss is DIR/bss/NAME.s,
+   on the overlay's bss row. */
 INCLUDE "extern.ld"
 SECTIONS
 {

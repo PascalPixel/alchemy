@@ -394,7 +394,7 @@ void Scene_SetRestartPoint(void) {
 }
 
 /// Returns the battle background chosen for the current scene. The battle setup
-/// (battle/encounter.c) reads it through Event_GetSpecialValueFar as the
+/// (battle/run.c) reads it through Event_GetSpecialValueFar as the
 /// battle's background.
 s16 Event_GetSpecialValue(void) { return gMainRoutineWork.special; }
 

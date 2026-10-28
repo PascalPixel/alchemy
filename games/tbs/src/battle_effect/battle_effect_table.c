@@ -48,8 +48,9 @@ struct BattleEffectParams;
 
 /// Mote cells: particle sheets hold ten, cell n (from 0) n + 1 pixels wide
 /// and twice that tall. EFFECT_DRAW_MOTE and many parts read it.
-/// It stays the first table: BattleEffect_BuildBlitter (parts/blitter.c)
-/// checks that a walk of the blitter template ended at its address.
+/// It stays the first table: BattleEffect_BuildBlitter
+/// (battle_effect/blitter.c) checks that a walk of the blitter template ended
+/// at its address.
 u16 gBattleEffect_MoteCells[] = {0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
 /// Flare cells: the first ten are squares 2x2 to 20x20, cell n (from 0) n + 1
 /// pixels from its centre to each edge (EFFECT_DRAW_FLARE, and Neptune and

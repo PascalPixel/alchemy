@@ -71,7 +71,7 @@ windows' screen map and the three map layers' screen maps, then the map's
 three sheets of tiles, and in its last 32 KB the sprites' tiles, which a cache
 hands out in 512 blocks of 64 bytes. The credits screen divides the background
 memory into two halves instead
-([Graphics](../graphics/README.md#two-battle-backgrounds-in-one-background-memory)).
+([Menus](../menu/README.md#two-battle-backgrounds-in-one-background-memory)).
 
 The window tiles are placed by `Window_LoadGraphics`, the map's by
 `MapGrid_LoadMap` ([Maps](../map/README.md)), and the sprite tiles by the

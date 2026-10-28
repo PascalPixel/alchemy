@@ -212,7 +212,7 @@ Psynergy's cast is the part of `event_commands/` named for it, whose comment
 names the abilities that reach it. A trigger's moment is
 `enum PsynergyPhase`, and what an ability does on the field is
 `enum FieldPsynergy`, the `fieldPsynergy` field of each ability in
-[`abilities.c`](../game/abilities.c).
+[`ability_table.c`](../game/ability_table.c).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -313,7 +313,7 @@ before each battle as well as between scenes.
 - **request**: a field of the field work that something sets to interrupt the
   walk (above).
 - **field kind**: what an ability does on the field, the `fieldPsynergy` field
-  of each ability in [`abilities.c`](../game/abilities.c), named by
+  of each ability in [`ability_table.c`](../game/ability_table.c), named by
   `enum FieldPsynergy`
   (`module/field/event_commands.h`). Whirlwind and Gale share
   `FIELD_PSYNERGY_WHIRLWIND`.

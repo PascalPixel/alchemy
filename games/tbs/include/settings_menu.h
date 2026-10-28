@@ -18,7 +18,7 @@
 /// menu takes the same slot for its cursor, entry (page) and icons.
 struct OptionMenuWork {
   u8 unused[0x400]; ///< no code names it
-  /// Seven 52-byte entries (struct OptionMenuEntry in options.c), whose
+  /// Seven 52-byte entries (struct OptionMenuEntry in settings_menu.c), whose
   /// state only the unused SettingsMenu_ResetEntries writes.
   u8 entries[7][52];
   u8 unusedAfterEntries[8]; ///< no code names it

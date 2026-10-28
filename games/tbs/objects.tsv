@@ -56,27 +56,27 @@ main	rom_main_01	games/tbs/src/field/actor_script
 main	rom_main_01	games/tbs/src/field/actor_script_operands
 main	rom_main_01	games/tbs/src/map/maps
 main	rom_main_02	games/tbs/src/gamepak/far_call/WINDOW
-main	rom_main_02	games/tbs/src/graphics/text/decode_symbol
+main	rom_main_02	games/tbs/src/window/message_decode
 main	rom_main_02	games/tbs/src/window/glyph_arm	.text
-main	rom_main_02	games/tbs/src/graphics/tile/decompress_4bpp	.text .rodata .text.decompress_4bpp_loop
-main	rom_main_02	games/tbs/src/graphics/tile/expand_opaque
+main	rom_main_02	games/tbs/src/window/decompress_4bpp	.text .rodata .text.decompress_4bpp_loop
+main	rom_main_02	games/tbs/src/window/expand_opaque
 main	rom_main_02	games/tbs/src/window/window	.text
 main	rom_main_02	games/tbs/src/window/screens	.text
-main	rom_main_02	games/tbs/src/window/slider	.rodata
+main	rom_main_02	games/tbs/src/graphics/ui/slider	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/marks	.rodata
 main	rom_main_02	games/tbs/src/graphics/ui/menu_icons	.rodata
-main	rom_main_02	games/tbs/src/window/fixed_block	.rodata
-main	rom_main_02	games/tbs/src/graphics/render/labels	.rodata
+main	rom_main_02	games/tbs/src/graphics/ui/pointing_hand	.rodata
+main	rom_main_02	games/tbs/src/graphics/ui/menu_titles	.rodata
 main	rom_main_02	games/tbs/src/graphics/font/text	.rodata
 main	rom_main_02	games/tbs/src/window/articles	.rodata
-main	rom_main_02	games/tbs/src/window/cursor	.rodata
+main	rom_main_02	games/tbs/src/graphics/ui/sprite_cursors	.rodata
 main	rom_main_02	games/tbs/src/window/scales	.rodata
-main	rom_main_02	games/tbs/src/window/windata	.rodata
+main	rom_main_02	games/tbs/src/window/window_tables	.rodata
 main	rom_main_02	games/tbs/text/messages	.rodata
-main	rom_main_02	games/tbs/src/graphics/text/genders	.rodata	en de es fr it
+main	rom_main_02	games/tbs/src/window/item_genders	.rodata	en de es fr it
 main	rom_main_02	games/tbs/src/window/message_speed	.rodata
-main	rom_main_02	games/tbs/src/graphics/text/numwords	.rodata	en de
-main	rom_main_02	games/tbs/src/window/slidpal	.rodata
+main	rom_main_02	games/tbs/src/window/counted_nouns	.rodata	en de
+main	rom_main_02	games/tbs/src/graphics/ui/slider_palette	.rodata
 main	rom_main_02	games/tbs/src/window/keyboard	.rodata
 main	rom_main_03	games/tbs/src/gamepak/far_call/GAME
 main	rom_main_03	games/tbs/src/game/game
@@ -84,11 +84,11 @@ main	rom_main_03	games/tbs/src/game/experience_table
 main	rom_main_03	games/tbs/src/game/artifact_slots
 main	rom_main_03	games/tbs/src/game/starting_equipment
 main	rom_main_03	games/tbs/src/game/item_table
-main	rom_main_03	games/tbs/src/game/abilities
-main	rom_main_03	games/tbs/src/game/enemies
-main	rom_main_03	games/tbs/src/game/chars
-main	rom_main_03	games/tbs/src/game/summons
-main	rom_main_03	games/tbs/src/game/classes
+main	rom_main_03	games/tbs/src/game/ability_table
+main	rom_main_03	games/tbs/src/game/enemy_table
+main	rom_main_03	games/tbs/src/game/character_table
+main	rom_main_03	games/tbs/src/game/summon_table
+main	rom_main_03	games/tbs/src/game/class_table
 main	rom_main_03	games/tbs/src/game/element_table
 main	rom_main_03	games/tbs/src/game/djinn_table
 main	rom_main_04	games/tbs/src/gamepak/far_call/FIELD_SEQUENCE
@@ -107,40 +107,40 @@ main	rom_main_04	games/tbs/src/field/scenes
 main	rom_main_04	games/tbs/src/field/scripts
 main	rom_main_05	games/tbs/src/gamepak/far_call/MENU
 main	rom_main_05	games/tbs/src/menu/menu
-main	rom_main_05	games/tbs/src/graphics/ui/menuspr
-main	rom_main_05	games/tbs/src/menu/menustr
-main	rom_main_05	games/tbs/src/menu/menudata
+main	rom_main_05	games/tbs/src/graphics/ui/menu_sprites
+main	rom_main_05	games/tbs/src/menu/menu_strings
+main	rom_main_05	games/tbs/src/menu/menu_tables
 main	rom_main_06	games/tbs/src/gamepak/far_call/SHOP
-main	rom_main_06	games/tbs/src/shop/shopspr
+main	rom_main_06	games/tbs/src/graphics/ui/shop_sprites
 main	rom_main_06	games/tbs/src/shop/shop
 main	rom_main_07	games/tbs/src/gamepak/far_call/BATTLE
-main	rom_main_07	games/tbs/src/graphics/tile/decode	.text .rodata .text.bit_dispatch
-main	rom_main_07	games/tbs/src/graphics/tile/decode	.data .text.bit_commands
+main	rom_main_07	games/tbs/src/battle/background_decode	.text .rodata .text.bit_dispatch
+main	rom_main_07	games/tbs/src/battle/background_decode	.data .text.bit_commands
 main	rom_main_07	games/tbs/src/battle/battle
-main	rom_main_07	games/tbs/src/battle/battle_data
+main	rom_main_07	games/tbs/src/battle/battle_tables
 main	rom_main_07	games/tbs/src/battle/ability_staging
-main	rom_main_07	games/tbs/src/battle/battle_data_tail
+main	rom_main_07	games/tbs/src/battle/element_glow_tables
 main	rom_main_07	games/tbs/src/battle/debug_parameter_sets
-main	rom_main_07	games/tbs/src/battle/battle_vars
+main	rom_main_07	games/tbs/src/battle/knockback_tables
 main	rom_main_07	games/tbs/src/battle/formations
 main	rom_main_07	games/tbs/src/battle/battle_sprites
 main	rom_main_08	games/tbs/src/gamepak/far_call/BATTLE_EFFECT
 main	rom_main_08	games/tbs/src/battle_effect/battle_effect	.text .data
-main	rom_main_08	games/tbs/src/battle_effect/battle_effect_composite
+main	rom_main_08	games/tbs/src/battle_effect/blitter_fragments
 main	rom_main_08	games/tbs/src/battle_effect/battle_effect_table	.data
-main	rom_main_08	games/tbs/src/battle_effect/battle_effect_composite_color
-main	rom_main_08	games/tbs/src/battle_effect/battle_effect_bits	.data
+main	rom_main_08	games/tbs/src/battle_effect/blitter_color_fragments
+main	rom_main_08	games/tbs/src/battle_effect/blitter_operands	.data
 main	rom_main_09	games/tbs/src/gamepak/far_call/CREDITS
-main	rom_main_09	games/tbs/src/graphics/tile/dot_product
-main	rom_main_09	games/tbs/src/graphics/tile/expand	.rodata
-main	rom_main_09	games/tbs/src/graphics/tile/expand	.text .data .text.battle_effect_expand_commands
-main	rom_main_09	games/tbs/src/graphics/credits/credits	.text
-main	rom_main_09	games/tbs/src/graphics/credits/credits	.rodata
-main	rom_main_09	games/tbs/src/graphics/credits/credits	.data
+main	rom_main_09	games/tbs/src/menu/credits_background_decode
+main	rom_main_09	games/tbs/src/menu/credits_background_expand	.rodata
+main	rom_main_09	games/tbs/src/menu/credits_background_expand	.text .data .text.credits_background_expand_commands
+main	rom_main_09	games/tbs/src/menu/credits	.text
+main	rom_main_09	games/tbs/src/menu/credits	.rodata
+main	rom_main_09	games/tbs/src/menu/credits	.data
 main	rom_main_09	games/tbs/src/graphics/credits/font	.rodata
 main	rom_main_10	games/tbs/src/gamepak/far_call/TITLE
 main	rom_main_10	games/tbs/src/graphics/title/prompt
-main	rom_main_10	games/tbs/src/graphics/title/intro
+main	rom_main_10	games/tbs/src/menu/title_intro
 main	rom_main_11	games/tbs/src/gamepak/far_call/LUCKY_DICE
 main	rom_main_11	games/tbs/src/field/lucky_dice
 main	rom_main_12	games/tbs/src/gamepak/far_call/LUCKY_WHEELS
@@ -429,23 +429,23 @@ main	rom_tail_00	games/tbs/sound/songs/se_311	.rodata
 main	rom_tail_01	games/tbs/src/gamepak/far_call/SPRITE
 main	rom_tail_01	games/tbs/src/system/sprite_metadata	.text
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata
-main	rom_tail_01	games/tbs/src/graphics/animref0	.rodata
+main	rom_tail_01	games/tbs/src/graphics/sprite/animref0	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.a
-main	rom_tail_01	games/tbs/src/graphics/animref1	.rodata
-main	rom_tail_01	games/tbs/src/graphics/animref2	.rodata
+main	rom_tail_01	games/tbs/src/graphics/sprite/animref1	.rodata
+main	rom_tail_01	games/tbs/src/graphics/sprite/animref2	.rodata
 main	rom_tail_01	games/tbs/src/graphics/sprite/sprites	.rodata.b
 main	rom_tail_02	games/tbs/src/gamepak/resource_directory
 main	rom_tail_02	games/tbs/src/graphics/ui/ui
 main	rom_tail_02	games/tbs/src/graphics/title/title
-main	rom_tail_02	games/tbs/src/graphics/battle_bg/battle_bg
+main	rom_tail_02	games/tbs/src/graphics/battle_backgrounds/battle_backgrounds
 main	rom_tail_02	games/tbs/src/graphics/lucky_wheels/lucky_wheels
 main	rom_tail_02	games/tbs/src/graphics/lucky_dice/lucky_dice
 main	rom_tail_02	games/tbs/src/graphics/battle_effects/battle_effects
 main	rom_tail_02	games/tbs/src/graphics/battle_effects/paths
 main	rom_tail_02	games/tbs/src/map/world_map
-main	rom_tail_02	games/tbs/src/graphics/world_map/worldmap
+main	rom_tail_02	games/tbs/src/graphics/world_map/world_map
 main	rom_tail_02	games/tbs/src/map/colosso/colosso
-main	rom_tail_02	games/tbs/src/graphics/shop/cursor
+main	rom_tail_02	games/tbs/src/graphics/ui/menu_cursor
 main	rom_tail_02	games/tbs/src/graphics/ui/icons
 main	rom_tail_02	games/tbs/src/graphics/monster/monster
 main	rom_tail_02	games/tbs/src/map/map_001/map
@@ -631,18 +631,18 @@ main	rom_tail_02	games/tbs/src/map/map_177/map
 main	rom_tail_02	games/tbs/src/map/map_178/map
 main	rom_tail_02	games/tbs/src/map/map_179/map
 main	rom_tail_02	games/tbs/src/system/overlay/overlays
-36f	text	games/tbs/src/menu/entry/title
-36f	text	games/tbs/src/menu/title
-36f	text	games/tbs/src/menu/import/title
-36f	bss	resource_36f_overlay	.bss
-370	text	games/tbs/src/menu/entry/file_screen
-370	text	games/tbs/src/menu/file_screen
-370	text	games/tbs/src/menu/import/file_screen
-370	text	games/tbs/src/menu/keyboard
+36f	text	games/tbs/src/scene/entry/title
+36f	text	games/tbs/src/scene/title
+36f	text	games/tbs/src/scene/import/title
+36f	bss	games/tbs/src/scene/bss/title	.bss
+370	text	games/tbs/src/scene/entry/file_screen
+370	text	games/tbs/src/scene/file_screen
+370	text	games/tbs/src/scene/import/file_screen
+370	text	games/tbs/src/scene/file_screen_keyboard
 371	text	games/tbs/src/scene/entry/world_map
 371	text	games/tbs/src/scene/world_map
 371	text	games/tbs/src/scene/import/world_map
-371	text	games/tbs/src/graphics/world_map/story
+371	text	games/tbs/src/graphics/world_map/lighthouse_transition
 371	bss	games/tbs/src/scene/world_map	.bss COMMON
 372	text	games/tbs/src/scene/entry/vale_prologue
 372	text	games/tbs/src/scene/vale_prologue
@@ -673,7 +673,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 37a	text	games/tbs/src/scene/entry/sol_sanctum_luna_sol_rooms
 37a	text	games/tbs/src/scene/sol_sanctum_luna_sol_rooms
 37a	text	games/tbs/src/scene/import/sol_sanctum_luna_sol_rooms
-37a	bss	resource_37a_overlay	.bss
+37a	bss	games/tbs/src/scene/bss/sol_sanctum_luna_sol_rooms	.bss
 37b	text	games/tbs/src/scene/entry/sol_sanctum_statue
 37b	text	games/tbs/src/scene/sol_sanctum_statue
 37b	text	games/tbs/src/scene/import/sol_sanctum_statue
@@ -698,7 +698,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 381	text	games/tbs/src/scene/entry/sol_sanctum_eruption
 381	text	games/tbs/src/scene/sol_sanctum_eruption
 381	text	games/tbs/src/scene/import/sol_sanctum_eruption
-381	bss	resource_381_overlay	.bss
+381	bss	games/tbs/src/scene/bss/sol_sanctum_eruption	.bss
 382	text	games/tbs/src/scene/entry/vault
 382	text	games/tbs/src/scene/vault
 382	text	games/tbs/src/scene/import/vault
@@ -769,12 +769,12 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 394	text	games/tbs/src/scene/entry/kolima_forest_floodgate
 394	text	games/tbs/src/scene/kolima_forest_floodgate
 394	text	games/tbs/src/scene/import/kolima_forest_floodgate
-394	bss	resource_394_overlay	.bss
+394	bss	games/tbs/src/scene/bss/kolima_forest_floodgate	.bss
 395	text	games/tbs/src/scene/entry/kolima_forest_tree
 395	text	games/tbs/src/scene/kolima_forest_tree
 395	text	games/tbs/src/scene/import/kolima_forest_tree
 395	bss	games/tbs/src/scene/kolima_forest_tree	.bss
-395	bss	resource_395_overlay	.bss
+395	bss	games/tbs/src/scene/bss/kolima_forest_tree	.bss
 396	text	games/tbs/src/scene/entry/tree_rooms
 396	text	games/tbs/src/scene/tree_rooms
 396	text	games/tbs/src/scene/import/tree_rooms
@@ -829,13 +829,13 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3a4	text	games/tbs/src/scene/entry/altin_peak
 3a4	text	games/tbs/src/scene/altin_peak
 3a4	text	games/tbs/src/scene/import/altin_peak
-3a4	bss	resource_3a4_overlay	.bss
+3a4	bss	games/tbs/src/scene/bss/altin_peak	.bss
 3a5	text	games/tbs/src/scene/entry/lamakan_desert
 3a5	text	games/tbs/src/scene/lamakan_desert
 3a5	text	games/tbs/src/scene/import/lamakan_desert
 3a5	text	libgcc.a:_call_via_rX
-3a5	text	games/tbs/src/graphics/lamakan/sand
-3a5	bss	resource_3a5_overlay	.bss
+3a5	text	games/tbs/src/graphics/lamakan_desert/heat_gauge
+3a5	bss	games/tbs/src/scene/bss/lamakan_desert	.bss
 3a6	text	games/tbs/src/scene/entry/vale_cave
 3a6	text	games/tbs/src/scene/vale_cave
 3a6	text	games/tbs/src/scene/import/vale_cave
@@ -853,7 +853,7 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3a8	text	games/tbs/src/scene/entry/kalay
 3a8	text	games/tbs/src/scene/kalay
 3a8	text	games/tbs/src/scene/import/kalay
-3a8	bss	resource_3a8_overlay	.bss
+3a8	bss	games/tbs/src/scene/bss/kalay	.bss
 3a9	text	games/tbs/src/scene/entry/stucco_rooms_a
 3a9	text	games/tbs/src/scene/stucco_rooms_a
 3a9	text	games/tbs/src/scene/import/stucco_rooms_a
@@ -920,18 +920,18 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3ba	text	games/tbs/src/scene/import/colosseum_azart_match
 3ba	text	libgcc.a:_call_via_rX
 3ba	text	games/tbs/src/graphics/colosso/gauge
-3ba	bss	resource_3ba_overlay	.bss
+3ba	bss	games/tbs/src/scene/bss/colosseum_azart_match	.bss
 3bb	text	games/tbs/src/scene/entry/colosseum_satrage_match
 3bb	text	games/tbs/src/scene/colosseum_satrage_match
 3bb	text	games/tbs/src/scene/import/colosseum_satrage_match
 3bb	text	games/tbs/src/graphics/colosso/gauge
-3bb	bss	resource_3bb_overlay	.bss
+3bb	bss	games/tbs/src/scene/bss/colosseum_satrage_match	.bss
 3bc	text	games/tbs/src/scene/entry/colosseum_navampa_match
 3bc	text	games/tbs/src/scene/colosseum_navampa_match
 3bc	text	games/tbs/src/scene/import/colosseum_navampa_match
 3bc	text	libgcc.a:_call_via_rX
 3bc	text	games/tbs/src/graphics/colosso/gauge
-3bc	bss	resource_3bc_overlay	.bss
+3bc	bss	games/tbs/src/scene/bss/colosseum_navampa_match	.bss
 3bd	text	games/tbs/src/scene/entry/altmiller_cave
 3bd	text	games/tbs/src/scene/altmiller_cave
 3bd	text	games/tbs/src/scene/import/altmiller_cave
@@ -992,11 +992,11 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3ca	text	games/tbs/src/scene/lemurian_ship
 3ca	text	games/tbs/src/scene/import/lemurian_ship
 3ca	bss	games/tbs/src/scene/lemurian_ship	.bss
-3cb	text	games/tbs/src/menu/entry/battle_arena
-3cb	text	games/tbs/src/menu/battle_arena
-3cb	text	games/tbs/src/menu/import/battle_arena
+3cb	text	games/tbs/src/scene/entry/battle_arena
+3cb	text	games/tbs/src/scene/battle_arena
+3cb	text	games/tbs/src/scene/import/battle_arena
 3cb	text	libgcc.a:_call_via_rX
-3cb	bss	games/tbs/src/menu/battle_arena	.bss
+3cb	bss	games/tbs/src/scene/battle_arena	.bss
 3cc	text	games/tbs/src/debug/entry/test_scenes
 3cc	text	games/tbs/src/debug/test_scenes
 3cc	text	games/tbs/src/debug/import/test_scenes

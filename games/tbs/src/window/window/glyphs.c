@@ -422,7 +422,7 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
 /// Control operands are skipped, not rendered as glyphs; the input is read
 /// only. The character code is the tile's number (Window_PutGlyph), so only
 /// codes up to TEXT_LAST_FONT_CODE show. The Djinn preview
-/// (screens/djinn_preview.c) draws its numbers this way.
+/// (screens/battle_djinn_preview.c) draws its numbers this way.
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y) {
   struct WindowWork *work;

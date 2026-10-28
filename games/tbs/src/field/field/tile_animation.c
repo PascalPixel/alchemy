@@ -113,7 +113,7 @@ void TilesetAnim_Update(void) {
 }
 
 /// Resumes tileset animation channelIndex by clearing its paused byte.
-/// Events and the Battle Arena (menu/battle_arena.c, tileset animation 5)
+/// Events and the Battle Arena (scene/battle_arena.c, tileset animation 5)
 /// reach it through TilesetAnim_ResumeFar.
 void TilesetAnim_Resume(u32 channelIndex) {
   struct MapGridScrollAnimView *gridState = gMapGridWork[0];
@@ -123,7 +123,7 @@ void TilesetAnim_Resume(u32 channelIndex) {
 }
 
 /// Pauses tileset animation channelIndex by setting its paused byte.
-/// Events and the Battle Arena (menu/battle_arena.c, tileset animation 5)
+/// Events and the Battle Arena (scene/battle_arena.c, tileset animation 5)
 /// reach it through TilesetAnim_PauseFar.
 void TilesetAnim_Pause(u32 channelIndex) {
   struct MapGridScrollAnimView *gridState = gMapGridWork[0];

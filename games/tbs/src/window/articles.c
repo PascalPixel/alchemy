@@ -31,7 +31,7 @@ const s8 *const gArticle_Table[8] = {
 };
 
 /// Counted nouns, each plural before its singular; gLocalizedWord_CountedNouns
-/// (graphics/text/numwords.c) pairs them as {singular, plural}. "K\xe4pfe" is
+/// (window/counted_nouns.c) pairs them as {singular, plural}. "K\xe4pfe" is
 /// the ROM's spelling of K\xe4mpfe.
 const u8 gLocalizedWord_Battles[] = "K\xe4pfe";
 const u8 gLocalizedWord_Battle[] = "Kampf";

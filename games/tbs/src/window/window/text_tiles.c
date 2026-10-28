@@ -328,8 +328,8 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 /// a tile taken but not marked shown (attribute exactly 1). The shown bit
 /// stays set afterwards, until the tile's rectangle is cleared. The field
 /// menus (menu/menu/djinn.c, djinn_preview.c, item.c, psynergy.c and status.c)
-/// and the battle menus (screens/djinn_menu.c, party_commands.c and
-/// status.c) call it.
+/// and the battle menus (screens/battle_djinn_menu.c, battle_party_commands.c
+/// and battle_status.c) call it.
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)base;

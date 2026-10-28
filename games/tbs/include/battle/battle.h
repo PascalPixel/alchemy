@@ -19,7 +19,7 @@ struct FieldParticle;
 struct AreaNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
-/// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
+/// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_tables.s).
 extern const s8 gBattlePlacement_StepPairs[];
 /// Read as a halfword by Actor_SetOthersPaused: the actor id of the
 /// player's actor, which it leaves alone.
@@ -172,7 +172,7 @@ extern u16 gBattleUnit_WeaponAnimationsIsaac[];
 /// background (BattleBackground_SelectForMap).
 extern s32 gScene_BattleBackgroundRules[];
 /// The template BattleEffect_BuildBlitter walks word by word to write a blitter
-/// (battle_effect_composite.s); none of it runs where it is.
+/// (blitter_fragments.s); none of it runs where it is.
 extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
 /// (Message_SetVoiceFromActor). The same values as
@@ -195,7 +195,7 @@ struct Sprite *GetBattleEffectObject(s32 kind);
 #endif
 
 /// BattleMotion_ApplyKnockback's knockbacks, the columns of the
-/// gBattleMotion_Variant* tables in battle_vars.s. Each is named by how far
+/// gBattleKnockback_* tables in knockback_tables.s. Each is named by how far
 /// and how high it sends the unit, as percent of its spot's distance from the
 /// centre and its hop in pixels a frame; all but KNOCKBACK_HURL accelerate by
 /// 1 pixel a frame to at most 4.

@@ -34,7 +34,7 @@ STATIC_ASSERT(sizeof(struct BattleSummaryStatCursor) == 8);
 STATIC_ASSERT(sizeof(struct BattleSummaryCursor) == 4);
 
 /// The stat cursor stops: rows 0 to 8 for a character with Djinn, rows 9 to
-/// 15 for one without (window/windata.s).
+/// 15 for one without (window/window_tables.s).
 extern const struct BattleSummaryStatCursor gBattleStatusScreen_StatCursors[];
 /// The cursor stops of the screen's second group
 /// (STATUS_CURSOR_COMBAT_STATS): column 19, rows 1 to 4.

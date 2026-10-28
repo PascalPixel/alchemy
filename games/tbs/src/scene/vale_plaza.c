@@ -24,7 +24,7 @@
 ///   VALE_PLAZA_AFTER_TRAVELERS_BATTLE, where the strangers leave the boys
 ///   lying in the storm, the storm ends (FLAG_VALE_STORM is cleared) and
 ///   VALE_PLAZA_TO_TITLE leads to the title shown after the prologue, which
-///   opens on Vale three years later (menu/title.c). The game names the two
+///   opens on Vale three years later (scene/title.c). The game names the two
 ///   only three years later, as Saturos and Menardi (vale_kradens_cottage.c);
 ///   their sprites here are the same.
 /// - Three years later, the day the story begins. The villagers talk of
@@ -1440,7 +1440,7 @@ static void ValePlaza_FightTravelers(void) {
 /// the battle, or VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE. Clears
 /// FLAG_VALE_STORM and takes VALE_PLAZA_TO_TITLE, to the title (SceneId_Title,
 /// TITLE_FROM_VALE_PLAZA), which then opens on Vale three years later
-/// (menu/title.c).
+/// (scene/title.c).
 static void ValePlaza_TravelersLeaveAfterBattle(void) {
   struct Actor *actor;
   s32 gravityQ8;

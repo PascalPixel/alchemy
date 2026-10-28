@@ -2,9 +2,9 @@
 /// Everything drawn over the battle while an ability plays comes from this one
 /// object. battle_effect_internal.h holds what every effect shares (includes,
 /// macros and the frame-loop helpers); the effects are in the files under
-/// parts/, included here in the order their code has in the ROM. That order
-/// mixes families, Djinn, summons and shared machinery, and each part is one
-/// run of it, named for what it holds. Camelot's own files are not
+/// battle_effect/, included here in the order their code has in the ROM. That
+/// order mixes families, Djinn, summons and shared machinery, and each part is
+/// one run of it, named for what it holds. Camelot's own files are not
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
 /// one family ends and the next begins.
 ///
@@ -22,7 +22,7 @@
 /// `Abilities: ` and one or more groups separated by `; `, each a list of
 /// ability names separated by `, `, then a space and the effect the group
 /// selects in parentheses, and a full stop. A name is written as the comment
-/// above its entry in abilities.c writes it, once in its group even where
+/// above its entry in ability_table.c writes it, once in its group even where
 /// several rows share it; where rows sharing a name select different
 /// effects (the two Blasts), the group's effect says which are meant. A
 /// group whose effect no row selects has `none` for its list. Names keep
@@ -32,8 +32,8 @@
 /// BATTLE_EFFECT_ a row of the handler table, SUMMON_EFFECT_ a row with
 /// EFFECT_SUMMON, CASTING_IMPACT_ a row with EFFECT_BY_ID_RANGE and a kind from
 /// EFFECT_RANGE_CASTING_IMPACT on (the enumerator being the kind less that),
-/// FIELD_PSYNERGY_ the fieldPsynergy field in abilities.c. Anything else that
-/// reaches a handler (an item, another effect handing over) is a sentence
+/// FIELD_PSYNERGY_ the fieldPsynergy field in ability_table.c. Anything else
+/// that reaches a handler (an item, another effect handing over) is a sentence
 /// after it; a function no row reaches, such as a runner, has no reach line and
 /// says what calls it.
 ///
@@ -67,69 +67,69 @@
 
 // The parts, in ROM order: the order of these includes is the order of the
 // code in the ROM.
-#include "parts/display.c"
-#include "parts/falling.c"
-#include "parts/streaks.c"
-#include "parts/target_strike.c"
-#include "parts/death_plunge.c"
-#include "parts/spider_web.c"
-#include "parts/canvas.c"
-#include "parts/planet_diver.c"
-#include "parts/gathering_lights.c"
-#include "parts/mirrored_wall.c"
-#include "parts/djinn_beams.c"
-#include "parts/lobbed_shells.c"
-#include "parts/condemn.c"
-#include "parts/bind.c"
-#include "parts/stars.c"
-#include "parts/procne.c"
-#include "parts/tiamat.c"
-#include "parts/nereid.c"
-#include "parts/vortices.c"
-#include "parts/prism.c"
-#include "parts/plasma.c"
-#include "parts/volcano.c"
-#include "parts/target_motes.c"
-#include "parts/djinn_heal.c"
-#include "parts/dispatch.c"
-#include "parts/cybele.c"
-#include "parts/boreas.c"
-#include "parts/drain.c"
-#include "parts/healing.c"
-#include "parts/stat_change.c"
-#include "parts/flare.c"
-#include "parts/quake.c"
-#include "parts/fire.c"
-#include "parts/frost.c"
-#include "parts/ray.c"
-#include "parts/eruption.c"
-#include "parts/burst_shower.c"
-#include "parts/orbiting.c"
-#include "parts/atalanta.c"
-#include "parts/growth.c"
-#include "parts/bolt.c"
-#include "parts/projectiles.c"
-#include "parts/rushing_strike.c"
-#include "parts/djinn_attacks.c"
-#include "parts/hail.c"
-#include "parts/thor.c"
-#include "parts/spire.c"
-#include "parts/flurry.c"
-#include "parts/gaia.c"
-#include "parts/positions.c"
-#include "parts/beams.c"
-#include "parts/casting_impact.c"
-#include "parts/torch.c"
-#include "parts/helm_splitter.c"
-#include "parts/particle_streams.c"
-#include "parts/ramses.c"
-#include "parts/dragon_cloud.c"
-#include "parts/annihilation.c"
-#include "parts/ragnarok.c"
-#include "parts/titan_blade.c"
-#include "parts/judgment.c"
-#include "parts/kirin.c"
-#include "parts/neptune.c"
-#include "parts/thrash.c"
-#include "parts/undead_sword.c"
-#include "parts/blitter.c"
+#include "battle_effect/display.c"
+#include "battle_effect/falling.c"
+#include "battle_effect/streaks.c"
+#include "battle_effect/target_strike.c"
+#include "battle_effect/death_plunge.c"
+#include "battle_effect/spider_web.c"
+#include "battle_effect/canvas.c"
+#include "battle_effect/planet_diver.c"
+#include "battle_effect/gathering_lights.c"
+#include "battle_effect/mirrored_wall.c"
+#include "battle_effect/djinn_beams.c"
+#include "battle_effect/lobbed_shells.c"
+#include "battle_effect/condemn.c"
+#include "battle_effect/bind.c"
+#include "battle_effect/stars.c"
+#include "battle_effect/procne.c"
+#include "battle_effect/tiamat.c"
+#include "battle_effect/nereid.c"
+#include "battle_effect/vortices.c"
+#include "battle_effect/prism.c"
+#include "battle_effect/plasma.c"
+#include "battle_effect/volcano.c"
+#include "battle_effect/target_motes.c"
+#include "battle_effect/djinn_heal.c"
+#include "battle_effect/dispatch.c"
+#include "battle_effect/cybele.c"
+#include "battle_effect/boreas.c"
+#include "battle_effect/drain.c"
+#include "battle_effect/healing.c"
+#include "battle_effect/stat_change.c"
+#include "battle_effect/flare.c"
+#include "battle_effect/quake.c"
+#include "battle_effect/fire.c"
+#include "battle_effect/frost.c"
+#include "battle_effect/ray.c"
+#include "battle_effect/eruption.c"
+#include "battle_effect/burst_shower.c"
+#include "battle_effect/orbiting.c"
+#include "battle_effect/atalanta.c"
+#include "battle_effect/growth.c"
+#include "battle_effect/bolt.c"
+#include "battle_effect/projectiles.c"
+#include "battle_effect/rushing_strike.c"
+#include "battle_effect/djinn_attacks.c"
+#include "battle_effect/hail.c"
+#include "battle_effect/thor.c"
+#include "battle_effect/spire.c"
+#include "battle_effect/flurry.c"
+#include "battle_effect/gaia.c"
+#include "battle_effect/positions.c"
+#include "battle_effect/beams.c"
+#include "battle_effect/casting_impact.c"
+#include "battle_effect/torch.c"
+#include "battle_effect/helm_splitter.c"
+#include "battle_effect/particle_streams.c"
+#include "battle_effect/ramses.c"
+#include "battle_effect/dragon_cloud.c"
+#include "battle_effect/annihilation.c"
+#include "battle_effect/ragnarok.c"
+#include "battle_effect/titan_blade.c"
+#include "battle_effect/judgment.c"
+#include "battle_effect/kirin.c"
+#include "battle_effect/neptune.c"
+#include "battle_effect/thrash.c"
+#include "battle_effect/undead_sword.c"
+#include "battle_effect/blitter.c"

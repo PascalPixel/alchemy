@@ -10,7 +10,7 @@
 /// 1.5 times and back over 32 steps. The swelling sprites loop over it, the
 /// shrinking ones take every other step of its second half
 /// (WindowSprite_UpdateScaleAnimation), and the command rows' chosen icon
-/// pulses by it (screens/command_row.c, icon_menu.c).
+/// pulses by it (screens/battle_command_row.c, icon_menu.c).
 // clang-format off
 const u16 gWindowSprite_BounceScales[32] = {
     256, 256, 260, 266, 274, 284, 294, 306,

@@ -355,8 +355,8 @@ enum BattleTargetHint {
 #define SAVE_SCAN_ALL_CLEARED 100
 
 /// One icon of the command row (struct BattleCommandRowWork): its sprite, where
-/// it stands and the command it stands for. pictures.c loads it, command_row.c
-/// runs the row.
+/// it stands and the command it stands for. menu_titles.c loads it,
+/// battle_command_row.c runs the row.
 struct BattleCommandRowIcon {
   /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
   /// the others show as tiles of BG1.
@@ -395,7 +395,7 @@ struct BattleCommandRowWork {
 
 // The Djinn menu's blinking tile, and where each element's Djinn count sits in
 // the party status window, in tiles, to blink while the Djinni under the
-// cursor is of that element, on standby and ready to summon (windata.s).
+// cursor is of that element, on standby and ready to summon (window_tables.s).
 /// The arrow tile BattleDjinnMenu_Run copies to the two BG tiles from
 /// DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
 /// blank), the second stays. The Djinn preview draws one of them, flipped,

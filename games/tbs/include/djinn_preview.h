@@ -25,7 +25,7 @@ struct PreviewSprite {
 };
 
 /// The stat arrows a Djinni preview shows beside a stat that would rise or
-/// fall, 16 by 16 pixels each (window/fixed_block.s).
+/// fall, 16 by 16 pixels each (graphics/ui/pointing_hand.s).
 extern u8 gDjinnMenu_ArrowUpTiles[];
 extern u8 gDjinnMenu_ArrowDownTiles[];
 

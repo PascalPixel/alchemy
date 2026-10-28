@@ -194,7 +194,6 @@ LD_SCRIPT := games/$(GAME)/main.ld
 LDFLAGS := --defsym $(DEFINE)=1 -L $(BUILD)/ld -T $(LD_SCRIPT)
 ifeq ($(GAME),tbs)
 OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/tbs/src/system/overlay/overlay.ld
-OVERLAY_SOURCE = $(wildcard games/tbs/src/cartridge/overlay/ovl_$*.s)
 OVERLAY_STREAM := games/tbs/src/system/overlay/overlays
 $(BUILD)/objects.mk: games/tbs/objects.tsv games/tbs/overlays.tsv $(OBJLIST)
 	$(OBJLIST) games/tbs/objects.tsv games/tbs/overlays.tsv $(LANG) $(BUILD)

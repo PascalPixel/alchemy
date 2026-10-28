@@ -309,7 +309,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 /// gets 0. The rounded corner tiles trim the first or last scanline of a row by
 /// one pixel on that side, so the window follows the border's rounded corners.
 /// Each frame of a window transition calls it, through
-/// ScanlineWindow_FillSpans (screens/outputs.c).
+/// ScanlineWindow_FillSpans (screens/window_sprites.c).
 void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;

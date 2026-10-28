@@ -5,7 +5,7 @@
 /// Ability numbers, named from the English release.
 
 /// Ability numbers. Each ability's name is the message MsgAbilityName plus its
-/// number, as abilities.c's last column gives it.
+/// number, as ability_table.c's last column gives it.
 enum AbilityId {
   ABILITY_ATTACK = 0x01,
   ABILITY_GROWTH = 0x0c,
@@ -62,7 +62,7 @@ enum AbilityId {
   ABILITY_ATALANTA = 0x18f,
   ABILITY_PROCNE = 0x190,
   ABILITY_THOR = 0x191,
-  /// Power 5: the second Bat row's (enemies.c).
+  /// Power 5: the second Bat row's (enemy_table.c).
   ABILITY_SONIC_WAVE = 0x1b3,
   /// Power 45 against the Bat's 5: the Rabid Bat's, the Clay Gargoyle's,
   /// the Ant Lion's and the Roach's.
@@ -92,7 +92,7 @@ enum AbilityId {
   ABILITY_CANT_USE = 0x1fd,
   /// The last row of gAbilityStaging.
   ABILITY_SEVERE_BLOW = 0x205,
-  /// The last row of abilities.c and gAbilityBattleEffects.
+  /// The last row of ability_table.c and gAbilityBattleEffects.
   ABILITY_THRASH = 0x206
 };
 

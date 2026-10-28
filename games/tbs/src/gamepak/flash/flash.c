@@ -67,7 +67,7 @@ extern u16 *gFlashMaxTime;
 /// gFlash_ChipDefault's: SST's routines and timings. Called by
 /// Save_InitializeWork, up to eight times a frame apart, before
 /// each use of the save. It rewrites three of the cells the credits borrow;
-/// graphics/credits/credits.c says why that borrowing is harmless.
+/// menu/credits.c says why that borrowing is harmless.
 s32 IdentifyFlash(void) {
   u16 missing;
   u16 id;

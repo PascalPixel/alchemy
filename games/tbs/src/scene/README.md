@@ -275,6 +275,18 @@ whole.
 | `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | `0x200` to `0x2ff` | cleared on every ordinary arrival in a scene |
 | `FLAG_AREA_TEMP_00` to `FLAG_AREA_TEMP_FF` | `0x300` to `0x3ff` | cleared on entering another area |
 
+## The Title, the File Screen and the Battle Arena
+
+Three scenes are screens rather than places, each a row of the scene table
+with an overlay of its own: the Title ([`title.c`](title.c): the start screen,
+and the logo shown after the ending), the File Screen
+([`file_screen.c`](file_screen.c): new game, continue, copy and delete, the
+door to the Battle Arena, and the transfer of a save's data by link or as a
+password) and the Battle Arena ([`battle_arena.c`](battle_arena.c)). Their
+screens are drawn by the window code
+([Windows](../window/README.md)), and the title intro and the credits the
+Title starts are in [Menus](../menu/README.md#the-title-intro).
+
 ## Code shared between overlays
 
 Code several scenes need is written once in `shared/` and compiled into each
@@ -296,7 +308,9 @@ that includes the header; each header's opening comment says what it holds.
 ## Design
 
 Each overlay is three objects, linked in this order into the overlay area:
-`entry/<scene>`, `<scene>` and `import/<scene>`. The scene table, `gScenes` in
+`entry/<scene>`, `<scene>` and `import/<scene>`. Where an overlay's RAM
+variables are still written in assembly, they are a fourth object,
+`bss/<scene>.s`, on the overlay's `bss` row of `objects.tsv`. The scene table, `gScenes` in
 [`field/scenes.s`](../field/scenes.s), gives each scene its overlay,
 area, scene type and map, and names it `SceneId_<Scene>`; several scenes may
 share one overlay, and then share its file. A scene overlay is never split into

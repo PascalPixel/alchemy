@@ -46,7 +46,7 @@ enum BattleType {
   /// running away!"), as it does once the party is challenged
   /// (Message_ShowLocalizedAndWait, window/screens/link_timer.c).
   BATTLE_TYPE_SCRIPTED = 3,
-  BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, menu/battle_arena.c)
+  BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, scene/battle_arena.c)
   /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
   /// by value; it still lets the party run.
   BATTLE_TYPE_DEBUG = 5

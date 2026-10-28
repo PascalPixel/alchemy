@@ -11,7 +11,7 @@
 /// auto battle), and each action is announced, built for its targets
 /// (BattleActionRun_Build, action.c), staged
 /// (BattleStaging_DispatchAction, staging.c) and applied to each target
-/// (BattleAbility_ApplyToTarget, target_exec.c), which queues the playback
+/// (BattleAbility_ApplyToTarget, ability.c), which queues the playback
 /// BattlePlayback_Run plays (playback.c). README.md in this folder gives the
 /// words, prefixes and spellings the parts use.
 
@@ -21,8 +21,8 @@
 #include "battle/debug.c"
 #include "battle/setup.c"
 #include "battle/link.c"
-#include "battle/encounter.c"
-#include "battle/sprites.c"
+#include "battle/run.c"
+#include "battle/sprite_slots.c"
 #include "battle/placement.c"
 #include "battle/objects.c"
 #include "battle/motion.c"
@@ -31,14 +31,14 @@
 #include "battle/staging.c"
 #include "battle/targeting.c"
 #include "battle/playback_queue.c"
-#include "battle/target_exec.c"
+#include "battle/ability.c"
 #include "battle/enemy_ai.c"
 #include "battle/playback.c"
 #include "battle/action.c"
 #include "battle/turn_end.c"
 #include "battle/transition.c"
 #include "battle/background.c"
-#include "battle/star_field.c"
+#include "battle/element_glow.c"
 #include "battle/formation.c"
-#include "battle/classes.c"
+#include "battle/battle_sprite.c"
 #include "battle/spoils.c"

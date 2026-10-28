@@ -21,7 +21,7 @@ the logos (`Title_ShowCamelotLogo` and `Title_ShowIntro`). A soft reset
 starts again from the first instruction, so start-up runs again in full. The
 cartridge's first instruction leads to `System_Entry` and
 `System_Initialize`, which ends by calling `MainRoutine_RunFar`.
-[The intro](src/graphics/README.md#the-intro) describes the logos, and
+[The title intro](src/menu/README.md#the-title-intro) describes the logos, and
 [Runtime](src/runtime/README.md#start-up) goes through start-up step by step.
 
 ## The main routine

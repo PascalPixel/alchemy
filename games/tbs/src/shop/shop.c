@@ -13,7 +13,7 @@
 ///
 ///   Shops           run.c: Shop_Run; buy.c: Shop_SelectBuy; sell.c:
 ///                   Shop_SelectSell; repair.c: Shop_SelectRepair
-///   Stock           artifacts.c: ShopStock_AddArtifacts,
+///   Stock           stock.c: ShopStock_AddArtifacts,
 ///                   Shop_BuySpecialItem
 ///   Sanctum         sanctum.c: Sanctum_RunPartyService
 ///   Inn             inn.c: Inn_CheckIn
@@ -27,7 +27,7 @@
 #include "shop/buy.c"
 #include "shop/sell.c"
 #include "shop/repair.c"
-#include "shop/artifacts.c"
+#include "shop/stock.c"
 #include "shop/sanctum.c"
 #include "shop/inn.c"
 #include "shop/item_picker.c"

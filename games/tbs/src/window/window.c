@@ -24,7 +24,7 @@
 ///   Text drawing    sprites.c: Glyph_Draw; text_tiles.c:
 ///                   Text_DrawStringAsTiles, Text_DrawString
 ///   Screens         selection.c: SelectionMenu_Run, FieldMenu_Run;
-///                   options.c: SettingsMenu_Run,
+///                   settings_menu.c: SettingsMenu_Run,
 ///                   PauseMenu_Choose
 
 #include "window_internal.h"
@@ -41,5 +41,5 @@
 #include "window/icons.c"
 #include "window/selection.c"
 #include "window/shortcuts.c"
-#include "window/options.c"
+#include "window/settings_menu.c"
 #include "window/text_tiles.c"

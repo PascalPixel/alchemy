@@ -21,7 +21,7 @@ enum {
   COMPOSITE_FLIP = COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y
 };
 /// BattleEffect_BuildBlitter's modes: how a picture's pixels combine with the
-/// canvas's (the fragments in battle_effect_composite.s).
+/// canvas's (the fragments in blitter_fragments.s).
 enum {
   COMPOSITE_COPY,        ///< writes every pixel
   COMPOSITE_TRANSPARENT, ///< writes every nonzero pixel

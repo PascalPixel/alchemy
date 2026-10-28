@@ -5,12 +5,12 @@
 /// Enemy ids, named from the English release.
 
 /// The first enemy id: enemy id `ENEMY_ID_FIRST + n` is the enemy in
-/// row n of enemies.c (Enemy_GetDefinition); the ids below it are the
+/// row n of enemy_table.c (Enemy_GetDefinition); the ids below it are the
 /// party's characters. A formation lists its members by row.
 #define ENEMY_ID_FIRST 8
 
 /// The enemies the code tests by id, each named by its row of
-/// enemies.c: an enemy id is the row plus ENEMY_ID_FIRST. Where several
+/// enemy_table.c: an enemy id is the row plus ENEMY_ID_FIRST. Where several
 /// rows share a name, each takes what tells its battle apart: the one place
 /// it is fought (its formation in formations.c, chosen from a zone of
 /// encounter_zones.c), the prize a Colosso finalist carries, or the Djinni a

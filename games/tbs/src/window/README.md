@@ -83,7 +83,7 @@ code names a message by its linker symbol (`MsgGameSaved`). A caller fills the
 blanks with `MessageArgument_Push`, then `Message_Decode`
 ([decode.c](window/decode.c)) unpacks the message into the text buffer; reading
 the bits is done by the handwritten `Text_DecodeSymbol`
-([Graphics](../graphics/README.md#the-handwritten-decoders)).
+([C and assembly](../README.md#c-and-assembly)).
 
 ## The text buffer
 
@@ -231,7 +231,7 @@ brightness; Select steps through preset colours. A or Start keeps the
 settings, and B puts the old ones back, which is why the menu works on a copy
 of them until then.
 
-`SettingsMenu_Run` ([options.c](window/options.c)) runs it, and
+`SettingsMenu_Run` ([settings_menu.c](window/settings_menu.c)) runs it, and
 `WindowColor_Apply` recolours every window from a hue and a brightness.
 
 ## The name entry screen
@@ -244,7 +244,7 @@ name. Two hidden button codes on the File Screen add more names to enter: the
 first Garet, Ivan and Mia, the second Felix, Jenna and Sheba as well.
 
 `NameEntry_EditMemberName` ([name_entry.c](screens/name_entry.c)) runs it; the
-File Screen ([file_screen.c](../menu/file_screen.c)) calls it for each name.
+File Screen ([file_screen.c](../scene/file_screen.c)) calls it for each name.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

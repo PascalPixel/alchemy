@@ -56,9 +56,9 @@ extern u8 gMenu_SmallDownArrowTiles[];
 /// The small up arrow, then the up and down arrows, 16 by 16 each; the item
 /// menu's stat rise loads the first (Resource_LoadPairedBlocks).
 extern u8 gMenu_ArrowTiles[];
-/// The Djinn menu's up arrow, 16 by 16 (djinn/arrowup).
+/// The Djinn menu's up arrow, 16 by 16 (graphics/ui/djinn_arrow_up).
 extern u8 gMenu_PairSpriteATiles[];
-/// The Djinn menu's down arrow, 16 by 16 (djinn/arrowdn).
+/// The Djinn menu's down arrow, 16 by 16 (graphics/ui/djinn_arrow_down).
 extern u8 gMenu_PairSpriteBTiles[];
 /// The item menu's quantity picture (quantity.4bpp).
 extern const u8 gMenu_QuantityTiles[];
@@ -96,7 +96,8 @@ extern const u8 gMenu_BackdropBorderTile[];
 /// (window/screens/debug.c): `:`.
 extern const u8 gMenu_ColonString[];
 #endif
-/// The selection screen's left arrow, 8 by 16 at 256 colours (cursor_l).
+/// The selection screen's left arrow, 8 by 16 at 256 colours
+/// (graphics/ui/sprite_cursors/left).
 extern u8 gMenu_CursorLeftActorTiles[];
 /// `0123456789ABCDEF`, drawn by a debug window.
 extern const u8 gMenu_HexDigitsString[];
@@ -152,7 +153,7 @@ extern u8 gDebugMenu_PageLabel[];
 extern u8 gDebugMenu_RangeDash[];
 /// A debug window's title: `STATUS`.
 extern u8 gDebugMenu_StatusTitle[];
-/// The settings menu's slider colours (slidpal).
+/// The settings menu's slider colours (graphics/ui/slider_palette).
 extern const u16 gSettingsMenu_SliderPalette[];
 /// The settings menu's slider, 32 by 8 (slider.4bpp32x8).
 extern const u8 gSettingsMenu_SliderTiles[];

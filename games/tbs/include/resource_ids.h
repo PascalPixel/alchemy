@@ -137,9 +137,9 @@ extern char ResourceId_LuckyDiceBoard;
 /// The Lucky Dice sprites and their colours.
 extern char ResourceId_LuckyDiceSprites;
 
-// The flashing strikes' pictures (battle_effect/parts/thrash.c). Each holds two
-// pictures; the first of a pair fills work->imageStorage, the second the start
-// of Ram_MapGridCellBuffer.
+// The flashing strikes' pictures (battle_effect/battle_effect/thrash.c). Each
+// holds two pictures; the first of a pair fills work->imageStorage, the second
+// the start of Ram_MapGridCellBuffer.
 
 extern char ResourceId_RevealMaskA; ///< Vorpal Slash, first of its pair.
 extern char ResourceId_RevealMaskB; ///< Vorpal Slash, second of its pair.

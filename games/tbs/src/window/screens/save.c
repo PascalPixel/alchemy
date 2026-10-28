@@ -387,7 +387,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
   return result;
 }
 
-/// The file list's Copy (menu/file_screen.c): lets the player choose a file,
+/// The file list's Copy (scene/file_screen.c): lets the player choose a file,
 /// reads both of its parts into the save buffer, overwriting it, and writes
 /// them to the first empty file. Returns 0, -1 when cancelled, or a
 /// SAVE_ERROR_* after showing its message (the game says "Failed to erase."
@@ -440,7 +440,7 @@ s32 Save_CopyFile(void) {
   return result;
 }
 
-/// The file list's Erase (menu/file_screen.c): lets the player choose a file,
+/// The file list's Erase (scene/file_screen.c): lets the player choose a file,
 /// asks whether to erase it and on Yes deletes both of its parts. "OK to
 /// erase this?" Returns 0 (also when the player answers No), -1 when cancelled,
 /// or a SAVE_ERROR_* after showing its message.
@@ -967,7 +967,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     } else if (summary->frames < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
       // file resumes at MainRoutineWork.restartScene, not where it was saved
-      // (menu/file_screen.c).
+      // (scene/file_screen.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->secondPartPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, y);
@@ -1262,7 +1262,7 @@ done:
 /// loads it into the save buffer as the current file, restoring its play time
 /// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
 /// its message. The title's Continue (mode 1), Battle (4) and Send (5) load
-/// through here (menu/file_screen.c).
+/// through here (scene/file_screen.c).
 s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
   s32 error = Save_InitializeWork();

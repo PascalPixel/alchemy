@@ -7,12 +7,12 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 
 const struct SceneEntrance *VenusLighthouse_GetEntrances(void);
 const struct SceneExitRegion *VenusLighthouse_GetRegions(void);
 const u32 *VenusLighthouse_GetExits(void);
-const struct ActorTemplate *VenusLighthouse_GetActorTemplates(void);
+const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void);
 const struct Trigger *VenusLighthouse_GetTriggers(void);
 s32 VenusLighthouse_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -73,13 +73,13 @@ extern struct SceneEntrance gVenusLighthouseSecondFloorEntrances[];
 extern struct SceneEntrance gVenusLighthouseThirdFloorEntrances[];
 extern struct SceneEntrance gVenusLighthouseFourthFloorEntrances[];
 extern u32 gVenusLighthouseExits[];
-extern struct ActorTemplate gVenusLighthouseActorTemplatesOther[];
-extern struct ActorTemplate gVenusLighthouseEntryActorTemplates[];
-extern struct ActorTemplate gVenusLighthouseGroundFloorActorTemplates[];
-extern struct ActorTemplate gVenusLighthouseFirstFloorActorTemplates[];
-extern struct ActorTemplate gVenusLighthouseSecondFloorActorTemplates[];
-extern struct ActorTemplate gVenusLighthouseThirdFloorActorTemplates[];
-extern struct ActorTemplate gVenusLighthouseFourthFloorActorTemplates[];
+extern struct ActorPlacement gVenusLighthouseActorPlacementsOther[];
+extern struct ActorPlacement gVenusLighthouseEntryActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseGroundFloorActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseFirstFloorActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseSecondFloorActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseThirdFloorActorPlacements[];
+extern struct ActorPlacement gVenusLighthouseFourthFloorActorPlacements[];
 extern struct Trigger gVenusLighthouseEntryTriggers[];
 extern struct Trigger gVenusLighthouseGroundFloorTriggers[];
 extern struct Trigger gVenusLighthouseFirstFloorTriggers[];

@@ -115,7 +115,7 @@ static void ValeStormyNight_CycleBoulderPalette(void);
 static void ValeStormyNight_CopyLeaderSpritePriority(void);
 
 /// The placed actors, numbered in the order of
-/// gValeStormyNight_ActorTemplates; the elders holding back the Boulder
+/// gValeStormyNight_ActorPlacements; the elders holding back the Boulder
 /// (gValeStormyNight_BoulderWatchers) follow them.
 enum StormNightActorId {
   /// The strongman who comes back to the river with Jenna, his Psynergy
@@ -332,8 +332,8 @@ const struct SceneExitRegion *ValeStormyNight_GetRegions(void) { return NULL; }
 
 const u32 *ValeStormyNight_GetExits(void) { return gValeStormyNight_Exits; }
 
-const struct ActorTemplate *ValeStormyNight_GetActorTemplates(void) {
-  return gValeStormyNight_ActorTemplates;
+const struct ActorPlacement *ValeStormyNight_GetActorPlacements(void) {
+  return gValeStormyNight_ActorPlacements;
 }
 
 const struct Trigger *ValeStormyNight_GetTriggers(void) {
@@ -3372,7 +3372,7 @@ u32 gValeStormyNight_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gValeStormyNight_ActorTemplates[] = {
+struct ActorPlacement gValeStormyNight_ActorPlacements[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3390,11 +3390,11 @@ struct ActorTemplate gValeStormyNight_ActorTemplates[] = {
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(437), 0, PIXELS(762), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(322), 0, PIXELS(1433), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(322), 0, PIXELS(1433), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(144), 0, PIXELS(1070), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(144), 0, PIXELS(1070), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(276), 0, PIXELS(1270), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(276), 0, PIXELS(1270), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3416,7 +3416,7 @@ struct ActorTemplate gValeStormyNight_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gValeStormyNight_BoulderWatchers[] = {
+struct ActorPlacement gValeStormyNight_BoulderWatchers[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, 7,
         PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

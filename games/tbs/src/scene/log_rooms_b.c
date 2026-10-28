@@ -68,7 +68,7 @@
 #include "flags.h"
 #include "heap.h"
 
-/// The townspeople, numbering the actor template rows from
+/// The townspeople, numbering the actor placement rows from
 /// ACTOR_FIRST_PLACED and named by what they say on the party's return.
 enum {
   /// A young man whose precious stone, he says, a cat ate.
@@ -159,14 +159,14 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gLogRoomsB_Exits; }
 
-/// Gives the actor templates' condition 0 whether each lies inside the
+/// Gives the actor placements' condition 0 whether each lies inside the
 /// view bounds of the room entered (Scene_AssignViewFlags), so only that
 /// room's people appear.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  struct ActorTemplate *templates = gLogRoomsB_ActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  struct ActorPlacement *placements = gLogRoomsB_ActorPlacements;
 
-  Scene_AssignViewFlags(templates);
-  return templates;
+  Scene_AssignViewFlags(placements);
+  return placements;
 }
 
 /// The actor stands still and says the selected message.
@@ -484,7 +484,7 @@ u32 gLogRoomsB_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gLogRoomsB_ActorTemplates[] = {
+struct ActorPlacement gLogRoomsB_ActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0, MOVEMENT_TYPE_STAND,
         PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0, 3,

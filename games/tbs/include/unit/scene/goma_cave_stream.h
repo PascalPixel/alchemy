@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -22,8 +22,8 @@ extern const s32 *gFieldEffect_DurationScripts[];
 extern struct SceneEntrance gGomaCaveStreamEntrances[];
 extern struct SceneEntrance gGomaCaveBridgeEntrances[];
 extern u32 gGomaCaveStreamAndBridgeExits[];
-extern struct ActorTemplate gGomaCaveStreamActorTemplates[];
-extern struct ActorTemplate gGomaCaveBridgeActorTemplates[];
+extern struct ActorPlacement gGomaCaveStreamActorPlacements[];
+extern struct ActorPlacement gGomaCaveBridgeActorPlacements[];
 extern struct Trigger gGomaCaveStreamTriggers[];
 extern struct Trigger gGomaCaveBridgeTriggers[];
 

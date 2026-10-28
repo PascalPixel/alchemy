@@ -350,17 +350,26 @@ the byte takes the name of the cell it belongs to.
 One of the 64 slots of `gActors` (`struct Actor`): anything on the field that
 moves or is drawn on its own, from the party and the townspeople to the
 camera and the footprints in snow ([Field](field.md#actors-and-their-actor-scripts)).
-A scene knows the party and the actors its actor templates place by their
-actor ids; the camera and the footprints have none
+A scene knows the party and the actors its actor placements put there by
+their actor ids; the camera and the footprints have none
 ([Scenes](src/scene/README.md#who-stands-where)). pret calls the nearest
-thing an object event, and a template an object event template.
+thing an object event, and an actor placement an object event template.
 
 ### Actor id
 
 An actor's number in its scene, the index of `FieldWork.actors`
 (`ACTOR_ID_COUNT` of them): 0 to 7 the party, the leader at 0, and from 8
-(`ACTOR_FIRST_PLACED`) the actor templates' rows in order; each scene names
+(`ACTOR_FIRST_PLACED`) the actor placements' rows in order; each scene names
 its own in an enum. pret calls it a local id.
+
+### Actor placement
+
+A row of a scene's actor table (`struct ActorPlacement`): the sprite, place,
+facing, actor script and condition of one person or thing the scene puts on
+the field when it loads ([Scenes](src/scene/README.md#who-stands-where)).
+
+Evidence: plain English for what a row does, place an actor; no word of the
+time names the table.
 
 ### Actor script
 

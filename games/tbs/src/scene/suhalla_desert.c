@@ -113,7 +113,7 @@ enum {
   FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
-/// The actors, numbering the actor template rows of the first two
+/// The actors, numbering the actor placement rows of the first two
 /// scenes from ACTOR_FIRST_PLACED; the third scene places none.
 enum {
   /// The storms, five in each scene.
@@ -224,7 +224,7 @@ static void SuhallaDesert_FightFlash(void) {
   Field_RequestDjinnBattle(ACTOR_FLASH, DJINNI_FLASH);
 }
 
-/// A storm's actor template script: clears its sprite and collision
+/// A storm's actor placement script: clears its sprite and collision
 /// flags.
 static s32
 SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *interpreter) {
@@ -234,7 +234,7 @@ SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *interpreter) {
   return 0;
 }
 
-/// A storm's actor template script: toggles its single-sprite storage.
+/// A storm's actor placement script: toggles its single-sprite storage.
 static s32 SuhallaDesert_ToggleActorActive(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   actor->spriteStorageKind ^= 1;
@@ -262,19 +262,19 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
 /// The storms, Iodem, and in the second scene Flash and what Reveal shows.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 selector = gAdventure.sceneId;
 
   if (selector == (s32)&SceneId_SuhallaDesertNorth) {
-    return gSuhallaDesertNorthActorTemplates;
+    return gSuhallaDesertNorthActorPlacements;
   }
   if (selector == (s32)&SceneId_SuhallaDesertSouth) {
-    return gSuhallaDesertSouthActorTemplates;
+    return gSuhallaDesertSouthActorPlacements;
   }
   if (selector == (s32)&SceneId_SuhallaDesertCaves) {
-    return gSuhallaDesertCavesActorTemplates;
+    return gSuhallaDesertCavesActorPlacements;
   }
-  return gSuhallaDesertActorTemplatesOther;
+  return gSuhallaDesertActorPlacementsOther;
 }
 
 /// Each frame while caught: spins the leader, and counts down to raising event
@@ -1062,34 +1062,34 @@ u32 gSuhallaDesertExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gSuhallaDesertActorTemplatesOther[] = {
+struct ActorPlacement gSuhallaDesertActorPlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gSuhallaDesertNorthActorTemplates[] = {
+struct ActorPlacement gSuhallaDesertNorthActorPlacements[] = {
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED, (s32)gSuhallaDesertStormScript,
         PIXELS(56), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 1, (s32)gSuhallaDesertStormScript,
-        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 2, (s32)gSuhallaDesertStormScript,
-        PIXELS(120), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(120), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 3, (s32)gSuhallaDesertStormScript,
-        PIXELS(264), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 4, (s32)gSuhallaDesertStormScript,
-        PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(440), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSuhallaDesertSouthActorTemplates[] = {
+struct ActorPlacement gSuhallaDesertSouthActorPlacements[] = {
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED, (s32)gSuhallaDesertStormScript,
         PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 1, (s32)gSuhallaDesertStormScript,
-        PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 2, (s32)gSuhallaDesertStormScript,
-        PIXELS(408), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(408), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 3, (s32)gSuhallaDesertFourthStormScript,
         PIXELS(376), 0, PIXELS(632), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SANDSTORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 4, MOVEMENT_TYPE_RESET_ACTION,
@@ -1103,7 +1103,7 @@ struct ActorTemplate gSuhallaDesertSouthActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSuhallaDesertCavesActorTemplates[] = {
+struct ActorPlacement gSuhallaDesertCavesActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 

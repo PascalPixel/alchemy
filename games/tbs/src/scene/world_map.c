@@ -141,7 +141,7 @@
 /// wreck off Gateway Cave.
 /// ★ Named from the game: "Black Orb" (MsgItemName)
 #define FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER FLAG_SCENE_TEMP_34
-/// The scene's ordinary actor templates (gWorldMapActorTemplates)
+/// The scene's ordinary actor placements (gWorldMapActorPlacements)
 /// are in use rather than an event's.
 /// ★ Named from its area name: World Map
 #define FLAG_WORLD_MAP_ORDINARY_ACTORS FLAG_SCENE_TEMP_35
@@ -194,7 +194,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse);
 enum { CONTACT_LAST_ACTOR = 65, STEP_TRIGGER_AREA_BASE = 100 };
 
 /// The World Map's own actors, numbered in the order of
-/// gWorldMapActorTemplates from ACTOR_FIRST_PLACED: the Djinn met on
+/// gWorldMapActorPlacements from ACTOR_FIRST_PLACED: the Djinn met on
 /// the map, the areas, then the Tolbi-bound Ship, the storm and Iodem.
 /// Each area is named by the scene its exit leads into (gWorldMapExits),
 /// and touching it raises its STEP_TRIGGER_AREA
@@ -346,7 +346,7 @@ enum { WORLD_MAP_BRIDGE_ANIMATION_LOWERED = 2 };
 enum { FALLING_ROCK_ANIMATION_TUMBLE = 2, FALLING_ROCK_ANIMATION_SHATTER = 3 };
 
 /// The actors of Hammet's caravan leaving Vault
-/// (gWorldMapActorTemplatesHammetsCaravan,
+/// (gWorldMapActorPlacementsHammetsCaravan,
 /// WORLD_MAP_HAMMETS_CARAVAN_LEAVES), numbered from ACTOR_FIRST_PLACED;
 /// Garet's row takes his own actor id.
 enum WorldMapCaravanActorId {
@@ -375,8 +375,8 @@ enum WorldMapCaravanActorId {
 };
 
 /// The Tolbi-bound Ship, the first actor of
-/// gWorldMapActorTemplatesCrossingEnds and
-/// gWorldMapActorTemplatesCrossing
+/// gWorldMapActorPlacementsCrossingEnds and
+/// gWorldMapActorPlacementsCrossing
 /// (WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK to
 /// WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI and
 /// WORLD_MAP_FROM_SHIP_ROOMS), shown on its way across the Karagol
@@ -387,14 +387,14 @@ enum {
 };
 
 /// Bunza's wagon at Kalay
-/// (gWorldMapActorTemplatesFromKalayTunnelEntranceSouth), after Kalay's
+/// (gWorldMapActorPlacementsFromKalayTunnelEntranceSouth), after Kalay's
 /// and the Kalay Tunnel Entrance's area actors.
 enum {
   /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
   ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2
 };
 
-/// The one actor of gWorldMapActorTemplatesFromClear, before the
+/// The one actor of gWorldMapActorPlacementsFromClear, before the
 /// ending: the island Jenna and Kraden are adrift on ("How long will this
 /// island continue to drift?"). It drifts east trailing a wake
 /// (WorldMap_SpawnIslandWake) until the map leads into their event.
@@ -405,7 +405,7 @@ enum {
 };
 
 /// The ending's actors
-/// (gWorldMapActorTemplatesJennaAndKradenAdrift), numbered from
+/// (gWorldMapActorPlacementsJennaAndKradenAdrift), numbered from
 /// ACTOR_FIRST_PLACED after the rows of Jenna and Sheba, which take their own
 /// actor ids.
 enum WorldMapEndingActorId {
@@ -437,7 +437,7 @@ enum {
 // rock has landed, in Hammet's caravan event.
 // FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER: Iodem has handed over the Black Orb.
 // FLAG_WORLD_MAP_ORDINARY_ACTORS: the scene's ordinary actor
-// templates are in use. FLAG_WORLD_MAP_CAUGHT_IN_STORM: the storm holds the
+// placements are in use. FLAG_WORLD_MAP_CAUGHT_IN_STORM: the storm holds the
 // party up in the air. FLAG_WORLD_MAP_STORM_GONE: the storm is done with, or
 // put away. FLAG_WORLD_MAP_STORM_FRAMES_LEFT: a byte: frames left in the air.
 
@@ -651,44 +651,44 @@ static s32 WorldMap_BlinkActorSprite(struct Actor *interpreter) {
 /// Chooses the actors for the entrance: each event has
 /// a table of its own while it is still to play, and every other arrival takes
 /// the areas, the Djinn, the storm and Iodem
-/// (gWorldMapActorTemplates) and sets
+/// (gWorldMapActorPlacements) and sets
 /// FLAG_WORLD_MAP_ORDINARY_ACTORS.
-const struct ActorTemplate *WorldMap_GetActorTemplates(void) {
+const struct ActorPlacement *WorldMap_GetActorPlacements(void) {
   switch (gAdventure.entrance) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (GameFlag_Get(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
         GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-      return gWorldMapActorTemplatesFromWestLunpaCave;
+      return gWorldMapActorPlacementsFromWestLunpaCave;
     }
     break;
   case WORLD_MAP_HAMMETS_CARAVAN_LEAVES:
     if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
-      return gWorldMapActorTemplatesHammetsCaravan;
+      return gWorldMapActorPlacementsHammetsCaravan;
     }
     break;
   case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK:
   case WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI:
-    return gWorldMapActorTemplatesCrossingEnds;
+    return gWorldMapActorPlacementsCrossingEnds;
   case WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH:
-    return gWorldMapActorTemplatesFromKalayTunnelEntranceSouth;
+    return gWorldMapActorPlacementsFromKalayTunnelEntranceSouth;
   case WORLD_MAP_FROM_FILE_SCREEN:
-    return gWorldMapActorTemplatesFromClear;
+    return gWorldMapActorPlacementsFromClear;
   case WORLD_MAP_BEFORE_SHEBAS_FALL:
-    return gWorldMapActorTemplatesBeforeShebasFall;
+    return gWorldMapActorPlacementsBeforeShebasFall;
   case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK:
   case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK:
   case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN:
   case WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND:
   case WORLD_MAP_FROM_SHIP_ROOMS:
-    return gWorldMapActorTemplatesCrossing;
+    return gWorldMapActorPlacementsCrossing;
   case WORLD_MAP_JENNA_AND_KRADEN_ADRIFT:
-    return gWorldMapActorTemplatesJennaAndKradenAdrift;
+    return gWorldMapActorPlacementsJennaAndKradenAdrift;
   default:
     break;
   }
 
   GameFlag_Set(FLAG_WORLD_MAP_ORDINARY_ACTORS);
-  return gWorldMapActorTemplates;
+  return gWorldMapActorPlacements;
 }
 
 /// Chooses a passage exit from the side of the actor the leader
@@ -993,7 +993,7 @@ s32 WorldMap_Initialize(void) {
 }
 
 /// The actors placed at WORLD_MAP_FROM_WEST_LUNPA_CAVE
-/// (gWorldMapActorTemplatesFromWestLunpaCave), numbered from
+/// (gWorldMapActorPlacementsFromWestLunpaCave), numbered from
 /// ACTOR_FIRST_PLACED: Bunza's wagon, then, after Lunpa's and West Lunpa
 /// Cave's area actors, Bunza and Hammet.
 enum {
@@ -1967,7 +1967,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
 /// Turns Gateway Cave's exit (the subject of ACTOR_TO_GATEWAY_CAVE's
 /// STEP_TRIGGER_AREA) into a step trigger that runs
 /// WorldMap_IodemCallsIsaacBack, and stands Iodem (ACTOR_IODEM, whose
-/// actor template row it finds by his sprite) at pixel (6036, 3400); the
+/// actor placement row it finds by his sprite) at pixel (6036, 3400); the
 /// actor given is not used. Called by WorldMap_RunBlackOrbEvent, and by
 /// WorldMap_Initialize when the party returns to WORLD_MAP_FROM_GATEWAY_CAVE
 /// with the orb still to use.
@@ -1986,10 +1986,10 @@ static void WorldMap_BlockGatewayCaveExit(s32 actorId) {
     i++;
   }
   for (i = 0;; i++) {
-    if (gWorldMapActorTemplates[i].sprite == SPRITE_IODEM) {
-      gWorldMapActorTemplates[i].x = PIXELS(6036);
-      gWorldMapActorTemplates[i].z = PIXELS(3400);
-      gWorldMapActorTemplates[i].facing = FACING_SOUTHEAST + FACING_STEP;
+    if (gWorldMapActorPlacements[i].sprite == SPRITE_IODEM) {
+      gWorldMapActorPlacements[i].x = PIXELS(6036);
+      gWorldMapActorPlacements[i].z = PIXELS(3400);
+      gWorldMapActorPlacements[i].facing = FACING_SOUTHEAST + FACING_STEP;
       return;
     }
   }
@@ -3495,7 +3495,7 @@ s32 gWorldMapStormScript[] = {
 };
 
 // clang-format off
-struct ActorTemplate gWorldMapActorTemplates[] = {
+struct ActorPlacement gWorldMapActorPlacements[] = {
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_VINE), (s32)gWorldMapFlintScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_CORONA), MOVEMENT_TYPE_STAND,
@@ -3577,9 +3577,9 @@ struct ActorTemplate gWorldMapActorTemplates[] = {
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SIGNPOST, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WORLD_MAP_BRIDGE, CONDITION_ALWAYS, (s32)gWorldMapKolimaBridgeScript,
         PIXELS(7568), 0, PIXELS(1384), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_GATEHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
@@ -3598,7 +3598,7 @@ struct ActorTemplate gWorldMapActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gWorldMapActorTemplatesHammetsCaravan[] = {
+struct ActorPlacement gWorldMapActorPlacementsHammetsCaravan[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_HAMMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3622,7 +3622,7 @@ struct ActorTemplate gWorldMapActorTemplatesHammetsCaravan[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gWorldMapActorTemplatesFromWestLunpaCave[] = {
+struct ActorPlacement gWorldMapActorPlacementsFromWestLunpaCave[] = {
     { SPRITE_WAGON, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
@@ -3636,7 +3636,7 @@ struct ActorTemplate gWorldMapActorTemplatesFromWestLunpaCave[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gWorldMapActorTemplatesCrossingEnds[] = {
+struct ActorPlacement gWorldMapActorPlacementsCrossingEnds[] = {
     { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5384), 0, PIXELS(2248), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
@@ -3644,17 +3644,17 @@ struct ActorTemplate gWorldMapActorTemplatesCrossingEnds[] = {
     { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5422), 0, PIXELS(2232), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_DOCK, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
-        PIXELS(5028), 0, PIXELS(2328), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(5028), 0, PIXELS(2328), FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gWorldMapActorTemplatesCrossing[] = {
+struct ActorPlacement gWorldMapActorPlacementsCrossing[] = {
     { SPRITE_SHIP, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5432), 0, PIXELS(2312), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gWorldMapActorTemplatesFromKalayTunnelEntranceSouth[] = {
+struct ActorPlacement gWorldMapActorPlacementsFromKalayTunnelEntranceSouth[] = {
     { SPRITE_WORLD_MAP_TOWN, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5592), 0, PIXELS(2136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_CAVE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
@@ -3664,7 +3664,7 @@ struct ActorTemplate gWorldMapActorTemplatesFromKalayTunnelEntranceSouth[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gWorldMapActorTemplatesJennaAndKradenAdrift[] = {
+struct ActorPlacement gWorldMapActorPlacementsJennaAndKradenAdrift[] = {
     { ACTOR_JENNA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7560), 0, PIXELS(3512), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { ACTOR_SHEBA, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
@@ -3680,13 +3680,13 @@ struct ActorTemplate gWorldMapActorTemplatesJennaAndKradenAdrift[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gWorldMapActorTemplatesFromClear[] = {
+struct ActorPlacement gWorldMapActorPlacementsFromClear[] = {
     { SPRITE_WORLD_MAP_ISLAND, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(7464), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gWorldMapActorTemplatesBeforeShebasFall[] = {
+struct ActorPlacement gWorldMapActorPlacementsBeforeShebasFall[] = {
     { SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(6080), 0, PIXELS(3168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },

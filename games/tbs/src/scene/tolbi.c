@@ -3,7 +3,7 @@
 /// warriors, is held each year in the colosseum. The party comes to Tolbi
 /// across the Karagol Sea from Kalay while the festival is on, and the town's
 /// talk follows the Colosso story in three stages. Tolbi_SelectTriggers gives
-/// each stage its own trigger table; one actor template table serves all
+/// each stage its own trigger table; one actor placement table serves all
 /// three, and Tolbi_ApplyEntryState moves the actors whose places
 /// change:
 ///
@@ -187,8 +187,8 @@ const struct SceneExitRegion *Tolbi_GetRegions(void) { return 0; }
 
 const u32 *Tolbi_GetExits(void) { return gTolbiExits; }
 
-const struct ActorTemplate *Tolbi_GetActorTemplates(void) {
-  return gTolbiActorTemplates;
+const struct ActorPlacement *Tolbi_GetActorPlacements(void) {
+  return gTolbiActorPlacements;
 }
 
 /// Growth on the sprout: the grown plant no longer blocks the party, and its
@@ -795,7 +795,7 @@ u32 gTolbiExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gTolbiActorTemplates[] = {
+struct ActorPlacement gTolbiActorPlacements[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(552), 0, PIXELS(288), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

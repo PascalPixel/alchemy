@@ -7,7 +7,7 @@
 const struct SceneEntrance *MercuryLighthouseEntrance_GetEntrances(void);
 const struct SceneExitRegion *MercuryLighthouseEntrance_GetRegions(void);
 const u32 *MercuryLighthouseEntrance_GetExits(void);
-const struct ActorTemplate *MercuryLighthouseEntrance_GetActorTemplates(void);
+const struct ActorPlacement *MercuryLighthouseEntrance_GetActorPlacements(void);
 const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void);
 s32 MercuryLighthouseEntrance_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -31,7 +31,7 @@ extern s32 gPaletteCycleGreen;
 extern s32 gPaletteCycleBlue;
 extern struct SceneEntrance gMercuryLighthouseEntrance_Entrances[];
 extern u32 gMercuryLighthouseEntrance_Exits[];
-extern struct ActorTemplate gMercuryLighthouseEntrance_ActorTemplates[];
+extern struct ActorPlacement gMercuryLighthouseEntrance_ActorPlacements[];
 extern struct Trigger gMercuryLighthouseEntrance_Triggers[];
 extern s32 gMercuryLighthouseEntrance_SparkBurstScript[];
 

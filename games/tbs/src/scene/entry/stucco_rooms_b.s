@@ -2,6 +2,6 @@
 	overlay_veneer StuccoRoomsB_ApplyEntryState
 	overlay_veneer StuccoRoomsB_GetEntrances
 	overlay_veneer StuccoRoomsB_GetExits
-	overlay_veneer StuccoRoomsB_SelectActorTemplates
+	overlay_veneer StuccoRoomsB_SelectActorPlacements
 	overlay_veneer StuccoRoomsB_SelectTriggers
 	overlay_veneer StuccoRoomsB_GetRegions

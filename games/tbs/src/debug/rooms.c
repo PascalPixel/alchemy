@@ -18,7 +18,7 @@
 #include "djinn_ids.h"
 
 /// The placed actors, numbered in the order of
-/// gTestRoom_ActorTemplates:
+/// gTestRoom_ActorPlacements:
 /// the first Djinni of each element, which TestRoom_GiveDjinniForTesting
 /// gives, placed while its flag (FLAG_DJINN_FIRST + element *
 /// DJINN_PER_ELEMENT) is clear.
@@ -41,14 +41,16 @@ s32 Scene_GetExitRegions(void) { return 0; }
 u8 *TestRoom_GetExits(void) { return (u8 *)gTestRoom_Exits; }
 
 /// Places one Djinni of each element in the test room, Flint, Fizz, Forge and
-/// Gust, each placed while its caught flag (the template's condition)
+/// Gust, each placed while its caught flag (the placement's condition)
 /// is clear.
-u8 *TestRoom_GetActorTemplates(void) { return (u8 *)gTestRoom_ActorTemplates; }
+u8 *TestRoom_GetActorPlacements(void) {
+  return (u8 *)gTestRoom_ActorPlacements;
+}
 
 /// Grants the first Djinni of an element, then clears its found flag for
 /// testing. Djinn_JoinParty plays the element's capture effect on the
 /// actor, releases its slot and gives the element's first Djinni to the party
-/// member with the fewest Djinn; clearing the flag the template tests lets the
+/// member with the fewest Djinn; clearing the flag the placement tests lets the
 /// room place the Djinni again on the next entry.
 static __inline__ void TestRoom_GiveDjinniForTesting(s32 actorId, s32 element) {
   Djinn_JoinParty(actorId, element, 0);
@@ -105,7 +107,7 @@ u32 gTestRoom_Exits[] = {
     SCENE_EXITS(TestRoom3), SCENE_EXITS_END,
 };
 
-struct ActorTemplate gTestRoom_ActorTemplates[] = {
+struct ActorPlacement gTestRoom_ActorPlacements[] = {
     {0x5a, 0x30, MOVEMENT_TYPE_STAND, PIXELS(496), 0, PIXELS(176), FACING_EAST,
      TALK_FACING_PARTY, 0},
     {0x5b, 0x44, MOVEMENT_TYPE_STAND, PIXELS(496), 0, PIXELS(200), FACING_EAST,

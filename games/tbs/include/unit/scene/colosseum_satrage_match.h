@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 ColosseumSatrageMatch_Initialize(void);
 // The native call precedes this definition; see MATCHING.md.
@@ -31,7 +31,7 @@ extern s32 gColosseumSatrageMatch_RaiseScript[];
 extern u32 gColosseumSatrageMatch_DirectionSteps[];
 extern struct SceneEntrance gColosseumSatrageMatchEntrances[];
 extern u32 gColosseumSatrageMatchExits[];
-extern struct ActorTemplate gColosseumSatrageMatchActorTemplates[];
+extern struct ActorPlacement gColosseumSatrageMatchActorPlacements[];
 extern s32 gColosseumSatrageMatch_LiftPhase;
 extern s32 gColosseumSatrageMatch_LiftTimer;
 extern struct Trigger gColosseumSatrageMatchTriggers[];

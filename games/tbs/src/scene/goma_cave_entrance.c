@@ -22,7 +22,7 @@
 /// pillar, moved with Move to its last column, settles into the floor so it can
 /// be walked over (FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE). Whirlwind
 /// blows the second ivy away for good (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
-/// its actor template row is then skipped, though it keeps its actor id.
+/// its actor placement row is then skipped, though it keeps its actor id.
 ///
 /// Scene_Initialize blocks Retreat and puts everything back as these flags say:
 /// the stump where it landed, the pillars on their columns and the map grid
@@ -127,8 +127,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gGomaCaveEntranceExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gGomaCaveEntranceActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gGomaCaveEntranceActorPlacements;
 }
 
 /// Move on the west pillar at Goma Cave Entrance, and after each push: the
@@ -696,7 +696,7 @@ u32 gGomaCaveEntranceExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gGomaCaveEntranceActorTemplates[] = {
+struct ActorPlacement gGomaCaveEntranceActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -712,7 +712,7 @@ struct ActorTemplate gGomaCaveEntranceActorTemplates[] = {
     { SPRITE_MOVE_HAND, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_MOVE_HAND, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_IVY, FLAG_GOMA_CAVE_IVAN_JOINED, MOVEMENT_TYPE_RESET_ACTION,

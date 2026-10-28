@@ -237,7 +237,7 @@ them.
 
 - 64 actors, and 64 sprites sharing 64 sprite animations, up to four each.
 - 66 actor places in the field work, the party's 8 and then 58 for
-  the scene's actor templates, though only 64 actors exist to fill them.
+  the scene's actor placements, though only 64 actors exist to fill them.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
 - 256 scene flags and 256 area flags, each range reused by every scene or
   area.

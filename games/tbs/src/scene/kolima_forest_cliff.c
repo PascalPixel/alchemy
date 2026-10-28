@@ -43,7 +43,7 @@
 #include "songs.h"
 
 /// The scene's actors, numbering the rows of
-/// gKolimaForestCliffActorTemplates.
+/// gKolimaForestCliffActorPlacements.
 enum {
   /// The three logs; the third is the one that can reach the river.
   /// ★ Named from what the player sees: a log lying west to east (its render)
@@ -70,8 +70,8 @@ const struct SceneExitRegion *KolimaForestCliff_GetRegions(void) { return 0; }
 const u32 *KolimaForestCliff_GetExits(void) { return gKolimaForestCliffExits; }
 
 /// The three logs.
-const struct ActorTemplate *KolimaForestCliff_GetActorTemplates(void) {
-  return gKolimaForestCliffActorTemplates;
+const struct ActorPlacement *KolimaForestCliff_GetActorPlacements(void) {
+  return gKolimaForestCliffActorPlacements;
 }
 
 /// Kolima Forest (SceneId_KolimaForestCliff), walking into a log: it rolls
@@ -182,7 +182,7 @@ u32 gKolimaForestCliffExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gKolimaForestCliffActorTemplates[] = {
+struct ActorPlacement gKolimaForestCliffActorPlacements[] = {
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(256), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

@@ -126,7 +126,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// This floor's actors, numbering its actor template rows from
+/// This floor's actors, numbering its actor placement rows from
 /// ACTOR_FIRST_PLACED. Mia stands in her own party slot; the Lizard Man is
 /// the monster she cannot get past (his scripted battle fights him as "Lizard
 /// Man"); the Ply target is the invisible actor Ply is cast on.
@@ -240,8 +240,9 @@ const u32 *MercuryLighthouseEntrance_GetExits(void) {
 }
 
 /// Returns Mia, the Lizard Man, the six statues and the Ply target.
-const struct ActorTemplate *MercuryLighthouseEntrance_GetActorTemplates(void) {
-  return gMercuryLighthouseEntrance_ActorTemplates;
+const struct ActorPlacement *
+MercuryLighthouseEntrance_GetActorPlacements(void) {
+  return gMercuryLighthouseEntrance_ActorPlacements;
 }
 
 /// Mercury Lighthouse: searching the inscription by the pool
@@ -903,7 +904,7 @@ u32 gMercuryLighthouseEntrance_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gMercuryLighthouseEntrance_ActorTemplates[] = {
+struct ActorPlacement gMercuryLighthouseEntrance_ActorPlacements[] = {
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LIZARD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -911,15 +912,15 @@ struct ActorTemplate gMercuryLighthouseEntrance_ActorTemplates[] = {
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(88), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(88), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(88), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(88), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(88), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(184), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(184), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(184), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(184), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

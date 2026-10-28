@@ -21,7 +21,7 @@
 /// - Unused: a ninth room drawn at the sheet's lower left, whose camera box no
 ///   entrance gives, so no door leads in.
 ///
-/// The actor templates and triggers follow the story:
+/// The actor placements and triggers follow the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   CottageRoomsA_Initialize removes every resident and flashes the
@@ -77,9 +77,9 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The placed actors, numbered in the order of the actor template
+/// The placed actors, numbered in the order of the actor placement
 /// tables, which all place them alike;
-/// gCottageRoomsA_ActorTemplatesAfterKalay adds Garet, Ivan and Mia,
+/// gCottageRoomsA_ActorPlacementsAfterKalay adds Garet, Ivan and Mia,
 /// who keep their characters' ids, and the drifting sprites. The villagers'
 /// notes quote what they say on the day the story begins.
 enum CottageRoomsAActorId {
@@ -209,18 +209,18 @@ const u32 *CottageRoomsA_GetExits(void) {
   return gCottageRoomsA_Exits;
 }
 
-/// Selects the actor templates for the day the story begins, after the
+/// Selects the actor placements for the day the story begins, after the
 /// party has left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay
 /// (FLAG_KALAY_REACHED), and marks which of their actors are in view.
-const struct ActorTemplate *CottageRoomsA_GetActorTemplates(void) {
-  struct ActorTemplate *table;
+const struct ActorPlacement *CottageRoomsA_GetActorPlacements(void) {
+  struct ActorPlacement *table;
 
   if (GameFlag_Get(FLAG_KALAY_REACHED)) {
-    table = gCottageRoomsA_ActorTemplatesAfterKalay;
+    table = gCottageRoomsA_ActorPlacementsAfterKalay;
   } else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT)) {
-    table = gCottageRoomsA_ActorTemplatesAfterLeaving;
+    table = gCottageRoomsA_ActorPlacementsAfterLeaving;
   } else {
-    table = gCottageRoomsA_ActorTemplates;
+    table = gCottageRoomsA_ActorPlacements;
   }
   Scene_AssignViewFlags(table);
   return table;
@@ -360,7 +360,7 @@ static void CottageRoomsA_LeaveToValeNorth(void) {
 }
 
 /// Leaves the empty house. It's the room entered from
-/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, which no actor template
+/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, which no actor placement
 /// table puts anyone in.
 static void CottageRoomsA_LeaveToValePlazaWest(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST);
@@ -1063,7 +1063,7 @@ u32 gCottageRoomsA_StormExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gCottageRoomsA_ActorTemplates[] = {
+struct ActorPlacement gCottageRoomsA_ActorPlacements[] = {
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
@@ -1097,7 +1097,7 @@ struct ActorTemplate gCottageRoomsA_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterLeaving[] = {
+struct ActorPlacement gCottageRoomsA_ActorPlacementsAfterLeaving[] = {
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(697), 0, PIXELS(468), FACING_SOUTHEAST + FACING_STEP, 3, 0 },
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
@@ -1131,7 +1131,7 @@ struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterLeaving[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterKalay[] = {
+struct ActorPlacement gCottageRoomsA_ActorPlacementsAfterKalay[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1171,9 +1171,9 @@ struct ActorTemplate gCottageRoomsA_ActorTemplatesAfterKalay[] = {
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 280, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 

@@ -88,7 +88,7 @@ const u32 gInteriorExits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ActorTemplate gInteriorActorTemplates[] = {
+const struct ActorPlacement gInteriorActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
       PIXELS(144), 0, PIXELS(168), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -284,8 +284,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gInteriorExits; }
 
 /// The townsfolk, shopkeepers and counters of all three areas.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gInteriorActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gInteriorActorPlacements;
 }
 
 /// The triggers of Gate to Suhalla, or those of Lunpa's buildings before and

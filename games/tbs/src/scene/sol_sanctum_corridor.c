@@ -37,8 +37,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSolSanctumCorridorExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gSolSanctumCorridorActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gSolSanctumCorridorActorPlacements;
 }
 
 /// Returns the passage's two exits, its only events.
@@ -69,7 +69,7 @@ u32 gSolSanctumCorridorExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gSolSanctumCorridorActorTemplates[] = {
+struct ActorPlacement gSolSanctumCorridorActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 

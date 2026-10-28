@@ -5,12 +5,12 @@
 #include "scene_tables.h"
 
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 
 const struct SceneEntrance *WorldMap_GetEntrances(void);
 const struct SceneExitRegion *WorldMap_GetRegions(void);
 const u32 *WorldMap_GetExits(void);
-const struct ActorTemplate *WorldMap_GetActorTemplates(void);
+const struct ActorPlacement *WorldMap_GetActorPlacements(void);
 const struct Trigger *WorldMap_GetTriggers(void);
 s32 WorldMap_Initialize(void);
 extern s32 gWorldMapIodem;
@@ -44,16 +44,16 @@ extern s32 gWorldMapKolimaBridgeScript[];
 extern s32 gWorldMapAlignToMapScript[];
 extern s32 gWorldMapIodemScript[];
 extern s32 gWorldMapStormScript[];
-extern struct ActorTemplate gWorldMapActorTemplates[];
-extern struct ActorTemplate gWorldMapActorTemplatesHammetsCaravan[];
-extern struct ActorTemplate gWorldMapActorTemplatesFromWestLunpaCave[];
-extern struct ActorTemplate gWorldMapActorTemplatesCrossingEnds[];
-extern struct ActorTemplate gWorldMapActorTemplatesCrossing[];
-extern struct ActorTemplate
-    gWorldMapActorTemplatesFromKalayTunnelEntranceSouth[];
-extern struct ActorTemplate gWorldMapActorTemplatesJennaAndKradenAdrift[];
-extern struct ActorTemplate gWorldMapActorTemplatesFromClear[];
-extern struct ActorTemplate gWorldMapActorTemplatesBeforeShebasFall[];
+extern struct ActorPlacement gWorldMapActorPlacements[];
+extern struct ActorPlacement gWorldMapActorPlacementsHammetsCaravan[];
+extern struct ActorPlacement gWorldMapActorPlacementsFromWestLunpaCave[];
+extern struct ActorPlacement gWorldMapActorPlacementsCrossingEnds[];
+extern struct ActorPlacement gWorldMapActorPlacementsCrossing[];
+extern struct ActorPlacement
+    gWorldMapActorPlacementsFromKalayTunnelEntranceSouth[];
+extern struct ActorPlacement gWorldMapActorPlacementsJennaAndKradenAdrift[];
+extern struct ActorPlacement gWorldMapActorPlacementsFromClear[];
+extern struct ActorPlacement gWorldMapActorPlacementsBeforeShebasFall[];
 extern struct Trigger gWorldTriggers[];
 extern u32 gWorldMapPassengerRowValues[];
 extern s32 gIslandWakeScript[];

@@ -92,7 +92,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind);
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
 /// The actors of the Lucky Dice and Lucky Wheels rooms (StuccoRoomsC),
-/// numbered in the order of gTolbiSpringActorTemplatesOther from
+/// numbered in the order of gTolbiSpringActorPlacementsOther from
 /// ACTOR_FIRST_PLACED.
 enum TolbiSpringGameRoomActorId {
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who runs Lucky
@@ -147,7 +147,7 @@ enum TolbiSpringGameRoomActorId {
 };
 
 /// Tolbi Spring's own actors (TolbiSpring), numbered in the order of
-/// gTolbiSpringActorTemplates from ACTOR_FIRST_PLACED. The toss draws
+/// gTolbiSpringActorPlacements from ACTOR_FIRST_PLACED. The toss draws
 /// the coin or the medal with its shadow and three trailing copies, which
 /// TOLBI_SPRING_COIN_TRAIL and TOLBI_SPRING_MEDAL_TRAIL number.
 enum TolbiSpringActorId {
@@ -273,11 +273,11 @@ const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
 
 /// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky
 /// Wheels rooms.
-const struct ActorTemplate *TolbiSpring_GetActorTemplates(void) {
+const struct ActorPlacement *TolbiSpring_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_TolbiSpring) {
-    return gTolbiSpringActorTemplates;
+    return gTolbiSpringActorPlacements;
   }
-  return gTolbiSpringActorTemplatesOther;
+  return gTolbiSpringActorPlacementsOther;
 }
 
 /// A visitor at Tolbi Spring asks whether the party has a Lucky Medal.
@@ -1543,7 +1543,7 @@ const u32 gTolbiSpring_Exits[] = {
 };
 
 // clang-format off
-const struct ActorTemplate gTolbiSpringActorTemplates[] = {
+const struct ActorPlacement gTolbiSpringActorPlacements[] = {
     { SPRITE_SPRING_COIN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPRING_COIN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1589,7 +1589,7 @@ const struct ActorTemplate gTolbiSpringActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiSpringActorTemplatesOther[] = {
+const struct ActorPlacement gTolbiSpringActorPlacementsOther[] = {
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(144), 0, PIXELS(360), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

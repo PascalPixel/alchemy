@@ -150,8 +150,8 @@ const u32 *SolSanctumEruption_GetExits(void) {
 /// unmasked, Alex, the Wise One (ACTOR_WISE_ONE) and sixteen crystals (from
 /// ACTOR_FIRST_CRYSTAL), all placed off the map until the event moves
 /// them.
-const struct ActorTemplate *SolSanctumEruption_GetActorTemplates(void) {
-  return gSolSanctumEruption_ActorTemplates;
+const struct ActorPlacement *SolSanctumEruption_GetActorPlacements(void) {
+  return gSolSanctumEruption_ActorPlacements;
 }
 
 /// Returns the empty trigger table: the scene is one event.
@@ -1750,7 +1750,7 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   WaitFrames(30);
 }
 
-/// Restores eight corner-cell cell behaviors from the chamber templates.
+/// Restores eight corner-cell cell behaviors from the chamber placements.
 static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
 
   MapGrid_CopyCellAttributes(14, 8, 1, 1, 10, 0);
@@ -1898,7 +1898,7 @@ u32 gSolSanctumEruption_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gSolSanctumEruption_ActorTemplates[] = {
+struct ActorPlacement gSolSanctumEruption_ActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

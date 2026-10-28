@@ -3,14 +3,14 @@
 /// at the edge of the Suhalla Desert, on the way from Gondowan Passage to
 /// Lalivero.
 ///
-/// Its people come in two sets, each an actor template table and a
+/// Its people come in two sets, each an actor placement table and a
 /// trigger table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO: before Babi's
 /// audience after Colosso the village talks of the sandstorms that close the
 /// desert, of its distrust of Angara and of Sheba, the hostage; after it, of
 /// the soldiers the storms caught on the way to Babi Lighthouse, who lie in one
 /// of its houses (timber_rooms_a.c). The same people stand in the same rows of
-/// both actor template tables, so one enum names them; the woman the sandstorms
-/// brought stands off the map until the audience.
+/// both actor placement tables, so one enum names them; the woman the
+/// sandstorms brought stands off the map until the audience.
 ///
 /// Five doors, whose cell behaviors are their exits' numbers
 /// (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST), open as the leader walks north
@@ -55,7 +55,7 @@
 enum { SPROUT_ANIMATION_GROWN = 4 };
 
 /// Suhalla's people and its sprout, numbering the rows of both actor
-/// template tables from ACTOR_FIRST_PLACED: gSuhallaActorTemplatesLater
+/// placement tables from ACTOR_FIRST_PLACED: gSuhallaActorPlacementsLater
 /// places the same people, by sprite, in the same rows. Each note gives what
 /// they say before Babi's audience, then after it.
 enum SuhallaActorId {
@@ -121,11 +121,11 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gSuhallaExits; }
 
 /// Suhalla's people, who stand elsewhere after Babi's audience.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-    return gSuhallaActorTemplatesLater;
+    return gSuhallaActorPlacementsLater;
   }
-  return gSuhallaActorTemplates;
+  return gSuhallaActorPlacements;
 }
 
 /// A woman asks whether the party is trying to get to Lalivero. She's
@@ -271,7 +271,7 @@ u32 gSuhallaExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gSuhallaActorTemplates[] = {
+struct ActorPlacement gSuhallaActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -293,7 +293,7 @@ struct ActorTemplate gSuhallaActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSuhallaActorTemplatesLater[] = {
+struct ActorPlacement gSuhallaActorPlacementsLater[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(104), 0, PIXELS(184), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

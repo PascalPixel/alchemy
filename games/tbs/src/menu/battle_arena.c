@@ -135,8 +135,8 @@
 //   monster series, the byte flag at FLAG_AREA_TEMP_E8 instead counts the
 //   victories, 0 to 2, towards a stronger monster.
 
-/// The actors, numbering the rows of gBattleArenaActorTemplates
-/// and gBattleArenaBattleActorTemplates, which list the same people in
+/// The actors, numbering the rows of gBattleArenaActorPlacements
+/// and gBattleArenaBattleActorPlacements, which list the same people in
 /// the same order; the rows of Garet, Ivan, Mia and Jenna take those
 /// characters' own ids.
 enum BattleArenaActorId {
@@ -325,20 +325,20 @@ static s32 BattleArena_InitializeSerial(void) {
 
 u8 *BattleArena_GetExits(void) { return (u8 *)gBattleArenaExits; }
 
-/// The actor templates entry. After a defeat
+/// The actor placements entry. After a defeat
 /// (BATTLE_ARENA_AFTER_MONSTER_LOSS or BATTLE_ARENA_AFTER_LINK_LOSS) the party
 /// party members and four visitors roughly trade places
-/// (gBattleArenaBattleActorTemplates): Garet, Ivan and Mia or Jenna take
+/// (gBattleArenaBattleActorPlacements): Garet, Ivan and Mia or Jenna take
 /// three of the visitors' spots, and the visitors stand around where the party
 /// stood.
-s32 BattleArena_SelectActorTemplates(void) {
+s32 BattleArena_SelectActorPlacements(void) {
   s16 entrance = gAdventure.entrance;
 
   if (entrance == BATTLE_ARENA_AFTER_LINK_LOSS ||
       entrance == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
-    return (s32)gBattleArenaBattleActorTemplates;
+    return (s32)gBattleArenaBattleActorPlacements;
   }
-  return (s32)gBattleArenaActorTemplates;
+  return (s32)gBattleArenaActorPlacements;
 }
 
 /// Returns 1 when the partner's payload holds slot's word in slot's column, 0
@@ -1764,9 +1764,9 @@ u32 gBattleArenaExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gBattleArenaActorTemplates[] = {
+struct ActorPlacement gBattleArenaActorPlacements[] = {
     { 0x6a, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1810,9 +1810,9 @@ struct ActorTemplate gBattleArenaActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBattleArenaBattleActorTemplates[] = {
+struct ActorPlacement gBattleArenaBattleActorPlacements[] = {
     { 0x6a, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { 0x79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

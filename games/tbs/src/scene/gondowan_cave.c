@@ -15,7 +15,7 @@
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
 /// One exit table serves every scene; the other getters choose by
-/// gAdventure.sceneId, Gondowan Passage's actor templates and triggers
+/// gAdventure.sceneId, Gondowan Passage's actor placements and triggers
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
 /// scene. Every scene's trigger table carries GondowanCaveRiver's two
 /// chests.
@@ -78,8 +78,8 @@
 #include "songs.h"
 
 /// Gondowan Passage's placed actors, numbered in the order of
-/// gGondowanPassageActorTemplates and
-/// gGondowanPassageActorTemplatesWithIodem from ACTOR_FIRST_PLACED: the
+/// gGondowanPassageActorPlacements and
+/// gGondowanPassageActorPlacementsWithIodem from ACTOR_FIRST_PLACED: the
 /// soldiers who guard the bridge, and in the second table Iodem after them.
 enum GondowanPassageActorId {
   /// Asks whether the party will cross into Gondowan.
@@ -100,7 +100,7 @@ enum GondowanPassageActorId {
 };
 
 /// GondowanCaveRiver's placed actor, the one row of
-/// gGondowanCaveRiverActorTemplates that a trigger names.
+/// gGondowanCaveRiverActorPlacements that a trigger names.
 enum GondowanCaveRiverActorId {
   /// Raised by Lift.
   /// ★ Named from what the player sees: a round grey boulder by the river
@@ -109,7 +109,7 @@ enum GondowanCaveRiverActorId {
 };
 
 /// GondowanCave's placed actors, numbered in the order of
-/// gGondowanCaveActorTemplates from ACTOR_FIRST_PLACED.
+/// gGondowanCaveActorPlacements from ACTOR_FIRST_PLACED.
 enum GondowanCaveActorId {
   /// Moved with Move, in the sprite of the Goma Cave stump.
   /// ★ Named from the game: "that stump" (MsgGomaNoUsePsynergy)
@@ -177,22 +177,22 @@ const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
 /// Colosso.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-      return gGondowanPassageActorTemplatesWithIodem;
+      return gGondowanPassageActorPlacementsWithIodem;
     }
-    return gGondowanPassageActorTemplates;
+    return gGondowanPassageActorPlacements;
   }
   if (sceneId == (s32)&SceneId_GondowanCaveRiver) {
-    return gGondowanCaveRiverActorTemplates;
+    return gGondowanCaveRiverActorPlacements;
   }
   if (sceneId == (s32)&SceneId_GondowanCave) {
-    return gGondowanCaveActorTemplates;
+    return gGondowanCaveActorPlacements;
   }
-  return gGondowanCaveActorTemplatesOther;
+  return gGondowanCaveActorPlacementsOther;
 }
 
 /// The triggers of each scene, with Iodem's in Gondowan Passage when he is
@@ -629,11 +629,11 @@ u32 gGondowanCaveExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gGondowanCaveActorTemplatesOther[] = {
+struct ActorPlacement gGondowanCaveActorPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gGondowanPassageActorTemplates[] = {
+struct ActorPlacement gGondowanPassageActorPlacements[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(144), 0, PIXELS(168), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -643,7 +643,7 @@ struct ActorTemplate gGondowanPassageActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gGondowanPassageActorTemplatesWithIodem[] = {
+struct ActorPlacement gGondowanPassageActorPlacementsWithIodem[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -656,7 +656,7 @@ struct ActorTemplate gGondowanPassageActorTemplatesWithIodem[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gGondowanCaveRiverActorTemplates[] = {
+struct ActorPlacement gGondowanCaveRiverActorPlacements[] = {
     { SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(504), 0, PIXELS(624), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -666,7 +666,7 @@ struct ActorTemplate gGondowanCaveRiverActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gGondowanCaveActorTemplates[] = {
+struct ActorPlacement gGondowanCaveActorPlacements[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(496), 0, PIXELS(304), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

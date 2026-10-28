@@ -7,12 +7,12 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern const s16 gVaultCave_DirectionSteps[];
@@ -26,10 +26,10 @@ extern u32 gVaultCave_FallbackExits[];
 extern u32 gVaultCavePassage_Exits[];
 extern u32 gVaultCaveVambrace_Exits[];
 extern u32 gVaultCaveMouth_Exits[];
-extern struct ActorTemplate gVaultCave_FallbackActorTemplates[];
-extern struct ActorTemplate gVaultCavePassage_ActorTemplates[];
-extern struct ActorTemplate gVaultCaveVambrace_ActorTemplates[];
-extern struct ActorTemplate gVaultCaveMouth_ActorTemplates[];
+extern struct ActorPlacement gVaultCave_FallbackActorPlacements[];
+extern struct ActorPlacement gVaultCavePassage_ActorPlacements[];
+extern struct ActorPlacement gVaultCaveVambrace_ActorPlacements[];
+extern struct ActorPlacement gVaultCaveMouth_ActorPlacements[];
 extern struct Trigger gVaultCave_FallbackTriggers[];
 extern struct Trigger gVaultCavePassage_Triggers[];
 extern struct Trigger gVaultCaveVambrace_Triggers[];

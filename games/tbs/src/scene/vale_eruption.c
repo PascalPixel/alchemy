@@ -49,7 +49,7 @@
 #include "fixed_math.h"
 
 /// The placed actors, numbered in the order of
-/// gValeEruption_ActorTemplates; Garet's row places the party's Garet and
+/// gValeEruption_ActorPlacements; Garet's row places the party's Garet and
 /// takes no number.
 enum ValeEruptionActorId {
   /// The Great Healer, a man with a white beard in a tall hat and a long
@@ -109,8 +109,8 @@ const struct SceneExitRegion *ValeEruption_GetRegions(void) { return NULL; }
 const u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
 
 /// Returns Garet and the villagers gathered before the sanctum.
-const struct ActorTemplate *ValeEruption_GetActorTemplates(void) {
-  return gValeEruption_ActorTemplates;
+const struct ActorPlacement *ValeEruption_GetActorPlacements(void) {
+  return gValeEruption_ActorPlacements;
 }
 
 /// The scene has no triggers of its own: everything happens on arrival.
@@ -526,7 +526,7 @@ u32 gValeEruption_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gValeEruption_ActorTemplates[] = {
+struct ActorPlacement gValeEruption_ActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(258), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

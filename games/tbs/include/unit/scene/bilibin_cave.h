@@ -6,12 +6,12 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 
 const struct SceneEntrance *BilibinCave_GetEntrances(void);
 const struct SceneExitRegion *BilibinCave_GetRegions(void);
 const u32 *BilibinCave_GetExits(void);
-const struct ActorTemplate *BilibinCave_GetActorTemplates(void);
+const struct ActorPlacement *BilibinCave_GetActorPlacements(void);
 const struct Trigger *BilibinCave_GetTriggers(void);
 s32 BilibinCave_Initialize(void);
 extern s32 gBilibinCave_ClearSpriteScript[];
@@ -20,10 +20,10 @@ extern struct SceneEntrance gBilibinCaveEntranceEntrances[];
 extern struct SceneEntrance gBilibinCaveRapierEntrances[];
 extern struct SceneEntrance gBilibinCaveIceEntrances[];
 extern u32 gBilibinCaveExits[];
-extern struct ActorTemplate gBilibinCaveActorTemplatesOther[];
-extern struct ActorTemplate gBilibinCaveEntranceActorTemplates[];
-extern struct ActorTemplate gBilibinCaveRapierActorTemplates[];
-extern struct ActorTemplate gBilibinCaveIceActorTemplates[];
+extern struct ActorPlacement gBilibinCaveActorPlacementsOther[];
+extern struct ActorPlacement gBilibinCaveEntranceActorPlacements[];
+extern struct ActorPlacement gBilibinCaveRapierActorPlacements[];
+extern struct ActorPlacement gBilibinCaveIceActorPlacements[];
 extern struct Trigger gBilibinCaveTriggersOther[];
 extern struct Trigger gBilibinCaveEntranceTriggers[];
 extern struct Trigger gBilibinCaveRapierTriggers[];

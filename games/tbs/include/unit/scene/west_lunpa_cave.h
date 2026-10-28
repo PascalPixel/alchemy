@@ -6,19 +6,19 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern const struct SceneEntrance gCaveEntrances[];
 extern const u32 gCaveExits[];
-extern const struct ActorTemplate gCaveNoActorTemplates[];
-extern const struct ActorTemplate gCaveActorTemplates[];
+extern const struct ActorPlacement gCaveNoActorPlacements[];
+extern const struct ActorPlacement gCaveActorPlacements[];
 extern const struct Trigger gCaveNoTriggers[];
 extern const struct Trigger gCaveTriggers[];
 

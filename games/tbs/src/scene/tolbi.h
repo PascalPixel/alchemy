@@ -29,7 +29,7 @@
 // sprout, FLAG_TOLBI_PUDDLE_FROZEN once Frost has frozen the puddle; both reset
 // when the party leaves the town.
 
-/// Actors, numbered in the order of the actor templates from
+/// Actors, numbered in the order of the actor placements from
 /// ACTOR_FIRST_PLACED. The townspeople the text gives no name are named by
 /// what their sprites show and what they say or, under Mind Read, think
 /// during the festival.

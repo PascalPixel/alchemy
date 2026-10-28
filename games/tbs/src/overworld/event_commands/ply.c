@@ -140,7 +140,7 @@ void FieldPsynergy_Ply(void) {
   // The particles share one sprite cache; keep its slot to free at the end.
   // last is read with no check that any particle spawned. It would be 0 only
   // with all 64 actors taken for eight frames, and a scene places at most 60:
-  // the World Map's 51 actor templates, the party's 8 and the camera.
+  // the World Map's 51 actor placements, the party's 8 and the camera.
   resourceSlot = last->slot;
   Sound_PlaySongFar(SE_PSYNERGY_START);
   // The last particle spawned 7 frames ago with 120 frames to live: wait

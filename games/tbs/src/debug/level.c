@@ -51,7 +51,7 @@
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 /// The room's actors, numbering the rows of
-/// gIncreaseItemAndLevel_ActorTemplates; the game names none of them, so
+/// gIncreaseItemAndLevel_ActorPlacements; the game names none of them, so
 /// each is named for what talking to it opens (gIncreaseItemAndLevel_Triggers),
 /// as a render of each talk shows it.
 enum IncreaseItemAndLevelActorId {
@@ -99,8 +99,8 @@ u8 *IncreaseItemAndLevel_GetExits(void) {
   return (u8 *)gIncreaseItemAndLevel_Exits;
 }
 
-u8 *IncreaseItemAndLevel_GetActorTemplates(void) {
-  return (u8 *)gIncreaseItemAndLevel_ActorTemplates;
+u8 *IncreaseItemAndLevel_GetActorPlacements(void) {
+  return (u8 *)gIncreaseItemAndLevel_ActorPlacements;
 }
 
 #if TBS_PATCH_1
@@ -597,7 +597,7 @@ u32 gIncreaseItemAndLevel_Exits[] = {
 /// also the ability browser (reachable in English and German only) and the two
 /// emote testers.
 // clang-format off
-struct ActorTemplate gIncreaseItemAndLevel_ActorTemplates[] = {
+struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[] = {
     {0x1f4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,
         TALK_FACING_PARTY, 0},
     {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(480), FACING_SOUTHEAST,

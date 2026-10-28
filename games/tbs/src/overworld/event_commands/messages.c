@@ -272,7 +272,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   if (actorId <= 7) {
     member = actorId & 0x0fff;
 
-    if (Scene_FindActorTemplate(member) == 0) {
+    if (Scene_FindActorPlacement(member) == 0) {
       sprite = member;
     }
   }

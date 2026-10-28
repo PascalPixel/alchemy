@@ -79,7 +79,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// The actors, numbering gKolimaForestTreeActorTemplates' rows
+/// The actors, numbering gKolimaForestTreeActorPlacements' rows
 /// from ACTOR_FIRST_PLACED.
 enum {
   /// Tret's face, drawn in SPRITE_TRET_RAISED; its animations are his face's
@@ -164,8 +164,8 @@ const u32 *KolimaForestTree_GetExits(void) { return gKolimaForestTreeExits; }
 
 /// Tret and Laurel, the blank actors at their spots, the ones the party
 /// talks to, Tret's wrathful side, and Garet, Ivan and Mia for the healing.
-const struct ActorTemplate *KolimaForestTree_GetActorTemplates(void) {
-  return gKolimaForestTreeActorTemplates;
+const struct ActorPlacement *KolimaForestTree_GetActorPlacements(void) {
+  return gKolimaForestTreeActorPlacements;
 }
 
 /// Unused: takes the touched exit after the leader's current movement; no
@@ -1109,7 +1109,7 @@ u32 gKolimaForestTreeExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gKolimaForestTreeActorTemplates[] = {
+struct ActorPlacement gKolimaForestTreeActorPlacements[] = {
     { SPRITE_TRET_RAISED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(327), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LAUREL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

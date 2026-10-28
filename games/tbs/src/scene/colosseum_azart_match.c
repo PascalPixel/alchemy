@@ -249,8 +249,8 @@ const u32 *ColosseumAzartMatch_GetExits(void) {
   return gColosseumAzartMatch_Exits;
 }
 
-const struct ActorTemplate *ColosseumAzartMatch_GetActorTemplates(void) {
-  return gColosseumAzartMatch_ActorTemplates;
+const struct ActorPlacement *ColosseumAzartMatch_GetActorPlacements(void) {
+  return gColosseumAzartMatch_ActorPlacements;
 }
 
 /// Advances the bridge animation and the cell behaviors that make it
@@ -1713,7 +1713,7 @@ u32 gColosseumAzartMatch_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gColosseumAzartMatch_ActorTemplates[] = {
+struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
     { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(312), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

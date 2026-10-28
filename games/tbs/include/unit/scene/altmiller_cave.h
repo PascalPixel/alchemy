@@ -5,13 +5,13 @@
 #include "scene_tables.h"
 
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct LightWheel;
 
 const struct SceneEntrance *AltmillerCave_GetEntrances(void);
 const struct SceneExitRegion *AltmillerCave_GetRegions(void);
 const u32 *AltmillerCave_GetExits(void);
-const struct ActorTemplate *AltmillerCave_GetActorTemplates(void);
+const struct ActorPlacement *AltmillerCave_GetActorPlacements(void);
 const struct Trigger *AltmillerCave_GetTriggers(void);
 s32 AltmillerCave_Initialize(void);
 extern s32 gPushedActor_DirectionSteps[];
@@ -20,10 +20,10 @@ extern s32 gPushedActor_FootprintBounds[];
 extern struct LightWheel *gAltmillerCave_LightWheel;
 extern struct SceneEntrance gAltmillerCave_Entrances[];
 extern u32 gAltmillerCave_Exits[];
-extern struct ActorTemplate gAltmillerCave_ActorTemplatesOther[];
-extern struct ActorTemplate gAltmillerCave_BabiActorTemplates[];
-extern struct ActorTemplate gAltmillerCave_SquallActorTemplates[];
-extern struct ActorTemplate gAltmillerCave_DraughtActorTemplates[];
+extern struct ActorPlacement gAltmillerCave_ActorPlacementsOther[];
+extern struct ActorPlacement gAltmillerCave_BabiActorPlacements[];
+extern struct ActorPlacement gAltmillerCave_SquallActorPlacements[];
+extern struct ActorPlacement gAltmillerCave_DraughtActorPlacements[];
 extern u32 gAltmillerCave_PulseScales[];
 extern s32 gAltmillerCave_GuardsArrivePath[];
 extern s32 gAltmillerCave_SecondGuardLeavePath[];

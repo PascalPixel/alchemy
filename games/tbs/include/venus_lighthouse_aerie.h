@@ -8,7 +8,7 @@
 #include "scene_tables.h"
 #include "types.h"
 
-/// The aerie's actors, in the order of its actor templates;
+/// The aerie's actors, in the order of its actor placements;
 /// Garet, Ivan, Mia and Sheba keep their character numbers.
 enum {
   /// The four statues around the beacon (SPRITE_STATUE_WITH_WREATH), the east

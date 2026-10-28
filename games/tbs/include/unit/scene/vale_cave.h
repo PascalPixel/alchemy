@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *ValeCave_GetEntrances(void);
 const struct SceneExitRegion *ValeCave_GetRegions(void);
 const u32 *ValeCave_GetExits(void);
-const struct ActorTemplate *ValeCave_GetActorTemplates(void);
+const struct ActorPlacement *ValeCave_GetActorPlacements(void);
 const struct Trigger *ValeCave_GetTriggers(void);
 s32 ValeCave_Initialize(void);
 extern s32 gValeCave_ShortEffectScript[];
@@ -28,9 +28,9 @@ extern struct SceneEntrance gValeCave_MouthEntrances[];
 extern struct SceneEntrance gValeCave_KiteEntrances[];
 extern struct SceneEntrance gValeCave_LogsEntrances[];
 extern u32 gValeCave_Exits[];
-extern struct ActorTemplate gValeCave_MouthActorTemplates[];
-extern struct ActorTemplate gValeCave_KiteActorTemplates[];
-extern struct ActorTemplate gValeCave_LogsActorTemplates[];
+extern struct ActorPlacement gValeCave_MouthActorPlacements[];
+extern struct ActorPlacement gValeCave_KiteActorPlacements[];
+extern struct ActorPlacement gValeCave_LogsActorPlacements[];
 extern struct Trigger gValeCave_TriggersOther[];
 extern struct Trigger gValeCave_MouthTriggers[];
 extern struct Trigger gValeCave_KiteTriggers[];

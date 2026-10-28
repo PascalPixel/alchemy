@@ -9,7 +9,7 @@
 ///   STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE to
 ///   STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST and
 ///   STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE, take the inn's
-///   actor templates and triggers; every other entrance takes
+///   actor placements and triggers; every other entrance takes
 ///   the houses'. The inn is full of tourists on their way to see Colosso in
 ///   Tolbi. The innkeeper offers a room when spoken to across the counter; from
 ///   elsewhere he asks `Are you going to Tolbi also?`, and the tour's guide in
@@ -52,10 +52,10 @@
 #include "songs.h"
 
 /// Each table numbers its own rows from ACTOR_FIRST_PLACED: the houses'
-/// (gKalayInteriors_HouseActorTemplates), the inn's, whose rooms are
+/// (gKalayInteriors_HouseActorPlacements), the inn's, whose rooms are
 /// entered through the inn's entrances
-/// (gKalayInteriors_InnActorTemplates), and the Kalay Sanctum's
-/// (gKalayInteriors_SanctumActorTemplates). Unless a note says otherwise,
+/// (gKalayInteriors_InnActorPlacements), and the Kalay Sanctum's
+/// (gKalayInteriors_SanctumActorPlacements). Unless a note says otherwise,
 /// it quotes what its actor says before the Colosso tour leaves.
 enum KalayInteriorsActorId {
   // Kalay's houses
@@ -200,14 +200,14 @@ const struct SceneExitRegion *KalayInteriors_GetRegions(void) { return NULL; }
 
 const u32 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 
-/// The inn's rooms share one actor template table and the houses
+/// The inn's rooms share one actor placement table and the houses
 /// another, chosen by entrance and clipped to the current view.
-const struct ActorTemplate *KalayInteriors_GetActorTemplates(void) {
+const struct ActorPlacement *KalayInteriors_GetActorPlacements(void) {
   s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     s32 entrance = gAdventure.entrance;
-    struct ActorTemplate *table;
+    struct ActorPlacement *table;
 
     switch (entrance) {
     case STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE:
@@ -218,23 +218,23 @@ const struct ActorTemplate *KalayInteriors_GetActorTemplates(void) {
     case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST:
     case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
     case STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
-      table = gKalayInteriors_InnActorTemplates;
+      table = gKalayInteriors_InnActorPlacements;
       break;
     default:
-      table = gKalayInteriors_HouseActorTemplates;
+      table = gKalayInteriors_HouseActorPlacements;
       break;
     }
     Scene_AssignViewFlags(table);
     return table;
   }
   if (sceneId == (s32)&SceneId_KalaySanctum) {
-    return gKalayInteriors_SanctumActorTemplates;
+    return gKalayInteriors_SanctumActorPlacements;
   }
-  return gKalayInteriors_NoActorTemplates;
+  return gKalayInteriors_NoActorPlacements;
 }
 
 /// Selects room dialogue with the same entrance grouping as the
-/// actor templates.
+/// actor placements.
 const struct Trigger *KalayInteriors_GetTriggers(void) {
   s32 sceneId = gAdventure.sceneId;
 
@@ -545,12 +545,12 @@ u32 gKalayInteriors_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gKalayInteriors_NoActorTemplates[] = {
+struct ActorPlacement gKalayInteriors_NoActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gKalayInteriors_HouseActorTemplates[] = {
+struct ActorPlacement gKalayInteriors_HouseActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(101), 0, PIXELS(181), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
@@ -578,7 +578,7 @@ struct ActorTemplate gKalayInteriors_HouseActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalayInteriors_InnActorTemplates[] = {
+struct ActorPlacement gKalayInteriors_InnActorPlacements[] = {
     { SPRITE_MAN_WITH_DARK_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(120), 0, PIXELS(627), FACING_EAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_WANDER,
@@ -606,7 +606,7 @@ struct ActorTemplate gKalayInteriors_InnActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalayInteriors_SanctumActorTemplates[] = {
+struct ActorPlacement gKalayInteriors_SanctumActorPlacements[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(248), 0, PIXELS(106), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },

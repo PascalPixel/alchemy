@@ -1,7 +1,7 @@
 /// @file
 /// Vale (SceneId_ValePlaza): the part of the village with the Psynergy Stone
 /// and the town gate, Vale's way out to the world. The scene sees the prologue
-/// end and the journey begin, and ValePlaza_GetActorTemplates and
+/// end and the journey begin, and ValePlaza_GetActorPlacements and
 /// ValePlaza_GetTriggers pick its people and events by the time of the story.
 /// In story order:
 ///
@@ -132,7 +132,7 @@
 /// (MsgValeThePsynergyStoneIsGone)
 #define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD 0x306
 
-/// Each actor template table numbers its own rows from
+/// Each actor placement table numbers its own rows from
 /// ACTOR_FIRST_PLACED, Garet keeping his own party slot, and the same people
 /// stand in several tables under other numbers. The three ivy actors
 /// come first in every table.
@@ -150,7 +150,7 @@ enum ValePlazaActorId {
   ACTOR_THIRD_IVY
 };
 
-/// By day (gValePlaza_ActorTemplates, before and after the party leaves).
+/// By day (gValePlaza_ActorPlacements, before and after the party leaves).
 /// The notes quote the day the story begins.
 enum ValePlazaDayActorId {
   /// An old man with a cane: "The Valeans are a chosen people." On the stormy
@@ -228,7 +228,7 @@ enum ValePlazaDayActorId {
   ACTOR_HUT_OWNER = ACTOR_FIRST_PLACED + 18
 };
 
-/// On the stormy night (gValePlaza_StormActorTemplates).
+/// On the stormy night (gValePlaza_StormActorPlacements).
 enum ValePlazaStormActorId {
   /// The same old man as ACTOR_CURIOUS_OLD_MAN: "Huh? Are you...asking me
   /// if I can use Psynergy, Isaac?"
@@ -301,7 +301,7 @@ enum ValePlazaStormActorId {
   ACTOR_STORM_JENNA ///< "Garet, Isaac... You came to help me?"
 };
 
-/// At the farewell (gValePlaza_DepartureActorTemplates).
+/// At the farewell (gValePlaza_DepartureActorPlacements).
 enum ValePlazaFarewellActorId {
   /// The small boy of ACTOR_FIRST_CHILD, at the top of the path. "What,
   /// didn't you hear? Isaac and Garet are leaving Vale on a journey."
@@ -366,7 +366,7 @@ enum ValePlazaFarewellActorId {
   ACTOR_FAREWELL_CAT
 };
 
-/// Back from Kalay (gValePlaza_ActorTemplatesAfterKalay).
+/// Back from Kalay (gValePlaza_ActorPlacementsAfterKalay).
 enum ValePlazaAfterKalayActorId {
   /// A young man with brown hair: "Hey, if it isn't Isaac! You came back home,
   /// huh?"
@@ -465,19 +465,19 @@ const u32 *ValePlaza_GetExits(void) {
   return gValePlaza_Exits;
 }
 
-/// Selects the actor templates: the stormy night's, the farewell's
+/// Selects the actor placements: the stormy night's, the farewell's
 /// (VALE_PLAZA_FROM_SANCTUM), after Kalay, else the day's.
-const struct ActorTemplate *ValePlaza_GetActorTemplates(void) {
+const struct ActorPlacement *ValePlaza_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
-    return gValePlaza_StormActorTemplates;
+    return gValePlaza_StormActorPlacements;
   }
   if (gAdventure.entrance == VALE_PLAZA_FROM_SANCTUM) {
-    return gValePlaza_DepartureActorTemplates;
+    return gValePlaza_DepartureActorPlacements;
   }
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    return gValePlaza_ActorTemplatesAfterKalay;
+    return gValePlaza_ActorPlacementsAfterKalay;
   }
-  return gValePlaza_ActorTemplates;
+  return gValePlaza_ActorPlacements;
 }
 
 /// In Vale, searching the Psynergy Stone restores the party's PP.
@@ -2428,7 +2428,7 @@ u32 gValePlaza_StormExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gValePlaza_ActorTemplates[] = {
+struct ActorPlacement gValePlaza_ActorPlacements[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2474,7 +2474,7 @@ struct ActorTemplate gValePlaza_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gValePlaza_StormActorTemplates[] = {
+struct ActorPlacement gValePlaza_StormActorPlacements[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2521,7 +2521,7 @@ struct ActorTemplate gValePlaza_StormActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gValePlaza_DepartureActorTemplates[] = {
+struct ActorPlacement gValePlaza_DepartureActorPlacements[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2575,7 +2575,7 @@ struct ActorTemplate gValePlaza_DepartureActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gValePlaza_ActorTemplatesAfterKalay[] = {
+struct ActorPlacement gValePlaza_ActorPlacementsAfterKalay[] = {
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(186), 0, PIXELS(460), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

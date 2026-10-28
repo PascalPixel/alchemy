@@ -7,13 +7,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Kolima_GetEntrances(void);
 const struct SceneExitRegion *Kolima_GetRegions(void);
 const u32 *Kolima_GetExits(void);
-const struct ActorTemplate *Kolima_GetActorTemplates(void);
+const struct ActorPlacement *Kolima_GetActorPlacements(void);
 const struct Trigger *Kolima_GetTriggers(void);
 s32 Kolima_Initialize(void);
 extern s32 gKolima_GaretWalksIn[];
@@ -32,10 +32,10 @@ extern struct SceneEntrance gKolimaBridgeEntrances[];
 extern struct SceneEntrance gKolimaTunnelEntrances[];
 extern struct SceneExitRegion gKolimaTunnelRegions[];
 extern u32 gKolimaExits[];
-extern struct ActorTemplate gKolimaTunnelActorTemplates[];
-extern struct ActorTemplate gKolimaActorTemplates[];
-extern struct ActorTemplate gKolima_EntryScript[];
-extern struct ActorTemplate gKolimaBridgeActorTemplates[];
+extern struct ActorPlacement gKolimaTunnelActorPlacements[];
+extern struct ActorPlacement gKolimaActorPlacements[];
+extern struct ActorPlacement gKolima_EntryScript[];
+extern struct ActorPlacement gKolimaBridgeActorPlacements[];
 extern struct Trigger gKolimaTriggers[];
 extern struct Trigger gKolimaBridgeTriggers[];
 extern s32 gKolima_GoldenRingsScript[];

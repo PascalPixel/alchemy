@@ -91,7 +91,7 @@
   (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
 
 /// The placed actors, numbered in the order of each room's actor
-/// templates (Scene_GetActorTemplates).
+/// placements (Scene_GetActorPlacements).
 enum CrossboneIsleSteppingStonesActorId {
   /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
@@ -681,22 +681,22 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 /// Returns the exits the five rooms share.
 const u32 *Scene_GetExits(void) { return gCrossboneIsleSteppingStonesExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsleSteppingStones) {
-    return gCrossboneIsleSteppingStonesActorTemplates;
+    return gCrossboneIsleSteppingStonesActorPlacements;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleIcePillars) {
-    return gCrossboneIsleIcePillarsActorTemplates;
+    return gCrossboneIsleIcePillarsActorPlacements;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleFloodgate) {
-    return gCrossboneIsleFloodgateActorTemplates;
+    return gCrossboneIsleFloodgateActorPlacements;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleDragonStatue) {
-    return gCrossboneIsleDragonStatueActorTemplates;
+    return gCrossboneIsleDragonStatueActorPlacements;
   }
-  return gCrossboneIsleSteppingStonesActorTemplatesOther;
+  return gCrossboneIsleSteppingStonesActorPlacementsOther;
 }
 
 /// Walking into a pillar in CrossboneIsleSteppingStones: jump two cells across
@@ -1866,12 +1866,12 @@ u32 gCrossboneIsleSteppingStonesExits[] = {
     SCENE_EXITS_END,
 };
 
-/// Unused: an empty actor template table nothing returns.
-struct ActorTemplate gCrossboneIsleSteppingStonesNoActorTemplates[] = {
+/// Unused: an empty actor placement table nothing returns.
+struct ActorPlacement gCrossboneIsleSteppingStonesNoActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplates[] = {
+struct ActorPlacement gCrossboneIsleSteppingStonesActorPlacements[] = {
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(744), 0, PIXELS(488), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1883,7 +1883,7 @@ struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsleIcePillarsActorTemplates[] = {
+struct ActorPlacement gCrossboneIsleIcePillarsActorPlacements[] = {
     { 0x12a, CONDITION_ALWAYS, 7,
         PIXELS(144), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x12a, CONDITION_ALWAYS, 7,
@@ -1897,7 +1897,7 @@ struct ActorTemplate gCrossboneIsleIcePillarsActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsleFloodgateActorTemplates[] = {
+struct ActorPlacement gCrossboneIsleFloodgateActorPlacements[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -1919,7 +1919,7 @@ struct ActorTemplate gCrossboneIsleFloodgateActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplatesOther[] = {
+struct ActorPlacement gCrossboneIsleSteppingStonesActorPlacementsOther[] = {
     { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(184), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { 0x100, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1931,7 +1931,7 @@ struct ActorTemplate gCrossboneIsleSteppingStonesActorTemplatesOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsleDragonStatueActorTemplates[] = {
+struct ActorPlacement gCrossboneIsleDragonStatueActorPlacements[] = {
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(208), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

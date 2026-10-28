@@ -7,7 +7,7 @@
 /// the item shop, a third the inn with the restaurant beside it, whose stairs
 /// (COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS and
 /// COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms; three
-/// other buildings hold villagers. CottageRoomsC_GetActorTemplates leaves
+/// other buildings hold villagers. CottageRoomsC_GetActorPlacements leaves
 /// out the actors of the rooms not in view.
 ///
 /// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
@@ -75,7 +75,7 @@ enum {
 enum { BILIBIN_INN = 2 };
 
 /// The placed actors, numbered in the order of
-/// gCottageRoomsCActorTemplates from ACTOR_FIRST_PLACED. Each room's
+/// gCottageRoomsCActorPlacements from ACTOR_FIRST_PLACED. Each room's
 /// actors are together: two in each house, then the shops' customers and
 /// keepers, the inn and its restaurant, and the room behind the inn's inner
 /// door.
@@ -178,11 +178,11 @@ const struct SceneExitRegion *CottageRoomsC_GetRegions(void) { return 0; }
 
 const u32 *CottageRoomsC_GetExits(void) { return gCottageRoomsCExits; }
 
-/// Marks actor templates outside the current room's view before
+/// Marks actor placements outside the current room's view before
 /// actors are spawned.
-const struct ActorTemplate *CottageRoomsC_GetActorTemplates(void) {
-  Scene_AssignViewFlags(gCottageRoomsCActorTemplates);
-  return gCottageRoomsCActorTemplates;
+const struct ActorPlacement *CottageRoomsC_GetActorPlacements(void) {
+  Scene_AssignViewFlags(gCottageRoomsCActorPlacements);
+  return gCottageRoomsCActorPlacements;
 }
 
 /// Bilibin's weapon merchant: across the counter the shop opens; otherwise,
@@ -483,7 +483,7 @@ u32 gCottageRoomsCExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gCottageRoomsCActorTemplates[] = {
+struct ActorPlacement gCottageRoomsCActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_WANDER,

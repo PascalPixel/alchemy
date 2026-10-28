@@ -65,9 +65,9 @@ enum StoneRoomsCellBehavior {
 };
 
 /// The placed actors, numbering the rows of the table
-/// Scene_GetActorTemplates returns: the three thieves of
-/// gStoneRooms_ThiefActorTemplates, or the prisoner of
-/// gStoneRooms_PrisonerActorTemplates in the same first slot.
+/// Scene_GetActorPlacements returns: the three thieves of
+/// gStoneRooms_ThiefActorPlacements, or the prisoner of
+/// gStoneRooms_PrisonerActorPlacements in the same first slot.
 enum JailActorId {
   /// The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of the
   /// cell.
@@ -110,16 +110,16 @@ const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 /// is set), or, entered from Vault's revisit scene
 /// (STONE_ROOMS_FROM_VAULT_REVISIT, after they have broken out), the lone
 /// prisoner.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gAdventure.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
-    return gStoneRooms_PrisonerActorTemplates;
+    return gStoneRooms_PrisonerActorPlacements;
   }
-  return gStoneRooms_ThiefActorTemplates;
+  return gStoneRooms_ThiefActorPlacements;
 }
 
 /// Returns the thieves' triggers, which also hold the Lunpa room's chests and
 /// exit, or the prisoner's when the party came in from Vault's revisit scene,
-/// matching Scene_GetActorTemplates.
+/// matching Scene_GetActorPlacements.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gAdventure.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerTriggers;
@@ -277,7 +277,7 @@ const u32 gStoneRooms_Exits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ActorTemplate gStoneRooms_ThiefActorTemplates[] = {
+const struct ActorPlacement gStoneRooms_ThiefActorPlacements[] = {
     { SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), MOVEMENT_TYPE_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), MOVEMENT_TYPE_STAND,
@@ -287,7 +287,7 @@ const struct ActorTemplate gStoneRooms_ThiefActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gStoneRooms_PrisonerActorTemplates[] = {
+const struct ActorPlacement gStoneRooms_PrisonerActorPlacements[] = {
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(168), 0, PIXELS(144), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },

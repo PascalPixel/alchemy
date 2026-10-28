@@ -2,6 +2,6 @@
 	overlay_veneer VenusLighthouseAerie_Initialize
 	overlay_veneer VenusLighthouseAerie_GetEntrances
 	overlay_veneer VenusLighthouseAerie_GetExits
-	overlay_veneer VenusLighthouseAerie_GetActorTemplates
+	overlay_veneer VenusLighthouseAerie_GetActorPlacements
 	overlay_veneer VenusLighthouseAerie_GetTriggers
 	overlay_veneer VenusLighthouseAerie_GetRegions

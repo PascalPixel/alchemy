@@ -50,7 +50,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 
   state = &gAdventure;
   // DJINN_NO_HOP rides along: it tells Actor_PlaceMapActors to put
-  // the Djinni back 32 pixels north of the leader, not at its template's
+  // the Djinni back 32 pixels north of the leader, not at its placement's
   // position.
   state->pendingDjinni = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
   work->encounter = Encounter_GetDjinnFormation(no);

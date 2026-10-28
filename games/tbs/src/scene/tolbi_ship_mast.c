@@ -100,7 +100,7 @@ s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
 
-/// The scene's one actor template row.
+/// The scene's one actor placement row.
 enum TolbiShipMastActorId {
   /// The ship's lookout, a man in a blue bandana
   /// (SPRITE_MAN_IN_BLUE_BANDANA). He is the crewman who hid the captain's
@@ -115,7 +115,7 @@ enum TolbiShipMastActorId {
 
 /// The first attack's actors
 /// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK), placed after the lookout from
-/// gTolbiShipMast_FirstAttackActorTemplates.
+/// gTolbiShipMast_FirstAttackActorPlacements.
 enum TolbiShipMastFirstAttackActorId {
   /// A sparkle (graphics/sprite/spr_286.png, a four-pointed sparkle in eight
   /// shrinking frames), placed nowhere else. It turns, swells for 10 frames and
@@ -133,9 +133,9 @@ enum TolbiShipMastFirstAttackActorId {
 
 /// The actors of the later events (from
 /// TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK on), placed after the lookout
-/// from gTolbiShipMast_BirdActorTemplates and, at
+/// from gTolbiShipMast_BirdActorPlacements and, at
 /// TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK, then from
-/// gTolbiShipMast_LandingActorTemplates.
+/// gTolbiShipMast_LandingActorPlacements.
 enum TolbiShipMastEnsembleActorId {
   /// The first of seven birds, all of one sprite (SPRITE_BIRD, a
   /// white bird in three wing poses), that flutter and bob about the mast
@@ -308,8 +308,8 @@ const struct SceneExitRegion *TolbiShipMast_GetRegions(void) {
 const u32 *TolbiShipMast_GetExits(void) { return gTolbiShipMast_Exits; }
 
 /// Returns the lookout, the only actor placed.
-const struct ActorTemplate *TolbiShipMast_GetActorTemplates(void) {
-  return gTolbiShipMast_ActorTemplates;
+const struct ActorPlacement *TolbiShipMast_GetActorPlacements(void) {
+  return gTolbiShipMast_ActorPlacements;
 }
 
 /// Returns the ladder, lookout dialogue and Anchor Charm examine triggers.
@@ -471,7 +471,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   void (*update)(struct Actor *);
 
   Event_Start();
-  Event_CallWithLastActiveActorId(gTolbiShipMast_FirstAttackActorTemplates);
+  Event_CallWithLastActiveActorId(gTolbiShipMast_FirstAttackActorPlacements);
   WaitFrames(1);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
@@ -601,7 +601,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, 0);
   WaitFrames(1);
-  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorTemplates);
+  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorPlacements);
   WaitFrames(1);
   TolbiShipMast_InitializeDriftingGroup();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
@@ -714,9 +714,9 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
   WaitFrames(1);
-  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorTemplates);
+  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorPlacements);
   WaitFrames(1);
-  Event_CallWithLastActiveActorId(gTolbiShipMast_LandingActorTemplates);
+  Event_CallWithLastActiveActorId(gTolbiShipMast_LandingActorPlacements);
   WaitFrames(1);
   TolbiShipMast_InitializeDriftingGroup();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
@@ -818,7 +818,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
-  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorTemplates);
+  Event_CallWithLastActiveActorId(gTolbiShipMast_BirdActorPlacements);
   WaitFrames(1);
   TolbiShipMast_InitializeDriftingGroup();
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
@@ -1054,25 +1054,25 @@ u32 gTolbiShipMast_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gTolbiShipMast_ActorTemplates[] = {
+struct ActorPlacement gTolbiShipMast_ActorPlacements[] = {
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gTolbiShipMast_FirstAttackActorTemplates[] = {
+struct ActorPlacement gTolbiShipMast_FirstAttackActorPlacements[] = {
     { 0x11e, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gTolbiShipMast_BirdActorTemplates[] = {
+struct ActorPlacement gTolbiShipMast_BirdActorPlacements[] = {
     { SPRITE_BIRD, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(144), 0, PIXELS(169), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BIRD, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -1092,7 +1092,7 @@ struct ActorTemplate gTolbiShipMast_BirdActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gTolbiShipMast_LandingActorTemplates[] = {
+struct ActorPlacement gTolbiShipMast_LandingActorPlacements[] = {
     { SPRITE_BLUE_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

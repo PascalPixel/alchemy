@@ -7,10 +7,10 @@
 #include "shared/colosso_story_flags.h"
 #include "flags.h"
 
-/// The placed actors, numbering the rows of the actor template
+/// The placed actors, numbering the rows of the actor placement
 /// table from ACTOR_FIRST_PLACED. Both tables hold the same people in the
 /// same order up to the healer, except that after Colosso
-/// (gStuccoRoomsBActorTemplatesAfterColosso) two others stand in the
+/// (gStuccoRoomsBActorPlacementsAfterColosso) two others stand in the
 /// rows of ACTOR_STUCCO_ROOMS_B_SLEEPLESS_GUEST and
 /// ACTOR_STUCCO_ROOMS_B_CROWD_SICK_GUEST, and six more rows follow the
 /// healer.

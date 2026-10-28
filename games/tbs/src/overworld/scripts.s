@@ -7,10 +7,10 @@ Actor_CameraFollowScript:
 	.global gField_LeaderScript
 gField_LeaderScript:
 	.4byte 16
-@ The party leader's actor template table (struct ActorTemplate): {sprite,
+@ The party leader's actor placement table (struct ActorPlacement): {sprite,
 @ condition, behavior, x, y, z, facing, talk facing, flags}
-	.global gField_DefaultActorTemplates
-gField_DefaultActorTemplates:
+	.global gField_DefaultActorPlacements
+gField_DefaultActorPlacements:
 	.2byte 0, -1
 	.4byte gField_LeaderScript, 300 << 16, 0, 300 << 16
 	.2byte 0x5bb0

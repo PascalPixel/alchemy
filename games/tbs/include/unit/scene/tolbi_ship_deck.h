@@ -8,7 +8,7 @@
 const struct SceneEntrance *TolbiShipDeck_GetEntrances(void);
 const struct SceneExitRegion *TolbiShipDeck_GetRegions(void);
 const u32 *TolbiShipDeck_GetExits(void);
-const struct ActorTemplate *TolbiShipDeck_GetActorTemplates(void);
+const struct ActorPlacement *TolbiShipDeck_GetActorPlacements(void);
 const struct Trigger *TolbiShipDeck_GetTriggers(void);
 s32 TolbiShipDeck_Initialize(void);
 extern const s32 gTolbiShipDeck_KajaLeavesActions[];
@@ -32,21 +32,22 @@ extern const s32 gTolbiShipDeck_SeanLooksAboutActions[];
 extern const struct SceneEntrance gTolbiShipDeckEntrances[];
 extern const struct SceneExitRegion gTolbiShipDeckRegions[];
 extern const u32 gTolbiShipDeckExits[];
-extern const struct ActorTemplate gTolbiShipDeckActorTemplates[];
+extern const struct ActorPlacement gTolbiShipDeckActorPlacements[];
 #ifdef UBFIX
-extern struct ActorTemplate gTolbiShipDeckActorTemplatesWaiting[];
+extern struct ActorPlacement gTolbiShipDeckActorPlacementsWaiting[];
 #else
-extern const struct ActorTemplate gTolbiShipDeckActorTemplatesWaiting[];
+extern const struct ActorPlacement gTolbiShipDeckActorPlacementsWaiting[];
 #endif
-extern const struct ActorTemplate gTolbiShipDeckActorTemplatesRowing[];
-extern const struct ActorTemplate gTolbiShipDeckActorTemplatesAtSea[];
-extern const struct ActorTemplate gTolbiShipDeck_CrewActorTemplates[];
-extern const struct ActorTemplate gTolbiShipDeck_TourGuideActorTemplates[];
-extern const struct ActorTemplate gTolbiShipDeck_MonstersBoardActorTemplates[];
-extern const struct ActorTemplate gTolbiShipDeck_SecondAttackActorTemplates[];
-extern const struct ActorTemplate gTolbiShipDeck_ThirdAttackActorTemplates[];
-extern const struct ActorTemplate gTolbiShipDeck_KrakenActorTemplates[];
-extern const struct ActorTemplate gTolbiShipDeckActorTemplatesArrived[];
+extern const struct ActorPlacement gTolbiShipDeckActorPlacementsRowing[];
+extern const struct ActorPlacement gTolbiShipDeckActorPlacementsAtSea[];
+extern const struct ActorPlacement gTolbiShipDeck_CrewActorPlacements[];
+extern const struct ActorPlacement gTolbiShipDeck_TourGuideActorPlacements[];
+extern const struct ActorPlacement
+    gTolbiShipDeck_MonstersBoardActorPlacements[];
+extern const struct ActorPlacement gTolbiShipDeck_SecondAttackActorPlacements[];
+extern const struct ActorPlacement gTolbiShipDeck_ThirdAttackActorPlacements[];
+extern const struct ActorPlacement gTolbiShipDeck_KrakenActorPlacements[];
+extern const struct ActorPlacement gTolbiShipDeckActorPlacementsArrived[];
 extern const struct Trigger gTolbiShipDeckTriggers[];
 extern const struct Trigger gTolbiShipDeckTriggersAtSea[];
 extern const struct Trigger gTolbiShipDeckTriggersArrived[];

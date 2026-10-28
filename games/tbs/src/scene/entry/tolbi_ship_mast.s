@@ -2,6 +2,6 @@
 	overlay_veneer TolbiShipMast_Initialize
 	overlay_veneer TolbiShipMast_GetEntrances
 	overlay_veneer TolbiShipMast_GetExits
-	overlay_veneer TolbiShipMast_GetActorTemplates
+	overlay_veneer TolbiShipMast_GetActorPlacements
 	overlay_veneer TolbiShipMast_GetTriggers
 	overlay_veneer TolbiShipMast_GetRegions

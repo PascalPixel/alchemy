@@ -6,7 +6,7 @@
 #include "scene_tables.h"
 
 /// The placed actors, numbered in the order of
-/// gSolSanctumLunaSolRoomsActorTemplates; Jenna and Garet, its last rows,
+/// gSolSanctumLunaSolRoomsActorPlacements; Jenna and Garet, its last rows,
 /// keep their characters' ids.
 enum SolSanctumLunaSolRoomsActorId {
   /// Eight statues, four in each room, with the sprite of

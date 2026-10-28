@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -27,11 +27,11 @@ extern struct SceneEntrance gGondowanPassageEntrances[];
 extern struct SceneEntrance gGondowanCaveRiverEntrances[];
 extern struct SceneEntrance gGondowanCaveEntrances[];
 extern u32 gGondowanCaveExits[];
-extern struct ActorTemplate gGondowanCaveActorTemplatesOther[];
-extern struct ActorTemplate gGondowanPassageActorTemplates[];
-extern struct ActorTemplate gGondowanPassageActorTemplatesWithIodem[];
-extern struct ActorTemplate gGondowanCaveRiverActorTemplates[];
-extern struct ActorTemplate gGondowanCaveActorTemplates[];
+extern struct ActorPlacement gGondowanCaveActorPlacementsOther[];
+extern struct ActorPlacement gGondowanPassageActorPlacements[];
+extern struct ActorPlacement gGondowanPassageActorPlacementsWithIodem[];
+extern struct ActorPlacement gGondowanCaveRiverActorPlacements[];
+extern struct ActorPlacement gGondowanCaveActorPlacements[];
 extern struct Trigger gGondowanCaveTriggersOther[];
 extern struct Trigger gGondowanPassageTriggers[];
 extern struct Trigger gGondowanPassageTriggersWithIodem[];

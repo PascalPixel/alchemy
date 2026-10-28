@@ -309,19 +309,19 @@ const struct SceneExitRegion *AltmillerCave_GetRegions(void) { return NULL; }
 
 const u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
 
-const struct ActorTemplate *AltmillerCave_GetActorTemplates(void) {
+const struct ActorPlacement *AltmillerCave_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
-    return gAltmillerCave_BabiActorTemplates;
+    return gAltmillerCave_BabiActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltmillerCaveSquall) {
-    return gAltmillerCave_SquallActorTemplates;
+    return gAltmillerCave_SquallActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltmillerCaveDraught) {
-    return gAltmillerCave_DraughtActorTemplates;
+    return gAltmillerCave_DraughtActorPlacements;
   }
-  return gAltmillerCave_ActorTemplatesOther;
+  return gAltmillerCave_ActorPlacementsOther;
 }
 
 /// Darkens AltmillerCaveEntrance to its current level: the brighter blend at
@@ -2407,11 +2407,11 @@ u32 gAltmillerCave_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gAltmillerCave_ActorTemplatesOther[] = {
+struct ActorPlacement gAltmillerCave_ActorPlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltmillerCave_BabiActorTemplates[] = {
+struct ActorPlacement gAltmillerCave_BabiActorPlacements[] = {
     {ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
      TALK_FACING_PARTY, 0},
     {ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
@@ -2429,7 +2429,7 @@ struct ActorTemplate gAltmillerCave_BabiActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltmillerCave_SquallActorTemplates[] = {
+struct ActorPlacement gAltmillerCave_SquallActorPlacements[] = {
     {SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS,
      MOVEMENT_TYPE_RESET_ACTION, PIXELS(328), 0, PIXELS(256), FACING_SOUTH,
      TALK_FACING_KEEP, 0},
@@ -2448,7 +2448,7 @@ struct ActorTemplate gAltmillerCave_SquallActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltmillerCave_DraughtActorTemplates[] = {
+struct ActorPlacement gAltmillerCave_DraughtActorPlacements[] = {
     {SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS,
      MOVEMENT_TYPE_RESET_ACTION, PIXELS(392), 0, PIXELS(416), FACING_SOUTH,
      TALK_FACING_KEEP, 0},

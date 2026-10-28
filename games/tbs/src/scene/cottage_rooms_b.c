@@ -159,7 +159,7 @@ static void CottageRoomsB_DemonstrateCatch(void);
 #define FLAG_VALE_DORA_OUT_OF_BED FLAG_SCENE_TEMP_03
 
 /// Vale's placed actors, numbered by the rows of
-/// gCottageRoomsB_ActorTemplates. The tables after the party leaves
+/// gCottageRoomsB_ActorPlacements. The tables after the party leaves
 /// and after Kalay keep the rows up to the inn's, and differ after them
 /// (CottageRoomsBAfterKalayActorId).
 enum CottageRoomsBActorId {
@@ -223,7 +223,7 @@ enum CottageRoomsBActorId {
   ACTOR_KRADEN
 };
 
-/// The rows of gCottageRoomsB_ActorTemplatesAfterKalay that differ
+/// The rows of gCottageRoomsB_ActorPlacementsAfterKalay that differ
 /// from the first table's.
 enum CottageRoomsBAfterKalayActorId {
   /// A burly grey-haired man at the inn. "Well if it isn't Isaac! You've grown
@@ -241,7 +241,7 @@ enum CottageRoomsBAfterKalayActorId {
 };
 
 /// Babi's scholars, numbered by the rows of
-/// gCottageRoomsB_BabiScholarsActorTemplates and named by what they say
+/// gCottageRoomsB_BabiScholarsActorPlacements and named by what they say
 /// before the Colosso finals.
 enum CottageRoomsBBabiScholarActorId {
   /// An old scholar with a white beard in a blue cap, who tells of the ruins
@@ -330,17 +330,17 @@ const u32 *CottageRoomsB_GetExits(void) {
 }
 
 /// Places Babi's scholars, or Vale's villagers as the story has left them.
-const struct ActorTemplate *CottageRoomsB_GetActorTemplates(void) {
-  struct ActorTemplate *table;
+const struct ActorPlacement *CottageRoomsB_GetActorPlacements(void) {
+  struct ActorPlacement *table;
 
   if (gAdventure.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
-    return gCottageRoomsB_BabiScholarsActorTemplates;
+    return gCottageRoomsB_BabiScholarsActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
-    table = gCottageRoomsB_ActorTemplatesAfterKalay;
+    table = gCottageRoomsB_ActorPlacementsAfterKalay;
   else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
-    table = gCottageRoomsB_ActorTemplatesAfterLeaving;
+    table = gCottageRoomsB_ActorPlacementsAfterLeaving;
   else
-    table = gCottageRoomsB_ActorTemplates;
+    table = gCottageRoomsB_ActorPlacements;
   Scene_AssignViewFlags(table);
   return table;
 }
@@ -1572,7 +1572,7 @@ u32 gCottageRoomsB_StormExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gCottageRoomsB_ActorTemplates[] = {
+struct ActorPlacement gCottageRoomsB_ActorPlacements[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1598,7 +1598,7 @@ struct ActorTemplate gCottageRoomsB_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterLeaving[] = {
+struct ActorPlacement gCottageRoomsB_ActorPlacementsAfterLeaving[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, 0x0, MOVEMENT_TYPE_STAND,
@@ -1618,7 +1618,7 @@ struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterLeaving[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterKalay[] = {
+struct ActorPlacement gCottageRoomsB_ActorPlacementsAfterKalay[] = {
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KYLE, 0x0, MOVEMENT_TYPE_STAND,
@@ -1642,7 +1642,7 @@ struct ActorTemplate gCottageRoomsB_ActorTemplatesAfterKalay[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCottageRoomsB_BabiScholarsActorTemplates[] = {
+struct ActorPlacement gCottageRoomsB_BabiScholarsActorPlacements[] = {
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_GLASSES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

@@ -84,7 +84,7 @@
 #define MAP_ALTIN_HOUSES ((s32)&SceneId_CottageRoomsD)
 
 /// The village's actors, numbering the rows of
-/// gAltin_ActorTemplates. The people without an event of their own
+/// gAltin_ActorPlacements. The people without an event of their own
 /// are named by their sprite and by what they say before the hydros statues are
 /// beaten.
 enum AltinVillageActorId {
@@ -167,7 +167,7 @@ enum AltinVillageActorId {
 };
 
 /// The houses' actors, numbering the rows of
-/// gCottageRoomsD_ActorTemplates, named as the village's are.
+/// gCottageRoomsD_ActorPlacements, named as the village's are.
 enum AltinHouseActorId {
   /// The family sheltering in the inn's Room One until the first drop: this
   /// man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) and a woman with
@@ -312,31 +312,31 @@ const u32 *Scene_GetExits(void) { return gAltin_Exits; }
 
 /// Some villagers only turn back after talking once the flood is over or
 /// their family has gone home.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gAdventure.sceneId;
   if (sceneId == MAP_ALTIN_VILLAGE) {
     if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED)) {
-      gAltin_ActorTemplates[ACTOR_WOMAN_WATER_LUCK - ACTOR_FIRST_PLACED]
+      gAltin_ActorPlacements[ACTOR_WOMAN_WATER_LUCK - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
-      gAltin_ActorTemplates[ACTOR_THIRSTY_OLD_WOMAN - ACTOR_FIRST_PLACED]
+      gAltin_ActorPlacements[ACTOR_THIRSTY_OLD_WOMAN - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
     }
-    return gAltin_ActorTemplates;
+    return gAltin_ActorPlacements;
   }
   if (sceneId == MAP_ALTIN_HOUSES) {
     if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN))
-      gCottageRoomsD_ActorTemplates[ACTOR_ROOM_ONE_SECOND_GUEST -
-                                    ACTOR_FIRST_PLACED]
+      gCottageRoomsD_ActorPlacements[ACTOR_ROOM_ONE_SECOND_GUEST -
+                                     ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
     if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
         GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN))
-      gCottageRoomsD_ActorTemplates[ACTOR_ROOM_TWO_SECOND_GUEST -
-                                    ACTOR_FIRST_PLACED]
+      gCottageRoomsD_ActorPlacements[ACTOR_ROOM_TWO_SECOND_GUEST -
+                                     ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
-    Scene_AssignViewFlags(gCottageRoomsD_ActorTemplates);
-    return gCottageRoomsD_ActorTemplates;
+    Scene_AssignViewFlags(gCottageRoomsD_ActorPlacements);
+    return gCottageRoomsD_ActorPlacements;
   }
-  return gAltin_NoActorTemplates;
+  return gAltin_NoActorPlacements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -1127,11 +1127,11 @@ u32 gAltin_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gAltin_NoActorTemplates[] = {
+struct ActorPlacement gAltin_NoActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltin_ActorTemplates[] = {
+struct ActorPlacement gAltin_ActorPlacements[] = {
     {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
      PIXELS(440), 0, PIXELS(200), FACING_SOUTH + FACING_STEP,
      TALK_FACING_PARTY_AND_BACK, 0},
@@ -1174,15 +1174,15 @@ struct ActorTemplate gAltin_ActorTemplates[] = {
      PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(332), 0,
      PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP,
-     ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(332), 0,
      PIXELS(396), FACING_SOUTH, TALK_FACING_KEEP,
-     ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gCottageRoomsD_ActorTemplates[] = {
+struct ActorPlacement gCottageRoomsD_ActorPlacements[] = {
     {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(104), 0, PIXELS(120), FACING_EAST + FACING_STEP,
         TALK_FACING_PARTY, 0},
     {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(105), 0, PIXELS(233), FACING_SOUTH + FACING_STEP,

@@ -71,7 +71,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // Afterimages of the same sprite at 15/16 size, each closing half the
   // distance to the one before it every frame, tinted by the Djinni's
   // sprite: the Venus sprite (90) takes param 2, Mars (92) 10, and Mercury
-  // (91) and Jupiter (93) 9 (the scenes' Djinni actor templates show which
+  // (91) and Jupiter (93) 9 (the scenes' Djinni actor placements show which
   // sprite is which element). They share one VRAM cache entry.
   sprite = djinni->sprite->entries[0]->animationId;
   tint = 9;
@@ -177,12 +177,12 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// Puts a Djinni's actor back where its battle started from: for a
 /// pending Djinni battle (pendingDjinni 300 to 380,
 /// FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor placed
-/// for that Djinni (condition = its flag) goes back to its template's position,
-/// or 32 pixels north of the leader when the event has DJINN_NO_HOP (0x800)
-/// set, and stands (animation 1). SceneSequence_Run calls it as it rebuilds the
-/// scene, only while an event is still pending after Djinn_ResolvePending's
-/// first call, that is after a won battle; the second call then makes this
-/// actor join the party.
+/// for that Djinni (condition = its flag) goes back to its placement's
+/// position, or 32 pixels north of the leader when the event has DJINN_NO_HOP
+/// (0x800) set, and stands (animation 1). SceneSequence_Run calls it as it
+/// rebuilds the scene, only while an event is still pending after
+/// Djinn_ResolvePending's first call, that is after a won battle; the second
+/// call then makes this actor join the party.
 void Actor_PlaceMapActors(void) {
   s32 flags = gAdventure.pendingDjinni & 0xf000;
   u32 event = gAdventure.pendingDjinni & 0xfff;
@@ -197,7 +197,7 @@ void Actor_PlaceMapActors(void) {
     if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 &&
         gAdventure.sequenceResult > 0) {
       for (id = 8; id <= 65; id++) {
-        struct ActorTemplate *desc = Scene_FindActorTemplate(id);
+        struct ActorPlacement *desc = Scene_FindActorPlacement(id);
         struct Actor *object;
 
         if (desc == NULL || desc->condition - FLAG_DJINN_FIRST !=
@@ -206,7 +206,7 @@ void Actor_PlaceMapActors(void) {
         object = Actor_Lookup(id);
         if (object == NULL)
           continue;
-        // Without DJINN_NO_HOP, back at its template's position in a new
+        // Without DJINN_NO_HOP, back at its placement's position in a new
         // actor's ground state: no ground height yet, following the ground and
         // falling.
         if (flags == 0) {
@@ -276,7 +276,7 @@ void Djinn_ResolvePending(s32 shown) {
         s32 actorId;
 
         for (actorId = 8; actorId <= 65; actorId++) {
-          struct ActorTemplate *found = Scene_FindActorTemplate(actorId);
+          struct ActorPlacement *found = Scene_FindActorPlacement(actorId);
           if (found != 0 && found->condition - FLAG_DJINN_FIRST ==
                                 flag - DJINNI_BATTLE_EVENT_FIRST) {
             WaitFrames(40);

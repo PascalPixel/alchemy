@@ -119,8 +119,8 @@ const u32 *LemurianShip_GetExits(void) { return gLemurianShipExits; }
 
 /// The gangway's two pieces; the party's own actors fill the first three
 /// rows.
-const struct ActorTemplate *LemurianShip_GetActorTemplates(void) {
-  return gLemurianShipActorTemplates;
+const struct ActorPlacement *LemurianShip_GetActorPlacements(void) {
+  return gLemurianShipActorPlacements;
 }
 
 /// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
@@ -986,7 +986,7 @@ u32 gLemurianShipExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gLemurianShipActorTemplates[] = {
+struct ActorPlacement gLemurianShipActorPlacements[] = {
     {ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
      TALK_FACING_PARTY, 0},
     {ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,

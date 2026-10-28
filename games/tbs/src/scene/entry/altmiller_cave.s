@@ -2,6 +2,6 @@
 	overlay_veneer AltmillerCave_Initialize
 	overlay_veneer AltmillerCave_GetEntrances
 	overlay_veneer AltmillerCave_GetExits
-	overlay_veneer AltmillerCave_GetActorTemplates
+	overlay_veneer AltmillerCave_GetActorPlacements
 	overlay_veneer AltmillerCave_GetTriggers
 	overlay_veneer AltmillerCave_GetRegions

@@ -95,7 +95,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
 static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void);
 
 /// The placed actors, numbered in the order of
-/// gSolSanctumElementalStarRoom_ActorTemplates; Garet and Jenna, placed
+/// gSolSanctumElementalStarRoom_ActorPlacements; Garet and Jenna, placed
 /// first, keep their own slots.
 enum StarRoomActorId {
   /// The shadow on the arrival platform under whoever appears there: a blank
@@ -172,9 +172,9 @@ const u32 *SolSanctumElementalStarRoom_GetExits(void) {
   return gSolSanctumElementalStarRoom_Exits;
 }
 
-const struct ActorTemplate *
-SolSanctumElementalStarRoom_GetActorTemplates(void) {
-  return gSolSanctumElementalStarRoom_ActorTemplates;
+const struct ActorPlacement *
+SolSanctumElementalStarRoom_GetActorPlacements(void) {
+  return gSolSanctumElementalStarRoom_ActorPlacements;
 }
 
 /// Returns the pedestals' examine triggers, the talk and Mind Read rows, and
@@ -2353,7 +2353,7 @@ u32 gSolSanctumElementalStarRoom_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gSolSanctumElementalStarRoom_ActorTemplates[] = {
+struct ActorPlacement gSolSanctumElementalStarRoom_ActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

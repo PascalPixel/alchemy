@@ -98,7 +98,7 @@
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
 /// The room's actors, numbered in the order of
-/// gGomaCavePillar_ActorTemplates.
+/// gGomaCavePillar_ActorPlacements.
 enum GomaCavePillarActorId {
   /// Slides between two places.
   /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
@@ -235,8 +235,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gGomaCavePillar_Exits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gGomaCavePillar_ActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gGomaCavePillar_ActorPlacements;
 }
 
 /// Copies the map grid cells for the west pillar on either side of its track.
@@ -715,7 +715,7 @@ u32 gGomaCavePillar_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gGomaCavePillar_ActorTemplates[] = {
+struct ActorPlacement gGomaCavePillar_ActorPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(384), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0},

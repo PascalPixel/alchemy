@@ -23,7 +23,7 @@
 ///
 /// The rooms' talk follows Colosso in the same three stages as the town, each
 /// with its own trigger table (StuccoRoomsB_SelectTriggers) and, after
-/// Colosso, an actor template table of its own. During the festival Babi
+/// Colosso, an actor placement table of its own. During the festival Babi
 /// is missing and the town is full of visitors, among them a tour group from
 /// Kalay that reserved only two rooms. On finals day (FLAG_BABI_SAVED) Babi
 /// has shown himself at the finals; the Spanish and Italian editions add a
@@ -117,11 +117,11 @@ const struct SceneExitRegion *StuccoRoomsB_GetRegions(void) { return 0; }
 const u32 *StuccoRoomsB_GetExits(void) { return gStuccoRoomsBExits; }
 
 /// After Colosso the rooms hold a different crowd.
-const struct ActorTemplate *StuccoRoomsB_SelectActorTemplates(void) {
+const struct ActorPlacement *StuccoRoomsB_SelectActorPlacements(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-    return gStuccoRoomsBActorTemplatesAfterColosso;
+    return gStuccoRoomsBActorPlacementsAfterColosso;
   }
-  return gStuccoRoomsBActorTemplates;
+  return gStuccoRoomsBActorPlacements;
 }
 
 #if TBS_PATCH_4
@@ -633,7 +633,7 @@ u32 gStuccoRoomsBExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gStuccoRoomsBActorTemplates[] = {
+struct ActorPlacement gStuccoRoomsBActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -683,7 +683,7 @@ struct ActorTemplate gStuccoRoomsBActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gStuccoRoomsBActorTemplatesAfterColosso[] = {
+struct ActorPlacement gStuccoRoomsBActorPlacementsAfterColosso[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,

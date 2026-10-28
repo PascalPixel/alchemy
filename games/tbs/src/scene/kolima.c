@@ -14,7 +14,7 @@
 ///   Tret deep within Kolima Forest.
 ///
 ///   Until the curse is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
-///   Kolima_GetActorTemplates gives the nine villagers
+///   Kolima_GetActorPlacements gives the nine villagers
 ///   (ACTOR_FIRST_VILLAGER to ACTOR_LAST_VILLAGER) tree sprites that stand
 ///   still, sparkles twinkle on the ground (ACTOR_FIRST_SPARKLE and the three
 ///   after it, and five more that Kolima_Initialize places), and the villagers
@@ -96,7 +96,7 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);
 static void Kolima_SpawnCurseSparkle(void);
 static void Kolima_RestoreBridgeState(void);
 
-/// Actors of Kolima, numbering the rows of gKolimaActorTemplates
+/// Actors of Kolima, numbering the rows of gKolimaActorPlacements
 /// from ACTOR_FIRST_PLACED: Garet, Ivan and Mia, who stand by for the curse,
 /// take their own actor slots. The nine villagers are named by what they
 /// say once the curse is lifted.
@@ -179,7 +179,7 @@ enum KolimaActorId {
 };
 
 /// Kolima Bridge's villager, numbering the rows of
-/// gKolimaBridgeActorTemplates from ACTOR_FIRST_PLACED: the same
+/// gKolimaBridgeActorPlacements from ACTOR_FIRST_PLACED: the same
 /// villager as a man and as a tree, in the same place.
 enum KolimaBridgeActorId {
   /// A burly grey-haired man.
@@ -222,13 +222,14 @@ static s32 Kolima_UpdateTimedAppearance(struct Actor *interpreter) {
   return 1;
 }
 
-/// While the curse lasts, gives Kolima's nine villagers (actor template
+/// While the curse lasts, gives Kolima's nine villagers (actor placement
 /// rows 3 to 11, ACTOR_FIRST_VILLAGER to ACTOR_LAST_VILLAGER) tree sprites,
 /// SPRITE_TREE or, for rows 9 and 10 (ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE and
 /// ACTOR_GIRL_SLEEPY_TREES), SPRITE_SMALL_TREE; they stand still and keep
 /// their facing when spoken to.
-static void Kolima_InitializeCursedVillagers(struct ActorTemplate *templates) {
-  struct ActorTemplate *villager = &templates[3];
+static void
+Kolima_InitializeCursedVillagers(struct ActorPlacement *placements) {
+  struct ActorPlacement *villager = &placements[3];
   u32 villagerIndex;
   s32 treeSprite;
   s32 alternateTreeSprite;
@@ -299,19 +300,19 @@ const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 
 /// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
-const struct ActorTemplate *Kolima_GetActorTemplates(void) {
+const struct ActorPlacement *Kolima_GetActorPlacements(void) {
   s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_Kolima) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-      Kolima_InitializeCursedVillagers(gKolimaActorTemplates);
+      Kolima_InitializeCursedVillagers(gKolimaActorPlacements);
     }
-    return gKolimaActorTemplates;
+    return gKolimaActorPlacements;
   }
   if (sceneId == (s32)&SceneId_KolimaBridge) {
-    return gKolimaBridgeActorTemplates;
+    return gKolimaBridgeActorPlacements;
   }
-  return gKolimaTunnelActorTemplates;
+  return gKolimaTunnelActorPlacements;
 }
 
 /// Kolima, once the curse is lifted: talking to the healer (ACTOR_HEALER)
@@ -1828,7 +1829,7 @@ u32 gKolimaExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gKolimaTunnelActorTemplates[] = {
+struct ActorPlacement gKolimaTunnelActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
@@ -1836,7 +1837,7 @@ struct ActorTemplate gKolimaTunnelActorTemplates[] = {
 /// Tret's and Laurel's voices and the four domes until the curse has been seen
 /// (FLAG_KOLIMA_CURSE_WITNESSED), four sparkles while it lasts, and Granite until
 /// it joins (its Djinni flag, 0x31).
-struct ActorTemplate gKolimaActorTemplates[] = {
+struct ActorPlacement gKolimaActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1868,19 +1869,19 @@ struct ActorTemplate gKolimaActorTemplates[] = {
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PSYNERGY_FIELD, FLAG_KOLIMA_CURSE_WITNESSED, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
         PIXELS(24), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(120), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(120), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_STAND,
-        PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(40), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { VENUS_DJINNI, 0x31, MOVEMENT_TYPE_STAND,
         PIXELS(328), 0, PIXELS(360), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
@@ -1888,24 +1889,24 @@ struct ActorTemplate gKolimaActorTemplates[] = {
 
 /// Five more sparkles, placed by Kolima_Initialize once the curse has been seen
 /// and kept while it lasts.
-struct ActorTemplate gKolima_EntryScript[] = {
+struct ActorPlacement gKolima_EntryScript[] = {
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(296), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(440), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(440), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
-        PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
 /// Kolima Bridge's villager, as a man (ACTOR_BRIDGE_VILLAGER) and as a tree
 /// (ACTOR_BRIDGE_VILLAGER_AS_TREE), in the same place;
 /// Kolima_RestoreBridgeState puts one of them out of sight.
-struct ActorTemplate gKolimaBridgeActorTemplates[] = {
+struct ActorPlacement gKolimaBridgeActorPlacements[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, 3, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

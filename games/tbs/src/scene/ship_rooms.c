@@ -14,7 +14,7 @@
 /// SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK from the captain's quarters, and
 /// SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK and
 /// SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD join the hold and the rowing deck.
-/// The actor templates and triggers are chosen by the room and the
+/// The actor placements and triggers are chosen by the room and the
 /// voyage's stage; most of the voyage's events play here, at the
 /// entrances from SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF on,
 /// through the shared operations of ShipRooms_RunEventCommand. In story order:
@@ -89,7 +89,7 @@
 ///
 /// A travelling healer opens a Sanctum in the hold. At Tolbi
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
-/// their own actor templates.
+/// their own actor placements.
 
 #include "script_operands.h"
 #include "flags.h"
@@ -181,8 +181,8 @@ enum ShipEventCommand {
 };
 
 /// The nine passengers who may be called to the oars, in the order of their
-/// rows in gShipRooms_HoldActorTemplatesAtSea and
-/// gShipRooms_RowingDeckActorTemplates and of each seat's group
+/// rows in gShipRooms_HoldActorPlacementsAtSea and
+/// gShipRooms_RowingDeckActorPlacements and of each seat's group
 /// of flags (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + passenger). The game gives
 /// them no names, so each is named by what they say, or by what the guides call
 /// themselves.
@@ -228,8 +228,8 @@ enum TolbiShipPassenger {
 };
 
 /// The captain's quarters, numbering the rows of
-/// gShipRooms_CaptainsQuartersActorTemplates and
-/// gShipRooms_CaptainsQuartersActorTemplatesWarriors from
+/// gShipRooms_CaptainsQuartersActorPlacements and
+/// gShipRooms_CaptainsQuartersActorPlacementsWarriors from
 /// ACTOR_FIRST_PLACED; the party's rows take their own slots. The captain,
 /// Kaja and the crewman have the sprites they have on deck
 /// (tolbi_ship_deck.c).
@@ -263,7 +263,7 @@ enum TolbiShipCaptainsQuartersActorId {
 };
 
 /// The hold while the ship waits at Kalay and after it reaches Tolbi,
-/// numbering the rows of gShipRooms_HoldActorTemplates from
+/// numbering the rows of gShipRooms_HoldActorPlacements from
 /// ACTOR_FIRST_PLACED: four of the passengers and the second guide, then the
 /// warriors bound for Colosso, Ouranos and his friend Sean, the travelling
 /// healer and Kaja.
@@ -306,7 +306,7 @@ enum TolbiShipHoldActorId {
 };
 
 /// The hold at sea, numbering the rows of
-/// gShipRooms_HoldActorTemplatesAtSea from ACTOR_FIRST_PLACED:
+/// gShipRooms_HoldActorPlacementsAtSea from ACTOR_FIRST_PLACED:
 /// the nine passengers in the order of enum TolbiShipPassenger, the healer and
 /// Kaja. Each passenger's evidence is its enum TolbiShipPassenger line.
 enum TolbiShipSeaHoldActorId {
@@ -356,7 +356,7 @@ enum TolbiShipSeaHoldActorId {
 };
 
 /// The rowing deck, numbering the rows of
-/// gShipRooms_RowingDeckActorTemplates from
+/// gShipRooms_RowingDeckActorPlacements from
 /// ACTOR_FIRST_PLACED; the monsters of each attack are placed after them.
 enum TolbiShipRowingDeckActorId {
   /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA), one of the crew
@@ -715,46 +715,46 @@ const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
 /// A byte view keeps the native address arithmetic; direct row-field writes
 /// choose different bases and registers. The layout still belongs to the row.
 #define TOLBI_SHIP_TALK_FACING(bytes, row)                                     \
-  ((bytes)[(row) * sizeof(struct ActorTemplate) +                              \
-           offsetof(struct ActorTemplate, talkFacing)])
+  ((bytes)[(row) * sizeof(struct ActorPlacement) +                             \
+           offsetof(struct ActorPlacement, talkFacing)])
 
-/// Picks the actor templates for the room entered and the voyage's
+/// Picks the actor placements for the room entered and the voyage's
 /// stage. Some stages change who turns to face the party when talked to
 /// (talkFacing) in the shared tables.
-const struct ActorTemplate *ShipRooms_SelectActorTemplates(void) {
-  u8 *templateBytes;
+const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
+  u8 *placementBytes;
 
   switch (gAdventure.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return gShipRooms_HoldActorTemplates;
+      return gShipRooms_HoldActorPlacements;
     } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-        // Update talkFacing in the actor template rows, preserving their
+        // Update talkFacing in the actor placement rows, preserving their
         // write order.
-        templateBytes = (u8 *)gShipRooms_HoldActorTemplatesAtSea;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 0) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 2) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 4) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 5) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 8) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 7) = TALK_FACING_KEEP;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 6) = TALK_FACING_PARTY_AND_BACK;
-        TOLBI_SHIP_TALK_FACING(templateBytes, 3) = TALK_FACING_KEEP;
+        placementBytes = (u8 *)gShipRooms_HoldActorPlacementsAtSea;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 0) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 2) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 4) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 5) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 8) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 7) = TALK_FACING_KEEP;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 6) = TALK_FACING_PARTY_AND_BACK;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 3) = TALK_FACING_KEEP;
       }
-      return gShipRooms_HoldActorTemplatesAtSea;
+      return gShipRooms_HoldActorPlacementsAtSea;
     } else if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
-        gShipRooms_HoldActorTemplates[0].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorTemplates[4].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorTemplates[1].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorTemplates[3].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacements[0].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacements[4].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacements[1].talkFacing = TALK_FACING_KEEP;
+        gShipRooms_HoldActorPlacements[3].talkFacing = TALK_FACING_KEEP;
       }
-      return gShipRooms_HoldActorTemplates;
+      return gShipRooms_HoldActorPlacements;
     } else {
-      return gShipRooms_HoldActorTemplatesEmpty;
+      return gShipRooms_HoldActorPlacementsEmpty;
     }
     break;
   case SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD:
@@ -765,55 +765,55 @@ const struct ActorTemplate *ShipRooms_SelectActorTemplates(void) {
   case SHIP_ROOMS_FROM_WORLD_MAP:
   case SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS:
-    return gShipRooms_RowingDeckActorTemplates;
+    return gShipRooms_RowingDeckActorPlacements;
     break;
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK:
-    templateBytes = (u8 *)gShipRooms_RowingDeckActorTemplates;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 0) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 1) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 3) = TALK_FACING_PARTY_AND_BACK;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 4) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 5) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 6) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 7) = TALK_FACING_KEEP;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 8) = TALK_FACING_PARTY_AND_BACK;
-    TOLBI_SHIP_TALK_FACING(templateBytes, 9) = TALK_FACING_KEEP;
-    return (const struct ActorTemplate *)templateBytes;
+    placementBytes = (u8 *)gShipRooms_RowingDeckActorPlacements;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 0) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 1) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 3) = TALK_FACING_PARTY_AND_BACK;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 4) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 5) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 6) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 7) = TALK_FACING_KEEP;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 8) = TALK_FACING_PARTY_AND_BACK;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 9) = TALK_FACING_KEEP;
+    return (const struct ActorPlacement *)placementBytes;
   case SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return gShipRooms_CaptainsQuartersActorTemplatesArrived;
+      return gShipRooms_CaptainsQuartersActorPlacementsArrived;
     } else if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
         if (Event_GetFlag(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-          gShipRooms_CaptainsQuartersActorTemplatesWarriors[1].talkFacing =
+          gShipRooms_CaptainsQuartersActorPlacementsWarriors[1].talkFacing =
               TALK_FACING_PARTY_AND_BACK;
         }
         if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
           if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
-            gShipRooms_CaptainsQuartersActorTemplatesWarriors[0].talkFacing =
+            gShipRooms_CaptainsQuartersActorPlacementsWarriors[0].talkFacing =
                 TALK_FACING_PARTY;
           }
         }
-        return gShipRooms_CaptainsQuartersActorTemplatesWarriors;
+        return gShipRooms_CaptainsQuartersActorPlacementsWarriors;
       }
-      return gShipRooms_ActorTemplatesNone;
+      return gShipRooms_ActorPlacementsNone;
     } else {
-      return gShipRooms_CaptainsQuartersActorTemplates;
+      return gShipRooms_CaptainsQuartersActorPlacements;
     }
     break;
   case SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF:
   case SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS:
   case SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN:
   case SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND:
-    return gShipRooms_CaptainsQuartersActorTemplates;
+    return gShipRooms_CaptainsQuartersActorPlacements;
     break;
   default:
-    return gShipRooms_ActorTemplatesNone;
+    return gShipRooms_ActorPlacementsNone;
     break;
   }
-  return (const struct ActorTemplate *)templateBytes;
+  return (const struct ActorPlacement *)placementBytes;
 }
 
 #undef TOLBI_SHIP_TALK_FACING
@@ -3541,7 +3541,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     }
     break;
   case SHIP_PLACE_FOLLOWERS_AND_MONSTERS:
-    Event_CallWithLastActiveActorId(gShipRooms_PartyFollowerActorTemplates);
+    Event_CallWithLastActiveActorId(gShipRooms_PartyFollowerActorPlacements);
     WaitFrames(1);
     if (arg == 1) {
       Event_CallWithLastActiveActorId(gShipRooms_FirstAttackMonsters);
@@ -4494,12 +4494,12 @@ u32 gShipRooms_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gShipRooms_ActorTemplatesNone[] = {
+struct ActorPlacement gShipRooms_ActorPlacementsNone[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplates[] = {
+struct ActorPlacement gShipRooms_CaptainsQuartersActorPlacements[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(446), 0, PIXELS(620), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -4511,7 +4511,7 @@ struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplates[] = {
 
 /// The captain's quarters once the warriors have come to see the captain, with the party's
 /// followers.
-struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplatesWarriors[] = {
+struct ActorPlacement gShipRooms_CaptainsQuartersActorPlacementsWarriors[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(482), 0, PIXELS(604), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -4534,21 +4534,21 @@ struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplatesWarriors[] = {
 };
 
 /// The captain's quarters once the ship has reached Tolbi.
-struct ActorTemplate gShipRooms_CaptainsQuartersActorTemplatesArrived[] = {
+struct ActorPlacement gShipRooms_CaptainsQuartersActorPlacementsArrived[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 /// The hold before the party hears of the delay at Kalay.
-struct ActorTemplate gShipRooms_HoldActorTemplatesEmpty[] = {
+struct ActorPlacement gShipRooms_HoldActorPlacementsEmpty[] = {
     { 0xf4, CONDITION_ALWAYS, (s32)gShipRooms_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
 /// The hold while the ship waits at Kalay, and after it reaches Tolbi.
-struct ActorTemplate gShipRooms_HoldActorTemplates[] = {
+struct ActorPlacement gShipRooms_HoldActorPlacements[] = {
     { SPRITE_PERSON_WITH_SWORD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(504), FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -4573,7 +4573,7 @@ struct ActorTemplate gShipRooms_HoldActorTemplates[] = {
 };
 
 /// The hold at sea, once the passengers row.
-struct ActorTemplate gShipRooms_HoldActorTemplatesAtSea[] = {
+struct ActorPlacement gShipRooms_HoldActorPlacementsAtSea[] = {
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(138), 0, PIXELS(446), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -4604,7 +4604,7 @@ struct ActorTemplate gShipRooms_HoldActorTemplatesAtSea[] = {
 /// The rowing deck, in the order of enum TolbiShipRowingDeckActorId: the crewman
 /// and the drummer, the oarsmen at the seats, the passengers who may take a
 /// seat, Kaja and the eight oars beside the seats.
-struct ActorTemplate gShipRooms_RowingDeckActorTemplates[] = {
+struct ActorPlacement gShipRooms_RowingDeckActorPlacements[] = {
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(438), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -4648,24 +4648,24 @@ struct ActorTemplate gShipRooms_RowingDeckActorTemplates[] = {
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(410), 0, PIXELS(174), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(470), 0, PIXELS(174), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(470), 0, PIXELS(174), FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(410), 0, PIXELS(206), FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(410), 0, PIXELS(206), FACING_EAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(470), 0, PIXELS(206), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(470), 0, PIXELS(206), FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(410), 0, PIXELS(286), FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(410), 0, PIXELS(286), FACING_EAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(470), 0, PIXELS(286), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(470), 0, PIXELS(286), FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(410), 0, PIXELS(316), FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(410), 0, PIXELS(316), FACING_EAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_RESTING_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(470), 0, PIXELS(316), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(470), 0, PIXELS(316), FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
 /// The party's followers, placed for an event.
-struct ActorTemplate gShipRooms_PartyFollowerActorTemplates[] = {
+struct ActorPlacement gShipRooms_PartyFollowerActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -4676,31 +4676,31 @@ struct ActorTemplate gShipRooms_PartyFollowerActorTemplates[] = {
 };
 
 /// The monsters of each attack, beside the seats.
-struct ActorTemplate gShipRooms_FirstAttackMonsters[] = {
+struct ActorPlacement gShipRooms_FirstAttackMonsters[] = {
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gShipRooms_SecondAttackMonsters[] = {
+struct ActorPlacement gShipRooms_SecondAttackMonsters[] = {
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LIZARD_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gShipRooms_ThirdAttackMonsters[] = {
+struct ActorPlacement gShipRooms_ThirdAttackMonsters[] = {
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(474), 0, PIXELS(332), FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(458), 0, PIXELS(310), FACING_WEST, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },

@@ -48,7 +48,7 @@ struct FieldRecord;
 struct SceneEntrance;
 struct MapEntry;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 struct SparklePicture;
 struct Swirl;

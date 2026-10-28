@@ -7,8 +7,8 @@
 /// them: the gem owner's house, the child's house, the inn and its guests' room
 /// upstairs, the item shop, the weapon and armor shop, the mayor's house and a
 /// room with a crate, behind which a way climbs to the inn's loft. The loft has
-/// actor templates and events of its own
-/// (LogRoomsA_GetActorTemplates and _GetTriggers), and
+/// actor placements and events of its own
+/// (LogRoomsA_GetActorPlacements and _GetTriggers), and
 /// FLAG_VAULT_THIEVES_JAILED chooses the other rooms' tables.
 ///
 /// The story flags drive the rooms in order:
@@ -120,7 +120,7 @@ enum LogRoomsARaisedTrigger {
 };
 
 /// The townspeople, named by what they say, numbering
-/// gLogRoomsA_ActorTemplates' rows from ACTOR_FIRST_PLACED;
+/// gLogRoomsA_ActorPlacements' rows from ACTOR_FIRST_PLACED;
 /// Garet's and Ivan's rows take their own slots.
 enum {
   /// A young man, to whose house a sparkling rock was blown from the volcano.
@@ -220,7 +220,7 @@ enum {
 
 /// The inn's loft (LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM and the two after the
 /// battle), where the thieves hid the stolen goods, numbering
-/// gLogRoomsA_LoftActorTemplates' rows from ACTOR_FIRST_PLACED.
+/// gLogRoomsA_LoftActorPlacements' rows from ACTOR_FIRST_PLACED.
 enum {
   /// vault.c's ACTOR_YOUNG_MAN_FIXING_THE_ROOF, tied up while fixing the
   /// roof.
@@ -306,17 +306,17 @@ const u32 *Scene_GetExits(void) { return gLogRoomsA_Exits; }
 /// (LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM and the two after the battle), the
 /// tied-up villager, the mayor, the thieves, their chests and the found
 /// treasures.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  struct ActorTemplate *table;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  struct ActorPlacement *table;
 
   switch (gAdventure.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
-    table = gLogRoomsA_LoftActorTemplates;
+    table = gLogRoomsA_LoftActorPlacements;
     break;
   default:
-    table = gLogRoomsA_ActorTemplates;
+    table = gLogRoomsA_ActorPlacements;
     break;
   }
   Scene_AssignViewFlags(table);
@@ -3889,7 +3889,7 @@ u32 gLogRoomsA_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gLogRoomsA_ActorTemplates[] = {
+struct ActorPlacement gLogRoomsA_ActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3935,7 +3935,7 @@ struct ActorTemplate gLogRoomsA_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLogRoomsA_LoftActorTemplates[] = {
+struct ActorPlacement gLogRoomsA_LoftActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

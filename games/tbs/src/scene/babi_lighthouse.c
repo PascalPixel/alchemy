@@ -338,19 +338,19 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 /// The four scenes share one exit table.
 const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_BabiLighthouseEntry) {
-    return gBabiLighthouse_EntryActorTemplates;
+    return gBabiLighthouse_EntryActorPlacements;
   }
   if (sceneId == (s32)&SceneId_BabiLighthouseLuff) {
-    return gBabiLighthouse_LuffActorTemplates;
+    return gBabiLighthouse_LuffActorPlacements;
   }
   if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
-    return gBabiLighthouse_StoneDoorActorTemplates;
+    return gBabiLighthouse_StoneDoorActorPlacements;
   }
-  return gBabiLighthouse_RoadActorTemplates;
+  return gBabiLighthouse_RoadActorPlacements;
 }
 
 /// After Move on one of the pillars at the Babi Lighthouse Entry, or a push: a
@@ -1744,17 +1744,17 @@ u32 gBabiLighthouse_Exits[] = {
     SCENE_EXITS_END,
 };
 
-/// Unused: an empty actor template table nothing returns.
-struct ActorTemplate gBabiLighthouse_NoActorTemplates[] = {
+/// Unused: an empty actor placement table nothing returns.
+struct ActorPlacement gBabiLighthouse_NoActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gBabiLighthouse_EntryActorTemplates[] = {
+struct ActorPlacement gBabiLighthouse_EntryActorPlacements[] = {
     {SPRITE_CAPPED_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
      PIXELS(88), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CAPPED_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
      PIXELS(296), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP,
-     ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(296), 0,
      PIXELS(130), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript,
@@ -1769,14 +1769,14 @@ struct ActorTemplate gBabiLighthouse_EntryActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gBabiLighthouse_LuffActorTemplates[] = {
+struct ActorPlacement gBabiLighthouse_LuffActorPlacements[] = {
     {JUPITER_DJINNI, FLAG_DJINNI(DJINNI_LUFF), MOVEMENT_TYPE_STAND, PIXELS(472),
      0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gBabiLighthouse_StoneDoorActorTemplates[] = {
+struct ActorPlacement gBabiLighthouse_StoneDoorActorPlacements[] = {
     {ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
         TALK_FACING_PARTY, 0},
     {ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY,
@@ -1798,7 +1798,7 @@ struct ActorTemplate gBabiLighthouse_StoneDoorActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gBabiLighthouse_RoadActorTemplates[] = {
+struct ActorPlacement gBabiLighthouse_RoadActorPlacements[] = {
     {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, PIXELS(128), 0, PIXELS(264), FACING_WEST,
         TALK_FACING_PARTY, 0},
     {SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, PIXELS(96), 0, PIXELS(184), FACING_EAST, TALK_FACING_PARTY,

@@ -2,6 +2,6 @@
 	overlay_veneer Scene_Initialize
 	overlay_veneer LaliveroInteriors_GetEntrances
 	overlay_veneer LaliveroInteriors_GetExits
-	overlay_veneer LaliveroInteriors_GetActorTemplates
+	overlay_veneer LaliveroInteriors_GetActorPlacements
 	overlay_veneer LaliveroInteriors_GetTriggers
 	overlay_veneer LaliveroInteriors_GetRegions

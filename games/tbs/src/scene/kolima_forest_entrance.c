@@ -61,7 +61,7 @@
 #include "fixed_math.h"
 
 /// The scene's actors after Garet's, Ivan's and Mia's party slots,
-/// numbering the rows of gKolimaForestEntrance_ActorTemplates from
+/// numbering the rows of gKolimaForestEntrance_ActorPlacements from
 /// ACTOR_FIRST_PLACED.
 enum {
   /// The three logs; the last is the one that can reach the river.
@@ -171,8 +171,8 @@ const u32 *KolimaForestEntrance_GetExits(void) {
 
 /// The party's companions, the logs, Tret, Laurel, the Psynergy fields and the
 /// ground sparkles.
-const struct ActorTemplate *KolimaForestEntrance_GetActorTemplates(void) {
-  return gKolimaForestEntrance_ActorTemplates;
+const struct ActorPlacement *KolimaForestEntrance_GetActorPlacements(void) {
+  return gKolimaForestEntrance_ActorPlacements;
 }
 
 /// Kolima Forest (SceneId_KolimaForestEntrance), walking into a log: it rolls
@@ -1360,7 +1360,7 @@ u32 gKolimaForestEntrance_Exits[] = {
 /// Garet, Ivan and Mia for the curse; the three logs; Tret and Laurel; the
 /// four Psynergy fields; and the five ground sparkles.
 // clang-format off
-struct ActorTemplate gKolimaForestEntrance_ActorTemplates[] = {
+struct ActorPlacement gKolimaForestEntrance_ActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
@@ -1374,25 +1374,25 @@ struct ActorTemplate gKolimaForestEntrance_ActorTemplates[] = {
     { SPRITE_LAUREL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY,
-        ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY,
-        ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PSYNERGY_FIELD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY,
-        ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(232), 0, PIXELS(655), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(166), 0, PIXELS(576), FACING_SOUTH, TALK_FACING_PARTY,
-        ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(189), 0, PIXELS(532), FACING_SOUTH, TALK_FACING_PARTY,
-        ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(288), 0, PIXELS(570), FACING_SOUTH, TALK_FACING_PARTY,
-        ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(331), 0, PIXELS(659), FACING_SOUTH, TALK_FACING_PARTY,
-        ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 // clang-format on

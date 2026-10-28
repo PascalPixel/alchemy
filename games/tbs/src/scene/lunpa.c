@@ -163,16 +163,16 @@ const u32 *Scene_GetExits(void) {
 }
 
 /// The townsfolk of Lunpa, or the guards of the Lunpa Fortress Gates.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_Lunpa) {
-    return gLunpaActorTemplates;
+    return gLunpaActorPlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressGates) {
-    return gGateActorTemplates;
+    return gGateActorPlacements;
   }
-  return gLunpaActorTemplates;
+  return gLunpaActorPlacements;
 }
 
 /// Lunpa: Catch on the Nut floating over the town gives it to the party.
@@ -1044,7 +1044,7 @@ u32 gGateExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gLunpaActorTemplates[] = {
+struct ActorPlacement gLunpaActorPlacements[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(520), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1074,7 +1074,7 @@ struct ActorTemplate gLunpaActorTemplates[] = {
     { SCENE_TABLE_END, CONDITION_ALWAYS },
 };
 
-struct ActorTemplate gGateActorTemplates[] = {
+struct ActorPlacement gGateActorPlacements[] = {
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(144), 0, PIXELS(200), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

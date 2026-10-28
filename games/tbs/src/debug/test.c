@@ -42,7 +42,7 @@
 #define DEBUG_ITEM_PAGE_STEP 30 ///< R and L move thirty.
 
 /// The placed actors, numbered in the order of
-/// gMenuTest_ActorTemplates
+/// gMenuTest_ActorPlacements
 /// after its four party rows, which keep their characters' ids. Each is drawn
 /// with the sprite of someone or something in the game and named for it; what
 /// talking to each does is in gMenuTest_Triggers.
@@ -107,7 +107,9 @@ s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *MenuTest_GetExits(void) { return (u8 *)gMenuTest_Exits; }
 
-u8 *MenuTest_GetActorTemplates(void) { return (u8 *)gMenuTest_ActorTemplates; }
+u8 *MenuTest_GetActorPlacements(void) {
+  return (u8 *)gMenuTest_ActorPlacements;
+}
 
 #if TBS_PATCH_1
 /// Finishes pending UI work, displays a message, and waits one final frame.
@@ -883,7 +885,7 @@ u32 gMenuTest_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gMenuTest_ActorTemplates[] = {
+struct ActorPlacement gMenuTest_ActorPlacements[] = {
     {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(40), 0, PIXELS(48),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(40), 0, PIXELS(80),

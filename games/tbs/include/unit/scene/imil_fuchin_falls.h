@@ -7,14 +7,14 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 extern s32 gImilFuchinFalls_TrackLeader;
 const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void);
 const struct SceneExitRegion *ImilFuchinFalls_GetRegions(void);
 const u32 *ImilFuchinFalls_GetExits(void);
-const struct ActorTemplate *ImilFuchinFalls_GetActorTemplates(void);
+const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void);
 const struct Trigger *ImilFuchinFalls_GetTriggers(void);
 s32 ImilFuchinFalls_Initialize(void);
 void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
@@ -32,13 +32,13 @@ extern struct SceneEntrance gImilFuchinFalls_ArcticBladeRoomEntrances[];
 extern struct SceneEntrance gImilFuchinFalls_KiRoomEntrances[];
 extern struct SceneEntrance gImilFuchinFalls_DragonRoomEntrances[];
 extern u32 gImilFuchinFalls_Exits[];
-extern struct ActorTemplate gImilFuchinFalls_NoActorTemplates[];
-extern struct ActorTemplate gImilFuchinFalls_ImilFallsCaveActorTemplates[];
-extern struct ActorTemplate gImilFuchinFalls_EntranceActorTemplates[];
-extern struct ActorTemplate gImilFuchinFalls_ZephyrRoomActorTemplates[];
-extern struct ActorTemplate gImilFuchinFalls_DragonsEyeRoomActorTemplates[];
-extern struct ActorTemplate gImilFuchinFalls_ArcticBladeRoomActorTemplates[];
-extern struct ActorTemplate gImilFuchinFalls_DragonRoomActorTemplates[];
+extern struct ActorPlacement gImilFuchinFalls_NoActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ImilFallsCaveActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_EntranceActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ZephyrRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_DragonsEyeRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_ArcticBladeRoomActorPlacements[];
+extern struct ActorPlacement gImilFuchinFalls_DragonRoomActorPlacements[];
 extern struct Trigger gImilFuchinFalls_NoTriggers[];
 extern struct Trigger gImilFuchinFalls_ImilFallsCaveTriggers[];
 extern struct Trigger gImilFuchinFalls_EntranceTriggers[];

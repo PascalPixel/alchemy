@@ -17,12 +17,12 @@ void Event_StartFar(void);
 /// Closes an event: gives the camera back to the leader and refreshes
 /// FLAG_LURE_CAP.
 void Event_EndFar(void);
-/// Spawns the actors of an actor template table after the last
+/// Spawns the actors of an actor placement table after the last
 /// actor in use, so a ship scene can bring people in mid-event.
-void Event_CallWithLastActiveActorIdFar(struct ActorTemplate *table);
-/// Gives each unconditional actor template a condition that shows it
+void Event_CallWithLastActiveActorIdFar(struct ActorPlacement *table);
+/// Gives each unconditional actor placement a condition that shows it
 /// only while it lies inside the map's view bounds.
-void Scene_AssignViewFlagsFar(struct ActorTemplate *entry);
+void Scene_AssignViewFlagsFar(struct ActorPlacement *entry);
 /// Replaces the scene's trigger table, the one the field checks as the leader
 /// moves.
 void Event_SetTriggersFar(const struct Trigger *triggers);

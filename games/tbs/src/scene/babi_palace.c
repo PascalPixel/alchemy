@@ -12,8 +12,8 @@
 ///   cottage_rooms_b.c) and one into the Colosseum Tunnel
 ///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
 ///
-/// Each scene has three actor template tables and three trigger tables,
-/// and Scene_GetActorTemplates and Scene_GetTriggers choose between them by
+/// Each scene has three actor placement tables and three trigger tables,
+/// and Scene_GetActorPlacements and Scene_GetTriggers choose between them by
 /// two story flags: while Babi is missing, during the finals (FLAG_BABI_SAVED,
 /// set when the party saves him in Altmiller Cave) and after Colosso
 /// (FLAG_COLOSSO_OVER). The people inside stand in all three under other
@@ -86,9 +86,9 @@
 
 /// The palace's actors are placed by one of three tables, as the story
 /// goes on: before Babi is rescued
-/// (gBabiPalace_ActorTemplatesBabiMissing), during the finals
-/// (gBabiPalace_ActorTemplatesFinals) and after Colosso
-/// (gBabiPalace_ActorTemplatesAfterColosso). Each numbers its rows from
+/// (gBabiPalace_ActorPlacementsBabiMissing), during the finals
+/// (gBabiPalace_ActorPlacementsFinals) and after Colosso
+/// (gBabiPalace_ActorPlacementsAfterColosso). Each numbers its rows from
 /// ACTOR_FIRST_PLACED, with Garet, Ivan, Mia and Sheba in their own party
 /// slots, and most of the people stand in all three under other numbers. The
 /// palace's residents, three old men with canes and a young man with brown
@@ -343,19 +343,19 @@ const struct SceneExitRegion *BabiPalace_GetRegions(void) {
 /// Both scenes share one exit table.
 const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
 
-/// Returns the actor templates for the scene and the story: before Babi's
+/// Returns the actor placements for the scene and the story: before Babi's
 /// rescue, during the finals or after Colosso.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
-    return gBabiPalace_OutsideActorTemplates;
+    return gBabiPalace_OutsideActorPlacements;
   }
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-    return gBabiPalace_ActorTemplatesAfterColosso;
+    return gBabiPalace_ActorPlacementsAfterColosso;
   }
   if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
-    return gBabiPalace_ActorTemplatesFinals;
+    return gBabiPalace_ActorPlacementsFinals;
   }
-  return gBabiPalace_ActorTemplatesBabiMissing;
+  return gBabiPalace_ActorPlacementsBabiMissing;
 }
 
 /// Asks a yes or no question; the answers are the two messages after it.
@@ -2442,7 +2442,7 @@ static void BabiPalace_ExamineWell(void) {
 }
 
 /// Returns the triggers for the scene and the story, as for the actor
-/// templates.
+/// placements.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gAdventure.sceneId == (s32)&SceneId_BabiPalaceEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -2675,7 +2675,7 @@ u32 gBabiPalace_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gBabiPalace_OutsideActorTemplates[] = {
+struct ActorPlacement gBabiPalace_OutsideActorPlacements[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2683,7 +2683,7 @@ struct ActorTemplate gBabiPalace_OutsideActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBabiPalace_ActorTemplatesBabiMissing[] = {
+struct ActorPlacement gBabiPalace_ActorPlacementsBabiMissing[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2725,7 +2725,7 @@ struct ActorTemplate gBabiPalace_ActorTemplatesBabiMissing[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBabiPalace_ActorTemplatesFinals[] = {
+struct ActorPlacement gBabiPalace_ActorPlacementsFinals[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2749,7 +2749,7 @@ struct ActorTemplate gBabiPalace_ActorTemplatesFinals[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBabiPalace_ActorTemplatesAfterColosso[] = {
+struct ActorPlacement gBabiPalace_ActorPlacementsAfterColosso[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

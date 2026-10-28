@@ -98,9 +98,9 @@
 #include "item_ids.h"
 
 /// Kalay Docks' people, numbering the rows of
-/// gKalayTolbiDocks_KalayActorTemplates from ACTOR_FIRST_PLACED;
+/// gKalayTolbiDocks_KalayActorPlacements from ACTOR_FIRST_PLACED;
 /// Garet's row takes his own actor slot. Once the ship has crossed
-/// (gKalayTolbiDocks_KalayActorTemplatesShipGone) the first four stand
+/// (gKalayTolbiDocks_KalayActorPlacementsShipGone) the first four stand
 /// off the map.
 enum KalayDocksActorId {
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who walks
@@ -137,7 +137,7 @@ enum KalayDocksActorId {
 };
 
 /// Tolbi Docks' people after the crossing, numbering the rows of
-/// gKalayTolbiDocks_TolbiActorTemplates from ACTOR_FIRST_PLACED.
+/// gKalayTolbiDocks_TolbiActorPlacements from ACTOR_FIRST_PLACED.
 enum TolbiDocksActorId {
   /// A man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA) who hears of
   /// the party's scary trip; after Colosso, "There are many here who want to
@@ -179,8 +179,8 @@ enum TolbiDocksActorId {
 };
 
 /// Tolbi Docks once the Colosso Tour's passengers are stranded there: the rows
-/// of gKalayTolbiDocks_TolbiActorTemplatesStranded that hold other people
-/// than gKalayTolbiDocks_TolbiActorTemplates. The man who hears of the
+/// of gKalayTolbiDocks_TolbiActorPlacementsStranded that hold other people
+/// than gKalayTolbiDocks_TolbiActorPlacements. The man who hears of the
 /// scary trip, the one done sailing and the crates keep their rows.
 enum TolbiDocksStrandedActorId {
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), the
@@ -214,9 +214,9 @@ enum TolbiDocksStrandedActorId {
 };
 
 /// The people of the two dock rooms, numbering the rows of
-/// gKalayTolbiDocks_InteriorActorTemplates from ACTOR_FIRST_PLACED: the
+/// gKalayTolbiDocks_InteriorActorPlacements from ACTOR_FIRST_PLACED: the
 /// Kalay room's three, then the Tolbi room's. Once the ship has crossed
-/// (gKalayTolbiDocks_InteriorActorTemplatesShipGone) the Kalay room's two
+/// (gKalayTolbiDocks_InteriorActorPlacementsShipGone) the Kalay room's two
 /// travellers stand off the map.
 enum KalayTolbiDocksInteriorActorId {
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) in the Kalay room.
@@ -250,7 +250,7 @@ enum KalayTolbiDocksInteriorActorId {
 };
 
 /// The dock rooms after Colosso
-/// (gKalayTolbiDocks_InteriorActorTemplatesStranded): the Tolbi room's
+/// (gKalayTolbiDocks_InteriorActorPlacementsStranded): the Tolbi room's
 /// last two rows hold other people.
 enum KalayTolbiDocksInteriorStrandedActorId {
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR). "Some rich
@@ -304,34 +304,34 @@ const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 /// Each scene's people before the crossing, once the ship has crossed and not
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
-const struct ActorTemplate *KalayTolbiDocks_GetActorTemplates(void) {
+const struct ActorPlacement *KalayTolbiDocks_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return gKalayTolbiDocks_KalayActorTemplatesShipGone;
+      return gKalayTolbiDocks_KalayActorPlacementsShipGone;
     }
-    return gKalayTolbiDocks_KalayActorTemplates;
+    return gKalayTolbiDocks_KalayActorPlacements;
   }
 
   if (sceneId == (s32)&SceneId_TolbiDocks) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-      return gKalayTolbiDocks_TolbiActorTemplatesStranded;
+      return gKalayTolbiDocks_TolbiActorPlacementsStranded;
     }
-    return gKalayTolbiDocks_TolbiActorTemplates;
+    return gKalayTolbiDocks_TolbiActorPlacements;
   }
 
   if (sceneId == (s32)&SceneId_CottageRoomsE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-      return gKalayTolbiDocks_InteriorActorTemplatesStranded;
+      return gKalayTolbiDocks_InteriorActorPlacementsStranded;
     }
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return gKalayTolbiDocks_InteriorActorTemplatesShipGone;
+      return gKalayTolbiDocks_InteriorActorPlacementsShipGone;
     }
-    return gKalayTolbiDocks_InteriorActorTemplates;
+    return gKalayTolbiDocks_InteriorActorPlacements;
   }
 
-  return gKalayTolbiDocks_NoActorTemplates;
+  return gKalayTolbiDocks_NoActorPlacements;
 }
 
 /// Tolbi Docks, stepping off the ship (step trigger 20, until
@@ -1198,12 +1198,12 @@ u32 gKalayTolbiDocks_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gKalayTolbiDocks_NoActorTemplates[] = {
+struct ActorPlacement gKalayTolbiDocks_NoActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplates[] = {
+struct ActorPlacement gKalayTolbiDocks_TolbiActorPlacements[] = {
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(408), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -1223,7 +1223,7 @@ struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplatesStranded[] = {
+struct ActorPlacement gKalayTolbiDocks_TolbiActorPlacementsStranded[] = {
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(408), 0, PIXELS(296), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1247,7 +1247,7 @@ struct ActorTemplate gKalayTolbiDocks_TolbiActorTemplatesStranded[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalayTolbiDocks_KalayActorTemplates[] = {
+struct ActorPlacement gKalayTolbiDocks_KalayActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -1267,7 +1267,7 @@ struct ActorTemplate gKalayTolbiDocks_KalayActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalayTolbiDocks_KalayActorTemplatesShipGone[] = {
+struct ActorPlacement gKalayTolbiDocks_KalayActorPlacementsShipGone[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1287,7 +1287,7 @@ struct ActorTemplate gKalayTolbiDocks_KalayActorTemplatesShipGone[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplates[] = {
+struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacements[] = {
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1303,7 +1303,7 @@ struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesShipGone[] = {
+struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacementsShipGone[] = {
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1319,7 +1319,7 @@ struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesShipGone[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalayTolbiDocks_InteriorActorTemplatesStranded[] = {
+struct ActorPlacement gKalayTolbiDocks_InteriorActorPlacementsStranded[] = {
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(152), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

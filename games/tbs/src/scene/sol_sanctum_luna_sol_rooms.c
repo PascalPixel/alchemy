@@ -168,8 +168,8 @@ const u32 *SolSanctumLunaSolRooms_GetExits(void) {
 
 /// Returns the eight statues, four in each room, Kraden, Jenna and Garet, all
 /// always placed.
-const struct ActorTemplate *SolSanctumLunaSolRooms_GetActorTemplates(void) {
-  return gSolSanctumLunaSolRoomsActorTemplates;
+const struct ActorPlacement *SolSanctumLunaSolRooms_GetActorPlacements(void) {
+  return gSolSanctumLunaSolRoomsActorPlacements;
 }
 
 /// Returns the floor's cell behaviors that tint the rooms, Kraden's talk
@@ -1751,7 +1751,7 @@ u32 gSolSanctumLunaSolRoomsExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gSolSanctumLunaSolRoomsActorTemplates[] = {
+struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[] = {
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(152), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

@@ -13,7 +13,7 @@ struct FieldParticle;
 struct Vector3;
 struct Actor;
 struct OrbitEffect;
-struct ActorTemplate;
+struct ActorPlacement;
 struct Window;
 struct Actor;
 
@@ -155,12 +155,12 @@ struct TriggerView {
 
 s32 Party_RemapCharacterIdByFlags(s32 character);
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood);
-void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot);
+void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot);
 void Actor_ReleaseAtIndex(s32 actorIndex);
-void Actor_ResetForLeader(struct ActorTemplate *table);
+void Actor_ResetForLeader(struct ActorPlacement *table);
 s32 Actor_FindLastActiveId(void);
 void *Actor_GetSlotAddress(u32 actorIndex);
-void Scene_AssignViewFlags(struct ActorTemplate *entry);
+void Scene_AssignViewFlags(struct ActorPlacement *entry);
 void Actor_ClearOutOfBounds(void);
 void Actor_Respawn(void);
 void Actor_ClearAll(void);
@@ -183,7 +183,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void);
 void Scene_ApplyEntrance(void);
 void PaletteEditor_Run(void);
 
-struct ActorTemplate *Scene_FindActorTemplate(s32 id);
+struct ActorPlacement *Scene_FindActorPlacement(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
 u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result);
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);

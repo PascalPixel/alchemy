@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void);
 const struct SceneExitRegion *ColosseumEntrance_GetRegions(void);
 const u32 *ColosseumEntrance_GetExits(void);
-const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void);
+const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void);
 const struct Trigger *ColosseumEntrance_GetTriggers(void);
 s32 ColosseumEntrance_Initialize(void);
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
@@ -28,17 +28,18 @@ extern struct SceneEntrance gColosseumEntranceEntrancesOther[];
 extern struct SceneEntrance gColosseumEntrances[];
 extern struct SceneEntrance gColosseumEntranceEntrances[];
 extern u32 gColosseumEntranceExits[];
-extern struct ActorTemplate gColosseumEntranceActorTemplatesOther[];
-extern struct ActorTemplate gColosseumStandsActorTemplates[];
-extern struct ActorTemplate gColosseumTrialGroundsActorTemplates[];
-extern struct ActorTemplate gColosseumActorTemplates[];
-extern struct ActorTemplate gColosseumSoldiersActorTemplates[];
-extern struct ActorTemplate
-    gColosseumActorTemplatesFromColosseumAzartMatchWest[];
-extern struct ActorTemplate gColosseumActorTemplatesFromColosseumNavampaMatch[];
-extern struct ActorTemplate gColosseumEntranceActorTemplates[];
-extern struct ActorTemplate gColosseumEntranceActorTemplatesFinalsDay[];
-extern struct ActorTemplate gColosseumEntranceActorTemplatesAfterColosso[];
+extern struct ActorPlacement gColosseumEntranceActorPlacementsOther[];
+extern struct ActorPlacement gColosseumStandsActorPlacements[];
+extern struct ActorPlacement gColosseumTrialGroundsActorPlacements[];
+extern struct ActorPlacement gColosseumActorPlacements[];
+extern struct ActorPlacement gColosseumSoldiersActorPlacements[];
+extern struct ActorPlacement
+    gColosseumActorPlacementsFromColosseumAzartMatchWest[];
+extern struct ActorPlacement
+    gColosseumActorPlacementsFromColosseumNavampaMatch[];
+extern struct ActorPlacement gColosseumEntranceActorPlacements[];
+extern struct ActorPlacement gColosseumEntranceActorPlacementsFinalsDay[];
+extern struct ActorPlacement gColosseumEntranceActorPlacementsAfterColosso[];
 extern struct Trigger gColosseumEntranceTriggersOther[];
 extern struct Trigger gColosseumTunnelTriggers[];
 extern struct Trigger gColosseumTriggers[];

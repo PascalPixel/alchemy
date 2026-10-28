@@ -284,8 +284,8 @@ const u32 *Scene_GetExits(void) { return gTreeRoomsExits; }
 
 /// Returns the party's other slots (Garet, Ivan and, once she has joined,
 /// Mia), placed for the events, and the two Tret actors.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gTreeRoomsActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gTreeRoomsActorPlacements;
 }
 
 /// Stepping on a cocoon in Tret Tree: the first step tears it, copying its
@@ -1453,7 +1453,7 @@ u32 gTreeRoomsExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gTreeRoomsActorTemplates[] = {
+struct ActorPlacement gTreeRoomsActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

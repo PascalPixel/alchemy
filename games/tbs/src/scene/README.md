@@ -28,7 +28,7 @@ says where the party then stands and who else is there.
 When the party arrives, the field asks what can happen here (the
 triggers, kept for the whole visit), where the party arrives (the
 [entrances](../../glossary.md#entrance)), who stands where (the
-[actor](../../glossary.md#actor) templates), and whether
+[actor](../../glossary.md#actor) placements), and whether
 anything needs setting up. At every step it asks whether the leader is
 standing in an [exit](../../glossary.md#exit) area, and as the party leaves,
 where the exit leads. Each answer comes from a function rather than a fixed
@@ -44,7 +44,7 @@ after a battle.
 The six are `struct SceneEntryPoints`, in a fixed order at the start of
 every overlay (`entry/<scene>.s`), each behind an 8-byte
 [veneer](../../glossary.md#veneer). Vault names them `Scene_Initialize`,
-`Scene_GetEntrances`, `Scene_GetExits`, `Scene_GetActorTemplates`,
+`Scene_GetEntrances`, `Scene_GetExits`, `Scene_GetActorPlacements`,
 `Scene_GetTriggers` and `Scene_GetExitRegions`; some overlays give them names of
 their own (`BabiLighthouse_GetExits`), since only the order is fixed.
 
@@ -60,7 +60,7 @@ east, y up and z south, and a facing is one of eight headings
   must be set, a position, a facing and how far the camera may go.
 - **Exits**: for each way out, the scene and entrance it leads to,
   sometimes only while a flag is clear. One kind of exit leads into a battle.
-- **Actor templates**: who stands where: a
+- **Actor placements**: who stands where: a
   [sprite](../../glossary.md#sprite-and-oam), a condition, how they move
   (standing, wandering, or an [actor script](../../glossary.md#actor-script) of
   their own), a position, a facing and how they turn when spoken to.
@@ -70,13 +70,13 @@ east, y up and z south, and a facing is one of eight headings
   ([below](#what-a-trigger-row-says)).
 
 These are `struct SceneEntrance`, the `SCENE_EXIT` rows of the exit
-table (named in `scene_exits.h`), `struct ActorTemplate`,
+table (named in `scene_exits.h`), `struct ActorPlacement`,
 `struct SceneExitRegion` and `struct Trigger`, all in `scene_tables.h` and
 `scene.h`.
 
 ### Conditions
 
-The actor templates and the triggers carry a condition, which says
+The actor placements and the triggers carry a condition, which says
 whether the row holds. Most often it is a [game flag](../../glossary.md#game-flag),
 and the row holds until that flag is set: "until this has happened" is the
 common case.
@@ -86,11 +86,11 @@ common case.
 | `CONDITION_ALWAYS` (-1) | always |
 | a game flag, such as `FLAG_VALE_NUT_CAUGHT` | while the flag is clear |
 | `IF_FLAG_SET(flag)` | while the flag is set |
-| `CONDITION_IN_VIEW` (0), actor templates only | while the actor lies within the view |
+| `CONDITION_IN_VIEW` (0), actor placements only | while the actor lies within the view |
 
 ### Who stands where
 
-Each row of a scene's actor templates puts one person or thing in the
+Each row of a scene's actor placements puts one person or thing in the
 scene, an actor, and each row owns a numbered place of its own, its
 [actor id](../../glossary.md#actor-id), whether or not it appears.
 
@@ -108,7 +108,7 @@ takes that character's own place instead.
 
 Each scene names its actors in an enum in row order,
 starting from `ACTOR_FIRST_PLACED`; `ACTOR_PARTY_LEADER` is the one the
-player moves, and `Event_SpawnActorTemplates` places the rows.
+player moves, and `Event_SpawnActorPlacements` places the rows.
 
 ### What a trigger row says
 

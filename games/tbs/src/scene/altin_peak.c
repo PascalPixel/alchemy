@@ -157,7 +157,7 @@ static void AltinPeak_StartPaletteAnimation(void);
 /// Each room's water beast fight returns the party to this entrance.
 enum { ENTRANCE_AFTER_BATTLE = 99 };
 
-/// The rooms' actors, from their actor templates.
+/// The rooms' actors, from their actor placements.
 /// AltinPeakSecondWaterBeast, AltinPeakThirdWaterBeast, AltinPeakPool and
 /// AltinPeakSpritz place the mine cart the party rides first.
 enum {
@@ -413,37 +413,37 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
 /// All the rooms share one exit table.
 const u32 *Scene_GetExits(void) { return gAltinPeak_Exits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_AltinPeakFirstWaterBeast) {
-    return gAltinPeak_FirstWaterBeastActorTemplates;
+    return gAltinPeak_FirstWaterBeastActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltinPeakSecondWaterBeast) {
-    return gAltinPeak_SecondWaterBeastActorTemplates;
+    return gAltinPeak_SecondWaterBeastActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltinPeakThirdWaterBeast) {
-    return gAltinPeak_ThirdWaterBeastActorTemplates;
+    return gAltinPeak_ThirdWaterBeastActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltinPeakPool) {
-    return gAltinPeak_PoolActorTemplates;
+    return gAltinPeak_PoolActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltinPeakSpritz) {
-    return gAltinPeak_SpritzActorTemplates;
+    return gAltinPeak_SpritzActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltinPeakJunction) {
-    return gAltinPeak_JunctionActorTemplates;
+    return gAltinPeak_JunctionActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltinPeakFallingRocks) {
-    return gAltinPeak_FallingRocksActorTemplates;
+    return gAltinPeak_FallingRocksActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltinPeakHydrosStatue) {
-    return gAltinPeak_HydrosStatueActorTemplates;
+    return gAltinPeak_HydrosStatueActorPlacements;
   }
   if (sceneId == (s32)&SceneId_AltinPeakWestExit) {
-    return gAltinPeak_WestExitActorTemplates;
+    return gAltinPeak_WestExitActorPlacements;
   }
-  return gAltinPeak_ActorTemplatesOther;
+  return gAltinPeak_ActorPlacementsOther;
 }
 
 /// Talking to a mine cart: the party leader jumps into it, and once the leader
@@ -2951,11 +2951,11 @@ u32 gAltinPeak_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gAltinPeak_ActorTemplatesOther[] = {
+struct ActorPlacement gAltinPeak_ActorPlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_FirstWaterBeastActorTemplates[] = {
+struct ActorPlacement gAltinPeak_FirstWaterBeastActorPlacements[] = {
     {SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(152), 0, PIXELS(216), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(296), 0, PIXELS(216), FACING_SOUTH,
@@ -2965,7 +2965,7 @@ struct ActorTemplate gAltinPeak_FirstWaterBeastActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_SecondWaterBeastActorTemplates[] = {
+struct ActorPlacement gAltinPeak_SecondWaterBeastActorPlacements[] = {
     {SPRITE_MINE_CART, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(216), 0, PIXELS(312), FACING_EAST,
         TALK_FACING_KEEP, 0},
     {SPRITE_WATER_BEAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(248), 0, PIXELS(464), FACING_WEST,
@@ -2975,7 +2975,7 @@ struct ActorTemplate gAltinPeak_SecondWaterBeastActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_ThirdWaterBeastActorTemplates[] = {
+struct ActorPlacement gAltinPeak_ThirdWaterBeastActorPlacements[] = {
     {SPRITE_MINE_CART, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(536), 0, PIXELS(296), FACING_EAST,
         TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(408), 0, PIXELS(216), FACING_SOUTH,
@@ -2985,7 +2985,7 @@ struct ActorTemplate gAltinPeak_ThirdWaterBeastActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_PoolActorTemplates[] = {
+struct ActorPlacement gAltinPeak_PoolActorPlacements[] = {
     {SPRITE_MINE_CART, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(712), 0, PIXELS(184), FACING_EAST,
         TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(696), 0, PIXELS(664), FACING_SOUTH,
@@ -2993,7 +2993,7 @@ struct ActorTemplate gAltinPeak_PoolActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_SpritzActorTemplates[] = {
+struct ActorPlacement gAltinPeak_SpritzActorPlacements[] = {
     {SPRITE_MINE_CART, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(264), 0, PIXELS(408), FACING_EAST,
         TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(424), 0, PIXELS(424), FACING_SOUTH,
@@ -3010,13 +3010,13 @@ struct ActorTemplate gAltinPeak_SpritzActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_JunctionActorTemplates[] = {
+struct ActorPlacement gAltinPeak_JunctionActorPlacements[] = {
     {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(536), 0, PIXELS(636), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_FallingRocksActorTemplates[] = {
+struct ActorPlacement gAltinPeak_FallingRocksActorPlacements[] = {
     {SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(784), 0, PIXELS(80), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {SPRITE_BLANK_LARGE, CONDITION_ALWAYS, 7, PIXELS(784), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0},
@@ -3027,7 +3027,7 @@ struct ActorTemplate gAltinPeak_FallingRocksActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_HydrosStatueActorTemplates[] = {
+struct ActorPlacement gAltinPeak_HydrosStatueActorPlacements[] = {
     {0xc7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
@@ -3038,7 +3038,7 @@ struct ActorTemplate gAltinPeak_HydrosStatueActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gAltinPeak_WestExitActorTemplates[] = {
+struct ActorPlacement gAltinPeak_WestExitActorPlacements[] = {
     {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0, PIXELS(280), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(200), 0, PIXELS(328), FACING_SOUTH,

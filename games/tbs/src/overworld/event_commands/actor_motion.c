@@ -87,7 +87,7 @@ s32 Actor_TurnTowardLinkedActor(struct Actor *actor) {
 
 /// Starts an actor's movement type: an enum MovementType, or any other
 /// value as the actor script to run itself. The built-in scripts are in
-/// scripts.s (field.h). Reached from an actor template's behavior column
+/// scripts.s (field.h). Reached from an actor placement's behavior column
 /// (overworld/actors.c), from Scene_TalkToActor after a talk
 /// (overworld/triggers.c), from the actor commands and from Lalivero's
 /// interiors.

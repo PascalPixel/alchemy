@@ -134,7 +134,7 @@ static void ColosseumNavampaMatch_PushActorAhead(void);
 typedef void (*MapTaskEntry)(void);
 
 /// The third finals match's actors, numbered in the order of
-/// gColosseumNavampaMatchActorTemplates from ACTOR_FIRST_PLACED; the
+/// gColosseumNavampaMatchActorPlacements from ACTOR_FIRST_PLACED; the
 /// rows of Isaac, Garet, Ivan and Mia take their own actors. By the
 /// guide's and attendants' explanations, the Scales of Justice, the
 /// Stepping-Stone Stage, the Wall Wedge, the Free-Climb Area, the Moving
@@ -319,8 +319,8 @@ const u32 *ColosseumNavampaMatch_GetExits(void) {
   return gColosseumNavampaMatchExits;
 }
 
-const struct ActorTemplate *ColosseumNavampaMatch_GetActorTemplates(void) {
-  return gColosseumNavampaMatchActorTemplates;
+const struct ActorPlacement *ColosseumNavampaMatch_GetActorPlacements(void) {
+  return gColosseumNavampaMatchActorPlacements;
 }
 
 /// The Wall Wedge's task: cycles its pistons through their four patterns,
@@ -2496,7 +2496,7 @@ u32 gColosseumNavampaMatchExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gColosseumNavampaMatchActorTemplates[] = {
+struct ActorPlacement gColosseumNavampaMatchActorPlacements[] = {
     { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(88), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2512,7 +2512,7 @@ struct ActorTemplate gColosseumNavampaMatchActorTemplates[] = {
     { 0x122, CONDITION_ALWAYS, 7,
         PIXELS(152), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { 0x122, CONDITION_ALWAYS, 7,
-        PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(88), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2574,9 +2574,9 @@ struct ActorTemplate gColosseumNavampaMatchActorTemplates[] = {
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { 0x118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 

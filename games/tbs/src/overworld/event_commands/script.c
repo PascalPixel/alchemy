@@ -131,10 +131,10 @@ UNUSED void Event_NoOpUpdateA(void) {}
 /// Event_RunActorUpdateAndWait calls it.
 void Event_NoOpUpdate(void) {}
 
-/// Respawns the scene's actors from an actor template table and
+/// Respawns the scene's actors from an actor placement table and
 /// waits one frame for them to appear. Reached only through an unnamed veneer
 /// in the overworld bank's far-call table; nothing in ☀️ names it.
-void Event_RunActorUpdateAndWait(struct ActorTemplate *table) {
+void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
   Event_NoOpUpdate();
   Actor_ResetForLeader(table);
   WaitFrames(1);
@@ -143,11 +143,11 @@ void Event_RunActorUpdateAndWait(struct ActorTemplate *table) {
   Actor_Lookup(gAdventure.leaderActorId);
 }
 
-/// Spawns the actors of an actor template table after the last
+/// Spawns the actors of an actor placement table after the last
 /// actor in use. Called by the Kolima, Kalay and Tolbi ship events
 /// to bring actors in during an event.
-void Event_CallWithLastActiveActorId(struct ActorTemplate *table) {
-  Event_SpawnActorTemplates(table, Actor_FindLastActiveId());
+void Event_CallWithLastActiveActorId(struct ActorPlacement *table) {
+  Event_SpawnActorPlacements(table, Actor_FindLastActiveId());
 }
 
 /// Sets the scene's trigger table, which the field checks as the leader moves:
@@ -416,7 +416,7 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 /// it too.
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   struct FieldWork *work = gFieldWork;
-  s32 sprite = Scene_FindActorTemplate(work->speaker)->sprite;
+  s32 sprite = Scene_FindActorPlacement(work->speaker)->sprite;
   struct Window *window = (struct Window *)work->messageWindow;
   struct Window *side = (struct Window *)work->sideWindow;
   s32 useBottom = 1;

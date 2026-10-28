@@ -2,6 +2,6 @@
 	overlay_veneer KalayTolbiDocks_Initialize
 	overlay_veneer KalayTolbiDocks_GetEntrances
 	overlay_veneer KalayTolbiDocks_GetExits
-	overlay_veneer KalayTolbiDocks_GetActorTemplates
+	overlay_veneer KalayTolbiDocks_GetActorPlacements
 	overlay_veneer KalayTolbiDocks_GetTriggers
 	overlay_veneer KalayTolbiDocks_GetRegions

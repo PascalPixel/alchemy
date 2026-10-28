@@ -34,7 +34,7 @@
 ///   (ValeCave_KiteKeepsAway), so it cannot be reached until Halt stops it.
 ///   A stopped Kite can be talked to
 ///   and joins the party (ValeCave_TalkToKite), setting FLAG_KITE, which
-///   removes it from the actor templates. The room's chests hold the
+///   removes it from the actor placements. The room's chests hold the
 ///   Halt Gem, which gives Halt, and a Nut. In the holes' part
 ///   (VALE_CAVE_KITE_SOUTH_FROM_WEST to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH) two stacks of crates sink into
@@ -96,7 +96,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// The way in's actor templates (gValeCave_MouthActorTemplates),
+/// The way in's actor placements (gValeCave_MouthActorPlacements),
 /// numbered from ACTOR_FIRST_PLACED: three stacks of crates (drawn as the
 /// crates of the Bilibin Barricade in bilibin.c), then two logs (as in Kolima
 /// Forest), none of which moves.
@@ -112,8 +112,8 @@ enum ValeCaveMouthActorId {
   ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
-/// The second room's actor templates
-/// (gValeCave_KiteActorTemplates), numbered from ACTOR_FIRST_PLACED.
+/// The second room's actor placements
+/// (gValeCave_KiteActorPlacements), numbered from ACTOR_FIRST_PLACED.
 enum ValeCaveKiteActorId {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
   /// ★ Named from the game: "Kite" (MsgDjinnName)
@@ -148,8 +148,8 @@ enum ValeCaveKiteActorId {
   ACTOR_SECOND_STANDING_LOG
 };
 
-/// The third room's actor templates
-/// (gValeCave_LogsActorTemplates), numbered from ACTOR_FIRST_PLACED;
+/// The third room's actor placements
+/// (gValeCave_LogsActorPlacements), numbered from ACTOR_FIRST_PLACED;
 /// its first row places Kite as the second room's does. Its three logs are
 /// pushed, and lie as in Kolima Forest.
 enum ValeCaveLogsActorId {
@@ -309,21 +309,21 @@ const struct SceneExitRegion *ValeCave_GetRegions(void) { return NULL; }
 /// Returns the shared packed exits for all cave rooms.
 const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 
-/// Selects the current room's actor templates: Kite, and the crates and
+/// Selects the current room's actor placements: Kite, and the crates and
 /// logs.
-const struct ActorTemplate *ValeCave_GetActorTemplates(void) {
+const struct ActorPlacement *ValeCave_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
-    return gValeCave_MouthActorTemplates;
+    return gValeCave_MouthActorPlacements;
   }
   if (sceneId == (s32)&SceneId_ValeCaveKite) {
-    return gValeCave_KiteActorTemplates;
+    return gValeCave_KiteActorPlacements;
   }
   if (sceneId == (s32)&SceneId_ValeCaveLogs) {
-    return gValeCave_LogsActorTemplates;
+    return gValeCave_LogsActorPlacements;
   }
-  return gValeCave_MouthActorTemplates;
+  return gValeCave_MouthActorPlacements;
 }
 
 /// In Vale Cave's second room, Reveal ends and the hidden cell is hidden again.
@@ -1135,7 +1135,7 @@ u32 gValeCave_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gValeCave_MouthActorTemplates[] = {
+struct ActorPlacement gValeCave_MouthActorPlacements[] = {
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(232), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
@@ -1149,7 +1149,7 @@ struct ActorTemplate gValeCave_MouthActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gValeCave_KiteActorTemplates[] = {
+struct ActorPlacement gValeCave_KiteActorPlacements[] = {
     { JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
@@ -1161,15 +1161,15 @@ struct ActorTemplate gValeCave_KiteActorTemplates[] = {
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(422), 0, PIXELS(206), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
-        PIXELS(440), 0, PIXELS(206), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(440), 0, PIXELS(206), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(384), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
-        PIXELS(400), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(400), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gValeCave_LogsActorTemplates[] = {
+struct ActorPlacement gValeCave_LogsActorPlacements[] = {
     { JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,

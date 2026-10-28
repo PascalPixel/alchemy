@@ -15,7 +15,7 @@
 ///   onto the World Map, with a Psynergy Stone.
 ///
 /// One exit table serves the three scenes; the other getters choose by
-/// gAdventure.sceneId, and SuhallaGateCheckpoint's actor templates also
+/// gAdventure.sceneId, and SuhallaGateCheckpoint's actor placements also
 /// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its trigger table answers any scene not
 /// otherwise named.
 ///
@@ -80,8 +80,8 @@
 #endif
 
 /// The actors of the gate itself (SuhallaGateCheckpoint), numbered in
-/// the order of gSuhallaGateCheckpointActorTemplates and, after Babi's
-/// audience, of gSuhallaGateCheckpointActorTemplatesAfterAudience.
+/// the order of gSuhallaGateCheckpointActorPlacements and, after Babi's
+/// audience, of gSuhallaGateCheckpointActorPlacementsAfterAudience.
 enum SuhallaGateCheckpointActorId {
   /// The two of Babi's soldiers who keep the passage north, standing before
   /// Babi's audience and lying wounded after it.
@@ -104,7 +104,7 @@ enum SuhallaGateCheckpointActorId {
 };
 
 /// The actors of the second scene (SuhallaGateDew), numbered in the order
-/// of gSuhallaGateDewActorTemplates.
+/// of gSuhallaGateDewActorPlacements.
 enum SuhallaGateDewActorId {
   /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Scene_Initialize gives it.
@@ -144,19 +144,19 @@ const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 
 /// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
 /// beside the vanishing soldier and Iodem; Dew and the second scene's sprouts.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_SuhallaGateDew) {
-    return gSuhallaGateDewActorTemplates;
+    return gSuhallaGateDewActorPlacements;
   }
   if (sceneId == (s32)&SceneId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-      return gSuhallaGateCheckpointActorTemplatesAfterAudience;
+      return gSuhallaGateCheckpointActorPlacementsAfterAudience;
     }
-    return gSuhallaGateCheckpointActorTemplates;
+    return gSuhallaGateCheckpointActorPlacements;
   }
-  return gSuhallaGateActorTemplatesOther;
+  return gSuhallaGateActorPlacementsOther;
 }
 
 /// The events of Suhalla Gate's second scene (SceneId_SuhallaGateDew), of
@@ -603,12 +603,12 @@ u32 gSuhallaGateExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gSuhallaGateActorTemplatesOther[] = {
+struct ActorPlacement gSuhallaGateActorPlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gSuhallaGateDewActorTemplates[] = {
+struct ActorPlacement gSuhallaGateDewActorPlacements[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(264), 0, PIXELS(400), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -624,7 +624,7 @@ struct ActorTemplate gSuhallaGateDewActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSuhallaGateCheckpointActorTemplates[] = {
+struct ActorPlacement gSuhallaGateCheckpointActorPlacements[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(120), 0, PIXELS(384), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -632,7 +632,7 @@ struct ActorTemplate gSuhallaGateCheckpointActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSuhallaGateCheckpointActorTemplatesAfterAudience[] = {
+struct ActorPlacement gSuhallaGateCheckpointActorPlacementsAfterAudience[] = {
 #if !TBS_PATCH_3
     { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
         PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },

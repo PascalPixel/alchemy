@@ -7,12 +7,12 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gCottageRoomsD_CookScript[];
@@ -20,9 +20,9 @@ extern struct SceneEntrance gAltin_NoEntrances[];
 extern struct SceneEntrance gAltin_Entrances[];
 extern struct SceneEntrance gCottageRoomsD_Entrances[];
 extern u32 gAltin_Exits[];
-extern struct ActorTemplate gAltin_NoActorTemplates[];
-extern struct ActorTemplate gAltin_ActorTemplates[];
-extern struct ActorTemplate gCottageRoomsD_ActorTemplates[];
+extern struct ActorPlacement gAltin_NoActorPlacements[];
+extern struct ActorPlacement gAltin_ActorPlacements[];
+extern struct ActorPlacement gCottageRoomsD_ActorPlacements[];
 extern struct Trigger gAltin_NoTriggers[];
 extern struct Trigger gAltin_Triggers[];
 extern struct Trigger gCottageRoomsD_Triggers[];

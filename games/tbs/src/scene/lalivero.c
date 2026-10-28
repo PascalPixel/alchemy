@@ -1,6 +1,6 @@
 /// @file Lalivero, the town by Babi Lighthouse, one scene with the area name
 /// Lalivero: SceneId_Lalivero. Its buildings are lalivero_interiors.c. The
-/// story brings the party here twice, and Lalivero_GetActorTemplates and
+/// story brings the party here twice, and Lalivero_GetActorPlacements and
 /// Lalivero_GetTriggers choose the town's people and triggers for each visit by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
@@ -64,10 +64,10 @@ static void Lalivero_TalkAboutIdejimaShip(void);
 enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 
 /// The placed actors, numbered in the order of
-/// gLaliveroActorTemplates. gLaliveroActorTemplatesAfterLighthouse,
+/// gLaliveroActorPlacements. gLaliveroActorPlacementsAfterLighthouse,
 /// for the later visit, places the same people in the same rows, then the sign
 /// and the Black Orb; its rows for Garet, Ivan and Mia take their own actor ids
-/// (Event_SpawnActorTemplates).
+/// (Event_SpawnActorPlacements).
 enum LaliveroActorId {
   /// Tolbi's soldiers, lying beaten in the street on the first visit. "Uhhnn...
   /// We were taken by surprise..."; later "Ha ha! I thought they had done me in
@@ -175,11 +175,11 @@ const u32 *Lalivero_GetExits(void) { return gLaliveroExits; }
 
 /// The townsfolk, who stand differently once the party is back from Venus
 /// Lighthouse.
-const struct ActorTemplate *Lalivero_GetActorTemplates(void) {
+const struct ActorPlacement *Lalivero_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-    return gLaliveroActorTemplatesAfterLighthouse;
+    return gLaliveroActorPlacementsAfterLighthouse;
   }
-  return gLaliveroActorTemplates;
+  return gLaliveroActorPlacements;
 }
 
 /// Lalivero, the first visit: the young man mourning Sheba stops sobbing to say
@@ -1014,7 +1014,7 @@ u32 gLaliveroExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gLaliveroActorTemplates[] = {
+struct ActorPlacement gLaliveroActorPlacements[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(224), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1050,7 +1050,7 @@ struct ActorTemplate gLaliveroActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLaliveroActorTemplatesAfterLighthouse[] = {
+struct ActorPlacement gLaliveroActorPlacementsAfterLighthouse[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(216), 0, PIXELS(376), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

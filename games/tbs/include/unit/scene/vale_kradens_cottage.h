@@ -7,7 +7,7 @@
 const struct SceneEntrance *ValeKradensCottage_GetEntrances(void);
 const struct SceneExitRegion *ValeKradensCottage_GetRegions(void);
 const u32 *ValeKradensCottage_GetExits(void);
-const struct ActorTemplate *ValeKradensCottage_GetActorTemplates(void);
+const struct ActorPlacement *ValeKradensCottage_GetActorPlacements(void);
 const struct Trigger *ValeKradensCottage_GetTriggers(void);
 s32 ValeKradensCottage_Initialize(void);
 extern s32 gValeKradensCottage_RockslideSurvivorEscapeActions[];
@@ -15,7 +15,7 @@ extern s32 gValeKradensCottage_RockslideSurvivorSquashes[];
 extern s32 gValeKradensCottage_FaceTargetActions[];
 extern struct SceneEntrance gValeKradensCottage_Entrances[];
 extern u32 gValeKradensCottage_Exits[];
-extern struct ActorTemplate gValeKradensCottage_ActorTemplates[];
+extern struct ActorPlacement gValeKradensCottage_ActorPlacements[];
 extern struct Trigger gValeKradensCottage_Triggers[];
 extern struct Trigger gValeKradensCottage_StormTriggers[];
 extern struct Trigger gValeKradensCottage_TriggersAfterKalay[];

@@ -49,7 +49,7 @@
 #include "flags.h"
 
 /// The actors of the houses, shops and inn, numbered by the rows of
-/// gLacquerRoomsB_ActorTemplates. Each villager is named by what they
+/// gLacquerRoomsB_ActorPlacements. Each villager is named by what they
 /// talk of before Xian hears of Hsu.
 enum LacquerRoomsBActorId {
   /// A man with a topknot, in the room at LACQUER_ROOMS_B_HOUSE.
@@ -144,12 +144,12 @@ const u32 *LacquerRoomsB_GetExits(void) { return gLacquerRoomsB_Exits; }
 /// other room shares one table, whose condition 0 Scene_AssignViewFlags
 /// replaces with whether each actor stands inside the view bounds of the
 /// room entered.
-const struct ActorTemplate *LacquerRoomsB_GetActorTemplates(void) {
+const struct ActorPlacement *LacquerRoomsB_GetActorPlacements(void) {
   if (gAdventure.entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
-    return gLacquerRoomsB_SchoolRoomActorTemplates;
+    return gLacquerRoomsB_SchoolRoomActorPlacements;
   }
-  Scene_AssignViewFlags(gLacquerRoomsB_ActorTemplates);
-  return gLacquerRoomsB_ActorTemplates;
+  Scene_AssignViewFlags(gLacquerRoomsB_ActorPlacements);
+  return gLacquerRoomsB_ActorPlacements;
 }
 
 /// Reads the leader's facing before a conversation changes actor state.
@@ -376,7 +376,7 @@ u32 gLacquerRoomsB_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gLacquerRoomsB_ActorTemplates[] = {
+struct ActorPlacement gLacquerRoomsB_ActorPlacements[] = {
     { SPRITE_MAN_WITH_TOPKNOT, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(144), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_APRON, 0x0, MOVEMENT_TYPE_STAND,
@@ -404,7 +404,7 @@ struct ActorTemplate gLacquerRoomsB_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLacquerRoomsB_SchoolRoomActorTemplates[] = {
+struct ActorPlacement gLacquerRoomsB_SchoolRoomActorPlacements[] = {
     { SPRITE_FEH, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
         PIXELS(224), 0, PIXELS(656), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_FEIZHI, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,

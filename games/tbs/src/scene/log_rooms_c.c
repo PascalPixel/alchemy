@@ -8,7 +8,7 @@
 /// Like the people outside, the fifteen residents (ACTOR_FIRST_VILLAGER to
 /// ACTOR_LAST_VILLAGER) were turned into trees when the curse fell, and until
 /// it is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED)
-/// LogRoomsC_GetActorTemplates gives them tree sprites that stand
+/// LogRoomsC_GetActorPlacements gives them tree sprites that stand
 /// still: they answer only Mind Read, each with the thoughts of someone stuck
 /// as a tree
 /// ("Who caused all this? Someone must have tried to cut down Tret!"). Once the
@@ -62,7 +62,7 @@ enum {
   KOLIMA_INN = 3
 };
 
-/// The residents, numbering gLogRoomsC_ActorTemplates' rows from
+/// The residents, numbering gLogRoomsC_ActorPlacements' rows from
 /// ACTOR_FIRST_PLACED. Their notes quote what they say once the curse is
 /// lifted.
 enum KolimaInteriorActorId {
@@ -136,7 +136,7 @@ enum KolimaInteriorActorId {
 
 /// Replaces the cursed residents' sprites and disables their movement and
 /// turning.
-static void LogRoomsC_TurnVillagersIntoTrees(struct ActorTemplate *template) {
+static void LogRoomsC_TurnVillagersIntoTrees(struct ActorPlacement *placement) {
   u32 villagerIndex;
   u8 talkFacing;
   s32 behavior;
@@ -149,16 +149,16 @@ static void LogRoomsC_TurnVillagersIntoTrees(struct ActorTemplate *template) {
   treeSprite = SPRITE_TREE;
   alternateTreeSprite = SPRITE_SMALL_TREE;
   do {
-    template->talkFacing = talkFacing;
-    template->movement = behavior;
-    template->sprite = treeSprite;
+    placement->talkFacing = talkFacing;
+    placement->movement = behavior;
+    placement->sprite = treeSprite;
     // The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the small tree.
     if (villagerIndex == ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
         villagerIndex == ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
-      template->sprite = alternateTreeSprite;
+      placement->sprite = alternateTreeSprite;
     }
     villagerIndex++;
-    template++;
+    placement++;
   } while (villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
 }
 
@@ -172,15 +172,15 @@ const struct SceneExitRegion *LogRoomsC_GetRegions(void) { return NULL; }
 const u32 *LogRoomsC_GetExits(void) { return gLogRoomsC_Exits; }
 
 /// Kolima's residents, turned into trees first while the curse lasts.
-const struct ActorTemplate *LogRoomsC_GetActorTemplates(void) {
-  struct ActorTemplate *templates;
+const struct ActorPlacement *LogRoomsC_GetActorPlacements(void) {
+  struct ActorPlacement *placements;
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    LogRoomsC_TurnVillagersIntoTrees(gLogRoomsC_ActorTemplates);
+    LogRoomsC_TurnVillagersIntoTrees(gLogRoomsC_ActorPlacements);
   }
-  templates = gLogRoomsC_ActorTemplates;
-  Scene_AssignViewFlags(templates);
-  return templates;
+  placements = gLogRoomsC_ActorPlacements;
+  Scene_AssignViewFlags(placements);
+  return placements;
 }
 
 /// Kolima's weapon shop, once the curse is lifted: spoken to across the counter
@@ -379,7 +379,7 @@ u32 gLogRoomsC_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gLogRoomsC_ActorTemplates[] = {
+struct ActorPlacement gLogRoomsC_ActorPlacements[] = {
     { SPRITE_OLD_MAN_WITH_CANE, 0, MOVEMENT_TYPE_WANDER,
         PIXELS(166), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_WOMAN, 0, MOVEMENT_TYPE_STAND,

@@ -1,7 +1,7 @@
 /// @file
 /// The Sanctum of Vale and of four towns on the party's way, which holds six
 /// places in one scene (SceneId_Sanctum): the entrance the party arrives
-/// at decides which, and Sanctum_GetActorTemplates and Sanctum_GetTriggers
+/// at decides which, and Sanctum_GetActorPlacements and Sanctum_GetTriggers
 /// choose that place's tables by it. Spoken to from the front, each place's
 /// healer opens the Sanctum's services (Sanctum_Run); from any other side the
 /// healer talks. Each place's door leads back out to its own town.
@@ -113,7 +113,7 @@
 // Sanctum.
 
 /// The placed actors, numbering the rows of the table
-/// Sanctum_GetActorTemplates returns for the entrance; the
+/// Sanctum_GetActorPlacements returns for the entrance; the
 /// party's rows take their own ids. Every place's first row is its healer.
 enum SanctumActorId {
   /// The place's healer: the Great Healer in Vale Sanctum, its own healer
@@ -122,8 +122,8 @@ enum SanctumActorId {
   /// ★ Named from the game: "What is it, Great Healer?"
   /// (MsgSanctumWeHadIdeaTrueSanctum)
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
-  // Vale Sanctum (gSanctum_ValeActorTemplates, and
-  // gSanctum_QuestActorTemplates at the
+  // Vale Sanctum (gSanctum_ValeActorPlacements, and
+  // gSanctum_QuestActorPlacements at the
   // quest).
   /// The western of Vale Sanctum's two other healers, men with long brown hair
   /// and beards in long robes, as Mind Read hears a villager in
@@ -138,7 +138,7 @@ enum SanctumActorId {
   /// ★ Named from the game: "should only be used for"
   /// (MsgSanctumPsynergyIsAPowerThatShould)
   ACTOR_EAST_HEALER,
-  // The quest (gSanctum_QuestActorTemplates).
+  // The quest (gSanctum_QuestActorPlacements).
   /// Isaac's mother, a woman with fair hair tied up.
   /// ★ Named from the game: "Please, call me Dora."
   /// (MsgValeAsStubbornAsYourFather)
@@ -157,7 +157,7 @@ enum SanctumActorId {
   /// beside him while his Psynergy shows, healer-afterimages.gif (its render)
   ACTOR_HEALER_AFTERIMAGE,
   // Vault Sanctum and Bilibin Sanctum
-  // (gSanctum_VaultBilibinActorTemplates).
+  // (gSanctum_VaultBilibinActorPlacements).
   /// The other person of the Sanctum, in the western healer's sprite (a man
   /// with long brown hair and a beard in a long robe), who wanders, and who
   /// speaks of the healer as someone else and of "our teachings" and "our
@@ -224,28 +224,28 @@ const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 /// SANCTUM_FROM_LOG_ROOMS_A and SANCTUM_FROM_BILIBIN), the healer alone in
 /// Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and SANCTUM_FROM_XIAN),
 /// and nobody otherwise.
-const struct ActorTemplate *Sanctum_GetActorTemplates(void) {
+const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
   switch (gAdventure.entrance) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
-    return gSanctum_ValeActorTemplates;
+    return gSanctum_ValeActorPlacements;
 
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_LOG_ROOMS_A:
   case SANCTUM_FROM_BILIBIN:
-    return gSanctum_VaultBilibinActorTemplates;
+    return gSanctum_VaultBilibinActorPlacements;
 
   case SANCTUM_FROM_VALE_ERUPTION:
   case SANCTUM_FROM_QUEST_RESTART:
-    return gSanctum_QuestActorTemplates;
+    return gSanctum_QuestActorPlacements;
 
   case SANCTUM_FROM_ALTIN:
   case SANCTUM_FROM_XIAN:
-    return gSanctum_AltinXianActorTemplates;
+    return gSanctum_AltinXianActorPlacements;
 
   default:
-    return gSanctum_NoActorTemplates;
+    return gSanctum_NoActorPlacements;
   }
 }
 
@@ -405,7 +405,7 @@ static void Sanctum_ReconsiderQuest(void) {
 static void Sanctum_AskAboutNewAdepts(void) {
   Event_Start();
 #if TBS_PATCH_1
-  Event_CallWithLastActiveActorId(gSanctum_IvanActorTemplate);
+  Event_CallWithLastActiveActorId(gSanctum_IvanActorPlacement);
   WaitFrames(1);
 #endif
   Event_SetMessageId(MsgSanctumIsaacYourNewFriendsAdepts);
@@ -2312,11 +2312,11 @@ u32 gSanctum_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gSanctum_NoActorTemplates[] = {
+struct ActorPlacement gSanctum_NoActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSanctum_ValeActorTemplates[] = {
+struct ActorPlacement gSanctum_ValeActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2331,14 +2331,14 @@ struct ActorTemplate gSanctum_ValeActorTemplates[] = {
 };
 
 #if TBS_PATCH_1
-struct ActorTemplate gSanctum_IvanActorTemplate[] = {
+struct ActorPlacement gSanctum_IvanActorPlacement[] = {
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 #endif
 
-struct ActorTemplate gSanctum_VaultBilibinActorTemplates[] = {
+struct ActorPlacement gSanctum_VaultBilibinActorPlacements[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -2348,7 +2348,7 @@ struct ActorTemplate gSanctum_VaultBilibinActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSanctum_QuestActorTemplates[] = {
+struct ActorPlacement gSanctum_QuestActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(208), 0, PIXELS(168), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2368,7 +2368,7 @@ struct ActorTemplate gSanctum_QuestActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSanctum_AltinXianActorTemplates[] = {
+struct ActorPlacement gSanctum_AltinXianActorPlacements[] = {
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(132), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },

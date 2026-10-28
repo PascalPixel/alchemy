@@ -7,7 +7,7 @@
 
 struct Sprite;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct Actor;
 
 /// A step of the current field Psynergy (FieldPsynergy_RunHandler).
@@ -58,8 +58,8 @@ void Event_Start(void);
 void Event_End(void);
 void Event_NoOpUpdateA(void);
 void Event_NoOpUpdate(void);
-void Event_RunActorUpdateAndWait(struct ActorTemplate *table);
-void Event_CallWithLastActiveActorId(struct ActorTemplate *table);
+void Event_RunActorUpdateAndWait(struct ActorPlacement *table);
+void Event_CallWithLastActiveActorId(struct ActorPlacement *table);
 void Event_SetTriggers(const struct Trigger *triggers);
 void Event_PrepareActorAndApplyValue(s32 unit, s32 announce);
 void Event_PrepareTwoActorsAndApply(s32 first, s32 second);

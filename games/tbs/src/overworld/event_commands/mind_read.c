@@ -113,12 +113,12 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       // From 2 pixels below each one's sprite height (its metadata's boxX).
       from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)Scene_FindActorTemplate(work->sourceId)->sprite);
+          (s16)Scene_FindActorPlacement(work->sourceId)->sprite);
       from.y = caster->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       from.z = caster->z.fixed;
       to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)Scene_FindActorTemplate(work->targetId)->sprite);
+          (s16)Scene_FindActorPlacement(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
       particle = Actor_CreateFar(281, to.x, to.y, to.z);

@@ -2,6 +2,6 @@
 	overlay_veneer KalayInteriors_Initialize
 	overlay_veneer KalayInteriors_GetEntrances
 	overlay_veneer KalayInteriors_GetExits
-	overlay_veneer KalayInteriors_GetActorTemplates
+	overlay_veneer KalayInteriors_GetActorPlacements
 	overlay_veneer KalayInteriors_GetTriggers
 	overlay_veneer KalayInteriors_GetRegions

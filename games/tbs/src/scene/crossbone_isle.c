@@ -102,7 +102,7 @@
   (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
 
 /// Crossbone Isle's placed actors, numbered in the order of
-/// gCrossboneIsle_IsleActorTemplates.
+/// gCrossboneIsle_IsleActorPlacements.
 enum CrossboneIsleActorId {
   /// The Nut that circles over the island until Catch takes it
   /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
@@ -140,7 +140,7 @@ enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
 
 /// The twelve floating logs of the ninth floor's side room
 /// (SceneId_CrossboneIsleFloatingLogs), numbered in the order of
-/// gCrossboneIsle_FloatingLogsActorTemplates, from the first to the
+/// gCrossboneIsle_FloatingLogsActorPlacements, from the first to the
 /// twelfth, with their shapes: a log three cells wide slides north and south,
 /// and one three cells tall slides east and west.
 enum CrossboneIsleFloatingLogsActorId {
@@ -185,7 +185,7 @@ enum CrossboneIsleFloatingLogsActorId {
 };
 
 /// The corridor rooms' one placed actor
-/// (gCrossboneIsle_CorridorActorTemplates).
+/// (gCrossboneIsle_CorridorActorPlacements).
 enum CrossboneIsleCorridorActorId {
   /// The pillar between the doors that sinks into the floor at column 40.
   /// ★ Named from what the player sees: a stone pillar between the two doors in
@@ -260,20 +260,20 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gCrossboneIsleExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsle) {
-    return gCrossboneIsle_IsleActorTemplates;
+    return gCrossboneIsle_IsleActorPlacements;
   }
   if (sceneId == (s32)&SceneId_CrossboneIsleFloatingLogs) {
-    return gCrossboneIsle_FloatingLogsActorTemplates;
+    return gCrossboneIsle_FloatingLogsActorPlacements;
   }
   if (sceneId <= (s32)&SceneId_CrossboneIsleNinthFloor &&
       sceneId >= (s32)&SceneId_CrossboneIsleFirstFloor) {
-    return gCrossboneIsle_CorridorActorTemplates;
+    return gCrossboneIsle_CorridorActorPlacements;
   }
-  return gCrossboneIsle_NoActorTemplates;
+  return gCrossboneIsle_NoActorPlacements;
 }
 
 #include "shared/effect_advance.h"
@@ -629,7 +629,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
 }
 
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
-/// party climb at (304, 368), but the actor templates put that plant at
+/// party climb at (304, 368), but the actor placements put that plant at
 /// the map's origin, off stage in the forest's corner, where no cast can reach
 /// it and the player never sees it (its render).
 static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
@@ -701,7 +701,7 @@ static void CrossboneIsle_BlowAwayFirstIvy(void) {
 }
 
 /// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for
-/// good, but the actor templates put that ivy at the map's origin, off
+/// good, but the actor placements put that ivy at the map's origin, off
 /// stage, where no cast can reach it and the player never sees it (its render).
 static void CrossboneIsle_UnusedBlowAwaySecondIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
@@ -713,7 +713,7 @@ static void CrossboneIsle_BlowAwayThirdIvy(void) {
 }
 
 /// Unused: Whirlwind on Crossbone Isle's fourth ivy would blow it away for
-/// good, but the actor templates place only three, so no actor
+/// good, but the actor placements set only three, so no actor
 /// answers its trigger.
 static void CrossboneIsle_UnusedBlowAwayFourthIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
@@ -2220,11 +2220,11 @@ u32 gCrossboneIsleExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gCrossboneIsle_NoActorTemplates[] = {
+struct ActorPlacement gCrossboneIsle_NoActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsle_IsleActorTemplates[] = {
+struct ActorPlacement gCrossboneIsle_IsleActorPlacements[] = {
     { SPRITE_BLANK, FLAG_CROSSBONE_ISLE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2248,11 +2248,11 @@ struct ActorTemplate gCrossboneIsle_IsleActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsle_FloatingLogsActorTemplates[] = {
+struct ActorPlacement gCrossboneIsle_FloatingLogsActorPlacements[] = {
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(408), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(168), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(520), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2262,11 +2262,11 @@ struct ActorTemplate gCrossboneIsle_FloatingLogsActorTemplates[] = {
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(216), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(392), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(216), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(216), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(72), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2276,7 +2276,7 @@ struct ActorTemplate gCrossboneIsle_FloatingLogsActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsle_CorridorActorTemplates[] = {
+struct ActorPlacement gCrossboneIsle_CorridorActorPlacements[] = {
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(632), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },

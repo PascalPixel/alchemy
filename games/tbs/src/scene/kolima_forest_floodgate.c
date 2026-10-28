@@ -61,7 +61,7 @@
 #include "item_ids.h"
 #include "heap.h"
 
-/// The actors, numbering gKolimaForestFloodgateActorTemplates'
+/// The actors, numbering gKolimaForestFloodgateActorPlacements'
 /// rows from ACTOR_FIRST_PLACED.
 enum {
   /// A short log that slides between x 72 and x 104.
@@ -105,8 +105,8 @@ const u32 *KolimaForestFloodgate_GetExits(void) {
 }
 
 /// The short log, the switch and the sign.
-const struct ActorTemplate *KolimaForestFloodgate_GetActorTemplates(void) {
-  return gKolimaForestFloodgateActorTemplates;
+const struct ActorPlacement *KolimaForestFloodgate_GetActorPlacements(void) {
+  return gKolimaForestFloodgateActorPlacements;
 }
 
 /// The logs, the switch, the sign, the jump and the chest.
@@ -648,7 +648,7 @@ u32 gKolimaForestFloodgateExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gKolimaForestFloodgateActorTemplates[] = {
+struct ActorPlacement gKolimaForestFloodgateActorPlacements[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(104), 0, PIXELS(176), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

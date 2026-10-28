@@ -18,9 +18,9 @@
 ///   statues of a woman that open the door to Venus Lighthouse once all five
 ///   stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
-/// The getters choose by gAdventure.sceneId; the actor templates of
+/// The getters choose by gAdventure.sceneId; the actor placements of
 /// TunnelRuinsLadyStatues answer any other scene number, and
-/// TunnelRuins_GetActorTemplates prepares each table's actors to
+/// TunnelRuins_GetActorPlacements prepares each table's actors to
 /// appear only in view. TunnelRuins_Initialize works room by room, one case for
 /// each room's entrances: it puts each puzzle back as it was left,
 /// redraws the first room and the walkways for the path the statue in Venus
@@ -98,7 +98,7 @@
 #include "item_ids.h"
 
 /// The actors of TunnelRuinsGreatStatue, in the order of its
-/// actor templates: two pairs of pillars to push or Move, three small pillars,
+/// actor placements: two pairs of pillars to push or Move, three small pillars,
 /// three patches of ivy for Whirlwind, two pillars that sink into the floor,
 /// and two puddles for Frost, both placed with the first sinking pillar.
 enum {
@@ -555,13 +555,13 @@ const u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
 /// The actors of TunnelRuinsGreatStatue or of TunnelRuinsLadyStatues
 /// (the enums above), each prepared to appear only when it lies in the view.
-const struct ActorTemplate *TunnelRuins_GetActorTemplates(void) {
-  struct ActorTemplate *table;
+const struct ActorPlacement *TunnelRuins_GetActorPlacements(void) {
+  struct ActorPlacement *table;
 
   if (gAdventure.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
-    table = gTunnelRuinsGreatStatueActorTemplates;
+    table = gTunnelRuinsGreatStatueActorPlacements;
   } else {
-    table = gTunnelRuinsActorTemplatesOther;
+    table = gTunnelRuinsActorPlacementsOther;
   }
   Scene_AssignViewFlags(table);
   return table;
@@ -2110,21 +2110,21 @@ u32 gTunnelRuinsExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gTunnelRuinsGreatStatueActorTemplates[] = {
+struct ActorPlacement gTunnelRuinsGreatStatueActorPlacements[] = {
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(152), 0, PIXELS(616),
      FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(168), 0, PIXELS(616),
-     FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(520), 0, PIXELS(488),
      FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_CAPPED_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(536), 0, PIXELS(488),
-     FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_SMALL_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(488), 0, PIXELS(840),
      FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_SMALL_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(520), 0, PIXELS(840),
-     FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_SMALL_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(424), 0, PIXELS(792),
-     FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_IVY, 0, (s32)gTunnelRuins_StretchScript, PIXELS(416), 0,
      PIXELS(794), FACING_NORTH, TALK_FACING_PARTY, 0},
     {SPRITE_IVY, 0, (s32)gTunnelRuins_StretchScript, PIXELS(432), 0,
@@ -2148,7 +2148,7 @@ struct ActorTemplate gTunnelRuinsGreatStatueActorTemplates[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorTemplate gTunnelRuinsActorTemplatesOther[] = {
+struct ActorPlacement gTunnelRuinsActorPlacementsOther[] = {
     {SPRITE_SINKING_PILLAR, 0, MOVEMENT_TYPE_STAND, PIXELS(392), 0, PIXELS(168),
      FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_PUDDLE, 0, MOVEMENT_TYPE_STAND, PIXELS(392), 0, PIXELS(248),
@@ -2157,13 +2157,13 @@ struct ActorTemplate gTunnelRuinsActorTemplatesOther[] = {
      PIXELS(152), FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_BALANCE_PLATFORM, 0, MOVEMENT_TYPE_RESET_ACTION, PIXELS(200), 0,
      PIXELS(152), FACING_NORTH, TALK_FACING_KEEP,
-     ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CARRY_STONE, 0, MOVEMENT_TYPE_STAND, PIXELS(152), 0, PIXELS(136),
      FACING_NORTH, TALK_FACING_KEEP, 0},
     {SPRITE_CARRY_STONE, 0, MOVEMENT_TYPE_STAND, PIXELS(184), 0, PIXELS(136),
-     FACING_NORTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_CARRY_STONE, 0, MOVEMENT_TYPE_STAND, PIXELS(216), 0, PIXELS(136),
-     FACING_NORTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+     FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(136), 0, PIXELS(792),
      FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_STATUE, 0, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(696),

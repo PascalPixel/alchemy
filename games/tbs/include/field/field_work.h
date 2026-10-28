@@ -9,7 +9,7 @@
 #include "edition.h"
 #include "static_assert.h"
 
-struct ActorTemplate;
+struct ActorPlacement;
 struct Trigger;
 struct Actor;
 struct Actor;
@@ -52,9 +52,9 @@ enum FieldRaisedTrigger {
 /// gFieldWork. The twelve requests from stepTrigger to raisedTrigger are
 /// handled by the scene sequence.
 struct FieldWork {
-  /// The actor template tables placed so far, recorded by
-  /// Event_SpawnActorTemplates.
-  struct ActorTemplate *tables[4];
+  /// The actor placement tables placed so far, recorded by
+  /// Event_SpawnActorPlacements.
+  struct ActorPlacement *tables[4];
   const struct Trigger *triggers; ///< the scene's trigger table
   /// The actors by actor id: 0 to 7 the party's characters, 8 on the
   /// placed actors.
@@ -116,10 +116,10 @@ struct FieldWork {
   s32 speaker;                ///< the actor speaking; the leader at each event
   s32 messageWindow;          ///< the open message window, 0 for none
   s32 sideWindow;             ///< the speaker's portrait window
-  /// The leader's two-row actor template table (its row and an end
+  /// The leader's two-row actor placement table (its row and an end
   /// row), which Actor_ResetForLeader builds through its offset.
-  u8 leaderTemplates[0x30];
-  u8 unusedAfterTemplates[0xa86]; ///< no code names it
+  u8 leaderPlacements[0x30];
+  u8 unusedAfterPlacements[0xa86]; ///< no code names it
   /// Set while a raised or step trigger runs; Event_Start then resets the
   /// effect counter.
   u16 busy;

@@ -103,7 +103,7 @@ static void CrossboneIsleKeys_InitializeStatues(void);
 static void CrossboneIsleKeys_InitializeBane(void);
 
 /// CrossboneIsleKeys's placed actors, numbered in the order of
-/// gCrossboneIsleKeysRoomActorTemplates: the keys, drawn as their item
+/// gCrossboneIsleKeysRoomActorPlacements: the keys, drawn as their item
 /// icons (Colosso_ShowItemIcon) until Catch takes them.
 enum CrossboneIsleKeysActorId {
   /// ★ Named from the game: "Blue Key" (MsgItemName), a key icon lying among
@@ -121,7 +121,7 @@ enum CrossboneIsleKeysActorId {
 };
 
 /// CrossboneIsleStatues's placed actors, numbered in the order of
-/// gCrossboneIsleStatuesActorTemplates: the five statues that pursue the
+/// gCrossboneIsleStatuesActorPlacements: the five statues that pursue the
 /// leader, all of one sprite, each waiting at its home for the leader to cross
 /// its stretch of the room.
 enum CrossboneIsleStatuesActorId {
@@ -152,7 +152,7 @@ enum CrossboneIsleStatuesRaisedTrigger {
 };
 
 /// CrossboneIsleBane's placed actors, numbered in the order of
-/// gCrossboneIsleBaneActorTemplates.
+/// gCrossboneIsleBaneActorPlacements.
 enum CrossboneIsleBaneActorId {
   /// The five pillars, in Goma Cave's pillar sprite, pushed by walking into
   /// them or with Move.
@@ -251,19 +251,19 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gCrossboneIsleKeysExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 selector = gAdventure.sceneId;
 
   if (selector == (s32)&SceneId_CrossboneIsleKeys) {
-    return gCrossboneIsleKeysRoomActorTemplates;
+    return gCrossboneIsleKeysRoomActorPlacements;
   }
   if (selector == (s32)&SceneId_CrossboneIsleStatues) {
-    return gCrossboneIsleStatuesActorTemplates;
+    return gCrossboneIsleStatuesActorPlacements;
   }
   if (selector == (s32)&SceneId_CrossboneIsleBane) {
-    return gCrossboneIsleBaneActorTemplates;
+    return gCrossboneIsleBaneActorPlacements;
   }
-  return gCrossboneIsleKeysActorTemplatesOther;
+  return gCrossboneIsleKeysActorPlacementsOther;
 }
 
 /// Halt on a pursuer in CrossboneIsleStatues: nothing beyond the
@@ -1559,11 +1559,11 @@ u32 gCrossboneIsleKeysExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gCrossboneIsleKeysActorTemplatesOther[] = {
+struct ActorPlacement gCrossboneIsleKeysActorPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsleKeysRoomActorTemplates[] = {
+struct ActorPlacement gCrossboneIsleKeysRoomActorPlacements[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(80), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1577,7 +1577,7 @@ struct ActorTemplate gCrossboneIsleKeysRoomActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsleStatuesActorTemplates[] = {
+struct ActorPlacement gCrossboneIsleStatuesActorPlacements[] = {
     { SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1591,17 +1591,17 @@ struct ActorTemplate gCrossboneIsleStatuesActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gCrossboneIsleBaneActorTemplates[] = {
+struct ActorPlacement gCrossboneIsleBaneActorPlacements[] = {
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(616), 0, PIXELS(680), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(728), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(728), 0, PIXELS(744), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(600), 0, PIXELS(856), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(600), 0, PIXELS(856), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(824), 0, PIXELS(888), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(824), 0, PIXELS(888), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(840), 0, PIXELS(888), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(840), 0, PIXELS(888), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(888), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

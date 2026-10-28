@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *KolimaForestEntrance_GetEntrances(void);
 const struct SceneExitRegion *KolimaForestEntrance_GetRegions(void);
 const u32 *KolimaForestEntrance_GetExits(void);
-const struct ActorTemplate *KolimaForestEntrance_GetActorTemplates(void);
+const struct ActorPlacement *KolimaForestEntrance_GetActorPlacements(void);
 const struct Trigger *KolimaForestEntrance_GetTriggers(void);
 s32 KolimaForestEntrance_Initialize(void);
 extern s32 gPushedActor_DirectionSteps[];
@@ -28,7 +28,7 @@ extern s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[];
 extern s32 gKolimaForestEntrance_GroundSparkleAction[];
 extern struct SceneEntrance gKolimaForestEntrance_Entrances[];
 extern u32 gKolimaForestEntrance_Exits[];
-extern struct ActorTemplate gKolimaForestEntrance_ActorTemplates[];
+extern struct ActorPlacement gKolimaForestEntrance_ActorPlacements[];
 extern struct Trigger gKolimaForestEntrance_Triggers[];
 extern s32 gKolimaForestEntrance_SparkleScript[];
 extern s32 gKolimaForestEntrance_SparkleBurstScript[];

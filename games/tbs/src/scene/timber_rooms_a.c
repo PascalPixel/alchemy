@@ -11,7 +11,7 @@
 /// - Suhalla Sanctum: behind the village's wide door (SUHALLA_TO_SANCTUM),
 ///   with TIMBER_ROOMS_A_SANCTUM_NORTH as its second entrance.
 ///
-/// The rooms' people and talk come in two sets, each an actor template
+/// The rooms' people and talk come in two sets, each an actor placement
 /// table and a trigger table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. Before
 /// Babi's audience after Colosso the village talks of Lalivero across the Nol
 /// River, out of reach under Tolbi's rule; after it, two of the soldiers who
@@ -50,8 +50,8 @@
 #include "scene.h"
 
 /// The actors, numbering the rows of
-/// gTimberRoomsAActorTemplates and of
-/// gTimberRoomsAActorTemplatesAfterAudience from
+/// gTimberRoomsAActorPlacements and of
+/// gTimberRoomsAActorPlacementsAfterAudience from
 /// ACTOR_FIRST_PLACED; the two tables agree up to ACTOR_HEALER. Where an
 /// actor's talk changes after Babi's audience, the note quotes it
 /// before.
@@ -140,11 +140,11 @@ const u32 *Scene_GetExits(void) { return gTimberRoomsAExits; }
 
 /// Suhalla's people, joined after Babi's audience by Iodem, the wounded
 /// soldiers and the travelers the sandstorms brought.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-    return gTimberRoomsAActorTemplatesAfterAudience;
+    return gTimberRoomsAActorPlacementsAfterAudience;
   }
-  return gTimberRoomsAActorTemplates;
+  return gTimberRoomsAActorPlacements;
 }
 
 /// Suhalla's merchant. Spoken to facing north, across the counter, the
@@ -601,7 +601,7 @@ u32 gTimberRoomsAExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gTimberRoomsAActorTemplates[] = {
+struct ActorPlacement gTimberRoomsAActorPlacements[] = {
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(368), 0, PIXELS(192), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -627,7 +627,7 @@ struct ActorTemplate gTimberRoomsAActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gTimberRoomsAActorTemplatesAfterAudience[] = {
+struct ActorPlacement gTimberRoomsAActorPlacementsAfterAudience[] = {
     { SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(400), 0, PIXELS(184), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

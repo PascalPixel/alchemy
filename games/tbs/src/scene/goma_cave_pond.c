@@ -62,8 +62,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gGomaCavePondExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gGomaCavePondActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gGomaCavePondActorPlacements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gGomaCavePondTriggers; }
@@ -112,7 +112,7 @@ u32 gGomaCavePondExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gGomaCavePondActorTemplates[] = {
+struct ActorPlacement gGomaCavePondActorPlacements[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },

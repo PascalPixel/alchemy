@@ -15,7 +15,7 @@
 ///   reached from Tolbi. During the trials the crowd cannot get in: its people
 ///   talk of the heats and of the Lucky Guess, a bet on which warrior will win
 ///   the finals, and Mind Read hears what they hope for. On the finals day
-///   ColosseumEntrance_GetActorTemplates places a second crowd, with
+///   ColosseumEntrance_GetActorPlacements places a second crowd, with
 ///   Isaac's companions and four of the colosseum's soldiers, and the
 ///   triggers' flag conditions give everyone new lines: the scalpers sell
 ///   seats, and the Lucky Guess man recognizes Isaac and will not let a
@@ -110,10 +110,10 @@ static inline void ColosseumEntrance_Turn(s32 actorId, s32 facing) {
 }
 
 /// The Colosseum Entrance's people, numbered by the rows of
-/// gColosseumEntranceActorTemplates;
-/// gColosseumEntranceActorTemplatesFinalsDay places the same people in
+/// gColosseumEntranceActorPlacements;
+/// gColosseumEntranceActorPlacementsFinalsDay places the same people in
 /// its first nine rows after Isaac's companions, who take their own
-/// actor slots, and gColosseumEntranceActorTemplatesAfterColosso keeps
+/// actor slots, and gColosseumEntranceActorPlacementsAfterColosso keeps
 /// the first two. They are named by what they say during the trials, except
 /// where the finals day says more about who they are.
 enum ColosseumEntranceActorId {
@@ -163,7 +163,7 @@ enum ColosseumEntranceActorId {
   /// (MsgColosseumDoKnowLuckyGuess)
   ACTOR_LUCKY_GUESS_MAN = ACTOR_FIRST_PLACED + 8,
   /// The four soldiers at the gates on the finals day (SPRITE_SOLDIER, as in
-  /// the waiting room), gColosseumEntranceActorTemplatesFinalsDay only.
+  /// the waiting room), gColosseumEntranceActorPlacementsFinalsDay only.
   /// The
   /// first greets Isaac ("Hey, you're Isaac!") and leads the party in.
   /// ★ Named from what the player sees: a soldier in a helmet with a spear,
@@ -172,7 +172,7 @@ enum ColosseumEntranceActorId {
 };
 
 /// The Colosseum's stands, numbered by the rows of
-/// gColosseumStandsActorTemplates.
+/// gColosseumStandsActorPlacements.
 enum ColosseumStandsActorId {
   /// A torch (SPRITE_TORCH).
   /// ★ Named from what the player sees: a torch on its stand (its render)
@@ -208,7 +208,7 @@ enum ColosseumStandsActorId {
 };
 
 /// The Colosseum's trial grounds, numbered by the rows of
-/// gColosseumTrialGroundsActorTemplates.
+/// gColosseumTrialGroundsActorPlacements.
 enum ColosseumTrialActorId {
   /// Six torches (SPRITE_TORCH) around the trial.
   /// ★ Named from what the player sees: six lit torches on stands around the
@@ -250,7 +250,7 @@ enum FlagBearerAnimation {
   FLAG_BEARER_ANIMATION_WHITE_FLAG = 6 ///< raises a white flag: he cleared it
 };
 
-/// The four soldiers of gColosseumSoldiersActorTemplates
+/// The four soldiers of gColosseumSoldiersActorPlacements
 /// (SPRITE_SOLDIER), who brief the party at COLOSSEUM_FROM_COLOSSEUM_ENTRANCE,
 /// congratulate Isaac after his wins and lead him through the passages; Isaac's
 /// companions take their own actor slots.
@@ -266,7 +266,7 @@ enum ColosseumSoldierActorId {
 
 /// The Colosseum's waiting room (Colosseum,
 /// COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST), numbered by the rows of
-/// gColosseumActorTemplatesFromColosseumAzartMatchWest: four soldiers and
+/// gColosseumActorPlacementsFromColosseumAzartMatchWest: four soldiers and
 /// the seven warriors who cleared the trials, as they introduce themselves.
 enum ColosseumWaitingRoomActorId {
   /// Asks whether Isaac is ready for the finals.
@@ -370,18 +370,18 @@ const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 /// party arrives at
 /// (the stands, the trial grounds, the passages, the waiting room or the
 /// soldiers' briefing), at the Colosseum Entrance by how far Colosso has gone.
-const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void) {
-  const struct ActorTemplate *table;
+const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
+  const struct ActorPlacement *table;
 
   if (gAdventure.sceneId == (s32)&SceneId_Colosseum) {
     switch (gAdventure.entrance) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
-      table = gColosseumStandsActorTemplates;
+      table = gColosseumStandsActorPlacements;
       break;
     case COLOSSEUM_FAILED_TRIAL_FROM_STANDS:
     case COLOSSEUM_CLEARED_TRIAL_FROM_STANDS:
-      table = gColosseumTrialGroundsActorTemplates;
+      table = gColosseumTrialGroundsActorPlacements;
       break;
     // XXX (no evidence): what entrances 3 and 8 were made for; no exit
     // or code enters by them, only the debug scene selector can, and 8 takes
@@ -392,29 +392,29 @@ const struct ActorTemplate *ColosseumEntrance_GetActorTemplates(void) {
     case COLOSSEUM_FROM_COLOSSEUM_ENTRANCE:
     case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST:
     case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST:
-      table = gColosseumSoldiersActorTemplates;
+      table = gColosseumSoldiersActorPlacements;
       break;
     case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST:
-      table = gColosseumActorTemplatesFromColosseumAzartMatchWest;
+      table = gColosseumActorPlacementsFromColosseumAzartMatchWest;
       break;
     case COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH:
     case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH:
-      table = gColosseumActorTemplatesFromColosseumNavampaMatch;
+      table = gColosseumActorPlacementsFromColosseumNavampaMatch;
       break;
     default:
-      table = gColosseumActorTemplates;
+      table = gColosseumActorPlacements;
       break;
     }
   } else if (gAdventure.sceneId == (s32)&SceneId_ColosseumEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-      table = gColosseumEntranceActorTemplatesAfterColosso;
+      table = gColosseumEntranceActorPlacementsAfterColosso;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
-      table = gColosseumEntranceActorTemplatesFinalsDay;
+      table = gColosseumEntranceActorPlacementsFinalsDay;
     } else {
-      table = gColosseumEntranceActorTemplates;
+      table = gColosseumEntranceActorPlacements;
     }
   } else {
-    table = gColosseumEntranceActorTemplatesOther;
+    table = gColosseumEntranceActorPlacementsOther;
   }
   return table;
 }
@@ -2204,7 +2204,7 @@ u32 gColosseumEntranceExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gColosseumEntranceActorTemplatesOther[] = {
+struct ActorPlacement gColosseumEntranceActorPlacementsOther[] = {
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2216,11 +2216,11 @@ struct ActorTemplate gColosseumEntranceActorTemplatesOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumStandsActorTemplates[] = {
+struct ActorPlacement gColosseumStandsActorPlacements[] = {
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(496), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(592), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(592), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(408), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc9, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2240,47 +2240,47 @@ struct ActorTemplate gColosseumStandsActorTemplates[] = {
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(208), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(444), 0, PIXELS(72), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(444), 0, PIXELS(72), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(312), 0, PIXELS(224), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(312), 0, PIXELS(224), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(376), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(200), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(280), 0, PIXELS(200), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(376), 0, PIXELS(224), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(376), 0, PIXELS(224), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(168), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(168), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(216), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(280), 0, PIXELS(216), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(428), 0, PIXELS(72), FACING_SOUTHEAST, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(240), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(344), 0, PIXELS(240), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(192), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(192), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(296), 0, PIXELS(200), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(296), 0, PIXELS(200), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(344), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(344), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(608), 0, PIXELS(104), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(608), 0, PIXELS(104), FACING_SOUTHEAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumTrialGroundsActorTemplates[] = {
+struct ActorPlacement gColosseumTrialGroundsActorPlacements[] = {
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(250), 0, PIXELS(846), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(298), 0, PIXELS(912), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(298), 0, PIXELS(912), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(250), 0, PIXELS(974), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(250), 0, PIXELS(974), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(121), 0, PIXELS(974), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(121), 0, PIXELS(974), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(72), 0, PIXELS(912), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(72), 0, PIXELS(912), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(121), 0, PIXELS(846), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(121), 0, PIXELS(846), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(96), 0, PIXELS(900), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2300,7 +2300,7 @@ struct ActorTemplate gColosseumTrialGroundsActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumActorTemplates[] = {
+struct ActorPlacement gColosseumActorPlacements[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(72), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2310,7 +2310,7 @@ struct ActorTemplate gColosseumActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumSoldiersActorTemplates[] = {
+struct ActorPlacement gColosseumSoldiersActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2328,7 +2328,7 @@ struct ActorTemplate gColosseumSoldiersActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumActorTemplatesFromColosseumAzartMatchWest[] = {
+struct ActorPlacement gColosseumActorPlacementsFromColosseumAzartMatchWest[] = {
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(808), 0, PIXELS(72), FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2354,7 +2354,7 @@ struct ActorTemplate gColosseumActorTemplatesFromColosseumAzartMatchWest[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumActorTemplatesFromColosseumNavampaMatch[] = {
+struct ActorPlacement gColosseumActorPlacementsFromColosseumNavampaMatch[] = {
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(536), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2370,7 +2370,7 @@ struct ActorTemplate gColosseumActorTemplatesFromColosseumNavampaMatch[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumEntranceActorTemplates[] = {
+struct ActorPlacement gColosseumEntranceActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(168), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2392,21 +2392,21 @@ struct ActorTemplate gColosseumEntranceActorTemplates[] = {
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(48), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(88), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(88), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(80), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(264), 0, PIXELS(56), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(264), 0, PIXELS(56), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(140), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(280), 0, PIXELS(64), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(280), 0, PIXELS(64), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_GIRL_IN_PINK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(72), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumEntranceActorTemplatesFinalsDay[] = {
+struct ActorPlacement gColosseumEntranceActorPlacementsFinalsDay[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2442,21 +2442,21 @@ struct ActorTemplate gColosseumEntranceActorTemplatesFinalsDay[] = {
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(278), 0, PIXELS(52), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_STOUT_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(70), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(278), 0, PIXELS(70), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(278), 0, PIXELS(88), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(106), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(278), 0, PIXELS(106), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(278), 0, PIXELS(124), FACING_NORTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(278), 0, PIXELS(142), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(278), 0, PIXELS(142), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_GIRL_IN_PINK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(160), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gColosseumEntranceActorTemplatesAfterColosso[] = {
+struct ActorPlacement gColosseumEntranceActorPlacementsAfterColosso[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(80), 0, PIXELS(238), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

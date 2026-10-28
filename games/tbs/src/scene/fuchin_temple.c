@@ -41,7 +41,7 @@
 ///     tree fall from the line, names it Ki (FLAG_FEH_SAW_KI). Moving the tree
 ///     with Move or by hand only sets
 ///     FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL. Once Hsu is known to be
-///     trapped (FLAG_XIAN_HEARD_HSU_TRAPPED), Scene_GetActorTemplates
+///     trapped (FLAG_XIAN_HEARD_HSU_TRAPPED), Scene_GetActorPlacements
 ///     removes the tree and two students. LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN
 ///     leads out into Xian.
 ///   - Lama Temple (by
@@ -99,7 +99,7 @@
 #define FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL FLAG_AREA_TEMP_01
 
 /// The placed actors outside Fuchin Temple (FuchinTempleGrounds),
-/// numbered in the order of gFuchinTempleGroundsActorTemplates.
+/// numbered in the order of gFuchinTempleGroundsActorPlacements.
 enum FuchinTempleOutsideActorId {
   /// A young man from Kolima.
   /// ★ Named from the game: "How did you get here? Is the bridge open again?"
@@ -129,7 +129,7 @@ enum FuchinTempleOutsideActorId {
 
 /// The placed actors inside Fuchin Temple and in Master Feh's school in
 /// Xian (LacquerRoomsA), numbered in the order of
-/// gFuchinTempleActorTemplates: Nyunpa, Feh's students, Feizhi and Feh,
+/// gFuchinTempleActorPlacements: Nyunpa, Feh's students, Feizhi and Feh,
 /// and the training tree.
 enum FuchinTempleInsideActorId {
   /// ★ Named from the game: "I have already heard of your test from Master
@@ -186,7 +186,7 @@ enum FuchinTempleInsideActorId {
 /// The placed actors in Master Hama's room in Lama Temple
 /// (LacquerRoomsA by
 /// LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE), numbered in the order
-/// of gFuchinTempleActorTemplatesFromLamaTemple; Garet, Ivan and Mia,
+/// of gFuchinTempleActorPlacementsFromLamaTemple; Garet, Ivan and Mia,
 /// placed first, keep their own slots.
 enum HamasRoomActorId {
   /// ★ Named from the game: "Master Hama is meditating."
@@ -275,32 +275,33 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 
 /// Selects the room's actors and applies the post-lesson actor
-/// template changes.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+/// placement changes.
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_FuchinTempleGrounds) {
-    return gFuchinTempleGroundsActorTemplates;
+    return gFuchinTempleGroundsActorPlacements;
   }
   if (gAdventure.entrance == LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
-    return gFuchinTempleActorTemplatesFromLamaTemple;
+    return gFuchinTempleActorPlacementsFromLamaTemple;
   }
   // Once Hsu is known to be trapped, the tree and two students are gone, and
   // another student stands elsewhere.
   if (Event_GetFlag(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
-    gFuchinTempleActorTemplates[ACTOR_PROUD_STUDENT - ACTOR_FIRST_PLACED]
+    gFuchinTempleActorPlacements[ACTOR_PROUD_STUDENT - ACTOR_FIRST_PLACED]
         .condition = FLAG_XIAN_HEARD_HSU_TRAPPED;
-    gFuchinTempleActorTemplates[ACTOR_TREE_STUDENT - ACTOR_FIRST_PLACED]
+    gFuchinTempleActorPlacements[ACTOR_TREE_STUDENT - ACTOR_FIRST_PLACED]
         .condition = FLAG_XIAN_HEARD_HSU_TRAPPED;
-    gFuchinTempleActorTemplates[ACTOR_MESSENGER_STUDENT - ACTOR_FIRST_PLACED]
+    gFuchinTempleActorPlacements[ACTOR_MESSENGER_STUDENT - ACTOR_FIRST_PLACED]
         .x = 0x1200000;
-    gFuchinTempleActorTemplates[ACTOR_MESSENGER_STUDENT - ACTOR_FIRST_PLACED]
+    gFuchinTempleActorPlacements[ACTOR_MESSENGER_STUDENT - ACTOR_FIRST_PLACED]
         .z = 0xf80000;
-    gFuchinTempleActorTemplates[ACTOR_TRAINING_TREE - ACTOR_FIRST_PLACED]
+    gFuchinTempleActorPlacements[ACTOR_TRAINING_TREE - ACTOR_FIRST_PLACED]
         .condition = FLAG_XIAN_HEARD_HSU_TRAPPED;
-    gFuchinTempleActorTemplates[ACTOR_TRAINING_TREE_TARGET - ACTOR_FIRST_PLACED]
+    gFuchinTempleActorPlacements[ACTOR_TRAINING_TREE_TARGET -
+                                 ACTOR_FIRST_PLACED]
         .condition = FLAG_XIAN_HEARD_HSU_TRAPPED;
   }
-  Scene_AssignViewFlags(gFuchinTempleActorTemplates);
-  return gFuchinTempleActorTemplates;
+  Scene_AssignViewFlags(gFuchinTempleActorPlacements);
+  return gFuchinTempleActorPlacements;
 }
 
 /// Talking to the young man from Kolima at Fuchin Temple
@@ -2676,7 +2677,7 @@ u32 gFuchinTempleExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gFuchinTempleGroundsActorTemplates[] = {
+struct ActorPlacement gFuchinTempleGroundsActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(296), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MONK_IN_WHITE_AND_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2692,7 +2693,7 @@ struct ActorTemplate gFuchinTempleGroundsActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gFuchinTempleActorTemplates[] = {
+struct ActorPlacement gFuchinTempleActorPlacements[] = {
     // Nyunpa
     { SPRITE_NYUNPA, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(472), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -2726,7 +2727,7 @@ struct ActorTemplate gFuchinTempleActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gFuchinTempleActorTemplatesFromLamaTemple[] = {
+struct ActorPlacement gFuchinTempleActorPlacementsFromLamaTemple[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

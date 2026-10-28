@@ -130,7 +130,7 @@ s32 FieldEffect_CopyLinkedActorPosition(struct Actor *updated) {
     actor->y.fixed =
         host->y.fixed +
         ((s8)Resource_GetMetadataRecordFar(
-             (s16)Scene_FindActorTemplate(*(s16 *)&actor->userValue)->sprite)
+             (s16)Scene_FindActorPlacement(*(s16 *)&actor->userValue)->sprite)
              ->boxX
          << 16) +
         (8 << 16);

@@ -27,8 +27,8 @@
 ///   SceneId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
 ///
 /// SceneId_SolSanctumReliefs is one scene, but each relief room has actor
-/// template and trigger tables of its own:
-/// SolSanctumEntrance_GetActorTemplates and _GetTriggers choose them by
+/// placement and trigger tables of its own:
+/// SolSanctumEntrance_GetActorPlacements and _GetTriggers choose them by
 /// the entrance the party came in at, so a room's statues and their
 /// events exist only while the party is in it. Each pushable statue's column
 /// is kept in two area flags, one for each side, which
@@ -217,8 +217,8 @@ const u32 *SolSanctumEntrance_GetExits(void) {
 /// statues, the second relief room's Kraden and the row of six; the rest of Sol
 /// Sanctum places Kraden and one statue (ACTOR_STATUE), and Sol Entrance the
 /// man who warns everyone away (ACTOR_WARNING_MAN).
-const struct ActorTemplate *SolSanctumEntrance_GetActorTemplates(void) {
-  struct ActorTemplate *table;
+const struct ActorPlacement *SolSanctumEntrance_GetActorPlacements(void) {
+  struct ActorPlacement *table;
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
@@ -228,24 +228,24 @@ const struct ActorTemplate *SolSanctumEntrance_GetActorTemplates(void) {
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
         if (gAdventure.entrance <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
-          return gSolSanctumReliefs_SecondReliefRoomActorTemplates;
+          return gSolSanctumReliefs_SecondReliefRoomActorPlacements;
         }
       } else {
-        return gSolSanctumReliefs_FirstReliefRoomActorTemplates;
+        return gSolSanctumReliefs_FirstReliefRoomActorPlacements;
       }
     }
-    table = gSolSanctumReliefs_ActorTemplates;
+    table = gSolSanctumReliefs_ActorPlacements;
     Scene_AssignViewFlags(table);
     return table;
   }
   if (gAdventure.sceneId == (s32)&SceneId_SolEntrance) {
-    return gSolEntrance_ActorTemplates;
+    return gSolEntrance_ActorPlacements;
   }
-  return gSolSanctumEntrance_FallbackActorTemplates;
+  return gSolSanctumEntrance_FallbackActorPlacements;
 }
 
 /// Selects the events for the scene and room, by the same entrances as
-/// SolSanctumEntrance_GetActorTemplates.
+/// SolSanctumEntrance_GetActorPlacements.
 const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
   s32 firstStatueRoomEntrance =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
@@ -1427,12 +1427,12 @@ u32 gSolSanctumEntrance_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gSolSanctumEntrance_FallbackActorTemplates[] = {
+struct ActorPlacement gSolSanctumEntrance_FallbackActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gSolSanctumReliefs_ActorTemplates[] = {
+struct ActorPlacement gSolSanctumReliefs_ActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1444,7 +1444,7 @@ struct ActorTemplate gSolSanctumReliefs_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSolSanctumReliefs_FirstReliefRoomActorTemplates[] = {
+struct ActorPlacement gSolSanctumReliefs_FirstReliefRoomActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1454,29 +1454,29 @@ struct ActorTemplate gSolSanctumReliefs_FirstReliefRoomActorTemplates[] = {
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1512), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1832), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1832), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1560), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1560), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1784), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1784), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1640), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1640), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1640), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1640), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1640), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1640), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1672), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1672), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1704), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1704), 0, PIXELS(136), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1704), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1704), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1704), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1704), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSolSanctumReliefs_SecondReliefRoomActorTemplates[] = {
+struct ActorPlacement gSolSanctumReliefs_SecondReliefRoomActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1486,19 +1486,19 @@ struct ActorTemplate gSolSanctumReliefs_SecondReliefRoomActorTemplates[] = {
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1672), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1672), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1736), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1736), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1800), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1800), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1864), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1864), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(1928), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(1928), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gSolEntrance_ActorTemplates[] = {
+struct ActorPlacement gSolEntrance_ActorPlacements[] = {
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },

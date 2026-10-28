@@ -5,39 +5,39 @@
 
 #include "../overworld_internal.h"
 
-/// Returns the actor template of actor id in the scene's
-/// actor template tables, or NULL: for a party character (0 to 7) the row with
+/// Returns the actor placement of actor id in the scene's
+/// actor placement tables, or NULL: for a party character (0 to 7) the row with
 /// its sprite, and for a placed actor (8 on) the row it was created
 /// from, counting the placed rows in order.
 ///
 /// Called by Scene_TalkToActor for the talk facing, and by the field
-/// Psynergy and event commands that read an actor's template (Mind Read,
+/// Psynergy and event commands that read an actor's placement (Mind Read,
 /// a Djinni's joining, the event messages and the view).
-struct ActorTemplate *Scene_FindActorTemplate(s32 id) {
-  struct ActorTemplate *template;
+struct ActorPlacement *Scene_FindActorPlacement(s32 id) {
+  struct ActorPlacement *placement;
   s32 tableIndex;
   s32 placedActorId = ACTOR_FIRST_PLACED;
 
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
-    template = gFieldWork->tables[tableIndex];
-    if (template == NULL)
+    placement = gFieldWork->tables[tableIndex];
+    if (placement == NULL)
       continue;
     if (id <= 7) {
-      for (; (s16)template->sprite != -1; template++) {
-        if ((s16)template->sprite == id) {
+      for (; (s16)placement->sprite != -1; placement++) {
+        if ((s16)placement->sprite == id) {
 #ifdef UBFIX
-          return template;
+          return placement;
 #else
           goto found;
 #endif
         }
       }
     } else {
-      for (; (s16)template->sprite != -1; template++) {
-        if ((s16)template->sprite > 7) {
+      for (; (s16)placement->sprite != -1; placement++) {
+        if ((s16)placement->sprite > 7) {
           if (placedActorId == id) {
 #ifdef UBFIX
-            return template;
+            return placement;
 #else
             goto found;
 #endif
@@ -52,9 +52,9 @@ struct ActorTemplate *Scene_FindActorTemplate(s32 id) {
 #else
 found:
   // BUG: a missing actor leaves entry NULL if the final table is absent.
-  if ((s16)template->sprite == -1)
+  if ((s16)placement->sprite == -1)
     return NULL;
-  return template;
+  return placement;
 #endif
 }
 
@@ -63,8 +63,8 @@ found:
 /// The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
 ///
 /// Used for every condition column of a scene's tables: triggers
-/// (Scene_FindTrigger, Field_ExamineCell), actor templates
-/// (Event_SpawnActorTemplates), exit regions
+/// (Scene_FindTrigger, Field_ExamineCell), actor placements
+/// (Event_SpawnActorPlacements), exit regions
 /// (Field_CheckExitRegions) and item triggers.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
@@ -197,7 +197,7 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 }
 
 /// Talks to actor id: shows its event's message or calls its event
-/// function, with the actor stopped and turned as its template says.
+/// function, with the actor stopped and turned as its placement says.
 /// For the actor stopped with Halt, its TRIGGER_TALK_HALTED event
 /// comes first; without one, a talk trigger that is a function gives one of two
 /// lines at random instead, from MsgPonderEllipsis on (dots spoken with
@@ -208,7 +208,7 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 /// the stopped actor and sets gAdventure.haltedActor back to -1
 /// afterwards.
 s32 Scene_TalkToActor(s32 id) {
-  struct ActorTemplate *template = Scene_FindActorTemplate(id);
+  struct ActorPlacement *placement = Scene_FindActorPlacement(id);
   s32 result = -1;
   struct Actor *actor = Actor_GetById(id);
   struct TriggerView *trigger;
@@ -254,7 +254,7 @@ s32 Scene_TalkToActor(s32 id) {
       *movementState = 1;
       Actor_SetAnimationSpeedFar(actor, 0);
       savedAngle = actor->facing;
-      talkFacing = (u8)template->talkFacing << 24;
+      talkFacing = (u8)placement->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
         struct Actor *leader = Actor_GetById(gAdventure.leaderActorId);
 
@@ -280,11 +280,11 @@ s32 Scene_TalkToActor(s32 id) {
       // An actor left idle (script command 16) goes back to what its
       // talk facing says: following the leader (3) or its old angle (1).
       if (actor->script[actor->scriptCursor] == 16) {
-        if ((s8)template->talkFacing == 3) {
+        if ((s8)placement->talkFacing == 3) {
           actor->linkedActor = Actor_GetById(gAdventure.leaderActorId);
           actor->steeringFlags |= 1;
           Actor_SetMovementType(actor, (s32)gActor_LinkedScript);
-        } else if ((s8)template->talkFacing == 1) {
+        } else if ((s8)placement->talkFacing == 1) {
           actor->timer = savedAngle;
           Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
         }

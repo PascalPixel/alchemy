@@ -24,7 +24,7 @@ STATIC_ASSERT(offsetof(struct FloodgateLog, actor) == 8);
 const struct SceneEntrance *KolimaForestFloodgate_GetEntrances(void);
 const struct SceneExitRegion *KolimaForestFloodgate_GetRegions(void);
 const u32 *KolimaForestFloodgate_GetExits(void);
-const struct ActorTemplate *KolimaForestFloodgate_GetActorTemplates(void);
+const struct ActorPlacement *KolimaForestFloodgate_GetActorPlacements(void);
 const struct Trigger *KolimaForestFloodgate_GetTriggers(void);
 s32 KolimaForestFloodgate_Initialize(void);
 // Native calls precede this definition; see MATCHING.md.
@@ -38,7 +38,7 @@ extern s8 gKolimaForestFloodgate_PushStepX[];
 extern s8 gKolimaForestFloodgate_PushStepZ[];
 extern struct SceneEntrance gKolimaForestFloodgateEntrances[];
 extern u32 gKolimaForestFloodgateExits[];
-extern struct ActorTemplate gKolimaForestFloodgateActorTemplates[];
+extern struct ActorPlacement gKolimaForestFloodgateActorPlacements[];
 extern struct Trigger gKolimaForestFloodgateTriggers[];
 
 #endif

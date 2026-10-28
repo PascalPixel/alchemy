@@ -2,7 +2,7 @@
 #define ALCHEMY_SCENE_TABLES_H
 
 /// @file
-/// The scene table formats: entrances, exits, actor templates
+/// The scene table formats: entrances, exits, actor placements
 /// and triggers, and the macros that write them.
 
 #include "static_assert.h"
@@ -41,7 +41,7 @@ enum { SCENE_TABLE_END = -1 };
 /// (GameFlag_IsConditionActive).
 enum {
   CONDITION_ALWAYS = -1,
-  /// An actor template's condition that Scene_AssignViewFlags replaces
+  /// An actor placement's condition that Scene_AssignViewFlags replaces
   /// with whether the actor lies within the map's view bounds, in the
   /// scenes that call it, so only the room entered is populated.
   CONDITION_IN_VIEW = 0,
@@ -120,7 +120,7 @@ enum {
 /// An actor a scene places: its sprite, the condition for placing it,
 /// how it behaves, where it stands and which way it faces, and how it turns to
 /// talk.
-struct ActorTemplate {
+struct ActorPlacement {
   /// The actor's sprite; 0 to 7 are the party's characters, each in its
   /// own actor slot, and -1 ends the table.
   s16 sprite;
@@ -138,13 +138,13 @@ struct ActorTemplate {
   u16 facing;    ///< 1/65536 turns (enum Facing)
   u8 talkFacing; ///< enum ActorTalkFacing; 3 follows the leader
                  ///< afterwards
-  u8 flags;      ///< ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE
+  u8 flags;      ///< ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE
 };
 
-STATIC_ASSERT(sizeof(struct ActorTemplate) == 24);
-STATIC_ASSERT(offsetof(struct ActorTemplate, talkFacing) == 22);
+STATIC_ASSERT(sizeof(struct ActorPlacement) == 24);
+STATIC_ASSERT(offsetof(struct ActorPlacement, talkFacing) == 22);
 
-/// The movement types an actor template's behavior can name, which
+/// The movement types an actor placement's behavior can name, which
 /// Actor_SetMovementType turns into scripts.
 enum MovementType {
   MOVEMENT_TYPE_STAND = 1, ///< its script only ends
@@ -170,10 +170,10 @@ enum ActorTalkFacing {
   TALK_FACING_PARTY_THEN_WATCH = 3
 };
 
-/// ActorTemplate.flags: the actor takes the previous
+/// ActorPlacement.flags: the actor takes the previous
 /// actor's sprite resource instead of loading its own, when both are single
 /// sprites.
-#define ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE 0x01
+#define ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
 
 /// Actor ids: 0 to 7 the party's characters, the placed actors from 8.
 /// A party member's actor takes its character's number

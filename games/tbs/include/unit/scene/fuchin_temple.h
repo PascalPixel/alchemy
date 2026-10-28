@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -27,9 +27,9 @@ extern u16 gFuchinTemple_FehsDoorCloses[];
 extern struct SceneEntrance gFuchinTempleGroundsEntrances[];
 extern struct SceneEntrance gFuchinTempleEntrancesOther[];
 extern u32 gFuchinTempleExits[];
-extern struct ActorTemplate gFuchinTempleGroundsActorTemplates[];
-extern struct ActorTemplate gFuchinTempleActorTemplates[];
-extern struct ActorTemplate gFuchinTempleActorTemplatesFromLamaTemple[];
+extern struct ActorPlacement gFuchinTempleGroundsActorPlacements[];
+extern struct ActorPlacement gFuchinTempleActorPlacements[];
+extern struct ActorPlacement gFuchinTempleActorPlacementsFromLamaTemple[];
 extern struct Trigger gFuchinTempleGroundsTriggers[];
 extern struct Trigger gFuchinTempleTriggers[];
 extern struct Trigger gFuchinTempleTriggersFromLamaTemple[];

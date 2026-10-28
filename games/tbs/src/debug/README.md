@@ -76,7 +76,7 @@ talks to Flint, always, run Flint's event.
 
 The room answers the field's six questions with `TestRoom_Initialize`,
 `TestRoom_GetEntrances`, `TestRoom_GetExits`,
-`TestRoom_GetActorTemplates`, `TestRoom_GetTriggers` and
+`TestRoom_GetActorPlacements`, `TestRoom_GetTriggers` and
 `Scene_GetExitRegions` (none). The events are `gTestRoom_Triggers`, and each
 event, such as `TestRoom_ReceiveFlint`, calls `Djinn_JoinParty` and
 `GameFlag_Clear`.

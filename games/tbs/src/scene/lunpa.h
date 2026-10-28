@@ -69,7 +69,7 @@ enum {
       CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR
 };
 
-/// Lunpa's placed actors, numbered in the order of gLunpaActorTemplates
+/// Lunpa's placed actors, numbered in the order of gLunpaActorPlacements
 /// from ACTOR_FIRST_PLACED. The townspeople are named by their sprites and by
 /// what they say before Donpa's judgment.
 enum LunpaActorId {
@@ -128,7 +128,7 @@ enum LunpaActorId {
 };
 
 /// The Lunpa Fortress Gates' placed actors, numbered in the order of
-/// gGateActorTemplates from ACTOR_FIRST_PLACED. Garet's row, the third,
+/// gGateActorPlacements from ACTOR_FIRST_PLACED. Garet's row, the third,
 /// takes his own actor, GARET, as every row of a party member's sprite does.
 enum GateActorId {
   /// ★ Named from the game: "We were on guard the whole time!"

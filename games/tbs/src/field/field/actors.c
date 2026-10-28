@@ -293,7 +293,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       // A list is four words but the next starts a word later, so a second
       // list would overlap the first and its zeroing clear count. No caller
       // passes ACTOR_CREATE_GROUP: every id is a sprite below 0x1000, an
-      // actor template's (0 to 504), or a kind with no sprite.
+      // actor placement's (0 to 504), or a kind with no sprite.
       // XXX (no evidence): whether the lists were meant four words apart;
       // nothing in the game creates a group to show it.
       spriteSlots =

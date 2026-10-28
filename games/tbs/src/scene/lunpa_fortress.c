@@ -81,7 +81,7 @@
 ///
 /// Unused: four item pickups that set out an Arctic Blade, a Masamune, a Silver
 /// Blade and a Shamshir on LunpaFortressGroundFloor's first four rows, and
-/// copies of West Lunpa Cave's exits and actor templates, which these
+/// copies of West Lunpa Cave's exits and actor placements, which these
 /// scenes never read.
 
 #include "adventure.h"
@@ -120,7 +120,7 @@
 #include "io_reg.h"
 
 /// LunpaFortressGroundFloor's people, numbered in the order of
-/// gLunpaFortressGroundFloorActorTemplates from ACTOR_FIRST_PLACED,
+/// gLunpaFortressGroundFloorActorPlacements from ACTOR_FIRST_PLACED,
 /// past its first four rows (in a chest's sprite, at the map's origin; see
 /// ACTOR_FIRST_ITEM_DISPLAY). Dodonpa's men, here and upstairs, wear the
 /// sprite of a man with a mop of orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
@@ -168,7 +168,7 @@ enum {
 };
 
 /// LunpaFortressUpperFloor's people and the Cell Key, numbered in the order of
-/// gLunpaFortressUpperFloorActorTemplates from ACTOR_FIRST_PLACED.
+/// gLunpaFortressUpperFloorActorPlacements from ACTOR_FIRST_PLACED.
 enum {
   /// ★ Named from what the player sees: a golden key (SPRITE_KEY) in the
   /// south of the floor, which the party takes as the Cell Key (its render)
@@ -247,7 +247,7 @@ enum {
 };
 
 /// LunpaFortressCave's ivy and crates, numbered in the order of
-/// gLunpaFortressCaveActorTemplates from ACTOR_FIRST_PLACED.
+/// gLunpaFortressCaveActorPlacements from ACTOR_FIRST_PLACED.
 enum {
   /// ★ Named from what the player sees: ivy (SPRITE_IVY) on the wall that
   /// hides the first switch until Whirlwind blows it away (its render)
@@ -273,7 +273,7 @@ enum {
 };
 
 /// LunpaFortressToadonpa's people, numbered in the order of
-/// gLunpaFortressToadonpaActorTemplates from ACTOR_FIRST_PLACED; its
+/// gLunpaFortressToadonpaActorPlacements from ACTOR_FIRST_PLACED; its
 /// rows for Ivan, Mia and Garet keep the party's own slots.
 enum {
   /// Three invisible solid actors (SPRITE_BLANK, ACTOR_SOLID) at
@@ -461,26 +461,26 @@ const u32 *Scene_GetExits(void) {
 }
 
 /// The guards, the other people and the objects of each scene.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   // Unused: this overlay never runs for West Lunpa Cave, which has its own.
   if (sceneId == (s32)&SceneId_WestLunpaCave) {
-    return gLunpaFortressUnusedWestLunpaCaveActorTemplates;
+    return gLunpaFortressUnusedWestLunpaCaveActorPlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressCave) {
-    return gLunpaFortressCaveActorTemplates;
+    return gLunpaFortressCaveActorPlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressUpperFloor) {
-    return gLunpaFortressUpperFloorActorTemplates;
+    return gLunpaFortressUpperFloorActorPlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressGroundFloor) {
-    return gLunpaFortressGroundFloorActorTemplates;
+    return gLunpaFortressGroundFloorActorPlacements;
   }
   if (sceneId == (s32)&SceneId_LunpaFortressToadonpa) {
-    return gLunpaFortressToadonpaActorTemplates;
+    return gLunpaFortressToadonpaActorPlacements;
   }
-  return gLunpaFortressActorTemplatesOther;
+  return gLunpaFortressActorPlacementsOther;
 }
 
 /// What the party can talk to, search and use Psynergy on, by scene.
@@ -3815,13 +3815,13 @@ u32 gLunpaFortressCaveAndToadonpaExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gLunpaFortressActorTemplatesOther[] = {
+struct ActorPlacement gLunpaFortressActorPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-/// Unused: a copy of West Lunpa Cave's actor templates, taken only by
+/// Unused: a copy of West Lunpa Cave's actor placements, taken only by
 /// a scene this overlay never runs for.
-struct ActorTemplate gLunpaFortressUnusedWestLunpaCaveActorTemplates[] = {
+struct ActorPlacement gLunpaFortressUnusedWestLunpaCaveActorPlacements[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3843,7 +3843,7 @@ struct ActorTemplate gLunpaFortressUnusedWestLunpaCaveActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLunpaFortressGroundFloorActorTemplates[] = {
+struct ActorPlacement gLunpaFortressGroundFloorActorPlacements[] = {
     // Unused: four chests at the map's origin, the display actors of the
     // unused sword pickups (ACTOR_FIRST_ITEM_DISPLAY).
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3877,7 +3877,7 @@ struct ActorTemplate gLunpaFortressGroundFloorActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLunpaFortressUpperFloorActorTemplates[] = {
+struct ActorPlacement gLunpaFortressUpperFloorActorPlacements[] = {
     { SPRITE_KEY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(264), 0, PIXELS(856), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gFirstPatrolRoute,
@@ -3919,7 +3919,7 @@ struct ActorTemplate gLunpaFortressUpperFloorActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLunpaFortressCaveActorTemplates[] = {
+struct ActorPlacement gLunpaFortressCaveActorPlacements[] = {
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(576), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3933,7 +3933,7 @@ struct ActorTemplate gLunpaFortressCaveActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLunpaFortressToadonpaActorTemplates[] = {
+struct ActorPlacement gLunpaFortressToadonpaActorPlacements[] = {
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(56), 0, PIXELS(72), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

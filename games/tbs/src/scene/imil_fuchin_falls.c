@@ -124,7 +124,7 @@
 #include "item_ids.h"
 #include "map_grid.h"
 
-/// The placed actors, numbering each scene's template rows from
+/// The placed actors, numbering each scene's placement rows from
 /// ACTOR_FIRST_PLACED: Fever in Imil Falls Cave, the floating logs of Fuchin
 /// Falls Cave's first four rooms, followed in the second room by Zephyr, and
 /// the one sprite the dragon statue's room places.
@@ -240,28 +240,28 @@ const struct SceneExitRegion *ImilFuchinFalls_GetRegions(void) { return NULL; }
 /// Returns the exit table every scene of the overlay shares.
 const u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
 
-const struct ActorTemplate *ImilFuchinFalls_GetActorTemplates(void) {
+const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_ImilFallsCave) {
-    return gImilFuchinFalls_ImilFallsCaveActorTemplates;
+    return gImilFuchinFalls_ImilFallsCaveActorPlacements;
   }
   if (sceneId == (s32)&SceneId_FuchinFallsCaveEntrance) {
-    return gImilFuchinFalls_EntranceActorTemplates;
+    return gImilFuchinFalls_EntranceActorPlacements;
   }
   if (sceneId == (s32)&SceneId_FuchinFallsCaveZephyr) {
-    return gImilFuchinFalls_ZephyrRoomActorTemplates;
+    return gImilFuchinFalls_ZephyrRoomActorPlacements;
   }
   if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
-    return gImilFuchinFalls_DragonsEyeRoomActorTemplates;
+    return gImilFuchinFalls_DragonsEyeRoomActorPlacements;
   }
   if (sceneId == (s32)&SceneId_FuchinFallsCaveArcticBlade) {
-    return gImilFuchinFalls_ArcticBladeRoomActorTemplates;
+    return gImilFuchinFalls_ArcticBladeRoomActorPlacements;
   }
   if (sceneId == (s32)&SceneId_FuchinFallsCaveDragonStatue) {
-    return gImilFuchinFalls_DragonRoomActorTemplates;
+    return gImilFuchinFalls_DragonRoomActorPlacements;
   }
-  return gImilFuchinFalls_NoActorTemplates;
+  return gImilFuchinFalls_NoActorPlacements;
 }
 
 #include "shared/actor_pairmove.h"
@@ -2151,17 +2151,17 @@ u32 gImilFuchinFalls_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gImilFuchinFalls_NoActorTemplates[] = {
+struct ActorPlacement gImilFuchinFalls_NoActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gImilFuchinFalls_ImilFallsCaveActorTemplates[] = {
+struct ActorPlacement gImilFuchinFalls_ImilFallsCaveActorPlacements[] = {
     { MARS_DJINNI, FLAG_DJINNI(DJINNI_FEVER), MOVEMENT_TYPE_STAND,
         PIXELS(263), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gImilFuchinFalls_EntranceActorTemplates[] = {
+struct ActorPlacement gImilFuchinFalls_EntranceActorPlacements[] = {
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(136), 0, PIXELS(504), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2171,7 +2171,7 @@ struct ActorTemplate gImilFuchinFalls_EntranceActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gImilFuchinFalls_ZephyrRoomActorTemplates[] = {
+struct ActorPlacement gImilFuchinFalls_ZephyrRoomActorPlacements[] = {
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2183,7 +2183,7 @@ struct ActorTemplate gImilFuchinFalls_ZephyrRoomActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gImilFuchinFalls_DragonsEyeRoomActorTemplates[] = {
+struct ActorPlacement gImilFuchinFalls_DragonsEyeRoomActorPlacements[] = {
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(328), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2195,7 +2195,7 @@ struct ActorTemplate gImilFuchinFalls_DragonsEyeRoomActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gImilFuchinFalls_ArcticBladeRoomActorTemplates[] = {
+struct ActorPlacement gImilFuchinFalls_ArcticBladeRoomActorPlacements[] = {
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(328), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -2205,7 +2205,7 @@ struct ActorTemplate gImilFuchinFalls_ArcticBladeRoomActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gImilFuchinFalls_DragonRoomActorTemplates[] = {
+struct ActorPlacement gImilFuchinFalls_DragonRoomActorPlacements[] = {
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(312), 0, PIXELS(128), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },

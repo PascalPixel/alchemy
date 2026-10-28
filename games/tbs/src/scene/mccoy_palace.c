@@ -6,7 +6,7 @@
 /// (step trigger 9) also reaches. Its people follow three story flags,
 /// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, FLAG_KOLIMA_CURSE_LIFTED and
 /// FLAG_MCCOY_PALACE_REWARD_TAKEN, in what they say and how they turn when
-/// talked to (Scene_GetActorTemplates).
+/// talked to (Scene_GetActorPlacements).
 ///
 /// Arriving in McCoy's room before the curse is lifted plays
 /// McCoyPalace_AudienceWithMcCoy: McCoy asks whether the party can save Kolima.
@@ -63,7 +63,7 @@
 #include "songs.h"
 
 /// The palace's people and the treasure room's chests, numbering
-/// gMcCoyPalaceActorTemplates' rows from ACTOR_FIRST_PLACED. Each note
+/// gMcCoyPalaceActorPlacements' rows from ACTOR_FIRST_PLACED. Each note
 /// gives what they say before the reward, then after it.
 enum McCoyPalaceActorId {
   /// A burly grey-haired man; points the way to McCoy. "If you want to see Lord
@@ -214,33 +214,33 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 /// Milady's nightgown, the old man who praises the warriors, the soldier who
 /// watched the party go to Kolima and the soldier who keeps the treasure turn
 /// differently when talked to.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  struct ActorTemplate *templates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  struct ActorPlacement *placements;
 
   if (gAdventure.sceneId == (s32)&SceneId_McCoyPalace) {
-    templates = gMcCoyPalaceActorTemplates;
-    Scene_AssignViewFlags(templates);
+    placements = gMcCoyPalaceActorPlacements;
+    Scene_AssignViewFlags(placements);
 
     if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-      // Through the global, not templates: the local splits each address into
+      // Through the global, not placements: the local splits each address into
       // base+144 and member+22 (9 of 38 instructions differ in tbs-en).
-      gMcCoyPalaceActorTemplates[ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN -
-                                 ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_KEEP;
-      gMcCoyPalaceActorTemplates[ACTOR_OLD_MAN_PRAISING_THE_WARRIORS -
-                                 ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_OLD_MAN_PRAISING_THE_WARRIORS -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
-      gMcCoyPalaceActorTemplates[ACTOR_SOLDIER_WATCHING_KOLIMA -
-                                 ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_SOLDIER_WATCHING_KOLIMA -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = 3;
-      gMcCoyPalaceActorTemplates[ACTOR_SOLDIER_SHOWING_THE_REWARD -
-                                 ACTOR_FIRST_PLACED]
+      gMcCoyPalaceActorPlacements[ACTOR_SOLDIER_SHOWING_THE_REWARD -
+                                  ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
     }
 
-    return templates;
+    return placements;
   }
-  return gMcCoyPalaceNoActorTemplates;
+  return gMcCoyPalaceNoActorPlacements;
 }
 
 /// What the party can talk to and search in the palace.
@@ -1684,12 +1684,12 @@ u32 gMcCoyPalaceExits[] = {
 
 /// Unused: the getters return it for any scene but SceneId_McCoyPalace, and the
 /// overlay serves no other.
-struct ActorTemplate gMcCoyPalaceNoActorTemplates[] = {
+struct ActorPlacement gMcCoyPalaceNoActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gMcCoyPalaceActorTemplates[] = {
+struct ActorPlacement gMcCoyPalaceActorPlacements[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(265), 0, PIXELS(702), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -1733,27 +1733,27 @@ struct ActorTemplate gMcCoyPalaceActorTemplates[] = {
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(616), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(632), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(632), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(648), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(648), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(664), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(664), 0, PIXELS(616), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(616), 0, PIXELS(648), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(648), 0, PIXELS(648), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(648), 0, PIXELS(648), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(664), 0, PIXELS(648), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(664), 0, PIXELS(648), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(616), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(648), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(648), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CHEST, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(664), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(664), 0, PIXELS(664), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-/// Unused, as gMcCoyPalaceNoActorTemplates is.
+/// Unused, as gMcCoyPalaceNoActorPlacements is.
 struct Trigger gMcCoyPalaceNoTriggers[] = {
     { TRIGGERS_END },
 };

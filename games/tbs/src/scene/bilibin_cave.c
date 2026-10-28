@@ -122,7 +122,7 @@ enum {
 };
 
 /// Actors of SceneId_BilibinCaveRapier, numbered by the rows of
-/// gBilibinCaveRapierActorTemplates.
+/// gBilibinCaveRapierActorPlacements.
 enum {
   /// A torch west of the fire, cold (TORCH_ANIMATION_UNLIT) where its twin
   /// burns.
@@ -140,7 +140,7 @@ enum {
 };
 
 /// Actors of SceneId_BilibinCaveIce, numbered by the rows of
-/// gBilibinCaveIceActorTemplates.
+/// gBilibinCaveIceActorPlacements.
 enum {
   /// A fire beside the first puddle, which Douse puts out.
   /// ★ Named from what the player sees: a flickering flame, SPRITE_FIRE (its
@@ -212,19 +212,19 @@ const struct SceneExitRegion *BilibinCave_GetRegions(void) { return NULL; }
 
 const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 
-const struct ActorTemplate *BilibinCave_GetActorTemplates(void) {
+const struct ActorPlacement *BilibinCave_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
-    return gBilibinCaveEntranceActorTemplates;
+    return gBilibinCaveEntranceActorPlacements;
   }
   if (sceneId == (s32)&SceneId_BilibinCaveRapier) {
-    return gBilibinCaveRapierActorTemplates;
+    return gBilibinCaveRapierActorPlacements;
   }
   if (sceneId == (s32)&SceneId_BilibinCaveIce) {
-    return gBilibinCaveIceActorTemplates;
+    return gBilibinCaveIceActorPlacements;
   }
-  return gBilibinCaveActorTemplatesOther;
+  return gBilibinCaveActorPlacementsOther;
 }
 
 const struct Trigger *BilibinCave_GetTriggers(void) {
@@ -731,18 +731,18 @@ u32 gBilibinCaveExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gBilibinCaveActorTemplatesOther[] = {
+struct ActorPlacement gBilibinCaveActorPlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gBilibinCaveEntranceActorTemplates[] = {
+struct ActorPlacement gBilibinCaveEntranceActorPlacements[] = {
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(136), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBilibinCaveRapierActorTemplates[] = {
+struct ActorPlacement gBilibinCaveRapierActorPlacements[] = {
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(840), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -752,21 +752,21 @@ struct ActorTemplate gBilibinCaveRapierActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBilibinCaveIceActorTemplates[] = {
+struct ActorPlacement gBilibinCaveIceActorPlacements[] = {
     { SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(152), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(520), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(520), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(504), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(536), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(536), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(504), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(504), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(584), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(584), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)gBilibinCave_ClearSpriteScript,
         PIXELS(296), 0, PIXELS(230), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, (s32)gBilibinCave_ClearSpriteScript,
@@ -776,21 +776,21 @@ struct ActorTemplate gBilibinCaveIceActorTemplates[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(224), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(392), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(392), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(424), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(424), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(456), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(328), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(328), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(248), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(136), 0, PIXELS(296), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(184), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(184), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 

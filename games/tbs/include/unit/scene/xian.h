@@ -7,7 +7,7 @@
 const struct SceneEntrance *Xian_GetEntrances(void);
 const struct SceneExitRegion *Xian_GetRegions(void);
 const u32 *Xian_GetExits(void);
-const struct ActorTemplate *Xian_GetActorTemplates(void);
+const struct ActorPlacement *Xian_GetActorPlacements(void);
 const struct Trigger *Xian_GetTriggers(void);
 s32 Xian_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -25,7 +25,7 @@ extern u16 gXian_SanctumDoorOpens[];
 extern u16 gXian_SchoolDoorOpens[];
 extern struct SceneEntrance gXian_Entrances[];
 extern u32 gXian_Exits[];
-extern struct ActorTemplate gXian_ActorTemplates[];
+extern struct ActorPlacement gXian_ActorPlacements[];
 extern struct Trigger gXian_Triggers[];
 
 #endif

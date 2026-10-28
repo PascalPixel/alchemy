@@ -128,7 +128,7 @@ FarCall_OverworldTable:
 	export WorldMap_FreezeFar, WorldMap_Freeze
 	export WorldMap_UnfreezeFar, WorldMap_Unfreeze
 	overlay_veneer Actor_ResetForLeader
-	overlay_veneer Event_SpawnActorTemplates
+	overlay_veneer Event_SpawnActorPlacements
 	overlay_veneer Actor_ReleaseAtIndex
 	export Actor_LookupFar, Actor_Lookup
 	export FieldEffect_StartFadeOverlayFar, FieldEffect_StartFadeOverlay

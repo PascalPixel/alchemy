@@ -127,7 +127,7 @@ static void Bilibin_UpdateWadingRipples(void);
 static void Bilibin_SpawnRipple(struct Actor *actor);
 static void Bilibin_UpdateTreasuryStatueCells(void);
 
-/// Actors of Bilibin, numbering its actor templates from
+/// Actors of Bilibin, numbering its actor placements from
 /// ACTOR_FIRST_PLACED. The ten villagers are named by what they say before
 /// the curse is lifted.
 enum BilibinActorId {
@@ -193,7 +193,7 @@ enum BilibinActorId {
 };
 
 /// Actors of the Bilibin Barricade (BilibinBarricade), numbering its
-/// actor templates from ACTOR_FIRST_PLACED.
+/// actor placements from ACTOR_FIRST_PLACED.
 enum BilibinBarricadeActorId {
   /// A stack of crates that slides a cell under Move or a push.
   /// ★ Named from what the player sees: a stack of two wooden crates,
@@ -239,7 +239,7 @@ enum BilibinBarricadeActorId {
 };
 
 /// Actors of the Bilibin Treasury (BilibinTreasury), numbering its
-/// actor templates from ACTOR_FIRST_PLACED.
+/// actor placements from ACTOR_FIRST_PLACED.
 enum BilibinTreasuryActorId {
   /// A statue that slides along one column under Move or a push.
   /// ★ Named from what the player sees: a golden statue of a figure in a long
@@ -303,19 +303,19 @@ static void Bilibin_GustJoins(void) {
 
 /// Selects the actors of Bilibin, the Bilibin Barricade or the Bilibin
 /// Treasury.
-const struct ActorTemplate *Bilibin_GetActorTemplates(void) {
+const struct ActorPlacement *Bilibin_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_Bilibin) {
-    return gBilibinActorTemplates;
+    return gBilibinActorPlacements;
   }
   if (sceneId == (s32)&SceneId_BilibinBarricade) {
-    return gBilibinBarricadeActorTemplates;
+    return gBilibinBarricadeActorPlacements;
   }
   if (sceneId == (s32)&SceneId_BilibinTreasury) {
-    return gBilibinTreasuryActorTemplates;
+    return gBilibinTreasuryActorPlacements;
   }
-  return gBilibinActorTemplatesOther;
+  return gBilibinActorPlacementsOther;
 }
 
 /// Searching the well in Bilibin: the leader peers in, and its bottom cannot
@@ -1104,11 +1104,11 @@ u32 gBilibinExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gBilibinActorTemplatesOther[] = {
+struct ActorPlacement gBilibinActorPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBilibinActorTemplates[] = {
+struct ActorPlacement gBilibinActorPlacements[] = {
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(40), 0, PIXELS(140), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1140,7 +1140,7 @@ struct ActorTemplate gBilibinActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBilibinBarricadeActorTemplates[] = {
+struct ActorPlacement gBilibinBarricadeActorPlacements[] = {
     { SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(136), 0, PIXELS(300), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1162,7 +1162,7 @@ struct ActorTemplate gBilibinBarricadeActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gBilibinTreasuryActorTemplates[] = {
+struct ActorPlacement gBilibinTreasuryActorPlacements[] = {
     { SPRITE_GOLDEN_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GUST), MOVEMENT_TYPE_STAND,

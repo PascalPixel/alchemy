@@ -7,14 +7,14 @@
 u8 *FileScreen_GetEntrances(void);
 s32 Scene_GetExitRegions(void);
 u8 *FileScreen_GetExits(void);
-u8 *FileScreen_GetActorTemplates(void);
+u8 *FileScreen_GetActorPlacements(void);
 u8 *FileScreen_GetTriggers(void);
 extern const u16 gFileScreen_ButtonCode[];
 extern const u16 gFileScreen_ExtraButtonCode[];
 s32 FileScreen_Run(void);
 extern struct SceneEntrance gFileScreen_Entrances[];
 extern u32 gFileScreen_Exits[];
-extern struct ActorTemplate gFileScreen_ActorTemplates[];
+extern struct ActorPlacement gFileScreen_ActorPlacements[];
 extern struct Trigger gFileScreen_Triggers[];
 extern s16 gFileScreen_BlendFrame;
 extern s16 gFileScreen_CodeUnlocked;

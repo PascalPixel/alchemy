@@ -69,7 +69,7 @@
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 /// The palace's actors, numbered in the order of
-/// gHammetPalaceActorTemplates from ACTOR_FIRST_PLACED; its rows for
+/// gHammetPalaceActorPlacements from ACTOR_FIRST_PLACED; its rows for
 /// Garet, Ivan and Mia keep the party's own slots.
 enum HammetPalaceActorId {
   /// ★ Named from the game: "Lady Layana was crying again last night."
@@ -152,14 +152,14 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 
-/// Applies actor template clipping before returning Hammet Palace's
+/// Applies actor placement clipping before returning Hammet Palace's
 /// actor rows.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_HammetPalace) {
-    Scene_AssignViewFlags(gHammetPalaceActorTemplates);
-    return gHammetPalaceActorTemplates;
+    Scene_AssignViewFlags(gHammetPalaceActorPlacements);
+    return gHammetPalaceActorPlacements;
   }
-  return gHammetPalaceActorTemplatesOther;
+  return gHammetPalaceActorPlacementsOther;
 }
 
 /// Selects Hammet Palace's dialogue and doorway handlers.
@@ -1095,12 +1095,12 @@ u32 gHammetPalaceExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gHammetPalaceActorTemplatesOther[] = {
+struct ActorPlacement gHammetPalaceActorPlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gHammetPalaceActorTemplates[] = {
+struct ActorPlacement gHammetPalaceActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

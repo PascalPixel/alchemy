@@ -48,7 +48,7 @@ static void Title_LoadBackground(void);
 
 /// The title overlay's scene tables, which SceneSequence_Run reads through
 /// entry/title.s: one entrance row, the exit, and no actor
-/// templates or triggers.
+/// placements or triggers.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
 
 /// The exit regions entry: the title has no exit boxes.
@@ -57,7 +57,7 @@ s32 Scene_GetExitRegions(void) { return 0; }
 u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
 
 /// The title overlay has no actors.
-u8 *Title_GetActorTemplates(void) { return (u8 *)gTitleActorTemplates; }
+u8 *Title_GetActorPlacements(void) { return (u8 *)gTitleActorPlacements; }
 
 /// The title overlay has no triggers.
 u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
@@ -389,7 +389,7 @@ u32 gTitleExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gTitleActorTemplates[] = {
+struct ActorPlacement gTitleActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 

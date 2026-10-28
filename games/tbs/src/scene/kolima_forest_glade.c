@@ -7,7 +7,7 @@
 /// (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the forest redder,
 /// darker colours.
 ///
-/// Until the third patch the Nut's actor template row tested Vale's
+/// Until the third patch the Nut's actor placement row tested Vale's
 /// FLAG_VALE_NUT_CAUGHT rather than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once
 /// Vale's Nut had been caught this one was never placed.
 ///
@@ -44,7 +44,7 @@
 #include "heap.h"
 
 /// Kolima Forest's actors, numbering the rows of
-/// gKolimaForestGlade_ActorTemplates.
+/// gKolimaForestGlade_ActorPlacements.
 enum KolimaForestGladeActorId {
   /// The three logs.
   /// ★ Named from what the player sees: logs lying on the forest grass among
@@ -70,8 +70,8 @@ const struct SceneExitRegion *KolimaForestGlade_GetRegions(void) { return 0; }
 const u32 *KolimaForestGlade_GetExits(void) { return gKolimaForestGlade_Exits; }
 
 /// The three logs and the Nut.
-const struct ActorTemplate *KolimaForestGlade_GetActorTemplates(void) {
-  return gKolimaForestGlade_ActorTemplates;
+const struct ActorPlacement *KolimaForestGlade_GetActorPlacements(void) {
+  return gKolimaForestGlade_ActorPlacements;
 }
 
 /// Kolima Forest (SceneId_KolimaForestGlade), walking into a log: it rolls
@@ -164,9 +164,9 @@ u32 gKolimaForestGlade_Exits[] = {
     SCENE_EXITS_END,
 };
 
-/// Until the third patch the Nut's actor template tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
+/// Until the third patch the Nut's actor placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
 /// catching it sets.
-struct ActorTemplate gKolimaForestGlade_ActorTemplates[] = {
+struct ActorPlacement gKolimaForestGlade_ActorPlacements[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

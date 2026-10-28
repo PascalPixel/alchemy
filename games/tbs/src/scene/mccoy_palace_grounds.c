@@ -65,7 +65,7 @@
 #endif
 
 /// The placed actors, numbered in the order of
-/// gMcCoyPalaceGroundsActorTemplates.
+/// gMcCoyPalaceGroundsActorPlacements.
 enum McCoyPalaceGroundsActorId {
   /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
   /// ordered from
@@ -132,17 +132,17 @@ const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 /// The people outside McCoy's Palace. Once McCoy has turned the party away,
 /// the east guard turns back after talking, and once the curse is lifted Lady
 /// McCoy faces the party.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
-      gMcCoyPalaceGroundsActorTemplates[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceGroundsActorPlacements[ACTOR_EAST_GUARD - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0)
-      gMcCoyPalaceGroundsActorTemplates[ACTOR_LADY_MCCOY - ACTOR_FIRST_PLACED]
+      gMcCoyPalaceGroundsActorPlacements[ACTOR_LADY_MCCOY - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
-    return gMcCoyPalaceGroundsActorTemplates;
+    return gMcCoyPalaceGroundsActorPlacements;
   }
-  return gMcCoyPalaceGroundsNoActorTemplates;
+  return gMcCoyPalaceGroundsNoActorPlacements;
 }
 
 /// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
@@ -486,11 +486,11 @@ u32 gMcCoyPalaceGroundsExits[] = {
 
 /// Unused: the getters return it for any scene but SceneId_McCoyPalaceGrounds,
 /// and the overlay serves no other.
-struct ActorTemplate gMcCoyPalaceGroundsNoActorTemplates[] = {
+struct ActorPlacement gMcCoyPalaceGroundsNoActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gMcCoyPalaceGroundsActorTemplates[] = {
+struct ActorPlacement gMcCoyPalaceGroundsActorPlacements[] = {
     { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(103), 0, PIXELS(280), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -510,7 +510,7 @@ struct ActorTemplate gMcCoyPalaceGroundsActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-/// Unused, as gMcCoyPalaceGroundsNoActorTemplates is.
+/// Unused, as gMcCoyPalaceGroundsNoActorPlacements is.
 struct Trigger gMcCoyPalaceGroundsNoTriggers[] = {
     { TRIGGERS_END },
 };

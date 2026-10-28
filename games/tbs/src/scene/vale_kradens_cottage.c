@@ -2,7 +2,7 @@
 /// Vale (SceneId_ValeKradensCottage): the part of the village around Kraden's
 /// cottage, by the fence that closes off the lands beyond. Kraden, "a trained
 /// Alchemy sage" in his own words, came to Vale to study Mt. Aleph and Alchemy.
-/// One actor template table serves every visit:
+/// One actor placement table serves every visit:
 /// ValeKradensCottage_Initialize removes the people a visit does not use, and
 /// ValeKradensCottage_GetTriggers picks the events for the time of the story.
 ///
@@ -97,7 +97,7 @@
 #include "audio_engine_symbols.h"
 
 /// The placed actors, numbered in the order of
-/// gValeKradensCottage_ActorTemplates; Garet and Jenna, placed between
+/// gValeKradensCottage_ActorPlacements; Garet and Jenna, placed between
 /// Kraden and Saturos, keep their own slots.
 enum ValeKradensCottageActorId {
   /// A boulder by the fence, with the sprite of the boulder Lift raises at the
@@ -161,11 +161,11 @@ const u32 *ValeKradensCottage_GetExits(void) {
   return gValeKradensCottage_Exits;
 }
 
-/// Returns the one actor template table for every visit;
+/// Returns the one actor placement table for every visit;
 /// ValeKradensCottage_Initialize removes the actors a visit does not
 /// use.
-const struct ActorTemplate *ValeKradensCottage_GetActorTemplates(void) {
-  return gValeKradensCottage_ActorTemplates;
+const struct ActorPlacement *ValeKradensCottage_GetActorPlacements(void) {
+  return gValeKradensCottage_ActorPlacements;
 }
 
 /// Selects the events for the current visit to Vale: after Kalay
@@ -1246,7 +1246,7 @@ u32 gValeKradensCottage_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gValeKradensCottage_ActorTemplates[] = {
+struct ActorPlacement gValeKradensCottage_ActorPlacements[] = {
     { 0x127, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(72), 0, PIXELS(256), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

@@ -6,12 +6,12 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void);
 const struct SceneExitRegion *MercuryLighthouse_GetRegions(void);
 const u32 *MercuryLighthouse_GetExits(void);
-const struct ActorTemplate *MercuryLighthouse_GetActorTemplates(void);
+const struct ActorPlacement *MercuryLighthouse_GetActorPlacements(void);
 const struct Trigger *MercuryLighthouse_GetTriggers(void);
 s32 MercuryLighthouse_Initialize(void);
 extern s32 gFieldEffect_ShortScript[];
@@ -45,11 +45,11 @@ extern struct SceneEntrance gMercuryLighthouseMiddleEntrances[];
 extern struct SceneEntrance gMercuryLighthouseUpperEntrances[];
 extern struct SceneEntrance gMercuryLighthouseExteriorEntrances[];
 extern u32 gMercuryLighthouse_Exits[];
-extern struct ActorTemplate gMercuryLighthouseActorTemplatesOther[];
-extern struct ActorTemplate gMercuryLighthouseLowerActorTemplates[];
-extern struct ActorTemplate gMercuryLighthouseMiddleActorTemplates[];
-extern struct ActorTemplate gMercuryLighthouseUpperActorTemplates[];
-extern struct ActorTemplate gMercuryLighthouseExteriorActorTemplates[];
+extern struct ActorPlacement gMercuryLighthouseActorPlacementsOther[];
+extern struct ActorPlacement gMercuryLighthouseLowerActorPlacements[];
+extern struct ActorPlacement gMercuryLighthouseMiddleActorPlacements[];
+extern struct ActorPlacement gMercuryLighthouseUpperActorPlacements[];
+extern struct ActorPlacement gMercuryLighthouseExteriorActorPlacements[];
 extern struct Trigger gMercuryLighthouseLowerTriggers[];
 extern struct Trigger gMercuryLighthouseMiddleTriggers[];
 extern struct Trigger gMercuryLighthouseUpperTriggers[];

@@ -6,7 +6,7 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 extern s32 gFieldEffect_ShortScript[];
@@ -16,15 +16,15 @@ extern const s32 *gFieldEffect_DurationScripts[];
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gLunpaEntrances[];
 extern struct SceneEntrance gGateEntrances[];
 extern u32 gLunpaExits[];
 extern u32 gGateExits[];
-extern struct ActorTemplate gLunpaActorTemplates[];
-extern struct ActorTemplate gGateActorTemplates[];
+extern struct ActorPlacement gLunpaActorPlacements[];
+extern struct ActorPlacement gGateActorPlacements[];
 extern struct Trigger gLunpaSealedTriggers[];
 extern struct Trigger gLunpaReopenedTriggers[];
 extern struct Trigger gGateTriggers[];

@@ -24,7 +24,7 @@ the `overworld` folder, runs one scene on that code, from its set-up to the
 `ParentSequence_Run`, the loop that runs one sequence after another, is there
 too.
 [Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
-templates, [triggers](../glossary.md#trigger) and [events](../glossary.md#event). [Maps](map/README.md)
+placements, [triggers](../glossary.md#trigger) and [events](../glossary.md#event). [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,

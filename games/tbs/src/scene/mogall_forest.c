@@ -41,7 +41,7 @@
 ///   back into the scene itself; a Psynergy Stone lies there.
 ///
 /// One overlay serves all four scenes: MogallForest_GetEntrances,
-/// _GetActorTemplates and _GetTriggers choose each scene's tables, and
+/// _GetActorPlacements and _GetTriggers choose each scene's tables, and
 /// MogallForest_Initialize puts back the apes already out, the rolled logs and
 /// the settled rocks, scene by scene and entrance by entrance. The
 /// third area's east ape is also the guide at cell behavior 22 and the
@@ -99,7 +99,7 @@
 #include "heap.h"
 
 /// Actors of the first area (SceneId_MogallForestSign), numbered in the
-/// order of gMogallForestSign_ActorTemplates.
+/// order of gMogallForestSign_ActorPlacements.
 enum MogallForestSignActorId {
   /// A log lying north to south at (488, 464), pushed as the river log is but
   /// with nothing happening where it stops.
@@ -130,7 +130,7 @@ enum MogallForestSignActorId {
 };
 
 /// Actors of the second area (SceneId_MogallForestQuartz), numbered in
-/// the order of gMogallForestQuartz_ActorTemplates.
+/// the order of gMogallForestQuartz_ActorPlacements.
 enum MogallForestQuartzActorId {
   /// ★ Named from what the player sees: a fallen tree trunk lying in the
   /// grass (its render)
@@ -170,7 +170,7 @@ enum MogallForestQuartzActorId {
 };
 
 /// Actors of the third area (SceneId_MogallForestKillerApe), numbered in
-/// the order of gMogallForestKillerApe_ActorTemplates.
+/// the order of gMogallForestKillerApe_ActorPlacements.
 enum MogallForestKillerApeActorId {
   /// ★ Named from what the player sees: a fallen tree trunk lying in the
   /// grass (its render)
@@ -456,19 +456,19 @@ const struct SceneExitRegion *MogallForest_GetRegions(void) { return NULL; }
 /// Returns the exits, one table for all four scenes.
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
-const struct ActorTemplate *MogallForest_GetActorTemplates(void) {
+const struct ActorPlacement *MogallForest_GetActorPlacements(void) {
   s16 selector = gAdventure.sceneId;
 
   if (selector == (s32)&SceneId_MogallForestSign) {
-    return gMogallForestSign_ActorTemplates;
+    return gMogallForestSign_ActorPlacements;
   }
   if (selector == (s32)&SceneId_MogallForestQuartz) {
-    return gMogallForestQuartz_ActorTemplates;
+    return gMogallForestQuartz_ActorPlacements;
   }
   if (selector == (s32)&SceneId_MogallForestKillerApe) {
-    return gMogallForestKillerApe_ActorTemplates;
+    return gMogallForestKillerApe_ActorPlacements;
   }
-  return gMogallForestSidePaths_ActorTemplates;
+  return gMogallForestSidePaths_ActorPlacements;
 }
 
 /// Mogall Forest, the first area: walking into a log (cell behavior 20)
@@ -1890,7 +1890,7 @@ u32 gMogallForest_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gMogallForestSign_ActorTemplates[] = {
+struct ActorPlacement gMogallForestSign_ActorPlacements[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(488), 0, PIXELS(464), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
@@ -1904,15 +1904,15 @@ struct ActorTemplate gMogallForestSign_ActorTemplates[] = {
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(136), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
-        PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(376), 0, PIXELS(432), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_FIRST_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
-        PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(504), 0, PIXELS(312), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_NUT_CAUGHT, 7,
         PIXELS(632), 0, PIXELS(440), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gMogallForestQuartz_ActorTemplates[] = {
+struct ActorPlacement gMogallForestQuartz_ActorPlacements[] = {
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         PIXELS(592), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
@@ -1930,15 +1930,15 @@ struct ActorTemplate gMogallForestQuartz_ActorTemplates[] = {
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_NORTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
-        PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
-        PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { VENUS_DJINNI, FLAG_DJINNI(DJINNI_QUARTZ), MOVEMENT_TYPE_STAND,
         PIXELS(488), 0, PIXELS(568), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gMogallForestKillerApe_ActorTemplates[] = {
+struct ActorPlacement gMogallForestKillerApe_ActorPlacements[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(680), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
@@ -1952,7 +1952,7 @@ struct ActorTemplate gMogallForestKillerApe_ActorTemplates[] = {
     { SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gMogallForest_RockScript,
         PIXELS(696), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gMogallForest_RockScript,
-        PIXELS(632), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(632), 0, PIXELS(408), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_ActorScript,
         PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_APE, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT, (s32)gMogallForest_ActorScript,
@@ -1964,15 +1964,15 @@ struct ActorTemplate gMogallForestKillerApe_ActorTemplates[] = {
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(488), 0, PIXELS(88), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
-        PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(424), 0, PIXELS(120), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
-        PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(360), 0, PIXELS(80), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION, (s32)gMogallForest_HidingPlaceScript,
-        PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(744), 0, PIXELS(400), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gMogallForestSidePaths_ActorTemplates[] = {
+struct ActorPlacement gMogallForestSidePaths_ActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 

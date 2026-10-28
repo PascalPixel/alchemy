@@ -2,6 +2,6 @@
 	overlay_veneer BattleArena_RunRoundResult
 	overlay_veneer BattleArena_GetEntrances
 	overlay_veneer BattleArena_GetExits
-	overlay_veneer BattleArena_SelectActorTemplates
+	overlay_veneer BattleArena_SelectActorPlacements
 	overlay_veneer BattleArena_GetTriggers
 	overlay_veneer Scene_GetExitRegions

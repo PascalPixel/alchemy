@@ -46,7 +46,7 @@ STATIC_ASSERT(sizeof(struct SceneExitRegion) == 16);
 
 /// The entry table at the start of each scene overlay: its initialize
 /// function and the functions returning its entrances, exits,
-/// actor templates, triggers and exit regions, each behind a veneer word.
+/// actor placements, triggers and exit regions, each behind a veneer word.
 /// The field reads each entry's veneer as the address word in its last four
 /// bytes, so member i of the six sits at 8 * i + 4; the field calls them as
 /// gOverlayArea.initialize(), gOverlayArea.events() and so on.
@@ -57,8 +57,8 @@ struct SceneEntryPoints {
   const struct SceneEntrance *(*entrances)(void);
   u32 exitsVeneer;
   const u32 *(*exits)(void);
-  u32 actorTemplatesVeneer;
-  const struct ActorTemplate *(*actorTemplates)(void);
+  u32 actorPlacementsVeneer;
+  const struct ActorPlacement *(*actorPlacements)(void);
   u32 triggersVeneer;
   const struct Trigger *(*triggers)(void);
   u32 regionsVeneer;

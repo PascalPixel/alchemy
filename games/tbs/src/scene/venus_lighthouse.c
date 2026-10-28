@@ -2,7 +2,7 @@
 /// Venus Lighthouse, six scenes in one overlay: the approach outside, the floor
 /// the front door opens onto, and the four floors of the climb that ends in the
 /// Lighthouse Aerie at the top (venus_lighthouse_aerie.c). Each scene has its
-/// own entrance, actor template and trigger tables
+/// own entrance, actor placement and trigger tables
 /// (VenusLighthouseGroundFloor's entrances are the fallback table), all
 /// share one exit table, and VenusLighthouse_Initialize redraws each scene's
 /// puzzles as their flags left them, case by entrance. Inside, only the
@@ -265,12 +265,12 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void);
 // on the floor switch.
 
 // Each scene numbers its actors by the rows of its own actor
-// template table, so each has an enum of its own; a row drawn as one of the
+// placement table, so each has an enum of its own; a row drawn as one of the
 // party's characters (Garet in VenusLighthouseGroundFloor) is that party member
 // in his own slot and takes no number.
 
 /// Venus Lighthouse Entry's actors, numbering the rows of
-/// gVenusLighthouseEntryActorTemplates: the scholars
+/// gVenusLighthouseEntryActorPlacements: the scholars
 /// (SPRITE_OLD_MAN_IN_BLUE_CAP) and Babi's soldiers (SPRITE_SOLDIER) the
 /// wanderers attacked, each named by what they say.
 enum VenusLighthouseEntryActorId {
@@ -308,7 +308,7 @@ enum VenusLighthouseEntryActorId {
 };
 
 /// VenusLighthouseGroundFloor's actors, numbering the rows of
-/// gVenusLighthouseGroundFloorActorTemplates after Garet's.
+/// gVenusLighthouseGroundFloorActorPlacements after Garet's.
 enum VenusLighthouseGroundFloorActorId {
   /// "Kraden told them to stop, but they attacked anyway."
   /// ★ Named from the game: "Kraden told them to stop, but they attacked
@@ -336,7 +336,7 @@ enum VenusLighthouseGroundFloorActorId {
 };
 
 /// VenusLighthouseFirstFloor's actors, numbering the rows of
-/// gVenusLighthouseFirstFloorActorTemplates.
+/// gVenusLighthouseFirstFloorActorPlacements.
 enum VenusLighthouseFirstFloorActorId {
   /// The three pillars, SPRITE_CAPPED_PILLAR, that Move or a push shifts, the
   /// nearer
@@ -352,7 +352,7 @@ enum VenusLighthouseFirstFloorActorId {
 };
 
 /// VenusLighthouseSecondFloor's actors, numbering the rows of
-/// gVenusLighthouseSecondFloorActorTemplates.
+/// gVenusLighthouseSecondFloorActorPlacements.
 enum VenusLighthouseSecondFloorActorId {
   /// A lady statue, as ACTOR_FLOOR_SWITCH_STATUE is, where
   /// ACTOR_GATE_SPARKLE sets out for the gate.
@@ -375,7 +375,7 @@ enum VenusLighthouseSecondFloorActorId {
 };
 
 /// VenusLighthouseThirdFloor's actors, numbering the rows of
-/// gVenusLighthouseThirdFloorActorTemplates.
+/// gVenusLighthouseThirdFloorActorPlacements.
 enum VenusLighthouseThirdFloorActorId {
   /// A lady statue (SPRITE_LADY_STATUE), where the two gate effects set out
   /// once all
@@ -396,7 +396,7 @@ enum VenusLighthouseThirdFloorActorId {
 };
 
 /// VenusLighthouseFourthFloor's actors, numbering the rows of
-/// gVenusLighthouseFourthFloorActorTemplates.
+/// gVenusLighthouseFourthFloorActorPlacements.
 enum VenusLighthouseFourthFloorActorId {
   /// The two platforms, SPRITE_BALANCE_PLATFORM, that rise or sink to the
   /// weight of the
@@ -1124,43 +1124,43 @@ const struct SceneExitRegion *VenusLighthouse_GetRegions(void) { return 0; }
 /// Returns the packed exits shared by the six scenes.
 const u32 *VenusLighthouse_GetExits(void) { return gVenusLighthouseExits; }
 
-/// Selects the scene's actor templates. Inside the lighthouse,
+/// Selects the scene's actor placements. Inside the lighthouse,
 /// Scene_AssignViewFlags first gives each row with condition 0 whether it
 /// lies inside the view bounds, so only the room entered is populated.
-const struct ActorTemplate *VenusLighthouse_GetActorTemplates(void) {
-  struct ActorTemplate *templates;
+const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void) {
+  struct ActorPlacement *placements;
   s16 sceneId;
 
   sceneId = gAdventure.sceneId;
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
-    return gVenusLighthouseEntryActorTemplates;
+    return gVenusLighthouseEntryActorPlacements;
   }
   if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
-    templates = gVenusLighthouseGroundFloorActorTemplates;
-    Scene_AssignViewFlags(templates);
-    return templates;
+    placements = gVenusLighthouseGroundFloorActorPlacements;
+    Scene_AssignViewFlags(placements);
+    return placements;
   }
   if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
-    templates = gVenusLighthouseFirstFloorActorTemplates;
-    Scene_AssignViewFlags(templates);
-    return templates;
+    placements = gVenusLighthouseFirstFloorActorPlacements;
+    Scene_AssignViewFlags(placements);
+    return placements;
   }
   if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
-    templates = gVenusLighthouseSecondFloorActorTemplates;
-    Scene_AssignViewFlags(templates);
-    return templates;
+    placements = gVenusLighthouseSecondFloorActorPlacements;
+    Scene_AssignViewFlags(placements);
+    return placements;
   }
   if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
-    templates = gVenusLighthouseThirdFloorActorTemplates;
-    Scene_AssignViewFlags(templates);
-    return templates;
+    placements = gVenusLighthouseThirdFloorActorPlacements;
+    Scene_AssignViewFlags(placements);
+    return placements;
   }
   if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
-    templates = gVenusLighthouseFourthFloorActorTemplates;
-    Scene_AssignViewFlags(templates);
-    return templates;
+    placements = gVenusLighthouseFourthFloorActorPlacements;
+    Scene_AssignViewFlags(placements);
+    return placements;
   }
-  return gVenusLighthouseActorTemplatesOther;
+  return gVenusLighthouseActorPlacementsOther;
 }
 
 /// Searching a locked door, in VenusLighthouseSecondFloor to
@@ -4604,11 +4604,11 @@ u32 gVenusLighthouseExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gVenusLighthouseActorTemplatesOther[] = {
+struct ActorPlacement gVenusLighthouseActorPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVenusLighthouseEntryActorTemplates[] = {
+struct ActorPlacement gVenusLighthouseEntryActorPlacements[] = {
     { SPRITE_SOLDIER, FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD, MOVEMENT_TYPE_STAND,
         PIXELS(128), 0, PIXELS(268), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -4626,7 +4626,7 @@ struct ActorTemplate gVenusLighthouseEntryActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVenusLighthouseGroundFloorActorTemplates[] = {
+struct ActorPlacement gVenusLighthouseGroundFloorActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -4638,7 +4638,7 @@ struct ActorTemplate gVenusLighthouseGroundFloorActorTemplates[] = {
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(872), 0, PIXELS(120), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(840), 0, PIXELS(88), FACING_NORTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(840), 0, PIXELS(88), FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
         PIXELS(664), 0, PIXELS(792), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, CONDITION_IN_VIEW, (s32)gVenusMiniatureLighthouseScript,
@@ -4646,39 +4646,39 @@ struct ActorTemplate gVenusLighthouseGroundFloorActorTemplates[] = {
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
         PIXELS(72), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(72), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(168), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
         PIXELS(72), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(104), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(104), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(136), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(136), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(168), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
-        PIXELS(200), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(200), 0, PIXELS(344), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVenusLighthouseFirstFloorActorTemplates[] = {
+struct ActorPlacement gVenusLighthouseFirstFloorActorPlacements[] = {
     { SPRITE_CAPPED_PILLAR, CONDITION_IN_VIEW, (s32)gVenusGreyPillarScript,
         PIXELS(248), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CAPPED_PILLAR, CONDITION_IN_VIEW, (s32)gVenusGreyPillarScript,
-        PIXELS(184), 0, PIXELS(824), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(184), 0, PIXELS(824), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CAPPED_PILLAR, CONDITION_IN_VIEW, (s32)gVenusGreyPillarScript,
-        PIXELS(200), 0, PIXELS(824), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(200), 0, PIXELS(824), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(392), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(88), 0, PIXELS(376), FACING_NORTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(88), 0, PIXELS(376), FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVenusLighthouseSecondFloorActorTemplates[] = {
+struct ActorPlacement gVenusLighthouseSecondFloorActorPlacements[] = {
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
         PIXELS(808), 0, PIXELS(728), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackNorthSouthScript,
@@ -4688,7 +4688,7 @@ struct ActorTemplate gVenusLighthouseSecondFloorActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVenusLighthouseThirdFloorActorTemplates[] = {
+struct ActorPlacement gVenusLighthouseThirdFloorActorPlacements[] = {
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
         PIXELS(888), 0, PIXELS(680), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackSouthEastScript,
@@ -4702,19 +4702,19 @@ struct ActorTemplate gVenusLighthouseThirdFloorActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVenusLighthouseFourthFloorActorTemplates[] = {
+struct ActorPlacement gVenusLighthouseFourthFloorActorPlacements[] = {
     { SPRITE_BALANCE_PLATFORM, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(104), 0, PIXELS(312), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BALANCE_PLATFORM, CONDITION_IN_VIEW, MOVEMENT_TYPE_RESET_ACTION,
-        PIXELS(168), 0, PIXELS(312), FACING_NORTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(312), FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(120), 0, PIXELS(280), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(136), 0, PIXELS(280), FACING_NORTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(136), 0, PIXELS(280), FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(152), 0, PIXELS(280), FACING_NORTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(152), 0, PIXELS(280), FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        PIXELS(248), 0, PIXELS(120), FACING_NORTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(248), 0, PIXELS(120), FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_LADY_STATUE, CONDITION_IN_VIEW, (s32)gVenusGreyStatueScript,
         PIXELS(136), 0, PIXELS(776), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPIRAL_PILLAR, CONDITION_IN_VIEW, (s32)gVenusTrackNorthSouthScript,

@@ -44,8 +44,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSolSanctumPsynergyStoneExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gSolSanctumPsynergyStoneActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gSolSanctumPsynergyStoneActorPlacements;
 }
 
 /// The exit and the Psynergy Stone.
@@ -89,7 +89,7 @@ u32 gSolSanctumPsynergyStoneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gSolSanctumPsynergyStoneActorTemplates[] = {
+struct ActorPlacement gSolSanctumPsynergyStoneActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 

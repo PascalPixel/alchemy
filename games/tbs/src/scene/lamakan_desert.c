@@ -147,7 +147,7 @@ enum {
 };
 
 /// The actors, numbered in the order of each scene's actor
-/// templates from ACTOR_FIRST_PLACED. LamakanDesertEast to
+/// placements from ACTOR_FIRST_PLACED. LamakanDesertEast to
 /// LamakanDesertManticore place the Manticore, then the LamakanDesertEast and
 /// LamakanDesertManticore one pit and LamakanDesertSmog all four pits and Smog;
 /// LamakanDesertCave places none.
@@ -255,7 +255,7 @@ const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 /// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
 /// way back from the Manticore's battle, marks it beaten; in the patched
 /// editions it also sets FLAG_KALAY_REACHED.
-const struct ActorTemplate *LamakanDesert_GetActorTemplates(void) {
+const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertManticore) {
     if (gAdventure.entrance == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
@@ -267,15 +267,15 @@ const struct ActorTemplate *LamakanDesert_GetActorTemplates(void) {
     }
   }
   if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertEast) {
-    return gLamakanDesertEastActorTemplates;
+    return gLamakanDesertEastActorPlacements;
   }
   if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertSmog) {
-    return gLamakanDesertSmogActorTemplates;
+    return gLamakanDesertSmogActorPlacements;
   }
   if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertManticore) {
-    return gLamakanDesertManticoreActorTemplates;
+    return gLamakanDesertManticoreActorPlacements;
   }
-  return gLamakanDesertActorTemplatesOther;
+  return gLamakanDesertActorPlacementsOther;
 }
 
 /// Lamakan Desert, step trigger 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
@@ -363,7 +363,7 @@ static s32 Reveal_HideSecrets(void) {
   Import_ActorSetPosition(ACTOR_FIRST_PIT + 2, 0, 0);
   Import_ActorSetPosition(ACTOR_LAST_PIT, 0, 0);
   Import_ActorSetPosition(ACTOR_SMOG, 0, 0);
-  // Hide the treasure spots independently of the actor templates.
+  // Hide the treasure spots independently of the actor placements.
   markerId = 100;
   do {
     TreasureSpot_SetActorPosition(markerId, 0, 0);
@@ -1294,11 +1294,11 @@ u32 gLamakanDesertExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gLamakanDesertActorTemplatesOther[] = {
+struct ActorPlacement gLamakanDesertActorPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLamakanDesertEastActorTemplates[] = {
+struct ActorPlacement gLamakanDesertEastActorPlacements[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1306,7 +1306,7 @@ struct ActorTemplate gLamakanDesertEastActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLamakanDesertSmogActorTemplates[] = {
+struct ActorPlacement gLamakanDesertSmogActorPlacements[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1322,7 +1322,7 @@ struct ActorTemplate gLamakanDesertSmogActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gLamakanDesertManticoreActorTemplates[] = {
+struct ActorPlacement gLamakanDesertManticoreActorPlacements[] = {
     { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

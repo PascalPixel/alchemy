@@ -7,7 +7,7 @@
 const struct SceneEntrance *ColosseumAzartMatch_GetEntrances(void);
 const struct SceneExitRegion *ColosseumAzartMatch_GetRegions(void);
 const u32 *ColosseumAzartMatch_GetExits(void);
-const struct ActorTemplate *ColosseumAzartMatch_GetActorTemplates(void);
+const struct ActorPlacement *ColosseumAzartMatch_GetActorPlacements(void);
 const struct Trigger *ColosseumAzartMatch_GetTriggers(void);
 s32 ColosseumAzartMatch_Initialize(void);
 extern const u8 gColosso_LetteringPaletteOffsets[];
@@ -19,7 +19,7 @@ extern s32 gColosseumAzartMatch_ScriptB[];
 extern u32 gColosseumAzartMatch_DirectionSteps[];
 extern struct SceneEntrance gColosseumAzartMatch_Entrances[];
 extern u32 gColosseumAzartMatch_Exits[];
-extern struct ActorTemplate gColosseumAzartMatch_ActorTemplates[];
+extern struct ActorPlacement gColosseumAzartMatch_ActorPlacements[];
 extern s32 gColosseumAzartMatch_Countdown;
 extern struct Trigger gColosseumAzartMatch_Triggers[];
 extern s16 gColosso_LetteringSlot;

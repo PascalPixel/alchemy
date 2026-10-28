@@ -14,8 +14,8 @@ enum {
 /// FLAG_CHILDHOOD gives Isaac and Garet ISAAC_CHILD and GARET_CHILD, and
 /// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
 ///
-/// Called by Event_SpawnActorTemplates for every actor
-/// template, and by PsynergyMenu_InitializeEntryActors (through
+/// Called by Event_SpawnActorPlacements for every actor
+/// placement, and by PsynergyMenu_InitializeEntryActors (through
 /// Party_RemapCharacterIdByFlagsFar) for the party's figures.
 s32 Party_RemapCharacterIdByFlags(s32 character) {
   s32 sprite;
@@ -60,16 +60,16 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 
 #define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
 
-extern const struct ActorTemplate gField_DefaultActorTemplates[2];
+extern const struct ActorPlacement gField_DefaultActorPlacements[2];
 
-/// Creates the actors of a scene's actor template table (ended by
+/// Creates the actors of a scene's actor placement table (ended by
 /// sprite -1), and records the table among the scene's tables. Sprites 0 to 7
 /// are the party's characters and take their own actor slot; other actor
-/// templates take the actor slots from slot on, one each, up to the last. An
-/// actor template whose condition does not hold is skipped, as is a Djinni
+/// placements take the actor slots from slot on, one each, up to the last. An
+/// actor placement whose condition does not hold is skipped, as is a Djinni
 /// hidden after a lost battle outside the World Map, but it still uses up its
 /// slot: actor slot + n is always row n, counted from 0, of the table's rows of
-/// sprite 8 or more, as Scene_FindActorTemplate counts them. An existing actor
+/// sprite 8 or more, as Scene_FindActorPlacement counts them. An existing actor
 /// is moved back to its place unless the party keeps its position. The table is
 /// kept by address, so it must last as long as the scene (the overlay's own
 /// tables do).
@@ -77,7 +77,7 @@ extern const struct ActorTemplate gField_DefaultActorTemplates[2];
 /// Called by Actor_ResetForLeader (the leader, then the scene's table),
 /// Actor_Respawn and Event_CallWithLastActiveActorId. Records
 /// the table in work->tables and each actor in work->actors.
-void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
+void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
   struct FieldWork *work;
   struct Actor *object;
   struct Actor *previous;
@@ -87,11 +87,11 @@ void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
   s32 spriteId;
   s32 condition;
   u8 spriteSlot;
-  u16 templateSprite;
+  u16 placementSprite;
 
   work = gFieldWork;
   // Remember the table once, before consuming slots for its actor
-  // templates.
+  // placements.
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
     if (work->tables[tableIndex] == entry)
       break;
@@ -100,10 +100,10 @@ void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
       break;
     }
   }
-  for (templateSprite = entry->sprite;
-       (s16)templateSprite != -1 && slot <= ACTOR_ID_COUNT - 1;
-       entry++, templateSprite = entry->sprite) {
-    // Current actor template tables use sprites 0 to 504, so every live
+  for (placementSprite = entry->sprite;
+       (s16)placementSprite != -1 && slot <= ACTOR_ID_COUNT - 1;
+       entry++, placementSprite = entry->sprite) {
+    // Current actor placement tables use sprites 0 to 504, so every live
     // row sets actorIndex.
     // XXX (no evidence): what the 0x2705 cutoff was for; no table reaches it.
     if (entry->sprite <= 7)
@@ -123,11 +123,11 @@ void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
     object = Actor_Lookup(actorIndex);
     if (object == 0) {
       object = Actor_CreateFar(spriteId, entry->x, entry->y, entry->z);
-      // ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE: share the previous
+      // ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE: share the previous
       // actor's sprite resource. The new sprite draws from the previous one's
       // VRAM cache entry, its own entry is freed, and both are marked to keep
       // the shared entry when either is released.
-      if (entry->flags & ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE) {
+      if (entry->flags & ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE) {
         previous = Actor_Lookup(actorIndex - 1);
         if (previous->spriteStorageKind == ACTOR_SPRITE_ONE &&
             object->spriteStorageKind == ACTOR_SPRITE_ONE) {
@@ -167,7 +167,7 @@ void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
       Actor_SelectAnimationFar(object, 1);
       (object)->homeX = object->x.fixed / Q16_ONE;
       (object)->homeZ = object->z.fixed / Q16_ONE;
-      // An actor template with a height is lifted half a pixel more and
+      // An actor placement with a height is lifted half a pixel more and
       // takes motion flags 4, floating: it neither follows the ground nor
       // falls. Outside the World Map every height is then counted from the
       // ground below.
@@ -176,7 +176,7 @@ void Event_SpawnActorTemplates(struct ActorTemplate *entry, s32 slot) {
         object->y.fixed += 0x8000;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        // World Map actor templates use single sprites and do not follow
+        // World Map actor placements use single sprites and do not follow
         // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
         object->motionFlags &= 0xfe;
@@ -226,7 +226,7 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 }
 
 /// Creates a scene's actors on entering it: the party leader where the
-/// adventure puts it, then the scene's actor template table from
+/// adventure puts it, then the scene's actor placement table from
 /// actor slot 8, and the camera that follows the leader. A leader entering
 /// above ground where its cell and the cell north of it are climbing spots
 /// (CELL_BEHAVIOR_CLIMB) is raised by the ground height of the cell north of it
@@ -237,9 +237,9 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 /// Empties every actor slot and table first, without releasing the
 /// actors in them; sets work->camera, the map's origin and
 /// gAdventure.movementMode.
-void Actor_ResetForLeader(struct ActorTemplate *table) {
+void Actor_ResetForLeader(struct ActorPlacement *table) {
   struct FieldWork *work;
-  struct ActorTemplate *entry;
+  struct ActorPlacement *entry;
   struct Actor *object;
   struct Actor *camera;
   struct MapGridCell *cell;
@@ -250,12 +250,12 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
 
   work = gFieldWork;
   leader = gAdventure.leaderActorId;
-  // Build the leader's temporary actor template before the scene's placed
+  // Build the leader's temporary actor placement before the scene's placed
   // actors. The two-row table, the leader's row and an end row, lives in
-  // the field work at 0x200 (FieldWork's leaderTemplates) and lasts with it.
-  entry = (struct ActorTemplate *)((u8 *)work + 0x200);
-  entry[0] = gField_DefaultActorTemplates[0];
-  entry[1] = gField_DefaultActorTemplates[1];
+  // the field work at 0x200 (FieldWork's leaderPlacements) and lasts with it.
+  entry = (struct ActorPlacement *)((u8 *)work + 0x200);
+  entry[0] = gField_DefaultActorPlacements[0];
+  entry[1] = gField_DefaultActorPlacements[1];
   for (pos = 0; pos < 4; pos++)
     work->tables[pos] = 0;
   Actor_ClearAll();
@@ -263,8 +263,8 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
   entry->sprite = leader;
   SET_POSITION(entry, gAdventure.x, 0, gAdventure.z);
   entry->facing = gAdventure.heading;
-  Event_SpawnActorTemplates(entry, leader);
-  Event_SpawnActorTemplates(table, ACTOR_FIRST_PLACED);
+  Event_SpawnActorPlacements(entry, leader);
+  Event_SpawnActorPlacements(table, ACTOR_FIRST_PLACED);
 
   object = work->actors[leader];
   // gAdventure.layer keeps the leader's map grid layer (SceneSequence_Run
@@ -310,7 +310,7 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
 /// append scan.
 ///
 /// Called by Actor_Respawn and Event_CallWithLastActiveActorId
-/// to choose where Event_SpawnActorTemplates starts.
+/// to choose where Event_SpawnActorPlacements starts.
 s32 Actor_FindLastActiveId(void) {
   struct FieldWork *work = gFieldWork;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
@@ -337,22 +337,22 @@ UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
   return (u8 *)gFieldWork + 0x14 + actorIndex * sizeof(void *);
 }
 
-// Actors and the view: actor template conditions from the map's
+// Actors and the view: actor placement conditions from the map's
 // view bounds, and clearing placed actors.
 
-#define FLAG_IN_VIEW 0x164     ///< kept clear, so a template using it appears
-#define FLAG_OUT_OF_VIEW 0x165 ///< kept set, so a template using it does not
+#define FLAG_IN_VIEW 0x164     ///< kept clear, so a placement using it appears
+#define FLAG_OUT_OF_VIEW 0x165 ///< kept set, so a placement using it does not
 
 #define PLACED_MAX                                                             \
   (ACTOR_ID_COUNT - ACTOR_FIRST_PLACED) ///< placed actors' slots
 
-/// Gives each actor template with condition 0 a condition saying whether
+/// Gives each actor placement with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
 ///
 /// Called by scene overlays through Scene_AssignViewFlagsFar. Writes the
-/// actor templates' condition, and clears FLAG_IN_VIEW and sets
+/// actor placements' condition, and clears FLAG_IN_VIEW and sets
 /// FLAG_OUT_OF_VIEW.
-void Scene_AssignViewFlags(struct ActorTemplate *entry) {
+void Scene_AssignViewFlags(struct ActorPlacement *entry) {
   struct MapGridScrollWork *view = gMapGridWork[0];
 
   GameFlag_ClearFar(FLAG_IN_VIEW);
@@ -425,7 +425,7 @@ void Actor_ClearOutOfBounds(void) {
           // ACTOR_SPRITE_ONE makes the release free the actor's one
           // sprite, and clearing retainCacheEntry (bit 0 of sprite byte 29)
           // frees its VRAM cache entry with it, even one shared with a
-          // neighbour (ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE).
+          // neighbour (ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE).
           *removed = ACTOR_SPRITE_ONE;
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
@@ -442,14 +442,14 @@ void Actor_ClearOutOfBounds(void) {
 }
 
 /// Releases every placed actor and places the scene's actors again
-/// from its first actor template table after the leader's.
+/// from its first actor placement table after the leader's.
 ///
 /// Called on the World Map after one, by Field_UsePsynergy and
 /// Djinn_JoinParty. Clears work->tables 1 to 3 before the table is spawned
 /// again.
 void Actor_Respawn(void) {
   struct FieldWork *work = gFieldWork;
-  struct ActorTemplate *templates;
+  struct ActorPlacement *placements;
   s32 slotIndex;
 
   for (slotIndex = 0; slotIndex < PLACED_MAX; slotIndex++) {
@@ -464,12 +464,12 @@ void Actor_Respawn(void) {
       work->actors[ACTOR_FIRST_PLACED + slotIndex] = 0;
     }
   }
-  templates = work->tables[1];
+  placements = work->tables[1];
   work->tables[1] = 0;
   work->tables[2] = 0;
   work->tables[3] = 0;
-  if (templates != 0)
-    Event_SpawnActorTemplates(templates, Actor_FindLastActiveId());
+  if (placements != 0)
+    Event_SpawnActorPlacements(placements, Actor_FindLastActiveId());
 }
 
 /// Empties all the actor slots, without releasing the actors.

@@ -38,7 +38,7 @@ enum RockRoomsCellBehavior {
 };
 
 /// The placed actors of Lunpa's houses, shops, inn and temple, numbered in the
-/// order of gInteriorActorTemplates. Two people live in each of the three
+/// order of gInteriorActorPlacements. Two people live in each of the three
 /// homes, named by their sprites and by what they say while the town is sealed.
 enum InteriorActorId {
   /// In the first home: this man with brown hair

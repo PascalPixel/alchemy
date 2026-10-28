@@ -422,22 +422,22 @@ const struct SceneExitRegion *MercuryLighthouse_GetRegions(void) {
 const u32 *MercuryLighthouse_GetExits(void) { return gMercuryLighthouse_Exits; }
 
 /// Selects the actors and obstacles for the current lighthouse scene.
-const struct ActorTemplate *MercuryLighthouse_GetActorTemplates(void) {
+const struct ActorPlacement *MercuryLighthouse_GetActorPlacements(void) {
   s16 selector = gAdventure.sceneId;
 
   if (selector == (s32)&SceneId_MercuryLighthouseLower) {
-    return gMercuryLighthouseLowerActorTemplates;
+    return gMercuryLighthouseLowerActorPlacements;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseMiddle) {
-    return gMercuryLighthouseMiddleActorTemplates;
+    return gMercuryLighthouseMiddleActorPlacements;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseUpper) {
-    return gMercuryLighthouseUpperActorTemplates;
+    return gMercuryLighthouseUpperActorPlacements;
   }
   if (selector == (s32)&SceneId_MercuryLighthouseExterior) {
-    return gMercuryLighthouseExteriorActorTemplates;
+    return gMercuryLighthouseExteriorActorPlacements;
   }
-  return gMercuryLighthouseActorTemplatesOther;
+  return gMercuryLighthouseActorPlacementsOther;
 }
 
 /// MercuryLighthouseLower, as in MercuryLighthouseEntrance, once Ply has worked
@@ -3242,11 +3242,11 @@ u32 gMercuryLighthouse_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gMercuryLighthouseActorTemplatesOther[] = {
+struct ActorPlacement gMercuryLighthouseActorPlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gMercuryLighthouseLowerActorTemplates[] = {
+struct ActorPlacement gMercuryLighthouseLowerActorPlacements[] = {
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3262,7 +3262,7 @@ struct ActorTemplate gMercuryLighthouseLowerActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gMercuryLighthouseMiddleActorTemplates[] = {
+struct ActorPlacement gMercuryLighthouseMiddleActorPlacements[] = {
     { SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(152), 0, PIXELS(528), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PIPE_END, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -3276,7 +3276,7 @@ struct ActorTemplate gMercuryLighthouseMiddleActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gMercuryLighthouseUpperActorTemplates[] = {
+struct ActorPlacement gMercuryLighthouseUpperActorPlacements[] = {
     { SPRITE_BLUE_STATUE, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL), MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(360), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLUE_STATUE, FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL, MOVEMENT_TYPE_STAND,
@@ -3306,7 +3306,7 @@ struct ActorTemplate gMercuryLighthouseUpperActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gMercuryLighthouseExteriorActorTemplates[] = {
+struct ActorPlacement gMercuryLighthouseExteriorActorPlacements[] = {
     { ACTOR_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(840), 0, PIXELS(664), FACING_NORTH, TALK_FACING_KEEP, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3316,7 +3316,7 @@ struct ActorTemplate gMercuryLighthouseExteriorActorTemplates[] = {
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(872), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(888), 0, PIXELS(872), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(888), 0, PIXELS(872), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(840), 0, PIXELS(600), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

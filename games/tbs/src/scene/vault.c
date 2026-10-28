@@ -3,7 +3,7 @@
 /// finds it after Mt. Aleph's eruption: its streets, with the townspeople,
 /// Ivan, the bell and the dog. The houses, the inn and its loft, where the
 /// search for Hammet's stolen Shaman's Rod plays out, are log_rooms_a.c.
-/// Scene_GetActorTemplates and Scene_GetTriggers choose their tables by
+/// Scene_GetActorPlacements and Scene_GetTriggers choose their tables by
 /// FLAG_VAULT_THIEVES_JAILED, and once the party has reached Kalay
 /// (FLAG_KALAY_REACHED) Scene_Initialize sends it straight on to the town's
 /// later scene (VAULT_TO_VAULT_REVISIT, SceneId_VaultRevisit,
@@ -202,10 +202,10 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gVault_Exits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0)
-    return gVault_ActorTemplatesAfterThieves;
-  return gVault_ActorTemplates;
+    return gVault_ActorPlacementsAfterThieves;
+  return gVault_ActorPlacements;
 }
 
 /// Counts the Venus Djinn that must leave Ivan before he leaves the party.
@@ -1314,7 +1314,7 @@ u32 gVault_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gVault_ActorTemplates[] = {
+struct ActorPlacement gVault_ActorPlacements[] = {
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1355,7 +1355,7 @@ struct ActorTemplate gVault_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVault_ActorTemplatesAfterThieves[] = {
+struct ActorPlacement gVault_ActorPlacementsAfterThieves[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

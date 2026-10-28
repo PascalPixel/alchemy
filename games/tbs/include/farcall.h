@@ -45,7 +45,7 @@ struct PolarOffsetOutput;
 struct GlyphRect;
 struct WindowSprite;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct MenuCursor;
 struct SpritePlacement;
 struct SpriteScale;

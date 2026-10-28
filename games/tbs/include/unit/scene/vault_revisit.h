@@ -7,7 +7,7 @@
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gVaultRevisit_ShortEffectScript[];
@@ -18,7 +18,7 @@ extern s32 gVaultRevisit_BoyRoundTheWellScript[];
 extern s32 gVaultRevisit_GirlRoundTheWellScript[];
 extern struct SceneEntrance gVaultRevisit_Entrances[];
 extern u32 gVaultRevisit_Exits[];
-extern struct ActorTemplate gVaultRevisit_ActorTemplates[];
+extern struct ActorPlacement gVaultRevisit_ActorPlacements[];
 extern u16 gVaultRevisit_GemOwnersHouseDoorCells[];
 extern u16 gVaultRevisit_ChildsHouseDoorCells[];
 extern u16 gVaultRevisit_InnDoorCells[];

@@ -136,7 +136,7 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The File Screen overlay's scene tables, for the scene loader: one
-/// entrance, the exit, and no actor templates or triggers.
+/// entrance, the exit, and no actor placements or triggers.
 u8 *FileScreen_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
 
 /// The exit regions entry: the File Screen has no exit boxes.
@@ -144,8 +144,8 @@ s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *FileScreen_GetExits(void) { return (u8 *)gFileScreen_Exits; }
 
-u8 *FileScreen_GetActorTemplates(void) {
-  return (u8 *)gFileScreen_ActorTemplates;
+u8 *FileScreen_GetActorPlacements(void) {
+  return (u8 *)gFileScreen_ActorPlacements;
 }
 
 u8 *FileScreen_GetTriggers(void) { return (u8 *)gFileScreen_Triggers; }
@@ -1357,7 +1357,7 @@ u32 gFileScreen_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gFileScreen_ActorTemplates[] = {
+struct ActorPlacement gFileScreen_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 

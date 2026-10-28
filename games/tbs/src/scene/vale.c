@@ -2,7 +2,7 @@
 /// SceneId_Vale, Isaac's village by day, outside the houses: the door of
 /// Isaac's house, the houses of Garet's family and of Jenna's grandparents, the
 /// Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
-/// actor templates and triggers come in three sets, chosen by the story
+/// actor placements and triggers come in three sets, chosen by the story
 /// flags: before the party leaves Vale, after it has left
 /// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED);
 /// VALE_FROM_TITLE has a set of its own. In story order:
@@ -169,10 +169,10 @@ static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor);
 static void Vale_CycleActorPalette(struct Actor *actor);
 
 /// The placed actors of Vale by day, numbered in the order of
-/// gVale_ActorTemplates and gVale_ActorTemplatesAfterLeaving, which
+/// gVale_ActorPlacements and gVale_ActorPlacementsAfterLeaving, which
 /// place the same people in the same rows. A row whose sprite is a party
 /// member's (Garet's, Jenna's) takes that party member's actor id instead
-/// (Event_SpawnActorTemplates), so the numbering skips it.
+/// (Event_SpawnActorPlacements), so the numbering skips it.
 enum ValeActorId {
   /// An old woman: "Mt. Aleph looks beautiful today. It's so peaceful."; after
   /// the party has left, "Vale is saved thanks to the Wise One!"
@@ -262,7 +262,7 @@ enum ValeActorId {
 };
 
 /// Back from Kalay, the placed actors of
-/// gVale_ActorTemplatesAfterKalay; Garet's row takes his own actor id.
+/// gVale_ActorPlacementsAfterKalay; Garet's row takes his own actor id.
 enum ValeAfterKalayActorId {
   /// Garet's sister. "Ah! It's been a while... You're back?"
   /// (Vale_GaretMeetsHisSister)
@@ -319,7 +319,7 @@ enum ValeAfterKalayActorId {
 };
 
 /// The game's opening (Vale_MendingTheRoof), the placed actors of
-/// gVale_RepairActorTemplates; Jenna's and Garet's rows take their own
+/// gVale_RepairActorPlacements; Jenna's and Garet's rows take their own
 /// actor ids.
 enum ValeOpeningActorId {
   /// A woman in a green dress who meets Jenna on her way.
@@ -420,15 +420,15 @@ const u32 *Vale_GetExits(void) { return gVale_Exits; }
 
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
-const struct ActorTemplate *Vale_GetActorTemplates(void) {
+const struct ActorPlacement *Vale_GetActorPlacements(void) {
   u8 *gameStateBytes = (u8 *)&gAdventure;
   if (((struct Adventure *)gameStateBytes)->entrance == VALE_FROM_TITLE)
-    return gVale_RepairActorTemplates;
+    return gVale_RepairActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
-    return gVale_ActorTemplatesAfterKalay;
+    return gVale_ActorPlacementsAfterKalay;
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
-    return gVale_ActorTemplatesAfterLeaving;
-  return gVale_ActorTemplates;
+    return gVale_ActorPlacementsAfterLeaving;
+  return gVale_ActorPlacements;
 }
 
 /// Catch on the Nut in Vale: the party gets it.
@@ -3518,7 +3518,7 @@ u32 gVale_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gVale_ActorTemplates[] = {
+struct ActorPlacement gVale_ActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3564,7 +3564,7 @@ struct ActorTemplate gVale_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVale_ActorTemplatesAfterLeaving[] = {
+struct ActorPlacement gVale_ActorPlacementsAfterLeaving[] = {
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3610,7 +3610,7 @@ struct ActorTemplate gVale_ActorTemplatesAfterLeaving[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVale_ActorTemplatesAfterKalay[] = {
+struct ActorPlacement gVale_ActorPlacementsAfterKalay[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3644,7 +3644,7 @@ struct ActorTemplate gVale_ActorTemplatesAfterKalay[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVale_RepairActorTemplates[] = {
+struct ActorPlacement gVale_RepairActorPlacements[] = {
     { ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(409), 0, PIXELS(1134), FACING_NORTH, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

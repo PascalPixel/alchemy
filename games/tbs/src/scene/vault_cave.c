@@ -160,7 +160,7 @@ enum {
 };
 
 /// The actors of SceneId_VaultCaveVambrace, numbering the rows of
-/// gVaultCaveVambrace_ActorTemplates.
+/// gVaultCaveVambrace_ActorPlacements.
 enum VaultCaveVambraceActorId {
   /// A pillar, drawn as ACTOR_SOUTHERN_PILLAR is, two cells east of the
   /// southern switch, drawn underfoot when the party arrives by
@@ -210,7 +210,7 @@ enum VaultCaveVambraceActorId {
 };
 
 /// The actors of SceneId_VaultCaveMouth, numbering the rows of
-/// gVaultCaveMouth_ActorTemplates. The northern switch is map cell (16,
+/// gVaultCaveMouth_ActorPlacements. The northern switch is map cell (16,
 /// 12).
 enum VaultCaveMouthActorId {
   /// A pillar two cells east of the northern switch.
@@ -269,19 +269,19 @@ const u32 *Scene_GetExits(void) {
 }
 
 /// Selects the pillars, water drops, puddles and ivy of the room.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_VaultCavePassage) {
-    return gVaultCavePassage_ActorTemplates;
+    return gVaultCavePassage_ActorPlacements;
   }
   if (sceneId == (s32)&SceneId_VaultCaveVambrace) {
-    return gVaultCaveVambrace_ActorTemplates;
+    return gVaultCaveVambrace_ActorPlacements;
   }
   if (sceneId == (s32)&SceneId_VaultCaveMouth) {
-    return gVaultCaveMouth_ActorTemplates;
+    return gVaultCaveMouth_ActorPlacements;
   }
-  return gVaultCave_FallbackActorTemplates;
+  return gVaultCave_FallbackActorPlacements;
 }
 
 /// Finds a placed actor with collision enabled at the requested map
@@ -1248,15 +1248,15 @@ u32 gVaultCaveMouth_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gVaultCave_FallbackActorTemplates[] = {
+struct ActorPlacement gVaultCave_FallbackActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVaultCavePassage_ActorTemplates[] = {
+struct ActorPlacement gVaultCavePassage_ActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVaultCaveVambrace_ActorTemplates[] = {
+struct ActorPlacement gVaultCaveVambrace_ActorPlacements[] = {
     { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(280), 0, PIXELS(876), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1290,7 +1290,7 @@ struct ActorTemplate gVaultCaveVambrace_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gVaultCaveMouth_ActorTemplates[] = {
+struct ActorPlacement gVaultCaveMouth_ActorPlacements[] = {
     { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(296), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { 0x12b, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

@@ -66,7 +66,7 @@ s32 SceneSequence_Run(s32 entrance) {
   Field_ClearRequests();
   work->triggers = gOverlayArea.triggers();
   Scene_ApplyEntrance();
-  Actor_ResetForLeader((struct ActorTemplate *)gOverlayArea.actorTemplates());
+  Actor_ResetForLeader((struct ActorPlacement *)gOverlayArea.actorPlacements());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
     Actor_Restore();
   if (gAdventure.pendingDjinni != 0)

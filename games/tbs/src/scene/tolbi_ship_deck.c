@@ -3,7 +3,7 @@
 /// the party and a tour group bound for Colosso across the Karagol Sea from
 /// Kalay to Tolbi. The ship's other scenes are its mast (tolbi_ship_mast.c)
 /// and below decks (ship_rooms.c). The voyage's stage, read from
-/// its flags, chooses the deck's actor templates and events: at Kalay,
+/// its flags, chooses the deck's actor placements and events: at Kalay,
 /// under sail once the first attack is fought off
 /// (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF), while the oars move
 /// (FLAG_TOLBI_SHIP_ROWING), at anchor off Crossbone Isle
@@ -145,15 +145,15 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 /// window and portrait open.
 #define SPEAKER(actorId, bits) ((bits) | (actorId))
 
-/// Who is who on deck, numbering each actor template table's rows from
+/// Who is who on deck, numbering each actor placement table's rows from
 /// ACTOR_FIRST_PLACED. Every table starts with the same twelve rows of oars,
 /// and the events add their actors after a table's last row
 /// (Event_CallWithLastActiveActorId), so each stage of the voyage has
 /// its own names, which carry its prefix. At Kalay
-/// (gTolbiShipDeckActorTemplatesWaiting) the captain talks the delay over
+/// (gTolbiShipDeckActorPlacementsWaiting) the captain talks the delay over
 /// with Kaja, the deck's fighter, and a crewman, who asks Kaja how the oarsmen
 /// are ("Say, Kaja, how are the oarsmen doing?"). At sea
-/// gTolbiShipDeck_CrewActorTemplates places Kaja and the warriors Ouranos
+/// gTolbiShipDeck_CrewActorPlacements places Kaja and the warriors Ouranos
 /// and Sean, who help him guard the deck ("That'll be me, Ouranos, and Sean on
 /// deck").
 enum TolbiShipDeckActorId {
@@ -173,8 +173,8 @@ enum TolbiShipDeckActorId {
   /// render)
   ACTOR_FIRST_OAR = ACTOR_FIRST_STROKE_OAR + 4,
 
-  // At Kalay: gTolbiShipDeckActorTemplates, then
-  // gTolbiShipDeckActorTemplatesWaiting.
+  // At Kalay: gTolbiShipDeckActorPlacements, then
+  // gTolbiShipDeckActorPlacementsWaiting.
   /// The crewman, a man in a blue bandana (SPRITE_MAN_IN_BLUE_BANDANA), who
   /// hid the captain's anchor charm on the mast and denies everything.
   /// ★ Named from the game: "I didn't do anything..."
@@ -215,7 +215,7 @@ enum TolbiShipDeckActorId {
   /// by land." (MsgTolbiShipDeckTheKaragolIsLikeAHumongous)
   ACTOR_KALAY_PASSENGER_KARAGOL,
 
-  // At sea: gTolbiShipDeck_CrewActorTemplates after the oars, then each
+  // At sea: gTolbiShipDeck_CrewActorPlacements after the oars, then each
   // event's own rows.
   /// ★ Named from the game: "Say, Kaja, how are the oarsmen doing?"
   /// (MsgTolbiShipWonderCouldHaveHappened)
@@ -235,7 +235,7 @@ enum TolbiShipDeckActorId {
   /// (MsgTolbiShipDeckYouMustFeelAwfullyImportantOrdering)
   ACTOR_SEA_CREW_MEMBER,
   /// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD
-  /// (gTolbiShipDeck_MonstersBoardActorTemplates): the first attack's
+  /// (gTolbiShipDeck_MonstersBoardActorPlacements): the first attack's
   /// three monsters, all of one sprite, which leap aboard and go below by the
   /// first door, where gShipRooms_FirstAttackMonsters places them.
   /// ★ Named from what the player sees: a jellyfish monster
@@ -243,7 +243,7 @@ enum TolbiShipDeckActorId {
   /// render)
   ACTOR_SEA_FIRST_ATTACK_MONSTER,
   /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_SECOND_ATTACK
-  /// (gTolbiShipDeck_SecondAttackActorTemplates): four monsters of one
+  /// (gTolbiShipDeck_SecondAttackActorPlacements): four monsters of one
   /// sprite hover by the deck, the first two diving at Sean and the others at
   /// Ouranos.
   /// ★ Named from what the player sees: a pink winged monster
@@ -261,7 +261,7 @@ enum TolbiShipDeckActorId {
   /// render)
   ACTOR_SEA_SPLASH = ACTOR_SEA_SECOND_ATTACK_MONSTER + 3,
   /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_THIRD_ATTACK
-  /// (gTolbiShipDeck_ThirdAttackActorTemplates): four monsters with the
+  /// (gTolbiShipDeck_ThirdAttackActorPlacements): four monsters with the
   /// first attack's sprite, that leap at Sean, the first two, and at Ouranos.
   /// ★ Named from what the player sees: a jellyfish monster leaping at Sean
   /// across the deck (its render)
@@ -280,7 +280,7 @@ enum TolbiShipDeckActorId {
   /// falling monster will land (its render)
   ACTOR_SEA_FALLING_MONSTER_SHADOW = ACTOR_SEA_THIRD_ATTACK_MONSTER + 3,
   /// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_KRAKEN and at anchor
-  /// (gTolbiShipDeck_KrakenActorTemplates, after Garet, Ivan and Mia in
+  /// (gTolbiShipDeck_KrakenActorPlacements, after Garet, Ivan and Mia in
   /// their own slots): the Kraken, which the party charges; at anchor the same
   /// rows place it only for it to be released at once.
   /// ★ Named from the game: "You did good against that Kraken."
@@ -290,14 +290,14 @@ enum TolbiShipDeckActorId {
   /// deck.
   ACTOR_INVISIBLE_SEA_CAMERA_TARGET,
   /// At anchor, back from the island
-  /// (gTolbiShipDeck_TourGuideActorTemplates): the tour guide comes up
+  /// (gTolbiShipDeck_TourGuideActorPlacements): the tour guide comes up
   /// from below. Kaja: "Tell our tourists they can enjoy a nice, long break
   /// after we arrive."
   /// ★ Named from the game: "The passengers are going stir crazy!"
   /// (MsgTolbiShipHowWasIsaacDidExplore)
   ACTOR_TOUR_GUIDE_AT_ANCHOR,
 
-  // At Tolbi: gTolbiShipDeckActorTemplatesArrived.
+  // At Tolbi: gTolbiShipDeckActorPlacementsArrived.
   /// ★ Named from the game: "You lookin' for Sean and Ouranos?"
   /// (MsgTolbiShipDeckYouLookinForSeanAndOuranos)
   ACTOR_ARRIVED_KAJA = ACTOR_FIRST_OAR + 8,
@@ -807,22 +807,22 @@ const struct SceneExitRegion *TolbiShipDeck_GetRegions(void) {
 const u32 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
 
 /// The talk facing of a Kalay actor's row in
-/// gTolbiShipDeckActorTemplatesWaiting.
+/// gTolbiShipDeckActorPlacementsWaiting.
 #define KALAY_TALK_FACING(actorId)                                             \
   STORE_CONST(                                                                 \
-      gTolbiShipDeckActorTemplatesWaiting[(actorId) - ACTOR_FIRST_PLACED]      \
+      gTolbiShipDeckActorPlacementsWaiting[(actorId) - ACTOR_FIRST_PLACED]     \
           .talkFacing)
 
-const struct ActorTemplate *TolbiShipDeck_GetActorTemplates(void) {
+const struct ActorPlacement *TolbiShipDeck_GetActorPlacements(void) {
   s32 afterFirstAttack;
 
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI))
-    return gTolbiShipDeckActorTemplatesArrived;
+    return gTolbiShipDeckActorPlacementsArrived;
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING))
-    return gTolbiShipDeckActorTemplatesRowing;
+    return gTolbiShipDeckActorPlacementsRowing;
   afterFirstAttack = GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF);
   if (afterFirstAttack != 0)
-    return gTolbiShipDeckActorTemplatesAtSea;
+    return gTolbiShipDeckActorPlacementsAtSea;
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
       KALAY_TALK_FACING(ACTOR_KALAY_CREW_MEMBER) = afterFirstAttack;
@@ -832,9 +832,9 @@ const struct ActorTemplate *TolbiShipDeck_GetActorTemplates(void) {
       KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_WAITING_LONG) = 1;
       KALAY_TALK_FACING(ACTOR_KALAY_PASSENGER_SEEING_COLOSSO) = 1;
     }
-    return gTolbiShipDeckActorTemplatesWaiting;
+    return gTolbiShipDeckActorPlacementsWaiting;
   }
-  return gTolbiShipDeckActorTemplates;
+  return gTolbiShipDeckActorPlacements;
 }
 
 #undef KALAY_TALK_FACING
@@ -1432,7 +1432,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
 
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, PIXELS(238), PIXELS(626));
@@ -1468,7 +1468,7 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
 
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, PIXELS(238), PIXELS(626));
@@ -1498,7 +1498,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   ((struct MapGridScrollWork *)gMapGridWork[0])->minX = PIXELS(65);
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_KrakenActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_KrakenActorPlacements);
   WaitFrames(1);
   Actor_ReleaseById(ACTOR_SEA_KRAKEN);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, PIXELS(238), PIXELS(626));
@@ -1562,7 +1562,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
 
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(232), PIXELS(636));
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1624,7 +1624,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
 static void TolbiShipDeck_SightSeaMonsters(void) {
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
@@ -1655,10 +1655,10 @@ static void TolbiShipDeck_MonstersBoard(void) {
 
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_MonstersBoardActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_MonstersBoardActorPlacements);
   WaitFrames(1);
   Actor_SetPosition(ACTOR_SEA_OURANOS, PIXELS(248), PIXELS(728));
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1729,10 +1729,10 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_SecondAttackActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_SecondAttackActorPlacements);
   WaitFrames(1);
   Import_ActorSetAnimation(ACTOR_SEA_SPLASH, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SEA_FIRST_HOVERING_MONSTER), 1);
@@ -1838,10 +1838,10 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   record = Actor_GetById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_ThirdAttackActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_ThirdAttackActorPlacements);
   WaitFrames(1);
   Import_ActorSetPosition(ACTOR_SEA_SEAN, PIXELS(176), PIXELS(696));
   record = Actor_GetById(ACTOR_SEA_SEAN);
@@ -1965,7 +1965,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
 
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_KrakenActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_KrakenActorPlacements);
   WaitFrames(1);
   FieldCamera_FollowActor(ACTOR_INVISIBLE_SEA_CAMERA_TARGET, 1);
   WaitFrames(1);
@@ -2081,7 +2081,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
 
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, PIXELS(182), PIXELS(618));
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, PIXELS(238), PIXELS(626));
@@ -2139,7 +2139,7 @@ static void TolbiShipDeck_SightLand(void) {
   record = Actor_GetById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Actor_SetPosition(ACTOR_SEA_KAJA, PIXELS(196), PIXELS(502));
   record = Actor_GetById(ACTOR_SEA_KAJA);
@@ -2781,7 +2781,7 @@ static void TolbiShipDeck_SightIsland(void) {
   sSeaScroll[0] = 0x40000;
   sSeaSpeed[0] = -0x8000;
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_CrewActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   WaitFrames(1);
   Actor_SetPosition(ACTOR_SEA_OURANOS, PIXELS(182), PIXELS(618));
   Actor_Get(ACTOR_SEA_OURANOS)->facing = FACING_NORTH;
@@ -2955,7 +2955,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
 static void TolbiShipDeck_ReturnFromIsland(void) {
   Event_Start();
   Event_CallWithLastActiveActorId(
-      (struct ActorTemplate *)gTolbiShipDeck_TourGuideActorTemplates);
+      (struct ActorPlacement *)gTolbiShipDeck_TourGuideActorPlacements);
   WaitFrames(1);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -3322,31 +3322,31 @@ const u32 gTolbiShipDeckExits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ActorTemplate gTolbiShipDeckActorTemplates[] = {
+const struct ActorPlacement gTolbiShipDeckActorPlacements[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(266), 0, PIXELS(703), FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
@@ -3355,34 +3355,34 @@ const struct ActorTemplate gTolbiShipDeckActorTemplates[] = {
 // UB: the matching compiler places this writable overlay table with the
 // constants. The modern build gives its talkFacing stores a mutable object.
 #ifdef UBFIX
-struct ActorTemplate gTolbiShipDeckActorTemplatesWaiting[] = {
+struct ActorPlacement gTolbiShipDeckActorPlacementsWaiting[] = {
 #else
-const struct ActorTemplate gTolbiShipDeckActorTemplatesWaiting[] = {
+const struct ActorPlacement gTolbiShipDeckActorPlacementsWaiting[] = {
 #endif
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(183), 0, PIXELS(720), FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_MAN_IN_YELLOW_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3402,7 +3402,7 @@ const struct ActorTemplate gTolbiShipDeckActorTemplatesWaiting[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeckActorTemplatesRowing[] = {
+const struct ActorPlacement gTolbiShipDeckActorPlacementsRowing[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3412,53 +3412,53 @@ const struct ActorTemplate gTolbiShipDeckActorTemplatesRowing[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeckActorTemplatesAtSea[] = {
+const struct ActorPlacement gTolbiShipDeckActorPlacementsAtSea[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeck_CrewActorTemplates[] = {
+const struct ActorPlacement gTolbiShipDeck_CrewActorPlacements[] = {
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(192), 0, PIXELS(512), FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_RED_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3470,23 +3470,23 @@ const struct ActorTemplate gTolbiShipDeck_CrewActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeck_TourGuideActorTemplates[] = {
+const struct ActorPlacement gTolbiShipDeck_TourGuideActorPlacements[] = {
     { SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeck_MonstersBoardActorTemplates[] = {
+const struct ActorPlacement gTolbiShipDeck_MonstersBoardActorPlacements[] = {
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeck_SecondAttackActorTemplates[] = {
+const struct ActorPlacement gTolbiShipDeck_SecondAttackActorPlacements[] = {
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PINK_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -3506,19 +3506,19 @@ const struct ActorTemplate gTolbiShipDeck_SecondAttackActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeck_ThirdAttackActorTemplates[] = {
+const struct ActorPlacement gTolbiShipDeck_ThirdAttackActorPlacements[] = {
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLUE_WINGED_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3526,7 +3526,7 @@ const struct ActorTemplate gTolbiShipDeck_ThirdAttackActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeck_KrakenActorTemplates[] = {
+const struct ActorPlacement gTolbiShipDeck_KrakenActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3548,31 +3548,31 @@ const struct ActorTemplate gTolbiShipDeck_KrakenActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gTolbiShipDeckActorTemplatesArrived[] = {
+const struct ActorPlacement gTolbiShipDeckActorPlacementsArrived[] = {
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, 0 },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        0, 0, 0, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(132), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(664), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_OAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(300), 0, PIXELS(728), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_KAJA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(188), 0, PIXELS(512), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

@@ -7,7 +7,7 @@
 #include "static_assert.h"
 
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 
 /// Each stop links to up to three others, with a heading for each connection.
 struct LogRoomsAStopConnection {
@@ -30,7 +30,7 @@ STATIC_ASSERT(sizeof(struct LogRoomsAStop) == 16);
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern struct LogRoomsAStop gLogRoomsA_Stops[];
@@ -63,8 +63,8 @@ extern s32 gLogRoomsA_SuspectAlongToSouthEastCorner[];
 extern struct SceneEntrance gLogRoomsA_Entrances[];
 extern struct SceneExitRegion gLogRoomsA_Regions[];
 extern u32 gLogRoomsA_Exits[];
-extern struct ActorTemplate gLogRoomsA_ActorTemplates[];
-extern struct ActorTemplate gLogRoomsA_LoftActorTemplates[];
+extern struct ActorPlacement gLogRoomsA_ActorPlacements[];
+extern struct ActorPlacement gLogRoomsA_LoftActorPlacements[];
 extern struct Trigger gLogRoomsA_Triggers[];
 extern struct Trigger gLogRoomsA_LoftTriggers[];
 extern struct Trigger gLogRoomsA_TriggersAfterThieves[];

@@ -17,7 +17,7 @@
 /// Each vine has cell behaviors of its own, so 12 and 13 repeat 10's and
 /// 11's events for the second vine. Breeze, a Jupiter Djinni, stands here until
 /// it has joined the party: its own flag (FLAG_DJINNI(DJINNI_BREEZE))
-/// removes its actor template. Talking to it starts a battle with it.
+/// removes its actor placement. Talking to it starts a battle with it.
 ///
 /// The setup opens the map with a backdrop fade, blends BG1 over the rest of
 /// the screen and splits BG3's scroll at a scanline, 192 less the ground
@@ -60,7 +60,7 @@
 #include "songs.h"
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed actor; its
-/// actor template is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE))
+/// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE))
 /// is set.
 enum {
   /// ★ Named from the game: "Breeze" (MsgDjinnName)
@@ -90,8 +90,8 @@ const struct SceneExitRegion *TretTreeBranch_GetRegions(void) { return NULL; }
 
 const u32 *TretTreeBranch_GetExits(void) { return gTretTreeBranch_Exits; }
 
-const struct ActorTemplate *TretTreeBranch_GetActorTemplates(void) {
-  return gTretTreeBranch_ActorTemplates;
+const struct ActorPlacement *TretTreeBranch_GetActorPlacements(void) {
+  return gTretTreeBranch_ActorPlacements;
 }
 
 /// Moves the leader and camera by signed 16-pixel cell offsets, placing each
@@ -332,7 +332,7 @@ u32 gTretTreeBranch_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gTretTreeBranch_ActorTemplates[] = {
+struct ActorPlacement gTretTreeBranch_ActorPlacements[] = {
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },

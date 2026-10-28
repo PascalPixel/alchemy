@@ -67,7 +67,7 @@
 #include "songs.h"
 
 /// The townspeople, the dog and Sap, numbering
-/// gVaultRevisit_ActorTemplates' rows from ACTOR_FIRST_PLACED.
+/// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.
 enum VaultRevisitActorId {
   /// vault.c's welcoming young man, who recognizes the party.
   /// ★ Named from the game: "You've returned to Vault!"
@@ -162,9 +162,9 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gVaultRevisit_Exits; }
 
-/// Returns the villagers, dog, and Djinni actor templates.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gVaultRevisit_ActorTemplates;
+/// Returns the villagers, dog, and Djinni actor placements.
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gVaultRevisit_ActorPlacements;
 }
 
 /// Stands the actor still while showing the message already selected.
@@ -831,7 +831,7 @@ u32 gVaultRevisit_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gVaultRevisit_ActorTemplates[] = {
+struct ActorPlacement gVaultRevisit_ActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(381), 0, PIXELS(342), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

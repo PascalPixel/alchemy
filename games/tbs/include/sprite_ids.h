@@ -6,7 +6,7 @@
 /// The characters' and Djinn's sprites are in character_ids.h. A sprite's
 /// picture is graphics/sprite/spr_<number>.png, its number in decimal.
 
-/// The sprites the field, its Psynergy and the scenes' actor template
+/// The sprites the field, its Psynergy and the scenes' actor placement
 /// tables create actors of by number.
 enum SpriteId {
   /// A treasure chest, shut, opening and open, with the pictures of the mimic

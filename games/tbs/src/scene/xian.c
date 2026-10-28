@@ -8,7 +8,7 @@
 /// Reveal lesson at Lama Temple sets: every villager's talk and Mind Read has a
 /// row for each side of it, and after it Xian_Initialize also turns
 /// ACTOR_BOY_ON_SILK_CLOTHES west and stands the kung fu student where her
-/// strike leaves her, and Xian_GetActorTemplates turns
+/// strike leaves her, and Xian_GetActorPlacements turns
 /// ACTOR_MUSCULAR_MAN_ON_DISASTERS to face the party. Feizhi stands by the
 /// village's south exit from FLAG_FEIZHI_WENT_TO_HSU (set in fuchin_temple.c)
 /// until she has found the road blocked at Alpine Crossing
@@ -83,7 +83,7 @@
 // FLAG_XIAN_STRIKE_SHOWN the kung fu student has shown her strike on the tree
 // FLAG_XIAN_TREE_JUMPED Force has made the tree jump once
 
-/// The actors, numbering the rows of gXian_ActorTemplates. Each
+/// The actors, numbering the rows of gXian_ActorPlacements. Each
 /// person is named by what their sprite shows and what they talk of before Xian
 /// hears of Hsu.
 enum XianActorId {
@@ -324,11 +324,11 @@ const u32 *Xian_GetExits(void) { return gXian_Exits; }
 
 /// Once Xian has heard Hsu is trapped, ACTOR_MUSCULAR_MAN_ON_DISASTERS turns
 /// to face the party.
-const struct ActorTemplate *Xian_GetActorTemplates(void) {
+const struct ActorPlacement *Xian_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
-    gXian_ActorTemplates[ACTOR_MUSCULAR_MAN_ON_DISASTERS - ACTOR_FIRST_PLACED]
+    gXian_ActorPlacements[ACTOR_MUSCULAR_MAN_ON_DISASTERS - ACTOR_FIRST_PLACED]
         .talkFacing = TALK_FACING_PARTY;
-  return gXian_ActorTemplates;
+  return gXian_ActorPlacements;
 }
 
 /// A villager in Xian asks whether the young warriors came through Mogall
@@ -1024,7 +1024,7 @@ u32 gXian_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gXian_ActorTemplates[] = {
+struct ActorPlacement gXian_ActorPlacements[] = {
     { SPRITE_YOUNG_MAN_IN_BLUE_JACKET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(328), 0, PIXELS(448), FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1058,9 +1058,9 @@ struct ActorTemplate gXian_ActorTemplates[] = {
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(426), 0, PIXELS(428), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(299), 0, PIXELS(222), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(299), 0, PIXELS(222), FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(168), 0, PIXELS(280), FACING_WEST, TALK_FACING_PARTY, ACTOR_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+        PIXELS(168), 0, PIXELS(280), FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
     { SCENE_TABLE_END },
 };
 

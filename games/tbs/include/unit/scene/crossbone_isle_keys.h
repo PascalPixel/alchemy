@@ -6,13 +6,13 @@
 
 struct SceneEntrance;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct SceneExitRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneExitRegion *Scene_GetExitRegions(void);
 const u32 *Scene_GetExits(void);
-const struct ActorTemplate *Scene_GetActorTemplates(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern s32 gPushedActor_DirectionSteps[];
@@ -25,10 +25,10 @@ extern struct SceneEntrance gCrossboneIsleKeysRoomEntrances[];
 extern struct SceneEntrance gCrossboneIsleStatuesEntrances[];
 extern struct SceneEntrance gCrossboneIsleBaneEntrances[];
 extern u32 gCrossboneIsleKeysExits[];
-extern struct ActorTemplate gCrossboneIsleKeysActorTemplatesOther[];
-extern struct ActorTemplate gCrossboneIsleKeysRoomActorTemplates[];
-extern struct ActorTemplate gCrossboneIsleStatuesActorTemplates[];
-extern struct ActorTemplate gCrossboneIsleBaneActorTemplates[];
+extern struct ActorPlacement gCrossboneIsleKeysActorPlacementsOther[];
+extern struct ActorPlacement gCrossboneIsleKeysRoomActorPlacements[];
+extern struct ActorPlacement gCrossboneIsleStatuesActorPlacements[];
+extern struct ActorPlacement gCrossboneIsleBaneActorPlacements[];
 extern struct Trigger gCrossboneIsleKeysTriggersOther[];
 extern struct Trigger gCrossboneIsleKeysRoomTriggers[];
 extern struct Trigger gCrossboneIsleStatuesTriggers[];

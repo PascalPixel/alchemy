@@ -205,7 +205,7 @@ enum { TREASURE_SPOT_PASSAGE = 100 };
 
 /// Draws the actor behind the background, on sprite priority 3 with
 /// automatic priority off. The first worker from Xian at the Alpine Crossing
-/// runs it from his actor template.
+/// runs it from his actor placement.
 static s32 Actor_DrawBehindScenery(struct Actor *interpreter) {
   struct Actor *actor = (struct Actor *)interpreter;
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -246,11 +246,11 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 /// Both scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gAdventure.sceneId == MAP_ALPINE_CROSSING) {
-    return gAlpineCrossing_ActorTemplates;
+    return gAlpineCrossing_ActorPlacements;
   }
-  return gLamaTemple_ActorTemplates;
+  return gLamaTemple_ActorPlacements;
 }
 
 /// A monk in Lama Temple, until Hsu is freed, asks whether the party comes
@@ -1011,9 +1011,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The first worker's actor template script: draw him behind the
+/// The first worker's actor placement script: draw him behind the
 /// background.
-s32 gAlpineCrossing_WorkerActorTemplateScript[] = {
+s32 gAlpineCrossing_WorkerActorPlacementScript[] = {
     SC_CALL(Actor_DrawBehindScenery),
     SC_END,
 };
@@ -1136,7 +1136,7 @@ u32 gAlpineCrossingLamaTemple_Exits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gLamaTemple_ActorTemplates[] = {
+struct ActorPlacement gLamaTemple_ActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1162,7 +1162,7 @@ struct ActorTemplate gLamaTemple_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gAlpineCrossing_ActorTemplates[] = {
+struct ActorPlacement gAlpineCrossing_ActorPlacements[] = {
     { SPRITE_HAMA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_HSU, CONDITION_ALWAYS, (s32)gAlpineCrossing_HsuStruggle,
@@ -1171,7 +1171,7 @@ struct ActorTemplate gAlpineCrossing_ActorTemplates[] = {
         PIXELS(296), 0, PIXELS(344), FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_ROUND_BOULDER, FLAG_HSU_RESCUED, MOVEMENT_TYPE_STAND,
         PIXELS(152), 0, PIXELS(276), FACING_WEST, TALK_FACING_PARTY, 0 },
-    { SPRITE_YOUTH_WITH_HEADBAND, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerActorTemplateScript,
+    { SPRITE_YOUTH_WITH_HEADBAND, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), (s32)gAlpineCrossing_WorkerActorPlacementScript,
         PIXELS(456), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUTH_WITH_TIED_HAIR, IF_FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED), MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_PARTY, 0 },

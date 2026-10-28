@@ -84,7 +84,7 @@
 /// once Hammet is free (FLAG_DODONPA_LOCKED_UP, set as Donpa judges Dodonpa in
 /// Lunpa) Ivan's report and Layana's scolding count as seen and
 /// FLAG_KALAY_TUNNEL_OPEN opens the passage. The getters choose each scene's
-/// tables; the cave and the passage have no actor templates, and an
+/// tables; the cave and the passage have no actor placements, and an
 /// empty set serves any other scene.
 
 #include "adventure.h"
@@ -134,9 +134,9 @@
 #include "audio_engine_symbols.h"
 
 /// Kalay's actors (Kalay), numbering the rows of
-/// gKalay_TownActorTemplates from ACTOR_FIRST_PLACED, then the tour
+/// gKalay_TownActorPlacements from ACTOR_FIRST_PLACED, then the tour
 /// group, which Kalay_WatchTourGroupDeparture places after them
-/// (gKalay_TourGroupActorTemplates).
+/// (gKalay_TourGroupActorPlacements).
 enum KalayTownActorId {
   /// The two soldiers of Kalay at the town's entrance from the World Map.
   /// ★ Named from the game: "Welcome to Kalay! You may enter, so long as you
@@ -231,7 +231,7 @@ enum KalayTownActorId {
 };
 
 /// Hammet Palace's front (HammetPalaceGrounds), numbering
-/// gKalay_HammetPalaceActorTemplates, whose first row places the party's
+/// gKalay_HammetPalaceActorPlacements, whose first row places the party's
 /// Ivan.
 enum KalayPalaceActorId {
   /// The soldiers of Kalay before the palace door. "This is Lord Hammet's
@@ -245,7 +245,7 @@ enum KalayPalaceActorId {
 };
 
 /// The Kalay Tunnel Entrance (KalayTunnelEntrance), numbering
-/// gKalay_TunnelEntranceActorTemplates after its rows for Garet, Ivan and
+/// gKalay_TunnelEntranceActorPlacements after its rows for Garet, Ivan and
 /// Mia.
 enum KalayTunnelEntranceActorId {
   /// A soldier of Kalay who keeps the passage closed by Hammet and Layana's
@@ -268,7 +268,7 @@ enum KalayTunnelEntranceActorId {
 };
 
 /// The Kalay Tunnel's treasure room (KalayTunnelTreasureRoom), numbering
-/// gKalay_TunnelActorTemplates.
+/// gKalay_TunnelActorPlacements.
 enum KalayTunnelActorId {
   /// The statues that open the two passages.
   /// ★ Named from what the player sees: two stone statues on pedestals that
@@ -416,22 +416,22 @@ const u32 *Kalay_GetExits(void) { return gKalay_Exits; }
 
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
-const struct ActorTemplate *Kalay_GetActorTemplates(void) {
+const struct ActorPlacement *Kalay_GetActorPlacements(void) {
   s16 sceneId = gAdventure.sceneId;
 
   if (sceneId == (s32)&SceneId_Kalay) {
-    return gKalay_TownActorTemplates;
+    return gKalay_TownActorPlacements;
   }
   if (sceneId == (s32)&SceneId_HammetPalaceGrounds) {
-    return gKalay_HammetPalaceActorTemplates;
+    return gKalay_HammetPalaceActorPlacements;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelEntrance) {
-    return gKalay_TunnelEntranceActorTemplates;
+    return gKalay_TunnelEntranceActorPlacements;
   }
   if (sceneId == (s32)&SceneId_KalayTunnelTreasureRoom) {
-    return gKalay_TunnelActorTemplates;
+    return gKalay_TunnelActorPlacements;
   }
-  return gKalay_NoActorTemplates;
+  return gKalay_NoActorPlacements;
 }
 
 /// Searching the well in Kalay: the party peers in, and it is very clean.
@@ -670,7 +670,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
       GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
-    Event_CallWithLastActiveActorId(gKalay_TourGroupActorTemplates);
+    Event_CallWithLastActiveActorId(gKalay_TourGroupActorPlacements);
     Actor_SetPosition(ACTOR_HEAD_GUIDE, PIXELS(252), PIXELS(272));
     Actor_SetPosition(ACTOR_FIRST_TOURIST, PIXELS(284), PIXELS(264));
     Actor_SetPosition(ACTOR_FIRST_TOURIST + 1, PIXELS(284), PIXELS(280));
@@ -2749,12 +2749,12 @@ u32 gKalay_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gKalay_NoActorTemplates[] = {
+struct ActorPlacement gKalay_NoActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ActorTemplate gKalay_TownActorTemplates[] = {
+struct ActorPlacement gKalay_TownActorPlacements[] = {
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(188), 0, PIXELS(476), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2796,7 +2796,7 @@ struct ActorTemplate gKalay_TownActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalay_TourGroupActorTemplates[] = {
+struct ActorPlacement gKalay_TourGroupActorPlacements[] = {
     { SPRITE_CHEF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_WOMAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2816,7 +2816,7 @@ struct ActorTemplate gKalay_TourGroupActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalay_HammetPalaceActorTemplates[] = {
+struct ActorPlacement gKalay_HammetPalaceActorPlacements[] = {
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SOLDIER_IN_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2826,7 +2826,7 @@ struct ActorTemplate gKalay_HammetPalaceActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalay_TunnelEntranceActorTemplates[] = {
+struct ActorPlacement gKalay_TunnelEntranceActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { ACTOR_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -2846,7 +2846,7 @@ struct ActorTemplate gKalay_TunnelEntranceActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gKalay_TunnelActorTemplates[] = {
+struct ActorPlacement gKalay_TunnelActorPlacements[] = {
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(376), 0, PIXELS(826), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

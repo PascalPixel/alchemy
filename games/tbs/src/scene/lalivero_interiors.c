@@ -84,7 +84,7 @@ enum {
 };
 
 /// The actors of both scenes, numbered by the rows of each scene's
-/// actor template tables. The people are named by what they say before Venus
+/// actor placement tables. The people are named by what they say before Venus
 /// Lighthouse and by what their sprites show.
 enum LaliveroInteriorsActorId {
   // The houses, the shops and the Sanctum (TimberRoomsB).
@@ -233,15 +233,15 @@ const struct SceneExitRegion *LaliveroInteriors_GetRegions(void) {
 const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroInteriors_Exits; }
 
 /// The people of each scene; Faran's house fills up after Venus Lighthouse.
-const struct ActorTemplate *LaliveroInteriors_GetActorTemplates(void) {
+const struct ActorPlacement *LaliveroInteriors_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
-      return gTimberRoomsC_ActorTemplatesAfterLighthouse;
+      return gTimberRoomsC_ActorPlacementsAfterLighthouse;
     }
-    return gTimberRoomsC_ActorTemplates;
+    return gTimberRoomsC_ActorPlacements;
   }
-  return gTimberRoomsB_ActorTemplates;
+  return gTimberRoomsB_ActorPlacements;
 }
 
 /// The side the leader faces: the facing rounded to the nearest of east,
@@ -882,7 +882,7 @@ s32 Scene_Initialize(void) {
     if (gAdventure.entrance == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
       LaliveroInteriors_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later actor
-      // templates do.
+      // placements do.
       Actor_SetMovementType(Actor_GetById(ACTOR_IODEM),
                             MOVEMENT_TYPE_FACE_LEADER);
       Actor_SetMovementType(Actor_GetById(ACTOR_FARAN),
@@ -1020,7 +1020,7 @@ u32 gLaliveroInteriors_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gTimberRoomsB_ActorTemplates[] = {
+struct ActorPlacement gTimberRoomsB_ActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(176), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1052,7 +1052,7 @@ struct ActorTemplate gTimberRoomsB_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gTimberRoomsC_ActorTemplates[] = {
+struct ActorPlacement gTimberRoomsC_ActorPlacements[] = {
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1072,7 +1072,7 @@ struct ActorTemplate gTimberRoomsC_ActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gTimberRoomsC_ActorTemplatesAfterLighthouse[] = {
+struct ActorPlacement gTimberRoomsC_ActorPlacementsAfterLighthouse[] = {
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(112), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

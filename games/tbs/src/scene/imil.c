@@ -8,7 +8,7 @@
 /// Mercury Lighthouse (FLAG_SATUROS_BEATEN_AT_MERCURY), by which time the
 /// lighthouse is lit and the fountain at its foot flows again, the villagers
 /// are sick or waiting for Mia; afterwards both scenes take their cured
-/// actor templates and lines, and the villagers talk of Mia leaving with the
+/// actor placements and lines, and the villagers talk of Mia leaving with the
 /// party. Some lines also change while she travels with them
 /// (FLAG_IN_PARTY(MIA)).
 ///
@@ -109,8 +109,8 @@
 #include "songs.h"
 
 /// The village's actors (Imil), numbering
-/// gImil_TownActorTemplates' rows, and
-/// gImil_TownActorTemplatesCured's, from ACTOR_FIRST_PLACED.
+/// gImil_TownActorPlacements' rows, and
+/// gImil_TownActorPlacementsCured's, from ACTOR_FIRST_PLACED.
 enum ImilVillageActorId {
   /// A young man, shivering and sneezing.
   /// ★ Named from the game: "Brrrrr... Ah-choo!!! I'm freezing!"
@@ -130,7 +130,7 @@ enum ImilVillageActorId {
 };
 
 /// The actors of the houses and the Sanctum (IceRooms), numbering
-/// gImil_InteriorActorTemplates' rows from ACTOR_FIRST_PLACED; the rows
+/// gImil_InteriorActorPlacements' rows from ACTOR_FIRST_PLACED; the rows
 /// of Garet, Ivan and Mia take those characters' own slots.
 enum IceRoomsActorId {
   /// The old couple's house.
@@ -317,18 +317,18 @@ const u32 *Imil_GetExits(void) { return gImil_Exits; }
 /// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again:
 /// inside, the sick old man is up and wandering, and the restaurant owner
 /// keeps facing the party after talking.
-const struct ActorTemplate *Imil_GetActorTemplates(void) {
-  struct ActorTemplate *script;
+const struct ActorPlacement *Imil_GetActorPlacements(void) {
+  struct ActorPlacement *script;
 
   if (gAdventure.sceneId == ((s32)&SceneId_IceRooms)) {
-    script = gImil_InteriorActorTemplates;
+    script = gImil_InteriorActorPlacements;
     Scene_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       // A byte view: written as script[row].talkFacing, the row's address is
       // formed first.
       ((u8 *)script)[(ACTOR_RESTAURANT_OWNER - ACTOR_FIRST_PLACED) *
-                         sizeof(struct ActorTemplate) +
-                     offsetof(struct ActorTemplate, talkFacing)] =
+                         sizeof(struct ActorPlacement) +
+                     offsetof(struct ActorPlacement, talkFacing)] =
           TALK_FACING_PARTY;
       script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].x = PIXELS(182);
       script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].z = PIXELS(564);
@@ -339,9 +339,9 @@ const struct ActorTemplate *Imil_GetActorTemplates(void) {
   }
 
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-    return gImil_TownActorTemplatesCured;
+    return gImil_TownActorPlacementsCured;
   }
-  return gImil_TownActorTemplates;
+  return gImil_TownActorPlacements;
 }
 
 /// Stepping onto the ice in Imil (cell behavior 90) starts a slide.
@@ -1837,7 +1837,7 @@ u32 gImil_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gImil_TownActorTemplates[] = {
+struct ActorPlacement gImil_TownActorPlacements[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gImil_FreezingYoungManScript,
         PIXELS(99), 0, PIXELS(234), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -1849,7 +1849,7 @@ struct ActorTemplate gImil_TownActorTemplates[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gImil_TownActorTemplatesCured[] = {
+struct ActorPlacement gImil_TownActorPlacementsCured[] = {
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(99), 0, PIXELS(234), FACING_NORTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
@@ -1861,7 +1861,7 @@ struct ActorTemplate gImil_TownActorTemplatesCured[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorTemplate gImil_InteriorActorTemplates[] = {
+struct ActorPlacement gImil_InteriorActorPlacements[] = {
     { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(111), 0, PIXELS(215), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_STAND,

@@ -103,11 +103,11 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gCaveExits; }
 
 /// Only the cave scene places puddles, Hammet, Bunza and the party members.
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_WestLunpaCave) {
-    return gCaveActorTemplates;
+    return gCaveActorPlacements;
   }
-  return gCaveNoActorTemplates;
+  return gCaveNoActorPlacements;
 }
 
 /// Routes switches, Frost targets and the reunion step trigger to their
@@ -1080,11 +1080,11 @@ const u32 gCaveExits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ActorTemplate gCaveNoActorTemplates[] = {
+const struct ActorPlacement gCaveNoActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorTemplate gCaveActorTemplates[] = {
+const struct ActorPlacement gCaveActorPlacements[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(136), 0, PIXELS(520), FACING_SOUTH, TALK_FACING_PARTY, 0 },

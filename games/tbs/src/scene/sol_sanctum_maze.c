@@ -46,8 +46,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSolSanctumMazeExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
-  return gSolSanctumMazeActorTemplates;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gSolSanctumMazeActorPlacements;
 }
 
 /// The exits, and the Small Jewel's chest.
@@ -76,7 +76,7 @@ u32 gSolSanctumMazeExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorTemplate gSolSanctumMazeActorTemplates[] = {
+struct ActorPlacement gSolSanctumMazeActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 

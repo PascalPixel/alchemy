@@ -14,7 +14,7 @@
 struct FieldPosition;
 struct Actor;
 struct Trigger;
-struct ActorTemplate;
+struct ActorPlacement;
 struct Window;
 
 #endif

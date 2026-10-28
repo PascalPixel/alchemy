@@ -57,7 +57,7 @@
 #include "ability_ids.h"
 #include "vector3.h"
 
-/// SceneId_GomaCaveStream's actors, numbering its actor template
+/// SceneId_GomaCaveStream's actors, numbering its actor placement
 /// rows from ACTOR_FIRST_PLACED.
 enum GomaCaveStreamActorId {
   /// The stump Move pushes, as Garet calls the one at the Goma Cave Entrance.
@@ -87,11 +87,11 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gGomaCaveStreamAndBridgeExits; }
 
-const struct ActorTemplate *Scene_GetActorTemplates(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gAdventure.sceneId == (s32)&SceneId_GomaCaveBridge) {
-    return gGomaCaveBridgeActorTemplates;
+    return gGomaCaveBridgeActorPlacements;
   }
-  return gGomaCaveStreamActorTemplates;
+  return gGomaCaveStreamActorPlacements;
 }
 
 /// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
@@ -290,14 +290,14 @@ u32 gGomaCaveStreamAndBridgeExits[] = {
 };
 
 // clang-format off
-struct ActorTemplate gGomaCaveStreamActorTemplates[] = {
+struct ActorPlacement gGomaCaveStreamActorPlacements[] = {
     { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };
 // clang-format on
 
-struct ActorTemplate gGomaCaveBridgeActorTemplates[] = {
+struct ActorPlacement gGomaCaveBridgeActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 

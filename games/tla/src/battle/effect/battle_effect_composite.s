@@ -1,4 +1,4 @@
-@ Instruction templates written into the compositing routine, not functions: r1
+@ Instruction placements written into the compositing routine, not functions: r1
 @ is the source, r9 the destination, and r5/r8/sl scratch; no calling convention.
 .syntax unified
 .text

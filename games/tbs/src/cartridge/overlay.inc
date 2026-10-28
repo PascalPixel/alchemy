@@ -249,7 +249,7 @@
 	import Actor_RunRepeatedMotion, Actor_RunRepeatedMotionFar
 	import Actor_JumpDownLedge, Actor_JumpDownLedgeFar
 	import Actor_SetAngleToward, Actor_SetAngleTowardFar
-	import Actor_TurnToFaceEachOther, Actor_LinkPairFar
+	import Actor_TurnToFaceEachOther, Actor_TurnToFaceEachOtherFar
 	import Actor_ConfigureSpriteColor, Actor_ConfigureSpriteColorFar
 	import Actor_SetSpriteColor, Actor_SetSpriteColorFar
 	import Actor_SetTargetAndCallback, Actor_SetTargetAndCallbackFar
@@ -335,7 +335,7 @@
 	import Actor_LaunchFromLeader, Actor_LaunchFromLeaderFar
 	import Actor_OffsetPositionAndReset, Actor_OffsetPositionAndResetFar
 	import Actor_CommitPositionAndActivate, Actor_CommitPositionAndActivateFar
-	import Actor_WatchAndSetScript, Actor_LinkAndSetScriptFar
+	import Actor_WatchAndSetScript, Actor_WatchAndSetScriptFar
 	import FieldPsynergy_HaltActor, FieldPsynergy_HaltActorFar
 	import Actor_Snapshot, Save_CaptureActorsFar
 	import Actor_Restore, Actor_RestoreFar

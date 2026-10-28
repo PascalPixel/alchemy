@@ -23,7 +23,7 @@ void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
 void Actor_SetMovementTypeById(u32 objectId, s32 action);
 void Actor_Stop(u32 objectId);
-void Actor_WatchAndSetScript(u32 objectId, u32 linked_object_id);
+void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId);
 void Actor_SetMovementTypeAndWaitById(u32 objectId, s32 action);
 void Actor_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z);
 void Actor_SetPositionAndReset(u32 objectId, s32 x, s32 z);

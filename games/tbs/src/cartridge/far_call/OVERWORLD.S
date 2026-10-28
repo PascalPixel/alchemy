@@ -44,7 +44,7 @@ FarCall_OverworldTable:
 	export Actor_RunRepeatedMotionFar, Actor_RunRepeatedMotion
 	export Actor_JumpDownLedgeFar, Actor_JumpDownLedge
 	export Actor_SetAngleTowardFar, Actor_SetAngleToward
-	export Actor_LinkPairFar, Actor_TurnToFaceEachOther
+	export Actor_TurnToFaceEachOtherFar, Actor_TurnToFaceEachOther
 	export Actor_ConfigureSpriteColorFar, Actor_ConfigureSpriteColor
 	export Actor_SetSpriteColorFar, Actor_SetSpriteColor
 	export Actor_SetTargetAndCallbackFar, Actor_SetTargetAndCallback
@@ -179,7 +179,7 @@ FarCall_OverworldTable:
 	export Actor_LaunchFromLeaderFar, Actor_LaunchFromLeader
 	export Actor_OffsetPositionAndResetFar, Actor_OffsetPositionAndReset
 	export Actor_CommitPositionAndActivateFar, Actor_CommitPositionAndActivate
-	export Actor_LinkAndSetScriptFar, Actor_WatchAndSetScript
+	export Actor_WatchAndSetScriptFar, Actor_WatchAndSetScript
 	export FieldPsynergy_HaltActorFar, FieldPsynergy_HaltActor
 	overlay_veneer FieldPsynergy_ResumeHaltedActor
 	overlay_veneer Actor_FindActiveByValue

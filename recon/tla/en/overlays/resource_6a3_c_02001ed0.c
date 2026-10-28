@@ -53,7 +53,7 @@ void Actor_TurnToFaceEachOther(s32 a, s32 b, s32 c);
 void Actor_RefreshSelectorById(u32);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 id);
-void Actor_WatchAndSetScript(u32 objectId, u32 linked_object_id);
+void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId);
 void PartyInventory_Remove(s32 a);
 s32 PartyInventory_Add(s32 item);
 void FieldMessage_Show(s32 message, s32 position);

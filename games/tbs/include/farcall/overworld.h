@@ -117,7 +117,7 @@ void Actor_JumpDownLedgeFar(s32 actorId, s32 pose, s32 param);
 void Actor_SetAngleTowardFar(s32 firstId, s32 second_id, s32 wait);
 /// Turns two actors toward each other, then waits wait frames; talking
 /// to someone turns the leader and them this way.
-void Actor_LinkPairFar(s32 firstId, s32 second_id, s32 wait);
+void Actor_TurnToFaceEachOtherFar(s32 firstId, s32 secondId, s32 wait);
 /// Gives every sprite part of an actor a param, or with bit 8 set makes
 /// the actor blink until another param is given.
 void Actor_ConfigureSpriteColorFar(s32 actorId, s32 value);
@@ -389,7 +389,7 @@ void Actor_OffsetPositionAndResetFar(u32 actorId, s32 x_offset, s32 z_offset);
 void Actor_CommitPositionAndActivateFar(u32 actorId, s32 x_offset,
                                         s32 z_offset);
 /// Makes an actor follow another through the watched actor script.
-void Actor_LinkAndSetScriptFar(u32 actorId, u32 linked_object_id);
+void Actor_WatchAndSetScriptFar(u32 actorId, u32 watchedActorId);
 /// Pauses an actor, keeping its update and pose in gAdventure for later;
 /// Halt and the Colosso operators use it.
 void FieldPsynergy_HaltActorFar(s32 id);

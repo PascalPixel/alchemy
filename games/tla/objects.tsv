@@ -1356,7 +1356,7 @@ main	rom_main_03	games/tla/src/game/character/d00c6604	.rodata
 main	rom_main_03	games/tla/src/game/character/d00c6644	.rodata
 main	rom_main_03	games/tla/src/game/character/elempre	.rodata
 main	rom_main_03	games/tla/src/game/djinn/djinn_table	.rodata
-main	rom_main_04	games/tla/src/gamepak/far_call/run_scene
+main	rom_main_04	games/tla/src/gamepak/far_call/field_sequence
 main	rom_main_04	games/tla/src/gamepak/far_call/event
 main	rom_main_04	games/tla/src/gamepak/far_call/object_motion
 main	rom_main_04	games/tla/src/gamepak/far_call/table_25

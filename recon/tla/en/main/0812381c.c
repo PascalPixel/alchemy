@@ -1,6 +1,6 @@
 // Draft of Func_0812381c with its nested Func_08123648 (compare both:
-// alchemy-devtools diff 0812381c.c 08123648,0812381c): ☀️'s BattleTurn_Build
-// and BattleTurn_SetTargets (games/tbs/src/battle/battle/turn.c), ported.
+// alchemy-devtools diff 0812381c.c 08123648,0812381c): ☀️'s BattleActionRun_Build
+// and BattleActionRun_SetTargets (games/tbs/src/battle/battle/action.c), ported.
 // ⚓️ differs: the plan's second unit (its byte 2) and its word at 100 are
 // cleared with it; command 9 skips the checks for what stops the actor and
 // attacks the aimed unit (ability 299, or the plain attack for enemies 101 to
@@ -41,7 +41,7 @@
 #include "input.h"
 #include "ram_buffer.h"
 
-struct TurnBattleWork {
+struct ActionRunBattleWork {
   u8 unk000[0x44];
   u8 twoSided;
   u8 unk045[0x58 - 0x45];
@@ -53,15 +53,15 @@ struct TurnBattleWork {
   u8 summonCount;
 };
 
-struct TurnRecoveryEntry {
+struct DjinnRecoveryEntryDraft {
   u8 element;
   u8 index;
   u8 unitId;
   s8 turns;
 };
 
-struct TurnRecoveryList {
-  struct TurnRecoveryEntry entries[72];
+struct DjinnRecoveryListDraft {
+  struct DjinnRecoveryEntryDraft entries[72];
   s32 count;
 };
 
@@ -142,8 +142,8 @@ s32 Func_0811f4d4(s32 party);
 
 s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   struct BattleUnit *actor = Unit_Get(request->unitId);
-  struct TurnBattleWork *battle =
-      (struct TurnBattleWork *)Ram_HeapSlots->battleWork;
+  struct ActionRunBattleWork *battle =
+      (struct ActionRunBattleWork *)Ram_HeapSlots->battleWork;
   s32 selectedTargetId;
   s32 abilityId;
 
@@ -569,22 +569,22 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
 
   case COMMAND_SUMMON: {
     const struct SummonDefinition *summon;
-    struct TurnRecoveryList *list;
+    struct DjinnRecoveryListDraft *list;
     s32 side;
     u8 counts[4];
     s32 index;
 
     summon = SummonDefinition_Get(request->parameter);
-    Func_08123574(((struct TurnBattleWork *)Ram_HeapSlots->battleWork)->twoSided
+    Func_08123574(((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided
                       ? request->unitId
                       : 0,
                   counts);
     side = 0;
     if ((u16)request->unitId > 7 &&
-        ((struct TurnBattleWork *)Ram_HeapSlots->battleWork)->twoSided)
+        ((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided)
       side = 1;
     list =
-        (struct TurnRecoveryList *)((u8 *)Djinn_GetRecoveryTableFar(side) + 8);
+        (struct DjinnRecoveryListDraft *)((u8 *)Djinn_GetRecoveryTableFar(side) + 8);
     for (index = 0; index < 4 && counts[index] >= summon->djinnRequired[index];
          index++)
       counts[index] = summon->djinnRequired[index];
@@ -601,7 +601,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     UiText_DrawQuantity(abilityId, 4);
     UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorSummons);
     for (index = 0; index != list->count; index++) {
-      struct TurnRecoveryEntry *entry = &list->entries[index];
+      struct DjinnRecoveryEntryDraft *entry = &list->entries[index];
 
       if (entry->turns == -1 && BattleParty_IsUnitListed(entry->unitId) &&
           counts[entry->element] != 0) {

@@ -20,7 +20,7 @@
 /// those `standby` can pay for first, each with its Djinn cost by element,
 /// the others in TEXT_COLOR_RED. Above it the summon's description, and the
 /// standby Djinn of each element, the elements it needs blinking. `standby`
-/// is what the earlier commands this round leave
+/// is what the earlier commands this turn leave
 /// (BattleMenuWork.standbyDjinn). Returns the chosen summon, even one that
 /// cannot be paid for (Battle_CollectPartyCommands then plays the error
 /// sound and goes on), or -1 when cancelled or when the link battle's time

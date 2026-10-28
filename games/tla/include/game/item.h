@@ -60,9 +60,9 @@ enum ItemEffectKind {
   ITEM_EFFECT_ADD_MARS_RESIST,
   ITEM_EFFECT_ADD_JUPITER_RESIST,
   ITEM_EFFECT_ADD_UNLEASH_CHANCE, ///< percent added to the weapon's unleash
-  ITEM_EFFECT_24,        ///< summed by Unit_Calculate; TBS never reads it
-  ITEM_EFFECT_25,        ///< sets restraint bit 3, which lifts bit 0
-  ITEM_EFFECT_ADD_TURNS, ///< more actions each round
+  ITEM_EFFECT_24,          ///< summed by Unit_Calculate; TBS never reads it
+  ITEM_EFFECT_25,          ///< sets restraint bit 3, which lifts bit 0
+  ITEM_EFFECT_ADD_ACTIONS, ///< more actions each turn
   ITEM_EFFECT_LURE ///< sets FLAG_LURE_CAP while worn: encounters come faster
 };
 

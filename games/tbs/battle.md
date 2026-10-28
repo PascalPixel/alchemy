@@ -2,7 +2,7 @@
 
 When a random battle starts, the field gives way to a battlefield where the
 [party](glossary.md#the-party) faces the enemies. The battle then runs in
-[rounds](glossary.md#rounds-and-turns): the player picks a command for each
+[turns](glossary.md#turns-and-actions): the player picks a command for each
 party member, every enemy picks one of its own, and the game plays the
 actions one after another, fastest first. When one side has nobody left
 standing, or the party runs away, the field comes back.
@@ -41,15 +41,15 @@ next sequence `SEQUENCE_BATTLE` and calls `Battle_RunFar`, which leads to `Battl
 `src/overworld/encounter_zones.c`.
 
 [Running a scene](src/overworld/README.md#random-battles) covers how the field
-rolls the encounter, and [Battles](src/battle/README.md#rounds) what the
+rolls the encounter, and [Battles](src/battle/README.md#turns) what the
 battle does from the opening to the spoils.
 
 ## Units and abilities
 
-![At the start of a round Isaac opens his Psynergy, picks Quake and aims it at the Harridan; Garet looks through his Djinn and backs out to attack; Ivan defends and Mia attacks. The round begins with `Ivan is defending!` and `Isaac casts Quake!`.](https://alchemy.pascalpixel.com/guides/battle/commands.gif)
+![At the start of a turn Isaac opens his Psynergy, picks Quake and aims it at the Harridan; Garet looks through his Djinn and backs out to attack; Ivan defends and Mia attacks. The turn begins with `Ivan is defending!` and `Isaac casts Quake!`.](https://alchemy.pascalpixel.com/guides/battle/commands.gif)
 
 Everyone in a fight, party member or enemy, is a unit, and everything a unit
-can do on its turn is an ability: Attack, Quake, a [Djinni](glossary.md#djinn),
+can do when it acts is an ability: Attack, Quake, a [Djinni](glossary.md#djinn),
 a [summon](glossary.md#summons), using an item, an enemy's special move. The
 command menu is how the player chooses one for each party member.
 
@@ -74,24 +74,24 @@ then `gAbilityAnimations` and `gAbilityStaging` in
 has the tables, and [Battles](src/battle/README.md#the-ability-kind) every
 kind of ability.
 
-## Rounds and turns
+## Turns and actions
 
-![Isaac and Garet against two Gryphons: both attack, then the first Gryphon casts Impact and its partner's Attack rises, and the second casts Tornado on the pair; the next round's menu opens.](https://alchemy.pascalpixel.com/guides/battle/round.gif)
+![Isaac and Garet against two Gryphons: both attack, then the first Gryphon casts Impact and its partner's Attack rises, and the second casts Tornado on the pair; the next turn's menu opens.](https://alchemy.pascalpixel.com/guides/battle/round.gif)
 
-A round is one pass of choosing, sorting and playing actions. The faster a
+A turn is one pass of choosing, sorting and playing actions. The faster a
 unit, the earlier it acts, and after every action the game checks whether a
-side has been beaten, so a battle can end in the middle of a round.
+side has been beaten, so a battle can end in the middle of a turn.
 
 The party's actions come from the command menu (or are picked automatically
 in the auto battle), the enemies' from each enemy's habits. They are sorted
 by Agility, except that the Djinn Granite, Flash and Ground go before
 everyone. Then each action in turn is announced, staged and animated, and its
-targets take its effect; the unit's turn ends; and when every action has
-played, the round ends with statuses counting down. The loop in `Battle_Run`,
+targets take its effect; the unit's action ends; and when every action has
+played, the turn ends with statuses counting down. The loop in `Battle_Run`,
 simplified:
 
 ```c
-for (;;) {                                     /* one round */
+for (;;) {                                     /* one turn */
   actionCount = Battle_GatherActions(battle->actions);
   for (i = 0; i < actionCount; i++) {          /* one action */
     if (BattleStaging_DispatchAction(&battle->actions[i], ...) == 1)
@@ -101,14 +101,14 @@ for (;;) {                                     /* one round */
     if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0)
       goto won;
   }
-  Battle_ProcessRoundEnd();
+  Battle_ProcessTurnEnd();
 }
 ```
 
-[Battles](src/battle/README.md#rounds) goes through each step, with
+[Battles](src/battle/README.md#turns) goes through each step, with
 [enemy actions](src/battle/README.md#enemy-actions),
 [first strikes and fleeing](src/battle/README.md#first-strikes-and-fleeing)
-and [building a turn](src/battle/README.md#building-a-turn).
+and [building an action](src/battle/README.md#building-an-action).
 
 ## Resolving an ability
 
@@ -241,7 +241,7 @@ takes one target's queue apart.
 ## Limits
 
 - There are 519 abilities.
-- A turn reaches at most 14 targets.
+- An action reaches at most 14 targets.
 - The party fights four at a time and the enemies six at most.
 - There are 380 formations, each of up to five kinds of enemy.
 - The playback queue holds 64 entries, and nothing checks that it does not

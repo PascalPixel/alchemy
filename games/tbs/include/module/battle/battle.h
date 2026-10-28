@@ -10,7 +10,7 @@ struct BattleSummonState;
 struct BattleTransitionEntry;
 struct AbilityDefinition;
 struct BattleObject;
-struct BattleTurn;
+struct BattleActionRun;
 struct FixedPointPosition;
 struct Actor;
 
@@ -182,39 +182,39 @@ void BattleUnit_ResetGuardLevels(void);
 s32 BattleFlee_CheckSuccess(void);
 s32 Battle_BuildUnitActions(struct BattleAction *entries);
 s32 Battle_BuildOpponentActions(struct BattleAction *entries);
-void BattleTurnOrder_Sort(struct BattleAction *entries, s32 count);
+void BattleActionOrder_Sort(struct BattleAction *entries, s32 count);
 s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count);
 void Palette_CopyWithBrightnessOffset(s32 offset);
 s32 Battle_GatherActions(struct BattleAction *actions);
 s32 Battle_GetTaggedSlotValue(s32 taggedPlace);
 s32 Battle_FindTaggedSlotByValue(u32 unitId);
-void Battle_RoundStartNoOp(void);
+void Battle_TurnStartNoOp(void);
 
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay);
 #ifdef UBFIX
-void BattleStaging_BuildTargetList(struct BattleTurn *plan,
+void BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                    struct BattleAnimArgs *args);
 #else
-s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
+s32 BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                   struct BattleAnimArgs *args);
 #endif
-s32 BattleStaging_RunFlee(struct BattleTurn *plan);
-s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode);
+s32 BattleStaging_RunFlee(struct BattleActionRun *plan);
+s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode);
 #ifdef UBFIX
-void BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused);
+void BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused);
 #else
-s32 BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused);
+s32 BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused);
 #endif
-s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode);
-s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags);
-s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
+s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode);
+s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input, s32 flags);
+s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                           struct BattleAction *selection);
 #ifdef UBFIX
 void BattleObject_SetColorMode(struct Actor *actor, s32 palette);
 #else
 s32 BattleObject_SetColorMode(struct Actor *actor, s32 palette);
 #endif
-s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode);
+s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode);
 
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1);
 void BattleObject_RemoveFromLists(s32 unitId);
@@ -252,9 +252,9 @@ u32 BattlePlayback_RunAll(void);
 u32 BattlePlayback_Push(u32 opcode, u32 operand);
 s32 Ability_EffectAppliesToDowned(s32 effect);
 #ifdef UBFIX
-void BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot);
+void BattleAbility_ApplyToTarget(struct BattleActionRun *plan, s32 slot);
 #else
-s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot);
+s32 BattleAbility_ApplyToTarget(struct BattleActionRun *plan, s32 slot);
 #endif
 u32 Ability_IsPsynergy(s32 abilityId);
 #ifdef UBFIX
@@ -274,7 +274,8 @@ s32 BattlePlayback_WaitForReady(void);
 #endif
 u32 BattleUnit_IsListed(u32 unitId);
 s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts);
-s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan);
+s32 BattleActionRun_Build(struct BattleAction *request,
+                          struct BattleActionRun *plan);
 
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias);
 s32 BattleUnit_CountDownAttackStage(s32 unitId);
@@ -287,14 +288,14 @@ s32 DjinnRecovery_CountDown(void);
 s32 DjinnRecovery_CountDownTwenty(void);
 void Battle_ReservedNoOpF674(void);
 #ifdef UBFIX
-void Battle_ProcessRoundEnd(void);
+void Battle_ProcessTurnEnd(void);
 #else
-s32 Battle_ProcessRoundEnd(void);
+s32 Battle_ProcessTurnEnd(void);
 #endif
 #ifdef UBFIX
-void BattleUnit_ProcessTurnEnd(struct BattleTurn *plan);
+void BattleUnit_ProcessActionEnd(struct BattleActionRun *plan);
 #else
-s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan);
+s32 BattleUnit_ProcessActionEnd(struct BattleActionRun *plan);
 #endif
 
 s32 BattleTransition_RunMosaicFadeOut(void);

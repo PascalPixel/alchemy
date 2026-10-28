@@ -140,7 +140,7 @@
 /// ★ Named from the game: "Lure Cap" (MsgItemName)
 #define FLAG_LURE_CAP 0x167
 /// Auto battle: every living unit, party and enemies, makes a plain attack
-/// each round with no command menu (AutoBattle_BuildActions).
+/// each turn with no command menu (AutoBattle_BuildActions).
 /// The debug battle menu sets it, and clears it again for its chooser.
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
@@ -154,7 +154,7 @@
 // the party there in normal play; a reader outside the debug keys would say
 // otherwise.
 /// In debug mode, with it set, holding R as an action is planned defeats every
-/// enemy, and R with Select the party (BattleTurn_Build); that is its only
+/// enemy, and R with Select the party (BattleActionRun_Build); that is its only
 /// reader. The debug story preset for Vale's plaza sets it, and so do the
 /// Colosseum's escorts as they swap Mia in for Jenna.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
@@ -170,7 +170,7 @@
 /// (Encounter_CountStepsAndSelectFormation).
 #define FLAG_IGNORE_ENCOUNTER_CHECKS 351
 /// Flint's lesson on Djinn, after he joins on the world map: in its battle the
-/// party strikes first, two of Flint's messages follow each round, and no
+/// party strikes first, two of Flint's messages follow each turn, and no
 /// spoils are handed out. The world map sets it.
 /// ★ Named from the game: "Now, I'll briefly teach you how to use Djinn."
 /// (MsgWorldMapAbilityVenusDjinni)

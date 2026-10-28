@@ -135,7 +135,7 @@ void UpdateLinkSessionCountdown(void) {
 
 /// Tests whether the party may not run from this battle: battle types 3 and
 /// 4 (the battles an event starts, and link battles; see
-/// BATTLE_TYPE_NO_ESCAPE in battle/battle/round.c) and a party once
+/// BATTLE_TYPE_NO_ESCAPE in battle/battle/turn.c) and a party once
 /// challenged (BattleWork.challengeFlag). When it may not, shows "This is no
 /// time to be running away!" until A or B is pressed or the link battle's
 /// time runs out, and returns 1; else returns 0. The Flee command asks it

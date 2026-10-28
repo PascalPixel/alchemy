@@ -7,7 +7,7 @@
 /// of the field and title screens, and the debug menus.
 ///
 /// screens_internal.h holds what every part shares (includes, edition
-/// values, macros and the link round state); the code is in the files under
+/// values, macros and the link turn state); the code is in the files under
 /// screens/, included here in the order it has in the ROM. Camelot's
 /// own files are not recoverable: the ROM shows one object, and these parts
 /// are ours, cut where one family ends and the next begins. README.md in this

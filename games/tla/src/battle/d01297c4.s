@@ -1,5 +1,5 @@
 	.section .rodata
-@ A copy of The Broken Seal's gBattleParty_RoundEndGroupOrder
+@ A copy of The Broken Seal's gBattleParty_TurnEndSideOrder
 	.global Data_081297c4
 Data_081297c4:
 	.4byte 1, 2

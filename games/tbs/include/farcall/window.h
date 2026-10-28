@@ -145,7 +145,7 @@ void PartyStatus_CloseFar(void);
 void Message_CloseFinishedWindowsFar(void);
 /// Closes every window, waiting only for the message windows to finish closing.
 void Window_CloseAllFar(s32 unused);
-/// Runs the party's battle commands for a round into out, one per unit in in,
+/// Runs the party's battle commands for a turn into out, one per unit in in,
 /// and returns how many it wrote: 1 when the party flees, -1 when the link
 /// fails.
 s32 Battle_CollectPartyCommandsFar(struct BattleAction *out, u16 *in,

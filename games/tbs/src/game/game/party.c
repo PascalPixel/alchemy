@@ -62,7 +62,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->baseDefense = enemy->def;
   unit->baseAgility = enemy->agi;
   unit->baseLuck = enemy->luck;
-  unit->baseActionCount = enemy->turns;
+  unit->baseActionCount = enemy->actionCount;
   unit->baseHpRegen = enemy->hpRegen;
   unit->basePpRegen = enemy->ppRegen;
   Message_DecodeRawFar(index + MsgEnemyName, name, 15);
@@ -251,7 +251,7 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 /// table to `output`, in menu order, ending with SUMMON_END. Returns how many.
 /// Called by BattleSummonMenu_Run to list the battle's Summon command.
 /// The bits are those BattleSummon_UpdateAvailability sets at the battle's
-/// start and each round. `output` needs room for 17 bytes: up to 16 summons
+/// start and each turn. `output` needs room for 17 bytes: up to 16 summons
 /// and SUMMON_END.
 s32 Summon_ListLearned(u8 *output) {
   u8 *source = (u8 *)gSummon_OrderList;

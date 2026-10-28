@@ -128,9 +128,9 @@ struct EnemyDefinition {
   u16 def;
   u16 agi;
   u8 luck;
-  u8 turns;   ///< actions a round (Unit.baseActionCount)
-  u8 hpRegen; ///< HP restored at each round's end (Unit.baseHpRegen)
-  u8 ppRegen; ///< PP restored at each round's end (Unit.basePpRegen)
+  u8 actionCount; ///< actions a turn (Unit.baseActionCount)
+  u8 hpRegen;     ///< HP restored at each turn's end (Unit.baseHpRegen)
+  u8 ppRegen;     ///< PP restored at each turn's end (Unit.basePpRegen)
   ///@}
   u8 reservedBeforeRewards[2]; ///< 0 in every entry
   u32 aiActionIndex;           ///< 0 in every row; copied to Unit.aiActionIndex

@@ -20,14 +20,14 @@ struct BattleAIState {
 /// instead where its item mask says so, and a target worth the ability. A
 /// choice that cannot be made (too little PP, sealed, a forbidden flight, no
 /// worthwhile target) picks again; after 18 tries the enemy defends.
-/// Called with retry 0 for each enemy as the round is built
-/// (Battle_BuildOpponentActions), and with retry 1 at its turn
+/// Called with retry 0 for each enemy as the turn is built
+/// (Battle_BuildOpponentActions), and with retry 1 when it acts
 /// (BattleStaging_DispatchAction). Writes request's command, parameter,
 /// target and range; ACTION_STRATEGY_RANDOM_START and
 /// ACTION_STRATEGY_IN_ORDER advance the place remembered in
 /// Unit.aiActionIndex. Returns nothing.
-/// @param retry 0 when the round is built: only a guard is settled now (it
-/// must raise before anyone acts); 1 at the enemy's turn: the rest
+/// @param retry 0 when the turn is built: only a guard is settled now (it
+/// must raise before anyone acts); 1 when the enemy acts: the rest
 #ifdef UBFIX
 void BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
 #else
@@ -123,7 +123,7 @@ select_again:
     }
     // fall through
   case ACTION_STRATEGY_IN_ORDER:
-    // It moves on only at the enemy's turn, wrapping from 7 to 0 in its three
+    // It moves on only when the enemy acts, wrapping from 7 to 0 in its three
     // bits.
     selection = selectionMemory->selection;
     if (retry != 0) {
@@ -149,12 +149,13 @@ select_again:
       if (enemy->targetStrategy == TARGET_STRATEGY_MOST_HP) {
         request->command = COMMAND_ITEM;
         // The parameter is the ability Can't Use, yet COMMAND_ITEM reads its
-        // parameter as an inventory slot (BattleTurn_Build): slot 509, 1,018
-        // bytes past the unit's inventory. For the first three enemies that
-        // is the twelfth inventory slot of the enemy three places on, which no
-        // enemy fills, so the item is the empty one and the enemy defends
-        // (MsgActorDefends); for the others it lies past the enemy units.
-        // XXX: what a fourth to sixth enemy's turn shows; a Brigand or Rat
+        // parameter as an inventory slot (BattleActionRun_Build): slot 509,
+        // 1,018 bytes past the unit's inventory. For the first three enemies
+        // that is the twelfth inventory slot of the enemy three places on,
+        // which no enemy fills, so the item is the empty one and the enemy
+        // defends (MsgActorDefends); for the others it lies past the enemy
+        // units.
+        // XXX: what a fourth to sixth enemy's action shows; a Brigand or Rat
         // Fighter (TARGET_STRATEGY_MOST_HP, item places) in such a place, out
         // of items, would show it.
         request->parameter = ABILITY_CANT_USE;
@@ -207,8 +208,8 @@ select_again:
       break;
     }
 
-    // As the round is built, only a guard is kept; anything else waits for
-    // the enemy's turn.
+    // As the turn is built, only a guard is kept; anything else waits for
+    // the enemy's action.
     if (retry == 0) {
       switch (request->command) {
       case COMMAND_DEFEND:
@@ -231,8 +232,8 @@ select_again:
            enemy->targetStrategy == TARGET_STRATEGY_RANDOM))
         goto next_candidate;
     }
-    // A challenged enemy won't flee, and at its turn it no longer chooses a
-    // guard (guards are settled as the round is built): both pick again.
+    // A challenged enemy won't flee, and when it acts it no longer chooses a
+    // guard (guards are settled as the turn is built): both pick again.
     command = request->command;
     if ((command == COMMAND_FLEE && (u8)unit->challenge != 0) ||
         (retry != 0 &&
@@ -291,7 +292,7 @@ select_again:
       break;
     }
   }
-  // As the round is built, one pick is all.
+  // As the turn is built, one pick is all.
   if (retry == 0)
     needsChoice = 0;
 next_candidate:

@@ -264,7 +264,7 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
 }
 
 /// Returns the ability ID used when the Djinni is unleashed. Called by the
-/// BattleTurn_Build, the battle queue's ordering and the battle menu.
+/// BattleActionRun_Build, the battle queue's ordering and the battle menu.
 s32 Djinn_GetAbilityId(u32 group, u32 index) {
   return Djinn_GetDefinition(group, index)->abilityId;
 }

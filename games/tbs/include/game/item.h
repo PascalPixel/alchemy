@@ -118,7 +118,7 @@ enum EquipEffectKind {
   /// "The curse can be removed": sets CURSE_REMOVABLE, which lifts
   /// CURSE_BOUND.
   EQUIP_EFFECT_CURSE_REMOVABLE,
-  EQUIP_EFFECT_ADD_TURNS, ///< more actions each round
+  EQUIP_EFFECT_ADD_ACTIONS, ///< more actions each turn
   EQUIP_EFFECT_LURE ///< sets FLAG_LURE_CAP while worn: encounters come faster
 };
 

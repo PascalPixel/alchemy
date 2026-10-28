@@ -340,10 +340,10 @@ s32 DjinnRecovery_Reconcile(void) {
 /// (djinnHeldCounts, set or not), all party members together. Whether enough of
 /// them are on standby is checked as the summon is chosen
 /// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it
-/// is built into a turn (BattleTurn_Build). Stores the mask of them (bit n for
+/// is built (BattleActionRun_Build). Stores the mask of them (bit n for
 /// summon n) and returns the state that holds it. Called by
 /// Battle_Run as the battle is set up and at the start of each
-/// round, which asks for the party status window's standby Djinn column
+/// turn, which asks for the party status window's standby Djinn column
 /// (PARTY_STATUS_SUMMONS) while the mask is not 0; PartyStatus_Draw shows it
 /// only while a Djinni is on standby. Writes the party recovery table's
 /// availableMask.

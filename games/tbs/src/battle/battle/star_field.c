@@ -359,8 +359,8 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 /// variant. Called with GLOW_STAR_FIELD by
 /// BattleStaging_HideField and BattleStaging_RunPsynergyCast,
 /// with GLOW_STREAKS by the latter, with GLOW_PILLAR by
-/// BattleUnit_ProcessTurnEnd and with GLOW_BURST by Battle_ProcessRoundEnd and
-/// BattleTurn_Build. Every glow first puts the background in
+/// BattleUnit_ProcessActionEnd and with GLOW_BURST by Battle_ProcessTurnEnd and
+/// BattleActionRun_Build. Every glow first puts the background in
 /// BATTLE_BACKGROUND_FIXED and opens window 0 over lines 16 to 135, with BG2
 /// blended over the other layers; GLOW_STAR_FIELD leaves the background's
 /// palette and BattleWork.brightness darkened.

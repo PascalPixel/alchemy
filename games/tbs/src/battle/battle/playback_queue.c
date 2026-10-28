@@ -62,8 +62,8 @@ s32 BattleObject_ResetRuntimeFields(s32 unitId) {
 /// Shows the bobbing arrow at the message window and waits for the player to
 /// go on (B, or one of KEY_ADVANCE), then plays the cursor sound.
 /// Called after a message by BattleStaging_DispatchAction and the
-/// staging runners, BattleTurn_Build (a flight),
-/// BattleIntro_AnnounceEncounter, the round's end (turn_end.c), and
+/// staging runners, BattleActionRun_Build (a flight),
+/// BattleIntro_AnnounceEncounter, the turn's end (turn_end.c), and
 /// BattlePlayback_RunAll for each PLAYBACK_MESSAGE. Waits for the
 /// message window first. Takes a 128-byte VRAM cache entry for the arrow's
 /// tiles and frees it; each frame queues the WINOUT writes, sets REG_BLDALPHA
@@ -166,7 +166,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
 
 /// Sets gBattleMessageWork->marked, which the next message reads, as
 /// PLAYBACK_MARK does.
-/// Called by BattleTurn_Build between a weapon's two unleash messages.
+/// Called by BattleActionRun_Build between a weapon's two unleash messages.
 void BattlePlayback_MarkMessage(void) { gBattleMessageWork->marked = 1; }
 
 /// Takes an enemy out of the battle at once (one that leaves rather than
@@ -213,10 +213,10 @@ void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
 /// plays them over frames instead): the messages with their arguments, the
 /// hit flashes, the downed units, the redraws. Then empties the queue.
 /// Called where an outcome is shown outside an animation: by the staging
-/// runners (a blocked cast, a dodge, a broken item, a turn's targets one by
-/// one), BattleTurn_Build's debug defeat, and the turn's end (turn_end.c). Each
-/// message, flash and fall waits its frames here. Ends with
-/// BattlePlayback_Reset.
+/// runners (a blocked cast, a dodge, a broken item, an action's targets one by
+/// one), BattleActionRun_Build's debug defeat, and the end of an action or a
+/// turn (turn_end.c). Each message, flash and fall waits its frames here. Ends
+/// with BattlePlayback_Reset.
 #ifdef UBFIX
 void BattlePlayback_RunAll(void) {
 #else
@@ -302,7 +302,7 @@ u32 BattlePlayback_RunAll(void) {
 /// Queues one playback command (enum BattlePlaybackCommand) with its operand,
 /// and returns the opcode. Called, directly or through PUSH_MESSAGE, by
 /// BattleAbility_ApplyToTarget for each step of an outcome, and by staging.c,
-/// turn.c and turn_end.c. Appends to gBattleWork->playback.queue with no test
+/// action.c and turn_end.c. Appends to gBattleWork->playback.queue with no test
 /// against BATTLE_PLAYBACK_CAPACITY: a caller must keep one target's commands,
 /// or one queue played at once, within it. The queue is emptied by
 /// BattlePlayback_Reset, by BattlePlayback_SchedulePhase and before each target

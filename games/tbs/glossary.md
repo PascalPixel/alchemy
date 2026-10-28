@@ -72,11 +72,14 @@ A summon spends one to four Djinn on standby to call up an elemental being
 (Venus, Ramses, Judgment and the others); the Djinn then recover for a few
 turns ([Battles](src/battle/README.md#commands-and-ability-ids)).
 
-### Rounds and turns
+### Turns and actions
 
-A round is every unit in a battle acting once; a turn is one unit's action
-within it (`struct BattleTurn`). What pret calls a battle turn is this game's
-round ([Battles](src/battle/README.md#rounds)).
+A turn is every unit in a battle acting once; an action is one unit's go
+within it, chosen as a `struct BattleAction` and carried out as a
+`struct BattleActionRun` ([Battles](src/battle/README.md#turns)).
+
+Evidence: the game's own words, from its text: `HP recovery / turn`, and in
+Japanese ターン for the pass and 行動 (action) for one unit's go.
 
 ### Battle animation
 

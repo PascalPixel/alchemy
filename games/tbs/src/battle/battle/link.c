@@ -252,7 +252,7 @@ s32 LinkBattle_WaitSync(void) {
   return 0;
 }
 
-/// In a link battle, after each action and after the end of each round,
+/// In a link battle, after each action and after the end of each turn,
 /// steps both consoles through the same handshake: "ex" "TU", then "rn",
 /// "EXEC", "tu" and finally "RN". Each step shows its signature and waits
 /// for the other console to show it too, failing if the other console

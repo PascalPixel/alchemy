@@ -13,20 +13,20 @@
 
 /// gDebugMode under the battle's name. While it and FLAG_DEBUG_BATTLE_KEYS are
 /// set, holding R as an action is planned defeats every enemy, or with Select
-/// the party (BattleTurn_Build).
+/// the party (BattleActionRun_Build).
 #define BATTLE_AUTO_MODE gDebugMode
 /// gKeysHeld under the battle's name: the keys held this frame.
 #define BATTLE_OPTIONS gKeysHeld
 
-/// Each ability's staging bits (BattleTurn.animation), by ability id
+/// Each ability's staging bits (BattleActionRun.animation), by ability id
 /// 0 to 518 (ability_staging.c).
 extern const u32 gAbilityAnimations[];
-/// Each ability's outcome staging (BattleTurn.staging), 0 for the default, by
-/// ability id 0 to 517 (ability_staging.c).
+/// Each ability's outcome staging (BattleActionRun.staging), 0 for the default,
+/// by ability id 0 to 517 (ability_staging.c).
 extern const u8 gAbilityStaging[];
 
-/// BattleTurn.staging: how BattleStaging_DispatchAction shows the
-/// action, set by BattleTurn_Build from the ability
+/// BattleActionRun.staging: how BattleStaging_DispatchAction shows the
+/// action, set by BattleActionRun_Build from the ability
 /// (gAbilityStaging where it gives one).
 enum BattleStaging {
   STAGING_MESSAGES = 1, ///< no animation: each target's messages only
@@ -47,7 +47,7 @@ enum BattleStaging {
   STAGING_FULL_SCREEN = 9 ///< Gaia, Rockfall, Procne and their kin
 };
 
-// BattleTurn.animation: the animation kind in the low twelve bits and
+// BattleActionRun.animation: the animation kind in the low twelve bits and
 // its strength (a double or triple blow) above them; then how the animation is
 // staged.
 #define ANIM_ID_MASK 0xfff
@@ -65,7 +65,7 @@ enum BattleStaging {
 /// while it plays.
 #define ANIM_ID_SEVERE_BLOW 0x87
 
-/// More of BattleTurn.animation: the camera takes the other side's
+/// More of BattleActionRun.animation: the camera takes the other side's
 /// view (an enemy's cast a view of its own), or turns right round.
 #define ANIM_VIEW_ACROSS 0x40000
 #define ANIM_VIEW_REVERSED 0x80000

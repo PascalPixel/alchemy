@@ -5,11 +5,11 @@
 #include "../battle_internal.h"
 
 /// Auto battle: gives every living unit a plain attack and sorts them into
-/// turn order. The party act at their Agility and target the first enemy
+/// action order. The party act at their Agility and target the first enemy
 /// unit, 128; enemies act at half their Agility plus a random part of it and
 /// target unit id 0 to n - 1 for n living party members, which
 /// AutoBattle_RunAction replaces if it is down. Returns how many
-/// actions there are. Called by Battle_Run each round under
+/// actions there are. Called by Battle_Run each turn under
 /// FLAG_AUTO_BATTLE; fills entries.
 s32 AutoBattle_BuildActions(struct BattleAction *entries) {
   struct BattleAction swap;
@@ -105,9 +105,9 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
   // Here any unit id above 4 counts as an enemy, Jenna's 5 included
   // (character_ids.h).
   if (action->unitId > 4)
-    yaw = YAW_ENEMY_TURN;
+    yaw = YAW_ENEMY_ACTION;
   else
-    yaw = YAW_PARTY_TURN;
+    yaw = YAW_PARTY_ACTION;
   view->targetYaw = yaw;
   view->frames = 60;
   MessageArgument_ClearAllFar();
@@ -239,8 +239,9 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   {
     struct BattleBackgroundWork *view = gBattleBackgroundWork;
     // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
-    // YAW_ENEMY_TURN.
-    view->targetYaw = action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_TURN;
+    // YAW_ENEMY_ACTION.
+    view->targetYaw =
+        action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
     view->frames = 60;
   }
   WaitFrames(10);
@@ -338,12 +339,12 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
 s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   struct BattleStagingWork work;
 
-  // A short wait when the camera already faces the party's turn.
-  if (gBattleBackgroundWork->targetYaw == YAW_PARTY_TURN) {
-    gBattleBackgroundWork->targetYaw = YAW_PARTY_TURN;
+  // A short wait when the camera already faces the party's side.
+  if (gBattleBackgroundWork->targetYaw == YAW_PARTY_ACTION) {
+    gBattleBackgroundWork->targetYaw = YAW_PARTY_ACTION;
     WaitFrames(10);
   } else {
-    gBattleBackgroundWork->targetYaw = YAW_PARTY_TURN;
+    gBattleBackgroundWork->targetYaw = YAW_PARTY_ACTION;
     WaitFrames(30);
   }
 
@@ -394,9 +395,9 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   s32 targetIndex;
 
   if (action->unitId > 4)
-    targetYaw = YAW_ENEMY_TURN;
+    targetYaw = YAW_ENEMY_ACTION;
   else
-    targetYaw = YAW_PARTY_TURN;
+    targetYaw = YAW_PARTY_ACTION;
   if (view->targetYaw == targetYaw) {
     view->frames = 40;
     WaitFrames(40);

@@ -78,8 +78,8 @@ struct BattlePlaybackWork {
 enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
 
 /// The battle's own work: its enemies, units and their battle objects, the
-/// turn's actions, the spoils, the background palette, the turn and the
-/// playback.
+/// turn's actions, the spoils, the background palette, the action under way and
+/// the playback.
 ///
 /// It lives in the HEAP_SLOT_BATTLE heap slot: Battle_Run takes and
 /// zeroes it, sets arrowTiles to -1 and formation, and the next scene change
@@ -140,9 +140,9 @@ struct BattleWork {
   u8 unusedAfterBackground[4]; ///< no code names it
   u16 highlightStep;           ///< index into gBattleHighlight_BlendRamp
   u16 highlightMode;           ///< nonzero while the units are highlighted
-  u8 paddingAfterHighlight[2]; ///< up to the word turn starts on
-  /// The action being carried out, as BattleTurn_Build lays it out.
-  struct BattleTurn turn;
+  u8 paddingAfterHighlight[2]; ///< up to the word actionRun starts on
+  /// The action being carried out, as BattleActionRun_Build lays it out.
+  struct BattleActionRun actionRun;
   struct BattlePlaybackWork playback;
   /// A value Battle_AdjustDebugValue edits with the d-pad while
   /// Start is held.
@@ -162,7 +162,7 @@ STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 0x530);
 STATIC_ASSERT(offsetof(struct BattleWork, palette) == 0x544);
 STATIC_ASSERT(offsetof(struct BattleWork, brightness) == 0x644);
 STATIC_ASSERT(offsetof(struct BattleWork, background) == 0x648);
-STATIC_ASSERT(offsetof(struct BattleWork, turn) == 0x654);
+STATIC_ASSERT(offsetof(struct BattleWork, actionRun) == 0x654);
 STATIC_ASSERT(offsetof(struct BattleWork, playback) == 0x6b8);
 STATIC_ASSERT(offsetof(struct BattlePlaybackWork, phase) == 0x148);
 STATIC_ASSERT(offsetof(struct BattlePlaybackWork, flags) == 0x16c);

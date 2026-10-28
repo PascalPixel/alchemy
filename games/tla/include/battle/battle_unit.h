@@ -178,7 +178,7 @@ struct BattleUnit {
   u16 baseDefense;    ///< before equipment, Djinn, class and stages
   u16 baseAgility;    ///< before equipment, Djinn, class and stages
   u8 baseLuck;        ///< before equipment, Djinn and class
-  u8 baseActionCount; ///< actions a round before equipment
+  u8 baseActionCount; ///< actions a turn before equipment
   u8 baseHpRegen;     ///< HP regained each turn before equipment
   u8 basePpRegen;     ///< PP regained each turn before equipment
   u8 unk022[2];       ///< Not named by any TLA C.
@@ -194,7 +194,7 @@ struct BattleUnit {
   u16 def;             ///< Defense (Unit_Calculate)
   u16 agi;             ///< Agility (Unit_Calculate)
   u8 luck;             ///< Luck (Unit_Calculate)
-  u8 actionEntryCount; ///< actions each round (Unit_Calculate)
+  u8 actionEntryCount; ///< actions each turn (Unit_Calculate)
   u8 hpRegen;          ///< HP regained at each turn's end
   u8 ppRegen;          ///< PP regained at each turn's end
   u8 unk046[2];        ///< Not named by any TLA C.

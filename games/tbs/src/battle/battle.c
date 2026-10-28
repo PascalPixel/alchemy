@@ -6,10 +6,10 @@
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
 /// one family ends and the next begins.
 ///
-/// A battle runs from Battle_Run (encounter.c). Each round the
-/// actions are gathered and put in turn order (round.c, or auto_battle.c under
-/// auto battle), and each action is announced, built into a turn
-/// (BattleTurn_Build, turn.c), staged
+/// A battle runs from Battle_Run (encounter.c). Each turn the
+/// actions are gathered and put in action order (turn.c, or auto_battle.c under
+/// auto battle), and each action is announced, built for its targets
+/// (BattleActionRun_Build, action.c), staged
 /// (BattleStaging_DispatchAction, staging.c) and applied to each target
 /// (BattleAbility_ApplyToTarget, target_exec.c), which queues the playback
 /// BattlePlayback_Run plays (playback.c). README.md in this folder gives the
@@ -27,14 +27,14 @@
 #include "battle/objects.c"
 #include "battle/motion.c"
 #include "battle/auto_battle.c"
-#include "battle/round.c"
+#include "battle/turn.c"
 #include "battle/staging.c"
 #include "battle/targeting.c"
 #include "battle/playback_queue.c"
 #include "battle/target_exec.c"
 #include "battle/enemy_ai.c"
 #include "battle/playback.c"
-#include "battle/turn.c"
+#include "battle/action.c"
 #include "battle/turn_end.c"
 #include "battle/transition.c"
 #include "battle/background.c"

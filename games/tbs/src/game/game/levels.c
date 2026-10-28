@@ -401,9 +401,9 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     unit->baseDefense += gains->def;
     unit->baseAgility += gains->agi;
     unit->baseLuck += gains->luck;
-    // A character's base is always one action a round and no regeneration;
+    // A character's base is always one action a turn and no regeneration;
     // Unit_Calculate adds equipment's actions and regeneration, Kite's extra
-    // action and 4 PP a round once the character's lighthouse is lit
+    // action and 4 PP a turn once the character's lighthouse is lit
     unit->baseActionCount = 1;
     unit->baseHpRegen = 0;
     unit->basePpRegen = 0;

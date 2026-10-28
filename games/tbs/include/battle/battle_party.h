@@ -35,14 +35,14 @@ enum BattleSideMask {
 /// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
 /// until a Djinn command sets it again or a summon uses it
 /// (DJINN_RECOVERY_SUMMONED), both in
-/// BattleTurn_Build; a party member who does not fight has it set as the
+/// BattleActionRun_Build; a party member who does not fight has it set as the
 /// next battle starts, outside a link battle
 /// (DjinnRecovery_Reconcile). DjinnRecovery_CountDown counts down only
 /// positive turns.
 #define DJINN_RECOVERY_AFTER_BATTLE -1
 
 /// DjinnRecoveryEntry.turns of a standby Djinni a summon has just used, until
-/// the turn's end gives it its turn to recover (BattleUnit_ProcessTurnEnd).
+/// the turn's end gives it its turn to recover (BattleUnit_ProcessActionEnd).
 #define DJINN_RECOVERY_SUMMONED -2
 
 /// A Djinni on standby or recovering: its element and index, the unit it

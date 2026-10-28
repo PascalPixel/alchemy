@@ -162,7 +162,7 @@ void BattleTransition_UploadTileVariant(void) {
 
 /// Advances the curtain opening by a frame: scrolls BG0 from 32 pixels to 0
 /// over frames 20 to 52, and over frames 0 to 80 turns the camera round to
-/// YAW_PARTY_TURN and zooms it from 180 to 100 percent.
+/// YAW_PARTY_ACTION and zooms it from 180 to 100 percent.
 /// Runs each frame as a task added by
 /// BattleTransition_Run, which removes it once the encounter
 /// is announced. Advances the timer in gBattleEntryTimer's slot
@@ -186,7 +186,7 @@ void BattleTransition_AdvanceTimer(void) {
   if (scroll < 0)
     scroll = 0;
   offset->y = scroll;
-  // 360 a frame from 0xaf80 reaches 0x12000, YAW_PARTY_TURN, at frame 80.
+  // 360 a frame from 0xaf80 reaches 0x12000, YAW_PARTY_ACTION, at frame 80.
   if (frame <= 0x50U)
     camera->yaw = 45 * frame * 8 + 0xaf80;
   next = (*timer = *timer + 1);

@@ -20,10 +20,10 @@
 /// enemies defeated when the party won (or the link broke), BATTLE_OUTCOME_FLED
 /// when the party ran, or BATTLE_OUTCOME_LOST.
 ///
-/// Each round, the party's commands are chosen (or chosen automatically
-/// under FLAG_AUTO_BATTLE), every unit acts in turn order, and the round ends
+/// Each turn, the party's commands are chosen (or chosen automatically
+/// under FLAG_AUTO_BATTLE), every unit acts in action order, and the turn ends
 /// with the turn-end effects; the Djinn tutorial adds its two messages
-/// after each round.
+/// after each turn.
 ///
 /// Reached through its far stub from ParentSequence_Run's switch on the
 /// sequence (SEQUENCE_BATTLE, with the entrance as enemyGroup), and from
@@ -75,7 +75,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // The transition owns the background (flag) until the entry transition
   // is over, the camera toward the party's view.
   view->frames = 0;
-  view->targetYaw = YAW_PARTY_TURN;
+  view->targetYaw = YAW_PARTY_ACTION;
   view->flag = 1;
   view->unusedAfterFlag[0] = 0;
   view->unusedAfterFlag[1] = 0;
@@ -192,7 +192,7 @@ s32 Battle_Run(s32 enemyGroup) {
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
   // 128 bytes of VRAM cache for the advance arrow's tiles, which
-  // playback shows after a message (PLAY_ADVANCE); taken again each round.
+  // playback shows after a message (PLAY_ADVANCE); taken again each turn.
   battle->arrowTiles = VramCache_AllocEntry(128);
 
   // A random encounter may open with a first strike (1 in 16) or a
@@ -213,9 +213,9 @@ s32 Battle_Run(s32 enemyGroup) {
   gCpuLoadDisplayEnabled = 0;
   Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_FRAME);
 
-  // The rounds.
+  // The turns.
   for (;;) {
-    Battle_RoundStartNoOp();
+    Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
     if (((struct BattleSummonState *)Djinn_GetRecoveryTableFar(
              DJINN_RECOVERY_PARTY))
@@ -229,7 +229,7 @@ s32 Battle_Run(s32 enemyGroup) {
     view->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);
 
-    // Every unit's action for the round, in turn order.
+    // Every unit's action for the turn, in action order.
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->arrowTiles);
     if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
@@ -250,7 +250,7 @@ s32 Battle_Run(s32 enemyGroup) {
     if (actionCount < 0)
       goto aborted;
 
-    // Each action, until one side is down or the party runs. The round's
+    // Each action, until one side is down or the party runs. The turn's
     // first action waits 10 frames facing the party first.
     for (i = 0; i < actionCount; i++) {
       actingUnit = battle->actions[i].unitId;
@@ -278,10 +278,10 @@ s32 Battle_Run(s32 enemyGroup) {
         goto aborted;
     }
 
-    // The end of the round.
+    // The end of the turn.
     battle->firstStrike = FIRST_STRIKE_NONE;
     Battle_ReservedNoOpF674();
-    Battle_ProcessRoundEnd();
+    Battle_ProcessTurnEnd();
     BattleObject_DestroyAll();
     if (battle->isLink != 0) {
       if (LinkBattle_SyncTurn() < 0)
@@ -450,9 +450,9 @@ s32 BattleEnemy_List(s16 *unitIds) {
 /// Lists the units still standing (HP above 0) on the sides in sideMask
 /// (BATTLE_SIDE_MASK_PARTY, BATTLE_SIDE_MASK_ENEMIES or both), party first.
 /// unitIds, if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns
-/// how many there are. Called across the battle parts (the round, staging, auto
-/// battle, turn end and spoils) to test whether a side still stands and to
-/// pick targets.
+/// how many there are. Called across the battle parts (the turn, staging, auto
+/// battle, the turn's end and spoils) to test whether a side still stands and
+/// to pick targets.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;

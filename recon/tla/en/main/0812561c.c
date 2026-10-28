@@ -4,7 +4,7 @@
 // each call argument copied into its argument register (pinned) at the call
 // or up to three statements before it, five minutes of permute; none reaches
 // 0.
-// Draft of Func_0812561c, The Broken Seal's BattleUnit_ProcessTurnEnd
+// Draft of Func_0812561c, The Broken Seal's BattleUnit_ProcessActionEnd
 // (games/tbs/src/battle/battle/turn_end.c). This game: an enemy's Djinn are
 // handled only in a two-sided battle; each element's Djinn count is capped at
 // 4 and raises that element's level; the power-up effect is Func_08127308; a

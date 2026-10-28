@@ -2208,7 +2208,7 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
     case EQUIP_EFFECT_ADD_PP_REGEN:
     case EQUIP_EFFECT_ADD_AGILITY:
     case EQUIP_EFFECT_ADD_LUCK:
-    case EQUIP_EFFECT_ADD_TURNS:
+    case EQUIP_EFFECT_ADD_ACTIONS:
       Text_DrawMessageAsTilesFar(def->effects[i].kind + MsgEquipEffectName,
                                  window, 0, row * 8);
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);

@@ -1,784 +1,759 @@
 /// @file
-/// An action announced and built into a turn, BattleTurn_Build.
+/// A turn's actions: the party's commands, the enemies' or the link
+/// opponent's, and their action order.
 // Part of battle.c.
 
 #include "../battle_internal.h"
 
-/// Returns 1 when the unit is in its side's list of units in the battle
-/// (BattleUnit_ListIds), 0 otherwise.
-/// Called by BattleTurn_Build, for the units holding the standby Djinn a
-/// summon uses.
-/// @param unitId a party member's, up to ALLY_MAX, or an enemy's
-u32 BattleUnit_IsListed(u32 unitId) {
-  u16 list[8];
-  s32 side;
-  s32 unitCount;
+/// Pulses HIGHLIGHT_PALETTE's colours: each takes the matching colour of
+/// WINDOW_PALETTE brightened by up to twelve steps, rising and falling with the
+/// frame count. Nothing in the source calls it. Writes BG palette RAM.
+void Palette_UpdatePulseBrightness(void) {
+  u16 *palette;
+  s32 remainingColors;
+  s32 channelMask;
+
+  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
+  channelMask = 31;
+  remainingColors = 15;
+  do {
+    u32 color;
+    s32 brightness;
+    u32 frameCount;
+    s32 angle;
+    s32 blue;
+    s32 green;
+    s32 red;
+
+    // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
+    // from 0 to 2.0 (16.16), and a sixth of 1.0 (0x2aaa) is one step.
+    frameCount = gFrameCount;
+    angle = (frameCount * 3U) << 10;
+    color = palette[16];
+    brightness = (Q16_ONE - Trig_Cos(angle)) / 0x2AAA;
+
+    blue = (color >> 10) & channelMask;
+    green = (color >> 5) & channelMask;
+    red = color & channelMask;
+    blue += brightness;
+    green += brightness;
+    red += brightness;
+
+    if (blue < 0 || blue > 31)
+      blue = 31;
+    if (green < 0 || green > 31)
+      green = 31;
+    if (red < 0 || red > 31)
+      red = 31;
+
+    *palette++ = (blue << 10) | (green << 5) | red;
+    remainingColors--;
+  } while (remainingColors >= 0);
+}
+
+/// Sets the camera up for the fixed view the battle shows while commands are
+/// chosen, raised by verticalOffset pixels, with its projection and the
+/// background's zoom to match. Called by
+/// Battle_GatherActions, and through its far stub by
+/// Battle_CollectPartyCommands and UpdateLinkSessionCountdown. Writes the
+/// camera, gBattleBackgroundWork's targetYaw and flag (left 1, so the camera
+/// task leaves the background alone), gProjection and the background's
+/// affine page.
+void BattleCamera_SetCommandView(s32 verticalOffset) {
+  // UB: indexing past scalar gBattleCamera reaches another heap slot. Named
+  // slots add four bytes in the native EN trial (0xd8 to 0xdc).
+#ifdef UBFIX
+  struct BattleCamera *camera = gBattleCamera;
+  struct BattleBackgroundWork *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+#else
+  void **slots = (void **)&gBattleCamera;
+  struct BattleCamera *camera = slots[0];
+  struct BattleBackgroundWork *view =
+      slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
+#endif
+  struct FixedPointPosition eyeOffset;
+  u32 result;
+
+  // Positions are 16.16 pixels and angles 1/65536 turns: the focus 5
+  // pixels up, a quarter turn of yaw, 750 pixels away.
+  camera->focus[1] = 160 << 11;
+  camera->focus[0] = 0;
+  camera->focus[2] = 0;
+  view->targetYaw = 128 << 7;
+  camera->yaw = 128 << 7;
+  camera->pitch = 244 << 8;
+  camera->followPosition = 0;
+  camera->distance = 0x02ee0000;
+  camera->followEye = 0;
+
+  Transform_Reset();
+  Transform_ApplyPosition(&camera->focus[0]);
+  Transform_ApplyYaw((s16)camera->yaw);
+  Transform_ApplyPitch((s16)camera->pitch);
+
+  eyeOffset.x = 0;
+  eyeOffset.y = 0;
+  eyeOffset.z = camera->distance;
+  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
+
+  result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
+  Projection_Set(0, result, 0x07920000);
+
+  // While active (the view's busy) is set, BattleCamera_SetRange leaves
+  // BG1's scroll alone. The range: centre (120, 118 less verticalOffset),
+  // offset 8 pixels in y (0x800 in 8.8), scale 2.0.
+  gProjection.centerY = verticalOffset + 120;
+  view->busy = 1;
+  BattleCamera_SetRange(240 << 15, (0x76 - verticalOffset) << 16, 0, 128 << 4,
+                        128 << 10);
+  view->flag = 1;
+  view->busy = 0;
+}
+
+/// Ends every unit's guard (Defend and the like) and recalculates its stats.
+/// Called by Battle_GatherActions as each turn begins. Clears
+/// every unit's defendLevel.
+void BattleUnit_ResetGuardLevels(void) {
+  u16 unitIds[14];
+  s32 count;
   s32 unitIndex;
 
-  side = BATTLE_SIDE_MASK_PARTY;
-  if (unitId > ALLY_MAX)
-    side = BATTLE_SIDE_MASK_ENEMIES;
-  unitCount = BattleUnit_ListIds(side, list);
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+  for (unitIndex = 0; unitIndex < count; unitIndex++) {
+    struct Unit *unit;
+
+    unit = Unit_GetFar(unitIds[unitIndex]);
+    unit->defendLevel = 0;
+    Unit_CalculateFar(unitIds[unitIndex]);
+  }
+}
+
+/// Rolls whether the party gets away. The chance, in hundredths of a
+/// percent, is 5000 plus 2000 for each attempt that failed, plus 500 times
+/// the party's average level, less 500 times the enemies' average level. A
+/// party that struck first always gets away; no one gets away from a battle
+/// that forbids it. Every attempt counts toward the next. Returns 1 when
+/// the party gets away. Called by Battle_GatherActions when the
+/// first action is COMMAND_FLEE. Each roll, even a successful one, raises
+/// gBattleWork->fleeFailures.
+s32 BattleFlee_CheckSuccess(void) {
+  s32 escaped;
+  u8 *failedAttempts;
+  s16 livingUnits[14];
+  s32 livingCount;
+  s32 levelTotal;
+  s32 unitIndex;
+  s32 chance;
+  struct BattleWork *escapeState;
+
+  escaped = 0;
+  escapeState = gBattleWork;
+  if (escapeState->firstStrike == FIRST_STRIKE_PARTY) {
+    escaped = 1;
+  } else {
+    failedAttempts = &escapeState->fleeFailures;
+    chance = 5000 + (escapeState->fleeFailures * 2000);
+    livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
+    levelTotal = 0;
+    for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
+      levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
+    }
+    chance += levelTotal * 500 / livingCount;
+    livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
+    levelTotal = 0;
+    for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
+      levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
+    }
+    chance -= levelTotal * 500 / livingCount;
+    // A roll from 0 to 9999 against the chance.
+    if ((chance > 0) && (((10000 * Random16()) >> 0x10) < chance)) {
+      escaped = 1;
+    }
+    *failedAttempts += 1;
+  }
+  if (gAdventure.battleType == BATTLE_TYPE_NO_ESCAPE) {
+    escaped = 0;
+  }
+  return escaped;
+}
+
+/// The party's actions for the turn, from the command menu: a party member who
+/// is asleep, confused, charmed or stunned loses each of their actions
+/// (COMMAND_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
+/// Returns how many actions there are, or -1 if the menu gave up. Called by
+/// Battle_GatherActions. Fills entries.
+s32 Battle_BuildUnitActions(struct BattleAction *entries) {
+  // Two lists, freed before the return; the allocator rounds them up to 20
+  // and 12 bytes: up to eight choosers and the up to four party members with
+  // their end mark.
+  u16 *choosingUnits = Heap_AllocEwram(17);
+  u16 *unitIds = Heap_AllocEwram(9);
+  s32 unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
+  s32 choosingCount = 0;
+  s32 entryCount = 0;
+  s32 unitIndex;
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-    if (list[unitIndex] == unitId)
-      break;
-  }
+    struct Unit *unit = Unit_GetFar(unitIds[unitIndex]);
+    s32 copyIndex;
 
-  return unitIndex != unitCount;
-}
-
-/// Counts the standby Djinn held by units on unitId's side, from that
-/// side's Djinn recovery list.
-/// Called by BattleTurn_Build for a summon, and through
-/// BattleDjinn_CountStandbyFar by the command menu (BattleCommandRow_Run,
-/// Battle_CollectPartyCommands, PartyStatus_Draw). Returns the total.
-/// @param unitId a unit of the party's side, up to ALLY_MAX, or of the
-/// enemies'
-/// @param counts if not null, receives the count for each of the four
-/// elements
-s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
-  u16 unitIds[8];
-  struct DjinnRecoveryList *list;
-  s32 unitCount;
-  s32 standbyCount;
-  s32 recoveryIndex;
-  s32 unitOrElementIndex;
-  s32 sideMask;
-  s32 enemySide;
-
-  standbyCount = 0;
-  sideMask = BATTLE_SIDE_MASK_PARTY;
-  if (unitId > ALLY_MAX)
-    sideMask = BATTLE_SIDE_MASK_ENEMIES;
-  unitCount = BattleUnit_ListIds(sideMask, unitIds);
-  enemySide = DJINN_RECOVERY_PARTY;
-  if (unitId > ALLY_MAX)
-    enemySide = DJINN_RECOVERY_OPPONENT;
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
-              ->list;
-  if (counts != 0)
-    for (unitOrElementIndex = ELEMENT_COUNT - 1; unitOrElementIndex >= 0;
-         unitOrElementIndex--)
-      counts[unitOrElementIndex] = 0;
-  recoveryIndex = 0;
-  if (list->count != 0) {
-    do {
-      if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-        for (unitOrElementIndex = 0; unitOrElementIndex < unitCount;
-             unitOrElementIndex++)
-          if (unitIds[unitOrElementIndex] ==
-              list->entries[recoveryIndex].unitId)
-            break;
-        if (unitOrElementIndex != unitCount) {
-          if (counts != 0)
-            counts[list->entries[recoveryIndex].element]++;
-          standbyCount++;
-        }
-      }
-      recoveryIndex++;
-    } while (recoveryIndex != list->count);
-  }
-  return standbyCount;
-}
-
-// COMMAND_DJINN's parameter: the Djinni's element in bits 11..8, its index in
-// bits 7..0.
-#define DJINN_ELEMENT(v) (((v) >> 8) & 15)
-#define DJINN_INDEX(v) ((v) & 255)
-/// The most targets a turn holds (BATTLE_TARGET_CAPACITY).
-#define TARGET_MAX 14
-/// Announces the action and builds its turn: its targets and animation.
-/// Returns 0 to stage the turn, TURN_REPORTED when the action failed (its
-/// message shown), or TURN_NO_ACTION.
-/// Called by BattleStaging_DispatchAction for each action of the round.
-/// Fills the turn (its acting unit, targets, hit and critical rolls, ability,
-/// element, staging, animation word and failure), resets the playback and shows
-/// the announcing message. The command's costs are paid here: a caster's PP, a
-/// Djinni set or put on standby (with its own animation), the standby Djinn a
-/// summon uses (DJINN_RECOVERY_SUMMONED). A unit that cannot act, or finds no
-/// target, may be set to Defend (defendLevel).
-///
-/// The phases: the debug defeat; what stops the unit; the announcement and
-/// the ability id, by command; the rolls of a plain attack, or an ability's
-/// extra blows, critical hit or advance hit roll; then how it is staged.
-s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
-  struct Unit *actor = Unit_GetFar(request->unitId);
-  struct BattleWork *battle = gBattleWork;
-  s32 selectedTargetId;
-  s32 abilityId;
-
-  /// Fills the turn's targets: the aimed unit, or for a range the places
-  /// within range - 1 of the aimed place on its side, standing units only
-  /// unless the ability revives. With none, the unit defends ("defends")
-  /// and it returns TURN_REPORTED.
-  /// Called by BattleTurn_Build once the command gives its ability id.
-  s32 BattleTurn_SetTargets(s32 abilityId) {
-    struct AbilityDefinition *ability = Ability_Get(abilityId);
-    s32 mode = ability->targetMode;
-    s32 includeDowned = 0;
-    s32 targetCount;
-    s32 partyCount;
-    s32 enemyCount;
-    s32 aimedPlace;
-    s32 range;
-    s32 place;
-    s32 targetId;
-
-    switch (ability->effect) {
-    case ABILITY_EFFECT_REVIVE:
-    case ABILITY_EFFECT_REVIVE_HALF:
-    case ABILITY_EFFECT_REVIVE_80:
-      includeDowned = 1;
-      break;
-    }
-    // No target mode, and the user alone: the aimed unit, as one target.
-    switch (mode) {
-    case ABILITY_TARGET_ONE:
-      plan->targetOffset[0] = mode;
-      plan->targetCount = 1;
-      plan->targetIds[0] = selectedTargetId;
-      plan->targetMultiplier[0] = 1;
-      break;
-    case ABILITY_TARGET_SELF:
-      plan->targetOffset[0] = 0;
-      plan->targetCount = 1;
-      plan->targetIds[0] = selectedTargetId;
-      plan->targetMultiplier[0] = 1;
-      break;
-    default:
-      // The places from range - 1 before the aimed place to range - 1 after
-      // it, on the side the target's place code names (bit 7 the enemies',
-      // the low four bits the place), within that side's list.
-      targetCount = 0;
-      for (place = 0; battle->partyUnits[place] != BATTLE_UNIT_LIST_END;
-           place++)
-        ;
-      partyCount = place;
-      for (place = 0; battle->enemyIds[place] != BATTLE_UNIT_LIST_END; place++)
-        ;
-      enemyCount = place;
-      aimedPlace = request->target & 15;
-      range = request->range;
-      {
-        s32 first = aimedPlace - range + 1;
-        s32 last = aimedPlace + range - 1;
-
-        for (place = first; place <= last; place++) {
-          if (place < 0)
-            continue;
-          // The enemies' side.
-          if (request->target & 128) {
-            if (place >= enemyCount)
-              continue;
-            targetId = battle->enemyIds[place];
-            if (targetId == BATTLE_UNIT_REMOVED)
-              continue;
-            if (!includeDowned && Unit_GetFar(targetId)->hp == 0)
-              continue;
-            plan->targetMultiplier[targetCount] = 1;
-            plan->targetOffset[targetCount] = place - aimedPlace;
-            plan->targetIds[targetCount] = targetId;
-            targetCount++;
-          } else {
-            if (place >= partyCount)
-              continue;
-            targetId = battle->partyUnits[place];
-            if (targetId == BATTLE_UNIT_REMOVED)
-              continue;
-            if (!includeDowned && Unit_GetFar(targetId)->hp == 0)
-              continue;
-            plan->targetMultiplier[targetCount] = 1;
-            plan->targetOffset[targetCount] = place - aimedPlace;
-            plan->targetIds[targetCount] = targetId;
-            targetCount++;
-          }
-        }
-      }
-      plan->targetCount = targetCount;
-      if (targetCount <= 0) {
-        MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-        BattleMessage_ShowAndWaitFar(MsgActorDefends);
-        if (actor->defendLevel == 0)
-          actor->defendLevel = DEFEND_NORMAL;
-        return TURN_REPORTED;
+    // Once for each of the party member's actions this turn (actionsPerTurn):
+    // a party member with two is listed twice and chooses twice.
+    for (copyIndex = 0; copyIndex < unit->actionsPerTurn; copyIndex++) {
+      if (unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||
+          unit->stun != 0) {
+        struct BattleAction *entry = &entries[entryCount];
+        entry->unitId = unitIds[unitIndex];
+        entry->priority = unit->agi;
+        entry->command = COMMAND_NONE;
+        entry->parameter = 0;
+        entry->target = TARGET_NONE_PARTY;
+        entryCount++;
+      } else {
+        choosingUnits[choosingCount++] = unitIds[unitIndex];
       }
     }
-#ifdef UBFIX
-    // Callers test only -1. A plain success return shortens EN by four bytes.
-    return plan->targetCount;
-#endif
   }
 
-  //----------------------------------------------------------------------
-  // A fresh turn, and the debug defeat
-  //----------------------------------------------------------------------
-  selectedTargetId = Battle_GetTaggedSlotValue(request->target);
-  BattlePlayback_Reset();
-  plan->hauntDamage = 0;
-  plan->unitId = request->unitId;
-  plan->targetCount = 0;
-  plan->animation = 0;
-  plan->failure = TURN_FAILURE_NONE;
-  plan->element = ELEMENT_NONE;
-  MessageArgument_ClearAllFar();
-  if (actor->hp == 0)
-    return TURN_NO_ACTION;
-
-  // Debug: hold R to defeat all enemies, or R+Select to defeat the whole party.
-  // Only in debug mode, with FLAG_DEBUG_BATTLE_KEYS set; each unit loses
-  // 0x40000000 HP, more than any unit has.
-  if (BATTLE_AUTO_MODE && GameFlag_GetFar(FLAG_DEBUG_BATTLE_KEYS) &&
-      (BATTLE_OPTIONS & KEY_R)) {
-    s32 enemy = 1;
-    s32 index;
-    s32 id;
-
-    if (BATTLE_OPTIONS & KEY_SELECT)
-      enemy = 0;
-    for (index = 0;; index++) {
-      if (enemy)
-        id = battle->enemyIds[index];
-      else
-        id = battle->partyUnits[index];
-      if (id == BATTLE_UNIT_LIST_END)
-        break;
-      if (id == BATTLE_UNIT_REMOVED)
-        continue;
-      if (Unit_AddHpFar(id, 0xc0000000) == 0) {
-        BattlePlayback_Push(PLAYBACK_HIT, id);
-        BattlePlayback_Push(PLAYBACK_DEFEAT, id);
-      }
-    }
-    BattlePlayback_RunAll();
-    return TURN_NO_ACTION;
-  }
-
-  //----------------------------------------------------------------------
-  // What stops the unit: Ground, sleep, stun, a bound unit's bad luck
-  //----------------------------------------------------------------------
-  MessageArgument_ClearAllFar();
-  if (actor->immobile) {
-    actor->immobile = 0;
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgUnableToMove);
-    return TURN_REPORTED;
-  }
-  if (actor->sleep) {
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgIsAsleep);
-    return TURN_REPORTED;
-  }
-  if (actor->stun) {
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgIsParalyzed);
-    return TURN_REPORTED;
-  }
-  // A bound unit (curse bit 0) loses one action in four,
-  // except Defend.
-  if ((actor->curse & CURSE_BOUND) && request->command != COMMAND_DEFEND &&
-      (Battle_RandomFar() & 3) == 0) {
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgIsBound);
-    return TURN_REPORTED;
-  }
-  if (request->command == COMMAND_NONE)
-    return TURN_NO_ACTION;
-  abilityId = ABILITY_ATTACK;
+  // The command menu appends the choosing party members' actions.
   {
-    s32 index;
+    s32 appended;
 
-    for (index = 0; index < TARGET_MAX; index++)
-      plan->targetCritical[index] = 0;
-    for (index = 0; index < TARGET_MAX; index++)
-      plan->targetHit[index] = HIT_NOT_ROLLED;
-  }
-
-  //----------------------------------------------------------------------
-  // Announce the selected action and find its ability id and targets. A
-  // command that ends here returns TURN_REPORTED when a message has shown why
-  // (BattleStaging_DispatchAction then waits for the player), or
-  // TURN_NO_ACTION.
-  //----------------------------------------------------------------------
-  switch (request->command) {
-  case COMMAND_FLEE:
-    if ((u16)request->unitId <= ALLY_MAX) {
-      BattleMessage_ShowAndWaitFar(MsgPartyFlees);
+    entries += entryCount;
+    appended =
+        Battle_CollectPartyCommandsFar(entries, choosingUnits, choosingCount);
+    if (appended < 0) {
+      unitCount = -1;
     } else {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      BattleMessage_ShowAndWaitFar(MsgActorRuns);
+      unitCount = entryCount + appended;
     }
-    BattleMessage_WaitForAdvance();
-    plan->staging = STAGING_FLEE;
-    return 0;
-
-  case COMMAND_ATTACK:
-    // A weapon unleash replaces the action with its ability.
-    abilityId = RollWeaponUnleashFar(actor);
-    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
-      return TURN_REPORTED;
-    if (abilityId != ABILITY_ATTACK) {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(Inventory_GetEquippedItemFar(actor, EQUIP_WEAPON),
-                              MESSAGE_ARGUMENT_ITEM);
-      BattleMessage_ShowAndWaitFar(MsgWeaponHowls);
-      BattlePlayback_MarkMessage();
-      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      BattleMessage_ShowAndWaitFar(MsgWeaponHowls + 1);
-    }
-    break;
-
-  case COMMAND_PSYNERGY: {
-    struct AbilityDefinition *ability;
-    s32 canCast = 1;
-
-    abilityId = request->parameter;
-    ability = Ability_Get(abilityId);
-    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
-      return TURN_REPORTED;
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-    BattleMessage_ShowAndWaitFar(MsgActorCasts);
-    // Fail if PP is insufficient or Psynergy is sealed (the seal wins); the
-    // failure is shown by the staging (plan->failure). Only a cast that goes
-    // ahead pays its PP.
-    if (actor->pp < ability->ppCost) {
-      plan->failure = TURN_FAILURE_NO_PP;
-      canCast = 0;
-    }
-    if (actor->psySeal) {
-      plan->failure = TURN_FAILURE_SEALED;
-      canCast = 0;
-    }
-    if (canCast) {
-      plan->failure = TURN_FAILURE_NONE;
-      actor->pp -= ability->ppCost;
-      Unit_RecalculateGaugesFar(request->unitId);
-      CLAMP(actor->pp, 0, actor->ppMax);
-    }
-  } break;
-
-  case COMMAND_ITEM: {
-    struct ItemDefinition *item;
-
-    // A slot of -1: an earlier command this round used the item up
-    // (BattleStaging_RunItem).
-    if (request->parameter < 0) {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      BattleMessage_ShowAndWaitFar(MsgItemAlreadyUsed);
-      return TURN_REPORTED;
-    }
-    // An item with no ability, or a broken one, and the user defends.
-    item = Item_GetDirectFar(actor->inventory[request->parameter]);
-    abilityId = item->abilityId;
-    if (abilityId == 0 ||
-        (actor->inventory[request->parameter] & INVENTORY_BROKEN)) {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      BattleMessage_ShowAndWaitFar(MsgActorDefends);
-      if (actor->defendLevel == 0)
-        actor->defendLevel = DEFEND_NORMAL;
-      return TURN_REPORTED;
-    }
-    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
-      return TURN_REPORTED;
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_PushFar(actor->inventory[request->parameter],
-                            MESSAGE_ARGUMENT_ITEM);
-    // An item that is kept: weapons, shields, gloves and armlets, the Psynergy
-    // items, rings and ITEM_TYPE_UNUSED are raised
-    // ("raises"); anything else is used.
-    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == ITEM_USE_FREE) {
-      switch (item->type) {
-      case ITEM_TYPE_WEAPON:
-      case ITEM_TYPE_SHIELD:
-      case ITEM_TYPE_PSYNERGY:
-      case ITEM_TYPE_UNUSED:
-      case ITEM_TYPE_RING:
-        BattleMessage_ShowAndWaitFar(MsgActorRaisesItem);
-        break;
-      default:
-        BattleMessage_ShowAndWaitFar(MsgActorUsesBattleItem);
-        break;
-      }
-    } else {
-      BattleMessage_ShowAndWaitFar(MsgActorUsesBattleItem);
-    }
-  } break;
-
-  case COMMAND_DEFEND:
-  case COMMAND_TOTAL_DEFENSE:
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgActorDefends);
-    return TURN_REPORTED;
-
-  case COMMAND_NONE:
-    return TURN_NO_ACTION;
-
-  case COMMAND_ENEMY_ABILITY: {
-    s32 message;
-
-    abilityId = request->parameter;
-    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
-      return TURN_REPORTED;
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-    if ((Ability_Get(abilityId)->flags & ABILITY_FORMULA_MASK) ==
-        ABILITY_FORMULA_ENEMY_DAMAGE)
-      message = MsgActorUnleashesAbility;
-    else
-      message = MsgActorUsesAbility;
-    // Some enemy abilities have their own wording.
-    switch (abilityId) {
-    case ABILITY_SONIC_WAVE:
-    case ABILITY_SONIC_WAVE_STRONG:
-      message = MsgEmitsUltrasonicWaves;
-      break;
-    case ABILITY_HEAT_MIRAGE:
-      message = MsgActorCasts;
-      break;
-    case ABILITY_THREATEN:
-      message = MsgGlowersFerociously;
-      break;
-    case ABILITY_TREMBLE:
-      message = MsgIsIntimidated;
-      break;
-    case ABILITY_CONTAIN:
-      message = MsgBalefulGaze;
-      break;
-    case ABILITY_WORMS:
-      message = MsgEatsWorms;
-      break;
-    case ABILITY_SHRIEK:
-    case ABILITY_BANSHEE_HOWL:
-    case ABILITY_CRAZY_VOICE:
-    case ABILITY_WAR_CRY:
-    case ABILITY_WICKED_HOWL:
-      message = MsgLetsOutAbility;
-      break;
-    case ABILITY_WING_BEAT:
-    case ABILITY_WING_FLUTTER:
-    case ABILITY_WING_STROKE:
-      message = MsgActorUsesAbility;
-      break;
-    case ABILITY_ROTTEN_BLOOD:
-      message = MsgEnemyUnleashesAbility;
-      break;
-    case ABILITY_HEARTRENDER:
-      message = MsgGlowersMiserably;
-      break;
-    case ABILITY_DECOMPOSE:
-      message = MsgSmellOfDecay;
-      break;
-    case ABILITY_BERSERK:
-      message = MsgFuriousRage;
-      break;
-    case ABILITY_SPEED_SURGE:
-      message = MsgAttemptsToDivide;
-      break;
-    case ABILITY_ALLY_SEARCH:
-      message = MsgLooksForAllies;
-      break;
-    case ABILITY_SEARCH_FOR_HELP:
-      message = MsgLooksForHelp;
-      break;
-    }
-    BattleMessage_ShowAndWaitFar(message);
-  } break;
-
-  case COMMAND_DJINN:
-    // A Djinni not set: one ready again is set, with its own short animation
-    // played through the playback queue, and nothing else happens
-    // (TURN_NO_ACTION); one still recovering says so (TURN_REPORTED). A set
-    // Djinni is unleashed below.
-    abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(request->parameter),
-                                      DJINN_INDEX(request->parameter));
-    if (!Djinn_IsSetFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                        DJINN_INDEX(request->parameter))) {
-      if (Djinn_CanSetFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                          DJINN_INDEX(request->parameter))) {
-        Ability_Get(abilityId);
-        BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
-        Djinn_SetFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                     DJINN_INDEX(request->parameter));
-        DjinnRecovery_RemoveFar(request->unitId,
-                                DJINN_ELEMENT(request->parameter),
-                                DJINN_INDEX(request->parameter));
-        Unit_CalculateFar(request->unitId);
-        BattlePlayback_Reset();
-        BattlePlayback_SchedulePhase(30);
-        BattlePlayback_Push(PLAYBACK_UNIT_NAME, request->unitId);
-        BattlePlayback_Push(
-            PLAYBACK_ABILITY_NAME,
-            DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
-                DJINN_INDEX(request->parameter) + ABILITY_DJINNI_FIRST);
-        BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
-        BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
-        BattlePlayback_Push(PLAYBACK_MESSAGE, MsgDjinnSet);
-        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
-        Sound_PlaySongFar(SE_POWER_UP);
-        Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->actor,
-                                 POSE_CAST);
-        Actor_SetAnimationSpeedFar(BattleObject_Get(request->unitId)->actor,
-                                   32);
-        ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
-                         GLOW_BURST, 0);
-        BattlePlayback_WaitForReady();
-        return TURN_NO_ACTION;
-      }
-      // Recovering.
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      Sound_PlaySongFar(SE_MENU_ERROR);
-      BattleMessage_ShowAndWaitFar(MsgDjinnInRecovery);
-      WaitFrames(60);
-      return TURN_REPORTED;
-    }
-    // Unleash the set Djinni; it goes on standby.
-    {
-      struct AbilityDefinition *ability;
-
-      if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
-        return TURN_REPORTED;
-      DjinnRecovery_AddStandbyFar(request->unitId,
-                                  DJINN_ELEMENT(request->parameter),
-                                  DJINN_INDEX(request->parameter));
-      ability = Ability_Get(abilityId);
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      BattleMessage_ShowAndWaitFar(MsgActorUnleashesDjinn);
-      plan->element = ability->element;
-    }
-    break;
-
-  case COMMAND_SUMMON: {
-    const struct SummonDefinition *summon;
-    struct DjinnRecoveryList *list;
-    s32 side;
-    u8 counts[ELEMENT_COUNT];
-    /* FAKEMATCH(dead): an unused array for the stack frame's 8 bytes below
-     * counts; without it, 34 of 1393 instructions differ in tbs-en. */
-    UNUSED u8 unused[8];
-    s32 index;
-
-    // Check whether enough Djinn of each element are on standby; the loop
-    // stops at the first element short (index below 4), and leaves counts
-    // holding what each element gives.
-    summon = SummonDefinition_Get(request->parameter);
-    BattleDjinn_CountStandby(request->unitId, counts);
-    side = DJINN_RECOVERY_PARTY;
-    if ((u16)request->unitId > ALLY_MAX)
-      side = DJINN_RECOVERY_OPPONENT;
-    list =
-        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
-    for (index = 0;
-         index < ELEMENT_COUNT && counts[index] >= summon->djinnRequired[index];
-         index++)
-      counts[index] = summon->djinnRequired[index];
-    abilityId = summon->abilityId;
-    if (BattleTurn_SetTargets(abilityId) == TURN_REPORTED)
-      return TURN_REPORTED;
-    if (index != ELEMENT_COUNT) {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      BattleMessage_ShowAndWaitFar(MsgSummonLacksDjinn);
-      return TURN_REPORTED;
-    }
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-    BattleMessage_ShowAndWaitFar(MsgActorSummons);
-    // Mark the standby Djinn being used DJINN_RECOVERY_SUMMONED, the first
-    // found of each element, from units in the formation.
-    for (index = 0; index != list->count; index++) {
-      struct DjinnRecoveryEntry *entry = &list->entries[index];
-
-      if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE &&
-          BattleUnit_IsListed(entry->unitId) && counts[entry->element] != 0) {
-        entry->turns = DJINN_RECOVERY_SUMMONED;
-        counts[entry->element]--;
-      }
-    }
-  } break;
+    Heap_Release(unitIds);
+    Heap_Release(choosingUnits);
+    return unitCount;
   }
-
-  //----------------------------------------------------------------------
-  // Build a normal attack.
-  //----------------------------------------------------------------------
-  if (abilityId == ABILITY_ATTACK) {
-    struct Unit *target = Unit_GetFar(plan->targetIds[0]);
-
-    plan->abilityId = ABILITY_ATTACK;
-    plan->element = Item_GetEquippedElementFar(request->unitId);
-    plan->staging = STAGING_ATTACK;
-    // An enemy's attack animation comes from its class; a party member's is
-    // animation 1 for Isaac, Garet and Jenna and 4 for Ivan and Mia, any other
-    // none. Each is played by id range (ANIM_BY_ID_RANGE).
-    if (actor->classId == CLASS_NONE) {
-      plan->animation =
-          BattleSprite_GetAttackAnim(actor->id) | ANIM_BY_ID_RANGE;
-    } else {
-      plan->animation = 0;
-      switch (actor->id) {
-      case ISAAC:
-        plan->animation = ANIM_BY_ID_RANGE | 1;
-        break;
-      case GARET:
-        plan->animation = ANIM_BY_ID_RANGE | 1;
-        break;
-      case IVAN:
-        plan->animation = ANIM_BY_ID_RANGE | 4;
-        break;
-      case MIA:
-        plan->animation = ANIM_BY_ID_RANGE | 4;
-        break;
-      case JENNA:
-        plan->animation = ANIM_BY_ID_RANGE | 1;
-        break;
-      }
-    }
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgActorAttacks);
-    // Miss chance: 153/256 when deluded, plus a separate 1/32 roll.
-    // Attacks cannot miss a target that cannot move. In the Djinn tutorial
-    // the attack always misses.
-    /* FAKEMATCH(one-pass): the rolls in a one-pass block left by break, which
-     * places them ahead of the five tests; as an if on the negated tests, 46
-     * of 1393 instructions differ in tbs-en. */
-    do {
-      if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
-          target->immobile != 0 || target->charm != 0)
-        break;
-      if (actor->delusion != 0 && (Battle_RandomFar() & 255) <= 152)
-        plan->targetMultiplier[0] = 0;
-      if ((Battle_RandomFar() & 31) == 0)
-        plan->targetMultiplier[0] = 0;
-    } while (0);
-    if (GameFlag_GetFar(FLAG_DJINN_LESSON))
-      plan->targetMultiplier[0] = 0;
-    // Critical hit: one chance in 32, or else the equipment's unleash bonus
-    // in 200ths, against a 16-bit roll.
-    if (target->hp != 0) {
-      if ((Battle_RandomFar() & 31) == 0)
-        plan->targetCritical[0] = CRITICAL_HIT;
-      else if ((Equipment_GetUnleashRateBonusFar(actor) << 16) / 200 >
-               (Battle_RandomFar() & 0xffff))
-        plan->targetCritical[0] = CRITICAL_HIT;
-    }
-  }
-
-  //----------------------------------------------------------------------
-  // Build an ability.
-  //----------------------------------------------------------------------
-  else {
-    struct AbilityDefinition *ability = Ability_Get(abilityId);
-
-    plan->element = ability->element;
-    plan->animation = 0;
-    plan->abilityId = abilityId;
-    if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60) {
-      // A double or triple blow on every target: 153, 32 or 64 in 256, the
-      // multiplier rising by 1 or 2.
-      s32 chance;
-      s32 amount;
-
-      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-          ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60)
-        chance = 153;
-      else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
-               ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8)
-        chance = 32;
-      else
-        chance = 64;
-      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
-          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4)
-        amount = 1;
-      else
-        amount = 2;
-      if ((Battle_RandomFar() & 255) < chance) {
-        s32 index;
-
-        for (index = 0; index < plan->targetCount; index++)
-          plan->targetMultiplier[index] += amount;
-      }
-    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_1_IN_64 &&
-               ability->effect <= ABILITY_EFFECT_CRITICAL_1_IN_4) {
-      // An ability's critical hit on every target, 1 in 64 to 1 in 4.
-      s32 mask;
-
-      switch (ability->effect) {
-      case ABILITY_EFFECT_CRITICAL_1_IN_64:
-        mask = 63;
-        break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_32:
-        mask = 31;
-        break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_16:
-        mask = 15;
-        break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_8:
-        mask = 7;
-        break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_4:
-      default:
-        mask = 3;
-        break;
-      }
-      if ((Battle_RandomFar() & mask) == 0) {
-        s32 index;
-
-        for (index = 0; index < plan->targetCount; index++)
-          plan->targetCritical[index] = CRITICAL_STRONG;
-      }
-    } else if (abilityId == ABILITY_ANNIHILATION) {
-      // Annihilation rolls its hit now, at full rate whatever the distance,
-      // so that the animation can show it (the variant below).
-      s32 index;
-
-      for (index = 0; index < plan->targetCount; index++)
-        plan->targetHit[index] =
-            Battle_RollEffectSuccessFar(request->unitId, plan->targetIds[index],
-                                        ability->element, ability->effect, 100);
-    }
-    // How it is staged: the ability's row of gAbilityAnimations, its variant
-    // raised to the first target's multiplier less one (a double or triple
-    // blow); then the staging, from gAbilityStaging where it gives one. The
-    // two tables end at ABILITY_THRASH and ABILITY_SEVERE_BLOW.
-    if (abilityId >= 0 && abilityId <= ABILITY_THRASH) {
-      plan->animation = gAbilityAnimations[abilityId];
-      if (plan->targetMultiplier[0] > 1)
-        plan->animation = gAbilityAnimations[abilityId] +
-                          (plan->targetMultiplier[0] << ANIM_VARIANT_SHIFT) -
-                          (1 << ANIM_VARIANT_SHIFT);
-    }
-    if ((abilityId >= 0 && abilityId <= ABILITY_SEVERE_BLOW) &&
-        gAbilityStaging[abilityId] != 0)
-      plan->staging = gAbilityStaging[abilityId];
-    else if (Ability_IsPsynergy(abilityId))
-      plan->staging = STAGING_CAST;
-    else if (plan->animation != 0) {
-      if (actor->classId == CLASS_NONE)
-        plan->staging = STAGING_ENEMY_CAST;
-      else
-        plan->staging = STAGING_CAST;
-    } else
-      plan->staging = STAGING_MESSAGES;
-    if (Battle_IsReviveEffectFar(ability->effect))
-      plan->animation |= ANIM_ON_DOWNED;
-    // When Annihilation's instant death lands on its first target, the
-    // variant becomes 1: the burst then shows its second picture and plays a
-    // sound (BattleAnim_RunAnnihilation).
-    if (abilityId == ABILITY_ANNIHILATION && plan->targetHit[0] != 0)
-      plan->animation |= 1 << ANIM_VARIANT_SHIFT;
-  }
-  // An item is staged as an item, unless its ability takes the whole screen.
-  if (request->command == COMMAND_ITEM && plan->staging != STAGING_SUMMON &&
-      plan->staging != STAGING_FULL_SCREEN)
-    plan->staging = STAGING_ITEM;
-  plan->command = request->command;
-  return 0;
 }
+
+/// The enemies' actions for the turn, in a shuffled order, each chosen by
+/// BattleAI_ChooseAction; a sleeping or stunned enemy loses its
+/// actions. An enemy acting more than once a turn acts later at half its
+/// Agility. None act when the party struck first; when the party is caught
+/// by surprise, only two to five enemies act, once each. Returns how many
+/// actions there are. Called by Battle_GatherActions outside a
+/// link battle. Fills entries.
+s32 Battle_BuildOpponentActions(struct BattleAction *entries) {
+  u16 unitIds[14];
+  s32 entryCount = 0;
+  struct BattleWork *battle = gBattleWork;
+  s32 unitCount;
+  s32 shuffleOrUnitIndex;
+
+  if (battle->firstStrike == FIRST_STRIKE_PARTY) {
+    return 0;
+  }
+
+  unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
+  if (unitCount == 0) {
+    return 0;
+  }
+
+  for (shuffleOrUnitIndex = 31; shuffleOrUnitIndex >= 0; shuffleOrUnitIndex--) {
+    u32 first = (unitCount * Random16()) >> 16;
+    u32 second = (unitCount * Random16()) >> 16;
+    s32 swap = unitIds[first];
+    unitIds[first] = unitIds[second];
+    unitIds[second] = swap;
+  }
+
+  // A roll of 1 to 5, raised to at least 2.
+  if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
+    s32 limit = ((Random16() * 5) >> 16) + 1;
+
+    if (limit <= 1) {
+      limit = 2;
+    }
+    if (limit < unitCount) {
+      unitCount = limit;
+    }
+  }
+
+  for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < unitCount;
+       shuffleOrUnitIndex++) {
+    s32 unitId = unitIds[shuffleOrUnitIndex];
+    struct Unit *unit = Unit_GetFar(unitId);
+    s32 copyIndex;
+
+    for (copyIndex = 0; copyIndex < unit->actionsPerTurn; copyIndex++) {
+      struct BattleAction *entry = &entries[entryCount];
+      s32 agility;
+
+      entry->unitId = unitId;
+      agility = unit->agi;
+      entry->priority = agility;
+      if (copyIndex != 0) {
+        entry->priority = (s16)agility / 2;
+      }
+
+      if (unit->sleep != 0 || unit->stun != 0) {
+        entry->command = COMMAND_NONE;
+        entry->parameter = 0;
+        entry->target = TARGET_NONE_ENEMY;
+      } else {
+        BattleAI_ChooseAction(entry, 0);
+      }
+
+      entryCount++;
+
+      if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
+        break;
+      }
+    }
+  }
+
+  return entryCount;
+}
+
+/// A Djinni whose effect is a guard or Ground acts before everyone else: its
+/// priority is raised by this, past any Agility (999 at most).
+#define DJINN_FIRST_PRIORITY 10000
+
+/// Sorts the turn's actions into action order, fastest first, after moving
+/// the guarding and grounding Djinn to the front. Called by
+/// Battle_GatherActions. Raises those Djinn actions' priority
+/// and reorders entries in place.
+void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
+  s32 actionIndex;
+  s32 sortIndex;
+  s32 swapCount;
+
+  for (actionIndex = 0; actionIndex < count; actionIndex++) {
+    struct BattleAction *entry = &entries[actionIndex];
+
+    if (entry->command == COMMAND_DJINN) {
+      struct AbilityDefinition *action;
+
+      // parameter: the Djinni's element in bits 8 to 11, its number below.
+      // The unit lookup's result is unused.
+      Unit_GetFar(entry->unitId);
+      action = Ability_Get(Djinn_GetAbilityIdFar(entry->parameter >> 8 & 15,
+                                                 entry->parameter & 0xff));
+      if (action->effect == ABILITY_EFFECT_DEFEND ||
+          action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
+          action->effect == ABILITY_EFFECT_GROUND) {
+        entry->priority += DJINN_FIRST_PRIORITY;
+      }
+    }
+  }
+
+  // Equal priorities keep their order, including the shuffle of enemies.
+  do {
+    swapCount = 0;
+    for (sortIndex = count - 1; sortIndex > 0; sortIndex--) {
+      if ((s16)entries[sortIndex].priority >
+          (s16)entries[sortIndex - 1].priority) {
+        struct BattleAction temporary;
+
+        Iwram_CopyWords(&temporary, &entries[sortIndex],
+                        sizeof(struct BattleAction));
+        Iwram_CopyWords(&entries[sortIndex], &entries[sortIndex - 1],
+                        sizeof(struct BattleAction));
+        Iwram_CopyWords(&entries[sortIndex - 1], &temporary,
+                        sizeof(struct BattleAction));
+        swapCount++;
+      }
+    }
+  } while (swapCount != 0);
+}
+
+/// The header a link battle sends before its actions: how many there are,
+/// the next random number to check the consoles agree, and the parent's
+/// random seed for the turn. Battle_AppendLinkedActions takes it
+/// from the EWRAM pool (40 bytes) for one exchange and frees it before
+/// returning. One header serves both ways: the parent's received header
+/// overwrites the one it sent, and the child receives first, then writes
+/// its count over the received header and sends it back.
+struct BattleLinkedActionState {
+  s32 count; ///< actions that follow the header
+  s32 check; ///< the parent's next Battle_RandomFar; the child checks its own
+  s32 seed;  ///< the parent's gRandomSeed, the turn's battle seed
+  u8 unused[28]; ///< padding; a header packet carries only the first 20 bytes
+};
+
+/// The link sends in packets of 20 bytes (the header is one), and a transfer
+/// may take 300 frames.
+#define LINK_PACKET_BYTES 20
+#define LINK_TRANSFER_TIMEOUT 300
+/// The bytes of count actions (16 each, a struct BattleAction), in
+/// whole packets.
+#define LINK_ACTIONS_BYTES(count)                                              \
+  ((u32)((count) * 16 + LINK_PACKET_BYTES - 1) / LINK_PACKET_BYTES *           \
+   LINK_PACKET_BYTES)
+
+/// Link battle: exchanges the turn's actions with the other console and
+/// appends the opponent's after the count of this console's. Each console
+/// sees its own party as the party: the received actions' units take the
+/// ids they have here and their targets swap sides. The parent sends first
+/// and gives the turn its random seed; the child checks both consoles
+/// agree on the next random number. A party member's priority is made even
+/// on the parent and odd on the child, so equal speeds sort alike on both.
+/// Returns how many actions were received, or -1 when the exchange fails.
+/// Called by Battle_GatherActions in a link battle. Sets
+/// gBattleRandomSeed, writes each action's slot and priority, and on a
+/// failure resets the link transfer and removes its interrupt handlers.
+s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
+  struct BattleWork *battle = gBattleWork;
+  s32 result = 0;
+  s32 allocationSize = LINK_ACTIONS_BYTES(count);
+  struct BattleLinkedActionState *state =
+      (struct BattleLinkedActionState *)Heap_AllocEwram(40);
+  s32 index;
+
+  // Sends the header, then this console's actions. Both transfers share one
+  // timeout of LINK_TRANSFER_TIMEOUT frames.
+  s32 LinkBattle_SendActions(void) {
+    s32 timeout;
+    s32 disconnected;
+    s32 status = Serial_StartSend(state, LINK_PACKET_BYTES);
+
+    disconnected = 0;
+    timeout = LINK_TRANSFER_TIMEOUT;
+    if (status == -1)
+      return status;
+    while (Serial_GetActiveTransfers()) {
+      WaitFrames(1);
+      if (--timeout < 0)
+        return -1;
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++disconnected > LINK_MAX_MISSED_FRAMES)
+          return -1;
+      } else {
+        disconnected = 0;
+      }
+    }
+    if (allocationSize) {
+      status = Serial_StartSend(actions, allocationSize);
+      if (status == -1)
+        return status;
+      while (Serial_GetActiveTransfers()) {
+        WaitFrames(1);
+        if (--timeout < 0)
+          return -1;
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          if (++disconnected > LINK_MAX_MISSED_FRAMES)
+            return -1;
+        } else {
+          disconnected = 0;
+        }
+      }
+    }
+    return 0;
+  }
+
+  // Receives the header, then the other console's actions after ours. A
+  // transfer that grows past its expected size, or ends short of it, fails.
+  s32 LinkBattle_ReceiveActions(void) {
+    // gSerialReceivedSize changes under the serial interrupt and is volatile
+    // (serial_runtime.h), so every read here loads it again.
+    s32 timeout;
+    s32 disconnected;
+    s32 status = Serial_StartReceive(state);
+
+    disconnected = 0;
+    timeout = LINK_TRANSFER_TIMEOUT;
+    if (status == -1)
+      return status;
+    while (Serial_GetActiveTransfers()) {
+      if (gSerialReceivedSize > LINK_PACKET_BYTES)
+        return -1;
+      WaitFrames(1);
+      if (--timeout < 0)
+        return -1;
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++disconnected > LINK_MAX_MISSED_FRAMES)
+          return -1;
+      } else {
+        disconnected = 0;
+      }
+    }
+    if (gSerialReceivedSize != LINK_PACKET_BYTES)
+      return -1;
+    result = state->count;
+    if (state->count) {
+      status = Serial_StartReceive(actions + count);
+      if (status == -1)
+        return status;
+      while (Serial_GetActiveTransfers()) {
+        if (gSerialReceivedSize > LINK_ACTIONS_BYTES(result))
+          return -1;
+        WaitFrames(1);
+        if (--timeout < 0)
+          return -1;
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          if (++disconnected > LINK_MAX_MISSED_FRAMES)
+            return -1;
+        } else {
+          disconnected = 0;
+        }
+      }
+      if (gSerialReceivedSize != LINK_ACTIONS_BYTES(result))
+        return -1;
+    }
+    return 0;
+  }
+
+  // Each action carries its unit's id as the opponent knows it.
+  for (index = 0; index < count; index++) {
+    struct BattleAction *action = &actions[index];
+
+    action->slot = battle->opponentSlots[action->unitId];
+
+    if (battle->linkSide == 0) {
+      if (action->priority & 1)
+        action->priority++;
+    } else {
+      action->priority |= 1;
+    }
+  }
+
+  // The parent (link side 0) sends, then receives; the child receives,
+  // then sends and checks the parent's next random number against its own.
+  if (battle->linkPaused == 0) {
+    if (battle->linkSide == 0) {
+      u32 saved;
+
+      state->count = count;
+      state->check = Battle_RandomFar();
+      IRQ_LOCK(saved);
+      gBattleRandomSeed = state->seed = gRandomSeed;
+      IRQ_UNLOCK(saved);
+      if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
+        goto fail;
+      result = state->count;
+    } else {
+      if (LinkBattle_ReceiveActions() < 0)
+        goto fail;
+      result = state->count;
+      state->count = count;
+      if (LinkBattle_SendActions() < 0 || Battle_RandomFar() != state->check)
+        goto fail;
+      gBattleRandomSeed = state->seed;
+    }
+
+    // The received actions, seen from this side: the xor with 0x80 moves a
+    // target between the party's ids and the enemies'.
+    for (index = 0; index < result; index++) {
+      struct BattleAction *action = &actions[count + index];
+
+      action->unitId = action->slot;
+      action->target ^= FIRST_ENEMY_UNIT;
+    }
+
+    Heap_Release(state);
+    return result;
+  }
+
+fail:
+  LinkBattle_ResetTransferState();
+  Serial_RemoveIrqHandlers();
+  Heap_Release(state);
+  return -1;
+}
+
+/// Copies BG palette 15 to 14 and 5 to 4, brightened or darkened. Called by
+/// Battle_GatherActions with 8, as the turn's commands are
+/// chosen.
+/// @param offset added to each of the red, green and blue values (held in 0
+/// to 31)
+void Palette_CopyWithBrightnessOffset(s32 offset) {
+  s32 bankIndex;
+  s32 sourceBank;
+  s32 colorIndex;
+  s32 channelMask;
+  s32 paletteIndex;
+
+  sourceBank = 15;
+  bankIndex = 0;
+  channelMask = 31;
+  do {
+    for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
+      u32 color;
+      s32 blue;
+      s32 green;
+      s32 red;
+      s32 adjustedColor;
+
+      paletteIndex = sourceBank * 16 + colorIndex;
+      color = ((u16 *)BG_PLTT)[paletteIndex];
+      blue = (color >> 10) & channelMask;
+      green = (color >> 5) & channelMask;
+      red = color & channelMask;
+      blue += offset;
+      green += offset;
+      red += offset;
+      if (blue > 31)
+        blue = 31;
+      if (green > 31)
+        green = 31;
+      if (red > 31)
+        red = 31;
+      if (blue < 0)
+        blue = 0;
+      if (green < 0)
+        green = 0;
+      if (red < 0)
+        red = 0;
+      adjustedColor = blue << 10;
+      adjustedColor |= green << 5;
+      adjustedColor |= red;
+      // Into the palette before the source, 14 and 4: 0x04ffffe0 is BG
+      // palette RAM (0x05000000) less one palette's 32 bytes.
+      ((s16 *)0x04ffffe0)[paletteIndex] = adjustedColor;
+    }
+    bankIndex++;
+    sourceBank = 5;
+  } while (bankIndex <= 1);
+}
+
+/// Builds the turn's actions and sorts them into action order: the party's
+/// commands, then the link opponent's or the enemies' actions.
+/// Returns how many actions there are; negative to abort (a link failure).
+/// Called by Battle_Run at the start of each turn outside auto
+/// battle. Clears gBattleWork->actions, sets every defender's defendLevel,
+/// may set firstStrike to FIRST_STRIKE_ENEMIES after a failed
+/// attempt to flee, and holds FLAG_CHOOSING_COMMANDS while the commands are
+/// chosen.
+/// @param actions the actions (20 at most)
+s32 Battle_GatherActions(struct BattleAction *actions) {
+  struct Unit *unit;
+  struct BattleWork *battle;
+  u8 *firstStrike;
+  s32 count;
+  s32 received;
+  s32 remainingActions;
+
+  battle = gBattleWork;
+  // Empty every action slot of the battle work.
+  {
+    struct BattleAction *record = battle->actions;
+    u32 actionIndex;
+
+    for (actionIndex = 0; actionIndex < BATTLE_ACTION_CAPACITY; actionIndex++) {
+      record[actionIndex].unitId = BATTLE_UNIT_LIST_END;
+      // The lowest priority.
+      record[actionIndex].priority = 0x8000;
+    }
+  }
+
+  // Last turn's guards end; palettes 14 and 4 take 15 and 5 eight steps
+  // brighter; the camera takes the command view.
+  BattleUnit_ResetGuardLevels();
+  Palette_CopyWithBrightnessOffset(8);
+  GameFlag_SetFar(FLAG_CHOOSING_COMMANDS);
+  firstStrike = &battle->firstStrike;
+  BattleCamera_SetCommandView(0);
+  BattleMessage_CloseFar();
+
+  // The party's commands (none when the enemies strike first).
+  if (*firstStrike != FIRST_STRIKE_ENEMIES) {
+    count = Battle_BuildUnitActions(actions);
+    if (count < 0)
+      goto finish;
+    // A failed attempt to flee makes the turn one the enemies began.
+    if (count != 0 && actions[0].command == COMMAND_FLEE &&
+        BattleFlee_CheckSuccess() == 0)
+      *firstStrike = FIRST_STRIKE_ENEMIES;
+  } else {
+    count = 0;
+  }
+
+  // The link opponent's actions, or the enemies'.
+  // A link battle syncs even after a failed exchange, before giving up.
+  if (gBattleWork->isLink != 0) {
+    received = Battle_AppendLinkedActions(actions, count);
+    if (LinkBattle_WaitSync() < 0) {
+      count = -1;
+      goto finish;
+    }
+    count += received;
+    if (received < 0) {
+      count = -1;
+      goto finish;
+    }
+  } else {
+    count += Battle_BuildOpponentActions(actions + count);
+  }
+
+  // Sort by priority, and raise the guards of Defend and Total Defense at
+  // once, before anyone acts.
+  BattleActionOrder_Sort(actions, count);
+  if (count > 0) {
+    struct BattleAction *action = actions;
+
+    remainingActions = count;
+    do {
+      if (action->command == COMMAND_DEFEND ||
+          action->command == COMMAND_TOTAL_DEFENSE) {
+        unit = Unit_GetFar(action->unitId);
+        // Half the damage, or a tenth.
+        unit->defendLevel =
+            action->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
+      }
+      action++;
+      remainingActions--;
+    } while (remainingActions != 0);
+  }
+
+finish:
+  // The battle view again, turned toward the party's side.
+  GameFlag_ClearFar(FLAG_CHOOSING_COMMANDS);
+  BattleCamera_SetDefaultView();
+  gBattleBackgroundWork->targetYaw = YAW_PARTY_ACTION;
+  return count;
+}
+
+/// Returns the unit id at a list place. Called by BattleActionRun_Build
+/// for a command's target.
+/// @param taggedPlace the place in the low four bits; 0x80 set for the
+/// enemies' list
+s32 Battle_GetTaggedSlotValue(s32 taggedPlace) {
+  struct BattleWork *battle = gBattleWork;
+
+  if ((taggedPlace & 0x80) != 0)
+    return battle->enemyIds[taggedPlace & 0xf];
+  return battle->partyUnits[taggedPlace & 0xf];
+}
+
+/// Returns the list place of unit id, or -1 if it is in neither list: the
+/// party's as 0x100 | place, the enemies' as 0x180 | place (PLACE_PARTY,
+/// PLACE_ENEMY). Called by the enemies' command choice (enemy_ai.c) to aim
+/// at a unit.
+/// @param unitId 0 to 7 the party, any other an enemy
+s32 Battle_FindTaggedSlotByValue(u32 unitId) {
+  struct BattleWork *battle = gBattleWork;
+  s32 placeIndex;
+  s16 listedUnit;
+
+  if (unitId <= ALLY_MAX) {
+    for (placeIndex = 0;; placeIndex++) {
+      listedUnit = battle->partyUnits[placeIndex];
+      if (listedUnit == BATTLE_UNIT_LIST_END)
+        return -1;
+      if (listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
+        return placeIndex | 0x100;
+    }
+  }
+  for (placeIndex = 0;; placeIndex++) {
+    listedUnit = battle->enemyIds[placeIndex];
+    if (listedUnit == BATTLE_UNIT_LIST_END)
+      return -1;
+    if (listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
+      return placeIndex | 0x180;
+  }
+}
+
+/// Turns the camera while L or R is held (a second copy). Nothing in the
+/// source calls it.
+DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeysAlt)
+
+/// Does nothing; Battle_Run calls it at the start of each turn.
+void Battle_TurnStartNoOp(void) {}

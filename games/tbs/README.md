@@ -441,18 +441,18 @@ party returns from a battle to the same spot.
 
 ## Battles
 
-![Isaac and Garet against two Gryphons: both attack, then the first Gryphon casts Impact and its partner's Attack rises, and the second casts Tornado on the pair; the next round's menu opens.](https://alchemy.pascalpixel.com/guides/battle/round.gif)
+![Isaac and Garet against two Gryphons: both attack, then the first Gryphon casts Impact and its partner's Attack rises, and the second casts Tornado on the pair; the next turn's menu opens.](https://alchemy.pascalpixel.com/guides/battle/round.gif)
 
 A battle is a sequence of its own with an ordinary loop, in `Battle_Run`:
 
 ```c
-for (;;) {                                  /* one round */
+for (;;) {                                  /* one turn */
   actionCount = Battle_GatherActions(...);  /* menus and enemy habits */
   for (i = 0; i < actionCount; i++) {       /* in Agility order */
     BattleStaging_DispatchAction(...);      /* announce, animate, apply */
     /* stop here if a side has fled or been beaten */
   }
-  Battle_ProcessRoundEnd();                 /* statuses count down */
+  Battle_ProcessTurnEnd();                  /* statuses count down */
 }
 ```
 

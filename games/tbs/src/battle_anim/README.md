@@ -56,14 +56,14 @@ An ability's row is one number holding the animation, its variant and a few
 switches: whether it is one of the numbered animations or a summon's, whether it
 also shows on downed targets, and whether the camera takes the other side's
 view or turns right round (Venus, Mercury, Mars and Jupiter do the first;
-twenty rows, among them the blessings, the second). Building the turn adjusts
+twenty rows, among them the blessings, the second). Building the action adjusts
 it: a double or triple blow raises the variant, a revival adds the switch for
 downed targets, and Annihilation's instant death landing on its first target
 sets the variant to 1. A critical hit adds `ANIM_ID_CRITICAL_OFFSET` to a plain attack's
 animation, which turns it into the ring and spark animation.
 
 The bits are named by the `ANIM_` macros in `../battle/battle_internal.h`,
-and the map is written out on `BattleTurn.animation`
+and the map is written out on `BattleActionRun.animation`
 (`include/battle_type.h`).
 
 ## Entry points and their blocks
@@ -469,7 +469,7 @@ carries. A few forms, such as the parts' order and the tables not being
 ## How animations fit with the rest of the game
 
 The battle decides everything that matters to the rules before an animation
-starts: [Battles](../battle/README.md) works out the turn, its targets and its
+starts: [Battles](../battle/README.md) works out the action, its targets and its
 damage, and [Battle](../../battle.md#animations) stages the animation. The
 animation only draws, and tells the battle when to show the damage. While it
 draws it borrows from the rest of the game: the heap from
@@ -526,8 +526,8 @@ Three handlers are unused, and are named from what they draw:
 `BattleAnim_RunUnusedOrbitingSpirals` (`planet_diver.c`),
 `BattleAnim_RunUnusedTriangleStrike` (`bind.c`) and
 `BattleAnim_RunUnusedSevereBlowLeap` (`thrash.c`). The handler table is reached
-only with a kind from a `gAbilityAnimations` row, through the turn's
-animation: building the turn changes only the variant and the staging bits,
+only with a kind from a `gAbilityAnimations` row, through the action's
+animation: building the action changes only the variant and the staging bits,
 the auto battle passes kind 0, and a critical hit's offset applies only to
 plain attacks, which are dispatched by id range. No row names any of the three
 kinds. [The Lost Age](../../glossary.md#the-two-games) keeps the same three
@@ -536,7 +536,7 @@ handlers at the same kinds, and its row for Severe Blow names
 here it plays a casting impact. The three animations in `orbiting.c` are
 unused too: no code calls them and nothing in the ROM holds their addresses.
 
-A plain attack's kind is 1 or 4 for the party (`BattleTurn_Build`) and 1 to 5
+A plain attack's kind is 1 or 4 for the party (`BattleActionRun_Build`) and 1 to 5
 for an enemy (`battle_sprites.c`), all by id range, so the beams play
 them. No ability uses the critical-hit effects
 (`ABILITY_EFFECT_CRITICAL_1_IN_64` to `ABILITY_EFFECT_CRITICAL_1_IN_4`), so

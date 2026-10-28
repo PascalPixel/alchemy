@@ -1,7 +1,7 @@
 // Under -mthumb-slow-loads (26 October 2026): differ 31 of 544 in tla-en.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped; none reaches 0.
-// Draft, differ 35 of 544: ☀️'s Battle_ProcessRoundEnd
+// Draft, differ 35 of 544: ☀️'s Battle_ProcessTurnEnd
 // (games/tbs/src/battle/battle/ turn_end.c), ported: advances Djinn recovery on
 // each battle side (each Djinni that comes back plays its event and is Set),
 // then for each unit in the round's side order applies HP and PP regeneration
@@ -26,14 +26,14 @@
 #include "owner_value.h"
 #include "ram_buffer.h"
 
-struct RoundEndList {
+struct TurnEndList {
   struct DjinnRecoveryEntry entries[72];
   s32 count;
 };
 
-struct RoundEndTable {
+struct TurnEndTable {
   u8 padding[8];
-  struct RoundEndList list;
+  struct TurnEndList list;
 };
 
 struct BattleGroupOrder {
@@ -97,14 +97,14 @@ void Func_08124e20(void) {
   s32 sideCount;
   s32 count;
   s32 recoveryIndex;
-  struct RoundEndList *list;
+  struct TurnEndList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
 
   battle = Ram_HeapSlots->battleWork;
   sideCount = (battle->twoSided != 0) + 1;
   for (side = 0; side < sideCount; side++) {
-    list = &((struct RoundEndTable *)Djinn_GetRecoveryTableFar(side))->list;
+    list = &((struct TurnEndTable *)Djinn_GetRecoveryTableFar(side))->list;
     recoveryIndex = 0;
     timedEntry = list->entries;
     if (recoveryIndex < list->count) {

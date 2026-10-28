@@ -149,7 +149,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 /// Builds the status icon bits of unit id's statuses into its battle
 /// object's activeStatuses, which BattleStatusIcon_Cycle shows. Called
 /// wherever a unit's statuses may have changed: BattlePlayback_RunAll,
-/// BattlePlayback_Run, Battle_ProcessRoundEnd,
+/// BattlePlayback_Run, Battle_ProcessTurnEnd,
 /// BattleObject_ResetRuntimeFields and BattleObject_SpawnObjectsForList.
 #ifdef UBFIX
 void BattleUnit_BuildStatusFlags(s32 unitId,
@@ -293,7 +293,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 /// step of 14 to 17 by the unit id's low two bits (16 is normal speed), so
 /// units side by side, even two of one kind, sway out of step.
 /// Called by BattleObject_SpawnObjectsForList, BattlePlayback_RunAll,
-/// BattlePlayback_Run and Battle_ProcessRoundEnd.
+/// BattlePlayback_Run and Battle_ProcessTurnEnd.
 #ifdef UBFIX
 void BattleObject_UpdatePose(s32 unitId) {
 #else
@@ -547,7 +547,7 @@ void ResetBattleObjectRecordGroups(struct Actor *actor) {
 }
 
 /// Frees the enemy sprite slots unitId holds and marks its actor
-/// for release at the end of the action or round
+/// for release at the end of the action or turn
 /// (BattleObject_DestroyAll), setting its active field to 1.
 /// Returns 0. Called when a unit leaves the battle: by
 /// BattlePlayback_Run, BattleStaging_RunFlee, BattleMotion_ShowDowned,
@@ -562,7 +562,7 @@ s32 BattleObject_MarkForRelease(s32 unitId) {
 
 /// Releases the actor of every unit marked by BattleObject_MarkForRelease,
 /// leaving its battle object with no actor. Called by Battle_Run
-/// at the end of each round and by BattleStaging_DispatchAction.
+/// at the end of each turn and by BattleStaging_DispatchAction.
 #ifdef UBFIX
 void BattleObject_DestroyAll(void) {
 #else

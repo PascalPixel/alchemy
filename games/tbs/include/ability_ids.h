@@ -28,7 +28,7 @@ enum AbilityId {
   /// Rolls its hit as it is planned.
   ABILITY_ANNIHILATION = 0xb2,
   ABILITY_DROWN = 0xdb,
-  /// The first of the enemy abilities BattleTurn_Build announces in
+  /// The first of the enemy abilities BattleActionRun_Build announces in
   /// their own words; the others run from ABILITY_SONIC_WAVE to
   /// ABILITY_SEARCH_FOR_HELP.
   ABILITY_HEAT_MIRAGE = 0xe0,

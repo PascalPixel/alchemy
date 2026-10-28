@@ -131,14 +131,14 @@ enum AbilityEffect {
   ABILITY_EFFECT_LEAVE_ONE_HP = 34,      ///< Severe Blow, Thrash
   ABILITY_EFFECT_HALVE_DEFENSE = 35,     ///< Torch
   /// A 1 in 64 to 1 in 4 chance of an ability's critical hit, rolled by
-  /// BattleTurn_Build. Only an attack (ABILITY_FORMULA_ATTACK or
+  /// BattleActionRun_Build. Only an attack (ABILITY_FORMULA_ATTACK or
   /// ABILITY_FORMULA_ATTACK_MULTIPLIED) applies it, and no ability has one.
   ABILITY_EFFECT_CRITICAL_1_IN_64 = 36,
   ABILITY_EFFECT_CRITICAL_1_IN_32 = 37,
   ABILITY_EFFECT_CRITICAL_1_IN_16 = 38,
   ABILITY_EFFECT_CRITICAL_1_IN_8 = 39,
   ABILITY_EFFECT_CRITICAL_1_IN_4 = 40,
-  /// A chance of a double or triple blow, rolled by BattleTurn_Build.
+  /// A chance of a double or triple blow, rolled by BattleActionRun_Build.
   ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 = 41,
   ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 = 42, ///< Double Fang, Twin Beaks
   ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8 = 43,
@@ -174,11 +174,11 @@ enum AbilityEffect {
 /// view. The party's cursor (BattleTarget_RunSelection) shows the enemies for
 /// every mode but ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF. No row of
 /// abilities.tsv has a mode between ABILITY_TARGET_ALLIES and
-/// ABILITY_TARGET_SELF or above it; BattleTurn_SetTargets would walk such a
-/// mode's range as it does ABILITY_TARGET_FOES'.
+/// ABILITY_TARGET_SELF or above it; BattleActionRun_SetTargets would walk such
+/// a mode's range as it does ABILITY_TARGET_FOES'.
 enum AbilityTarget {
   /// The ability takes one target, the aimed unit, whatever its range
-  /// (BattleTurn_SetTargets), and an enemy aims it at itself. The field
+  /// (BattleActionRun_SetTargets), and an enemy aims it at itself. The field
   /// Psynergy and enemies' commands such as Threaten, Ally Search and Flee
   /// have it.
   ABILITY_TARGET_ONE = 0,
@@ -238,13 +238,13 @@ enum AbilityUse {
 #define FIRST_ENEMY_UNIT 128
 
 /// Unit.poison: the poison takes a tenth of the maximum HP at the end of
-/// each turn, deadly poison a fifth.
+/// each of the unit's actions, deadly poison a fifth.
 #define POISON_NORMAL 1
 #define POISON_VENOM 2
 
 /// Unit.defendLevel, 0 for no Defend: Defend and Granite halve the damage,
 /// Total Defense and Flash cut it to a tenth (REDUCE_BY_GUARD, target_exec.c).
-/// It lasts the round: BattleUnit_ResetGuardLevels clears it as the next
+/// It lasts the turn: BattleUnit_ResetGuardLevels clears it as the next
 /// one's commands are gathered.
 #define DEFEND_NORMAL 1
 #define DEFEND_TOTAL 2
@@ -275,8 +275,9 @@ struct Unit {
   u16 baseDefense; ///< before equipment, Djinn, class and stages
   u16 baseAgility; ///< before equipment, Djinn, class and stages
   u8 baseLuck;     ///< before equipment, Djinn and class
-  /// Actions a round before equipment: the low four bits are read. An enemy's
-  /// comes from its definition's turns; a level up sets a character's to 1.
+  /// Actions a turn before equipment: the low four bits are read. An enemy's
+  /// comes from its definition's actionCount; a level up sets a character's
+  /// to 1.
   u8 baseActionCount;
   u8 baseHpRegen; ///< HP regained each turn before equipment; 0 for a character
   u8 basePpRegen; ///< PP regained each turn before equipment and lighthouses
@@ -291,12 +292,12 @@ struct Unit {
   s16 pp;    ///< current PP
   u16 atk;   ///< Attack, 0 to 999 (Unit_Calculate)
   u16 def;   ///< Defense, 0 to 999 (Unit_Calculate)
-  u16 agi;   ///< Agility, 0 to 999: the order of the round's actions
+  u16 agi;   ///< Agility, 0 to 999: the order of the turn's actions
   u8 luck;   ///< 0 to 99 (Unit_Calculate)
-  /// Actions each round, 0 to 2: baseActionCount, one more while ready, and
-  /// the equipment's extra turns (Unit_Calculate). Each gives the unit a place
-  /// in the round's queue.
-  u8 actionsPerRound;
+  /// Actions each turn, 0 to 2: baseActionCount, one more while ready, and
+  /// the equipment's extra actions (Unit_Calculate). Each gives the unit a
+  /// place in the turn's queue.
+  u8 actionsPerTurn;
   u8 hpRegen; ///< HP regained at each turn's end (Unit_Calculate)
   /// PP regained at each turn's end, 0 to 200 (Unit_Calculate): 4 more once the
   /// lighthouse of the character's element is lit.
@@ -339,14 +340,14 @@ struct Unit {
   /// DEFEND_NORMAL or DEFEND_TOTAL while the unit guards, else 0.
   s8 defendLevel;
   /// A summon's boost to its summoner's power in each element: at the end of
-  /// the summoner's turn, the element the summon spent the most Djinn of
-  /// rises to that many (BattleUnit_ProcessTurnEnd), and n adds
+  /// the summoner's action, the element the summon spent the most Djinn of
+  /// rises to that many (BattleUnit_ProcessActionEnd), and n adds
   /// (n * n + n) * 5 power (Unit_Calculate). Cleared at the battle's start, on
   /// going down and by Break.
   s8 summonBoost[ELEMENT_COUNT];
   /// The curse: CurseFlag bits. Unit_Calculate rebuilds CURSE_BOUND and
   /// CURSE_ITEM from the equipment. A bound unit loses one action in
-  /// four, except Defend (BattleTurn_Build); any bit set shows the curse
+  /// four, except Defend (BattleActionRun_Build); any bit set shows the curse
   /// in the Status screens and lets the sanctum remove it.
   s8 curse;
   s8 poison; ///< POISON_NORMAL or POISON_VENOM, 0 for none
@@ -385,7 +386,7 @@ struct Unit {
   /// Unit_Calculate sums; TBS never reads them back
   u8 equipBonus[2];
   /// Kite's extra action: 2 when cast, down one at each turn's end; while
-  /// nonzero Unit_Calculate gives the unit one more action a round.
+  /// nonzero Unit_Calculate gives the unit one more action a turn.
   u8 ready;
   u8 immobile;     ///< set by ABILITY_EFFECT_GROUND: the next action is lost
   u8 agilityTurns; ///< the Agility change's turns left, 5 when cast

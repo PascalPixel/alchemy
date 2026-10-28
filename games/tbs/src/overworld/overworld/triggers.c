@@ -554,7 +554,7 @@ s32 Field_ExamineCell(s32 tile) {
               if (condition != -1) {
                 condition = gAdventure.pendingDjinni = condition | 0x1000;
               }
-              // BATTLE_TYPE_NO_ESCAPE (battle/battle/round.c): no first strike
+              // BATTLE_TYPE_NO_ESCAPE (battle/battle/turn.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
               // still offers it, refusing outright only for
               // BATTLE_TYPE_SCRIPTED and BATTLE_TYPE_LINK.

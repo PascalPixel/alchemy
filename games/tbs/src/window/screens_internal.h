@@ -3,7 +3,7 @@
 
 /// @file
 /// What every part of the menu object shares: its includes, edition values,
-/// macros and the link round state. screens.c includes it before the
+/// macros and the link turn state. screens.c includes it before the
 /// parts, and each part includes it too, so that a part read on its own still
 /// resolves.
 
@@ -317,7 +317,7 @@ enum {
 
 /// The two battle command rows BattleCommandRow_Run runs.
 enum CommandRowMode {
-  COMMAND_ROW_PARTY = 0, ///< the start of a round: Fight, Flee and Status
+  COMMAND_ROW_PARTY = 0, ///< the start of a turn: Fight, Flee and Status
   COMMAND_ROW_MEMBER =
       1 ///< a party member's commands; any mode but 0 is this row
 };

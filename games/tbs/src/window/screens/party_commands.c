@@ -34,7 +34,7 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
   return targetKind;
 }
 
-/// Collects the party's commands for a round into `commands`, one
+/// Collects the party's commands for a turn into `commands`, one
 /// for each of the `commandCount` units in `actors` (a party member with two
 /// actions is listed twice), and returns how many it wrote: commandCount, 1
 /// when the party flees (COMMAND_FLEE for the first actor), or -1 when the link
@@ -53,7 +53,7 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
 /// the partner to finish ("Waiting for opponent's input."). Its work,
 /// BattleMenuWork (gBattleMenuWork), lives in HEAP_SLOT_BATTLE_MENU
 /// until it returns. Battle_BuildUnitActions calls it
-/// (battle/battle/round.c).
+/// (battle/battle/turn.c).
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
   struct BattleMenuWork *state;
@@ -199,7 +199,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       continue;
     }
     // Flee, unless the battle forbids it: one COMMAND_FLEE for the party,
-    // first in the round (priority 0x7ffe).
+    // first in the turn (priority 0x7ffe).
     if (mode == COMMAND_ICON_FLEE) {
       if (Message_ShowLocalizedAndWait() != 0) {
         continue;

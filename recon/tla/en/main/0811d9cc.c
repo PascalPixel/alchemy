@@ -9,7 +9,7 @@
 // (games/tbs/src/battle/battle/staging.c), ported: plays one action of the
 // round. An enemy picks its ability now (Func_08122514 with retry 1), the
 // camera resets, command 10 builds its plan with Func_0811d7e8 and any other
-// with Func_0812381c (☀️'s BattleTurn_Build), and the plan's staging kind
+// with Func_0812381c (☀️'s BattleActionRun_Build), and the plan's staging kind
 // chooses the runner. ⚓️ adds: the battle work's actor mode byte (0x869) set
 // to 3, a confused unit's attack on an ally (kind 10: the actor and its plan's
 // second unit trade places for a cast and an attack, "attacks an ally!" or

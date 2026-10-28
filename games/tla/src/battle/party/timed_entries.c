@@ -160,7 +160,7 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void BattleEventRuntime_WaitForReady(void);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 
-/// Counts down one side's Djinn recovery at the round's end: an owner must be in the
+/// Counts down one side's Djinn recovery at the turn's end: an owner must be in the
 /// battle; each Djinni that comes back plays its event (its icon, sound 175,
 /// the flash and its message) before it is Set. The message is
 /// "... is set to ...!" Returns 1 when a count fell, 2 when one was Set, else

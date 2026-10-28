@@ -50,7 +50,7 @@ s32 BattlePres_WaitSync(void) {
 }
 
 /// In a link battle, synchronizes successive signals after each action and
-/// after the end-of-round processing.
+/// after the end-of-turn processing.
 /// "ex" "TU" → "rn" → "EXEC" → "tu" → "RN"
 /// Returns -1 if disconnected, if an earlier signal disagrees with the peer,
 /// or after 25 consecutive frames without a connection. Returns zero on

@@ -54,7 +54,7 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
 /// The battle's random number generator, the same linear congruential one as
 /// Random16 with its own seed. Returns bits 8 to 23 of the new seed and writes
 /// gBattleRandomSeed. Rolls that use it advance independently of Random16;
-/// link battles exchange this seed before resolving the round.
+/// link battles exchange this seed before resolving the turn.
 s32 Battle_Random(void) {
   u32 seed;
 
@@ -126,7 +126,7 @@ s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
 
 /// Returns the element the unit attacks with (ELEMENT_NONE for none): an
 /// enemy's comes from its kind, a character's from its equipped weapon.
-/// Called by BattleTurn_Build for an attack's element.
+/// Called by BattleActionRun_Build for an attack's element.
 s32 Item_GetEquippedElement(s32 unitId) {
   struct ItemDefinition *item;
   struct Unit *unit;
@@ -142,7 +142,7 @@ s32 Item_GetEquippedElement(s32 unitId) {
 
 /// Returns the unleash chance, in percent, that a unit's equipment adds
 /// (EQUIP_EFFECT_ADD_UNLEASH_CHANCE). Called by RollWeaponUnleash and the
-/// BattleTurn_Build.
+/// BattleActionRun_Build.
 s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
   s32 chanceBonus;
   s32 inventorySlot;
@@ -166,7 +166,7 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
 
 /// Rolls whether a character's weapon unleashes: its chance is the weapon's
 /// unleashChance times 5 percent plus what the equipment adds. Returns the
-/// unleash action, or 1 for a plain attack. Called by BattleTurn_Build for
+/// unleash action, or 1 for a plain attack. Called by BattleActionRun_Build for
 /// each Attack command.
 s32 RollWeaponUnleash(struct Unit *unit) {
   struct ItemDefinition *item;
@@ -294,8 +294,8 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// and weakness; 0 still succeeds when Battle_RandomPercent gives 0, about 1
 /// time in 100. Luff gets three tries.
 /// Reached through GAME.S as Battle_RollEffectSuccessFar, which
-/// BattleAbility_ApplyToTarget and BattleTurn_Build call for each target of an
-/// ability with an effect.
+/// BattleAbility_ApplyToTarget and BattleActionRun_Build call for each target
+/// of an ability with an effect.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   // Restore's psySeal and confusion reads and Cure All's haunt read go

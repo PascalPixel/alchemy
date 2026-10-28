@@ -13,11 +13,11 @@ start. [Battle animations](../battle_anim/README.md) draws the animations,
 [Game rules](../game/README.md) holds the ability, item and enemy tables and
 the arithmetic the rules call.
 
-## Rounds
+## Turns
 
 ![Isaac, Garet, Ivan and Mia against the Lizard King, a Harridan and two Stone Soldiers: Ivan, Isaac and Mia attack the Harridan until it falls; Garet, whose target is gone, defends; then one Stone Soldier casts Blast, the other tries Mad Blast without enough PP, and the Lizard King casts High Impact.](https://alchemy.pascalpixel.com/guides/battle/turn-order.gif)
 
-Each round, every unit (everyone in the fight, party member or enemy)
+Each turn, every unit (everyone in the fight, party member or enemy)
 chooses an action, and the actions play fastest first. Here the party,
 at level 35, is faster than all four enemies, so it acts first; Garet,
 slowest of the four, finds the Harridan already felled and defends instead.
@@ -26,33 +26,33 @@ Who acts first is decided by Agility, highest first, with a few twists:
 
 - The Djinn that guard or hold an enemy, Granite, Flash and Ground, go before
   everyone ([Djinni](../../glossary.md#djinn)).
-- A party member's Agility gains up to a sixteenth more at random each round,
+- A party member's Agility gains up to a sixteenth more at random each turn,
   so two party members of nearly equal speed may swap places; an enemy's counts as
   it is.
 - On a tie the party goes first, and enemies of equal Agility go in a
   shuffled order.
-- A unit that acts twice in a round has its second action at half its
+- A unit that acts twice in a turn has its second action at half its
   Agility.
 - Defend and Total Defense are raised as soon as the actions are sorted, so a
-  defending unit is guarded against everything that round.
+  defending unit is guarded against everything that turn.
 
-Before the first round the formation becomes a set of enemies, each with its
+Before the first turn the formation becomes a set of enemies, each with its
 level and, when two of a kind meet, a letter to tell them apart, and the
-opening plays. Then each round goes the same way: the actions are gathered
+opening plays. Then each turn goes the same way: the actions are gathered
 and sorted; each action is announced, staged and animated, while the rules
-apply it to each target; the unit's turn ends, which is when poison bites
+apply it to each target; the unit's action ends, which is when poison bites
 (a tenth of the maximum HP, deadly poison a fifth), the Grim Reaper takes a
 unit whose countdown has run out, and a
-[summon](../../glossary.md#summons)'s boost takes hold; and at the round's
+[summon](../../glossary.md#summons)'s boost takes hold; and at the turn's
 end stat changes and statuses count down and the Djinn recover. When one side
 has nobody left, the spoils (coins, experience, items and level ups) are
 handed out.
 
 `Battle_Run` ([`battle/encounter.c`](battle/encounter.c)) runs the whole
-battle. The round's steps are `Battle_GatherActions` and
-`BattleTurnOrder_Sort` (`round.c`), then for each action `BattleTurn_Build`
-(`turn.c`) and `BattleStaging_DispatchAction` (`staging.c`), and last
-`Battle_ProcessRoundEnd` (`turn_end.c`); `spoils.c` closes the battle.
+battle. The turn's steps are `Battle_GatherActions` and
+`BattleActionOrder_Sort` (`turn.c`), then for each action `BattleActionRun_Build`
+(`action.c`) and `BattleStaging_DispatchAction` (`staging.c`), and last
+`Battle_ProcessTurnEnd` (`turn_end.c`); `spoils.c` closes the battle.
 
 ### Enemy actions
 
@@ -65,9 +65,9 @@ the list, so it uses Wing Flutter most and Ward least: each pick rolls a
 number from 0 to 255, and Wing Flutter takes rolls 0 to 52, Tornado 53 to 99,
 Twin Beaks 100 to 140, and so on down to Ward's 245 to 255.
 
-An enemy chooses twice each round. While the round is put together it keeps
+An enemy chooses twice each turn. While the turn is put together it keeps
 its pick only if it is a guard, so that its guard goes up with the party's;
-at its own turn it picks again. A pick it cannot use (too little
+when it acts it picks again. A pick it cannot use (too little
 [PP](../../glossary.md#psynergy-and-pp), a seal, no target worth it) is
 drawn again, and after 18 failed picks the enemy defends.
 
@@ -92,7 +92,7 @@ choice from the enemy's row of `../game/enemies.c`; the habits are
 ![A random battle with two Gryphons opens with `Isaac's party attacks first!`, and Isaac and Garet attack while the Gryphons stand still.](https://alchemy.pascalpixel.com/guides/battle/first-strike.gif)
 
 Now and then a random battle opens with `Isaac's party attacks first!` and the
-enemies stand still for a round; more rarely it opens with
+enemies stand still for a turn; more rarely it opens with
 `Isaac's party was caught by surprise!`, and some enemies act before the party
 can choose anything.
 
@@ -100,19 +100,19 @@ Only random battles roll for it: the party strikes first one time in 16, and
 otherwise the enemies one time in 32. The Djinn tutorial always gives the
 party the first strike. When the enemies strike first, the party chooses no
 commands and two to five enemies, drawn at random, act once each. Everything
-is back to normal at the round's end.
+is back to normal at the turn's end.
 
-![The party, at level 20, chooses Flee against two Gryphons: `Isaac and friends run!` is followed by `But there's no escape!`, and the Gryphons use Wing Flutter and Twin Beaks. The next round the party tries again and gets away.](https://alchemy.pascalpixel.com/guides/battle/flee.gif)
+![The party, at level 20, chooses Flee against two Gryphons: `Isaac and friends run!` is followed by `But there's no escape!`, and the Gryphons use Wing Flutter and Twin Beaks. The next turn the party tries again and gets away.](https://alchemy.pascalpixel.com/guides/battle/flee.gif)
 
 Running away is a chance that grows with every failed try: 50 percent, plus
 20 for each failed try in the battle, plus 5 for each level the party's
 average is above the enemies' (or less, below). The party at level 20 against
 Gryphons at level 23 starts at 35 percent. A first strike makes running
 certain, and some battles, such as a Mimic's, cannot be fled at all. A failed
-try turns the rest of the round into one the enemies began.
+try makes the rest of the turn one the enemies began.
 
 `BattleWork.firstStrike` records which side has the jump, and
-`BattleFlee_CheckSuccess` (`round.c`) rolls the escape. What kind of battle it
+`BattleFlee_CheckSuccess` (`turn.c`) rolls the escape. What kind of battle it
 is, `gAdventure.battleType`, decides the rest:
 
 | Kind | What it changes |
@@ -123,24 +123,24 @@ is, `gAdventure.battleType`, decides the rest:
 | `BATTLE_TYPE_LINK` | a link battle |
 | `BATTLE_TYPE_DEBUG` | the debug battle menu's battle; the party may run |
 
-## Building a turn
+## Building an action
 
 ![Isaac casts Spire at Ivan: the announcement `Isaac casts Spire!` comes first, then a spire of rock falls on Ivan and shatters, and `Ivan takes 52 damage!`.](https://alchemy.pascalpixel.com/abilities/spire.gif)
 
 Just before a unit acts, the player reads its announcement, such as
-`Isaac casts Spire!`. By then the game has turned the chosen command into a
-turn: which ability it is, who it reaches, and the rolls the animation must
+`Isaac casts Spire!`. By then the game has built the chosen command into an
+action run: which ability it is, who it reaches, and the rolls the animation must
 show. An action that fails at this point (an item already used up, no one
-left in range) shows its own message instead and the turn ends there.
+left in range) shows its own message instead and the action ends there.
 
-`BattleTurn_Build` ([`battle/turn.c`](battle/turn.c)) builds the turn, a
-`struct BattleTurn`, and shows the announcement.
+`BattleActionRun_Build` ([`battle/action.c`](battle/action.c)) builds the action's run, a
+`struct BattleActionRun`, and shows the announcement.
 
 ### Commands and ability ids
 
 ![Isaac attacks Ivan with the Swift Sword: `Isaac's Swift Sword lets out a howl! Sonic Smash!`, and the sword strikes three times for 281 damage.](https://alchemy.pascalpixel.com/guides/battle/unleash.gif)
 
-The command the player chose decides which ability the turn carries. An
+The command the player chose decides which ability the action carries. An
 Attack is usually just Attack, but a weapon can unleash its own ability in its
 place, as the Swift Sword unleashes Sonic Smash.
 
@@ -157,7 +157,7 @@ place, as the Swift Sword unleashes Sonic Smash.
 - Summon takes the summon's ability from `../game/summons.c` and marks the
   standby Djinn it uses.
 
-The turn takes its [element](../../glossary.md#the-four-elements) from the
+The action takes its [element](../../glossary.md#the-four-elements) from the
 ability, except that a plain Attack strikes with the weapon's element, or an
 enemy's with its own. The commands are `enum BattleCommand`.
 
@@ -178,20 +178,20 @@ holds its place. If no one in range is left, the unit defends
 (`<unit> is defending!`). The reach stops at the ends of the line, though the
 cursor wraps round. Where the units stand on screen changes none of this.
 
-`BattleTurn_SetTargets` walks the places; the cursor is
+`BattleActionRun_SetTargets` walks the places; the cursor is
 `BattleTarget_RunSelection` (`../window/screens/targets.c`).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `ABILITY_RANGE_ALL` | 255 | the whole side, every target treated as the aimed one |
-| `TARGET_MAX` | 14 | targets a turn holds at most |
+| `TARGET_MAX` | 14 | targets an action holds at most |
 
 ### Rolls made in advance
 
 ![Isaac attacks Ivan twice: the first time `Ivan nimbly dodges the blow!`, the second a critical hit bursts in light and `Ivan takes 110 damage!`.](https://alchemy.pascalpixel.com/guides/battle/rolls.gif)
 
 A dodge and a critical hit look different from a plain blow, so the animation
-has to know which it is before it starts. The turn therefore rolls them while
+has to know which it is before it starts. The action therefore rolls them while
 it is built, before anything is drawn.
 
 A plain Attack never misses a target that cannot act (down, asleep, stunned,
@@ -395,13 +395,13 @@ Other effects that landed change the damage itself: Torch's blow counts half
 the target's Defense; Severe Blow and Thrash leave the target 1 HP at most;
 Condemn and the other instant deaths skip the damage; Dynamite and Mortal Blow
 remove their user; Psy Drain takes PP instead of HP; and Ground holds a
-target only if it has not acted yet this round.
+target only if it has not acted yet this turn.
 
 ### Applying the added effect
 
 ![Garet casts Impair at Mia: a shield appears over her and shatters, and `Mia's Defense drops by 54!`.](https://alchemy.pascalpixel.com/abilities/impair.gif)
 
-Statuses and stat changes are counters on the unit that the end of each round
+Statuses and stat changes are counters on the unit that the end of each turn
 counts down. Impair lowers Mia's Defense for seven turns, and the number in the
 message is how far it fell.
 
@@ -418,7 +418,7 @@ own damage has just felled. The rules the effects share are these.
   seven turns. Luff's seal lasts two turns that never end early. Curse starts
   the Grim Reaper's countdown of seven turns.
 - A lowered stat or a status may end early: once five turns or fewer are left,
-  each round's end rolls for it, more often for a lucky unit, and the player
+  each turn's end rolls for it, more often for a lucky unit, and the player
   reads, for a delusion, `<unit> sees clearly once again!`. A raised stat
   always lasts its turns.
 - Restore and Elixir clear delusion, stun, sleep, the seal and the Grim
@@ -426,7 +426,7 @@ own damage has just felled. The rules the effects share are these.
   clears confusion or charm.
 - Drain gives the user all the HP the target lost, Sap half, Psy Drain the PP
   it took, and Psy Leech a tenth of the damage as PP.
-- Defend and Granite halve the damage the target takes this round, Total
+- Defend and Granite halve the damage the target takes this turn, Total
   Defense and Flash cut it to a tenth. Break returns every raised stage to 0
   and removes a summon's boost. Kite lets the target act twice next turn,
   Ground costs it its next action, and Haunt sets an evil spirit on it.
@@ -443,9 +443,9 @@ A sleeping unit that is hit may wake up, and a unit haunted by an evil spirit
 pays for its own attacks.
 
 Losing HP or PP wakes a sleeping target one time in four, unless it fell
-asleep this round. A haunted unit, one time in four for each target it took
+asleep this turn. A haunted unit, one time in four for each target it took
 HP or PP from, keeps aside a quarter of that loss (at least 1), and loses the
-total from its own HP at the end of its turn. In the Djinn tutorial a
+total from its own HP at the end of its action. In the Djinn tutorial a
 Djinni's blow always leaves its target 1 HP, and a summon always fells it.
 
 ## Rules and pictures meet at the playback queue
@@ -454,7 +454,7 @@ Djinni's blow always leaves its target 1 HP, and a summon always fells it.
 
 Each target's HP drops at once, but the player sees it happen in steps: the
 target flinches, its message appears and waits, and only then does the next
-target's turn come. The rules leave a list of what to show, in order, and the
+target come. The rules leave a list of what to show, in order, and the
 screen plays the list.
 
 That list, the playback queue, is the one way the rules reach the screen: the
@@ -480,8 +480,8 @@ to show; the animation decides only when the damage appears. So the same
 arithmetic serves every animation, and an animation can be replaced or
 skipped without changing an outcome.
 
-Turns are worked out in two stages for the same reason: what the animation
-must show (a miss, a critical hit, a double blow) is rolled while the turn is
+Actions are worked out in two stages for the same reason: what the animation
+must show (a miss, a critical hit, a double blow) is rolled while the action is
 built, before anything is drawn, and everything else is rolled target by
 target as the blow lands.
 
@@ -507,9 +507,9 @@ staging and hand back control when they finish.
 
 ## Limits
 
-- There are 519 abilities. The turn reads `gAbilityAnimations` only up to
+- There are 519 abilities. The action reads `gAbilityAnimations` only up to
   Thrash, and `gAbilityStaging`, a row shorter, up to Severe Blow.
-- A turn reaches at most `TARGET_MAX` targets.
+- An action reaches at most `TARGET_MAX` targets.
 - The party fights four at a time and the enemies six at most; in a link
   battle each console sends three.
 - `formations.c` has 380 formations, each of up to five kinds of enemy with
@@ -522,7 +522,7 @@ staging and hand back control when they finish.
 - **unit**, **unit id**: everyone in a fight. Party members keep their
   character numbers as unit ids, and enemies take ids from 128
   (`FIRST_ENEMY_UNIT`). A unit is a `struct Unit` (`Unit_GetFar`).
-- **ability**, **ability id**: anything a unit does on its turn, from Attack
+- **ability**, **ability id**: anything a unit does when it acts, from Attack
   to Quake, a Djinni, a summon, an item's use or an enemy's move. The id is a
   row number in three tables: `../game/abilities.c`, `gAbilityAnimations` and
   `gAbilityStaging`.
@@ -538,7 +538,12 @@ staging and hand back control when they finish.
   added effect.
 - **place**: a unit's position in its side's line-up.
 - **side**: the party or the enemies.
-- **turn**: the action under way (`struct BattleTurn`): the acting unit, the
+- **turn**: one pass in which every unit acts once, in Agility order; the
+  game's word, as in `HP recovery / turn`. Stat changes and statuses last a
+  number of turns.
+- **action**: one unit's go within a turn: a `struct BattleAction` while the
+  turn is gathered, then, once built, the action under way
+  (`struct BattleActionRun`): the acting unit, the
   ability, its element, its targets with their distances and rolls, its
   staging and its animation.
 - **battle object**: a unit's figure on the battlefield
@@ -552,7 +557,7 @@ staging and hand back control when they finish.
 The parts give the same locals the same names: `battle` or `work` for
 `gBattleWork`, `unitId`, `unit` for its `struct Unit`, `battleObject` for its
 `struct BattleObject`, `actor` for that object's `struct Actor`, `record`
-for one of its sprites, and `plan` for the turn.
+for one of its sprites, and `plan` for the action under way.
 
 ## Evidence
 
@@ -564,7 +569,7 @@ battle's recordings show.
 
 The chances and counts on this page were checked in a tbs-en build with
 `alchemy-devtools render`, answering `Battle_Random` with chosen numbers.
-Replaying a Gryphon's turn with each of the 256 rolls gave its actions in the
+Replaying a Gryphon's action with each of the 256 rolls gave its actions in the
 spans above. One encounter (the Lizard King, a Harridan and two Stone
 Soldiers) opened both as a first strike, where only the four party members
 acted, and as a surprise, where three of the enemies did. Isaac's attacks on a
@@ -579,8 +584,8 @@ enemies moved the cursor from the last place round to the first. The party at
 level 20 ran from two Gryphons on its second try, the first forced to fail.
 
 Bits 0 and 1 of the `flags` column of `gAbilityAnimations` (`ANIM_ON_DOWNED`,
-`ANIM_OTHER_SIDE`) are read, but no row in either game sets them. The turn
-adds the first itself for the revive effects; nothing adds the second, so the
+`ANIM_OTHER_SIDE`) are read, but no row in either game sets them. Building
+the action adds the first itself for the revive effects; nothing adds the second, so the
 side flip it asks for is unused. Only the Mars Lighthouse bosses (Saturos's
 second fight, Menardi and the Fusion Dragon) set the class bit that makes a
 beam blow land with `SE_HEAVY_IMPACT` (`BattleSprite_HasHeavyImpact`).

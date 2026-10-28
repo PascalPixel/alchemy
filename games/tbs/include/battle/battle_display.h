@@ -52,7 +52,7 @@ struct BattleBackgroundWork {
   s32 secondMode;
   s32 busy; ///< while set, BattleCamera_SetRange leaves BG1's scroll
   /// 0 lets the camera update set the background's range each frame; 1 for
-  /// a critical hit's zoom and once a round's view is set.
+  /// a critical hit's zoom and once a turn's view is set.
   s32 flag;
   s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
 };
@@ -119,7 +119,7 @@ STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 0x2a0);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
 
-struct BattleTurn;
+struct BattleActionRun;
 struct BattleAnimArgs;
 
 #endif

@@ -80,7 +80,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// BATTLE_BACKGROUND_FIXED queues BATTLE_BG1CNT for BG1. Called with
 /// BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the battle animations'
 /// canvas layers (canvas.c), and with BATTLE_BACKGROUND_ZOOMED by
-/// BattleStaging_DispatchAction and Battle_ProcessRoundEnd. Sets
+/// BattleStaging_DispatchAction and Battle_ProcessTurnEnd. Sets
 /// BattleBackgroundWork.mode (enum BattleBackgroundMode), adds
 /// BattleBackground_ShowZoomedPage when it was BATTLE_BACKGROUND_NONE,
 /// and copies the first sprite palette to BG palette 5. unusedResource is not

@@ -1,13 +1,13 @@
 /// @file
-/// How each ability is staged in battle: the outcome staging BattleTurn_Build
-/// gives it and the animation it plays, by ability id. The ability names in
-/// the comments are the English release's.
+/// How each ability is staged in battle: the outcome staging
+/// BattleActionRun_Build gives it and the animation it plays, by ability id.
+/// The ability names in the comments are the English release's.
 
 #include "battle_command.h"
 #include "module/battle_anim/battle_anim.h"
 
 // clang-format off
-/// Up to ABILITY_SEVERE_BLOW; 0 leaves the choice to BattleTurn_Build.
+/// Up to ABILITY_SEVERE_BLOW; 0 leaves the choice to BattleActionRun_Build.
 const u8 gAbilityStaging[] = {
     0, // Nothing
     0, // Attack

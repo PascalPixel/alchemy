@@ -5,15 +5,15 @@
 
 #include "../battle_internal.h"
 
-/// Plays one action of the round, after delay frames facing the party: an
-/// enemy picks its ability now; the turn is built (its targets, hits
-/// and damage) and shown the way its staging asks, then the turn's end
+/// Plays one action of the turn, after delay frames facing the party: an
+/// enemy picks its ability now; the action is built (its targets, hits
+/// and damage) and shown the way its staging asks, then the action's end
 /// effects run and every unit returns to its spot. Returns 1 when the
 /// party got away, 0 otherwise, and -1 when the unit is already down.
-/// Called by Battle_Run for each action of the round, with a delay
+/// Called by Battle_Run for each action of the turn, with a delay
 /// of 10 for the first. Resets the camera's view (gBattleBackgroundWork's
 /// frames, flag and yaw, gBattleWork->brightness, the transform and
-/// projection), builds gBattleWork->turn, and marks the action done
+/// projection), builds gBattleWork->actionRun, and marks the action done
 /// (request->unitId to BATTLE_UNIT_LIST_END) unless the party fled.
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   struct BattleBackgroundWork *view;
@@ -33,7 +33,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   unit = Unit_GetFar(request->unitId);
   if (unit->hp == 0)
     return -1;
-  // An enemy settles its ability now, at its turn.
+  // An enemy settles its ability now, as it acts.
   if (unit->classId == CLASS_NONE)
     BattleAI_ChooseAction(request, 1);
 
@@ -52,61 +52,61 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   Transform_SetLookAt(camera->eye, camera->focus);
   Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
   if (delay != 0) {
-    view->targetYaw = YAW_PARTY_TURN;
+    view->targetYaw = YAW_PARTY_ACTION;
     WaitFrames(delay);
   }
-  // Build the turn, with the acting unit highlighted, and stage it by its
-  // outcome. A turn that failed has shown its message; TURN_REPORTED
+  // Build the action, with the acting unit highlighted, and stage it by its
+  // outcome. An action that failed has shown its message; ACTION_REPORTED
   // waits for the player first.
   actingUnit[0] = request->unitId;
   actingUnit[1] = BATTLE_UNIT_LIST_END;
   BattleHighlight_SetModes(actingUnit, HIGHLIGHT_SELECTED);
-  result = BattleTurn_Build(request, &battle->turn);
+  result = BattleActionRun_Build(request, &battle->actionRun);
   if (result == 0) {
-    switch (battle->turn.staging) {
+    switch (battle->actionRun.staging) {
     case STAGING_MESSAGES:
-      BattleStaging_RunActorEntries(&battle->turn, 0);
+      BattleStaging_RunActorEntries(&battle->actionRun, 0);
       break;
     case STAGING_ATTACK:
-      BattleStaging_RunAttack(&battle->turn, 0);
+      BattleStaging_RunAttack(&battle->actionRun, 0);
       break;
     case STAGING_SUMMON:
-      BattleStaging_HideField(&battle->turn, STAGING_HIDE_ACTOR);
+      BattleStaging_HideField(&battle->actionRun, STAGING_HIDE_ACTOR);
       break;
     case STAGING_FULL_SCREEN:
-      BattleStaging_HideField(&battle->turn, 0);
+      BattleStaging_HideField(&battle->actionRun, 0);
       break;
     case STAGING_CAST:
-      BattleStaging_RunPsynergyCast(&battle->turn, CAST_PSYNERGY);
+      BattleStaging_RunPsynergyCast(&battle->actionRun, CAST_PSYNERGY);
       break;
     case STAGING_DJINNI:
-      BattleStaging_RunPsynergyCast(&battle->turn, CAST_DJINNI);
+      BattleStaging_RunPsynergyCast(&battle->actionRun, CAST_DJINNI);
       break;
     case STAGING_ENEMY_CAST:
-      BattleStaging_RunPsynergyCast(&battle->turn, CAST_ENEMY);
+      BattleStaging_RunPsynergyCast(&battle->actionRun, CAST_ENEMY);
       break;
     case STAGING_ITEM:
-      BattleStaging_RunItem(&battle->turn, 0, request);
+      BattleStaging_RunItem(&battle->actionRun, 0, request);
       break;
     case STAGING_FLEE:
-      if (BattleStaging_RunFlee(&battle->turn) != 0)
+      if (BattleStaging_RunFlee(&battle->actionRun) != 0)
         fled = 1;
       if (fled != 0)
         goto finish;
       break;
     }
   } else {
-    if (result == TURN_REPORTED) {
+    if (result == ACTION_REPORTED) {
       BattleMessage_WaitForAdvance();
       WaitFrames(3);
     }
     BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   }
 
-  // The turn's end, then every unit back to its spot. A party that fled
+  // The action's end, then every unit back to its spot. A party that fled
   // skips this and the action's mark.
   BattleObject_DestroyAll();
-  BattleUnit_ProcessTurnEnd(&battle->turn);
+  BattleUnit_ProcessActionEnd(&battle->actionRun);
   BattleObject_Put();
   unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
@@ -118,17 +118,17 @@ finish:
   return fled;
 }
 
-/// Fills an animation command from a turn: its kind and strength,
+/// Fills an animation command from an action run: its kind and strength,
 /// the acting unit and the targets still standing (or every target, for an
 /// animation that revives), at least the first. Called by each staging runner
 /// before its animation plays: RunUnitTransition, RunAttack, RunPlainAttack,
 /// RunItem and RunPsynergyCast. Writes args' prelude (0), kind, variant, user,
 /// targets, firstTarget, targetCount and range (1); the caller sets its side.
 #ifdef UBFIX
-void BattleStaging_BuildTargetList(struct BattleTurn *plan,
+void BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                    struct BattleAnimArgs *args) {
 #else
-s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
+s32 BattleStaging_BuildTargetList(struct BattleActionRun *plan,
                                   struct BattleAnimArgs *args) {
 #endif
   s16 *outputTarget;
@@ -166,9 +166,9 @@ s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
   args->range = 1;
 }
 
-/// Plays a unit's attempt to run. The flee roll was made as the round's
-/// actions were gathered (BattleFlee_CheckSuccess); a failed one turns the
-/// round into the enemies' (FIRST_STRIKE_ENEMIES), and that is
+/// Plays a unit's attempt to run. The flee roll was made as the turn's
+/// actions were gathered (BattleFlee_CheckSuccess); a failed one makes the
+/// turn the enemies' (FIRST_STRIKE_ENEMIES), and that is
 /// what this tests. So the party gets away unless the roll failed ("But
 /// there's no escape!"), each party member able to move running off in turn; an
 /// enemy gets away 7 times in 10 and leaves the battle. Returns 1 when the
@@ -177,7 +177,7 @@ s32 BattleStaging_BuildTargetList(struct BattleTurn *plan,
 /// camera to the party's view and holds gBattleBackgroundWork->busy while it
 /// runs; an enemy that gets away is taken out of the lists and its battle
 /// object marked for release.
-s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
+s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
@@ -192,7 +192,7 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
 
   completed.halves[0] = 0;
   completed.halves[1] = 0;
-  view->targetYaw = YAW_PARTY_TURN;
+  view->targetYaw = YAW_PARTY_ACTION;
   view->busy = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
 
@@ -255,7 +255,7 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
 /// fades, and the units' colour modes; schedules BattlePlayback_Run around the
 /// animation.
 /// @param mode STAGING_HIDE_ACTOR hides the acting unit too (the summons)
-s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
+s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   u16 units[14];
   struct BattleStagingWork work;
   u32 actor;
@@ -285,7 +285,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
 #else
     view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
-    yaw = YAW_PARTY_TURN;
+    yaw = YAW_PARTY_ACTION;
     if (actor > ALLY_MAX)
       yaw = YAW_BEHIND_ENEMIES;
     view->targetYaw = yaw;
@@ -298,9 +298,9 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
 #else
     view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
-    yaw = YAW_ENEMY_TURN;
+    yaw = YAW_ENEMY_ACTION;
     if (actor <= ALLY_MAX)
-      yaw = YAW_PARTY_TURN;
+      yaw = YAW_PARTY_ACTION;
     if (view->targetYaw != yaw)
       view->targetYaw = yaw;
   }
@@ -333,8 +333,8 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
     WaitFrames(1);
   }
   // A failed cast: "blocked" (sealed) or too little PP, shown at once.
-  if (plan->failure != TURN_FAILURE_NONE) {
-    if (plan->failure == TURN_FAILURE_SEALED) {
+  if (plan->failure != ACTION_FAILURE_NONE) {
+    if (plan->failure == ACTION_FAILURE_SEALED) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
       BattlePlayback_Push(PLAYBACK_MESSAGE, MsgPsynergyBlocked);
     } else {
@@ -345,7 +345,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   } else {
     // Only the target side's units stay on the field (with the acting unit,
     // unless STAGING_HIDE_ACTOR hides it); the list is then reused for the
-    // turn's targets.
+    // action's targets.
     kept = 0;
     for (i = 0; i < count; i++) {
       u32 unit = units[i];
@@ -434,9 +434,9 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
 /// action with no animation: each target's BattleAbility_ApplyToTarget is
 /// played at once by BattlePlayback_RunAll.
 #ifdef UBFIX
-void BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused) {
+void BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused) {
 #else
-s32 BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused) {
+s32 BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused) {
 #endif
   s32 targetIndex;
 
@@ -462,7 +462,7 @@ s32 BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused) {
 /// zoom), the window registers (WIN0 and WIN1 to the battlefield, rows 16 to
 /// 136, both turned on), and schedules BattlePlayback_Run around the
 /// animation.
-s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
+s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   struct BattleStagingWork work;
   struct Actor *actor;
   struct Sprite *animation;
@@ -482,7 +482,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
 
   view = gBattleBackgroundWork;
   {
-    struct BattleTurn *savedPlan = plan;
+    struct BattleActionRun *savedPlan = plan;
 
     /* FAKEMATCH(dead): plan cleared and restored under tests that emit
      * nothing, ending a CSE block so the first read of plan reloads it;
@@ -493,7 +493,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
       plan = savedPlan;
   }
 
-  // The camera turns to halfway between YAW_PARTY_TURN and the
+  // The camera turns to halfway between YAW_PARTY_ACTION and the
   // attacker's bearing from the centre, an enemy's taken from the other
   // side: 5 frames if it is there already, else 10.
   actor = BattleObject_Get(plan->unitId)->actor;
@@ -625,9 +625,10 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
 /// BattleStaging_RunAttack without the hop height, the windows, the critical
 /// zoom, the dodge message or playback; its playback is played at once after
 /// the animation, and the camera's slower turn waits 20 frames.
-UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
+UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
+                                        s32 flags) {
   struct BattleStagingWork work;
-  struct BattleTurn *savedInput;
+  struct BattleActionRun *savedInput;
   struct Actor *actor;
   struct Sprite *animation;
   struct BattleBackgroundWork *view;
@@ -696,14 +697,14 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
 /// Plays an item's use: the camera turns to the user's side, the user raises
 /// the item and, for an item with an animation, the screen dims while it plays
 /// with its playback. Then the item is spent as its use type says; when its
-/// slot empties, later item commands of the same party member this round follow
+/// slot empties, later item commands of the same party member this turn follow
 /// their items to their new slots (or lose theirs, -1).
 /// Called by BattleStaging_DispatchAction for STAGING_ITEM, with the
 /// action's entry as selection. Sets gBattleBackgroundWork's yaw and, while an
 /// animation plays, dims gBattleWork->brightness and BG palettes 6 to 13;
 /// changes the user's inventory (Inventory_RemoveFar, Inventory_BreakFar, or
 /// the Empty Bottle) and the parameters of gBattleWork->actions.
-s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
+s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                           struct BattleAction *selection) {
   struct BattleStagingWork work;
   struct Actor *actor;
@@ -723,9 +724,9 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   // XXX (no evidence): whether > 4 is a slip; the play the game allows
   // behaves the same either way, so only the author's intent would say.
   if (plan->unitId > 4)
-    targetYaw = YAW_ENEMY_TURN;
+    targetYaw = YAW_ENEMY_ACTION;
   else
-    targetYaw = YAW_PARTY_TURN;
+    targetYaw = YAW_PARTY_ACTION;
   if (view->targetYaw != targetYaw)
     view->targetYaw = targetYaw;
   BattleStaging_BuildTargetList(plan, &work.effect);
@@ -875,7 +876,7 @@ s32 BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
 /// (CAST_ENEMY). Sets gBattleBackgroundWork's yaw (and its frames for a fixed
 /// view), redraws the party status window without its PP row, and schedules
 /// BattlePlayback_Run around the animation.
-s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
+s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   struct BattleStagingWork work;
   struct BattleBackgroundWork *view = gBattleBackgroundWork;
   struct Actor *object;
@@ -890,7 +891,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   // then overrides it with the opposite side's view.
   if (plan->animation & ANIM_VIEW_ACROSS) {
     view->targetYaw =
-        plan->unitId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_BEHIND_ENEMIES;
+        plan->unitId <= ALLY_MAX ? YAW_ENEMY_ACTION : YAW_BEHIND_ENEMIES;
     view->frames = 60;
   } else {
     struct Actor *actor = BattleObject_Get(plan->unitId)->actor;
@@ -902,9 +903,10 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
     else
       targetYaw = angle + 0x1800;
     targetYaw = (s16)targetYaw;
-    targetYaw += ((plan->unitId <= ALLY_MAX ? YAW_PARTY_TURN : YAW_ENEMY_TURN) -
-                  targetYaw) *
-                 3 / 4;
+    targetYaw +=
+        ((plan->unitId <= ALLY_MAX ? YAW_PARTY_ACTION : YAW_ENEMY_ACTION) -
+         targetYaw) *
+        3 / 4;
     if (!((plan->unitId <= ALLY_MAX) ^ (plan->targetIds[0] <= ALLY_MAX)))
       targetYaw = plan->unitId <= ALLY_MAX ? 0x2400 : -0x2400;
     if (view->targetYaw != targetYaw)
@@ -912,7 +914,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   }
   if (plan->animation & ANIM_VIEW_REVERSED) {
     view->targetYaw =
-        plan->unitId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_PARTY_TURN;
+        plan->unitId <= ALLY_MAX ? YAW_ENEMY_ACTION : YAW_PARTY_ACTION;
     view->frames = 60;
   }
 
@@ -950,8 +952,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
 
   // A failed cast is shown at once; otherwise the animation plays during
   // playback, and an ability with no animation only restores the palette.
-  if (plan->failure != TURN_FAILURE_NONE) {
-    if (plan->failure == TURN_FAILURE_SEALED) {
+  if (plan->failure != ACTION_FAILURE_NONE) {
+    if (plan->failure == ACTION_FAILURE_SEALED) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
       BattlePlayback_Push(PLAYBACK_MESSAGE, MsgPsynergyBlocked);
     } else {
@@ -1015,14 +1017,14 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
 }
 
 /// Takes unit id out of the party's or the enemies' list and out of this
-/// round's actions, and frees its name letter.
+/// turn's actions, and frees its name letter.
 /// Called when a unit leaves the battle: by BattleStaging_RunFlee (an
 /// enemy that gets away), BattleMotion_ShowDowned and PLAY_FELLED in
 /// BattlePlayback_Run (a fallen enemy), and
 /// BattleObject_DestroyTemporaryObject. Sets the unit's side to
 /// BATTLE_SIDE_NONE and its list entry to BATTLE_UNIT_REMOVED, releases its
 /// name letter (BattleEnemy_ReleaseNameLetter), and ends its actions this
-/// round (unitId BATTLE_UNIT_LIST_END). A unit in neither list only has its
+/// turn (unitId BATTLE_UNIT_LIST_END). A unit in neither list only has its
 /// side changed.
 void BattleObject_RemoveFromLists(s32 unitId) {
   struct BattleWork *battle;

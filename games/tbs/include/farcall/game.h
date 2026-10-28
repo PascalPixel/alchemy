@@ -130,7 +130,7 @@ s32 Battle_CalculateRecoveryFar(s32 power, s32 element, s32 rate);
 /// Returns an enemy's definition, the first row for an id past the table.
 const u8 *Enemy_GetDefinitionFar(s32 selector);
 /// Returns the battle's next random number, from its own seed, which link
-/// battles exchange before resolving a round.
+/// battles exchange before resolving a turn.
 s32 Battle_RandomFar(void);
 /// Gives a unit a Djinni, returning -1 when it has it already or holds ten of
 /// that element.

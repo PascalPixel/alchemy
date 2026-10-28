@@ -11,7 +11,7 @@
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
 /// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the
-/// turn's targets. Its message phases (PLAY_MESSAGE and the like) are
+/// action's targets. Its message phases (PLAY_MESSAGE and the like) are
 /// private to playback.c.
 enum BattlePlaybackPhase {
   BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the animation resumes it

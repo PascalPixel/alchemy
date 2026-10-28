@@ -72,7 +72,7 @@ wearer's list.
 
 The row is read as `struct ItemDefinition` (`games/tbs/include/game/item.h`),
 whose fields and flags say what each holds. When an item is used in battle,
-the battle builds a turn from the ability the row names
+the battle builds an action from the ability the row names
 ([Battles](../battle/README.md#how-an-ability-resolves)).
 
 ## What an inventory slot holds

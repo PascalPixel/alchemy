@@ -151,7 +151,7 @@
 
 /// The frames a link battle tolerates without a connection before it gives
 /// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
-/// the sync or transfer under way (link.c, round.c).
+/// the sync or transfer under way (link.c, turn.c).
 #define LINK_MAX_MISSED_FRAMES 24
 
 /// The two battle sprites drawn in two parts: the sprite after each is its
@@ -171,9 +171,9 @@
 #define ACTOR_SPRITE_KIND_MASK 15
 #define ACTOR_SPRITE_GROUP_SIZE 4
 
-/// BattleTurn_Build's results besides 0, which stages the turn.
-#define TURN_REPORTED -1  ///< the action failed and its message is shown
-#define TURN_NO_ACTION -2 ///< nothing to stage or show
+/// BattleActionRun_Build's results besides 0, which stages the action.
+#define ACTION_REPORTED -1 ///< the action failed and its message is shown
+#define ACTION_NOTHING_TO_SHOW -2 ///< nothing to stage or show
 
 /// BattleStaging_HideField's mode: a summon hides its user too.
 #define STAGING_HIDE_ACTOR 1
@@ -191,7 +191,7 @@ enum BattleCastKind {
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
 
-/// BattleAction.target of a held unit's lost turn (COMMAND_NONE, from
+/// BattleAction.target of a held unit's lost action (COMMAND_NONE, from
 /// Battle_BuildOpponentActions and
 /// Battle_BuildUnitActions): as a place code, place 0 of the other
 /// side, 0x100 the party's for an enemy and 0x180 the enemies' for a party
@@ -202,11 +202,11 @@ enum BattleCastKind {
 /// The camera's yaw while a party member acts, and while an enemy does, in
 /// 1/65536 turns: an eighth of a turn either side of 0. The camera task
 /// eases toward it (BattleCamera_Update).
-#define YAW_PARTY_TURN 0x2000
-#define YAW_ENEMY_TURN -0x2000
+#define YAW_PARTY_ACTION 0x2000
+#define YAW_ENEMY_ACTION -0x2000
 
 /// The camera's yaw from behind the enemies, which an enemy's staged animation
-/// and cast take in place of YAW_ENEMY_TURN.
+/// and cast take in place of YAW_ENEMY_ACTION.
 #define YAW_BEHIND_ENEMIES 0x5000
 
 /// REG_BLDCNT: blend the semi-transparent sprites (SPRITE_SEMI_TRANSPARENT)

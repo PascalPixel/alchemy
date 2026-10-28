@@ -12,7 +12,7 @@
 
 struct BattleAction;
 struct BattleAnimArgs;
-struct BattleTurn;
+struct BattleActionRun;
 struct Unit;
 struct Actor;
 struct FieldParticle;
@@ -41,7 +41,7 @@ struct BattlePlaybackWork;
 struct BattleSideOrder;
 struct SceneEncounterRule;
 struct BattleObject;
-struct BattleTurn;
+struct BattleActionRun;
 struct BattleBackgroundWork;
 struct BattleSummonState;
 struct Unit;
@@ -88,9 +88,9 @@ extern s32 gBattleKnockback_VelocityY[];
 /// A fixed formation's places by order, as offsets from the middle place:
 /// 0, -1, 1, -2, 2 and so on out to 4.
 extern s8 gBattleParty_CenterOrderOffsets[];
-/// Round-end effects go to the party (BATTLE_SIDE_MASK_PARTY), then the enemies
+/// Turn-end effects go to the party (BATTLE_SIDE_MASK_PARTY), then the enemies
 /// (BATTLE_SIDE_MASK_ENEMIES).
-extern const struct BattleSideOrder gBattleParty_RoundEndSideOrder;
+extern const struct BattleSideOrder gBattleParty_TurnEndSideOrder;
 /// A lone SC_END: a battle unit's actor script, which BattleObject_Make
 /// starts.
 extern const s32 gBattleObject_EmptyScript[];
@@ -149,12 +149,12 @@ extern u8 *gEnemyUnits;
 #endif
 #ifndef OWN_gRandomSeed
 /// Random16's seed; Lucky Wheels seeds it with the play time, and a link
-/// battle's parent sends it as the round's gBattleRandomSeed.
+/// battle's parent sends it as the turn's gBattleRandomSeed.
 extern u32 gRandomSeed;
 #endif
 #ifndef OWN_gBattleBackgroundWork
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
-/// staging.c, auto_battle.c and round.c set for each action, and the
+/// staging.c, auto_battle.c and turn.c set for each action, and the
 /// background's display mode.
 extern struct BattleBackgroundWork *gBattleBackgroundWork;
 #endif

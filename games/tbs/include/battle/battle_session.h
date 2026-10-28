@@ -39,8 +39,8 @@ struct BattleObject {
   s16 fading; ///< set while a fallen enemy's picture is being removed
 };
 
-/// BattleAction.command and BattleTurn's copy of it: what a unit does
-/// on its turn.
+/// BattleAction.command and BattleActionRun's copy of it: what a unit does
+/// when it acts.
 enum BattleCommand {
   COMMAND_ATTACK = 0,
   COMMAND_PSYNERGY = 1,
@@ -56,8 +56,8 @@ enum BattleCommand {
 };
 
 /// A unit's chosen action for the turn: its command, the command's parameter,
-/// its target and range, and its priority in the turn order. BattleWork.actions
-/// holds the turn's actions.
+/// its target and range, and its priority in the action order.
+/// BattleWork.actions holds the turn's actions.
 struct BattleAction {
   s16 unitId;
   u16 slot;      ///< in a link battle, unitId as the opponent knows it

@@ -92,7 +92,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
     }                                                                          \
   }
 
-/// Applies the turn's ability to one of its targets: first its damage or
+/// Applies the action's ability to one of its targets: first its damage or
 /// healing, then its added effect (a status, a stat change, a revival...).
 /// Nothing is shown here: each step queues playback commands (the names and
 /// numbers a message needs, the message, the target's reactions) that
@@ -124,14 +124,14 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// 7. Waking from damage, the recalculated stats, the redraw, and the evil
 ///    spirit's share for a haunted unit.
 ///
-/// @param plan the turn under way: the acting unit, the ability, its element
+/// @param plan the action under way: the acting unit, the ability, its element
 /// and its targets, each with its distance from the aimed position, damage
 /// multiplier, critical hit and any hit roll made in advance
-/// @param slot which of the turn's targets (0 to plan->targetCount - 1)
+/// @param slot which of the action's targets (0 to plan->targetCount - 1)
 #ifdef UBFIX
-void BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
+void BattleAbility_ApplyToTarget(struct BattleActionRun *plan, s32 slot) {
 #else
-s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
+s32 BattleAbility_ApplyToTarget(struct BattleActionRun *plan, s32 slot) {
 #endif
   s32 distance; // steps from the aimed position, 0 to 5
   struct AbilityDefinition *ability;
@@ -219,7 +219,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   }
 
   // The user's power in the ability's element; items always use 100. (Here
-  // and below the element is read from the turn again, as the bytes need.)
+  // and below the element is read from plan again, as the bytes need.)
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
       plan->command != COMMAND_ITEM)
     elementPower = actor->element[plan->element].power;
@@ -246,7 +246,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
       BattlePlayback_Push(PLAYBACK_DJINN_BONUS, 5);
   }
 
-  // Whether the effect lands: a roll made when the turn was built, or
+  // Whether the effect lands: a roll made when the action was built, or
   // one made now, less likely the farther the target is.
   kind = ability->flags & ABILITY_FORMULA_MASK;
   {
@@ -342,7 +342,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
     if (ability->effect == ABILITY_EFFECT_GROUND) {
       u32 i;
 
-      // Ground holds only a target with an entry in this round's action
+      // Ground holds only a target with an entry in this turn's action
       // list. BattleStaging_DispatchAction clears each entry once it has
       // played, so a target that has already acted is left alone; the auto
       // battle's AutoBattle_RunAction clears none.
@@ -1257,7 +1257,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
         battle->challengeFlag |= 2;
       break;
 
-    // The target loses its next action (BattleTurn_Build).
+    // The target loses its next action (BattleActionRun_Build).
     case ABILITY_EFFECT_GROUND:
       PUSH_MESSAGE(MsgImmobile);
       target->immobile = 1;
@@ -1295,7 +1295,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   BattlePlayback_Push(PLAYBACK_CLEAR_ARGUMENTS, 0);
 
   // Losing HP or PP wakes a sleeping target still standing one time in four,
-  // unless it fell asleep this round: Battle_ProcessRoundEnd has not yet
+  // unless it fell asleep this turn: Battle_ProcessTurnEnd has not yet
   // counted it down from STATUS_TURNS.
   if (target->hp != 0 && target->sleep != 0 && target->sleep < STATUS_TURNS &&
       damageDealt > 0 && (Battle_RandomFar() & 3) == 0) {
@@ -1311,7 +1311,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
     BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
   // A haunted unit pays, one time in four, for each target it took HP or PP
   // from: a quarter of that (at least 1), gathered in hauntDamage and taken
-  // from its own HP at the end of its turn (BattleUnit_ProcessTurnEnd).
+  // from its own HP at the end of its action (BattleUnit_ProcessActionEnd).
   if (actor->haunt != 0 && (Battle_RandomFar() & 3) == 0 && damageDealt > 0) {
     s32 share;
 
@@ -1324,7 +1324,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
 
 /// Returns 1 for an ability that costs PP, and for Psy Drain, which costs
 /// none.
-/// Called by BattleTurn_Build (a cast's staging) and
+/// Called by BattleActionRun_Build (a cast's staging) and
 /// BattleAI_ChooseAction (an enemy's PP and seal checks).
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;

@@ -30,7 +30,7 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// party member's row only. When the link battle's time runs out the row takes
 /// its first command. Battle_CollectPartyCommands runs both rows.
 ///
-/// COMMAND_ROW_PARTY is the party's row at the start of a round: Fight, Flee
+/// COMMAND_ROW_PARTY is the party's row at the start of a turn: Fight, Flee
 /// and Status. COMMAND_ROW_MEMBER, as any other mode, is a party member's row:
 /// Attack, Psynergy, Djinn once the party's Djinn are enough for a summon
 /// (BattleSummonState.availableMask), Summon while any Djinni is on standby,

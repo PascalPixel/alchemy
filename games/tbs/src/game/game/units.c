@@ -15,9 +15,9 @@ struct StatWork {
   s32 agi;                ///< Agility, 0 to UNIT_STAT_MAX once clamped
   s32 unused;             ///< never written; a gap between Agility and Luck
   s32 luck;               ///< Luck, 0 to UNIT_LUCK_MAX once clamped
-  s32 turns;              ///< actions a round, 0 to 2
-  s32 hpRegen;            ///< HP regained each round
-  s32 ppRegen;            ///< PP regained each round
+  s32 actionCount;        ///< actions a turn, 0 to 2
+  s32 hpRegen;            ///< HP regained each turn
+  s32 ppRegen;            ///< PP regained each turn
   s32 element[4][2];      ///< [element][0] power and [1] resistance
   s32 kind;               ///< the item effect being applied
   s32 unusedAfterKind[2]; ///< never written
@@ -170,7 +170,7 @@ void Unit_Calculate(s32 unitId) {
   stats->def = unit->baseDefense;
   stats->agi = unit->baseAgility;
   stats->luck = unit->baseLuck;
-  stats->turns = unit->baseActionCount & 15;
+  stats->actionCount = unit->baseActionCount & 15;
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
@@ -197,7 +197,7 @@ void Unit_Calculate(s32 unitId) {
   if (unit->curse & CURSE_KEEP_BOUND)
     unit->curse |= CURSE_BOUND;
   if (unit->ready)
-    stats->turns++;
+    stats->actionCount++;
   unit->equipBonus[0] = 0;
   unit->equipBonus[1] = 0;
 
@@ -276,8 +276,8 @@ void Unit_Calculate(s32 unitId) {
         case EQUIP_EFFECT_CURSE_REMOVABLE:
           unit->curse |= CURSE_REMOVABLE;
           break;
-        case EQUIP_EFFECT_ADD_TURNS:
-          stats->turns += stats->amount;
+        case EQUIP_EFFECT_ADD_ACTIONS:
+          stats->actionCount += stats->amount;
           break;
         }
       }
@@ -402,7 +402,7 @@ void Unit_Calculate(s32 unitId) {
   CLAMP(stats->def, 0, UNIT_STAT_MAX);
   CLAMP(stats->agi, 0, UNIT_STAT_MAX);
   CLAMP(stats->luck, 0, UNIT_LUCK_MAX);
-  CLAMP(stats->turns, 0, 2);
+  CLAMP(stats->actionCount, 0, 2);
   CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
   CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
   for (index = 0; index < ELEMENT_COUNT; index++) {
@@ -414,7 +414,7 @@ void Unit_Calculate(s32 unitId) {
   unit->def = stats->def;
   unit->agi = stats->agi;
   unit->luck = stats->luck;
-  unit->actionsPerRound = stats->turns;
+  unit->actionsPerTurn = stats->actionCount;
   unit->hpRegen = stats->hpRegen;
   unit->ppRegen = stats->ppRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
@@ -791,7 +791,7 @@ void Unit_SetPp(struct Unit *unit, s32 pp) {
 }
 
 /// Adds delta to the HP of unit unitId, clamped to 0..hpMax, recomputes its
-/// gauges and returns the new HP. Called by battle's round end, poison and
+/// gauges and returns the new HP. Called by battle's turn end, poison and
 /// regeneration, and by the field's damage floors and status damage.
 s32 Unit_AddHp(s32 unitId, s32 delta) {
   struct Unit *unit = Unit_Get(unitId);
@@ -808,7 +808,7 @@ s32 Unit_AddHp(s32 unitId, s32 delta) {
 
 /// Adds delta to the PP of unit unitId, clamped to 0..ppMax, recomputes its
 /// gauges and returns the new PP. Called when Psynergy is used in the field,
-/// in battle and from the menu, by PP recovery at the end of a battle round,
+/// in battle and from the menu, by PP recovery at the end of a battle turn,
 /// and by the debug menu.
 s16 Unit_AddPp(s32 unitId, s32 delta) {
   struct Unit *unit = Unit_Get(unitId);

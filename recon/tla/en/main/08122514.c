@@ -1,6 +1,6 @@
 // 2026-10-26: differ 6 of 783 (both functions). The summon search reads
 // each Djinni count through the definition (summon->djinnRequired[element]),
-// as The Broken Seal's turn.c does, rather than through a pointer to the
+// as The Broken Seal's action.c does, rather than through a pointer to the
 // array: the first comparison then folds element 0 as the native does (12 to
 // 8). Left: the opening stores' zero, issued after the unit reload here and
 // before it natively, and abilityId's copy to r9 for an item, before the two

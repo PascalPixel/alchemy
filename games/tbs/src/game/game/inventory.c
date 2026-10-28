@@ -330,7 +330,8 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
 }
 
 /// Returns the id of the unit's equipped item of `type`, or 0. Called by
-/// BattleObject_Make to draw a party member's weapon, and by BattleTurn_Build.
+/// BattleObject_Make to draw a party member's weapon, and by
+/// BattleActionRun_Build.
 s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
   s32 slot;
 

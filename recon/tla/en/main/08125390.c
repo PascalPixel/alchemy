@@ -9,7 +9,7 @@
 // to ten candidates are gathered and one picked. A Set Djinni goes on standby;
 // with announce the event says so (MsgDjinnOnStandby) and stops. Otherwise
 // the pick's standby entries are given their recovery turns, as ☀️'s
-// BattleUnit_ProcessTurnEnd does, and the first drain is announced
+// BattleUnit_ProcessActionEnd does, and the first drain is announced
 // (MsgDjinnDrained, the next message for an enemy; MsgAllDjinnDrained with
 // all, which repeats until none is left). The outer loop is a goto: as a
 // do-while, loop.c hoists both arrays' addresses and the stack frame grows by 8.

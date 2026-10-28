@@ -1,5 +1,6 @@
 #include "izumo.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 void Func_02000b08(void) {
   struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -11,7 +12,7 @@ void Func_02000b08(void) {
     Call6((void (*)())Func_02000ce0, 36, 12, 22, 8, 3, 3);
     Call6((void (*)())Func_02000ce8, 36, 12, 3, 3, 22, 8);
     if (x == 23 && z == 9)
-      Func_02000d40(gMainRoutineWork.currentOwner, 0x1780000, 0x880000);
+      Func_02000d40(gMainRoutineWork.currentOwner, PIXELS(376), PIXELS(136));
   } else {
     Call6((void (*)())Func_02000ce0, 36, 8, 22, 8, 3, 3);
     Call6((void (*)())Func_02000ce8, 36, 8, 3, 3, 22, 8);
@@ -27,7 +28,7 @@ void Func_02000ba4(void) {
 void Func_02000bdc(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 340);
 
-  Actor_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   BYTE_AT(Actor_GetById(4), 90) &= ~1;
   Actor_OffsetPositionAndResetMotion(4, 0, 4);
@@ -58,7 +59,7 @@ void Func_02000c7c(void) {
 }
 
 void Func_02000ca4(void) {
-  Actor_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Func_02000bdc();
 }

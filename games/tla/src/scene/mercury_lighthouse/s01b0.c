@@ -4,6 +4,8 @@
 #include "actor.h"
 #include "call.h"
 #include "task.h"
+#include "scene_tables.h"
+#include "io_reg.h"
 
 extern u32 gData_020007e4;
 extern u8 MsgImilVoicesDisbeliefReply[];
@@ -54,21 +56,21 @@ void Func_020001b0(void) {
   Func_02000608();
   Value3((s32 (*)())Func_020005c0, 8, 256, 0);
   Value3((s32 (*)())Func_020005c0, 8, 256, 20);
-  Call3((void (*)())Actor_ArmCallback, 8, 0x3000, 0);
+  Call3((void (*)())Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 0);
   Call3((void (*)())Actor_Jump, 8, 4, 10);
   Call2((void (*)())Func_020005a0, 0x8008, 0);
   Value3((s32 (*)())Func_020005c0, 11, 257, 0);
   Value3((s32 (*)())Func_020005c0, 12, 257, 40);
-  Call3((void (*)())Actor_ArmCallback, 11, 0xd000, 0);
-  Call3((void (*)())Actor_ArmCallback, 12, 0xb000, 0);
+  Call3((void (*)())Actor_ArmCallback, 11, FACING_NORTH + FACING_STEP, 0);
+  Call3((void (*)())Actor_ArmCallback, 12, FACING_NORTHWEST + FACING_STEP, 0);
   Call2((void (*)())Func_02000600, 13, 14);
   Call2((void (*)())Func_020005a0, 3, 0);
   Func_02000608();
   Actor_SetModeById(9, 3);
   Call2((void (*)())Func_020005a0, 0x8009, 0);
-  Call2((void (*)())Func_020005b0, 12, 0);
+  Call2((void (*)())Func_020005b0, 12, FACING_EAST);
   Call2((void (*)())Func_020005a0, 0x800c, 0);
-  Call2((void (*)())Func_020005b0, 11, 0x8000);
+  Call2((void (*)())Func_020005b0, 11, FACING_WEST);
   Actor_SetModeById(11, 4);
   Call2((void (*)())Func_020005a0, 0x400b, 0);
   actor = Actor_GetById(11);
@@ -122,7 +124,7 @@ void Func_020001b0(void) {
   Call2((void (*)())Func_020005a0, 6, 0);
   Func_02000608();
   FieldEvent_Wait(20);
-  *(u16 *)0x05000000 = 0;
+  *(u16 *)BG_PLTT = 0;
   wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 16;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x201;

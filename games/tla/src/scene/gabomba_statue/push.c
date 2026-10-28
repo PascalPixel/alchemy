@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 extern s32 gData_02005af0;
 struct Actor *Actor_GetById(s32 id);
@@ -100,7 +101,7 @@ void Func_02000cf0(struct Actor *object) {
   Camera_SetSpeed(0x10000, 0x2000);
   Func_02005714(39, 164 << 17, 148 << 17);
   FieldEvent_Wait(30);
-  Actor_Turn(gMainRoutineWork.currentOwner, 0x2000, 0);
+  Actor_Turn(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(15);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 39);
   Func_0200578c(gMainRoutineWork.currentOwner, 257, 30);
@@ -128,14 +129,14 @@ void Func_02000cf0(struct Actor *object) {
   Actor_Walk(39, 344, 184);
   Actor_Walk(39, 344, 200);
   FieldEvent_Wait(2);
-  Actor_Turn(39, 0x8000, 0);
+  Actor_Turn(39, FACING_WEST, 0);
   FieldEvent_Wait(15);
   Func_02005854(152);
-  Actor_GetById(39)->velocityY = 0x40000;
+  Actor_GetById(39)->velocityY = PIXELS(4);
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_Walk(39, 312, 200);
   Func_02005854(152);
-  Actor_GetById(39)->velocityY = 0x60000;
+  Actor_GetById(39)->velocityY = PIXELS(6);
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_Walk(39, 312, 168);
   Actor_SetSpeed(39, 0x20000, 0x10000);
@@ -143,12 +144,12 @@ void Func_02000cf0(struct Actor *object) {
   Camera_SetBounds(-1, -1, -1, 0);
   FieldEvent_Wait(15);
   Func_02005854(152);
-  Actor_GetById(39)->velocityY = 0x60000;
+  Actor_GetById(39)->velocityY = PIXELS(6);
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_Walk(39, 360, 152);
   FieldEvent_Wait(15);
   Func_02005854(152);
-  Actor_GetById(39)->velocityY = 0x60000;
+  Actor_GetById(39)->velocityY = PIXELS(6);
   Actor_SetSpeed(39, 0x20000, 0x10000);
   Actor_Walk(39, 360, 184);
   Actor_SetSpeed(39, 0x20000, 0x10000);
@@ -157,7 +158,7 @@ void Func_02000cf0(struct Actor *object) {
   Actor_Walk(39, 408, 184);
   FieldEvent_Wait(15);
   Func_02005854(152);
-  Actor_GetById(39)->velocityY = 0x60000;
+  Actor_GetById(39)->velocityY = PIXELS(6);
   Actor_SetSpeed(39, 0x40000, 0x20000);
   Actor_Walk(39, 440, 184);
   Func_02005714(39, 0, 0);

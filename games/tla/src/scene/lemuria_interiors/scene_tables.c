@@ -60,7 +60,7 @@ L_02008082:
   Call1((void (*)())Func_020028fc, 0);
   Call1((void (*)())Func_020028ac, (s32)MsgLemuriaInteriors08);
   Call2((void (*)())Func_020028c4, arg0, 0);
-  Call3((void (*)())Actor_ArmCallback, arg0, 0x3000, 0);
+  Call3((void (*)())Actor_ArmCallback, arg0, FACING_SOUTHEAST + FACING_STEP, 0);
   ((void (*)())Func_02002834)();
   goto L_020080f6;
 L_020080ba:
@@ -75,7 +75,7 @@ L_020080ba:
 L_020080dc:
   Value1((s32 (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Func_020028c4, arg0, 0);
-  Call3((void (*)())Actor_ArmCallback, arg0, 0x8000, 0);
+  Call3((void (*)())Actor_ArmCallback, arg0, FACING_WEST, 0);
 L_020080f6:
   return;
 }

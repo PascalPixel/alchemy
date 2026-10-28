@@ -6,6 +6,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 void FieldEvent_Wait();
 void Func_02001d50();
@@ -81,7 +82,7 @@ void Func_02001008(void) {
   ((void (*)())Func_02001d50)();
   Call1((void (*)())Func_02001eb8, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x6666, 0x3333);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 11, 0x19a, 109);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 11, 410, 109);
   object = Actor_GetById(4);
   /* FAKEMATCH(barrier): the object passed through an asm after the call, so
    * the z load follows the asm by one cycle and ties the bound 0x5f0000;
@@ -95,11 +96,10 @@ void Func_02001008(void) {
      * instructions differ in tla-en. */
     asm("" : "+r"(object) : "r"(z));
     if (z > 0x5f0000)
-      Call3((void (*)())Actor_SetPositionAndReset, 4,
-            object->x / 0x10000, 95);
+      Call3((void (*)())Actor_SetPositionAndReset, 4, object->x / 0x10000, 95);
   }
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 0x16a, 95);
-  Call2((void (*)())Func_02001e40, 4, 0x4000);
+  Call3((void (*)())Actor_SetPositionAndReset, 4, 362, 95);
+  Call2((void (*)())Func_02001e40, 4, FACING_SOUTH);
   Call1((void (*)())Actor_WaitForMoveById, 11);
   Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors110);
   Call3((void (*)())Actor_SetAngleToward, 10, 4, 0);
@@ -107,8 +107,8 @@ void Func_02001008(void) {
   Value3((s32 (*)())Func_02001e48, 10, 0x102, 30);
   Call3((void (*)())Func_02001e28, 10, 0, 10);
   Value3((s32 (*)())Func_02001e48, 11, 0x100, 3);
-  Call3((void (*)())Actor_SetPositionAndReset, 11, 0x17a, 109);
-  Call3((void (*)())Actor_ArmCallback, 11, 0xa000, 0);
+  Call3((void (*)())Actor_SetPositionAndReset, 11, 378, 109);
+  Call3((void (*)())Actor_ArmCallback, 11, FACING_NORTHWEST, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 11, 0, 10);
   Call3((void (*)())Actor_TurnToFaceEachOther, 10, 11, 0);
@@ -130,34 +130,28 @@ void Func_02001008(void) {
   Call2((void (*)())Motion_SetVarCbAndRefresh, 11, 2);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 11, 0, 10);
-  Call2((void (*)())Func_02001e40, 11, 0x4000);
+  Call2((void (*)())Func_02001e40, 11, FACING_SOUTH);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Func_02001e40, 11, 0xc000);
+  Call2((void (*)())Func_02001e40, 11, FACING_NORTH);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Func_02001e40, 11, 0x8000);
+  Call2((void (*)())Func_02001e40, 11, FACING_WEST);
   Call1((void (*)())FieldEvent_Wait, 10);
   Value3((s32 (*)())Func_02001e48, 11, 0x106, 30);
   Call1((void (*)())Actor_Stop, 25);
   Call3((void (*)())Actor_SetSpeedParameters, 10, 0x8000, 0x4000);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x8000, 0x4000);
   Call3((void (*)())Actor_SetSpeedParameters, 25, 0x8000, 0x4000);
-  Call2((void (*)())Actor_SetMovementTypeById, 11,
-        (s32)gData_02001f18);
-  Call2((void (*)())Actor_SetMovementTypeById, 4,
-        (s32)gData_02001f4c);
+  Call2((void (*)())Actor_SetMovementTypeById, 11, (s32)gData_02001f18);
+  Call2((void (*)())Actor_SetMovementTypeById, 4, (s32)gData_02001f4c);
   Call1((void (*)())FieldEvent_Wait, 60);
-  Call2((void (*)())Actor_SetMovementTypeById, 10,
-        (s32)gData_02001f90);
+  Call2((void (*)())Actor_SetMovementTypeById, 10, (s32)gData_02001f90);
   Call1((void (*)())Actor_RefreshSelectorById, 10);
   Call1((void (*)())FieldEvent_Wait, 120);
-  Call2((void (*)())Actor_SetMovementTypeById, 11,
-        (s32)gData_02001fc4);
+  Call2((void (*)())Actor_SetMovementTypeById, 11, (s32)gData_02001fc4);
   Call2((void (*)())Actor_WatchAndSetScript, 4, 11);
   Call1((void (*)())FieldEvent_Wait, 60);
-  Call2((void (*)())Actor_SetMovementTypeById, 10,
-        (s32)gData_02002054);
-  Call2((void (*)())Actor_SetMovementTypeById, 25,
-        (s32)gData_020020e4);
+  Call2((void (*)())Actor_SetMovementTypeById, 10, (s32)gData_02002054);
+  Call2((void (*)())Actor_SetMovementTypeById, 25, (s32)gData_020020e4);
   Call1((void (*)())Actor_RefreshSelectorById, 10);
   Call1((void (*)())Actor_RefreshSelectorById, 11);
   Call1((void (*)())Actor_RefreshSelectorById, 25);
@@ -167,18 +161,17 @@ void Func_02001008(void) {
   Call3((void (*)())Func_02001ec0, 25, 2, 10);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   Call2((void (*)())Actor_SetModeById, 4, 1);
-  Call3((void (*)())Actor_ArmCallback, 10, 0x4000, 0);
+  Call3((void (*)())Actor_ArmCallback, 10, FACING_SOUTH, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 10, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Actor_ArmCallback, 4, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, 4, FACING_EAST, 0);
   Call3((void (*)())Func_02001e28, 10, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 11, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 11, 0, 10);
   ((void (*)())Func_02001d58)();
 }
-
 
 void Func_02001310(void) {
   struct Actor *object0;
@@ -190,10 +183,9 @@ void Func_02001310(void) {
   /* FAKEMATCH: ⚓️ loads z before it builds the bound. */
   __asm__ volatile("" : "+l"(object0));
   if (object0->z > 0x5f0000)
-    Call3((void (*)())Actor_SetPositionAndReset, 4, object0->x / 0x10000,
-          95);
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 0x16a, 95);
-  Call2((void (*)())Func_02001e40, 4, 0x4000);
+    Call3((void (*)())Actor_SetPositionAndReset, 4, object0->x / 0x10000, 95);
+  Call3((void (*)())Actor_SetPositionAndReset, 4, 362, 95);
+  Call2((void (*)())Func_02001e40, 4, FACING_SOUTH);
   Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors110);
   Call3((void (*)())Actor_SetAngleToward, 10, 4, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
@@ -205,7 +197,7 @@ void Func_02001310(void) {
   Call3((void (*)())Func_02001e28, 11, 0, 5);
   Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors115);
   Value3((s32 (*)())Func_02001e48, 10, 0x100, 30);
-  Call2((void (*)())Func_02001e40, 10, 0);
+  Call2((void (*)())Func_02001e40, 10, FACING_EAST);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_02001e28, 10, 0, 5);
   Call3((void (*)())Actor_TurnToFaceEachOther, 10, 11, 0);
@@ -239,24 +231,24 @@ void Func_02001450(void) {
   Call3((void (*)())Actor_SetAngleToward, 28, 4, 0);
   Call3((void (*)())Func_02001e28, 28, 0, 10);
   Call3((void (*)())Actor_SetAngleToward, 15, 4, 0);
-  Call3((void (*)())Actor_ArmCallback, 17, 0xb000, 0);
+  Call3((void (*)())Actor_ArmCallback, 17, FACING_NORTHWEST + FACING_STEP, 0);
   Call3((void (*)())Actor_SetAngleToward, 18, 4, 0);
   Call3((void (*)())Actor_SetAngleToward, 14, 4, 0);
   Call3((void (*)())Actor_SetAngleToward, 15, 4, 0);
   Call3((void (*)())Actor_SetAngleToward, 16, 4, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 0x2bd, 93);
+  Call3((void (*)())Actor_SetPositionAndReset, 4, 701, 93);
   Call3((void (*)())Actor_OffsetPositionAndReset, 4, -32, 0);
-  Call4((void (*)())Func_02001ec8, 5, -8, 32, 0x8000);
-  Call4((void (*)())Func_02001ec8, 31, -16, 0, 0x5000);
-  Call4((void (*)())Func_02001ec8, 6, -8, 16, 0x6000);
-  Call4((void (*)())Func_02001ec8, 7, -24, 16, 0x6000);
+  Call4((void (*)())Func_02001ec8, 5, -8, 32, FACING_WEST);
+  Call4((void (*)())Func_02001ec8, 31, -16, 0, FACING_SOUTH + FACING_STEP);
+  Call4((void (*)())Func_02001ec8, 6, -8, 16, FACING_SOUTHWEST);
+  Call4((void (*)())Func_02001ec8, 7, -24, 16, FACING_SOUTHWEST);
   Call1((void (*)())FieldEvent_Wait, 30);
   Value3((s32 (*)())Func_02001e48, 15, 0x100, 30);
   Call3((void (*)())Func_02001e28, 15, 0, 10);
   Value3((s32 (*)())Func_02001e48, 27, 0x100, 30);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call3((void (*)())Actor_ArmCallback, 27, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, 27, FACING_EAST, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 27, 2);
   Call1((void (*)())FieldEvent_Wait, 20);
@@ -267,14 +259,14 @@ void Func_02001450(void) {
   Call3((void (*)())Func_02001e28, 27, 0, 10);
   Call3((void (*)())Actor_TurnToFaceEachOther, 7, 4, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call3((void (*)())Actor_ArmCallback, 7, 0x8000, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0x6000, 0);
+  Call3((void (*)())Actor_ArmCallback, 7, FACING_WEST, 0);
+  Call3((void (*)())Actor_ArmCallback, 4, FACING_SOUTHWEST, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 7, 0, 10);
   Call3((void (*)())Actor_Jump, 18, 6, 20);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 18, 0, 10);
-  Call2((void (*)())Func_02001e40, 7, 0x3000);
+  Call2((void (*)())Func_02001e40, 7, FACING_SOUTHEAST + FACING_STEP);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 7, 0, 10);
@@ -285,7 +277,7 @@ void Func_02001450(void) {
     goto L_02009690;
   Value3((s32 (*)())Func_02001e48, 27, 0x108, 30);
   Call3((void (*)())Func_02001e28, 27, 0, 10);
-  Call2((void (*)())Func_02001e40, 7, 0x6000);
+  Call2((void (*)())Func_02001e40, 7, FACING_SOUTHWEST);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 7, 0, 10);
@@ -298,7 +290,7 @@ L_02009690:
   ((void (*)())Func_02001ef8)();
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 3;
   Call3((void (*)())Func_02001e28, 27, 0, 10);
-  Call2((void (*)())Func_02001e40, 7, 0x6000);
+  Call2((void (*)())Func_02001e40, 7, FACING_SOUTHWEST);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 7, 0, 10);
@@ -324,17 +316,17 @@ L_02009700:
 L_02009760:
   ((void (*)())Func_02001a20)();
 L_02009764:
-  Call3((void (*)())Actor_ArmCallback, 7, 0x4000, 0);
-  Call2((void (*)())Func_02001e40, 4, 0x4000);
+  Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTH, 0);
+  Call2((void (*)())Func_02001e40, 4, FACING_SOUTH);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Actor_SetModeById, 7, 3);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 4, 3);
   Call1((void (*)())FieldEvent_Wait, 40);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xa000, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0x8000, 0);
-  Call3((void (*)())Actor_ArmCallback, 31, 0x6000, 0);
-  Call3((void (*)())Actor_ArmCallback, 4, 0x2000, 0);
-  Call3((void (*)())Actor_ArmCallback, 7, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTHWEST, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, FACING_WEST, 0);
+  Call3((void (*)())Actor_ArmCallback, 31, FACING_SOUTHWEST, 0);
+  Call3((void (*)())Actor_ArmCallback, 4, FACING_SOUTHEAST, 0);
+  Call3((void (*)())Actor_ArmCallback, 7, FACING_EAST, 0);
   Call1((void (*)())FieldEvent_Wait, 40);
   Call2((void (*)())Actor_SetModeById, 5, 3);
   Call2((void (*)())Actor_SetModeById, 6, 3);
@@ -347,8 +339,8 @@ L_02009764:
   object2 = Actor_GetById(4);
   if (object2 == 0)
     goto L_02009832;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 31,
-         *(s16 *)((u8 *)object2 + 10), *(s16 *)((u8 *)object2 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 31, *(s16 *)((u8 *)object2 + 10),
+         *(s16 *)((u8 *)object2 + 18));
 L_02009832:
   Call1((void (*)())Actor_WaitForMoveById, 31);
   Call3((void (*)())Func_02001db8, 31, 0, 0);
@@ -357,8 +349,8 @@ L_02009832:
   object3 = Actor_GetById(4);
   if (object3 == 0)
     goto L_02009870;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 6,
-         *(s16 *)((u8 *)object3 + 10), *(s16 *)((u8 *)object3 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 6, *(s16 *)((u8 *)object3 + 10),
+         *(s16 *)((u8 *)object3 + 18));
 L_02009870:
   Call1((void (*)())Actor_WaitForMoveById, 6);
   Call3((void (*)())Func_02001db8, 6, 0, 0);
@@ -367,8 +359,8 @@ L_02009870:
   object4 = Actor_GetById(4);
   if (object4 == 0)
     goto L_020098ae;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 7,
-         *(s16 *)((u8 *)object4 + 10), *(s16 *)((u8 *)object4 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 7, *(s16 *)((u8 *)object4 + 10),
+         *(s16 *)((u8 *)object4 + 18));
 L_020098ae:
   Call1((void (*)())Actor_WaitForMoveById, 7);
   Call3((void (*)())Func_02001db8, 7, 0, 0);
@@ -377,8 +369,8 @@ L_020098ae:
   object5 = Actor_GetById(4);
   if (object5 == 0)
     goto L_020098ec;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 5,
-         *(s16 *)((u8 *)object5 + 10), *(s16 *)((u8 *)object5 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 5, *(s16 *)((u8 *)object5 + 10),
+         *(s16 *)((u8 *)object5 + 18));
 L_020098ec:
   Call1((void (*)())Actor_WaitForMoveById, 5);
   Call3((void (*)())Func_02001db8, 5, 0, 0);
@@ -392,8 +384,8 @@ void Func_02001910(void) {
   Call3((void (*)())Func_02001e28, 28, 0, 10);
   Call3((void (*)())Actor_TurnToFaceEachOther, 4, 31, 0);
   Call1((void (*)())FieldEvent_Wait, 40);
-  Call3((void (*)())Actor_ArmCallback, 4, 0x6000, 0);
-  Call3((void (*)())Actor_ArmCallback, 31, 0x5000, 0);
+  Call3((void (*)())Actor_ArmCallback, 4, FACING_SOUTHWEST, 0);
+  Call3((void (*)())Actor_ArmCallback, 31, FACING_SOUTH + FACING_STEP, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 4, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
@@ -412,7 +404,7 @@ void Func_02001910(void) {
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 17, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 17, 0, 10);
-  Call2((void (*)())Func_02001e40, 5, 0x4000);
+  Call2((void (*)())Func_02001e40, 5, FACING_SOUTH);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 18, 3);
@@ -426,14 +418,14 @@ void Func_02001a20(void) {
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 17, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 17, 0, 10);
-  Call2((void (*)())Func_02001e40, 5, 0x4000);
+  Call2((void (*)())Func_02001e40, 5, FACING_SOUTH);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 4);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 5, 0, 10);
   Call3((void (*)())Actor_SetAngleToward, 6, 5, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 6, 0, 10);
-  Call2((void (*)())Func_02001e40, 5, 0xc000);
+  Call2((void (*)())Func_02001e40, 5, FACING_NORTH);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_02001e48, 17, 0x101, 30);
@@ -468,7 +460,7 @@ void Func_02001a20(void) {
   Call3((void (*)())Func_02001e28, 5, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call2((void (*)())Func_02001e40, 7, 0x2000);
+  Call2((void (*)())Func_02001e40, 7, FACING_SOUTHEAST);
   Call3((void (*)())Func_02001e28, 7, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
@@ -483,23 +475,23 @@ void Func_02001a20(void) {
   Call1((void (*)())GameFlag_SetBit, 0x981);
   Value3((s32 (*)())Func_02001e48, 15, 0x100, 30);
   Call3((void (*)())Func_02001e28, 15, 0, 10);
-  Call2((void (*)())Func_02001e40, 7, 0x6000);
+  Call2((void (*)())Func_02001e40, 7, FACING_SOUTHWEST);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 7, 0, 10);
-  Call3((void (*)())Actor_ArmCallback, 4, 0x6000, 0);
+  Call3((void (*)())Actor_ArmCallback, 4, FACING_SOUTHWEST, 0);
   Value3((s32 (*)())Func_02001e48, 27, 0x102, 30);
   Call3((void (*)())Func_02001e28, 27, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 31, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 31, 0, 10);
   Value3((s32 (*)())Func_02001e48, 5, 0x108, 30);
-  Call3((void (*)())Actor_ArmCallback, 5, 0x8000, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, FACING_WEST, 0);
   Call3((void (*)())Func_02001e28, 5, 0, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 17, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02001e28, 17, 0, 10);
-  Call2((void (*)())Func_02001e40, 5, 0x4000);
+  Call2((void (*)())Func_02001e40, 5, FACING_SOUTH);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 3);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 18, 3);

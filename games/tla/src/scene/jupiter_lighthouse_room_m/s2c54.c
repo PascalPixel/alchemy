@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_room_m.h"
+#include "scene_tables.h"
 
 extern s32 gData_02005a3c;
 
@@ -49,8 +50,8 @@ s32 Func_02002c54(void) {
   object->terrainHeight = 0;
   object = Actor_GetById(25);
   object->motionFlags = 0;
-  object->y = 0x200000;
-  object->terrainHeight = 0x200000;
+  object->y = PIXELS(32);
+  object->terrainHeight = PIXELS(32);
   if (GameFlag_Test_(514)) {
     Func_0200474c(49, 106, 4, 3, 49, 76);
     Func_02004744(49, 45, 4, 1, 49, 44);

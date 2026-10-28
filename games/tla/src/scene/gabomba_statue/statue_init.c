@@ -2,6 +2,7 @@
 #include "text/msg_ids.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 extern const u8 gData_02005944[];
 extern const u8 gData_02005d7c[];
@@ -47,7 +48,7 @@ void Func_020034f4(void) {
   }
   Func_020053bc(gData_02005d7c);
   if (!GameFlag_Test(0x8ce) || !GameFlag_Test(0x8cf))
-    Actor_GetById(26)->y = 0x100000;
+    Actor_GetById(26)->y = PIXELS(16);
   Func_02005824();
   Exit_Set(0, 513, 8, 9);
   Exit_Set(1, 514, 10, 11);

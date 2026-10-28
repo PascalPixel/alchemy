@@ -50,7 +50,7 @@ void Func_02000054(void) {
   MapCopy(17, 10, 1, 4, 19, 10);
   MapCopyAttr(17, 10, 1, 1, 19, 10);
   SetCollisionCode(0x1300000, 0xa00000, 0, 254);
-  Func_02001e70(14, 0x1f80000, 0xa80000);
+  Func_02001e70(14, PIXELS(504), PIXELS(168));
   if (GameFlag_Test(0xa00)) {
     Func_02000724(14);
     SetCollisionCode(0x1f00000, 0xa00000, 0, 254);

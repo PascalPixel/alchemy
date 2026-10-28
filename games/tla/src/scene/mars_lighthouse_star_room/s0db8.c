@@ -1,4 +1,5 @@
 #include "mars_lighthouse_star_room.h"
+#include "scene_tables.h"
 
 void Actor_SetSpritePriority(u32 id, s32 variant);
 void Actor_SetModeById(u32 id, s32 mode);
@@ -28,11 +29,11 @@ void Func_02000db8(s32 id) {
   object->priorityFlags |= 2;
   object->collisionFlags = 0;
   if (id == 13) {
-    Func_0200432c_(13, 175 << 18, 224 << 16);
+    Func_0200432c_(13, 175 << 18, PIXELS(224));
     Actor_SetModeById(13, 10);
     Func_0200423c_(39, 22, 2, 1, 43, id);
   } else {
-    Func_0200432c_(14, 165 << 18, 216 << 16);
+    Func_0200432c_(14, 165 << 18, PIXELS(216));
     Actor_SetModeById(14, 9);
     Func_0200423c_(31, 21, 2, 2, 40, 12);
   }

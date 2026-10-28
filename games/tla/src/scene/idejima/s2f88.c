@@ -1,9 +1,9 @@
 #include "types.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 
 struct ActorSprite {
   u8 unk00[18];
@@ -14,7 +14,7 @@ void Func_02002f88(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   Actor_SetSingleChildFlags(Actor_GetById(id), 0);
-  object->angle = 0x4000;
+  object->angle = FACING_SOUTH;
   object->motionFlags = 0;
   {
     s32 x = object->x;
@@ -24,7 +24,7 @@ void Func_02002f88(s32 id) {
     asm("" : "+l"(x));
     object->x = x + 0xc0000;
   }
-  object->y = 0x100000;
+  object->y = PIXELS(16);
   object->collisionFlags = 0;
   {
     /* FAKEMATCH(pin): the sprite pointer in r2; as a plain local, 8 of 32

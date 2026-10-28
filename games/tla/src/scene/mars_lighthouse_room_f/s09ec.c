@@ -1,6 +1,7 @@
 #include "room.h"
 #include "input.h"
 #include "macros.h"
+#include "scene_tables.h"
 
 extern s16 gData_02005f18[];
 
@@ -26,7 +27,7 @@ void Func_020009ec(void) {
   Flag_Set(0x350);
   if (!Flag_IsSet(0x351)) {
     Func_020055d0(0x20000, 0x4000);
-    Camera_SetBounds(0x2680000, -1, 0x180000, 1);
+    Camera_SetBounds(PIXELS(616), -1, PIXELS(24), 1);
     FieldEvent_Wait(60);
     Func_02005660();
     Func_020055f0(9);
@@ -36,7 +37,7 @@ void Func_020009ec(void) {
 void Func_02000aac(void) {
   Func_020027ac(3, 3);
   Func_020055d0(0x10000, 0x2000);
-  Camera_SetBounds(0xb80000, -1, 0x2300000, 1);
+  Camera_SetBounds(PIXELS(184), -1, PIXELS(560), 1);
 }
 
 void Func_02000ad8(void) {
@@ -50,7 +51,7 @@ void Func_02000ad8(void) {
   Flag_Clear(0x104);
   FieldEvent_Wait(60);
   Func_020055d0(0x30000, 0x6000);
-  Camera_SetBounds(0xb80000, -1, 0x2e80000, 1);
+  Camera_SetBounds(PIXELS(184), -1, PIXELS(744), 1);
   Func_020055e0();
   FieldEvent_Wait(60);
   Func_02005568();

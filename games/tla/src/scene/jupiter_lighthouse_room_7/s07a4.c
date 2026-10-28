@@ -11,6 +11,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test();
@@ -21,8 +22,7 @@ void FieldEvent_Wait(s32 frames);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02002c5c();
 s32 Func_02000194(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020002f0(void);
 void Actor_Stop(s32 id);
 void Func_02002ba4(s32 id, s32 a, s32 b);
@@ -86,7 +86,7 @@ void Func_020007a4(s32 unused, s32 id) {
     FieldEvent_Wait(10);
     Func_02002b6c();
     Func_02002c0c(0);
-    Camera_MoveWithinMapBounds(166 << 18, -1, 136 << 16, 1);
+    Camera_MoveWithinMapBounds(166 << 18, -1, PIXELS(136), 1);
     Func_02002bd4();
     FieldEvent_Wait(20);
     Call1(Func_02002c5c, 151);

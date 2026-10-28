@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void FieldEvent_Wait(s32 frames);
@@ -22,13 +23,13 @@ void Func_020001d8(void) {
   first->speedLimit = 0x20000;
   first->acceleration = 0x20000;
   first->motionFlags = 0;
-  Func_02001fa4(first, first->x + 0x60000, first->y + 0x80000, first->z);
+  Func_02001fa4(first, first->x + PIXELS(6), first->y + PIXELS(8), first->z);
   second =
       Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
   second->speedLimit = 0x20000;
   second->acceleration = 0x20000;
   second->motionFlags = 0;
-  Func_02001fa4(second, first->x + 0x80000, first->y - 0x40000, first->z);
+  Func_02001fa4(second, first->x + PIXELS(8), first->y - PIXELS(4), first->z);
   Func_02001fac(first);
   Func_02001f9c(first);
   Func_02001fac(second);

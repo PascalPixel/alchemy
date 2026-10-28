@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "flag_call.h"
 #include "call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_Stop(s32 actor);
@@ -22,7 +23,7 @@ void Func_0200036c(void) {
   Func_02001164(0);
   Call3((void (*)())Actor_ResetAndSetPosition, 17, 764, 384);
   Call3((void (*)())Actor_SetPositionAndCommit, 16, 746, 380);
-  Actor_GetById(17)->velocityY = 0x40000;
+  Actor_GetById(17)->velocityY = PIXELS(4);
   Actor_WaitForMoveById(17);
   Actor_GetById(17)->priorityFlags |= 2;
   if (!Flag_IsSet(0x8ff) && !Flag_IsSet(0x201)) {

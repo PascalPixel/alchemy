@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 void wait(s32 frames);
 void FieldEvent_Wait(s32 frames);
@@ -23,10 +24,10 @@ void Func_020024ac(void) {
   x >>= 20;
   z >>= 20;
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                                    (z << 4) + 8);
+                             (z << 4) + 8);
   wait(1);
-  Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
-                                   (z << 20) + 0x80000);
+  Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
+                                  (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_02002bdc()->y -= 0x80000;
 }

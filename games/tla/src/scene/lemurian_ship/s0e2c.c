@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "scene_tables.h"
 
 /// When actor 8 or 9 stands on its switch cell (column 35 or 29, row 9), lowers
 /// it, edits the map and sets flag 0x202 or 0x203; once both are set, the last
@@ -34,7 +35,7 @@ void Func_02000e2c(void) {
           wait(1);
         }
         Actor_SetModeById(8, 3);
-        LemurianShip_ObjPlace(10, 0x2380000, 0x980000);
+        LemurianShip_ObjPlace(10, PIXELS(568), PIXELS(152));
         FieldEvent_Wait(20);
         GameFlag_SetBit(0x202);
         if (object->z > leader->z) {
@@ -68,7 +69,7 @@ void Func_02000e2c(void) {
           wait(1);
         }
         Actor_SetModeById(9, 3);
-        LemurianShip_ObjPlace(11, 0x1d80000, 0x980000);
+        LemurianShip_ObjPlace(11, PIXELS(472), PIXELS(152));
         FieldEvent_Wait(20);
         GameFlag_SetBit(0x203);
         if (object->z > leader->z) {

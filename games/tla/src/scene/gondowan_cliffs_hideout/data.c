@@ -19,75 +19,29 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(104),
-    SCENE_EXIT_IF(1, 102, 3, 0xffffffff),
+    SCENE_EXIT_IF(1, 102, 3, -1),
     SCENE_EXITS_END,
 };
 
-s32 gData_02000270[] = {
-    (s32)0xffff019a,
-    (s32)gData_02000224,
-    0xd80000,
-    0,
-    0xb80000,
-    0x4000,
-    (s32)0xffff0132,
-    1,
-    0xd80000,
-    0,
-    0xb80000,
-    0x4000,
-    (s32)0xffff0053,
-    1,
-    1,
-    0,
-    0,
-    0x2008000,
-    (s32)0xffff0053,
-    1,
-    2,
-    0,
-    0,
-    0x200c000,
-    (s32)0xffff0053,
-    1,
-    3,
-    0,
-    0,
-    0x2004000,
-    (s32)0xffff0053,
-    1,
-    4,
-    0,
-    0,
-    0x2000000,
-    0xffff,
-    0,
-    0,
-    0,
-    0,
-    0,
+// clang-format off
+struct ActorPlacement gData_02000270[] = {
+    {410, CONDITION_ALWAYS, (s32)gData_02000224, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    {83, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_WEST, 0, 2},
+    {83, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 0, 2},
+    {83, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 0, 2},
+    {83, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_EAST, 0, 2},
+    {SCENE_TABLE_END},
 };
+// clang-format on
 
-s32 gData_02000318[] = {
-    (s32)0xffff019a,
-    (s32)gData_02000224,
-    0xd80000,
-    0,
-    0xb80000,
-    0x4000,
-    (s32)0xffff0132,
-    1,
-    0xd80000,
-    0,
-    0xb80000,
-    0x4000,
-    0xffff,
-    0,
-    0,
-    0,
-    0,
-    0,
+// clang-format off
+struct ActorPlacement gData_02000318[] = {
+    {410, CONDITION_ALWAYS, (s32)gData_02000224, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
 };
+// clang-format on
 
 struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},

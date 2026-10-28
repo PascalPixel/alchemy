@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Func_020031f0(s32 id) {
   Func_02005b8c(id);
@@ -32,7 +33,7 @@ void Func_0200324c(void) {
     asm("" : "+r"(zero));
     object->motionFlags = zero;
   }
-  Actor_GetById(15)->y = 0x200000;
+  Actor_GetById(15)->y = PIXELS(32);
   Actor_GetById(16)->y = zero;
   Func_02003220();
 }

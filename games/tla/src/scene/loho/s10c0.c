@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 extern char SceneId_Ov6A6Room1;
 
@@ -33,15 +34,15 @@ s32 Func_020010c0(void) {
   }
   if (GameFlag_Test(0xa5f)) {
     Func_02001348(20, 0, 0);
-    Func_02001350_(14, 0xf80000, 0x1e00000, 0);
+    Func_02001350_(14, PIXELS(248), PIXELS(480), FACING_EAST);
     if (!GameFlag_Test(0x90a)) {
       Func_02001348(17, 0, 0);
       Func_02001348(16, 0, 0);
       Func_02001348(18, 0, 0);
     } else {
-      Func_02001350_(16, 0x1cb0000, 0xfe0000, 0xe000);
-      Func_02001350_(18, 0x1ba0000, 0xcb0000, 0x8000);
-      Func_02001350_(17, 0x1ea0000, 0xbc0000, 0x2000);
+      Func_02001350_(16, PIXELS(459), PIXELS(254), FACING_NORTHEAST);
+      Func_02001350_(18, PIXELS(442), PIXELS(203), FACING_WEST);
+      Func_02001350_(17, PIXELS(490), PIXELS(188), FACING_SOUTHEAST);
       Actor_GetById(17)->action = Actor_GetById(17)->x >> 16;
       Actor_GetById(17)->unk66 = Actor_GetById(17)->z >> 16;
       Actor_SetMovementTypeById(17, 2);

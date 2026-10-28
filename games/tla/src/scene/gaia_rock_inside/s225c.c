@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
 #include "call.h"
+#include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -49,7 +50,7 @@ void Func_0200225c(void) {
   Func_02004e3c(partner, 1);
   Func_02004ec4(12, gMainRoutineWork.currentOwner);
   Call3(Actor_ResetAndSetPosition, 12, 528, 372);
-  partner->velocityY = 0x60000;
+  partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(12);
   FieldEvent_Wait(45);
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
@@ -90,8 +91,8 @@ void Func_0200225c(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
-                                       *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = 0x60000;
+                                *(s16 *)((u8 *)leader + 18));
+    partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
     if (!GameFlag_Test(0x927)) {
@@ -114,8 +115,8 @@ void Func_0200225c(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
-                                       *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = 0x60000;
+                                *(s16 *)((u8 *)leader + 18));
+    partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
     Func_02004e64();
@@ -137,7 +138,7 @@ void Func_020024b8(void) {
   Func_02004e3c(partner, 1);
   Func_02004ec4(12, gMainRoutineWork.currentOwner);
   Call3(Actor_ResetAndSetPosition, 12, 672, 372);
-  partner->velocityY = 0x60000;
+  partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(12);
   FieldEvent_Wait(45);
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
@@ -178,8 +179,8 @@ void Func_020024b8(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
-                                       *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = 0x60000;
+                                *(s16 *)((u8 *)leader + 18));
+    partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
     if (!GameFlag_Test(0x927)) {
@@ -202,8 +203,8 @@ void Func_020024b8(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
-                                       *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = 0x60000;
+                                *(s16 *)((u8 *)leader + 18));
+    partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
     Func_02004e64();
@@ -225,7 +226,7 @@ void Func_02002718(void) {
   Func_02004e3c(partner, 1);
   Func_02004ec4(14, gMainRoutineWork.currentOwner);
   Call3(Actor_ResetAndSetPosition, 14, 336, 396);
-  partner->velocityY = 0x60000;
+  partner->velocityY = PIXELS(6);
   Actor_WaitForMoveById(14);
   FieldEvent_Wait(45);
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
@@ -266,8 +267,8 @@ void Func_02002718(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
-                                       *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = 0x60000;
+                                *(s16 *)((u8 *)leader + 18));
+    partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(14);
     Func_02004ebc(14, 0, 0);
     if (!GameFlag_Test(0x927)) {
@@ -290,8 +291,8 @@ void Func_02002718(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
-                                       *(s16 *)((u8 *)leader + 18));
-    partner->velocityY = 0x60000;
+                                *(s16 *)((u8 *)leader + 18));
+    partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(14);
     Func_02004ebc(14, 0, 0);
     Func_02004e64();

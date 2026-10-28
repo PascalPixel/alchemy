@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -34,8 +35,7 @@ void FieldEvent_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetMovementTypeById(s32 id, const void *script);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
@@ -122,8 +122,8 @@ void Func_02000a28(void) {
   animation->frame = ((struct AnimationRecord18 *)lever->animation)->frame;
   if (Flag_Test(0x204) != 0 && animation->frame == 0) {
     Cue(0x217);
-    rock->x += -0x20000;
-    rock->velocityY = 0x20000;
+    rock->x += PIXELS(-2);
+    rock->velocityY = PIXELS(2);
     Flag_Clear(0x204);
   }
   if (animation->frame != 0)

@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
+#include "scene_tables.h"
 
 struct WarpTarget {
   s32 scene;
@@ -101,19 +102,18 @@ static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                        s32 acceleration) {
+                                                 s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
-                                                    s32 offset) {
+static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CenterOnColumn(id, column, offset);
 }
 
-static __inline__ void
-Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
+                                                           s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
@@ -247,14 +247,13 @@ void Func_020004a8(void) {
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
   if (GameFlag_Test(0xfbb) == 0) {
-    Func_02001c2c_(69, 0x3280000, 0x4980000);
+    Func_02001c2c_(69, PIXELS(808), PIXELS(1176));
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Func_02001bcc();
       Func_02001d04(0);
       Func_02001cac(gMainRoutineWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 16,
-                                                 0);
-      leader->velocityY = 0x60000;
+      Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 16, 0);
+      leader->velocityY = PIXELS(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02001bd4();
     }

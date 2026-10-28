@@ -2,11 +2,11 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 void Func_020056b4(struct Actor *object);
 void Func_0200580c(s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02005794(s32 id, s32 value);
 void FieldEvent_Wait(s32 frames);
 void wait(s32 frames);
@@ -27,9 +27,9 @@ void Func_02000a20(struct Actor *object) {
   Func_0200580c(0);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
-  object->y = 0x60000;
+  object->y = PIXELS(6);
   object->z = 0xf741cf;
-  object->angle = 0x4000;
+  object->angle = FACING_SOUTH;
   party = &gMainRoutineWork;
   /* FAKEMATCH: the native loads gMainRoutineWork's address among the stores
    * above and builds the owner's offset after them; the plain order builds the

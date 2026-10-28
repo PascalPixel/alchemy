@@ -19,9 +19,9 @@ void Func_02001634(void) {
   if (*timer == 300) {
     Func_02005388(162);
     Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(13),
-          0x1b80000, -0x140000, 0xcc0000);
+          PIXELS(440), PIXELS(-20), PIXELS(204));
     Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(15),
-          0x1b80000, -0x140000, 0xc80000);
+          PIXELS(440), PIXELS(-20), PIXELS(200));
     Actor_SetSpritePriority(13, 3);
     Actor_SetSpritePriority(15, 3);
     base->priorityFlags |= 2;
@@ -29,7 +29,7 @@ void Func_02001634(void) {
     Actor_SetModeById(13, 0);
     Actor_SetModeById(15, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
-    lift->y += 0x40000;
+    lift->y += PIXELS(4);
     Func_02000cd8(15, 0x4ccc, 0x4ccc);
     // y read as long, another alias set than the reads around it: GCSE then
     // keeps the reload after this call; as lift->y, 2 instructions move.
@@ -55,7 +55,7 @@ void Func_02001634(void) {
       }
     }
   } else {
-    lift->y += -0x40000;
+    lift->y += PIXELS(-4);
     Func_02000cf8(15, 0x4ccc, 0x4ccc);
     // y read as long, as above.
     if (*(long *)&lift->y < -0x50000)

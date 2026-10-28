@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Party_RemoveOwnerRestored(s32 owner);
 
@@ -13,10 +14,10 @@ void Func_02001218(void) {
   Actor_SetSpritePriority(
       7, Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority);
   wait(1);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0xa000, 0);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
   Kibombo_ObjWalk(7, 62, 444);
-  Kibombo_ObjTurn(7, 0x2000);
+  Kibombo_ObjTurn(7, FACING_SOUTHEAST);
   Func_02005b4c((s32)MsgNowThatIKnow);
   Kibombo_MessagePut(7, 0);
   Actor_GetById(7)->priorityFlags |= 1;

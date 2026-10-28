@@ -12,7 +12,7 @@ void Func_02003c54(void) {
      * (three reordered rows as a plain argument). */
     s32 angle = 0x3000;
 
-    Func_02005238_(12, 0x1880000, 0x1680000, angle);
+    Func_02005238_(12, PIXELS(392), PIXELS(360), angle);
   }
 }
 
@@ -41,7 +41,7 @@ void Func_02003c8c(void) {
        * (one reordered row as a plain argument). */
       s32 angle = 0x5000;
 
-      Func_02005238_(12, 0x1b00000, 0x18a0000, angle);
+      Func_02005238_(12, PIXELS(432), PIXELS(394), angle);
     } else {
       Func_02004fb4();
       if (GameFlag_Test_(0x849))
@@ -63,7 +63,7 @@ void Func_02003c8c(void) {
 
       Func_02005230_(12, 0, 0);
       angle = 0xb000;
-      Func_02005238_(15, 0x1980000, 0x2980000, angle);
+      Func_02005238_(15, PIXELS(408), PIXELS(664), angle);
     } else if (GameFlag_Test_(0x848)) {
       Func_02005230_(12, 0, 0);
       Func_02005230_(15, 0, 0);

@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 extern u8 MsgHereTheIntruder[];
 
@@ -32,12 +33,12 @@ void Func_02000af0(void) {
    * instructions differ in tla-en. */
   Func_02001084();
   Func_02001164(0);
-  Call3((void (*)())Func_020010d4, 23, 0xf80000, 0x1d80000);
-  Call3((void (*)())Func_020010d4, 24, 0x1080000, 0x1d80000);
-  Call3((void (*)())Func_020010d4, 25, 0xeb0000, 0x1e30000);
-  Call3((void (*)())Func_020010d4, 26, 0xe80000, 0x1f00000);
-  Call3((void (*)())Func_020010d4, 27, 0x1150000, 0x1e30000);
-  Call3((void (*)())Func_020010d4, 28, 0x1180000, 0x1f00000);
+  Call3((void (*)())Func_020010d4, 23, PIXELS(248), PIXELS(472));
+  Call3((void (*)())Func_020010d4, 24, PIXELS(264), PIXELS(472));
+  Call3((void (*)())Func_020010d4, 25, PIXELS(235), PIXELS(483));
+  Call3((void (*)())Func_020010d4, 26, PIXELS(232), PIXELS(496));
+  Call3((void (*)())Func_020010d4, 27, PIXELS(277), PIXELS(483));
+  Call3((void (*)())Func_020010d4, 28, PIXELS(280), PIXELS(496));
   Func_02000ad4(owner);
   Func_02000ad4(23);
   Func_02000ad4(24);

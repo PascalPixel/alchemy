@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Func_020050ac(void) {
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
@@ -13,7 +14,7 @@ void Func_020050ac(void) {
 }
 
 void Func_02005114(void) {
-  Func_02005b0c(11, 0x580000, 0x13a0000);
+  Func_02005b0c(11, PIXELS(88), PIXELS(314));
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->scaleY = 0x8000;
   Func_020050ac();

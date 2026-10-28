@@ -17,6 +17,7 @@ void Func_02001558(void) {
    * is loaded (one reordered row). */
   do {
   } while (0);
-  *(volatile u16 *)0x0400001e = offset;
-  Dma_Set(line + 1, (void *)0x0400001e, 0xa2600001, REG_DMA0);
+  REG_BG3VOFS = offset;
+  Dma_Set(line + 1, (void *)&REG_BG3VOFS, DMA_HBLANK_HALFWORD_PER_LINE,
+          REG_DMA0);
 }

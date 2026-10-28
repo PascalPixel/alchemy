@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 extern u8 gData_02006510[];
 extern u8 gData_020066d8[];
@@ -73,7 +74,7 @@ void Func_02000270(void) {
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(20);
   Func_02005b64(24, 0);
-  Kibombo_ObjTurn(24, 0x3000);
+  Kibombo_ObjTurn(24, FACING_SOUTHEAST + FACING_STEP);
   Func_02005aa4();
 }
 
@@ -163,7 +164,7 @@ void Func_0200042c(void) {
     Actor_SetAngleToward(36, gMainRoutineWork.currentOwner, 0);
     FieldEvent_Wait(10);
     Func_02005c8c(36);
-    Kibombo_ObjArm(36, 0xb000, 0);
+    Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
     Func_02005aa4();
   } else {
     Func_02005a9c();
@@ -174,7 +175,7 @@ void Func_0200042c(void) {
     Actor_SetAngleToward(36, gMainRoutineWork.currentOwner, 0);
     FieldEvent_Wait(10);
     Func_02005c8c(36);
-    Kibombo_ObjArm(36, 0xb000, 0);
+    Kibombo_ObjArm(36, FACING_NORTHWEST + FACING_STEP, 0);
     Kibombo_FlagSet(0x9df);
     Func_02005aa4();
   }
@@ -317,11 +318,11 @@ void Func_020007c8(void) {
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
   Func_02005ba4(0x9999, 0x1333);
-  Kibombo_CamMove(0x580000, -1, 0x1880000, 1);
+  Kibombo_CamMove(PIXELS(88), -1, PIXELS(392), 1);
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 72, 392);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, 88, 392);
-  Kibombo_ObjArm(7, 0x6000, 10);
+  Kibombo_ObjArm(7, FACING_SOUTHWEST, 10);
   Func_02005b4c((s32)MsgWhWhoAre);
   Func_02005b64(7, 0);
   Func_02005b1c(26, gMainRoutineWork.currentOwner);
@@ -354,37 +355,37 @@ void Func_020007c8(void) {
 }
 
 void Func_02000978(void) {
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0x8000, 20);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_WEST, 20);
   Func_02005b4c((s32)MsgItLooksLikeHas);
   FieldMessage_ShowAtActor(6, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Kibombo_ObjArm(5, 0x4000, 10);
+    Kibombo_ObjArm(5, FACING_SOUTH, 10);
     Actor_SetModeById(5, 3);
     Func_02005b64(5, 0);
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
   } else {
-    Kibombo_ObjArm(5, 0x4000, 10);
+    Kibombo_ObjArm(5, FACING_SOUTH, 10);
     Actor_SetModeById(5, 4);
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Func_02005b64(5, 0);
   }
   Kibombo_ObjEmote(7, 0x101, 20);
   Func_02005b64(7, 0);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0x2000, 0);
-  Kibombo_ObjArm(26, 0xb000, 0);
-  Kibombo_ObjArm(5, 0x6000, 0);
-  Kibombo_ObjArm(6, 0xe000, 40);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0xe000, 0);
-  Kibombo_ObjArm(26, 0xd000, 0);
-  Kibombo_ObjArm(5, 0, 0);
-  Kibombo_ObjArm(6, 0xe000, 20);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(5, FACING_SOUTHWEST, 0);
+  Kibombo_ObjArm(6, FACING_NORTHEAST, 40);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+  Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(5, FACING_EAST, 0);
+  Kibombo_ObjArm(6, FACING_NORTHEAST, 20);
   Func_02005b64(7, 0);
   Kibombo_ObjEmote(26, 0x100, 0);
   Func_02005b64(26, 0);
   Func_02005b64(7, 0);
   Func_02005b64(6, 0);
-  Kibombo_ObjArm(5, 0x4000, 40);
-  Kibombo_ObjArm(5, 0, 0);
+  Kibombo_ObjArm(5, FACING_SOUTH, 40);
+  Kibombo_ObjArm(5, FACING_EAST, 0);
   Func_02005b64(5, 0);
   Func_02005b64(7, 0);
   Kibombo_ObjEmote(6, 0x103, 0);
@@ -400,19 +401,19 @@ void Func_02000978(void) {
 void Func_02000b2c(void) {
   Func_02005b4c((s32)MsgHeSeemsTo);
   Func_02005b64(6, 0);
-  Kibombo_ObjArm(5, 0x4000, 10);
+  Kibombo_ObjArm(5, FACING_SOUTH, 10);
   Actor_SetModeById(5, 4);
   Func_02005b64(5, 0);
   Kibombo_ObjEmote(7, 0x101, 20);
   Func_02005b64(7, 0);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0x2000, 0);
-  Kibombo_ObjArm(26, 0xb000, 0);
-  Kibombo_ObjArm(5, 0x6000, 0);
-  Kibombo_ObjArm(6, 0xe000, 40);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0xe000, 0);
-  Kibombo_ObjArm(26, 0xd000, 0);
-  Kibombo_ObjArm(5, 0, 0);
-  Kibombo_ObjArm(6, 0xe000, 0);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  Kibombo_ObjArm(26, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(5, FACING_SOUTHWEST, 0);
+  Kibombo_ObjArm(6, FACING_NORTHEAST, 40);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+  Kibombo_ObjArm(26, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(5, FACING_EAST, 0);
+  Kibombo_ObjArm(6, FACING_NORTHEAST, 0);
   Func_02005b9c(7, 0x102);
   FieldEvent_Wait(20);
   Func_02005b64(7, 0);
@@ -420,8 +421,8 @@ void Func_02000b2c(void) {
   Func_02005b64(7, 0);
   Kibombo_ObjEmote(6, 0x109, 0);
   Func_02005b64(6, 0);
-  Kibombo_ObjArm(5, 0x6000, 40);
-  Kibombo_ObjArm(5, 0, 0);
+  Kibombo_ObjArm(5, FACING_SOUTHWEST, 40);
+  Kibombo_ObjArm(5, FACING_EAST, 0);
   Func_02005b64(5, 0);
   Func_02005b64(7, 0);
   Kibombo_ObjEmote(6, 0x103, 0);

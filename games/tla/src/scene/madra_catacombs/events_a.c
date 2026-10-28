@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct EventWork15a {
   u8 unk000[0x15a];
@@ -130,33 +131,33 @@ void Func_02000568(void) {
     wait(1);
   }
   Speed_Set(0x33333, 0x6666);
-  Camera_SetBounds(160 << 16, -1, 240 << 16, 1);
+  Camera_SetBounds(PIXELS(160), -1, PIXELS(240), 1);
   Func_02001174();
   Speed_Set(0x6666, 0xccc);
-  Camera_SetBounds(160 << 16, -1, 186 << 16, 1);
+  Camera_SetBounds(PIXELS(160), -1, PIXELS(186), 1);
   Func_02001214(168);
-  Actor_Place(14, 136 << 16, 258 << 16);
-  Actor_Place(19, 184 << 16, 258 << 16);
+  Actor_Place(14, PIXELS(136), PIXELS(258));
+  Actor_Place(19, PIXELS(184), PIXELS(258));
   Actor_SetMovementTypeById(14, gData_02001264);
   Actor_SetMovementTypeById(19, gData_02001264);
   FieldEvent_Wait(40);
   Func_02001214(168);
-  Actor_Place(13, 120 << 16, 226 << 16);
-  Actor_Place(18, 200 << 16, 226 << 16);
+  Actor_Place(13, PIXELS(120), PIXELS(226));
+  Actor_Place(18, PIXELS(200), PIXELS(226));
   Actor_SetMovementTypeById(13, gData_02001264);
   Actor_SetMovementTypeById(18, gData_02001264);
   FieldEvent_Wait(40);
   Func_02001214(168);
-  Actor_Place(12, 120 << 16, 194 << 16);
-  Actor_Place(17, 200 << 16, 194 << 16);
+  Actor_Place(12, PIXELS(120), PIXELS(194));
+  Actor_Place(17, PIXELS(200), PIXELS(194));
   Actor_SetMovementTypeById(12, gData_02001264);
   Actor_SetMovementTypeById(17, gData_02001264);
   FieldEvent_Wait(60);
   Func_02001214(229);
-  Actor_Place(11, 136 << 16, 162 << 16);
-  Actor_Place(16, 184 << 16, 162 << 16);
-  Actor_Place(10, 136 << 16, 138 << 16);
-  Actor_Place(15, 184 << 16, 138 << 16);
+  Actor_Place(11, PIXELS(136), PIXELS(162));
+  Actor_Place(16, PIXELS(184), PIXELS(162));
+  Actor_Place(10, PIXELS(136), PIXELS(138));
+  Actor_Place(15, PIXELS(184), PIXELS(138));
   Actor_SetMovementTypeById(11, gData_020012f4);
   Actor_SetMovementTypeById(16, gData_020012f4);
   Actor_SetMovementTypeById(10, gData_020012f4);

@@ -1,4 +1,5 @@
 #include "izumo.h"
+#include "io_reg.h"
 
 extern u32 gFrameCount;
 
@@ -86,34 +87,34 @@ void Func_0200060c(void) {
    * as the native's are; as do-while, while or for loops, 90 instructions
    * differ in tla-en. */
   if ((gFrameCount & 3) == 0) {
-    saved = *(volatile u16 *)0x0500007c;
+    saved = *(volatile u16 *)&BG_PLTT_COLOR(3, 14);
     index = 14;
   first:
-    palette = (u16 *)0x05000060;
+    palette = (u16 *)&BG_PLTT_COLOR(3, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto first;
-    *(volatile u16 *)0x05000062 = saved;
+    *(volatile u16 *)&BG_PLTT_COLOR(3, 1) = saved;
 
-    saved = *(volatile u16 *)0x0500009c;
+    saved = *(volatile u16 *)&BG_PLTT_COLOR(4, 14);
     index = 14;
   second:
-    palette = (u16 *)0x05000080;
+    palette = (u16 *)&BG_PLTT_COLOR(4, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto second;
-    *(volatile u16 *)0x05000082 = saved;
+    *(volatile u16 *)&BG_PLTT_COLOR(4, 1) = saved;
 
-    saved = *(volatile u16 *)0x050000bc;
+    saved = *(volatile u16 *)&BG_PLTT_COLOR(5, 14);
     index = 14;
   third:
-    palette = (u16 *)0x050000a0;
+    palette = (u16 *)&BG_PLTT_COLOR(5, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto third;
-    *(volatile u16 *)0x050000a2 = saved;
+    *(volatile u16 *)&BG_PLTT_COLOR(5, 1) = saved;
   }
 }

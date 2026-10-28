@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test();
@@ -28,7 +29,7 @@ void Func_02000a74(void) {
           Value1(GameFlag_Test, 2579) + Value1(GameFlag_Test, 2581) ==
       0)
     return;
-  Camera_MoveWithinMapBounds(148 << 18, -1, 248 << 16, 1);
+  Camera_MoveWithinMapBounds(148 << 18, -1, PIXELS(248), 1);
   Func_02002bd4();
   FieldEvent_Wait(10);
   if (Value1(GameFlag_Test, 2576))

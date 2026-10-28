@@ -2,6 +2,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Scene_SetArrivalFlags(s32 unused);
@@ -27,7 +28,7 @@ s32 Func_02000bf0(void) {
     Func_02000e04(16);
   }
   if (Flag_IsSet(0xa09)) {
-    Func_020028f8(11, 0xd80000, 0x2280000);
+    Func_020028f8(11, PIXELS(216), PIXELS(552));
     Func_02000e04(11);
   }
   return 0;

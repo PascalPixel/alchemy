@@ -1,12 +1,12 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Func_02002eb0(void);
 void Func_020032e0(void);
 void Func_02003610(void);
 
 void Func_020040cc(void) {
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
@@ -16,18 +16,18 @@ void Func_020040cc(void) {
   Kibombo_Wait(40);
   Kibombo_SePlay(78);
   Kibombo_CamSpeed(0xcccc, 0x1999);
-  Kibombo_CamMove(132 << 17, -1, 194 << 17, 1);
+  Kibombo_CamMove(PIXELS(264), -1, PIXELS(388), 1);
   Func_02005bb4();
-  Kibombo_ObjTurn(17, 0x3000);
+  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Motion_SetModeAndWaitAnimation(17, 3);
   Func_02005b4c((s32)MsgLetUsNow);
   Kibombo_MessagePut(0x4000 + 17, 0);
   Kibombo_SePlay(26);
   Actor_SetSingleChildFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
-  Kibombo_ObjSetPos(Actor_GetById(27), 0x1090000, 0x180000, 172 << 17);
+  Kibombo_ObjSetPos(Actor_GetById(27), PIXELS(265), PIXELS(24), PIXELS(344));
   Kibombo_CamSpeed(0x6666, 0xccc);
-  Kibombo_CamMove(132 << 17, -1, 170 << 17, 1);
+  Kibombo_CamMove(PIXELS(264), -1, PIXELS(340), 1);
   Kibombo_ObjSpeed(17, 0x3333, 0x1999);
   Kibombo_ObjWalk(17, 264, 374);
   wait(1);
@@ -58,14 +58,13 @@ void Func_02004294(void) {
   struct KibomboObject *object;
   s32 y;
 
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(27), 0);
   Actor_GetById(27)->motionFlags = 0;
-  Kibombo_ObjSetPos(Actor_GetById(27), 0x1090000, 0x180000, 172 << 17);
+  Kibombo_ObjSetPos(Actor_GetById(27), PIXELS(265), PIXELS(24), PIXELS(344));
   Func_02003640(1, 1);
   wait(1);
   if (gData_02007950 != 0) {
@@ -92,7 +91,7 @@ void Func_02004294(void) {
     object->motionFlags = 0;
     goto test;
     do {
-      Kibombo_ObjArm(17, 0xd000, 0);
+      Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
       /* FAKEMATCH(temporary): the slot's address reloaded each pass, as the
        * native does; as gData_02007950->y, 4 of 151 instructions differ in
        * tla-en. */
@@ -110,7 +109,7 @@ void Func_02004294(void) {
   }
   Motion_SetModeAndWaitAnimation(17, 4);
   Kibombo_MessagePut(17, 0);
-  Kibombo_ObjTurn(17, 0x3000);
+  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Kibombo_MessagePut(0x4000 + 17, 0);
   GameFlag_ClearBit(0x8f7);
   Kibombo_SePlay(11);

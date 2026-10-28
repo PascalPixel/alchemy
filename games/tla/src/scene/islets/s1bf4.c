@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "scene_tables.h"
 
 void Func_02003fbc(void);
 void Func_02003fc4(void);
@@ -19,8 +20,7 @@ void Func_02001a68(void) {
 
   Func_02003e64();
   Call1((void (*)())Func_02003fa4, 0);
-  Call3((void (*)())Actor_SetAngleToward, 9, gMainRoutineWork.currentOwner,
-        0);
+  Call3((void (*)())Actor_SetAngleToward, 9, gMainRoutineWork.currentOwner, 0);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call1((void (*)())Func_02003f24, (s32)MsgYouAllSet);
   Call2((void (*)())Func_02003f2c, 9, 0);
@@ -37,8 +37,8 @@ void Func_02001a68(void) {
     Call3((void (*)())Actor_Jump, gMainRoutineWork.currentOwner, 6, 0);
     Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
           0x19999, 0xcccc);
-    Call3((void (*)())Actor_SetPositionAndCommit,
-          gMainRoutineWork.currentOwner, 152, 0x300);
+    Call3((void (*)())Actor_SetPositionAndCommit, gMainRoutineWork.currentOwner,
+          152, 768);
     leader->update = (void (*)(void))Func_02001278;
     Call2((void (*)())Actor_SetPartAttribute,
           Actor_GetById(gMainRoutineWork.currentOwner), 15);
@@ -55,12 +55,10 @@ void Func_02001a68(void) {
     done = (u8 *)object + 99;
     *done = 0;
     object->update = update;
-    Call2((void (*)())Actor_SetMovementTypeById, 9,
-          (s32)gData_020045a4);
+    Call2((void (*)())Actor_SetMovementTypeById, 9, (s32)gData_020045a4);
     Call1((void (*)())FieldEvent_Wait, 30);
     Actor_GetById(10)->update = update;
-    Call2((void (*)())Actor_SetMovementTypeById, 10,
-          (s32)gData_020045f0);
+    Call2((void (*)())Actor_SetMovementTypeById, 10, (s32)gData_020045f0);
     do {
       Call1((void (*)())wait, 1);
     } while (*done == 0);
@@ -75,7 +73,7 @@ void Func_02001a68(void) {
     Func_02003fbc();
     Call1((void (*)())Func_02003f24, (s32)MsgYouAllSet + 4);
     Call2((void (*)())Func_02003f2c, 9, 0);
-    Call2((void (*)())Func_02003f3c, 9, 0x4000);
+    Call2((void (*)())Func_02003f3c, 9, FACING_SOUTH);
   }
   Func_02003e6c();
 }
@@ -86,7 +84,7 @@ void Func_02001bf4(void) {
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
   Func_02003f24((s32)MsgMyPopS);
   Func_02003f2c(9, 0);
-  Call2((void (*)())Func_02003f3c, 9, 0xb000);
+  Call2((void (*)())Func_02003f3c, 9, FACING_NORTHWEST + FACING_STEP);
   Func_02003e6c();
 }
 

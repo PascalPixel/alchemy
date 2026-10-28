@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "scene_tables.h"
 
 extern const u8 gData_02005944[];
 extern const u8 gData_02005d7c[];
@@ -49,8 +50,7 @@ void Func_02005774(s32 id, s32 value);
 void Func_020057b4(void);
 void Func_02004f40(s32 *x_out, s32 *z_out);
 struct Actor *Func_0200563c(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02005624(struct Actor *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct Actor *object);
@@ -122,12 +122,12 @@ void Func_02002f70(void) {
   Func_02005714(21, 0, 0);
   Func_02005714(22, 0, 0);
   wait(1);
-  Camera_SetBounds(220 << 17, -1, 182 << 16, 0);
+  Camera_SetBounds(PIXELS(440), -1, PIXELS(182), 0);
   Func_02005714(gMainRoutineWork.currentOwner, 0, 0);
   fast = 0x4000;
-  Actor_Slide(5, 236 << 17, 216 << 16, fast);
+  Actor_Slide(5, PIXELS(472), PIXELS(216), fast);
   slow = 0x3000;
-  Actor_Slide(24, 236 << 17, 200 << 16, slow);
+  Actor_Slide(24, PIXELS(472), PIXELS(200), slow);
   wait(1);
   Func_0200564c();
   wait(1);
@@ -135,19 +135,19 @@ void Func_02002f70(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_020057a4(0x13333, 0x2666);
-  Camera_SetBounds(220 << 17, -1, 156 << 17, 1);
+  Camera_SetBounds(PIXELS(440), -1, PIXELS(312), 1);
   Actor_SetSpeed(5, 0x10000, 0x8000);
   Actor_SetSpeed(24, 0x10000, 0x8000);
   Actor_SetMovementTypeById(5, gData_02005ccc);
   Actor_SetMovementTypeAndWaitById(24, gData_02005d24);
   Func_02005754(MsgGabombaSawEnergyFlow);
   Func_02005764(5, 0);
-  Actor_Turn(24, 0xb000, 0);
+  Actor_Turn(24, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_Walk(5, 440, 296);
-  Func_02005774_(5, 0);
+  Func_02005774_(5, FACING_EAST);
   Func_02005764(5, 0);
-  Actor_Turn(5, 0xa000, 0);
-  Camera_SetBounds(207 << 17, -1, 136 << 17, 1);
+  Actor_Turn(5, FACING_NORTHWEST, 0);
+  Camera_SetBounds(PIXELS(414), -1, PIXELS(272), 1);
   Func_020057b4();
   Func_02005764(5, 0);
   Func_02004f40(&x, &z);
@@ -168,21 +168,21 @@ void Func_02002f70(void) {
   Func_020057b4();
   Func_02005764(5, 0);
   Func_02005644(spark);
-  Camera_SetBounds(220 << 17, -1, 152 << 17, 1);
+  Camera_SetBounds(PIXELS(440), -1, PIXELS(304), 1);
   Func_020057b4();
-  Func_02005774_(5, 0x2000);
+  Func_02005774_(5, FACING_SOUTHEAST);
   Func_02005764(5, 0);
   Func_02005794(24, 258);
   FieldEvent_Wait(20);
   Func_02005764(24, 0);
-  Actor_Slide(gMainRoutineWork.currentOwner, 236 << 17, 204 << 16, fast);
-  Actor_Slide(7, 220 << 17, 204 << 16, fast);
-  Actor_Slide(23, 228 << 17, 204 << 16, slow);
-  Actor_Slide(6, 244 << 17, 204 << 16, fast);
+  Actor_Slide(gMainRoutineWork.currentOwner, PIXELS(472), PIXELS(204), fast);
+  Actor_Slide(7, PIXELS(440), PIXELS(204), fast);
+  Actor_Slide(23, PIXELS(456), PIXELS(204), slow);
+  Actor_Slide(6, PIXELS(488), PIXELS(204), fast);
   wait(1);
   Func_02005764(23, 0);
-  Actor_Turn(24, 0xd000, 0);
-  Camera_SetBounds(220 << 17, -1, 132 << 17, 1);
+  Actor_Turn(24, FACING_NORTH + FACING_STEP, 0);
+  Camera_SetBounds(PIXELS(440), -1, PIXELS(264), 1);
   Func_020057b4();
   Actor_Jump(24, 4, 10);
   Func_02005764(0x4018, 0);

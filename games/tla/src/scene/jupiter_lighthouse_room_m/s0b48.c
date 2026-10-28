@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_room_m.h"
+#include "scene_tables.h"
 
 extern u32 gData_02005524[];
 extern u32 gData_02005548[];
@@ -8,8 +9,7 @@ extern u32 gData_02005644[];
 extern u32 gData_0200569c[];
 
 void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 void Task_Add(void (*func)(void), s32 priority);
 s32 Func_02000a78(void);
@@ -42,10 +42,10 @@ void Func_02000b48(void) {
   ObjSpeed(27, 0x30000, 0x18000);
   ObjSpeed(0, 0x30000, 0x18000);
   ObjSpeed(2, 0x30000, 0x18000);
-  PLACE(0, 776, 202, 0x8000);
-  PLACE(2, 731, 232, 0xc000);
-  PLACE(27, 731, 213, 0x4000);
-  PLACE(26, 737, 202, 0);
+  PLACE(0, 776, 202, FACING_WEST);
+  PLACE(2, 731, 232, FACING_NORTH);
+  PLACE(27, 731, 213, FACING_SOUTH);
+  PLACE(26, 737, 202, FACING_EAST);
   Actor_SetMovementTypeById(0, gData_0200558c);
   Actor_SetMovementTypeById(2, gData_02005644);
   Actor_SetMovementTypeById(26, gData_020055ec);
@@ -54,17 +54,17 @@ void Func_02000b48(void) {
 }
 
 void Func_02000c08(void) {
-  PLACE(2, 757, 216, 0x2000);
-  PLACE(0, 761, 219, 0x2000);
-  PLACE(3, 816, 285, 0x2000);
-  PLACE(1, 824, 302, 0xc000);
-  PLACE(29, 821, 302, 0xc000);
+  PLACE(2, 757, 216, FACING_SOUTHEAST);
+  PLACE(0, 761, 219, FACING_SOUTHEAST);
+  PLACE(3, 816, 285, FACING_SOUTHEAST);
+  PLACE(1, 824, 302, FACING_NORTH);
+  PLACE(29, 821, 302, FACING_NORTH);
   Actor_SetSingleChildFlags(Actor_GetById(1), 0);
   Actor_SetMovementTypeById(1, gData_02005524);
   {
     /* FAKEMATCH: the priority passes through a block temporary, so 0x480 is
-     * built before the task function's address is loaded; as an argument, 2 of 57
-     * instructions differ in tla-en. */
+     * built before the task function's address is loaded; as an argument, 2 of
+     * 57 instructions differ in tla-en. */
     s32 priority = 0x480;
 
     Task_Add((void (*)(void))Func_02000a78, priority);

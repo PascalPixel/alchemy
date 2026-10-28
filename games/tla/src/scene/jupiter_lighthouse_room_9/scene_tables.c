@@ -50,11 +50,11 @@ void Func_02000090(s32 id) {
   if (gData_02002618 == 0) {
     object = Actor_GetById(8);
     if (id == 30) {
-      Value3(Func_02001c10, 8, 0x1280000, 0x2580000);
+      Value3(Func_02001c10, 8, PIXELS(296), PIXELS(600));
       object->y = 0;
-      object->angle = 0x8000;
+      object->angle = FACING_WEST;
     } else if (id == 31) {
-      Value3(Func_02001c10, 8, 0x880000, 0x2a80000);
+      Value3(Func_02001c10, 8, PIXELS(136), PIXELS(680));
       object->y = 0;
       object->angle = 0;
     }
@@ -67,23 +67,24 @@ void Func_020000e8(s32 id) {
   struct Actor *object;
   struct Actor *motion;
 
-  if (gData_02002618 == 0 && Actor_GetById(gMainRoutineWork.currentOwner)->y > 0) {
+  if (gData_02002618 == 0 &&
+      Actor_GetById(gMainRoutineWork.currentOwner)->y > 0) {
     object = Actor_GetById(8);
     if (id == 50) {
-      Value3(Func_02001c10, 8, 0x1e80000, 0x1180000);
-      object->y = 0x200000;
-      object->angle = 0x8000;
+      Value3(Func_02001c10, 8, PIXELS(488), PIXELS(280));
+      object->y = PIXELS(32);
+      object->angle = FACING_WEST;
     } else if (id == 51) {
-      Value3(Func_02001c10, 8, 0x1d80000, 0xb80000);
-      object->y = 0x200000;
-      object->angle = 0x8000;
+      Value3(Func_02001c10, 8, PIXELS(472), PIXELS(184));
+      object->y = PIXELS(32);
+      object->angle = FACING_WEST;
     } else if (id == 52) {
-      Value3(Func_02001c10, 8, 0x2680000, 0x1180000);
-      object->y = 0x200000;
+      Value3(Func_02001c10, 8, PIXELS(616), PIXELS(280));
+      object->y = PIXELS(32);
       object->angle = 0;
     } else if (id == 53) {
-      Value3(Func_02001c10, 8, 0x2780000, 0xb80000);
-      object->y = 0x200000;
+      Value3(Func_02001c10, 8, PIXELS(632), PIXELS(184));
+      object->y = PIXELS(32);
       object->angle = 0;
     }
     motion = Func_02000910(object);

@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -33,9 +34,8 @@ void Func_02000b6c(void) {
     Func_02004fcc(0);
     if (leader->x >> 20 == 38 && leader->z >> 20 == 25) {
       Call2(Func_02004f34, gMainRoutineWork.currentOwner, 258);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
-                                                0);
-      leader->velocityY = 0x60000;
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
+      leader->velocityY = PIXELS(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     }
     if (!GameFlag_Test(0x927)) {

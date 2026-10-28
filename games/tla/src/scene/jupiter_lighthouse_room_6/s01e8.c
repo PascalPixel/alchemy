@@ -2,6 +2,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "scene_tables.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
@@ -23,7 +24,7 @@ s32 Func_020001e8(void) {
 
   work->screenEffect = 0x204;
   if (JupiterLighthouseRoom6_FlagCheck(0xa19)) {
-    Func_02001b6c(12, 0x480000, 0x2580000);
+    Func_02001b6c(12, PIXELS(72), PIXELS(600));
     Func_020000b4(0);
   }
   if (GameFlag_Test(0x200))

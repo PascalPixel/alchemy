@@ -1,5 +1,6 @@
 #include "gabomba_statue_chamber.h"
 #include "call.h"
+#include "io_reg.h"
 
 void Func_02001d88(s32 a, s32 b, s32 c);
 void Func_02001eb8(s32 a, s32 b);
@@ -7,7 +8,7 @@ void Func_02001ec0(s32 a, s32 b);
 void Func_02001ec8(s32 frames);
 
 void Func_02000100(void) {
-  volatile u16 *color = (volatile u16 *)0x0500021e;
+  volatile u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
   struct GabombaStatueChamberEventWork *work;
 
   Actor_SetModeById(8, 2);

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "objcmd.h"
 
 void Func_02000038(void);
 void Func_0200013c(void);
@@ -20,21 +21,33 @@ extern u32 gData_02003188[];
 
 // clang-format off
 u32 gData_02003110[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_0200314c[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_02003188[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s16 gData_020031c4[] = {

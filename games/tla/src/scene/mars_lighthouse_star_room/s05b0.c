@@ -1,5 +1,6 @@
 #include "mars_lighthouse_star_room.h"
 #include "call.h"
+#include "scene_tables.h"
 
 void Func_02000d88(void);
 void Func_02004264(s32 a, s32 b, s32 c);
@@ -36,8 +37,8 @@ void Func_020005b0(void) {
   Call2((void (*)())Actor_SetModeById, 11, 2);
   Call2((void (*)())Actor_SetModeById, 12, 2);
   Call1((void (*)())FieldEvent_Wait, 24);
-  Call3((void (*)())Func_0200432c, 11, 0x2b80000, 0xe80000);
-  Call3((void (*)())Func_0200432c, 12, 0x2980000, 0xe80000);
+  Call3((void (*)())Func_0200432c, 11, PIXELS(696), PIXELS(232));
+  Call3((void (*)())Func_0200432c, 12, PIXELS(664), PIXELS(232));
   Call2((void (*)())Actor_SetModeById, 11, 3);
   Call2((void (*)())Actor_SetModeById, 12, 3);
   Call1((void (*)())Func_0200446c, 107);

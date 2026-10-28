@@ -33,8 +33,9 @@ next:
     goto next;
   i = 0;
 next2:
-  RegSet(0x3f42, 0x04000050);
-  RegSet(gData_02001678[i], 0x04000052);
+  RegSet(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
+         (s32)&REG_BLDCNT);
+  RegSet(gData_02001678[i], (s32)&REG_BLDALPHA);
   wait(8);
   i++;
   if (i <= 7)

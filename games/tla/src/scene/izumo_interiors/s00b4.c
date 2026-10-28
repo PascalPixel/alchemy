@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -63,11 +64,11 @@ static inline void ActorAnimate(s32 actor, s32 animation, s32 frames) {
 }
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer; called as
-   * value-returning, the animation and frames are set before the owner is
-   * loaded (differ 4 as a void call). */
-  ((s32 (*)(s32, s32, s32))Func_0200226c)(gMainRoutineWork.currentOwner, animation,
-                                          frames);
+  /* FAKEMATCH: scene calls reach the main image through one inline layer;
+   * called as value-returning, the animation and frames are set before the
+   * owner is loaded (differ 4 as a void call). */
+  ((s32 (*)(s32, s32, s32))Func_0200226c)(gMainRoutineWork.currentOwner,
+                                          animation, frames);
 }
 
 const u8 *Func_020000b4(void) {
@@ -203,7 +204,7 @@ void Func_02000378(void) {
     if (PartyInventory_FindOwner(451) != -1)
       FIELD_AT(work, u16, 346) = 1;
   }
-  ActorTurn(15, 0x4000, 0);
+  ActorTurn(15, FACING_SOUTH, 0);
   Func_020021cc();
 }
 
@@ -247,6 +248,6 @@ void Func_02000458(void) {
     }
     FlagSet(0x92b);
   }
-  ActorTurn(15, 0x4000, 0);
+  ActorTurn(15, FACING_SOUTH, 0);
   Func_020021cc();
 }

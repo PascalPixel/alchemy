@@ -19,7 +19,7 @@ void Func_020032d8(void) {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 107);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_020030cc();
   }
@@ -34,7 +34,7 @@ void Func_02003348(void) {
   } else {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 280, 136);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_020030cc();
   }
@@ -49,7 +49,7 @@ void Func_020033b0(void) {
   } else {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_020030cc();
   }

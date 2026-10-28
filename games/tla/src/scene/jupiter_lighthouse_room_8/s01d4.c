@@ -1,5 +1,6 @@
 #include "types.h"
 #include "field_event.h"
+#include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -24,7 +25,7 @@ s32 Func_020001d4(void) {
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;
     object->y = -0x200000;
-    Func_02002228_(10, 0x680000, 0xe80000);
+    Func_02002228_(10, PIXELS(104), PIXELS(232));
     Func_020021e0(object->x, object->z, 0, 0);
     Func_020022c0(object->x, object->z, 0, 128);
   }

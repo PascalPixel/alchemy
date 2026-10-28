@@ -2,6 +2,7 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 extern char SceneId_Ov65FRoom1;
 extern char SceneId_Ov65FRoom2;
@@ -33,7 +34,7 @@ s32 Func_02000aa8(void) {
        * 0x4000), 4 of 128 instructions differ in tla-en. */
       s32 angle = 0x4000;
 
-      Value4((s32 (*)())Func_02005214, 10, 0x1480000, 0xa20000, angle);
+      Value4((s32 (*)())Func_02005214, 10, PIXELS(328), PIXELS(162), angle);
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
     Func_020052f4(0);

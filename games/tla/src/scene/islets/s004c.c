@@ -1,4 +1,5 @@
 #include "islets.h"
+#include "scene_tables.h"
 
 u8 *Func_0200004c(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -35,8 +36,8 @@ void Func_020000d8(void) {
     object->priorityFlags |= 2;
     object->motionFlags = 0;
     object->velocityY = 0;
-    object->y = 0xfff80000;
-    object->terrainHeight = 0xfff80000;
+    object->y = PIXELS(-8);
+    object->terrainHeight = PIXELS(-8);
     Func_02003e24(9, 1, 4, 1, 9, 10);
     Func_02003e24(9, 8, 4, 1, 9, 9);
     Func_02003e24(9, 64, 4, 1, 9, 74);

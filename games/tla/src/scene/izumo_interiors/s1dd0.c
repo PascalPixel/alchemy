@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 
 s32 Event_AskYesNoWithActorAnimation();
 void FieldEvent_Wait();
@@ -39,12 +40,13 @@ void Func_02001dd0(void) {
   Func_020021c4();
   Call1(Func_020022bc, 0);
   Call1(Func_02002244, (s32)&MsgAhCouldIt);
-  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 144, 0x218);
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 144, 536);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Call1(FieldEvent_Wait, 15);
   Value3((s32 (*)())Func_0200226c, 15, 0x100, 60);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 15, 0);
-  t9 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
+  t9 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+              0);
   if (t9 != 0)
     goto L_02009e3a;
   Call1(Func_02002244, ((s32)&MsgAhCouldIt + 1));
@@ -65,11 +67,11 @@ L_02009e48:
   Call2(Func_020022fc, t21, 2);
   Call1(Func_0200231c, 201);
   Call1(FieldEvent_Wait, 60);
-  Call3(Func_02002214, 24, 0x900000, 0x2080000);
+  Call3(Func_02002214, 24, PIXELS(144), PIXELS(520));
   Call3(Actor_Jump, 24, 6, 0);
-  Call3(Actor_ResetAndSetPosition, 24, 160, 0x208);
+  Call3(Actor_ResetAndSetPosition, 24, 160, 520);
   Call1(Actor_WaitForMoveById, 24);
-  Call3(Actor_ArmCallback, 24, 0x4000, 0);
+  Call3(Actor_ArmCallback, 24, FACING_SOUTH, 0);
   Call1(FieldEvent_Wait, 60);
   t31 = Value1(Actor_GetById, 15);
   Call2(Func_020022fc, t31, 0);

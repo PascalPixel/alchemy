@@ -1,6 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
+#include "objcmd.h"
 
 void Func_02000038(void);
 void Func_02000060(void);
@@ -201,8 +202,11 @@ s32 gData_020045b8[] = {
 };
 
 u32 gData_02004744[] = {
-    0, 30, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_WAIT(30),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 
 u32 gData_02004774[] = {
@@ -229,33 +233,47 @@ s32 gData_0200483c[] = {
 };
 
 u32 gData_0200485c[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_02004898[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_020048d4[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 s32 gData_02004910[] = {
-    46,
-    (s32)Func_02000038,
-    17,
+    SC_CALL(Func_02000038),
+    SC_END,
 };
 
 s32 gData_0200491c[] = {
-    23, 9, 0x400, 23, 10, 0x400,
-    23, 6, -0x4000, 0, 1, 13,
-    40, 0, 17,
+    SC_ADD(SW_SCALE_X, 0x400),
+    SC_ADD(SW_SCALE_Y, 0x400),
+    SC_ADD(SW_Y, -0x4000),
+    SC_WAIT(1),
+    SC_LOOP(40, SC_TOP),
+    SC_END,
 };
 
 s32 gData_02004958[] = {

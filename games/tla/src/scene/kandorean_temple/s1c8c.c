@@ -54,7 +54,7 @@ void Func_02001d40(void) {
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
   Func_02005280((s32)&MsgKandoreanTemple02);
   Func_020052a0(9, 0);
-  Actor_GetById(9)->angle = 0x3000;
+  Actor_GetById(9)->angle = FACING_SOUTHEAST + FACING_STEP;
   wait(1);
   Actor_SetMovementTypeById(9, gData_02005514);
   wait(1);
@@ -68,7 +68,7 @@ void Func_02001db4(void) {
   Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
   Func_02005280((s32)&MsgKandoreanTemple03);
   Func_02005298(10, 0);
-  Actor_GetById(10)->angle = 0x5000;
+  Actor_GetById(10)->angle = FACING_SOUTH + FACING_STEP;
   wait(1);
   Func_020051c8();
   GameFlag_SetBit(0x846);
@@ -110,9 +110,9 @@ void Func_02001e58(void) {
   }
   Func_020051c0();
   Func_02005370(0);
-  /* FAKEMATCH: the flags address, the zero and gMainRoutineWork's address are taken
-   * before an empty asm, which holds the byte store below the address load as
-   * the native has it; the plain store goes first (differ 2). */
+  /* FAKEMATCH: the flags address, the zero and gMainRoutineWork's address are
+   * taken before an empty asm, which holds the byte store below the address
+   * load as the native has it; the plain store goes first (differ 2). */
   flags = &leader->motionFlags;
   zero = 0;
   party = &gMainRoutineWork;
@@ -120,10 +120,10 @@ void Func_02001e58(void) {
   *flags = zero;
   Actor_SetSpeedParameters(party->currentOwner, 0x10000, 0x8000);
   Actor_SetPositionAndReset(party->currentOwner, 168, 80);
-  Func_020052b0(party->currentOwner, 0xc000);
+  Func_020052b0(party->currentOwner, FACING_NORTH);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   Actor_SetModeById(party->currentOwner, 13);
-  Func_02005160(leader, 0xa80000, -0xc0000, 0x500000);
+  Func_02005160(leader, PIXELS(168), PIXELS(-12), PIXELS(80));
   Func_02005168(leader);
   Actor_SetModeById(party->currentOwner, 10);
   Func_020053d8(123);

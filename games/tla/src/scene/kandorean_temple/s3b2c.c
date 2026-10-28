@@ -15,20 +15,20 @@ void Func_02003b2c(void) {
     Func_02005178_(2, 0, 2, 3, 17, 24);
     Func_02005230(9, 0, 0);
     Func_02005230(10, 0, 0);
-    Func_02005238_(11, 0x1760000, 0x11a0000, 0);
+    Func_02005238_(11, PIXELS(374), PIXELS(282), FACING_EAST);
     {
       /* FAKEMATCH: a temporary builds the angle ahead of the other arguments
        * (three reordered rows as a plain argument). */
       s32 angle = 0xd000;
 
-      Func_02005238_(12, 0x1100000, 0x1280000, angle);
+      Func_02005238_(12, PIXELS(272), PIXELS(296), angle);
     }
     {
       /* FAKEMATCH: a temporary builds the angle ahead of the other arguments
        * (three reordered rows as a plain argument). */
       s32 angle = 0x3000;
 
-      Func_02005238_(13, 0xd80000, 0x1080000, angle);
+      Func_02005238_(13, PIXELS(216), PIXELS(264), angle);
     }
   } else {
     Func_02003ae4(11, 0);

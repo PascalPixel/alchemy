@@ -1,4 +1,5 @@
 #include "jupiter_lighthouse_room_m.h"
+#include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -25,7 +26,7 @@ void Func_020008c8(void) {
   Func_020047d4();
   Func_0200494c(0);
   Func_020049c4(125);
-  Camera_MoveWithinMapBounds(776 << 16, -1, 208 << 16, 1);
+  Camera_MoveWithinMapBounds(PIXELS(776), -1, PIXELS(208), 1);
   Func_020048f4();
   FieldEvent_Wait(6);
   Func_0200474c_(49, 103, 4, 3, 49, 76);

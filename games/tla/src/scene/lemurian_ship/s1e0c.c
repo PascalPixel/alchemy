@@ -1,5 +1,6 @@
 #include "lemurian_ship.h"
 #include "flag_call.h"
+#include "scene_tables.h"
 
 void Func_020013f0(void);
 void Func_02001944(s32 id, s32 platform);
@@ -9,8 +10,8 @@ void Func_02001dc8(s32 id);
 /// Places a platform object at its raised position.
 #define RAISE(id, x, z)                                                        \
   {                                                                            \
-    LemurianShip_ObjSetPos(Actor_GetById(id), x, -0x200000, z);               \
-    Actor_GetById(id)->height = -0x200000;                                    \
+    LemurianShip_ObjSetPos(Actor_GetById(id), x, PIXELS(-32), z);              \
+    Actor_GetById(id)->height = -0x200000;                                     \
   }
 
 void Func_02001e0c(void) {
@@ -23,7 +24,8 @@ void Func_02001e0c(void) {
     struct LemurianShipObject *object = Actor_GetById(15);
 
     object->motionFlags = 0;
-    LemurianShip_ObjSetPos(Actor_GetById(15), 206 << 18, -0x200000, 144 << 15);
+    LemurianShip_ObjSetPos(Actor_GetById(15), 206 << 18, PIXELS(-32),
+                           144 << 15);
     object->height = -0x200000;
     if (GameFlag_Test(0x212))
       LemurianShip_BlendStart(110, 1, 3, 1, 110, 4);

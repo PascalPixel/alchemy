@@ -1,5 +1,6 @@
 #include "mars_lighthouse_aerie.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 void Func_02004da0(void) {
   Func_0200560c();
@@ -11,10 +12,10 @@ void Func_02004da0(void) {
   Func_020056dc(MsgIUnderstandYour);
   Func_020056f4(2, 0);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-  Func_02005704(2, 0x8000);
+  Func_02005704(2, FACING_WEST);
   Func_02004d50(2);
 #else
-  MarsLighthouseAerie_ObjTurn(2, 0x8000);
+  MarsLighthouseAerie_ObjTurn(2, FACING_WEST);
 #endif
   Func_02005614();
 }

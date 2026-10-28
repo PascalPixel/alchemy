@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -72,24 +73,24 @@ L_02008694:
   Func_02001bcc();
   Call1(Func_02001d04, 0);
   Call1(Func_02001c6c, (s32)&MsgAreYouKids);
-  Call3(Func_02001c2c, 12, 0x3680000, 0x3700000);
+  Call3(Func_02001c2c, 12, PIXELS(872), PIXELS(880));
   t12 = Value1(Actor_GetById, 12);
   Call2(Animation_SetIndexAndInitializeObjects, t12, 43);
   Call2(Actor_SetModeById, 12, 3);
-  Call3(Actor_ArmCallback, 12, 0x5000, 0);
+  Call3(Actor_ArmCallback, 12, FACING_SOUTH + FACING_STEP, 0);
   Call3(Func_02001c7c, 12, 0, 10);
-  Call4(Camera_MoveWithinMapBounds, 0x3680000, -1, 0x3080000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(776), 1);
   Func_02001cc4();
   Call1(FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_02001ca4, 12, 0x109, 30);
   Call3(Func_02001c7c, 12, 0, 10);
   Call2(Motion_SetModeAndWaitAnimation, 12, 4);
   Call3(Func_02001c7c, 12, 0, 10);
-  Call4(Camera_MoveWithinMapBounds, 0x3680000, -1, 0x3580000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(856), 1);
   Func_02001cc4();
   Call1(FieldEvent_Wait, 20);
   Call3(Func_02001c7c, 12, 0, 10);
-  Call4(Camera_MoveWithinMapBounds, 0x3680000, -1, 0x3a00000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(928), 1);
   Func_02001cc4();
   t30 = Value1(Func_02001bbc, 133);
   v5 = t30;
@@ -104,28 +105,28 @@ L_02008778:
 L_02008788:
   Call1(Func_02001c6c, (s32)&MsgWhatSThe);
   Call1(FieldEvent_Wait, 20);
-  Call3(Actor_SetPositionAndReset, 4, 0x358, 0x3b8);
-  Call2(Func_02001c94, 4, 0xc000);
+  Call3(Actor_SetPositionAndReset, 4, 856, 952);
+  Call2(Func_02001c94, 4, FACING_NORTH);
   Call1(FieldEvent_Wait, 10);
   Value3((s32 (*)())Func_02001ca4, 4, 0x105, 60);
-  Call4(Camera_MoveWithinMapBounds, 0x3680000, v5, 0x3180000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(872), v5, PIXELS(792), 1);
   Func_02001cc4();
   Call1(FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_02001ca4, 12, 0x101, 30);
   Call3(Func_02001c7c, 12, 0, 10);
-  Call4(Camera_MoveWithinMapBounds, 0x3680000, v5, 0x3580000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(872), v5, PIXELS(856), 1);
   Call3(Actor_Jump, 12, 4, 0);
-  Call3(Actor_SetPositionAndReset, 12, 0x368, 0x390);
+  Call3(Actor_SetPositionAndReset, 12, 872, 912);
   Call1(FieldEvent_Wait, 20);
   Call3(Actor_SetSpeedParameters, 12, 0x10000, 0x8000);
   Call3(Actor_CommitPositionAndActivate, 12, -32, 0);
-  Call2(Func_02001c94, 12, 0x3000);
-  Call4(Camera_MoveWithinMapBounds, 0x3500000, v5, 0x3880000, 1);
+  Call2(Func_02001c94, 12, FACING_SOUTHEAST + FACING_STEP);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(848), v5, PIXELS(904), 1);
   Func_02001cc4();
   Call1(FieldEvent_Wait, 15);
   Call3(Func_02001c7c, 12, 0, 5);
-  Call3(Func_02001c2c, 28, 0x3480000, 0x3980000);
-  Call3(Func_02001c2c, 27, 0x3480000, 0x3a80000);
+  Call3(Func_02001c2c, 28, PIXELS(840), PIXELS(920));
+  Call3(Func_02001c2c, 27, PIXELS(840), PIXELS(936));
   Value3((s32 (*)())Func_02001d2c, 1, 28, 27);
   Call3(Func_02001d34, 1, 28, 27);
   Call1(FieldEvent_Wait, 30);

@@ -1,5 +1,6 @@
 #include "lemurian_ship.h"
 #include "macros.h"
+#include "scene_tables.h"
 
 void Func_0200155c(void) {
   struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
@@ -34,7 +35,7 @@ void Func_020015c8(void) {
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
     Actor_SetSingleChildFlags(object, 0);
     Func_02002bf0(object, 0);
-    Func_02002c18(object, 0x3280000, 0x80000, 0x8c0000);
+    Func_02002c18(object, PIXELS(808), PIXELS(8), PIXELS(140));
     Func_02002bf8(object, gData_02003ef8);
   }
 }

@@ -4,6 +4,7 @@
 #include "map.h"
 #include "actor.h"
 #include "ram_buffer.h"
+#include "scene_tables.h"
 
 /// The halves of a 16.16 coordinate. Read through an s16 pointer instead, the
 /// high half's offset folds into the coordinate's (differ 11).
@@ -38,17 +39,16 @@ void Func_020005b8(void) {
     return;
 #endif
   if (((struct FixedHalves *)&map->viewZ)->whole <= 177) {
-    ((struct SpriteRecord *)((struct FieldSprite *)Actor_GetById(36)
-                                 ->animation)
+    ((struct SpriteRecord *)((struct FieldSprite *)Actor_GetById(36)->animation)
          ->record)
         ->unk05 = 1;
     if (gFrameCount & 1) {
-      Func_02005884(36, 0x2000000, 0x1080000);
+      Func_02005884(36, PIXELS(512), PIXELS(264));
       Actor_GetById(36)->y = 0x6f8000;
       Actor_GetById(36)->scaleX = 0x10000;
       Actor_GetById(36)->scaleY = 0x10000;
     } else {
-      Func_02005884(36, 0x2000000, 0x1080000);
+      Func_02005884(36, PIXELS(512), PIXELS(264));
       Actor_GetById(36)->y = 0x688000;
       Actor_GetById(36)->scaleX = 0x14ccc;
       Actor_GetById(36)->scaleY = 0x14ccc;

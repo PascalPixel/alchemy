@@ -1,5 +1,6 @@
 #include "room.h"
 #include "edition.h"
+#include "io_reg.h"
 
 void Func_020002f8(void) {
   if ((gFrameCount & 7) == 0) {
@@ -8,26 +9,26 @@ void Func_020002f8(void) {
     s16 saved;
     s32 index;
 
-    saved = *(volatile u16 *)0x05000172;
+    saved = *(volatile u16 *)&BG_PLTT_COLOR(11, 9);
     index = 9;
   first:
-    palette = (u16 *)0x05000160;
+    palette = (u16 *)&BG_PLTT_COLOR(11, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 4)
       goto first;
-    slot = (volatile u16 *)0x05000168;
+    slot = (volatile u16 *)&BG_PLTT_COLOR(11, 4);
     *slot = saved;
     slot += 11;
     saved = *slot;
     index = 15;
   second:
-    palette = (volatile u16 *)0x05000160;
+    palette = (volatile u16 *)&BG_PLTT_COLOR(11, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 12)
       goto second;
-    *(volatile u16 *)0x05000178 = saved;
+    *(volatile u16 *)&BG_PLTT_COLOR(11, 12) = saved;
   }
 }
 

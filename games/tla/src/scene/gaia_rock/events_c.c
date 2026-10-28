@@ -5,6 +5,7 @@
 #include "scene_ids.h"
 #include "call.h"
 #include "event_work.h"
+#include "scene_tables.h"
 
 struct SceneEntrance;
 
@@ -57,9 +58,9 @@ void Func_020002c0(void) {
     return;
   done = GameFlag_Test(0xf74);
   if (done == 0) {
-    Call3((void (*)())Func_02000e8c, 64, 0x2910000, 0xf60000);
+    Call3((void (*)())Func_02000e8c, 64, PIXELS(657), PIXELS(246));
     object->motionFlags = done;
-    object->y = 0x500000;
+    object->y = PIXELS(80);
   }
 }
 

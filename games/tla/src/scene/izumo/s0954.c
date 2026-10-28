@@ -1,5 +1,6 @@
 #include "izumo.h"
 #include "task.h"
+#include "scene_tables.h"
 
 void Func_02000954(void) {
   if (!GameFlag_Test(2346)) {
@@ -14,7 +15,8 @@ void Func_02000954(void) {
      * flags are loaded before the actor: one reordered pair with the header's
      * void prototype). */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+        0) {
       Func_02000814();
     } else {
       Func_02000d60(message - 1);
@@ -48,7 +50,7 @@ s32 Func_020009d0(void) {
       Func_020006a4();
     }
     if (GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
-      Call3((void (*)())Func_02000d40, 32, 200 << 16, 216 << 16);
+      Call3((void (*)())Func_02000d40, 32, PIXELS(200), PIXELS(216));
       Actor_SetSpritePriority(32, 3);
       Actor_GetById(32)->motionFlags |= 2;
       GameFlag_SetBit(0x302);

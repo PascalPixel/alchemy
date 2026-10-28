@@ -4,7 +4,7 @@
 // Twin: The Broken Seal's BattleEffect_RunStatReduction (effect.c), call for
 // call. The Lost Age adds mode 3 (the dagger in the glow palette), reads
 // the effect from its argument, takes its heap blocks as Ram_HeapSlots
-// fields and orders the callback 0xc80. Resources not yet named in
+// fields and gives its task the priority 0xc80. Resources not yet named in
 // directory.s, by row and asset: 0x15f BattleEffect_DaggerSheet, 0x15e
 // BattleEffect_ShieldSheet, 0x17f BattleEffect_PinkBurstSheet, 0x17b
 // BattleEffect_GlowOrbSheet and 0x160 BattleEffect_PaletteRampImage.

@@ -2,7 +2,7 @@
 #include "adventure.h"
 #include "task.h"
 
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Func_020003e8(void);
 void Func_02000f98(void);
 void Func_02001500(void);

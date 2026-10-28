@@ -20,7 +20,7 @@ extern struct SceneState gSceneState;
 
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Func_020038ac(void);
 void Func_02003974(void);
 s32 Func_02003a64(s32 value);

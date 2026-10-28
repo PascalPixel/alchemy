@@ -67,8 +67,8 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void ResourceObject_ReleaseFar(void *object);
 void Sound_PlayFar(s32 cue);

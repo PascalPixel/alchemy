@@ -19,7 +19,7 @@ struct SparkWork {
   s16 resource;
 };
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 
 void VenusLighthouseEntrance_StopSparks(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;

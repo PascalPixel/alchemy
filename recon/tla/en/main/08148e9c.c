@@ -13,7 +13,7 @@
 // and (188, 0x17), the transfer callback at 0xc80, the shape table
 // gData_081979ae (☀️ gVortices_Shapes) and the glint cell tables
 // gData_08197486/92/98, Func_08118088 for the struck targets, and the two
-// blitters released before the callback is removed, as ☀️ does.
+// blitters released before the task function is removed, as ☀️ does.
 
 // Same frame, registers and instruction count. What is left is order: each
 // row a load (pool word, work slot, the argument spill) that the native

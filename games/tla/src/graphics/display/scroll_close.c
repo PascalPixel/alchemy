@@ -4,7 +4,7 @@
 extern const void *gDisplayScroll_LineTable[];
 extern u32 *gDisplayScroll_Objects;
 s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Remove(void (*func)(void));
 void Func_081a0cac(void);
 void Func_081a0d78(void);
 

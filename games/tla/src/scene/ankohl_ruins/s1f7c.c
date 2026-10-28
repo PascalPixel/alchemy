@@ -1,6 +1,6 @@
 #include "ankohl_ruins.h"
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 
 /// Each frame, moves the raft (object 9) down by 0xcccc and carries the leader
 /// and the event work's unk1cc object with it while the leader stands on it;

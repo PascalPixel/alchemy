@@ -50,7 +50,7 @@ void Func_02001a8c(s32 a, s32 b);
 void Func_02001ab4(s32 skip);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
-void Task_RemoveFar(void *callback);
+void Task_RemoveFar(void *func);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y,
                                           s32 flags);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);

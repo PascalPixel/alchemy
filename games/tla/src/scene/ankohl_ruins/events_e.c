@@ -4,7 +4,7 @@ extern s16 gData_02003782;
 extern s16 gData_02003784;
 extern s32 gData_0200378c;
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 
 void Func_020015ac(void) {
   struct AnkohlRuinsEventWork *work =

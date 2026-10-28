@@ -26,7 +26,7 @@ void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetMovementTypeById(s32 actor, const u8 *action);
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

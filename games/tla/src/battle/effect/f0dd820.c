@@ -24,7 +24,7 @@ s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void Func_080cf554(void);
-void Task_Add(void (*callback)(void), s32 order);
+void Task_Add(void (*func)(void), s32 order);
 void Func_080dd754(void);
 
 #define FIELD_FX_REVEAL 8

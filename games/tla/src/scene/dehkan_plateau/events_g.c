@@ -95,8 +95,8 @@ void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_ArmCallback(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 void FieldEvent_WaitFrames(s32 frames);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);

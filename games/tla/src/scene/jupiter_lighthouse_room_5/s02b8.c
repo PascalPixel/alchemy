@@ -19,8 +19,8 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Func_02001718(const s32 *from, const s32 *to);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Func_02002870(s32 a, s32 b, s32 c);
 void Actor_SetSpritePriority(u32 id, s32 variant);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);

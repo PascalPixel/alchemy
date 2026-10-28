@@ -79,8 +79,8 @@ void Func_0200285c(struct Actor *object, s32 mode);
 void Func_02002874(struct Actor *object);
 void Import_SoundPlay(s32 cue);
 void WaitFrames(s32 frames);
-s32 Task_Add(void (*callback)(void), s32 order);
-void Task_RemoveFar(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+void Task_RemoveFar(void (*func)(void));
 void Func_02001fd0(void);
 
 void Func_020023a4(s32 id) {

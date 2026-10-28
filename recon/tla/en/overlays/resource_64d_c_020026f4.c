@@ -51,7 +51,7 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02002a0c(struct SparkSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Func_0200258c(void);
 
 void Func_020026f4(void) {

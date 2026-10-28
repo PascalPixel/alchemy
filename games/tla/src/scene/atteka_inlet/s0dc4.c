@@ -12,7 +12,7 @@ struct MapBits {
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Actor_WatchAndSetScript(s32 id, s32 target);
@@ -26,11 +26,11 @@ void GameFlag_ClearBit(s32 flag);
 void WaitFrames(s32 frames);
 void Func_02000ff8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
-static __inline__ void Task_Add_(void (*callback)(void),
+static __inline__ void Task_Add_(void (*func)(void),
                                                       s32 priority) {
   /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
    * as The Broken Seal's scene layer does. */
-  Task_Add(callback, priority);
+  Task_Add(func, priority);
 }
 
 static __inline__ void Func_02001060_(s32 id, s32 x, s32 z) {

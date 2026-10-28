@@ -21,7 +21,7 @@ void Func_02002840(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
                    s32 destZ);
 void Func_02002838(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
                    s32 destZ);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02001288(void);
 void Func_02001304(void);
 void Func_02001424(void);

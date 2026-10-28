@@ -21,7 +21,7 @@
 // layer is closed.
 
 // Port of The Broken Seal's BattleEffect_RunHail (kind 207 there
-// too), with The Lost Age's heap slots and callback order, no work->effect
+// too), with The Lost Age's heap slots and task priority, no work->effect
 // store, and the canvas preparer's packed arguments: kind | side << 4 |
 // anchor << 5, with the screen point returned in a three-word array.
 
@@ -99,8 +99,8 @@ void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
 void EffectPosition_ProjectBattler(s32 id, s32 *position);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                       s32 gravity);

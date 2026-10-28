@@ -9,7 +9,7 @@ void GameFlag_ClearBit(s32 flag);
 struct Actor *Actor_GetById(s32 id);
 void Func_020011e0(void);
 void Func_020018a8(s32 id, s32 x, s32 z);
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void WaitFrames(s32 frames);
 
 /// The chest that follows the step count: when the tracked object stands on

@@ -31,7 +31,7 @@ void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -147,7 +147,7 @@ void Func_020034d8(void);
 void Func_02003eec(s32 actor, s32 target);
 void Func_02003fac(s32 actor, s32 target);
 void Func_02003fb4(void);
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Actor_Stop(s32 actor);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);

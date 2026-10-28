@@ -35,7 +35,7 @@ struct Actor *Func_02002808(s32 type, s32 x, s32 y, s32 z);
 void Func_02002800(struct Actor *object, const u8 *script);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02002918(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02002838(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,

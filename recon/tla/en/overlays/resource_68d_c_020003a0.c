@@ -42,7 +42,7 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02002104(struct LemuriaPalaceSprite *sprite, s32 a, s32 b, u32 attr,
                    s32 tile);
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_020002b4(void);
 
 void Func_020003a0(void) {

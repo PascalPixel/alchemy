@@ -18,7 +18,7 @@
 // layer is closed.
 
 // Port of The Broken Seal's BattleEffect_RunMars (kind 252 there),
-// with The Lost Age's heap slots and callback order and no work->effect
+// with The Lost Age's heap slots and task priority and no work->effect
 // store.
 
 // Listing 421 instructions, draft 421, differ 22 (trial 0, 2026-10-15).
@@ -95,8 +95,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);

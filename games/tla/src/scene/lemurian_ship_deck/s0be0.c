@@ -7,7 +7,7 @@
 extern const u8 gData_020020dc[];
 
 struct Actor *Actor_GetById(s32 id);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_020020c4(const void *data);
 void Func_02000188(void);
 void Func_020001cc(void);
@@ -22,11 +22,11 @@ struct MapMode {
   } __attribute__((packed)) bits;
 };
 
-static __inline__ void AddCallback(void (*callback)(void), s32 priority) {
+static __inline__ void AddTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
    * arguments up in their own order and keeps each call's constants; a direct
    * call builds the costly constant first or shares it (differ 2 or more). */
-  Task_Add(callback, priority);
+  Task_Add(func, priority);
 }
 
 s32 Func_02000be0(void) {
@@ -53,11 +53,11 @@ s32 Func_02000be0(void) {
     Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
     Actor_SetModeById(8, 1);
     Func_020020c4(gData_020020dc);
-    AddCallback(Func_02000188, 0x480);
+    AddTask(Func_02000188, 0x480);
     if (party->entrance == 99)
       Func_02000210();
     else
-      AddCallback(Func_020001cc, 0x480);
+      AddTask(Func_020001cc, 0x480);
   }
   return 0;
 }

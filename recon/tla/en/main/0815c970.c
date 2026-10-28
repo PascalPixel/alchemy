@@ -19,7 +19,7 @@
 // layer is closed.
 
 // Port of The Broken Seal's BattleEffect_RunTwoResource, with The Lost Age's
-// heap slots, blitter mode (3 minus ☀️'s) and callback order, and no
+// heap slots, blitter mode (3 minus ☀️'s) and task priority, and no
 // work->effect store.
 
 // Listing 260 instructions, draft 252, differ 202. The logic and constants
@@ -89,8 +89,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 
 void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {

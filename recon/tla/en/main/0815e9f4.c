@@ -20,7 +20,7 @@
 // callback in copy mode.
 
 // Port of The Broken Seal's BattleEffect_RunRingAndSparkScene, with The Lost
-// Age's heap slots, blitter modes (3 minus ☀️'s) and callback orders (the
+// Age's heap slots, blitter modes (3 minus ☀️'s) and task priorities (the
 // transfer at 0xc80, the fade at 0x480), no work->effect store, and these
 // changes: the palette goes by DMA, the canvases are cleared 0x3c00 bytes
 // at a time, the flash's middle cels are 128 pixels square from the map
@@ -87,8 +87,8 @@ u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target,
                                                  s32 frames);

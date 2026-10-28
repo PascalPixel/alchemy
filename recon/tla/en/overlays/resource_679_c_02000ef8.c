@@ -96,7 +96,7 @@ void Func_020017bc(void) {
   __asm__("" : "+m"(*(u8 *)work));
   VramCache_Load(*work, 0x200, 0);
   priority = 0x480;
-  /* FAKEMATCH: the native builds the priority before loading the callback. */
+  /* FAKEMATCH: the native builds the priority before loading the task function. */
   __asm__ volatile("" : "+r"(priority));
   Task_Add(Func_020015f8, priority);
 }

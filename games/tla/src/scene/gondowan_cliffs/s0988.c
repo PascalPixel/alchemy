@@ -30,7 +30,7 @@ void Func_02000fcc(s32 a, s32 b);
 u16 *Func_02001068(s32 index, s32 actor, s32 start, s32 low, s32 high);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Actor_SetModeById(u32 id, s32 mode);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02000738(void);
 
 /// Gondowan Cliffs' setup: Ov66bRoom2 runs Func_02000768 and returns; with

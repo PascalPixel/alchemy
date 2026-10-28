@@ -45,7 +45,7 @@ extern const u16 gData_0802f054[8];
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void Heap_Initialize(void);
 void Task_ResetAll(void);
-void Task_Add(void (*callback)(void), s32 order);
+void Task_Add(void (*func)(void), s32 order);
 void VramCache_Reset(void);
 void Func_080230e0(s32 mode);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);

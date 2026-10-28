@@ -19,7 +19,7 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 void Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020029c8(void *data);
 void Func_02002860(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_020001a4(void);
 
 /// Scene preparation: the event value 0x204, actor 22 placed while flag 0xa22

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Func_020047b8(void);
 
 void Func_02004718(void) {

@@ -4,7 +4,7 @@
 // call. The Lost Age reads the effect from its argument (it never stores
 // work->effect), takes its heap blocks as Ram_HeapSlots fields, loads the
 // blitter through BattleEffect_LoadBlitter (BLIT_MAX is 1 where The Broken Seal's
-// COMPOSITE_MAX is 2) and orders the callback 0xc80.
+// COMPOSITE_MAX is 2) and gives its task the priority 0xc80.
 
 // Left: about a dozen rows where the native issues a load one slot earlier
 // than agscc (canvas before the 1 for StartCanvasLayer, the blitter word

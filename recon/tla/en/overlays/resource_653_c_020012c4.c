@@ -13,7 +13,7 @@ void Func_02000cd8(s32 id, s32 offset, s32 limit);
 void Func_02000cf8(s32 id, s32 offset, s32 limit);
 s32 Func_02000d3c(void);
 void Func_02000e60(void);
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 s32 Math_Sine(s32 angle);
 
 void Func_020012c4(void) {

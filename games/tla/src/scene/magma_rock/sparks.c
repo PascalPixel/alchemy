@@ -8,7 +8,7 @@ struct MagmaRockSparkWork {
   s16 resource;
 };
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Func_0200379c(void);
 
 void Func_02003998(void) {

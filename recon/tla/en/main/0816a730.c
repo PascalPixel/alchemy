@@ -11,7 +11,7 @@
 // the heap blocks read from Ram_HeapSlots, the effect kept as the argument (the
 // dispatcher stores work->effect), no blitter fetch before the loop (only the
 // one after each frame's columns), a lighter shake while the columns are still
-// below ground (4 where ☀️ has 2), and the callback order 0xc80.
+// below ground (4 where ☀️ has 2), and the task priority 0xc80.
 
 // Devices: the empty asm at the start stores the argument before 0x03000000 is
 // started (differ 12 without it); the BG2PA halfword pinned to r3 and set in a

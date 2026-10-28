@@ -18,7 +18,7 @@ void Func_02000220(void);
 void Func_02001488(s32 actor, s32 x, s32 z);
 void Func_02001578(const void *data);
 void Func_02001598(s32 actor, s32 value);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 void Func_020002f8(void) {

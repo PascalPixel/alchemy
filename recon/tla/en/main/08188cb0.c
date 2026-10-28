@@ -37,7 +37,7 @@
 #define HEAP_SLOT_BLITTER 104
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
 
-// The transfer callback runs at this order, where ☀️'s runs at 0x480.
+// The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
 
 // FAKEMATCH: ⚓️ loads a pooled halfword before it starts the register's
@@ -67,8 +67,8 @@ extern u8 gHelmSplitter_CellHeights[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ProjectBattler(

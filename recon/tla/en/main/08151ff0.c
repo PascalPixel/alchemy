@@ -15,7 +15,7 @@
 // call. The Lost Age blends BG1 and BG2 at 16:16, reads the effect from its
 // argument, takes its heap blocks as Ram_HeapSlots fields, loads its
 // blitter through BattleEffect_LoadBlitter (BLIT_MAX 1 where COMPOSITE_MAX is 2),
-// orders the callback 0xc80 and keeps the puff sizes as halfwords.
+// gives its task the priority 0xc80 and keeps the puff sizes as halfwords.
 // ResourceId_BlastSheet and ResourceId_FireStreakSheet are rows 0x184 and
 // 0x159 of directory.s (assets BattleEffect_BlastSheet and
 // BattleEffect_FireStreakSheet), not yet named there.

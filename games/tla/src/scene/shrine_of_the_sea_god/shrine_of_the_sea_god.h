@@ -215,23 +215,23 @@ static inline void ShrineOfTheSeaGod_ObjEmote(s32 actor, s32 emote) {
   Func_02003ab0(actor, emote);
 }
 
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 
-static inline void ShrineOfTheSeaGod_TaskAdd(void (*callback)(void),
+static inline void ShrineOfTheSeaGod_TaskAdd(void (*func)(void),
                                              s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   s32 p = priority;
 
-  Task_Add(callback, p);
+  Task_Add(func, p);
 }
 
-#define SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(callback, priority)                \
+#define SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(func, priority)                \
   do {                                                                         \
     s32 priority_;                                                             \
     priority_ = (priority);                                                    \
-    /* FAKEMATCH: a barrier keeps the callback load after the priority. */     \
+    /* FAKEMATCH: a barrier keeps the task function load after the priority. */     \
     __asm__ volatile("" : : "r"(priority_));                                   \
-    Task_Add((callback), priority_);                      \
+    Task_Add((func), priority_);                      \
   } while (0)
 
 static inline s32 ShrineOfTheSeaGod_FlagCheck(s32 flag) {

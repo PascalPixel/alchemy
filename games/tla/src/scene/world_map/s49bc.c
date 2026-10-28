@@ -9,7 +9,7 @@ extern s16 gData_02006e10;
 extern u8 gData_02006f20[];
 
 s32 Resource_FindFreeEntry(void);
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Func_020048f4(void);
 void Func_02004aa8(const u8 *a, u8 *b);
 

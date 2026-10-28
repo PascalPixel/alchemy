@@ -21,8 +21,8 @@ void Func_02001f3c(void);
 void Func_02001c8c(void);
 void Actor_Jump(s32 id, s32 height, s32 frames);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
-s32 Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 
 void Func_02003e8c(void) {
   struct Actor *object;

@@ -294,18 +294,18 @@ s32 Task_ResumeOverlayTasks(void) {
 }
 
 /// Runs one pass of the tasks: every task whose priority's high byte matches
-/// `key`'s (TASK_PASS_FRAME or TASK_PASS_VBLANK), in table order.
+/// `pass`'s (TASK_PASS_FRAME or TASK_PASS_VBLANK), in table order.
 /// Called once a frame by WaitFrames and once a VBlank by
 /// System_VBlankHandler. Nothing runs until Task_ResetAll has set
 /// gTasksInitialized.
-void Task_RunPass(s32 key) {
+void Task_RunPass(s32 pass) {
   struct Task *task = gTasks;
   s32 remaining;
 
   // A pass matches the high byte only; the low byte has already ranked the
   // tasks through the sort, and a suspended task's odd high byte matches no
   // pass
-  key >>= 8;
+  pass >>= 8;
   if (gTasksInitialized == 1) {
     remaining = TASK_COUNT + 1;
     task--;
@@ -313,7 +313,7 @@ void Task_RunPass(s32 key) {
       if (--remaining == 0)
         return;
       task++;
-      if (TASK_STATE_HIGH(task) == key) {
+      if (TASK_STATE_HIGH(task) == pass) {
         // UB: tasks return void, and the stored word is not a pointer
         // object. The native integer-return call uses r0; a void call uses
         // r3 instead (two instructions and the call relocation differ).

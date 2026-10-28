@@ -71,7 +71,7 @@ void Func_0814355c(void); // the BG2 canvas's registers
 void BattleEffect_DimBackgroundStep(void); // fades the battle background
 void BattleEffect_TransferHalvedCanvas(void); // halves the canvas into VRAM
 void Func_0813f8d4(void); // BattleEffect_DrawStreaks
-s32 Task_Add(void *callback, s32 order);
+s32 Task_Add(void *func, s32 order);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);

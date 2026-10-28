@@ -20,7 +20,7 @@ extern u8 Data_0202c001[];
 struct Actor *Actor_GetById(u32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         u32 value);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02001b98(void);
 
 #define MARK(at, cellPicture, shape)                                              \

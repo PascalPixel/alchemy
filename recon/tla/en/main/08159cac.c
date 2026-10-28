@@ -20,7 +20,7 @@
 
 // Port of The Broken Seal's BattleEffect_RunSpire (kind 2 there
 // too), with The Lost Age's heap slots, blitter mode (3 minus ☀️'s) and
-// callback order, no work->effect store, and The Lost Age's timing: the
+// task priority, no work->effect store, and The Lost Age's timing: the
 // effect runs 65 frames past the last drop, not 80, and the first crash
 // resumes the battle where ☀️ only plays the cue.
 
@@ -94,8 +94,8 @@ void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // Copies the canvas to VRAM when a transfer is pending.
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Task_Add(s32 (*callback)(void), s32 order);
-s32 Task_Remove(s32 (*callback)(void));
+s32 Task_Add(s32 (*func)(void), s32 order);
+s32 Task_Remove(s32 (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 // BattlePlayback_Start through its far call.

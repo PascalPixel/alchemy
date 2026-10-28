@@ -101,8 +101,8 @@ void Actor_SetSingleChildFlags(struct KibomboObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct KibomboObject *object, s32 flags);
 void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -234,12 +234,12 @@ static inline void Kibombo_WaitFrames(s32 frames) {
   WaitFrames(frames);
 }
 
-#define KIBOMBO_TASK_ADD(callback, priority)                                   \
+#define KIBOMBO_TASK_ADD(func, priority)                                   \
   {                                                                            \
     /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * callback load. */                                                       \
+     * task function load. */                                                       \
     s32 priority_ = (priority);                                                \
-    Task_Add((callback), priority_);                      \
+    Task_Add((func), priority_);                      \
   }
 
 static inline void Kibombo_ObjEmote(s32 actor, s32 emote, s32 frames) {
@@ -252,9 +252,9 @@ static inline void Kibombo_ObjEmoteWait(s32 actor, s32 emote) {
   Func_02005b9c(actor, emote);
 }
 
-static inline void Kibombo_TaskAdd(void (*callback)(void), s32 priority) {
+static inline void Kibombo_TaskAdd(void (*func)(void), s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(callback, priority);
+  Task_Add(func, priority);
 }
 
 static inline void Kibombo_MessagePut(s32 speaker, s32 flags) {

@@ -21,8 +21,8 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Camera_FollowActor(s32 id, s32 a);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void WaitFrames(s32 frames);
 void Func_02000054(void);
 void Func_020000b4(void);

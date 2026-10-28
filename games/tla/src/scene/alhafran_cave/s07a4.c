@@ -11,7 +11,7 @@ void Func_020015e0(s32 value);
 void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
 void Func_02001220(void);
 s32 Func_02000258(void);
-void Task_Add(s32 (*callback)(void), s32 priority);
+void Task_Add(s32 (*func)(void), s32 priority);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);

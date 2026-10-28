@@ -8,7 +8,7 @@
 
 extern u16 gData_020026c0[];
 
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02000c50(void);
 void Func_02001650(void);
 void Func_02001a14(void);

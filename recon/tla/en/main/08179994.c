@@ -66,8 +66,8 @@ extern const u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
-void Task_Add(s32 callback, s32 priority);
-s32 Task_Remove(s32 callback);
+void Task_Add(s32 func, s32 priority);
+s32 Task_Remove(s32 func);
 void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);

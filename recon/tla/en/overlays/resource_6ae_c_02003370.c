@@ -31,7 +31,7 @@ s32 Math_Sine(s32 angle);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 void SceneActor_ParkRecord(struct Actor *object);
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 struct Actor *Func_02005574(s32 type, s32 x, s32 y, s32 z);
 void Func_0200556c(struct Actor *object, const u8 *script);
 void Func_020055c4(s32 a, s32 b, s32 c);

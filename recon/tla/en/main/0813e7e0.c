@@ -55,8 +55,8 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleEffect_ClearActorTimers(void);
 void Func_08191530(struct BattleEffectArgument *effect);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Task_Add(void *callback, s32 order);
-s32 Task_Remove(void *callback);
+s32 Task_Add(void *func, s32 order);
+s32 Task_Remove(void *func);
 void HeapSlot_Release(s32 slot);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
                                                 s32 value);

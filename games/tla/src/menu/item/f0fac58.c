@@ -9,7 +9,7 @@ struct ItemMenuIcons {
 };
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-void Task_Remove(void (*callback)(void));
+void Task_Remove(void (*func)(void));
 void Func_080fabe0(void);
 
 void Func_080fac58(void) {

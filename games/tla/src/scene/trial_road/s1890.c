@@ -35,7 +35,7 @@ void Func_02001904(void) {
   Func_0200062c(18);
   Func_0200062c(19);
   {
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the callback
+    /* FAKEMATCH: a temporary keeps the priority constant ahead of the task function
      * load (differ 2 without it). */
     s32 priority = 0x480;
 

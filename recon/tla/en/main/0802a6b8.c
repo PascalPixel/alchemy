@@ -101,7 +101,7 @@ void DisplayBlend_StartScript(u16 *);
 s32 Resource_DecodeType2(const void *source, void *destination);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Func_0802ad84(void);
 
 s32 Func_0802a6b8(s32 index) {

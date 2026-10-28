@@ -28,7 +28,7 @@
 #define HEAP_SLOT_BLITTER 104
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
 
-// The transfer callback runs at this order, where ☀️'s runs at 0x480.
+// The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
 
 #define HI(v) (((s16 *)&(v))[1])
@@ -70,8 +70,8 @@ struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);

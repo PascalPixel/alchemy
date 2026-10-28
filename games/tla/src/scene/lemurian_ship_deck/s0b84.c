@@ -14,7 +14,7 @@ extern const u8 gData_020021e8[];
 extern const u8 gData_0200221c[];
 
 struct Actor *Actor_GetById(s32 id);
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void WaitFrames(s32 frames);
 void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
@@ -58,11 +58,11 @@ void Func_0200207c(s32 countdown);
 void Func_020020ac(s32 skip);
 void Func_020020b4(s32 id, s32 dx, s32 dz, s32 angle);
 
-static __inline__ void AddCallback(void (*callback)(void), s32 priority) {
+static __inline__ void AddTask(void (*func)(void), s32 priority) {
   /* FAKEMATCH: as in ☀️'s scene layer, forwarding through the inline sets the
    * arguments up in their own order and keeps each call's constants; a direct
    * call builds the costly constant first or shares it (differ 2 or more). */
-  Task_Add(callback, priority);
+  Task_Add(func, priority);
 }
 
 /// The scene run from entrance 10: the crew takes its places on deck and the
@@ -322,8 +322,8 @@ void Func_020006e4(void) {
 
 void Func_02000b84(void) {
   Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
-  AddCallback(Func_02000188, 0x480);
-  AddCallback(Func_020001cc, 0x480);
+  AddTask(Func_02000188, 0x480);
+  AddTask(Func_020001cc, 0x480);
   if (gAdventure.entrance == 10)
     Func_020002cc();
   /* FAKEMATCH: the one-pass block keeps the second entrance test a load of its

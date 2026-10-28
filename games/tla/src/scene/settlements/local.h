@@ -22,8 +22,8 @@ void Actor_WaitForMoveById(s32 id);
 void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void PartyInventory_GiveItem(s32 item, s32 mode);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 s32 Math_Cosine(s32 angle);
 
 void FieldMessage_ShowAtActor(s32 id, s32 flags);

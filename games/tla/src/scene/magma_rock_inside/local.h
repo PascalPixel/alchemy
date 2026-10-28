@@ -44,8 +44,8 @@ void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 
 extern const u8 gData_02005534[];
 

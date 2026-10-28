@@ -65,8 +65,8 @@ void Sound_PlayFar(s32 cue);
 void Event_WaitFrames(s32 frames);
 void Actor_StartScriptFar(struct Actor *object,
                                   const void *script);
-void Task_Add(void (*callback)(void), s32 order);
-void Task_Remove(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 order);
+void Task_Remove(void (*func)(void));
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_PrepareBufferInterpolation(void);

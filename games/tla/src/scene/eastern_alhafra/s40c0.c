@@ -8,7 +8,7 @@ struct EasternAlhafraSparkWork {
   s16 resource;
 };
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Func_02003ec4(void);
 
 void Func_020040c0(void) {

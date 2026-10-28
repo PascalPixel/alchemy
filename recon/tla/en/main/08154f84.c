@@ -9,7 +9,7 @@
 
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), blitters load through BattleEffect_LoadBlitter with
-// the Lost Age's mode numbers, the callback order is 0xc80 and the cues are
+// the Lost Age's mode numbers, the task priority is 0xc80 and the cues are
 // 133 where the twin has 132.
 
 // What remains (order only; the instructions and registers agree):
@@ -78,8 +78,8 @@ void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Task_Add(s32 (*callback)(void), s32 order);
-s32 Task_Remove(s32 (*callback)(void));
+s32 Task_Add(s32 (*func)(void), s32 order);
+s32 Task_Remove(s32 (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);

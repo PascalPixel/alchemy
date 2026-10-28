@@ -32,13 +32,13 @@ void Func_020021d4(void) {
   s32 z = Actor_GetById(9)->z >> 20;
 
   if (AnkohlRuins_FlagCheck(0x9dd) != 0 && z == 24) {
-    /* FAKEMATCH: the callback pinned to r5 leaves the z cell in r6; plain, the
+    /* FAKEMATCH: the task function pinned to r5 leaves the z cell in r6; plain, the
      * two swap (differ 12). */
-    register void (*callback)(void) asm("r5") = Func_02001f7c;
+    register void (*func)(void) asm("r5") = Func_02001f7c;
 
-    if (Func_02002dcc(callback) == -1) {
+    if (Func_02002dcc(func) == -1) {
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
-      Task_Add(callback, TASK_PASS_VBLANK);
+      Task_Add(func, TASK_PASS_VBLANK);
       AnkohlRuins_Call2dfc(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
       AnkohlRuins_FlagSet(381);

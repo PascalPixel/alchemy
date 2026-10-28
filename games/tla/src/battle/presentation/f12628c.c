@@ -6,7 +6,7 @@
 #include "battle_work.h"
 #include "battle_display.h"
 
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void BattleStaging_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *destination);
 void Func_08125bb8(void *destination);

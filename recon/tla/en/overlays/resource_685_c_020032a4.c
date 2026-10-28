@@ -12,7 +12,7 @@
        ->v)
 
 void WaitFrames(s32 frames);
-void Task_RemoveFar(void *callback);
+void Task_RemoveFar(void *func);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 void Func_02002de4(void);

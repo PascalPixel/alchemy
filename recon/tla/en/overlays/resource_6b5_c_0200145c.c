@@ -51,7 +51,7 @@ s32 Func_020013ec(void);
 s32 Func_02001400(void);
 void Func_02001414(s32 value);
 void Func_02001914(void);
-void Func_02001944(void *callback, s32 mask);
+void Func_02001944(void *func, s32 mask);
 void Func_02001994(s32 entry);
 void Func_0200199c(s32 x, s32 y, s32 width, s32 height, s32 destX, s32 destY);
 void Func_020019e4(s32 value, s32 digits);
@@ -67,7 +67,7 @@ void LinkLobby_WriteSlotValue(s32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void WaitFrames(s32 frames);
-void Task_Add(void *callback, s32 priority);
+void Task_Add(void *func, s32 priority);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 
@@ -86,7 +86,7 @@ s32 Func_0200145c(void) {
   s32 i;
   u32 score;
   struct LobbyEventWork *work;
-  void *callback;
+  void *func;
 
   Flag_Set(0x17e);
   gAdventure.packedEvents[0] = 0;
@@ -260,9 +260,9 @@ s32 Func_0200145c(void) {
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
   }
-  callback = Func_02000134;
-  Task_Add(callback, 0x480);
-  Func_02001944(callback, 1);
+  func = Func_02000134;
+  Task_Add(func, 0x480);
+  Func_02001944(func, 1);
   if (gAdventure.entrance != 8 || !Flag_IsSet(0x173)) {
     Func_02001a04(1);
     DjinnRecovery_CountDownTwenty();

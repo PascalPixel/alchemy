@@ -73,8 +73,8 @@ void BattleEffect_LoadBlitter(s32 slot, s32 value);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);

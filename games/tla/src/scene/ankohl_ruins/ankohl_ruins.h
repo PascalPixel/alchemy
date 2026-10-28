@@ -34,7 +34,7 @@ extern s16 gData_02003784;
 extern s32 gData_02003788;
 extern s32 gData_0200378c;
 
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void FieldEvent_WaitFrames(s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);

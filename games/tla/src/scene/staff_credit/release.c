@@ -8,7 +8,7 @@ extern s16 gData_02003fc4;
 extern s16 gData_02003fc6;
 extern s16 gData_02003fc8;
 void Func_02001f54(const u8 *a, u8 *b);
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Func_02001d90(void);
 
 void Func_02001e58(void) {

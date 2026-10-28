@@ -12,7 +12,7 @@
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 
 void Func_02000ab4(void) {
   if (gAdventure.renderMode == 2) {

@@ -46,7 +46,7 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_02003190(struct RockSprite *sprite, s32 width, s32 height, u32 attr,
                    s32 tile);
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02002cc0(void);
 
 void Func_02002e00(void) {

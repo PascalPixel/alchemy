@@ -28,8 +28,8 @@ struct ItemDetailsMenu {
 };
 
 void Menu_UpdateEntryObjectTransforms(void);
-void Task_Remove(void (*callback)(void));
-s32 Task_Add(void (*callback)(void), s32 order);
+void Task_Remove(void (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
 void Palette_CopyObjectBankToBackground14(void);
 s32 GameFlag_Test(s32);
 s32 Window_CreateFar(s32, s32, s32, s32, s32);

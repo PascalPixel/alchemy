@@ -21,7 +21,7 @@
 
 // Port of The Broken Seal's BattleEffect_RunGround (kind 203 there
 // too), with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
-// callback order, no work->effect store, the canvas preparer's packed
+// task priority, no work->effect store, the canvas preparer's packed
 // arguments, and the chips' blitter built by BattleEffect_BuildBlitter
 // directly. Other editions place a differently built version; only the
 // English listing was compared.
@@ -100,8 +100,8 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   s32 mode);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(void *camera, void *eye);

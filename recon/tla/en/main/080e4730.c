@@ -26,7 +26,7 @@ void HeapSlot_Release(s32 slot);
 void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedObject,
                                     s32 groupMode, s32 action);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Remove(void (*func)(void));
 void Func_080e42d4(void);
 void *Resource_GetTableEntry(u16 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);

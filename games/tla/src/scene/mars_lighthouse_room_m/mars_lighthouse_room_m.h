@@ -64,7 +64,7 @@ struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 
 void Func_02003118(struct Actor *object, s32 value);
 void Func_02003120(struct Actor *object, const void *script);

@@ -22,8 +22,8 @@ struct ContigoGlow *Func_02003fec(s32 type, s32 x, s32 y, s32 z);
 void Func_02003fdc(struct ContigoGlow *object, s32 mode);
 void Func_02003ff4(struct ContigoGlow *object);
 void Actor_SetSingleChildFlags(struct ContigoGlow *object, u32 value);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Func_02000a80(void);
 
 static inline struct ContigoGlow *Contigo_Create(s32 type, s32 x, s32 y,

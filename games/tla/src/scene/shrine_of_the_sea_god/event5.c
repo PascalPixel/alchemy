@@ -1,6 +1,6 @@
 #include "shrine_of_the_sea_god.h"
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Func_02001340(struct ShrineOfTheSeaGodObject *object,
                    struct ShrineOfTheSeaGodObject *target);
 void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base);

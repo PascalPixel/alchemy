@@ -101,8 +101,8 @@ void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
 void Palette_StepFadeTransfer(void);
-s32 Task_Add(void *callback, s32 order);
-s32 Task_Remove(void *callback);
+s32 Task_Add(void *func, s32 order);
+s32 Task_Remove(void *func);
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);

@@ -5,7 +5,7 @@
 #include "adventure.h"
 #include "call.h"
 
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
 void Func_020000f4(void);

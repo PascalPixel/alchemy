@@ -36,7 +36,7 @@ struct Actor *Actor_GetById(s32 id);
 void FieldEvent_WaitFrames(s32 frames);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);

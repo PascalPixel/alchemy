@@ -23,7 +23,7 @@ void WaitFrames(s32 frames);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_0200567c(s32 id, s32 a, s32 b);
 void Func_020004a4(void);

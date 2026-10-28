@@ -194,7 +194,7 @@ void Func_02003134(void) {
     Actor_SetSingleChildFlags(Actor_GetById(11), 1);
     Actor_GetById(11)->collisionFlags = 1;
   }
-  /* FAKEMATCH: the native builds the priority before it loads the callback. */
+  /* FAKEMATCH: the native builds the priority before it loads the task function. */
   SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(Func_020030fc, 0x480);
 }
 

@@ -42,7 +42,7 @@ void Func_02003104(s32 x, s32 y, s32 z) {
     object->field64 = count + 10;
     object->field66 = 0;
     update = Func_020030b8;
-    /* FAKEMATCH: the native loads the callback before the sprite; the plain
+    /* FAKEMATCH: the native loads the task function before the sprite; the plain
      * order loads the sprite first (one reordered pair). */
     asm volatile("" : "+l"(update));
     sprite = object->sprite;

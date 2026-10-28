@@ -94,8 +94,8 @@ void Actor_SetSingleChildFlags(struct LemurianShipObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct LemurianShipObject *object, s32 flags);
 void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -192,12 +192,12 @@ static inline void LemurianShip_WaitFrames(s32 frames) {
   WaitFrames(frames);
 }
 
-#define LEMURIAN_SHIP_TASK_ADD(callback, priority)                             \
+#define LEMURIAN_SHIP_TASK_ADD(func, priority)                             \
   {                                                                            \
     /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * callback load. */                                                       \
+     * task function load. */                                                       \
     s32 priority_ = (priority);                                                \
-    Task_Add((callback), priority_);                      \
+    Task_Add((func), priority_);                      \
   }
 
 static inline void LemurianShip_ObjEmoteWait(s32 actor, s32 emote) {
@@ -205,9 +205,9 @@ static inline void LemurianShip_ObjEmoteWait(s32 actor, s32 emote) {
   Func_02002d48(actor, emote);
 }
 
-static inline void LemurianShip_TaskAdd(void (*callback)(void), s32 priority) {
+static inline void LemurianShip_TaskAdd(void (*func)(void), s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(callback, priority);
+  Task_Add(func, priority);
 }
 
 static inline void LemurianShip_MessagePut(s32 speaker, s32 flags) {

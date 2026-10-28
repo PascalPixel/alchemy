@@ -16,7 +16,7 @@ typedef void (*TaskFunc)(void);
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 void Func_02002c88(void);
 void Func_02002d34(void);
-s32 Task_Add(TaskFunc callback, s32 order);
+s32 Task_Add(TaskFunc func, s32 order);
 void Func_02003434(s32 x, s32 y, s32 z);
 void WaitFrames(s32 frames);
 void Func_02002de4(void);

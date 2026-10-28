@@ -43,7 +43,7 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 u8 *Actor_GetById(s32 id);
-void Task_Add(s32 (*callback)(void), s32 priority);
+void Task_Add(s32 (*func)(void), s32 priority);
 void Actor_SetSingleChildFlags(u8 *object, s32 flags);
 void Func_0200195c(s32 id, s32 x, s32 z);
 void Func_02000048(void);

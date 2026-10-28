@@ -44,7 +44,7 @@ u8 *Resource_GetTableEntry(s32 id);
 void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count);
 void Graphics_BuildSequentialTileTable(void *destination);
 void Func_08125bb8(void *destination);
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void BattleStaging_UpdateHBlankScroll(void);
 
 // Loads a battle backdrop: its picture decoded into BG VRAM, its palette

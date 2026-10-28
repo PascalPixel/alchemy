@@ -36,7 +36,7 @@
 #define HEAP_SLOT_BLITTER 104
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
 
-// The transfer callback runs at this order, where ☀️'s runs at 0x480.
+// The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
 
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
@@ -116,8 +116,8 @@ extern u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);

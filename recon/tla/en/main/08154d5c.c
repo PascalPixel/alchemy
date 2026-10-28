@@ -20,7 +20,7 @@
 // anchor packed into one word and fills two positions; the effect argument
 // is read directly, as the Lost Age never stores work->effect; blitters
 // load through BattleEffect_LoadBlitter with the Lost Age's mode numbers (transparent
-// is 2); the callback order is 0xc80.
+// is 2); the task priority is 0xc80.
 
 // What remains (all order, no allocation):
 // - the preparer's arguments: the pin's one-pass block moves the flag's
@@ -70,8 +70,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 
 #define VINE_COUNT 16

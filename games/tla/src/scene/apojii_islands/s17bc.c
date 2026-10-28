@@ -15,7 +15,7 @@ void Func_020017bc(void) {
    * first, a size temporary or the VramBlock_LoadCached_ inline: no closer). */
   asm("");
   VramCache_Load(gData_02002aa0[0], 0x200, 0);
-  /* FAKEMATCH: held in a local, the priority is built before the callback's
+  /* FAKEMATCH: held in a local, the priority is built before the task function's
    * address loads, as in the native and events_f.c (as a literal: differ 2). */
   priority = 0x480;
   Task_Add(Func_020015f8, priority);

@@ -15,7 +15,7 @@
 
 // Twin: The Broken Seal's BattleEffect_RunSwirlingStars (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
-// blocks as Ram_HeapSlots fields and orders the callback 0xc80.
+// blocks as Ram_HeapSlots fields and gives its task the priority 0xc80.
 // ResourceId_StarDotSheet is row 0x14f of directory.s (asset
 // BattleEffect_StarDotSheet), not yet named there.
 

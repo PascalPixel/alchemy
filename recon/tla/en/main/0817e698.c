@@ -97,8 +97,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Task_Add(s32 callback, s32 priority);
-s32 Task_Remove(s32 callback);
+s32 Task_Add(s32 func, s32 priority);
+s32 Task_Remove(s32 func);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);

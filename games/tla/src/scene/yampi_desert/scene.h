@@ -29,8 +29,8 @@ void GameFlag_ClearBit(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
 void Actor_SetWideSprite(s32 actor, s32 value);
-s32 Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 
 void Func_020006ac(void);
@@ -109,9 +109,9 @@ void Func_020020a8(void);
 void Func_02003fa8(struct FieldActor *object, s32 mode);
 void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer);
 
-static inline void Scene_TaskAdd(void (*callback)(void), s32 priority) {
+static inline void Scene_TaskAdd(void (*func)(void), s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(callback, priority);
+  Task_Add(func, priority);
 }
 
 static inline s32 Scene_FlagTest(s32 flag) {

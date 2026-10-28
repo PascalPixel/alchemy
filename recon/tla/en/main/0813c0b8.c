@@ -63,8 +63,8 @@ void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
 void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
-s32 Task_Add(void *callback, s32 order);
-s32 Task_Remove(void *callback);
+s32 Task_Add(void *func, s32 order);
+s32 Task_Remove(void *func);
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar

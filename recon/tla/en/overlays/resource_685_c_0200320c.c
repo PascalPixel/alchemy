@@ -4,7 +4,7 @@
 // Draft of overlay 685's Func_0200320c, differ 4 of 68: allocates the
 // 0x1078-byte work in heap slot 55, starts Func_02002de4 and raises field106c
 // in two steps until it reaches 0x14ccc. The priority temporary is needed (the
-// native finishes 0x480 before it loads the callback). Left: in the second step
+// native finishes 0x480 before it loads the task function). Left: in the second step
 // the native finishes 0x14ccc (adds r3, #204) before it starts 999 (movs r5,
 // #186), then stores; here 999 starts first. sched2 ranks the store one lower
 // than the native must. Tried: state as u32, s16 or u16, the value through a
@@ -29,7 +29,7 @@ struct ChampaCliffCavesWork {
 };
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void WaitFrames(s32 frames);
 void Func_02002d34(void);
 void Func_02002de4(void);

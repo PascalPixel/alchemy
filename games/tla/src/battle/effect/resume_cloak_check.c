@@ -1,7 +1,7 @@
 #include "types.h"
 
 extern u8 gAdventure[];
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void FieldEffect_CheckCloakTile(void);
 
 void FieldEffect_ResumeCloakCheck(void) {

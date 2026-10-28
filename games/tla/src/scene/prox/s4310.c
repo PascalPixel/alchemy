@@ -6,7 +6,7 @@ struct SparkWork {
   s16 resource;
 };
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Resource_ResetEntry(s32 entry);
 void HeapSlot_Release(s32 slot);
 void Func_02004114(void);

@@ -37,7 +37,7 @@
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
 
-// The transfer callback runs at this order, where ☀️'s runs at 0x480.
+// The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
 
 // FAKEMATCH: ⚓️ loads a pooled halfword before it starts the register's
@@ -64,8 +64,8 @@ void BattleEffect_StartTiledCanvas(s32 bgControl);
 void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);

@@ -20,7 +20,7 @@ void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Actor_Stop(s32 id);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Func_02000038(struct Actor *object);
 void Func_02004d24(s32 id);
 void Func_02004d50(s32 id);
@@ -61,7 +61,7 @@ struct MarsLighthouseAerieParty {
   s16 held;
 };
 
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 s32 Func_0200508c(u16 *list);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);

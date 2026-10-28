@@ -24,7 +24,7 @@
 
 // Port of The Broken Seal's BattleEffect_RunGaia (kind 3 there too),
 // with The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and
-// callback order, no work->effect store, and the rock object's flags at
+// task priority, no work->effect store, and the rock object's flags at
 // 0x1a.
 
 // Listing 973 instructions, draft 974, differ 87 (trial 1, 2026-10-15).
@@ -130,8 +130,8 @@ void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // Copies the canvas to VRAM when a transfer is pending.
 s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Task_Add(s32 (*callback)(void), s32 order);
-s32 Task_Remove(s32 (*callback)(void));
+s32 Task_Add(s32 (*func)(void), s32 order);
+s32 Task_Remove(s32 (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 // BattlePlayback_Start through its far call.

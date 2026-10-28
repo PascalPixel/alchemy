@@ -12,7 +12,7 @@ struct EventWork1ac {
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void WaitFrames(s32 frames);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Func_020018e0(void);
 void Func_020027e4(void);

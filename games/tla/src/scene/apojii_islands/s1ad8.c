@@ -29,7 +29,7 @@ extern const u8 gField_Tiles679[];
 void Func_02001940(void);
 void Func_02001c24(const void *source, void *destination);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and Func_02001940 scheduled at priority 0x480 to move

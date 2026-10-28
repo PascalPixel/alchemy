@@ -58,8 +58,8 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
-void Task_Add(void (*callback)(void), s32 order);
-void Task_Remove(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 order);
+void Task_Remove(void (*func)(void));
 void Actor_Destroy(struct Actor *object);
 void BattleEffect_EndX(void);
 

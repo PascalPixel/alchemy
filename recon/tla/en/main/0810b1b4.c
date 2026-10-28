@@ -42,7 +42,7 @@ void WaitFrames(s32 frames);
 void Sound_PlayFar(s32 sound_id);
 
 void Shop_RestoreSceneTiles(s32 address);
-s32 Task_Add(void (*callback)(void), s32 flags);
+s32 Task_Add(void (*func)(void), s32 flags);
 void Func_0808a528(struct Effect_080b2f4c *effect, s32 mode, s32 x, s32 z);
 void Func_0808a520(struct Effect_080b2f4c *effect,
                    void (*callback)(struct Effect_080b2f4c *));
@@ -50,7 +50,7 @@ void Func_0808a518(struct Effect_080b2f4c *effect, s32 value);
 void Func_08009248(s32 object, u32 frame_offset);
 void Sound_WaitForJingle(void);
 void Func_0808a530(struct Effect_080b2f4c *effect);
-void Task_Remove(void (*callback)(void));
+void Task_Remove(void (*func)(void));
 void Func_08009280(s32 object, s32 arg);
 void Shop_InitializeEffect(void);
 void Shop_ResetEffects(void);

@@ -49,8 +49,4 @@ extern volatile u8 gTasksRunning;
 extern u8 gTasksInitialized; ///< 1 once the task table is set up
 extern struct Task gTasks[];
 
-void Task_RunByPriority(s32 key);
-s32 Task_CountByPriority(s32 key);
-void Task_RunBeforePriority(s32 key);
-
 #endif

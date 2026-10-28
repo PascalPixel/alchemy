@@ -61,8 +61,8 @@ void WaitFrames(s32 frames);
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void Func_080d92d4(s32 target, s32 y, s32 z);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_Remove(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_Remove(void (*func)(void));
 void Func_080e0618(void);
 
 extern char ResourceId_SparkleFade;

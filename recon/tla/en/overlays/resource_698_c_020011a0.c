@@ -68,7 +68,7 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *buffer);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02001074(void);
 
 s32 Func_020011a0(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {

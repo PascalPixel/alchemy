@@ -11,7 +11,7 @@ struct MapBits {
 };
 
 void GameFlag_SetBit(s32 flag);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void *Actor_GetById(s32 id);
 void Actor_SetModeById(u32 id, s32 mode);
 void Func_02000190(void);

@@ -18,7 +18,7 @@ extern u32 gData_0200117c[];
 extern u32 gData_020011cc[];
 
 struct Actor *Actor_GetById(s32 id);
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_020003fc(void *cells, s32 index);
 void Func_02000ba0(void);
 void Func_02000fec(s32 id, s32 x, s32 z);

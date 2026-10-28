@@ -70,7 +70,7 @@ void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_EndArcEffect(void);
 void WaitFrames(s32 frames);
 void Func_080dbb40(void);
-void Task_Remove(void (*callback)(void));
+void Task_Remove(void (*func)(void));
 void BattleEffect_UpdateAllEffectSlots(void);
 void Event_NoOp(void);
 void HeapSlot_Release(s32 slot);

@@ -65,8 +65,8 @@ void Func_02002b68(s32 sound);
 void Func_0200105c(struct Actor *object);
 void FieldEvent_WaitFrames(s32 frames);
 void WaitFrames(s32 frames);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Func_02001080(void);
 
 void Func_020017a8(s32 a, s32 b, s32 side) {

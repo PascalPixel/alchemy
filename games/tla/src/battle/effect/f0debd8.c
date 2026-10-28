@@ -21,7 +21,7 @@ struct CloakCaster {
   void (*hook)(void);
 };
 
-void Task_Remove(void (*callback)(void));
+void Task_Remove(void (*func)(void));
 void FieldEffect_CheckCloakTile(void);
 void WaitFrames(s32 frames);
 

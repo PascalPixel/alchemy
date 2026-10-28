@@ -29,7 +29,7 @@ s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 u32 Random16(void);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_080d69f4(void);
 
 extern const u8 gData_080f385e[];
@@ -75,7 +75,7 @@ void Func_080d6b90(void) {
     particle->timer = i * 2;
   }
   priority = 0x480;
-  /* FAKEMATCH: the barrier builds the priority before the callback's pool
+  /* FAKEMATCH: the barrier builds the priority before the task function's pool
    * load, as the native does (differ 2 without it). */
   asm volatile("");
   Task_Add(Func_080d69f4, priority);

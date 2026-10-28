@@ -31,7 +31,7 @@ s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02001bf8(void);
 
 void Func_02001df0(u16 *targets, u16 *stops, s32 a2, s32 a3) {

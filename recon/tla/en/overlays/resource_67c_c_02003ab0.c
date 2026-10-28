@@ -29,7 +29,7 @@ typedef void (*TaskFunc)(void);
 
 s32 GameFlag_Test(s32 flag);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Task_Add(TaskFunc callback, s32 order);
+s32 Task_Add(TaskFunc func, s32 order);
 void Func_02003a70(void);
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {

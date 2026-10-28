@@ -34,7 +34,7 @@ void Func_02003ee4(s32 id, s32 x, s32 z, s32 angle);
 struct Actor *Actor_GetById(u32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02001c4c(void);
 void WaitFrames(s32 frames);
 void Func_02002830(void);

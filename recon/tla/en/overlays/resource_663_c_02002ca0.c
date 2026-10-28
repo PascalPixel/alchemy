@@ -44,7 +44,7 @@ void Func_02003bf8(s32 id, s32 x, s32 z);
 void Func_02003cb0(const u8 *table);
 void Func_020003e8(const u8 *table);
 void Func_02003ca0(const u8 *table);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02002b88(void);
 void Func_020024b0(void);
 void Func_02000620(void);

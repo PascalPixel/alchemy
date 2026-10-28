@@ -4,7 +4,7 @@
 // FieldPsynergy_StartCloak: Cloak. ⚓️ takes the caster from the
 // effect scene, sets its mode directly and schedules the ground check at
 // 0x480 where ☀️ uses 0xc80.
-// The callback order through a local set before the stores after the loop
+// The task priority through a local set before the stores after the loop
 // (found by alchemy-devtools permute, tagged) gives the native's allocation: the
 // flicker count in r5, the 2 in r6. Left: four loads one row late after the
 // loop (the check literal, the adventure literal, the event work from the
@@ -41,7 +41,7 @@ struct CloakEvent {
   s16 psynergyRequest;
 };
 
-void Task_Add(void (*callback)(void), s32 order);
+void Task_Add(void (*func)(void), s32 order);
 void FieldEffect_CheckCloakTile(void);
 void Func_080debd8(void);
 void WaitFrames(s32 frames);
@@ -82,7 +82,7 @@ void Func_080decb8(void) {
     WaitFrames(2);
   }
 
-  /* FAKEMATCH(temporary): the callback order through a local set before the
+  /* FAKEMATCH(temporary): the task priority through a local set before the
    * stores, which gives the flicker count r5 and the 2 r6; as a literal
    * 0x480 in the call, 24 of 91 instructions differ in tla-en. */
   order = 0x480;

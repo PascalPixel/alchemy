@@ -31,7 +31,7 @@ void GameFlag_SetBit(s32 flag);
 void Func_02002770(void);
 void WaitFrames(s32 frames);
 void Func_02005d84(void);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_02004f3c(void);
 void Func_02001690(void);
 void Func_02004eb0(void);

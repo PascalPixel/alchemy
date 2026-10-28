@@ -22,7 +22,7 @@ extern s16 gData_02003a82;
 void Func_0200055c(void);
 void Func_02003158(void);
 void Func_02003178(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z);
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 
 void Func_02000934(s32 entrance) {
   s32 cell = -1;

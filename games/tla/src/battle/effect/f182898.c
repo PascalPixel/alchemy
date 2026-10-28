@@ -35,8 +35,8 @@ extern u8 gData_0819967e[];
 extern u16 gData_0819968e[];
 
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void *Resource_GetTableEntry(s32 id);
 u32 Random16(void);
@@ -66,18 +66,18 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   s32 i;
   struct EffectStep *bubble;
 
-  // Each frame the transfer callback copies the canvas and clears it.
+  // Each frame the transfer task copies the canvas and clears it.
   {
-    /* FAKEMATCH(pin): the callback pinned to r0 behind an empty asm that
+    /* FAKEMATCH(pin): the task function pinned to r0 behind an empty asm that
      * holds r1, with work loaded after it, so the pool load comes before
      * work's; as Task_Add(BattleEffect_..., TASK_PASS_FRAME) with work
      * set at its declaration, 2 of 225 instructions differ in tla-en. */
-    register void (*callback)(void) __asm__("r0") =
+    register void (*func)(void) __asm__("r0") =
         BattleEffect_ProcessPendingGraphicsTransfer;
 
-    __asm__("" : "+l"(callback) : : "r1");
+    __asm__("" : "+l"(func) : : "r1");
     work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-    Task_Add(callback, TASK_PASS_FRAME);
+    Task_Add(func, TASK_PASS_FRAME);
   }
   work->transferMode = 2;
   work->transferValue = 50;

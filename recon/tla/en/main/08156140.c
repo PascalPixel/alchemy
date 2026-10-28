@@ -52,7 +52,7 @@
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), blitters load through BattleEffect_LoadBlitter and
 // Func_08196404 with the Lost Age's mode numbers (max is 1, additive 0),
-// the callback order is 0xc80, the canvas preparer takes its flags packed,
+// the task priority is 0xc80, the canvas preparer takes its flags packed,
 // the volley time counts count - 1 target delays, and a shot's z velocity
 // is worked out before its y velocity.
 
@@ -134,8 +134,8 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
-s32 Task_Add(s32 (*callback)(void), s32 order);
-s32 Task_Remove(s32 (*callback)(void));
+s32 Task_Add(s32 (*func)(void), s32 order);
+s32 Task_Remove(s32 (*func)(void));
 void HeapSlot_Release(s32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
 void Sound_PlayFar(s32 cue);

@@ -90,8 +90,8 @@ void Actor_SetSingleChildFlags(struct AlhafraInteriorsObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct AlhafraInteriorsObject *object, s32 flags);
 void Actor_SetModeById(s32 actor, s32 mode);
-void Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+void Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -172,12 +172,12 @@ static inline void AlhafraInteriors_WaitFrames(s32 frames) {
   WaitFrames(frames);
 }
 
-#define ALHAFRA_INTERIORS_TASK_ADD(callback, priority)                         \
+#define ALHAFRA_INTERIORS_TASK_ADD(func, priority)                         \
   {                                                                            \
     /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * callback load. */                                                       \
+     * task function load. */                                                       \
     s32 priority_ = (priority);                                                \
-    Task_Add((callback), priority_);                      \
+    Task_Add((func), priority_);                      \
   }
 
 static inline void AlhafraInteriors_ObjEmoteWait(s32 actor, s32 emote) {
@@ -185,10 +185,10 @@ static inline void AlhafraInteriors_ObjEmoteWait(s32 actor, s32 emote) {
   Func_02000b64(actor, emote);
 }
 
-static inline void AlhafraInteriors_TaskAdd(void (*callback)(void),
+static inline void AlhafraInteriors_TaskAdd(void (*func)(void),
                                             s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(callback, priority);
+  Task_Add(func, priority);
 }
 
 static inline void AlhafraInteriors_MessagePut(s32 speaker, s32 flags) {

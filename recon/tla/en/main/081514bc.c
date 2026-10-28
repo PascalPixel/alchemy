@@ -2,7 +2,7 @@
 
 // Twin: The Broken Seal's BattleEffect_RunFrost (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
-// blocks as Ram_HeapSlots fields, orders the callback 0xc80, ends 50
+// blocks as Ram_HeapSlots fields, gives its task the priority 0xc80, ends 50
 // frames after the burst (The Broken Seal: 75) and begins the results
 // with phase 133 (132). ResourceId_IceChipSheet and ResourceId_SparkleDots
 // are rows 0x17c and 0x17e of directory.s (assets BattleEffect_IceChipSheet and

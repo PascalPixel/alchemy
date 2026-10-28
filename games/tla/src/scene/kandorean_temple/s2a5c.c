@@ -3,7 +3,7 @@
 #include "edition.h"
 #include "task.h"
 
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02005398(void);
 s32 Func_020053a0(s32 a, s32 b, s32 c);
 void Func_020053b8(const void *data);

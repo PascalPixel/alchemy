@@ -7,7 +7,7 @@ void Func_02001f34(s32 a);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void FieldEvent_WaitFrames(s32 frames);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Func_020001cc(void);
 
 void Func_02000210(void) {

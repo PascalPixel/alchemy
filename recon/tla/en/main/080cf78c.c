@@ -43,7 +43,7 @@ extern const s8 Data_080f01e6[];
 extern struct TransitionShape Data_080f2e9c[];
 extern u32 gFrameCount;
 
-void Task_Remove(void (*callback)(void));
+void Task_Remove(void (*func)(void));
 void BattleEffect_StartWindowHBlankDma(void);
 void Window_FillFromSceneFar(u16 *pairs);
 s32 Party_GetLeaderActor(void);

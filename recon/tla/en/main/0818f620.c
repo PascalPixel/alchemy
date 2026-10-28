@@ -45,8 +45,8 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0815e22c(struct EffectPosition *position);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void EffectPosition_ProjectBattler(s32 id,
                                                  struct EffectPosition *out);
 void HeapSlot_Release(s32 slot);

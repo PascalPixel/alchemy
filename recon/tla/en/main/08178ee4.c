@@ -74,8 +74,8 @@ extern u8 gData_081993e8[];
 extern u16 gData_081993f0[];
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
-s32 Task_Add(s32 callback, s32 priority);
-s32 Task_Remove(s32 callback);
+s32 Task_Add(s32 func, s32 priority);
+s32 Task_Remove(s32 func);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Sound_PlayFar(s32 cue);

@@ -31,7 +31,7 @@
 // last frame left behind), and the sparks at the target.
 
 // Port of The Broken Seal's BattleEffect_RunBeam, with The Lost
-// Age's heap slots, blitter modes (3 minus ☀️'s) and callback order, no
+// Age's heap slots, blitter modes (3 minus ☀️'s) and task priority, no
 // work->effect store, and these changes: kind 6 joins kind 5, kind 3 has
 // its own test, the beam is drawn additive (☀️ draws it with max), the
 // recoil depends on the kind, the summon test reads the enemy id, and the
@@ -100,8 +100,8 @@ u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*callback)(void), s32 order);
-s32 Task_Remove(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void *Unit_Get(s32 owner);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);

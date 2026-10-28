@@ -12,7 +12,7 @@ void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void Resource_DecodeType01(const void *source, void *destination);
 s32 VramCache_Load(s32 slot, s32 size, void *tiles);
-void Task_Add(void (*callback)(void), s32 order);
+void Task_Add(void (*func)(void), s32 order);
 void Func_080daab0(void);
 void Func_080dacb8(void);
 

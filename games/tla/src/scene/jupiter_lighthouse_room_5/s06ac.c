@@ -28,7 +28,7 @@ struct SparkWork {
 extern s32 gData_020033dc;
 extern u8 MsgFieldShowAnemosPower[];
 
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 void Resource_ResetEntry(s32 entry);
 void HeapSlot_Release(s32 slot);
 void Event_WaitTransitionFrames(void);

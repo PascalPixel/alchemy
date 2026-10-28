@@ -85,7 +85,7 @@ s32 Task_SuspendOverlayTasks(void);
 s32 Task_SetFlags(TaskFunc func, u32 mask);
 s32 Task_ResumeAll(TaskFunc func);
 s32 Task_ResumeOverlayTasks(void);
-void Task_RunPass(s32 key);
+void Task_RunPass(s32 pass);
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, void *position);

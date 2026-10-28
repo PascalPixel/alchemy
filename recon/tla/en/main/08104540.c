@@ -70,7 +70,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count);
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
 void Input_ResetKeyRepeat(void);
 void Sound_PlayFar(s32 cue);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
 void WaitFrames(s32 frames);
 

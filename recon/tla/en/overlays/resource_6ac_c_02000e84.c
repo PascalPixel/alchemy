@@ -5,7 +5,7 @@
 // returning s32 (it returns nothing; as void, its arguments are set r0 first:
 // 36), which would be a signature device; an empty asm with a memory clobber
 // between the two scene tests stops GCSE sharing room 6's id between them (22
-// without), and a volatile asm on the callback's priority builds it before the
+// without), and a volatile asm on the task's priority builds it before the
 // callback's pool load (6 without). Left: the native's pool holds
 // SceneId_Ov6ACRoom3 twice, once for the first test and once for the palette,
 // where this compile shares one entry, so the closing loads differ and the pool
@@ -27,7 +27,7 @@ void Func_020031f8(s32 id, s32 a, s32 b);
 void Func_02003270(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020032b0(s32 a);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 
 static __inline__ void SetValue(s32 id, s32 value) {
   /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */

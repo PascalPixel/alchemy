@@ -76,8 +76,8 @@ extern char ResourceId_CyanPalette;
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Task_Add(void *callback, s32 order);
-s32 Task_Remove(void *callback);
+s32 Task_Add(void *func, s32 order);
+s32 Task_Remove(void *func);
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar

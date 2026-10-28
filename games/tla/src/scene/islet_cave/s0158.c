@@ -9,8 +9,8 @@ extern u16 *gData_02001a24;
 extern u16 gData_02001a30;
 extern u16 gData_02001a34;
 
-s32 Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 s32 Func_020001d4(s16 *list);
 void Func_020001f8(void);
 

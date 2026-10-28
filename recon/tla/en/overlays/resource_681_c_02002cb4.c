@@ -15,7 +15,7 @@ struct Actor *Actor_GetById(u32 id);
 void Func_02004ebc(s32 id, s32 x, s32 z);
 void Func_02002b04(u32 id, s8 mode);
 void Func_02002b8c(void);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 
 void Func_02002cb4(u8 mode) {
   if (!GameFlag_Test(265)) {

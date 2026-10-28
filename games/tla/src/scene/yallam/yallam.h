@@ -44,8 +44,8 @@ extern const struct YallamStop gData_02002ce4[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
-s32 Task_Add(void (*callback)(void), s32 priority);
-void Task_RemoveFar(void (*callback)(void));
+s32 Task_Add(void (*func)(void), s32 priority);
+void Task_RemoveFar(void (*func)(void));
 void Actor_SetModeById(u32 id, s32 mode);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_OffsetPositionAndResetMotion(s32 actor, s32 x, s32 z);

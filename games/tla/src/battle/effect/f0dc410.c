@@ -52,7 +52,7 @@ s32 ResourceTable_CountFreeBlocks(void);
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
 void BattleEffect_StartArcEffect(void);
 void BattleEffect_UpdateAllEffectSlots(void);
-void Task_Add(void (*callback)(void), s32 order);
+void Task_Add(void (*func)(void), s32 order);
 
 #define HEAP_SLOT_FX 224
 

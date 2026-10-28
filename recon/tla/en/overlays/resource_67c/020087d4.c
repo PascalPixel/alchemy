@@ -27,7 +27,7 @@ void Func_020007d4(void) {
   s32 j;
 
   /* FAKEMATCH: the native builds the task priority before loading the
-   * callback; naming the priority here, before it is set, gives that order, as
+   * task function; naming the priority here, before it is set, gives that order, as
    * in Func_0200071c. */
   __asm__ volatile("" : "+r"(priority));
   Func_02003d7c();

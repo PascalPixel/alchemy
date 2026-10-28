@@ -45,11 +45,11 @@ s32 Task_ResumeOverlayTasks(void) {
   return result;
 }
 
-void Task_RunPass(s32 key) {
+void Task_RunPass(s32 pass) {
   struct Task *task = gTasks;
   s32 remaining;
 
-  key >>= 8;
+  pass >>= 8;
   if (gTasksInitialized == 1) {
     remaining = TASK_COUNT + 1;
     task--;
@@ -57,7 +57,7 @@ void Task_RunPass(s32 key) {
     remaining--;
     if (remaining != 0) {
       task++;
-      if (TASK_STATE_HIGH(task) == key) {
+      if (TASK_STATE_HIGH(task) == pass) {
         TaskIntFunc func = *(TaskIntFunc *)&task->func;
 
         func();
@@ -67,7 +67,7 @@ void Task_RunPass(s32 key) {
   }
 }
 
-s32 Task_CountInPass(s32 key) {
+s32 Task_CountInPass(s32 pass) {
   /* FAKEMATCH: plain typed scans use bottom-tested loops. The native
    * preincrement countdown uses an unsigned cursor so no before-array C pointer
    * is formed. */
@@ -81,7 +81,7 @@ s32 Task_CountInPass(s32 key) {
   count = 0;
   observed = *status;
   cursor = (u32)gTasks;
-  key >>= 8;
+  pass >>= 8;
   if (observed == 1) {
     i = 25;
     cursor -= sizeof(*task);
@@ -90,27 +90,27 @@ s32 Task_CountInPass(s32 key) {
     if (i != 0) {
       goto count_task;
     }
-    key = count;
+    pass = count;
     goto finish;
   count_task:
     {
       cursor += sizeof(*task);
       task = (struct Task *)cursor;
-      if (TASK_STATE_HIGH(task) == key) {
+      if (TASK_STATE_HIGH(task) == pass) {
         count++;
       }
       goto next_task;
     }
   }
 finish:
-  return key;
+  return pass;
 }
 
-void Task_RunPassBeforeVBlankTasks(s32 key) {
+void Task_RunPassBeforeVBlankTasks(s32 pass) {
   struct Task *task = gTasks;
   s32 remaining;
 
-  key >>= 8;
+  pass >>= 8;
   if (gTasksInitialized == 1) {
     remaining = TASK_COUNT + 1;
     task--;
@@ -121,7 +121,7 @@ void Task_RunPassBeforeVBlankTasks(s32 key) {
       if (TASK_STATE_HIGH(task) == 4) {
         return;
       }
-      if (TASK_STATE_HIGH(task) == key) {
+      if (TASK_STATE_HIGH(task) == pass) {
         TaskIntFunc func = *(TaskIntFunc *)&task->func;
 
         func();

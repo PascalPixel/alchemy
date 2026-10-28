@@ -47,8 +47,8 @@ s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Task_Add(void *callback, s32 priority);
-void Task_RemoveFar(void *callback);
+void Task_Add(void *func, s32 priority);
+void Task_RemoveFar(void *func);
 s32 Random16Far(void);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
@@ -396,10 +396,10 @@ static __inline__ void Func_02003e44_(s32 a, s32 b) {
   Func_02003e44(a, b);
 }
 
-static __inline__ void Task_Add_(void *callback,
+static __inline__ void Task_Add_(void *func,
                                                       s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(callback, priority);
+  Task_Add(func, priority);
 }
 
 #endif

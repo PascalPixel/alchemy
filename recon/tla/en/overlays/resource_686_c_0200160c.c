@@ -37,7 +37,7 @@ struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_WaitFrames(s32 frames);
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_020015ac(void);
 void Func_02002df4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02002dfc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);

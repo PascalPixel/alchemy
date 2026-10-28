@@ -4,7 +4,7 @@
 // Twin: The Broken Seal's BattleEffect_RunTargetBursts (effect.c), call for
 // call. The Lost Age loads its two blitters through BattleEffect_LoadBlitter into heap
 // slots 104 and 188 (BLIT_ADDITIVE 0 and BLIT_MAX 1 where The Broken Seal
-// has 3 and 2), reads the effect from its argument and orders the callback
+// has 3 and 2), reads the effect from its argument and gives its task the priority
 // 0xc80. Resources not yet named in directory.s, by row and asset: 0x161
 // BattleEffect_SmokeSheet, 0x12d BattleEffect_TargetBurstImage and 0x17f
 // BattleEffect_PinkBurstSheet.

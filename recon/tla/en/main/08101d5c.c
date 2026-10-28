@@ -50,7 +50,7 @@ s32 Message_AllTypedFar(void);
 void Func_080f8a44(s32 x, s32 y);
 s32 Resource_ResetEntry(u32 entry);
 void Window_CloseFar(void *window, s32 mode);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
 void WaitFrames(s32 frames);
 extern char MsgDjinnInfoPrompt[], MsgDjinnInfoTopic[], MsgDjinnInfoText[];

@@ -70,7 +70,7 @@ void Func_080fabe0(void);
 void Window_SetBounds(void *window, s32 x, s32 y, s32 width, s32 height);
 void WindowSprite_RedrawSavedRectFar(void *window);
 void *Unit_Get(s32 owner);
-void Task_Add(void (*callback)(void), s32 priority);
+void Task_Add(void (*func)(void), s32 priority);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_08104ef8(s32 first);

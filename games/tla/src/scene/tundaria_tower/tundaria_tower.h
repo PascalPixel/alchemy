@@ -39,7 +39,7 @@ void GameFlag_ClearBit(s32 flag);
 s32 Random16Far(void);
 void FieldMessage_Show(const u8 *message, s32 flags);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct TundariaTowerEffectParams *params);

@@ -69,7 +69,7 @@ s32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 s32 Func_08138048(s32 slot, s32 modeAndFlags);
-s32 Task_Add(TaskFunc callback, s32 order);
+s32 Task_Add(TaskFunc func, s32 order);
 s32 Func_08126e00(void);
 s32 Func_08127038(void);
 

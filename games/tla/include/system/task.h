@@ -65,8 +65,8 @@ s32 Task_ResumeOverlayTasks(void);
 s32 Menu_ResumeFieldTasks(void);
 s32 Menu_SuspendFieldTasks(void);
 
-void Task_RunPass(s32 key);
-s32 Task_CountInPass(s32 key);
-void Task_RunPassBeforeVBlankTasks(s32 key);
+void Task_RunPass(s32 pass);
+s32 Task_CountInPass(s32 pass);
+void Task_RunPassBeforeVBlankTasks(s32 pass);
 
 #endif

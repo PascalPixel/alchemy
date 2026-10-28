@@ -1,7 +1,7 @@
 #include "types.h"
 #include "task.h"
 
-s32 Task_Add(void (*callback)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02000ab4(void);
 
 void Func_02000dd0(void) {

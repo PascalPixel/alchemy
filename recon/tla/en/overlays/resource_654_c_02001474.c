@@ -36,7 +36,7 @@ void Func_020039c0(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 u32 Random16Far(void);
-void Task_RemoveFar(void (*callback)(void));
+void Task_RemoveFar(void (*func)(void));
 
 void Func_02001474(void) {
   struct ShrineOfTheSeaGodObject *leader =

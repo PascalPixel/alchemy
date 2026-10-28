@@ -7,7 +7,7 @@
 
 extern u8 gData_02006c08[];
 
-s32 Task_Add(void (*callback)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Func_020036a8(void);
 
 /// While the object system runs, the world map's blend is queued for the

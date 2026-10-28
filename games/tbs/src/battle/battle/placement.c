@@ -18,7 +18,7 @@
 /// unit casts one.
 /// ★ Named from what the player sees: the black ellipse under each unit's
 /// feet (a battle's render)
-#define BATTLE_SHADOW_SPRITE 0x1fe
+#define BATTLE_SHADOW_SPRITE 510
 
 /// Creates the battle object of unit at (x, y) on the battlefield, in
 /// pixels: its sprite (an enemy's from its class, sharing the slot it
@@ -405,9 +405,9 @@ void BattleUnit_RefreshPlacement(void) {
   enemyPlace = 0;
   battle = gBattleWork;
   count = BattleParty_PrepareMembers(unitIds);
-  // placement[0..7] is each party unit id's place (0xff for none) and
-  // placement[8..13] the enemy places, numbered 8 to 13.
-  placementValue = 0xff;
+  // placement[0..7] is each party unit id's place (BATTLE_OBJECT_NONE for none)
+  // and placement[8..13] the enemy places, numbered 8 to 13.
+  placementValue = BATTLE_OBJECT_NONE;
   for (unitIndex = 13; unitIndex >= 0; unitIndex--)
     battle->objectIndex[unitIndex] = placementValue;
   placementCursor = &battle->objectIndex[13];

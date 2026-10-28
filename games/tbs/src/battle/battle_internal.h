@@ -126,6 +126,11 @@
 
 #define ALLY_MAX 7 ///< the last party member's unit id
 
+/// BattleWork.objectIndex of a unit with no place on the battlefield:
+/// BattleUnit_RefreshPlacement fills the list with it, and BattleObject_Get
+/// returns NULL for it.
+#define BATTLE_OBJECT_NONE 0xff
+
 // BattleWork.defeatState: whether the last enemy fell alone, or with others
 // before it, or a party member's action ended the battle with a single
 // defeat. The messages are "has been downed!" and "'s party goes down!",
@@ -138,6 +143,13 @@
 /// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
 /// choose only formations of defeated enemies (BattleFormation_AverageLevel).
 #define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
+
+/// BattleEnemy_ClaimNameLetter returns the letter in ENEMY_LETTER_MASK, with
+/// ENEMY_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
+/// give the first one its letter too (BattleEnemy_LetterFirstOfKind) before
+/// passing the letter to BattleUnit_SetFar.
+#define ENEMY_LETTER_FIRST_TOO 0x8000
+#define ENEMY_LETTER_MASK 0x7fff
 
 /// The length of a unit's name, its terminator excluded.
 #define UNIT_NAME_LENGTH 14
@@ -191,13 +203,18 @@ enum BattleCastKind {
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
 
+/// The list place codes the target pickers return (targeting.c,
+/// Battle_FindTaggedSlotByValue): a place in the party's list or the enemies',
+/// or'd with the side's tag.
+#define PLACE_PARTY 0x100
+#define PLACE_ENEMY 0x180
+
 /// BattleAction.target of a held unit's lost action (COMMAND_NONE, from
 /// Battle_BuildOpponentActions and
 /// Battle_BuildUnitActions): as a place code, place 0 of the other
-/// side, 0x100 the party's for an enemy and 0x180 the enemies' for a party
-/// member (PLACE_PARTY, PLACE_ENEMY).
-#define TARGET_NONE_ENEMY 0x100
-#define TARGET_NONE_PARTY 0x180
+/// side, the party's for an enemy and the enemies' for a party member.
+#define TARGET_NONE_ENEMY PLACE_PARTY
+#define TARGET_NONE_PARTY PLACE_ENEMY
 
 /// The camera's yaw while a party member acts, and while an enemy does, in
 /// 1/65536 turns: an eighth of a turn either side of 0. The camera task

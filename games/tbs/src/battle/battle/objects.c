@@ -349,7 +349,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 
 /// The shadow a body 32 pixels wide takes instead of
 /// BattleObject.shadow's (see BATTLE_SHADOW_SPRITE, placement.c).
-#define NARROW_SHADOW_SPRITE 0x1ff
+#define NARROW_SHADOW_SPRITE 511
 
 /// Readies the sprites of the units in list: releases those of every place
 /// list lacks, then creates each listed unit's sprites (body, weapon, status
@@ -497,7 +497,7 @@ struct BattleObject *BattleObject_Get(s32 unitId) {
     unitId -= FIRST_ENEMY_UNIT - 8;
   }
   placementIndex = unitId;
-  if (battle->objectIndex[placementIndex] == 0xFF) {
+  if (battle->objectIndex[placementIndex] == BATTLE_OBJECT_NONE) {
     return NULL;
   }
   return &battleObjects[battle->objectIndex[placementIndex]];

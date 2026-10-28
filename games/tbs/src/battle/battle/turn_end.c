@@ -14,9 +14,9 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct Unit *unit = Unit_GetFar(unitId);
 
   if (turns <= 5) {
-    // 0x28f is 65536 / 100 rounded down, scaling the percentage to a 16-bit
+    // Q16_ONE / 100, rounded down, scales the percentage to a 16-bit
     // random number.
-    s32 threshold = ((unit->luck * 3 - turns * 5) + bias) * 0x28f;
+    s32 threshold = ((unit->luck * 3 - turns * 5) + bias) * (Q16_ONE / 100);
     if (threshold >= (Battle_RandomFar() & 0xffff))
       return 1;
   }
@@ -165,7 +165,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
     if (remaining == 0)
       return 1;
     if (remaining <= 7U &&
-        BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, 0x1E) != 0) {
+        BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, 30) != 0) {
       unit->psySeal = 0U;
       return 1;
     }

@@ -6,7 +6,7 @@
 
 /// The formation the Fusion Dragon leads, fought on the Venus Lighthouse aerie:
 /// it opens with the storm instead of the curtain.
-#define TRANSITION_STORM_FORMATION 0x15b
+#define TRANSITION_STORM_FORMATION 347
 
 /// The curtain's map entries: tile 128 + n of CURTAIN_TILE, WINDOW_PALETTE.
 #define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))
@@ -109,18 +109,18 @@ void BattleTransition_BuildTilemap(void *tilemap) {
   u32 index;
 
   // Iwram_FillWords counts bytes; the pointer steps in words.
-  Iwram_FillWords(destination, 0x100, -1);
-  destination += 0x40;
-  Iwram_FillWords(destination, 0x80, 0x03ff03ff);
+  Iwram_FillWords(destination, 256, -1);
+  destination += 64;
+  Iwram_FillWords(destination, 128, 0x03ff03ff);
   entry = (0x0201 << 16) | 0x0200;
-  destination += 0x20;
+  destination += 32;
   index = 0;
   do {
     index++;
     *destination++ = entry;
     entry += 0x00020002;
   } while (index <= 239);
-  Iwram_FillWords(destination, 0x280, 0x03ff03ff);
+  Iwram_FillWords(destination, 640, 0x03ff03ff);
 }
 
 /// Shows the zoomed background's finished page each VBlank while the
@@ -179,22 +179,22 @@ void BattleTransition_AdvanceTimer(void) {
   timer = *(u32 **)Ram_BattleEntryTimer;
   frame = *timer;
   camera = *(struct BattleCamera **)Ram_CameraWork;
-  scroll = 0x34 - frame;
-  if (scroll > 0x20)
-    scroll = 0x20;
+  scroll = 52 - frame;
+  if (scroll > 32)
+    scroll = 32;
   offset = (struct BgScroll *)Ram_BgScroll;
   if (scroll < 0)
     scroll = 0;
   offset->y = scroll;
   // 360 a frame from 0xaf80 reaches 0x12000, YAW_PARTY_ACTION, at frame 80.
-  if (frame <= 0x50U)
+  if (frame <= 80U)
     camera->yaw = 45 * frame * 8 + 0xaf80;
   next = (*timer = *timer + 1);
-  if (next <= 0x50U) {
-    BattleCamera_SetView(0, 0, 0, 0xb4 - next);
+  if (next <= 80U) {
+    BattleCamera_SetView(0, 0, 0, 180 - next);
     return;
   }
-  BattleCamera_SetView(0, 0, 0, 0x64);
+  BattleCamera_SetView(0, 0, 0, 100);
 }
 
 /// Draws the curtain opening on BG1 as it stands at the current frame: over 80
@@ -214,7 +214,7 @@ void BattleTransition_DrawRows(void) {
 
   transitionFrame = *gBattleEntryTimer;
   if (transitionFrame >= 0 && transitionFrame <= 79) {
-    tileEntry = (7 & transitionFrame) + 0xf081;
+    tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
     // transitionFrame / 8 as signed division rounds it; the frame is never
     // negative here.
     if (transitionFrame >= 0) {
@@ -232,7 +232,7 @@ void BattleTransition_DrawRows(void) {
     } while (column != 32);
 
     // The lower half: the same tile flipped vertically.
-    tileEntry |= 0x800;
+    tileEntry |= TILE_VFLIP;
     alignedFrame = transitionFrame;
     if (transitionFrame < 0) {
       alignedFrame += 7;
@@ -312,8 +312,8 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     // 136 clear; BG1 shows the curtain from screen block 12 behind BG0, whose
     // priority is raised by 2.
     REG_DISPCNT = DISPCNT_MODE_1;
-    Dma_Fill32Cell(fill, 0x33333333, CURTAIN_TILE(0), 0x20);
-    Dma_Fill32Cell(fill, 0, CURTAIN_TILE(8), 0x20);
+    Dma_Fill32Cell(fill, 0x33333333, CURTAIN_TILE(0), TILE_SIZE_4BPP);
+    Dma_Fill32Cell(fill, 0, CURTAIN_TILE(8), TILE_SIZE_4BPP);
     REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);
     REG_BG0CNT |= BGCNT_PRIORITY(2);
     view->mode = BATTLE_BACKGROUND_ZOOMED;

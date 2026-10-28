@@ -9,39 +9,39 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A map cell's metatile behavior (`MapGridCell.behavior`): what stepping
+/// A map cell's cell behavior (`MapGridCell.behavior`): what stepping
 /// on, pushing against or searching the cell does.
-enum MetatileBehavior {
-  MB_NORMAL = 0, ///< open ground: nothing happens there
+enum CellBehavior {
+  CELL_BEHAVIOR_NORMAL = 0, ///< open ground: nothing happens there
   /// 1 to 239: the scene's own events, step trigger or exit when stepped on
   /// (Scene_RunStepTriggerOrExit), examine trigger when the player presses A
   /// facing the cell.
-  MB_EVENT_FIRST = 1,
-  MB_EVENT_LAST = 239,
+  CELL_BEHAVIOR_EVENT_FIRST = 1,
+  CELL_BEHAVIOR_EVENT_LAST = 239,
   /// Ground with encounters of its own: grounds 1 and 2 of the map's zones.
-  MB_ENCOUNTER_GROUND_1 = 240,
-  MB_ENCOUNTER_GROUND_2 = 241,
+  CELL_BEHAVIOR_ENCOUNTER_GROUND_1 = 240,
+  CELL_BEHAVIOR_ENCOUNTER_GROUND_2 = 241,
   /// 242 to 247: examine triggers with lines of their own, the same on every
   /// map (Field_ExamineCell, gField_ExamineTriggerMessageOffsets).
-  MB_JAR = 242,
-  MB_BARREL = 243,
-  MB_WOODEN_BOX = 244,
-  MB_GRAVE = 245,
-  MB_BOOKS = 246,
-  MB_WELL = 247,
-  /// Jumps forward like MB_JUMP_FORWARD, but Field_UpdateWalking never
-  /// passes it to Field_RunPushCell.
-  MB_JUMP_FORWARD_UNREACHED = 249,
+  CELL_BEHAVIOR_JAR = 242,
+  CELL_BEHAVIOR_BARREL = 243,
+  CELL_BEHAVIOR_WOODEN_BOX = 244,
+  CELL_BEHAVIOR_GRAVE = 245,
+  CELL_BEHAVIOR_BOOKS = 246,
+  CELL_BEHAVIOR_WELL = 247,
+  /// Jumps forward like CELL_BEHAVIOR_JUMP_FORWARD, but Field_UpdateWalking
+  /// never passes it to Field_RunPushCell.
+  CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED = 249,
   /// Ground that hurts the party over time: the Lamakan Desert's sand.
-  MB_DESERT_SAND = 250,
+  CELL_BEHAVIOR_DESERT_SAND = 250,
   /// 252 to 254: cells the leader pushes against (Field_RunPushCell).
-  MB_LEDGE = 252,        ///< jumped down with Down held
-  MB_CLIMB = 253,        ///< climbed up or down with Up or Down held
-  MB_JUMP_FORWARD = 254, ///< jumped across
-  MB_WALL = 255          ///< blocks whatever the heights
+  CELL_BEHAVIOR_LEDGE = 252,        ///< jumped down with Down held
+  CELL_BEHAVIOR_CLIMB = 253,        ///< climbed up or down with Up or Down held
+  CELL_BEHAVIOR_JUMP_FORWARD = 254, ///< jumped across
+  CELL_BEHAVIOR_WALL = 255          ///< blocks whatever the heights
 };
 
-/// One cell of a map layer: its metatile and flags, its metatile behavior and
+/// One cell of a map layer: its metatile and flags, its cell behavior and
 /// its shape, an index into the shape table.
 struct MapGridCell {
   // XXX (no evidence): what the four flag bits mark; the grids set them, but
@@ -49,7 +49,7 @@ struct MapGridCell {
   /// bits: 15..12 flags (15..14 read by MapGrid_GetCellHighFlags) | 11..0
   /// metatile
   u16 metatileAndFlags;
-  u8 behavior; ///< an enum MetatileBehavior
+  u8 behavior; ///< an enum CellBehavior
   /// Indexes the 4-byte shape table (gMapGridShapes): the shape's kind in
   /// the first byte's low four bits, then its height samples.
   u8 shape;

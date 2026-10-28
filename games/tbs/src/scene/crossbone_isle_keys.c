@@ -198,7 +198,7 @@ enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 /// rows of spikes, below a ladder (its render)
 #define FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER FLAG_SCENE_TEMP_06
 /// CrossboneIsleBane: the leader last looked east from the ladder, which gives
-/// the ladder cell its other metatile behaviors.
+/// the ladder cell its other cell behaviors.
 /// ★ Named from what the player sees: the ladder up the ledge beside the second
 /// pillar, from which the leader can face east and jump across (its render)
 #define FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST FLAG_SCENE_TEMP_07

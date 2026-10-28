@@ -401,7 +401,7 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
-      Field_SetMetatileBehaviorAt(0, PIXELS(304), PIXELS(368), MB_CLIMB);
+      Field_SetCellBehaviorAt(0, PIXELS(304), PIXELS(368), CELL_BEHAVIOR_CLIMB);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
@@ -410,7 +410,7 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
-      Field_SetMetatileBehaviorAt(0, PIXELS(80), PIXELS(368), MB_CLIMB);
+      Field_SetCellBehaviorAt(0, PIXELS(80), PIXELS(368), CELL_BEHAVIOR_CLIMB);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
@@ -419,7 +419,7 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
-      Field_SetMetatileBehaviorAt(0, PIXELS(96), PIXELS(336), MB_CLIMB);
+      Field_SetCellBehaviorAt(0, PIXELS(96), PIXELS(336), CELL_BEHAVIOR_CLIMB);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
@@ -428,8 +428,8 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
-      Field_SetMetatileBehaviorAt(0, PIXELS(144), PIXELS(320), MB_CLIMB);
-      Field_SetMetatileBehaviorAt(0, PIXELS(752), PIXELS(320), MB_CLIMB);
+      Field_SetCellBehaviorAt(0, PIXELS(144), PIXELS(320), CELL_BEHAVIOR_CLIMB);
+      Field_SetCellBehaviorAt(0, PIXELS(752), PIXELS(320), CELL_BEHAVIOR_CLIMB);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_NUT_CAUGHT) != 0) {
       return 0;
@@ -641,7 +641,7 @@ static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
     actor->collisionFlags = 0;
   }
   Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
-  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
+  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN);
 }
 
@@ -655,7 +655,7 @@ static void CrossboneIsle_GrowSecondPlant(s32 actorId) {
     actor->collisionFlags = 0;
   }
   Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
-  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
+  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1);
 }
 
@@ -669,7 +669,7 @@ static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
     actor->collisionFlags = 0;
   }
   Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
-  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
+  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2);
 }
 
@@ -685,8 +685,8 @@ static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
     actor->collisionFlags = 0;
   }
   Actor_SetSpriteFlags(Actor_GetById(actorId), 0);
-  MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
-  MapGrid_SetMetatileBehaviorAt(0, secondFixedX, secondFixedZ, MB_CLIMB);
+  MapGrid_SetCellBehaviorAt(0, fixedX, fixedZ, CELL_BEHAVIOR_CLIMB);
+  MapGrid_SetCellBehaviorAt(0, secondFixedX, secondFixedZ, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3);
 }
 

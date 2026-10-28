@@ -13,37 +13,36 @@
 ///   steps across to block her, then waits, turning to watch the leader come up
 ///   (MercuryLighthouseEntrance_LizardManBlocksMia). Spoken to, she says `A
 ///   monster inside Mercury Lighthouse? How could this be!?` The Lizard Man
-///   steps into the leader's way too (metatile behavior 41, and back to the
+///   steps into the leader's way too (cell behavior 41, and back to the
 ///   middle on 40 and 42); talking to him, Mind Read on him or walking north
 ///   into him starts the battle (the second slot of the encounter zone of Tret
 ///   Tree's and Mercury Lighthouse's scripted battles). Back from it
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN), Mia nods to
 ///   the leader and goes on into the lighthouse
-///   (FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA); metatile behavior 10 by the
+///   (FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA); cell behavior 10 by the
 ///   doorway brings the party back to
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, so this plays
 ///   even if the party wandered off. Six statues line the way to the doorway.
-/// - The pool. An inscription (metatile behavior 1) reads `He who honors the
+/// - The pool. An inscription (cell behavior 1) reads `He who honors the
 ///   heart of the goddess shall stand at the center of all, like a swan in the
 ///   center of a rippling pond.` Ply cast on the invisible actor there
 ///   from one cell only, (12, 32), dims the room, raises sparks from the water,
 ///   starts the colours shimmering and opens the routes that need it
-///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED): it copies the metatile behaviors
+///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED): it copies the cell behaviors
 ///   of 13 by 7 cells over the pool at (6, 32), and entering the goddess's room
 ///   once it is set copies them again. Cells out in the water take
-///   MB_MERCURY_LIGHTHOUSE_POOL_WATER, the heart
-///   MB_MERCURY_LIGHTHOUSE_POOL_HEART and cells on the pool's rim
-///   MB_MERCURY_LIGHTHOUSE_POOL_RIM, which the hops and lights below answer,
-///   while the water between them stays a wall. From then on
-///   the pool's heart
-///   ( MB_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader up to three lights,
-///   each hop into the water spends one, and landing in it without one sinks
-///   the leader back to the heart (the helpers of
+///   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, the heart
+///   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART and cells on the pool's rim
+///   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, which the hops and lights below
+///   answer, while the water between them stays a wall. From then on the pool's
+///   heart ( CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader up
+///   to three lights, each hop into the water spends one, and landing in it
+///   without one sinks the leader back to the heart (the helpers of
 ///   shared/mercury_lighthouse_pillar.h). Dropping in from above
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE) the first
 ///   time, the leader lands in a burst, and until Ply has worked the
 ///   inscription's words appear.
-/// - The way on. Three sparkling passages (metatile behaviors 67 to 69) carry
+/// - The way on. Three sparkling passages (cell behaviors 67 to 69) carry
 ///   the leader between this floor's parts
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_TO_DRY_FOUNTAIN,
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_FOUNTAINS and
@@ -200,28 +199,30 @@ static s32 MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *updated) {
 #include "shared/mercury_lighthouse_palette_cycle.h"
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching
-/// MB_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples spreading from the
-/// leader while there.
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples spreading
+/// from the leader while there.
 static void MercuryLighthouseEntrance_RippleAroundLeader(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching
-/// MB_MERCURY_LIGHTHOUSE_POOL_RIM takes the leader's lights.
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM takes the leader's lights.
 static void MercuryLighthouseEntrance_LoseLights(void) {
   MercuryLighthouse_LoseLights();
 }
 
 /// Mercury Lighthouse, the pool, once Ply has worked: walking into
-/// MB_MERCURY_LIGHTHOUSE_POOL_HEART, MB_MERCURY_LIGHTHOUSE_POOL_WATER or
-/// MB_MERCURY_LIGHTHOUSE_POOL_RIM hops the leader two cells the pressed way,
-/// spending a light on a hop into the water.
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART,
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER or
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM hops the leader two cells the
+/// pressed way, spending a light on a hop into the water.
 static void MercuryLighthouseEntrance_HopAcrossPool(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching its heart
-/// ( MB_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader lights, up to three.
+/// ( CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader lights, up
+/// to three.
 static void MercuryLighthouseEntrance_ChargeLights(void) {
   MercuryLighthouse_ChargeLights();
 }
@@ -244,7 +245,7 @@ const struct ActorTemplate *MercuryLighthouseEntrance_GetActorTemplates(void) {
 }
 
 /// Mercury Lighthouse: searching the inscription by the pool
-/// (metatile behavior 1). "He who honors the heart of the goddess shall stand
+/// (cell behavior 1). "He who honors the heart of the goddess shall stand
 /// at the center of all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Event_Start();
@@ -255,7 +256,7 @@ static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
 
 #include "shared/mercury_lighthouse_passage.h"
 
-/// Mercury Lighthouse: walking north into metatile behavior 67, a sparkling
+/// Mercury Lighthouse: walking north into cell behavior 67, a sparkling
 /// passage, leaves by
 /// MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_TO_DRY_FOUNTAIN.
 static void MercuryLighthouseEntrance_LeaveChestPoolByPassage(void) {
@@ -263,7 +264,7 @@ static void MercuryLighthouseEntrance_LeaveChestPoolByPassage(void) {
       MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_TO_DRY_FOUNTAIN);
 }
 
-/// Mercury Lighthouse: walking north into metatile behavior 68, a sparkling
+/// Mercury Lighthouse: walking north into cell behavior 68, a sparkling
 /// passage, leaves by
 /// MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_FOUNTAINS.
 static void MercuryLighthouseEntrance_LeaveEastWaterfallsByPassage(void) {
@@ -271,7 +272,7 @@ static void MercuryLighthouseEntrance_LeaveEastWaterfallsByPassage(void) {
       MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_FOUNTAINS);
 }
 
-/// Mercury Lighthouse: walking north into metatile behavior 69, a sparkling
+/// Mercury Lighthouse: walking north into cell behavior 69, a sparkling
 /// passage, leaves by
 /// MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_TO_CHEST_FOUNTAIN.
 static void MercuryLighthouseEntrance_LeaveDryPoolByPassage(void) {
@@ -287,7 +288,7 @@ const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void) {
 /// Mercury Lighthouse, the pool: Ply on the Ply target, from cell (12, 32)
 /// only, as the inscription bids. The room dims, fifteen sparks rise from the
 /// pool, its colours start to shimmer, and the routes that need it open, so
-/// the pool's metatile behaviors come into play. Until
+/// the pool's cell behaviors come into play. Until
 /// FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED is set, which it sets.
 static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 leaderColumn;
@@ -350,7 +351,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   }
 }
 
-/// Mercury Lighthouse, the doorway: touching metatile behavior 10 starts the
+/// Mercury Lighthouse, the doorway: touching cell behavior 10 starts the
 /// scene again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN,
 /// where Mia goes in if she has not yet.
 static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
@@ -358,7 +359,7 @@ static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
       MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN);
 }
 
-/// Mercury Lighthouse, the doorway: touching metatile behavior 40 or 42 while
+/// Mercury Lighthouse, the doorway: touching cell behavior 40 or 42 while
 /// the Lizard Man stands aside: he steps back in front of the doorway.
 static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
   GameFlag_Clear(FLAG_LIZARD_MAN_STEPPED_ASIDE);
@@ -366,7 +367,7 @@ static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
                   gMercuryLighthouseEntrance_LizardManStepCentre);
 }
 
-/// Mercury Lighthouse, the doorway: touching metatile behavior 41 while the
+/// Mercury Lighthouse, the doorway: touching cell behavior 41 while the
 /// Lizard Man stands in the doorway: he steps into the leader's way, west from
 /// column 7 and east otherwise.
 static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
@@ -388,7 +389,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 }
 
 /// Mercury Lighthouse, the doorway: talking to the Lizard Man, Mind Read on
-/// him, or walking north into metatile behavior 40 or 41. He stirs and the
+/// him, or walking north into cell behavior 40 or 41. He stirs and the
 /// battle begins; afterwards the party comes back at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN.
 static void MercuryLighthouseEntrance_FightLizardMan(void) {
@@ -430,7 +431,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   }
   // Restore persistent lighting and the Retreat destination first.
   MercuryLighthouse_RestoreLights(
-      MB_MERCURY_LIGHTHOUSE_POOL_WATER,
+      CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER,
       (struct MercuryLighthouseLights *)gSceneLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gAdventure.retreatEntrance = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
@@ -927,12 +928,12 @@ struct ActorTemplate gMercuryLighthouseEntrance_ActorTemplates[] = {
 };
 
 struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
-    { STEP_TRIGGER_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_LoseLights) },
-    { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_RippleAroundLeader) },
-    { STEP_TRIGGER_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_ChargeLights) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_LoseLights) },
+    { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_RippleAroundLeader) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_ChargeLights) },
     { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_ReturnToDoorway) },
     { TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },
     { TRIGGER_STEP, 42, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT(MercuryLighthouseEntrance_LizardManReturnsToCentre) },

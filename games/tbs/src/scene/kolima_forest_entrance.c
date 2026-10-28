@@ -196,7 +196,8 @@ static void KolimaForestEntrance_PushLog(void) {
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-      PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, MB_NORMAL);
+      PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4,
+                                             CELL_BEHAVIOR_NORMAL);
       GameFlag_Set(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER);
       actor = Actor_GetById(ACTOR_RIVER_LOG);
       Actor_SetSpriteFlags(actor, 0);
@@ -222,7 +223,8 @@ s32 KolimaForestEntrance_Initialize(void) {
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
     Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
-    PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, MB_NORMAL);
+    PushedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4,
+                                           CELL_BEHAVIOR_NORMAL);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIVER_LOG), 0);
   }
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);

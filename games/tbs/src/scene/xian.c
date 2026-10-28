@@ -18,7 +18,7 @@
 /// a scene other than by returning from a battle:
 /// - the water carrier walks her round (gXian_WaterCarrierRoute). Spoken to on
 ///   its eastern part, she spills her water (FLAG_XIAN_WATER_SPILLED): a puddle
-///   spreads at her feet, its cell takes a metatile behavior that walking into
+///   spreads at her feet, its cell takes a cell behavior that walking into
 ///   jumps the leader over it (Xian_JumpOverSpilledWater), and she walks back
 ///   for more. Frost freezes the puddle (FLAG_XIAN_SPILLED_WATER_FROZEN) into
 ///   ice that can be stood on. A leader who stands in her way for two seconds
@@ -676,7 +676,7 @@ static void Xian_WalkThroughExit(s32 exitNumber) {
 }
 
 /// Walking north into one of Xian's doors: it opens and the party goes in. Each
-/// door's metatile behavior is the number of the exit it leads by: five lead
+/// door's cell behavior is the number of the exit it leads by: five lead
 /// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_THUMP)
 /// and XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {

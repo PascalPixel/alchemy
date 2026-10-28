@@ -22,17 +22,17 @@
 ///
 /// The storms are the desert's mechanism, ACTOR_FIRST_SANDSTORM to
 /// ACTOR_LAST_SANDSTORM in the first two scenes. As the party nears one
-/// (metatile behaviors 61 to 65 and 71 to 73) it rises, growing to full size,
+/// (cell behaviors 61 to 65 and 71 to 73) it rises, growing to full size,
 /// and the sand haze, BG1 blended over the rest (SUHALLA_DESERT_HAZE_BLEND),
 /// fades in the first time (SuhallaDesert_RaiseStorm); the first storm to rise
 /// while Iodem travels with the party brings him out to warn of them. Walking
-/// into one (metatile behaviors 41 to 45 and 51 to 54) draws the leader to its
+/// into one (cell behaviors 41 to 45 and 51 to 54) draws the leader to its
 /// centre and lifts the party, spinning, for SANDSTORM_CAPTURE_FRAMES
 /// (SuhallaDesert_CatchInStorm). Douse in that time stops the storm and the
 /// monster in it attacks (SuhallaDesert_DouseStorm); otherwise the storm
 /// carries the party up and drops it on the World Map outside Suhalla
 /// (SuhallaDesert_StormCarriesPartyAway), which is why everyone the storms
-/// catch winds up there. In SuhallaDesertSouth, metatile behavior 81 sets the
+/// catch winds up there. In SuhallaDesertSouth, cell behavior 81 sets the
 /// fifth storm chasing the leader (SuhallaDesert_ChaseLeader), and it catches a
 /// leader on the move.
 ///
@@ -350,20 +350,20 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the leader walks into the scene's first storm
-/// (metatile behavior 41 or 51).
+/// (cell behavior 41 or 51).
 static void SuhallaDesert_CaughtByFirstStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the leader walks into the second storm
-/// (metatile behavior 42 or 52).
+/// (cell behavior 42 or 52).
 static void SuhallaDesert_CaughtBySecondStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 1);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the leader walks into the third storm (metatile
+/// SceneId_SuhallaDesertSouth), the leader walks into the third storm (cell
 /// behavior 43 or 53).
 static void SuhallaDesert_CaughtByThirdStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 2);
@@ -371,13 +371,13 @@ static void SuhallaDesert_CaughtByThirdStorm(void) {
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the leader walks into the fourth storm
-/// (metatile behavior 44 or 54).
+/// (cell behavior 44 or 54).
 static void SuhallaDesert_CaughtByFourthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 3);
 }
 
 /// The fifth storm catches the leader. In SuhallaDesertNorth the leader walks
-/// into it (metatile behavior 45); in SuhallaDesertSouth it's the chasing
+/// into it (cell behavior 45); in SuhallaDesertSouth it's the chasing
 /// storm, which reaches the moving leader (event 55).
 static void SuhallaDesert_CaughtByFifthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 4);
@@ -479,39 +479,39 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
 /// SceneId_SuhallaDesertSouth), the party nears the scene's first storm
-/// (metatile behavior 61 or 71).
+/// (cell behavior 61 or 71).
 static void SuhallaDesert_FirstStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the party nears the second storm (metatile
+/// SceneId_SuhallaDesertSouth), the party nears the second storm (cell
 /// behavior 62 or 72).
 static void SuhallaDesert_SecondStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 1);
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the party nears the third storm (metatile
+/// SceneId_SuhallaDesertSouth), the party nears the third storm (cell
 /// behavior 63 or 73).
 static void SuhallaDesert_ThirdStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 2);
 }
 
-/// In SuhallaDesertNorth, the party nears the fourth storm (metatile behavior
+/// In SuhallaDesertNorth, the party nears the fourth storm (cell behavior
 /// 64).
 static void SuhallaDesert_FourthStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 3);
 }
 
-/// In SuhallaDesertNorth, the party nears the fifth storm (metatile behavior
+/// In SuhallaDesertNorth, the party nears the fifth storm (cell behavior
 /// 65).
 static void SuhallaDesert_FifthStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 4);
 }
 
 /// Iodem asks whether to search the desert for Sheba again or press on. It
-/// plays in SuhallaDesertSouth, near its way out to the World Map (metatile
+/// plays in SuhallaDesertSouth, near its way out to the World Map (cell
 /// behavior 9), once Iodem has heard the wounded soldiers in Suhalla: he steps
 /// out of the party. "Sheba is nowhere to be found. Should we search the desert
 /// once more or press on to Lalivero?" Whatever the answer, Iodem decides to

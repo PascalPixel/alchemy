@@ -132,11 +132,11 @@ static inline s32 Task_AddOrUpdateFrame(TaskFunc callback, s32 priority) {
   return Task_AddFrame(callback, priority);
 }
 
-/// Changes the metatile behavior of the cell at (x, y), in 16.16 pixels,
-/// opening or closing the way (MapGrid_SetMetatileBehaviorAt).
-static inline void Field_SetMetatileBehaviorAt(s32 layer, s32 x, s32 y,
-                                               s32 behavior) {
-  MapGrid_SetMetatileBehaviorAt(layer, x, y, behavior);
+/// Changes the cell behavior of the cell at (x, y), in 16.16 pixels,
+/// opening or closing the way (MapGrid_SetCellBehaviorAt).
+static inline void Field_SetCellBehaviorAt(s32 layer, s32 x, s32 y,
+                                           s32 behavior) {
+  MapGrid_SetCellBehaviorAt(layer, x, y, behavior);
 }
 
 /// Changes one 512-pixel tile of the World Map, drawn at once when it's next to

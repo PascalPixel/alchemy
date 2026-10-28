@@ -160,30 +160,31 @@ enum StuccoRoomsBActorId {
   ACTOR_STUCCO_ROOMS_B_CAVE_RUMOR_GUEST = ACTOR_STUCCO_ROOMS_B_CROWD_SICK_GUEST
 };
 
-/// The metatile behaviors the rooms' coord and examine triggers answer: the
-/// doors, counted from MB_STUCCO_ROOMS_B_FIRST_DOOR, and the things the party
-/// can search.
-enum StuccoRoomsBMetatileBehavior {
-  MB_STUCCO_ROOMS_B_FIRST_DOOR = 14,
+/// The cell behaviors the rooms' coord and examine triggers answer: the
+/// doors, counted from CELL_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR, and the things
+/// the party can search.
+enum StuccoRoomsBCellBehavior {
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR = 14,
   /// The inn's sign.
   /// ★ Named from the game: "checked the sign."
   /// (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)
-  MB_STUCCO_ROOMS_B_INN_SIGN = 40,
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_INN_SIGN = 40,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
-  MB_STUCCO_ROOMS_B_VIAL_BARREL = 100,
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_VIAL_BARREL = 100,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
-  MB_STUCCO_ROOMS_B_MEDAL_BARREL = 101,
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_MEDAL_BARREL = 101,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
-  MB_STUCCO_ROOMS_B_HIDDEN_MEDAL_BARREL = 102, ///< where the woman hid her find
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_HIDDEN_MEDAL_BARREL =
+      102, ///< where the woman hid her find
   /// ★ Named from the game: "Tolbi pizza."
   /// (MsgTolbiInteriorsShesMakingTheWorldRenownedTolbi)
-  MB_STUCCO_ROOMS_B_PIZZA_OVEN = 200,
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_PIZZA_OVEN = 200,
   /// ★ Named from the game: "boiling the pasta"
   /// (MsgTolbiInteriorsHeIsBoilingThePastaIt)
-  MB_STUCCO_ROOMS_B_PASTA_OVEN = 201,
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_PASTA_OVEN = 201,
   /// ★ Named from the game: "It's Tolbi seafood pasta!"
   /// (MsgTolbiInteriorsItsTolbiSeafoodPastaWithLots)
-  MB_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN = 202,
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN = 202,
 };
 
 /// A facing rounded to the nearest of east, south, west and north.

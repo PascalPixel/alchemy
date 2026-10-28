@@ -49,13 +49,14 @@
 /// The shops and the inn open across their counters when the leader faces
 /// north; otherwise their keepers speak. A jar, two barrels and a wooden box
 /// hold coins, a Sleep Bomb and a Mint, each found once, and two bookcases can
-/// be read. The cells the events answer are enum LogRoomsAMetatileBehavior
+/// be read. The cells the events answer are enum LogRoomsACellBehavior
 /// (log_rooms_a.h).
 ///
 /// LogRoomsA_ApproachSuspects plays once: it copies
-/// MB_LOG_ROOMS_A_GUESTS_ROOM_DOOR cells over the guests' room's
-/// MB_LOG_ROOMS_A_GUESTS_ROOM cells, LogRoomsA_DiscussSuspiciousGuests makes
-/// them MB_LOG_ROOMS_A_CORNERING_START, and every later arrival with
+/// CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_DOOR cells over the guests' room's
+/// CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM cells,
+/// LogRoomsA_DiscussSuspiciousGuests makes them
+/// CELL_BEHAVIOR_LOG_ROOMS_A_CORNERING_START, and every later arrival with
 /// FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
 /// log-rooms-a: the room has no GUESTS_ROOM cell once the flag is set).
 
@@ -362,9 +363,9 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
 /// Indoors in Vault, facing north or south across the gap in the roof, the
 /// leader jumps it.
 ///
-/// Reached by walking onto MB_LOG_ROOMS_A_ROOF_GAP. Then copies the cell
-/// (41, 85) or (43, 85) over the gap's cell (42, 85), whichever side the leader
-/// faced.
+/// Reached by walking onto CELL_BEHAVIOR_LOG_ROOMS_A_ROOF_GAP. Then copies the
+/// cell (41, 85) or (43, 85) over the gap's cell (42, 85), whichever side the
+/// leader faced.
 static void LogRoomsA_JumpAcrossRoofGap(void) {
   s32 x;
   s32 z;
@@ -511,8 +512,8 @@ static void LogRoomsA_GaretRefusesToLeave(void) {
 
 /// At Vault's inn, Isaac checks the barrel but doesn't find anything.
 ///
-/// Reached by searching MB_LOG_ROOMS_A_INN_BARREL before the thieves are
-/// jailed; after, the same spot holds the Bone (Vault_FindBone).
+/// Reached by searching CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL before the thieves
+/// are jailed; after, the same spot holds the Bone (Vault_FindBone).
 static void LogRoomsA_SearchEmptyBarrel(void) {
   Event_Start();
   FieldMessage_Show(MsgVaultIsaacCheckedBarrel, 1);
@@ -1512,8 +1513,8 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
 /// At Vault's inn, the party leaves the guests' room for the floor below
 /// (LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS).
 ///
-/// Reached by stepping on MB_LOG_ROOMS_A_GUESTS_ROOM_STAIRS before the
-/// thieves are jailed (after, the same cell is a plain exit); takes
+/// Reached by stepping on CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_STAIRS before
+/// the thieves are jailed (after, the same cell is a plain exit); takes
 /// LOG_ROOMS_A_INN_UPSTAIRS_TO_INN.
 static void LogRoomsA_LeaveGuestsRoom(void) {
   Sound_PlaySong(SE_MAP_EXIT);
@@ -1523,7 +1524,7 @@ static void LogRoomsA_LeaveGuestsRoom(void) {
 /// In Vault's room with the crate, the party climbs up into the inn's loft by
 /// the way behind the crate.
 ///
-/// Reached by stepping on MB_LOG_ROOMS_A_LOFT_CLIMB; takes
+/// Reached by stepping on CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_CLIMB; takes
 /// LOG_ROOMS_A_CRATE_ROOM_TO_LOFT.
 static void LogRoomsA_ClimbToLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1537,7 +1538,7 @@ static void LogRoomsA_ClimbToLoft(void) {
 /// It hears him when it leaves before the thieves are confronted.
 /// "Uhnn... Uhnn..."
 ///
-/// Reached by stepping on MB_LOG_ROOMS_A_LOFT_DESCENT; takes
+/// Reached by stepping on CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_DESCENT; takes
 /// LOG_ROOMS_A_LOFT_TO_CRATE_ROOM back down.
 static void LogRoomsA_LeaveLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1556,12 +1557,12 @@ static void LogRoomsA_LeaveLoft(void) {
 /// In the guests' room at Vault's inn, the two suspects spot "that weird kid"
 /// with the party and run from him. "What do you want?"
 ///
-/// Reached by stepping on MB_LOG_ROOMS_A_GUESTS_ROOM while
+/// Reached by stepping on CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM while
 /// FLAG_VAULT_IVAN_JOINED_ROD_SEARCH is set. Sets
 /// FLAG_VAULT_SUSPECTS_APPROACHED and FLAG_SUSPECTS_FLEEING, starts their
 /// routes and the task that keeps them facing the leader.
-/// It plays once: it copies MB_LOG_ROOMS_A_GUESTS_ROOM_DOOR cells over
-/// the cells that reach it.
+/// It plays once: it copies CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_DOOR cells
+/// over the cells that reach it.
 static void LogRoomsA_ApproachSuspects(void) {
 
   struct Actor *suspectedLeader;
@@ -1612,7 +1613,7 @@ static void LogRoomsA_ApproachSuspects(void) {
 /// Ivan can't read their minds while they run; Garet tells Isaac to take the
 /// lead and corner them.
 ///
-/// Reached by stepping on MB_LOG_ROOMS_A_GUESTS_ROOM_DOOR while
+/// Reached by stepping on CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_DOOR while
 /// FLAG_SUSPECTS_FLEEING is set. Clears it and stops the facing task; the
 /// suspects go back to their places.
 static void LogRoomsA_DiscussSuspiciousGuests(void) {
@@ -1707,7 +1708,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
 /// In the guests' room at Vault's inn, the party sets out to corner the two
 /// suspects.
 ///
-/// Reached by stepping on MB_LOG_ROOMS_A_CORNERING_START while
+/// Reached by stepping on CELL_BEHAVIOR_LOG_ROOMS_A_CORNERING_START while
 /// FLAG_VAULT_SUSPECTS_APPROACHED is set. Sets FLAG_MENUS_RAISE_TRIGGER, so the
 /// menus answer with Garet's refusal, and FLAG_VAULT_CORNERING_SUSPECTS, so
 /// talking to Ivan or the suspects does nothing; then starts the chase
@@ -2017,20 +2018,20 @@ static void LogRoomsA_DiscussMindReading(void) {
 
 /// The fleeing suspects move on to their next spots.
 /// This is in the guests' room at Vault's inn, when the leader steps on one of
-/// the route cells, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE to
+/// the route cells, CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE to
 /// _LAST_SUSPECT_ROUTE.
 ///
 /// Reached by stepping on one of them while FLAG_SUSPECTS_FLEEING is
 /// set.
 static void LogRoomsA_SuspectsRunFromParty(void) {
   switch (gFieldWork->stepTrigger) {
-  case MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE:
+  case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 1, 2,
                                   gLogRoomsA_SuspectToMiddleBedHead);
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 3, 4,
                                   gLogRoomsA_SuspectAlongToSouthEastCorner);
     break;
-  case MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 1:
+  case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 1:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 1, 4,
                                   gLogRoomsA_SuspectRoundToWestBedFoot);
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 2, 3,
@@ -2038,7 +2039,7 @@ static void LogRoomsA_SuspectsRunFromParty(void) {
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 1, 3,
                                   gLogRoomsA_SuspectToSouthWestCorner);
     break;
-  case MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 2:
+  case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 2:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 2, 1,
                                   gLogRoomsA_SuspectToWestBedHead);
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 3, 6,
@@ -2046,19 +2047,19 @@ static void LogRoomsA_SuspectsRunFromParty(void) {
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 2, 4,
                                   gLogRoomsA_SuspectToSouthEastCorner);
     break;
-  case MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 3:
+  case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 3:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 3, 2,
                                   gLogRoomsA_SuspectToMiddleBedHead);
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 4, 3,
                                   gLogRoomsA_SuspectAlongToSouthWestCorner);
     break;
-  case MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 4:
+  case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 4:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 4, 5,
                                   gLogRoomsA_SuspectToMiddleBedFoot);
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 1, 2,
                                   gLogRoomsA_SuspectAcrossToEastOfBeds);
     break;
-  case MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 5:
+  case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 5:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 4, 1,
                                   gLogRoomsA_SuspectRoundToWestBedHead);
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 5, 6,
@@ -2066,7 +2067,7 @@ static void LogRoomsA_SuspectsRunFromParty(void) {
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 3, 1,
                                   gLogRoomsA_SuspectToWestOfBeds);
     break;
-  case MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 6:
+  case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 6:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 5, 4,
                                   gLogRoomsA_SuspectToWestBedFoot);
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 6, 3,
@@ -2074,7 +2075,7 @@ static void LogRoomsA_SuspectsRunFromParty(void) {
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 4, 2,
                                   gLogRoomsA_SuspectToEastOfBeds);
     break;
-  case MB_LOG_ROOMS_A_LAST_SUSPECT_ROUTE:
+  case CELL_BEHAVIOR_LOG_ROOMS_A_LAST_SUSPECT_ROUTE:
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 6, 5,
                                   gLogRoomsA_SuspectToMiddleBedFoot);
     LogRoomsA_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 2, 1,
@@ -2165,7 +2166,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
       Actor_FaceDirection(ACTOR_SUSPECTED_THIEF, FACING_WEST, 0);
     }
-    // Once approached, the room's doorway metatile behavior changes; after the
+    // Once approached, the room's doorway cell behavior changes; after the
     // mind reading the suspects sit turned toward the leader.
     if (GameFlag_Get(FLAG_VAULT_SUSPECTS_APPROACHED) != 0) {
       MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
@@ -3973,25 +3974,25 @@ struct Trigger gLogRoomsA_Triggers[] = {
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTH_NORTHEAST },
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTHWEST },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_GUESTS_ROOM_STAIRS, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveGuestsRoom) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_STAIRS, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveGuestsRoom) },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, LOG_ROOMS_A_INN_TO_INN_UPSTAIRS },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_GUESTS_ROOM, IF_FLAG_SET(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH), EVENT(LogRoomsA_ApproachSuspects) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 2, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 3, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 4, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 5, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 6, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_LAST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_GUESTS_ROOM_DOOR, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_DiscussSuspiciousGuests) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_CORNERING_START, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_APPROACHED), EVENT(LogRoomsA_StartCorneringSuspects) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM, IF_FLAG_SET(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH), EVENT(LogRoomsA_ApproachSuspects) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 2, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 3, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 4, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 5, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE + 6, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LAST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_SuspectsRunFromParty) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_DOOR, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT(LogRoomsA_DiscussSuspiciousGuests) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_CORNERING_START, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_APPROACHED), EVENT(LogRoomsA_StartCorneringSuspects) },
     { TRIGGER_RAISED, LOG_ROOMS_A_LEADER_CORNERED, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, LOG_ROOMS_A_THIEF_CORNERED, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, LOG_ROOMS_A_BOTH_CORNERED, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, FIELD_RAISED_TRIGGER_MENUS, CONDITION_ALWAYS, EVENT(LogRoomsA_GaretRefusesToLeave) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT(LogRoomsA_ClimbToLoft) },
-    { STEP_TRIGGER_WALKING, MB_LOG_ROOMS_A_ROOF_GAP, CONDITION_ALWAYS, EVENT(LogRoomsA_JumpAcrossRoofGap) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT(LogRoomsA_ClimbToLoft) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LOG_ROOMS_A_ROOF_GAP, CONDITION_ALWAYS, EVENT(LogRoomsA_JumpAcrossRoofGap) },
     { TRIGGER_TALK, ACTOR_IVAN, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },
     { TRIGGER_TALK, ACTOR_IVAN, CONDITION_ALWAYS, EVENT(LogRoomsA_MeetIvan) },
     { TRIGGER_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
@@ -4040,18 +4041,18 @@ struct Trigger gLogRoomsA_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT(LogRoomsA_SuspectedLeaderDodges) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SUSPECTED_THIEF, CONDITION_ALWAYS, EVENT(LogRoomsA_SuspectedThiefDodges) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE, FLAG_VAULT_CRATE_MOVED, EVENT(LogRoomsA_CheckCrateMoved) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LOG_ROOMS_A_INN_BARREL, CONDITION_ALWAYS, EVENT(LogRoomsA_SearchEmptyBarrel) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), MB_LOG_ROOMS_A_JAR, FLAG_LOG_ROOMS_A_JAR_COINS, FIND_COINS(7) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_LOG_ROOMS_A_FIRST_BARREL, FLAG_LOG_ROOMS_A_BARREL_COINS, FIND_COINS(4) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_LOG_ROOMS_A_SECOND_BARREL, FLAG_LOG_ROOMS_A_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), MB_LOG_ROOMS_A_WOODEN_BOX, FLAG_LOG_ROOMS_A_BOX_MINT, FIND_ITEM(ITEM_MINT) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, MB_LOG_ROOMS_A_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), MB_LOG_ROOMS_A_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL, CONDITION_ALWAYS, EVENT(LogRoomsA_SearchEmptyBarrel) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_LOG_ROOMS_A_JAR, FLAG_LOG_ROOMS_A_JAR_COINS, FIND_COINS(7) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_BARREL, FLAG_LOG_ROOMS_A_BARREL_COINS, FIND_COINS(4) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_LOG_ROOMS_A_SECOND_BARREL, FLAG_LOG_ROOMS_A_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), CELL_BEHAVIOR_LOG_ROOMS_A_WOODEN_BOX, FLAG_LOG_ROOMS_A_BOX_MINT, FIND_ITEM(ITEM_MINT) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_LOG_ROOMS_A_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_LOG_ROOMS_A_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
     { TRIGGERS_END },
 };
 
 struct Trigger gLogRoomsA_LoftTriggers[] = {
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_LOFT_DESCENT, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveLoft) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_DESCENT, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveLoft) },
     { TRIGGER_TALK, ACTOR_TIED_UP_VILLAGER, CONDITION_ALWAYS, EVENT(LogRoomsA_FreeRooferAndConfrontThieves) },
     { TRIGGER_TALK, ACTOR_FIRST_CHEST, CONDITION_ALWAYS, EVENT(LogRoomsA_SearchEmptyChest) },
     { TRIGGER_TALK, ACTOR_SECOND_CHEST, CONDITION_ALWAYS, EVENT(LogRoomsA_SearchEmptyChest) },
@@ -4061,7 +4062,7 @@ struct Trigger gLogRoomsA_LoftTriggers[] = {
 };
 
 struct Trigger gLogRoomsA_TriggersAfterThieves[] = {
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LOG_ROOMS_A_INN_BARREL, CONDITION_ALWAYS, EVENT(Vault_FindBone) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL, CONDITION_ALWAYS, EVENT(Vault_FindBone) },
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_EAST_SOUTHEAST },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHEAST },
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_SOUTHWEST },
@@ -4070,8 +4071,8 @@ struct Trigger gLogRoomsA_TriggersAfterThieves[] = {
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTHWEST },
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, LOG_ROOMS_A_INN_UPSTAIRS_TO_INN },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, LOG_ROOMS_A_INN_TO_INN_UPSTAIRS },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT(LogRoomsA_ClimbToLoft) },
-    { TRIGGER_STEP, MB_LOG_ROOMS_A_LOFT_DESCENT, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveLoft) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT(LogRoomsA_ClimbToLoft) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_DESCENT, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveLoft) },
     { TRIGGER_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },
     { TRIGGER_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT(LogRoomsA_TalkAboutRocks) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, EVENT(LogRoomsA_AskWhetherThievesCameFromLunpa) },
@@ -4104,12 +4105,12 @@ struct Trigger gLogRoomsA_TriggersAfterThieves[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyAreThesePeopleSoAnxious) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultWhoCouldHaveKnownTheyWere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultOfCourseIAlwaysSuspectedThey) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), MB_LOG_ROOMS_A_JAR, FLAG_LOG_ROOMS_A_JAR_COINS, FIND_COINS(7) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_LOG_ROOMS_A_FIRST_BARREL, FLAG_LOG_ROOMS_A_BARREL_COINS, FIND_COINS(4) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_LOG_ROOMS_A_SECOND_BARREL, FLAG_LOG_ROOMS_A_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), MB_LOG_ROOMS_A_WOODEN_BOX, FLAG_LOG_ROOMS_A_BOX_MINT, FIND_ITEM(ITEM_MINT) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, MB_LOG_ROOMS_A_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), MB_LOG_ROOMS_A_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_LOG_ROOMS_A_JAR, FLAG_LOG_ROOMS_A_JAR_COINS, FIND_COINS(7) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_BARREL, FLAG_LOG_ROOMS_A_BARREL_COINS, FIND_COINS(4) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_LOG_ROOMS_A_SECOND_BARREL, FLAG_LOG_ROOMS_A_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), CELL_BEHAVIOR_LOG_ROOMS_A_WOODEN_BOX, FLAG_LOG_ROOMS_A_BOX_MINT, FIND_ITEM(ITEM_MINT) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE) | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_LOG_ROOMS_A_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_LOG_ROOMS_A_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
     { TRIGGERS_END },
 };
 // clang-format on

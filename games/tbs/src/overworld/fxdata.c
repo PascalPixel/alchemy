@@ -20,7 +20,7 @@
 // const all the same: in rom_main_04 .data follows scripts.o, and these tables
 // would move. So this file includes none of those headers.
 
-/// The message of each searchable metatile behavior from 242 to 247, as an
+/// The message of each searchable cell behavior from 242 to 247, as an
 /// offset from MsgTileChecked and MsgTileResult.
 const u8 gField_ExamineTriggerMessageOffsets[6] = {
     2,  // a jar

@@ -146,9 +146,9 @@ enum LaliveroActorId {
 };
 
 /// The door into the Lalivero Sanctum, a gate two cells wide.
-enum LaliveroMetatileBehavior { MB_LALIVERO_SANCTUM_GATE = 6 };
+enum LaliveroCellBehavior { CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE = 6 };
 
-/// A cell of the wall along the town's south edge (MB_WALL), whose
+/// A cell of the wall along the town's south edge (CELL_BEHAVIOR_WALL), whose
 /// attributes Lalivero_SetupMap copies onto cells the party may not cross.
 enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
@@ -239,7 +239,7 @@ static void Lalivero_EnterDoor(void) {
 
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FALLS;
   Sound_PlaySong(SE_DOOR_OPEN);
-  if (door == MB_LALIVERO_SANCTUM_GATE) {
+  if (door == CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE) {
     MapGrid_AnimateCells(gLaliveroGateOpenSteps, (u16)x, (u16)y);
     Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   } else {

@@ -406,7 +406,7 @@ static void Kolima_EnterDoor(void) {
 /// drawbridge then comes down across the river in front of the leader in four
 /// ever quicker steps of map cells, ten puffs of dust fly up where it lands,
 /// the screen shakes and the leader jumps back. The last cells copied also
-/// give the bridge the metatile behaviors that open it. From then on the
+/// give the bridge the cell behaviors that open it. From then on the
 /// villager keeps turning to face the leader. Sets FLAG_KOLIMA_BRIDGE_LOWERED.
 static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
@@ -499,7 +499,7 @@ static void Kolima_LowerBridge(void) {
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
 /// transition, and Kolima itself. There the four sparkles twinkle, the
 /// villagers stand as trees while the curse lasts (and three cells around
-/// (14, 8) take the metatile behavior of cell (13, 9)), and the first entry
+/// (14, 8) take the cell behavior of cell (13, 9)), and the first entry
 /// from the World Map plays Kolima_WitnessForestCurse. Once that has been seen,
 /// here or in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes
 /// are taken away and five more sparkles are placed.

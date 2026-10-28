@@ -44,7 +44,7 @@
 /// (ColosseumSatrageMatch_UpdateLifts): every
 /// COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES the phase flips, all four lifts
 /// lined up across the water in one phase and two up and two down, by turns,
-/// in the other. Each frame the task copies metatile behaviors into row 13 from
+/// in the other. Each frame the task copies cell behaviors into row 13 from
 /// column 58 and into cell (58, 11): one pair of copies by phase once the
 /// last lift has stopped, another while it moves. Each copied cell is a wall,
 /// a jump across or open ground, as the lifts line up or part.
@@ -470,7 +470,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   obstacle->z.fixed = PIXELS(264);
   obstacle->velocityY = 0;
   obstacle->velocityX = 0;
-  // Keep both the stage and its saved metatile behavior strip in the new state.
+  // Keep both the stage and its saved cell behavior strip in the new state.
   MapGrid_CopyCellAttributes(19, 16, 1, 1, 20, 16);
   MapGrid_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
@@ -663,7 +663,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Event_End();
 }
 
-/// Rebuilds the metatile behaviors under the three rolling logs at their
+/// Rebuilds the cell behaviors under the three rolling logs at their
 /// positions.
 static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
   s32 cell;
@@ -783,7 +783,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     }
     rider->z.fixed = riderZ;
   }
-  // The final lift's destination selects the metatile behaviors for the row.
+  // The final lift's destination selects the cell behaviors for the row.
   if (gColosseumSatrageMatch_LiftTimer != 0 && lift->targetX == 0x80000000) {
     if (gColosseumSatrageMatch_LiftPhase == 0) {
       MapGrid_CopyCellAttributes(58, 28, 7, 1, 58, 13);
@@ -996,7 +996,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   s32 zero;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
-  // Restore the metatile behavior templates before applying saved puzzle
+  // Restore the cell behavior templates before applying saved puzzle
   // progress.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   MapGrid_CopyCellAttributes(14, 11, 12, 4, 100, 11);

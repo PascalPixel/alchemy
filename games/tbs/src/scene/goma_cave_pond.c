@@ -12,7 +12,7 @@
 /// its top shows (STUMP_ANIMATION_SINK), drawn underfoot with no collision
 /// flags. The five by five cells around it, open water in the room's render
 /// (places/goma-cave-pond/map-1.png), are replaced by a copy that adds
-/// MB_JUMP_FORWARD cells, so the leader can jump across the water by
+/// CELL_BEHAVIOR_JUMP_FORWARD cells, so the leader can jump across the water by
 /// way of it.
 /// The flag is an area temp flag, so the stump is back up in the room
 /// above once the party leaves Goma Cave's four scenes.

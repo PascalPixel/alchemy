@@ -441,32 +441,35 @@ const struct ActorTemplate *MercuryLighthouse_GetActorTemplates(void) {
 }
 
 /// MercuryLighthouseLower, as in MercuryLighthouseEntrance, once Ply has worked
-/// there: touching  MB_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue ripples
-/// spreading from the leader.
+/// there: touching  CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue
+/// ripples spreading from the leader.
 static void MercuryLighthouse_RippleWhileInPool(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
-/// MercuryLighthouseLower, touching  MB_MERCURY_LIGHTHOUSE_POOL_RIM or metatile
-/// behavior 32: the leader loses his lights.
+/// MercuryLighthouseLower, touching  CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM
+/// or cell behavior 32: the leader loses his lights.
 static void MercuryLighthouse_LoseLightsOnLower(void) {
   MercuryLighthouse_LoseLights();
 }
 
-/// MercuryLighthouseLower, walking into  MB_MERCURY_LIGHTHOUSE_POOL_HEART,
-/// MB_MERCURY_LIGHTHOUSE_POOL_WATER or MB_MERCURY_LIGHTHOUSE_POOL_RIM: one step
-/// across the pool, spending a light.
+/// MercuryLighthouseLower, walking into
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART,
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER or
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM: one step across the pool,
+/// spending a light.
 static void MercuryLighthouse_HopAcrossPoolOnLower(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
-/// MercuryLighthouseLower, touching  MB_MERCURY_LIGHTHOUSE_POOL_HEART, the
-/// pool's heart: the column of lights over the leader grows a stage.
+/// MercuryLighthouseLower, touching
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, the pool's heart: the column of
+/// lights over the leader grows a stage.
 static void MercuryLighthouse_ChargeLightsOnLower(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-/// MercuryLighthouseExterior, searching metatile behavior 10. "Strange forces
+/// MercuryLighthouseExterior, searching cell behavior 10. "Strange forces
 /// are at work..."
 static void MercuryLighthouse_InspectBlockedPassage(void) {
   Event_Start();
@@ -492,22 +495,22 @@ const struct Trigger *MercuryLighthouse_GetTriggers(void) {
 
 #include "shared/mercury_lighthouse_passage.h"
 
-/// MercuryLighthouseUpper, walking north into metatile behavior 53: the leader
+/// MercuryLighthouseUpper, walking north into cell behavior 53: the leader
 /// rises through
 /// MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST (the
-/// metatile behavior less 50), a sparkling passage as in
+/// cell behavior less 50), a sparkling passage as in
 /// MercuryLighthouseEntrance.
 static void MercuryLighthouse_LeaveUpperByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger - 50);
 }
 
-/// MercuryLighthouseUpper, walking north into metatile behavior 63: the same,
+/// MercuryLighthouseUpper, walking north into cell behavior 63: the same,
 /// through MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
 static void MercuryLighthouse_LeaveUpperWaterfallsByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger - 50);
 }
 
-/// MercuryLighthouseExterior, walking north into metatile behavior 55: the
+/// MercuryLighthouseExterior, walking north into cell behavior 55: the
 /// same, through MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
 static void MercuryLighthouse_LeaveWaterfallByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger - 50);
@@ -540,7 +543,7 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
   }
 }
 
-/// MercuryLighthouseLower, pushing a channel pipe (walking into metatile
+/// MercuryLighthouseLower, pushing a channel pipe (walking into cell
 /// behavior 25): each pipe opens one channel when it reaches its place, and the
 /// water runs on through the ones before it.
 static void MercuryLighthouse_PushChannelPipes(void) {
@@ -607,7 +610,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
   Event_End();
 }
 
-/// MercuryLighthouseMiddle, touching metatile behavior 2, 3 or 4 once the
+/// MercuryLighthouseMiddle, touching cell behavior 2, 3 or 4 once the
 /// stairs are raised, or 46: the leader is carried to the landing in a trail of
 /// sparkles.
 static void MercuryLighthouse_WalkLeaderIn(void) {
@@ -640,7 +643,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   Event_End();
 }
 
-/// MercuryLighthouseMiddle, pushing the gate statue (walking into metatile
+/// MercuryLighthouseMiddle, pushing the gate statue (walking into cell
 /// behavior 10) while the gate is shut: it moves a step, and may come to rest
 /// on the floor switch.
 static void MercuryLighthouse_PushGateSwitchStatue(void) {
@@ -678,7 +681,7 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
   Event_End();
 }
 
-/// MercuryLighthouseMiddle, touching metatile behavior 12 while the gate is
+/// MercuryLighthouseMiddle, touching cell behavior 12 while the gate is
 /// shut: standing on the floor switch sinks the leader two pixels and opens the
 /// gate.
 static void MercuryLighthouse_PressGateFloorSwitch(void) {
@@ -704,7 +707,7 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
   }
 }
 
-/// MercuryLighthouseMiddle, touching metatile behavior 10 or 13: stepping off
+/// MercuryLighthouseMiddle, touching cell behavior 10 or 13: stepping off
 /// the switch closes the gate again.
 static void MercuryLighthouse_CloseFloorSwitch(void) {
   struct Actor *leader;
@@ -902,7 +905,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
   Task_Remove(MercuryLighthouse_SprayAtFountain);
 }
 
-/// MercuryLighthouseMiddle, pushing a pipe (walking into metatile behavior 1 or
+/// MercuryLighthouseMiddle, pushing a pipe (walking into cell behavior 1 or
 /// 45): the stair pipe raises the stairs at column 11 and lowers them anywhere
 /// else; the fountain pipe starts the fountain at row 40, the first time with
 /// the camera watching, and stops it at row 42.
@@ -968,7 +971,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, pushing the fallen statue (walking into metatile
+/// MercuryLighthouseUpper, pushing the fallen statue (walking into cell
 /// behavior 10 or 12) while the stair gate is shut: it moves a step and may
 /// come to rest on the floor switch.
 static void MercuryLighthouse_PushStairSwitchStatue(void) {
@@ -1000,7 +1003,7 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, touching metatile behavior 12 while the stair gate
+/// MercuryLighthouseUpper, touching cell behavior 12 while the stair gate
 /// is shut: standing on its switch opens it.
 static void MercuryLighthouse_PressStairFloorSwitch(void) {
   s32 x;
@@ -1028,7 +1031,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, touching metatile behavior 10: stepping off the
+/// MercuryLighthouseUpper, touching cell behavior 10: stepping off the
 /// switch closes the stair gate.
 static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   struct Actor *leader;
@@ -1238,7 +1241,7 @@ static s32 MercuryLighthouse_StopStatueSpray(void) {
 }
 
 /// MercuryLighthouseUpper, pushing a pipe before the stone doors (walking
-/// into metatile behavior 40): the door switch pipe opens a different stone
+/// into cell behavior 40): the door switch pipe opens a different stone
 /// door at each column, and at column 48, once the statue is in place, the
 /// statue slides out and falls to the floor below.
 static void MercuryLighthouse_PushStoneDoorPipes(void) {
@@ -1338,7 +1341,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, pushing a crossing statue (walking into metatile
+/// MercuryLighthouseUpper, pushing a crossing statue (walking into cell
 /// behavior 47): it moves a step and where the statues rest is saved.
 static void MercuryLighthouse_PushAndSaveCrossingStatuePositions(void) {
   Event_Start();
@@ -2033,7 +2036,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   }
 }
 
-/// MercuryLighthouseExterior, searching metatile behavior 42 shows the
+/// MercuryLighthouseExterior, searching cell behavior 42 shows the
 /// fountain's sign. "Fountain of Healing / Water of Hermes: It brings
 /// rejuvenation to all that lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
@@ -2043,7 +2046,7 @@ static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Event_End();
 }
 
-/// MercuryLighthouseMiddle or MercuryLighthouseUpper, searching metatile
+/// MercuryLighthouseMiddle or MercuryLighthouseUpper, searching cell
 /// behavior 20: the door is locked tight.
 static void MercuryLighthouse_InspectLockedDoor(void) {
   Event_Start();
@@ -2052,7 +2055,7 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
   Event_End();
 }
 
-/// MercuryLighthouseExterior, searching the Fountain of Healing (metatile
+/// MercuryLighthouseExterior, searching the Fountain of Healing (cell
 /// behavior 5) before taking its water: it seems dry, or once Saturos is beaten
 /// flows with water; carrying an Empty Bottle, the item menu then opens.
 static void MercuryLighthouse_InspectHealingFountain(void) {
@@ -2089,7 +2092,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 }
 
 /// MercuryLighthouseLower or MercuryLighthouseMiddle, walking south into
-/// metatile behavior 15: on the first the leader steps to the hole and drops
+/// cell behavior 15: on the first the leader steps to the hole and drops
 /// into MercuryLighthouseEntrance
 /// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE, its
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE); on the
@@ -2316,7 +2319,7 @@ s32 MercuryLighthouse_Initialize(void) {
     REG_BLDALPHA = alpha;
   }
   MercuryLighthouse_RestoreLights(
-      MB_MERCURY_LIGHTHOUSE_POOL_WATER,
+      CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER,
       (struct MercuryLighthouseLights *)gSceneLocalState);
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
@@ -3346,12 +3349,12 @@ struct Trigger gMercuryLighthouseLowerTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER },
     { TRIGGER_STEP, 32, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
-    { STEP_TRIGGER_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
-    { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_RippleWhileInPool) },
-    { STEP_TRIGGER_WALKING, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { TRIGGER_STEP, MB_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_ChargeLightsOnLower) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
+    { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_RippleWhileInPool) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_ChargeLightsOnLower) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT(MercuryLighthouse_EnterRisingPassage) },
     { STEP_TRIGGER_WALKING, 25, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushChannelPipes) },
     { TRIGGER_TALK, ACTOR_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },

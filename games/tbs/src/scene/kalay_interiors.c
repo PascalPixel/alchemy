@@ -20,7 +20,7 @@
 ///   people are gone from the houses, one of whom was about to join it, and
 ///   those who stay say so. Searching the ovens shows what the cooks are
 ///   making, except that the oven with roasted eggplant gives a Smoke Bomb: its
-///   find comes first in the table under the same metatile behavior, and a
+///   find comes first in the table under the same cell behavior, and a
 ///   named examine trigger ignores its condition, so it answers every time and
 ///   the eggplant line is unused. Barrels hold 11 coins and an Elixir. The
 ///   inn's table and the houses' both carry these examine triggers.

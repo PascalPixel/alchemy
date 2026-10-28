@@ -54,7 +54,7 @@ enum {
 /// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
 /// scenes then place their later actors and lines, the Sanctum takes
 /// another trigger table and Healer line, and the Sol Sanctum approach moves
-/// its sentry, changes metatile behaviors and stops sending its way down to
+/// its sentry, changes cell behaviors and stops sending its way down to
 /// SceneId_ValeEruption.
 /// ★ Named from its area name: Vale
 enum { FLAG_VALE_PARTY_LEFT = 0x815 };
@@ -207,7 +207,7 @@ struct Trigger {
   /// ability | 11 short push | 10 facing | 9 walking | 8..4 examine target | 7
   /// Psynergy anywhere | 5..4 exit sound | 4 on an actor | 3..0 kind
   u32 kind;
-  /// What the trigger answers: an actor id, a metatile behavior, a treasure
+  /// What the trigger answers: an actor id, a cell behavior, a treasure
   /// spot id or a raised value. Item and Psynergy triggers read it as bits
   /// below; bit 10 also skips an examine trigger's checking message and its
   /// field Psynergy. bits: 15..12 facing | 11 needs facing | 10 own message
@@ -230,10 +230,10 @@ STATIC_ASSERT(sizeof(struct Trigger) == 12);
 /// Trigger.kind's low four bits: what the trigger answers.
 enum TriggerKind {
   TRIGGER_TALK = 0, ///< the A button on an actor; the subject is its id
-  /// Stepping onto a cell whose metatile behavior is the subject, when no
+  /// Stepping onto a cell whose cell behavior is the subject, when no
   /// step trigger answers it; value is the exit kind.
   TRIGGER_EXIT = 1,
-  TRIGGER_STEP = 2,    ///< stepping onto or pushing against a metatile behavior
+  TRIGGER_STEP = 2,    ///< stepping onto or pushing against a cell behavior
   TRIGGER_EXAMINE = 3, ///< the A button on what is ahead, when it is no actor
   TRIGGER_ITEM = 4,    ///< an item used on a cell or an actor
   TRIGGER_PSYNERGY = 5,
@@ -334,7 +334,7 @@ enum PsynergyEventTarget {
   ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY_ANYWHERE |           \
    TRIGGER_PSYNERGY)
 
-// Using an item (one byte) on a metatile behavior, or on an actor, as
+// Using an item (one byte) on a cell behavior, or on an actor, as
 // Field_FindItemTrigger reads them.
 #define TRIGGER_ITEM_ON_ACTOR 0x10
 #define USE_ITEM(item) (TRIGGER_ITEM | (item) << 8)

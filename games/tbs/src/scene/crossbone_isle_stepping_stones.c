@@ -341,7 +341,7 @@ static inline void CrossboneIsleSteppingStones_DrawFloatingLogs(void) {
   CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 7);
 }
 
-/// Restores the ground metatiles and metatile behaviors under the
+/// Restores the ground metatiles and cell behaviors under the
 /// actor's footprint.
 static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
@@ -360,8 +360,9 @@ static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 actorId) {
 
     MapGrid_CopyCellAttributes(sourceCellX, sourceCellZ, width, depth,
                                probe.position.x, probe.position.z);
-    PushedActor_FillGridAttributeRectangle(
-        0, probe.position.x, probe.position.z, width, depth, MB_WALL);
+    PushedActor_FillGridAttributeRectangle(0, probe.position.x,
+                                           probe.position.z, width, depth,
+                                           CELL_BEHAVIOR_WALL);
   }
 
   Actor_SelectAnimation(actor, 1);
@@ -391,7 +392,7 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
   }
 }
 
-/// Copies the cell's flags and metatile behavior without replacing its
+/// Copies the cell's flags and cell behavior without replacing its
 /// metatile.
 static void CrossboneIsleSteppingStones_SetCellAttributes(
     s32 layer, s32 x, s32 y, const union CrossboneIslePillarCell *source) {
@@ -1102,8 +1103,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
         2, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].cell);
     // Falling pillars either reach a ledge, shrink away, or settle on ground.
     if (*flags & 1) {
-      if (MapGrid_GetMetatileBehaviorAt(2, actor->x.fixed, actor->z.fixed) ==
-          50) {
+      if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) == 50) {
         Sound_PlaySong(SE_STONE_GRIND);
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated (100 of
@@ -1111,8 +1111,8 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
         *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_LowerActorToLedge(id, 1);
         *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-      } else if (MapGrid_GetMetatileBehaviorAt(2, actor->x.fixed,
-                                               actor->z.fixed) == 51) {
+      } else if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) ==
+                 51) {
         CrossboneIsleSteppingStones_StopAtGroundOrHeight(actor, 0);
         Sound_PlaySong(SE_STONE_GRIND);
         actor->y.fixed = 0;
@@ -1470,7 +1470,7 @@ static void CrossboneIsleSteppingStones_StartMovingSinkingPillar(void) {
   x = pillar->x.fixed >> 20;
   z = pillar->z.fixed >> 20;
 
-  PushedActor_FillGridAttributeRectangle(2, x, z, 1, 1, MB_NORMAL);
+  PushedActor_FillGridAttributeRectangle(2, x, z, 1, 1, CELL_BEHAVIOR_NORMAL);
   Event_End();
 }
 
@@ -1482,8 +1482,9 @@ static void CrossboneIsleSteppingStones_MoveSinkingPillar(void) {
 
   pillar = Actor_GetById(ACTOR_SINKING_BOULDER);
   Event_Start();
-  PushedActor_FillGridAttributeRectangle(
-      2, (pillar->x.fixed >> 20), (pillar->z.fixed >> 20), 1, 1, MB_WALL);
+  PushedActor_FillGridAttributeRectangle(2, (pillar->x.fixed >> 20),
+                                         (pillar->z.fixed >> 20), 1, 1,
+                                         CELL_BEHAVIOR_WALL);
   if ((pillar->x.fixed >> 20) == 16) {
     alreadyLowered =
         Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);

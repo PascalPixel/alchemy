@@ -1482,7 +1482,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   struct Actor *actor;
 
   Event_Start();
-  // Restore the chest-row metatile behavior patches before presenting the
+  // Restore the chest-row cell behavior patches before presenting the
   // reward.
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldCamera_GetActor()->motionFlags = 0;

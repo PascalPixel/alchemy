@@ -11,11 +11,11 @@
 ///   leader up and a conversation plays, with one yes-or-no question that
 ///   changes only the reply.
 /// - Six floating platforms lie between the party and the beacon
-///   (MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
-///   MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS): the leader jumps from one
-///   to the next, and each stops bobbing and dips under him as he lands
-///   (FLAG_VENUS_AERIE_ON_PLATFORM while he stands on one).
-/// - The confrontation (MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
+///   (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+///   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS): the leader jumps
+///   from one to the next, and each stops bobbing and dips under him as he
+///   lands (FLAG_VENUS_AERIE_ON_PLATFORM while he stands on one).
+/// - The confrontation (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
 ///   VenusLighthouseAerie_ConfrontSaturosAndMenardi): the Shaman's Rod is
 ///   handed over, remembered in FLAG_SHAMANS_ROD_HOLDER plus the party member
 ///   who carried it, and the first battle follows (ENCOUNTER_ZONE_SCRIPTED,
@@ -160,14 +160,15 @@ static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor);
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void);
 static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor);
 
-/// The metatile behaviors the aerie's step triggers answer.
-enum VenusLighthouseAerieMetatileBehavior {
-  MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON =
+/// The cell behaviors the aerie's step triggers answer.
+enum VenusLighthouseAerieCellBehavior {
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON =
       5, ///< where the party confronts Saturos and Menardi
-  MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM = 10, ///< a floating platform's cells
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM =
+      10, ///< a floating platform's cells
   /// The floor beside the platforms, from which the leader jumps
   /// onto them.
-  MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS = 11
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS = 11
 };
 
 /// A child value that makes an actor blink rather than set its colour
@@ -825,13 +826,14 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
   }
 }
 
-/// Walking up to Saturos and Menardi (MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON):
-/// Felix refuses to be rescued, Sheba reads the party's minds for the rod that
-/// reaches Jupiter Lighthouse, they promise not to harm her for the Shaman's
-/// Rod, Felix carries it over, they will not let her go, and the first battle
-/// begins. It sets FLAG_SHAMANS_ROD_HOLDER plus the party member who carried
-/// the rod, and FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which
-/// changes the aerie's music.
+/// Walking up to Saturos and Menardi
+/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON): Felix refuses to be
+/// rescued, Sheba reads the party's minds for the rod that reaches Jupiter
+/// Lighthouse, they promise not to harm her for the Shaman's Rod, Felix carries
+/// it over, they will not let her go, and the first battle begins. It sets
+/// FLAG_SHAMANS_ROD_HOLDER plus the party member who carried the rod, and
+/// FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
+/// aerie's music.
 static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   s32 rodHolder;
   struct Actor *actor;
@@ -3477,17 +3479,17 @@ s32 gVenusLighthouseAerie_LandedPlatform = 0;
 
 struct Trigger gVenusLighthouseAerieTriggers[] = {
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS, CONDITION_ALWAYS,
      EVENT(VenusLighthouseAerie_JumpToNextPlatform)},
-    {TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
      CONDITION_ALWAYS, EVENT(VenusLighthouseAerie_FloatPlatforms)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM, CONDITION_ALWAYS,
      EVENT(VenusLighthouseAerie_JumpToNextPlatform)},
-    {TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
      FLAG_VENUS_AERIE_ON_PLATFORM, EVENT(VenusLighthouseAerie_LandOnPlatform)},
-    {TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON, CONDITION_ALWAYS,
-     EVENT(VenusLighthouseAerie_ConfrontSaturosAndMenardi)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
+     CONDITION_ALWAYS, EVENT(VenusLighthouseAerie_ConfrontSaturosAndMenardi)},
     {TRIGGERS_END},
 };
 

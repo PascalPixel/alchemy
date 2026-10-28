@@ -9,15 +9,15 @@
 /// on every scene, at which the party loses a quarter of its HP, and on all but
 /// LamakanDesertCave starts the heat gauge, a thermometer down the screen's
 /// left edge (HeatGauge_Draw). Each moving frame on the sand adds a step
-/// (HeatGauge_CountStep, MB_LAMAKAN_DESERT_SAND and the examine triggers'
-/// metatile behaviors 100 to 107). As the gauge passes a quarter, a half and
-/// three quarters, HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
+/// (HeatGauge_CountStep, CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and the examine
+/// triggers' cell behaviors 100 to 107). As the gauge passes a quarter, a half
+/// and three quarters, HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
 /// FLAG_HEAT_THREE_QUARTERS and raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to
 /// LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, and Garet, Ivan or Mia complains
 /// of the heat (LamakanDesert_ComplainAboutHeat). Stepping into an oasis
-/// (MB_LAMAKAN_DESERT_OASIS), the leader hops into the middle of the nearest
-/// one and bathes until the heat has drained (LamakanDesert_BatheInOasis), and
-/// a running Reveal ends.
+/// (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS), the leader hops into the middle of the
+/// nearest one and bathes until the heat has drained
+/// (LamakanDesert_BatheInOasis), and a running Reveal ends.
 ///
 /// Entry saves the patches of the map grid that hold the desert's secrets (the
 /// oases, the Ant Lions' pits, the Manticore, Smog, a Jupiter Djinni, and the
@@ -27,9 +27,9 @@
 /// only while Reveal shines, as the monks of Lama Temple warn: `Reveal will
 /// help you find oases to cool you against the heat.`
 ///
-/// Stepping by a pit (MB_LAMAKAN_DESERT_PIT) pulls the leader into it for a
-/// battle with an Ant Lion (LamakanDesert_FallIntoPit), and slopes of sand
-/// (MB_LAMAKAN_DESERT_SLOPE) carry the leader south
+/// Stepping by a pit (CELL_BEHAVIOR_LAMAKAN_DESERT_PIT) pulls the leader into
+/// it for a battle with an Ant Lion (LamakanDesert_FallIntoPit), and slopes of
+/// sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) carry the leader south
 /// (LamakanDesert_SlideDownDune).
 ///
 /// In LamakanDesertManticore, until it is beaten
@@ -102,14 +102,17 @@ enum LamakanDesertRaisedTrigger {
   LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS = 3
 };
 
-/// The metatile behaviors of the desert's ground.
-enum LamakanDesertMetatileBehavior {
+/// The cell behaviors of the desert's ground.
+enum LamakanDesertCellBehavior {
   /// An oasis's water, in the patches Reveal shows (renders of the maps with
   /// the patches shown: the pool at (384, 128) in LamakanDesertEast).
-  MB_LAMAKAN_DESERT_OASIS = 20,
-  MB_LAMAKAN_DESERT_SAND = 21, ///< sand, where each moving frame adds heat
-  MB_LAMAKAN_DESERT_PIT = 22,  ///< by an Ant Lion's pit, under Reveal too
-  MB_LAMAKAN_DESERT_SLOPE = 30 ///< sand that carries the leader south
+  CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS = 20,
+  CELL_BEHAVIOR_LAMAKAN_DESERT_SAND =
+      21, ///< sand, where each moving frame adds heat
+  CELL_BEHAVIOR_LAMAKAN_DESERT_PIT =
+      22, ///< by an Ant Lion's pit, under Reveal too
+  CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE =
+      30 ///< sand that carries the leader south
 };
 
 enum {
@@ -552,9 +555,9 @@ struct LamakanDesertOasis {
   s32 z;
 };
 
-/// Lamakan Desert, stepping into an oasis (MB_LAMAKAN_DESERT_OASIS), which
-/// only Reveal shows: the leader hops into the middle of the nearest of the
-/// map's oases, bathes with a heart over his head while the gauge drains 5
+/// Lamakan Desert, stepping into an oasis (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS),
+/// which only Reveal shows: the leader hops into the middle of the nearest of
+/// the map's oases, bathes with a heart over his head while the gauge drains 5
 /// steps a frame, for at least a second, then hops out.
 static void LamakanDesert_BatheInOasis(void) {
   u8 *work;
@@ -699,7 +702,7 @@ static void HeatGauge_CountStep(void) {
     return;
   }
   gAdventure.hazardSteps++;
-  if (work->stepTrigger == MB_LAMAKAN_DESERT_SLOPE) {
+  if (work->stepTrigger == CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) {
     return;
   }
   if (actor->speedLimit <= 0x10000) {
@@ -818,9 +821,9 @@ static void LamakanDesert_FallIntoPit(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }
 
-/// Lamakan Desert, on a slope of sand (MB_LAMAKAN_DESERT_SLOPE): the sand
-/// carries the leader south 1.5 pixels a frame, and at a ledge the leader hops
-/// down 8 pixels.
+/// Lamakan Desert, on a slope of sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE): the
+/// sand carries the leader south 1.5 pixels a frame, and at a ledge the leader
+/// hops down 8 pixels.
 static void LamakanDesert_SlideDownDune(void) {
   struct Actor *center;
   s32 id;
@@ -1342,10 +1345,10 @@ struct Trigger gLamakanDesertTriggers[] = {
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, 3 },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, 4 },
     { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(LamakanDesert_LeaveForTheWorldMap) },
-    { TRIGGER_STEP, MB_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_BatheInOasis) },
-    { TRIGGER_STEP, MB_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, MB_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_FallIntoPit) },
-    { TRIGGER_STEP, MB_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT(LamakanDesert_SlideDownDune) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_BatheInOasis) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_FallIntoPit) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT(LamakanDesert_SlideDownDune) },
     { TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(LamakanDesert_MeetManticore) },
     { TRIGGER_TALK, ACTOR_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT(LamakanDesert_FightManticore) },
     { TRIGGER_TALK, ACTOR_SMOG, CONDITION_ALWAYS, EVENT(LamakanDesert_TalkToSmog) },

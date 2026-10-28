@@ -17,7 +17,7 @@
 	.set import.Actor_WaitForMove, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.MapGrid_GetTerrainHeight, 1
-	.set import.MapGrid_GetMetatileBehaviorAt, 1
+	.set import.MapGrid_GetCellBehaviorAt, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1

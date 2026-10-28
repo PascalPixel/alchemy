@@ -140,9 +140,9 @@ What starts a row also says what it answers:
 | --- | --- | --- |
 | `TRIGGER_TALK` | the A button on someone | that actor |
 | `TRIGGER_TALK_HALTED` | talking to someone Halt has stopped | that actor |
-| `TRIGGER_STEP` and its forms | stepping onto a spot, facing a way, or pushing against it | the spot's [metatile behavior](../../glossary.md#metatile-behavior) |
-| `TRIGGER_EXIT` | stepping onto a spot no step trigger answers | the spot's metatile behavior |
-| `EXAMINE_TRIGGER(target)` | the A button on what is ahead, when it is nobody | the spot's metatile behavior |
+| `TRIGGER_STEP` and its forms | stepping onto a spot, facing a way, or pushing against it | the spot's [cell behavior](../../glossary.md#cell-behavior) |
+| `TRIGGER_EXIT` | stepping onto a spot no step trigger answers | the spot's cell behavior |
+| `EXAMINE_TRIGGER(target)` | the A button on what is ahead, when it is nobody | the spot's cell behavior |
 | `USE_ITEM(item)` and its form | using an item | a spot or an actor |
 | `PSYNERGY_ON_ACTOR(ability)` and its form | using Psynergy on someone, or anywhere | that actor, or anywhere |
 | `TRIGGER_RAISED` | the scene's code asking for it | a number the code gives |
@@ -171,8 +171,8 @@ message `MSGNO(name)`.
 Some spots in a scene do something when the leader reaches them: a doorstep
 leads into a house when the leader walks into it, the edge of a village leads
 on to the next scene, a ladder climbs to a roof, and a chest or a bookcase
-answers the A button. The map marks each spot by the [metatile
-behavior](../../glossary.md#metatile-behavior) of its
+answers the A button. The map marks each spot by the [cell
+behavior](../../glossary.md#cell-behavior) of its
 [cell](../../glossary.md#cell), and the scene's trigger table says what that
 number does. The same number means different things in different scenes.
 
@@ -189,7 +189,7 @@ its number and whose condition holds, or failing one the first such exit;
 pressing A facing it runs the first such examine trigger.
 
 `Scene_RunStepTriggerOrExit` runs the stepping, and the numbers a
-scene owns are `MB_EVENT_FIRST` to `MB_EVENT_LAST`; the numbers above them mean
+scene owns are `CELL_BEHAVIOR_EVENT_FIRST` to `CELL_BEHAVIOR_EVENT_LAST`; the numbers above them mean
 the same in every scene ([Maps](../map/README.md#cells)).
 
 ## How a trigger is chosen

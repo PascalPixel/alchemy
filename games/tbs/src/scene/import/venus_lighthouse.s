@@ -26,7 +26,7 @@
 	.set import.Actor_SetBlendMode, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
-	.set import.MapGrid_SetMetatileBehaviorAt, 1
+	.set import.MapGrid_SetCellBehaviorAt, 1
 	.set import.FieldMessage_Show, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1

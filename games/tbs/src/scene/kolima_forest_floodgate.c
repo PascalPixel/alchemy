@@ -2,20 +2,20 @@
 /// Kolima Forest (SceneId_KolimaForestFloodgate), the fourth of the forest's
 /// five scenes, between SceneId_KolimaForestCliff and the scene where Tret
 /// stands (SceneId_KolimaForestTree). A Floodgate Switch
-/// (MB_KOLIMA_FOREST_FLOODGATE_SWITCH), beside a sign that reads "Do not touch
-/// Floodgate Switch!", raises and lowers the river: with the water high the
-/// logs float (26 pixels up) and can be rolled along it; with it low they lie
-/// on the riverbed. A short log slides between two places, the leader can jump
-/// south across a gap (step trigger 10), and a chest holds a Fur Coat. The
-/// forest keeps its cursed colours until Tret lifts the curse
+/// (CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH), beside a sign that reads "Do
+/// not touch Floodgate Switch!", raises and lowers the river: with the water
+/// high the logs float (26 pixels up) and can be rolled along it; with it low
+/// they lie on the riverbed. A short log slides between two places, the leader
+/// can jump south across a gap (step trigger 10), and a chest holds a Fur Coat.
+/// The forest keeps its cursed colours until Tret lifts the curse
 /// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// The water level, the short log's place and each log's cells are kept in
 /// gSceneLocalState (gKolimaForestFloodgateMap, gKolimaForestFloodgateReturned
 /// and gKolimaForestFloodgateRecords), so they survive a battle. Under each
-/// log KolimaForestFloodgate_StampLogCells writes MB_JUMP_FORWARD while
-/// the water is high, so the leader jumps across the floating logs, and
-/// MB_WALL while it is low and after a roll, which
+/// log KolimaForestFloodgate_StampLogCells writes CELL_BEHAVIOR_JUMP_FORWARD
+/// while the water is high, so the leader jumps across the floating logs, and
+/// CELL_BEHAVIOR_WALL while it is low and after a roll, which
 /// KolimaForestFloodgate_CheckLogFits also treats as taken.
 ///
 /// Flipping the switch from high water opens the floodgate: the water bursts
@@ -78,10 +78,10 @@ enum {
   ACTOR_SIGN
 };
 
-/// The metatile behavior of the Floodgate Switch's cell, which a search flips.
-enum KolimaForestFloodgateMetatileBehavior {
+/// The cell behavior of the Floodgate Switch's cell, which a search flips.
+enum KolimaForestFloodgateCellBehavior {
   /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
-  MB_KOLIMA_FOREST_FLOODGATE_SWITCH = 9
+  CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH = 9
 };
 
 static void KolimaForestFloodgate_MarkShortLogCells(void);
@@ -119,7 +119,8 @@ const struct Trigger *KolimaForestFloodgate_GetTriggers(void) {
 static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_RollLog(gKolimaForestFloodgateRecords);
   MapGrid_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
-  KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords, MB_WALL);
+  KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
+                                      CELL_BEHAVIOR_WALL);
   KolimaForestFloodgate_MarkShortLogCells();
 }
 
@@ -129,7 +130,7 @@ static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
 #include "shared/map_grid_panel.h"
 
-/// Gives the short log's column of cells its metatile behavior: column 4 at the
+/// Gives the short log's column of cells its cell behavior: column 4 at the
 /// west place, column 6 at the east.
 static void KolimaForestFloodgate_MarkShortLogCells(void) {
   if (*(s16 *)gKolimaForestFloodgateReturned == 1) {
@@ -193,10 +194,11 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
   if (*gKolimaForestFloodgateMap == 1) {
     MapGrid_CopyCellAttributes(0, 32, 32, 32, 0, 0);
     KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
-                                        MB_JUMP_FORWARD);
+                                        CELL_BEHAVIOR_JUMP_FORWARD);
   } else {
     MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
-    KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords, MB_WALL);
+    KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgateRecords,
+                                        CELL_BEHAVIOR_WALL);
   }
 
   KolimaForestFloodgate_MarkShortLogCells();
@@ -421,7 +423,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   }
   KolimaForestFloodgate_CreateLogs(gKolimaForestFloodgateRecords);
   KolimaForestFloodgate_StampLogCells(gKolimaForestFloodgate_DefaultRecords,
-                                      MB_WALL);
+                                      CELL_BEHAVIOR_WALL);
   KolimaForestFloodgate_DrawWaterLevel();
   Import_ActorSetAnimation(ACTOR_FLOODGATE_SPRAY, 0);
   Actor_GetById(ACTOR_FLOODGATE_SPRAY)->motionFlags = 0;
@@ -469,7 +471,7 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
   }
 }
 
-/// Writes a metatile behavior into the four cells of each log.
+/// Writes a cell behavior into the four cells of each log.
 void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
                                          s32 value) {
 
@@ -524,7 +526,7 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
     struct MapGridCell *cell =
         &((struct MapGridCell *)gMapGridCellBuffer)[x + (z << 7)];
 
-    if (cell->behavior == MB_WALL ||
+    if (cell->behavior == CELL_BEHAVIOR_WALL ||
         *(u8 *)((cell->shape << 2) + (s32)gMapGridShapes) != 0) {
       return -1;
     }
@@ -672,8 +674,9 @@ struct Trigger gKolimaForestFloodgateTriggers[] = {
      EVENT(KolimaForestFloodgate_PushShortLogEast)},
     {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS,
      MSGNO(MsgKolimaDoNotTouchFloodgate)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), MB_KOLIMA_FOREST_FLOODGATE_SWITCH,
-     CONDITION_ALWAYS, EVENT(KolimaForestFloodgate_FlipFloodgateSwitch)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT),
+     CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH, CONDITION_ALWAYS,
+     EVENT(KolimaForestFloodgate_FlipFloodgateSwitch)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf00, FIND_ITEM(ITEM_FUR_COAT)},
     {TRIGGERS_END},
 };

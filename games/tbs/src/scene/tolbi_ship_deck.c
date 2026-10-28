@@ -18,13 +18,14 @@
 /// - At Kalay (TOLBI_SHIP_DECK_FROM_KALAY_DOCKS), while the ship waits for
 ///   its replacement from Tolbi. Once the tour group has left Kalay
 ///   (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking up to the crew
-///   (MB_TOLBI_SHIP_DECK_BY_CREW) plays the captain, Kaja and a crewman
-///   talking over the delay: the captain will sail trusting his anchor charm,
-///   and the crewman slips below (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
-///   Coming up to his door brings him out denying everything
-///   (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT), and Mind Read shows he hid the charm
-///   on the mast. Once it is back (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) the
-///   passengers who promised to row stand on deck.
+///   (CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW) plays the captain, Kaja and a
+///   crewman talking over the delay: the captain will sail trusting his anchor
+///   charm, and the crewman slips below
+///   (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY). Coming up to his door brings him
+///   out denying everything (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT), and Mind Read
+///   shows he hid the charm on the mast. Once it is back
+///   (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) the passengers who promised to row
+///   stand on deck.
 /// - Setting sail (TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY): Kaja
 ///   brings word that all is ready ("Preparations... Ready!"), which leads
 ///   to the lookout on the mast.
@@ -323,15 +324,15 @@ enum TolbiShipDeckActorId {
   ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET = ACTOR_ARRIVED_FIRST_PASSENGER + 9
 };
 
-/// The deck's step triggers at Kalay, beside the ways below, whose metatile
+/// The deck's step triggers at Kalay, beside the ways below, whose cell
 /// behaviors carry the numbers of their exits (TolbiShipDeck_GoBelow).
-enum TolbiShipDeckMetatileBehavior {
+enum TolbiShipDeckCellBehavior {
   /// Beside the crew, where they talk over the delay.
-  MB_TOLBI_SHIP_DECK_BY_CREW = 10,
+  CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW = 10,
   /// East of the second door, which the crewman slipped through.
-  MB_TOLBI_SHIP_DECK_EAST_OF_DOOR = 11,
+  CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR = 11,
   /// West of that door.
-  MB_TOLBI_SHIP_DECK_WEST_OF_DOOR = 12
+  CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR = 12
 };
 
 // Shared code, included where it sits in the ROM.
@@ -944,10 +945,10 @@ static void TolbiShipDeck_OpenSecondDoor(void) {
   }
 }
 
-/// Walking into one of the ways below deck, whose metatile behaviors are
+/// Walking into one of the ways below deck, whose cell behaviors are
 /// numbered as their exits. The doors to the passengers' hold and the captain's
 /// quarters open and the leader steps through; the hatch to the cargo hold just
-/// plays its sound. Leaves by the exit numbered as the metatile behavior.
+/// plays its sound. Leaves by the exit numbered as the cell behavior.
 static void TolbiShipDeck_GoBelow(void) {
 
   s32 throughDoor;
@@ -977,7 +978,7 @@ static void TolbiShipDeck_GoBelow(void) {
 }
 
 #if TBS_PATCH_2
-/// In the German, Spanish, French and Italian editions metatile behavior 2 is a
+/// In the German, Spanish, French and Italian editions cell behavior 2 is a
 /// plain step trigger: the leader goes below only while facing west, after
 /// walking onto the hatch.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
@@ -992,10 +993,10 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 
 /// The captain decides to set sail without the replacement ship. On deck at
 /// Kalay, once the tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT;
-/// MB_TOLBI_SHIP_DECK_BY_CREW), the captain, Kaja and the crewman wonder what
-/// happened to the replacement ship, and the captain decides to set sail
-/// anyway, trusting his anchor charm; the crewman runs off through the second
-/// door. Plays once (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
+/// CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW), the captain, Kaja and the crewman
+/// wonder what happened to the replacement ship, and the captain decides to set
+/// sail anyway, trusting his anchor charm; the crewman runs off through the
+/// second door. Plays once (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct Actor *record;
 
@@ -1118,9 +1119,9 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 }
 
 /// On deck at Kalay, approaching from the east side of the door
-/// (MB_TOLBI_SHIP_DECK_EAST_OF_DOOR): the crewman comes out, protests and
-/// slips away round the party to the bow. "I didn't do anything..." Runs until
-/// the party has confronted the crewman.
+/// (CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR): the crewman comes out,
+/// protests and slips away round the party to the bow. "I didn't do
+/// anything..." Runs until the party has confronted the crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   u8 bits;
 
@@ -1166,7 +1167,7 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
 }
 
 /// The same, approaching from the west side
-/// (MB_TOLBI_SHIP_DECK_WEST_OF_DOOR).
+/// (CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR).
 static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   u8 bits;
 
@@ -3642,9 +3643,9 @@ const struct Trigger gTolbiShipDeckTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KALAY_PASSENGER_KARAGOL, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckTheKaragolSeaIsPrettyFoggy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KALAY_PASSENGER_KARAGOL, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckThoseGuysSeemPrettySureOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KALAY_PASSENGER_KARAGOL, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckUsHelpWithTheRowingGet) },
-    { TRIGGER_STEP, MB_TOLBI_SHIP_DECK_BY_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT(TolbiShipDeck_WatchCrewDecideToSail) },
-    { TRIGGER_STEP, MB_TOLBI_SHIP_DECK_EAST_OF_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromEast) },
-    { TRIGGER_STEP, MB_TOLBI_SHIP_DECK_WEST_OF_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromWest) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT(TolbiShipDeck_WatchCrewDecideToSail) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromEast) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromWest) },
     { TRIGGERS_END },
 };
 

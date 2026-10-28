@@ -147,7 +147,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   Actor_SelectAnimation(lead, 1);
 }
 
-/// Sets the metatile behavior of a width by height rectangle of cells, from
+/// Sets the cell behavior of a width by height rectangle of cells, from
 /// cell (x, z), to value, on map grid layer 0 to 2, or (3 and up) in
 /// gMapGridCellBuffer.
 static s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
@@ -397,7 +397,7 @@ found:
 /// Rolls the large thing to the position probe found: the leader pushes
 /// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
 /// SE_HEAVY_MOVE while the leader follows half a cell, and it stops with
-/// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked (metatile
+/// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked (cell
 /// behavior 255) at its new place, through the map grid's layer 1 offset, and
 /// its old place is given back what was under it.
 UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
@@ -456,7 +456,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
   PushedActor_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                          horizontalExtent, verticalExtent,
-                                         MB_NORMAL);
+                                         CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, 0x8000, 0x1999);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_WaitFrames(15);
@@ -539,10 +539,10 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
         horizontalOrigin + probe.position.x, verticalOrigin + probe.position.z);
     PushedActor_FillGridAttributeRectangle(0, probe.position.x,
                                            probe.position.z, horizontalExtent,
-                                           verticalExtent, MB_WALL);
+                                           verticalExtent, CELL_BEHAVIOR_WALL);
     PushedActor_FillGridAttributeRectangle(2, probe.position.x,
                                            probe.position.z, horizontalExtent,
-                                           verticalExtent, MB_WALL);
+                                           verticalExtent, CELL_BEHAVIOR_WALL);
 
     {
       s32 tableOffset = probe.footprintIndex << 4;
@@ -560,14 +560,14 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     MapGrid_CopyCellAttributeRect(horizontalOrigin, verticalOrigin,
                                   horizontalExtent, verticalExtent,
                                   originalPosition.x, originalPosition.z);
-    PushedActor_FillGridAttributeRectangle(2, originalPosition.x,
-                                           originalPosition.z, horizontalExtent,
-                                           verticalExtent, MB_NORMAL);
+    PushedActor_FillGridAttributeRectangle(
+        2, originalPosition.x, originalPosition.z, horizontalExtent,
+        verticalExtent, CELL_BEHAVIOR_NORMAL);
   }
   Scene_PlayQueuedMusic();
 }
 
-/// Block large thing id's cells (metatile behavior 255) where it stands,
+/// Block large thing id's cells (cell behavior 255) where it stands,
 /// through the map grid's layer 1 offset; returns 0 when its sprite is no large
 /// thing.
 UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
@@ -623,8 +623,8 @@ UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
                                 height, idx + probe.position.x,
                                 dstZ + probe.position.z);
   PushedActor_FillGridAttributeRectangle(0, probe.position.x, probe.position.z,
-                                         width, height, MB_WALL);
+                                         width, height, CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(2, probe.position.x, probe.position.z,
-                                         width, height, MB_WALL);
+                                         width, height, CELL_BEHAVIOR_WALL);
   return 1;
 }

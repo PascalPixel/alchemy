@@ -24,9 +24,9 @@
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
 ///   Aleph; a bearded man in a long robe jumps out to warn him against sneaking
 ///   up the sacred peak (FLAG_VALE_WARNED_AGAINST_MT_ALEPH) and then keeps
-///   watching him, asking again whenever he comes near (metatile behaviors 51
+///   watching him, asking again whenever he comes near (cell behaviors 51
 ///   to 53). Three puppies (from ACTOR_FIRST_PUPPY) play; walking up to them
-///   from either side (metatile behaviors 20 and 21) sets them barking, until
+///   from either side (cell behaviors 20 and 21) sets them barking, until
 ///   the party has met Saturos and Menardi, of the strangers staying at the inn
 ///   (FLAG_MET_SATUROS_AND_MENARDI); then the setup removes them. Villagers
 ///   talk of the mayor, Garet's grandfather, and of not going beyond Kraden's
@@ -48,7 +48,7 @@
 /// or ACTOR_NUT_AFTER_KALAY), a pillar to push or Move, whose column the
 /// setup restores from FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and
 /// _IN_EAST_COLUMN, a ladder up onto the roof of Isaac's house, climbed on
-/// metatile behaviors 100 and 101 (FLAG_VALE_ON_ROOF while on the roof), and
+/// cell behaviors 100 and 101 (FLAG_VALE_ON_ROOF while on the roof), and
 /// cells of the bridge over the river that change while the leader is on it
 /// (FLAG_VALE_ON_BRIDGE); after a battle (FLAG_KEEP_PARTY_POSITION) the
 /// setup restores both. Exits: VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol
@@ -376,7 +376,7 @@ enum ValeAnimation {
 /// (MsgValeRepairCaption)
 #define FLAG_VALE_ON_ROOF FLAG_SCENE_TEMP_04
 /// The leader is on the rope bridge over the river. While it is set, the
-/// bridge's cells take the deck's shapes and metatile behaviors: its two middle
+/// bridge's cells take the deck's shapes and cell behaviors: its two middle
 /// rows walkable at the deck's height and its rails walls; stepping off puts
 /// back the river's, walled water between open banks.
 /// ★ Named from what the player sees: a wooden bridge with rope rails over the
@@ -576,21 +576,21 @@ static void Vale_AskAboutTheLackOfTravelers(void) {
   Event_End();
 }
 
-/// Walking onto the bridge in Vale (metatile behavior 15): its cells'
-/// metatile behaviors change, remembered in FLAG_VALE_ON_BRIDGE.
+/// Walking onto the bridge in Vale (cell behavior 15): its cells'
+/// cell behaviors change, remembered in FLAG_VALE_ON_BRIDGE.
 static void Vale_StepOntoBridge(void) {
   GameFlag_Set(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// Walking off the bridge in Vale (metatile behavior 14) restores its
-/// cells' metatile behaviors.
+/// Walking off the bridge in Vale (cell behavior 14) restores its
+/// cells' cell behaviors.
 static void Vale_StepOffBridge(void) {
   GameFlag_Clear(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-/// The door of Vale Sanctum (metatile behavior 1): it opens, the leader walks
+/// The door of Vale Sanctum (cell behavior 1): it opens, the leader walks
 /// in, and VALE_TO_SANCTUM leads into the Sanctum.
 static void Vale_EnterSanctum(void) {
   Event_PlaySong(SE_THUMP);
@@ -599,7 +599,7 @@ static void Vale_EnterSanctum(void) {
   Import_EventSetExitRequest(VALE_TO_SANCTUM);
 }
 
-/// The path to Mt. Aleph in Vale (metatile behavior 2): Jenna stops Isaac until
+/// The path to Mt. Aleph in Vale (cell behavior 2): Jenna stops Isaac until
 /// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED); then
 /// VALE_TO_SOL_ENTRANCE leads up to Sol Entrance. Jenna says "Kraden is waiting
 /// for us".
@@ -612,27 +612,27 @@ static void Vale_ApproachMtAleph(void) {
   }
 }
 
-/// Metatile behavior 3 in Vale takes the northern way out to
+/// Cell behavior 3 in Vale takes the northern way out to
 /// SceneId_ValeKradensCottage.
 static void Vale_ExitToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
-/// Metatile behavior 4 in Vale takes the southern way out to
+/// Cell behavior 4 in Vale takes the southern way out to
 /// SceneId_ValeKradensCottage.
 static void Vale_ExitToValeKradensCottageSouth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
-/// Metatile behavior 5 in Vale takes the way out to SceneId_ValePlaza.
+/// Cell behavior 5 in Vale takes the way out to SceneId_ValePlaza.
 static void Vale_ExitToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_PLAZA);
 }
 
-/// The door of the house of Garet's family in Vale (metatile behavior 6): it
+/// The door of the house of Garet's family in Vale (cell behavior 6): it
 /// opens and VALE_TO_COTTAGE_ROOMS_A_EAST leads in.
 static void Vale_EnterGaretsHouse(void) {
   Event_PlaySong(SE_DOOR_OPEN);
@@ -641,7 +641,7 @@ static void Vale_EnterGaretsHouse(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_EAST);
 }
 
-/// A house door in Vale (metatile behavior 7): it opens and
+/// A house door in Vale (cell behavior 7): it opens and
 /// VALE_TO_COTTAGE_ROOMS_A_SOUTH leads in, to the room CottageRoomsA
 /// enters from COTTAGE_ROOMS_A_FROM_VALE_SOUTH.
 static void Vale_EnterCottageRoomsA(void) {
@@ -651,7 +651,7 @@ static void Vale_EnterCottageRoomsA(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_SOUTH);
 }
 
-/// The door of Isaac's house in Vale (metatile behavior 8): after the party has
+/// The door of Isaac's house in Vale (cell behavior 8): after the party has
 /// left and before Kalay, Dora will not open. "My Isaac would keep his
 /// promise... Go away." Otherwise VALE_TO_COTTAGE_ROOMS_B leads in.
 static void Vale_EnterIsaacsHouse(void) {
@@ -679,7 +679,7 @@ static void Vale_EnterIsaacsHouse(void) {
   }
 }
 
-/// The door of the house of Jenna's grandparents in Vale (metatile behavior 9):
+/// The door of the house of Jenna's grandparents in Vale (cell behavior 9):
 /// it opens and VALE_TO_COTTAGE_ROOMS_A_NORTH leads in.
 static void Vale_EnterJennasGrandparentsHouse(void) {
   Event_PlaySong(SE_DOOR_OPEN);
@@ -688,7 +688,7 @@ static void Vale_EnterJennasGrandparentsHouse(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
-/// A house door in Vale (metatile behavior 10): it opens and
+/// A house door in Vale (cell behavior 10): it opens and
 /// VALE_TO_COTTAGE_ROOMS_A_WEST leads in, to the room CottageRoomsA
 /// enters from COTTAGE_ROOMS_A_FROM_VALE_WEST.
 static void Vale_EnterCottageRoomsAWest(void) {
@@ -698,7 +698,7 @@ static void Vale_EnterCottageRoomsAWest(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_WEST);
 }
 
-/// Unused: its row answers metatile behavior 11, which no cell of Vale's layout
+/// Unused: its row answers cell behavior 11, which no cell of Vale's layout
 /// (map/map_000, the stormy night's too) carries, as
 /// ValeStormyNight_UnusedLeaveToCottageRoomsAWestBySecondDoor in
 /// vale_stormy_night.c. It would have opened Isaac's door, walked the leader to
@@ -753,7 +753,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   Event_End();
 }
 
-/// The puppies in Vale (metatile behavior 20), until the party has met Saturos
+/// The puppies in Vale (cell behavior 20), until the party has met Saturos
 /// and Menardi: they bark, the camera pans down to them and back, and the
 /// leader turns away.
 static void Vale_WatchThePuppies(void) {
@@ -803,7 +803,7 @@ static void Vale_WatchThePuppies(void) {
   }
 }
 
-/// The puppies in Vale from the other side (metatile behavior 21): the same
+/// The puppies in Vale from the other side (cell behavior 21): the same
 /// barking, without the camera pan.
 static void Vale_TurnBackFromThePuppies(void) {
   s32 msg;
@@ -822,7 +822,7 @@ static void Vale_TurnBackFromThePuppies(void) {
   }
 }
 
-/// Metatile behavior 100 in Vale, at the foot of the ladder beside Isaac's
+/// Cell behavior 100 in Vale, at the foot of the ladder beside Isaac's
 /// house: walking north into it climbs the leader up onto the roof, whose cells
 /// change so it can be walked (FLAG_VALE_ON_ROOF set while there).
 static void Vale_ClimbLadderOntoRoof(void) {
@@ -834,7 +834,7 @@ static void Vale_ClimbLadderOntoRoof(void) {
   Event_End();
 }
 
-/// Metatile behavior 101 in Vale, at the top of the ladder beside Isaac's
+/// Cell behavior 101 in Vale, at the top of the ladder beside Isaac's
 /// house: walking south into it climbs the leader back down, and the roof's
 /// cells are put back (FLAG_VALE_ON_ROOF cleared).
 static void Vale_ClimbDownFromRoof(void) {
@@ -848,7 +848,7 @@ static void Vale_ClimbDownFromRoof(void) {
 }
 
 /// A bearded man in a long robe in Vale (ACTOR_MAN_GUARDING_MT_ALEPH,
-/// metatile behavior 50) jumps out in front of Isaac, then keeps watching him;
+/// cell behavior 50) jumps out in front of Isaac, then keeps watching him;
 /// sets FLAG_VALE_WARNED_AGAINST_MT_ALEPH. "You're not planning on sneaking up
 /// to Mt. Aleph...?"
 static void Vale_WarnAgainstSneakingUpMtAleph(void) {
@@ -3172,7 +3172,7 @@ static void Vale_UpdateParticlePosition(struct Actor *particle, s32 distance,
   }
 }
 
-/// Pushing the pillar in Vale (metatile behaviors 30 and 31) moves it a cell.
+/// Pushing the pillar in Vale (cell behaviors 30 and 31) moves it a cell.
 static void Vale_PushPillar(void) {
 #if !TBS_PATCH_1
   // Japanese edition only: look up the pillar but do not use the return value.
@@ -3224,7 +3224,7 @@ static void Vale_PlayStepSound(void) {
     Sound_PlaySong(SE_PSYNERGY_SPARKLE);
 }
 
-/// Searching a locked door in Vale (metatile behavior 24).
+/// Searching a locked door in Vale (cell behavior 24).
 static void Vale_SearchTheLockedDoor(void) {
   Event_Start();
   FieldMessage_Show(MsgValeDoorWontOpen, 1);

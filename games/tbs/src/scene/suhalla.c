@@ -12,7 +12,7 @@
 /// both actor template tables, so one enum names them; the woman the sandstorms
 /// brought stands off the map until the audience.
 ///
-/// Five doors, whose metatile behaviors are their exits' numbers
+/// Five doors, whose cell behaviors are their exits' numbers
 /// (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST), open as the leader walks north
 /// into them (Suhalla_EnterDoor, Suhalla_EnterWideDoor) and lead into
 /// the village's buildings. Three ways lead out onto the World Map, and the
@@ -163,7 +163,7 @@ static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   Event_ShowMessageAndWait(actorId, 0);
 }
 
-/// Growth on Suhalla's sprout: the plant grows, and its cell takes the metatile
+/// Growth on Suhalla's sprout: the plant grows, and its cell takes the cell
 /// behavior of the grown plant's cell. Sets FLAG_SUHALLA_SPROUT_GROWN.
 static void Suhalla_GrowSprout(void) {
   MapGrid_CopyCellAttributes(25, 9, 1, 1, 4, 9);
@@ -172,7 +172,7 @@ static void Suhalla_GrowSprout(void) {
 
 /// Walking north into one of Suhalla's doors (SUHALLA_TO_INN,
 /// SUHALLA_TO_HOUSE_WEST, SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST,
-/// whose metatile behaviors are their exits' numbers): the door opens, the
+/// whose cell behaviors are their exits' numbers): the door opens, the
 /// leader steps through and the party leaves by that exit into the village's
 /// buildings.
 static void Suhalla_EnterDoor(void) {
@@ -315,7 +315,7 @@ struct ActorTemplate gSuhallaActorTemplatesLater[] = {
     { SCENE_TABLE_END },
 };
 
-/// The cell each door's opening is drawn at, by metatile behavior.
+/// The cell each door's opening is drawn at, by cell behavior.
 s16 gSuhallaDoorCells[][2] = {
     { 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };

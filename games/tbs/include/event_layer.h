@@ -310,7 +310,7 @@ static inline void FieldCamera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,
 }
 
 /// Changes part of the room in place, copying whole cells, picture and
-/// metatile behavior alike, from another part of the map.
+/// cell behavior alike, from another part of the map.
 static inline void MapGrid_CopyCells(s32 sourceX, s32 sourceY, s32 width,
                                      s32 height, s32 destinationX,
                                      s32 destinationY) {
@@ -319,7 +319,7 @@ static inline void MapGrid_CopyCells(s32 sourceX, s32 sourceY, s32 width,
 }
 
 /// Changes where the party can walk in part of the room, copying only the
-/// cells' metatile behaviors and flags.
+/// cells' cell behaviors and flags.
 static inline void MapGrid_CopyCellAttributes(s32 sourceX, s32 sourceY,
                                               s32 width, s32 height,
                                               s32 destinationX,
@@ -425,7 +425,7 @@ static inline void Actor_SetSpriteColorById(s32 actorId, s32 value) {
 #define ACTION_TABLE_STOP ((const u8 *)1)
 
 /// Changes what part of the room shows, copying the cells' pictures but not
-/// their metatile behaviors.
+/// their cell behaviors.
 static inline void MapGrid_CopyCellsTo(s32 sourceX, s32 sourceY,
                                        s32 destinationX, s32 destinationY,
                                        s32 width, s32 height) {

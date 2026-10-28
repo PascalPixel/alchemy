@@ -8,15 +8,15 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The metatile behaviors the cave's triggers answer.
-enum WestLunpaCaveMetatileBehavior {
-  MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE = 1,
-  MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE = 2,
+/// The cell behaviors the cave's triggers answer.
+enum WestLunpaCaveCellBehavior {
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE = 1,
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE = 2,
   /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
-  MB_WEST_LUNPA_CAVE_LOWERING_SWITCH = 3,
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_LOWERING_SWITCH = 3,
   /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
-  MB_WEST_LUNPA_CAVE_RAISING_SWITCH = 4,
-  MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_RAISING_SWITCH = 4,
+  CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
 };
 
 enum CaveActorId {

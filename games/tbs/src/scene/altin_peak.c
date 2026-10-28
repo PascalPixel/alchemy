@@ -253,7 +253,7 @@ enum {
   ACTOR_WALL,
   /// The falling-rock sign, drawn with the sprite of Lalivero's sign and the
   /// Kolima Forest floodgate's (SPRITE_SIGNPOST); it is read by searching
-  /// metatile behavior 12 (AltinPeak_ReadFallingRockSign).
+  /// cell behavior 12 (AltinPeak_ReadFallingRockSign).
   /// ★ Named from the game: "Watch for falling rocks!"
   /// (MsgAltinWatchFallingRocks)
   ACTOR_FALLING_ROCK_SIGN
@@ -2326,7 +2326,8 @@ static void AltinPeak_MarkActorTerrainCell(s32 actorId) {
   actor = Actor_GetById(actorId);
   actor->collisionFlags &= (u8)~ACTOR_SOLID;
 
-  MapGrid_SetMetatileBehaviorAt(0, actor->x.fixed, actor->z.fixed, MB_WALL);
+  MapGrid_SetCellBehaviorAt(0, actor->x.fixed, actor->z.fixed,
+                            CELL_BEHAVIOR_WALL);
 }
 
 /// The mine cart reaches the end of its run: it settles in the middle of its
@@ -2496,13 +2497,14 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
   }
 }
 
-/// The metatile behaviors that mark the mine cart's route, on map layer 2.
-enum AltinPeakMetatileBehavior {
-  MB_ALTIN_PEAK_CART_COUNTDOWN = 96, ///< AltinPeak_StartCartCountdown
-  MB_ALTIN_PEAK_CART_TURN_LEFT = 97,
-  MB_ALTIN_PEAK_CART_TURN_RIGHT = 98,
+/// The cell behaviors that mark the mine cart's route, on map layer 2.
+enum AltinPeakCellBehavior {
+  CELL_BEHAVIOR_ALTIN_PEAK_CART_COUNTDOWN =
+      96, ///< AltinPeak_StartCartCountdown
+  CELL_BEHAVIOR_ALTIN_PEAK_CART_TURN_LEFT = 97,
+  CELL_BEHAVIOR_ALTIN_PEAK_CART_TURN_RIGHT = 98,
   /// The end of the route, where the leader jumps off.
-  MB_ALTIN_PEAK_CART_STOP = 99
+  CELL_BEHAVIOR_ALTIN_PEAK_CART_STOP = 99
 };
 
 /// Rolls the mine cart the party leader rides: it sets off the first way it can
@@ -2553,17 +2555,17 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   Sound_PlaySong(SE_CART_ROLL);
   // The route cells select turns, a countdown sound, and the destination.
   for (;;) {
-    switch (MapGrid_GetMetatileBehaviorAt(2, actor->x.fixed, actor->z.fixed)) {
-    case MB_ALTIN_PEAK_CART_TURN_RIGHT:
+    switch (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed)) {
+    case CELL_BEHAVIOR_ALTIN_PEAK_CART_TURN_RIGHT:
       AltinPeak_TurnCartRight(actor);
       break;
-    case MB_ALTIN_PEAK_CART_TURN_LEFT:
+    case CELL_BEHAVIOR_ALTIN_PEAK_CART_TURN_LEFT:
       AltinPeak_TurnCartLeft(actor);
       break;
-    case MB_ALTIN_PEAK_CART_COUNTDOWN:
+    case CELL_BEHAVIOR_ALTIN_PEAK_CART_COUNTDOWN:
       AltinPeak_StartCartCountdown(actor);
       break;
-    case MB_ALTIN_PEAK_CART_STOP:
+    case CELL_BEHAVIOR_ALTIN_PEAK_CART_STOP:
       goto arrived;
     }
     AltinPeak_AdvanceCart(actor);

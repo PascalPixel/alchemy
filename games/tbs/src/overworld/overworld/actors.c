@@ -229,8 +229,8 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 /// adventure puts it, then the scene's actor template table from
 /// actor slot 8, and the camera that follows the leader. A leader entering
 /// above ground where its cell and the cell north of it are climbing spots
-/// (MB_CLIMB) is raised by the ground height of the cell north of it less 32
-/// pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
+/// (CELL_BEHAVIOR_CLIMB) is raised by the ground height of the cell north of it
+/// less 32 pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
 /// Called by SceneSequence_Run on entering a scene, and by
 /// Event_RunActorUpdateAndWait.
@@ -274,8 +274,8 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
   pos = (object->x.fixed / 0x100000) + (object->z.fixed / 0x100000) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];
-  if (gAdventure.y != 0 && cell->behavior == MB_CLIMB &&
-      above->behavior == MB_CLIMB) {
+  if (gAdventure.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
+      above->behavior == CELL_BEHAVIOR_CLIMB) {
     gAdventure.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
                                          object->z.fixed - 0x100000) -

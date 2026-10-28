@@ -7,7 +7,7 @@
 ///   (IMIL_FROM_IMIL_FALLS_CAVE). Fever, a Mars Djinni, waits on its ice and
 ///   joins the party when spoken to, without a battle. Every normal entry
 ///   blocks Retreat and walks the leader up toward Fever, and stepping onto the
-///   ice (metatile behavior 10) slides the leader in the held direction,
+///   ice (cell behavior 10) slides the leader in the held direction,
 ///   turning toward it as he goes, until a blocked cell or one too high stops
 ///   him.
 /// - Fuchin Falls Cave (SceneId_FuchinFallsCaveEntrance to
@@ -350,7 +350,7 @@ const struct ActorTemplate *ImilFuchinFalls_GetActorTemplates(void) {
 /// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST FLAG_AREA_TEMP_15
 
-/// Lets the log settle before rebuilding its room's metatile behaviors.
+/// Lets the log settle before rebuilding its room's cell behaviors.
 static inline void FuchinFallsCave_FinishLogMove(void (*rebuildLogs)(void)) {
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
   WaitFrames(2);
@@ -1103,7 +1103,7 @@ static void Imil_LeaveFallsCave(void) {
   Import_EventSetExitRequest(IMIL_FALLS_CAVE_TO_IMIL);
 }
 
-/// Stepping onto the ice in Imil Falls Cave (metatile behavior 10) slides
+/// Stepping onto the ice in Imil Falls Cave (cell behavior 10) slides
 /// the selected actor in the held direction.
 static void Imil_MoveAcrossIce(void) { Imil_SlideActorAcrossIce(); }
 
@@ -1570,7 +1570,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
   }
 }
 
-/// Restores the metatile behavior templates for the current log room of Fuchin
+/// Restores the cell behavior templates for the current log room of Fuchin
 /// Falls Cave.
 static void ImilFuchinFalls_RebuildLogRoom(void) {
   if (gAdventure.sceneId == (s32)&SceneId_FuchinFallsCaveEntrance) {
@@ -1924,7 +1924,7 @@ static void Imil_TurnSkaterTowardHeldDirection(struct Actor *updated) {
   Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
 }
 
-/// Slides along Imil Falls Cave's ice until terrain or a metatile behavior
+/// Slides along Imil Falls Cave's ice until terrain or a cell behavior
 /// boundary ends the move.
 static void Imil_SlideActorAcrossIce(void) {
   struct Actor *actor;
@@ -1951,12 +1951,11 @@ static void Imil_SlideActorAcrossIce(void) {
     probe.z = (actor->z.fixed & 0xfff00000) + PIXELS(8);
     z = probe.z;
     x = probe.x;
-    startBehavior = MapGrid_GetMetatileBehaviorAt(actor->layer, x, z);
+    startBehavior = MapGrid_GetCellBehaviorAt(actor->layer, x, z);
     FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
 
-    nextBehavior =
-        MapGrid_GetMetatileBehaviorAt(actor->layer, probe.x, probe.z);
-    if (nextBehavior == MB_WALL ||
+    nextBehavior = MapGrid_GetCellBehaviorAt(actor->layer, probe.x, probe.z);
+    if (nextBehavior == CELL_BEHAVIOR_WALL ||
         MapGrid_GetTerrainHeight(actor->layer, probe.x, probe.z) -
                 actor->y.fixed >
             PIXELS(8)) {
@@ -1976,12 +1975,11 @@ static void Imil_SlideActorAcrossIce(void) {
     Actor_WaitForMove(actor);
     actor->update = Imil_TurnSkaterTowardHeldDirection;
 
-    // Keep sliding through cells with the same metatile behavior.
+    // Keep sliding through cells with the same cell behavior.
     for (;;) {
       FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
-      nextBehavior =
-          MapGrid_GetMetatileBehaviorAt(actor->layer, probe.x, probe.z);
-      if (nextBehavior == MB_WALL) {
+      nextBehavior = MapGrid_GetCellBehaviorAt(actor->layer, probe.x, probe.z);
+      if (nextBehavior == CELL_BEHAVIOR_WALL) {
         break;
       }
       if (MapGrid_GetTerrainHeight(actor->layer, probe.x, probe.z) -
@@ -2008,7 +2006,7 @@ static void Imil_SlideActorAcrossIce(void) {
   }
 
 blocked:
-  // A metatile behavior change ends the slide and restores normal steering.
+  // A cell behavior change ends the slide and restores normal steering.
   actor->update = NULL;
   actor->steeringFlags |= ACTOR_FACES_MOTION;
 

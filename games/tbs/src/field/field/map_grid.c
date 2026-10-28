@@ -99,7 +99,7 @@ UNUSED void TileMap_NumberPlaceholderMetatiles(void) {
 }
 
 /// Converts the map's cells in place with Tile_ConvertMapGrid, run from RAM.
-/// The grid is decoded as three planes: metatile behaviors and shapes
+/// The grid is decoded as three planes: cell behaviors and shapes
 /// (16 KB each), then 32 KB of metatile halfwords (the metatile number with the
 /// layer and priority bits an actor standing there takes). The routine makes
 /// each metatile halfword the low half of a cell word, numbering placeholder
@@ -949,7 +949,7 @@ void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
 
 /// Copies only the attributes of a rectangle of cells, from (sourceX, sourceY)
 /// to (dstX, dstY), width by height cells, keeping each destination cell's
-/// metatile number. Nothing is redrawn: the attributes (flags, metatile
+/// metatile number. Nothing is redrawn: the attributes (flags, cell
 /// behavior and shape) do not show. Called by about 65 events through
 /// MapGrid_CopyCellAttributeRectFar.
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,

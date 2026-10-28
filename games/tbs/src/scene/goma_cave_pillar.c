@@ -19,7 +19,7 @@
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST), the party finds it set into the
 /// floor underfoot, with the cells along it changed. All three are area
 /// temp flags, so the room is as it started again once the party leaves Goma
-/// Cave's four scenes. Walking west into a gap (metatile behavior 20) jumps the
+/// Cave's four scenes. Walking west into a gap (cell behavior 20) jumps the
 /// leader across it, and a chest holds a Lucky Medal.
 ///
 /// Forge, a Mars Djinni, waits here beside a man who once fought it: `Did you
@@ -485,7 +485,7 @@ static void GomaCavePillar_PushEastPillar(void) {
   Event_End();
 }
 
-/// Walking west into the gap in Goma Cave (metatile behavior 20): the leader
+/// Walking west into the gap in Goma Cave (cell behavior 20): the leader
 /// jumps across it. Later patches use the shared forward jump.
 static void GomaCavePillar_JumpGapWest(void) {
 #if TBS_PATCH_1

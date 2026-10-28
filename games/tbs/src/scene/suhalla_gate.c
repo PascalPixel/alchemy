@@ -20,10 +20,10 @@
 /// otherwise named.
 ///
 /// Before Babi's audience after Colosso the guards turn the party away for want
-/// of travel papers, and metatile behavior 10 before the passage brings them
+/// of travel papers, and cell behavior 10 before the passage brings them
 /// together in front of it (SuhallaGate_GuardsBlockPassage). After it they lie
 /// wounded, a third soldier lies east of the gate, and Iodem, who travels with
-/// the party, has an actor out of sight: metatile behavior 10 then plays
+/// the party, has an actor out of sight: cell behavior 10 then plays
 /// SuhallaGate_IodemQuestionsGuards once (FLAG_SUHALLA_GATE_ATTACK_SEEN), after
 /// which a defeat returns the party to the house beside the gate. The third
 /// soldier, talked to or read, warns of the attack on Venus Lighthouse and
@@ -277,7 +277,7 @@ static void SuhallaGate_LeaveForWorldMap(void) {
 }
 
 /// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) before Babi's audience, each
-/// time the party nears the passage north (metatile behavior 10): the two
+/// time the party nears the passage north (cell behavior 10): the two
 /// guards step together in front of it, and the map cells around them change.
 static void SuhallaGate_GuardsBlockPassage(void) {
   Event_Start();
@@ -299,7 +299,7 @@ static void SuhallaGate_GuardsBlockPassage(void) {
 }
 
 /// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience, on
-/// reaching the passage (metatile behavior 10), once: Iodem steps out of the
+/// reaching the passage (cell behavior 10), once: Iodem steps out of the
 /// party and demands to know what happened. "What is the meaning of this!?" The
 /// wounded guards tell of a strange group without papers whose strange powers
 /// beat them; Iodem asks whether it was Felix, the party's foe, and the guards

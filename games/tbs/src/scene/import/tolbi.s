@@ -5,7 +5,7 @@
 	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
-	.set import.MapGrid_SetMetatileBehaviorAt, 1
+	.set import.MapGrid_SetCellBehaviorAt, 1
 	.set import.Message_OpenWindow, 1
 	.set import.Portrait_OpenWindow, 1
 	.set import.GameFlag_Get, 1

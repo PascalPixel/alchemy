@@ -311,19 +311,19 @@ enum ColosseumWaitingRoomActorId {
   ACTOR_BUFORD
 };
 
-/// The metatile behaviors the Colosseum Entrance's triggers answer.
-enum ColosseumEntranceMetatileBehavior {
+/// The cell behaviors the Colosseum Entrance's triggers answer.
+enum ColosseumEntranceCellBehavior {
   /// Before the gates (ColosseumEntrance_CrowdRecognizesIsaac).
-  MB_COLOSSEUM_ENTRANCE_BEFORE_GATES = 10
+  CELL_BEHAVIOR_COLOSSEUM_ENTRANCE_BEFORE_GATES = 10
 };
 
-/// The metatile behaviors the Colosseum's triggers answer.
-enum ColosseumMetatileBehavior {
+/// The cell behaviors the Colosseum's triggers answer.
+enum ColosseumCellBehavior {
   /// The line before the waiting room's east passage
   /// (ColosseumEntrance_FinalsStart).
-  MB_COLOSSEUM_FINALS_LINE = 12,
+  CELL_BEHAVIOR_COLOSSEUM_FINALS_LINE = 12,
   /// The cells behind it (ColosseumEntrance_StepBackFromFinalsLine).
-  MB_COLOSSEUM_BEHIND_FINALS_LINE = 13
+  CELL_BEHAVIOR_COLOSSEUM_BEHIND_FINALS_LINE = 13
 };
 
 /// The temporary flags the colosseum's scenes keep.
@@ -657,12 +657,12 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
 }
 
 /// Stepping toward the gates at the Colosseum Entrance
-/// (MB_COLOSSEUM_ENTRANCE_BEFORE_GATES) on the finals day: four soldiers
-/// recognize Isaac as Babi's pick and quarrel over a boy in the finals, then
-/// one takes the party in to the Colosseum's COLOSSEUM_FROM_COLOSSEUM_ENTRANCE.
-/// If Isaac will not go, the soldiers insist and Ivan, Mia and Garet talk him
-/// round; if he still refuses, Garet leads the way in. Before Babi is saved it
-/// does nothing.
+/// (CELL_BEHAVIOR_COLOSSEUM_ENTRANCE_BEFORE_GATES) on the finals day: four
+/// soldiers recognize Isaac as Babi's pick and quarrel over a boy in the
+/// finals, then one takes the party in to the Colosseum's
+/// COLOSSEUM_FROM_COLOSSEUM_ENTRANCE. If Isaac will not go, the soldiers insist
+/// and Ivan, Mia and Garet talk him round; if he still refuses, Garet leads the
+/// way in. Before Babi is saved it does nothing.
 static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   // The native code reuses this word for actor handles and the
   // reply.
@@ -906,10 +906,10 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
 }
 
 /// Stepping to the line in the Colosseum's waiting room
-/// (MB_COLOSSEUM_FINALS_LINE, while FLAG_FINALS_LINE_ARMED is set and
-/// FLAG_FINALS_LINE_REACHED clear): asked whether he is ready, Isaac can still
-/// wait; if he is, the warriors grumble, line up by rank and march out, and
-/// Isaac follows them out by the east passage
+/// (CELL_BEHAVIOR_COLOSSEUM_FINALS_LINE, while FLAG_FINALS_LINE_ARMED is set
+/// and FLAG_FINALS_LINE_REACHED clear): asked whether he is ready, Isaac can
+/// still wait; if he is, the warriors grumble, line up by rank and march out,
+/// and Isaac follows them out by the east passage
 /// (COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST).
 static void ColosseumEntrance_FinalsStart(void) {
   struct Actor *actor;
@@ -1045,7 +1045,7 @@ static void ColosseumEntrance_FinalsStart(void) {
 }
 
 /// Stepping back from the line in the Colosseum's waiting room
-/// (MB_COLOSSEUM_BEHIND_FINALS_LINE) arms the question again
+/// (CELL_BEHAVIOR_COLOSSEUM_BEHIND_FINALS_LINE) arms the question again
 /// (FLAG_FINALS_LINE_ARMED and FLAG_FINALS_LINE_REACHED).
 static void ColosseumEntrance_StepBackFromFinalsLine(void) {
   GameFlag_Clear(FLAG_FINALS_LINE_REACHED);
@@ -2529,7 +2529,7 @@ struct Trigger gColosseumEntranceTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCALPER, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceImGoingToBeInTrouble) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_GUESS_MAN, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceOnceTheTrialsAreOverIts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_GUESS_MAN, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAllOfTheProfitsFromThe) },
-    { TRIGGER_STEP, MB_COLOSSEUM_ENTRANCE_BEFORE_GATES, FLAG_COLOSSO_OVER, EVENT(ColosseumEntrance_CrowdRecognizesIsaac) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_COLOSSEUM_ENTRANCE_BEFORE_GATES, FLAG_COLOSSO_OVER, EVENT(ColosseumEntrance_CrowdRecognizesIsaac) },
     { TRIGGERS_END },
 };
 // clang-format on
@@ -2557,9 +2557,9 @@ struct Trigger gColosseumTriggersFromColosseumAzartMatchWest[] = {
      MSGNO(MsgColosseumEntranceIFeelWeveBeenWaitingForever)},
     {TRIGGER_TALK, ACTOR_GONG_SOLDIER, CONDITION_ALWAYS,
      MSGNO(MsgColosseumEntranceWhenTheGongSoundsTheFinals)},
-    {TRIGGER_STEP, MB_COLOSSEUM_FINALS_LINE, FLAG_FINALS_LINE_REACHED,
-     EVENT(ColosseumEntrance_FinalsStart)},
-    {TRIGGER_STEP, MB_COLOSSEUM_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_COLOSSEUM_FINALS_LINE,
+     FLAG_FINALS_LINE_REACHED, EVENT(ColosseumEntrance_FinalsStart)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_COLOSSEUM_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
      EVENT(ColosseumEntrance_StepBackFromFinalsLine)},
     {TRIGGERS_END},
 };

@@ -15,7 +15,7 @@
 /// TREE_ROOMS_ENTRANCE_TO_TRET, lead from room to room, three of them
 /// through regions 28 to 36 pixels up (Scene_GetExitRegions).
 ///
-/// Webs hold cocoons, each a step trigger (metatile behaviors 21 to 29, 31, 32
+/// Webs hold cocoons, each a step trigger (cell behaviors 21 to 29, 31, 32
 /// and 50 to 59) with a temporary flag of its own
 /// (FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and the others). The first step
 /// on a cocoon tears it: its cell is redrawn and its flag set. The next step on
@@ -34,7 +34,7 @@
 /// them from gTreeRooms_MapPatches.
 ///
 /// Tret's face (ACTOR_TRET) and a second Tret actor at the same spot
-/// speak his lines. Walking up to him (metatile behavior 40, while
+/// speak his lines. Walking up to him (cell behavior 40, while
 /// FLAG_TRET_DEFEATED is clear) runs TreeRooms_FightTret: he roars, the party
 /// gathers in front of him, and the evil within him scorns them before the
 /// battle with Tret. The battle returns to
@@ -468,7 +468,7 @@ static void TreeRooms_JumpFromCocoon(void) {
 /// Returns the exits, the cocoons, Tret, Reveal and the chests' events.
 const struct Trigger *Scene_GetTriggers(void) { return gTreeRoomsTriggers; }
 
-/// Walking up to Tret in Tret Tree (metatile behavior 40, while
+/// Walking up to Tret in Tret Tree (cell behavior 40, while
 /// FLAG_TRET_DEFEATED is clear): he roars, the party gathers in front of him,
 /// and the evil within him scorns them before the battle with Tret starts.
 /// "Hm... HROOOM!!!" and "You hoped to find my kindly self?" The battle returns

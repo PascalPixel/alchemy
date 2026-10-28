@@ -27,14 +27,14 @@ enum InteriorRoom {
 
 #define ROOM_DOOR(room) {TRIGGER_EXIT, (room), CONDITION_ALWAYS, (room)}
 
-/// The metatile behaviors the rooms' examine triggers answer; each door's cells
+/// The cell behaviors the rooms' examine triggers answer; each door's cells
 /// carry the number of its exit.
-enum RockRoomsMetatileBehavior {
-  MB_ROCK_ROOMS_WOODEN_BOX = 100,
+enum RockRoomsCellBehavior {
+  CELL_BEHAVIOR_ROCK_ROOMS_WOODEN_BOX = 100,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
-  MB_ROCK_ROOMS_BARREL,
-  MB_ROCK_ROOMS_FIRST_OVEN = 200,
-  MB_ROCK_ROOMS_SECOND_OVEN
+  CELL_BEHAVIOR_ROCK_ROOMS_BARREL,
+  CELL_BEHAVIOR_ROCK_ROOMS_FIRST_OVEN = 200,
+  CELL_BEHAVIOR_ROCK_ROOMS_SECOND_OVEN
 };
 
 /// The placed actors of Lunpa's houses, shops, inn and temple, numbered in the

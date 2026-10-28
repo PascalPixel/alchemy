@@ -93,7 +93,7 @@
 ///   Kraden. The setup does not show the area's name there.
 ///
 /// The exits COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST to
-/// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST are taken by the metatile
+/// COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST are taken by the cell
 /// behaviors of the same numbers, leading to the rest of Vale (ValePlaza,
 /// ValeKradensCottage, Vale and ValeStormyNight) or between this scene's own
 /// parts.
@@ -445,19 +445,19 @@ static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
   Import_EventSetExitRequest(exitNumber);
 }
 
-// The exits in Vale: stepping on the metatile behavior of the same number in
+// The exits in Vale: stepping on the cell behavior of the same number in
 // any of the Vale tables plays a step sound and takes that exit
 // (gCottageRoomsB_Exits, or gCottageRoomsB_StormExits on the stormy
 // night).
 
-/// Reached by metatile behavior 1; leads to ValePlaza
+/// Reached by cell behavior 1; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST).
 static void CottageRoomsB_ExitToValePlazaNorthwest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST);
 }
 
-/// Reached by metatile behavior 2; leads to Kraden's cottage
+/// Reached by cell behavior 2; leads to Kraden's cottage
 /// (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH).
 static void CottageRoomsB_ExitToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
@@ -465,28 +465,28 @@ static void CottageRoomsB_ExitToValeKradensCottageNorth(void) {
       COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
-/// Reached by metatile behavior 3; leads to ValePlaza
+/// Reached by cell behavior 3; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH).
 static void CottageRoomsB_ExitToValePlazaNortheast(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST);
 }
 
-/// Reached by metatile behavior 4; leads to ValePlaza
+/// Reached by cell behavior 4; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH).
 static void CottageRoomsB_ExitToValePlazaWest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST);
 }
 
-/// Reached by metatile behavior 5, the inn's stairs; climbs to its guest room
+/// Reached by cell behavior 5, the inn's stairs; climbs to its guest room
 /// at COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR.
 static void CottageRoomsB_ExitToInnUpstairs(void) {
   Sound_PlaySong(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS);
 }
 
-/// Reached by metatile behavior 6; leads to Vale
+/// Reached by cell behavior 6; leads to Vale
 /// (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
 static void CottageRoomsB_ExitToVale(void) {
@@ -494,21 +494,21 @@ static void CottageRoomsB_ExitToVale(void) {
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE);
 }
 
-/// Reached by metatile behavior 7, the stairs of Isaac's house; climbs to its
+/// Reached by cell behavior 7, the stairs of Isaac's house; climbs to its
 /// upper floor.
 static void CottageRoomsB_ExitToIsaacsHouseUpstairs(void) {
   Sound_PlaySong(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
-/// Reached by metatile behavior 8, the stairs of the inn's guest room; goes
+/// Reached by cell behavior 8, the stairs of the inn's guest room; goes
 /// back down.
 static void CottageRoomsB_ExitToInnDownstairs(void) {
   Sound_PlaySong(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR);
 }
 
-/// Reached by metatile behavior 9, the stairs on the upper floor of Isaac's
+/// Reached by cell behavior 9, the stairs on the upper floor of Isaac's
 /// house; goes back down.
 static void CottageRoomsB_ExitToIsaacsHouseDownstairs(void) {
   Sound_PlaySong(SE_STAIRS_DOWN);
@@ -516,14 +516,14 @@ static void CottageRoomsB_ExitToIsaacsHouseDownstairs(void) {
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
 
-/// Reached by metatile behavior 10; leads to ValeStormyNight
+/// Reached by cell behavior 10; leads to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST).
 static void CottageRoomsB_ExitToValeStormyNightWest(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST);
 }
 
-/// Reached by metatile behavior 11; leads to ValeStormyNight
+/// Reached by cell behavior 11; leads to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST).
 static void CottageRoomsB_ExitToValeStormyNightEast(void) {
   Sound_PlaySong(SE_MAP_EXIT);
@@ -1144,7 +1144,7 @@ static void CottageRoomsB_TalkToDora(void) {
   Event_End();
 }
 
-/// Restores the room's tiles and metatile behaviors outside the storm.
+/// Restores the room's tiles and cell behaviors outside the storm.
 /// Called by CottageRoomsB_Initialize when FLAG_VALE_STORM is clear.
 static void CottageRoomsB_RestoreRoomPatch(void) {
   MapGrid_CopyCellsTo(22, 85, 25, 85, 2, 2);

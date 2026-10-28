@@ -3,7 +3,7 @@
 /// ship's lookout (ACTOR_LOOKOUT) keeps watch: one of the ship's three scenes
 /// on its voyage from Kalay to Tolbi, which tolbi_ship_deck.c describes. The
 /// party climbs up by the deck's ladder (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK)
-/// and down again by MB_TOLBI_SHIP_MAST_LADDER and the region of
+/// and down again by CELL_BEHAVIOR_TOLBI_SHIP_MAST_LADDER and the region of
 /// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The entrances from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// events here, each leading on into the next; during the attacks the
@@ -15,7 +15,7 @@
 ///
 /// - At Kalay, while the ship waits for its replacement: the captain's anchor
 ///   charm, gone from his quarters, lies up here. Searching for it
-///   (MB_TOLBI_SHIP_MAST_ANCHOR_CHARM) finds the Anchor Charm
+///   (CELL_BEHAVIOR_TOLBI_SHIP_MAST_ANCHOR_CHARM) finds the Anchor Charm
 ///   (FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND), but only once the party has
 ///   confronted the crewman on deck or the warriors have gone to the captain
 ///   (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT or FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN).
@@ -168,12 +168,13 @@ enum TolbiShipMastEnsembleActorId {
 };
 
 /// The mast's step trigger and examine trigger cells.
-enum TolbiShipMastMetatileBehavior {
-  MB_TOLBI_SHIP_MAST_LADDER = 10, ///< the top of the ladder down to the deck
+enum TolbiShipMastCellBehavior {
+  CELL_BEHAVIOR_TOLBI_SHIP_MAST_LADDER =
+      10, ///< the top of the ladder down to the deck
   /// Where the crewman hid the captain's anchor charm.
   /// ★ Named from the game: "I hid it on top of the mast."
   /// (MsgTolbiShipInteriorsIWaitedTooLongIllGet)
-  MB_TOLBI_SHIP_MAST_ANCHOR_CHARM = 11
+  CELL_BEHAVIOR_TOLBI_SHIP_MAST_ANCHOR_CHARM = 11
 };
 
 /// Keeps the effect actor relative to the saved camera origin and
@@ -317,12 +318,12 @@ const struct Trigger *TolbiShipMast_GetTriggers(void) {
 }
 
 /// Walking south onto the ladder at the mast's top
-/// (MB_TOLBI_SHIP_MAST_LADDER): the leader climbs down.
+/// (CELL_BEHAVIOR_TOLBI_SHIP_MAST_LADDER): the leader climbs down.
 static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
 
 /// Searching the mast's top for the captain's anchor charm
-/// (MB_TOLBI_SHIP_MAST_ANCHOR_CHARM): gives the Anchor Charm once the crewman
-/// has been confronted or the warriors have gone to the captain.
+/// (CELL_BEHAVIOR_TOLBI_SHIP_MAST_ANCHOR_CHARM): gives the Anchor Charm once
+/// the crewman has been confronted or the warriors have gone to the captain.
 static void TolbiShipMast_FindAnchorCharm(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0 ||
       GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
@@ -1100,14 +1101,14 @@ struct ActorTemplate gTolbiShipMast_LandingActorTemplates[] = {
 };
 
 struct Trigger gTolbiShipMast_Triggers[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), MB_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT(TolbiShipMast_ClimbDownLadder) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT(TolbiShipMast_ClimbDownLadder) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipMonstersAnywhereAroundHere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SHIP_MAST_ANCHOR_CHARM, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT(TolbiShipMast_FindAnchorCharm) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_SHIP_MAST_ANCHOR_CHARM, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT(TolbiShipMast_FindAnchorCharm) },
     { TRIGGERS_END },
 };
 

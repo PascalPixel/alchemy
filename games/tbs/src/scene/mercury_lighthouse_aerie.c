@@ -8,7 +8,7 @@
 /// - The first arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
 ///   MercuryLighthouseAerie_PartyArrives): the Adepts of the lit element
 ///   regain their PP, the aerie shakes, and in a flash the party stands at the
-///   top. Touching metatile behavior 5
+///   top. Touching cell behavior 5
 ///   (MercuryLighthouseAerie_ConfrontSaturos), Garet sees `It's too late! The
 ///   lighthouse has already been lit!` Mia learns that the party came from Vale
 ///   to recover the Elemental Stars, and that Vale protected Sol Sanctum as her
@@ -30,13 +30,13 @@
 ///   FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
-///   from one to the next (metatile behaviors 10 and 11;
+///   from one to the next (cell behaviors 10 and 11;
 ///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_StepOntoPlatform.gif);
 ///   the lift leads down to
 ///   Mercury Lighthouse's SceneId_MercuryLighthouseExterior
 ///   (mercury_lighthouse.c), arriving at
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
-///   of Healing: metatile behavior 6 calls it up, metatile behavior 12 rides it
+///   of Healing: cell behavior 6 calls it up, cell behavior 12 rides it
 ///   down (MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR), and
 ///   arriving by it (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR)
 ///   leaves it up
@@ -389,7 +389,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 #include "shared/actor_distance.h"
 #include "shared/actor_nearest.h"
 
-/// Lighthouse Aerie: walking into metatile behavior 10 or 11. If nothing is in
+/// Lighthouse Aerie: walking into cell behavior 10 or 11. If nothing is in
 /// the way the leader jumps two cells ahead, off any platform and onto the
 /// next.
 static void MercuryLighthouseAerie_JumpToPlatform(void) {
@@ -424,7 +424,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   }
 }
 
-/// Lighthouse Aerie: touching metatile behavior 10 when not already on a
+/// Lighthouse Aerie: touching cell behavior 10 when not already on a
 /// platform. The platform underfoot dips with the leader and bobs back up.
 static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   struct Actor *leader;
@@ -463,7 +463,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   Event_End();
 }
 
-/// Lighthouse Aerie: touching metatile behavior 11, off the platforms. The
+/// Lighthouse Aerie: touching cell behavior 11, off the platforms. The
 /// leader walks normally again and the platforms stop following.
 static void MercuryLighthouseAerie_SettlePlatforms(void) {
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 3;
@@ -475,7 +475,7 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
   Actor_GetById(ACTOR_FIRST_PLATFORM + 5)->motionFlags = 4;
 }
 
-/// Lighthouse Aerie: touching metatile behavior 5 before the confrontation.
+/// Lighthouse Aerie: touching cell behavior 5 before the confrontation.
 /// Garet sees the lighthouse is lit: "It's too late! The lighthouse has already
 /// been lit!" Mia learns the party is from Vale; Jenna calls out, and Felix,
 /// Menardi and Saturos face the party. Menardi leaves with Jenna, Kraden and
@@ -1467,7 +1467,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_End();
 }
 
-/// Lighthouse Aerie: touching metatile behavior 6 while the lift is down. The
+/// Lighthouse Aerie: touching cell behavior 6 while the lift is down. The
 /// camera watches it rise with its statue.
 static void MercuryLighthouseAerie_CallLift(void) {
   struct MapGridLayerScroll *lift;
@@ -1497,7 +1497,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
   Event_End();
 }
 
-/// Lighthouse Aerie: touching metatile behavior 12. The leader steps onto the
+/// Lighthouse Aerie: touching cell behavior 12. The leader steps onto the
 /// lift and rides it down to SceneId_MercuryLighthouseExterior, arriving at
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.

@@ -250,7 +250,7 @@ with each; the encounter columns from what
 sum, so a negative raised trigger with a positive request can hide both.
 It can happen: `Field_UpdateWalking` raises `FIELD_RAISED_TRIGGER_PARTY_FELL` (-1)
 on the frame a party member falls to poison, and the `stepTrigger` request is the cell's
-[metatile behavior](../../glossary.md#metatile-behavior), 1 on the cells of
+[cell behavior](../../glossary.md#cell-behavior), 1 on the cells of
 step trigger 1, which 154 scenes have. Both then wait until another request makes
 the sum non-zero, by which time a later cell's behavior may have replaced the
 step trigger. It is marked [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), and

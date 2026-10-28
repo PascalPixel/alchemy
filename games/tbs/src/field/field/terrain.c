@@ -384,11 +384,11 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   return *(Ram_MapGridShapes + heightAttributeIndex * 4) & 15;
 }
 
-/// Returns the metatile behavior of a layer's cell at (x, y) in 16.16 pixels.
+/// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels.
 /// The shift by 20 takes 16.16 pixels straight to 16-pixel cells. Called
-/// through MapGrid_GetMetatileBehaviorAtFar by the Psynergy climbing and by
+/// through MapGrid_GetCellBehaviorAtFar by the Psynergy climbing and by
 /// scenes (Altin Peak, Colosso, Imil, Crossbone Isle).
-s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
+s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   struct MapGridScrollAnimView *gridState;
   struct MapGridCell *cell;
 
@@ -404,12 +404,12 @@ s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
   return cell->behavior;
 }
 
-/// Sets the metatile behavior of a layer's cell at (x, y) in 16.16 pixels.
+/// Sets the cell behavior of a layer's cell at (x, y) in 16.16 pixels.
 /// Writes the cell in the map's grid; does nothing before the map is set up.
-/// Called through MapGrid_SetMetatileBehaviorAtFar by scenes
+/// Called through MapGrid_SetCellBehaviorAtFar by scenes
 /// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
 /// Sanctum).
-void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
+void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
   struct MapGridScrollAnimView *gridState = gMapGridWork[0];
 
   x >>= 20;
@@ -466,7 +466,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
     cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   cell += pixelX / 16 + (pixelZ / 16 << 7);
   // A wall blocks whatever the heights.
-  if (cell->behavior == MB_WALL)
+  if (cell->behavior == CELL_BEHAVIOR_WALL)
     return COLLISION_IMPASSABLE;
   heightBytes = Ram_MapGridShapes + cell->shape * 4;
   // UB: read the kind byte before passing the remaining samples.
@@ -491,8 +491,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 }
 
 /// Returns -1 when the cell under position (its x, and y less its height) in
-/// MAPGRID_LAYER_OVERHEAD is a wall (MB_WALL), else 0; also 0 before the map
-/// work exists. Called by the player control and, as
+/// MAPGRID_LAYER_OVERHEAD is a wall (CELL_BEHAVIOR_WALL), else 0; also 0 before
+/// the map work exists. Called by the player control and, as
 /// MapGrid_IsWallAtFar, by the Psynergy climbing.
 s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   s32 pixelX;
@@ -514,7 +514,7 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   cellY = pixelY / 16;
   cell += cellX + cellY * 128;
   // 1 - 1 for open ground, 0 - 1 for a wall: nonzero means walled.
-  return (cell->behavior != MB_WALL) - 1;
+  return (cell->behavior != CELL_BEHAVIOR_WALL) - 1;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper

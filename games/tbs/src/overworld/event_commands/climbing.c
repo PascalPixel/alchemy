@@ -15,9 +15,10 @@
 /// or SPRITE_LOG_NORTH_SOUTH) the log plays its animation 7 and the leader bobs
 /// down 2 pixels and back. Each jump adds two cells to work->walkingDistance,
 /// as walking them would, and the leader keeps jumping while it lands on
-/// another jump spot (MB_JUMP_FORWARD_UNREACHED). Returns 0 after a jump,
-/// -1 when the leader cannot jump; a chain that is blocked after its first jump
-/// also returns -1, with the leader standing on the jump spot it reached.
+/// another jump spot (CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED). Returns 0 after a
+/// jump, -1 when the leader cannot jump; a chain that is blocked after its
+/// first jump also returns -1, with the leader standing on the jump spot it
+/// reached.
 ///
 /// Called by Field_RunPushCell when the leader has pushed against a jump
 /// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
@@ -99,9 +100,8 @@ again:
       work->walkingDistance +=
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
     // Landed on another jump spot: stand, then jump again.
-    if (MapGrid_GetMetatileBehaviorAtFar(leader->layer, position->x,
-                                         position->z) ==
-        MB_JUMP_FORWARD_UNREACHED) {
+    if (MapGrid_GetCellBehaviorAtFar(leader->layer, position->x, position->z) ==
+        CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
       Actor_SelectAnimationFar(leader, 1);
       WaitFrames(6);
       goto again;

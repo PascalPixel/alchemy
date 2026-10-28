@@ -9,8 +9,8 @@
 ///
 /// - The festival (neither story flag set). The trials have begun at the
 ///   colosseum, but Babi is not there, and his soldiers are searching the
-///   town. The first time the party steps on MB_TOLBI_SOLDIERS, two of them
-///   stop it to show his picture, `Have you seen anyone who looks like
+///   town. The first time the party steps on CELL_BEHAVIOR_TOLBI_SOLDIERS, two
+///   of them stop it to show his picture, `Have you seen anyone who looks like
 ///   this?`, and go their way whatever it answers
 ///   (Tolbi_MeetSearchingSoldiers, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI).
 /// - Finals day (FLAG_BABI_SAVED), once the party has saved Babi in
@@ -31,13 +31,13 @@
 /// (https://alchemy.pascalpixel.com/places/tolbi/events/Tolbi_TalkToOlderBrother.gif).
 /// A visitor testing his luck stands at the gate of Tolbi Spring; once the
 /// party agrees to go first he steps aside for good (Tolbi_TalkToSpringVisitor,
-/// FLAG_TOLBI_SPRING_OPENED), and the gate (MB_TOLBI_GATE_TO_SPRING) leads into
-/// Tolbi Spring (TOLBI_TO_TOLBI_SPRING). Ember, a Mars Djinni, joins the party
-/// when spoken to. Growth raises a sprout and Frost freezes a puddle, each a
-/// scene flag kept only through a return that keeps the party's position;
-/// Reveal uncovers a chest with Power Bread, and a barrel and a jar hold 9
-/// coins and a Lucky Medal (during the festival, the editions from TBS_PATCH_1
-/// on find the jar only when the party faces north).
+/// FLAG_TOLBI_SPRING_OPENED), and the gate (CELL_BEHAVIOR_TOLBI_GATE_TO_SPRING)
+/// leads into Tolbi Spring (TOLBI_TO_TOLBI_SPRING). Ember, a Mars Djinni, joins
+/// the party when spoken to. Growth raises a sprout and Frost freezes a puddle,
+/// each a scene flag kept only through a return that keeps the party's
+/// position; Reveal uncovers a chest with Power Bread, and a barrel and a jar
+/// hold 9 coins and a Lucky Medal (during the festival, the editions from
+/// TBS_PATCH_1 on find the jar only when the party faces north).
 ///
 /// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, whose cells carry
 /// their exits' numbers, lead into Tolbi's houses, inns and shops and into
@@ -202,7 +202,7 @@ static void Tolbi_GrowSprout(void) {
   }
   sprout = Actor_GetById(ACTOR_TOLBI_SPROUT);
   Actor_SetSpriteFlags(sprout, 0);
-  Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), MB_CLIMB);
+  Field_SetCellBehaviorAt(0, PIXELS(544), PIXELS(288), CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_TOLBI_SPROUT_GROWN);
 }
 
@@ -210,14 +210,15 @@ static void Tolbi_GrowSprout(void) {
 /// moves into place.
 static void Tolbi_RevealHiddenChest(void) {
   MapGrid_CopyCellAttributes(3, 32, 1, 1, 3, 26);
-  TreasureSpot_SetPosition(MB_TOLBI_HIDDEN_CHEST, PIXELS(56), PIXELS(424));
+  TreasureSpot_SetPosition(CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, PIXELS(56),
+                           PIXELS(424));
 }
 
 /// When Reveal wears off, the chest's cell is covered again and the chest
 /// moves out of sight.
 static void Tolbi_HideRevealedChest(void) {
   MapGrid_CopyCellAttributes(2, 25, 1, 1, 3, 26);
-  TreasureSpot_SetPosition(MB_TOLBI_HIDDEN_CHEST, -1, -1);
+  TreasureSpot_SetPosition(CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, -1, -1);
 }
 
 /// The first sign at Tolbi Spring: face away and toss a coin in.
@@ -400,7 +401,7 @@ static void Tolbi_TalkToSnackVendor(void) {
 
 /// Walking into one of the town's doors: the door opens, the leader steps in
 /// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the scene changes through the
-/// door's exit, numbered as its metatile behavior.
+/// door's exit, numbered as its cell behavior.
 static void Tolbi_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   u32 actorId;
@@ -532,14 +533,14 @@ static void Tolbi_TalkToSpringVisitor(void) {
   Event_End();
 }
 
-/// The gate to Tolbi Spring (MB_TOLBI_GATE_TO_SPRING), once the visitor at the
-/// gate has stepped aside.
+/// The gate to Tolbi Spring (CELL_BEHAVIOR_TOLBI_GATE_TO_SPRING), once the
+/// visitor at the gate has stepped aside.
 static void Tolbi_EnterSpring(void) {
   Import_EventSetExitRequest(TOLBI_TO_TOLBI_SPRING);
   Event_End();
 }
 
-/// Leaves by the exit numbered as the metatile behavior the party walked into.
+/// Leaves by the exit numbered as the cell behavior the party walked into.
 static void Tolbi_RequestTouchedExit(void) {
   s16 *trigger = &gFieldWork->stepTrigger;
 
@@ -548,8 +549,9 @@ static void Tolbi_RequestTouchedExit(void) {
 
 /// Two soldiers searching for the missing Babi stop the party and show his
 /// picture. They do so during the festival, the first time the party steps on
-/// MB_TOLBI_SOLDIERS. "Have you seen anyone who looks like this?" They leave
-/// either way the party answers. Sets FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI.
+/// CELL_BEHAVIOR_TOLBI_SOLDIERS. "Have you seen anyone who looks like this?"
+/// They leave either way the party answers. Sets
+/// FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI.
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
@@ -865,8 +867,8 @@ struct Trigger gTolbiTriggersFestival[] = {
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
     { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP, MB_TOLBI_SOLDIERS, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT(Tolbi_MeetSearchingSoldiers) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SOLDIERS, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT(Tolbi_MeetSearchingSoldiers) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
     { TRIGGER_TALK, ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbisAlwaysReallyBustlingDuringColosso) },
     { TRIGGER_TALK, ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoIsHeldInTheColosseum) },
     { TRIGGER_TALK, ACTOR_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTryoutsStartedAtTheColosseumToday) },
@@ -905,12 +907,12 @@ struct Trigger gTolbiTriggersFestival[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveBeenGuardingOurSpotBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT(Tolbi_JoinEmber) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
 // The international editions find the jar only when the party faces north.
-    { TOLBI_JAR_SEARCH_KIND, MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
+    { TOLBI_JAR_SEARCH_KIND, CELL_BEHAVIOR_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
@@ -934,7 +936,7 @@ struct Trigger gTolbiTriggersFinalsDay[] = {
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
     { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
     { TRIGGER_TALK, ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoWillReachItsApexAny) },
     { TRIGGER_TALK, ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiAreYouPlanningToWatchThe) },
     { TRIGGER_TALK, ACTOR_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiMyFamilySavedMeASeat) },
@@ -977,11 +979,11 @@ struct Trigger gTolbiTriggersFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTodayIsABigDayFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT(Tolbi_JoinEmber) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
@@ -1005,7 +1007,7 @@ struct Trigger gTolbiTriggersAfterColosso[] = {
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, TOLBI_TO_WORLD_MAP },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
     { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT(Tolbi_RequestTouchedExit) },
-    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, MB_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
+    { TRIGGER_STEP | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_TOLBI_GATE_TO_SPRING, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT(Tolbi_EnterSpring) },
     { TRIGGER_TALK, ACTOR_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWellThisYearsColossoHasEnded) },
     { TRIGGER_TALK, ACTOR_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsBackToOurNormalQuiet) },
     { TRIGGER_TALK, ACTOR_TOLBI_FINALS_FAN, CONDITION_ALWAYS, EVENT(Tolbi_AskWhetherPartyWasInFinals) },
@@ -1030,11 +1032,11 @@ struct Trigger gTolbiTriggersAfterColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiHowCanWeGetHomeIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { TRIGGER_TALK, ACTOR_TOLBI_EMBER, CONDITION_ALWAYS, EVENT(Tolbi_JoinEmber) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), MB_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Tolbi_HideRevealedChest) },
@@ -1049,7 +1051,7 @@ u16 gTolbiDoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The doors, in the order of their metatile behaviors 1 to 9, by map cell.
+/// The doors, in the order of their cell behaviors 1 to 9, by map cell.
 struct MapGridCellAnimation gTolbiDoors[] = {
     {gTolbiDoorOpening, 48, 6},  {gTolbiDoorOpening, 63, 4},
     {gTolbiDoorOpening, 71, 8},  {gTolbiDoorOpening, 71, 4},

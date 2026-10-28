@@ -342,7 +342,7 @@ static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
   Import_EventSetExitRequest(exitNumber);
 }
 
-// The rooms' doors: stepping on a door's cell, whose metatile behavior is its
+// The rooms' doors: stepping on a door's cell, whose cell behavior is its
 // exit's number, takes that exit back out, in every table. On the stormy night
 // the exits to SceneId_Vale lead to the storm's scene (SceneId_ValeStormyNight)
 // instead.

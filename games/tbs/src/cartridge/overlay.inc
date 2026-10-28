@@ -97,7 +97,7 @@
 	import BlendScript_Resume, BlendScript_ResumeFar
 	import BlendScript_Suspend, BlendScript_SuspendFar
 	import MapGrid_GetTerrainHeight, MapGrid_GetTerrainHeightFar
-	import MapGrid_GetMetatileBehaviorAt, MapGrid_GetMetatileBehaviorAtFar
+	import MapGrid_GetCellBehaviorAt, MapGrid_GetCellBehaviorAtFar
 	import MapGrid_CopyMetatileCellsRect, MapGrid_CopyMetatileCellsRectFar
 	import MapGrid_CopyCellAttributeRect, MapGrid_CopyCellAttributeRectFar
 	import MapGrid_CopyCellIndexRect, MapGrid_CopyCellIndexRectFar
@@ -115,7 +115,7 @@
 	import Anim_ApplyChildValues, Anim_ApplyChildValuesFar
 	import Sprite_SetAnimColorModes, Sprite_SetAnimColorModesFar
 	import MapGrid_SetShownLayers, MapGrid_SetShownLayersFar
-	import MapGrid_SetMetatileBehaviorAt, MapGrid_SetMetatileBehaviorAtFar
+	import MapGrid_SetCellBehaviorAt, MapGrid_SetCellBehaviorAtFar
 @ Window bank (far_call/WINDOW.S)
 	import Window_Create, Window_CreateFar
 	import Window_Close, Window_CloseFar

@@ -114,17 +114,19 @@
 #define SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT 9
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH 32
 
-/// The metatile behaviors the step triggers answer: the jump spots,
+/// The cell behaviors the step triggers answer: the jump spots,
 /// the four seal statues' and the centre statue's cells. The beam statues'
 /// rows answer the behaviors of the cells each can stand in, 20 to 29.
-enum SolSanctumStatueMetatileBehavior {
-  MB_SOL_SANCTUM_STATUE_NORTHWEST_STATUE = 5,
-  MB_SOL_SANCTUM_STATUE_NORTHEAST_STATUE = 6,
-  MB_SOL_SANCTUM_STATUE_SOUTHWEST_STATUE = 7,
-  MB_SOL_SANCTUM_STATUE_SOUTHEAST_STATUE = 8,
-  MB_SOL_SANCTUM_STATUE_JUMP_NORTH = 10, ///< a jump spot, crossed northward
-  MB_SOL_SANCTUM_STATUE_JUMP_SOUTH = 11, ///< a jump spot, crossed southward
-  MB_SOL_SANCTUM_STATUE_CENTER_STATUE = 32
+enum SolSanctumStatueCellBehavior {
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_NORTHWEST_STATUE = 5,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_NORTHEAST_STATUE = 6,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_SOUTHWEST_STATUE = 7,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_SOUTHEAST_STATUE = 8,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_JUMP_NORTH =
+      10, ///< a jump spot, crossed northward
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_JUMP_SOUTH =
+      11, ///< a jump spot, crossed southward
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_CENTER_STATUE = 32
 };
 
 // Scene flags, cleared on every ordinary arrival:
@@ -1054,7 +1056,7 @@ static void SolSanctumStatue_SoutheastStatueMoved(void) {
 /// the centre it shines its beam. Reached by Move on ACTOR_LEFT_BEAM_STATUE
 /// until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void SolSanctumStatue_LeftBeamStatueMoved(void) {
-  Field_SetMetatileBehaviorAt(2, PIXELS(208), PIXELS(112), 0);
+  Field_SetCellBehaviorAt(2, PIXELS(208), PIXELS(112), 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_LEFT_BEAM_STATUE, 14, 7) != 0) {
     SolSanctumStatue_ShineLeftBeam();
   }
@@ -1063,7 +1065,7 @@ static void SolSanctumStatue_LeftBeamStatueMoved(void) {
 /// Moving the right beam statue with Move: as the left one. Reached by Move on
 /// ACTOR_RIGHT_BEAM_STATUE until FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING is set.
 static void SolSanctumStatue_RightBeamStatueMoved(void) {
-  Field_SetMetatileBehaviorAt(2, PIXELS(352), PIXELS(112), 0);
+  Field_SetCellBehaviorAt(2, PIXELS(352), PIXELS(112), 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_RIGHT_BEAM_STATUE, 21, 7) != 0) {
     SolSanctumStatue_ShineRightBeam();
   }
@@ -1082,8 +1084,8 @@ static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if ((leader->z.fixed >> 20) == 8) {
     if ((u32)(column - 17) <= 1) {
-      Field_SetMetatileBehaviorAt(2, PIXELS(272), PIXELS(128), MB_WALL);
-      Field_SetMetatileBehaviorAt(2, PIXELS(288), PIXELS(128), MB_WALL);
+      Field_SetCellBehaviorAt(2, PIXELS(272), PIXELS(128), CELL_BEHAVIOR_WALL);
+      Field_SetCellBehaviorAt(2, PIXELS(288), PIXELS(128), CELL_BEHAVIOR_WALL);
     }
   }
 }
@@ -1096,7 +1098,7 @@ static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
   s32 row = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20;
 
   if (row == 7 && (u32)(column - 13) <= 1) {
-    Field_SetMetatileBehaviorAt(2, PIXELS(208), PIXELS(112), MB_WALL);
+    Field_SetCellBehaviorAt(2, PIXELS(208), PIXELS(112), CELL_BEHAVIOR_WALL);
   }
 }
 
@@ -1107,7 +1109,7 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
   s32 row = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20;
 
   if (row == 7 && (u32)(column - 21) <= 1) {
-    Field_SetMetatileBehaviorAt(2, PIXELS(352), PIXELS(112), MB_WALL);
+    Field_SetCellBehaviorAt(2, PIXELS(352), PIXELS(112), CELL_BEHAVIOR_WALL);
   }
 }
 
@@ -1124,8 +1126,8 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
   s32 statueZ;
 
   statue = Actor_GetById(ACTOR_CENTER_STATUE);
-  Field_SetMetatileBehaviorAt(2, PIXELS(272), PIXELS(128), 0);
-  Field_SetMetatileBehaviorAt(2, PIXELS(288), PIXELS(128), 0);
+  Field_SetCellBehaviorAt(2, PIXELS(272), PIXELS(128), 0);
+  Field_SetCellBehaviorAt(2, PIXELS(288), PIXELS(128), 0);
   if (statue != NULL) {
     statueZ = statue->z.fixed;
     Event_Start();
@@ -1199,7 +1201,7 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
 }
 
 /// Walking into the centre statue from the south: the leader pushes it north.
-/// Reached by walking north into metatile behavior 32 until
+/// Reached by walking north into cell behavior 32 until
 /// FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set.
 static void SolSanctumStatue_PushCenterStatueNorth(void) {
   struct Actor *movingActor;
@@ -1224,7 +1226,7 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
 }
 
 /// Walking into the northwest statue: the leader pushes it onto its seal.
-/// Reached by walking east into metatile behavior 5 until
+/// Reached by walking east into cell behavior 5 until
 /// FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN is set.
 static void SolSanctumStatue_PushNorthwestStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_NORTHWEST_STATUE, 31, 9, 30, 9);
@@ -1232,7 +1234,7 @@ static void SolSanctumStatue_PushNorthwestStatue(void) {
 }
 
 /// Walking into the northeast statue: the leader pushes it onto its seal.
-/// Reached by walking west into metatile behavior 6 until
+/// Reached by walking west into cell behavior 6 until
 /// FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN is set.
 static void SolSanctumStatue_PushNortheastStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_NORTHEAST_STATUE, 40, 9, 41, 9);
@@ -1240,7 +1242,7 @@ static void SolSanctumStatue_PushNortheastStatue(void) {
 }
 
 /// Walking into the southwest statue: the leader pushes it onto its seal.
-/// Reached by walking east into metatile behavior 7 until
+/// Reached by walking east into cell behavior 7 until
 /// FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN is set.
 static void SolSanctumStatue_PushSouthwestStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_SOUTHWEST_STATUE, 31, 12, 30, 12);
@@ -1248,7 +1250,7 @@ static void SolSanctumStatue_PushSouthwestStatue(void) {
 }
 
 /// Walking into the southeast statue: the leader pushes it onto its seal.
-/// Reached by walking west into metatile behavior 8 until
+/// Reached by walking west into cell behavior 8 until
 /// FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN is set.
 static void SolSanctumStatue_PushSoutheastStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_SOUTHEAST_STATUE, 40, 12, 41, 12);
@@ -1256,7 +1258,7 @@ static void SolSanctumStatue_PushSoutheastStatue(void) {
 }
 
 /// Walking into the left beam statue from the west: it slides east in front
-/// of the centre and shines its beam. Reached by walking east into metatile
+/// of the centre and shines its beam. Reached by walking east into cell
 /// behaviors 20 and 21 until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void SolSanctumStatue_PushLeftBeamStatueEast(void) {
   SolSanctumStatue_PushStatue(ACTOR_LEFT_BEAM_STATUE, 14, 7, 13, 7);
@@ -1264,7 +1266,7 @@ static void SolSanctumStatue_PushLeftBeamStatueEast(void) {
 }
 
 /// Walking into the left beam statue from the north: it slides one cell south.
-/// Reached by walking south into metatile behavior 21 until the beam shines.
+/// Reached by walking south into cell behavior 21 until the beam shines.
 static void SolSanctumStatue_PushLeftBeamStatueSouth(void) {
   struct Actor *statue = Actor_GetById(ACTOR_LEFT_BEAM_STATUE);
   s32 row;
@@ -1278,7 +1280,7 @@ static void SolSanctumStatue_PushLeftBeamStatueSouth(void) {
 }
 
 /// Walking into the left beam statue from the south: it slides one cell north.
-/// Reached by walking north into metatile behaviors 23 and 24 until the beam
+/// Reached by walking north into cell behaviors 23 and 24 until the beam
 /// shines.
 static void SolSanctumStatue_PushLeftBeamStatueNorth(void) {
   struct Actor *statue = Actor_GetById(ACTOR_LEFT_BEAM_STATUE);
@@ -1289,7 +1291,7 @@ static void SolSanctumStatue_PushLeftBeamStatueNorth(void) {
 }
 
 /// Walking into the right beam statue from the east: as the left one. Reached
-/// by walking west into metatile behaviors 25 and 26 until
+/// by walking west into cell behaviors 25 and 26 until
 /// FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING is set.
 static void SolSanctumStatue_PushRightBeamStatueWest(void) {
   SolSanctumStatue_PushStatue(ACTOR_RIGHT_BEAM_STATUE, 21, 7, 22, 7);
@@ -1297,7 +1299,7 @@ static void SolSanctumStatue_PushRightBeamStatueWest(void) {
 }
 
 /// Walking into the right beam statue from the north: it slides one cell south.
-/// Reached by walking south into metatile behavior 26 until the beam shines.
+/// Reached by walking south into cell behavior 26 until the beam shines.
 static void SolSanctumStatue_PushRightBeamStatueSouth(void) {
   struct Actor *statue = Actor_GetById(ACTOR_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
@@ -1307,7 +1309,7 @@ static void SolSanctumStatue_PushRightBeamStatueSouth(void) {
 }
 
 /// Walking into the right beam statue from the south: it slides one cell north.
-/// Reached by walking north into metatile behaviors 28 and 29 until the beam
+/// Reached by walking north into cell behaviors 28 and 29 until the beam
 /// shines.
 static void SolSanctumStatue_PushRightBeamStatueNorth(void) {
   struct Actor *statue = Actor_GetById(ACTOR_RIGHT_BEAM_STATUE);
@@ -1788,10 +1790,10 @@ struct Trigger gSolSanctumStatue_Triggers[] = {
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_PSYNERGY_STONE},
-    {STEP_TRIGGER_WALKING, MB_SOL_SANCTUM_STATUE_JUMP_NORTH, CONDITION_ALWAYS,
-     EVENT(SolSanctumStatue_JumpNorth)},
-    {STEP_TRIGGER_WALKING, MB_SOL_SANCTUM_STATUE_JUMP_SOUTH, CONDITION_ALWAYS,
-     EVENT(SolSanctumStatue_JumpSouth)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SOL_SANCTUM_STATUE_JUMP_NORTH,
+     CONDITION_ALWAYS, EVENT(SolSanctumStatue_JumpNorth)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SOL_SANCTUM_STATUE_JUMP_SOUTH,
+     CONDITION_ALWAYS, EVENT(SolSanctumStatue_JumpSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHWEST_STATUE,
      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT(SolSanctumStatue_NorthwestStatueMoved)},
@@ -1805,19 +1807,19 @@ struct Trigger gSolSanctumStatue_Triggers[] = {
      FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT(SolSanctumStatue_SoutheastStatueMoved)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
-     MB_SOL_SANCTUM_STATUE_NORTHWEST_STATUE,
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_NORTHWEST_STATUE,
      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT(SolSanctumStatue_PushNorthwestStatue)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
-     MB_SOL_SANCTUM_STATUE_NORTHEAST_STATUE,
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_NORTHEAST_STATUE,
      FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
      EVENT(SolSanctumStatue_PushNortheastStatue)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
-     MB_SOL_SANCTUM_STATUE_SOUTHWEST_STATUE,
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_SOUTHWEST_STATUE,
      FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
      EVENT(SolSanctumStatue_PushSouthwestStatue)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
-     MB_SOL_SANCTUM_STATUE_SOUTHEAST_STATUE,
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_SOUTHEAST_STATUE,
      FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT(SolSanctumStatue_PushSoutheastStatue)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -1869,7 +1871,8 @@ struct Trigger gSolSanctumStatue_Triggers[] = {
      FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT(SolSanctumStatue_CenterStatueMoved)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     MB_SOL_SANCTUM_STATUE_CENTER_STATUE, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_CENTER_STATUE,
+     FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT(SolSanctumStatue_PushCenterStatueNorth)},
     {TRIGGERS_END},
 };

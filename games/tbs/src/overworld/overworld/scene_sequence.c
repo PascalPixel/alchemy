@@ -399,11 +399,11 @@ done:
   return result;
 }
 
-/// Returns the metatile behavior of the map cell 16 pixels ahead of the party
+/// Returns the cell behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot
-/// (MB_JAR to MB_WELL) whose ground is level with the leader or up
-/// to 64 pixels above it, or a behavior the scene has an examine trigger for.
-/// Returns 0 otherwise.
+/// (CELL_BEHAVIOR_JAR to CELL_BEHAVIOR_WELL) whose ground is level with the
+/// leader or up to 64 pixels above it, or a behavior the scene has an examine
+/// trigger for. Returns 0 otherwise.
 ///
 /// Called by SceneSequence_Run for the A button (a non-zero result becomes
 /// work->tile, for Field_ExamineCell), and by FieldMenu_Run's search
@@ -444,7 +444,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
                       << 2);
     }
     behavior = cell[2];
-    if (behavior >= MB_JAR && behavior <= MB_WELL) {
+    if (behavior >= CELL_BEHAVIOR_JAR && behavior <= CELL_BEHAVIOR_WELL) {
       groundHeight = MapGrid_GetTerrainHeightFar(
           leader->layer, probePosition.vector.x, probePosition.vector.z);
       if (groundHeight >= leader->y.fixed &&

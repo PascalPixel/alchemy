@@ -123,21 +123,21 @@ wall.
 [The field bank](src/field/README.md#walking-and-running) has the speeds on each kind
 of ground and [how high a step can go](src/field/README.md#how-high-a-step-can-go).
 
-## Cells and metatile behaviors
+## Cells and cell behaviors
 
 ![Isaac faces the stack of wooden boxes by a house in Vale and presses A: "Isaac checked the wooden box..." and "but didn't find anything."](https://alchemy.pascalpixel.com/guides/world/wooden-box.gif)
 
 A map is a grid of 16-pixel squares, [cells](glossary.md#cell), and each
 cell says three things: what is drawn there, how high its ground is, and what
-standing there does. That last part, its [metatile
-behavior](glossary.md#metatile-behavior), is a number that walls and
+standing there does. That last part, its [cell
+behavior](glossary.md#cell-behavior), is a number that walls and
 triggers are keyed on. Most numbers belong to the scene, whose trigger table says
 what each one does, so the same number is a door in one town and a chest in
 another. A few mean the same in every scene: the jars, barrels and wooden boxes
 anyone can search, as in the recording, ledges, the desert's sand and walls.
 
 A loaded cell is `struct MapGridCell`, and the behaviors are
-`enum MetatileBehavior`. [Maps](src/map/README.md#cells) gives every
+`enum CellBehavior`. [Maps](src/map/README.md#cells) gives every
 behavior and [how the build makes each
 map](src/map/README.md#how-the-build-makes-a-map).
 

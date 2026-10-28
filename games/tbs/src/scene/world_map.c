@@ -24,7 +24,7 @@
 /// the Suhalla Desert's storms do: Douse on it brings the party down into a
 /// battle, and when the time runs out it drops the party outside Suhalla
 /// (WORLD_MAP_FROM_SUHALLA, FLAG_ARRIVE_FALLING). The Turtle Boots are buried
-/// in the ground (MB_WORLD_MAP_TURTLE_BOOTS).
+/// in the ground (CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS).
 ///
 /// And it plays the story's moments on the map, each run by WorldMap_Initialize
 /// for the entrance another scene sends the party to. In story order:
@@ -51,18 +51,19 @@
 ///   _SAIL_TO_LAND) the map shows the ship sailing west and sends the party
 ///   back aboard (FLAG_TOLBI_SHIP_ROWING). A rowing off course takes it north
 ///   to anchor off the island (WORLD_MAP_FROM_SHIP_ROOMS,
-///   FLAG_TOLBI_SHIP_AT_ISLAND), where MB_WORLD_MAP_CROSSBONE_ISLE leads ashore
-///   and MB_WORLD_MAP_TOLBI_SHIP back aboard;
+///   FLAG_TOLBI_SHIP_AT_ISLAND), where CELL_BEHAVIOR_WORLD_MAP_CROSSBONE_ISLE
+///   leads ashore and CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP back aboard;
 ///   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI ends the crossing at Tolbi
 ///   (FLAG_TOLBI_SHIP_REACHED_TOLBI).
 /// - The Black Orb: out of Gateway Cave (WORLD_MAP_FROM_GATEWAY_CAVE) Iodem
 ///   sees Babi's ship scuttled off the coast and gives Isaac the orb to use on
 ///   it (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER, FLAG_SAW_SHIP_AT_IDEJIMA), and
 ///   calls him back if he walks into the cave again. Used on the wreck
-///   (MB_WORLD_MAP_SHIPWRECK) the orb does nothing; Iodem takes it back and the
-///   party must go on to Babi Lighthouse (FLAG_BLACK_ORB_RETURNED). A defeat
-///   meanwhile returns to WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the
-///   orb and leads on by WORLD_MAP_TO_ROCK_ROOMS.
+///   (CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK) the orb does nothing; Iodem takes it
+///   back and the party must go on to Babi Lighthouse
+///   (FLAG_BLACK_ORB_RETURNED). A defeat meanwhile returns to
+///   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the orb and leads on by
+///   WORLD_MAP_TO_ROCK_ROOMS.
 /// - Venus Lighthouse lit (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT): the
 ///   lighthouse transition, then back to the Lighthouse Aerie
 ///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT); after the look back
@@ -188,7 +189,7 @@ static void
 WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse);
 
 /// The actors WorldMap_UpdateAreaContacts looks at, the placed ones
-/// to the last slot, and the base of the metatile behaviors a touch raises
+/// to the last slot, and the base of the cell behaviors a touch raises
 /// (STEP_TRIGGER_AREA).
 enum { CONTACT_LAST_ACTOR = 65, STEP_TRIGGER_AREA_BASE = 100 };
 
@@ -307,23 +308,25 @@ enum WorldMapActorId {
   ACTOR_IODEM
 };
 
-/// The metatile behavior raised by touching an area's actor.
+/// The cell behavior raised by touching an area's actor.
 #define STEP_TRIGGER_AREA(actorId) (STEP_TRIGGER_AREA_BASE + (actorId))
 
-/// The World Map's own metatile behaviors, which the map's cells carry. Each
+/// The World Map's own cell behaviors, which the map's cells carry. Each
 /// exit cell carries the number of the exit it leads to, so the exit rows of
-/// gWorldTriggers name their metatile behavior by that exit.
-enum WorldMapMetatileBehavior {
-  MB_WORLD_MAP_TOLBI_SHIP = 74, ///< the shore beside the anchored ship
-  MB_WORLD_MAP_CROSSBONE_ISLE =
-      75,                      ///< the island's shore, walked onto northward
-  MB_WORLD_MAP_FLINT = 90,     ///< the ground around Flint
-  MB_WORLD_MAP_CORONA = 91,    ///< the ground around Corona
-  MB_WORLD_MAP_VINE = 92,      ///< the ground around Vine
-  MB_WORLD_MAP_HAIL = 93,      ///< the ground around Hail
-  MB_WORLD_MAP_STORM = 95,     ///< the ground under the storm
-  MB_WORLD_MAP_SHIPWRECK = 96, ///< the scuttled ship off Gateway Cave
-  MB_WORLD_MAP_TURTLE_BOOTS =
+/// gWorldTriggers name their cell behavior by that exit.
+enum WorldMapCellBehavior {
+  CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP =
+      74, ///< the shore beside the anchored ship
+  CELL_BEHAVIOR_WORLD_MAP_CROSSBONE_ISLE =
+      75, ///< the island's shore, walked onto northward
+  CELL_BEHAVIOR_WORLD_MAP_FLINT = 90,  ///< the ground around Flint
+  CELL_BEHAVIOR_WORLD_MAP_CORONA = 91, ///< the ground around Corona
+  CELL_BEHAVIOR_WORLD_MAP_VINE = 92,   ///< the ground around Vine
+  CELL_BEHAVIOR_WORLD_MAP_HAIL = 93,   ///< the ground around Hail
+  CELL_BEHAVIOR_WORLD_MAP_STORM = 95,  ///< the ground under the storm
+  CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK =
+      96, ///< the scuttled ship off Gateway Cave
+  CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS =
       100 ///< the ground where the Turtle Boots are buried
 };
 
@@ -441,7 +444,7 @@ enum {
 /// Walking near Vine, or talking to him: once a battle is nearly due, half the
 /// time Vine fights; otherwise the next step brings an ordinary battle.
 /// Reached by talking to ACTOR_VENUS_DJINNI, or by walking onto
-/// MB_WORLD_MAP_VINE until Vine is caught.
+/// CELL_BEHAVIOR_WORLD_MAP_VINE until Vine is caught.
 static void WorldMap_MeetVine(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -458,8 +461,8 @@ static void WorldMap_MeetVine(void) {
 
 /// Walking near Corona, or talking to him: once a battle is nearly due, Corona
 /// fights.
-/// Reached by talking to ACTOR_CORONA, or by walking onto MB_WORLD_MAP_CORONA
-/// until Corona is caught.
+/// Reached by talking to ACTOR_CORONA, or by walking onto
+/// CELL_BEHAVIOR_WORLD_MAP_CORONA until Corona is caught.
 static void WorldMap_MeetCorona(void) {
   struct Adventure *state = &gAdventure;
   s32 *steps = &state->encounterSteps;
@@ -474,7 +477,7 @@ static void WorldMap_MeetCorona(void) {
 /// Walking near Hail, or talking to him: once a battle is nearly due, Hail
 /// fights.
 /// Reached by talking to ACTOR_HAIL, or by walking onto
-/// MB_WORLD_MAP_HAIL until Hail is caught.
+/// CELL_BEHAVIOR_WORLD_MAP_HAIL until Hail is caught.
 static void WorldMap_MeetHail(void) {
   struct Adventure *state = &gAdventure;
   s32 *steps = &state->encounterSteps;
@@ -850,8 +853,8 @@ static void WorldMap_EnterVault(void) {
 /// Walking east from Crossbone Isle's shore back aboard the Tolbi-bound Ship
 /// (WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE, to
 /// TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS).
-/// Reached by walking east into MB_WORLD_MAP_TOLBI_SHIP while the ship lies at
-/// anchor off the island (FLAG_TOLBI_SHIP_AT_ISLAND).
+/// Reached by walking east into CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP while the
+/// ship lies at anchor off the island (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void WorldMap_ReturnToTolbiShip(void) {
 
   Event_Start();
@@ -1600,7 +1603,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
 
 /// Walking up to Flint: he joins the party and shows how Djinn are set and put
 /// on standby; then comes the tutorial battle.
-/// Reached by walking onto MB_WORLD_MAP_FLINT until Flint is caught
+/// Reached by walking onto CELL_BEHAVIOR_WORLD_MAP_FLINT until Flint is caught
 /// (FLAG_DJINNI(DJINNI_FLINT)). Sets FLAG_DJINN_LESSON and its two part
 /// flags for each lesson, and clears them all after the battle.
 static void WorldMap_MeetFlint(void) {
@@ -2043,7 +2046,7 @@ static void WorldMap_IodemCallsIsaacBack(void) {
 /// the coast." While Iodem waits for the Black Orb to be used
 /// (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) the File Screen opens as the search
 /// ends, so that the orb can be used. Reached by searching
-/// MB_WORLD_MAP_SHIPWRECK.
+/// CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK.
 static void WorldMap_SearchShipwreck(void) {
 
   Event_Start();
@@ -2062,7 +2065,7 @@ static void WorldMap_SearchShipwreck(void) {
 
 /// Using the Black Orb on the shipwreck: nothing happens, the orb is taken back
 /// and the party is to press on to Babi Lighthouse. Reached by using the Black
-/// Orb on MB_WORLD_MAP_SHIPWRECK until it is handed back. Clears
+/// Orb on CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK until it is handed back. Clears
 /// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and sets FLAG_BLACK_ORB_RETURNED.
 static void WorldMap_UseBlackOrb(void) {
   struct Actor *iodem;
@@ -2642,7 +2645,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
 }
 
 /// Walking into the storm: the party is lifted up into the air. Reached by
-/// walking onto MB_WORLD_MAP_STORM until the storm is done with
+/// walking onto CELL_BEHAVIOR_WORLD_MAP_STORM until the storm is done with
 /// (FLAG_WORLD_MAP_STORM_GONE).
 static void WorldMap_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 
@@ -3690,17 +3693,17 @@ struct ActorTemplate gWorldMapActorTemplatesBeforeShebasFall[] = {
 };
 
 struct Trigger gWorldTriggers[] = {
-    { TRIGGER_STEP, MB_WORLD_MAP_FLINT, FLAG_DJINNI(DJINNI_FLINT), EVENT(WorldMap_MeetFlint) },
-    { TRIGGER_STEP, MB_WORLD_MAP_STORM, FLAG_WORLD_MAP_STORM_GONE, EVENT(WorldMap_WalkIntoStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_FLINT, FLAG_DJINNI(DJINNI_FLINT), EVENT(WorldMap_MeetFlint) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_STORM, FLAG_WORLD_MAP_STORM_GONE, EVENT(WorldMap_WalkIntoStorm) },
     { TRIGGER_TALK, ACTOR_VENUS_DJINNI, CONDITION_ALWAYS, EVENT(WorldMap_MeetVine) },
     { TRIGGER_TALK, ACTOR_CORONA, CONDITION_ALWAYS, EVENT(WorldMap_MeetCorona) },
     { TRIGGER_TALK, ACTOR_HAIL, CONDITION_ALWAYS, EVENT(WorldMap_MeetHail) },
-    { TRIGGER_STEP, MB_WORLD_MAP_VINE, FLAG_DJINNI(DJINNI_VINE), EVENT(WorldMap_MeetVine) },
-    { TRIGGER_STEP, MB_WORLD_MAP_CORONA, FLAG_DJINNI(DJINNI_CORONA), EVENT(WorldMap_MeetCorona) },
-    { TRIGGER_STEP, MB_WORLD_MAP_HAIL, FLAG_DJINNI(DJINNI_HAIL), EVENT(WorldMap_MeetHail) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_WORLD_MAP_SHIPWRECK, CONDITION_ALWAYS, EVENT(WorldMap_SearchShipwreck) },
-    { USE_ITEM(ITEM_BLACK_ORB), MB_WORLD_MAP_SHIPWRECK, FLAG_BLACK_ORB_RETURNED, EVENT(WorldMap_UseBlackOrb) },
-    { EXAMINE_TRIGGER(EXAMINE_GROUND), MB_WORLD_MAP_TURTLE_BOOTS, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_VINE, FLAG_DJINNI(DJINNI_VINE), EVENT(WorldMap_MeetVine) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_CORONA, FLAG_DJINNI(DJINNI_CORONA), EVENT(WorldMap_MeetCorona) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_HAIL, FLAG_DJINNI(DJINNI_HAIL), EVENT(WorldMap_MeetHail) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK, CONDITION_ALWAYS, EVENT(WorldMap_SearchShipwreck) },
+    { USE_ITEM(ITEM_BLACK_ORB), CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK, FLAG_BLACK_ORB_RETURNED, EVENT(WorldMap_UseBlackOrb) },
+    { EXAMINE_TRIGGER(EXAMINE_GROUND), CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
     { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT(WorldMap_TalkAboutBlackOrb) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_IODEM, CONDITION_ALWAYS, EVENT(WorldMap_TalkAboutBlackOrb) },
     { TRIGGER_EXIT, WORLD_MAP_TO_MOGALL_FOREST_SIGN, CONDITION_ALWAYS, WORLD_MAP_TO_MOGALL_FOREST_SIGN },
@@ -3751,8 +3754,8 @@ struct Trigger gWorldTriggers[] = {
     { TRIGGER_EXIT, STEP_TRIGGER_AREA(ACTOR_TO_GATEWAY_CAVE), CONDITION_ALWAYS, WORLD_MAP_TO_GATEWAY_CAVE },
     { TRIGGER_EXIT, STEP_TRIGGER_AREA(ACTOR_TO_ROAD_TO_BABI_LIGHTHOUSE), CONDITION_ALWAYS, WORLD_MAP_TO_ROAD_TO_BABI_LIGHTHOUSE },
     { TRIGGER_STEP, STEP_TRIGGER_AREA(ACTOR_TO_LALIVERO), CONDITION_ALWAYS, EVENT(WorldMap_EnterLalivero) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), MB_WORLD_MAP_TOLBI_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT(WorldMap_ReturnToTolbiShip) },
-    { TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, MB_WORLD_MAP_CROSSBONE_ISLE, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP, IF_FLAG_SET(FLAG_TOLBI_SHIP_AT_ISLAND), EVENT(WorldMap_ReturnToTolbiShip) },
+    { TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_WORLD_MAP_CROSSBONE_ISLE, CONDITION_ALWAYS, WORLD_MAP_TO_CROSSBONE_ISLE },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT(WorldMap_StartDousingStorm) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_STORM, IF_FLAG_SET(FLAG_WORLD_MAP_CAUGHT_IN_STORM), EVENT(WorldMap_DouseMapStorm) },
     { TRIGGER_RAISED, RAISED_STORM_TIME_UP, CONDITION_ALWAYS, EVENT(WorldMap_StormDropsParty) },

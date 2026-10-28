@@ -24,7 +24,7 @@
 ///   the leader's footprints in the snow off on the frozen river that runs down
 ///   from the falls and on the raised ground under the big tree, and on
 ///   elsewhere. Stepping onto ice
-///   (metatile behavior 90) slides the leader in the held direction, turning
+///   (cell behavior 90) slides the leader in the held direction, turning
 ///   toward it as he goes, until a blocked cell or one too high stops him. Move
 ///   pushes the snowman only when cast from the snow, not from the river's ice
 ///   or the raised ground, and once it lands at cell (15, 7) it stays there for
@@ -216,11 +216,11 @@ enum { SHOP_IMIL_WEAPONS = 10, SHOP_IMIL_ARMOR = 11, SHOP_IMIL_ITEMS = 12 };
 /// Imil's inn, as Inn_CheckIn numbers the inns.
 enum { IMIL_INN = 4 };
 
-/// The weapon and armor counters' metatile behaviors in the houses: searching
+/// The weapon and armor counters' cell behaviors in the houses: searching
 /// one facing north reaches its seller.
-enum IceRoomsMetatileBehavior {
-  MB_ICE_ROOMS_WEAPON_COUNTER = 10,
-  MB_ICE_ROOMS_ARMOR_COUNTER = 11
+enum IceRoomsCellBehavior {
+  CELL_BEHAVIOR_ICE_ROOMS_WEAPON_COUNTER = 10,
+  CELL_BEHAVIOR_ICE_ROOMS_ARMOR_COUNTER = 11
 };
 
 // The leader faces a counter: FACING_IS_NORTH, in the two spellings the sites
@@ -344,7 +344,7 @@ const struct ActorTemplate *Imil_GetActorTemplates(void) {
   return gImil_TownActorTemplates;
 }
 
-/// Stepping onto the ice in Imil (metatile behavior 90) starts a slide.
+/// Stepping onto the ice in Imil (cell behavior 90) starts a slide.
 static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 
 /// The village's, or the houses' and the Sanctum's, conversations and
@@ -1594,11 +1594,11 @@ static void Imil_RunIceSlide(void) {
     z = probe.z;
     x = probe.x;
     layer = &subject->layer;
-    startBehavior = MapGrid_GetMetatileBehaviorAt(*layer, x, z);
+    startBehavior = MapGrid_GetCellBehaviorAt(*layer, x, z);
     Vector_AddPolarOffset(PIXELS(16), heading, &probe);
 
-    nextBehavior = MapGrid_GetMetatileBehaviorAt(*layer, probe.x, probe.z);
-    if (nextBehavior == MB_WALL ||
+    nextBehavior = MapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z);
+    if (nextBehavior == CELL_BEHAVIOR_WALL ||
         MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) - subject->y.fixed >
             PIXELS(8)) {
       subject->facing = heading;
@@ -1619,8 +1619,8 @@ static void Imil_RunIceSlide(void) {
     // Advance along the slide until its next cell is blocked or too high.
     for (;;) {
       FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
-      if ((nextBehavior = MapGrid_GetMetatileBehaviorAt(*layer, probe.x,
-                                                        probe.z)) == 255) {
+      if ((nextBehavior =
+               MapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z)) == 255) {
         break;
       }
       if (MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) -
@@ -1982,8 +1982,8 @@ struct Trigger gImil_InteriorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JUSTIN, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEGAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_ReadMegansMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MEGAN, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
-    { EXAMINE_TRIGGER_FACING(FACING_NORTH), MB_ICE_ROOMS_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToWeaponMerchant) },
-    { EXAMINE_TRIGGER_FACING(FACING_NORTH), MB_ICE_ROOMS_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToArmorMerchant) },
+    { EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_ICE_ROOMS_WEAPON_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToWeaponMerchant) },
+    { EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_ICE_ROOMS_ARMOR_COUNTER, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToArmorMerchant) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf26, FIND_ITEM(ITEM_EMPTY_BOTTLE) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_OVEN), 102, 0xf63, FIND_ITEM(ITEM_LUCKY_PEPPER) },

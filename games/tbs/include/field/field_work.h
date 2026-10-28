@@ -65,14 +65,14 @@ struct FieldWork {
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
   s16 stepTrigger; ///< a step trigger (1 to 239) for Scene_RunStepTriggerOrExit
-  s16 pushCell;    ///< a metatile behavior (252 to 254) for Field_RunPushCell
+  s16 pushCell;    ///< a cell behavior (252 to 254) for Field_RunPushCell
   s16 exit;        ///< the exit taken, which ends the scene
   s16 fieldMenu;   ///< open the field menu
   /// The A button: a talk, an examine or the field menu, by what is ahead.
   s16 aButton;
   s16 pauseMenu;   ///< the Start button: open the Pause menu
   u16 talk;        ///< an actor's talk trigger, as actor id | 0x1000
-  s16 examineCell; ///< a cell's metatile behavior, for Field_ExamineCell
+  s16 examineCell; ///< a cell's cell behavior, for Field_ExamineCell
   s16 encounter;   ///< the formation of a random encounter
   s16 psynergy;    ///< a field Psynergy to use, as unit << 10 | Psynergy
   s16 item;        ///< an item to use, packed as Field_UseItem reads it

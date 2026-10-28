@@ -1325,7 +1325,7 @@ s32 BabiLighthouse_SetupMap(void) {
     state->retreatScene = (s32)&SceneId_BabiLighthouseEntry;
     mapCopy = state->sceneId;
   }
-  // The road: the moved pillar's metatile behavior where it stands.
+  // The road: the moved pillar's cell behavior where it stands.
   if (sceneId == (s32)&SceneId_RoadToBabiLighthouse) {
     placedActor = Actor_GetById(ACTOR_ROAD_PILLAR);
     x = placedActor->x.fixed >> 20;

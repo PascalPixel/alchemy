@@ -21,7 +21,7 @@ enum SceneType {
 /// gAdventure.hazardMode: what advances the hazard count
 /// (Field_UpdateWalking).
 enum HazardMode {
-  /// The distance the leader walks on MB_DESERT_SAND ground.
+  /// The distance the leader walks on CELL_BEHAVIOR_DESERT_SAND ground.
   HAZARD_COUNT_ON_CELLS = 0,
   /// One each frame the scene sequence runs; no ☀️ code sets it.
   HAZARD_COUNT_FRAMES = 1

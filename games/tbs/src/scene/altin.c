@@ -15,7 +15,7 @@
 /// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Scene_Initialize turns them
 /// into three scene temp flags, the water dropped once, twice, or drained (the
 /// second and third drains both), and Altin_ApplyWaterLevel copies the layout
-/// area for that level over the village, with its metatile behaviors, and
+/// area for that level over the village, with its cell behaviors, and
 /// leaves out whoever would be standing in the water. And every villager has
 /// two sets of lines and thoughts, before and after
 /// FLAG_HYDROS_STATUES_DEFEATED, whether the party has beaten the hydros
@@ -251,19 +251,20 @@ enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
 /// Altin's inn, as Inn_CheckIn numbers the inns.
 enum { ALTIN_INN = 6 };
 
-/// The metatile behaviors Altin's triggers answer.
-enum AltinMetatileBehavior {
+/// The cell behaviors Altin's triggers answer.
+enum AltinCellBehavior {
   /// The doors' step triggers are numbered from 2 in the village's triggers,
   /// and each takes the exit of its own number.
-  MB_ALTIN_FIRST_DOOR = 2,
-  MB_ALTIN_NEAR_BEAST = 20
+  CELL_BEHAVIOR_ALTIN_FIRST_DOOR = 2,
+  CELL_BEHAVIOR_ALTIN_NEAR_BEAST = 20
 };
 
 /// The doors of the village, by their index in gAltin_Doors.
 enum {
   /// The Sanctum's door, which leads to SANCTUM_FROM_ALTIN.
-  DOOR_SANCTUM = ALTIN_TO_SANCTUM - MB_ALTIN_FIRST_DOOR,
-  DOOR_STRAIGHT_IN = ALTIN_TO_COTTAGE_ROOMS_D_EAST - MB_ALTIN_FIRST_DOOR
+  DOOR_SANCTUM = ALTIN_TO_SANCTUM - CELL_BEHAVIOR_ALTIN_FIRST_DOOR,
+  DOOR_STRAIGHT_IN = ALTIN_TO_COTTAGE_ROOMS_D_EAST -
+      CELL_BEHAVIOR_ALTIN_FIRST_DOOR
 };
 
 #define WATER_BEAST_HOP_PERIOD 60
@@ -617,7 +618,9 @@ static void Altin_EnterDoor(void) {
   // The bytes read the entry through byte offsets and sign-extend the door
   // number by shifts; indexing the structs loads the fields differently.
   doorBytes = (u8 *)gAltin_Doors;
-  doorIndex = ((*(u16 *)&work->stepTrigger - MB_ALTIN_FIRST_DOOR) << 16) >> 16;
+  doorIndex =
+      ((*(u16 *)&work->stepTrigger - CELL_BEHAVIOR_ALTIN_FIRST_DOOR) << 16) >>
+      16;
   doorByteOffset = doorIndex << 3;
   coordinatesByteOffset = doorByteOffset + 4;
   column = *(s16 *)(doorBytes + coordinatesByteOffset);
@@ -639,7 +642,8 @@ static void Altin_EnterDoor(void) {
     // (8, 17), above where the party comes back out
     // (ALTIN_FROM_COTTAGE_ROOMS_D_NORTH), so that doorway is drawn open here
     // (a render with this copy made on entry shows the open doorway).
-    if (doorIndex == ALTIN_TO_COTTAGE_ROOMS_D_NORTH - MB_ALTIN_FIRST_DOOR) {
+    if (doorIndex ==
+        ALTIN_TO_COTTAGE_ROOMS_D_NORTH - CELL_BEHAVIOR_ALTIN_FIRST_DOOR) {
       MapGrid_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
     MapGrid_AnimateCells(gAltin_Doors[doorIndex].steps, column, row);
@@ -1295,7 +1299,7 @@ struct Trigger gAltin_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FLOODED_ITEM_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinIfMyGoodsAreWetIll)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_STATUE, CONDITION_ALWAYS, EVENT(Altin_CheckPillarMoved)},
-    {TRIGGER_STEP, MB_ALTIN_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT(Altin_ScareOffBeast)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT(Altin_ScareOffBeast)},
     {TRIGGERS_END},
 };
 

@@ -325,19 +325,19 @@ Cottage rooms or Stucco rooms ([Scenes](src/scene/README.md#design)).
 ### Cell
 
 One 16 by 16 pixel square of a map: which metatile is drawn there, the
-shape and height of the ground, and its metatile behavior
+shape and height of the ground, and its cell behavior
 ([Maps](src/map/README.md#cells)).
 
 ### Metatile
 
 The picture of one cell: 2 by 2 of the console's 8-pixel tiles.
 
-### Metatile behavior
+### Cell behavior
 
 The byte of a cell that says what standing on it, walking into it or searching
 it does: a wall, a ledge, a jar. One range of behaviors means whatever the
 scene's own trigger table says
-([Field](field.md#cells-and-metatile-behaviors)).
+([Field](field.md#cells-and-cell-behaviors)).
 
 ### Actor
 
@@ -368,7 +368,7 @@ as player control (`SC_PLAYER`) or the camera's
 
 A row of a scene's trigger table (`struct Trigger`): a kind, the subject it
 answers, a condition and the event it runs. The subject is an actor id for
-talking, a metatile behavior for a cell, a treasure spot, or a value the
+talking, a cell behavior for a cell, a treasure spot, or a value the
 scene's code raises. When the player talks, searches, steps on a marked cell or
 uses Psynergy, the first row that fits runs
 ([Scenes](src/scene/README.md#what-a-trigger-row-says)). pret calls a row a
@@ -377,7 +377,7 @@ map event.
 ### Step trigger
 
 A trigger that runs when the leader steps onto, or walks into, a cell with a
-given metatile behavior: a doorstep, a ladder, the edge of a path. pret calls
+given cell behavior: a doorstep, a ladder, the edge of a path. pret calls
 it a coord event.
 
 ### Examine trigger

@@ -667,7 +667,7 @@ static void Bilibin_JillGivesHardNut(void) {
 }
 
 /// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
-/// Bilibin Treasury: its actors by story flags, its metatile behaviors
+/// Bilibin Treasury: its actors by story flags, its cell behaviors
 /// and its opening transition.
 s32 Bilibin_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -724,7 +724,7 @@ static void Bilibin_RestoreVillageActors(void) {
 }
 
 /// Updates the cells around the statue in Bilibin after it moves. It runs after
-/// Move, a push, or entry: it updates the metatile behaviors of the statue's
+/// Move, a push, or entry: it updates the cell behaviors of the statue's
 /// lane, opens its home cell (16, 13) once it has left it, and moves the leader
 /// clear if it has landed on him.
 static void Bilibin_UpdateVillageStatueCells(void) {
@@ -935,7 +935,7 @@ static void Bilibin_PushStatueOrCrates(void) {
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
       Actor_SelectAnimation(leader, ANIM_STAND);
-      // Each scene derives its metatile behaviors from this same moved
+      // Each scene derives its cell behaviors from this same moved
       // actor.
       if (gAdventure.sceneId == (s32)&SceneId_BilibinBarricade)
         Bilibin_UpdateCratesCells();

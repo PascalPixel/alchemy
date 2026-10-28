@@ -339,9 +339,9 @@ s32 Scene_RunRaisedTrigger(s32 value) {
 /// nothing.
 ///
 /// Called by SceneSequence_Run for its step request (work->stepTrigger), which
-/// Field_UpdateWalking raises for MB_EVENT_FIRST to MB_EVENT_LAST.
-/// Sets work->exit for an exit, and clears work->blockedSteps after a
-/// step trigger that needs pushing.
+/// Field_UpdateWalking raises for CELL_BEHAVIOR_EVENT_FIRST to
+/// CELL_BEHAVIOR_EVENT_LAST. Sets work->exit for an exit, and clears
+/// work->blockedSteps after a step trigger that needs pushing.
 s32 Scene_RunStepTriggerOrExit(s32 value) {
   struct TriggerView *touch;
   struct TriggerView *exit;
@@ -392,32 +392,32 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
   return handled;
 }
 
-/// Runs the event of a cell the leader pushes against (MB_LEDGE to
-/// MB_JUMP_FORWARD, and MB_JUMP_FORWARD_UNREACHED), once it has
-/// pushed for more than 12 frames; the count then restarts.
+/// Runs the event of a cell the leader pushes against (CELL_BEHAVIOR_LEDGE to
+/// CELL_BEHAVIOR_JUMP_FORWARD, and CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED), once
+/// it has pushed for more than 12 frames; the count then restarts.
 ///
 /// Called by SceneSequence_Run for its push request (work->pushCell), which
-/// Field_UpdateWalking raises for MB_LEDGE to MB_JUMP_FORWARD.
-/// Clears work->blockedSteps when it acts.
+/// Field_UpdateWalking raises for CELL_BEHAVIOR_LEDGE to
+/// CELL_BEHAVIOR_JUMP_FORWARD. Clears work->blockedSteps when it acts.
 s32 Field_RunPushCell(s32 behavior) {
   struct FieldWork *work = gFieldWork;
   s32 leader = gAdventure.leaderActorId;
 
   switch (behavior) {
-  case MB_LEDGE:
+  case CELL_BEHAVIOR_LEDGE:
     if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
       Actor_JumpDownLedge(leader, 6, 0);
       work->blockedSteps = 0;
     }
     break;
-  case MB_JUMP_FORWARD_UNREACHED:
-  case MB_JUMP_FORWARD:
+  case CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED:
+  case CELL_BEHAVIOR_JUMP_FORWARD:
     if (work->blockedSteps > 12) {
       Field_TryJumpForward();
       work->blockedSteps = 0;
     }
     break;
-  case MB_CLIMB:
+  case CELL_BEHAVIOR_CLIMB:
     if (work->blockedSteps > 12) {
       if (gKeysHeld & KEY_DOWN) {
         Field_ClimbDown();
@@ -431,11 +431,11 @@ s32 Field_RunPushCell(s32 behavior) {
   return 0;
 }
 
-/// Searches the cell ahead with the given metatile behavior. The fixed search
-/// spots, MB_JAR to MB_WELL, show their two messages. Otherwise the
-/// scene's examine trigger for the cell runs: a function, a message, or a chest
-/// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
-/// the ground" and "found nothing".
+/// Searches the cell ahead with the given cell behavior. The fixed search
+/// spots, CELL_BEHAVIOR_JAR to CELL_BEHAVIOR_WELL, show their two messages.
+/// Otherwise the scene's examine trigger for the cell runs: a function, a
+/// message, or a chest holding a Psynergy Stone, a mimic, coins or an item;
+/// with no event, "checked the ground" and "found nothing".
 ///
 /// Called by SceneSequence_Run for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
@@ -452,9 +452,9 @@ s32 Field_ExamineCell(s32 tile) {
   leader = gAdventure.leaderActorId;
   // Each fixed spot has its own pair of lines, chosen through
   // gField_ExamineTriggerMessageOffsets; the unsigned compare also rejects
-  // codes below MB_JAR.
-  messageOffset = tile - MB_JAR;
-  if (messageOffset <= MB_WELL - MB_JAR) {
+  // codes below CELL_BEHAVIOR_JAR.
+  messageOffset = tile - CELL_BEHAVIOR_JAR;
+  if (messageOffset <= CELL_BEHAVIOR_WELL - CELL_BEHAVIOR_JAR) {
     Leader_StopMoving();
     tile = gField_ExamineTriggerMessageOffsets[messageOffset];
     FieldMessage_ShowFar(MsgTileChecked + tile, FIELD_MESSAGE_ZOOM);

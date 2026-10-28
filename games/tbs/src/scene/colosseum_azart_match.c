@@ -253,7 +253,7 @@ const struct ActorTemplate *ColosseumAzartMatch_GetActorTemplates(void) {
   return gColosseumAzartMatch_ActorTemplates;
 }
 
-/// Advances the bridge animation and the metatile behaviors that make it
+/// Advances the bridge animation and the cell behaviors that make it
 /// walkable.
 static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
   switch ((u32)gColosseumAzartMatch_Countdown) {

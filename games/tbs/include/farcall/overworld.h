@@ -208,7 +208,7 @@ void Event_LeaveForFar(u16 first, u16 second);
 /// Writes an actor's screen position in pixels, y at the top of its
 /// sprite. Returns 0, or -1 when there is no such actor.
 s32 Actor_GetScreenPositionFar(s32 actorId, s32 *position);
-/// Returns the metatile behavior of the searchable cell 16 pixels ahead of the
+/// Returns the cell behavior of the searchable cell 16 pixels ahead of the
 /// leader, or 0 when there is nothing to search; the field menu's search
 /// entry asks it.
 s32 Actor_GetTriggerCellAheadOfCurrentFar(void);

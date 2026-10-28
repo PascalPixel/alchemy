@@ -31,9 +31,8 @@ static inline void Vault_DrawDoorway(s32 sourceColumn) {
                       VAULT_DOOR_HALF_SIZE);
 }
 
-/// Walking north into MB_VAULT_SANCTUM_DOORWAY opens the doorway to the
-/// Sanctum.
-/// The leader passes behind the doorframe through the exit.
+/// Walking north into CELL_BEHAVIOR_VAULT_SANCTUM_DOORWAY opens the doorway to
+/// the Sanctum. The leader passes behind the doorframe through the exit.
 static void Vault_OpenDoorwayAndEnter(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;

@@ -232,7 +232,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 
 /// Rolls a random battle on the encounter zone of the ground underfoot.
 /// terrain: the ground, an index into work->encounterZones: 0 for ordinary
-/// ground, 1 and 2 for MB_ENCOUNTER_GROUND_1 and _2 cells.
+/// ground, 1 and 2 for CELL_BEHAVIOR_ENCOUNTER_GROUND_1 and _2 cells.
 /// steps: the step weight, passed on to Encounter_CountStepsAndSelectFormation.
 /// Returns the formation to fight, or 0 for no battle.
 /// Called by Field_UpdateWalking in a scene, which stores the result in

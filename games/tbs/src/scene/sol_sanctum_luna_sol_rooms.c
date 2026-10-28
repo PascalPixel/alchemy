@@ -40,7 +40,7 @@
 ///
 /// The rooms' colours follow the party: cells on the floor between them fade
 /// the palette to a tint or back to plain colours (enum
-/// SolSanctumLunaSolRoomsMetatileBehavior), and one of three scene flags
+/// SolSanctumLunaSolRoomsCellBehavior), and one of three scene flags
 /// remembers which colours show, so a return after a battle keeps them. On
 /// entry SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN and redraws the pictures, the floor and the
@@ -110,30 +110,31 @@
 /// The dim red tint the rooms fade to.
 #define SOL_SANCTUM_WARM_TINT (PALETTE_TINT_CUSTOM | RGB(17, 13, 11))
 
-/// The metatile behaviors of the floor cells the events answer; behaviors 1
+/// The cell behaviors of the floor cells the events answer; behaviors 1
 /// and 2 are the exits.
-enum SolSanctumLunaSolRoomsMetatileBehavior {
+enum SolSanctumLunaSolRoomsCellBehavior {
   /// Before Kraden in the Luna room.
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
   /// The way back out to SceneId_SolSanctumReliefs.
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT = 9,
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT = 9,
   /// The symbol of the sun on the floor, first stepped on.
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM = 11,
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM = 11,
   /// Fades to SOL_SANCTUM_WARM_TINT.
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT = 12,
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT = 12,
   /// Fades to plain colours, or to SOL_SANCTUM_BLUE_TINT once all four
   /// quarters are lit.
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT = 13,
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT = 13,
   /// Fades to SOL_SANCTUM_BLUE_TINT, or to plain colours once all four
   /// quarters are lit.
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE = 14,
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN = 15, ///< fades to plain colours
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP =
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE = 14,
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN =
+      15, ///< fades to plain colours
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP =
       19, ///< turns the backdrop black
   /// The symbol on the floor, searched to open the way up.
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL = 20,
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL = 20,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST = 100
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST = 100
 };
 
 // Scene flags, cleared at every ordinary entrance; one of the three is
@@ -171,15 +172,15 @@ const struct ActorTemplate *SolSanctumLunaSolRooms_GetActorTemplates(void) {
   return gSolSanctumLunaSolRoomsActorTemplates;
 }
 
-/// Returns the floor's metatile behaviors that tint the rooms, Kraden's talk
+/// Returns the floor's cell behaviors that tint the rooms, Kraden's talk
 /// and events, the floor symbol and the Herb's chest.
 const struct Trigger *SolSanctumLunaSolRooms_GetTriggers(void) {
   return gSolSanctumLunaSolRoomsTriggers;
 }
 
-/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT. Until all four
-/// quarters are lit the rooms fade back to plain colours; afterwards to
-/// SOL_SANCTUM_BLUE_TINT, and Kraden sees the floor symbol changed the first
+/// Sol Sanctum: crossing CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT. Until
+/// all four quarters are lit the rooms fade back to plain colours; afterwards
+/// to SOL_SANCTUM_BLUE_TINT, and Kraden sees the floor symbol changed the first
 /// time (and the Luna room, had he not yet). Also called by
 /// SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum after the eruption. Sets
 /// one of FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and
@@ -222,8 +223,8 @@ static void SolSanctumLunaSolRooms_TintSolRoom(void) {
   }
 }
 
-/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN fades the rooms
-/// back to plain colours. Also called by
+/// Sol Sanctum: crossing CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN fades
+/// the rooms back to plain colours. Also called by
 /// SolSanctumLunaSolRooms_KradenStopsPartyLeaving after the eruption. Sets
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and clears the other two tint
 /// flags.
@@ -239,11 +240,11 @@ static void SolSanctumLunaSolRooms_RestorePlainTint(void) {
   }
 }
 
-/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE, as
-/// MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT the other way round. Until all four
-/// quarters are lit the rooms fade to SOL_SANCTUM_BLUE_TINT, and the first time
-/// Kraden sees the Luna room; afterwards back to plain colours. Sets one of
-/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and
+/// Sol Sanctum: crossing CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE,
+/// as CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT the other way round. Until
+/// all four quarters are lit the rooms fade to SOL_SANCTUM_BLUE_TINT, and the
+/// first time Kraden sees the Luna room; afterwards back to plain colours. Sets
+/// one of FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED, clearing the other tint flags.
 static void SolSanctumLunaSolRooms_TintLunaRoom(void) {
   s32 paletteActive;
@@ -275,8 +276,8 @@ static void SolSanctumLunaSolRooms_TintLunaRoom(void) {
   }
 }
 
-/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT fades the
-/// rooms to SOL_SANCTUM_WARM_TINT. Sets
+/// Sol Sanctum: crossing CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT
+/// fades the rooms to SOL_SANCTUM_WARM_TINT. Sets
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED and clears the other two tint
 /// flags.
 static void SolSanctumLunaSolRooms_TintPassageBetweenRooms(void) {
@@ -289,8 +290,9 @@ static void SolSanctumLunaSolRooms_TintPassageBetweenRooms(void) {
   }
 }
 
-/// Sol Sanctum: crossing MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP turns the
-/// backdrop black.
+/// Sol Sanctum: crossing
+/// CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP turns the backdrop
+/// black.
 static void SolSanctumLunaSolRooms_ClearBackdropColor(void) {
   s32 black = 0;
   u16 *backdropColor = (u16 *)&PLTT_BACKDROP;
@@ -360,7 +362,8 @@ static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
 /// it!" The strangers told the truth and must be thieves, but Kraden talks the
 /// others into going a little farther. Plays until FLAG_SOL_SANCTUM_FOUND is
 /// set, which it sets with FLAG_RETREAT_BLOCKED; after the eruption the
-/// crossing tints the rooms as MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT does.
+/// crossing tints the rooms as CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT
+/// does.
 static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
   struct Actor *leader;
 
@@ -1778,31 +1781,32 @@ struct ActorTemplate gSolSanctumLunaSolRoomsActorTemplates[] = {
 struct Trigger gSolSanctumLunaSolRoomsTriggers[] = {
     {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
      EVENT(SolSanctumLunaSolRooms_TalkToKraden)},
-    {TRIGGER_STEP, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE, CONDITION_ALWAYS,
-     EVENT(SolSanctumLunaSolRooms_TintLunaRoom)},
-    {TRIGGER_STEP, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT, CONDITION_ALWAYS,
-     EVENT(SolSanctumLunaSolRooms_TintSolRoom)},
-    {TRIGGER_STEP, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN, CONDITION_ALWAYS,
-     EVENT(SolSanctumLunaSolRooms_RestorePlainTint)},
-    {TRIGGER_STEP, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT, CONDITION_ALWAYS,
-     EVENT(SolSanctumLunaSolRooms_TintPassageBetweenRooms)},
-    {TRIGGER_STEP, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE,
+     CONDITION_ALWAYS, EVENT(SolSanctumLunaSolRooms_TintLunaRoom)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT,
+     CONDITION_ALWAYS, EVENT(SolSanctumLunaSolRooms_TintSolRoom)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN,
+     CONDITION_ALWAYS, EVENT(SolSanctumLunaSolRooms_RestorePlainTint)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT,
+     CONDITION_ALWAYS, EVENT(SolSanctumLunaSolRooms_TintPassageBetweenRooms)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP,
      CONDITION_ALWAYS, EVENT(SolSanctumLunaSolRooms_ClearBackdropColor)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT),
-     MB_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL, CONDITION_ALWAYS,
      EVENT(SolSanctumLunaSolRooms_RiseToElementalStarRoom)},
-    {TRIGGER_STEP, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN,
      CONDITION_ALWAYS,
      EVENT(SolSanctumLunaSolRooms_KradenSeesLunaPictureChange)},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS,
      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE},
-    {TRIGGER_STEP, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM,
      CONDITION_ALWAYS, EVENT(SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum)},
-    {TRIGGER_STEP, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT, CONDITION_ALWAYS,
-     EVENT(SolSanctumLunaSolRooms_KradenStopsPartyLeaving)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), MB_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT,
+     CONDITION_ALWAYS, EVENT(SolSanctumLunaSolRooms_KradenStopsPartyLeaving)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST),
+     CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST,
      FLAG_SOL_SANCTUM_HERB_FOUND, FIND_ITEM(ITEM_HERB)},
     {TRIGGERS_END},
 };

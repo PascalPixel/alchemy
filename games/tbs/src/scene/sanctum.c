@@ -483,7 +483,7 @@ s32 Sanctum_Initialize(void) {
   return 0;
 }
 
-/// Vale Sanctum: heading for the door after refusing the quest (metatile
+/// Vale Sanctum: heading for the door after refusing the quest (cell
 /// behavior 2, until FLAG_SANCTUM_WARNED_BEFORE_LEAVING is set, which it sets).
 /// The Great Healer warns that the choice is final: "Once you step outside the
 /// village, you cannot take back your decision."
@@ -503,7 +503,7 @@ static void Sanctum_WarnBeforeLeaving(void) {
   Event_End();
 }
 
-/// Vale Sanctum: leaving after refusing the quest (metatile behavior 1) ends
+/// Vale Sanctum: leaving after refusing the quest (cell behavior 1) ends
 /// the game. The room turns sepia: `And so the world began drifting toward its
 /// fated destruction...` Starting again from the Great Healer takes
 /// SANCTUM_TO_QUEST_RESTART, back to SANCTUM_FROM_QUEST_RESTART; the other
@@ -2050,7 +2050,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
 }
 
 /// Copies two blocks of map grid cells for the quest's visits, the metatiles of
-/// one and the metatile behaviors of the other.
+/// one and the cell behaviors of the other.
 static void Sanctum_RestoreQuestFloor(void) {
   {
     MapGrid_CopyCellsTo(0, 64, 11, 68, 3, 2);

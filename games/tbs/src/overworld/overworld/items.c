@@ -10,7 +10,7 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
 
 /// Returns the scene's item trigger (TRIGGER_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
-/// names an actor (TRIGGER_ITEM_ON_ACTOR) or a metatile behavior,
+/// names an actor (TRIGGER_ITEM_ON_ACTOR) or a cell behavior,
 /// and may also require the leader to face within 0x17ff (about 34 degrees) of
 /// a direction. Called by Field_UseItem, and by Scene_HasPsynergyTrigger
 /// (psynergy.c) to test whether an item would do anything here.
@@ -27,7 +27,7 @@ s32 Field_FindItemTrigger(s32 item) {
   tileAhead = Field_GetCollisionAheadOfLeader();
 
   // subject bits: 15..12 facing | 11 facing required | 7..0 actor or
-  // metatile behavior; control bits: 15..8 item | 4 on an actor | 3..0
+  // cell behavior; control bits: 15..8 item | 4 on an actor | 3..0
   // kind.
   while (trigger->kind != -1) {
     s32 eventFacing = trigger->subject & 0xf000;
@@ -207,7 +207,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// actor the Psynergy would target in *target. eventFlags gives the
 /// event's phase and kind (PSYNERGY_TRIGGER_ANY for any phase). The event may
 /// apply to any target (TRIGGER_PSYNERGY_ANYWHERE), to an actor
-/// (TRIGGER_PSYNERGY_ON_ACTOR) or to a metatile behavior. Called by
+/// (TRIGGER_PSYNERGY_ON_ACTOR) or to a cell behavior. Called by
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEndEvents, and by the
 /// Force, Frost and Reveal (event_commands/) for their own phases.
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {

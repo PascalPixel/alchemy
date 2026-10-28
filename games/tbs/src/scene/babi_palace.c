@@ -23,9 +23,9 @@
 /// (BabiPalace_ShowBeds), which a search then sleeps in
 /// (BabiPalace_RestInPalaceBeds, with a talk the first night,
 /// FLAG_BABI_PALACE_FIRST_NIGHT). Stepping beside Iodem
-/// (MB_BABI_PALACE_BESIDE_IODEM) plays BabiPalace_HearSoldiersReport once
-/// (FLAG_IODEM_HEARD_SOLDIERS, whose rows for Iodem and his soldiers place no
-/// one once it is set), and Sheba notices the first Mind Read on her
+/// (CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM) plays BabiPalace_HearSoldiersReport
+/// once (FLAG_IODEM_HEARD_SOLDIERS, whose rows for Iodem and his soldiers place
+/// no one once it is set), and Sheba notices the first Mind Read on her
 /// (BabiPalace_ReadShebasMind, FLAG_SHEBA_NOTICED_MIND_READ).
 ///
 /// During the finals the guards outside pass on Babi's word once
@@ -273,16 +273,17 @@ enum BabiPalaceBedAnimation {
   ANIM_IN_BED_SHAKE_HEAD = 34
 };
 
-/// Metatile behaviors the triggers answer besides the exits, whose metatile
+/// Cell behaviors the triggers answer besides the exits, whose cell
 /// behaviors are their exits' numbers.
-enum BabiPalaceMetatileBehavior {
+enum BabiPalaceCellBehavior {
   /// The cells beside Iodem, while Babi is missing
   /// (BabiPalace_HearSoldiersReport).
-  MB_BABI_PALACE_BESIDE_IODEM = 60,
-  MB_BABI_PALACE_BEDS = 70, ///< the big bedroom's four beds, searched to sleep
+  CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM = 60,
+  CELL_BEHAVIOR_BABI_PALACE_BEDS =
+      70, ///< the big bedroom's four beds, searched to sleep
   /// The well outside the palace.
   /// ★ Named from the game: "peered into the well" (MsgFieldPeeredWell)
-  MB_BABI_PALACE_WELL = 90
+  CELL_BEHAVIOR_BABI_PALACE_WELL = 90
 };
 
 /// A companion walks into the leader and is taken off the map, as the party
@@ -2824,7 +2825,7 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { TRIGGER_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
-    { TRIGGER_STEP, MB_BABI_PALACE_BESIDE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, EVENT(BabiPalace_HearSoldiersReport) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, EVENT(BabiPalace_HearSoldiersReport) },
     { TRIGGER_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT(BabiPalace_AskAboutSoldiers) },
     { TRIGGER_TALK, ACTOR_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfYoureEnteringColossoHurryAlong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowDiligentlyBabisSoldiers) },
@@ -2851,7 +2852,7 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorWasTakenHostageToForce) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEBA, CONDITION_ALWAYS, EVENT(BabiPalace_ReadShebasMind) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT(BabiPalace_RestInPalaceBeds) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT(BabiPalace_RestInPalaceBeds) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -2917,7 +2918,7 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceASmileOnAPrettyGirl) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT(BabiPalace_RestInPalaceBeds) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT(BabiPalace_RestInPalaceBeds) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -2992,7 +2993,7 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { TRIGGER_TALK, ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSurprisedActorWasAllowed) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItSeemedOnlyNaturalThatActor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSoRelievedActorHas) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_BEDS, CONDITION_ALWAYS, EVENT(BabiPalace_RestInPalaceBeds) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_BEDS, CONDITION_ALWAYS, EVENT(BabiPalace_RestInPalaceBeds) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
     { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
@@ -3011,7 +3012,7 @@ struct Trigger gBabiPalace_OutsideTriggersBabiMissing[] = {
     { TRIGGER_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSomeOfTheRoomsInThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceShouldThePalaceReallyBeOpen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowManyPeopleWill) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
     { TRIGGERS_END },
 };
 
@@ -3026,7 +3027,7 @@ struct Trigger gBabiPalace_OutsideTriggersFinals[] = {
     { TRIGGER_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT(BabiPalace_ThankForSavingBabi) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceSureTheySavedBabiButIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceBabiIsADeliberateManHe) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
     { TRIGGERS_END },
 };
 
@@ -3037,7 +3038,7 @@ struct Trigger gBabiPalace_OutsideTriggersAfterColosso[] = {
     { TRIGGER_TALK, ACTOR_SECOND_GUARD, CONDITION_ALWAYS, EVENT(BabiPalace_AskAboutRemainingWarriors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceTheEndOfAFestivalIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceAllTheHeroicWarriorsWhoTook) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_WELL, CONDITION_ALWAYS, EVENT(BabiPalace_ExamineWell) },
     { TRIGGERS_END },
 };
 // clang-format on

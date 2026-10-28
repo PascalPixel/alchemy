@@ -28,7 +28,7 @@
 /// FLAG_VENUS_LIGHTHOUSE_SECOND_PATH), sets the retreat point, and in the rooms
 /// that need it starts a fade overlay that follows the leader south of a depth
 /// set per room (TunnelRuins_UpdateTrackedActor). The walking events,
-/// keyed on the metatile behaviors under the leader, are shared by both scenes:
+/// keyed on the cell behaviors under the leader, are shared by both scenes:
 /// hops across gaps (TunnelRuins_HopLeaderTo), jumps off ledges and steps down.
 ///
 /// The puzzles that must survive a visit keep story flags
@@ -296,7 +296,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 }
 
 /// Walking south into a gap: the leader hops 32 pixels across it.
-/// Reached by walking south into metatile behaviors 29, 30 and 50 in
+/// Reached by walking south into cell behaviors 29, 30 and 50 in
 /// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopSouth(void) {
   struct FieldPosition target;
@@ -309,7 +309,7 @@ static void TunnelRuins_HopSouth(void) {
 }
 
 /// Walking north into a gap: the leader hops 32 pixels across it.
-/// Reached by walking north into metatile behaviors 29 and 30 in
+/// Reached by walking north into cell behaviors 29 and 30 in
 /// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopNorth(void) {
   struct FieldPosition target;
@@ -460,7 +460,7 @@ static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
 
 /// Walking south off a step: the leader hops 12 pixels forward and slides 16
 /// pixels down, kicking up dust behind.
-/// Reached by walking south into metatile behavior 25 in TunnelRuinsGreatStatue
+/// Reached by walking south into cell behavior 25 in TunnelRuinsGreatStatue
 /// and 27 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopDownStep(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -568,7 +568,7 @@ const struct ActorTemplate *TunnelRuins_GetActorTemplates(void) {
 }
 
 /// Walking into the first pair of pillars pushes them along.
-/// Reached by walking into metatile behavior 24 in TunnelRuinsGreatStatue.
+/// Reached by walking into cell behavior 24 in TunnelRuinsGreatStatue.
 static void TunnelRuins_PushFirstPillars(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -578,7 +578,7 @@ static void TunnelRuins_PushFirstPillars(void) {
 }
 
 /// Walking west into a gap: the leader hops 32 pixels across it.
-/// Reached by walking west into the gaps' cells: metatile behaviors 23, 31 and
+/// Reached by walking west into the gaps' cells: cell behaviors 23, 31 and
 /// 32 in TunnelRuinsGreatStatue (31 until the north-west pillar's puddle is
 /// frozen), 26 and 30 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopWest(void) {
@@ -592,7 +592,7 @@ static void TunnelRuins_HopWest(void) {
 }
 
 /// Walking into the second pair of pillars pushes them along.
-/// Reached by walking into metatile behavior 26 in TunnelRuinsGreatStatue.
+/// Reached by walking into cell behavior 26 in TunnelRuinsGreatStatue.
 static void TunnelRuins_PushSecondPillars(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -602,14 +602,14 @@ static void TunnelRuins_PushSecondPillars(void) {
 }
 
 /// Walking south off a ledge: the leader jumps down.
-/// Reached by walking south into metatile behaviors 23 and 27
+/// Reached by walking south into cell behaviors 23 and 27
 /// (TunnelRuinsGreatStatue) and 26 (TunnelRuinsLadyStatues).
 static void TunnelRuins_JumpDownLedge(void) {
   FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
 }
 
 /// Walking east into a gap: the leader hops 32 pixels across it.
-/// Reached by walking east into the gaps' cells: metatile behaviors 27, 29, 31,
+/// Reached by walking east into the gaps' cells: cell behaviors 27, 29, 31,
 /// 32 and 50 in TunnelRuinsGreatStatue, some only until the puddle beside them
 /// is frozen, and 30 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopEast(void) {
@@ -623,7 +623,7 @@ static void TunnelRuins_HopEast(void) {
 }
 
 /// Walking into the small pillars pushes the one in front along.
-/// Reached by walking into metatile behavior 28 in TunnelRuinsGreatStatue.
+/// Reached by walking into cell behavior 28 in TunnelRuinsGreatStatue.
 static void TunnelRuins_PushSmallPillars(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
@@ -635,7 +635,7 @@ static void TunnelRuins_PushSmallPillars(void) {
 
 /// Walking south at the small pillars: the leader hops a gap if there is one,
 /// and pushes the small pillar in front otherwise. Reached by walking south
-/// into metatile behavior 28 in TunnelRuinsGreatStatue.
+/// into cell behavior 28 in TunnelRuinsGreatStatue.
 static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition target;
@@ -696,7 +696,7 @@ static void TunnelRuins_BlowAwayIvyC(void) {
 }
 
 /// Hops west as TunnelRuins_HopWest, except from cell (32, 50).
-/// Reached by walking west into metatile behavior 50 in TunnelRuinsGreatStatue.
+/// Reached by walking west into cell behavior 50 in TunnelRuinsGreatStatue.
 static void TunnelRuins_HopWestBySmallPillars(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
 
@@ -706,7 +706,7 @@ static void TunnelRuins_HopWestBySmallPillars(void) {
 }
 
 /// Hops north as TunnelRuins_HopNorth, except from cell (30, 52).
-/// Reached by walking north into metatile behavior 50 in
+/// Reached by walking north into cell behavior 50 in
 /// TunnelRuinsGreatStatue.
 static void TunnelRuins_HopNorthBySmallPillars(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -785,7 +785,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
 
 /// Walking into the north-west sinking pillar pushes it, and it sinks if it
 /// reaches column 46 (until FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR).
-/// Reached by walking into metatile behavior 29 in TunnelRuinsGreatStatue.
+/// Reached by walking into cell behavior 29 in TunnelRuinsGreatStatue.
 static void TunnelRuins_PushNorthwestSinkingPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -870,7 +870,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
 
 /// Walking into the south-east sinking pillar pushes it, and it sinks if it is
 /// soaked and reaches column 48.
-/// Reached by walking into metatile behavior 30, or east into 32 before Douse
+/// Reached by walking into cell behavior 30, or east into 32 before Douse
 /// has soaked it, in TunnelRuinsGreatStatue.
 static void TunnelRuins_PushSoutheastSinkingPillar(void) {
   Event_Start();
@@ -916,7 +916,7 @@ static void TunnelRuins_FreezeSoutheastPillarPuddle(void) {
 /// or, once the statue in Venus Lighthouse has opened a path
 /// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH), that the path will not
 /// open here.
-/// Reached by searching metatile behavior 40 in TunnelRuinsGreatStatue.
+/// Reached by searching cell behavior 40 in TunnelRuinsGreatStatue.
 static void TunnelRuins_ReadFirstStatue(void) {
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -938,7 +938,7 @@ static void TunnelRuins_MoveDousePillar(void) {
 }
 
 /// Walking into the Douse pillar pushes it along.
-/// Reached by walking into metatile behavior 25 in TunnelRuinsLadyStatues.
+/// Reached by walking into cell behavior 25 in TunnelRuinsLadyStatues.
 static void TunnelRuins_PushDousePillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -1195,7 +1195,7 @@ static void TunnelRuins_SetStoneOnBalance(void) {
 }
 
 /// Walking into a pushable object pushes it along.
-/// Reached by walking into metatile behaviors 28 and 30 in
+/// Reached by walking into cell behaviors 28 and 30 in
 /// TunnelRuinsLadyStatues.
 static void TunnelRuins_PushActor(void) {
   Event_Start();
@@ -1227,7 +1227,7 @@ static void TunnelRuins_MoveEastPillar(void) {
 }
 
 /// Walking into an east pillar pushes it along, and its place is kept.
-/// Reached by walking east into metatile behavior 29 in TunnelRuinsLadyStatues.
+/// Reached by walking east into cell behavior 29 in TunnelRuinsLadyStatues.
 static void TunnelRuins_PushEastPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -1375,7 +1375,7 @@ static void TunnelRuins_MoveLadyStatue(void) {
 
 /// Walking into one of the five coloured statues pushes it along, then checks
 /// the door.
-/// Reached by walking into metatile behavior 41 in TunnelRuinsLadyStatues.
+/// Reached by walking into cell behavior 41 in TunnelRuinsLadyStatues.
 static void TunnelRuins_PushLadyStatue(void) {
   Event_Start();
   {
@@ -1388,7 +1388,7 @@ static void TunnelRuins_PushLadyStatue(void) {
 
 /// Searching the statue in TunnelRuinsLadyStatues's room of the five coloured
 /// statues. "The statue seems to speak to your soul..." Reached by searching
-/// metatile behavior 42 in TunnelRuinsLadyStatues.
+/// cell behavior 42 in TunnelRuinsLadyStatues.
 static void TunnelRuins_ReadSecondStatue(void) {
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1397,7 +1397,7 @@ static void TunnelRuins_ReadSecondStatue(void) {
 }
 
 /// Searching the door in TunnelRuinsLadyStatues: it is tightly locked.
-/// Reached by searching metatile behavior 20 in TunnelRuinsLadyStatues.
+/// Reached by searching cell behavior 20 in TunnelRuinsLadyStatues.
 static void TunnelRuins_SearchLockedDoor(void) {
   Event_Start();
   FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
@@ -1494,10 +1494,12 @@ static void TunnelRuins_MarkPushPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
   PushedActor_FillGridAttributeRectangle(
       0, Actor_GetById(ACTOR_EAST_PILLAR_A)->x.fixed >> 20,
-      Actor_GetById(ACTOR_EAST_PILLAR_A)->z.fixed >> 20, 1, 1, MB_WALL);
+      Actor_GetById(ACTOR_EAST_PILLAR_A)->z.fixed >> 20, 1, 1,
+      CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(
       0, Actor_GetById(ACTOR_EAST_PILLAR_B)->x.fixed >> 20,
-      Actor_GetById(ACTOR_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, MB_WALL);
+      Actor_GetById(ACTOR_EAST_PILLAR_B)->z.fixed >> 20, 1, 1,
+      CELL_BEHAVIOR_WALL);
 }
 
 /// On entering a room: the puzzle as it was left, and the path the statue in

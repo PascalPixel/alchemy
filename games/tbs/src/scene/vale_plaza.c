@@ -8,7 +8,7 @@
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
 ///   have gathered in the plaza here. Isaac and Garet come from the river
 ///   (Vale, SceneId_ValeStormyNight, by VALE_STORMY_NIGHT_TO_VALE_PLAZA), where
-///   Felix has fallen in. Walking up to the villagers (metatile behavior 20)
+///   Felix has fallen in. Walking up to the villagers (cell behavior 20)
 ///   plays ValePlaza_SentToAidElders: Garet's grandfather, the mayor, sends
 ///   two strongmen to aid the elders holding the Boulder, then sends Isaac and
 ///   Garet back to show Jenna and a strongman whose Psynergy the Psynergy Stone
@@ -47,14 +47,14 @@
 ///   the hut's owner finds the stone gone, leaving a hole in his roof
 ///   (ValePlaza_PsynergyStoneIsGone), and a door in the north-east opens.
 ///
-/// The Psynergy Stone (an examine trigger on metatile behavior 100) restores
+/// The Psynergy Stone (an examine trigger on cell behavior 100) restores
 /// the party's PP at every time but the farewell. The ivy in three places
 /// (ACTOR_FIRST_IVY to ACTOR_THIRD_IVY) can be blown away with Whirlwind,
 /// each one's flag keeping it gone. The doors lead into the houses
 /// (SceneId_CottageRoomsA) and into the inn and the forge
 /// (SceneId_CottageRoomsB), the path west to the village (SceneId_Vale) or, on
 /// the stormy night, back to the storm's scene (SceneId_ValeStormyNight), and
-/// the exit row of metatile behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM,
+/// the exit row of cell behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM,
 /// which the exit table sends to Goma Cave (SceneId_GomaCaveStream,
 /// GOMA_CAVE_STREAM_FROM_VALE_PLAZA). Behavior 11 lies on one cell, (11, 28),
 /// in every state of the map, the cell north of where the party arrives from
@@ -482,7 +482,7 @@ const struct ActorTemplate *ValePlaza_GetActorTemplates(void) {
 
 /// In Vale, searching the Psynergy Stone restores the party's PP.
 ///
-/// Reached by searching metatile behavior 100 in every table but the
+/// Reached by searching cell behavior 100 in every table but the
 /// farewell's. Clears FLAG_NOTHING_HAPPENS.
 static void ValePlaza_UsePsynergyStone(void) {
   Event_Start();
@@ -818,7 +818,7 @@ static inline void ValePlaza_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
 
-// Vale's doors here: walking north into metatile behavior n opens door n and
+// Vale's doors here: walking north into cell behavior n opens door n and
 // takes exit n (Vale_RequestBackdropExit), into the houses
 // (SceneId_CottageRoomsA) or the inn and the forge (SceneId_CottageRoomsB).
 
@@ -833,7 +833,7 @@ static void ValePlaza_OpenNorthwestDoor(void) {
 /// into the second forge room (SceneId_CottageRoomsB,
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
 ///
-/// Reached by walking north into metatile behavior 2 after Kalay; the other
+/// Reached by walking north into cell behavior 2 after Kalay; the other
 /// tables have no such door.
 static void ValePlaza_OpenNortheastDoor(void) {
   Event_PlaySong(SE_THUMP);
@@ -883,7 +883,7 @@ static void ValePlaza_OpenSoutheastDoor(void) {
 }
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
-/// storm's scene: stepping on metatile behavior 9 takes VALE_PLAZA_TO_VALE, to
+/// storm's scene: stepping on cell behavior 9 takes VALE_PLAZA_TO_VALE, to
 /// the storm's VALE_STORMY_NIGHT_FROM_VALE_PLAZA.
 static void ValePlaza_LeaveThroughWestPassage(void) {
   Sound_PlaySong(SE_MAP_EXIT);
@@ -893,7 +893,7 @@ static void ValePlaza_LeaveThroughWestPassage(void) {
 /// In Vale, leaves by the town gate for the World Map, once the party has
 /// begun its journey.
 ///
-/// Reached by stepping on metatile behavior 8; takes VALE_PLAZA_TO_WORLD_MAP
+/// Reached by stepping on cell behavior 8; takes VALE_PLAZA_TO_WORLD_MAP
 /// once FLAG_VALE_PARTY_LEFT is set, else does nothing. The farewell
 /// (ValePlaza_DepartForQuest) shows the villagers gathered at the gate and
 /// leaves by the same exit.
@@ -1074,7 +1074,7 @@ static inline void ValePlaza_RejoinParty(s32 actorId) {
 /// Garet back to the river to show Jenna and a man whose Psynergy is restored
 /// the way. "Go aid the elders!"
 ///
-/// Reached by stepping on metatile behavior 20 on the stormy night, until
+/// Reached by stepping on cell behavior 20 on the stormy night, until
 /// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set; sets it. The flag is named for
 /// the mayor's first order, but what it records is the boys being sent back:
 /// the return to the river (vale_stormy_night.c) waits for it.

@@ -629,9 +629,9 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   z = actor->z.fixed >> 20;
   if (x == 81 && z == 12) {
     if ((actor->facing & 0xE000) == 0x4000) {
-      behavior = MB_CLIMB;
+      behavior = CELL_BEHAVIOR_CLIMB;
     }
-    MapGrid_SetMetatileBehaviorAt(0, x << 20, z << 20, behavior);
+    MapGrid_SetCellBehaviorAt(0, x << 20, z << 20, behavior);
   }
 }
 
@@ -640,7 +640,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
 static s32 ColosseumNavampaMatch_CheckLongLogCell(s32 x, s32 z) {
   struct Actor *actor;
 
-  if (MapGrid_GetMetatileBehaviorAt(0, x, z) == MB_WALL) {
+  if (MapGrid_GetCellBehaviorAt(0, x, z) == CELL_BEHAVIOR_WALL) {
     return -2;
   }
   actor = Actor_GetById(ACTOR_LOG_AREA_STONE_A);
@@ -1026,7 +1026,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  // Restore the scale ledges, movable weight and supporting metatile behaviors.
+  // Restore the scale ledges, movable weight and supporting cell behaviors.
   Task_AddFrame(ColosseumNavampaMatch_UpdateEastEndCollision, TASK_PASS_FRAME);
   MapGrid_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 

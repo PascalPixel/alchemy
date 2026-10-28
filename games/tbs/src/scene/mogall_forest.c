@@ -26,8 +26,8 @@
 ///   Apple.
 /// - Third area (SceneId_MogallForestKillerApe). Two logs roll into the river,
 ///   two rocks settle with Move, and a chest holds an Elven Shirt. Touching
-///   metatile behavior 22 the first time, the east ape leads the party south to
-///   a hiding place (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE); there (metatile
+///   cell behavior 22 the first time, the east ape leads the party south to
+///   a hiding place (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE); there (cell
 ///   behavior 23) the Killer Ape bursts out to fight
 ///   (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1), and coming back at
 ///   MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS marks it beaten
@@ -44,7 +44,7 @@
 /// _GetActorTemplates and _GetTriggers choose each scene's tables, and
 /// MogallForest_Initialize puts back the apes already out, the rolled logs and
 /// the settled rocks, scene by scene and entrance by entrance. The
-/// third area's east ape is also the guide at metatile behavior 22 and the
+/// third area's east ape is also the guide at cell behavior 22 and the
 /// Killer Ape, and the editions differ in how it is kept out of sight once it
 /// has come out (the #if blocks below and in MogallForest_Initialize).
 ///
@@ -471,7 +471,7 @@ const struct ActorTemplate *MogallForest_GetActorTemplates(void) {
   return gMogallForestSidePaths_ActorTemplates;
 }
 
-/// Mogall Forest, the first area: walking into a log (metatile behavior 20)
+/// Mogall Forest, the first area: walking into a log (cell behavior 20)
 /// pushes it; the river log pushed to row 26 rolls into the water and can be
 /// crossed. Sets FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED.
 static void MogallForest_FirstArea_PushLog(void) {
@@ -500,7 +500,7 @@ static void MogallForest_FirstArea_PushLog(void) {
   Event_End();
 }
 
-/// Mogall Forest, the first area: walking north into metatile behavior 25 jumps
+/// Mogall Forest, the first area: walking north into cell behavior 25 jumps
 /// the leader north across the log.
 static void MogallForest_FirstArea_JumpNorth(void) {
   struct FieldPosition position;
@@ -518,7 +518,7 @@ static void MogallForest_FirstArea_JumpNorth(void) {
   MogallForest_TryJumpLeaderTo(&position);
 }
 
-/// Mogall Forest, the first area: walking south into metatile behavior 26 jumps
+/// Mogall Forest, the first area: walking south into cell behavior 26 jumps
 /// the leader onto the log, which bobs under the weight.
 static void MogallForest_FirstArea_JumpSouth(void) {
   struct FieldPosition position;
@@ -556,7 +556,7 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   }
 }
 
-/// Mogall Forest, the first area: searching the sign (metatile behavior 27).
+/// Mogall Forest, the first area: searching the sign (cell behavior 27).
 /// "The broken sign reads: North: Fuchin Temple / South: Mogall Prairie..."
 static void MogallForest_ReadBrokenSign(void) {
   Event_Start();
@@ -692,7 +692,7 @@ static void MogallForest_CatchNut(void) {
   Event_End();
 }
 
-/// Mogall Forest, the second area: walking into a log (metatile behavior 20)
+/// Mogall Forest, the second area: walking into a log (cell behavior 20)
 /// pushes it; the log at row 23 changes the ground beside it, and the river log
 /// pushed to column 35 rolls into the water.
 static void MogallForest_SecondArea_PushLog(void) {
@@ -744,11 +744,16 @@ static void MogallForest_SecondArea_PushLog(void) {
 
 /// Marks the rock's cell and clears the cells it could have moved from.
 static inline void MogallForest_UpdateRockFootprint(s32 column, s32 row) {
-  PushedActor_FillGridAttributeRectangle(2, column, row, 1, 1, MB_WALL);
-  PushedActor_FillGridAttributeRectangle(2, column + 1, row, 1, 1, MB_NORMAL);
-  PushedActor_FillGridAttributeRectangle(2, column - 1, row, 1, 1, MB_NORMAL);
-  PushedActor_FillGridAttributeRectangle(2, column, row + 1, 1, 1, MB_NORMAL);
-  PushedActor_FillGridAttributeRectangle(2, column, row - 1, 1, 1, MB_NORMAL);
+  PushedActor_FillGridAttributeRectangle(2, column, row, 1, 1,
+                                         CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(2, column + 1, row, 1, 1,
+                                         CELL_BEHAVIOR_NORMAL);
+  PushedActor_FillGridAttributeRectangle(2, column - 1, row, 1, 1,
+                                         CELL_BEHAVIOR_NORMAL);
+  PushedActor_FillGridAttributeRectangle(2, column, row + 1, 1, 1,
+                                         CELL_BEHAVIOR_NORMAL);
+  PushedActor_FillGridAttributeRectangle(2, column, row - 1, 1, 1,
+                                         CELL_BEHAVIOR_NORMAL);
 }
 
 /// Mogall Forest, the second area: Move on the rock. Its footprint follows it,
@@ -914,7 +919,7 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   Event_End();
 }
 
-/// Mogall Forest, the third area: walking into a log (metatile behavior 20)
+/// Mogall Forest, the third area: walking into a log (cell behavior 20)
 /// pushes it; each river log rolls into the water at its column (42 and 40) and
 /// can be crossed.
 static void MogallForest_ThirdArea_PushLog(void) {
@@ -961,7 +966,7 @@ static void MogallForest_ThirdArea_PushLog(void) {
   Event_End();
 }
 
-/// Mogall Forest, the third area: walking west into metatile behavior 25 jumps
+/// Mogall Forest, the third area: walking west into cell behavior 25 jumps
 /// the leader onto the second river log, which bobs under the weight.
 static void MogallForest_ThirdArea_JumpWest(void) {
   struct Actor *leader;
@@ -1052,7 +1057,7 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
     rock->groundHeight = -PIXELS(2);
     rock->y.fixed = -PIXELS(2);
     GameFlag_Set(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
-    PushedActor_FillGridAttributeRectangle(2, 43, 23, 1, 1, MB_WALL);
+    PushedActor_FillGridAttributeRectangle(2, 43, 23, 1, 1, CELL_BEHAVIOR_WALL);
   }
   Event_End();
 }
@@ -1239,7 +1244,7 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   Event_End();
 }
 
-/// Mogall Forest, the third area: touching metatile behavior 22, once. The east
+/// Mogall Forest, the third area: touching cell behavior 22, once. The east
 /// ape appears again, turns to the party and leads it south to a hiding place.
 /// Sets FLAG_MOGALL_FOREST_LED_TO_KILLER_APE.
 static void MogallForest_ApeLeadsToKillerApe(void) {
@@ -1275,7 +1280,7 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
   Event_End();
 }
 
-/// Mogall Forest, the third area: touching metatile behavior 23 until the
+/// Mogall Forest, the third area: touching cell behavior 23 until the
 /// Killer Ape is beaten. The hiding place shakes twice and out comes the Killer
 /// Ape, the east ape's actor a fifth again as big, to fight
 /// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1); the party comes back
@@ -1521,7 +1526,7 @@ s32 MogallForest_Initialize(void) {
       fixedZ = Actor_GetById(ACTOR_SECOND_AREA_ROCK)->z.fixed;
       column >>= 20;
       PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             MB_WALL);
+                                             CELL_BEHAVIOR_WALL);
       WaitFrames(1);
       Actor_ConfigureSpriteColor(ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
       Actor_GetById(ACTOR_SECOND_AREA_LOG)->collisionFlags |=
@@ -1578,7 +1583,7 @@ s32 MogallForest_Initialize(void) {
       fixedZ = Actor_GetById(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed;
       column >>= 20;
       PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             MB_WALL);
+                                             CELL_BEHAVIOR_WALL);
       Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_NORTH_ROCK,
                                  SPRITE_COLOR_GREY);
       WaitFrames(1);
@@ -1628,7 +1633,7 @@ s32 MogallForest_Initialize(void) {
       fixedZ = Actor_GetById(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed;
       column >>= 20;
       PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             MB_WALL);
+                                             CELL_BEHAVIOR_WALL);
       Actor_ConfigureSpriteColor(ACTOR_THIRD_AREA_SOUTH_ROCK,
                                  SPRITE_COLOR_GREY);
       WaitFrames(1);

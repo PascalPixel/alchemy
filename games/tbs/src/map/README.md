@@ -26,8 +26,8 @@ The ledge in the recording is all three: a picture of a ledge, cells that say
 one cell, 2 by 2 of the console's 8-pixel tiles. A cell names its picture by
 number, a row of the map's table of pictures.
 
-**What standing on it does.** The [metatile
-behavior](../../glossary.md#metatile-behavior) is a number that walls and
+**What standing on it does.** The [cell
+behavior](../../glossary.md#cell-behavior) is a number that walls and
 [triggers](../../glossary.md#trigger) are keyed on. One number is a wall
 whatever the heights. Most belong to the scene: a
 [step trigger](../../glossary.md#step-trigger) runs when the leader steps onto or
@@ -56,19 +56,19 @@ walls and heights ([The field bank](../field/README.md#how-high-a-step-can-go)).
 A loaded cell is `struct MapGridCell`, one 32-bit word: 12 bits
 pick the metatile, four flag bits nothing reads ([below](#evidence)), a byte
 the behavior and a byte the shape. The behaviors are
-`enum MetatileBehavior`:
+`enum CellBehavior`:
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | (open ground) | 0 | nothing happens |
-| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the scene's own step triggers, [exits](../../glossary.md#exit) and examine triggers |
-| `MB_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with random battles of its own |
-| `MB_JAR` to `MB_WELL` | 242 to 247 | search spots with lines every scene shares: a jar, a barrel, a wooden box, a grave, books, a well |
-| `MB_DESERT_SAND` | 250 | ground that hurts the [party](../../glossary.md#the-party) over time: the Lamakan Desert's sand |
-| `MB_LEDGE` | 252 | jumped down with Down held |
-| `MB_CLIMB` | 253 | climbed up or down with Up or Down held |
-| `MB_JUMP_FORWARD` | 254 | jumped across |
-| `MB_WALL` | 255 | a wall, whatever the heights |
+| `CELL_BEHAVIOR_EVENT_FIRST` to `CELL_BEHAVIOR_EVENT_LAST` | 1 to 239 | the scene's own step triggers, [exits](../../glossary.md#exit) and examine triggers |
+| `CELL_BEHAVIOR_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with random battles of its own |
+| `CELL_BEHAVIOR_JAR` to `CELL_BEHAVIOR_WELL` | 242 to 247 | search spots with lines every scene shares: a jar, a barrel, a wooden box, a grave, books, a well |
+| `CELL_BEHAVIOR_DESERT_SAND` | 250 | ground that hurts the [party](../../glossary.md#the-party) over time: the Lamakan Desert's sand |
+| `CELL_BEHAVIOR_LEDGE` | 252 | jumped down with Down held |
+| `CELL_BEHAVIOR_CLIMB` | 253 | climbed up or down with Up or Down held |
+| `CELL_BEHAVIOR_JUMP_FORWARD` | 254 | jumped across |
+| `CELL_BEHAVIOR_WALL` | 255 | a wall, whatever the heights |
 
 ## A map's tables
 
@@ -203,7 +203,7 @@ map.
 
 | Plane, in stored order | Size | Values |
 | --- | --- | --- |
-| metatile behaviors | 16 KB | a byte a cell |
+| cell behaviors | 16 KB | a byte a cell |
 | shapes | 16 KB | a byte a cell |
 | metatiles | 32 KB | a halfword a cell |
 | the cell words they make | 64 KB | a word a cell |

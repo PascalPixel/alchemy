@@ -20,7 +20,7 @@
 /// death storms. The two tables agree up to ACTOR_HEALER; the travelers stand
 /// off the map until the audience.
 ///
-/// Stepping into the wounded soldiers' house (the step trigger on metatile
+/// Stepping into the wounded soldiers' house (the step trigger on cell
 /// behavior 50) plays TimberRoomsA_IodemQuestionsWoundedSoldiers once, while
 /// Iodem travels with the party and has not yet reached Babi Lighthouse. It
 /// sets FLAG_IODEM_MET_WOUNDED_SOLDIERS either way, which Iodem's lines in the
@@ -234,7 +234,7 @@ static void TimberRoomsA_LeaveByExit(void) {
 }
 
 /// In Suhalla after Babi's audience, stepping into the house where the two
-/// wounded soldiers lie (metatile behavior 50), once: Iodem steps out of the
+/// wounded soldiers lie (cell behavior 50), once: Iodem steps out of the
 /// party and questions them. "Iodem..." They were escorting Sheba to Lalivero
 /// when a sandstorm hit them, and tell of others who stopped the cyclones with
 /// water and slew the monsters causing them. Iodem asks whether these are the

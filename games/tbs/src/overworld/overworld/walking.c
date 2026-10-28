@@ -48,7 +48,7 @@ s32 Field_CountRequests(void) {
 
   // BUG: a sum can be 0 with requests pending. Field_UpdateWalking raises
   // FIELD_RAISED_TRIGGER_PARTY_FELL (-1) on the frame a party member falls to
-  // poison, and the step trigger request is the cell's metatile behavior, 1 on
+  // poison, and the step trigger request is the cell's cell behavior, 1 on
   // step trigger 1's cells (154 scenes have them); together they sum to 0, and
   // both wait until another request breaks the tie, by which time a later
   // cell's behavior may have replaced the step trigger. BUGFIX tests each
@@ -65,7 +65,7 @@ s32 Field_CountRequests(void) {
 #endif
 }
 
-/// Returns the metatile behavior of the map cell 16 pixels ahead of the party
+/// Returns the cell behavior of the map cell 16 pixels ahead of the party
 /// leader (a World Map metatile on the World Map), or 0 without a leader.
 ///
 /// Called by Field_FindItemTrigger and Scene_FindPsynergyTrigger (items.c),
@@ -137,7 +137,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
 /// Called by Field_UpdateWalking when the leader steps on a cell with a
-/// non-zero metatile behavior. Sets work->exit and stops the leader.
+/// non-zero cell behavior. Sets work->exit and stops the leader.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   // A do/while or while scan changes register allocation (51 text bytes in
   // tbs-en); keep the sentinel backedge until that form matches.
@@ -253,9 +253,9 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   // request it raises.
   if (event != 0)
     Field_CheckExitRegions(x, y, z);
-  if (event >= MB_EVENT_FIRST && event <= MB_EVENT_LAST)
+  if (event >= CELL_BEHAVIOR_EVENT_FIRST && event <= CELL_BEHAVIOR_EVENT_LAST)
     work->stepTrigger = event;
-  if (event >= MB_LEDGE && event <= MB_JUMP_FORWARD)
+  if (event >= CELL_BEHAVIOR_LEDGE && event <= CELL_BEHAVIOR_JUMP_FORWARD)
     work->pushCell = event;
 
   // Only while walking (not climbing) towards a target.
@@ -271,12 +271,12 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       fullEncounterRate = 1;
       work->encounter =
           Encounter_RollWorldMap((s32)&leader->x.fixed, encounterSpeed);
-    } else if (event == MB_ENCOUNTER_GROUND_1 ||
-               event == MB_ENCOUNTER_GROUND_2) {
+    } else if (event == CELL_BEHAVIOR_ENCOUNTER_GROUND_1 ||
+               event == CELL_BEHAVIOR_ENCOUNTER_GROUND_2) {
       fullEncounterRate =
-          work->encounterZones[event - (MB_ENCOUNTER_GROUND_1 - 1)];
+          work->encounterZones[event - (CELL_BEHAVIOR_ENCOUNTER_GROUND_1 - 1)];
       work->encounter = Encounter_RollMapStep(
-          event - (MB_ENCOUNTER_GROUND_1 - 1), encounterSpeed);
+          event - (CELL_BEHAVIOR_ENCOUNTER_GROUND_1 - 1), encounterSpeed);
     } else {
       fullEncounterRate = work->encounterZones[0];
       work->encounter = Encounter_RollMapStep(0, encounterSpeed);
@@ -305,8 +305,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     // the count follows the distance walked there (the Lamakan Desert's
     // limit is 600).
     if (gAdventure.hazardMode == HAZARD_COUNT_ON_CELLS &&
-        event == MB_DESERT_SAND) {
-      if (work->previousCell->behavior == MB_DESERT_SAND)
+        event == CELL_BEHAVIOR_DESERT_SAND) {
+      if (work->previousCell->behavior == CELL_BEHAVIOR_DESERT_SAND)
         gAdventure.hazardSteps += leader->speedLimit / Q16_ONE;
       else
         gAdventure.hazardSteps = gAdventure.hazardLimit / 2;

@@ -32,13 +32,13 @@
 	.set import.TilesetAnim_Resume, 1
 	.set import.TilesetAnim_Pause, 1
 	.set import.MapGrid_GetTerrainHeight, 1
-	.set import.MapGrid_GetMetatileBehaviorAt, 1
+	.set import.MapGrid_GetCellBehaviorAt, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CopyCellIndexRect, 1
 	.set import.MapGrid_CheckCollision, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.ActorSystem_SuspendProjectionAndShowSprites, 1
-	.set import.MapGrid_SetMetatileBehaviorAt, 1
+	.set import.MapGrid_SetCellBehaviorAt, 1
 	.set import.FieldMessage_Show, 1
 	.set import.MessageArgument_Push, 1
 	.set import.Icon_DrawItem, 1

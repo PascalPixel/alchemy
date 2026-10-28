@@ -140,7 +140,7 @@ void FieldPsynergy_Carry(void);
 struct TriggerView {
   s32 flags; ///< the low 4 bits are the kind (TriggerKind; 7 talks to
              ///< the actor the party stopped)
-  u8 value;  ///< the target (an actor id or a metatile behavior)
+  u8 value;  ///< the target (an actor id or a cell behavior)
   u8 unused05;
   s16 condition; ///< as for GameFlag_IsConditionActive
   s32 result;    ///< below 0x10000 a message, else a function to call

@@ -260,7 +260,7 @@ enum {
   ACTOR_CAVE_SECOND_SWITCH_IVY,
   /// An invisible solid actor (SPRITE_BLANK, ACTOR_SOLID) at (504,
   /// 168) that makes the jar the layout draws there, in the cell behind the
-  /// cave's eastern door, stop the leader: the layout's metatile behavior lets
+  /// cave's eastern door, stop the leader: the layout's cell behavior lets
   /// him walk onto the jar, and with this actor he stops 14 pixels short
   /// of it. A blank sprite draws only its shadow, which
   /// LunpaFortress_InitializeCave turns off.
@@ -280,7 +280,7 @@ enum {
   /// (56, 72), (136, 72) and (216, 72), in line with the cell doors
   /// gLunpaFortressToadonpaDoorCells lists third, second and first, that make
   /// the jar, chest and jar the layout draws in those cells stop the leader.
-  /// The layout's metatile behaviors let him walk onto the two jars; the
+  /// The layout's cell behaviors let him walk onto the two jars; the
   /// chest's own cells already stop him, so the middle actor changes
   /// nothing. Scene_Initialize turns off the shadows their blank sprites would
   /// draw and lays them underfoot.
@@ -315,14 +315,14 @@ enum {
   ACTOR_INVISIBLE_TOADONPA_DODONPA
 };
 
-/// The metatile behaviors the fortress's triggers answer: the cell doors
-/// count from MB_LUNPA_FORTRESS_FIRST_DOOR in each scene.
-enum LunpaFortressMetatileBehavior {
+/// The cell behaviors the fortress's triggers answer: the cell doors
+/// count from CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR in each scene.
+enum LunpaFortressCellBehavior {
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
-  MB_LUNPA_FORTRESS_LOCKED_DOOR = 99,
-  MB_LUNPA_FORTRESS_SEALED_DOOR = 98,
-  MB_LUNPA_FORTRESS_FIRST_DOOR = 40
+  CELL_BEHAVIOR_LUNPA_FORTRESS_LOCKED_DOOR = 99,
+  CELL_BEHAVIOR_LUNPA_FORTRESS_SEALED_DOOR = 98,
+  CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR = 40
 };
 
 /// The events a watching guard raises on spotting the party.
@@ -344,7 +344,8 @@ enum { EXIT_THROWN_OUT = 60 };
 enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
 
 /// The first of the flags that remember which cell doors the Cell Key opened,
-/// per scene: one for each door trigger from MB_LUNPA_FORTRESS_FIRST_DOOR.
+/// per scene: one for each door trigger from
+/// CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR.
 enum {
   TOADONPA_DOOR_FLAG = FLAG_AREA_TEMP_50,
   CAVE_DOOR_FLAG = FLAG_AREA_TEMP_55,
@@ -577,14 +578,14 @@ static void LunpaFortress_UnlockToadonpaDoor(void) {
   work = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
     doorTrigger = work->stepTrigger;
-    doorIndex = doorTrigger - MB_LUNPA_FORTRESS_FIRST_DOOR;
+    doorIndex = doorTrigger - CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR;
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
       Event_PlaySong(SE_GATE_MOVE);
       MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      GameFlag_Set(doorTrigger +
-                   (TOADONPA_DOOR_FLAG - MB_LUNPA_FORTRESS_FIRST_DOOR));
+      GameFlag_Set(doorTrigger + (TOADONPA_DOOR_FLAG -
+                                  CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR));
     }
   }
 }
@@ -617,11 +618,13 @@ static void LunpaFortress_UnlockCaveDoor(void) {
   work = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
     doorTrigger = work->stepTrigger;
-    LunpaFortress_OpenCaveDoor(doorTrigger - MB_LUNPA_FORTRESS_FIRST_DOOR);
+    LunpaFortress_OpenCaveDoor(doorTrigger -
+                               CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
     Event_PlaySong(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    GameFlag_Set(doorTrigger + (CAVE_DOOR_FLAG - MB_LUNPA_FORTRESS_FIRST_DOOR));
+    GameFlag_Set(doorTrigger +
+                 (CAVE_DOOR_FLAG - CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR));
   }
 }
 
@@ -646,12 +649,12 @@ static void LunpaFortress_UnlockUpperFloorDoor(void) {
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
     doorTrigger = work->stepTrigger;
     LunpaFortress_OpenUpperFloorDoor(doorTrigger -
-                                     MB_LUNPA_FORTRESS_FIRST_DOOR);
+                                     CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
     Event_PlaySong(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    GameFlag_Set(doorTrigger +
-                 (UPPER_FLOOR_DOOR_FLAG - MB_LUNPA_FORTRESS_FIRST_DOOR));
+    GameFlag_Set(doorTrigger + (UPPER_FLOOR_DOOR_FLAG -
+                                CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR));
   }
 }
 
@@ -679,12 +682,12 @@ static void LunpaFortress_UnlockGroundFloorDoor(void) {
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
     doorTrigger = work->stepTrigger;
     LunpaFortress_OpenGroundFloorDoor(doorTrigger -
-                                      MB_LUNPA_FORTRESS_FIRST_DOOR);
+                                      CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
     Event_PlaySong(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    GameFlag_Set(doorTrigger +
-                 (GROUND_FLOOR_DOOR_FLAG - MB_LUNPA_FORTRESS_FIRST_DOOR));
+    GameFlag_Set(doorTrigger + (GROUND_FLOOR_DOOR_FLAG -
+                                CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR));
   }
 }
 
@@ -1301,7 +1304,7 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
 
     if (playerX == 43 && playerZ > 28 && playerZ <= 31) {
       s16 *touchedTrigger = &gFieldWork->stepTrigger;
-      s32 doorTrigger = MB_LUNPA_FORTRESS_FIRST_DOOR + 1;
+      s32 doorTrigger = CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 1;
 
       *touchedTrigger = doorTrigger;
       LunpaFortress_UnlockGroundFloorDoor();
@@ -1322,7 +1325,7 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
     if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
         (leader->facing == FACING_NORTH || leader->facing == FACING_SOUTH)) {
       s16 *touchedTrigger = &gFieldWork->stepTrigger;
-      s32 doorTrigger = MB_LUNPA_FORTRESS_FIRST_DOOR;
+      s32 doorTrigger = CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR;
 
       *touchedTrigger = doorTrigger;
       LunpaFortress_UnlockUpperFloorDoor();
@@ -3986,13 +3989,13 @@ struct Trigger gLunpaFortressGroundFloorTriggers[] = {
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_TREASURE_ROOM },
     { TRIGGER_EXIT, 19, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_TO_NORTHEAST_PASSAGE },
     { TRIGGER_EXIT, 20, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_PASSAGE },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchLockedDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR, GROUND_FLOOR_DOOR_FLAG, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
-    { STEP_TRIGGER_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR, GROUND_FLOOR_DOOR_FLAG, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
-    { STEP_TRIGGER_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
-    { STEP_TRIGGER_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchLockedDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR, GROUND_FLOOR_DOOR_FLAG, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
+    { STEP_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR, GROUND_FLOOR_DOOR_FLAG, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
+    { STEP_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
+    { STEP_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockGroundFloorDoor) },
     { TRIGGER_STEP, 50, FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY, EVENT(LunpaFortress_EntranceGuardThrowsPartyOut) },
     { TRIGGER_STEP, 51, FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY, EVENT(LunpaFortress_SentriesThrowPartyOut) },
     { TRIGGER_TALK, ACTOR_GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
@@ -4048,10 +4051,10 @@ struct Trigger gLunpaFortressUpperFloorTriggers[] = {
     { TRIGGER_STEP, 31, FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN, EVENT(LunpaFortress_FightThreeGuards) },
     { TRIGGER_STEP, 32, FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN, EVENT(LunpaFortress_FightEastGuard) },
     { TRIGGER_STEP, 33, FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, EVENT(LunpaFortress_FightWestGuard) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchLockedDoor) },
-    { STEP_TRIGGER_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR, UPPER_FLOOR_DOOR_FLAG, EVENT(LunpaFortress_UnlockUpperFloorDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockUpperFloorDoor) },
-    { STEP_TRIGGER_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockUpperFloorDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchLockedDoor) },
+    { STEP_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR, UPPER_FLOOR_DOOR_FLAG, EVENT(LunpaFortress_UnlockUpperFloorDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockUpperFloorDoor) },
+    { STEP_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockUpperFloorDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_UPPER_FLOOR_CELL_KEY, CONDITION_ALWAYS, EVENT(LunpaFortress_TakeCellKey) },
     { TRIGGER_TALK, ACTOR_UPPER_FLOOR_CELL_KEY, CONDITION_ALWAYS, EVENT(LunpaFortress_TakeCellKey) },
     { TRIGGER_TALK, ACTOR_UPPER_FLOOR_DODONPAS_WIFE, CONDITION_ALWAYS, EVENT(LunpaFortress_AskWhereDodonpaIs) },
@@ -4089,12 +4092,12 @@ struct Trigger gLunpaFortressCaveTriggers[] = {
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTH },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchLockedDoor) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_FORTRESS_SEALED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchSealedDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR, CAVE_DOOR_FLAG, EVENT(LunpaFortress_UnlockCaveDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, CAVE_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockCaveDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, CAVE_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockCaveDoor) },
-    { STEP_TRIGGER_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, CAVE_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockCaveDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchLockedDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_FORTRESS_SEALED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchSealedDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR, CAVE_DOOR_FLAG, EVENT(LunpaFortress_UnlockCaveDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 1, CAVE_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockCaveDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 2, CAVE_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockCaveDoor) },
+    { STEP_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 2, CAVE_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockCaveDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS, EVENT(LunpaFortress_CratesSink) },
     { STEP_TRIGGER_WALKING, 70, CONDITION_ALWAYS, EVENT(LunpaFortress_PushCrates) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 51, FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY, EVENT(LunpaFortress_FlipSecondSwitch) },
@@ -4112,12 +4115,12 @@ struct Trigger gLunpaFortressTriggersOther[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchLockedDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR, TOADONPA_DOOR_FLAG, EVENT(LunpaFortress_UnlockToadonpaDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, TOADONPA_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockToadonpaDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, TOADONPA_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockToadonpaDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 3, TOADONPA_DOOR_FLAG + 3, EVENT(LunpaFortress_UnlockToadonpaDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 4, TOADONPA_DOOR_FLAG + 4, EVENT(LunpaFortress_UnlockToadonpaDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(LunpaFortress_SearchLockedDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR, TOADONPA_DOOR_FLAG, EVENT(LunpaFortress_UnlockToadonpaDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 1, TOADONPA_DOOR_FLAG + 1, EVENT(LunpaFortress_UnlockToadonpaDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 2, TOADONPA_DOOR_FLAG + 2, EVENT(LunpaFortress_UnlockToadonpaDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 3, TOADONPA_DOOR_FLAG + 3, EVENT(LunpaFortress_UnlockToadonpaDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 4, TOADONPA_DOOR_FLAG + 4, EVENT(LunpaFortress_UnlockToadonpaDoor) },
     { TRIGGER_STEP, 20, FLAG_LUNPA_FORTRESS_FINDING_HAMMET, EVENT(LunpaFortress_FindHammet) },
     { TRIGGER_TALK, ACTOR_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },

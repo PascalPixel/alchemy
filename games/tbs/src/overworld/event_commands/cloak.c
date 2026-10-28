@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// The metatile behavior of the cells Cloak can stay hidden on: byte 2 of a
+/// The cell behavior of the cells Cloak can stay hidden on: byte 2 of a
 /// cell (MapGridCell.behavior), or of a 4-byte gMetatiles entry on the
 /// World Map.
 #define CLOAK_TILE 0xfb

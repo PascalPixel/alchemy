@@ -18,7 +18,7 @@
 ///   the area flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
 ///   FLAG_VALE_STORM_FOURTH_ROCK_PASSED: ValeStormyNight_FirstRockFalls to
 ///   ValeStormyNight_FourthRockFalls drop a rock across a path at four spots.
-///   The _FELL flag puts back the rock and the metatile behaviors of the cells
+///   The _FELL flag puts back the rock and the cell behaviors of the cells
 ///   it blocks; the _PASSED flag, cleared once the party leaves Vale, keeps the
 ///   event from running again.
 /// - FLAG_VALE_STORM_BUMPED_INTO_VILLAGER: ValeStormyNight_BumpIntoShovingMan,
@@ -313,7 +313,7 @@ static s32 ValeStormyNight_RerollHeadingOnCountdown(struct Actor *interpreter) {
 /// ★ Named from the game: "Oh... Sorry to shove you like that." (MsgValeHuh)
 #define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_SCENE_TEMP_06
 /// The leader is on the rope bridge over the river. While it is set, the
-/// bridge's cells take the deck's shapes and metatile behaviors: its two middle
+/// bridge's cells take the deck's shapes and cell behaviors: its two middle
 /// rows walkable at the deck's height and its rails walls; stepping off puts
 /// back the river's, walled water between open banks.
 /// ★ Named from what the player sees: a wooden bridge with rope rails over the
@@ -340,8 +340,8 @@ const struct Trigger *ValeStormyNight_GetTriggers(void) {
   return gValeStormyNight_Triggers;
 }
 
-/// In Vale on the stormy night, swaps the bridge's metatile behaviors as
-/// the leader steps onto it. Reached by stepping on metatile behavior 15. Sets
+/// In Vale on the stormy night, swaps the bridge's cell behaviors as
+/// the leader steps onto it. Reached by stepping on cell behavior 15. Sets
 /// FLAG_VALE_ON_BRIDGE, which ValeStormyNight_Initialize reads to swap them
 /// again.
 static void ValeStormyNight_StepOntoBridge(void) {
@@ -349,8 +349,8 @@ static void ValeStormyNight_StepOntoBridge(void) {
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// In Vale on the stormy night, restores the bridge's metatile behaviors as
-/// the leader steps off it. Reached by stepping on metatile behavior 14. Clears
+/// In Vale on the stormy night, restores the bridge's cell behaviors as
+/// the leader steps off it. Reached by stepping on cell behavior 14. Clears
 /// FLAG_VALE_ON_BRIDGE.
 static void ValeStormyNight_StepOffBridge(void) {
   GameFlag_Clear(FLAG_VALE_ON_BRIDGE);
@@ -377,7 +377,7 @@ UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
 }
 
 /// Leaves through an exit the exit table doesn't list. In Vale on the stormy
-/// night, stepping on metatile behavior 2 requests exit 1, the one number the
+/// night, stepping on cell behavior 2 requests exit 1, the one number the
 /// exit table leaves out; Scene_TakeExit therefore falls back to the first
 /// exit's scene, Vale's SceneId_ValePlaza, at ENTRANCE_DEFAULT.
 static void ValeStormyNight_LeaveNorthwestToValePlaza(void) {
@@ -387,7 +387,7 @@ static void ValeStormyNight_LeaveNorthwestToValePlaza(void) {
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
 /// cottage.
-/// Reached by stepping on metatile behavior 3; arrives at
+/// Reached by stepping on cell behavior 3; arrives at
 /// VALE_KRADENS_COTTAGE_FROM_VALE_NORTH.
 static void ValeStormyNight_LeaveToValeKradensCottageNorth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
@@ -396,7 +396,7 @@ static void ValeStormyNight_LeaveToValeKradensCottageNorth(void) {
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
 /// cottage by its second path.
-/// Reached by stepping on metatile behavior 4; arrives at
+/// Reached by stepping on cell behavior 4; arrives at
 /// VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH.
 static void ValeStormyNight_LeaveToValeKradensCottageSouth(void) {
   Sound_PlaySong(SE_MAP_EXIT);
@@ -405,7 +405,7 @@ static void ValeStormyNight_LeaveToValeKradensCottageSouth(void) {
 
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
 /// gathered (SceneId_ValePlaza).
-/// Reached by stepping on metatile behavior 5; arrives at VALE_PLAZA_FROM_VALE.
+/// Reached by stepping on cell behavior 5; arrives at VALE_PLAZA_FROM_VALE.
 /// After the Boulder swept them away, Garet first resolves to go after Isaac
 /// (ValeStormyNight_GaretFollowsIsaac).
 static void ValeStormyNight_LeaveToValePlaza(void) {
@@ -418,7 +418,7 @@ static void ValeStormyNight_LeaveToValePlaza(void) {
 }
 
 /// In Vale on the stormy night, opens the door of Garet's house and goes in.
-/// Reached by walking north into metatile behavior 6; arrives at
+/// Reached by walking north into cell behavior 6; arrives at
 /// COTTAGE_ROOMS_A_FROM_VALE_EAST, the house where Garet's family lives.
 static void ValeStormyNight_LeaveToCottageRoomsAEast(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
@@ -431,7 +431,7 @@ static void ValeStormyNight_LeaveToCottageRoomsAEast(void) {
 /// A stout man runs out of a house and shoves Isaac. In Vale on the stormy
 /// night, this is Isaac's first time at the door of
 /// VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_SOUTH; afterwards the door opens as
-/// usual. "Huh? Isaac?" Reached by walking north into metatile behavior 7. The
+/// usual. "Huh? Isaac?" Reached by walking north into cell behavior 7. The
 /// shove plays until FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or
 /// FLAG_VALE_STORM_SECOND_ROCK_FELL is set, and sets
 /// FLAG_VALE_SHOVING_MANS_DOOR_OPEN; otherwise goes into a house of Vale
@@ -454,7 +454,7 @@ static void ValeStormyNight_LeaveToCottageRoomsA(void) {
 
 /// Goes back into Isaac's house on the stormy night. It's the door he and Dora
 /// came out of in Vale, and it opens unless they left it open.
-/// Reached by walking north into metatile behavior 8; takes
+/// Reached by walking north into cell behavior 8; takes
 /// VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE, to
 /// COTTAGE_ROOMS_B_FROM_VALE in SceneId_CottageRoomsB, where Vale's
 /// VALE_TO_COTTAGE_ROOMS_B leads by day.
@@ -469,7 +469,7 @@ static void ValeStormyNight_LeaveToIsaacsHouse(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into metatile behavior 9; arrives in a house of
+/// Reached by walking north into cell behavior 9; arrives in a house of
 /// Vale at COTTAGE_ROOMS_A_FROM_VALE_NORTH.
 static void ValeStormyNight_LeaveToCottageRoomsANorth(void) {
   Sound_PlaySong(SE_DOOR_OPEN);
@@ -480,7 +480,7 @@ static void ValeStormyNight_LeaveToCottageRoomsANorth(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into metatile behavior 10; takes
+/// Reached by walking north into cell behavior 10; takes
 /// VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST, to
 /// COTTAGE_ROOMS_A_FROM_VALE_WEST in SceneId_CottageRoomsA, where
 /// Vale's VALE_TO_COTTAGE_ROOMS_A_WEST leads by day.
@@ -492,7 +492,7 @@ static void ValeStormyNight_LeaveToCottageRoomsAWest(void) {
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_COTTAGE_ROOMS_A_WEST);
 }
 
-/// Unused: its row answers metatile behavior 11, which no cell of the stormy
+/// Unused: its row answers cell behavior 11, which no cell of the stormy
 /// night's layout (map/map_000) carries. It would have opened Isaac's
 /// door, as ValeStormyNight_LeaveToCottageRoomsBWest does for behavior 12,
 /// walked the leader to the same spot and taken
@@ -509,7 +509,7 @@ static void ValeStormyNight_UnusedLeaveToCottageRoomsAWestBySecondDoor(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into metatile behavior 12; arrives in the house
+/// Reached by walking north into cell behavior 12; arrives in the house
 /// with two beds before a hearth, COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_WEST.
 static void ValeStormyNight_LeaveToCottageRoomsBWest(void) {
   Event_PlaySong(SE_DOOR_OPEN);
@@ -520,7 +520,7 @@ static void ValeStormyNight_LeaveToCottageRoomsBWest(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into metatile behavior 13; arrives in the house
+/// Reached by walking north into cell behavior 13; arrives in the house
 /// with two beds before a hearth, COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_EAST.
 static void ValeStormyNight_LeaveToCottageRoomsBEast(void) {
   Event_PlaySong(SE_DOOR_OPEN);
@@ -867,7 +867,7 @@ static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
 /// In Vale on the stormy night, walking past: the first rock
 /// (ACTOR_FIRST_ROCK) falls across the path, and Garet, once with Isaac, says
 /// they cannot get around it.
-/// Reached by stepping on metatile behavior 41 until
+/// Reached by stepping on cell behavior 41 until
 /// FLAG_VALE_STORM_FIRST_ROCK_PASSED is set, which this sets. Sets
 /// FLAG_VALE_STORM_FIRST_ROCK_FELL as the rock falls; with Garet along, before
 /// the Boulder swept Felix, his parents and Kyle away, his first comment on any
@@ -935,7 +935,7 @@ static void ValeStormyNight_FirstRockFalls(void) {
   }
 }
 
-/// Applies the metatile behaviors left by the first rock (ACTOR_FIRST_ROCK).
+/// Applies the cell behaviors left by the first rock (ACTOR_FIRST_ROCK).
 /// Called by ValeStormyNight_FirstRockFalls and, once the rock has fallen, by
 /// ValeStormyNight_Initialize.
 static void ValeStormyNight_ApplyFirstRockCollision(void) {
@@ -948,7 +948,7 @@ static void ValeStormyNight_ApplyFirstRockCollision(void) {
 
 /// In Vale on the stormy night, walking past: the second rock
 /// (ACTOR_FIRST_ROCK + 1) falls down the path.
-/// Reached by stepping on metatile behavior 42; as
+/// Reached by stepping on cell behavior 42; as
 /// ValeStormyNight_FirstRockFalls does the first, with
 /// FLAG_VALE_STORM_SECOND_ROCK_FELL and FLAG_VALE_STORM_SECOND_ROCK_PASSED.
 static void ValeStormyNight_SecondRockFalls(void) {
@@ -1009,7 +1009,7 @@ static void ValeStormyNight_SecondRockFalls(void) {
   }
 }
 
-/// Applies the metatile behaviors left by the second rock (ACTOR_FIRST_ROCK +
+/// Applies the cell behaviors left by the second rock (ACTOR_FIRST_ROCK +
 /// 1). Called by ValeStormyNight_SecondRockFalls and, once the rock has fallen,
 /// by ValeStormyNight_Initialize.
 static void ValeStormyNight_ApplySecondRockCollision(void) {
@@ -1025,7 +1025,7 @@ static void ValeStormyNight_ApplySecondRockCollision(void) {
 
 /// In Vale on the stormy night, walking past: the third rock
 /// (ACTOR_FIRST_ROCK + 2) falls down the path.
-/// Reached by stepping on metatile behavior 43; as
+/// Reached by stepping on cell behavior 43; as
 /// ValeStormyNight_FirstRockFalls does the first, with
 /// FLAG_VALE_STORM_THIRD_ROCK_FELL and FLAG_VALE_STORM_THIRD_ROCK_PASSED.
 static void ValeStormyNight_ThirdRockFalls(void) {
@@ -1085,7 +1085,7 @@ static void ValeStormyNight_ThirdRockFalls(void) {
   }
 }
 
-/// Applies the metatile behaviors left by the third rock (ACTOR_FIRST_ROCK +
+/// Applies the cell behaviors left by the third rock (ACTOR_FIRST_ROCK +
 /// 2). Called by ValeStormyNight_ThirdRockFalls and, once the rock has fallen,
 /// by ValeStormyNight_Initialize.
 static void ValeStormyNight_ApplyThirdRockCollision(void) {
@@ -1097,7 +1097,7 @@ static void ValeStormyNight_ApplyThirdRockCollision(void) {
 
 /// In Vale on the stormy night, walking past: the fourth rock
 /// (ACTOR_FIRST_ROCK + 3) falls down the path.
-/// Reached by stepping on metatile behavior 44; as
+/// Reached by stepping on cell behavior 44; as
 /// ValeStormyNight_FirstRockFalls does the first, with
 /// FLAG_VALE_STORM_FOURTH_ROCK_FELL and FLAG_VALE_STORM_FOURTH_ROCK_PASSED.
 static void ValeStormyNight_FourthRockFalls(void) {
@@ -1154,7 +1154,7 @@ static void ValeStormyNight_FourthRockFalls(void) {
   }
 }
 
-/// Applies the metatile behaviors left by the fourth rock (ACTOR_FIRST_ROCK +
+/// Applies the cell behaviors left by the fourth rock (ACTOR_FIRST_ROCK +
 /// 3). Called by ValeStormyNight_FourthRockFalls and, once the rock has fallen,
 /// by ValeStormyNight_Initialize.
 static void ValeStormyNight_ApplyFourthRockCollision(void) {
@@ -1202,7 +1202,7 @@ static void ValeStormyNight_BumpIntoShovingMan(void) {
 
 /// In Vale on the stormy night, Isaac hears Garet struggling with his things.
 /// "Ugh... Hrnghhh..."
-/// Reached by stepping on metatile behavior 30, until Garet has joined. Sets
+/// Reached by stepping on cell behavior 30, until Garet has joined. Sets
 /// FLAG_VALE_STORM_HEARD_GARET.
 static void ValeStormyNight_HearGaretStruggling(void) {
   if (Event_GetFlag(FLAG_VALE_STORM_HEARD_GARET) == 0) {
@@ -1224,7 +1224,7 @@ static void ValeStormyNight_HearGaretStruggling(void) {
 
 /// In Vale on the stormy night, walking away from him: Garet calls after
 /// Isaac, asking whether he will just leave him there.
-/// Reached by stepping on metatile behavior 31 once Isaac has heard Garet and
+/// Reached by stepping on cell behavior 31 once Isaac has heard Garet and
 /// before Garet joins; ValeStormyNight_GaretLeavesHisChest brings him along.
 static void ValeStormyNight_GaretCallsAfterIsaac(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
@@ -1310,7 +1310,7 @@ static void ValeStormyNight_GaretLeavesHisChest(void) {
 /// Unused: an earlier version of Garet joining Isaac on the stormy night,
 /// which the game never plays.
 ///
-/// Its row answers metatile behavior 32, but every way there crosses the cells
+/// Its row answers cell behavior 32, but every way there crosses the cells
 /// where Isaac hears Garet struggling (behavior 30,
 /// ValeStormyNight_HearGaretStruggling) and where Garet calls after him and
 /// joins (behavior 31, ValeStormyNight_GaretCallsAfterIsaac), so Garet has
@@ -1373,7 +1373,7 @@ static void ValeStormyNight_UnusedGaretJoinsIsaac(void) {
 
 /// In Vale on the stormy night, Garet turns Isaac back from the path north,
 /// which leads to Mt. Aleph.
-/// Reached by stepping on metatile behavior 33, every time; Isaac is walked
+/// Reached by stepping on cell behavior 33, every time; Isaac is walked
 /// back south.
 static void ValeStormyNight_WarnAboutMtAleph(void) {
   struct Actor *leader;
@@ -1448,7 +1448,7 @@ static void ValeStormyNight_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 /// In Vale on the stormy night, the elders hold the Boulder with their
 /// Psynergy as it slips.
 /// "Ahhh! The Boulder! It's falling!"
-/// Reached by stepping on metatile behavior 34 until FLAG_VALE_BOULDER_FELL is
+/// Reached by stepping on cell behavior 34 until FLAG_VALE_BOULDER_FELL is
 /// set, which this sets. The elders and their two stand-ins
 /// (gValeStormyNight_BoulderWatchers, ACTOR_ELDER_EAST_STAND_IN to
 /// ACTOR_ELDER_WEST) are placed for the event and removed after it.
@@ -1686,7 +1686,7 @@ UNUSED static void ValeStormyNight_FlashBoulderMapAnimationEntries(void) {
 /// Vale on the stormy night, her brother Felix has fallen in and clings on as
 /// Kyle and her parents try to save him. "Oh no! My brother!" The rope will not
 /// reach and no one has Psynergy left, so they send for help. Reached by
-/// stepping on metatile behavior 35 until FLAG_VALE_STORM_SAW_FELIX_HANGING_ON
+/// stepping on cell behavior 35 until FLAG_VALE_STORM_SAW_FELIX_HANGING_ON
 /// is set, which this sets after ValeStormyNight_DoraGoesForHelp.
 static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
@@ -2122,7 +2122,7 @@ static void ValeStormyNight_TalkAboutSavingFelix(void) {
 /// night, Jenna comes back to the river with Isaac, Garet and the man whose
 /// Psynergy is restored ("Mom! Dad! We're back!"), and as Dora calls everyone
 /// down to save Felix the Boulder comes down the river and sweeps away Felix,
-/// his parents and Kyle. Reached by stepping on metatile behavior 36 once
+/// his parents and Kyle. Reached by stepping on cell behavior 36 once
 /// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set (vale_plaza.c), until
 /// FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY is set, which this sets.
 static void ValeStormyNight_BoulderSweepsThemAway(void) {
@@ -2832,7 +2832,7 @@ static void ValeStormyNight_GaretFollowsIsaac(void) {
   GameFlag_Set(FLAG_VALE_STORM_GARET_LEFT);
 }
 
-/// Redraws the riverbank as the Boulder left it, pictures and metatile
+/// Redraws the riverbank as the Boulder left it, pictures and cell
 /// behaviors. Called by ValeStormyNight_ShowBoulderSweepingDownriver and, on
 /// later arrivals, by ValeStormyNight_Initialize.
 static void ValeStormyNight_RebuildRiverbank(void) {
@@ -2856,7 +2856,7 @@ static void ValeStormyNight_RebuildRiverbank(void) {
 
 /// In Vale on the stormy night, a monster attacks on the paths (slot 2 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
-/// Reached by stepping on metatile behavior 16 until
+/// Reached by stepping on cell behavior 16 until
 /// FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT is set.
 static void ValeStormyNight_FightThirdMonster(void) {
   struct FieldWork *state;
@@ -2874,7 +2874,7 @@ static void ValeStormyNight_FightThirdMonster(void) {
 
 /// In Vale on the stormy night, another monster attacks (slot 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
-/// Reached by stepping on metatile behavior 17 until
+/// Reached by stepping on cell behavior 17 until
 /// FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT is set.
 static void ValeStormyNight_FightFourthMonster(void) {
   struct FieldWork *state;

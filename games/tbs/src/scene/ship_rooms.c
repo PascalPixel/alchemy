@@ -21,11 +21,11 @@
 ///
 /// - At Kalay, while the ship waits for its replacement from Tolbi. Once the
 ///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into
-///   the hold (MB_SHIP_ROOMS_HOLD_WARRIORS) has Ouranos, a warrior
+///   the hold (CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS) has Ouranos, a warrior
 ///   bound for Colosso who "can't stand water", threaten to go ashore, and he
 ///   and his friend Sean go to make the captain sail
 ///   (FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The crew's talk of the delay
-///   plays here (MB_SHIP_ROOMS_QUARTERS_CREW) if it has not on
+///   plays here (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW) if it has not on
 ///   deck. In the captain's quarters the warriors and passengers press the
 ///   captain, who has just decided to sail
 ///   (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL); Ouranos and Sean offer to guard
@@ -429,19 +429,19 @@ enum TolbiShipRowingDeckActorId {
 
 /// The step triggers and searched containers below decks whose subjects are
 /// more than an exit.
-enum ShipRoomsMetatileBehavior {
+enum ShipRoomsCellBehavior {
   /// The rowing deck's stairs up to the hold, barred while monsters are
   /// aboard.
-  MB_SHIP_ROOMS_ROWING_DECK_STAIRS = 4,
+  CELL_BEHAVIOR_SHIP_ROOMS_ROWING_DECK_STAIRS = 4,
   /// In the captain's quarters, where the crew's talk of the delay plays.
-  MB_SHIP_ROOMS_QUARTERS_CREW = 10,
+  CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW = 10,
   /// Inside the hold, where Ouranos threatens to go ashore.
-  MB_SHIP_ROOMS_HOLD_WARRIORS = 11,
+  CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS = 11,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
-  MB_SHIP_ROOMS_CRATE_HOLD_BARREL = 100,
+  CELL_BEHAVIOR_SHIP_ROOMS_CRATE_HOLD_BARREL = 100,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
-  MB_SHIP_ROOMS_HOLD_BARREL = 101,
-  MB_SHIP_ROOMS_QUARTERS_JAR = 102
+  CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL = 101,
+  CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR = 102
 };
 
 /// A speaker: the actor, with the speaker bits for where its message
@@ -1580,7 +1580,7 @@ static void ShipRooms_TurnBackFromStairs(void) {
 }
 
 /// Below decks at Kalay, once the warriors have gone to the captain
-/// (MB_SHIP_ROOMS_QUARTERS_CREW): the captain, Kaja and the crewman
+/// (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW): the captain, Kaja and the crewman
 /// wonder what could have happened to the replacement ship, as on deck
 /// (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void ShipRooms_WatchCrewWonderAtDelay(void) {
@@ -1617,7 +1617,7 @@ static void ShipRooms_WatchCrewWonderAtDelay(void) {
 }
 
 /// In the hold at Kalay, once the tour group has left Kalay
-/// (MB_SHIP_ROOMS_HOLD_WARRIORS): Ouranos threatens to go ashore if
+/// (CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS): Ouranos threatens to go ashore if
 /// the ship doesn't sail. The second guide can't say when it will, so Sean and
 /// Ouranos set off to make the captain set sail, and the guide ("I don't want
 /// any violence!") hurries after them past the party.
@@ -4709,7 +4709,7 @@ struct ActorTemplate gShipRooms_ThirdAttackMonsters[] = {
 /// The cargo hold, and the events.
 struct Trigger gShipRooms_TriggersOther[] = {
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, SHIP_ROOMS_CRATE_HOLD_TO_TOLBI_SHIP_DECK },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_SHIP_ROOMS_CRATE_HOLD_BARREL, FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_SHIP_ROOMS_CRATE_HOLD_BARREL, FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGERS_END },
 };
 
@@ -4717,7 +4717,7 @@ struct Trigger gShipRooms_TriggersOther[] = {
 struct Trigger gShipRooms_HoldTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK },
-    { TRIGGER_STEP, MB_SHIP_ROOMS_HOLD_WARRIORS, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT(ShipRooms_WatchWarriorsStormOff) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT(ShipRooms_WatchWarriorsStormOff) },
     { TRIGGER_TALK, ACTOR_HOLD_WARRIOR, CONDITION_ALWAYS, EVENT(ShipRooms_TalkToWaitingWarrior) },
     { TRIGGER_TALK, ACTOR_HOLD_TICKET_GRUMBLER, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsApparentlyWeCantTakeSilkRoad) },
     { TRIGGER_TALK, ACTOR_HOLD_TICKET_GRUMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd) },
@@ -4738,7 +4738,7 @@ struct Trigger gShipRooms_HoldTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOLD_HEALER, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsEvenThoughImOpposedToViolence) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOLD_HEALER, FLAG_TOLBI_SHIP_REACHED_TOLBI, MSGNO(MsgTolbiShipInteriorsICantRowButIAm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOLD_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMadeItToColossoIn) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { TRIGGERS_END },
 };
 
@@ -4775,7 +4775,7 @@ struct Trigger gShipRooms_HoldTriggersChoosingRowers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCanJustMoveRightAlong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_SECOND_GUIDE, FLAG_TOLBI_SHIP_ROWER_CHOSEN, MSGNO(MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCarefulNowWatchOutDontMake) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { TRIGGERS_END },
 };
 
@@ -4803,7 +4803,7 @@ struct Trigger gShipRooms_HoldTriggersAtIsland[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_TICKET_GRUMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsJustDontMakeMeFaceThat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSoAnyoneKnowIfThereAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SEA_HOLD_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOhhThatsCreepy) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), MB_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { TRIGGERS_END },
 };
 
@@ -4829,9 +4829,9 @@ struct Trigger gShipRooms_CaptainsQuartersTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThatThingCouldntHaveGottenLost) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWouldSteal) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheShipDoesntLeaveSoon) },
-    { TRIGGER_STEP, MB_SHIP_ROOMS_QUARTERS_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT(ShipRooms_WatchCrewWonderAtDelay) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT(ShipRooms_WatchCrewWonderAtDelay) },
     { USE_ITEM_ON_ACTOR(ITEM_ANCHOR_CHARM), ACTOR_QUARTERS_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, EVENT(ShipRooms_ReturnLuckyAnchor) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR) | TRIGGER_FLAG_FACING | FACING_NORTH, MB_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR) | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { TRIGGERS_END },
 };
 
@@ -4842,7 +4842,7 @@ struct Trigger gShipRooms_CaptainsQuartersTriggersAtIsland[] = {
     { TRIGGER_TALK, ACTOR_QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereLookingIntoTheShipsPosition) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImReallySurprisedThatThereIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheWindsDirectionAndTheHigh) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), MB_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { TRIGGERS_END },
 };
 
@@ -4851,7 +4851,7 @@ struct Trigger gShipRooms_CaptainsQuartersTriggersArrived[] = {
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK },
     { TRIGGER_TALK, ACTOR_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), MB_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { TRIGGERS_END },
 };
 
@@ -4895,7 +4895,7 @@ struct Trigger gShipRooms_RowingDeckTriggers[] = {
 /// The rowing deck while monsters are aboard: talking to one
 /// (ACTOR_ROWING_FIRST_MONSTER and the two after it) fights it.
 struct Trigger gShipRooms_RowingDeckTriggersMonstersAboard[] = {
-    { TRIGGER_STEP, MB_SHIP_ROOMS_ROWING_DECK_STAIRS, CONDITION_ALWAYS, EVENT(ShipRooms_TurnBackFromStairs) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SHIP_ROOMS_ROWING_DECK_STAIRS, CONDITION_ALWAYS, EVENT(ShipRooms_TurnBackFromStairs) },
     { TRIGGER_TALK, ACTOR_ROWING_FIRST_MONSTER, CONDITION_ALWAYS, EVENT(ShipRooms_FightRowingDeckMonsters) },
     { TRIGGER_TALK, ACTOR_ROWING_FIRST_MONSTER + 1, CONDITION_ALWAYS, EVENT(ShipRooms_FightRowingDeckMonsters) },
     { TRIGGER_TALK, ACTOR_ROWING_FIRST_MONSTER + 2, CONDITION_ALWAYS, EVENT(ShipRooms_FightRowingDeckMonsters) },

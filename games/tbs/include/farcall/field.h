@@ -81,7 +81,7 @@ void SpriteDissolve_RunFar(u8 *obj);
 /// Dissolves `cnt` sprites together over 32 frames; the battle's staging uses
 /// it once a unit is off its lists.
 void SpriteDissolve_RunManyFar(u8 **table, s32 cnt);
-/// Loads layout `index` (metatiles, metatile behaviors, cells, tileset
+/// Loads layout `index` (metatiles, cell behaviors, cells, tileset
 /// animations, blend script, treasure spots and graphics) and starts its layers
 /// scrolling. Returns 2.
 s32 MapGrid_LoadMapFar(s32 index);
@@ -135,14 +135,14 @@ void BlendScript_SuspendFar(void);
 /// Returns the ground height of `layer` at (x, y) in 16.16 pixels, where y is
 /// the map's down axis (an actor's z).
 s32 MapGrid_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
-/// Returns the metatile behavior of the cell of `layer` under (x, y), given in
+/// Returns the cell behavior of the cell of `layer` under (x, y), given in
 /// 16.16 pixels.
-s32 MapGrid_GetMetatileBehaviorAtFar(s32 layer, s32 x, s32 y);
+s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 y);
 /// Copies a rectangle of cells whole, metatile numbers and attributes, and
 /// draws the copied cells that are in view.
 void MapGrid_CopyMetatileCellsRectFar(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dst_x, s32 dst_y);
-/// Copies only the attributes (flags, metatile behavior and shape) of a
+/// Copies only the attributes (flags, cell behavior and shape) of a
 /// rectangle of cells. Nothing is redrawn, since attributes don't show.
 void MapGrid_CopyCellAttributeRectFar(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dst_x, s32 dst_y);
@@ -175,7 +175,7 @@ void ActorSystem_SuspendProjectionAndShowSpritesFar(void);
 /// undoing ActorSystem_SuspendProjectionAndShowSpritesFar.
 void ActorSystem_ResumeProjectionAndHideLayersFar(void);
 /// Returns -1 when the overhead layer's cell under `position`, its height
-/// taken off, is a wall (MB_WALL), else 0.
+/// taken off, is a wall (CELL_BEHAVIOR_WALL), else 0.
 s32 MapGrid_IsWallAtFar(struct WorldPosition *position);
 /// Adds a sprite anim playing animation `no` to a one-sprite actor's sprite; a
 /// negative `no` does nothing.
@@ -210,7 +210,7 @@ s32 WorldMap_GetBattleEnvironmentFar(struct WorldPosition *position,
 s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 /// Writes `behavior` into the cell of `layer` under (x, y), given in 16.16
 /// pixels; before the map is set up it does nothing.
-void MapGrid_SetMetatileBehaviorAtFar(u32 layer, s32 x, s32 y, u32 behavior);
+void MapGrid_SetCellBehaviorAtFar(u32 layer, s32 x, s32 y, u32 behavior);
 /// Sets the timer step of a sprite's animated sprite anims: 16 plays at normal
 /// speed, 0 stops them.
 void Sprite_SetAnimSpeedFar(struct Sprite *group, s32 val);

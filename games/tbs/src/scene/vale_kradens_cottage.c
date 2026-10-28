@@ -16,12 +16,13 @@
 ///   (VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_NORTH and
 ///   VALE_KRADENS_COTTAGE_TO_VALE_STORMY_NIGHT_SOUTH). A rockslide has broken
 ///   the fence and let monsters in: Initialize starts the lightning, leaves the
-///   two rocks that Isaac cannot budge across the way, copies MB_WALL over the
-///   path's six cells below the west rock and under the east one, two of which
-///   by day hold ValeKradensCottage_MeetSaturosAndMenardi's metatile behavior
-///   7, and lays a hurt man by the fence. Talking to him, or walking up to him
-///   (metatile behavior 20), plays ValeKradensCottage_TalkToRockslideSurvivor:
-///   asked whether he will die, a yes leaves him giving up
+///   two rocks that Isaac cannot budge across the way, copies
+///   CELL_BEHAVIOR_WALL over the path's six cells below the west rock and under
+///   the east one, two of which by day hold
+///   ValeKradensCottage_MeetSaturosAndMenardi's cell behavior 7, and lays a
+///   hurt man by the fence. Talking to him, or walking up to him (cell behavior
+///   20), plays ValeKradensCottage_TalkToRockslideSurvivor: asked whether he
+///   will die, a yes leaves him giving up
 ///   (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP), and a no has him find he is not
 ///   hurt at all, warn them of the monsters on their way to the plaza and run
 ///   off (FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED), after which he is no longer
@@ -29,12 +30,12 @@
 ///   of the encounter zone of the scripted battles of Vale, Vault and the world
 ///   map).
 /// - Three years later, the day the story begins, Isaac comes up with Garet and
-///   Jenna to find two strangers outside. Walking past them (metatile behavior
+///   Jenna to find two strangers outside. Walking past them (cell behavior
 ///   7) plays ValeKradensCottage_MeetSaturosAndMenardi: the three overhear the
 ///   two speak of Sol Sanctum and of using Kraden, confront them and are let
 ///   go, the two calling each other Saturos and Menardi
 ///   (FLAG_MET_SATUROS_AND_MENARDI), and the strangers then stand aside,
-///   turning to watch the leader. Near the cottage (metatile behavior 5), the
+///   turning to watch the leader. Near the cottage (cell behavior 5), the
 ///   party overhears Kraden wondering what the strangers know of the Elemental
 ///   Stars (ValeKradensCottage_OverhearKraden,
 ///   FLAG_KRADEN_WONDERED_ABOUT_STRANGERS). Talking to Kraden plays
@@ -142,7 +143,7 @@ enum ValeKradensCottageActorId {
 #include "shared/actor_facing.h"
 
 /// The front door of Kraden's cottage stands open since Kraden set off, so
-/// walking in (metatile behavior 3, the exit into the cottage) skips its
+/// walking in (cell behavior 3, the exit into the cottage) skips its
 /// opening.
 /// ★ Named from what the player sees: the arched wooden door of Kraden's
 /// thatched cottage (its render)
@@ -580,7 +581,7 @@ static void ValeKradensCottage_KradenSetsOff(void) {
 /// In Vale, walking into Kraden's cottage: the door opens unless Kraden left
 /// it open.
 ///
-/// Reached by walking north into metatile behavior 3, by day and after Kalay;
+/// Reached by walking north into cell behavior 3, by day and after Kalay;
 /// takes VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH into the cottage.
 static void ValeKradensCottage_EnterCottage(void) {
   if (GameFlag_Get(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
@@ -595,7 +596,7 @@ static void ValeKradensCottage_EnterCottage(void) {
 /// Isaac, Garet and Jenna overhear Saturos and Menardi, confront them and are
 /// warned off.
 ///
-/// Reached by stepping on metatile behavior 7 in the day's events; runs once,
+/// Reached by stepping on cell behavior 7 in the day's events; runs once,
 /// setting FLAG_MET_SATUROS_AND_MENARDI. Saturos and Menardi are left turning
 /// to watch the leader.
 static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
@@ -822,7 +823,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
 /// the strangers were and what they know of Sol Sanctum and the Elemental
 /// Stars.
 ///
-/// Reached by stepping on metatile behavior 5 in the day's events; runs once,
+/// Reached by stepping on cell behavior 5 in the day's events; runs once,
 /// setting FLAG_KRADEN_WONDERED_ABOUT_STRANGERS.
 static void ValeKradensCottage_OverhearKraden(void) {
   struct Actor *leader;
@@ -1014,7 +1015,7 @@ s32 ValeKradensCottage_Initialize(void) {
 /// about the monsters and runs off.
 ///
 /// Reached on the stormy night by talking to him (ACTOR_ROCKSLIDE_SURVIVOR),
-/// or by stepping on metatile behavior 20 until he has given up. Sets
+/// or by stepping on cell behavior 20 until he has given up. Sets
 /// FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP on yes, or
 /// FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED on no; once he has escaped it does
 /// nothing.
@@ -1115,7 +1116,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
 
 /// In Vale on the stormy night, a monster attacks by the broken fence.
 ///
-/// Reached by stepping on metatile behavior 10 until
+/// Reached by stepping on cell behavior 10 until
 /// FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT is set. Sets it and
 /// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts the first slot of the encounter
 /// zone of the scripted battles of Vale, Vault and the World Map.
@@ -1137,7 +1138,7 @@ static void ValeKradensCottage_FightFirstMonster(void) {
 
 /// In Vale on the stormy night, a second monster attacks by the broken fence.
 ///
-/// Reached by stepping on metatile behavior 11 until
+/// Reached by stepping on cell behavior 11 until
 /// FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT is set. Sets it and
 /// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts its second slot.
 static void ValeKradensCottage_FightSecondMonster(void) {

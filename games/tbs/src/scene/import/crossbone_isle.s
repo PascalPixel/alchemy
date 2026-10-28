@@ -20,7 +20,7 @@
 	.set import.MapGrid_CheckCollision, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.Actor_SetBlendMode, 1
-	.set import.MapGrid_SetMetatileBehaviorAt, 1
+	.set import.MapGrid_SetCellBehaviorAt, 1
 	.set import.Icon_DrawItem, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1

@@ -56,7 +56,7 @@ FarCall_FieldTable:
 	export BlendScript_ResumeFar, BlendScript_Resume
 	export BlendScript_SuspendFar, BlendScript_Suspend
 	export MapGrid_GetTerrainHeightFar, MapGrid_GetTerrainHeight
-	export MapGrid_GetMetatileBehaviorAtFar, MapGrid_GetMetatileBehaviorAt
+	export MapGrid_GetCellBehaviorAtFar, MapGrid_GetCellBehaviorAt
 	export MapGrid_CopyMetatileCellsRectFar, MapGrid_CopyMetatileCellsRect
 	export MapGrid_CopyCellAttributeRectFar, MapGrid_CopyCellAttributeRect
 	export MapGrid_CopyCellIndexRectFar, MapGrid_CopyCellIndexRect
@@ -81,7 +81,7 @@ FarCall_FieldTable:
 	export SpriteAnim_SumCommandLengthsFar, SpriteAnim_SumCommandLengths
 	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
 	export SpritePictureCache_LoadFar, SpritePictureCache_Load
-	export MapGrid_SetMetatileBehaviorAtFar, MapGrid_SetMetatileBehaviorAt
+	export MapGrid_SetCellBehaviorAtFar, MapGrid_SetCellBehaviorAt
 	export Sprite_SetAnimSpeedFar, Sprite_SetAnimSpeed
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
 	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll

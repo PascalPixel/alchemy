@@ -244,7 +244,7 @@ decides each test, and `WorldMap_IsWalkable` the world map's.
 | `COLLISION_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
 | `COLLISION_NONE` | 0 | the actor can step there |
 | `COLLISION_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
-| `COLLISION_IMPASSABLE` | 2 | the cell there is a wall (`MB_WALL`) |
+| `COLLISION_IMPASSABLE` | 2 | the cell there is a wall (`CELL_BEHAVIOR_WALL`) |
 
 ## Towns and dungeons on screen
 
@@ -358,7 +358,7 @@ handles requests, and the field supplies the actors, actor scripts and ground
 checks it uses. Overlays reach the field through their
 [import tables](../../glossary.md#entry-table-and-import-table): nine scenes
 ask for the ground's height, and six rewrite a cell's
-[metatile behavior](../../glossary.md#metatile-behavior). The battle uses the
+[cell behavior](../../glossary.md#cell-behavior). The battle uses the
 actors in its own mode for its sprites. The Lost Age's field code is
 described by [its own guide](../../../tla/src/field/README.md), as
 differences from this one.

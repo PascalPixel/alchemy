@@ -1750,7 +1750,7 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   WaitFrames(30);
 }
 
-/// Restores eight corner-cell metatile behaviors from the chamber templates.
+/// Restores eight corner-cell cell behaviors from the chamber templates.
 static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
 
   MapGrid_CopyCellAttributes(14, 8, 1, 1, 10, 0);

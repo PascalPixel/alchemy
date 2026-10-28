@@ -31,17 +31,18 @@
 /// - FLAG_LUNPA_HIDDEN_PASSAGE_OPEN: the switch has opened the passage.
 ///
 /// At the gates, stepping uncloaked on the ground before the guards
-/// (MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND) brings them in front of the door,
-/// and an uncloaked leader among them, or one still among them as Cloak fades,
-/// is marched back down the steps (Lunpa_GuardsCatchParty, raised as
-/// RAISED_PARTY_SPOTTED by Lunpa_WatchForUncloakedParty). A party caught in the
-/// fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown down the
-/// steps; after the rescue it leaves the fortress by
+/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND) brings them in front of
+/// the door, and an uncloaked leader among them, or one still among them as
+/// Cloak fades, is marched back down the steps (Lunpa_GuardsCatchParty, raised
+/// as RAISED_PARTY_SPOTTED by Lunpa_WatchForUncloakedParty). A party caught in
+/// the fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT and is thrown down
+/// the steps; after the rescue it leaves the fortress by
 /// LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA and sneaks past under
 /// Cloak. Every entry clears the fortress's puzzle and beaten-guard flags, so
 /// the fortress starts over. Between Donpa's judgment and the reunion in West
 /// Lunpa Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going
-/// back up (MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH). Its scene temp flags:
+/// back up (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH). Its scene
+/// temp flags:
 ///
 /// - FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR: the guards stand before the
 ///   door.
@@ -184,7 +185,7 @@ static void Lunpa_CatchFloatingNut(void) {
   Event_End();
 }
 
-/// Restores the metatile behaviors of the frozen pillar's three cells,
+/// Restores the cell behaviors of the frozen pillar's three cells,
 /// including its sides.
 static inline void Lunpa_ApplyFrozenPuddleCollision(void) {
   MapGrid_CopyCellAttributes(17, 4, 1, 1, 14, 4);
@@ -297,8 +298,9 @@ static void Lunpa_HideSecrets(void) {
   GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
-/// Searching the well (MB_LUNPA_WELL, MB_LUNPA_FORTRESS_GATES_WELL), in Lunpa
-/// or at the Lunpa Fortress Gates: frogs croak in it.
+/// Searching the well (CELL_BEHAVIOR_LUNPA_WELL,
+/// CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_WELL), in Lunpa or at the Lunpa Fortress
+/// Gates: frogs croak in it.
 static void Lunpa_SearchWell(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
@@ -502,20 +504,21 @@ static void Lunpa_ReadRightGuardsThoughts(void) {
 
 /// Every frame at the Lunpa Fortress Gates after Donpa's judgment: stepping up
 /// to row 10 raises Garet's warning
-/// (MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
+/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
 static void Lunpa_WatchForFortressApproach(void) {
   s32 leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
   if (Event_GetFlag(FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING) == 0 &&
       leaderRow == 10) {
     GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_GARET_WARNING);
-    gFieldWork->stepTrigger = MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH;
+    gFieldWork->stepTrigger =
+        CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH;
   }
 }
 
-/// Lunpa Fortress Gates, MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH after
-/// Donpa's judgment: Garet reminds the leader they cannot go into the fortress,
-/// and the leader steps back.
+/// Lunpa Fortress Gates, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH
+/// after Donpa's judgment: Garet reminds the leader they cannot go into the
+/// fortress, and the leader steps back.
 static void Lunpa_GaretTurnsIsaacBack(void) {
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -549,7 +552,7 @@ static void Lunpa_EnterDoor(void) {
     }
   }
   Event_PlaySong(SE_DOOR_OPEN);
-  doorIndex = work->stepTrigger - MB_LUNPA_FIRST_HOME_DOOR;
+  doorIndex = work->stepTrigger - CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR;
   MapGrid_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                        gLunpaDoors[doorIndex].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -565,8 +568,8 @@ static void Lunpa_EnterDoor(void) {
   Event_End();
 }
 
-/// Lunpa, MB_LUNPA_HIDDEN_PASSAGE: the hidden passage leads to the hidden room
-/// once opened, while Reveal shows it.
+/// Lunpa, CELL_BEHAVIOR_LUNPA_HIDDEN_PASSAGE: the hidden passage leads to the
+/// hidden room once opened, while Reveal shows it.
 static void Lunpa_EnterHiddenPassage(void) {
   if (GameFlag_Get(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
@@ -580,8 +583,8 @@ static void Lunpa_EnterHiddenPassage(void) {
   }
 }
 
-/// Lunpa Fortress Gates, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR: through the
-/// fortress door at the top of the steps, into Lunpa Fortress.
+/// Lunpa Fortress Gates, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_DOOR:
+/// through the fortress door at the top of the steps, into Lunpa Fortress.
 static void Lunpa_EnterFortress(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS);
   Event_Start();
@@ -644,9 +647,9 @@ static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
   MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 9, 11);
 }
 
-/// Lunpa Fortress Gates, MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND: coming close
-/// uncloaked, the guards step in front of the fortress door and the gateway
-/// closes.
+/// Lunpa Fortress Gates, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND:
+/// coming close uncloaked, the guards step in front of the fortress door and
+/// the gateway closes.
 static void Lunpa_GuardsBlockGate(void) {
   if (gAdventure.cloaked == 0) {
     Event_Start();
@@ -1091,18 +1094,23 @@ struct ActorTemplate gGateActorTemplates[] = {
    EVENT(Lunpa_EnterDoor)}
 
 #define LUNPA_ROADS_AND_DOORS                                                  \
-  {TRIGGER_EXIT, MB_LUNPA_WORLD_MAP_ROAD, CONDITION_ALWAYS,                    \
+  {TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_WORLD_MAP_ROAD, CONDITION_ALWAYS,         \
    LUNPA_TO_WORLD_MAP},                                                        \
-      {TRIGGER_EXIT, MB_LUNPA_GATE_ROAD, CONDITION_ALWAYS,                     \
+      {TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_GATE_ROAD, CONDITION_ALWAYS,          \
        LUNPA_TO_LUNPA_FORTRESS_GATES},                                         \
-      {TRIGGER_EXIT, MB_LUNPA_CAVE_ROAD, CONDITION_ALWAYS,                     \
+      {TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_CAVE_ROAD, CONDITION_ALWAYS,          \
        LUNPA_TO_WEST_LUNPA_CAVE},                                              \
-      DOOR(MB_LUNPA_FIRST_HOME_DOOR), DOOR(MB_LUNPA_SECOND_HOME_DOOR),         \
-      DOOR(MB_LUNPA_THIRD_HOME_DOOR), DOOR(MB_LUNPA_ARMS_SHOP_DOOR),           \
-      DOOR(MB_LUNPA_ITEM_SHOP_DOOR), DOOR(MB_LUNPA_INN_DOOR),                  \
-      DOOR(MB_LUNPA_TEMPLE_DOOR), DOOR(MB_LUNPA_EIGHTH_ROOM_DOOR), {           \
-    STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_LUNPA_HIDDEN_PASSAGE,          \
-        CONDITION_ALWAYS, EVENT(Lunpa_EnterHiddenPassage)                      \
+      DOOR(CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR),                               \
+      DOOR(CELL_BEHAVIOR_LUNPA_SECOND_HOME_DOOR),                              \
+      DOOR(CELL_BEHAVIOR_LUNPA_THIRD_HOME_DOOR),                               \
+      DOOR(CELL_BEHAVIOR_LUNPA_ARMS_SHOP_DOOR),                                \
+      DOOR(CELL_BEHAVIOR_LUNPA_ITEM_SHOP_DOOR),                                \
+      DOOR(CELL_BEHAVIOR_LUNPA_INN_DOOR),                                      \
+      DOOR(CELL_BEHAVIOR_LUNPA_TEMPLE_DOOR),                                   \
+      DOOR(CELL_BEHAVIOR_LUNPA_EIGHTH_ROOM_DOOR), {                            \
+    STEP_TRIGGER_WALKING_INTO(FACING_NORTH),                                   \
+        CELL_BEHAVIOR_LUNPA_HIDDEN_PASSAGE, CONDITION_ALWAYS,                  \
+        EVENT(Lunpa_EnterHiddenPassage)                                        \
   }
 
 #define LUNPA_SECRETS                                                          \
@@ -1112,18 +1120,18 @@ struct ActorTemplate gGateActorTemplates[] = {
        CONDITION_ALWAYS, EVENT(Lunpa_RevealSecrets)},                          \
       {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,             \
        CONDITION_ALWAYS, EVENT(Lunpa_HideSecrets)},                            \
-      {EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_HIDDEN_SWITCH,                \
+      {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_HIDDEN_SWITCH,     \
        FLAG_LUNPA_SECRETS_HIDDEN, EVENT(Lunpa_PressHiddenSwitch)},             \
-      {EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_PSYNERGY_STONE,               \
+      {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_PSYNERGY_STONE,    \
        FLAG_LUNPA_PSYNERGY_STONE, FIND_PSYNERGY_STONE},                        \
-      {EXAMINE_TRIGGER(EXAMINE_GRAVE), MB_LUNPA_GRAVE_SLEEP_BOMB,              \
+      {EXAMINE_TRIGGER(EXAMINE_GRAVE), CELL_BEHAVIOR_LUNPA_GRAVE_SLEEP_BOMB,   \
        FLAG_LUNPA_GRAVE_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB)},               \
-      {EXAMINE_TRIGGER(EXAMINE_BARREL), MB_LUNPA_BARREL_NUT,                   \
+      {EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_LUNPA_BARREL_NUT,        \
        FLAG_LUNPA_BARREL_NUT, FIND_ITEM(ITEM_NUT)},                            \
       {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT,                   \
        FLAG_LUNPA_NUT_CAUGHT, EVENT(Lunpa_CatchFloatingNut)},                  \
-      {EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_WELL, CONDITION_ALWAYS,       \
-       EVENT(Lunpa_SearchWell)},                                               \
+      {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_WELL,              \
+       CONDITION_ALWAYS, EVENT(Lunpa_SearchWell)},                             \
   {                                                                            \
     TRIGGERS_END                                                               \
   }
@@ -1206,25 +1214,25 @@ struct Trigger gLunpaReopenedTriggers[] = {
 
 // clang-format off
 struct Trigger gGateTriggers[] = {
-    { TRIGGER_EXIT, MB_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
     // XXX (no evidence): where the third road was meant to lead; gGateExits
     // has no row for it, so the field sends it to LunpaFortressGroundFloor's
     // default entrance.
-    { TRIGGER_EXIT, MB_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_EXIT_THIRD },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_EXIT_THIRD },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Lunpa_CastCloak) },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(Lunpa_CloakFades) },
-    { TRIGGER_STEP, MB_LUNPA_FORTRESS_GATES_FORTRESS_DOOR, FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS,
+    { TRIGGER_STEP, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_DOOR, FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS,
       EVENT(Lunpa_EnterFortress) },
-    { TRIGGER_STEP, MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND, FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR,
+    { TRIGGER_STEP, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND, FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR,
       EVENT(Lunpa_GuardsBlockGate) },
-    { TRIGGER_STEP, MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH, CONDITION_ALWAYS,
+    { TRIGGER_STEP, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH, CONDITION_ALWAYS,
       EVENT(Lunpa_GaretTurnsIsaacBack) },
     { TRIGGER_RAISED, RAISED_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT(Lunpa_GuardsCatchParty) },
     TALK(ACTOR_LEFT_GUARD, EVENT(Lunpa_TalkToLeftGuard)),
     TALK(ACTOR_RIGHT_GUARD, EVENT(Lunpa_TalkToRightGuard)),
     MIND_READ(ACTOR_LEFT_GUARD, EVENT(Lunpa_ReadLeftGuardsThoughts)),
     MIND_READ(ACTOR_RIGHT_GUARD, EVENT(Lunpa_ReadRightGuardsThoughts)),
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_LUNPA_FORTRESS_GATES_WELL, CONDITION_ALWAYS, EVENT(Lunpa_SearchWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_WELL, CONDITION_ALWAYS, EVENT(Lunpa_SearchWell) },
     { TRIGGERS_END },
 };
 // clang-format on
@@ -1249,7 +1257,7 @@ u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
 };
 
 /// Each door's opening animation and the map grid cell it plays at, by its
-/// step trigger from MB_LUNPA_FIRST_HOME_DOOR.
+/// step trigger from CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR.
 struct MapGridCellAnimation gLunpaDoors[] = {
     {gLunpaDoorSteps[0], 46, 9},  {gLunpaDoorSteps[1], 52, 12},
     {gLunpaDoorSteps[2], 52, 18}, {gLunpaDoorSteps[3], 45, 20},

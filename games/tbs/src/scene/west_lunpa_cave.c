@@ -5,9 +5,10 @@
 ///
 /// The party comes in from the World Map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
 /// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA);
-/// MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE and MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE
-/// lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no exit names,
-/// repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
+/// CELL_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE and
+/// CELL_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE lead back out.
+/// WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no exit names, repeats
+/// WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
 ///
 /// The gate puzzle runs on scene flags, which Scene_Initialize redraws: the
 /// lowering switch brings the gate down and the raising switch lifts it, each
@@ -24,11 +25,11 @@
 /// - FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
 /// - FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen.
 /// - FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen into
-///   a pillar, which changes one cell's metatile behavior.
+///   a pillar, which changes one cell's cell behavior.
 ///
 /// Once Donpa has let the party leave Lunpa Fortress with Hammet
 /// (FLAG_DODONPA_LOCKED_UP), stepping onto
-/// MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE the first time
+/// CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE the first time
 /// (FLAG_LUNPA_CAVE_REUNION_SEEN) plays the reunion: Bunza, a Kalay merchant,
 /// comes out from behind a rock (WestLunpaCave_HammetFindsBunza), they talk
 /// (Reunion_Converse), and the party's answers decide whether it rides home in
@@ -139,7 +140,7 @@ static void WestLunpaCave_FreezeSouthPuddle(void) {
 }
 
 /// Animates the raised gate resting on the frozen pillar, then opens the way
-/// through its metatile behaviors.
+/// through its cell behaviors.
 static void WestLunpaCave_GateDrawPropped(void) {
   struct Actor *pillar;
 
@@ -260,7 +261,7 @@ static void WestLunpaCave_FlipRaisingSwitch(void) {
 }
 
 /// In West Lunpa Cave, Hammet finds Bunza hiding behind a rock. It plays on
-/// stepping onto metatile behavior 10, by the rock Bunza hides behind, after
+/// stepping onto cell behavior 10, by the rock Bunza hides behind, after
 /// Donpa has let the party leave the fortress with Hammet
 /// (FLAG_DODONPA_LOCKED_UP). Bunza steps out, the party and Hammet gather
 /// behind the leader, Garet and Mia think they saw someone, and Ivan asks
@@ -1105,13 +1106,13 @@ const struct Trigger gCaveNoTriggers[] = {
 };
 
 const struct Trigger gCaveTriggers[] = {
-    { TRIGGER_EXIT, MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
-    { TRIGGER_EXIT, MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
-    { TRIGGER_STEP, MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
+    { TRIGGER_EXIT, CELL_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
+    { TRIGGER_STEP, CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
       EVENT(WestLunpaCave_HammetFindsBunza) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_WEST_LUNPA_CAVE_LOWERING_SWITCH, CONDITION_ALWAYS,
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_WEST_LUNPA_CAVE_LOWERING_SWITCH, CONDITION_ALWAYS,
       EVENT(WestLunpaCave_FlipLoweringSwitch) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_WEST_LUNPA_CAVE_RAISING_SWITCH, CONDITION_ALWAYS,
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_WEST_LUNPA_CAVE_RAISING_SWITCH, CONDITION_ALWAYS,
       EVENT(WestLunpaCave_FlipRaisingSwitch) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_UNUSED_PUDDLE, CONDITION_ALWAYS,
       EVENT(WestLunpaCave_UnusedFreezePuddle) },

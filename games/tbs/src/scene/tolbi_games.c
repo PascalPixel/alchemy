@@ -206,8 +206,8 @@ enum TolbiSpringActorId {
 #define TOLBI_SPRING_MEDAL_TRAIL(n) (ACTOR_TOLBI_SPRING_MEDAL_SHADOW - (n))
 
 /// What searching answers in Tolbi Spring.
-enum TolbiSpringMetatileBehavior {
-  MB_TOLBI_SPRING_WATER = 80, ///< searched to toss a coin or medal
+enum TolbiSpringCellBehavior {
+  CELL_BEHAVIOR_TOLBI_SPRING_WATER = 80, ///< searched to toss a coin or medal
 };
 
 // FLAG_TOLBI_SPRING_RISEN is set once the spring has risen and faded in.
@@ -1652,7 +1652,7 @@ const struct Trigger gTolbiSpringTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIGetNervousWhenIToss) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhyWontAnyoneGiveMeA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThisIsALuckyMedalSo) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_TOLBI_SPRING_WATER, CONDITION_ALWAYS, EVENT(TolbiSpring_TossCoinOrMedal) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_SPRING_WATER, CONDITION_ALWAYS, EVENT(TolbiSpring_TossCoinOrMedal) },
     { TRIGGERS_END },
 };
 

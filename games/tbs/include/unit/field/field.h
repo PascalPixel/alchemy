@@ -169,7 +169,7 @@ enum Collision {
   COLLISION_TOO_LOW = -1,  ///< the ground there is more than 12 pixels lower
   COLLISION_NONE = 0,      ///< the actor can step there
   COLLISION_TOO_HIGH = 1,  ///< the ground there is more than 8 pixels higher
-  COLLISION_IMPASSABLE = 2 ///< the cell there is a wall (MB_WALL)
+  COLLISION_IMPASSABLE = 2 ///< the cell there is a wall (CELL_BEHAVIOR_WALL)
 };
 
 u8 *Decompress_Lz(const u8 *source, u8 *destination);
@@ -450,8 +450,8 @@ s32 Terrain_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y);
-s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y);
-void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior);
+s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y);
+void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior);
 s32 MapGrid_GetCellHighFlags(s32 x, s32 y);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 s32 MapGrid_IsWallAt(struct WorldPosition *position);

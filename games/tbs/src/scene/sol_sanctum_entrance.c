@@ -40,10 +40,10 @@
 ///
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH)
 /// the door no longer opens: Sol Entrance's setup makes the three wall cells
-/// across the door MB_SOL_ENTRANCE_LOCKED_DOOR, copied from the other door,
-/// and the three MB_SOL_ENTRANCE_DOOR cells before it plain ground, so the
-/// leader walks up to the door and stops, and searching it finds it "tightly
-/// locked" (render probe sol-entrance).
+/// across the door CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR, copied from the
+/// other door, and the three CELL_BEHAVIOR_SOL_ENTRANCE_DOOR cells before it
+/// plain ground, so the leader walks up to the door and stops, and searching it
+/// finds it "tightly locked" (render probe sol-entrance).
 
 #include "adventure.h"
 #include "unit/field/field.h"
@@ -143,37 +143,37 @@
 // flag 0xfff, which nothing sets, so the exit is always taken.
 #define EXIT_FLAG_NONE 0xffffffff
 
-/// The metatile behaviors of the cells the Sol Sanctum entrance's coord, bg
+/// The cell behaviors of the cells the Sol Sanctum entrance's coord, bg
 /// and item triggers answer; behaviors 1 to 16 in both scenes are the exits, in
 /// the exit table's order.
-enum SolEntranceMetatileBehavior {
+enum SolEntranceCellBehavior {
   /// ★ Named from what the player sees: the door that slides open as the
   /// leader walks into it (SolSanctumEntrance_OpenDoorAndEnter)
-  MB_SOL_ENTRANCE_DOOR = 2,
+  CELL_BEHAVIOR_SOL_ENTRANCE_DOOR = 2,
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
-  MB_SOL_ENTRANCE_LOCKED_DOOR = 10
+  CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR = 10
 };
 
-/// The metatile behaviors of the cells the relief rooms' coord, bg and
+/// The cell behaviors of the cells the relief rooms' coord, bg and
 /// item triggers answer.
-enum SolSanctumReliefsMetatileBehavior {
+enum SolSanctumReliefsCellBehavior {
   /// ★ Named from the game: "It's a relief of a minotaur."
   /// (MsgSolSanctumMinotaurReliefOneEye)
-  MB_SOL_SANCTUM_RELIEFS_FIRST_RELIEF = 20,
+  CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_RELIEF = 20,
   /// ★ Named from the game: "It's a relief of a minotaur."
   /// (MsgSolSanctumMinotaurReliefOneEye)
-  MB_SOL_SANCTUM_RELIEFS_SECOND_RELIEF = 21,
+  CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF = 21,
   /// The first relief room's statues, pushed from any side.
-  MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE = 22,
+  CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE = 22,
   /// The first relief room's statues, pushed east only.
-  MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST = 23,
+  CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST = 23,
   /// The second relief room's row of statues.
-  MB_SOL_SANCTUM_RELIEFS_ROW_STATUE = 24,
+  CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_ROW_STATUE = 24,
   /// The first relief room's statues, pushed west only.
-  MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST = 25,
+  CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST = 25,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_SOL_SANCTUM_RELIEFS_CHEST = 100
+  CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_CHEST = 100
 };
 
 /// An item trigger's subject bit that skips the `<actor> uses <item>.` message,
@@ -672,8 +672,8 @@ s32 SolSanctumEntrance_Initialize(void) {
 /// (FLAG_RETREAT_BLOCKED), and after the eruption
 /// SolSanctumEntrance_UpdateEruptionRumbles shakes the ground now and then.
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH),
-/// the door is locked: its row becomes MB_SOL_ENTRANCE_LOCKED_DOOR and the
-/// cells before it plain ground; once the party has left Vale
+/// the door is locked: its row becomes CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR
+/// and the cells before it plain ground; once the party has left Vale
 /// (FLAG_VALE_PARTY_LEFT), the
 /// man who warns everyone away, placed off the map until then, stands in the
 /// path and the three cells across it change.
@@ -1176,7 +1176,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
 }
 
 /// Sol Sanctum, the second relief room: sets the cells the six statues
-/// start on, one metatile behavior while a statue stands there and another once
+/// start on, one cell behavior while a statue stands there and another once
 /// it has been pushed to either side, and, when placeActors is nonzero
 /// (on entry), moves the statues to their saved columns.
 static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
@@ -1510,8 +1510,8 @@ struct Trigger gSolSanctumEntrance_FallbackTriggers[] = {
 
 struct Trigger gSolEntrance_Triggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_SOL_ENTRANCE_DOOR, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_OpenDoorAndEnter) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_SOL_ENTRANCE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_DoorTightlyLocked) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_SOL_ENTRANCE_DOOR, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_OpenDoorAndEnter) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_DoorTightlyLocked) },
     { TRIGGER_TALK, ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
     { TRIGGERS_END },
@@ -1534,9 +1534,9 @@ struct Trigger gSolSanctumReliefs_Triggers[] = {
     { TRIGGER_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { TRIGGER_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
     { TRIGGER_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_SOL_SANCTUM_RELIEFS_CHEST, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
-    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | MB_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_SetFirstSmallJewel) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_InspectFirstMinotaurRelief) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_CHEST, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
+    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_SetFirstSmallJewel) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_InspectFirstMinotaurRelief) },
     { TRIGGERS_END },
 };
 
@@ -1559,9 +1559,9 @@ struct Trigger gSolSanctumReliefs_FirstReliefRoomTriggers[] = {
     { TRIGGER_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT(SolSanctumEntrance_WestStatueMoved) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_STATUE, FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM, EVENT(SolSanctumEntrance_EastStatueMoved) },
-    { STEP_TRIGGER_WALKING, MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), MB_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
     { TRIGGERS_END },
 };
 
@@ -1588,9 +1588,9 @@ struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_4, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue4Moved) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_5, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue5Moved) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_6, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue6Moved) },
-    { STEP_TRIGGER_WALKING, MB_SOL_SANCTUM_RELIEFS_ROW_STATUE, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
-    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | MB_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_SetSecondSmallJewel) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_InspectSecondMinotaurRelief) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_ROW_STATUE, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
+    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_SetSecondSmallJewel) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_InspectSecondMinotaurRelief) },
     { TRIGGERS_END },
 };
 // clang-format on

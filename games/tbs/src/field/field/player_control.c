@@ -850,7 +850,7 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
 
 /// SC_KEYS: moves an actor 8 pixels at a time by the direction pad, with up
 /// and down changing its height (y) rather than its depth. Refuses steps
-/// into an occupied cell, across a change of metatile behavior, or onto ground
+/// into an occupied cell, across a change of cell behavior, or onto ground
 /// too high (up) or too low (down). Returns 1.
 ///
 /// Run each frame by gActor_KeysScript, which the scene sequence starts
@@ -904,7 +904,7 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
     position.y = actor->y.fixed - position.z;
     position.z = actor->z.fixed;
     // The cells (16 pixels, 0x100000) under the actor and the step; a step
-    // into a cell with another metatile behavior is refused.
+    // into a cell with another cell behavior is refused.
     sourceCell = &((struct MapGridCell *)
                        Ram_MapGridCellBuffer)[actor->x.fixed / 0x100000 +
                                               (position.z / 0x100000) * 128];

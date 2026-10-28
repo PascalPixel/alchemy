@@ -19,13 +19,13 @@
 /// joins the party. Coming in by a gate clears the call, so Sap hides again
 /// until it has joined. The dog, given a Bone, runs to a spot and jumps there
 /// three times (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c); Reveal then
-/// shows the hidden passage at that spot, whose cell (MB_VAULT_HIDDEN_PASSAGE)
-/// leads down into Vault Cave, and the cave mouth in the northeast cliff
-/// (MB_VAULT_CLIFF_CAVE_MOUTH) is a second way in. A wooden box holds a Nut,
-/// and the well rumbles with water. The cells the events answer are enum
-/// VaultMetatileBehavior (vault.h); the jail door brings the party in by
-/// STONE_ROOMS_FROM_VAULT_REVISIT, where a lone prisoner sits in the thieves'
-/// place.
+/// shows the hidden passage at that spot, whose cell
+/// (CELL_BEHAVIOR_VAULT_HIDDEN_PASSAGE) leads down into Vault Cave, and the
+/// cave mouth in the northeast cliff (CELL_BEHAVIOR_VAULT_CLIFF_CAVE_MOUTH) is
+/// a second way in. A wooden box holds a Nut, and the well rumbles with water.
+/// The cells the events answer are enum VaultCellBehavior (vault.h); the jail
+/// door brings the party in by STONE_ROOMS_FROM_VAULT_REVISIT, where a lone
+/// prisoner sits in the thieves' place.
 ///
 /// The inn's roof is mended: the 3-by-3 block of cells Scene_Initialize copies
 /// from (45, 41) to (8, 45) lies under map grid layer 2's window, on the inn's
@@ -482,7 +482,7 @@ static void VaultRevisit_EnterInn(void) {
 /// It's VAULT_REVISIT_TO_LOG_ROOMS_B_EAST, into the item shop,
 /// where the couple who talk of Colosso also stand. The leader is
 /// drawn at sprite priority 3 as he walks in, as at the weapon and armor shop
-/// and the jail, and the metatile behavior of the doorway, a column of three
+/// and the jail, and the cell behavior of the doorway, a column of three
 /// cells at (23, 12), is replaced so he can pass.
 static void VaultRevisit_EnterItemShop(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -578,7 +578,7 @@ static void VaultRevisit_GiveBoneToDog(void) {
   Event_End();
 }
 
-/// Covers the hidden passage again, tiles and metatile behaviors, when Reveal
+/// Covers the hidden passage again, tiles and cell behaviors, when Reveal
 /// ends.
 static void VaultRevisit_HidePassage(void) {
 
@@ -587,7 +587,7 @@ static void VaultRevisit_HidePassage(void) {
 }
 
 /// Reveal shows the hidden passage where the dog jumps: its tiles, and the
-/// metatile behavior of cell (13, 25), which lets the party step onto metatile
+/// cell behavior of cell (13, 25), which lets the party step onto cell
 /// behavior 40 and down into Vault Cave.
 static void VaultRevisit_RevealPassage(void) {
 
@@ -636,7 +636,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 }
 
 /// Sets up Vault as the party finds it after reaching Kalay.
-/// On arrival it restores the passage's metatile behaviors
+/// On arrival it restores the passage's cell behaviors
 /// (shared/vault_toggle.h), creates the still actor of sprite 223 on the well
 /// that shows nothing, mends the inn's roof, which vault.c
 /// leaves holed, and gives the two children round the well the update routine
@@ -894,18 +894,18 @@ u16 gVaultRevisit_JailDoorCells[] = {
 struct Trigger gVaultRevisit_Triggers[] = {
     { TRIGGER_EXIT, 20, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
     { TRIGGER_EXIT, 21, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
-    { TRIGGER_EXIT, MB_VAULT_HIDDEN_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
-    { TRIGGER_EXIT, MB_VAULT_CLIFF_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
-    { TRIGGER_STEP, MB_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT(Vault_RaisePathToBridge) },
-    { TRIGGER_STEP, MB_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT(Vault_LowerPathUnderBridge) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterGemOwnersHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterChildsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_INN_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterInn) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterItemShop) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterWeaponAndArmorShop) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterMayorsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT(Vault_OpenDoorwayAndEnter) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MB_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterJail) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_VAULT_HIDDEN_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_VAULT_CLIFF_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT(Vault_RaisePathToBridge) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VAULT_WEST_OF_BRIDGE, CONDITION_ALWAYS, EVENT(Vault_LowerPathUnderBridge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_GEM_OWNERS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterGemOwnersHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_CHILDS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterChildsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_INN_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterInn) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterItemShop) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterWeaponAndArmorShop) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterMayorsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT(Vault_OpenDoorwayAndEnter) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterJail) },
     { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT(VaultRevisit_RecognizeThiefCatchers) },
     { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
     { TRIGGER_TALK, ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
@@ -919,7 +919,7 @@ struct Trigger gVaultRevisit_Triggers[] = {
     { TRIGGER_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT(VaultRevisit_TalkToDog) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
     { TRIGGER_TALK, ACTOR_SAP, CONDITION_ALWAYS, EVENT(VaultRevisit_SapJoins) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT(VaultRevisit_RingBell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VAULT_BELL, CONDITION_ALWAYS, EVENT(VaultRevisit_RingBell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_WELCOMING_YOUNG_MAN, FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY, EVENT(VaultRevisit_ReadMindAndRecognizeThiefCatchers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
@@ -937,8 +937,8 @@ struct Trigger gVaultRevisit_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThatsTheLastOfTheRoof) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VAULT_WELL, CONDITION_ALWAYS, EVENT(VaultRevisit_PeerIntoWell) },
-    { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), MB_VAULT_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VAULT_WELL, CONDITION_ALWAYS, EVENT(VaultRevisit_PeerIntoWell) },
+    { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), CELL_BEHAVIOR_VAULT_WOODEN_BOX, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { USE_ITEM_ON_ACTOR(ITEM_BONE), ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT(VaultRevisit_GiveBoneToDog) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(VaultRevisit_RevealPassage) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(VaultRevisit_HidePassage) },

@@ -141,27 +141,27 @@ enum TolbiActorId {
   ACTOR_TOLBI_MISSING_PERSON_POSTER = 32,
 };
 
-/// The metatile behaviors Tolbi's coord and examine triggers answer besides the
+/// The cell behaviors Tolbi's coord and examine triggers answer besides the
 /// doors, whose own cells carry the numbers of their exits (Tolbi_EnterDoor,
 /// Tolbi_RequestTouchedExit).
-enum TolbiMetatileBehavior {
+enum TolbiCellBehavior {
   /// Where Babi's soldiers stop the party during the festival.
-  MB_TOLBI_SOLDIERS = 20,
+  CELL_BEHAVIOR_TOLBI_SOLDIERS = 20,
   /// The first of the two signs beside the gate to Tolbi Spring.
   /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
   /// it." (MsgTolbiFaceAwayTolbi)
-  MB_TOLBI_SPRING_SIGN = 30,
+  CELL_BEHAVIOR_TOLBI_SPRING_SIGN = 30,
   /// ★ Named from the game: "If you toss a Lucky Medal"
   /// (MsgTolbiTossLuckyMedal)
-  MB_TOLBI_LUCKY_MEDAL_SIGN = 31,
+  CELL_BEHAVIOR_TOLBI_LUCKY_MEDAL_SIGN = 31,
   /// ★ Named from the game: "checked the barrel" (MsgVaultIsaacCheckedBarrel)
-  MB_TOLBI_BARREL = 100,
-  MB_TOLBI_JAR = 101,
+  CELL_BEHAVIOR_TOLBI_BARREL = 100,
+  CELL_BEHAVIOR_TOLBI_JAR = 101,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_TOLBI_HIDDEN_CHEST = 102,
+  CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST = 102,
   /// The gate to Tolbi Spring, open once the visitor at the gate has stepped
   /// aside.
-  MB_TOLBI_GATE_TO_SPRING = 239
+  CELL_BEHAVIOR_TOLBI_GATE_TO_SPRING = 239
 };
 
 /// The running children keep these flags in Actor.timer, their scene

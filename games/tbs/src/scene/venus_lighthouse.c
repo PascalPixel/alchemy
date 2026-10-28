@@ -12,26 +12,27 @@
 /// scholars
 ///   and Babi's soldiers the wanderers attacked lie hurt and say what they saw;
 ///   a soldier who tells of the attack flickers and vanishes
-///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the metatile behavior of his spot
+///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the cell behavior of his spot
 ///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the open
 ///   door, leads in.
 /// - Venus Lighthouse (SceneId_VenusLighthouseGroundFloor, named by an
 /// area
 ///   rule of its own), the floor behind the front door, with three scholars.
-///   The great statue (MB_VENUS_LIGHTHOUSE_GREAT_STATUE) opens one of two paths
-///   (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH, the first time by the
-///   frame counter's parity, then switching at each search) and lights it in
-///   gold lines between the floor lamps before it, where a small model of the
-///   lighthouse stands (gVenusMiniatureLighthouseScript); the Tunnel Ruins
-///   under Babi Lighthouse redraw their ways to match (tunnel_ruins.c), and
-///   they lead up into VenusLighthouseFirstFloor. The reliefs
-///   (MB_VENUS_LIGHTHOUSE_FIRST_RELIEF) are read, and Reveal shows a hidden
-///   path in two places. Move pushes a pillar to a wall
+///   The great statue (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_GREAT_STATUE) opens one
+///   of two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH, the first
+///   time by the frame counter's parity, then switching at each search) and
+///   lights it in gold lines between the floor lamps before it, where a small
+///   model of the lighthouse stands (gVenusMiniatureLighthouseScript); the
+///   Tunnel Ruins under Babi Lighthouse redraw their ways to match
+///   (tunnel_ruins.c), and they lead up into VenusLighthouseFirstFloor. The
+///   reliefs (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF) are read, and Reveal
+///   shows a hidden path in two places. Move pushes a pillar to a wall
 ///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL) and Carry, from the Carry Stone in
 ///   one of the floor's chests, sets it down beyond
 ///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED). A floor switch is pressed while
 ///   the leader stands on it and held by a statue Moved onto it; until then the
-///   ledge (MB_VENUS_LIGHTHOUSE_LEDGE) drops the leader to the floor below.
+///   ledge (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LEDGE) drops the leader to the floor
+///   below.
 /// - Venus Lighthouse (SceneId_VenusLighthouseFirstFloor), where the Tunnel
 ///   Ruins come up
 ///   (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES). A floor
@@ -65,7 +66,7 @@
 ///   (VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE).
 ///
 /// Locked doors stand on the second floor and above
-/// (MB_VENUS_LIGHTHOUSE_LOCKED_DOOR). The wall and gate flags
+/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LOCKED_DOOR). The wall and gate flags
 /// (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED to FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)
 /// and the Psynergy Stones' flags are area flags: they last while the
 /// party stays in the scenes of the climb (SceneId_VenusLighthouseFirstFloor to
@@ -162,61 +163,66 @@
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE 0x351
 
-/// The metatile behaviors the floors' events answer, by floor; a number means
+/// The cell behaviors the floors' events answer, by floor; a number means
 /// one thing on one floor and another on the next. Each exit cell carries the
 /// number of the exit it leads by, and the event rows name it by that exit, as
 /// they do the sparkling passages, which leave by their own number
 /// (VenusLighthouse_EnterSparklingPassage).
-enum VenusLighthouseMetatileBehavior {
+enum VenusLighthouseCellBehavior {
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
-  MB_VENUS_LIGHTHOUSE_LOCKED_DOOR =
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LOCKED_DOOR =
       25, ///< a locked door, from the second floor up
-  MB_VENUS_LIGHTHOUSE_DRIFT_SOUTH =
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH =
       30, ///< a floor that carries the party south
   /// A floor's chest.
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_VENUS_LIGHTHOUSE_CHEST = 100,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST = 100,
   /// A floor's Psynergy Stone.
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  MB_VENUS_LIGHTHOUSE_PSYNERGY_STONE = 110,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_PSYNERGY_STONE = 110,
   // VenusLighthouseGroundFloor
   /// The first of the six reliefs, whose words VenusLighthouse_ReadRelief shows
   /// in
   /// their order.
   /// ★ Named from the game: "There are words carved into the relief"
   /// (MsgVenusThereWordsCarvedIntoRelief)
-  MB_VENUS_LIGHTHOUSE_FIRST_RELIEF = 35,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF = 35,
   /// ★ Named from the game: "The statue speaks"
   /// (MsgVenusStatueSpeaksIsaacSoulYe)
-  MB_VENUS_LIGHTHOUSE_GREAT_STATUE = 41,
-  MB_VENUS_LIGHTHOUSE_LEDGE =
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_GREAT_STATUE = 41,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LEDGE =
       45, ///< where the leader jumps down until the switch is held
-  MB_VENUS_LIGHTHOUSE_FLOOR_SWITCH = 46,
-  MB_VENUS_LIGHTHOUSE_WALL_PILLAR = 50, ///< walking into ACTOR_WALL_PILLAR
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOOR_SWITCH = 46,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_WALL_PILLAR =
+      50, ///< walking into ACTOR_WALL_PILLAR
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_VENUS_LIGHTHOUSE_SECOND_CHEST = 101,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_SECOND_CHEST = 101,
   // VenusLighthouseFirstFloor
-  MB_VENUS_LIGHTHOUSE_HOLE = 35,
-  MB_VENUS_LIGHTHOUSE_CARRY_PILLARS =
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_HOLE = 35,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CARRY_PILLARS =
       45, ///< the gap and the two pillars beside it
   // VenusLighthouseSecondFloor
-  MB_VENUS_LIGHTHOUSE_WALL_SWITCH = 35,
-  MB_VENUS_LIGHTHOUSE_GATE_PILLAR = 36, ///< the gap and ACTOR_GATE_PILLAR
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_WALL_SWITCH = 35,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_GATE_PILLAR =
+      36, ///< the gap and ACTOR_GATE_PILLAR
   // VenusLighthouseThirdFloor
-  MB_VENUS_LIGHTHOUSE_SWITCH_PILLARS =
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_SWITCH_PILLARS =
       35, ///< the gaps and the three switch pillars
   // VenusLighthouseFourthFloor
-  MB_VENUS_LIGHTHOUSE_RISING_PASSAGE = 18,
-  MB_VENUS_LIGHTHOUSE_DRIFT_NORTH = 31,
-  MB_VENUS_LIGHTHOUSE_DRIFT_WEST = 32,
-  MB_VENUS_LIGHTHOUSE_DRIFT_EAST = 33,
-  MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS = 35,     ///< pushing a floating pillar
-  MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS_GAP = 36, ///< a gap jumped west or east
-  MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS_EAST_GAP = 37, ///< a gap jumped east
-  MB_VENUS_LIGHTHOUSE_WEST_WALL_SWITCH = 40,
-  MB_VENUS_LIGHTHOUSE_EAST_WALL_SWITCH = 41,
-  MB_VENUS_LIGHTHOUSE_SOCKET_PILLARS =
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_RISING_PASSAGE = 18,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_NORTH = 31,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_WEST = 32,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_EAST = 33,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS =
+      35, ///< pushing a floating pillar
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS_GAP =
+      36, ///< a gap jumped west or east
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS_EAST_GAP =
+      37, ///< a gap jumped east
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_WEST_WALL_SWITCH = 40,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_EAST_WALL_SWITCH = 41,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_SOCKET_PILLARS =
       45 ///< the gaps and the four socket pillars
 };
 
@@ -622,7 +628,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
-/// Unused: fills metatile behaviors in a rectangle of the requested map layer;
+/// Unused: fills cell behaviors in a rectangle of the requested map layer;
 /// nothing in Venus Lighthouse calls it.
 static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layerIndex, s32 x,
                                                          s32 z, u32 width,
@@ -853,7 +859,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 
 /// Makes the leader the actor the fade overlay follows (struct
 /// FadeOverlayWork: two translucent marks beside him wherever the ground beside
-/// him rises above his floor). Reached by stepping onto metatile behavior 32 of
+/// him rises above his floor). Reached by stepping onto cell behavior 32 of
 /// VenusLighthouseFirstFloor, which the map gives the rows the three capped
 /// pillars stand in; code 31, in the rows that bound them, turns the marks off
 /// again (VenusLighthouse_LeaveDepthPillarRows), and walking into a pillar from
@@ -862,7 +868,7 @@ static void VenusLighthouse_EnterDepthPillarRows(void) {
   gFadeOverlayWork->actor = Actor_GetById(ACTOR_PARTY_LEADER);
 }
 
-/// Stepping onto metatile behavior 31 of VenusLighthouseFirstFloor, in the rows
+/// Stepping onto cell behavior 31 of VenusLighthouseFirstFloor, in the rows
 /// that bound the capped pillars': the fade overlay follows no one.
 static void VenusLighthouse_LeaveDepthPillarRows(void) {
   gFadeOverlayWork->actor = NULL;
@@ -1168,7 +1174,7 @@ static void VenusLighthouse_SearchLockedDoor(void) {
 /// At Venus Lighthouse Entry, talking to the soldier by the entrance (or
 /// reading his mind): "Venus Lighthouse was attacked by strange wanderers..."
 /// He flickers ten times and is gone (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and
-/// the metatile behavior of his spot changes, as it does on later arrivals.
+/// the cell behavior of his spot changes, as it does on later arrivals.
 static void VenusLighthouse_HearOfTheAttack(void) {
   u32 flickersLeft;
   u32 flickerDelay;
@@ -1224,7 +1230,7 @@ static void VenusLighthouse_CarryPillarPastWall(void) {
 }
 
 /// Searching a relief in VenusLighthouseGroundFloor shows its words, the relief
-/// metatile behavior's own message. "There are words carved into the relief..."
+/// cell behavior's own message. "There are words carved into the relief..."
 ///
 /// The Japanese text gives each of the six reliefs its own words; every
 /// translation joins the first five into one message and leaves the next four
@@ -1243,7 +1249,7 @@ static void VenusLighthouse_ReadRelief(void) {
   message = (s32)MSGNO(MsgVenusThereWordsCarvedIntoRelief);
 #else
   message = work->examineCell + MSGNO(MsgVenusThereWordsCarvedIntoRelief) -
-            MB_VENUS_LIGHTHOUSE_FIRST_RELIEF;
+            CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF;
 #endif
   FieldMessage_Show(message, 1);
   Event_End();
@@ -1292,8 +1298,8 @@ static void VenusLighthouse_RevealPath(void) {
 }
 
 /// In VenusLighthouseGroundFloor, walking off the ledge
-/// (MB_VENUS_LIGHTHOUSE_LEDGE) before the floor switch is held down: the leader
-/// jumps down to the floor below and shakes his head.
+/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LEDGE) before the floor switch is held down:
+/// the leader jumps down to the floor below and shakes his head.
 static void VenusLighthouse_JumpDown(void) {
   struct Actor *leader;
   s32 landingQuarterZ;
@@ -1487,7 +1493,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
   }
 }
 
-/// In VenusLighthouseGroundFloor, pushing the pillar by the wall (metatile
+/// In VenusLighthouseGroundFloor, pushing the pillar by the wall (cell
 /// behavior 50): as Move, with Garet's remark at the wall.
 static void VenusLighthouse_PushPillarTowardWall(void) {
 
@@ -1569,7 +1575,7 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
   Event_End();
 }
 
-/// In VenusLighthouseFirstFloor, stepping onto the hole in the floor (metatile
+/// In VenusLighthouseFirstFloor, stepping onto the hole in the floor (cell
 /// behavior 35): the leader looks down, falls through and lands in the room
 /// below (VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE).
 static void VenusLighthouse_FallThroughFloor(void) {
@@ -1700,7 +1706,7 @@ static void VenusLighthouse_LiftCarryPillar(void) {
   do {
     pillar = Actor_GetById(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
     pillarIndex++;
-    MapGrid_SetMetatileBehaviorAt(0, pillar->x.fixed, pillar->z.fixed, 45);
+    MapGrid_SetCellBehaviorAt(0, pillar->x.fixed, pillar->z.fixed, 45);
   } while (pillarIndex <= 1);
 }
 
@@ -1714,8 +1720,8 @@ static void VenusLighthouse_MoveCarryPillar(void) {
   do {
     pillar = Actor_GetById(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
     if (pillar->y.fixed > -PIXELS(16)) {
-      MapGrid_SetMetatileBehaviorAt(0, pillar->x.fixed, pillar->z.fixed,
-                                    MB_WALL);
+      MapGrid_SetCellBehaviorAt(0, pillar->x.fixed, pillar->z.fixed,
+                                CELL_BEHAVIOR_WALL);
     }
     pillarIndex++;
   } while (pillarIndex <= 1);
@@ -1794,9 +1800,9 @@ static void VenusLighthouse_CarryPillarAcrossGap(void) {
 }
 
 /// In VenusLighthouseSecondFloor, stepping on the floor switch
-/// (MB_VENUS_LIGHTHOUSE_WALL_SWITCH): the wall slides aside in a cloud of dust,
-/// the first time only (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED), and the event cuts
-/// to VenusLighthouseFirstFloor by
+/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_WALL_SWITCH): the wall slides aside in a
+/// cloud of dust, the first time only (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED), and
+/// the event cuts to VenusLighthouseFirstFloor by
 /// VENUS_LIGHTHOUSE_SECOND_FLOOR_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR_EAST, where
 /// VenusLighthouse_AnimatePairedTileWaves shows what moved there before
 /// bringing the party back.
@@ -2336,7 +2342,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
 }
 
 /// In VenusLighthouseFourthFloor, pushing a floating pillar
-/// (MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS and the gaps beside it).
+/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS and the gaps beside it).
 static void VenusLighthouse_PushPuzzlePillar(void) {
 
   Event_Start();
@@ -2668,8 +2674,8 @@ static void VenusLighthouse_JumpOrPushSocketPillar(void) {
 }
 
 /// In VenusLighthouseFourthFloor, walking south into the passage
-/// (MB_VENUS_LIGHTHOUSE_RISING_PASSAGE): the leader rises out of the room to
-/// the floor above (
+/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_RISING_PASSAGE): the leader rises out of the
+/// room to the floor above (
 /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES_RISING, where
 /// VenusLighthouse_RaiseLeaderWithSpray lands him on ACTOR_RISING_PLATFORM).
 static void VenusLighthouse_EnterRisingPassage(void) {
@@ -3249,10 +3255,11 @@ s32 VenusLighthouse_Initialize(void) {
 }
 
 /// Standing on this floor (VenusLighthouseFourthFloor's
-/// MB_VENUS_LIGHTHOUSE_DRIFT_NORTH) carries the party north in a trail of dust;
-/// at a ledge they drop down. The floors of MB_VENUS_LIGHTHOUSE_DRIFT_SOUTH,
-/// _WEST and _EAST do the same south, west and east, and the southward floor
-/// also lies in VenusLighthouseFirstFloor and VenusLighthouseThirdFloor.
+/// CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_NORTH) carries the party north in a
+/// trail of dust; at a ledge they drop down. The floors of
+/// CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH, _WEST and _EAST do the same
+/// south, west and east, and the southward floor also lies in
+/// VenusLighthouseFirstFloor and VenusLighthouseThirdFloor.
 static void VenusLighthouse_DriftNorth(void) {
   struct Vector3 args;
 
@@ -4771,28 +4778,28 @@ struct Trigger gVenusLighthouseGroundFloorTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_WEST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_RELIEFS_EAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_GROUND_FLOOR_CARRY_STONE_TO_PILLARS },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_LEDGE, FLAG_SCENE_TEMP_00, EVENT(VenusLighthouse_JumpDown) },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_FLOOR_SWITCH, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnFloorSwitch) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_WALL_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushPillarTowardWall) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LEDGE, FLAG_SCENE_TEMP_00, EVENT(VenusLighthouse_JumpDown) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOOR_SWITCH, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnFloorSwitch) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_WALL_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushPillarTowardWall) },
     { TRIGGER_TALK, ACTOR_SCHOLAR_ATTACKED_ANYWAY, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenToldThemToStopBut) },
     { TRIGGER_TALK, ACTOR_SCHOLAR_NOT_THE_ENTRANCE, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenWentInsideButThenCame) },
     { TRIGGER_TALK, ACTOR_DOOR_SCHOLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_TalkToScholarByDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_ATTACKED_ANYWAY, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIfKradenHadntBeenThereWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_NOT_THE_ENTRANCE, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenSaidSomethingAboutThisBeing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOOR_SCHOLAR, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIWonderWhatMysteriesTheStatue) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_FIRST_RELIEF, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
 #if LANGUAGE == LANGUAGE_JAPANESE
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_FIRST_RELIEF + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_FIRST_RELIEF + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_FIRST_RELIEF + 3, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_FIRST_RELIEF + 4, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 3, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 4, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
 #endif
 #if !TBS_PATCH_1 || TBS_PATCH_2
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_FIRST_RELIEF + 5, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 5, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief) },
 #endif
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_GREAT_STATUE, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchStatue) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_LUCKY_CAP, FIND_ITEM(ITEM_LUCKY_CAP) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_VENUS_LIGHTHOUSE_SECOND_CHEST, FLAG_VENUS_LIGHTHOUSE_CARRY_STONE, FIND_ITEM(ITEM_CARRY_STONE) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_GREAT_STATUE, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchStatue) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_LUCKY_CAP, FIND_ITEM(ITEM_LUCKY_CAP) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_SECOND_CHEST, FLAG_VENUS_LIGHTHOUSE_CARRY_STONE, FIND_ITEM(ITEM_CARRY_STONE) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_MovePillarTowardWall) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FLOOR_SWITCH_STATUE, FLAG_SCENE_TEMP_00, EVENT(VenusLighthouse_MovePillarOntoSwitch) },
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_WALL_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_CarryPillarPastWall) },
@@ -4821,15 +4828,15 @@ struct Trigger gVenusLighthouseFirstFloorTriggers[] = {
     { TRIGGER_EXIT, VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE_TO_LADDERS },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_TUNNEL_RUINS_LADY_STATUES },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_HOLE, CONDITION_ALWAYS, EVENT(VenusLighthouse_FallThroughFloor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_HOLE, CONDITION_ALWAYS, EVENT(VenusLighthouse_FallThroughFloor) },
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushDepthPillar) },
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 32, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushDepthPillar) },
     { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(VenusLighthouse_LeaveDepthPillarRows) },
     { TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(VenusLighthouse_EnterDepthPillarRows) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_CARRY_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpOrPushCarryPillar) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN, FIND_ITEM(ITEM_THUNDER_CROWN) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CARRY_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpOrPushCarryPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN, FIND_ITEM(ITEM_THUNDER_CROWN) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveDepthPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveDepthPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveDepthPillar) },
@@ -4855,9 +4862,9 @@ struct Trigger gVenusLighthouseSecondFloorTriggers[] = {
     { TRIGGER_EXIT, VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_TO_GATE },
     { TRIGGER_EXIT, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_WALL_SWITCH },
     { TRIGGER_EXIT, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_TO_PILLAR_PIT },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_WALL_SWITCH, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnWallSwitch) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT(VenusLighthouse_JumpOrPushGatePillar) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchLockedDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_WALL_SWITCH, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnWallSwitch) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT(VenusLighthouse_JumpOrPushGatePillar) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchLockedDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATE_PILLAR, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT(VenusLighthouse_MoveGatePillar) },
     { TRIGGERS_END },
 };
@@ -4881,11 +4888,11 @@ struct Trigger gVenusLighthouseThirdFloorTriggers[] = {
     { TRIGGER_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_TO_WEST_ROOM },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR },
     { TRIGGER_EXIT, VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_ROOM_TO_PILLAR_SOCKETS },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
     { TRIGGER_STEP, VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_TO_SOUTHWEST_ROOM, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_SWITCH_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpOrPushSwitchPillar) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchLockedDoor) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_DRAGON_SCALES, FIND_ITEM(ITEM_DRAGON_SCALES) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_SWITCH_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpOrPushSwitchPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchLockedDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_DRAGON_SCALES, FIND_ITEM(ITEM_DRAGON_SCALES) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSwitchPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSwitchPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_SWITCH_PILLAR + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveSwitchPillar) },
@@ -4910,23 +4917,23 @@ struct Trigger gVenusLighthouseFourthFloorTriggers[] = {
     { TRIGGER_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_SOUTH },
     { TRIGGER_EXIT, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_TO_WALL_SWITCHES_EAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE_TO_WALL_SWITCHES },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), MB_VENUS_LIGHTHOUSE_RISING_PASSAGE, CONDITION_ALWAYS, EVENT(VenusLighthouse_EnterRisingPassage) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushPuzzlePillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpAcrossGap) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpAcrossGap) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushPuzzlePillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS_EAST_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpAcrossGap) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_FLOATING_PILLARS_EAST_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushPuzzlePillar) },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_WEST_WALL_SWITCH, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnWestWallSwitch) },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_EAST_WALL_SWITCH, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnEastWallSwitch) },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_DRIFT_NORTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftNorth) },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_DRIFT_WEST, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftWest) },
-    { TRIGGER_STEP, MB_VENUS_LIGHTHOUSE_DRIFT_EAST, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftEast) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_SOCKET_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpOrPushSocketPillar) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchLockedDoor) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_GAIA_BLADE, FIND_ITEM(ITEM_GAIA_BLADE) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), MB_VENUS_LIGHTHOUSE_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_RISING_PASSAGE, CONDITION_ALWAYS, EVENT(VenusLighthouse_EnterRisingPassage) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushPuzzlePillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpAcrossGap) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpAcrossGap) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushPuzzlePillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS_EAST_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpAcrossGap) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS_EAST_GAP, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushPuzzlePillar) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_WEST_WALL_SWITCH, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnWestWallSwitch) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_EAST_WALL_SWITCH, CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnEastWallSwitch) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_NORTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftNorth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_WEST, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftWest) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_EAST, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftEast) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_SOCKET_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpOrPushSocketPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VenusLighthouse_SearchLockedDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_GAIA_BLADE, FIND_ITEM(ITEM_GAIA_BLADE) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_FLOATING_PILLAR, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_FLOATING_PILLAR + 1, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_FLOATING_PILLAR + 2, CONDITION_ALWAYS, 0 },

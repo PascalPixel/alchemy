@@ -17,13 +17,12 @@
 ///   STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner instead.
 /// - Lunpa (STONE_ROOMS_FROM_LUNPA), Lunpa's hidden room, which the town's
 ///   hidden passage reaches (lunpa.c). Its six chests are each opened once
-///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), MB_LUNPA_HIDDEN_ROOM_DOOR leads back up
-///   into Lunpa, and arriving this way clears FLAG_SHOW_AREA_NAME, so no
-///   area name is shown. The room uses the thieves' tables, so its chests and
-///   exit sit in the same trigger table as the thieves' talk and the Vault
-///   door.
-///   ★ Named from what the player sees: a hidden stone room of six chests
-///   behind barred windows (its render)
+///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR
+///   leads back up into Lunpa, and arriving this way clears
+///   FLAG_SHOW_AREA_NAME, so no area name is shown. The room uses the thieves'
+///   tables, so its chests and exit sit in the same trigger table as the
+///   thieves' talk and the Vault door. ★ Named from what the player sees: a
+///   hidden stone room of six chests behind barred windows (its render)
 
 #include "adventure.h"
 #include "unit/scene/stone_rooms.h"
@@ -47,22 +46,22 @@
 #include "songs.h"
 #include "text/msg_ids.h"
 
-/// The metatile behaviors the jail's triggers answer.
-enum StoneRoomsMetatileBehavior {
-  MB_VAULT_JAIL_DOOR = 1,
-  MB_LUNPA_HIDDEN_ROOM_DOOR = 2,
+/// The cell behaviors the jail's triggers answer.
+enum StoneRoomsCellBehavior {
+  CELL_BEHAVIOR_VAULT_JAIL_DOOR = 1,
+  CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR = 2,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE = 100,
+  CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE = 100,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
+  CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
+  CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
+  CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_LUNPA_HIDDEN_ROOM_CHEST_COINS,
+  CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_COINS,
   /// ★ Named from the game: "checked the chest" (MsgVaultIsaacCheckedChest)
-  MB_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR
+  CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR
 };
 
 /// The placed actors, numbering the rows of the table
@@ -223,8 +222,8 @@ static void StoneRooms_ReadRightThiefMind(void) {
 
 /// The party steps out of Vault's jail into Vault, with the exit sound.
 ///
-/// Reached by stepping on the door's cell (MB_VAULT_JAIL_DOOR) under the
-/// thieves' table, that is, entered from Vault or Lunpa; takes
+/// Reached by stepping on the door's cell (CELL_BEHAVIOR_VAULT_JAIL_DOOR) under
+/// the thieves' table, that is, entered from Vault or Lunpa; takes
 /// STONE_ROOMS_TO_VAULT to VAULT_FROM_STONE_ROOMS. The prisoner's table leaves
 /// by a plain exit instead, STONE_ROOMS_TO_VAULT_REVISIT.
 static void StoneRooms_LeaveForVault(void) {
@@ -295,8 +294,8 @@ const struct ActorTemplate gStoneRooms_PrisonerActorTemplates[] = {
 };
 
 const struct Trigger gStoneRooms_ThiefTriggers[] = {
-    { TRIGGER_STEP, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT(StoneRooms_LeaveForVault) },
-    { TRIGGER_EXIT, MB_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VAULT_JAIL_DOOR, CONDITION_ALWAYS, EVENT(StoneRooms_LeaveForVault) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR, CONDITION_ALWAYS, STONE_ROOMS_TO_LUNPA },
     { TRIGGER_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
       EVENT(StoneRooms_LeaderSilencesThieves) },
     { TRIGGER_TALK, ACTOR_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
@@ -309,23 +308,23 @@ const struct Trigger gStoneRooms_ThiefTriggers[] = {
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT(StoneRooms_ReadLeftThiefMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIGHT_THIEF,
       IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT(StoneRooms_ReadRightThiefMind) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE,
       FIND_ITEM(ITEM_WATER_OF_LIFE) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB, FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB, FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB,
       FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL, FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL, FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE,
       FIND_ITEM(ITEM_ANTIDOTE) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_COINS, FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS, FIND_COINS(44) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), MB_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR,
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_COINS, FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS, FIND_COINS(44) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR, FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR,
       FIND_ITEM(ITEM_ELIXIR) },
     { TRIGGERS_END },
 };
 // clang-format on
 
 const struct Trigger gStoneRooms_PrisonerTriggers[] = {
-    {TRIGGER_EXIT, MB_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, CELL_BEHAVIOR_VAULT_JAIL_DOOR, CONDITION_ALWAYS,
      STONE_ROOMS_TO_VAULT_REVISIT},
     {TRIGGER_TALK, ACTOR_PRISONER, CONDITION_ALWAYS,
      MsgVaultPrisonerRegretsFight},

@@ -8,13 +8,13 @@
 /// Its eight exits (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and
 /// the seven after it) lead back into SceneId_TreeRooms; walking into
 /// one for two frames (STEP_TRIGGER_FLAG_QUICK) plays the exit sound and leaves
-/// at once, the cells' metatile behaviors being the exits' own numbers.
-/// Step triggers on metatile behaviors 10 to 15 lie in pairs at the top and
+/// at once, the cells' cell behaviors being the exits' own numbers.
+/// Step triggers on cell behaviors 10 to 15 lie in pairs at the top and
 /// bottom of the vines that hang from one branch to the one below (cells
 /// (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20) and (40, 26) in
 /// map_047's map.txt): each moves the leader and the camera five
 /// or six cells north or south in one step, up or down its vine, with no walk.
-/// Each vine has metatile behaviors of its own, so 12 and 13 repeat 10's and
+/// Each vine has cell behaviors of its own, so 12 and 13 repeat 10's and
 /// 11's events for the second vine. Breeze, a Jupiter Djinni, stands here until
 /// it has joined the party: its own flag (FLAG_DJINNI(DJINNI_BREEZE))
 /// removes its actor template. Talking to it starts a battle with it.
@@ -131,43 +131,43 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   }
 }
 
-/// Touching metatile behavior 10 in Tret Tree: the leader and camera move 80
+/// Touching cell behavior 10 in Tret Tree: the leader and camera move 80
 /// pixels south at once.
 static void TretTreeBranch_GoDownWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Touching metatile behavior 11 in Tret Tree: the leader and camera move 80
+/// Touching cell behavior 11 in Tret Tree: the leader and camera move 80
 /// pixels north at once.
 static void TretTreeBranch_GoUpWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Touching metatile behavior 12 in Tret Tree: the same 80-pixel move south as
-/// metatile behavior 10.
+/// Touching cell behavior 12 in Tret Tree: the same 80-pixel move south as
+/// cell behavior 10.
 static void TretTreeBranch_GoDownNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Touching metatile behavior 13 in Tret Tree: the same 80-pixel move north as
-/// metatile behavior 11.
+/// Touching cell behavior 13 in Tret Tree: the same 80-pixel move north as
+/// cell behavior 11.
 static void TretTreeBranch_GoUpNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Touching metatile behavior 14 in Tret Tree: the leader and camera move 96
+/// Touching cell behavior 14 in Tret Tree: the leader and camera move 96
 /// pixels south at once.
 static void TretTreeBranch_GoDownSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
-/// Touching metatile behavior 15 in Tret Tree: the leader and camera move 96
+/// Touching cell behavior 15 in Tret Tree: the leader and camera move 96
 /// pixels north at once.
 static void TretTreeBranch_GoUpSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
-/// Walking into one of the eight exits in Tret Tree, whose cells' metatile
+/// Walking into one of the eight exits in Tret Tree, whose cells' cell
 /// behaviors are the exits' own numbers: the exit sound plays and the party
 /// leaves by the exit touched, into Tret Tree's other scene
 /// (SceneId_TreeRooms).

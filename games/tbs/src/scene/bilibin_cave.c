@@ -9,7 +9,7 @@
 /// scene being entered.
 ///
 /// At the Bilibin Cave Entrance, entered from the World Map, Growth on a sprout
-/// (ACTOR_SPROUT) grows it into a vine and changes the metatile behavior of
+/// (ACTOR_SPROUT) grows it into a vine and changes the cell behavior of
 /// its cell (BilibinCave_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
 /// keeps it grown until the party leaves the Bilibin Cave Entrance, into the
 /// cave beyond or out to the World Map, since both are other areas. Two
@@ -41,10 +41,11 @@
 /// Move, and while either stands beside the pillar, on cell (35, 23), the
 /// pillar melts into a puddle and the cells north and south of it change with
 /// it; when both leave it freezes again
-/// (BilibinCave_UpdateThirdPuddleFromTorches). Melting turns the metatile
+/// (BilibinCave_UpdateThirdPuddleFromTorches). Melting turns the cell
 /// behaviors of cells (36, 22) and (36, 24), north and south of the puddle,
-/// from MB_ENCOUNTER_GROUND_1 to MB_JUMP_FORWARD: encounter ground becomes a
-/// jump across. FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
+/// from CELL_BEHAVIOR_ENCOUNTER_GROUND_1 to CELL_BEHAVIOR_JUMP_FORWARD:
+/// encounter ground becomes a jump across.
+/// FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
 /// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there
 /// and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted, so
 /// coming back from SceneId_BilibinCaveRapier puts the torches and the pillar
@@ -244,7 +245,7 @@ const struct Trigger *BilibinCave_GetTriggers(void) {
 /// Stepping on step trigger 10 at the Bilibin Cave Entrance, on either side of
 /// the way into Bilibin Cave: the way's cell (21, 14), the exit cell of
 /// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
-/// metatile behavior of source cell (1, 0), which has none.
+/// cell behavior of source cell (1, 0), which has none.
 static void BilibinCave_WalkOntoLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
@@ -308,7 +309,7 @@ static void BilibinCave_DouseIceRoomFire(void) {
   Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
   Event_WaitFrames(40);
-  // Match the replacement's drawing priority to its metatile behavior.
+  // Match the replacement's drawing priority to its cell behavior.
   Actor_SetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
   Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
   Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -402,7 +403,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 }
 
 /// Growth on the sprout at the Bilibin Cave Entrance, until it has grown: it
-/// grows into a vine and its cell's metatile behavior changes;
+/// grows into a vine and its cell's cell behavior changes;
 /// FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps it grown.
 static void BilibinCave_GrowPlant(void) {
 
@@ -520,7 +521,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 3);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 4);
   BilibinCave_EmptyActorSetupHook(ACTOR_FIRST_TORCH + 5);
-  // Restore the surface exposed by Douse, including its metatile behavior and
+  // Restore the surface exposed by Douse, including its cell behavior and
   // priority.
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);

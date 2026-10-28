@@ -1,7 +1,7 @@
 /// @file The wharf at the edge of Lalivero where Babi's ship lies sunk, the
 /// game's last scene: SceneId_LemurianShip, with the area name Lemurian ship.
 /// It is entered from Faran's house (lalivero_interiors.c) once Iodem has given
-/// the party the Black Orb, and stepping back on metatile behavior 1
+/// the party the Black Orb, and stepping back on cell behavior 1
 /// (LemurianShip_LeaveTheShip) returns there.
 ///
 /// LemurianShip_SetupMap sinks the ship's two map layers 90 pixels, puts the
@@ -11,7 +11,7 @@
 /// Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug scene
 /// selector reaches, first gives the leader the Black Orb.
 ///
-/// Using the Black Orb at the water's edge (metatile behavior 10) plays
+/// Using the Black Orb at the water's edge (cell behavior 10) plays
 /// LemurianShip_RaiseTheShip: the orb glows, spray rises and the ship comes up
 /// out of the water 90 pixels. It adds Ship_UpdateSwell and
 /// ShipGlow_CyclePalette, which run to the end of the game, and then
@@ -124,7 +124,7 @@ const struct ActorTemplate *LemurianShip_GetActorTemplates(void) {
 }
 
 /// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
-/// colour. Reached by stepping on metatile behavior 1 (gLemurianShipTriggers);
+/// colour. Reached by stepping on cell behavior 1 (gLemurianShipTriggers);
 /// takes LEMURIAN_SHIP_TO_TIMBER_ROOMS_C.
 static void LemurianShip_LeaveTheShip(void) {
   Import_EventSetExitRequest(gFieldWork->stepTrigger);
@@ -142,7 +142,7 @@ static void Ripple_Start(void) {
   ScanlineEffect_InitWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
-/// The exit, Reveal and the Black Orb at the water's edge (metatile behavior
+/// The exit, Reveal and the Black Orb at the water's edge (cell behavior
 /// 10).
 const struct Trigger *LemurianShip_GetTriggers(void) {
   return gLemurianShipTriggers;
@@ -598,7 +598,7 @@ static __inline__ s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude,
 
 /// Lemurian ship: the Black Orb glows, the water lights up, spray rises and
 /// the ship comes up out of the sea 90 pixels; then the party sets sail.
-/// Reached by using the Black Orb at the water's edge (metatile behavior 10).
+/// Reached by using the Black Orb at the water's edge (cell behavior 10).
 /// Adds the swell and glow tasks, which run to the end of the game, and
 /// calls LemurianShip_SetSail.
 static void LemurianShip_RaiseTheShip(void) {

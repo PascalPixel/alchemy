@@ -28,7 +28,7 @@
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near makes Kite hop away
 ///   (ValeCave_KiteRunsOff) and then run behind a ledge
 ///   (ValeCave_KiteRunsBehindLedge, setting
-///   FLAG_VALE_CAVE_KITE_BEHIND_LEDGE); from then on twelve metatile behaviors,
+///   FLAG_VALE_CAVE_KITE_BEHIND_LEDGE); from then on twelve cell behaviors,
 ///   45 to 56 on the 23 cells round the ledge, each send it to its point of
 ///   gValeCave_WalkTargets on the ledge's far side as the leader walks round
 ///   (ValeCave_KiteKeepsAway), so it cannot be reached until Halt stops it.
@@ -166,9 +166,9 @@ enum ValeCaveLogsActorId {
   ACTOR_SOUTH_LOG ///< lying west to east, pushed north
 };
 
-/// The first of the twelve metatile behaviors that send Kite round its ledge
+/// The first of the twelve cell behaviors that send Kite round its ledge
 /// (ValeCave_KiteKeepsAway), one for each of gValeCave_WalkTargets.
-enum ValeCaveMetatileBehavior { MB_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
+enum ValeCaveCellBehavior { CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 
 /// The flag of Kite, set once it is caught.
 /// ★ Named from the game: "Kite" (MsgDjinnName)
@@ -456,7 +456,7 @@ static void ValeCave_MoveEastCratesIntoHole(void) {
 /// In Vale Cave's second room, pushing the eastern crates: they move a cell,
 /// and sink if they are then over their hole.
 ///
-/// Reached by walking into metatile behavior 24 in the second room, until
+/// Reached by walking into cell behavior 24 in the second room, until
 /// FLAG_VALE_CAVE_EAST_CRATES_SUNK is set.
 static void ValeCave_PushEastCratesIntoHole(void) {
   Event_Start();
@@ -468,7 +468,7 @@ static void ValeCave_PushEastCratesIntoHole(void) {
 /// In Vale Cave's second room, walking south off a ledge: Isaac hops down if
 /// the cell below is free.
 ///
-/// Reached by walking south into metatile behavior 21 in the second room.
+/// Reached by walking south into cell behavior 21 in the second room.
 /// Returns 1 when the leader hopped, 0 when the landing cell is blocked.
 static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
 
@@ -517,7 +517,7 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
 /// In Kite's part of Vale Cave's second room, coming near Kite: the camera
 /// finds it; it notices the party and hops away up the ledge.
 ///
-/// Reached by stepping on metatile behavior 40 in the second room until Kite is
+/// Reached by stepping on cell behavior 40 in the second room until Kite is
 /// caught (FLAG_KITE); runs once, setting FLAG_VALE_CAVE_KITE_RAN_OFF.
 static void ValeCave_KiteRunsOff(void) {
 
@@ -551,7 +551,7 @@ static void ValeCave_KiteRunsOff(void) {
 /// In Kite's part of Vale Cave's second room, coming near again: Kite runs
 /// behind the ledge and turns to watch the party.
 ///
-/// Reached by stepping on metatile behavior 41 in the second room until Kite is
+/// Reached by stepping on cell behavior 41 in the second room until Kite is
 /// caught, once ValeCave_KiteRunsOff has run. Sets
 /// FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE,
 /// and gives Kite the update routine ValeCave_FaceActorTowardLeader.
@@ -584,7 +584,7 @@ static void ValeCave_KiteRunsBehindLedge(void) {
 /// In Kite's part of Vale Cave's second room, walking around the ledge: Kite
 /// keeps to the far side of it, unless Halt has stopped it.
 ///
-/// Reached by stepping on metatile behaviors 45 to 56 in the second room until
+/// Reached by stepping on cell behaviors 45 to 56 in the second room until
 /// Kite is caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set; each behavior
 /// sends Kite to its row of gValeCave_WalkTargets at the leader's speed.
 static void ValeCave_KiteKeepsAway(void) {
@@ -606,7 +606,7 @@ static void ValeCave_KiteKeepsAway(void) {
       djinni = Actor_GetById(ACTOR_KITE);
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
       djinni->acceleration = leader->acceleration;
-      routeIndex -= MB_VALE_CAVE_FIRST_KITE_ROUTE;
+      routeIndex -= CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
       // X/Z pairs occupy eight bytes. Plain pair indexing changes six
       // instruction words in the English build, so keep separate offsets.
       walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
@@ -632,7 +632,7 @@ static void ValeCave_HaltKite(void) {
 /// In Vale Cave's third room, pushing the eastern log along the ledge: at its
 /// edge the log falls off, opening the way.
 ///
-/// Reached by walking into metatile behavior 20 in the third room. When the log
+/// Reached by walking into cell behavior 20 in the third room. When the log
 /// falls (column 17) it sets FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE and
 /// clears the cells it held.
 static void ValeCave_PushLogOverEdge(void) {
@@ -686,7 +686,7 @@ static void ValeCave_PushLogOverEdge(void) {
 /// In Vale Cave's third room, pushing the western log east: it falls off the
 /// ledge, opening the way.
 ///
-/// Reached by walking east into metatile behavior 21 in the third room. Sets
+/// Reached by walking east into cell behavior 21 in the third room. Sets
 /// FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE and clears the cells the log held.
 static void ValeCave_PushLogOffLedge(void) {
 
@@ -722,8 +722,8 @@ static void ValeCave_PushLogOffLedge(void) {
   Import_ActorSetAnimation(ACTOR_WEST_LOG, 8);
   Actor_SetSpritePriority(ACTOR_WEST_LOG, 3);
   Actor_GetById(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
-  PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
+  PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
+  PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
   GameFlag_Set(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE);
   Event_PlaySong(SE_LOG_FALL);
   Event_End();
@@ -732,7 +732,7 @@ static void ValeCave_PushLogOffLedge(void) {
 /// In Vale Cave's third room, pushing the southern log north: it slides a cell,
 /// opening the way.
 ///
-/// Reached by walking into metatile behavior 22 in the third room. Sets
+/// Reached by walking into cell behavior 22 in the third room. Sets
 /// FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW when it stops on row 20, else
 /// FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW, and then opens the cells above it.
 static void ValeCave_PushLogNorth(void) {
@@ -741,7 +741,7 @@ static void ValeCave_PushLogNorth(void) {
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
-    // Slide into the new cell before replacing the metatile behavior footprint.
+    // Slide into the new cell before replacing the cell behavior footprint.
     Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 3);
     Actor_SetSpeed(ACTOR_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
     Actor_OffsetPositionAndResetMotion(ACTOR_SOUTH_LOG, 0, -16);
@@ -812,7 +812,7 @@ s32 ValeCave_Initialize(void) {
 /// In Vale, the cave's way in (SceneId_ValeCaveMouth), each exit plays the exit
 /// sound before leaving.
 ///
-/// Reached by stepping on metatile behaviors 1 to 3 in the first room; takes
+/// Reached by stepping on cell behaviors 1 to 3 in the first room; takes
 /// the exit of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST,
 /// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or
 /// VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST).
@@ -841,7 +841,7 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 /// In Vale Cave's second room, walking east onto the riding log: it carries
 /// the leader to the eastern end of the passage.
 ///
-/// Reached by walking east into metatile behavior 20 in the second room. Sets
+/// Reached by walking east into cell behavior 20 in the second room. Sets
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void ValeCave_RideLogEast(void) {
 
@@ -857,7 +857,7 @@ static void ValeCave_RideLogEast(void) {
 /// In Vale Cave's second room, walking west onto the riding log: it carries
 /// the leader back to the western end of the passage.
 ///
-/// Reached by walking west into metatile behavior 21 in the second room. Clears
+/// Reached by walking west into cell behavior 21 in the second room. Clears
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void ValeCave_RideLogWest(void) {
 
@@ -954,21 +954,26 @@ static void ValeCave_ApplyEntryState(void) {
       // Each log already pushed leaves open floor; else its footprint
       // blocks its cells again.
       if (GameFlag_Get(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE) != 0) {
-        PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, MB_NORMAL);
-        PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, MB_NORMAL);
+        PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4,
+                                               CELL_BEHAVIOR_NORMAL);
+        PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4,
+                                               CELL_BEHAVIOR_NORMAL);
       } else {
         Scene_RedrawActorFootprint(ACTOR_WEST_LOG);
       }
       if (GameFlag_Get(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE) != 0) {
-        PushedActor_FillGridAttributeRectangle(2, 16, 16, 1, 4, MB_NORMAL);
-        PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4, MB_NORMAL);
+        PushedActor_FillGridAttributeRectangle(2, 16, 16, 1, 4,
+                                               CELL_BEHAVIOR_NORMAL);
+        PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4,
+                                               CELL_BEHAVIOR_NORMAL);
       } else {
         Scene_RedrawActorFootprint(ACTOR_EAST_LOG);
       }
       southLogOnSouthernRow =
           GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
       if (southLogOnSouthernRow != 0) {
-        PushedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2, MB_NORMAL);
+        PushedActor_FillGridAttributeRectangle(0, 13, 19, 4, 2,
+                                               CELL_BEHAVIOR_NORMAL);
       } else if (GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW) != 0) {
         PushedActor_FillGridAttributeRectangle(0, 13, 15, 4, 2,
                                                southLogOnSouthernRow);
@@ -986,7 +991,7 @@ static void ValeCave_ApplyEntryState(void) {
 /// In Vale Cave's second room, touching the riding log restarts its
 /// animation.
 ///
-/// Reached by stepping on metatile behavior 20 or 21 in the second room.
+/// Reached by stepping on cell behavior 20 or 21 in the second room.
 static void ValeCave_TouchRidingLog(void) {
   Import_ActorSetAnimation(ACTOR_RIDING_LOG, 1);
   Import_ActorSetAnimation(ACTOR_RIDING_LOG, 2);
@@ -1045,7 +1050,7 @@ s32 gPushedActor_FootprintBounds[] = {
 };
 
 /// The twelve points round the far side of Kite's ledge, x then z in pixels,
-/// one for each metatile behavior from MB_VALE_CAVE_FIRST_KITE_ROUTE on.
+/// one for each cell behavior from CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE on.
 s32 gValeCave_WalkTargets[] = {
     760, 296,
     760, 280,

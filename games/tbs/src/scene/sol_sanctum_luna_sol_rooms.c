@@ -1283,7 +1283,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
       TilesetAnim_Resume(10);
       GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
     }
-    Actor_LinkPair(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 30);
+    Actor_TurnToFaceEachOther(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 30);
     Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Import_ActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);

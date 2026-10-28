@@ -155,7 +155,7 @@ struct Actor {
     };
   };
   /// The actor its actor script follows or faces.
-  struct Actor *linkedActor;
+  struct Actor *watchedActor;
   /// Called each frame before its script, while the actor is live.
   void (*update)(struct Actor *actor);
 };
@@ -202,8 +202,8 @@ enum ActorTarget {
   ACTOR_NO_TARGET = (s32)0x80000000
 };
 
-/// Preserves the current action and motion when assigning a linked target.
-enum ActorLinkFlag { ACTOR_LINK_KEEP_MOTION = 0x10000 };
+/// Preserves the current action and motion when assigning a watched actor.
+enum ActorWatchFlag { ACTOR_WATCH_KEEP_MOTION = 0x10000 };
 
 /// Actor.priorityFlags bits.
 enum ActorPriorityFlag {

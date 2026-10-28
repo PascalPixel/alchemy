@@ -473,11 +473,11 @@ const s32 gFieldEffect_SharedParticleScript[] = {
     SC_RELEASE,
 };
 
-/// Faces the linked actor every frame, forever: the caster holding its
+/// Faces the watched actor every frame, forever: the caster holding its
 /// target while Move, Carry or Lift has it (each gives the caster its target
 /// first).
 const s32 gFieldEffect_SourceHoldScript[] = {
-    SC_FACE_LINK,
+    SC_FACE_WATCHED,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

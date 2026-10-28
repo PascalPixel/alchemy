@@ -33,7 +33,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   FieldPsynergy_FadeToCastColor();
   // The caster's script starts 3 words into the shared particle script, with
   // the target as its argument.
-  caster->linkedActor = target;
+  caster->watchedActor = target;
   Actor_StartScriptFar(caster, gFieldEffect_SharedParticleScript + 3);
 
   x = effectWork->x;

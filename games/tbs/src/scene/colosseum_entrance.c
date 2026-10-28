@@ -478,7 +478,7 @@ static void ColosseumEntrance_DiscussLuckyGuessWinnings(void) {
     Actor_RunRepeatedMotion(ACTOR_SCALPER, 2);
     Event_SetMessageId(MsgColosseumHoldOnSecond);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_SCALPER);
-    Actor_LinkPair(ACTOR_SCALPER, ACTOR_PARTY_LEADER, 0);
+    Actor_TurnToFaceEachOther(ACTOR_SCALPER, ACTOR_PARTY_LEADER, 0);
     Event_WaitFrames(20);
     Event_AskYesNoAndShowResponse(ACTOR_SCALPER, 0);
     ColosseumEntrance_FaceDirection(ACTOR_SCALPER, FACING_EAST);
@@ -532,7 +532,7 @@ static void ColosseumEntrance_TalkToAzart(void) {
   contestant = Actor_GetById(ACTOR_AZART);
   Event_Start();
   Actor_Stop(ACTOR_AZART);
-  Actor_LinkPair(ACTOR_AZART, ACTOR_PARTY_LEADER, 20);
+  Actor_TurnToFaceEachOther(ACTOR_AZART, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumImRatedAsSecondBest);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_AZART);
   Actor_RunRepeatedMotion(ACTOR_AZART, 1);
@@ -576,7 +576,7 @@ static void ColosseumEntrance_TalkToSatrage(void) {
   Event_Start();
   Event_SetMessageId(MsgColosseumWhoHaveComeQuestionMe);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
-  Actor_LinkPair(ACTOR_SATRAGE, ACTOR_PARTY_LEADER, 20);
+  Actor_TurnToFaceEachOther(ACTOR_SATRAGE, ACTOR_PARTY_LEADER, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_SATRAGE);
   Actor_SetAnimationAndWait(ACTOR_SATRAGE, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_SATRAGE, 0);
@@ -598,7 +598,7 @@ static void ColosseumEntrance_TalkToDekka(void) {
     ColosseumEntrance_FaceDirection(ACTOR_NAVAMPA, FACING_EAST);
     Actor_RunRepeatedMotion(ACTOR_NAVAMPA, 1);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
-    Actor_LinkPair(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
+    Actor_TurnToFaceEachOther(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
     Import_ActorSetAnimation(ACTOR_NAVAMPA, ANIM_SHAKE_HEAD);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
     Actor_ShowEmote(ACTOR_NAVAMPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
@@ -613,7 +613,7 @@ static void ColosseumEntrance_TalkToDekka(void) {
 /// introduces himself.
 static void ColosseumEntrance_TalkToNavampa(void) {
   Event_Start();
-  Actor_LinkPair(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
+  Actor_TurnToFaceEachOther(ACTOR_NAVAMPA, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumAmNavampaGondowanSixthRanked);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_NAVAMPA);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -629,13 +629,13 @@ static void ColosseumEntrance_TalkToNavampa(void) {
 /// today.
 static void ColosseumEntrance_TalkToBuford(void) {
   Event_Start();
-  Actor_LinkPair(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
+  Actor_TurnToFaceEachOther(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumImBufordSeventhSeed);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
   Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTH + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_BUFORD, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_BUFORD, FACING_WEST, 40);
-  Actor_LinkPair(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
+  Actor_TurnToFaceEachOther(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
   Actor_SetAnimationAndWait(ACTOR_BUFORD, ANIM_NOD);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_BUFORD);
@@ -647,7 +647,7 @@ static void ColosseumEntrance_TalkToBuford(void) {
 /// for the finals.
 static void ColosseumEntrance_AskIfReadyForFinals(void) {
   Event_Start();
-  Actor_LinkPair(ACTOR_FINALS_SOLDIER, ACTOR_PARTY_LEADER, 20);
+  Actor_TurnToFaceEachOther(ACTOR_FINALS_SOLDIER, ACTOR_PARTY_LEADER, 20);
   Event_SetMessageId(MsgColosseumYouReadyForFinals);
   FieldMessage_ShowAtActor(ACTOR_FINALS_SOLDIER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
@@ -1062,7 +1062,7 @@ static void ColosseumEntrance_TalkToTrialAttendant(void) {
   Event_Start();
   clearedTrialSeen = GameFlag_Get(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);
   if (clearedTrialSeen != 0) {
-    Actor_LinkPair(ACTOR_TRIAL_ATTENDANT, ACTOR_PARTY_LEADER, 40);
+    Actor_TurnToFaceEachOther(ACTOR_TRIAL_ATTENDANT, ACTOR_PARTY_LEADER, 40);
     Event_SetMessageId(MsgColosseumHavePerfectTechniquesLikeThose);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_TRIAL_ATTENDANT);
     Actor_FaceDirection(ACTOR_TRIAL_ATTENDANT, FACING_SOUTHEAST + FACING_STEP,

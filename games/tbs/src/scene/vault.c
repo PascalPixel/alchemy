@@ -247,7 +247,7 @@ static void Vault_IvanStaysBehind(void) {
     Actor_WalkToAndWait(ACTOR_IVAN, 224, 162);
     FieldCamera_WaitForArrival();
   }
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   Event_WaitFrames(20);
   Event_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
   FieldEvent_ShowMessageThenWait(
@@ -920,7 +920,7 @@ s32 Scene_Initialize(void) {
           } else {
             Actor_SetPosition(ACTOR_IVAN, PIXELS(224), PIXELS(162));
           }
-          Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+          Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
           Event_StartScreenTransition();
           Event_WaitTransitionFrames();
           Event_WaitFrames(30);
@@ -953,7 +953,7 @@ s32 Scene_Initialize(void) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
           Event_Start();
           Actor_SetPosition(ACTOR_IVAN, PIXELS(40), PIXELS(310));
-          Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+          Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
           Event_StartScreenTransition();
           Event_WaitTransitionFrames();
           Event_WaitFrames(30);
@@ -995,7 +995,7 @@ static void Vault_ShowMessageAndWait(s32 actorId, s32 delay) {
 }
 
 static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay) {
-  Actor_LinkPair(actorId, other, 0);
+  Actor_TurnToFaceEachOther(actorId, other, 0);
   Event_WaitFrames(delay);
 }
 

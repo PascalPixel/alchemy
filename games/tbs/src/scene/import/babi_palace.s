@@ -41,7 +41,7 @@
 	.set import.Actor_StartRepeatedMotion, 1
 	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_SetAngleToward, 1
-	.set import.Actor_LinkPair, 1
+	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1
@@ -62,7 +62,7 @@
 	.set import.Actor_LaunchFromLeader, 1
 	.set import.Actor_OffsetPositionAndReset, 1
 	.set import.Actor_CommitPositionAndActivate, 1
-	.set import.Actor_LinkAndSetScript, 1
+	.set import.Actor_WatchAndSetScript, 1
 	.set import.Inn_PlaySleep, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

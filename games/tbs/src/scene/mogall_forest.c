@@ -428,7 +428,7 @@ static void MogallForest_ApeComesOut(s32 actorId, s32 color) {
 /// The ape turns to the leader, hops and gestures down the way to go.
 static inline void MogallForest_ApePointsTheWay(s32 guideId) {
   FieldCamera_FollowActor(guideId, 1);
-  Actor_LinkPair(guideId, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(guideId, ACTOR_PARTY_LEADER, 0);
   Event_WaitFrames(20);
   Actor_StartRepeatedMotion(guideId, 2);
   FieldEffect_SetAttached(guideId,
@@ -620,7 +620,8 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
                     EFFECT_SCRIPT_MEDIUM, 0);
 
   FieldCamera_FollowActor(ACTOR_FIRST_AREA_ATTACKING_APE, 1);
-  Actor_LinkPair(ACTOR_FIRST_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_FIRST_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
+                            0);
   Event_WaitFrames(30);
   Actor_StartRepeatedMotion(ACTOR_FIRST_AREA_ATTACKING_APE, 2);
   FieldEffect_SpawnAttached(ACTOR_FIRST_AREA_ATTACKING_APE,
@@ -1082,7 +1083,8 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                     (creature->z.fixed + jumpSpeed), 0, 0, 0,
                     EFFECT_SCRIPT_MEDIUM, 0);
   FieldCamera_FollowActor(ACTOR_THIRD_AREA_ATTACKING_APE, 1);
-  Actor_LinkPair(ACTOR_THIRD_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_THIRD_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
+                            0);
   Event_WaitFrames(30);
   Actor_StartRepeatedMotion(ACTOR_THIRD_AREA_ATTACKING_APE, 2);
   FieldEffect_SpawnAttached(ACTOR_THIRD_AREA_ATTACKING_APE,

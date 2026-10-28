@@ -191,7 +191,8 @@ static void VaultRevisit_RecognizeThiefCatchers(void) {
 static void VaultRevisit_TalkOfLunpaThieves(void) {
 
   Event_SetMessageId(MsgVaultRumorsThievesLunpa);
-  Actor_LinkPair(ACTOR_WOMAN_ON_LUNPAS_THIEVES, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(ACTOR_WOMAN_ON_LUNPAS_THIEVES, ACTOR_PARTY_LEADER,
+                            2);
   VaultRevisit_ShowStandingActorMessage(ACTOR_WOMAN_ON_LUNPAS_THIEVES);
 }
 
@@ -214,7 +215,8 @@ static void VaultRevisit_PraisePartyStrength(void) {
 static void VaultRevisit_HopeVolcanoStaysCalm(void) {
 
   Event_SetMessageId(MsgVaultVolcanoStaysCalm);
-  Actor_LinkPair(ACTOR_OLD_WOMAN_ON_THE_VOLCANO, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(ACTOR_OLD_WOMAN_ON_THE_VOLCANO, ACTOR_PARTY_LEADER,
+                            2);
   VaultRevisit_ShowStandingActorMessage(ACTOR_OLD_WOMAN_ON_THE_VOLCANO);
 }
 
@@ -233,7 +235,7 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   text = MsgVaultWarriorGuy;
   Event_SetMessageId(text);
   Import_ActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
-  Actor_LinkPair(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   if (Event_GetFlag(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) == 0) {
     Actor_ShowEmote(ACTOR_BOY_ROUND_THE_WELL,
                     EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -261,7 +263,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultWishVaultsElders);
   Import_ActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
-  Actor_LinkPair(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_GIRL_ROUND_THE_WELL, 0, 10);
   actor->facing = originalFacing;
   WaitFrames(1);
@@ -275,7 +277,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
 static void VaultRevisit_AskAboutJailbreak(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuysCheckJail);
-  Actor_LinkPair(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
   FieldMessage_ShowAtActor(ACTOR_STRONGMAN_ON_WATCH, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     gFieldWork->message += 1;
@@ -377,7 +379,7 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
     Actor_RunRepeatedMotion(ACTOR_STRONGMAN_ON_WATCH, 1);
     Event_WaitFrames(20);
     Event_SetMessageId(MsgVaultGuysCheckJail);
-    Actor_LinkPair(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
+    Actor_TurnToFaceEachOther(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
     Event_OpenMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       gFieldWork->message++;
@@ -601,7 +603,7 @@ static void VaultRevisit_TalkToDog(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruff2);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
-  Actor_LinkPair(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Event_WaitFrames(2);
   Event_ShowMessageAndWait(ACTOR_VAULT_DOG, 0);
   Import_ActorSetAnimation(ACTOR_VAULT_DOG, ANIM_STAND);

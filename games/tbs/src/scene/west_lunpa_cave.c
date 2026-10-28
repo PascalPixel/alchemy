@@ -480,7 +480,7 @@ static void Reunion_Converse(void) {
   Event_WaitFrames(20);
   Event_SetMessageId(reunion + REUNION_BUNZA_AVOIDED_LUNPA);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-  Actor_LinkPair(ACTOR_HAMMET, ACTOR_IVAN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_HAMMET, ACTOR_IVAN, 0);
   Event_WaitFrames(60);
   Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
@@ -541,7 +541,7 @@ static void Reunion_Converse(void) {
   Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_SetMessageId(reunion + REUNION_BUNZA_MENTIONS_COMMOTION);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-  Actor_LinkPair(ACTOR_IVAN, ACTOR_HAMMET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_HAMMET, 0);
   Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_WaitFrames(30);
@@ -607,7 +607,7 @@ static void Reunion_Converse(void) {
   Event_SetMessageId(reunion + REUNION_BUNZA_WARNS_OF_SEARCH);
   Event_ShowMessage(ACTOR_BUNZA, 0);
   Event_WaitFrames(20);
-  Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -662,7 +662,7 @@ static void Reunion_Converse(void) {
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   Event_SetMessageId(messageBase + PLAN_BUNZA_REASSURES);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_WaitFrames(60);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_BUNZA, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_BUNZA, 0);
@@ -673,7 +673,7 @@ static void Reunion_Converse(void) {
   Event_WaitFrames(20);
   Event_SetMessageId(messageBase + PLAN_BUNZA_IS_UNSUSPECTED);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_BUNZA, 0);
-  Actor_LinkPair(ACTOR_HAMMET, ACTOR_IVAN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_HAMMET, ACTOR_IVAN, 0);
   Event_WaitFrames(60);
   Import_ActorSetAnimation(ACTOR_HAMMET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);

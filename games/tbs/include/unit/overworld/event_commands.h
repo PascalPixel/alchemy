@@ -99,7 +99,7 @@ void Actor_SetSpeedParameters(u32 actorId, s32 speedLimit, s32 acceleration);
 
 void Actor_SetMovementTypeById(u32 actorId, s32 action);
 void Actor_Stop(u32 actorId);
-void Actor_LinkAndSetScript(u32 actorId, u32 linkedActorId);
+void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId);
 void Actor_RefreshSelectorById(u32 actorId);
 /// Accepts a movement type or an actor script address; waits up to 300 frames.
 void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action);
@@ -127,7 +127,7 @@ void FieldEffect_UpdateParticleLinearMotion(struct Actor *actor);
 void FieldEffect_SpawnBurstParticle(struct Actor *source, s32 param);
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param);
 void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait);
-void Actor_LinkPair(s32 firstId, s32 secondId, s32 wait);
+void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait);
 void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second);
 void Actor_ReleaseById(s32 index);
 void Actor_ReleaseNoOp(void);
@@ -179,9 +179,9 @@ s32 FieldEffect_StepRatioTransition(void);
 void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames);
 void Event_WaitForZoomTransition(void);
 #ifdef UBFIX
-void FieldEffect_CopyLinkedActorPosition(struct Actor *actor);
+void FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
 #else
-s32 FieldEffect_CopyLinkedActorPosition(struct Actor *actor);
+s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
 #endif
 void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait);
 /// FieldEffect_SpawnAttached's emote flag: the bubble takes sprite priority 1
@@ -219,7 +219,7 @@ enum AttachedEffectFlag {
 void FieldEffect_SetAttached(s32 actorId, s32 flags);
 s32 Actor_ClearChildAndCollisionFlags(void *obj);
 s32 Actor_MoveTowardTarget(struct Actor *actor);
-s32 Actor_TurnTowardLinkedActor(struct Actor *actor);
+s32 Actor_TurnTowardWatchedActor(struct Actor *actor);
 void Actor_SetMovementType(struct Actor *actor, s32 action);
 struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite);
 s32 Field_TryJumpForward(void);
@@ -299,7 +299,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value);
 void FieldEffect_UpdateScaledArcActorA(struct Actor *actor);
 void FieldEffect_UpdateScaledArcActorB(struct Actor *actor);
-void FieldEffect_SpawnScaledArcActors(struct Actor *linked);
+void FieldEffect_SpawnScaledArcActors(struct Actor *watched);
 void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *actor);
 void FieldEffect_CycleActorValueByCounter(struct Actor *actor);
 void FieldEffect_UpdateAllEffectSlots(void);

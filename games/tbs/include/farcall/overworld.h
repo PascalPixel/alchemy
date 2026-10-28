@@ -124,8 +124,8 @@ void Actor_ConfigureSpriteColorFar(s32 actorId, s32 value);
 /// Sets the param byte of every animated part of an actor's sprite; scenes
 /// flash an actor by alternating 0 and 15.
 void Actor_SetSpriteColorFar(struct Actor *actor, s32 value);
-/// Links an actor to a target and starts a script on it; unless
-/// ACTOR_LINK_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
+/// Makes an actor watch a target and starts a script on it; unless
+/// ACTOR_WATCH_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
 /// keep up and unable to block the target.
 void Actor_SetTargetAndCallbackFar(u32 actorId, s32 targetId,
                                    const void *callback);
@@ -388,7 +388,7 @@ void Actor_OffsetPositionAndResetFar(u32 actorId, s32 x_offset, s32 z_offset);
 /// it still.
 void Actor_CommitPositionAndActivateFar(u32 actorId, s32 x_offset,
                                         s32 z_offset);
-/// Makes an actor follow another through the linked actor script.
+/// Makes an actor follow another through the watched actor script.
 void Actor_LinkAndSetScriptFar(u32 actorId, u32 linked_object_id);
 /// Pauses an actor, keeping its update and pose in gAdventure for later;
 /// Halt and the Colosso operators use it.

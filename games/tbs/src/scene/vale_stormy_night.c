@@ -806,7 +806,7 @@ static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
   Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_KYLE, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KYLE, 0);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_KYLE, 0, 20);
@@ -1182,7 +1182,7 @@ static void ValeStormyNight_BumpIntoShovingMan(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 282, 855);
   Import_ActorSetAnimation(ACTOR_SHOVING_MAN, ANIM_STAND);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_SHOVING_MAN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_SHOVING_MAN, 0);
   Scene_PlayQueuedMusic();
   Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1271,7 +1271,7 @@ static void ValeStormyNight_GaretLeavesHisChest(void) {
   s32 agreedToLeaveBelongings;
 
   FieldMessage_ShowAtActor(ACTOR_GARET_CHILD, 0);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   agreedToLeaveBelongings = 0;
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(MsgValeThinkForgetThings);
@@ -1338,7 +1338,7 @@ static void ValeStormyNight_UnusedGaretJoinsIsaac(void) {
     Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(2), PIXELS(1));
     Actor_RunScriptAndWait(ACTOR_GARET_CHILD,
                            gValeStormyNight_UnusedGaretRunsUpScript);
-    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
     Event_WaitFrames(30);
     Actor_SetScript(ACTOR_GARET_CHILD,
                     gValeStormyNight_UnusedGaretPantingScript);
@@ -1387,7 +1387,7 @@ static void ValeStormyNight_WarnAboutMtAleph(void) {
   }
   Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 281, 507);
-  Actor_LinkPair(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
   Event_WaitFrames(30);
   Event_SetMessageId(MsgValeNorthLeadsToMtAleph);
   Event_ShowMessage(ACTOR_GARET_CHILD, 0);
@@ -1424,7 +1424,7 @@ static void ValeStormyNight_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   }
   Actor_SetSpeedParameters(ACTOR_GARET_CHILD, speed, acceleration);
   Actor_SetPositionAndReset(ACTOR_GARET_CHILD, x, y);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_WaitFrames(20);
   FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1750,7 +1750,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
     }
   }
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 132, 1094);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_WaitFrames(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 20);
@@ -1839,7 +1839,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNAS_FATHER, 2);
   Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_JENNAS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Actor_LinkPair(ACTOR_JENNAS_FATHER, ACTOR_KYLE, 0);
+  Actor_TurnToFaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_KYLE, 0);
   Event_WaitFrames(10);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 2);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0);
@@ -1892,7 +1892,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   Actor_ShowEmote(ACTOR_JENNAS_MOTHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_JENNA_CHILD, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_ArmCallback(ACTOR_DORA, FACING_EAST, 10);
-  Actor_LinkPair(ACTOR_JENNAS_FATHER, ACTOR_JENNAS_MOTHER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_JENNAS_FATHER, ACTOR_JENNAS_MOTHER, 0);
   Event_WaitFrames(20);
   Actor_ArmCallback(ACTOR_DORA, FACING_EAST, 0);
   Actor_ArmCallback(ACTOR_KYLE, FACING_EAST, 10);
@@ -1900,7 +1900,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_WEST, 10);
   Import_ActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNAS_MOTHER, ANIM_NOD);
-  Actor_LinkPair(ACTOR_KYLE, ACTOR_DORA, 0);
+  Actor_TurnToFaceEachOther(ACTOR_KYLE, ACTOR_DORA, 0);
   Event_WaitFrames(20);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 1);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
@@ -2063,7 +2063,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   }
   Actor_SetScript(ACTOR_DORA, gValeStormyNight_DoraLeavesForHelp);
   Event_WaitFrames(90);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
@@ -2090,7 +2090,7 @@ static void ValeStormyNight_TalkAboutSavingFelix(void) {
   Event_Start();
   Import_ActorSetAnimation(ACTOR_KYLE, ANIM_STAND);
   Event_WaitFrames(10);
-  Actor_LinkPair(ACTOR_KYLE, ACTOR_PARTY_LEADER, 20);
+  Actor_TurnToFaceEachOther(ACTOR_KYLE, ACTOR_PARTY_LEADER, 20);
   if (GameFlag_Get(FLAG_VALE_STORM_KYLE_GREETED_ISAAC) != 0) {
     Event_SetMessageId(MsgValeTwoDontEnough);
     Event_ShowMessageThenWait(ACTOR_KYLE, 0, 10);
@@ -2216,8 +2216,9 @@ static void ValeStormyNight_BoulderSweepsThemAway(void) {
       Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 20);
       Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
       Event_ShowMessageAndWait(ACTOR_DORA, 0);
-      Actor_LinkPair(ACTOR_JENNA_CHILD, ACTOR_EXHAUSTED_STRONGMAN, 0);
-      Actor_LinkPair(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
+      Actor_TurnToFaceEachOther(ACTOR_JENNA_CHILD, ACTOR_EXHAUSTED_STRONGMAN,
+                                0);
+      Actor_TurnToFaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
       Event_WaitFrames(40);
       Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
       Actor_SetAngleToward(ACTOR_GARET_CHILD, ACTOR_DORA, 0);
@@ -2959,7 +2960,7 @@ static void ValeStormyNight_SpawnEffectPair(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedActor = parent;
+      child->watchedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;

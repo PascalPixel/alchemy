@@ -3021,12 +3021,12 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 421, 152);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
   Event_WaitFrames(20);
-  Actor_LinkPair(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
+  Actor_TurnToFaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
     rowerId = ShipRooms_FindFirstSetFlag(seat, 0);
     Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
     Event_WaitFrames(20);
-    Actor_LinkPair(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
+    Actor_TurnToFaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
     Event_SetMessageId(MsgTolbiShipBackBroughtOarsman);
     ShipRooms_Say(KAJA_ROWING_SPEAKER);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -3074,7 +3074,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
       leftSeat = 1;
       ShipRooms_Turn(rowerId, FACING_NORTH + FACING_STEP);
     }
-    Actor_LinkPair(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 20);
+    Actor_TurnToFaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 20);
     ShipRooms_Say(SPEAKER(ACTOR_ROWING_KAJA, SPEAKER_PORTRAIT_RIGHT));
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);

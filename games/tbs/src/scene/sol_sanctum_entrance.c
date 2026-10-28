@@ -1008,7 +1008,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, 5, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, 5, 0);
   Event_WaitFrames(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);

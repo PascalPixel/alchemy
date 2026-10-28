@@ -499,7 +499,7 @@ static void Kalay_AskAboutCaveAccess(void) {
   relativeFacing = (leader->facing + 0xfffff000) << 16;
   if (relativeFacing > 0x60000000) {
     Event_Start();
-    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_TUNNEL_GUARD, 0);
+    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TUNNEL_GUARD, 0);
     Event_WaitFrames(10);
     Event_SetMessageId(MsgKalayDoWantGoCaveUp);
     FieldMessage_ShowAtActor(ACTOR_TUNNEL_GUARD, 0);

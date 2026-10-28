@@ -51,7 +51,7 @@
 	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_JumpDownLedge, 1
 	.set import.Actor_SetAngleToward, 1
-	.set import.Actor_LinkPair, 1
+	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.Event_SetMessageId, 1

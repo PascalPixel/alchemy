@@ -13,7 +13,7 @@ s32 Input_GetDpadAngle(u32 unused) {
 }
 
 /// Per-frame update of Move's hand (FieldEffect_StartItemBreak): turns it
-/// toward the actor it is linked to, at most 1/16 turn a frame, and sheds a
+/// toward the actor it watches, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
 void FieldEffect_UpdateItemBreakFragment(struct Actor *actor) {
   struct Actor *source = (struct Actor *)actor;
@@ -23,7 +23,7 @@ void FieldEffect_UpdateItemBreakFragment(struct Actor *actor) {
   s32 turn;
   s32 radius;
 
-  target = source->linkedActor;
+  target = source->watchedActor;
   if (target != 0) {
     s32 dx = target->x.fixed - source->x.fixed;
     s32 dz = target->z.fixed - source->z.fixed;
@@ -92,7 +92,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
-  user->linkedActor = target;
+  user->watchedActor = target;
   Actor_StartScriptFar(user, gFieldEffect_SourceHoldScript);
   pusher = FieldEffect_StartItemBreak(user);
   if (pusher == NULL) {
@@ -101,7 +101,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   }
 
   // The hand goes 16 pixels above the target and 16 pixels toward angle.
-  pusher->linkedActor = target;
+  pusher->watchedActor = target;
   candidate = &position;
   SET_POSITION(candidate, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);

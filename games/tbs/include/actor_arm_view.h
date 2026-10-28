@@ -87,14 +87,14 @@ struct ActorArmView {
   u8 refused; ///< frames in a row a solid actor refused its move
   u8 frozen;  ///< nonzero skips steering, terrain, gravity and floating
   /// Actor's two bytes scene code uses, and its timer
-  /// (the actor script's parameter), footprint side and linked actor; not named
-  /// here.
+  /// (the actor script's parameter), footprint side and watched actor; not
+  /// named here.
   ///@{
   u8 riseCounter;
   u8 riseEnabled;
   s16 timer;
   s16 userValue;
-  struct ActorArmView *linkedActor;
+  struct ActorArmView *watchedActor;
   ///@}
   /// Called each frame before its script.
   void (*update)(struct Actor *actor);

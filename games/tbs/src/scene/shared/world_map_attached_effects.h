@@ -10,7 +10,7 @@
 
 /// Attaches two rising particles to the actor, sharing the effect's
 /// cached tiles.
-void WorldMap_CreateLinkedEffects(struct Actor *parent) {
+void WorldMap_CreateAttachedEffects(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *sprite;
@@ -26,7 +26,7 @@ void WorldMap_CreateLinkedEffects(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedActor = parent;
+      child->watchedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;

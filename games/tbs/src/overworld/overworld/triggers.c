@@ -248,7 +248,7 @@ s32 Scene_TalkToActor(s32 id) {
   if (trigger != 0 && trigger->result != 0) {
     if (!actorPaused) {
       // Stop the actor; with talk facing 0, 1 or 3, also stop the leader
-      // and link the two.
+      // and make each watch the other.
       u8 *movementState = &actor->paused;
 
       *movementState = 1;
@@ -262,7 +262,7 @@ s32 Scene_TalkToActor(s32 id) {
         leader->targetY = leader->y.fixed;
         leader->targetZ = leader->z.fixed;
         SET_VELOCITY(leader, 0, 0, 0);
-        Actor_LinkPair(id, gAdventure.leaderActorId, 0);
+        Actor_TurnToFaceEachOther(id, gAdventure.leaderActorId, 0);
       }
     }
     // A result below 0x10000 is a message; above, a function to call.
@@ -281,9 +281,9 @@ s32 Scene_TalkToActor(s32 id) {
       // talk facing says: following the leader (3) or its old angle (1).
       if (actor->script[actor->scriptCursor] == 16) {
         if ((s8)placement->talkFacing == 3) {
-          actor->linkedActor = Actor_GetById(gAdventure.leaderActorId);
+          actor->watchedActor = Actor_GetById(gAdventure.leaderActorId);
           actor->steeringFlags |= 1;
-          Actor_SetMovementType(actor, (s32)gActor_LinkedScript);
+          Actor_SetMovementType(actor, (s32)gActor_FaceWatchedScript);
         } else if ((s8)placement->talkFacing == 1) {
           actor->timer = savedAngle;
           Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);

@@ -978,12 +978,12 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_WalkToAndWait(ACTOR_IVAN, 134, 234);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_STAND);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_MIA,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA,
                                   gImil_FaceTargetScript);
   FieldActor_SetTargetAndCallback(
-      ACTOR_GARET, ACTOR_LINK_KEEP_MOTION | ACTOR_MIA, gImil_FaceTargetScript);
+      ACTOR_GARET, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, gImil_FaceTargetScript);
   FieldActor_SetTargetAndCallback(
-      ACTOR_IVAN, ACTOR_LINK_KEEP_MOTION | ACTOR_MIA, gImil_FaceTargetScript);
+      ACTOR_IVAN, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, gImil_FaceTargetScript);
   FieldCamera_WaitForArrival();
   table = gImil_BobScript;
   Actor_SetScript(ACTOR_OLD_MAN, table);

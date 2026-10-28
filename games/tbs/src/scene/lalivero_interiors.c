@@ -572,8 +572,8 @@ static void LaliveroInteriors_ReportToFaran(void) {
   Event_WaitFrames(20);
   Event_ShowMessageAndWait(ACTOR_FARAN, 0);
   Event_WaitFrames(10);
-  Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Actor_LinkPair(ACTOR_MIA, ACTOR_IVAN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Event_WaitFrames(40);
   Event_WaitFrames(10);
   // Faran believes Sheba lived; Iodem explains Adepts.

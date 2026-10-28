@@ -10,7 +10,7 @@ struct ScriptObjectRuntime {
   const s32 *script; ///< null when the object is free
   u16 scriptCursor;  ///< in words
   /// The object's facing, 1/65536 turns: the heading the wander commands
-  /// wander around, and where SC_FACE_LINK stores the angle to the linked
+  /// wander around, and where SC_FACE_WATCHED stores the angle to the linked
   /// object.
   u16 scriptValue;
   s32 x;             ///< 16.16 fixed-point pixels
@@ -51,7 +51,7 @@ struct ScriptObjectRuntime {
   s16 homeX;
   s16 homeZ;
   ///@}
-  /// The object SC_FACE_LINK and SC_MOVE_LINK aim at.
+  /// The object SC_FACE_WATCHED and SC_MOVE_TO_WATCHED aim at.
   struct ScriptObjectRuntime *linkedObject;
   u8 unk6c[0x04]; ///< the update hook (ObjectRuntime.update); not named here
 };

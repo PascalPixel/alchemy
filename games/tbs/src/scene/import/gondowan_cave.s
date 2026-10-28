@@ -30,7 +30,7 @@
 	.set import.Import_ActorSetPosition, 1
 	.set import.Import_ActorSetAnimation, 1
 	.set import.Actor_SetAngleToward, 1
-	.set import.Actor_LinkPair, 1
+	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Actor_SetSpriteColor, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1

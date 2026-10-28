@@ -13,7 +13,7 @@ extern const s32 gActor_KeysScript[];
 extern const s32 gActor_PlayerScript[];
 extern const s32 gActor_WorldMapScript[];
 extern const s32 gActor_CameraScript[];
-extern const s32 gActor_ApproachLinkScript[];
+extern const s32 gActor_ApproachWatchedScript[];
 extern const s32 gActor_IdleScript[];
 
 #endif

@@ -654,13 +654,13 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   // From now on the three turn to face the leader wherever he goes.
   FieldActor_SetTargetAndCallback(ACTOR_GANG_MEMBER_EAST,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gBilibin_FaceLeaderScript);
   FieldActor_SetTargetAndCallback(ACTOR_GANG_MEMBER_WEST,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gBilibin_FaceLeaderScript);
   FieldActor_SetTargetAndCallback(ACTOR_JILL,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gBilibin_FaceLeaderScript);
   GameFlag_Set(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
   Event_End();

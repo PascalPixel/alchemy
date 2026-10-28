@@ -84,7 +84,7 @@
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/scene/world_map.h"
-#include "unit/scene/shared/world_map_linked_effects.h"
+#include "unit/scene/shared/world_map_attached_effects.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -1669,7 +1669,7 @@ static void WorldMap_MeetFlint(void) {
       else
         Actor_SetColorMode(djinni, SPRITE_COLOR_NORMAL);
       if ((gFrameCount & 15) == 0)
-        WorldMap_CreateLinkedEffects(djinni);
+        WorldMap_CreateAttachedEffects(djinni);
       WaitFrames(1);
     }
     FieldPsynergy_End();
@@ -2842,7 +2842,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
 }
 
 /// Unused: an update routine that blinks an actor and now and then creates
-/// its linked effects; no actor is given it.
+/// its attached effects; no actor is given it.
 UNUSED static void WorldMap_UpdateBlinkingLinkedEffects(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
@@ -2850,18 +2850,18 @@ UNUSED static void WorldMap_UpdateBlinkingLinkedEffects(struct Actor *actor) {
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
-    WorldMap_CreateLinkedEffects(actor);
+    WorldMap_CreateAttachedEffects(actor);
   }
 }
 
 /// Unused: an update routine that cycles an actor's palettes and now and
-/// then creates its linked effects; no actor is given it.
+/// then creates its attached effects; no actor is given it.
 UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     Actor_SetColorMode(actor, ((u32)((gFrameCount >> 1)) % (u32)6));
   }
   if ((gFrameCount & 15) == 0) {
-    WorldMap_CreateLinkedEffects(actor);
+    WorldMap_CreateAttachedEffects(actor);
   }
 }
 
@@ -2876,7 +2876,7 @@ UNUSED static void WorldMap_CycleActorPalettes(struct Actor *actor) {
 }
 
 #include "shared/effect_vertical.h"
-#include "shared/world_map_linked_effects.h"
+#include "shared/world_map_attached_effects.h"
 
 s32 gCaravanFirstWagonArrives[] = {
     SC_POSITION(PIXELS(5848), 0, PIXELS(1576)),

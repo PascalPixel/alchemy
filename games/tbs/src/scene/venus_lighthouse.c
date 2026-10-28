@@ -1463,7 +1463,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       Actor_SetSpeedParameters(ACTOR_GARET, walkSpeed, walkAcceleration);
       Actor_SetPositionAndReset(ACTOR_GARET, garetX, 88);
       Actor_SetPositionAndReset(ACTOR_GARET, garetX, 104);
-      Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+      Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
       Event_WaitFrames(20);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       Event_WaitFrames(20);

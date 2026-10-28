@@ -192,7 +192,7 @@ extern const u8 gMovementType_WanderCloseScript[];
 /// kept angle (Actor_LaunchFromLeader).
 extern u8 gActor_LaunchScript;
 /// Movement type 5: Actor_MoveTowardTarget every frame, forever.
-extern const u8 gMovementType_FollowLinkedScript[];
+extern const u8 gMovementType_FollowWatchedScript[];
 /// Movement type 7: Actor_ClearChildAndCollisionFlags once, then SC_END.
 extern const u8 gMovementType_ResetActionScript[];
 /// Turns by Actor_StepAngle until it faces the kept angle, then SC_END.
@@ -256,7 +256,7 @@ extern const s32 gFieldEffect_BurstParticleActorScript[];
 /// The emote bubble's script (FieldEffect_SpawnAttached): eight 2-frame steps
 /// of squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames
 /// still, then SC_RELEASE.
-extern const s32 gFieldEffect_LinkedActorScript[];
+extern const s32 gFieldEffect_WatchedActorScript[];
 extern const s32 gFieldEffect_MarkerParticleScript[];
 extern const s32 gFieldEffect_ParticleEmitterScript[];
 extern const s32 gFieldEffect_ParticleScript[];

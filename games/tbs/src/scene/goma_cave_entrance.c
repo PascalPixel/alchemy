@@ -344,7 +344,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 120);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
     Event_WaitFrames(60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);

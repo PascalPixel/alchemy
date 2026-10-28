@@ -1,5 +1,5 @@
 /// @file
-/// The view bounds, zoom transitions and actors linked to an actor.
+/// The view bounds, zoom transitions and actors that ride another.
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
@@ -110,20 +110,20 @@ void Event_WaitForZoomTransition(void) {
 }
 
 // Per-frame update of a riding actor: keeps it on the actor it rides
-// (its linked actor), raised by the actor's sprite height (its
+// (its watched actor), raised by the actor's sprite height (its
 // metadata's boxX) and 8 pixels. Its work holds the actor's id. Its
 // caller ignores the result. Plain void removes the native zero result and
 // changes its return register (three instructions in tbs-en).
 #ifdef UBFIX
-void FieldEffect_CopyLinkedActorPosition(struct Actor *updated) {
+void FieldEffect_CopyWatchedActorPosition(struct Actor *updated) {
 #else
-s32 FieldEffect_CopyLinkedActorPosition(struct Actor *updated) {
+s32 FieldEffect_CopyWatchedActorPosition(struct Actor *updated) {
 #endif
   void *self = (void *)updated;
   struct Actor *actor = self;
   struct Actor *host;
 
-  host = actor->linkedActor;
+  host = actor->watchedActor;
   if (host != NULL) {
     actor->motionFlags = 0;
     actor->x.fixed = host->x.fixed;
@@ -147,7 +147,7 @@ s32 FieldEffect_CopyLinkedActorPosition(struct Actor *updated) {
 /// pick the bubble (enum Emote; EMOTE_LIGHT_BULB also plays SE_CHIME); with
 /// EMOTE_IN_FRONT the bubble takes sprite priority 1, otherwise the
 /// actor's. The bubble rides the actor and releases itself after 46 frames
-/// (gFieldEffect_LinkedActorScript: 16 frames of squash and stretch, then 30),
+/// (gFieldEffect_WatchedActorScript: 16 frames of squash and stretch, then 30),
 /// whatever wait is.
 void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
   struct Actor *target;
@@ -164,20 +164,20 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
     if (bubble != 0) {
       struct Sprite *sprite;
 
-      Actor_StartScriptFar(bubble, gFieldEffect_LinkedActorScript);
+      Actor_StartScriptFar(bubble, gFieldEffect_WatchedActorScript);
       Actor_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->userValue = actorId;
       sprite = bubble->sprite;
 #ifdef UBFIX
-      bubble->update = FieldEffect_CopyLinkedActorPosition;
+      bubble->update = FieldEffect_CopyWatchedActorPosition;
 #else
       bubble->update =
-          (void (*)(struct Actor *))FieldEffect_CopyLinkedActorPosition;
+          (void (*)(struct Actor *))FieldEffect_CopyWatchedActorPosition;
 #endif
       sprite->flags = 0;
-      bubble->linkedActor = target;
+      bubble->watchedActor = target;
 
       // Replace the bubble's priority bits (2 and 3) with 1 or the
       // actor's.
@@ -211,7 +211,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
 /// AttachedEffectFlag: removes the actor attached to an actor, attaches
 /// one (SPRITE_ATTACHED_EFFECT, animation 1) or shows a one-off one (animation
 /// 2) that ends by itself (gActor_WaitScript, 40 frames). The attached
-/// actor is kept as the actor's linkedActor, so ATTACHED_EFFECT_ATTACH
+/// actor is kept as the actor's watchedActor, so ATTACHED_EFFECT_ATTACH
 /// does nothing while the actor has one, and ATTACHED_EFFECT_REMOVE
 /// releases whatever it is; a one-off is never recorded there. The leader's
 /// walking update runs all three for hazard ground (overworld/walking.c).
@@ -228,16 +228,16 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == ATTACHED_EFFECT_ONCE || actor->linkedActor == 0) {
+    if ((flags & 3) == ATTACHED_EFFECT_ONCE || actor->watchedActor == 0) {
       effect = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, actor->x.fixed,
                                actor->y.fixed, actor->z.fixed);
     }
   } else {
-    effect = actor->linkedActor;
+    effect = actor->watchedActor;
     if (effect == 0)
       return;
     Actor_ReleaseFar(effect);
-    actor->linkedActor = 0;
+    actor->watchedActor = 0;
     return;
   }
 
@@ -248,7 +248,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
     Actor_SelectAnimationFar(effect, 1);
-    actor->linkedActor = effect;
+    actor->watchedActor = effect;
     effect->timer = 1;
     break;
   case ATTACHED_EFFECT_ONCE:
@@ -261,14 +261,14 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   effect->userValue = actorId;
   effect->motionFlags = 0;
 #ifdef UBFIX
-  effect->update = FieldEffect_CopyLinkedActorPosition;
+  effect->update = FieldEffect_CopyWatchedActorPosition;
 #else
   effect->update =
-      (void (*)(struct Actor *))FieldEffect_CopyLinkedActorPosition;
+      (void (*)(struct Actor *))FieldEffect_CopyWatchedActorPosition;
 #endif
   visual = effect->sprite;
   visual->flags = 0;
-  effect->linkedActor = actor;
+  effect->watchedActor = actor;
 
   // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
   if (flags & ATTACHED_EFFECT_IN_FRONT) {

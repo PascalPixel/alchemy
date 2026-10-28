@@ -281,7 +281,7 @@ static void GondowanCave_IodemRejoins(void) {
   Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_WaitFrames(10);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Event_SetMessageId(MsgKaragolIveBeenWaitingForIsaac);
   Event_ShowMessageAndWait(ACTOR_IODEM, 0);
   Import_ActorSetAnimation(ACTOR_IODEM, ANIM_WALK);

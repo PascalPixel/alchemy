@@ -44,7 +44,7 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareWait,              // 0x22 SW_WAIT
     ActorScript_SetOrCompareTimer,             // 0x23
     ActorScript_SetOrCompareUserValue,         // 0x24
-    ActorScript_SetOrCompareLinkedActor,       // 0x25
+    ActorScript_SetOrCompareWatchedActor,      // 0x25
     ActorScript_SetOrCompareUpdateAddress,     // 0x26 SW_HOOK
     ActorScript_SetOrCompareRiseCounter,       // 0x27 SW_RISE_COUNTER
     ActorScript_SetOrCompareRiseEnabled,       // 0x28 SW_RISE_ENABLED

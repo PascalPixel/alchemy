@@ -487,7 +487,7 @@ static void Kolima_LowerBridge(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // From now on the villager turns to keep facing the leader.
   FieldActor_SetTargetAndCallback(ACTOR_BRIDGE_VILLAGER,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gKolima_FaceLeaderScript);
   Event_WaitFrames(60);
   FieldEffect_SpawnAttached(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -750,7 +750,7 @@ static void Kolima_WitnessForestCurse(void) {
   if (*partyLayout != 0) {
     Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
   }
-  Actor_LinkPair(ACTOR_IVAN, ACTOR_GARET, 60);
+  Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_GARET, 60);
   if (*partyLayout != 0) {
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   }

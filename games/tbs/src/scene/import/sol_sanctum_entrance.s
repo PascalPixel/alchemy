@@ -32,7 +32,7 @@
 	.set import.Actor_Jump, 1
 	.set import.Actor_StartRepeatedMotion, 1
 	.set import.Actor_RunRepeatedMotion, 1
-	.set import.Actor_LinkPair, 1
+	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
 	.set import.Event_ShowMessageAndWait, 1

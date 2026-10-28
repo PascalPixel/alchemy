@@ -710,7 +710,8 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_WaitFrames(40);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_WaitFrames(10);
-  Actor_LinkPair(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA, 50);
+  Actor_TurnToFaceEachOther(ACTOR_DOUBTING_THE_DOOR, ACTOR_WORRIED_FOR_SHEBA,
+                            50);
   Import_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Event_WaitFrames(30);
@@ -1009,8 +1010,8 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_WaitFrames(25);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_WaitFrames(10);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
-  Actor_LinkPair(ACTOR_MIA, ACTOR_IVAN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Event_WaitFrames(30);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);

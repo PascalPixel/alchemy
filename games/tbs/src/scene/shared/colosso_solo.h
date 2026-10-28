@@ -462,13 +462,13 @@ L_main:
   Actor_WalkToAndWait(friendId, guideX, frontZ);
   besideX = guideX + 16;
   Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, besideX, frontZ);
-  Actor_LinkPair(friendId, ACTOR_PARTY_LEADER, 30);
+  Actor_TurnToFaceEachOther(friendId, ACTOR_PARTY_LEADER, 30);
   Import_ActorSetAnimation(friendId, ANIM_NOD);
   behindZ = frontZ - 32;
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_WalkToAndWait(guide, guideX, behindZ);
   Actor_ResetAndSetPositionInMode2(guide, besideX, behindZ);
-  Actor_LinkAndSetScript(ACTOR_PARTY_LEADER, friendId);
+  Actor_WatchAndSetScript(ACTOR_PARTY_LEADER, friendId);
   Actor_WalkToAndWait(friendId, guideX, behindZ);
   Import_ActorSetAnimation(guide, 1);
   Actor_FaceDirection(guide, FACING_WEST, 0);

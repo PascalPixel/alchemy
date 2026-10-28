@@ -111,7 +111,7 @@ void FieldEffect_CircleAnchor(struct Actor *actor) {
   s32 dx;
   s32 dz;
 
-  anchor = effect->linkedActor;
+  anchor = effect->watchedActor;
   radius = WHIRLWIND_ORBIT_RADIUS;
   angle = effect->facing;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
@@ -231,7 +231,7 @@ void FieldPsynergy_Whirlwind(void) {
       particle = Actor_Spawn(0xf9, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_CircleAnchor;
-        particle->linkedActor = ball;
+        particle->watchedActor = ball;
         particle->timer = 0;
         particle->userValue = 0;
         particle->facing = Random16();

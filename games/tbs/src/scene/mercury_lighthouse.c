@@ -2009,7 +2009,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Event_WaitFrames(60);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-    Actor_LinkPair(ACTOR_GARET, ACTOR_IVAN, 20);
+    Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_IVAN, 20);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_WaitFrames(40);

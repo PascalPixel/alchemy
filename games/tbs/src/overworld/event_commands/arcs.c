@@ -16,7 +16,7 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
   s32 frame;
   s32 scale;
 
-  anchor = arc->linkedActor;
+  anchor = arc->watchedActor;
   frame = ++arc->timer;
   if (frame > 31) {
     Actor_StartScriptFar(arc, gFieldEffect_SharedParticleScript);
@@ -38,7 +38,7 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *actor) {
   s32 frame;
   s32 scale;
 
-  anchor = arc->linkedActor;
+  anchor = arc->watchedActor;
   frame = ++arc->timer;
   if (frame > 31) {
     Actor_StartScriptFar(arc, gFieldEffect_SharedParticleScript);
@@ -90,7 +90,7 @@ struct SpriteArcOamView {
 /// casting update routines below spawn them every 16 frames, and
 /// FieldPsynergy_End waits for the last to end (at most 30
 /// frames).
-void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
+void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *source = effectWork->mainActor;
   struct Actor *arcs[2];
@@ -99,16 +99,16 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *linked) {
   s32 arcIndex;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
-    arc = Actor_CreateFar(SPRITE_GOLDEN_RINGS, linked->x.fixed, linked->y.fixed,
-                          linked->z.fixed);
+    arc = Actor_CreateFar(SPRITE_GOLDEN_RINGS, watched->x.fixed,
+                          watched->y.fixed, watched->z.fixed);
     arcs[arcIndex] = arc;
     if (arc == 0)
       continue;
-    arc->groundHeight = linked->groundHeight;
+    arc->groundHeight = watched->groundHeight;
     sprite = (struct SpriteArcOamView *)arc->sprite;
     arc->motionFlags = 0;
     arc->timer = 0;
-    arc->linkedActor = linked;
+    arc->watchedActor = watched;
     arc->scaleX = arc->scaleY = 0x1999; // 0.1
     if (sprite == 0)
       continue;

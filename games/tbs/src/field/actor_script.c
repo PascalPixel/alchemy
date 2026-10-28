@@ -51,9 +51,9 @@ const s32 gActor_CameraScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Started by Actor_StartApproachLink.
-const s32 gActor_ApproachLinkScript[] = {
-    SC_APPROACH_LINK,
+/// Started by Actor_StartApproachWatched.
+const s32 gActor_ApproachWatchedScript[] = {
+    SC_APPROACH_WATCHED,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -75,12 +75,12 @@ const ScriptCommand gActorScript_CommandTable[47] = {
     ActorScript_SetPositionAndResetMotion, // 0x02 SC_POSITION
     ActorScript_ApplyAbsolutePosition,     // 0x03 SC_MOVE
     ActorScript_ApplyRelativePosition,     // 0x04 SC_MOVE_BY
-    ActorScript_StoreAngleToLinkedActor,   // 0x05 SC_FACE_LINK
-    ActorScript_ApplyLinkedActorPosition,  // 0x06 SC_MOVE_LINK
+    ActorScript_StoreAngleToWatchedActor,  // 0x05 SC_FACE_WATCHED
+    ActorScript_ApplyWatchedActorPosition, // 0x06 SC_MOVE_TO_WATCHED
     ActorScript_ApplyLocalOffsetPosition,  // 0x07 SC_MOVE_LOCAL
     Actor_Wander,                          // 0x08 SC_WANDER
     ActorScript_WanderNearHome,            // 0x09 SC_WANDER_HOME
-    Actor_ApproachLinkedActor,             // 0x0a SC_APPROACH_LINK
+    Actor_ApproachWatchedActor,            // 0x0a SC_APPROACH_WATCHED
     FieldCamera_FollowLeaderInBounds,      // 0x0b SC_CAMERA
     ActorScript_RepeatOrJump,              // 0x0c SC_LOOP
     ActorScript_JumpToLabel,               // 0x0d SC_JUMP

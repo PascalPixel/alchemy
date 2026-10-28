@@ -31,7 +31,7 @@ FarCall_FieldTable:
 	export Actor_ReleaseFar, Actor_Release
 	overlay_veneer Actor_SetSpriteRotation
 	export Actor_StartCameraFar, Actor_StartCamera
-	overlay_veneer Actor_StartApproachLink
+	overlay_veneer Actor_StartApproachWatched
 	export Actor_SetPositionAndResetMotionFar, Actor_SetPositionAndResetMotion
 	export SpriteDissolve_StepFar, SpriteDissolve_Step
 	export SpriteDissolve_RunFar, SpriteDissolve_Run

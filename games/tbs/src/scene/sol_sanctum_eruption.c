@@ -257,7 +257,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   SolSanctumEruption_SetMaterializationTint(0, 20, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_WaitFrames(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -286,7 +286,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 20);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 10);
   SolSanctumEruption_PlaceHostageGroup();
@@ -362,7 +362,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 10);
   Import_ActorSetAnimation(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
-  Actor_LinkPair(ACTOR_SATUROS, ACTOR_MENARDI, 40);
+  Actor_TurnToFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
   Import_ActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
   // Jenna: "What about Isaac and Garet? You can't just leave them here!"
@@ -371,7 +371,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 40);
-  Actor_LinkPair(ACTOR_SATUROS, ACTOR_MENARDI, 40);
+  Actor_TurnToFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 10);
   // Saturos: "Forget about them." Menardi: they might survive. Saturos: "So
@@ -426,7 +426,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH + FACING_STEP, 20);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   Event_WaitFrames(20);
-  Actor_LinkPair(ACTOR_SATUROS, ACTOR_MENARDI, 0);
+  Actor_TurnToFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 0);
   Event_WaitFrames(30);
   Import_ActorSetAnimation(ACTOR_SATUROS, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
@@ -460,7 +460,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_LinkPair(ACTOR_SATUROS, ACTOR_MENARDI, 20);
+  Actor_TurnToFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 20);
   Import_ActorSetAnimation(ACTOR_SATUROS, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Event_WaitFrames(20);
@@ -1821,7 +1821,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedActor = parent;
+      child->watchedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;

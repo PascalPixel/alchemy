@@ -102,10 +102,10 @@
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// Per-frame update of an afterimage: closes half the distance to the actor
-/// it is linked to, on all three axes.
+/// it watches, on all three axes.
 static inline void FieldEffect_MoveAfterimageHalfway(struct Actor *actor) {
   struct Actor *afterimage = (struct Actor *)actor;
-  struct Actor *target = afterimage->linkedActor;
+  struct Actor *target = afterimage->watchedActor;
 
   afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
   afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;

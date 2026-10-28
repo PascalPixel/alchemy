@@ -158,9 +158,9 @@ extern u32 gRandomSeed;
 /// background's display mode.
 extern struct BattleBackgroundWork *gBattleBackgroundWork;
 #endif
-/// SC_FACE_LINK every frame, forever: the script of an actor told to
-/// keep facing its linked actor.
-extern const u8 gActor_LinkedScript[];
+/// SC_FACE_WATCHED every frame, forever: the script of an actor told to
+/// keep facing its watched actor.
+extern const u8 gActor_FaceWatchedScript[];
 /// Where the party returns after a defeat: {scene, entrance (-1 any),
 /// return scene, return entrance} rows, ended by scene -1
 /// (Scene_SetRestartPoint).

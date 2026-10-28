@@ -636,7 +636,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Actor_RunRepeatedMotion(ACTOR_FELIX_MASKED, 2);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_FELIX_MASKED, 20);
-  Actor_LinkPair(ACTOR_JENNA, ACTOR_KRADEN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_KRADEN, 0);
   Event_WaitFrames(20);
   Actor_StartRepeatedMotion(ACTOR_JENNA, 2);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1156,7 +1156,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
@@ -1201,23 +1201,23 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   Actor_SetPosition(ACTOR_ALEX, PIXELS(460), PIXELS(360));
   Actor_SetPosition(ACTOR_FELIX, PIXELS(471), PIXELS(306));
   actor = Actor_GetById(ACTOR_JENNA);
-  actor->linkedActor = leader;
+  actor->watchedActor = leader;
   actor->steeringFlags |= 1;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_GetById(ACTOR_KRADEN);
-  actor->linkedActor = leader;
+  actor->watchedActor = leader;
   actor->steeringFlags |= 1;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_GetById(ACTOR_MENARDI);
-  actor->linkedActor = leader;
+  actor->watchedActor = leader;
   actor->steeringFlags |= 1;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_GetById(ACTOR_SATUROS);
-  actor->linkedActor = leader;
+  actor->watchedActor = leader;
   actor->steeringFlags |= 1;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   alex = Actor_GetById(ACTOR_ALEX);
-  alex->linkedActor = leader;
+  alex->watchedActor = leader;
   alex->steeringFlags |= 1;
   alex->scaleX = Q16_ONE;
   alex->scaleY = Q16_ONE;
@@ -1225,7 +1225,7 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   alex->y.fixed = 0;
   Actor_StartScript(alex, gSolSanctumElementalStarRoom_AngleScript);
   actor = Actor_GetById(ACTOR_FELIX);
-  actor->linkedActor = leader;
+  actor->watchedActor = leader;
   actor->steeringFlags |= 1;
   Actor_StartScript(actor, gSolSanctumElementalStarRoom_AngleScript);
   Event_End();
@@ -1277,7 +1277,7 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   }
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_GARET, 218, 172);
-  Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_WaitFrames(20);
   Event_PlaySong(SE_CRASH);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
@@ -1321,7 +1321,7 @@ static void SolSanctumElementalStarRoom_TalkToKraden(void) {
       Event_SetMessageId(MsgSolSanctumKradenBringTheStarsHere);
     else
       Event_SetMessageId(MsgSolSanctumKradenFetchTheOthers);
-    Actor_LinkPair(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 0);
+    Actor_TurnToFaceEachOther(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 0);
     Event_WaitFrames(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   }
@@ -1340,7 +1340,7 @@ static void SolSanctumElementalStarRoom_TalkToJenna(void) {
       Event_SetMessageId(MsgSolSanctumJennaBeCareful);
     else
       Event_SetMessageId(MsgSolSanctumJennaKradenIsGiddy);
-    Actor_LinkPair(ACTOR_JENNA, ACTOR_PARTY_LEADER, 0);
+    Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_PARTY_LEADER, 0);
     Event_WaitFrames(10);
     Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   }
@@ -1665,7 +1665,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_WaitFrames(40);
   SolSanctumElementalStarRoom_ShowMessageAndWait(kradenSpeaker, 30);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
   Event_WaitFrames(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);

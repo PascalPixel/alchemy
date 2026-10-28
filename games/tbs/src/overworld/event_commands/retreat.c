@@ -185,7 +185,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   s32 scale;
 
   limit = particle->groundHeight + 0xA0000;
-  source = particle->linkedActor;
+  source = particle->watchedActor;
   if (gAdventure.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + 0x40000;
 
@@ -215,7 +215,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
   s32 scale;
 
   limit = particle->groundHeight + 0xA0000;
-  source = particle->linkedActor;
+  source = particle->watchedActor;
   if (gAdventure.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + 0x40000;
 
@@ -299,7 +299,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     actor->motionFlags = 0;
     actor->timer = 0;
     zero = 0;
-    actor->linkedActor = source;
+    actor->watchedActor = source;
     actor->scaleY = 0x6666;
     actor->scaleX = 0x6666;
     if (sprite == NULL)

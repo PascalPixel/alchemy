@@ -6,7 +6,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_SelectAnimation(struct ObjectRuntime *object,
                                             s32 argument);
 
-/// SC_APPROACH_LINK: follows the linked object at its speed. More than 16
+/// SC_APPROACH_WATCHED: follows the linked object at its speed. More than 16
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
 // As ☀️'s function of the same name.

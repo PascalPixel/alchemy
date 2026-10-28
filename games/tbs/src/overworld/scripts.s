@@ -266,8 +266,8 @@ gActor_StepAngleScript:
 	.global gMessageSpeed_VoiceRates
 gMessageSpeed_VoiceRates:
 	.byte 1, 3, 10, 0
-	.global gFieldEffect_LinkedActorScript
-gFieldEffect_LinkedActorScript:
+	.global gFieldEffect_WatchedActorScript
+gFieldEffect_WatchedActorScript:
 	.4byte 22, 9, 0xffff8000, 22, 10, 16384, 0, 2
 	.4byte 22, 9, 16384, 22, 10, 0xffffe000, 0, 2
 	.4byte 22, 9, 8192, 22, 10, 0xfffff000, 0, 2
@@ -307,14 +307,14 @@ gMovementType_WanderCloseScript:
 	.4byte 21, 15, 26214, 21, 16, 13107, 28, 2
 	.4byte 0x80010000, 9, 131072, 131072, 393216, 1, 0, 4
 	.4byte 12, 65535, 0xc0010000
-	.global gMovementType_FollowLinkedScript
-gMovementType_FollowLinkedScript:
+	.global gMovementType_FollowWatchedScript
+gMovementType_FollowWatchedScript:
 	.4byte 34, Actor_MoveTowardTarget, 12, 65535, 0
 	.global gMovementType_FaceLeaderScript
 gMovementType_FaceLeaderScript:
-	.4byte 34, Actor_TurnTowardLinkedActor, 12, 65535, 0
-	.global gActor_LinkedScript
-gActor_LinkedScript:
+	.4byte 34, Actor_TurnTowardWatchedActor, 12, 65535, 0
+	.global gActor_FaceWatchedScript
+gActor_FaceWatchedScript:
 	.4byte 5, 0, 1, 12, 65535, 0
 @ Ground particles, motes of light and sparkles
 	.global gFieldEffect_GroundParticleTiles

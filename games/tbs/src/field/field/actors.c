@@ -451,12 +451,12 @@ void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
   }
 }
 
-/// Starts an actor on the script that approaches its linked actor
-/// (SC_APPROACH_LINK), linked to linkedActorHandle. The functions below start
-/// the field's other scripts (actor_script.c).
-void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle) {
-  Actor_StartScript(actor, gActor_ApproachLinkScript);
-  actor->linkedActor = (struct Actor *)linkedActorHandle;
+/// Starts an actor on the script that approaches its watched actor
+/// (SC_APPROACH_WATCHED), watching watchedActorHandle. The functions below
+/// start the field's other scripts (actor_script.c).
+void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
+  Actor_StartScript(actor, gActor_ApproachWatchedScript);
+  actor->watchedActor = (struct Actor *)watchedActorHandle;
 }
 
 /// Starts an actor on the script that runs SC_KEY_COUNT every frame.
@@ -495,12 +495,12 @@ void Actor_StartIdle(struct Actor *actor) {
 /// acceleration of 0.5. Called through
 /// Actor_StartCameraFar by the overworld's actor code, the Psynergy
 /// camera and the Colosso and Kolima Forest scenes.
-void Actor_StartCamera(struct Actor *actor, s32 linkedActorHandle) {
+void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
-  if (linkedActorHandle != 0) {
+  if (watchedActorHandle != 0) {
     actor->acceleration = 0x8000;
     actor->speedLimit = 0x40000;
-    actor->linkedActor = (struct Actor *)linkedActorHandle;
+    actor->watchedActor = (struct Actor *)watchedActorHandle;
     actor->timer = 0;
   }
 }

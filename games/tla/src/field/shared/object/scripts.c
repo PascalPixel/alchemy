@@ -252,7 +252,7 @@ const s32 gData_080f3764[] = {
 
 /// gObjectMotion_LinkedActionScript
 const s32 gObject_LinkedMotionScript[] = {
-    SC_FACE_LINK,
+    SC_FACE_WATCHED,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

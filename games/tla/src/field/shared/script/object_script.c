@@ -229,7 +229,7 @@ const s32 gObjectDispatch_CameraScript[] = {
 };
 
 const s32 gData_0802f1e8[] = {
-    SC_APPROACH_LINK,
+    SC_APPROACH_WATCHED,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -246,12 +246,12 @@ const ScriptCommandFn gData_0802f204[54] = {
     Func_08025038,                       // 0x03 SC_CMD_03
     Func_08025078,                       // 0x04 SC_MOVE
     Script_ApplyRelativePosition,        // 0x05 SC_MOVE_BY
-    Script_StoreAngleToLinkedObject,     // 0x06 SC_FACE_LINK
-    Script_ApplyLinkedObjectPosition,    // 0x07 SC_MOVE_LINK
+    Script_StoreAngleToLinkedObject,     // 0x06 SC_FACE_WATCHED
+    Script_ApplyLinkedObjectPosition,    // 0x07 SC_MOVE_TO_WATCHED
     Script_ApplyLocalOffsetPosition,     // 0x08 SC_MOVE_LOCAL
     Func_08025698,                       // 0x09 SC_WANDER
     Func_08025830,                       // 0x0a SC_WANDER_HOME
-    Object_ApproachLinkedObject,         // 0x0b SC_APPROACH_LINK
+    Object_ApproachLinkedObject,         // 0x0b SC_APPROACH_WATCHED
     Func_08025160,                       // 0x0c SC_CAMERA
     Script_RepeatOrJump,                 // 0x0d SC_LOOP
     Script_JumpToLabel,                  // 0x0e SC_JUMP

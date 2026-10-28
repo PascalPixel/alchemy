@@ -394,7 +394,7 @@ static void CottageRoomsB_AskIsaacHisBusiness(void) {
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 2);
   Event_WaitFrames(30);
   Event_SetMessageId(MsgValeHeyBoy);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MASKED_MAN, 10);
   FieldEvent_ShowMessageThenWait(ACTOR_MASKED_MAN, 0, 6);
   Actor_ShowEmote(ACTOR_MASKED_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 1);
@@ -904,7 +904,7 @@ ramp:
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_WaitFrames(80);
   Import_ActorSetPosition(ACTOR_KYLE, 0, 0);
-  Actor_LinkPair(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
+  Actor_TurnToFaceEachOther(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_WaitFrames(40);
@@ -1128,7 +1128,7 @@ static void CottageRoomsB_TalkToDora(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
     Actor_SetTargetAndCallback(ACTOR_DORA,
-                               ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                               ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                gCottageRoomsB_DoraFacesIsaacScript);
     Event_WaitFrames(20);
     Event_SetMessageId(MsgValeDontWorryBest);
@@ -1262,7 +1262,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
       part = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedActor = parent;
+      child->watchedActor = parent;
       if (part != NULL) {
         sprite = part;
         Sprite_StartAnim(part, 0);

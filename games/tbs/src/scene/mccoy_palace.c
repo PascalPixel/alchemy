@@ -1051,17 +1051,18 @@ accepted:
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, 3);
   Event_WaitFrames(20);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_CAPTAIN,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                   gPalace_FacingActions);
   // Keep the party looking at the captain while he leaves the audience.
   FieldActor_SetTargetAndCallback(ACTOR_GARET,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_CAPTAIN,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                   gPalace_FacingActions);
   FieldActor_SetTargetAndCallback(ACTOR_IVAN,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_CAPTAIN,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                   gPalace_FacingActions);
-  FieldActor_SetTargetAndCallback(
-      ACTOR_MIA, ACTOR_LINK_KEEP_MOTION | ACTOR_CAPTAIN, gPalace_FacingActions);
+  FieldActor_SetTargetAndCallback(ACTOR_MIA,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
+                                  gPalace_FacingActions);
   Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
@@ -1078,7 +1079,7 @@ accepted:
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldActor_SetTargetAndCallback(ACTOR_CAPTAIN,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gPalace_FacingActions);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -1452,7 +1453,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 0);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_CAPTAIN,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                   gPalace_FacingActions);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);

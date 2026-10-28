@@ -14,7 +14,7 @@ static s32 Scene_TurnTowardTarget(struct Actor *interpreter) {
   s32 angle;
   struct Actor *target;
 
-  target = actor->linkedActor;
+  target = actor->watchedActor;
   if (target != 0) {
     actor->steeringFlags = (0xFE & actor->steeringFlags);
     angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,

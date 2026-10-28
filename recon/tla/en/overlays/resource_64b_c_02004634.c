@@ -1,5 +1,5 @@
 // Draft of Func_02004634 (overlay 64B, 120 instructions), differ 69: the linked
-// pair of effects, ported from ☀️'s WorldMap_CreateLinkedEffects (⚓️ creates
+// pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects (⚓️ creates
 // kind 271, its updates are Func_020045e4 and Func_02004598, the sprite's
 // detail sits at 0x28). As a for loop (differ 95) loop.c hoists the 63 mask and
 // the pair array's address and a fourth high register is saved; as a goto loop

@@ -78,7 +78,7 @@
 #include "unit/scene/vale.h"
 #include "unit/scene/shared/actor_orbit.h"
 #include "unit/scene/shared/effect_psynergy.h"
-#include "unit/scene/shared/world_map_linked_effects.h"
+#include "unit/scene/shared/world_map_attached_effects.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
@@ -470,7 +470,8 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
     Event_ShowMessageAndWait(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   } else {
     Event_SetMessageId(MsgValeYourGrandpaIsTheMayor);
-    Actor_LinkPair(ACTOR_GIRL_JEALOUS_OF_GARET, ACTOR_PARTY_LEADER, 4);
+    Actor_TurnToFaceEachOther(ACTOR_GIRL_JEALOUS_OF_GARET, ACTOR_PARTY_LEADER,
+                              4);
     Event_AskYesNoAndShowResponse(ACTOR_GIRL_JEALOUS_OF_GARET, 0);
   }
   Event_End();
@@ -488,11 +489,13 @@ static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   } else if (GameFlag_Get(flag) == 0) {
     GameFlag_Set(flag);
     Event_SetMessageId(MsgValeDoYouNeedToGo);
-    Actor_LinkPair(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER, 4);
+    Actor_TurnToFaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
+                              ACTOR_PARTY_LEADER, 4);
     Event_AskYesNoAndShowResponse(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   } else {
     Event_SetMessageId(MsgValeDontGoBeyondKradensCottage);
-    Actor_LinkPair(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, ACTOR_PARTY_LEADER, 4);
+    Actor_TurnToFaceEachOther(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
+                              ACTOR_PARTY_LEADER, 4);
     Event_ShowMessageAndWait(ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
   }
   Event_End();
@@ -506,12 +509,12 @@ static void Vale_ArgueWithGaretsSister(void) {
     GameFlag_Set(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
     Event_SetMessageId(MsgValeYouMakeMeSoMad);
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARETS_SISTER, 20);
+    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARETS_SISTER, 20);
     FieldEvent_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 6);
     Actor_FaceDirection(ACTOR_GARETS_SISTER, FACING_WEST, 30);
     Actor_Jump(ACTOR_GARETS_SISTER, 2, 20);
     FieldEvent_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 6);
-    Actor_LinkPair(ACTOR_GARETS_SISTER, ACTOR_PARTY_LEADER, 10);
+    Actor_TurnToFaceEachOther(ACTOR_GARETS_SISTER, ACTOR_PARTY_LEADER, 10);
     Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     FieldEvent_ShowMessageThenWait(ACTOR_GARETS_SISTER, 0, 10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -541,7 +544,8 @@ static void Vale_DoraFretsAboutTheRoof(void) {
 /// asks whether Jenna is back.
 static void Vale_AskWhetherJennaHasReturned(void) {
   Event_Start();
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER,
+                            ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
   Event_SetMessageId(MsgValeIsJennaBackYet);
   Event_ShowMessageAndWait(ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 0);
   GameFlag_Set(FLAG_VALE_ASKED_IF_JENNA_IS_BACK);
@@ -732,7 +736,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   WaitFrames(1);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_JENNA, 110, 283);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_JENNA, 2);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 2);
   Event_SetMessageId(MsgValeKradenIsWaitingForUs);
   if (leader->x.fixed < jenna->x.fixed) {
     FieldEvent_ShowMessageThenWait(
@@ -1263,7 +1267,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_WaitFrames(100);
-  Actor_LinkPair(ACTOR_JENNA, ACTOR_GARET, 30);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_WaitFrames(10);
@@ -1301,7 +1305,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_DORA, 0, 40);
-  Actor_LinkPair(ACTOR_JENNA, ACTOR_GARET, 30);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_WaitFrames(30);
@@ -2075,7 +2079,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_WalkToAndWait(ACTOR_JENNA, 374, 1008);
   Actor_WalkToAndWait(ACTOR_JENNA, 347, 955);
   Actor_WalkToAndWait(ACTOR_OPENING_WOMAN, 318, 947);
-  Actor_LinkPair(ACTOR_JENNA, ACTOR_OPENING_WOMAN, 40);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_OPENING_WOMAN, 40);
   Actor_RunRepeatedMotion(ACTOR_OPENING_WOMAN, 2);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_WaitFrames(10);
@@ -2098,7 +2102,7 @@ static void Vale_MendingTheRoof(void) {
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  Actor_LinkPair(ACTOR_OPENING_DORA, ACTOR_PARTY_LEADER, 40);
+  Actor_TurnToFaceEachOther(ACTOR_OPENING_DORA, ACTOR_PARTY_LEADER, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -2187,7 +2191,7 @@ static void Vale_MendingTheRoof(void) {
   // Finish the reunion conversation after the repair effects settle.
   Event_WaitFrames(10);
   Actor_WalkToAndWait(ACTOR_JENNA, 424, 624);
-  Actor_LinkPair(ACTOR_GARET, ACTOR_JENNA, 60);
+  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_JENNA, 60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_WaitFrames(10);
   FieldEvent_ShowMessageThenWait(
@@ -2671,7 +2675,7 @@ static void Vale_RoofMended(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_WaitFrames(80);
-  Actor_LinkPair(ACTOR_JENNA, ACTOR_GARET, 30);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_WaitFrames(10);
@@ -2705,7 +2709,7 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 10);
   FieldEvent_ShowMessageThenWait(ACTOR_DORA, 0, 40);
-  Actor_LinkPair(ACTOR_JENNA, ACTOR_GARET, 30);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_WaitFrames(20);
@@ -3269,7 +3273,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
 #include "shared/actor_orbit.h"
 
 /// Someone calling up Psynergy: drawn SPRITE_COLOR_WHITE (7) for two frames in
-/// four, and the World Map's linked sparks every 16 frames.
+/// four, and the World Map's attached sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
 
   if ((gFrameCount & 2) != 0)
@@ -3277,7 +3281,7 @@ static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
   else
     Actor_SetColorMode(actor, 0);
   if ((gFrameCount & 0xf) == 0)
-    WorldMap_CreateLinkedEffects(actor);
+    WorldMap_CreateAttachedEffects(actor);
 }
 
 /// Someone using Psynergy: colour modes SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG
@@ -3287,7 +3291,7 @@ static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0)
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
   if ((gFrameCount & 0xf) == 0)
-    WorldMap_CreateLinkedEffects(actor);
+    WorldMap_CreateAttachedEffects(actor);
 }
 
 /// What Psynergy moves: colour modes SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG in
@@ -3298,7 +3302,7 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
 }
 
 #include "shared/effect_vertical.h"
-#include "shared/world_map_linked_effects.h"
+#include "shared/world_map_attached_effects.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

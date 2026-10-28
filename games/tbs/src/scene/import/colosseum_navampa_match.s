@@ -77,7 +77,7 @@
 	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_JumpDownLedge, 1
 	.set import.Actor_SetAngleToward, 1
-	.set import.Actor_LinkPair, 1
+	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
@@ -106,7 +106,7 @@
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Scene_PlayMusic, 1
 	.set import.Event_ClearInvalidPackedValues, 1
-	.set import.Actor_LinkAndSetScript, 1
+	.set import.Actor_WatchAndSetScript, 1
 	.set import.FieldPsynergy_HaltActor, 1
 	.set import.PartyMemberChooser_Open, 1
 	.set import.Sound_PlaySong, 1

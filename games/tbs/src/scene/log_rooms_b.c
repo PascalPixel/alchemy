@@ -180,7 +180,7 @@ static void LogRoomsB_ShowStandingActorDialogue(s32 actorId) {
 /// Faces the leader and shows this resident's dialogue while standing still.
 static inline void LogRoomsB_FaceAndSpeak(s32 actorId, s32 message) {
   Event_SetMessageId(message);
-  Actor_LinkPair(actorId, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(actorId, ACTOR_PARTY_LEADER, 2);
   LogRoomsB_ShowStandingActorDialogue(actorId);
 }
 
@@ -212,7 +212,7 @@ static void LogRoomsB_HusbandLongsForColosso(void) {
 static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
-  Actor_LinkPair(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
   Import_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
   FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
@@ -254,7 +254,7 @@ static void LogRoomsB_UnusedOfferLeftoverBones(void) {
 /// that is, the leader not standing beside the floor Bone.
 static void LogRoomsB_OfferBones(void) {
   Event_Start();
-  Actor_LinkPair(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Event_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
     Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);

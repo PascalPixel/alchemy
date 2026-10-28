@@ -582,8 +582,8 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_WaitFrames(30);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_WaitFrames(10);
-  Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Actor_LinkPair(ACTOR_MIA, ACTOR_IVAN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);

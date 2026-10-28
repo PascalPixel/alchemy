@@ -248,7 +248,8 @@ const struct Trigger *CottageRoomsA_GetTriggers(void) {
 static void CottageRoomsA_AskAboutKradensStudies(void) {
   Event_Start();
   Event_SetMessageId(MsgValeKradenCameToStudyMt);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_MAN_ON_KRADENS_STUDIES, 6);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_MAN_ON_KRADENS_STUDIES,
+                            6);
   Event_AskYesNoAndShowResponse(ACTOR_MAN_ON_KRADENS_STUDIES, 0);
   Event_End();
 }
@@ -261,7 +262,8 @@ static void CottageRoomsA_AskAboutKradensStudies(void) {
 static void CottageRoomsA_AskToScareVisitors(void) {
   Event_Start();
   Event_SetMessageId(MsgValeLetsScareKradensVisitors);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_STRONGMAN_SCARING_VISITORS, 6);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER,
+                            ACTOR_STRONGMAN_SCARING_VISITORS, 6);
   Event_AskYesNoAndShowResponse(ACTOR_STRONGMAN_SCARING_VISITORS, 0);
   Event_End();
 }
@@ -280,9 +282,9 @@ static void CottageRoomsA_GiveFarewellHerb(void) {
   if (Event_GetFlag(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     Event_SetMessageId(MsgValeYouMustSaveJenna);
     Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
-    FieldActor_SetTargetAndCallback(ACTOR_ITEM_MERCHANT,
-                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                    gCottageRoomsA_FaceTargetScript);
+    FieldActor_SetTargetAndCallback(
+        ACTOR_ITEM_MERCHANT, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+        gCottageRoomsA_FaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     Event_SetMessageId(gift);
@@ -631,16 +633,16 @@ static void CottageRoomsA_GaretComesHome(void) {
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
   Event_WaitFrames(10);
   FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
                                   gCottageRoomsA_FaceTargetScript);
   FieldActor_SetTargetAndCallback(ACTOR_GARET,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
                                   gCottageRoomsA_FaceTargetScript);
   FieldActor_SetTargetAndCallback(ACTOR_IVAN,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
                                   gCottageRoomsA_FaceTargetScript);
   FieldActor_SetTargetAndCallback(ACTOR_MIA,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
                                   gCottageRoomsA_FaceTargetScript);
   Event_WaitFrames(300);
   FieldCamera_GetActor()->motionFlags = motionFlags;

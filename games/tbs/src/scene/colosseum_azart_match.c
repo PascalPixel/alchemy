@@ -624,7 +624,7 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1288, 192);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
   Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -804,9 +804,9 @@ s32 ColosseumAzartMatch_Initialize(void) {
       ColosseumAzartMatch_MarkFinishTerrain(ACTOR_MIA);
       ColosseumAzartMatch_ShowRoundIntroduction(1);
     }
-    Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
-    Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-    Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
+    Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
+    Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+    Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
     Colosso_StartOpponent((s32)&ResourceId_OpponentPathA);
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST:

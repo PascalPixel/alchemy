@@ -264,7 +264,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   }
   Event_SetMessageId(msg);
   Import_ActorSetAnimation(ACTOR_TOLBI_OLDER_BROTHER, 0);
-  Actor_LinkPair(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
   WaitFrames(1);
@@ -302,7 +302,7 @@ static void Tolbi_TalkToYoungerSister(void) {
   }
   Event_SetMessageId(msg);
   Import_ActorSetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, 0);
-  Actor_LinkPair(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
+  Actor_TurnToFaceEachOther(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
   WaitFrames(1);

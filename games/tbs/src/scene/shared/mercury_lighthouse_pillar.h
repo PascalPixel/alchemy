@@ -35,7 +35,7 @@
 static s32
 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *interpreter) {
   struct Actor *effect = interpreter;
-  struct Actor *anchor = effect->linkedActor;
+  struct Actor *anchor = effect->watchedActor;
   s16 step = ++effect->timer;
   s32 scale;
 
@@ -80,7 +80,7 @@ static s32 Actor_AdvanceScaleCounter(struct Actor *interpreter) {
   return 1;
 }
 
-/// Follows the linked actor and alternates the light's animation
+/// Follows the watched actor and alternates the light's animation
 /// parameter.
 static s32 MercuryLighthouse_FollowLeader(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -93,7 +93,7 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *interpreter) {
   s32 moveDistance;
 
   actor->speedLimit = PIXELS(2);
-  leader = actor->linkedActor;
+  leader = actor->watchedActor;
   actor->acceleration = PIXELS(1);
   targetX = leader->x.fixed;
   targetZ = leader->z.fixed;
@@ -158,7 +158,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     Actor_StartScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->linkedActor = point;
+    spark->watchedActor = point;
     if (sprite != NULL) {
       Sprite_StartAnim(sprite, 2);
       sprite->flags = 0;
@@ -173,7 +173,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     Actor_StartScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->linkedActor = point;
+    spark->watchedActor = point;
     spark->priorityFlags = 2;
     if (sprite != NULL) {
       Sprite_StartAnim(sprite, 1);
@@ -211,7 +211,7 @@ void MercuryLighthouse_ChargeLights(void) {
 
       actor->groundHeight = leader->groundHeight;
       Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
-      actor->linkedActor = leader;
+      actor->watchedActor = leader;
       actor->motionFlags = 4;
       // The height is written by its offset, the plain-C form of obj->y.fixed
       // this site matches with (scene/README.md): as the field, the sprite's

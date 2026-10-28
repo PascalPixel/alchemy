@@ -62,7 +62,7 @@ struct BattleActor {
   u8 riseEnabled;
   s16 timer;
   u16 userValue;
-  struct BattleActor *linkedActor;
+  struct BattleActor *watchedActor;
   void (*update)(struct Actor *actor);
 };
 

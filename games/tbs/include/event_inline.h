@@ -4,7 +4,7 @@
 /// @file
 /// The event inlines: one typed inline for each event command an event calls
 /// by its own name, passing it on to the main image's import
-/// (Actor_FaceEachOther calls Actor_LinkPair).
+/// (Actor_FaceEachOther calls Actor_TurnToFaceEachOther).
 ///
 /// It is a habit of the whole game written once: a layer, not a
 /// compiler-steering device. An event writes
@@ -27,7 +27,7 @@
 /// Turns two actors toward each other, as a conversation between them
 /// begins.
 static inline void Actor_FaceEachOther(s32 actorId, s32 other, s32 frames) {
-  Actor_LinkPair(actorId, other, frames);
+  Actor_TurnToFaceEachOther(actorId, other, frames);
 }
 
 /// Switches an actor to an ActorAnimation, such as ANIM_NOD.

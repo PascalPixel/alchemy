@@ -418,9 +418,9 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // should be all right.
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_WaitFrames(40);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
   Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
@@ -546,7 +546,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
   Event_WaitFrames(40);
   Actor_SetAngleToward(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_KRADEN, ACTOR_JENNA, 0);
@@ -602,9 +602,9 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Event_WaitFrames(60);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
-  Actor_LinkPair(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_WaitFrames(40);
-  Actor_LinkPair(ACTOR_JENNA, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_PARTY_LEADER, 0);
   Event_WaitFrames(40);
   // Kraden: "Should I tell you more?" Either answer, he thinks they would not
   // understand yet.

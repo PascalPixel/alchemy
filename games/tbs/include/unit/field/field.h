@@ -270,8 +270,8 @@ void ActorScript_SetOrCompareTimer(struct ScriptOperands *work, s32 operation,
                                    s32 value);
 void ActorScript_SetOrCompareUserValue(struct ScriptOperands *work,
                                        s32 operation, s32 value);
-void ActorScript_SetOrCompareLinkedActor(struct ScriptOperands *work,
-                                         s32 operation, s32 value);
+void ActorScript_SetOrCompareWatchedActor(struct ScriptOperands *work,
+                                          s32 operation, s32 value);
 void ActorScript_SetOrCompareUpdateAddress(struct ScriptOperands *work,
                                            s32 operation, s32 value);
 void ActorScript_SetOrCompareRiseCounter(struct ScriptOperands *work,
@@ -293,13 +293,13 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step);
 void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation);
 void Anim_SetIndexAndInitializeObjects(void *rawDispatchActor, s32 animationId);
 void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId);
-void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle);
+void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle);
 void Actor_StartKeyCheck(struct Actor *actor);
 void Actor_StartMoveByKeys(struct Actor *actor);
 void Actor_StartPlayerControl(struct Actor *actor);
 void Actor_StartWorldMapControl(struct Actor *actor);
 void Actor_StartIdle(struct Actor *actor);
-void Actor_StartCamera(struct Actor *actor, s32 linkedActorHandle);
+void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle);
 void Actor_WaitForScriptEnd(void *rawActor);
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags);
 void Actor_SetBlendMode(struct Actor *actor, u32 mode);
@@ -343,11 +343,11 @@ struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
 s32 ActorScript_SetPositionAndResetMotion(struct Actor *interpreter);
 s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter);
 s32 ActorScript_ApplyRelativePosition(struct Actor *interpreter);
-s32 ActorScript_StoreAngleToLinkedActor(struct Actor *interpreter);
-s32 ActorScript_ApplyLinkedActorPosition(struct Actor *interpreter);
+s32 ActorScript_StoreAngleToWatchedActor(struct Actor *interpreter);
+s32 ActorScript_ApplyWatchedActorPosition(struct Actor *interpreter);
 s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *interpreter);
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter);
-s32 Actor_ApproachLinkedActor(struct Actor *interpreter);
+s32 Actor_ApproachWatchedActor(struct Actor *interpreter);
 s32 Actor_Wander(struct Actor *interpreter);
 s32 ActorScript_WanderNearHome(struct Actor *interpreter);
 

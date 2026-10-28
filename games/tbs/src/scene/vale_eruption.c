@@ -224,9 +224,9 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Weather_LastLightning();
   Event_PlaySong(SE_CRASH);
   Event_WaitFrames(60);
-  Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
-  Actor_LinkPair(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
-  Actor_LinkPair(ACTOR_GARETS_BROTHER, ACTOR_GUARD, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GARETS_BROTHER, ACTOR_GUARD, 0);
   Actor_StartRepeatedMotion(ACTOR_GREAT_HEALER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
@@ -263,7 +263,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_WaitFrames(10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_WaitFrames(20);
 
   // "What should we do, Isaac? Should we go back up?" Either way, the two stay.
@@ -361,7 +361,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_WaitFrames(40);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_WaitFrames(50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
@@ -381,7 +381,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     // The mayor answers either reply; the other reply is skipped.
     Event_WaitFrames(40);
-    Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
+    Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
     Event_WaitFrames(50);
     Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
@@ -391,7 +391,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
     Event_SkipMessages(1);
   } else {
     Event_WaitFrames(40);
-    Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
+    Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
     Event_WaitFrames(50);
     Actor_FaceDirection(ACTOR_GREAT_HEALER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
@@ -434,7 +434,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_WaitFrames(40);
-  Actor_LinkPair(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Event_WaitFrames(40);
   Import_ActorSetAnimation(ACTOR_GREAT_HEALER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);

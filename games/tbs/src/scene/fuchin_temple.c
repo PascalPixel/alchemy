@@ -846,7 +846,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_ShowEmote(ACTOR_MESSENGER_STUDENT, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 20);
-  Actor_LinkPair(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
+  Actor_TurnToFaceEachOther(ACTOR_TREE_STUDENT, ACTOR_FEH, 0);
   Event_WaitFrames(20);
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_NOD);
   Event_WaitFrames(20);
@@ -1380,9 +1380,9 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_SetAnimationAndWait(ACTOR_FEH, ANIM_SHAKE_HEAD);
   Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 40);
-  Actor_LinkPair(ACTOR_PUNCHING_STUDENT, ACTOR_KICKING_STUDENT, 0);
-  Actor_LinkPair(ACTOR_JUMPING_STUDENT, ACTOR_WATCHING_STUDENT, 0);
-  Actor_LinkPair(ACTOR_PROUD_STUDENT, ACTOR_TREE_STUDENT, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PUNCHING_STUDENT, ACTOR_KICKING_STUDENT, 0);
+  Actor_TurnToFaceEachOther(ACTOR_JUMPING_STUDENT, ACTOR_WATCHING_STUDENT, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PROUD_STUDENT, ACTOR_TREE_STUDENT, 0);
   Event_WaitFrames(60);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEH, 0);
   Actor_FaceActor(ACTOR_PUNCHING_STUDENT, ACTOR_FEH, 0);
@@ -1866,7 +1866,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_IVAN, 50);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 30);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);

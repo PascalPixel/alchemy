@@ -62,7 +62,7 @@ struct ScriptOperands {
   u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by scene code
   s16 timer;            ///< work value 0x23, what its actor script reads
   s16 userValue;        ///< work value 0x24, or scene scratch
-  u32 linkedActor;      ///< work value 0x25, the actor it follows or faces
+  u32 watchedActor;     ///< work value 0x25, the actor it follows or faces
   u32 update;           ///< SW_HOOK, the routine run each frame
 };
 
@@ -77,7 +77,7 @@ STATIC_ASSERT(offsetof(struct ScriptOperands, refused) == 0x60);
 STATIC_ASSERT(offsetof(struct ScriptOperands, conditionResult) == 0x57);
 STATIC_ASSERT(offsetof(struct ScriptOperands, wait) == 0x5e);
 STATIC_ASSERT(offsetof(struct ScriptOperands, timer) == 0x64);
-STATIC_ASSERT(offsetof(struct ScriptOperands, linkedActor) == 0x68);
+STATIC_ASSERT(offsetof(struct ScriptOperands, watchedActor) == 0x68);
 STATIC_ASSERT(offsetof(struct ScriptOperands, update) == 0x6c);
 STATIC_ASSERT(sizeof(struct ScriptOperands) == 0x70);
 

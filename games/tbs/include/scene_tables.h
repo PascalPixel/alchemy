@@ -150,23 +150,23 @@ enum MovementType {
   MOVEMENT_TYPE_STAND = 1, ///< its script only ends
   /// Wanders about where it stands (SC_WANDER_HOME), within 16 pixels.
   MOVEMENT_TYPE_WANDER = 2,
-  MOVEMENT_TYPE_WANDER_NEAR = 3,   ///< as MOVEMENT_TYPE_WANDER, within 8 pixels
-  MOVEMENT_TYPE_WANDER_CLOSE = 4,  ///< within 6 pixels, at its own speed
-  MOVEMENT_TYPE_FOLLOW_LINKED = 5, ///< moves toward the linked actor
-  MOVEMENT_TYPE_FACE_LEADER = 6,   ///< links to the leader and turns toward it
-  MOVEMENT_TYPE_RESET_ACTION = 7   ///< gMovementType_ResetActionScript
+  MOVEMENT_TYPE_WANDER_NEAR = 3,  ///< as MOVEMENT_TYPE_WANDER, within 8 pixels
+  MOVEMENT_TYPE_WANDER_CLOSE = 4, ///< within 6 pixels, at its own speed
+  MOVEMENT_TYPE_FOLLOW_WATCHED = 5, ///< moves toward the watched actor
+  MOVEMENT_TYPE_FACE_LEADER = 6,    ///< watches the leader and turns toward it
+  MOVEMENT_TYPE_RESET_ACTION = 7    ///< gMovementType_ResetActionScript
 };
 
 /// How a placed actor turns when the leader talks to it
 /// (Scene_TalkToActor). With all but TALK_FACING_KEEP the leader stops
-/// and the two are linked.
+/// and each watches the other.
 enum ActorTalkFacing {
   TALK_FACING_PARTY = 0,
   /// Faces the party, then turns back to its old heading.
   TALK_FACING_PARTY_AND_BACK = 1,
   TALK_FACING_KEEP = 2,
   /// Faces the party, then keeps turning to face the leader once the talk is
-  /// over (gActor_LinkedScript).
+  /// over (gActor_FaceWatchedScript).
   TALK_FACING_PARTY_THEN_WATCH = 3
 };
 

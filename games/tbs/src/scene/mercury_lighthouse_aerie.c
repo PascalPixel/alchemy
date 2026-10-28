@@ -543,7 +543,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 30);
-  Actor_LinkPair(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+  Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Event_WaitFrames(60);
   Actor_WalkToAndWait(ACTOR_IVAN, 336, 248);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -577,7 +577,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   }
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_WaitFrames(60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 20);
@@ -756,7 +756,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 70);
-  Actor_LinkPair(ACTOR_JENNA, ACTOR_KRADEN, 0);
+  Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_KRADEN, 0);
   Event_WaitFrames(50);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -1118,7 +1118,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_WaitFrames(30);
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_WaitFrames(10);
-  Actor_LinkPair(ACTOR_ALEX, ACTOR_SATUROS, 0);
+  Actor_TurnToFaceEachOther(ACTOR_ALEX, ACTOR_SATUROS, 0);
   Event_WaitFrames(35);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
   Event_WaitFrames(30);
@@ -1752,7 +1752,7 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   FieldPsynergy_End();
 }
 
-/// A beacon spark's update: it swings round the beacon it is linked to, its
+/// A beacon spark's update: it swings round the beacon it watches, its
 /// angle (its timer, in 1/65536 turns) stepping back each frame; its speed
 /// holds the swing's radius in pixels, less 28.
 static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *actor) {
@@ -1760,7 +1760,7 @@ static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *actor) {
   struct Actor *beacon;
   u16 angle;
 
-  beacon = spark->linkedActor;
+  beacon = spark->watchedActor;
   angle = spark->timer;
   spark->x.fixed = beacon->x.fixed + Trig_Cos(angle) * (spark->speedLimit + 28);
   spark->z.fixed = (Trig_Sin(angle) << 4) + PIXELS(144);
@@ -1821,7 +1821,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   angle = Import_RandomNext() & 0x0ffff000;
   spark->timer = angle;
   spark->userValue = cycleFrame;
-  spark->linkedActor = beacon;
+  spark->watchedActor = beacon;
   spark->update = MercuryLighthouseAerie_UpdateBeaconSpark;
   spark->speedLimit = (Trig_Sin((height & 0xfffff) >> 4) * 24) >> 16;
   sprite->flags = 0;

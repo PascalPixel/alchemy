@@ -2235,10 +2235,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Event_WaitFrames(20);
   // The party tracks each departing speaker before gathering back together.
-  Actor_LinkAndSetScript(ACTOR_PARTY_LEADER, ACTOR_IODEM);
-  Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_IODEM);
-  Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_IODEM);
-  Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_IODEM);
+  Actor_WatchAndSetScript(ACTOR_PARTY_LEADER, ACTOR_IODEM);
+  Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_IODEM);
+  Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_IODEM);
+  Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_IODEM);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 32);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
@@ -2262,10 +2262,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_WaitFrames(30);
-  Actor_LinkAndSetScript(ACTOR_PARTY_LEADER, ACTOR_BABI);
-  Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_BABI);
-  Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_BABI);
-  Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_BABI);
+  Actor_WatchAndSetScript(ACTOR_PARTY_LEADER, ACTOR_BABI);
+  Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_BABI);
+  Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_BABI);
+  Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_BABI);
   Event_WaitFrames(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_WaitFrames(30);

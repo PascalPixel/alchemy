@@ -216,7 +216,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
 }
 
 /// Per-frame update of an afterimage: closes half the distance to the actor
-/// it is linked to. Set on the Mercury Djinni's afterimages by
+/// it watches. Set on the Mercury Djinni's afterimages by
 /// FieldEffect_RunMercuryDjinnCapture.
 void FieldEffect_HalveDistanceToTarget(struct Actor *actor) {
   FieldEffect_MoveAfterimageHalfway(actor);

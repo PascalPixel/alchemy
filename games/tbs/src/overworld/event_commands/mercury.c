@@ -79,7 +79,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
       Actor_SelectAnimationFar(copy, 0);
       Actor_SetSpriteFlagsFar(copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
-      copy->linkedActor = previous;
+      copy->watchedActor = previous;
       previous = copy;
     }
   }

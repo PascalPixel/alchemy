@@ -262,7 +262,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 264);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
-    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_KRADEN, 20);
+    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_KRADEN, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // Garet and Jenna step out of Isaac and stand either side of him.
@@ -347,8 +347,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 10);
     FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 6);
     // The three agree and turn to go.
-    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_GARET, 10);
-    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
+    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 10);
+    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
     Actor_FaceActor(ACTOR_KRADEN, ACTOR_GARET, 10);
     Actor_FaceActor(ACTOR_KRADEN, ACTOR_JENNA, 10);
     ValeKradensCottage_NodTogether();
@@ -392,7 +392,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_WaitFrames(16);
-    Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_JENNA, 40);
+    Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 40);
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -716,7 +716,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   accusationMessage = MsgValeYoureTheOnesSneakingAround;
   Event_SetMessageId(accusationMessage);
   FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-  Actor_LinkPair(ACTOR_SATUROS, ACTOR_MENARDI, 40);
+  Actor_TurnToFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 60);
@@ -810,10 +810,10 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   FieldActor_SetTargetAndCallback(ACTOR_SATUROS,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gValeKradensCottage_FaceTargetActions);
   FieldActor_SetTargetAndCallback(ACTOR_MENARDI,
-                                  ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                   gValeKradensCottage_FaceTargetActions);
   Scene_PlayMusic();
   Event_End();
@@ -995,10 +995,10 @@ s32 ValeKradensCottage_Initialize(void) {
         Actor_SetPosition(ACTOR_SATUROS, PIXELS(392), PIXELS(376));
         Actor_SetPosition(ACTOR_MENARDI, PIXELS(376), PIXELS(376));
         FieldActor_SetTargetAndCallback(
-            ACTOR_SATUROS, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            ACTOR_SATUROS, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gValeKradensCottage_FaceTargetActions);
         FieldActor_SetTargetAndCallback(
-            ACTOR_MENARDI, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            ACTOR_MENARDI, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gValeKradensCottage_FaceTargetActions);
       }
     }
@@ -1082,11 +1082,11 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         Actor_SetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
         // Follow his escape until the party can see that he is unharmed.
         FieldActor_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                        ACTOR_LINK_KEEP_MOTION |
+                                        ACTOR_WATCH_KEEP_MOTION |
                                             ACTOR_ROCKSLIDE_SURVIVOR,
                                         gValeKradensCottage_FaceTargetActions);
         FieldActor_SetTargetAndCallback(
-            ACTOR_GARET, ACTOR_LINK_KEEP_MOTION | ACTOR_ROCKSLIDE_SURVIVOR,
+            ACTOR_GARET, ACTOR_WATCH_KEEP_MOTION | ACTOR_ROCKSLIDE_SURVIVOR,
             gValeKradensCottage_FaceTargetActions);
         Actor_RunScriptAndWait(
             ACTOR_ROCKSLIDE_SURVIVOR,
@@ -1199,7 +1199,7 @@ s32 gValeKradensCottage_RockslideSurvivorSquashes[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Keeps a linked actor facing its current target.
+/// Keeps a watched actor facing its current target.
 s32 gValeKradensCottage_FaceTargetActions[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),

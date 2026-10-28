@@ -139,7 +139,7 @@ static void VenusLighthouseAerie_FloatPlatforms(void);
 static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void);
 static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown);
 static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor);
-static void VenusLighthouseAerie_SpawnLinkedPairEffects(struct Actor *parent);
+static void VenusLighthouseAerie_SpawnAttachedPairEffects(struct Actor *parent);
 static void VenusLighthouseAerie_UpdateShebaPalette(void);
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void);
 static void VenusLighthouseAerie_FlashScreen(void);
@@ -1256,7 +1256,7 @@ static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor) {
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
-    VenusLighthouseAerie_SpawnLinkedPairEffects(actor);
+    VenusLighthouseAerie_SpawnAttachedPairEffects(actor);
   }
 }
 
@@ -1267,7 +1267,7 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
     Actor_SetColorMode(actor, Math_RemainderUnsigned(gFrameCount >> 1, 6));
   }
   if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
-    VenusLighthouseAerie_SpawnLinkedPairEffects(actor);
+    VenusLighthouseAerie_SpawnAttachedPairEffects(actor);
   }
 }
 
@@ -1275,7 +1275,8 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
 
 /// Spawns two vertical effects using the parent position and shared cached
 /// tiles.
-static void VenusLighthouseAerie_SpawnLinkedPairEffects(struct Actor *parent) {
+static void
+VenusLighthouseAerie_SpawnAttachedPairEffects(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct Sprite *sprite;
@@ -1292,7 +1293,7 @@ static void VenusLighthouseAerie_SpawnLinkedPairEffects(struct Actor *parent) {
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->linkedActor = parent;
+      child->watchedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;
@@ -3158,7 +3159,7 @@ static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor) {
   }
 }
 
-/// Emits particles beside the lower beam and links each to its source
+/// Emits particles beside the lower beam and attaches each to its source
 /// actor.
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   struct Actor *center;
@@ -3204,20 +3205,20 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   angle = Random_Next() & 0xffff000;
   effect->timer = angle;
   effect->userValue = phase;
-  effect->linkedActor = center;
+  effect->watchedActor = center;
   effect->update = VenusLighthouseAerie_UpdateOrbitingEffect;
   effect->speedLimit = Trig_Sin((drift & 0xfffff) >> 4) * 24 >> 16;
   sprite->flags = 0;
   sprite->image.priority = center->sprite->image.priority;
 }
 
-/// Moves a linked particle along its horizontal ellipse and preserves its
+/// Moves an attached particle along its horizontal ellipse and preserves its
 /// target.
 static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
   struct Actor *anchor;
   s32 spin;
 
-  anchor = actor->linkedActor;
+  anchor = actor->watchedActor;
   spin = ((struct FieldEffect *)actor)->spin;
   ((struct FieldEffect *)actor)->x =
       anchor->x.fixed + Trig_Cos(spin) * (actor->speedLimit + 28);

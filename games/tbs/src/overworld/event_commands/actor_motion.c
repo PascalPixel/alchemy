@@ -13,9 +13,9 @@ s32 Actor_ClearChildAndCollisionFlags(void *obj) {
   return 0;
 }
 
-/// The SC_CALL routine of movement type 5: follows the linked actor. While it
+/// The SC_CALL routine of movement type 5: follows the watched actor. While it
 /// is at least timer pixels away the actor walks (animation 2) toward a point
-/// 16 / timer of the way there, so with timer 16 it heads for the linked actor
+/// 16 / timer of the way there, so with timer 16 it heads for the watched actor
 /// itself; closer, it stands (animation 1). Returns 1, so SC_CALL runs it again
 /// every frame until the actor's script is replaced.
 s32 Actor_MoveTowardTarget(struct Actor *actor) {
@@ -29,7 +29,7 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   s32 newZ;
   s32 distance;
 
-  target = actor->linkedActor;
+  target = actor->watchedActor;
   if (target != 0) {
     // Whole pixels, rounded toward zero as a division by 0x10000 would.
     deltaX = target->x.fixed - actor->x.fixed;
@@ -57,16 +57,16 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   return 1;
 }
 
-/// The SC_CALL routine of movement type 6: turns the actor toward its linked
+/// The SC_CALL routine of movement type 6: turns the actor toward its watched
 /// actor, at most 1/16 turn a frame. Returns 1, so SC_CALL runs it again every
 /// frame until the actor's script is replaced.
-s32 Actor_TurnTowardLinkedActor(struct Actor *actor) {
+s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   s16 turnStep;
   u16 currentAngle;
   s32 targetAngle;
   struct Actor *target;
 
-  target = actor->linkedActor;
+  target = actor->watchedActor;
   if (target != NULL) {
     // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
     actor->steeringFlags &= 0xfe;
@@ -105,11 +105,11 @@ void Actor_SetMovementType(struct Actor *actor, s32 action) {
   case MOVEMENT_TYPE_WANDER_CLOSE:
     action = (s32)gMovementType_WanderCloseScript;
     break;
-  case MOVEMENT_TYPE_FOLLOW_LINKED:
-    action = (s32)gMovementType_FollowLinkedScript;
+  case MOVEMENT_TYPE_FOLLOW_WATCHED:
+    action = (s32)gMovementType_FollowWatchedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    actor->linkedActor = Actor_GetById(gAdventure.leaderActorId);
+    actor->watchedActor = Actor_GetById(gAdventure.leaderActorId);
     action = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:

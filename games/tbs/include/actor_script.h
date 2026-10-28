@@ -20,8 +20,8 @@
 #define SC_POSITION(x, y, z) 0x02, (x), (y), (z) ///< Set position.
 #define SC_MOVE(x, y, z) 0x03, (x), (y), (z)     ///< Move toward the target.
 #define SC_MOVE_BY(x, y, z) 0x04, (x), (y), (z)  ///< Move by a relative offset.
-#define SC_FACE_LINK 0x05                        ///< Face the linked actor.
-#define SC_MOVE_LINK 0x06                        ///< Move to the linked actor.
+#define SC_FACE_WATCHED 0x05                     ///< Face the watched actor.
+#define SC_MOVE_TO_WATCHED 0x06                  ///< Move to the watched actor.
 /// Move toward the actor's position plus an offset that is never filled in;
 /// the operands are skipped unread.
 #define SC_MOVE_LOCAL(a, b) 0x07, (a), (b)
@@ -29,8 +29,8 @@
 // SC_WANDER_HOME heads home when outside it.
 #define SC_WANDER(a, b, c) 0x08, (a), (b), (c)
 #define SC_WANDER_HOME(a, b, c) 0x09, (a), (b), (c)
-#define SC_APPROACH_LINK 0x0a ///< Follow the linked actor to 16 pixels.
-#define SC_CAMERA 0x0b        ///< Follow the leader.
+#define SC_APPROACH_WATCHED 0x0a ///< Follow the watched actor to 16 pixels.
+#define SC_CAMERA 0x0b           ///< Follow the leader.
 /// Jump to label to n - 1 times, so what lies between runs n times; loops
 /// do not nest.
 #define SC_LOOP(n, to) 0x0c, (n), (to)

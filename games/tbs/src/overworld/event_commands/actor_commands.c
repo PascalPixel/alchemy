@@ -58,15 +58,15 @@ void Actor_Stop(u32 actorId) {
   }
 }
 
-/// Makes an actor follow another (the linked actor script): writes its
-/// linkedActor. Called by the Colosso log's event, and by Altmiller
+/// Makes an actor follow another (the watched actor script): writes its
+/// watchedActor. Called by the Colosso log's event, and by Altmiller
 /// Cave's.
-void Actor_LinkAndSetScript(u32 actorId, u32 linkedActorId) {
+void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    actor->linkedActor = Actor_GetById(linkedActorId);
-    Actor_SetMovementType(actor, (s32)gActor_LinkedScript);
+    actor->watchedActor = Actor_GetById(watchedActorId);
+    Actor_SetMovementType(actor, (s32)gActor_FaceWatchedScript);
   }
 }
 
@@ -638,7 +638,7 @@ void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
 /// toward each other, then waits wait frames. Events reach it
 /// (Actor_FaceEachOther); Scene_TalkToActor turns the leader and
 /// the actor spoken to with it.
-void Actor_LinkPair(s32 firstId, s32 secondId, s32 wait) {
+void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 wait) {
   void *first = Actor_Lookup(firstId);
   void *second = Actor_Lookup(secondId);
 
@@ -649,7 +649,7 @@ void Actor_LinkPair(s32 firstId, s32 secondId, s32 wait) {
 }
 
 /// Turns two actors to face each other, at most 1/16 turn a frame each,
-/// until both do (at most 60 frames). Only Actor_LinkPair calls it.
+/// until both do (at most 60 frames). Only Actor_TurnToFaceEachOther calls it.
 void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
   s32 firstTargetAngle;
   s32 secondTargetAngle;
@@ -795,8 +795,8 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
   }
 }
 
-/// Links an actor to the actor in the low 8 bits of targetId and
-/// starts script on it. Unless ACTOR_LINK_KEEP_MOTION is set it takes a
+/// Makes an actor watch the actor in the low 8 bits of targetId and
+/// starts script on it. Unless ACTOR_WATCH_KEEP_MOTION is set it takes a
 /// follow distance of 40 pixels (timer 40, read by
 /// Actor_MoveTowardTarget), the target's top speed with twice its
 /// acceleration, to keep up with it, and no collision flags, so it cannot block
@@ -807,8 +807,8 @@ void Actor_SetTargetAndCallback(u32 actorId, s32 targetId, const void *script) {
   struct Actor *target = Actor_Lookup(targetId & 0xff);
 
   if (follower != NULL && target != NULL) {
-    follower->linkedActor = target;
-    if (!(targetId & ACTOR_LINK_KEEP_MOTION)) {
+    follower->watchedActor = target;
+    if (!(targetId & ACTOR_WATCH_KEEP_MOTION)) {
       follower->timer = 40;
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;

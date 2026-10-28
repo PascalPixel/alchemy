@@ -23,12 +23,12 @@
 #define SC_CMD_03 0x03
 #define SC_MOVE(x, y, z) 0x04, (x), (y), (z)    ///< move to a target
 #define SC_MOVE_BY(x, y, z) 0x05, (x), (y), (z) ///< move by an offset
-#define SC_FACE_LINK 0x06                       ///< face the linked object
-#define SC_MOVE_LINK 0x07                       ///< move to the linked object
+#define SC_FACE_WATCHED 0x06                       ///< face the linked object
+#define SC_MOVE_TO_WATCHED 0x07                       ///< move to the linked object
 #define SC_MOVE_LOCAL(a, b) 0x08, (a), (b)
 #define SC_WANDER(a, b, c) 0x09, (a), (b), (c)
 #define SC_WANDER_HOME(a, b, c) 0x0a, (a), (b), (c)
-#define SC_APPROACH_LINK 0x0b
+#define SC_APPROACH_WATCHED 0x0b
 #define SC_CAMERA 0x0c                 ///< follow the leader
 #define SC_LOOP(n, to) 0x0d, (n), (to) ///< repeat up to n times
 #define SC_JUMP(to) 0x0e, (to)

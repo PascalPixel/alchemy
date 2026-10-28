@@ -18,7 +18,7 @@ enum {
   SCRIPT_WANDER_DIAGONAL_ANGLE = 0x2000, ///< one eighth of a turn
   SCRIPT_WANDER_SIDE_ANGLE = 0x4000,     ///< one quarter of a turn
   SCRIPT_HALF_TURN = 0x8000,
-  /// Whole pixels SC_APPROACH_LINK stays short of its linked actor.
+  /// Whole pixels SC_APPROACH_WATCHED stays short of its watched actor.
   SCRIPT_APPROACH_DISTANCE = 16,
   /// Under 64 pixels (16.16) SC_CAMERA measures its distance in 16.16.
   CAMERA_FOLLOW_FINE_DISTANCE = 64 * Q16_ONE,
@@ -346,27 +346,27 @@ s32 ActorScript_ApplyRelativePosition(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_FACE_LINK: stores the angle from the actor to its linked actor in
+/// SC_FACE_WATCHED: stores the angle from the actor to its watched actor in
 /// scriptValue, measured on the ground plane (x and z).
-s32 ActorScript_StoreAngleToLinkedActor(struct Actor *interpreter) {
+s32 ActorScript_StoreAngleToWatchedActor(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
   struct Actor *target;
 
-  target = actor->linkedActor;
+  target = actor->watchedActor;
   actor->facing = ArcTan2((target->z.fixed - actor->z.fixed),
                           (target->x.fixed - actor->x.fixed));
   actor->scriptCursor++;
   return 1;
 }
 
-/// SC_MOVE_LINK: sends the actor towards its linked actor.
-s32 ActorScript_ApplyLinkedActorPosition(struct Actor *interpreter) {
+/// SC_MOVE_TO_WATCHED: sends the actor towards its watched actor.
+s32 ActorScript_ApplyWatchedActorPosition(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
   struct Actor *target;
 
-  target = actor->linkedActor;
+  target = actor->watchedActor;
   Actor_SetMoveTarget(actor, target->x.fixed, target->y.fixed, target->z.fixed);
   actor->scriptCursor++;
   return 1;
@@ -391,7 +391,7 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_CAMERA: keeps the camera actor on its leader (linkedActor), clamped
+/// SC_CAMERA: keeps the camera actor on its leader (watchedActor), clamped
 /// so the view stays on the map. It closes an eighth of the distance a frame,
 /// at most its speed limit, and a quarter of a large height difference; when
 /// timer is set it jumps there at once.
@@ -420,7 +420,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   // Use MapGrid_UpdateLayerScroll's viewport origin and the leader's elevation
   // when clamping its ground position to the viewport bounds.
   bounds = gMapGridWork[0];
-  leader = cameraActor->linkedActor;
+  leader = cameraActor->watchedActor;
   // UB: the bounds read the leader's height before the null check below.
 #ifdef UBFIX
   if (leader == NULL) {
@@ -497,14 +497,14 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_APPROACH_LINK: follows the linked actor at its speed. More than 16
+/// SC_APPROACH_WATCHED: follows the watched actor at its speed. More than 16
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
 ///
-/// Run each frame by gActor_ApproachLinkScript, which
-/// Actor_StartApproachLink starts. Copies the linked actor's speed
+/// Run each frame by gActor_ApproachWatchedScript, which
+/// Actor_StartApproachWatched starts. Copies the watched actor's speed
 /// limit and acceleration, and sets the move target.
-s32 Actor_ApproachLinkedActor(struct Actor *interpreter) {
+s32 Actor_ApproachWatchedActor(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
   s32 distancePixels;
@@ -516,18 +516,18 @@ s32 Actor_ApproachLinkedActor(struct Actor *interpreter) {
   s32 remainingDistance;
   s32 moveX;
   s32 scaledDeltaX;
-  struct Actor *linkedActor;
+  struct Actor *watchedActor;
 
-  linkedActor = actor->linkedActor;
-  actor->speedLimit = linkedActor->speedLimit;
-  actor->acceleration = linkedActor->acceleration;
-  dx = linkedActor->x.fixed - actor->x.fixed;
-  dz = linkedActor->z.fixed - actor->z.fixed;
+  watchedActor = actor->watchedActor;
+  actor->speedLimit = watchedActor->speedLimit;
+  actor->acceleration = watchedActor->acceleration;
+  dx = watchedActor->x.fixed - actor->x.fixed;
+  dz = watchedActor->z.fixed - actor->z.fixed;
   deltaXPixels = dx >> 0x10;
   deltaZPixels = dz >> 0x10;
   distancePixels =
       Iwram_Sqrt((deltaXPixels * deltaXPixels) + (deltaZPixels * deltaZPixels));
-  // Further than 16 pixels: aim at the point 16 pixels short of the linked
+  // Further than 16 pixels: aim at the point 16 pixels short of the watched
   // actor along the line to it (the 16.16 offset scaled by the whole-pixel
   // ratio) and run on to SC_WAIT(1); otherwise stand and stay on this command.
   if (distancePixels > SCRIPT_APPROACH_DISTANCE) {
@@ -905,7 +905,7 @@ void ActorScript_SetOrCompareWait(struct ScriptOperands *work, s32 operation,
 
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareTimer, timer, s16)
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareUserValue, userValue, s16)
-SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareLinkedActor, linkedActor)
+SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareWatchedActor, watchedActor)
 SCRIPT_DEFINE_OPERAND_WORD(ActorScript_SetOrCompareUpdateAddress, update)
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseCounter, riseCounter,
                              u8)

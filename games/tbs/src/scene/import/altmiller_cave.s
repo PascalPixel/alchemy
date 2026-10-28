@@ -44,7 +44,7 @@
 	.set import.Actor_StartRepeatedMotion, 1
 	.set import.Actor_RunRepeatedMotion, 1
 	.set import.Actor_SetAngleToward, 1
-	.set import.Actor_LinkPair, 1
+	.set import.Actor_TurnToFaceEachOther, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Event_SetMessageId, 1
 	.set import.FieldMessage_ShowAtActor, 1
@@ -76,7 +76,7 @@
 	.set import.Actor_LaunchFromLeader, 1
 	.set import.Actor_OffsetPositionAndReset, 1
 	.set import.Actor_CommitPositionAndActivate, 1
-	.set import.Actor_LinkAndSetScript, 1
+	.set import.Actor_WatchAndSetScript, 1
 	.set import.Scene_PlayQueuedMusic, 1
 	.set import.Shop_SaveAndTintFieldPalette, 1
 	.set import.Shop_RestoreFieldPalette, 1

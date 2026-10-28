@@ -915,7 +915,7 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 256);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_STAND);
-  Actor_LinkPair(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
+  Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
   Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1136,9 +1136,9 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumSatrageMatch_ShowRoundStartLettering(2);
     }
-    Actor_LinkAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
-    Actor_LinkAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-    Actor_LinkAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
+    Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
+    Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+    Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
     ColosseumSatrageMatch_StartOpponentPath((s32)&ResourceId_OpponentPathB);
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
@@ -1715,7 +1715,7 @@ static void ColosseumSatrageMatch_WaitForOpponentFinish(void) {
   }
 }
 
-/// Occasionally spawns a falling particle around the linked finish effect.
+/// Occasionally spawns a falling particle around the attached finish effect.
 static void ColosseumSatrageMatch_SpawnRandomMapEffect(struct Actor *actor) {
   struct Actor *source = (struct Actor *)actor;
   s32 position[3];
@@ -1751,7 +1751,7 @@ static void ColosseumSatrageMatch_SpawnRandomMapEffect(struct Actor *actor) {
   }
 }
 
-/// Raises the linked finish effect, starts its script and clears the link.
+/// Raises the attached finish effect, starts its script and clears the link.
 static s32
 ColosseumSatrageMatch_RaiseLinkedMapEffect(struct Actor *interpreter) {
   struct Actor *source = interpreter;

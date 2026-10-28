@@ -53,7 +53,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
       obj->groundHeight = actor->groundHeight;
       animation = obj->sprite;
       Actor_StartScript(obj, gMercuryLighthouse_PillarScript);
-      obj->linkedActor = actor;
+      obj->watchedActor = actor;
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
       if (animation != 0) {

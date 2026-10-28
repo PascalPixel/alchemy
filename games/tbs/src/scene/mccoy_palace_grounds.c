@@ -280,7 +280,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       } while (0);
     guard:
       FieldActor_SetTargetAndCallback(
-          ACTOR_EAST_GUARD, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+          ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
           gGuardWatchesParty);
     } else {
       Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0);
@@ -342,7 +342,7 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
       if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
         Import_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
         FieldActor_SetTargetAndCallback(
-            ACTOR_EAST_GUARD, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gGuardWatchesParty);
       }
     }

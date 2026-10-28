@@ -2,6 +2,7 @@
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "edition.h"
+#include "objcmd.h"
 
 void Func_020001a0(void);
 void Func_0200065c(void);
@@ -75,35 +76,55 @@ u32 gData_02005b0c[] = {
 };
 
 s32 gData_02005b54[] = {
-    (s32)0x80010000, 23, 9, -1536, 0, 1,
-    13, 4, (s32)0xc0010000, (s32)0x80020000, 23, 9,
-    0x600, 0, 1, 13, 4, (s32)0xc0020000,
-    13, 0xffff, 0,
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -1536),
+    SC_WAIT(1),
+    SC_LOOP(4, SC_TO(1)),
+    SC_LABEL(2),
+    SC_ADD(SW_SCALE_X, 0x600),
+    SC_WAIT(1),
+    SC_LOOP(4, SC_TO(2)),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 u32 gData_02005ba8[] = {
-    39, 2, 4, 0x1f00000, 0, 0x1480000,
-    1, 39, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(496), 0, PIXELS(328)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02005bd0[] = {
-    39, 2, 4, 0x1e00000, 0, 0x1480000,
-    1, 39, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(480), 0, PIXELS(328)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02005bf8[] = {
-    39, 2, 4, 0x1e80000, 0, 0x1400000,
-    1, 39, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(488), 0, PIXELS(320)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02005c20[] = {
-    39, 2, 4, 0x2100000, 0, 0x1480000,
-    1, 39, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(528), 0, PIXELS(328)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02005c48[] = {
-    39, 2, 4, 0x2000000, 0, 0x1480000,
-    1, 39, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(512), 0, PIXELS(328)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 s32 gData_02005c70[] = {
@@ -113,57 +134,100 @@ s32 gData_02005c70[] = {
 };
 
 u32 gData_02005cac[] = {
-    23, 9, 512, 23, 10, 512,
-    23, 6, 0x2000, 0, 1, 13,
-    128, 0, 17,
+    SC_ADD(SW_SCALE_X, 512),
+    SC_ADD(SW_SCALE_Y, 512),
+    SC_ADD(SW_Y, 0x2000),
+    SC_WAIT(1),
+    SC_LOOP(128, SC_TOP),
+    SC_END,
 };
 
 u32 gData_02005ce8[] = {
-    39, 2, 4, 0x1f40000, 0, 0x1320000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xe000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(500), 0, PIXELS(306)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005d2c[] = {
-    39, 2, 4, 0x20c0000, 0, 0x1320000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(524), 0, PIXELS(306)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005d70[] = {
-    39, 2, 4, 0x1e80000, 0, 0x1400000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xe000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(488), 0, PIXELS(320)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005db4[] = {
-    39, 2, 4, 0x1d80000, 0, 0x1300000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xe000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(472), 0, PIXELS(304)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005df8[] = {
-    39, 2, 4, 0x1d00000, 0, 0x1180000,
-    1, 39, 1, 0, 10, 22,
-    3, 0, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(464), 0, PIXELS(280)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005e3c[] = {
-    39, 2, 4, 0x21a0000, 0, 0x1400000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(538), 0, PIXELS(320)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005e80[] = {
-    39, 2, 4, 0x2280000, 0, 0x1300000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(552), 0, PIXELS(304)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005ec4[] = {
-    39, 2, 4, 0x2300000, 0, 0x1180000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(560), 0, PIXELS(280)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005f08[] = {
@@ -179,42 +243,70 @@ u32 gData_02005f50[] = {
 };
 
 u32 gData_02005f98[] = {
-    39, 2, 4, 0x1e60000, 0, 0x11e0000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(486), 0, PIXELS(286)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02005fdc[] = {
-    39, 2, 4, 0x1f80000, 0, 0x12c0000,
-    1, 39, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(504), 0, PIXELS(300)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02006004[] = {
-    39, 2, 4, 0x2100000, 0, 0x1240000,
-    1, 39, 1, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(528), 0, PIXELS(292)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_0200602c[] = {
-    39, 2, 4, 0x2300000, 0, 0x1180000,
-    1, 39, 1, 0, 10, 22,
-    3, 0x8000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(560), 0, PIXELS(280)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 u32 gData_02006070[] = {
-    39, 2, 4, 0x2240000, 0, 0x1240000,
-    1, 39, 1, 0, 10, 22,
-    3, 0xa000, 0, 10, 17,
+    SC_ARG(2),
+    SC_MOVE(PIXELS(548), 0, PIXELS(292)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
 };
 
 s32 gData_020060b4[] = {
-    23, 9, 0x1000, 0, 1, 13,
-    32, 0, 17, 23, 9, -896,
-    0, 1, 13, 140, 0, 17,
+    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_WAIT(1),
+    SC_LOOP(32, SC_TOP),
+    SC_END,
+    SC_ADD(SW_SCALE_X, -896),
+    SC_WAIT(1),
+    SC_LOOP(140, SC_TOP),
+    SC_END,
 };
 
 s32 gData_020060fc[] = {
-    23, 9, -896, 0, 1, 13,
-    160, 0, 17,
+    SC_ADD(SW_SCALE_X, -896),
+    SC_WAIT(1),
+    SC_LOOP(160, SC_TOP),
+    SC_END,
 };
 
 u32 gData_02006120[] = {
@@ -235,10 +327,14 @@ s32 gData_02006180[] = {
 };
 
 s32 gData_020061d4[] = {
-    23, 9, 0x1000, 0, 1, 13,
-    8, 0, (s32)0x80010000, 23, 9, -4096,
-    0, 1, 13, 8, (s32)0xc0010000, 13,
-    0xffff, 0,
+    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_WAIT(1),
+    SC_LOOP(8, SC_TOP),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -4096),
+    SC_WAIT(1),
+    SC_LOOP(8, SC_TO(1)),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -288,33 +384,33 @@ s16 gData_0200626c[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gData_0200644c[] = {
-    0xffff01e9, 7, 0, 0, 0, 0x24000,
-    0xffff01e9, 7, 0, 0, 0, 0x24000,
-    0xffff01e9, 7, 0, 0, 0, 0x24000,
-    0xffff01e9, 7, 0, 0, 0, 0x1024000,
-    0xffff01e9, 7, 0, 0, 0, 0x1024000,
-    0xffff01e9, 7, 0, 0, 0, 0x1024000,
-    0xffff01e9, 7, 0, 0, 0, 0x1024000,
-    0xffff01e9, 7, 0, 0, 0, 0x1024000,
-    0xffff01e9, 7, 0, 0, 0, 0x1024000,
-    0xffff00b6, 7, 0x2000000, 0, 0xec0000, 0x24000,
-    0xffff0137, 7, 0, 0, 0, 0x24000,
-    0xffff0038, 1, 0x2200000, 0, 0x1620000, 0x2b000,
-    0xffff0030, 1, 0x1f00000, 0, 0x1480000, 0x2c000,
-    0xffff0031, 1, 0x1e00000, 0, 0x1480000, 0x2c000,
-    0xffff0032, 1, 0x1e80000, 0, 0x1400000, 0x2c000,
-    0xffff0033, 1, 0x2080000, 0, 0x1400000, 0x2c000,
-    0xffff0034, 1, 0x2180000, 0, 0x1400000, 0x2c000,
-    0xffff0036, 1, 0x2200000, 0, 0x1480000, 0x2c000,
-    0xffff0035, 1, 0x2100000, 0, 0x1480000, 0x2c000,
-    0xffff00b7, 7, 0x1de0000, 0, 0x10a0000, 0x24000,
-    0xffff00b7, 7, 0x1fa0000, 0, 0x1180000, 0x24000,
-    0xffff00b7, 7, 0x2180000, 0, 0x1140000, 0x24000,
-    0xffff003d, 7, 0x1e00000, 0, 0x11a0000, 0x24000,
-    0xffff003c, 7, 0x1fa0000, 0, 0x1240000, 0x24000,
-    0xffff003e, 7, 0x21c0000, 0, 0x11c0000, 0x24000,
-    0xffff, 0, 0, 0, 0, 0,
+struct ActorPlacement gData_0200644c[] = {
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {182, CONDITION_ALWAYS, 7, PIXELS(512), 0, PIXELS(236), FACING_SOUTH, 2, 0},
+    {311, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {56, CONDITION_ALWAYS, 1, PIXELS(544), 0, PIXELS(354), FACING_NORTHWEST + FACING_STEP, 2, 0},
+    {48, CONDITION_ALWAYS, 1, PIXELS(496), 0, PIXELS(328), FACING_NORTH, 2, 0},
+    {49, CONDITION_ALWAYS, 1, PIXELS(480), 0, PIXELS(328), FACING_NORTH, 2, 0},
+    {50, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(320), FACING_NORTH, 2, 0},
+    {51, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(320), FACING_NORTH, 2, 0},
+    {52, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(320), FACING_NORTH, 2, 0},
+    {54, CONDITION_ALWAYS, 1, PIXELS(544), 0, PIXELS(328), FACING_NORTH, 2, 0},
+    {53, CONDITION_ALWAYS, 1, PIXELS(528), 0, PIXELS(328), FACING_NORTH, 2, 0},
+    {183, CONDITION_ALWAYS, 7, PIXELS(478), 0, PIXELS(266), FACING_SOUTH, 2, 0},
+    {183, CONDITION_ALWAYS, 7, PIXELS(506), 0, PIXELS(280), FACING_SOUTH, 2, 0},
+    {183, CONDITION_ALWAYS, 7, PIXELS(536), 0, PIXELS(276), FACING_SOUTH, 2, 0},
+    {61, CONDITION_ALWAYS, 7, PIXELS(480), 0, PIXELS(282), FACING_SOUTH, 2, 0},
+    {60, CONDITION_ALWAYS, 7, PIXELS(506), 0, PIXELS(292), FACING_SOUTH, 2, 0},
+    {62, CONDITION_ALWAYS, 7, PIXELS(540), 0, PIXELS(284), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
 };
 
 s16 gData_020066bc[] = {
@@ -398,14 +494,23 @@ struct Trigger gSceneEvents[] = {
 };
 
 u32 gData_02006ad0[] = {
-    22, 10, 0x16666, 22, 9, 0x16666,
-    39, 4, 0, 30, 38,
+    SC_SET(SW_SCALE_Y, 0x16666),
+    SC_SET(SW_SCALE_X, 0x16666),
+    SC_ARG(4),
+    SC_WAIT(30),
+    SC_FREE,
 };
 
 u32 gData_02006afc[] = {
-    22, 9, 0xcccc, 22, 10, 0xcccc,
-    39, 1, 0x80010000, 23, 6, 0x10000,
-    0, 1, 13, 16, 0xc0010000, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_SET(SW_SCALE_X, 0xcccc),
+    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_ARG(1),
+    SC_LABEL(1),
+    SC_ADD(SW_Y, PIXELS(1)),
+    SC_WAIT(1),
+    SC_LOOP(16, SC_TO(1)),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
 };
 // clang-format on

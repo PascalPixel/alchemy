@@ -1,5 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "objcmd.h"
 
 void Func_02000038(void);
 void Func_02000060(void);
@@ -10,25 +11,46 @@ extern s32 gData_02000728[];
 
 // clang-format off
 u32 gData_020005e4[] = {
-    4, 0x2d80000, 0, 0xa00000, 1, 4,
-    0x2600000, 0, 0x980000, 1, 4, 0x1e80000,
-    0, 0x980000, 1, 4, 0x1700000, 0,
-    0x980000, 1, 4, 0x1700000, 0, 0x700000,
-    1, 4, 0x1500000, 0, 0x580000, 1,
-    4, 0x1400000, 0, 0x580000, 1, 4,
-    0x1200000, 0, 0x780000, 1, 4, 0x1200000,
-    0, 0xb00000, 1, 4, 0x1100000, 0,
-    0xc00000, 1, 4, 0x1100000, 0, 0x1180000,
-    1, 4, 0x1580000, 0, 0x1180000, 1,
-    4, 0x1800000, 0, 0x1400000, 1, 4,
-    0x1800000, 0, 0x1980000, 1, 4, 0x1a00000,
-    0, 0x1b80000, 1, 4, 0x1a00000, 0,
-    0x2280000, 1, 17,
+    SC_MOVE(PIXELS(728), 0, PIXELS(160)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(608), 0, PIXELS(152)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(488), 0, PIXELS(152)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(368), 0, PIXELS(152)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(368), 0, PIXELS(112)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(336), 0, PIXELS(88)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(320), 0, PIXELS(88)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(288), 0, PIXELS(120)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(288), 0, PIXELS(176)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(272), 0, PIXELS(192)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(272), 0, PIXELS(280)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(344), 0, PIXELS(280)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(384), 0, PIXELS(320)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(384), 0, PIXELS(408)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(416), 0, PIXELS(440)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(416), 0, PIXELS(552)),
+    SC_SYNC,
+    SC_END,
 };
 // clang-format on
 
 s32 gData_02000728[] = {
-    46, (s32)Func_02000038, 39, 7, 17,
+    SC_CALL(Func_02000038),
+    SC_ARG(7),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -38,11 +60,11 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(199),
-    SCENE_EXIT_IF(1, 2, 45, 0xffffffff),
-    SCENE_EXIT_IF(2, 199, 4, 0xffffffff),
-    SCENE_EXIT_IF(3, 200, 1, 0xffffffff),
-    SCENE_EXIT_IF(4, 199, 2, 0xffffffff),
-    SCENE_EXIT_IF(5, 200, 1, 0xffffffff),
+    SCENE_EXIT_IF(1, 2, 45, -1),
+    SCENE_EXIT_IF(2, 199, 4, -1),
+    SCENE_EXIT_IF(3, 200, 1, -1),
+    SCENE_EXIT_IF(4, 199, 2, -1),
+    SCENE_EXIT_IF(5, 200, 1, -1),
     SCENE_EXITS_END,
 };
 

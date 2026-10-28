@@ -29,6 +29,9 @@ enum Facing {
   FACING_NORTHEAST = 0xe000
 };
 
+/// A sixteenth of a turn, half the step between two headings.
+enum { FACING_STEP = 0x1000 };
+
 enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
 
 /// Entrance positions.

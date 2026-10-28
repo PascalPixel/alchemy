@@ -1,5 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "objcmd.h"
 
 // clang-format off
 u32 gData_020049cc[] = {
@@ -15,50 +16,76 @@ u32 gData_020049ec[] = {
 };
 
 u32 gData_020049fc[] = {
-    1, 39, 1, 22, 3, 0x4000,
-    17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_END,
 };
 
 u32 gData_02004a18[] = {
-    1, 39, 1, 22, 3, 0,
-    17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_END,
 };
 
 u32 gData_02004a34[] = {
-    1, 39, 1, 22, 3, 0x8000,
-    17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_END,
 };
 
 u32 gData_02004a50[] = {
-    1, 39, 1, 22, 3, 0xc000,
-    17,
+    SC_SYNC,
+    SC_ARG(1),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_END,
 };
 
 u32 gData_02004a6c[] = {
-    1, 0, 1, 22, 3, 0x2000,
-    39, 1, 17,
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02004a90[] = {
-    1, 0, 1, 22, 3, 0,
-    39, 1, 17,
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02004ab4[] = {
-    1, 48, 0x2bb0000, 0xaa0000, 1, 0,
-    1, 22, 3, 0x2000, 39, 1,
-    17,
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(699), PIXELS(170)),
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02004ae8[] = {
-    1, 48, 0x2a70000, 0xaa0000, 1, 0,
-    1, 22, 3, 0x2000, 39, 1,
-    17,
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(679), PIXELS(170)),
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ARG(1),
+    SC_END,
 };
 
 u32 gData_02004b1c[] = {
-    1, 48, 0x2930000, 0xaa0000, 1, 0,
-    1, 22, 3, 0x2000, 39, 1,
-    17,
+    SC_SYNC,
+    SC_MOVE_XZ(PIXELS(659), PIXELS(170)),
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ARG(1),
+    SC_END,
 };
 // clang-format on

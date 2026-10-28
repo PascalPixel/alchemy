@@ -1,5 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
+#include "objcmd.h"
 
 void Func_02000054(void);
 void Func_02000074(void);
@@ -14,21 +15,33 @@ extern u32 gData_02002240[];
 
 // clang-format off
 u32 gData_020021c8[] = {
-    0, 1, 13, 22, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_02002204[] = {
-    0, 1, 13, 44, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 u32 gData_02002240[] = {
-    0, 1, 13, 126, 0, 0,
-    1, 2, 0, 0, 0, 0,
-    1, 38, 17,
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -52,44 +65,23 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gData_020022e8[] = {
-    1,
-    (s32)0xffff0001,
-    1,
-    1,
-    (s32)0xffff0002,
-    2,
-    1,
-    (s32)0xffff0003,
-    3,
-    1,
-    (s32)0xffff0004,
-    4,
-    0x50008905,
-    (s32)0xffff001e,
-    (s32)Func_02000054,
-    0x50008905,
-    (s32)0xffff001f,
-    (s32)Func_02000074,
-    0x50008905,
-    (s32)0xffff0020,
-    (s32)Func_020000f8,
-    0x50008905,
-    (s32)0xffff0021,
-    (s32)Func_02000118,
-    0x50008905,
-    (s32)0xffff0022,
-    (s32)Func_02000124,
-    0x50008905,
-    (s32)0xffff0026,
-    (s32)Func_02000094,
-    -1,
-    0,
-    0,
+struct Trigger gData_020022e8[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000074)},
+    {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_020000f8)},
+    {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_02000118)},
+    {0x50008905, 34, CONDITION_ALWAYS, EVENT(Func_02000124)},
+    {0x50008905, 38, CONDITION_ALWAYS, EVENT(Func_02000094)},
+    {TRIGGERS_END},
 };
 
-s32 gData_0200236c[] = {
-    1, (s32)0xffff0001, 1, -1, 0, 0,
+struct Trigger gData_0200236c[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {TRIGGERS_END},
 };
 
 s32 gData_02002384[] = {

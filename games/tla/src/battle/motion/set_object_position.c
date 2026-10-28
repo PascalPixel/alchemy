@@ -46,8 +46,8 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
   object->autoFaceMotion = 0;
   Actor_ResetMotion(object);
   scaledX = slot->anchorX * 3;
-  Actor_SetTargetPosition(object, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
-                     slot->anchorZ);
+  Actor_SetTargetPosition(object, (s32)(scaledX + (scaledX >> 31)) >> 1, 0,
+                          slot->anchorZ);
 }
 
 void Func_0811c01c(s32 objectId) {

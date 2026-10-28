@@ -71,7 +71,7 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
   slot = Resource_FindFreeEntry();
   if (slot != 0x60) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
-    WindowSprite_CreateFar(slot, 0x40000000, window, x, y);
+    WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
 }
 
@@ -91,7 +91,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
     resource = (u16)data->resourceSlots[0];
   else
     resource = (u16)data->resourceSlots[1];
-  object = WindowSprite_CreateFar(resource, 0x40000000, w, xx, y);
+  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
   if (object == 0) {
     /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes
      * through CSE, as in The Broken Seal; a plain return -1 gives other
@@ -125,7 +125,7 @@ s32 Func_08104ba8(struct RenderInput *window, s32 x, s32 y, s32 variant) {
     resource = (u16)data->resourceSlots[1];
     y -= 4;
   }
-  object = WindowSprite_CreateFar(resource, 0x40000000, w, xx, y);
+  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
   if (object == 0) {
     /* FAKEMATCH: the redundant failure branch keeps the arguments' lifetimes
      * through CSE, as in The Broken Seal; a plain return -1 gives other

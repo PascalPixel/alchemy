@@ -37,15 +37,15 @@ void Shop_DrawServiceParty(void *window, s32 selected) {
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
     if (first != 0) {
-      icon = WindowSprite_CreateFar(shop->previousPageIcon, 0x40000000, window,
-                                    88, -12);
+      icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
+                                    window, 88, -12);
       icon->kind = 0;
       icon->active = 17;
       icon->animStep = 0;
     }
     if (first + 4 < count) {
-      icon =
-          WindowSprite_CreateFar(shop->nextPageIcon, 0x40000000, window, 88, 0);
+      icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
+                                    window, 88, 0);
       icon->kind = 0;
       icon->active = 15;
       icon->animStep = 0;

@@ -22,7 +22,7 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 arg0, s32 arg1,
   result = NULL;
   if (no != 0x60) {
     Icon_CopyResourceToSlot(arg0, arg1, no);
-    result = WindowSprite_Create(no, 0x40000000, arg2, arg3, arg4);
+    result = WindowSprite_Create(no, OUTPUT_SIZE_16X16, arg2, arg3, arg4);
   }
   return result;
 }

@@ -86,7 +86,7 @@ void Func_0810857c(s32 messageId) {
     no += MsgItemShopWelcome - MsgWeaponShopWelcome;
   (*slot)->active = 0xD;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
+  Message_OpenWindowFar(no, 5, 0, (variant << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);

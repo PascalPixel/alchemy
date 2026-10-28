@@ -32,6 +32,8 @@ struct Window *Func_0804128c(void) {
     Func_08041268(gData_080aa170[2][i], window, 120, y);
     Func_08041268(gData_080aa170[3][i], window, 176, y);
   }
+  // 0x40000000 is OUTPUT_SIZE_16X16, which render_input.h names; its
+  // WindowSprite_Create prototype conflicts with this file's.
   WORD_AT(work, 1444) = WindowSprite_Create(
       Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000, window, 0, 0);
   return window;

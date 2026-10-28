@@ -66,7 +66,8 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   window = Func_080380f8(shop->keeperResource, 0, 0, 0);
   if (window == 0)
     window = Window_CreateFar(30, 0, 2, 2, 2);
-  anchor = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
+  anchor =
+      WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
   anchor->sentinel = 255;
   anchor->active = 1;
   anchor->kind = 0;

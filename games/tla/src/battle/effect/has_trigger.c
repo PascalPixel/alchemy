@@ -22,5 +22,5 @@ u32 BattleEffect_HasTrigger(u16 effectId) {
   s32 result;
 
   result = Event_FindFacingTrigger(effectId);
-  return (u32)((0 - result) | result) >> 0x1F;
+  return (u32)((0 - result) | result) >> 31;
 }

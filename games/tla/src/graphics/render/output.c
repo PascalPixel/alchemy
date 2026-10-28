@@ -30,7 +30,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
     return NULL;
   }
   Icon_BuildCommandIconTiles(arg0, 1, &count, &unused, 1);
-  result = WindowSprite_Create(count, 0x40000000, arg1, arg2, arg3);
+  result = WindowSprite_Create(count, OUTPUT_SIZE_16X16, arg1, arg2, arg3);
   result->sentinel = 251;
   return result;
 }
@@ -70,8 +70,8 @@ struct WindowSprite *CreateSideObject(s32 objectKind, s32 position, s32 side,
 
   slot = 14 + side;
   UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
-  object = WindowSprite_Create(first, 0x80000000, (struct RenderInput *)arg3,
-                               arg4, arg5);
+  object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
+                               (struct RenderInput *)arg3, arg4, arg5);
   if (object != 0) {
     object->oam.palette = slot;
     object->kind = 2;

@@ -28,6 +28,6 @@ s32 WindowSprite_CreateFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
   slot = Resource_FindFreeEntry();
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Resource_LoadIndexedEntryToBuffer(ability, slot);
-    WindowSprite_Create(slot, 0x40000000, input, x, y); // 16x16 OBJ size.
+    WindowSprite_Create(slot, OUTPUT_SIZE_16X16, input, x, y);
   }
 }

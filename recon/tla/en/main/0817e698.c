@@ -26,7 +26,7 @@
 // differ 24.
 // Resources 0x13c (BattleEffect_EarthWallSheet), 0x148 (BattleEffect_OrangePaletteB),
 // 0x129 (BattleEffect_FireballSheet) and 0x150 (BattleEffect_MarsDjinnSheet) need
-// their names in system/resource/directory.s when this is adopted.
+// their names in gamepak/resource_directory.s when this is adopted.
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"

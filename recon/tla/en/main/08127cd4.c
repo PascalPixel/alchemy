@@ -16,7 +16,7 @@
 // before enemyCount (their stack slots).
 #include "types.h"
 #include "battle.h"
-#include "battle_calc.h"
+#include "range_falloff.h"
 #include "battle_formation.h"
 #include "battle_summon.h"
 #include "battle_unit.h"

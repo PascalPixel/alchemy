@@ -107,7 +107,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #include "bg_scroll.h"
 #include "io_write_queue.h"
-#include "irqlock.h"
+#include "irq_lock.h"
 
 void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);

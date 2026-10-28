@@ -1,5 +1,5 @@
 // Draft, differ 338 of 755: BattleEffect_RunTargetMotes, the body of nine effect
-// kinds through the wrappers in games/tla/src/battle/effect/render_mode.c
+// kinds through the wrappers in games/tla/src/battle_effect/render_mode.c
 // (modes 0 to 7).
 
 // ☀️ twin: BattleEffect_RunTargetMotes (games/tbs/src/effect/effect.c), shape 0.898,

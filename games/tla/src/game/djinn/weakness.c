@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "battle_unit.h"
-#include "runtime_interfaces.h"
+#include "enemy_definition.h"
 #include "owner_state.h"
 
 /// A rate for the effect id: 20 to 75 for the ids listed, otherwise a

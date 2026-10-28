@@ -5,7 +5,7 @@
 // while the second keeps sparkling for two seconds. Overlay 681's Func_020015d0
 // is a near copy. Translated from its listing; names and structure still to do.
 #include "iwram_call.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

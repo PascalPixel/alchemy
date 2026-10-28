@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene.h"
 #include "fixed_math.h"
-#include "runtime_interfaces.h"
+#include "enemy_definition.h"
 #include "ram_buffer.h"
 #include "save.h"
 #include "dma.h"

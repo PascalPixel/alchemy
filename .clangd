@@ -14,9 +14,11 @@ CompileFlags:
     - -Igames/tla/include/battle
     - -Igames/tla/include/field
     - -Igames/tla/include/game
+    - -Igames/tla/include/gamepak
     - -Igames/tla/include/graphics
-    - -Igames/tla/include/lib
     - -Igames/tla/include/menu
+    - -Igames/tla/include/shop
     - -Igames/tla/include/sound
     - -Igames/tla/include/system
+    - -Igames/tla/include/window
     - -Iout/tla-en

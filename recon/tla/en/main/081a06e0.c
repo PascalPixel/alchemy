@@ -12,7 +12,7 @@
 // (differ 113).
 #include "types.h"
 #include "io_reg.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "system.h"
 #include "frame.h"
 #include "input.h"

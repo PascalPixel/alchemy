@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/idejima/wave.o"(.text)
         "*/resource_650_overlay.o"(.text.x020095a0)
         "*/games/tla/src/scene/idejima/drift.o"(.text)
-        "*/games/tla/src/field/shared/drift_spawn.o"(.text)
+        "*/games/tla/src/scene/shared/drift_spawn.o"(.text)
         "*/games/tla/src/scene/idejima/s16d8.o"(.text)
         "*/games/tla/src/scene/idejima/s1ee0.o"(.text)
         "*/games/tla/src/scene/idejima/s2304.o"(.text)

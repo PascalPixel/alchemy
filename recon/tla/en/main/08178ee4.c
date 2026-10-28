@@ -21,7 +21,7 @@
 // "lsls r1, r1, #2" are one row apart in several calls, and the
 // halfword pool loads of the 16 in the BLDALPHA fades come one row
 // earlier in the native.
-// Resource 220 needs its name in system/resource/directory.s when this is
+// Resource 220 needs its name in gamepak/resource_directory.s when this is
 // adopted. The cell addresses are gMapCellBuffer offsets (the listing's
 // pool names them Data_020124de, Data_02011f20, Data_02012e6e and
 // Data_02014e9d).

@@ -1,6 +1,6 @@
 // Near miss, differ 2 of 114 (94 before, 2026-10-26): The Broken Seal's
 // Map_RenderCellPictureColumn with the layer window of Func_0802abbc (adopted in
-// field/shared/map/layer_render.c, whose forms this follows) and its
+// field/map/layer_render.c, whose forms this follows) and its
 // CopyCellPictureHalfColumn helper. Left: the native loads the second cell picture
 // row's literal (Data_02020004) one slot later, just before the first store;
 // an empty asm at each line of the function measured 2 or worse.

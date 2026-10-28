@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "render_placement.h"
 
 struct OwnerMenuState {

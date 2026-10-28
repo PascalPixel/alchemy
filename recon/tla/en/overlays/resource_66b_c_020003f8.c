@@ -10,7 +10,7 @@
 #include "actor.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
-#include "lib/call.h"
+#include "call.h"
 
 struct Actor *Actor_GetById(u32 id);
 void Func_0200120c(void);

@@ -2,7 +2,7 @@
 // person 12 sinks into the floor over forty frames with two rings of effects,
 // a boulder drops in its place (flag 0x9ee) and the screen blends back.
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "system/io_reg.h"
 

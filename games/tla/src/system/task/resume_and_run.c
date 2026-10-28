@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "task.h"
 #include "system.h"
-#include "irqlock.h"
+#include "irq_lock.h"
 
 /// Keyed callbacks return a value (the target address is left in r0).
 typedef s32 (*TaskIntFunc)(void);

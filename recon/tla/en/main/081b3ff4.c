@@ -8,7 +8,7 @@
 // split constants (movs #136; lsls #7 for the work offsets, movs #192; lsls
 // #2 for 0x3ff), and stack spills a slot earlier. No empty asm or one-pass
 // block can put a load between a split constant's halves.
-#include "lzpack.h"
+#include "lucky_wheels_lzpack.h"
 #include "ram_buffer.h"
 
 #define PACK_WINDOW_MASK 0x3ff

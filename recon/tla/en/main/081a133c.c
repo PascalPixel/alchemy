@@ -19,7 +19,7 @@
 // nothing.
 // 2026-10-24: the later reads through a second pointer copied from the
 // block's (32). Func_081a1294, which this callback's column copy mirrors, is
-// adopted (games/tla/src/graphics/display/scroll_map.c).
+// adopted (games/tla/src/menu/credits/scroll_map.c).
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"

@@ -22,7 +22,7 @@
 // 3223, the other editions to be checked.
 #include "types.h"
 #include "battle.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_system.h"
 
 struct PlacementList {

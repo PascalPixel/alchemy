@@ -3,7 +3,7 @@
 // statements brings it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
 // Near miss of Window_UpdateInterpolatedGeometry (The Broken Seal twin in
-// graphics/window/window.c; first written 2026-10-12): differ 2 of 92. After
+// window/window.c; first written 2026-10-12): differ 2 of 92. After
 // each of three ratio calls the native loads the next operand (window->x,
 // window->height, window->y) before it stores the result to the scratch
 // (ldrsh; str r0, [r5, #8]); the twin's form stores first each time (differ

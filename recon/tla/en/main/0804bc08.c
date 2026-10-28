@@ -3,7 +3,7 @@
 // battle commands, The Broken Seal's Battle_CollectPartyCommands
 // (games/tbs/src/window/screens/party_commands.c) on this game's work and
 // menus, with its two nested functions: the party panels' clear
-// (Battle_DrawPartyPanelsWithEmptyList, adopted alone in battle/party_panel.c
+// (Battle_DrawPartyPanelsWithEmptyList, adopted alone in window/party_panel.c
 // with a stand-in for the static chain) and the link wait's message
 // (Func_0804bbd0, drafted alone in 0804bbd0.c). This game's changes: each round
 // first appends the forced actions of statused members (Func_0804babc), whose

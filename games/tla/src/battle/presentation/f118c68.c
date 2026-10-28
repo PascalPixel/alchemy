@@ -1,7 +1,7 @@
 // Func_08118c68: The Broken Seal's BattleParty_CollectUnitList.
 #include "types.h"
 #include "battle_work.h"
-#include "battle_party.h"
+#include "battle_side.h"
 
 s32 BattleEnemy_List(s16 *unit_ids);
 extern const s8 gData_081287c8[];

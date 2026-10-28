@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "battle.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_display.h"
 
 /// Readies every unit's battle graphics, releasing those of departed units,

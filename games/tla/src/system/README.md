@@ -1,29 +1,35 @@
 # The Lost Age: system
 
-What ties The Lost Age's image together, with much of what The Broken Seal
-keeps in its runtime folder: the cartridge header and entry, the RAM layout,
-the resident IWRAM code, the [far-call](../../../tbs/glossary.md#far-call) tables, the
-[overlay](../../../tbs/glossary.md#overlay) streams, the resource decoders, the
-[task](../../../tbs/glossary.md#task) table (`task/`), the link cable (`link/`) and saving
-(`save/`). [Cartridge and memory](../../../tbs/src/cartridge/README.md) and
+The Lost Age's System code: power-on and the entry, the RAM layout, the
+resident IWRAM code, the interrupt table, the heap, the
+[task](../../../tbs/glossary.md#task) table (`task/`), the resource loader
+(`resource/`), the save format (`save/`), the link cable (`serial/`), the game
+flags (`flags/`), the maths, the [overlay](../../../tbs/glossary.md#overlay)
+streams (`overlay/`) and the [main routine](../../../tbs/glossary.md#main-routine).
+[Cartridge and memory](../../../tbs/src/cartridge/README.md) and
 [Runtime](../../../tbs/src/runtime/README.md) explain, for The Broken Seal,
 why the image is linked as it is and how a [frame](../../../tbs/glossary.md#frame) runs.
+The ROM header, the far-call tables, the resource directory and the flash chip
+are in [The Lost Age: Game Pak](../gamepak/README.md).
 
 ## What differs from The Broken Seal
 
-- There is no runtime folder: power-on (`Entry` in `entry.s`, then
-  `Func_0801319c` in `f01319c.c`, which enters the
-  [main routine](../../../tbs/glossary.md#main-routine)), `wait()` (`system.c`), the interrupt
-  table (`runtime_irq_table.s`) and `Irq_SetHandler` (`setirq.c`), the task
-  table, the link cable and saving sit here, beside the resident code they
-  call. The main routine itself is in the field folder
-  ([The Lost Age: field](../field/README.md)).
-- The far-call tables are 105 files under `far_call/`, named by the family of
-  their exports (`sound_driver.s`, `object_dispatch_3.s`), where The Broken
-  Seal has one file per [bank](../../../tbs/glossary.md#bank); in `games/tla/objects.tsv` most banks
-  open with the run of these files that makes up their table. The banks start
-  at fixed addresses (`games/tla/main.ld`), and the far-call stub works as it
-  does in The Broken Seal.
+- The code is not gathered into one object with parts: power-on (`Entry` in
+  `entry.s`, then `Func_0801319c` in `f01319c.c`, which enters the main
+  routine), `wait()` (`system.c`), the interrupt table (`irq_table.s`) and
+  `Irq_SetHandler` (`setirq.c`), the task table, the link cable and saving
+  are each their own files, beside the resident code they call.
+- The main routine, `MainRoutine_Run` (`main_routine.c`), sits here with the
+  run of files around it in the ROM (`take_exit.c`, `return_from_sequence.c`,
+  `data_get_resource_group.c`, `data_load_resource_group.c`,
+  `reset_flags_on_enter.c`, `play_saved_music.c`), as The Broken Seal's
+  `main_routine.c` does. It adds four debug starts and keeps background
+  palettes 14 and 15 across three of its sequences.
+- The game flags are read by five functions here (`flags/`), where The Broken
+  Seal keeps them with the game rules.
+- The trigonometry (`trig.s`, `sine_table.s`), the tangent table the
+  arctangent searches (`mathtan.s`), `math.c`, the long multiplies and the
+  16.16 dot product are here, in the first bank, as their twins are.
 - `overlay/overlays.s` places the packed overlay streams as The Broken Seal's
   does; how each overlay is linked is in
   [The Lost Age: scene](../scene/README.md).
@@ -31,11 +37,10 @@ why the image is linked as it is and how a [frame](../../../tbs/glossary.md#fram
 - Every Thumb file is compiled with `-mthumb-split-constants`,
   `-mthumb-call-via-lr`, `-mthumb-slow-loads` and `-mtune=arm9tdmi` added to
   The Broken Seal's options, and without `-mthumb-interwork` (`CFLAGS_tla` in
-  the `Makefile`). The flash library (`save/flash.c`, `sst.c`, `atmel.c`,
-  `program_flash_sector.c`) is compiled with `old_agbcc`, as The Broken Seal's
-  is (`FLASH_C`).
+  the `Makefile`).
 - This game's fixed addresses are its own, listed in
-  `games/tla/include/ram_buffer.h`, `iwram_call.h` and `cartboot.h`.
+  `games/tla/include/system/ram_buffer.h`, `iwram_call.h` and
+  `gamepak/rom_header.h`.
 - Each game numbers its own scenes, items, abilities, formations, resources
   and sounds, so an id from one does not name anything in the other.
 - Functions that do what a twin does mostly take its name, so a search finds

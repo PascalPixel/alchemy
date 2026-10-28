@@ -32,7 +32,7 @@
 #include "battle_system.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
-#include "serial_runtime.h"
+#include "serial.h"
 
 s32 Serial_StartSend(void *source, s32 size);
 s32 Serial_GetActiveTransfers(void);

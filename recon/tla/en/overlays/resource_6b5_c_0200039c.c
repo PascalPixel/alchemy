@@ -7,7 +7,7 @@
 // scan indexes namePrefix where this walks a pointer.
 #include "types.h"
 #include "edition.h"
-#include "serial_runtime.h"
+#include "serial.h"
 
 void *Unit_Get(s32 owner);
 void *Djinn_GetRecoveryTable(s32 which);

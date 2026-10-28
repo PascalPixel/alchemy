@@ -14,7 +14,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
-#include "lib/call.h"
+#include "call.h"
 
 extern u8 gWorldMapPackedTiles[];
 extern u8 gWorldMapPackedPictures[];

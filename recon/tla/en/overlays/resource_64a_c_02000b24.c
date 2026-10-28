@@ -6,7 +6,7 @@
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "io_reg.h"
-#include "game/edition.h"
+#include "edition.h"
 
 extern volatile u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];

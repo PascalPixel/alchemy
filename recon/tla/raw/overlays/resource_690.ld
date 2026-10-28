@@ -3,9 +3,9 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/settlements/entry.o"(.text)
-        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/resource_690_overlay.o"(.text.x0200807e)
-        "*/games/tla/src/field/shared/effect/move.o"(.text)
+        "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_690_overlay.o"(.text.x020080b6)
         "*/resource_690_overlay.o"(.text.x020080b8)
         "*/games/tla/src/scene/settlements/s0280.o"(.text)
@@ -34,7 +34,7 @@ SECTIONS
         "*/resource_690_overlay.o"(.text.x0200938c)
         "*/games/tla/src/scene/settlements/s155c.o"(.text)
         "*/games/tla/src/scene/settlements/s156c.o"(.text)
-        "*/games/tla/src/field/shared/effect/advance_motion.o"(.text)
+        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/resource_690_overlay.o"(.text.x0200961e)
         "*/resource_690_overlay.o"(.text.x02009620)
         "*/games/tla/src/scene/settlements/s16a4.o"(.text)

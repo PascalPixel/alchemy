@@ -3,10 +3,10 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/entry.o"(.text)
-        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/shared/object/prepare_object.o"(.text)
+        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/spawn.o"(.text)
-        "*/games/tla/src/field/shared/effect/move.o"(.text)
+        "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_6b1_overlay.o"(.text.x0200815a)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/s015c.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/hide.o"(.text)

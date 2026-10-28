@@ -1,7 +1,7 @@
 # The Lost Age: scene
 
 The Lost Age's [scenes](../../../tbs/glossary.md#scene), one folder per scene
-[overlay](../../../tbs/glossary.md#overlay), 106 of them, each loaded at the same address as The
+[overlay](../../../tbs/glossary.md#overlay), 109 of them, each loaded at the same address as The
 Broken Seal's. [Scenes](../../../tbs/src/scene/README.md) explains how a scene
 runs, its tables and its [events](../../../tbs/glossary.md#event).
 
@@ -21,5 +21,10 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
   `overlay.ld` and its object list.
 - The scene table is in the field folder, with what differs in it
   ([The Lost Age: field](../field/README.md)).
-- The main-image code a scene imports is in `games/tla/src/field/shared/` and
-  the other folders of this game.
+- The main-image code a scene imports is in the bank folders of this game,
+  most of it under `games/tla/src/field/`. The code only overlays link sits in
+  `scene/shared/` (`drift_spawn.c`, `scene_set_arrival_flags.c`).
+- The Title (`title/`), the scene in the row after it, `SceneId_Ov64a`
+  (`clear/`, `0x64a`), with its password grid and button codes, and the lobby
+  where a link battle is arranged (`lobby/`, `0x6b5`) are overlays here, as
+  The Broken Seal's Title, File Screen and Battle Arena are.

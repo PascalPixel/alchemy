@@ -9,7 +9,7 @@
 #include "battle_escape.h"
 
 #include "battle_work.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_unit.h"
 #include "battle_system.h"
 #include "battle_display.h"

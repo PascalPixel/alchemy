@@ -11,7 +11,7 @@
 // (differ 126); forced++ inside the address (differ 26).
 #include "types.h"
 #include "battle_unit.h"
-#include "battle_session.h"
+#include "battle_action.h"
 
 void *Heap_AllocEwram(s32 size);
 s32 BattleParty_ListLivingUnitsFar(s32 sideMask, u16 *unitIds);

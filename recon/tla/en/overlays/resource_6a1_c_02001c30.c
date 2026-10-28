@@ -32,7 +32,7 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Actor_SetModeById(u32 id, s32 mode);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-#include "iowrite.h"
+#include "io_write.h"
 
 void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

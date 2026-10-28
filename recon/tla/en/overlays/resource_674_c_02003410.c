@@ -6,7 +6,7 @@
 // asrs) and i as (i << 16) + 0x10000.
 #include "types.h"
 #include "mem.h"
-#include "palqueue.h"
+#include "palette_snapshots.h"
 
 void Func_02003410(void) {
   struct PaletteSnapshotWork *queue;

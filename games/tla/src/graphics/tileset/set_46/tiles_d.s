@@ -1,4 +1,4 @@
-	.include "games/tla/include/game/ed_asm.h"
+	.include "games/tla/include/ed_asm.h"
 	.section .rodata
 	.global Tileset_Set46TilesD
 Tileset_Set46TilesD:

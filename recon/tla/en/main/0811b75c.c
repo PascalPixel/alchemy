@@ -17,10 +17,10 @@
 // barrier-held slot pointer (36), five minutes of permute (no gain).
 #include "types.h"
 #include "motobj.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "metadata_lookup.h"
+#include "sprite_metadata.h"
 #include "task.h"
 
 struct TlaBattleObj {

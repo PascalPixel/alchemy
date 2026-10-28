@@ -1,5 +1,5 @@
 // Draft, differ 24 of 78: loads the glow disc picture (resource 0x1d9, which
-// would need a ResourceId_GlowDisc name in system/resource/directory.s) into
+// would need a ResourceId_GlowDisc name in gamepak/resource_directory.s) into
 // the work in heap slot 55, moves every tile byte with the high nibble 0xf to
 // 0x6n, loads it into VRAM and sets up the first sprite. The sprites are
 // 0x28 bytes, not FieldSprite's 0x2c. Left: in the goto loop the native keeps

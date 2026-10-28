@@ -3,12 +3,12 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/sea_of_time/entry.o"(.text)
-        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/resource_687_overlay.o"(.text.x0200807e)
-        "*/games/tla/src/field/shared/object/prepare_object.o"(.text)
+        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/resource_687_overlay.o"(.text.x020080ce)
         "*/games/tla/src/scene/sea_of_time/object.o"(.text)
-        "*/games/tla/src/field/shared/effect/move.o"(.text)
+        "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_687_overlay.o"(.text.x0200815a)
         "*/resource_687_overlay.o"(.text.x0200815c)
         "*/games/tla/src/scene/sea_of_time/map.o"(.text)

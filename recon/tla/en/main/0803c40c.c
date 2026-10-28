@@ -16,7 +16,7 @@
 #include "ram_buffer.h"
 #include "window.h"
 
-// games/tla/include/affine.h's transform, written out: the stale affine.h
+// games/tla/include/system/affine.h's transform, written out: the stale affine.h
 // beside these drafts would shadow it.
 struct AffineTransform {
   u16 scaleX;

@@ -47,7 +47,7 @@ System_InstallIwramAndIrqs:
 .L_08013414:
 	.4byte 0x04000208
 .L_08013418:
-	.4byte IwramRuntime_Rom
+	.4byte IwramResident_Rom
 .L_0801341c:
 	.4byte IwramIrqMain
 .L_08013420:

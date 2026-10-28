@@ -50,7 +50,7 @@
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "battle_work.h"
 #include "bg_scroll.h"
 #include "dma.h"

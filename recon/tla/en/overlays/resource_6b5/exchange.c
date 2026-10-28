@@ -13,7 +13,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "main_routine_work.h"
-#include "serial_runtime.h"
+#include "serial.h"
 
 s32 Func_0200039c(void);
 s32 Func_02000578(void);

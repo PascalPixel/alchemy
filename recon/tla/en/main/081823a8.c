@@ -17,11 +17,11 @@
 // Measured: the first draft 338; the arrival test grouped as two range
 // pairs, so both fold to one unsigned compare each as in the native: 296.
 // Resource 0x184 (BattleEffect_BlastSheet) and the Djinn sheets 0x154, 0x150
-// and 0x152 need names in system/resource/directory.s when this is
+// and 0x152 need names in gamepak/resource_directory.s when this is
 // adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "effect_step.h"
 #include "io_reg.h"
 #include "iwram_call.h"

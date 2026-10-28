@@ -9,7 +9,7 @@
 // the bucket offset's split constant. Also tried: the root pinned to r9 (16)
 // or, declared before the mask, to r0 (29), and declared before the mask
 // unpinned (16).
-#include "lzpack.h"
+#include "lucky_wheels_lzpack.h"
 
 void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   s32 limit = count;

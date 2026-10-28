@@ -33,7 +33,7 @@
 #include "graphics.h"
 #include "transform.h"
 #include "motobj.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 

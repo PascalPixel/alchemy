@@ -5,7 +5,7 @@
 #include "battle.h"
 #include "game.h"
 #include "system.h"
-#include "battle_calc.h"
+#include "range_falloff.h"
 #include "scene.h"
 #include "item.h"
 #include "inventory.h"

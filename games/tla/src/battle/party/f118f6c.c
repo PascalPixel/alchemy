@@ -3,7 +3,7 @@
 // the mask back.
 #include "types.h"
 #include "battle_summon.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_unit.h"
 
 struct BattleSummonState *Djinn_GetRecoveryTableFar(s32 owner);

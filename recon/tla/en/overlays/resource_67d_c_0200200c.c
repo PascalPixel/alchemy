@@ -1,7 +1,7 @@
 // Draft, differ 20 of 163: Izumo interiors' entry setup: places the party and
 // the people by the story flags for entrances 5 and 7.
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

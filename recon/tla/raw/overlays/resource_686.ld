@@ -3,10 +3,10 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/ankohl_ruins/entry.o"(.text)
-        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/shared/object/prepare_object.o"(.text)
+        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/spawn.o"(.text)
-        "*/games/tla/src/field/shared/effect/move.o"(.text)
+        "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_686_overlay.o"(.text.x0200815a)
         "*/resource_686_overlay.o"(.text.x0200815c)
         "*/games/tla/src/scene/ankohl_ruins/scene_tables.o"(.text)

@@ -3,5 +3,5 @@
 /// Neither it nor its caller Func_0200042c exists in the Japanese scene.
 #include "edition.h"
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-#include "../../field/shared/effect/advance_motion.c"
+#include "../../field/field_effect/advance_motion.c"
 #endif

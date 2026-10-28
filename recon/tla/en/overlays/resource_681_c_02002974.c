@@ -2,7 +2,7 @@
 // 11 stand on, as the two halves of the byte flag 0x210. Translated from its
 // listing; names and structure still to do.
 #include "iwram_call.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

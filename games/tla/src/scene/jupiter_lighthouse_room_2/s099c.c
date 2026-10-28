@@ -4,7 +4,7 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "io_reg.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "call.h"
 
 extern const u8 gData_02002b60[];

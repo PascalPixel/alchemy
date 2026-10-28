@@ -24,7 +24,7 @@
 #include "battle.h"
 #include "battle_unit.h"
 #include "battle_work.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_system.h"
 #include "ram_buffer.h"
 #include "system.h"

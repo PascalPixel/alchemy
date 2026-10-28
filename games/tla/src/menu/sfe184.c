@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "mem.h"
-#include "animspr.h"
+#include "sprite.h"
 
 struct OwnerMenuState {
   u8 unk000[0x28];

@@ -9,7 +9,7 @@
 // Djinn_RunMarsJoinEffect, measured 36 to 38.
 #include "types.h"
 #include "system.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "motobj.h"
 #include "actor.h"
 #include "objdisp.h"

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "iwram_call.h"
 
 s32 BattleParty_ListActorIds();

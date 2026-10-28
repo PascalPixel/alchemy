@@ -38,11 +38,11 @@
 // into r2 and work into r1 for r9): 145 to 141.
 // Resources 0x134 (Resource_Data134), 0xc2 (Resource_Data0C2), 0x181
 // (Resource_Data181), 0x13e (BattleEffect_FlashBurstSheet), 0x186, 0x17d,
-// 0x17f, 0x184 and 0x148 need names in system/resource/directory.s when
+// 0x17f, 0x184 and 0x148 need names in gamepak/resource_directory.s when
 // this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "effect_step.h"
 #include "io_reg.h"
 #include "iwram_call.h"

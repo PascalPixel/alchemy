@@ -17,7 +17,7 @@
 #include "fx_scene.h"
 #include "main_routine_work.h"
 #include "actor.h"
-#include "animspr.h"
+#include "sprite.h"
 
 // ⚓️'s composite sprite (as polar_target.c's CompositeAnimation).
 struct CloakSprite {

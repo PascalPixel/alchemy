@@ -30,7 +30,7 @@
 #include "effect_step.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "battle_display.h"

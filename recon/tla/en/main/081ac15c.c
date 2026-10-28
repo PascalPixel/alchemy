@@ -17,7 +17,7 @@
 // constants from the pool at each use) and in the key tests; the resource
 // and message names are not in directory.s and en.po yet.
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "dma.h"

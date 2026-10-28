@@ -10,7 +10,7 @@
 // early return, no change.
 #include "types.h"
 #include "actor.h"
-#include "lib/call.h"
+#include "call.h"
 
 extern s32 gData_02004698;
 s32 Func_02003cc8(void);

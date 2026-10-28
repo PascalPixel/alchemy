@@ -14,9 +14,9 @@
 // *entry++.
 #include "types.h"
 #include "actor.h"
-#include "metadata_lookup.h"
+#include "sprite_metadata.h"
 #include "actor_view.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "dma.h"

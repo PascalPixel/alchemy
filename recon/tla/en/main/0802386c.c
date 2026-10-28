@@ -22,7 +22,7 @@
 #include "mem.h"
 #include "iwram_call.h"
 #include "actor.h"
-#include "field/animspr.h"
+#include "field/sprite.h"
 
 struct PlacedSprite {
   u8 unk00[9];

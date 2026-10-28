@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
   Func_0811b75c(list, refresh, 1);

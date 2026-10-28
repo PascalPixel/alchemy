@@ -2,7 +2,7 @@
 /// Battle: test whether a unit is in a battle formation.
 
 #include "types.h"
-#include "battle_party.h"
+#include "battle_side.h"
 
 /// Returns 1 if the unit is in its side's formation.
 /// id: unit ID (0-7 allies, all others enemies).

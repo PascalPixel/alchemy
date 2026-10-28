@@ -21,7 +21,7 @@
 #include "input.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
-#include "serial_runtime.h"
+#include "serial.h"
 #include "text/msg_ids.h"
 
 s32 Func_02000f6c(s32 id);

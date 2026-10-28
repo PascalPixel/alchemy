@@ -1,7 +1,7 @@
 #include "types.h"
 #include "battle.h"
 #include "battle_work.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "motobj.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"

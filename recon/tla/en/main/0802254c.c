@@ -13,7 +13,7 @@
 // before the offsets gives the native's spill slots (26 after); matrix's
 // shift in two statements (32 in one).
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 

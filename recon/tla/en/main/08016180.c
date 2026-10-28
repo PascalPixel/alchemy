@@ -10,7 +10,7 @@
 // (still 8); after the second it moves the REG_IME = 1 constant up instead;
 // a one-pass block there is differ 12; four minutes of permuter found
 // differ 6 only by wrapping the tail in a one-pass block.
-#include "serial_runtime.h"
+#include "serial.h"
 #include "dma.h"
 
 void Serial_Initialize(void) {

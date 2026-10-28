@@ -27,7 +27,7 @@
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "task.h"
 #include "effect_step.h"
 #include "fixed_math.h"

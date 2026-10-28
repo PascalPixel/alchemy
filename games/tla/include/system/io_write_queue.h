@@ -2,7 +2,7 @@
 #define ALCHEMY_IO_WRITE_QUEUE_H
 
 #include "edition.h"
-#include "irqlock.h"
+#include "irq_lock.h"
 #include "types.h"
 
 struct IoWriteQueue {

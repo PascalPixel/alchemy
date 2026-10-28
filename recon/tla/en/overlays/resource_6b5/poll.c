@@ -18,7 +18,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "actor.h"
-#include "serial_runtime.h"
+#include "serial.h"
 #include "text/msg_ids.h"
 
 struct LinkPeer {

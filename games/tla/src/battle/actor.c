@@ -5,13 +5,13 @@
 #include "edition.h"
 #include "battle.h"
 #include "system.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_system.h"
 #include "battle_type.h"
 #include "battle_work.h"
 #include "battle_summon.h"
 #include "motobj.h"
-#include "animspr.h"
+#include "sprite.h"
 
 struct BattleUnit *Unit_Get(s32);
 

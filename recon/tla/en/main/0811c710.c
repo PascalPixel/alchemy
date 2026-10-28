@@ -15,7 +15,7 @@
 #include "battle.h"
 #include "battle_unit.h"
 #include "battle_display.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "motobj.h"
 #include "io_reg.h"
 #include "owner_state.h"

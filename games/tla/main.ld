@@ -32,9 +32,9 @@ SECTIONS
     {
         INCLUDE "iwram_slots.ld"
     } > IWRAM
-    .iwram_runtime 0x3000100 :
+    .iwram_resident 0x3000100 :
     {
-        INCLUDE "iwram_runtime_00.ld"
+        INCLUDE "iwram_resident_00.ld"
     } > IWRAM AT>ROM
     iwram (NOLOAD) :
     {
@@ -102,7 +102,7 @@ SECTIONS
         . = ABSOLUTE(0x08680000);
         INCLUDE "rom_tail_02.ld"
     } > ROM
-    IwramRuntime_Rom = LOADADDR(.iwram_runtime);
+    IwramResident_Rom = LOADADDR(.iwram_resident);
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -15,11 +15,11 @@
 // Measured: the block as plain statements (differ 103), the loop through a work
 // pointer (65), nine minutes of permute, five on the loop alone (no gain).
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "actor_view.h"
 #include "battle.h"
 #include "battle_display.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_obj.h"
 #include "battle_work.h"
 #include "motobj.h"

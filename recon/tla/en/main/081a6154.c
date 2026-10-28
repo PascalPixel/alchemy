@@ -11,7 +11,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "bg_scroll.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 
 struct TitleScrollStep {
   s32 frames;

@@ -10,7 +10,7 @@
 #include "types.h"
 #include "objdisp.h"
 #include "battle_system.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "owner_state.h"
 
 struct BattleObj *BattleObject_Get(s32 arg0);

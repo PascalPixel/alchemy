@@ -5,8 +5,8 @@
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "palqueue.h"
+#include "palette_snapshots.h"
 
 #define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unk70[0])
 
-#include "../../graphics/palette/palqueue_add.c"
+#include "../../field/palqueue_add.c"

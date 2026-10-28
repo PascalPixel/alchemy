@@ -18,7 +18,7 @@
 #include "uiwindow.h"
 #include "output.h"
 #include "resource.h"
-#include "ramcode.h"
+#include "ram_code.h"
 
 struct GlyphCell {
   struct GlyphCell *next;

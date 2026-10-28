@@ -40,7 +40,7 @@ extern const u32 gDefaultIrqHandlers[IRQ_COUNT];
 
 extern u8 IwramIrqMain[];
 extern const u32 IwramIrqModeWord;
-extern const u8 IwramRuntime_Rom[];
+extern const u8 IwramResident_Rom[];
 extern void *gIrqVector;
 
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler);

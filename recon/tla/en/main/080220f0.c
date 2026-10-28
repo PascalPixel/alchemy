@@ -21,7 +21,7 @@
 
 #include "types.h"
 #include <affine.h>
-#include "animspr.h"
+#include "sprite.h"
 #include "iwram_call.h"
 
 // The Lost Age's animation object: The Broken Seal's fields with the

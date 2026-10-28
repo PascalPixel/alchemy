@@ -12,7 +12,7 @@
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "irq.h"
 
 void System_InstallIwramAndIrqs(void) {
@@ -21,7 +21,7 @@ void System_InstallIwramAndIrqs(void) {
   Io_Write16(0, &REG_IME);
   iwram = IwramIrqMain;
   asm("" : "+r"(iwram));
-  Dma_Set(IwramRuntime_Rom, iwram, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400,
+  Dma_Set(IwramResident_Rom, iwram, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400,
           REG_DMA3);
   gIrqVector = IwramIrqMain;
   Dma_Set(gDefaultIrqHandlers, gIrqHandlers,

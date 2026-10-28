@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

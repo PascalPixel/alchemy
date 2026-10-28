@@ -19,7 +19,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
-#include "ramcode.h"
+#include "ram_code.h"
 
 struct BattlePresentationTransition {
   u8 unk00[8];

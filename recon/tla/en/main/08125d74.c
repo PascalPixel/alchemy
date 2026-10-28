@@ -18,7 +18,7 @@
 #include "battle_unit.h"
 #include "battle_work.h"
 #include "battle_display.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "motobj.h"
 #include "bg_scroll.h"
 #include "task.h"

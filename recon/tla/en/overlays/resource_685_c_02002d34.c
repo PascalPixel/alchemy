@@ -1,6 +1,6 @@
 // Draft of overlay 685's Func_02002d34, differ 24 of 78: Func_02002c88's twin for
 // resource 0x1f7 (which wants a ResourceId_Data1F7 name in
-// system/resource/directory.s) and the second sprite, loading 0x800 bytes.
+// gamepak/resource_directory.s) and the second sprite, loading 0x800 bytes.
 // The sprites are 0x28 bytes, not FieldSprite's 0x2c, and the loop is a goto
 // loop (as a for loop loop.c hoists both masks and reverses the count, 61).
 // Left: the native keeps the pointer in r2 and the byte in r1, as in

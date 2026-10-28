@@ -17,7 +17,7 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_m/jupiter_lighthouse_room_m.h"
 #include "io_reg.h"
 #include "dma.h"
-#include "iowrite.h"
+#include "io_write.h"
 
 extern u8 gCpuLoadDisplayEnabled;
 extern char ResourceId_LightningTiles;

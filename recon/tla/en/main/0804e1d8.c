@@ -14,7 +14,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "render_input.h"
 
 extern u8 gData_0805f8f0[];

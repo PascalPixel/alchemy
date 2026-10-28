@@ -3,7 +3,7 @@
 // as the native does); names and structure still to do. Left: the native saves
 // r8 and r10 only, and branch offsets follow.
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"

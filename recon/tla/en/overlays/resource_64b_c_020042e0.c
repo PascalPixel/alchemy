@@ -17,7 +17,7 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "bg_scroll.h"
-#include "animspr.h"
+#include "sprite.h"
 
 extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];

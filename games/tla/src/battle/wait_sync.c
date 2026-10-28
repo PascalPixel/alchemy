@@ -4,7 +4,7 @@
 #include "types.h"
 #include "edition.h"
 #include "ram_buffer.h"
-#include "serial_runtime.h"
+#include "serial.h"
 #include "battle_work.h"
 
 extern u16 gLinkPeerSignatures[][12];

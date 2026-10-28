@@ -4,7 +4,7 @@
 // after independent moves
 #include "types.h"
 #include "system.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "motobj.h"
 #include "actor.h"
 #include "objdisp.h"

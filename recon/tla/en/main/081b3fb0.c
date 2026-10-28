@@ -25,7 +25,7 @@
 // #1 before the strb and adds r0, #1 after it, where the native has the index
 // step first (differ 4). An asm on the index kills the strength reduction
 // (37); the byte read into a local first swaps r2 and r3 (8).
-#include "lzpack.h"
+#include "lucky_wheels_lzpack.h"
 
 void LzPack_CopyBufferedBytes(u8 *destination) {
   struct LzPackWork *work = gFlash_Handler3;

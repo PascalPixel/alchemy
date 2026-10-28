@@ -1,0 +1,5 @@
+	.section .rodata
+	.global BattleEffect_VenusDjinnSheet
+BattleEffect_VenusDjinnSheet:
+	.incbin "games/tla/src/graphics/battle_effects/venus_djinn.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/venus_djinn.bitmap.lz"

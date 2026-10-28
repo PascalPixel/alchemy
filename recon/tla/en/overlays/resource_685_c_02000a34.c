@@ -4,7 +4,7 @@
 // pushed back, the glow flares and person 10 drops to the floor with a
 // shake.
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

@@ -15,7 +15,7 @@
 #include "mem.h"
 #include "iwram_call.h"
 #include "battle_unit.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "ram_buffer.h"
 
 #define ACTION_ID_MASK OWNER_ACTION_ID_MASK

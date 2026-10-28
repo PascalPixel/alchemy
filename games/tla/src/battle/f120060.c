@@ -1,6 +1,6 @@
 #include "types.h"
 #include "input.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "io_reg.h"
 
 struct CursorSprite {

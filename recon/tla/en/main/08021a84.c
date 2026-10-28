@@ -12,7 +12,7 @@
 // outline (flag 2) is an ARM routine copied to the heap for the call; flags
 // 8 and 4 sink the picture into the ground or shade its lowest rows.
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "dma.h"

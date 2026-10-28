@@ -39,10 +39,10 @@
 // comments, the devices tagged; the same 436 instructions and differ 88.
 // The always-true "frame >= 0" test is a device: without it differ 105.
 // Resources 302 (BattleEffect_PinkStarSheet) and 353 (BattleEffect_SmokeSheet)
-// need their names in system/resource/directory.s when this is adopted.
+// need their names in gamepak/resource_directory.s when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "effect_step.h"
 #include "io_reg.h"
 #include "iwram_call.h"

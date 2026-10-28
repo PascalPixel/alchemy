@@ -20,7 +20,7 @@ SECTIONS
         "*/resource_668_overlay.o"(.text.x0200c004)
         "*/games/tla/src/scene/eastern_alhafra/s40c0.o"(.text)
         "*/resource_668_overlay.o"(.text.x0200c0ec)
-        "*/games/tla/src/field/shared/map/cellfill.o"(.text)
+        "*/games/tla/src/field/map/cellfill.o"(.text)
         "*/resource_668_overlay.o"(.text.x0200c240)
         "*/resource_668_overlay.o"(.text.x0200c3a8)
         "*/resource_668_overlay.o"(.text.x0200c4c4)

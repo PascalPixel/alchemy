@@ -1,0 +1,6 @@
+	.section .rodata
+	.global Slots_GreenDigits
+Slots_GreenDigits:
+	.incbin "games/tla/src/graphics/lucky_wheels/green_digits.gbapal"
+	.incbin "games/tla/src/graphics/lucky_wheels/green_digits.4bpp32x32.lz"
+	.byte 0xe6	@ PACKER: left in the buffer by Resource_Data087+0x733

@@ -2,10 +2,10 @@
 #include "task.h"
 #include "input.h"
 #include "oam.h"
-#include "serial_runtime.h"
+#include "serial.h"
 #include "io_reg.h"
 #include "frame.h"
-#include "cartboot.h"
+#include "rom_header.h"
 
 #define SLEEP_IDLE_FRAMES 10800
 #define RGB_WHITE 0x7fff

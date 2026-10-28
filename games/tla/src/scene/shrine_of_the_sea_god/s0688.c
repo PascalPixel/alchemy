@@ -1,6 +1,6 @@
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "io_reg.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "call.h"
 #include "scene_tables.h"
 

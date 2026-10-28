@@ -14,11 +14,11 @@
 // changes the comparison).
 #include "types.h"
 #include "motobj.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "ram_buffer.h"
 #include "battle_work.h"
 #include "battle_display.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_unit.h"
 
 struct TlaBattleObj {

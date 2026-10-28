@@ -17,7 +17,7 @@
 #include "ram_buffer.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
-#include "lib/call.h"
+#include "call.h"
 
 struct Actor *Actor_GetById(u32 id);
 void Func_02005e14(void);

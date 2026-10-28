@@ -20,7 +20,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "battle_display.h"
 
 struct EncounterWork {

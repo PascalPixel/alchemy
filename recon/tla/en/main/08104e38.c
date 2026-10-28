@@ -12,7 +12,7 @@
 // the spilled id address (here after).
 #include "types.h"
 #include "ram_buffer.h"
-#include "animspr.h"
+#include "sprite.h"
 
 struct FigureMenuState {
   u8 unk000[0xf8];

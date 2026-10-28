@@ -7,7 +7,7 @@
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "palqueue.h"
+#include "palette_snapshots.h"
 
 #define gPaletteWork ((struct PaletteSnapshotWork *)Ram_HeapSlots->unk70[0])
 #define EVENT_S16(offset) (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + (offset)))

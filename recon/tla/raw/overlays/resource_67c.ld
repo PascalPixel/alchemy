@@ -3,12 +3,12 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/aqua_rock_inside/entry.o"(.text)
-        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/resource_67c_overlay.o"(.text.x0200807e)
-        "*/games/tla/src/field/shared/object/prepare_object.o"(.text)
+        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/resource_67c_overlay.o"(.text.x020080ce)
         "*/games/tla/src/scene/aqua_rock_inside/s00d0.o"(.text)
-        "*/games/tla/src/field/shared/effect/move.o"(.text)
+        "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_67c_overlay.o"(.text.x0200815a)
         "*/resource_67c_overlay.o"(.text.x0200815c)
         "*/games/tla/src/scene/aqua_rock_inside/s033c.o"(.text)

@@ -4,7 +4,7 @@
 // water drains it shows the drained state once its flag is set. Translated from
 // its listing; names and structure still to do.
 #include "iwram_call.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

@@ -2,7 +2,7 @@
 // its picture and sprites, starts its frame callback and a shake, then grows
 // its first sprite, waits ten frames and grows its second in two stages.
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

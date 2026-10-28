@@ -10,7 +10,7 @@
 #include "types.h"
 #include "owner_state.h"
 #include "battle_unit.h"
-#include "runtime_interfaces.h"
+#include "enemy_definition.h"
 
 /// One of the 48 element presets an enemy record names.
 struct ElementPreset {

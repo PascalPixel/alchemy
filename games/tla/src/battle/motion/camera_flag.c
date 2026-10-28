@@ -1,6 +1,6 @@
 #include "types.h"
 #include "motobj.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "battle_display.h"
 #include "fixed_point_position.h"
 #include "ram_buffer.h"

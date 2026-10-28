@@ -26,7 +26,7 @@
 #include "resource.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
-#include "iowrite.h"
+#include "io_write.h"
 
 struct LayeredSceneEntry {
   u16 resources[6];

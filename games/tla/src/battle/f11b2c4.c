@@ -3,7 +3,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_work.h"
-#include "battle_session.h"
+#include "battle_action.h"
 
 void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
 struct BattleObj *BattleObject_Get(s32 id);

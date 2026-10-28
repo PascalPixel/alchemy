@@ -1,6 +1,6 @@
 #include "scene_tables.h"
 #include "scene.h"
-#include "lib/call.h"
+#include "call.h"
 
 struct EventTransition {
   u8 unk000[0x1ac];

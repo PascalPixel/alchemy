@@ -1,0 +1,20 @@
+	.section .rodata
+@ The staff credits font, characters 0x20 to 0x7f, 8x8 and 1 bit:
+@ The Broken Seal's gDisplayScroll_Font. The Spanish, French and Italian
+@ fonts draw an i with an acute accent at '`', and the French and Italian
+@ ones an accented capital A at 0x7f.
+	.global gDisplayScroll_Font
+gDisplayScroll_Font:
+	.ifdef TLA_EDITION_ES
+	.incbin "games/tla/src/graphics/credits/font_es.1bpp"
+	.else
+	.ifdef TLA_EDITION_FR
+	.incbin "games/tla/src/graphics/credits/font_fr.1bpp"
+	.else
+	.ifdef TLA_EDITION_IT
+	.incbin "games/tla/src/graphics/credits/font_it.1bpp"
+	.else
+	.incbin "games/tla/src/graphics/credits/font.1bpp"
+	.endif
+	.endif
+	.endif

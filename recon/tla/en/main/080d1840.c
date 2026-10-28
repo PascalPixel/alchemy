@@ -8,7 +8,7 @@
 // ☀️'s frame device: without them the stack frame is 12 bytes, not 16.
 #include "types.h"
 #include "ram_buffer.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "resource.h"
 #include "vram_tab.h"
 

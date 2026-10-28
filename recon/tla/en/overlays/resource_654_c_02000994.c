@@ -10,7 +10,7 @@
 // leader's id loaded after the 1 of its SetActionVariant call.
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "io_reg.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "call.h"
 
 void Func_02003988(void);

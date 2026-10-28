@@ -105,7 +105,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define HI(v) (((s16 *)&(v))[1])
 
 #include "io_write_queue.h"
-#include "irqlock.h"
+#include "irq_lock.h"
 #include "actor.h"
 
 struct ProjectedPoint {

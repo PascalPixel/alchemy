@@ -9,7 +9,7 @@
 // copy; not tried), and the object in r10.
 #include "types.h"
 #include "battle.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "battle_display.h"
 #include "battle_obj.h"
 #include "motobj.h"

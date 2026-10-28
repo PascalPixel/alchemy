@@ -4,7 +4,7 @@
 // s16 counters with u16 casts (68), pointer rows, two minutes of alchemy
 // permute (42 at best).
 #include "../../../../games/tla/include/types.h"
-#include "../../../../games/tla/include/ram_buffer.h"
+#include "../../../../games/tla/include/system/ram_buffer.h"
 #include "../../../../games/tla/include/map.h"
 
 void Func_0200495c(s32 layer, s32 keep) {

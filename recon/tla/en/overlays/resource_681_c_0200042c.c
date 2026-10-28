@@ -7,7 +7,7 @@
 // scene with other scales; overlay 686's Func_02000418 is a copy. Measured
 // against its copies: overlay 686's Func_02000418 (differ 10 of 177).
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

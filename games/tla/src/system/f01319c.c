@@ -1,7 +1,7 @@
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "dma.h"
 #include "mem.h"
 #include "irq.h"

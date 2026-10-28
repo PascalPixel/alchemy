@@ -20,7 +20,7 @@
 // cleared first (differ 26).
 #include "types.h"
 #include "battle.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_type.h"
 #include "battle_work.h"
 #include "iwram_call.h"

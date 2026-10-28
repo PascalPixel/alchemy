@@ -7,7 +7,7 @@
 // size) and both sprites go into Oam_AddSpriteAtDepth's slot depth.
 #include "types.h"
 #include <affine.h>
-#include "animspr.h"
+#include "sprite.h"
 #include "iwram_call.h"
 
 struct PlacedObject {

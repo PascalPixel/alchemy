@@ -34,7 +34,7 @@
 // cases 1 and 2 of both sides share one call and cases 3 and 4 share
 // "subs r3, #88" before it.
 // Resources 308, 243 and 329 (BattleEffect_EffectPalette02) need names in
-// system/resource/directory.s when this is adopted.
+// gamepak/resource_directory.s when this is adopted.
 // 2026-10-15 (lane N2): rewritten with the work struct, named cels and
 // constants and comments. The same differ 284; one BattleEffect_LoadBlitter call with
 // the mode chosen by a conditional expression: 289 (the native's single

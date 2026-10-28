@@ -1,5 +1,5 @@
 #include "types.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 #include "ram_buffer.h"
 
 void BattleEffect_PackTargetBuffer(void) {

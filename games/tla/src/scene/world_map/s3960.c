@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "io_write_queue.h"
 #include "task.h"
 

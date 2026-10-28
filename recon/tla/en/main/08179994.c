@@ -17,7 +17,7 @@
 // work->particles in place of the ring pointer, frame declared first:
 // 320 (frame stays 124).
 // Resources 0xeb (BattleEffect_SmallFlameSheet) and 0x148
-// (BattleEffect_OrangePaletteB) need names in system/resource/directory.s
+// (BattleEffect_OrangePaletteB) need names in gamepak/resource_directory.s
 // when this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"

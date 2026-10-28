@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "edition.h"
 
 union FieldObject;

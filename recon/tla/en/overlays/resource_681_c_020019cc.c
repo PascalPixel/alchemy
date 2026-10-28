@@ -2,7 +2,7 @@
 // the ground shakes, the screen blends out and back while the ledge changes,
 // the party gains the item and person 11 joins the leader (flag 0x9ba).
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "system/io_reg.h"

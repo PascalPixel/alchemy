@@ -7,7 +7,7 @@
 // (differ 92); the permuter (5 minutes) reached 10 only by reading the
 // height through an inline helper.
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 
 struct LayeredSprite {
   struct AnimationSpritePart image;

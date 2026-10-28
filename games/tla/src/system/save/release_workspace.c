@@ -3,7 +3,7 @@
 #include "flash.h"
 #include "ram_buffer.h"
 #include "save.h"
-#include "runtime_interfaces.h"
+#include "enemy_definition.h"
 #include "irq.h"
 #include "io_reg.h"
 

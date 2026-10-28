@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_ESCAPE_H
 
 #include "edition.h"
-#include "battle_session.h"
+#include "battle_action.h"
 
 #include "types.h"
 

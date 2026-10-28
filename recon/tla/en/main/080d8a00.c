@@ -11,7 +11,7 @@
 // r4 and the depth key in r8; here r6, r10, r6 and r4). Func_080d9b80 is the heap slot 0xa0
 // sibling.
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "map.h"
 #include "ram_buffer.h"
 #include "vram_tab.h"

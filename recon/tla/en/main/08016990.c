@@ -12,7 +12,7 @@
 // improves it.
 #include "types.h"
 #include "io_reg.h"
-#include "serial_runtime.h"
+#include "serial.h"
 
 struct SerialHalfword {
   u16 v;

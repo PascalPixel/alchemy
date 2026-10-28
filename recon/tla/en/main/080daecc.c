@@ -15,7 +15,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "map.h"
 
 struct ChainLink {

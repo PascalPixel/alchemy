@@ -26,7 +26,7 @@
 #include "types.h"
 #include "battle.h"
 #include "battle_type.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "battle_display.h"
 #include "motobj.h"
 #include "io_write_queue.h"

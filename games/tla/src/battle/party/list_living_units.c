@@ -1,4 +1,4 @@
-#include "battle_party.h"
+#include "battle_side.h"
 #include "game_flags.h"
 #include "owner_state.h"
 #include "types.h"

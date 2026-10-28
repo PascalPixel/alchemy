@@ -1,7 +1,7 @@
 // Under -mthumb-slow-loads (2026-10-26): differ 6 of 175 in tla-en, instruction
 // order only. No empty asm before any one statement lowers it.
 #include "types.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"

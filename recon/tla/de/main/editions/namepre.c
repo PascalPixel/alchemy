@@ -1,7 +1,7 @@
 #include "mem.h"
 #include "types.h"
 #include "owner_state.h"
-#include "serial_runtime.h"
+#include "serial.h"
 
 void Message_DecodeRawUnboundedFar(s32, u16 *);
 void Heap_Release(void *);

@@ -1,6 +1,6 @@
 // Near miss, differ 48 of 272 (2026-10-26, statements reordered) (2026-10-18, written from the listing; ☀️ has
 // no twin): the frame callback of the effect Func_080e87c4 ends, with the
-// ring picture of graphics/field_fx/ring_arcs.s. The position is reached
+// ring picture of graphics/field_effects/ring_arcs.s. The position is reached
 // through a pointer, as the ROM keeps sp + 4 in r7 (221 -> 167). The colour
 // loop is a goto loop over a pointer to the phase: as a for loop agscc
 // strength-reduces both palette addresses and hoists their pool loads, which

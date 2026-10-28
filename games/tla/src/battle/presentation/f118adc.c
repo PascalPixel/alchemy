@@ -4,7 +4,7 @@
 #include "battle_display.h"
 #include "battle_work.h"
 #include "ram_buffer.h"
-#include "serial_runtime.h"
+#include "serial.h"
 
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 

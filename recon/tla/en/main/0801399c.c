@@ -15,7 +15,7 @@
 #include "input.h"
 #include "oam.h"
 #include "bg_scroll.h"
-#include "serial_runtime.h"
+#include "serial.h"
 #include "io_write_queue.h"
 #include "task.h"
 

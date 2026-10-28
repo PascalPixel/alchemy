@@ -10,7 +10,7 @@
 // the unwrapped row around __modsi3. The clamps also take x and z in the
 // other registers (x in r5 in the native). Shape otherwise as the listing.
 // 2026-10-19: the forms that matched Func_080ecf74
-// (games/tla/src/battle/effect/world_map_row.c: the tile in two steps, the cell
+// (games/tla/src/field/event_commands/world_map_row.c: the tile in two steps, the cell
 // as an index incremented with the tile, i + column) give 146 here: the same
 // shape, but x and z, the tile and the cell pointer take other registers, and
 // the native spills the unwrapped row around __modsi3.

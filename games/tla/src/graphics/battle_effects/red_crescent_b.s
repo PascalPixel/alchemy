@@ -1,0 +1,6 @@
+	.section .rodata
+	.global BattleEffect_RedCrescentSheetB
+BattleEffect_RedCrescentSheetB:
+	.incbin "games/tla/src/graphics/battle_effects/red_crescent_b.gbapal"
+	.incbin "games/tla/src/graphics/battle_effects/red_crescent_b.bitmap.lz"
+	.byte 0xf0, 0x79	@ PACKER: left in the buffer by BattleEffect_BlueBeastSheet+0x3ea

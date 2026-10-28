@@ -13,6 +13,9 @@ explains them for The Broken Seal.
   TSV, packed by the build into a `.table` file that a `.s` beside it
   includes, where The Broken Seal's are C arrays
   ([item_table.c](../../../tbs/src/game/item_table.c),
-  [classes.c](../../../tbs/src/game/classes.c)).
+  [class_table.c](../../../tbs/src/game/class_table.c)).
 - Each file holds a single function or family; some files are still
   named by address (`character/add5c.c`, `character/d00c6604.s`).
+- The game flags are read through `GameFlag_` functions that this game links
+  in its first bank, so they are in
+  [The Lost Age: system](../system/README.md) (`flags/`).

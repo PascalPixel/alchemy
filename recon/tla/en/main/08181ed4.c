@@ -41,7 +41,7 @@
 // reached 120 only by reading an uninitialized temporary: not taken.
 // Resources 0xc0 (BattleEffect_CrossTextureSheet), 0xd2 (Resource_Data0D2) and
 // the Djinn sheets 0x154, 0x150 and 0x152 need names in
-// system/resource/directory.s when this is adopted.
+// gamepak/resource_directory.s when this is adopted.
 // 2026-10-26: 127 under K2's -mthumb-slow-loads; the target's actor read
 // into its own local before Func_081180e8 at frame 20: 122 (permute, 20
 // minutes, found nothing better that was plain C).

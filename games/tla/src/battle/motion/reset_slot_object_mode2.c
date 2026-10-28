@@ -13,7 +13,7 @@
 #include "motobj.h"
 #include "battle_motion.h"
 #include "fixed_math.h"
-#include "battle_session.h"
+#include "battle_action.h"
 
 #define Actor_ResetMotion ((void (*)(struct MotionObject *))Actor_ResetMotion)
 #define Actor_SetTargetPosition                                                     \

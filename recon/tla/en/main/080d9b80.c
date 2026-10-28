@@ -10,7 +10,7 @@
 // in r11, r10 and r7). Func_080d8a00 is
 // the heap slot 0x9c sibling.
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "map.h"
 #include "ram_buffer.h"
 #include "vram_tab.h"

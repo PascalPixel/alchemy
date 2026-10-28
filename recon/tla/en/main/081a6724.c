@@ -12,7 +12,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "bg_scroll.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 
 void PaletteFade_SetCurrent(s32 index, s32 transform);
 s32 Title_WaitOrPress(u32 frames);

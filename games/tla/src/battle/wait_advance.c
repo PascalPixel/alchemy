@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "io_reg.h"
 
 struct AdvanceSprite {

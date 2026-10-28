@@ -13,14 +13,14 @@
 // offset's x and y after the pitch call's load, two pool loads a row apart,
 // and builds 0x106 afresh where this adds 2 to 0x104.
 #include "types.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "mem.h"
 #include "resource.h"
-#include "ramcode.h"
+#include "ram_code.h"
 #include "iwram_call.h"
 #include "bg_scroll.h"
 #include "frame.h"

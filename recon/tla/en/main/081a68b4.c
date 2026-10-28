@@ -13,7 +13,7 @@
 #include "types.h"
 #include "dma.h"
 #include "bg_scroll.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 #include "ram_buffer.h"
 
 struct TitleScroll {

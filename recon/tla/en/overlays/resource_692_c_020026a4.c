@@ -7,7 +7,7 @@
 // display control's address after the window store before it and after the
 // blend store at the end (an empty asm or one-pass block there: 8 or more).
 #include "types.h"
-#include "lib/call.h"
+#include "call.h"
 #include "io_reg.h"
 #include "actor.h"
 #include "field_sprite.h"

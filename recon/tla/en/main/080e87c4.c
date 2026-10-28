@@ -1,7 +1,7 @@
 // Near miss, differ 36 of 226 (2026-10-18, written from the listing; ☀️ has
 // no twin): the burst of 64 sparkles Func_080e807c's effect ends with. The
 // resource is directory entry 0x1ea, FieldEffect_SparkleFade: adoption names it
-// SparkleFade in system/resource/directory.s. What remains: the frame count
+// SparkleFade in gamepak/resource_directory.s. What remains: the frame count
 // takes r5 and the second loop's sprite r7, where the ROM has r7 and r5
 // (separate block-scoped pointers 44, the count fixed in r7 93, other
 // declaration orders 36); and reordered pairs where the native loads

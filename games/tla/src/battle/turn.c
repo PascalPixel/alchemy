@@ -14,7 +14,7 @@
 #include "battle_system.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
-#include "serial_runtime.h"
+#include "serial.h"
 #include "iwram_call.h"
 
 static inline void BattleAction_Swap(struct BattleActionRecord *a,

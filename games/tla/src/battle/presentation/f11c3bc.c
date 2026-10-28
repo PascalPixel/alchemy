@@ -5,7 +5,7 @@
 #include "battle_display.h"
 #include "battle_target.h"
 #include "fixed_math.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "system.h"
 #include "battle_system.h"
 #include "dma.h"

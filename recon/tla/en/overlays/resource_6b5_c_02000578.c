@@ -8,7 +8,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "owner_state.h"
-#include "serial_runtime.h"
+#include "serial.h"
 
 s32 Func_02000538(u16 *memberIds);
 s32 Func_0200192c(void *data, s32 size);

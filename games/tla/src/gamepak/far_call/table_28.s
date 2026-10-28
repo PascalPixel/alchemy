@@ -1,0 +1,15 @@
+.syntax unified
+	.thumb
+	.include "games/tla/src/gamepak/far_call/veneer.s"
+	.global BattleEffect_StartBufferInterpolationFar
+	.thumb_func
+BattleEffect_StartBufferInterpolationFar:
+	overlay_veneer BattleEffect_StartBufferInterpolation
+	.global BattlePalette_StopBlendAndReleaseBufferFar
+	.thumb_func
+BattlePalette_StopBlendAndReleaseBufferFar:
+	overlay_veneer BattlePalette_StopBlendAndReleaseBuffer
+	.global BattleEffect_SetPrimaryBufferValueFar
+	.thumb_func
+BattleEffect_SetPrimaryBufferValueFar:
+	overlay_veneer BattleEffect_SetPrimaryBufferValue

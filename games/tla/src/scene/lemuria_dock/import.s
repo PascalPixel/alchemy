@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.include "games/tla/src/system/overlay.inc"
+	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
 	.global Task_Add
 	.thumb_func

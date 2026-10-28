@@ -2,4 +2,4 @@
 
 #define VENT_TOUCHING Func_02003844
 #define VENT_BOUNCE Func_0200389c
-#include "../../field/shared/object/vent_bounce.c"
+#include "../../field/object/vent_bounce.c"

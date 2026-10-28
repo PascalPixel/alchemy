@@ -30,7 +30,7 @@
 // 2026-10-15 (lane N2): rewritten with the work struct, named constants
 // and comments; the same 326 instructions and differ 16.
 // Resource 0x139 (BattleEffect_CrossedDaggersSheet) needs its name in
-// system/resource/directory.s when this is adopted.
+// gamepak/resource_directory.s when this is adopted.
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"

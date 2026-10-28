@@ -10,7 +10,8 @@ describes for The Broken Seal.
   `level/`, `psynergy_test/`, `psynergy_test_2/` and `shop_test/`. Each is a
   folder holding its [entry table](../../../tbs/glossary.md#entry-table-and-import-table)
   (`entry.s`), its import table (`import.s`), its scene tables and its code;
-  `presets.tsv` and `stream.c` sit beside them.
+  the battle's debug parameter sets and the field sequence's `stream.c` are
+  in their banks' folders.
 - An overlay's code is split into files by function, some still named by
   offset (`level/s004c.c`), and linked as
   [The Lost Age: scene](../scene/README.md) describes.

@@ -2,7 +2,7 @@
 #define ALCHEMY_SOUND_DRIVER_TYPES_H
 
 #include "types.h"
-#include "../lib/static_assert.h"
+#include "../static_assert.h"
 
 #define SOUND_LOCK 0x68736D53
 

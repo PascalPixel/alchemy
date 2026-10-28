@@ -41,7 +41,7 @@
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "effect_step.h"
 #include "io_reg.h"
 #include "iwram_call.h"

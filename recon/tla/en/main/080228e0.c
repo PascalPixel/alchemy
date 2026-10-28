@@ -9,8 +9,8 @@
 // without them the pictures are stored two rows later and that pair differs as
 // well (differ 4).
 #include "types.h"
-#include "animspr.h"
-#include "metadata_lookup.h"
+#include "sprite.h"
+#include "sprite_metadata.h"
 
 struct MetadataSlotState {
   u8 unk00[0x0c];

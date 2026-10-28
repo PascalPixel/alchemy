@@ -4,7 +4,7 @@
 #include "io_reg.h"
 #include "bg_scroll.h"
 #include "battle_display.h"
-#include "iowrite.h"
+#include "io_write.h"
 
 extern const u8 gData_0812cc74[];
 

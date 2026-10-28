@@ -1,4 +1,4 @@
-	.include "games/tla/include/game/ed_asm.h"
+	.include "games/tla/include/ed_asm.h"
 .syntax unified
 	.thumb
 	.section .text.x0200814e,"ax",%progbits

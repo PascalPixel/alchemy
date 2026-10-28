@@ -6,7 +6,7 @@
 // with i * 3, a second index stepped by 3) is strength-reduced to three
 // pointers.
 #include "../../../../games/tla/src/scene/garoh/garoh.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 
 extern const u16 gData_020054ee[];
 extern const u16 gData_020054b8[];

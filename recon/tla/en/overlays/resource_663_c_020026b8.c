@@ -20,7 +20,7 @@
 #include "field_sprite.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
-#include "lib/call.h"
+#include "call.h"
 
 struct SpriteParts {
   u8 unk00[9];

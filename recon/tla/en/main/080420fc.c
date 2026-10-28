@@ -10,7 +10,7 @@
 // four minutes of permuter found nothing better. Twin of The Broken Seal's
 // Text_DrawStringAtOffset with this game's loop barrier.
 #include "mem.h"
-#include "text_render_runtime.h"
+#include "text_render.h"
 #include "window.h"
 #include "ram_buffer.h"
 

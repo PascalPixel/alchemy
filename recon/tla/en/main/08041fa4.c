@@ -8,7 +8,7 @@
 // before the mask is applied. Measured: an empty asm barrier after the
 // window work swaps r5 and r6 (differ 22). Twin of The Broken Seal's
 // Text_DrawMessage.
-#include "text_render_runtime.h"
+#include "text_render.h"
 #include "window.h"
 #include "ram_buffer.h"
 

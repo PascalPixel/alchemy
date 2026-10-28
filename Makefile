@@ -162,7 +162,7 @@ ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
 INCLUDES := -Igames/$(GAME)/include \
-            $(addprefix -Igames/$(GAME)/include/,battle field game gamepak graphics lib menu shop sound system window)
+            $(addprefix -Igames/$(GAME)/include/,battle field game gamepak graphics menu shop sound system window)
 
 # Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game.
 CFLAGS_tbs := -O2 -mthumb -mthumb-interwork -nostdinc -fcall-used-r4
@@ -181,9 +181,9 @@ SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/sr
            games/tla/src/sound/sound.c games/tla/src/sound/tables.c \
            $(wildcard games/tla/src/sound/driver.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
 FLASH_C := $(addprefix games/tbs/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c) \
-           $(addprefix games/tla/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c)
+           $(addprefix games/tla/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm.c games/tbs/src/field/world_map_lines.c \
-           games/tla/src/graphics/tile/cell_picture.c
+           games/tla/src/window/cell_picture.c
 
 ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork
 EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
@@ -439,10 +439,13 @@ test: tools format-check
 # and is skipped.
 CLANG_FORMAT ?= clang-format
 FORMATTED := $(shell git ls-files 'games/tbs/*.c' 'games/tbs/*.h' 'games/tla/include/*/*.h' \
-               games/tla/src/sound/sound.c games/tla/src/sound/tables.c 'games/tla/src/system/save/*.c' \
+               $(addprefix games/tla/include/,call.h ed_asm.h edition.h fixed_math.h lib.h macros.h static_assert.h stddef.h string.h) \
+               games/tla/src/sound/sound.c games/tla/src/sound/tables.c 'games/tla/src/system/save/*.c' 'games/tla/src/gamepak/flash/*.c' \
+               $(addprefix games/tla/src/window/,f042f10.c f042ff0.c find_free_summary_slot.c party_status_close.c play_time.c \
+                 progress_bar.c save_progress.c save_write.c saveload.c saveslot.c scan_part_flags.c) \
                games/tla/src/battle/wait_sync.c games/tla/src/game/ratios_second_input.c \
-               games/tla/src/window/glow_update_sine.c games/tla/src/graphics/display/glyph_widths.h \
-               games/tla/src/graphics/lucky_dice/tables.h games/tla/src/graphics/slots/reel_tables.h)
+               games/tla/src/window/glow_update_sine.c games/tla/src/graphics/credits/glyph_widths.h \
+               games/tla/src/graphics/lucky_dice/tables.h games/tla/src/graphics/lucky_wheels/reel_tables.h)
 .PHONY: format-check
 format-check:
 	@if command -v $(CLANG_FORMAT) >/dev/null; then \

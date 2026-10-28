@@ -10,7 +10,7 @@
 #include "owner_state.h"
 #include "types.h"
 #include "field_event.h"
-#include "battle_session.h"
+#include "battle_action.h"
 
 #define Actor_SetAnimationSpeedFar                                 \
   ((void (*)(s32, s32))Actor_SetAnimationSpeedFar)

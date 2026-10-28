@@ -7,7 +7,7 @@
 // before the text colour. Iwram_ExpandBitRuns is the resident routine at
 // 0x03000314 (the listing's IwramFillWords + 0xb4), which ⚓️'s
 // iwram_call.h does not list yet: adopting needs its entry there and a label
-// in system/runtime_math.s. Left: in the packing loop the native advances
+// in system/iwram_math.s. Left: in the packing loop the native advances
 // pixel by 24 between the store and the spill of out; agscc spills first.
 // Reordering the three statements, out++ apart, or a barrier before it, do
 // not move it. The old draft (another work layout) differed 182.

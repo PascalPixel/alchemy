@@ -1,4 +1,4 @@
-	.include "games/tla/include/game/ed_asm.h"
+	.include "games/tla/include/ed_asm.h"
 	.section .rodata
 @ The subtitle's words, the two sharper stages (see picture_01c.s).
 @ Streams are rounded to four bytes; PACKER rows name the buffer's last writer.

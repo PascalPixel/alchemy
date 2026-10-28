@@ -19,7 +19,7 @@
 #include "battle_work.h"
 #include "battle_display.h"
 #include "battle_event.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "task.h"
 #include "motobj.h"
 #include "ram_buffer.h"

@@ -1,6 +1,6 @@
 #include "scene_tables.h"
 #include "ankohl_ruins.h"
-#include "lib/call.h"
+#include "call.h"
 
 void Func_02002e04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000b78(s32 kind, s32 a, s32 x, s32 y, s32 z, s32 b);

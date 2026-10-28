@@ -3,8 +3,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/gabomba_statue/entry.o"(.text)
-        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/shared/effect/move.o"(.text)
+        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s00b8.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/wander.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/scene_tables.o"(.text)
@@ -40,7 +40,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/s20b0.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200a0f0)
         "*/games/tla/src/scene/gabomba_statue/s22d0.o"(.text)
-        "*/games/tla/src/field/shared/effect/advance_motion.o"(.text)
+        "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200a394)
         "*/games/tla/src/scene/gabomba_statue/s253c.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200aa64)

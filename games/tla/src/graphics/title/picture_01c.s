@@ -1,4 +1,4 @@
-	.include "games/tla/include/game/ed_asm.h"
+	.include "games/tla/include/ed_asm.h"
 	.section .rodata
 @ The subtitle's words in each language, each sheet three 64x64 word pieces
 @ placed side by side in one row, as the title shows them, in four stages

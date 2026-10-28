@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.include "games/tla/src/system/overlay.inc"
+	.include "games/tla/src/system/overlay/imports.inc"
 	.balign 4
 	overlay_veneer Func_02000bdc
 	overlay_veneer Scene_GetEntrances

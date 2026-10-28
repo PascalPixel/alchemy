@@ -12,7 +12,7 @@
 // call where here it is set after the call. Tried: the total's 0 behind a
 // barrier (11: CSE takes escaped's zero from its slot).
 #include "types.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "battle_escape.h"
 #include "owner_state.h"
 #include "main_routine_work.h"

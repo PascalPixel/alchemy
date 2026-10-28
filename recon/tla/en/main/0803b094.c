@@ -1,14 +1,14 @@
 // Misfiled draft (tla-en, 2026-10-18): the listing at 0x0803b094 is
 // Message_Decode (831 instructions), which this file only
 // declares. It holds the text writers after it instead: Text_DrawMessage,
-// Text_DrawString (since adopted, games/tla/src/graphics/text/draw_string.c),
+// Text_DrawString (since adopted, games/tla/src/window/draw_string.c),
 // Text_DrawStringAtOffset, Text_DrawStringInWindow and the number writers
-// (adopted, games/tla/src/graphics/text/render.c), and
+// (adopted, games/tla/src/window/render.c), and
 // Text_DrawPrefixedNumberAtOffset (listing 0x08042274). alchemy-devtools diff
 // against the listing reports differ 1071, which measures nothing.
 
 #include "mem.h"
-#include "text_render_runtime.h"
+#include "text_render.h"
 #include "ram_buffer.h"
 #include "window.h"
 

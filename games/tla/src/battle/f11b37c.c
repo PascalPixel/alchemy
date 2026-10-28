@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_work.h"
-#include "battle_session.h"
+#include "battle_action.h"
 
 extern const s8 gBattlePlacement_StepPairs[];
 void BattleObject_Make(struct BattleObj *actor, s32 unit, s32 x, s32 y);

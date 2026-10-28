@@ -10,7 +10,7 @@
 #include "types.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
-#include "lib/call.h"
+#include "call.h"
 
 u16 Random16Far(void);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

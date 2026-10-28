@@ -13,7 +13,7 @@
 // empty loop and unused Spark are not needed; its one-pass block for BG2X
 // stays. The callbacks are added at 0x480. The four resources are rows
 // 0x18c to 0x18f of the directory, read from the pool, so they need their
-// ResourceId_ names in games/tla/src/system/resource/directory.s before
+// ResourceId_ names in games/tla/src/gamepak/resource_directory.s before
 // adoption.
 
 // Left: the frame. The native reserves 8 bytes and keeps mode at sp+4, a
@@ -27,7 +27,7 @@
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"

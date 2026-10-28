@@ -13,7 +13,7 @@
 // the count test (differ 17), found set later (91), four minutes of permute
 // (no gain).
 #include "types.h"
-#include "battle_party.h"
+#include "battle_side.h"
 
 struct PlacementEntry {
   u8 x;

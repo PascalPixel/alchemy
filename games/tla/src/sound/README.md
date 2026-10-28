@@ -1,7 +1,8 @@
 # The Lost Age: sound
 
 The Lost Age's [sound](../../../tbs/glossary.md#sound) layer and its MusicPlayer2000 sound driver,
-with the driver's handwritten routines under `driver/`.
+with the driver's handwritten routines under `driver/`, and the mixer the game copies into IWRAM
+(`resident_mixer*.s`).
 [Sound](../../../tbs/src/sound/README.md) explains, for The Broken Seal, what
 a sound number means, how a jingle returns to the music and the driver's lock.
 

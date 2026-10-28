@@ -1,4 +1,4 @@
-#include "irqlock.h"
+#include "irq_lock.h"
 #include "types.h"
 #include "io_reg.h"
 #include "task.h"

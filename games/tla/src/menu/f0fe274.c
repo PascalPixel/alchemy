@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "mem.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "window.h"
 #include "iwram_call.h"
 #include "dma.h"

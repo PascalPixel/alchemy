@@ -22,7 +22,7 @@
 #include "fixed_math.h"
 #include "task.h"
 #include "motobj.h"
-#include "battle_session.h"
+#include "battle_action.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 

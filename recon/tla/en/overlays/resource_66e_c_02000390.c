@@ -18,7 +18,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
-#include "lib/call.h"
+#include "call.h"
 
 void Func_02001138(const u8 *message);
 void Func_02001148(s32 speaker, s32 flags);

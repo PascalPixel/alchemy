@@ -15,7 +15,7 @@
 #include "ram_buffer.h"
 #include "fx_scene.h"
 #include "actor.h"
-#include "animspr.h"
+#include "sprite.h"
 
 struct EffectVector {
   s32 x;

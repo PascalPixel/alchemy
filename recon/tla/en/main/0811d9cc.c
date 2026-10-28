@@ -31,8 +31,8 @@
 #include "battle_type.h"
 #include "battle_work.h"
 #include "battle_display.h"
-#include "battle_session.h"
-#include "battle_party.h"
+#include "battle_action.h"
+#include "battle_side.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 

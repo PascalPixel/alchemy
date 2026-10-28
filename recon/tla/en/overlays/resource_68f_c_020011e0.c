@@ -10,7 +10,7 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "frame.h"
-#include "lib/call.h"
+#include "call.h"
 #include "field_effect.h"
 
 struct Actor *Actor_GetById(s32 id);

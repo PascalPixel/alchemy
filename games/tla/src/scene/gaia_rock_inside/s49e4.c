@@ -1,8 +1,8 @@
 #include "../../../../games/tla/include/types.h"
-#include "../../../../games/tla/include/ram_buffer.h"
+#include "system/ram_buffer.h"
 #include "../../../../games/tla/include/map.h"
 #include "../../../../games/tla/include/actor.h"
-#include "../../../../games/tla/include/main_routine_work.h"
+#include "system/main_routine_work.h"
 
 struct Actor *Actor_GetById(u32 id);
 

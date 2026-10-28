@@ -16,7 +16,7 @@
 #include "ram_buffer.h"
 #include "window.h"
 #include "render_input.h"
-#include "text_render_runtime.h"
+#include "text_render.h"
 
 u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 

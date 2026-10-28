@@ -7,7 +7,7 @@
 #include "actor.h"
 #include "event_work.h"
 #include "io_reg.h"
-#include "game/edition.h"
+#include "edition.h"
 
 extern char SceneId_Ov661Room1;
 extern char SceneId_Ov661Room8;

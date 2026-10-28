@@ -42,7 +42,7 @@
 #include "battle_display.h"
 #include "bg_scroll.h"
 #include "iwram_call.h"
-#include "irqlock.h"
+#include "irq_lock.h"
 #include "resource.h"
 
 // Heap slots, as byte offsets into Ram_HeapSlots.

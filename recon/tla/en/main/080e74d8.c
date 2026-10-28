@@ -1,7 +1,7 @@
 // Draft, differ 256 of 358 (2026-10-19, written from the listing; ☀️ has no
 // twin): the controlled actor spins, shrinks and vanishes in a column of 100
 // rising and falling sparks (resource 0x1ef, FieldEffect_ColouredOrbs: adoption
-// names it ColouredOrbs in system/resource/directory.s). Most of what
+// names it ColouredOrbs in gamepak/resource_directory.s). Most of what
 // remains is allocation: agscc hoists the spawn loop's stored 0 into r11,
 // where the ROM keeps the next spark's index there and rematerializes the 0
 // at each store, so the index spills and the stack frame grows by a slot; and the

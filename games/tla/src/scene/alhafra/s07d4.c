@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "main_routine_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -93,8 +94,8 @@ L_02008962:
   t44 = Value1(GameFlag_Test, 0x8b9);
   if (t44 == 0)
     goto L_02008a0a;
-  Call3(Func_02001c3c, 12, 0x380000, 0x1480000);
-  Call3(Actor_ArmCallback, 12, 0, 0);
+  Call3(Func_02001c3c, 12, PIXELS(56), PIXELS(328));
+  Call3(Actor_ArmCallback, 12, FACING_EAST, 0);
   goto L_02008a0a;
 L_0200898a:
   Call2(Actor_SetSpritePriority, 13, 2);
@@ -105,7 +106,7 @@ L_0200898a:
   t51 = Value1(GameFlag_Test, 0x8b3);
   if (t51 == 0)
     goto L_020089c8;
-  Call3(Func_02001c3c, 14, 0x2180000, 0x2f80000);
+  Call3(Func_02001c3c, 14, PIXELS(536), PIXELS(760));
 L_020089c8:
   t53 = Value1(GameFlag_Test, 0x8b4);
   if (t53 == 0)

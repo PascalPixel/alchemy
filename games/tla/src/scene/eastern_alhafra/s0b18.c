@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -40,17 +41,17 @@ s32 Func_02000b18(void) {
   if (Value1(GameFlag_Test, 0x8a7) != 0) {
     if (Value1(GameFlag_Test, 0x905) != 0 &&
         Value1(GameFlag_Test, 0x90f) == 0) {
-      Call3(Func_02004b04, 30, 0xb80000, 0x2680000);
-      Call3(Func_02004b04, 31, 0x880000, 0x2580000);
-      Call3(Func_02004b04, 28, 0xa80000, 0x2480000);
-      Call3(Actor_ArmCallback, 28, 0x4000, 0);
+      Call3(Func_02004b04, 30, PIXELS(184), PIXELS(616));
+      Call3(Func_02004b04, 31, PIXELS(136), PIXELS(600));
+      Call3(Func_02004b04, 28, PIXELS(168), PIXELS(584));
+      Call3(Actor_ArmCallback, 28, FACING_SOUTH, 0);
       Call3(Func_02004c5c, 30, 0, 13);
       Call3(Func_02004c5c, 31, 0x8000, 13);
       Call3(Func_02004c5c, 28, 0, 13);
-      Call3(Func_02004b04, 25, 0x700000, 0x1b00000);
-      Call3(Func_02004b04, 27, 0xb00000, 0x1980000);
-      Call3(Func_02004b04, 29, 0x980000, 0x1780000);
-      Call3(Actor_ArmCallback, 29, 0x4000, 0);
+      Call3(Func_02004b04, 25, PIXELS(112), PIXELS(432));
+      Call3(Func_02004b04, 27, PIXELS(176), PIXELS(408));
+      Call3(Func_02004b04, 29, PIXELS(152), PIXELS(376));
+      Call3(Actor_ArmCallback, 29, FACING_SOUTH, 0);
       Call2(Func_02004c54, 25, 0x4000);
       Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 25), 0);
       Call2(Func_02004c54, 27, 0xc000);
@@ -75,11 +76,11 @@ s32 Func_02000b18(void) {
   if (gMainRoutineWork.entrance == 99) {
     gMainRoutineWork.secondary = 1;
     gMainRoutineWork.entrance = 1;
-    Call3(Func_02004b04, 4, 0x880000, 0x2280000);
-    Call3(Func_02004b04, 26, 0x780000, 0x2280000);
-    Call3(Func_02004b04, 30, 0xb80000, 0x2680000);
-    Call3(Func_02004b04, 31, 0x880000, 0x2580000);
-    Call3(Func_02004b04, 28, 0xa00000, 0x2480000);
+    Call3(Func_02004b04, 4, PIXELS(136), PIXELS(552));
+    Call3(Func_02004b04, 26, PIXELS(120), PIXELS(552));
+    Call3(Func_02004b04, 30, PIXELS(184), PIXELS(616));
+    Call3(Func_02004b04, 31, PIXELS(136), PIXELS(600));
+    Call3(Func_02004b04, 28, PIXELS(160), PIXELS(584));
     Call2(Func_02004c54, 30, 0x4000);
     Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 30), 0);
     Call2(Func_02004c54, 31, 0xc000);
@@ -89,15 +90,15 @@ s32 Func_02000b18(void) {
     Call2(Actor_SetSpritePriority, 27, 2);
     Call2(Actor_SetSpritePriority, 25, 2);
     Call2(Actor_SetSpritePriority, 29, 2);
-    Call3(Func_02004b04, 25, 0xa00000, 0x1880000);
-    Call3(Func_02004b04, 27, 0xb00000, 0x1980000);
-    Call3(Func_02004b04, 29, 0x980000, 0x1780000);
+    Call3(Func_02004b04, 25, PIXELS(160), PIXELS(392));
+    Call3(Func_02004b04, 27, PIXELS(176), PIXELS(408));
+    Call3(Func_02004b04, 29, PIXELS(152), PIXELS(376));
     Call2(Func_02004c54, 27, 0xc000);
     Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 27), 0);
     Call2(Func_02004c54, 29, 0x4000);
     Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 29), 0);
     Call3(Actor_ArmCallback, 25, 0xd000, 0);
-    Call3(Actor_ArmCallback, 29, 0x4000, 0);
+    Call3(Actor_ArmCallback, 29, FACING_SOUTH, 0);
     Call2(Actor_SetModeById, 27, 13);
     Call2(Actor_SetModeById, 29, 13);
     Call2(Actor_SetModeById, 30, 13);

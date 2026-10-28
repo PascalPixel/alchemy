@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "scene.h"
 
 struct EventCounters {
@@ -40,7 +41,7 @@ void Func_02000804(s32 actor) {
   FieldEvent_Wait(8);
   Func_0200351c(8, 0, 5);
   Func_0200067c(0);
-  Func_02003534(8, 0x8000);
+  Func_02003534(8, FACING_WEST);
   FieldEvent_Wait(10);
   Func_02003544(8, 258, 30);
   /* FAKEMATCH: called as returning a value, which the native's argument order

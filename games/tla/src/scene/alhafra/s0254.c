@@ -9,4 +9,4 @@
 #include "call.h"
 s32 Actor_SetSpritePriority();
 
-void Func_02000254(void) { Call2(Actor_SetSpritePriority, 0x19, 2); }
+void Func_02000254(void) { Call2(Actor_SetSpritePriority, 25, 2); }

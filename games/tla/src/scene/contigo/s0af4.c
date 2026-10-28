@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "contigo.h"
 
 struct ContigoGlow {
@@ -107,9 +108,9 @@ void Func_02000af4(void) {
   Contigo_MessagePut(17, 0);
   Contigo_ObjMode(17, 1);
   Contigo_Jump(14, 259, 0);
-  Contigo_ObjTurn(14, 0x8000, 20);
+  Contigo_ObjTurn(14, FACING_WEST, 20);
   Contigo_MessagePut(14, 0);
-  Contigo_ObjFace(15, 0);
+  Contigo_ObjFace(15, FACING_EAST);
   Contigo_MessagePut(15, 0);
   Contigo_ObjMode(14, 3);
   Contigo_ObjModeWait(15, 3);

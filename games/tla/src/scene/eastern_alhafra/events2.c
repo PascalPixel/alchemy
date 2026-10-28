@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
@@ -45,7 +46,7 @@ void Func_0200042c(s32 mode, s32 id) {
   Value4(Func_02004c7c, 0x1600000, 0x2000000, 2, 0);
   Value4(Func_02004c7c, 0x1500000, 0x2100000, 2, 255);
   if (open)
-    Camera_MoveWithinMapBounds(0x1500000, -1, 0x2300000, 1);
+    Camera_MoveWithinMapBounds(PIXELS(336), -1, PIXELS(560), 1);
   Func_02000200(mode, id);
   if (open)
     Camera_FollowActor(gMainRoutineWork.currentOwner, 1);

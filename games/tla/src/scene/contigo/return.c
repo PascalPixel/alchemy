@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "contigo.h"
 
 extern const u8 gData_02004ac0[];
@@ -8,7 +9,7 @@ void Func_02002e18(void) {
     Func_0200406c();
     Func_02004204(0);
     Contigo_CamSpeed(0xcccc, 0x1999);
-    Contigo_CamMove(0xa00000, -1, 0x1700000, 1);
+    Contigo_CamMove(PIXELS(160), -1, PIXELS(368), 1);
     Contigo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Contigo_ObjWalk(gMainRoutineWork.currentOwner, 158, 394);
     Contigo_ObjTurn(8, 0x5000, 0);
@@ -16,7 +17,7 @@ void Func_02002e18(void) {
     wait(1);
     Contigo_ObjSpeed(2, 0xcccc, 0x6666);
     Contigo_ObjWalk(2, 144, 374);
-    Contigo_ObjFace(2, 0xe000);
+    Contigo_ObjFace(2, FACING_NORTHEAST);
     Contigo_Jump(8, 265, 20);
     Contigo_MessageSet((s32)MsgReturnedToMyNewHome);
     Contigo_MessagePut(8, 0);
@@ -26,7 +27,7 @@ void Func_02002e18(void) {
     Contigo_MessagePut(0x1002, 0);
     Contigo_ObjMode(8, 4);
     Contigo_MessagePut(8, 0);
-    Contigo_ObjTurn(2, 0xa000, 40);
+    Contigo_ObjTurn(2, FACING_NORTHWEST, 40);
     Contigo_ObjWalk(2, 180, 364);
     Contigo_Wait(20);
     Contigo_ObjWalk(2, 186, 388);
@@ -37,7 +38,7 @@ void Func_02002e18(void) {
     Contigo_Jump(8, 259, 20);
     Contigo_MessagePut(8, 0);
     Contigo_Jump(2, 257, 0);
-    Contigo_ObjTurn(2, 0xe000, 40);
+    Contigo_ObjTurn(2, FACING_NORTHEAST, 40);
     Contigo_MessagePut(8, 0);
     Contigo_Jump(2, 256, 0);
     Contigo_MessagePut(0x1002, 0);
@@ -52,7 +53,7 @@ void Func_02002e18(void) {
     Contigo_Jump(0, 256, 0);
     Contigo_ObjSpeed(0, 0x13333, 0x9999);
     Contigo_ObjWalk(0, 168, 380);
-    Contigo_ObjFace(0, 0xa000);
+    Contigo_ObjFace(0, FACING_NORTHWEST);
     Contigo_MessagePut(0, 0);
     Contigo_Jump(8, 256, 0);
     Contigo_ObjTurn(8, 0x3000, 0);
@@ -63,10 +64,10 @@ void Func_02002e18(void) {
     Contigo_ObjSpeed(9, 0xcccc, 0x6666);
     Contigo_ObjWalk(9, 182, 378);
     Contigo_ObjWalk(9, 182, 360);
-    Contigo_ObjFace(9, 0x8000);
+    Contigo_ObjFace(9, FACING_WEST);
     Contigo_Jump(9, 265, 20);
     Contigo_MessagePut(0x8009, 0);
-    Contigo_ObjTurn(8, 0, 0);
+    Contigo_ObjTurn(8, FACING_EAST, 0);
     Contigo_ObjEmote(9, 258);
     Contigo_MessagePut(0x8009, 0);
     Contigo_ObjModeWait(8, 3);
@@ -78,20 +79,20 @@ void Func_02002e18(void) {
     Contigo_ObjFace(8, 0x5000);
     Contigo_MessagePut(8, 0);
     Contigo_MessagePut(0x8009, 0);
-    Contigo_ObjFace(8, 0);
+    Contigo_ObjFace(8, FACING_EAST);
     Contigo_ObjModeWait(8, 3);
-    Contigo_ObjTurn(2, 0xa000, 0);
-    Contigo_ObjTurn(gMainRoutineWork.currentOwner, 0x2000, 40);
-    Contigo_ObjTurn(gMainRoutineWork.currentOwner, 0, 0);
-    Contigo_ObjFace(2, 0xe000);
+    Contigo_ObjTurn(2, FACING_NORTHWEST, 0);
+    Contigo_ObjTurn(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
+    Contigo_ObjTurn(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Contigo_ObjFace(2, FACING_NORTHEAST);
     Contigo_MessagePut(0x1002, 0);
     Contigo_Jump(8, 259, 0);
     Contigo_ObjTurn(8, 0x5000, 20);
     Contigo_MessagePut(8, 0);
-    Contigo_ObjTurn(0, 0xe000, 0);
+    Contigo_ObjTurn(0, FACING_NORTHEAST, 0);
     Contigo_ObjTurn(9, 0x5000, 40);
-    Contigo_ObjTurn(9, 0x8000, 0);
-    Contigo_ObjFace(0, 0xa000);
+    Contigo_ObjTurn(9, FACING_WEST, 0);
+    Contigo_ObjFace(0, FACING_NORTHWEST);
     Contigo_MessagePut(0, 0);
     Contigo_ObjEmote(8, 258);
     Contigo_ObjFace(8, 0x3000);
@@ -103,17 +104,17 @@ void Func_02002e18(void) {
     Contigo_ObjFace(8, 0x5000);
     Contigo_ObjMode(8, 4);
     Contigo_MessagePut(8, 0);
-    Contigo_ObjTurn(0, 0xe000, 0);
+    Contigo_ObjTurn(0, FACING_NORTHEAST, 0);
     Contigo_ObjTurn(9, 0x5000, 0);
-    Contigo_ObjTurn(2, 0xa000, 0);
-    Contigo_ObjTurn(gMainRoutineWork.currentOwner, 0x2000, 40);
+    Contigo_ObjTurn(2, FACING_NORTHWEST, 0);
+    Contigo_ObjTurn(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
     Contigo_ObjEmote(0, 258);
     Contigo_Wait(20);
-    Contigo_ObjFace(0, 0xa000);
+    Contigo_ObjFace(0, FACING_NORTHWEST);
     Contigo_MessagePut(0, 0);
-    Contigo_ObjTurn(gMainRoutineWork.currentOwner, 0, 0);
-    Contigo_ObjTurn(9, 0x8000, 0);
-    Contigo_ObjTurn(2, 0xe000, 0);
+    Contigo_ObjTurn(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Contigo_ObjTurn(9, FACING_WEST, 0);
+    Contigo_ObjTurn(2, FACING_NORTHEAST, 0);
     Contigo_Jump(8, 265, 0);
     Contigo_ObjTurn(8, 0x3000, 0);
     Contigo_MessagePut(0x1008, 0);
@@ -122,8 +123,8 @@ void Func_02002e18(void) {
     Contigo_ObjFace(8, 0x5000);
     Contigo_MessagePut(8, 0);
     Contigo_Jump(9, 261, 20);
-    Contigo_ObjTurn(0, 0xe000, 0);
-    Contigo_ObjTurn(8, 0, 80);
+    Contigo_ObjTurn(0, FACING_NORTHEAST, 0);
+    Contigo_ObjTurn(8, FACING_EAST, 80);
     Contigo_Jump(9, 261, 40);
     Contigo_Jump(0, 257, 0);
     Contigo_Jump(gMainRoutineWork.currentOwner, 257, 0);
@@ -140,14 +141,14 @@ void Func_02002e18(void) {
     Contigo_ObjModeWait(9, 3);
     Contigo_MessageOpen(9, 0);
     Contigo_Jump(2, 257, 0);
-    Contigo_ObjTurn(2, 0xa000, 0);
+    Contigo_ObjTurn(2, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-      Contigo_ObjFace(2, 0xe000);
+      Contigo_ObjFace(2, FACING_NORTHEAST);
       Contigo_ObjMode(2, 3);
       Contigo_MessagePut(0x1002, 0);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
-      Contigo_ObjFace(2, 0xe000);
+      Contigo_ObjFace(2, FACING_NORTHEAST);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
       Contigo_ObjMode(2, 4);
       Contigo_MessagePut(0x1002, 0);
@@ -156,14 +157,14 @@ void Func_02002e18(void) {
     Contigo_ObjMode(9, 4);
     Contigo_MessageOpen(9, 0);
     Contigo_Jump(0, 257, 0);
-    Contigo_ObjTurn(0, 0xa000, 0);
+    Contigo_ObjTurn(0, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-      Contigo_ObjFace(0, 0xe000);
+      Contigo_ObjFace(0, FACING_NORTHEAST);
       Contigo_ObjMode(0, 3);
       Contigo_MessagePut(0x1000, 0);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     } else {
-      Contigo_ObjFace(0, 0xe000);
+      Contigo_ObjFace(0, FACING_NORTHEAST);
       ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
       Contigo_ObjMode(0, 4);
       Contigo_MessagePut(0x1000, 0);
@@ -171,7 +172,7 @@ void Func_02002e18(void) {
     Contigo_ObjModeWait(9, 3);
     Contigo_MessagePut(9, 0);
     Contigo_Jump(9, 265, 0);
-    Contigo_ObjFace(9, 0x8000);
+    Contigo_ObjFace(9, FACING_WEST);
     Contigo_MessagePut(9, 0);
     Contigo_ObjEmote(2, 258);
     Contigo_MessagePut(0x1002, 0);
@@ -182,21 +183,21 @@ void Func_02002e18(void) {
     Contigo_MessagePut(0x1000, 0);
     Contigo_Jump(8, 257, 20);
     Contigo_MessagePut(0x1008, 0);
-    Contigo_ObjFace(9, 0x8000);
+    Contigo_ObjFace(9, FACING_WEST);
     Contigo_ObjMode(9, 3);
     Contigo_MessagePut(0x8009, 0);
     Contigo_ObjFace(9, 0x5000);
     Contigo_Jump(9, 265, 0);
     Contigo_MessagePut(9, 0);
-    Contigo_ObjFace(0, 0xa000);
+    Contigo_ObjFace(0, FACING_NORTHWEST);
     Contigo_MessagePut(0, 0);
     Contigo_ObjEmote(2, 258);
-    Contigo_ObjFace(2, 0xa000);
+    Contigo_ObjFace(2, FACING_NORTHWEST);
     Contigo_MessagePut(2, 0);
     Contigo_ObjFace(8, 0x5000);
     Contigo_ObjModeWait(8, 3);
     Contigo_MessagePut(8, 0);
-    Contigo_ObjFace(9, 0x8000);
+    Contigo_ObjFace(9, FACING_WEST);
     Contigo_ObjMode(9, 3);
     Contigo_MessagePut(9, 0);
     Contigo_ObjModeWait(gMainRoutineWork.currentOwner, 3);

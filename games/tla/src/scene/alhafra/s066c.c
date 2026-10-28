@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "main_routine_work.h"
 #include "call.h"
 
@@ -39,12 +40,13 @@ void Func_0200066c(s32 actor) {
       Call2(Func_02001c8c, actor, 0);
       Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 72,
             344);
-      Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
+      Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
       Call1(FieldEvent_Wait, 10);
       Call3(Actor_SetSpeedParameters, actor, 0x10000, 0x8000);
       Call3(Actor_SetPositionAndReset, actor, 56, 328);
-      Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xa000, 0);
-      Call3(Actor_ArmCallback, actor, 0x2000, 0);
+      Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHWEST,
+            0);
+      Call3(Actor_ArmCallback, actor, FACING_SOUTHEAST, 0);
       Call1(FieldEvent_Wait, 20);
       Call2(Motion_SetModeAndWaitAnimation, actor, 3);
       Call1(FieldEvent_Wait, 10);

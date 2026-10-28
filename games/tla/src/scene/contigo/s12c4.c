@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -50,7 +51,7 @@ void Func_020012c4(void) {
 
   Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Test_(0xfc7) == 0) {
-    Func_020040d4_(66, 0x1180000, 0x2980000);
+    Func_020040d4_(66, PIXELS(280), PIXELS(664));
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
       Func_0200406c();
       Func_02004204_(0);

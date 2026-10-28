@@ -48,7 +48,8 @@ void Func_02001ad8(void) {
    * 81 instructions differ in tla-en. */
   size = 0;
   zero = size;
-  Dma_Set((const void *)&zero, work, 0x85000205, REG_DMA3);
+  Dma_Set((const void *)&zero, work,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
   buf = HeapSlot_AllocEwram(56, 0x400);
   Func_02001c24(gField_Tiles679, buf);
   work->vramEntry = Resource_FindFreeEntry();

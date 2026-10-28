@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "text/msg_ids.h"
 #include "call.h"
@@ -44,7 +45,7 @@ void Func_02000208(void) {
     Call3(Actor_Jump, 9, 6, 0);
     Call3(Actor_SetPositionAndCommit, 9, 64, 336);
     Call3(Actor_SetPositionAndReset, 9, 70, 308);
-    Call3(Actor_ArmCallback, 9, 0, 0);
+    Call3(Actor_ArmCallback, 9, FACING_EAST, 0);
     {
       /* FAKEMATCH: as above (differ 2). */
       s32 angle = 160;
@@ -56,7 +57,7 @@ void Func_02000208(void) {
     Call3(Actor_Jump, 10, 6, 0);
     Call3(Actor_SetPositionAndCommit, 10, 90, 288);
     Call3(Actor_SetPositionAndReset, 10, 80, 316);
-    Call2(Func_020010b8, 10, 0);
+    Call2(Func_020010b8, 10, FACING_EAST);
     Actor_GetById(9)->velocityY = 0x40000;
     Call1(FieldEvent_Wait, 10);
     Call1(Func_02001098, (s32)MsgWhereDoYouThink);
@@ -68,9 +69,9 @@ void Func_02000208(void) {
     Call2(Func_020010b8, 10, 0xb000);
     Call2(Actor_SetModeById, 10, 3);
     Call2(Func_020010a8, 10, 0);
-    Call3(Actor_ArmCallback, 10, 0, 0);
+    Call3(Actor_ArmCallback, 10, FACING_EAST, 0);
     Value3(Func_020010c8, 9, 264, 0);
-    Call3(Actor_ArmCallback, 9, 0, 20);
+    Call3(Actor_ArmCallback, 9, FACING_EAST, 20);
     Call2(Func_020010a8, 0x4009, 0);
     Call2(Func_020010a8, 10, 0);
     Func_02000ff8(1, 16, 1, 1, 3, 19);

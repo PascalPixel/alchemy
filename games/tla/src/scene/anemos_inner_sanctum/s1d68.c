@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -24,8 +25,8 @@ void Func_02001d68(void) {
   Func_02003488(0);
   Actor_SetModeById(9, 2);
   object->y = -0x400000;
-  Func_020033e0_(9, 0x2d80000, 0x780000);
-  Func_020033e0_(gMainRoutineWork.currentOwner, 0x2d80000, 0x780000);
+  Func_020033e0_(9, PIXELS(728), PIXELS(120));
+  Func_020033e0_(gMainRoutineWork.currentOwner, PIXELS(728), PIXELS(120));
   Actor_GetById(gMainRoutineWork.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;

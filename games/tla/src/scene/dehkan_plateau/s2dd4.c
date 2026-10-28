@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
@@ -29,7 +30,7 @@ void Func_02002dd4(void) {
   Call1(Func_02003d78, 0);
   Call2(Actor_WatchAndSetScript, gMainRoutineWork.currentOwner, 16);
   ((struct Actor *)Value0((s32 (*)())Func_02003cf8))->motionFlags = 0;
-  Call4(Camera_MoveWithinMapBounds, 0x2f80000, 0x200000, 0xcc0000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(760), PIXELS(32), PIXELS(204), 1);
   Func_02003cf0();
   Call3(Actor_SetAngleToward, 16, gMainRoutineWork.currentOwner, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
@@ -40,7 +41,7 @@ void Func_02002dd4(void) {
   actor->velocityY = 0x80000;
   Call2(Actor_SetSingleChildFlags,
         Value1((s32 (*)())Actor_GetById, 16), 0);
-  Call3(Actor_SetPositionAndReset, 16, 0x2f8, 200);
+  Call3(Actor_SetPositionAndReset, 16, 760, 200);
   Call2(Actor_SetSingleChildFlags,
         Value1((s32 (*)())Actor_GetById, 16), 1);
   Call1(FieldEvent_Wait, 20);
@@ -48,7 +49,7 @@ void Func_02002dd4(void) {
   actor->velocityY = 0x80000;
   Call2(Actor_SetSingleChildFlags,
         Value1((s32 (*)())Actor_GetById, 16), 0);
-  Call3(Actor_SetPositionAndReset, 16, 0x318, 200);
+  Call3(Actor_SetPositionAndReset, 16, 792, 200);
   Call2(Actor_SetSingleChildFlags,
         Value1((s32 (*)())Actor_GetById, 16), 1);
   Call3(Func_02002698, 9, 16, 0x210);
@@ -56,7 +57,7 @@ void Func_02002dd4(void) {
   actor->velocityY = 0x80000;
   Call2(Actor_SetSingleChildFlags,
         Value1((s32 (*)())Actor_GetById, 16), 0);
-  Call3(Actor_SetPositionAndReset, 16, 0x338, 200);
+  Call3(Actor_SetPositionAndReset, 16, 824, 200);
   Call2(Actor_SetSingleChildFlags,
         Value1((s32 (*)())Actor_GetById, 16), 1);
   Call1(FieldEvent_Wait, 20);

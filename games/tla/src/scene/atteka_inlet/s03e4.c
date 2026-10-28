@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
@@ -32,7 +33,7 @@ void Func_020003e4(void) {
     Call1(Func_02001108, 0);
     Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
     Call2(Func_020010d0, 0x26666, 0x4ccc);
-    Call4(Camera_MoveWithinMapBounds, 0x2080000, -1, 0x1740000, 1);
+    Call4(Camera_MoveWithinMapBounds, PIXELS(520), -1, PIXELS(372), 1);
     Func_020010e0();
     Value3(Func_020010c8, 23, 264, 0);
     Call3(Actor_ArmCallback, 23, 0x3000, 20);
@@ -42,14 +43,14 @@ void Func_020003e4(void) {
     Call2(Func_020010a8, 0x2017, 0);
     Func_020010e8()->motionFlags = 0;
     Call2(Func_020010d0, 0x4cccc, 0x9999);
-    Call4(Camera_MoveWithinMapBounds, 0x1b80000, 0x200000, 0x1700000, 1);
+    Call4(Camera_MoveWithinMapBounds, PIXELS(440), PIXELS(32), PIXELS(368), 1);
     Func_020010e0();
     Call1(FieldEvent_Wait, 40);
-    Call4(Camera_MoveWithinMapBounds, 0x1b00000, 0x200000, 0xe80000, 1);
+    Call4(Camera_MoveWithinMapBounds, PIXELS(432), PIXELS(32), PIXELS(232), 1);
     Func_020010e0();
     Call1(FieldEvent_Wait, 40);
     Call2(Func_020010d0, 0x4cccc, 0x9999);
-    Call4(Camera_MoveWithinMapBounds, 0x2080000, 0x200000, 0x1740000, 1);
+    Call4(Camera_MoveWithinMapBounds, PIXELS(520), PIXELS(32), PIXELS(372), 1);
     Func_020010e0();
     Call1(FieldEvent_Wait, 20);
     Call2(Func_020010b8, 23, 0x3000);

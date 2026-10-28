@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "text/msg_ids.h"
 
 s32 *Actor_GetById(s32 id);
@@ -18,7 +19,7 @@ void Func_02000430(s32 actor) {
   object[6] = 0x10000;
   Func_02002adc((s32)MsgChampa07);
   Func_02002af4(actor, 0);
-  Func_02002b04(actor, 0);
+  Func_02002b04(actor, FACING_EAST);
   Actor_SetActionCallback(object, 8);
 }
 

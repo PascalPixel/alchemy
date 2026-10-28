@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -186,7 +187,7 @@ void Func_020021e8(void) {
   Func_020021b4();
   Pause(10);
   Actor_Launch(24, 6, 16);
-  Actor_PlaceFacing(24, 222 << 18, 168 << 16, 0x4000);
+  Actor_PlaceFacing(24, 222 << 18, 168 << 16, FACING_SOUTH);
   Pause(20);
   Flag_Set(0x86c);
   Func_02003c30();
@@ -227,7 +228,7 @@ void Func_02002390(void) {
   Actor_MoveTo(25, 200, 104);
   Actor_SetSingleChildFlags(Actor_Get(25), 1);
   Actor_MoveTo(25, 294, 104);
-  Actor_PlaceFacing(25, 212 << 17, 208 << 15, 0x4000);
+  Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
   Flag_Set(0x86e);
   Func_02003c30();
 }
@@ -244,7 +245,7 @@ void Func_02002458(void) {
   Camera_SetBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);
-  Actor_ArmCallback(25, 0, 20);
+  Actor_ArmCallback(25, FACING_EAST, 20);
   Func_02002604();
   Actor_MoveTo(25, 440, 152);
   Actor_MoveTo(25, 456, 168);
@@ -255,7 +256,7 @@ void Func_02002458(void) {
   Func_020021b4();
   Actor_MoveTo(25, 456, 216);
   Actor_MoveTo(25, 584, 216);
-  Actor_PlaceFacing(25, 154 << 18, 140 << 17, 0x4000);
+  Actor_PlaceFacing(25, 154 << 18, 140 << 17, FACING_SOUTH);
   Flag_Set(0x86f);
   Func_02003c30();
 }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -72,7 +73,7 @@ void Func_02000dc4(void) {
     if (GameFlag_Test(0x9b1)) {
       s32 speed = 0xc0;
 
-      Func_02001068_(23, 0x1f80000, 0x1680000, speed << 6);
+      Func_02001068_(23, PIXELS(504), PIXELS(360), speed << 6);
     }
     Actor_WatchAndSetScript(19, party->currentOwner);
     Actor_WatchAndSetScript(20, party->currentOwner);
@@ -89,8 +90,8 @@ void Func_02000ed0(void) {
     Func_02001060(10, 0, 0);
     Func_02001060(11, 0, 0);
   } else if (GameFlag_Test(0x9b0)) {
-    Func_02001068_(9, 70 << 16, 308 << 16, 0);
-    Func_02001068_(10, 80 << 16, 316 << 16, 0);
+    Func_02001068_(9, 70 << 16, 308 << 16, FACING_EAST);
+    Func_02001068_(10, 80 << 16, 316 << 16, FACING_EAST);
     Func_02000ff8(1, 16, 1, 1, 3, 19);
     Func_02000ff8(1, 16, 1, 1, 4, 19);
     Func_02000ff8(1, 16, 1, 1, 4, 20);

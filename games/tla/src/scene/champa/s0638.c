@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -67,16 +68,16 @@ void Func_02000638(void) {
          * the native has (one reordered row as a plain argument). */
         s32 angle = 0xc000;
 
-        Call4(Func_02002aa4, 0x1d, 0x13a0000, 0x2a70000, angle);
+        Call4(Func_02002aa4, 29, PIXELS(314), PIXELS(679), angle);
       }
       Call3(Func_02002aec, 0x1d, 0, 5);
-      Call3(Actor_SetPositionAndReset, 4, 0x13a, 0x244);
-      Call3(Actor_ArmCallback, 4, 0x4000, 0);
-      Call1(FieldEvent_Wait, 0xa);
-      Call2(Camera_FollowActor, 0x1d, 1);
+      Call3(Actor_SetPositionAndReset, 4, 314, 580);
+      Call3(Actor_ArmCallback, 4, FACING_SOUTH, 0);
+      Call1(FieldEvent_Wait, 10);
+      Call2(Camera_FollowActor, 29, 1);
       Func_02002b3c();
-      Call1(FieldEvent_Wait, 0x28);
-      Call3(Actor_SetPositionAndReset, 0x1d, 0x13a, 0x270);
+      Call1(FieldEvent_Wait, 40);
+      Call3(Actor_SetPositionAndReset, 29, 314, 624);
       Func_02002b1c(0x1d, 0x101, 0x1e);
       FieldMessage_ShowAtActor(0x1d, 0);
       t17 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
@@ -91,8 +92,8 @@ void Func_02000638(void) {
       }
       Func_02002b1c(0x1d, 0x109, 0x1e);
       Call4(Func_02002b74, 0x1e, 0x10, 0, 0x4000);
-      Call1(Actor_WaitForMoveById, 0x1e);
-      Call1(FieldEvent_Wait, 0x14);
+      Call1(Actor_WaitForMoveById, 30);
+      Call1(FieldEvent_Wait, 20);
       {
         /* FAKEMATCH: the native loads the emote and the frames before the
          * actor; pinned to their argument registers they are loaded first (the
@@ -104,32 +105,32 @@ void Func_02000638(void) {
         Func_02002b1c(0x1e, emote, frames);
       }
       Call3(Func_02002aec, 0x1e, 0, 5);
-      Call2(Motion_SetVarCbAndRefresh, 0x1d, 2);
+      Call2(Motion_SetVarCbAndRefresh, 29, 2);
       Call1(FieldEvent_Wait, 5);
       Call3(Func_02002aec, 0x1d, 0, 5);
-      Call2(Motion_SetModeAndWaitAnimation, 0x1e, 3);
-      Call1(FieldEvent_Wait, 0xa);
-      Call2(Func_02002b04, 0x1d, 0x4000);
-      Call1(FieldEvent_Wait, 0x14);
-      Call2(Func_02002b04, 0x1d, 0xc000);
-      Call1(FieldEvent_Wait, 0x14);
-      Call2(Func_02002b04, 0x1d, 0x4000);
-      Call1(FieldEvent_Wait, 0x14);
-      Call2(Func_02002b04, 0x1d, 0xc000);
+      Call2(Motion_SetModeAndWaitAnimation, 30, 3);
+      Call1(FieldEvent_Wait, 10);
+      Call2(Func_02002b04, 29, FACING_SOUTH);
+      Call1(FieldEvent_Wait, 20);
+      Call2(Func_02002b04, 29, FACING_NORTH);
+      Call1(FieldEvent_Wait, 20);
+      Call2(Func_02002b04, 29, FACING_SOUTH);
+      Call1(FieldEvent_Wait, 20);
+      Call2(Func_02002b04, 29, FACING_NORTH);
       Call3(Func_02002aec, 0x1d, 0, 5);
-      Call3(Actor_TurnToFaceEachOther, 0x1e, 4, 0);
-      Call1(FieldEvent_Wait, 0x28);
-      Call3(Actor_ArmCallback, 0x1e, 0x4000, 0);
-      Call3(Actor_ArmCallback, 4, 0x4000, 0);
-      Call1(FieldEvent_Wait, 0x14);
-      Call2(Motion_SetModeAndWaitAnimation, 0x1e, 4);
+      Call3(Actor_TurnToFaceEachOther, 30, 4, 0);
+      Call1(FieldEvent_Wait, 40);
+      Call3(Actor_ArmCallback, 30, FACING_SOUTH, 0);
+      Call3(Actor_ArmCallback, 4, FACING_SOUTH, 0);
+      Call1(FieldEvent_Wait, 20);
+      Call2(Motion_SetModeAndWaitAnimation, 30, 4);
       Call3(Func_02002aec, 0x1e, 0, 5);
       Func_02002b1c(0x1d, 0x107, 0x1e);
-      Call3(Actor_Jump, 0x1d, 2, 0);
+      Call3(Actor_Jump, 29, 2, 0);
       Call3(Func_02002aec, 0x1d, 0, 5);
       Func_02002b1c(0x1e, 0x101, 0x1e);
       Call3(Func_02002aec, 0x1e, 0, 5);
-      Call2(Motion_SetVarCbAndRefresh, 0x1d, 2);
+      Call2(Motion_SetVarCbAndRefresh, 29, 2);
       Call1(FieldEvent_Wait, 5);
       Call3(Func_02002aec, 0x1d, 0, 5);
       Call3(Func_02002aec, 0x1d, 0, 5);
@@ -142,12 +143,12 @@ void Func_02000638(void) {
       Call3(Func_02002aec, 0x1e, 0, 5);
       Func_02002b1c(0x1d, 0x102, 0x14);
       Call3(Func_02002aec, 0x1d, 0, 5);
-      Call2(Motion_SetModeAndWaitAnimation, 0x1e, 3);
-      Call1(FieldEvent_Wait, 0xa);
+      Call2(Motion_SetModeAndWaitAnimation, 30, 3);
+      Call1(FieldEvent_Wait, 10);
       Call3(Func_02002aec, 0x1e, 0, 5);
       Call3(Func_02002aec, 0x1d, 0, 5);
-      Call2(Func_02002b04, 0x1d, 0x4000);
-      Call1(FieldEvent_Wait, 0xa);
+      Call2(Func_02002b04, 29, FACING_SOUTH);
+      Call1(FieldEvent_Wait, 10);
       {
         s32 b = 0x108, c = 0x1e;
         /* FAKEMATCH: the native schedule sets the first argument last. */
@@ -155,53 +156,53 @@ void Func_02000638(void) {
         Call3(Func_02002b1c, 0x1e, b, c);
       }
       Call3(Func_02002aec, 0x1e, 0, 5);
-      Call2(Func_02002b04, 0x1d, 0xc000);
-      Call1(FieldEvent_Wait, 0xa);
+      Call2(Func_02002b04, 29, FACING_NORTH);
+      Call1(FieldEvent_Wait, 10);
       Func_02002b1c(0x1d, 0x108, 0x1e);
       Call3(Func_02002aec, 0x1d, 0, 5);
-      Call2(Motion_SetModeAndWaitAnimation, 0x1e, 3);
-      Call1(FieldEvent_Wait, 0xa);
-      Call2(Motion_SetVarCbAndRefresh, 0x1d, 2);
+      Call2(Motion_SetModeAndWaitAnimation, 30, 3);
+      Call1(FieldEvent_Wait, 10);
+      Call2(Motion_SetVarCbAndRefresh, 29, 2);
       Call1(FieldEvent_Wait, 5);
       Call3(Func_02002aec, 0x1d, 0, 5);
       Func_0200060c();
-      Call3(Actor_TurnToFaceEachOther, 0x1e, 4, 0);
-      Call1(FieldEvent_Wait, 0x28);
-      Call3(Actor_ArmCallback, 0x1e, 0x4000, 0);
-      Call3(Actor_ArmCallback, 4, 0x4000, 0);
-      Call1(FieldEvent_Wait, 0x14);
+      Call3(Actor_TurnToFaceEachOther, 30, 4, 0);
+      Call1(FieldEvent_Wait, 40);
+      Call3(Actor_ArmCallback, 30, FACING_SOUTH, 0);
+      Call3(Actor_ArmCallback, 4, FACING_SOUTH, 0);
+      Call1(FieldEvent_Wait, 20);
       Call3(Func_02002aec, 0x1e, 0, 5);
-      Call2(Motion_SetModeAndWaitAnimation, 0x1d, 3);
-      Call1(FieldEvent_Wait, 0xa);
+      Call2(Motion_SetModeAndWaitAnimation, 29, 3);
+      Call1(FieldEvent_Wait, 10);
       Call3(Func_02002aec, 0x1d, 0, 5);
       Func_02002b1c(0x1e, 0x100, 0x1e);
       Call3(Func_02002aec, 0x1e, 0, 5);
-      Call2(Motion_SetModeAndWaitAnimation, 0x1d, 3);
-      Call1(FieldEvent_Wait, 0xa);
+      Call2(Motion_SetModeAndWaitAnimation, 29, 3);
+      Call1(FieldEvent_Wait, 10);
       Call3(Func_02002aec, 0x1d, 0, 5);
       Call2(Actor_SetModeById, 4, 3);
-      Call2(Motion_SetModeAndWaitAnimation, 0x1e, 3);
-      Call1(FieldEvent_Wait, 0xa);
-      Call2(Motion_SetModeAndWaitAnimation, 0x1d, 3);
-      Call1(FieldEvent_Wait, 0xa);
+      Call2(Motion_SetModeAndWaitAnimation, 30, 3);
+      Call1(FieldEvent_Wait, 10);
+      Call2(Motion_SetModeAndWaitAnimation, 29, 3);
+      Call1(FieldEvent_Wait, 10);
       Call2(Camera_FollowActor, 4, 1);
-      Call3(Actor_SetSpeedParameters, 0x1d, 0x13333, 0x9999);
-      Call3(Actor_OffsetPositionAndReset, 0x1d, 0, 0x64);
-      Call1(FieldEvent_Wait, 0xa);
-      Call3(Actor_TurnToFaceEachOther, 4, 0x1e, 0);
-      Call1(FieldEvent_Wait, 0x1e);
-      Call2(Actor_SetModeById, 0x1e, 3);
+      Call3(Actor_SetSpeedParameters, 29, 0x13333, 0x9999);
+      Call3(Actor_OffsetPositionAndReset, 29, 0, 100);
+      Call1(FieldEvent_Wait, 10);
+      Call3(Actor_TurnToFaceEachOther, 4, 30, 0);
+      Call1(FieldEvent_Wait, 30);
+      Call2(Actor_SetModeById, 30, 3);
       Call2(Motion_SetModeAndWaitAnimation, 4, 3);
-      Call1(FieldEvent_Wait, 0x1e);
-      Call2(Actor_SetModeById, 0x1e, 2);
+      Call1(FieldEvent_Wait, 30);
+      Call2(Actor_SetModeById, 30, 2);
       t106 = Value1(Actor_GetById, 4);
       if (t106 != 0) {
-        Call3(Actor_ResetAndSetPosition, 0x1e, FIELD_AT(t106, s16, 10),
+        Call3(Actor_ResetAndSetPosition, 30, FIELD_AT(t106, s16, 10),
               FIELD_AT(t106, s16, 18));
       }
-      Call1(Actor_WaitForMoveById, 0x1e);
-      Call3(Func_02002a9c, 0x1e, 0, 0);
-      Call3(Func_02002a9c, 0x1d, 0, 0);
+      Call1(Actor_WaitForMoveById, 30);
+      Call3(Func_02002a9c, 30, 0, 0);
+      Call3(Func_02002a9c, 29, 0, 0);
       Func_02002a4c();
     }
   }

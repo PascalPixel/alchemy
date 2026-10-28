@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "bg_scroll.h"
@@ -73,19 +74,19 @@ void Func_02002cf0(void) {
 
   Func_02005e14();
   Func_02005f2c(0);
-  REG_DISPCNT &= ~0x100;
+  REG_DISPCNT &= ~DISPCNT_BG0_ON;
   /* FAKEMATCH(one-pass): BG0CNT's value in a block of its own, built before
    * its address; as a plain block, 2 of 446 instructions differ in tla-en. */
   do {
-    s32 control = 0x400;
+    s32 control = BGCNT_SCREEN_BASE(4);
 
     REG_BG0CNT = control;
   } while (0);
   Func_02005d24(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                 buffer);
-  Dma_Set(buffer, (void *)0x6000000, 0x84000200, (volatile u32 *)0x040000d4);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)0x6002000, 0x800);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
   Func_02005d24(Resource_GetTableEntry((s32)&ResourceId_LightningMap), buffer);
   i = 0;
@@ -99,8 +100,8 @@ mask:
   cell = buffer;
   i = 0;
 row:
-  Dma_Set(cell, (void *)(0x6002000 + (i << 6)), 0x84000002,
-          (volatile u32 *)0x040000d4);
+  Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + (i << 6)), DMA_COPY_WORDS(2),
+          REG_DMA3);
   i++;
   cell += 4;
   if (i != 16)
@@ -144,12 +145,13 @@ row:
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02005ee4();
   Call2((void (*)())Func_02005ed4, 0x10000, 0x2000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1380000, -1, 0x2a80000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(312), -1, PIXELS(680),
+        1);
   Func_02005ee4();
   Actor_GetById(11)->update = 0;
   Actor_SetPartAttribute(Actor_GetById(11), 6);
-  REG_BLDALPHA = 0x1010;
-  REG_BLDCNT = 0x3f41;
+  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = 0xff98;
   gBgScroll[0].y = 42;
   wait(30);
@@ -161,13 +163,13 @@ row:
   Func_02005f0c(0x7fff, 0);
   Func_02005f04(0x10003, 0);
   Func_02005f14(8);
-  REG_DISPCNT |= 0x100;
-  Func_02005d9c(0x40, 78, 18, 105, 3, 3);
+  REG_DISPCNT |= DISPCNT_BG0_ON;
+  Func_02005d9c(64, 78, 18, 105, 3, 3);
   Func_02005dcc(0x50000, 0x70000, 0x10000);
   Call3((void (*)())Func_02005dcc, -1, -1, 0xe666);
   i = 0;
 fade:
-  REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
+  REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
   wait(1);
   i++;
   if (i != 32)
@@ -178,7 +180,7 @@ fade:
   wait(30);
   Func_02005f94(148);
   Func_02002aa8(0x1380000, 0x2d00000);
-  Call6((void (*)())Func_02005d9c, 0x40, 78, 18, 105, 3, 5);
+  Call6((void (*)())Func_02005d9c, 64, 78, 18, 105, 3, 5);
   Func_02005ed4(0x18000, 0x3000);
   Func_02005eec(10, 1);
   Func_02005ee4();
@@ -196,12 +198,12 @@ fade:
   Func_02005d34();
   Func_02005d2c();
   Func_02005e04(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
-  REG_BLDALPHA = 0x1008;
-  REG_BLDCNT = 0x3f10;
+  REG_BLDALPHA = BLEND_ALPHA(8, 16);
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   /* FAKEMATCH(barrier): DISPCNT's address built after the blend store;
    * without it, 2 of 446 instructions differ in tla-en. */
   asm volatile("");
-  REG_DISPCNT |= 0x100;
+  REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   GameFlag_SetBit(0x89a);

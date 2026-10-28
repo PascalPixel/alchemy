@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "local.h"
 
 void Func_02000974(void) {
@@ -8,11 +9,11 @@ void Func_02000974(void) {
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 16, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_ArmCallback(16, 0, 0);
+  Actor_ArmCallback(16, FACING_EAST, 0);
   Motion_SetModeAndWaitAnimation(16, 3);
-  Actor_ArmCallback_(16, 0x8000, 0);
+  Actor_ArmCallback_(16, FACING_WEST, 0);
   Motion_SetModeAndWaitAnimation(16, 3);
-  Actor_ArmCallback_(16, 0xe000, 0);
+  Actor_ArmCallback_(16, FACING_NORTHEAST, 0);
   Motion_SetModeAndWaitAnimation(16, 3);
   Func_02001d6c(16, 0x102, 20);
   Func_02001d54(16, 0);
@@ -33,7 +34,7 @@ void Func_02000a68(void) {
 
   Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
   if (GameFlag_Test(0xf9b) == 0) {
-    Func_02001d04_(65, 0x1780000, 0x1780000);
+    Func_02001d04_(65, PIXELS(376), PIXELS(376));
     if (leader->x >> 20 == 23 && leader->z >> 20 == 23) {
       Func_02001cc4();
       Func_02001dcc(0);
@@ -52,7 +53,7 @@ void Func_02000af8(void) {
 
   Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
   if (GameFlag_Test(0xf9a) == 0) {
-    Func_02001d04_(64, 0x2580000, 0x1980000);
+    Func_02001d04_(64, PIXELS(600), PIXELS(408));
     if (leader->x >> 20 == 37 && leader->z >> 20 == 25) {
       Func_02001cc4();
       Func_02001dcc(0);
@@ -73,7 +74,7 @@ void Func_02000ba8(void) {
 
   Func_02001e0c_(67, 38, 11, 6, 67, 8, 1);
   if (GameFlag_Test(0xf9e) == 0) {
-    Func_02001d04_(64, 0xc80000, 0x980000);
+    Func_02001d04_(64, PIXELS(200), PIXELS(152));
     if (leader->x >> 20 == 12 && leader->z >> 20 == 9) {
       Func_02001cc4();
       Func_02001dcc(0);
@@ -118,7 +119,7 @@ s32 Func_02000cb4(void) {
     Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
     Func_02001d44((s32)&MsgWhyDoesMy);
     Func_02001d54(9, 0);
-    Actor_ArmCallback_(9, 0x2000, 0);
+    Actor_ArmCallback_(9, FACING_SOUTHEAST, 0);
   }
   Func_02001ccc();
   return 0;

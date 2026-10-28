@@ -34,18 +34,18 @@ void Func_020007b4(s32 mode, s32 step) {
     second->y += -0x1c0000;
     wait(1);
     entry = &gResourceTableEntries[secondSprite->vramBlock];
-    second->watchedObject = (void *)(entry->offset + 0x6010000);
+    second->watchedObject = (void *)(entry->offset + OBJ_VRAM0);
     entry = &gResourceTableEntries[firstSprite->vramBlock];
-    first->watchedObject = (void *)(entry->offset + 0x6010000);
+    first->watchedObject = (void *)(entry->offset + OBJ_VRAM0);
     Dma_Fill32(step, second->watchedObject, entry->size);
-    Dma_Set(first->watchedObject, second->watchedObject, 0x840000c0,
-            (volatile u32 *)0x040000d4);
+    Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(192),
+            REG_DMA3);
     first->watchedObject = (void *)((u8 *)first->watchedObject + 0x300);
     second->watchedObject = (void *)((u8 *)second->watchedObject + 0x300);
   } else if (step <= 5) {
     second->y += 0x53333;
-    Dma_Set(first->watchedObject, second->watchedObject, 0x84000030,
-            (volatile u32 *)0x040000d4);
+    Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(48),
+            REG_DMA3);
     first->watchedObject = (void *)((u8 *)first->watchedObject + 0x100);
     second->watchedObject = (void *)((u8 *)second->watchedObject + 0x100);
   }

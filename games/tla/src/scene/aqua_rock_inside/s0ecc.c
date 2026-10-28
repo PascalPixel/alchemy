@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "local.h"
 #include "io_write_queue.h"
 
@@ -13,7 +14,7 @@ void Func_02000ecc(s32 unused, s32 id) {
 
     Func_02003d7c();
     Func_02003eac(0);
-    Actor_ArmCallback_(gMainRoutineWork.currentOwner, 0x4000, 0);
+    Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     Func_02003ef4(0x22d);
     Actor_SetModeById(9, 2);
     Func_02003d24_(114, 39, 1, 2, 113, 39);

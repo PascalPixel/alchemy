@@ -12,13 +12,13 @@ extern const u8 *gMenuTitlePictures[];
 /// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
 /// valid VRAM slot.
 void MenuTitle_Load(s32 picture, s32 slot) {
-  void *stagingBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   const u8 *resource = gMenuTitlePictures[picture];
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz(resource, stagingBuffer);
     VramCache_Load(slot, 0x200, stagingBuffer);
-    FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+    HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
 }
 
@@ -71,7 +71,7 @@ void MenuTitle_Bob(struct WindowSprite *obj) {
 /// when `remap` is nonzero.
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
   s32 size = 1024;
-  void *buffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, size);
+  void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
   u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
@@ -79,7 +79,7 @@ void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
     if (remap != 0)
       SpriteColor_RemapPixelsFar(buffer, 768);
     VramCache_Load(slot, size, buffer);
-    FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+    HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
 }
 
@@ -340,10 +340,10 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   Icon_DrawMisc(resource);
   result = VramCache_Reload(index, (s32)work->tiles);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -355,10 +355,10 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   ItemIcon_Compose(resource, 0x1a);
   result = VramCache_Reload(index, (s32)work->tiles);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -372,11 +372,11 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   slot = index;
   Ability_LoadGlyph(resource, 0, &slot, &tile, 1);
   result = VramCache_Reload(index, (s32)work->tiles);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -425,7 +425,7 @@ UNUSED void Icon_Decompress(GlyphTransfer *work) {
                    Tile_Decompress4bppCodeSize);
   ((void (*)(const void *, u8 *))((union HeapState *)gHeapSlots)
        ->slots[HEAP_SLOT_RAM_CODE_TEMP])(work->encoded, work->input);
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE_TEMP);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
 // How the link timer's heading is drawn: Spanish and French at a pixel
@@ -455,7 +455,7 @@ struct Window *Link_CreateCountdownLabelWindow(void) {
 /// use it.
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
-      AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
   u8 **encoded = &buffer->encoded;
   void *target = (void *)((u32)offsetTable + offsetTable[icon]);
@@ -464,7 +464,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   *encoded = target;
   Decompress_ByteLz(target, buffer);
   result = VramCache_Reload(slotIndex, (s32)buffer);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
 
@@ -473,7 +473,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
 /// row's icons share `palette`: each colour index first met takes the next
 /// BG palette entry, which gets that index's sprite palette colour. Past 64
 /// entries every new index takes entry 64, whose colour is not set here.
-/// HEAP_SLOT_GLYPH_TRANSFER holds the decoded icon and a 1 KB Alloc block
+/// HEAP_SLOT_GLYPH_TRANSFER holds the decoded icon and a 1 KB Heap_Alloc block
 /// the remapped pixels; both are freed before it returns.
 void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
   GlyphTransfer *decoded;
@@ -484,11 +484,11 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
   s32 i;
   u32 index;
 
-  decoded = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*decoded));
+  decoded = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*decoded));
   font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Decompress_ByteLz(decoded->encoded, decoded);
-  remapped = Alloc(0x400);
+  remapped = Heap_Alloc(0x400);
   source = decoded->input;
   destination = remapped;
   for (i = 0; i < 0x400; i++) {
@@ -503,8 +503,8 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
     *destination++ = palette->slot[index];
   }
   Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY32(256), REG_DMA3);
-  Free(remapped);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  Heap_Release(remapped);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 /// Loads the command row's icon `index` as command icon `icon`: as BG1 tiles

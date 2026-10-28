@@ -17,7 +17,7 @@
 ///                   Task_Add
 ///   Screen          fade.c: ScreenFade_Start; render.c: Oam_BuildBuffer;
 ///                   vram_cache.c: VramCache_Load
-///   Memory          heap.c: AllocHeapSlot, Alloc
+///   Memory          heap.c: HeapSlot_Alloc, Heap_Alloc
 ///   3D              transform.c: Transform_ApplyRotationTranslation,
 ///                   Transform_ProjectPoint
 ///   Saving          save.c: Save_WriteRecord,

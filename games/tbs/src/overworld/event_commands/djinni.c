@@ -302,7 +302,7 @@ void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateEffectSlots(); }
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
-  work = AllocHeapSlot(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectWork));
+  work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectWork));
   Dma_Fill32(0, work, sizeof(struct FieldEffectWork));
   // 3200 is TASK_PASS_FRAME: the slots update once a frame.
   Task_Add(FieldEffect_UpdateAllSlots, TASK_PASS_FRAME);
@@ -322,7 +322,7 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
     if (effect->active != 0)
       FieldEffect_ClearOwnedSlot(effect);
   }
-  FreeHeapSlot(HEAP_SLOT_FIELD_EFFECT);
+  HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);
   WaitFrames(1);
 }
 

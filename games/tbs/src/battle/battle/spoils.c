@@ -223,7 +223,7 @@ void Battle_AwardSpoils(void) {
   // may gain, so that what the level brought can be read against the copy.
   unitIds = units;
   count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
-  beforeLevelUp = AllocEwram(sizeof(struct Unit));
+  beforeLevelUp = Heap_AllocEwram(sizeof(struct Unit));
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     unitId = unitIds[unitIndex];
     unit = Unit_GetFar(unitId);
@@ -291,7 +291,7 @@ void Battle_AwardSpoils(void) {
       }
     }
   }
-  Free(beforeLevelUp);
+  Heap_Release(beforeLevelUp);
   if (spoils->coins != 0) {
     MessageArgument_PushFar(spoils->coins, MESSAGE_ARGUMENT_NUMBER);
     BattleMessage_ShowAndWaitFar(MsgCoinsGained);

@@ -68,7 +68,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       if ((u16)mark != 0)
         result += draw(window, (u16)mark, x + result, y, font);
 #endif
-      Free(draw);
+      Heap_Release(draw);
       return result;
     }
   } else if (character == ' ') {

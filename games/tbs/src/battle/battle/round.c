@@ -187,8 +187,8 @@ s32 Battle_BuildUnitActions(struct BattleAction *entries) {
   // Two lists, freed before the return; the allocator rounds them up to 20
   // and 12 bytes: up to eight choosers and the up to four party members with
   // their end mark.
-  u16 *choosingUnits = AllocEwram(17);
-  u16 *unitIds = AllocEwram(9);
+  u16 *choosingUnits = Heap_AllocEwram(17);
+  u16 *unitIds = Heap_AllocEwram(9);
   s32 unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
   s32 choosingCount = 0;
   s32 entryCount = 0;
@@ -228,8 +228,8 @@ s32 Battle_BuildUnitActions(struct BattleAction *entries) {
     } else {
       unitCount = entryCount + appended;
     }
-    Free(unitIds);
-    Free(choosingUnits);
+    Heap_Release(unitIds);
+    Heap_Release(choosingUnits);
     return unitCount;
   }
 }
@@ -405,7 +405,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   s32 result = 0;
   s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkedActionState *state =
-      (struct BattleLinkedActionState *)AllocEwram(40);
+      (struct BattleLinkedActionState *)Heap_AllocEwram(40);
   s32 index;
 
   // Sends the header, then this console's actions. Both transfers share one
@@ -548,14 +548,14 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       action->target ^= FIRST_ENEMY_UNIT;
     }
 
-    Free(state);
+    Heap_Release(state);
     return result;
   }
 
 fail:
   LinkBattle_ResetTransferState();
   Serial_RemoveIrqHandlers();
-  Free(state);
+  Heap_Release(state);
   return -1;
 }
 

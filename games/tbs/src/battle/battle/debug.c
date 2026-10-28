@@ -256,7 +256,7 @@ restart:
   Window_LoadGraphics();
   DebugText_Clear();
   Task_ResetAll();
-  InitHeap();
+  Heap_Initialize();
   VramCache_Reset();
   GameFlag_SetFar(FLAG_AUTO_BATTLE);
   encounter = DEBUG_FIRST_ENCOUNTER;
@@ -312,7 +312,7 @@ restart:
       Window_LoadGraphics();
       DebugText_Clear();
       Task_ResetAll();
-      InitHeap();
+      Heap_Initialize();
       VramCache_Reset();
     }
   }

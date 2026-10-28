@@ -46,9 +46,9 @@ void BattleAnim_CallDoNothing(s32 count) {
 /// BattleAnim_RunFromTable it does not set work->args: each animation does
 /// that itself.
 void BattleAnim_RunSummon(struct BattleAnimArgs *args) {
-  AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
-  AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
   if (args->kind == SUMMON_ANIM_NONE) {
     BattleAnim_RunMeteor(args);
@@ -93,9 +93,9 @@ void BattleAnim_RunSummon(struct BattleAnimArgs *args) {
     }
   }
 
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
 /// Runs an ordinary battle animation: takes the animation's sheet, work and
@@ -116,9 +116,9 @@ void BattleAnim_RunFromTable(struct BattleAnimArgs *args) {
   s32 kind;
   struct BattleAnimWork *work;
 
-  AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
-  AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   work->args = args;
@@ -128,9 +128,9 @@ void BattleAnim_RunFromTable(struct BattleAnimArgs *args) {
   else
     gBattleAnim_Handlers[kind - 1](args);
 
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
 /// Builds window 0's right edge for every scanline and restarts the HBlank

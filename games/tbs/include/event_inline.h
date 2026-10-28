@@ -46,15 +46,6 @@ static inline void PaletteFade_Interpolate(s32 frames) {
   PaletteFade_StartInterpolation(frames);
 }
 
-/// Takes a work block for a scene from its heap slot, or returns the block the
-/// slot already holds.
-static inline void *Heap_Allocate(s32 slot, s32 size) {
-  return AllocHeapSlot(slot, size);
-}
-
-/// Frees a scene's work block once the scene is done with it.
-static inline void Heap_Release(s32 slot) { FreeHeapSlot(slot); }
-
 /// Draws an item's icon, ready for an event to show it.
 static inline void Item_LoadIcon(s32 item) { Icon_DrawItem(item); }
 

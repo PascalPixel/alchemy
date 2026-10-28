@@ -3130,10 +3130,10 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   sprite->count = set;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  buffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
   VramCache_Load(sprite->slot, 128, buffer + 0x400);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   gShipRooms_AnchorObject = actor;
   return actor;

@@ -45,12 +45,12 @@
 	import Trig_Cos, Trig_CosFar
 	import Vector_AddPolarOffset, Vector_AddPolarOffsetFar
 	import Irq_SetHandler, Irq_SetHandlerFar
-	import AllocHeapSlot, AllocHeapSlotFar
-	import AllocHeapSlotEwram, AllocHeapSlotEwramFar
-	import FreeHeapSlot, FreeHeapSlotFar
-	import Alloc, AllocFar
-	import AllocEwram, AllocEwramFar
-	import Free, FreeFar
+	import HeapSlot_Alloc, HeapSlot_AllocFar
+	import HeapSlot_AllocEwram, HeapSlot_AllocEwramFar
+	import HeapSlot_Release, HeapSlot_ReleaseFar
+	import Heap_Alloc, Heap_AllocFar
+	import Heap_AllocEwram, Heap_AllocEwramFar
+	import Heap_Release, Heap_ReleaseFar
 	import Decompress_ByteLz, Decompress_ByteLzFar
 	import Decompress_TaggedLz, Decompress_TaggedLzFar
 	import VramCache_FreeEntry, VramCache_FreeEntryFar

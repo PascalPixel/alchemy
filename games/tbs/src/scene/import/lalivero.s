@@ -1,6 +1,6 @@
 	.set overlay_imports, 1
-	.set import.AllocHeapSlot, 1
-	.set import.FreeHeapSlot, 1
+	.set import.HeapSlot_Alloc, 1
+	.set import.HeapSlot_Release, 1
 	.set import.VramCache_Load, 1
 	.set import.MapGrid_PlayMapEdit, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1

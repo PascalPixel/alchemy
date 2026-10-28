@@ -669,7 +669,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
                   20, 40);
         draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_OFFSETS, x, y,
                 20, 40);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
 
       // The shots: shot j at target i launches after frame
@@ -825,7 +825,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
                   screenPosition->x - 16,
                   screenPosition->y - gProjectileVolley_CometHeights[comet], 32,
                   gProjectileVolley_CometHeights[comet]);
-              FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
               if (work->args->side == ANIM_SIDE_PARTY)
                 ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                   ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
@@ -838,7 +838,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_OFFSETS,
                   screenPosition->x - 16, screenPosition->y, 32,
                   gProjectileVolley_CometHeights[comet]);
-              FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               // Shurikens vanish once past their target.
               if (ABS(shot->x) <= ABS(target->x.fixed))
@@ -894,7 +894,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
                   flash->y - gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step]);
-              FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
               ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                 ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
                                 COMPOSITE_LIGHTEN);
@@ -905,7 +905,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
                       gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step]);
-              FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             } else {
               ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS,
                                 COMPOSITE_LIGHTEN);
@@ -917,7 +917,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
                   flash->y - gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step],
                   gProjectileVolley_FlashWidths[step]);
-              FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
               ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                                 ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
                                 COMPOSITE_LIGHTEN);
@@ -929,7 +929,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *args, s32 mode) {
                       gProjectileVolley_FlashRises[step],
                   flash->y, gProjectileVolley_FlashHeights[step],
                   gProjectileVolley_FlashWidths[step]);
-              FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
             flash->z++;
             if (flash->z == 12)

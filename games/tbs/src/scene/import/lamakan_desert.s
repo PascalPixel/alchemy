@@ -4,8 +4,8 @@
 	.set import.Task_Add, 1
 	.set import.Import_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Alloc, 1
-	.set import.Free, 1
+	.set import.Heap_Alloc, 1
+	.set import.Heap_Release, 1
 	.set import.Decompress_TaggedLz, 1
 	.set import.VramCache_ReleaseVram, 1
 	.set import.VramCache_Load, 1

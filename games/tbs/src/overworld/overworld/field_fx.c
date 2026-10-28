@@ -184,13 +184,13 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
 
     // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
     // sprite's tiles: 128 bytes from offset 0x400 of the block.
-    iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItemFar(item);
 
     sprite->image.tile =
         VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
 
-    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     picture->update = ItemDisplay_EmitSparkles;
   }
 
@@ -266,7 +266,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// heap reset frees it).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gAdventure.leaderActorId);
-  void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  void *iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct Actor *actor =
       Actor_CreateFar(SPRITE_BLANK, leader->x.fixed,
                       leader->y.fixed + (36 << 16), leader->z.fixed);
@@ -282,7 +282,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 
     Icon_DrawItemFar(item);
     VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
-    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
       actor->update = ItemDisplay_EmitSparkles;

@@ -6,7 +6,7 @@
 	.set import.Import_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Irq_SetHandler, 1
-	.set import.AllocHeapSlotEwram, 1
+	.set import.HeapSlot_AllocEwram, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_Create, 1
 	.set import.Actor_StartCamera, 1

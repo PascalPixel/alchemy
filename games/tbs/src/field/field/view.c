@@ -79,7 +79,7 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
         lines, pixels, gBgTileBuffer + TILEMAP_TILE_BANK_BYTES,
         base + TILEMAP_MAP_BANK_BYTES);
   } while (0);
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE_TEMP);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
 /// Rebuilds the ground plane's scanline terms when the world map pitch changes.

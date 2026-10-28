@@ -5,8 +5,8 @@
 	.set import.Task_Remove, 1
 	.set import.Import_RandomNext, 1
 	.set import.Trig_Sin, 1
-	.set import.AllocHeapSlotEwram, 1
-	.set import.AllocEwram, 1
+	.set import.HeapSlot_AllocEwram, 1
+	.set import.Heap_AllocEwram, 1
 	.set import.VramCache_Load, 1
 	.set import.VramCache_FindFreeEntry, 1
 	.set import.Oam_AddSpriteAtDepth, 1

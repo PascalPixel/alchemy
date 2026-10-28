@@ -158,7 +158,7 @@ void BattleAnim_RunBolt(struct BattleAnimArgs *args) {
           BOLT_GLINT_BLITTER(canvas, work->sheet + gBattleAnim_GlintCells[kind],
                              x, y, gBattleAnim_GlintCellWidths[kind],
                              gBattleAnim_GlintCellHeights[kind]);
-          FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
     }

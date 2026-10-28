@@ -121,12 +121,12 @@ void FieldEffect_StartFadeOverlay(void *object) {
   u8 *tiles;
   volatile u32 fill;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
   // Upload the solid sprite tiles before enabling the drawing task.
-  tiles = AllocHeapSlot(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
-  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   Task_Add(FadeOverlay_DrawMarks, TASK_PASS_FRAME);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,

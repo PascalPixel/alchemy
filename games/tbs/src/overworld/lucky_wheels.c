@@ -974,12 +974,12 @@ void LuckyWheels_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  canvas = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
   work =
-      AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
-  state = AllocHeapSlotEwram(LUCKY_WHEELS_HEAP_SLOT,
-                             sizeof(struct LuckyWheelsWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
+  state = HeapSlot_AllocEwram(LUCKY_WHEELS_HEAP_SLOT,
+                              sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
   save = (struct AdventureWonPrizesView *)((u8 *)&gAdventure + 12);
   Stub_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
@@ -1280,14 +1280,14 @@ void LuckyWheels_Run(void) {
                               0x100);
       WaitFrames(1);
     }
-    FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
-    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(LuckyWheels_TransferCanvas);
     Task_Remove(LuckyWheels_Update);
-    FreeHeapSlot(LUCKY_WHEELS_HEAP_SLOT);
-    FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-    FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
-    FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
+    HeapSlot_Release(LUCKY_WHEELS_HEAP_SLOT);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   }
 }
 

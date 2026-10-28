@@ -107,7 +107,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *args) {
       else
         blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
                     position.x / 2, position.y - 24, 48, 72);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     // The fire burst over the target grows a step every two frames up to
     // the third (frame 20) and holds it to frame 47; a nonzero variant takes
@@ -133,7 +133,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *args) {
       // XXX (no evidence): why it waits; the delay changes nothing the game
       // draws or computes, so only the author's intent would say.
       BattleAnim_CallDoNothing(10000);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     // The strike fills the canvas with level 63, a flash that the transfer
     // then fades.

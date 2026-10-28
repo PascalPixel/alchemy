@@ -34,7 +34,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
   s32 z;
   s32 flag;
 
-  *(struct MercuryLighthouseLights **)AllocHeapSlotEwram(
+  *(struct MercuryLighthouseLights **)HeapSlot_AllocEwram(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(st)) = st;
   flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {

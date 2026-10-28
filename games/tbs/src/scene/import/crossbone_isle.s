@@ -7,8 +7,8 @@
 	.ifndef TBS_EDITION_JA
 	.set import.Vector_AddPolarOffset, 1
 	.endif
-	.set import.AllocHeapSlot, 1
-	.set import.FreeHeapSlot, 1
+	.set import.HeapSlot_Alloc, 1
+	.set import.HeapSlot_Release, 1
 	.set import.VramCache_Load, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_StartScript, 1

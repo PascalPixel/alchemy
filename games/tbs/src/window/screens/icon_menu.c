@@ -241,7 +241,7 @@ void IconMenu_DrawIcons(void) {
 void *IconMenu_Open(void) {
   // The matching allocation size is the complete six-entry work block.
   void *work;
-  work = AllocHeapSlotEwram(HEAP_SLOT_ICON_MENU, 152);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, 152);
   Dma_Fill32(0, work, 152);
   Task_Add(IconMenu_DrawIcons, TASK_PASS_FRAME - 10);
   return work;
@@ -264,7 +264,7 @@ void IconMenu_Close(void) {
   for (i = 0; i < work->count; i++) {
     VramCache_FreeEntry(work->entries[i].slot);
   }
-  FreeHeapSlot(HEAP_SLOT_ICON_MENU);
+  HeapSlot_Release(HEAP_SLOT_ICON_MENU);
   WaitFrames(1U);
 }
 
@@ -384,12 +384,12 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
 /// through a 1 KB block it allocates and frees.
 void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
   s32 size = 1024;
-  void *buffer = Alloc(size);
+  void *buffer = Heap_Alloc(size);
   u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
   Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[index]), buffer);
   VramCache_Load(slot, size, buffer);
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// Appends a command icon if fewer than six are present. Its initial position

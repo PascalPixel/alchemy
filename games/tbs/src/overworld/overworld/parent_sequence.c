@@ -172,11 +172,11 @@ enum {
 };
 
 /// Runs the dice sequence (Lucky Dice), preserving BG palettes 14 and 15 in a
-/// 64-byte Alloc copy freed afterwards. Returns the minigame's result, 0, for
-/// Scene_ReturnFromSequence.
+/// 64-byte Heap_Alloc copy freed afterwards. Returns the minigame's result, 0,
+/// for Scene_ReturnFromSequence.
 static __inline__ s32 ParentSequence_RunDice(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
-  void *saved = Alloc(MINIGAME_PALETTE_BYTES);
+  void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
 
   Dma_Set(palette, saved,
@@ -186,7 +186,7 @@ static __inline__ s32 ParentSequence_RunDice(s32 entrance) {
   Dma_Set(saved, palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
-  Free(saved);
+  Heap_Release(saved);
   return result;
 }
 
@@ -194,7 +194,7 @@ static __inline__ s32 ParentSequence_RunDice(s32 entrance) {
 /// ParentSequence_RunDice does. Returns LuckyWheels_Start's result, 0.
 static __inline__ s32 ParentSequence_RunSlots(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
-  void *saved = Alloc(MINIGAME_PALETTE_BYTES);
+  void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
 
   Dma_Set(palette, saved,
@@ -204,7 +204,7 @@ static __inline__ s32 ParentSequence_RunSlots(s32 entrance) {
   Dma_Set(saved, palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
-  Free(saved);
+  Heap_Release(saved);
   return result;
 }
 
@@ -261,7 +261,7 @@ void ParentSequence_Run(s32 mode) {
     Task_ResetAll();
     Irq_SetHandler(IRQ_HBLANK, 0, 0);
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);
-    InitHeap();
+    Heap_Initialize();
     DebugText_Clear();
     VramCache_Reset();
     // The battle, dice and slots sequences return a result, not an exit: the

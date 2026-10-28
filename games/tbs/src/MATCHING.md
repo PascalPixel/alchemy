@@ -332,7 +332,7 @@ several ways: `HEAP_SLOT_BLOCK(n)`, `gHeapSlots[n]`, `*(gHeapSlots + n)`, the
 slot's own name (`gWindowWork[0]`, `WINDOW_WORK`), from a neighbouring slot
 (`gFieldBlendWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD_BLEND]` in
 `Weather_UpdateLightning`), through a base pointer (`slots[n - base]`,
-`ANIM_SLOT`, `ANIM_BLITTERS[n]`), or with `AllocHeapSlotEwram`, which returns
+`ANIM_SLOT`, `ANIM_BLITTERS[n]`), or with `HeapSlot_AllocEwram`, which returns
 the existing block. Indexing past a named pointer (`(void **)&gBattleCamera`) is
 undefined behaviour, with its defined form behind `UBFIX`. Not every site has
 been measured against the other spellings; each keeps its spelling until it

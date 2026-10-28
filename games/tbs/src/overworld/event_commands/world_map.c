@@ -99,7 +99,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   u32 tile;
   u32 cursorAttributes;
 
-  markerTiles = AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
+  markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   work = (struct WorldPictureWork *)gMapGridCellBuffer;
 #ifdef UBFIX
   marker = work->markers;
@@ -140,7 +140,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
     *oam++ = tileAttributes;
 #endif
   }
-  Free(markerTiles);
+  Heap_Release(markerTiles);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT)) {
     work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
     work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
@@ -444,7 +444,7 @@ void WorldPicture_UpdateMarkers(void) {
 void WorldPicture_Show(s32 picture) {
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
-      AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   struct ActorSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);
   s32 resource = (s32)&ResourceId_WorldMapPicture;
   struct TilesetAnim *layer;
@@ -558,7 +558,7 @@ void Field_UpdateActorVisibilityBounds(void) {
 /// it for event -889; the overlay tasks are suspended meanwhile.
 void FieldEffect_RunVisibilityTransition(void) {
   struct FieldWork *work =
-      AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Task_SuspendOverlayTasks();

@@ -506,7 +506,7 @@ UNUSED void Actor_RunUpdateAllFromHeap(void) {
 
   RamCode_Load(updateActors, Actor_UpdateAll, Actor_UpdateAllCodeSize);
   updateActors();
-  Free(updateActors);
+  Heap_Release(updateActors);
 }
 
 /// Advances the first 14 actors' motion by one frame, without running their

@@ -153,7 +153,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
                    Credits_DecodeBackgroundCodeSize);
   ((PackedDecoder)gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
       resourceData + 256, tileDestination, paletteOffset);
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE_TEMP);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 
   // Queue palette RAM writes for VBlank rather than transferring colours
   // during the active display.
@@ -1032,7 +1032,7 @@ void Credits_InitTextSprites(void) {
   u32 column;
 
   SCROLL_OBJECTS =
-      AllocEwram(CREDITS_OAM_ENTRIES * sizeof(struct CreditsOamEntry));
+      Heap_AllocEwram(CREDITS_OAM_ENTRIES * sizeof(struct CreditsOamEntry));
   // Solid border sprites immediately after the ring mask the partial text
   // rows at the top and bottom of the window.
   Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);
@@ -1089,7 +1089,7 @@ void Credits_InitTextSprites(void) {
 /// value left-aligns; every caller passes 1. The glyphs are colour 15 with a
 /// colour 1 shadow a pixel down and right.
 s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
-  u8 *linePixels = AllocEwram(CREDITS_BUFFER_BYTES);
+  u8 *linePixels = Heap_AllocEwram(CREDITS_BUFFER_BYTES);
   s32 startX = 0;
   s32 lineWidth = CREDITS_LINE_PIXELS;
   const u8 *font = gCredits_Font;
@@ -1112,18 +1112,18 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 
   if (text == NULL) {
     // BUG: the end marker is checked after allocation, leaking one line
-    // buffer. Free rewinds this bump pool to the allocation's start.
+    // buffer. Heap_Release rewinds this bump pool to the allocation's start.
 #ifdef BUGFIX
     if (linePixels != NULL)
-      Free(linePixels);
+      Heap_Release(linePixels);
 #endif
     return -1;
   }
   // The ninth raster row holds the shadow below this line. Carry it into the
   // next line before clearing the rest of the reused scratch buffer. The buffer
-  // comes back at the same address each call (Free rewinds the pool), so the
-  // last line's ninth row is still there. FLAG_CREDITS_LINE_DRAWN, here a line
-  // has been drawn, is clear on entering the scene (Scene_Arrive), so
+  // comes back at the same address each call (Heap_Release rewinds the pool),
+  // so the last line's ninth row is still there. FLAG_CREDITS_LINE_DRAWN, here
+  // a line has been drawn, is clear on entering the scene (Scene_Arrive), so
   // the first line starts from a clean buffer.
   if (!GameFlag_GetFar(FLAG_CREDITS_LINE_DRAWN)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
@@ -1203,6 +1203,6 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     *(u32 *)(0x06010018 + tileIndex * 32) = words[0x180];
     *(u32 *)(0x0601001c + tileIndex * 32) = words[0x1c0];
   }
-  Free(linePixels);
+  Heap_Release(linePixels);
   return 0;
 }

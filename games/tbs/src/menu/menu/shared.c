@@ -226,7 +226,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
     // Equip (or, previewing a removal, unequip) the item on the real unit,
     // recalculate its stats, show them against the saved copy, then put the
     // unit back as it was.
-    backup = Alloc(sizeof(struct Unit));
+    backup = Heap_Alloc(sizeof(struct Unit));
     StatusPanel_CopyUnit(backup, unit);
     if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
@@ -235,7 +235,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
     Unit_CalculateFar(member);
     Text_DrawStatComparison(unit, backup, window);
     StatusPanel_CopyUnit(unit, backup);
-    Free(backup);
+    Heap_Release(backup);
     break;
   }
   case STATUS_PANEL_LEARN: {

@@ -24,8 +24,8 @@ void SelectionMenu_Create(void) {
   s32 i;
   u16 clear = 0;
 
-  screen = AllocHeapSlotEwram(HEAP_SLOT_SELECTION_MENU,
-                              sizeof(struct SelectionMenuWork));
+  screen = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU,
+                               sizeof(struct SelectionMenuWork));
   screen->head = NULL;
   screen->path = NULL;
   screen->window = NULL;
@@ -518,7 +518,7 @@ void SelectionMenu_Close(void) {
     }
   }
   VramCache_FreeEntry(state->records[14].slot);
-  FreeHeapSlot(HEAP_SLOT_SELECTION_MENU);
+  HeapSlot_Release(HEAP_SLOT_SELECTION_MENU);
 }
 
 /// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
@@ -1357,7 +1357,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   if (selected->kind != ICON_KIND_COMMAND && selected->kind != ICON_KIND_YES_NO)
     return;
 
-  buffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   transfer = &state->records[15];
   resourceId = selected->base;
   // The resource starts with a halfword offset per command icon.
@@ -1377,7 +1377,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   transfer->scale = 40;
   transfer->scaleStep = 40;
   transfer->scaleEnd = 240;
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 /// Frees the large command icon, if it is shown.

@@ -972,7 +972,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *args, s32 mode) {
               canvas, Ram_MapGridCellBuffer + gBattleAnim_GlintCells[image],
               imageX, imageY + 56, gBattleAnim_GlintCellWidths[image],
               gBattleAnim_GlintCellHeights[image]);
-          FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           BattleAnim_FetchRectangleBlitters(work->args->side, blitters);
         }
       }
@@ -1018,7 +1018,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *args, s32 mode) {
                                         draw);
         (*draw)(canvas, Ram_MapGridCellBuffer + (17 * 104), originX - width,
                 fall + 47, width * 2, 65);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         if (frame == 8) {
           work->shakeFrames = frame;
         }
@@ -1054,13 +1054,13 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *args, s32 mode) {
         slotDraw = (DrawRectangle *)gHeapSlots;
         CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, pairX - 24, 48,
                                 24, height, slotDraw + HEAP_SLOT_RAM_CODE_2);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
         CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, pairX, 48, 24,
                                 height, slotDraw + HEAP_SLOT_RAM_CODE_2);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
       BattleAnim_FetchRectangleBlitters(work->args->side, blitters);
     } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {

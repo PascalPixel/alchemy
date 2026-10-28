@@ -22,7 +22,7 @@ void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
                          s32 stepY, s32 ampY) {
   struct LineScrollWork *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_LINE_SCROLL, 0xf20);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_LINE_SCROLL, 0xf20);
   Dma_Fill32(0, work, 0xf20);
   WaitDma(REG_DMA3);
   work->mode = mode;

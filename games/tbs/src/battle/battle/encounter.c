@@ -60,11 +60,11 @@ s32 Battle_Run(s32 enemyGroup) {
   // are taken here from EWRAM first: ActorSystem_InitializeFar's own requests
   // for them then get these blocks, as an allocated slot is returned as it
   // is (field/field/animation.c, runtime/runtime/heap.c).
-  camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  battle = AllocHeapSlotEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
-  enemyUnits = AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
-  view = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
-  AllocHeapSlotEwram(11, 0x280);
+  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
+  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
+  enemyUnits = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
+  view = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
+  HeapSlot_AllocEwram(11, 0x280);
   focus = camera->focus;
   /* FAKEMATCH(dead): result set to 0, a store no read sees, whose register
    * CSE takes the setup's zeros from; without it, 122 of 645 instructions
@@ -92,12 +92,12 @@ s32 Battle_Run(s32 enemyGroup) {
   Dma_Fill32Cell(fill, 0, battle, sizeof(struct BattleWork));
   battle->arrowTiles = -1;
   battle->formation = enemyGroup;
-  display = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_MESSAGE,
-                               sizeof(struct BattleMessageWork));
+  display = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MESSAGE,
+                                sizeof(struct BattleMessageWork));
   Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleMessageWork));
   battle->background = Event_GetSpecialValueFar();
-  AllocHeapSlotEwram(HEAP_SLOT_SPRITES, 0xe00);
-  AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 0x600);
+  HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 0xe00);
+  HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 0x600);
   ActorSystem_InitializeFar(ACTOR_SYSTEM_BATTLE);
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0)
     WindowSystem_InitBattleFar(1);

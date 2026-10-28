@@ -4,10 +4,10 @@
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
-	.set import.AllocHeapSlotEwram, 1
-	.set import.FreeHeapSlot, 1
-	.set import.AllocEwram, 1
-	.set import.Free, 1
+	.set import.HeapSlot_AllocEwram, 1
+	.set import.HeapSlot_Release, 1
+	.set import.Heap_AllocEwram, 1
+	.set import.Heap_Release, 1
 	.set import.Serial_Initialize, 1
 	.set import.Serial_RemoveIrqHandlers, 1
 	.set import.Sound_LoadReverbCode, 1

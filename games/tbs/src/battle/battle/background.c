@@ -151,7 +151,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
 void BattleBackground_Init(void) {
   struct BattleAffineHdma *work;
   struct BattleBackgroundWork *state;
-  work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_SCANLINES, sizeof *work);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, sizeof *work);
   state = gBattleBackgroundWork;
   Dma_Fill32(0, work, sizeof *work);
   state->mode = BATTLE_BACKGROUND_NONE;
@@ -159,7 +159,9 @@ void BattleBackground_Init(void) {
 
 /// Frees the zoomed background's scanline work; called by
 /// Battle_Run as the battle ends.
-void BattleBackground_Free(void) { FreeHeapSlot(HEAP_SLOT_BATTLE_SCANLINES); }
+void BattleBackground_Free(void) {
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SCANLINES);
+}
 
 /// The bit decoder BattleBackground_Load copies to RAM and runs.
 typedef void (*BitDecoder)(const u8 *source, void *destination);
@@ -198,7 +200,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     ((BitDecoder)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(
         backgroundData + offset, vram);
   }
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE_TEMP);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
   palette = battle->palette;
   Dma_Set(backgroundData, palette, DMA_COPY_WORDS(64), REG_DMA3);
   if (level >= 0)

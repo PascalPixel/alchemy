@@ -182,7 +182,7 @@ void ActorSystem_PlaceSprites(void) {
       }
     }
   }
-  FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
+  HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 
 /// Unused: returns 1; nothing calls it.
@@ -292,5 +292,5 @@ void ActorSystem_ProjectSprites(void) {
       break;
     }
   }
-  FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
+  HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }

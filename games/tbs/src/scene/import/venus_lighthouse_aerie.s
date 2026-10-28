@@ -8,8 +8,8 @@
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.AllocHeapSlot, 1
-	.set import.FreeHeapSlot, 1
+	.set import.HeapSlot_Alloc, 1
+	.set import.HeapSlot_Release, 1
 	.set import.VramCache_FreeEntry, 1
 	.set import.VramCache_Load, 1
 	.set import.Sprite_StartAnimation, 1

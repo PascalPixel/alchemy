@@ -644,7 +644,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Event_WaitFrames(6);
   Import_ActorSetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
-  Actor_StartCamera(((struct FieldWork *)AllocHeapSlotEwram(
+  Actor_StartCamera(((struct FieldWork *)HeapSlot_AllocEwram(
                          HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                         ->camera,
                     (s32)log);
@@ -1845,9 +1845,9 @@ void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
   void *graphics;
   s32 vramSlot;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_COLOSSO_RACE,
-                            sizeof(struct ColossoRaceWork));
-  graphics = AllocEwram(512);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_COLOSSO_RACE,
+                             sizeof(struct ColossoRaceWork));
+  graphics = Heap_AllocEwram(512);
 
   work->gauge.playerActorId = leaderId;
   work->gauge.opponentActorId = opponentId;
@@ -1880,7 +1880,7 @@ void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
 
   Task_AddFrame(Colosso_DrawGauge, TASK_PASS_FRAME - 10);
 
-  Free(graphics);
+  Heap_Release(graphics);
 }
 
 /// Decodes the opponent's recorded path and starts its playback task.

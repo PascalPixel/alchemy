@@ -37,8 +37,8 @@ s32 FieldEffect_StepRatioTransition(void) {
   s32 delta;
 
   perspective = gMapGridWork[0];
-  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
-                                              sizeof(struct FieldWork)))
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                               sizeof(struct FieldWork)))
           ->camera->paused != 0)
     return;
   frames = (s16 *)&perspective->zoomTransitionFrames;
@@ -72,8 +72,8 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 inverse;
 
-  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
-                                              sizeof(struct FieldWork)))
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                               sizeof(struct FieldWork)))
           ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   {
@@ -96,8 +96,8 @@ void Event_WaitForZoomTransition(void) {
   s32 frames;
   struct WorldMapView *perspective = gMapGridWork[0];
 
-  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
-                                              sizeof(struct FieldWork)))
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                               sizeof(struct FieldWork)))
           ->mode == ACTOR_SYSTEM_WORLD_MAP) {
     frames = 0;
     if (*(s16 *)&perspective->zoomTransitionFrames != 0) {

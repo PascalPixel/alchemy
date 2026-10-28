@@ -90,7 +90,7 @@ UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
 }
 
 /// A Psynergy the debug shortcut picker lists: its party member and the
-/// Psynergy. The picker's list is a Alloc block of 448 of them.
+/// Psynergy. The picker's list is a Heap_Alloc block of 448 of them.
 struct AbilityListEntry {
   u16 member;  ///< the party member's unit id
   u16 ability; ///< the action id (10 bits in a shortcut)
@@ -123,7 +123,7 @@ void Debug_SelectAbilityPair(void) {
   // Build the debug shortcut candidates before creating their three windows.
   // 0x700 bytes hold 448 entries, as many as Menu_FindShortcutEntries
   // searches.
-  list = Alloc(0x700);
+  list = Heap_Alloc(0x700);
   Unit_LearnPsynergyFar(ISAAC, ABILITY_MOVE);
   Unit_LearnPsynergyFar(GARET, ABILITY_MOVE);
   Unit_LearnPsynergyFar(IVAN, ABILITY_MOVE);
@@ -241,7 +241,7 @@ void Debug_SelectAbilityPair(void) {
     Window_Close(info, 1);
     WaitFrames(1);
   }
-  Free(list);
+  Heap_Release(list);
 }
 
 /// Lists every Psynergy of the active party members as (party member, Psynergy)
@@ -334,7 +334,7 @@ UNUSED void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
   u32 zero;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_SELECTION_WORKSPACE, 0x1004);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_WORKSPACE, 0x1004);
   zero = 0;
   work->firstActive = zero;
   work->secondActive = zero;
@@ -356,5 +356,5 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   if (state->secondActive != 0) {
     VramCache_FreeEntry(state->secondResource);
   }
-  FreeHeapSlot(HEAP_SLOT_SELECTION_WORKSPACE);
+  HeapSlot_Release(HEAP_SLOT_SELECTION_WORKSPACE);
 }

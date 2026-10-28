@@ -377,7 +377,7 @@ s32 BattleAnim_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   // their branches. A forward branch is written with its template word, its
   // site marked, and its displacement ORed in when the walk reaches its
   // target; a backward branch is written whole at once.
-  codeWords = (u32 *)AllocHeapSlot(slot, wordCount << 2);
+  codeWords = (u32 *)HeapSlot_Alloc(slot, wordCount << 2);
   templateWords = gBlitterTemplate;
 
   BLITTER_WALK();

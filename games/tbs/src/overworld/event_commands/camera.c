@@ -18,7 +18,7 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   subject = Actor_Lookup(actorId);
   // The slot already holds the field work, which this returns; the camera
   // commands here all find it this way.
-  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   camera = work->camera;
   grid = gMapGridWork[0];
   if (subject != 0) {
@@ -39,7 +39,7 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
 /// acceleration, 16.16 pixels per frame.
 void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
   struct FieldWork *owner =
-      AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   owner->camera->speedLimit = speedLimit;
   owner->camera->acceleration = acceleration;
 }
@@ -67,7 +67,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   positionY = requestedY;
   shouldGlide = glide;
   positionZ = requestedZ;
-  runtimeBlock = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  runtimeBlock = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   camera = runtimeBlock->camera;
   grid = gMapGridWork[0];
 
@@ -121,7 +121,7 @@ void Actor_PlaceCurrentWithinCameraBounds(s32 actorId, s32 glide) {
 
   subject = Actor_Lookup(actorId);
   // The field work, looked up and not used.
-  AllocHeapSlotEwram(HEAP_SLOT_FIELD, 0xCCC);
+  HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xCCC);
   if (subject != NULL) {
     FieldCamera_MoveWithinMapBounds(subject->x.fixed, -1, subject->z.fixed,
                                     glide);
@@ -131,7 +131,7 @@ void Actor_PlaceCurrentWithinCameraBounds(s32 actorId, s32 glide) {
 /// The event command "camera wait for move": waits (at most 600 frames) for
 /// the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
-  Actor_WaitForMoveFar(((struct FieldWork *)AllocHeapSlotEwram(
+  Actor_WaitForMoveFar(((struct FieldWork *)HeapSlot_AllocEwram(
                             HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                            ->camera);
   Event_WaitFrames(2);
@@ -139,8 +139,8 @@ void FieldCamera_WaitForArrival(void) {
 
 /// The event command "get view centre": returns the camera actor.
 struct Actor *FieldCamera_GetActor(void) {
-  return ((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
-                                                 sizeof(struct FieldWork)))
+  return ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                  sizeof(struct FieldWork)))
       ->camera;
 }
 
@@ -149,8 +149,8 @@ struct Actor *FieldCamera_GetActor(void) {
 UNUSED void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
   struct Actor *camera;
 
-  camera = ((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
-                                                   sizeof(struct FieldWork)))
+  camera = ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                    sizeof(struct FieldWork)))
                ->camera;
   if (target != NULL) {
     Actor_StartCameraFar(camera, 0);

@@ -62,7 +62,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   if (update == 0 && tile == *shownQuarter)
     return 0;
   *shownQuarter = tile;
-  decodedTile = AllocHeapSlot(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Decompress_ByteLz((u8 *)tileOffsets + tileOffsets[tile], decodedTile);
 
   // A tile is 16 by 16 cells of 4 bytes. Each layer's cell picture buffer holds
@@ -99,7 +99,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
       screenTiles += 48;
     }
   }
-  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   return 1;
 }
 
@@ -143,7 +143,7 @@ s32 WorldMap_InitializePerspective(void) {
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
-  perspective = AllocHeapSlot(HEAP_SLOT_MAP_GRID, sizeof(struct WorldMapView));
+  perspective = HeapSlot_Alloc(HEAP_SLOT_MAP_GRID, sizeof(struct WorldMapView));
   Dma_Fill32Cell(fill, 0, perspective, sizeof(struct WorldMapView));
   perspective->viewX = 0;
   perspective->viewY = 0;
@@ -199,9 +199,9 @@ s32 WorldMap_InitializePerspective(void) {
   REG_BG3X = 0;
   Io_Write16(0, &REG_BG3Y);
 
-  camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  affineWork = AllocHeapSlot(HEAP_SLOT_WORLD_MAP_AFFINE,
-                             sizeof(struct WorldMapAffineWork));
+  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
+  affineWork = HeapSlot_Alloc(HEAP_SLOT_WORLD_MAP_AFFINE,
+                              sizeof(struct WorldMapAffineWork));
   cameraPosition = camera->focus;
   affinePages = affineWork->pages;
   farPlane = 0x1fe0000;
@@ -337,7 +337,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   s16 backdropColor;
 
   graphicsSet = 0;
-  buffer = Alloc(0x200);
+  buffer = Heap_Alloc(0x200);
   perspective = gMapGridWork[0];
   // The 32-pixel cell under (x, z) (16.16 / 0x200000), 32 cells to a row.
   if (WORLD_MAP_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)]
@@ -390,7 +390,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
     perspective->tileIds[28] = 0x11c;
     WorldMap_UpdateCurrentTileBlock();
   }
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// HBlank setup each VBlank on the world map: copies the first scanline's BG2

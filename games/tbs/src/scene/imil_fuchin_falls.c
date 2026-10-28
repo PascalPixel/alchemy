@@ -1653,10 +1653,10 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     sprite->image.palette = 0;
     actor->motionFlags = clear;
     actor->retainSpriteCache = 1;
-    glyph = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
     Icon_DrawItem(ITEM_DRAGONS_EYE);
     VramCache_Load(sprite->slot, 128, glyph->tiles);
-    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     gImilFuchinFalls_DragonsEye = actor;
   }
 }

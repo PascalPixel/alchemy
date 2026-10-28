@@ -540,7 +540,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
                            actor->z.fixed);
   Event_WaitFrames(6);
   Import_ActorSetAnimation(leaderId, ANIM_WALK);
-  Actor_StartCamera(((struct FieldWork *)AllocHeapSlotEwram(
+  Actor_StartCamera(((struct FieldWork *)HeapSlot_AllocEwram(
                          HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                         ->camera,
                     (s32)actor);

@@ -315,7 +315,7 @@ void SettingsMenu_AnimateCursors(void) {
 void SettingsMenu_InitializeWork(void) {
   struct OptionMenuWork *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
   work->option[0] = gAdventure.windowColor[0];
   work->optionCount[0] = 24;
@@ -334,7 +334,7 @@ void SettingsMenu_InitializeWork(void) {
 /// The task goes first, since it reads the work block.
 void SettingsMenu_Release(void) {
   Task_Remove(SettingsMenu_AnimateCursors);
-  FreeHeapSlot(HEAP_SLOT_SETTINGS_MENU);
+  HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
 #define SLIDER_PALETTE 14 ///< the sprite palette of the hue slider's ends
@@ -667,7 +667,7 @@ void PauseMenu_AnimateCursor(void) {
 /// frame pass.
 void PauseMenu_Initialize(void) {
   void *work;
-  work = AllocHeapSlotEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
   Task_Add(PauseMenu_AnimateCursor, TASK_PASS_FRAME);
 }
@@ -676,7 +676,7 @@ void PauseMenu_Initialize(void) {
 /// The task goes first, since it reads the work block.
 void PauseMenu_Release(void) {
   Task_Remove(&PauseMenu_AnimateCursor);
-  FreeHeapSlot(HEAP_SLOT_SETTINGS_MENU);
+  HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
 /// Opens the Pause menu's window with its entries (Save your quest, Sleep,

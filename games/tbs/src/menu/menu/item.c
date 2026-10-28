@@ -103,9 +103,9 @@ s32 ItemMenu_Run(void) {
   // and free the copy after putting the tiles back.
 #if TBS_PATCH_1
   size = 0x2000;
-  backup = AllocEwram(size);
+  backup = Heap_AllocEwram(size);
 #endif
-  screen = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   cache = &((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_ACTOR_SYSTEM];
   ((struct ActorSystemWork *)cache[0])->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
@@ -148,14 +148,14 @@ s32 ItemMenu_Run(void) {
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   IconMenu_ReleaseArrows();
-  FreeHeapSlot(HEAP_SLOT_MENU);
+  HeapSlot_Release(HEAP_SLOT_MENU);
   ((struct ActorSystemWork *)cache[0])->suspended = 0;
 #if TBS_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords(BG_CHAR_BLOCK(1), backup, size);
   ((struct WindowWork *)*process)->holdTilemapUpload = 0;
-  Free(backup);
+  Heap_Release(backup);
   WaitFrames(1);
   Menu_ResumeFieldTasks();
 #endif
@@ -631,8 +631,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       // back.
       sourceUnit = Unit_GetFar(menu->sideMember[0]);
       targetUnit = Unit_GetFar(menu->sideMember[1]);
-      sourceCopy = Alloc(BATTLE_UNIT_SIZE);
-      targetCopy = Alloc(BATTLE_UNIT_SIZE);
+      sourceCopy = Heap_Alloc(BATTLE_UNIT_SIZE);
+      targetCopy = Heap_Alloc(BATTLE_UNIT_SIZE);
       Item_CopyWords(ITEM_IWRAM_COPY_WORDS, sourceCopy, sourceUnit,
                      BATTLE_UNIT_SIZE);
       Item_CopyWords(ITEM_IWRAM_COPY_WORDS, targetCopy, targetUnit,
@@ -749,8 +749,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       }
-      Free(targetCopy);
-      Free(sourceCopy);
+      Heap_Release(targetCopy);
+      Heap_Release(sourceCopy);
       Event_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_MEMBER;
       break;
@@ -1552,7 +1552,7 @@ void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
 
       unit = Unit_GetFar(target);
       size = BATTLE_UNIT_SIZE;
-      member = (s32)Alloc(size);
+      member = (s32)Heap_Alloc(size);
       Iwram_CopyWords((void *)member, unit, size);
       // With room made, add the item unequipped and preview it in its new
       // slot; otherwise the panel shows target's status without a preview.
@@ -1570,7 +1570,7 @@ void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
         StatusPanel_Draw(menu->statusWindow, target, slot, panelStyle);
       }
       Iwram_CopyWords(unit, (void *)member, size);
-      Free((void *)member);
+      Heap_Release((void *)member);
     }
     break;
   case ITEM_TYPE_PSYNERGY:
@@ -1583,7 +1583,7 @@ void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
 
       unit = Unit_GetFar(target);
       size = BATTLE_UNIT_SIZE;
-      member = (s32)Alloc(size);
+      member = (s32)Heap_Alloc(size);
       buffer = (void *)member;
       Iwram_CopyWords(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
@@ -1600,7 +1600,7 @@ void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
       }
       Iwram_CopyWords(unit, (void *)member, size);
       buffer = (void *)member;
-      Free(buffer);
+      Heap_Release(buffer);
     }
     break;
   }
@@ -2446,7 +2446,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   struct ItemMenuWork *menu = gMenuWork;
   // 1 KB of HEAP_SLOT_TILE_SCRATCH to draw the dial's digits in, released
   // before returning.
-  void *tiles = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  void *tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   struct Window *window;
   struct WindowSprite *rightDial;
 
@@ -2533,7 +2533,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   }
   WindowSprite_RedrawSavedRectFar(window);
   WindowSprite_ClearListFar((void *)window);
-  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   menu->selectedItemIcon->motion = ICON_HIDDEN;
   if (GameFlag_GetFar(FLAG_MENU_START_PRESSED))
     quantity = -1;
@@ -2636,7 +2636,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   slot = menu->selectedSlots[1];
   member = menu->sideMember[1];
   ItemMenu_DrawEquipPreview(member, slot, 0, member);
-  saved = Alloc(BATTLE_UNIT_SIZE);
+  saved = Heap_Alloc(BATTLE_UNIT_SIZE);
   Iwram_CopyWords(saved, unit, BATTLE_UNIT_SIZE);
   window = menu->questionWindow;
   // Equip it now; a result of -1 or -2 means it cannot be equipped.
@@ -2701,7 +2701,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   // No: put the party member back as they were.
   if (selection == 1)
     Iwram_CopyWords(unit, saved, BATTLE_UNIT_SIZE);
-  Free(saved);
+  Heap_Release(saved);
   Unit_CalculateFar(menu->sideMember[1]);
   Unit_RefreshPsynergyFar(menu->sideMember[1]);
   return selection;

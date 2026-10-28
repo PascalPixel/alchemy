@@ -44,9 +44,10 @@
 /// the menu work (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 PsynergyMenu_Run(void) {
 #if TBS_PATCH_2
-  void *saved = AllocEwram(PSYNERGY_PROMPT_TILES_SIZE);
+  void *saved = Heap_AllocEwram(PSYNERGY_PROMPT_TILES_SIZE);
 #endif
-  struct PsynergyMenuWork *menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  struct PsynergyMenuWork *menu =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 member;
   s32 unused;
   s32 psynergy;
@@ -87,7 +88,7 @@ s32 PsynergyMenu_Run(void) {
       1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
-  FreeHeapSlot(HEAP_SLOT_MENU);
+  HeapSlot_Release(HEAP_SLOT_MENU);
   ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 0;
 #if TBS_PATCH_2
@@ -96,7 +97,7 @@ s32 PsynergyMenu_Run(void) {
   Iwram_CopyWords(PSYNERGY_PROMPT_TILES, saved, PSYNERGY_PROMPT_TILES_SIZE);
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
       0;
-  Free(saved);
+  Heap_Release(saved);
   WaitFrames(1);
   Menu_ResumeFieldTasks();
 #endif
@@ -451,10 +452,10 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
         menu->mode = PSYNERGY_MODE_SET_L;
       else
         menu->mode = PSYNERGY_MODE_SET_R;
-      actions = Alloc(32 * sizeof(u16));
+      actions = Heap_Alloc(32 * sizeof(u16));
       fieldCount = PsynergyMenu_CollectActions((struct Unit *)unit, actions,
                                                PSYNERGY_LIST_SHORTCUTS);
-      Free(actions);
+      Heap_Release(actions);
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
         menu->mode = shortcutCount;

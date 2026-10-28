@@ -622,7 +622,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   s32 unitMessageBase;
 #endif
 
-  tileBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tileBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   redraw = 1;
   maximum -= minimum;
   selectedQuantity = -1;
@@ -694,7 +694,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       Window_CloseFar(window, 2);
     }
   }
-  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   return selectedQuantity;
 }
 

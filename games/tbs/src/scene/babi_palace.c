@@ -2501,10 +2501,10 @@ s32 BabiPalace_ApplyEntryState(void) {
         sprite->image.palette = 0;
         // The icon is drawn 0x400 bytes into the glyph buffer, as the 128 bytes
         // of a 16 by 16 sprite.
-        buf = Heap_Allocate(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+        buf = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
         Item_LoadIcon(ITEM_CLOAK_BALL);
         Vram_Load(sprite->slot, 128, buf + 0x400);
-        Heap_Release(HEAP_SLOT_GLYPH_TRANSFER);
+        HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
       if (gAdventure.entrance == BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
           !Event_GetFlag(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {

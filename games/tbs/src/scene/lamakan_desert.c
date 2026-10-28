@@ -1078,7 +1078,7 @@ static void HeatGauge_Draw(void) {
   }
 
   // Tint the six changing palette entries before composing the gauge tiles.
-  buffer = Alloc(0x900);
+  buffer = Heap_Alloc(0x900);
   Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
           REG_DMA3);
   colors = (s16 *)(buffer + 12);
@@ -1172,7 +1172,7 @@ static void HeatGauge_Draw(void) {
     offset += 12;
     x += 32;
   }
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// Loads the gauge's tiles, claims VRAM for them and starts drawing it.

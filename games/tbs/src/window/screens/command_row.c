@@ -53,7 +53,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   iconSlot = VramCache_AllocEntry(0x400);
   stripDirty = 1;
   tradeCount = 0;
-  selectionUi = AllocEwram(sizeof(*selectionUi));
+  selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
   for (i = 255; i >= 0; i--)
     selectionUi->palette.slot[i] = 255;
@@ -364,7 +364,7 @@ s32 BattleCommandRow_Run(s32 mode) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_16);
-  Free(selectionUi);
+  Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
   WaitFrames(1);
   return command;

@@ -954,7 +954,7 @@ UNUSED static void FileList_FillTileGrid(struct Window *window,
   s32 offset;
 
   shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
-  decodedTiles = AllocEwram(0x300);
+  decodedTiles = Heap_AllocEwram(0x300);
   FieldDecompress_TaggedLz(compressedTiles, decodedTiles);
   offset = (window->y * 32 + window->x) * 2;
   vram = (u16 *)(0x06002000 + offset);
@@ -969,14 +969,14 @@ UNUSED static void FileList_FillTileGrid(struct Window *window,
     vram += 16;
     shadow += 16;
   }
-  Free(decodedTiles);
+  Heap_Release(decodedTiles);
 }
 
 /// UNUSED: fills a 16-by-eight region with WINDOW_PALETTE tiles beginning at
 /// tile 32.
 UNUSED static void FileList_FillTileBlock(const struct Window *window) {
   s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
-  s16 *buffer = AllocEwram(0x300);
+  s16 *buffer = Heap_AllocEwram(0x300);
   s16 *vram;
   s32 cell;
   s32 row;
@@ -1006,7 +1006,7 @@ UNUSED static void FileList_FillTileBlock(const struct Window *window) {
     mirror += 16;
     base += 16;
   } while (row <= 7);
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// A party member's base stats, which the password clamps and packs: struct

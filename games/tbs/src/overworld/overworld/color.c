@@ -372,7 +372,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
 void PaletteFade_Initialize(void) {
   struct PaletteFade *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   Dma_Set((void *)BG_PLTT, &work->palette[0],
           (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
@@ -386,7 +386,7 @@ void PaletteFade_Initialize(void) {
 /// veneer; no ☀️ code names it.
 void PaletteFade_Release(void) {
   Task_Remove(&PaletteFade_Update);
-  FreeHeapSlot(HEAP_SLOT_PALETTE_FADE);
+  HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Sets the colours the buffer moves toward (see PaletteFade_Build); does

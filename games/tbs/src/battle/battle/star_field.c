@@ -217,8 +217,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 
   // Word 2 of the background's work is BattleBackgroundWork.mode.
   ((s32 *)gBattleBackgroundWork)[2] = BATTLE_BACKGROUND_FIXED;
-  work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
   /* FAKEMATCH(one-pass): an empty one-pass loop, a scheduling barrier that
    * keeps the multiply routine's address ahead of the spark cursor; without
    * it, 1 of 246 instructions differ in tbs-en. */
@@ -301,10 +301,10 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 /// read.
 s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
   Task_Remove(STAR_FIELD_UPLOAD_CALLBACK);

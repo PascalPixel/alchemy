@@ -81,14 +81,14 @@ s32 DjinnMenu_Run(void) {
   struct DjinnMenuBackdrop *backdrop;
   s32 zero;
 
-  menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  menu = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   savedMessageSpeed = gAdventure.messageSpeed;
   gAdventure.messageSpeed = MESSAGE_SPEED_FAST;
   enabled = gActorSystemWork->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);
   Window_InitializeWork(0);
-  backdrop = AllocEwram(0x2130);
+  backdrop = Heap_AllocEwram(0x2130);
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = DJINN_TUTORIAL_OFF;
@@ -136,8 +136,8 @@ s32 DjinnMenu_Run(void) {
   WaitFrames(1);
   Menu_ResumeFieldTasks();
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  Free(menu->backdrop);
-  FreeHeapSlot(HEAP_SLOT_MENU);
+  Heap_Release(menu->backdrop);
+  HeapSlot_Release(HEAP_SLOT_MENU);
   Event_ClearInvalidPackedValuesFar();
   gAdventure.messageSpeed = savedMessageSpeed;
   return 1;
@@ -1699,7 +1699,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
   takeElement = menu->pairElement[addPairSlot];
   takeIndex = menu->pairIndex[addPairSlot];
   takeSet = menu->pairEntries[addPairSlot] & DJINN_ENTRY_IS_SET;
-  originalUnit = Alloc(sizeof(struct Unit));
+  originalUnit = Heap_Alloc(sizeof(struct Unit));
   Unit_Copy(originalUnit, unit);
 
   if (page == 0) {
@@ -1933,7 +1933,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
     Portrait_CreateFar(memberId, 0, side, window, 0, 0);
   // None of the preview's class, stat or action changes escape this call.
   Unit_Copy(unit, originalUnit);
-  Free(originalUnit);
+  Heap_Release(originalUnit);
   return 1;
 }
 

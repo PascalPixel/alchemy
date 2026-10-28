@@ -22,9 +22,9 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
   s32 handle;
   s32 pal;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_COLOSSO_RACE,
-                            sizeof(struct ColossoRaceWork));
-  handle = (s32)AllocEwram(512);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_COLOSSO_RACE,
+                             sizeof(struct ColossoRaceWork));
+  handle = (s32)Heap_AllocEwram(512);
 
   work->gauge.playerActorId = playerActorId;
   work->gauge.opponentActorId = opponentActorId;
@@ -60,7 +60,7 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
   Task_AddFrame((TaskFunc)((s32)Colosso_DrawGauge + 1), TASK_PASS_FRAME - 10);
 #endif
 
-  Free((void *)handle);
+  Heap_Release((void *)handle);
 }
 
 /// Decodes the opponent's recorded path (resource) after the gauge's work and,

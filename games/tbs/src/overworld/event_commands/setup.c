@@ -26,7 +26,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
 
   running = ev->psynergyActing;
   if (running == 0) {
-    effectWork = AllocHeapSlot(HEAP_SLOT_FIELD_EFFECT, sizeof *effectWork);
+    effectWork = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof *effectWork);
     Dma_Fill32(running, effectWork, sizeof *effectWork);
   } else {
     effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
@@ -189,7 +189,7 @@ void FieldPsynergy_End(void) {
     if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
       runtime->effectTimerRunning = 1;
     Scene_PlayQueuedMusic();
-    FreeHeapSlot(HEAP_SLOT_FIELD_EFFECT);
+    HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);
   }
 }
 

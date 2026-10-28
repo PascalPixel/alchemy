@@ -2124,10 +2124,10 @@ static void WorldMap_UseBlackOrb(void) {
      * 363 instructions differ in tbs-en. */
     motion = &orb->motionFlags;
     *motion = 0;
-    buffer = Heap_Allocate(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, 128, buffer + 0x400);
-    Heap_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     Event_WaitFrames(20);
     orb->update = WorldMap_PulseOrbAndSpawnSparks;
     Event_WaitFrames(80);
@@ -2776,7 +2776,7 @@ static inline void WorldMap_ShowTransitionPicture(u8 *buffer, s32 offset,
 /// sets FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void
 WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
-  u8 *buffer = AllocEwram(0x4000);
+  u8 *buffer = Heap_AllocEwram(0x4000);
 
   WaitFrames(1);
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
@@ -2837,7 +2837,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   Event_WaitFrames(45);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Free(buffer);
+  Heap_Release(buffer);
   GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 

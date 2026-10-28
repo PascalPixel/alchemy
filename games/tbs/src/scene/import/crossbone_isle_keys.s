@@ -3,8 +3,8 @@
 	.set import.Task_Add, 1
 	.set import.Task_Remove, 1
 	.set import.ArcTan2, 1
-	.set import.AllocHeapSlot, 1
-	.set import.FreeHeapSlot, 1
+	.set import.HeapSlot_Alloc, 1
+	.set import.HeapSlot_Release, 1
 	.set import.VramCache_Load, 1
 	.set import.SpriteAnimation_Clear, 1
 	.set import.Actor_SelectAnimation, 1

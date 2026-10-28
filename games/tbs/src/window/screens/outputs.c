@@ -269,7 +269,7 @@ void ScanlineWindow_FillSpans(void *spans) {
     RamCode_Load(routine, Tile_BuildCellPictures,
                  Tile_BuildCellPicturesCodeSize);
     routine(spans, tilemap);
-    Free(routine);
+    Heap_Release(routine);
   }
 }
 

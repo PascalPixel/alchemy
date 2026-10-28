@@ -509,7 +509,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
     gBgScroll[1].x = savedX;
     gBgScroll[1].y = savedY;
   }
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   // The burst, PARTICLE_STREAMS_BURST_FRAMES frames: switch to the blended
   // half-scale display, load the blast
   // sheet and seed 32 screen motes, 128 flashes and 512 embers, the flashes
@@ -696,7 +696,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *args, s32 mode) {
     ANIM_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == PARTICLE_STREAMS_METEOR)
     Sprite_DestroyFar(work->animations[0]);
   BattleAnim_EndCanvasLayer();

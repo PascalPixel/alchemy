@@ -161,7 +161,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// later call gets the same ones back. No code releases HEAP_SLOT_ACTORS or
 /// HEAP_SLOT_ACTOR_SYSTEM by name, but SceneSequence_Run takes HEAP_SLOT_FIELD
 /// from EWRAM before them, so its release of that slot as it returns frees
-/// their memory too; InitHeap clears the slots at the next
+/// their memory too; Heap_Initialize clears the slots at the next
 /// scene change.
 ///
 /// Called through ActorSystem_InitializeFar by the scene sequence
@@ -174,9 +174,9 @@ void ActorSystem_Initialize(s32 controlMode) {
   struct Actor *objectPool;
   volatile u32 fill;
 
-  system = AllocHeapSlotEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*system));
+  system = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*system));
   objectPool =
-      AllocHeapSlotEwram(HEAP_SLOT_ACTORS, ACTOR_COUNT * sizeof(*objectPool));
+      HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, ACTOR_COUNT * sizeof(*objectPool));
   ActorSystem_Configure(controlMode);
   Dma_Fill32Cell(fill, 0, objectPool, ACTOR_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));

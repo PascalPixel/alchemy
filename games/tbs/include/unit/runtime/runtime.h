@@ -105,13 +105,13 @@ void DebugText_Clear(void);
 void Window_LoadGraphics(void);
 void Palette_LoadBasicSpriteColors(void);
 
-void InitHeap(void);
+void Heap_Initialize(void);
 s32 Heap_GetRemainingIwram(void);
 s32 Heap_GetRemainingEwram(void);
-void *AllocHeapSlot(s32 kind, s32 size);
-void *AllocHeapSlotEwram(s32 kind, s32 size);
-void *Alloc(s32 size);
-void *AllocEwram(s32 size);
+void *HeapSlot_Alloc(s32 kind, s32 size);
+void *HeapSlot_AllocEwram(s32 kind, s32 size);
+void *Heap_Alloc(s32 size);
+void *Heap_AllocEwram(s32 size);
 void Heap_ReservedNoOp(void);
 
 void Transform_Reset(void);

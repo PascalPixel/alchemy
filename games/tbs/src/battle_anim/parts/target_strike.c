@@ -299,7 +299,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *args, s32 mode) {
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
               gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
         }
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         if (frame %
                 (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 6) ==
             TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) {
@@ -374,13 +374,13 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *args, s32 mode) {
       ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
                                         work->sheet + stage * (18 * 48) + 0xc80,
                                         targetPosition.x / 2 - 18, 56, 18, 48);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
                                         work->sheet + stage * (18 * 48) + 0xc80,
                                         targetPosition.x / 2, 56, 18, 48);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       if (frame % (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) ==
           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 3) {
         // A hit: the target flashes; the last hit lets the battle show the
@@ -460,7 +460,7 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *args, s32 mode) {
         (*lower)(canvas, work->sheet + gBattleAnim_GlintCells[image], x, y,
                  gBattleAnim_GlintCellWidths[image],
                  gBattleAnim_GlintCellHeights[image]);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
     }
 

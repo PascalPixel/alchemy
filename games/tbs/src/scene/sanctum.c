@@ -1976,10 +1976,10 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
     sprite->image.palette = 0;
     icon->velocityY = PIXELS(2);
     icon->gravity = PIXELS(1) / 4;
-    transferBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    transferBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(item);
     VramCache_Load(sprite->slot, 128, transferBuffer + 0x400);
-    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     for (frame = 0; frame < 60; frame++) {
       if ((u32)(icon->velocityY + 255) <= 0x1fe)
         icon->motionFlags = 0;

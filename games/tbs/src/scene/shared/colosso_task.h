@@ -86,7 +86,7 @@ static void Colosso_LoadLettering(s32 id) {
   u8 *buf;
   s32 off;
 
-  buf = AllocEwram(0x1c00 + COLOSSO_PALETTE_BYTES);
+  buf = Heap_AllocEwram(0x1c00 + COLOSSO_PALETTE_BYTES);
   if (gColosso_LetteringSlot == -1)
     gColosso_LetteringSlot = VramCache_FindFreeEntry();
   off = gColosso_LetteringPaletteOffsets[id];
@@ -99,7 +99,7 @@ static void Colosso_LoadLettering(s32 id) {
   Vram_Load(gColosso_LetteringSlot, 0x400,
             (u8 *)((id << 10) + (s32)buf + COLOSSO_PALETTE_BYTES));
   Dma_Wait(REG_DMA3);
-  Free(buf);
+  Heap_Release(buf);
 }
 
 /// The lettering's task: run its script, move, scale and fade it, and

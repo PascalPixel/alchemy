@@ -326,7 +326,7 @@ s32 Save_ProcessSelectedFile(void) {
   s32 error;
   u8 *stamp;
 
-  record = AllocEwram(SAVE_RECORD_BYTES);
+  record = Heap_AllocEwram(SAVE_RECORD_BYTES);
   result = 0;
   // BUG: returns without freeing the record buffer.
   if (gSaveSlot == -1)
@@ -354,7 +354,7 @@ s32 Save_ProcessSelectedFile(void) {
     }
   }
   Save_ReleaseWork();
-  Free(record);
+  Heap_Release(record);
   return result;
 }
 
@@ -888,7 +888,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   struct WindowSprite *cursorSprite;
 #endif
 
-  spriteWork = AllocHeapSlot(HEAP_SLOT_MENU, sizeof(*spriteWork));
+  spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(*spriteWork));
   save = *(gHeapSlots + HEAP_SLOT_SAVE);
   summaryWindow = NULL;
   partyWindow = NULL;
@@ -1184,7 +1184,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
 #else
 #endif
   // 55 is HEAP_SLOT_MENU, spriteWork's block.
-  FreeHeapSlot(HEAP_SLOT_MENU);
+  HeapSlot_Release(HEAP_SLOT_MENU);
   WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
   WaitFrames(1);
 done:

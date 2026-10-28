@@ -174,7 +174,7 @@ static void Title_LoadSprites(s32 unused) {
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
   u8 *encodedGraphics;
 
-  decodedSprites = AllocEwram(0x9600);
+  decodedSprites = Heap_AllocEwram(0x9600);
   encodedGraphics = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
@@ -192,7 +192,7 @@ static void Title_LoadSprites(s32 unused) {
 #else
   // The decoded data opens with its 16-colour palette (8 words), then 0x500
   // bytes (40 4-bit tiles) of lettering.
-  decodedSprites = AllocEwram(0x520);
+  decodedSprites = Heap_AllocEwram(0x520);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
   FieldDecompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
@@ -205,7 +205,7 @@ static void Title_LoadSprites(s32 unused) {
   dma3 = REG_DMA3;
   while (dma3[2] & (DMA_ENABLE << 16))
     ;
-  Free(decodedSprites);
+  Heap_Release(decodedSprites);
 }
 
 /// The task that queues the logo's lettering sprites each frame,

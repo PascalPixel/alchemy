@@ -320,7 +320,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
                 dotSize * 2);
       }
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
     // The beam, frames 151 to 167: rows of the ramp narrowing at its top,
@@ -359,12 +359,12 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
                         COMPOSITE_LIGHTEN);
       ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas, work->sheet, 32,
                                           (frame - 151) * 20 - 12, 32, 96);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
       ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas, work->sheet, 64,
                                           (frame - 151) * 20 - 12, 32, 96);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
     ANIM_PRESENT_CANVAS(work);
   }
@@ -486,7 +486,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
               ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
                   canvas, work->sheet + i % 3 * THOR_BOLT_BYTES, boltX, boltY,
                   THOR_BOLT_SIZE, THOR_BOLT_SIZE);
-              FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
             if (frame == i * 2 + 80) {
               THOR_LAUNCH_SPARKS(spark, j, 0x100000, 0x500000,
@@ -519,27 +519,27 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas,
                                             work->sheet + THOR_MOTE_OFFSETS,
                                             moteX + 60, moteY - 24, 12, 24);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas,
                                             work->sheet + THOR_MOTE_OFFSETS,
                                             mirrorX, moteY - 24, 12, 24);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_OFFSETS, moteX + 60, moteY, 12, 24);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
         ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_OFFSETS, mirrorX, moteY, 12, 24);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         // Four sparks a frame from the right-hand copies, in any direction,
         // at 64 to 127 128ths of a pixel a frame (twice that up and down),
         // living 16 to 23 frames.
@@ -592,7 +592,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
           }
         }
       }
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
       // The formation is placed from frame 16, its corner at (80, 64), and
       // pushed back from frame 32: right 4 pixels a frame and up 1/4, the
@@ -630,7 +630,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
               canvas, Ram_MapGridCellBuffer + gBattleAnim_GlintCells[glint], x,
               y + 56, gBattleAnim_GlintCellWidths[glint],
               gBattleAnim_GlintCellHeights[glint]);
-          FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
       if (frame <= 31) {
@@ -641,7 +641,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *args) {
       ANIM_END_FRAME(work);
     }
 
-    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
     BattleAnim_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
   }

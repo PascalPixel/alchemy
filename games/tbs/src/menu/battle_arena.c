@@ -555,7 +555,7 @@ static s32 BattleArena_ReceivePartyRecords(void) {
   s32 nameIndex;
 
   size = LOBBY_UNIT_RECORD_BYTES;
-  heap = AllocEwram(size);
+  heap = Heap_AllocEwram(size);
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
   slot = 0;
@@ -654,9 +654,9 @@ testRecovery:
   goto done;
 second:
   // Then the recovery table, into the enemy side's (unit 0x83's record).
-  Free(heap);
+  Heap_Release(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = AllocEwram(size);
+  heap = Heap_AllocEwram(size);
   tries = 0;
   if ((transferResult = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
     goto testRecovery;
@@ -664,7 +664,7 @@ second:
 failed:
   result = transferResult;
 done:
-  Free(heap);
+  Heap_Release(heap);
   return result;
 }
 
@@ -732,7 +732,7 @@ static s32 BattleArena_SendPartyRecords(void) {
   struct DjinnRecoveryList *list;
 
   size = LOBBY_UNIT_RECORD_BYTES;
-  heap = AllocEwram(size);
+  heap = Heap_AllocEwram(size);
   result = 0;
   timeout = LOBBY_SEND_TIMEOUT_FRAMES;
   memberCount = BattleArena_CopyPartyOwnerIds(memberIds);
@@ -802,9 +802,9 @@ next:
     result = transferResult;
     goto done;
   }
-  Free(heap);
+  Heap_Release(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = AllocEwram(size);
+  heap = Heap_AllocEwram(size);
   /* FAKEMATCH(one-pass): the recovery table's copy in a one-pass block, which
    * gives the copy's argument order and keeps the list base's copy first after
    * the call; as a plain call, 8 of 255 instructions differ in tbs-en. */
@@ -852,7 +852,7 @@ next:
     WaitFrames(2);
   }
 done:
-  Free(heap);
+  Heap_Release(heap);
   return result;
 }
 
@@ -979,7 +979,7 @@ static s32 BattleArena_EnterBattle(void) {
     // Djinn into units 0x80 to 0x83. The copy to gActorSpriteSlots
     // (gMapGridCellBuffer
     // + 0x8000) hands them to Battle_Run, which copies them back.
-    savedWork = AllocHeapSlotEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
+    savedWork = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
     Task_Remove((TaskFunc)BattleArena_PollPeerReady);
     // Run the map's tileset animation 5 for eight frames.
     TilesetAnim_Resume(5);
@@ -1012,7 +1012,7 @@ static s32 BattleArena_EnterBattle(void) {
         WaitFrames(8);
         TilesetAnim_Pause(5);
         Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-        FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
+        HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
         BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
         Task_AddFrame((TaskFunc)BattleArena_PollPeerReady, TASK_PASS_FRAME);
@@ -1057,7 +1057,7 @@ static s32 BattleArena_EnterBattle(void) {
       i++;
       *destination++ = *source++;
     } while (i <= 0x7c7);
-    FreeHeapSlot(HEAP_SLOT_ENEMY_UNITS);
+    HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
   Event_End();
 #ifdef UBFIX

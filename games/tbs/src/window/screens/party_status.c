@@ -82,7 +82,7 @@ void PartyStatus_CreateWindow(s32 flags) {
   struct PartyStatusWindow *layout;
   s8 *busy;
 
-  layout = AllocHeapSlotEwram(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
+  layout = HeapSlot_AllocEwram(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
   busy = (s8 *)&WINDOW_WORK->holdTilemapUpload;
   zero = 0;
   *busy = 1;
@@ -383,7 +383,7 @@ void PartyStatus_Close(void) {
 #else
   Window_Close((struct Window *)**(s32 **)(u32)&gWindowWork[1], 1);
 #endif
-  FreeHeapSlot(HEAP_SLOT_PARTY_STATUS);
+  HeapSlot_Release(HEAP_SLOT_PARTY_STATUS);
 }
 
 /// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the

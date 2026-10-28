@@ -430,16 +430,16 @@ void ActorSystem_Configure(s32 mode) {
   // EWRAM first; elsewhere from IWRAM first, though a battle has already taken
   // both from EWRAM.
   if (mode == 3) {
-    sprites = AllocHeapSlotEwram(HEAP_SLOT_SPRITES,
-                                 ANIM_OBJECT_COUNT * sizeof(struct Sprite));
+    sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
+                                  ANIM_OBJECT_COUNT * sizeof(struct Sprite));
     layers =
-        AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMATIONS,
-                           ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
+        HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS,
+                            ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   } else {
-    sprites = AllocHeapSlot(HEAP_SLOT_SPRITES,
-                            ANIM_OBJECT_COUNT * sizeof(struct Sprite));
-    layers = AllocHeapSlot(HEAP_SLOT_SPRITE_ANIMATIONS,
-                           ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
+    sprites = HeapSlot_Alloc(HEAP_SLOT_SPRITES,
+                             ANIM_OBJECT_COUNT * sizeof(struct Sprite));
+    layers = HeapSlot_Alloc(HEAP_SLOT_SPRITE_ANIMATIONS,
+                            ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   }
   // Load the sprites' basic colours, clear both pools, then load the shared
   // shadow (128 bytes: the two 8x8 tiles of a 16x8, 256-colour sprite) and

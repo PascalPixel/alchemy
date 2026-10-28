@@ -152,7 +152,7 @@ void BattleAnim_RunFlashingStrike(struct BattleAnimArgs *args, s32 mode) {
   }
   // Releases the blitter before stopping the transfer, the other way round
   // from ANIM_FINISH_CANVAS_ONE_BLITTER.
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   BattleAnim_EndCanvasLayer();
 }

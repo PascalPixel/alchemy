@@ -60,8 +60,8 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
                                                    HEAP_SLOT_ACTOR_SYSTEM];
 #endif
   if (decodePicture == 0) {
-    code = AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH,
-                         (s32)Render_DecodePictureCodeSize);
+    code = HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
+                          (s32)Render_DecodePictureCodeSize);
     Dma_Set(Render_DecodePicture, code,
             (((u32)gRender_DecodePictureEnd - (u32)Render_DecodePicture) >> 2) |
                 (DMA_ENABLE | DMA_32BIT) << 16,
@@ -198,7 +198,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
 
   if (animation->dirty != 0) {
     size = animation->width * animation->height;
-    pixels = Alloc(size);
+    pixels = Heap_Alloc(size);
     Iwram_ClearWords(pixels, size);
 
     // Sort the visible sprite animations by priority (0-3), then by index, with
@@ -250,11 +250,11 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == SPRITE_PICTURE_LZ) {
         if (layer->colorMode != 0) {
-          unpacked = Alloc(0x400);
+          unpacked = Heap_Alloc(0x400);
           decodePicture(
               Decompress_Lz(layer->pictures[layer->picture], unpacked), pixels,
               layer->colorMode);
-          Free(unpacked);
+          Heap_Release(unpacked);
         } else {
           decoded = Iwram_Decompress(layer->pictures[layer->picture], pixels);
           if (decoded != 0) {
@@ -278,7 +278,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
       u8 *src;
       u8 *dst;
 
-      inside = Alloc(size);
+      inside = Heap_Alloc(size);
       w = animation->width;
       h = animation->height;
       edge = system->edge;
@@ -308,7 +308,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         dst++;
         src++;
       }
-      Free(inside);
+      Heap_Release(inside);
     }
 
     // Upload the pixels to the sprite's tiles in VRAM.
@@ -322,11 +322,11 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     animation->image.tile = tile;
     animation->dirty = 0;
     system->used += size;
-    Free(pixels);
+    Heap_Release(pixels);
   }
 
   if (decoderWasLoaded == 0) {
-    FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
+    HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
   }
   return mirrored;
 }

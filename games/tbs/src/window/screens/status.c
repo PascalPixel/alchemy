@@ -666,7 +666,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
       }
 
-      helpText = (u16 *)Alloc(OWNER_STATUS_TEXT_MAX * sizeof(*helpText));
+      helpText = (u16 *)Heap_Alloc(OWNER_STATUS_TEXT_MAX * sizeof(*helpText));
       if ((u32)cursor.helpEntry >= OWNER_STATUS_HELP_CONDITION) {
         statusKind =
             statusKinds[cursor.helpEntry - OWNER_STATUS_HELP_CONDITION];
@@ -678,7 +678,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         // what the stat stages add (the stats less those recalculated with
         // the stages cleared, after which the unit is restored from a copy),
         // or 20 for each Resistance stage.
-        savedUnit = (struct Unit *)Alloc(sizeof(*unit));
+        savedUnit = (struct Unit *)Heap_Alloc(sizeof(*unit));
         helpValue = 0;
         Iwram_CopyWords(savedUnit, unit, sizeof(*unit));
 
@@ -693,7 +693,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         defenseDelta -= unit->def;
         agilityDelta -= unit->agi;
         Iwram_CopyWords(unit, savedUnit, sizeof(*unit));
-        Free(savedUnit);
+        Heap_Release(savedUnit);
 
         switch (statusKind) {
         case OWNER_CONDITION_GRIM_REAPER:
@@ -747,7 +747,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       }
 
       Text_DrawWideStringAtOffset(helpText, (struct Window *)helpWindow, 0, 4);
-      Free(helpText);
+      Heap_Release(helpText);
       redraw = 0;
       work->dirty = 1;
     }

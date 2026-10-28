@@ -127,7 +127,7 @@ void WaitFrames(s32 frames) {
     gTasksRunning = 1;
     Task_RunPass(TASK_PASS_FRAME);
     gTasksRunning = 0;
-    Oam_BuildBuffer(AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, 0x400));
+    Oam_BuildBuffer(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, 0x400));
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
       // CPU load: the scanline the frame's work ended on, counted from the
@@ -201,7 +201,7 @@ void WaitFrames(s32 frames) {
     gFrameVBlanks = 0;
     CAMELOT_ASM("Halt in VBlankIntrWait")
     VBlankIntrWait();
-    FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
+    HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
     Oam_ResetFrame();
     gFrameCount++;
     gPlayTimeFrames++;

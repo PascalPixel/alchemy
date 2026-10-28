@@ -106,7 +106,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   u32 bits;
 
   work = WINDOW_WORK;
-  canvas = Alloc(0x800);
+  canvas = Heap_Alloc(0x800);
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   paletteBits = work->textPalette << 12;
   Iwram_ClearWords(pens, 16);
@@ -292,7 +292,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
     tiles++;
     mirror++;
   }
-  Free(canvas);
+  Heap_Release(canvas);
   return tileCount;
 }
 
@@ -645,16 +645,16 @@ static __inline__ void Text_WidenByteString(const u8 *input, u16 *output) {
 /// Draws a byte string into a text canvas window at pixel (x, y).
 /// The 256-halfword scratch requires at most 255 input bytes before the
 /// terminator. The scratch comes from EWRAM, or IWRAM when EWRAM is full
-/// (AllocEwram), and is freed before returning.
+/// (Heap_AllocEwram), and is freed before returning.
 void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
   s16 *buffer;
   const u8 *input;
 
   input = text;
-  buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
+  buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   Text_WidenByteString(input, (u16 *)buffer);
   Text_DrawWideStringAtOffset((u16 *)buffer, window, x, y);
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
@@ -671,7 +671,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
   s32 dst;
   s32 phase;
 
-  buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
+  buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   canvas = WINDOW_WORK;
   Text_WidenByteString(text, (u16 *)buffer);
 
@@ -687,7 +687,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
     Text_DrawStringAsTiles((u16 *)buffer, (u16 *)src, (u16 *)dst, phase);
     // The scratch is freed only here: a place outside the tilemap leaves it
     // allocated.
-    Free(buffer);
+    Heap_Release(buffer);
   }
 }
 
@@ -697,12 +697,12 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
 /// coordinates.
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, u32 x,
                              u32 y) {
-  u16 *buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
+  u16 *buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   Text_WidenByteString(text, buffer);
   x >>= 3;
   y >>= 3;
   Text_DrawWideStringInWindow((s16 *)buffer, window, x, y);
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// Draws a number (width as String_FormatNumber) into a text canvas window at

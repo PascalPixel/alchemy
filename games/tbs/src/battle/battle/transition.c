@@ -288,7 +288,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   s32 visibleCount;
 
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  timer = AllocHeapSlot(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
+  timer = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
   if (encounterId != TRANSITION_STORM_FORMATION) {
     // The curtain's seven edge tiles.
     Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
@@ -445,7 +445,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   gBgScroll[1].x = 8;
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ENTRY_TIMER);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ENTRY_TIMER);
 }
 
 #undef TRANSITION_CURTAIN_ENTRY

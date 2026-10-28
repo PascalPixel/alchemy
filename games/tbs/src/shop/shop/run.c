@@ -52,7 +52,7 @@ void Shop_InitializeWork(void) {
   struct ShopWork *shop;
   s32 resourceSlot;
 
-  shop = AllocHeapSlot(HEAP_SLOT_MENU, sizeof(struct ShopWork));
+  shop = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ShopWork));
   Field_EndBusyAndRevealFar();
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
@@ -94,7 +94,7 @@ void Shop_ReleaseWork(void) {
   VramCache_FreeEntry(state->gemIcon);
   VramCache_FreeEntry(state->statUpIcon);
   VramCache_FreeEntry(state->statDownIcon);
-  FreeHeapSlot(HEAP_SLOT_MENU);
+  HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
 /// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair

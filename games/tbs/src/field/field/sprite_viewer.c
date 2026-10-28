@@ -80,8 +80,8 @@ void SpriteViewer_Run(void) {
   editMode = UI_SPRITE_VIEWER_EDIT_SPRITE;
   shadowsEnabled = 1;
   selectedLayer = 0;
-  ring = AllocHeapSlotEwram(HEAP_SLOT_BATTLE,
-                            UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
+  ring = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE,
+                             UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   gDecodeFillByte = 3;
 
   // Only the ring's first word is cleared; SpriteViewer_BuildProbeRing fills
@@ -109,10 +109,10 @@ void SpriteViewer_Run(void) {
   // Rebuilt from here whenever sprite animation 0's sprite changes or Select is
   // pressed: a fresh heap, task table and VRAM cache each time.
 restart:
-  InitHeap();
+  Heap_Initialize();
   Task_ResetAll();
-  ring = AllocHeapSlotEwram(HEAP_SLOT_BATTLE,
-                            UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
+  ring = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE,
+                             UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   VramCache_Reset();
   ActorSystem_Initialize(ACTOR_SYSTEM_MAP);
   // With no map loaded, the map cell buffer holds sprite animation 0's

@@ -105,7 +105,7 @@ void BattleAnim_RunUndeadSword(struct BattleAnimArgs *args) {
           draw[0] = ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE]);
           ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE])(
               canvas, work->sheet, x, 112 - height, 14, height);
-          FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
     }

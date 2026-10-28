@@ -96,7 +96,8 @@
 /// party member's id, or -1 when the player backs out. Owns the menu work
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 PartyMemberChooser_Open(void) {
-  struct StatusScreenWork *menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  struct StatusScreenWork *menu =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 result;
   s32 index;
 
@@ -118,7 +119,7 @@ s32 PartyMemberChooser_Open(void) {
   ItemMenu_Close();
   gActorSystemWork->suspended = 0;
   WaitFrames(1);
-  FreeHeapSlot(HEAP_SLOT_MENU);
+  HeapSlot_Release(HEAP_SLOT_MENU);
   return result;
 }
 
@@ -149,9 +150,10 @@ s32 PartyMemberChooser_Run(void) {
 /// field menu again. The menu work and the two saved copies, taken from the
 /// EWRAM pool, are freed before returning.
 s32 StatusScreen_Run(void) {
-  struct StatusScreenWork *menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  void *palette = AllocEwram(64);
-  void *tiles = AllocEwram(STATUS_SAVED_TILE_BYTES);
+  struct StatusScreenWork *menu =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  void *palette = Heap_AllocEwram(64);
+  void *tiles = Heap_AllocEwram(STATUS_SAVED_TILE_BYTES);
   s32 result;
   s32 index;
 
@@ -219,13 +221,13 @@ s32 StatusScreen_Run(void) {
 #endif
   Iwram_CopyWords((void *)BG_PLTT, palette, 64);
   Iwram_CopyWords(BG_CHAR_BLOCK(1), tiles, STATUS_SAVED_TILE_BYTES);
-  Free(tiles);
-  Free(palette);
+  Heap_Release(tiles);
+  Heap_Release(palette);
   ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->holdTilemapUpload =
       1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
-  FreeHeapSlot(HEAP_SLOT_MENU);
+  HeapSlot_Release(HEAP_SLOT_MENU);
   ((struct ActorSystemWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM))
       ->suspended = 0;
   WaitFrames(1);
@@ -996,11 +998,11 @@ void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
     }
   }
 
-  buffer = Alloc(STATUS_HELP_TEXT_MAX * 2);
+  buffer = Heap_Alloc(STATUS_HELP_TEXT_MAX * 2);
   Message_CopyExpandedFar(messageVariant + MsgProgressHelp, buffer,
                           STATUS_HELP_TEXT_MAX);
   Text_DrawWideStringAtOffsetFar(buffer, destination, 0, -1);
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// Draws party member memberId's status page into window: the top rows

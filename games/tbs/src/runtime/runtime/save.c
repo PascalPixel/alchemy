@@ -33,7 +33,7 @@ enum {
 /// newer stays taken. Returns 1 when no flash chip answers, 0 otherwise; either
 /// way the caller ends with Save_ReleaseWork. Called by the save
 /// screens (window/screens/save.c) before every save, load, copy or
-/// delete. The workspace is EWRAM first (AllocHeapSlotEwram) and not cleared
+/// delete. The workspace is EWRAM first (HeapSlot_AllocEwram) and not cleared
 /// by the allocator, so it is cleared here; the record and sector-table
 /// functions in this file read it through gSaveWork, the slot's word in
 /// gHeapSlots, and need it allocated.
@@ -43,7 +43,7 @@ s32 Save_InitializeWork(void) {
   struct SaveSectorHeader *header;
   u32 index;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_SAVE, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SAVE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   SetFlashTimerIntr(SAVE_FLASH_TIMER, &gIrqHandlers[IRQ_TIMER2]);
 
@@ -429,7 +429,7 @@ s32 Save_LoadFileSummaries(void) {
 /// declaration says; no caller reads one.
 u32 Save_ReleaseWork(void) {
   Irq_SetHandler(IRQ_TIMER2, 0, NULL);
-  FreeHeapSlot(HEAP_SLOT_SAVE);
+  HeapSlot_Release(HEAP_SLOT_SAVE);
   // UB: nothing is returned, and no caller reads the result
 #ifdef UBFIX
   return 0;

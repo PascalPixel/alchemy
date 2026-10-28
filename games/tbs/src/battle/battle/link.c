@@ -47,7 +47,7 @@ s32 LinkBattle_ReceiveParty(void) {
   // XXX (no evidence): whether the block is left from a receive into a buffer,
   // as LinkBattle_SendParty does send from one; the function is never called,
   // so no run of the game uses it either way.
-  buffer = AllocEwram(LINK_PARTY_UNIT_BYTES);
+  buffer = Heap_AllocEwram(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
   partySlot = 0;
   while (partySlot < LINK_PARTY_SIZE) {
@@ -87,16 +87,16 @@ s32 LinkBattle_ReceiveParty(void) {
     opponent->name[UNIT_NAME_LENGTH] = 0;
     partySlot += 1;
   }
-  Free(buffer);
+  Heap_Release(buffer);
 
   // The recovery packet follows all three party places.
-  buffer = AllocEwram(LINK_PARTY_OFFER_BYTES);
+  buffer = Heap_AllocEwram(LINK_PARTY_OFFER_BYTES);
   if (Serial_StartReceive(Djinn_GetRecoveryTableFar(DJINN_RECOVERY_OPPONENT)) !=
       -1) {
     Serial_WaitForReceive();
     WaitFrames(2);
   }
-  Free(buffer);
+  Heap_Release(buffer);
   return memberCount;
 }
 
@@ -121,7 +121,7 @@ s32 LinkBattle_SendParty(void) {
   u16 unitIds[8];
 
   size = LINK_PARTY_UNIT_BYTES;
-  buffer = (u8 *)AllocEwram(size);
+  buffer = (u8 *)Heap_AllocEwram(size);
   noSlot = 0xff;
   battle = gBattleWork;
   for (i = 7; i >= 0; i--)
@@ -150,8 +150,8 @@ s32 LinkBattle_SendParty(void) {
 
   // The Djinn recovery list, its units renumbered for the opponent.
   size = LINK_PARTY_OFFER_BYTES;
-  Free(buffer);
-  buffer = (u8 *)AllocEwram(size);
+  Heap_Release(buffer);
+  buffer = (u8 *)Heap_AllocEwram(size);
   /* FAKEMATCH(one-pass): the copy in a one-pass loop, a scheduling barrier
    * that keeps the list pointer's copy ahead of the count's load; as the plain
    * call, 1 of 152 instructions differ in tbs-en. */
@@ -167,7 +167,7 @@ s32 LinkBattle_SendParty(void) {
     WaitFrames(1);
     WaitFrames(2);
   }
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// Copies the low bytes of a name's first four characters and a terminator,

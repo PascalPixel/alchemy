@@ -108,7 +108,7 @@ struct BattleBaseStats {
 /// unless FLAG_MONSTER_BATTLE_ANY_ENEMY bypasses the defeated-enemy check.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
-  struct FormationCandidate *pool = AllocEwram(128);
+  struct FormationCandidate *pool = Heap_AllocEwram(128);
   u16 party[8];
   s32 levelTotal = 0;
   s32 unitCount = BattleParty_PrepareMembers(party);
@@ -192,7 +192,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     result = 1;
   }
 
-  Free(pool);
+  Heap_Release(pool);
   return result;
 }
 
@@ -215,7 +215,7 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   s32 minimumStat;
   s32 element;
 
-  base = AllocEwram(sizeof(struct BattleBaseStats));
+  base = Heap_AllocEwram(sizeof(struct BattleBaseStats));
   unit = Unit_GetFar(unitId);
   Iwram_CopyWords(base, &unit->baseHp, sizeof(struct BattleBaseStats));
 
@@ -261,7 +261,7 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 
   unit->level += levels;
   Unit_CalculateFar(unitId);
-  Free(base);
+  Heap_Release(base);
 }
 
 /// Gives an enemy of the class its name letter, which tells it from others of

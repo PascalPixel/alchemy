@@ -12,7 +12,7 @@
 /// every heap slot) and sets the pools' next addresses to gIwramHeap and
 /// gEwramHeap. Called by System_Initialize, by ParentSequence_Run and by
 /// the debug modes that start over, so every earlier block is forgotten.
-void InitHeap(void) {
+void Heap_Initialize(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 
   Dma_Fill32(0, work, 0x100);
@@ -40,17 +40,17 @@ s32 Heap_GetRemainingEwram(void) {
 /// Returns heap slot `kind`'s block, first allocating `size` bytes for it
 /// (rounded up to words), from IWRAM when they fit and EWRAM otherwise. A new
 /// block advances that pool's next address and is stored in the slot, so
-/// later calls with the same `kind` return it until FreeHeapSlot
+/// later calls with the same `kind` return it until HeapSlot_Release
 /// frees it. Returns NULL when neither pool has room. Called throughout the
 /// game for long-lived work blocks, and by WaitFrames for each frame's OAM
 /// list.
 ///
 /// A slot that already has a block returns it whatever `size` asks for, so a
 /// caller that allocates also gets an earlier caller's block. The block is
-/// not cleared. It lives until FreeHeapSlot(kind), which also
+/// not cleared. It lives until HeapSlot_Release(kind), which also
 /// releases every block taken after it from the same pool, or until
-/// InitHeap.
-void *AllocHeapSlot(s32 kind, s32 size) {
+/// Heap_Initialize.
+void *HeapSlot_Alloc(s32 kind, s32 size) {
   union HeapState *work;
   s32 alignedSize;
   u32 address;
@@ -82,9 +82,9 @@ void *AllocHeapSlot(s32 kind, s32 size) {
   return (void *)cachedAddress;
 }
 
-/// As AllocHeapSlot, but tries EWRAM first, for blocks that need
+/// As HeapSlot_Alloc, but tries EWRAM first, for blocks that need
 /// room more than speed: the battle, shop and save work, among others.
-void *AllocHeapSlotEwram(s32 kind, s32 size) {
+void *HeapSlot_AllocEwram(s32 kind, s32 size) {
   union HeapState *work;
   u32 alignedSize;
   u32 next;
@@ -118,10 +118,10 @@ void *AllocHeapSlotEwram(s32 kind, s32 size) {
 /// Allocates `size` bytes (rounded up to words) with no heap slot, from IWRAM
 /// when they fit and EWRAM otherwise, and advances that pool's next address.
 /// Returns NULL when neither has room. Called for short-lived buffers (decode
-/// buffers, RAM copies of code). The buffer is not cleared. Free(p) sets
-/// its pool's next address back to `p`, which also frees everything
+/// buffers, RAM copies of code). The buffer is not cleared. Heap_Release(p)
+/// sets its pool's next address back to `p`, which also frees everything
 /// allocated after it there, so buffers are freed newest first.
-void *Alloc(s32 size) {
+void *Heap_Alloc(s32 size) {
   union HeapState *work = (union HeapState *)gHeapSlots;
   u32 nextAddress;
   u32 next;
@@ -144,9 +144,9 @@ void *Alloc(s32 size) {
   return (void *)allocationAddress;
 }
 
-/// As Alloc, but tries EWRAM first. Called mostly by the battle code and
+/// As Heap_Alloc, but tries EWRAM first. Called mostly by the battle code and
 /// the credits for buffers too large to want IWRAM.
-void *AllocEwram(s32 size) {
+void *Heap_AllocEwram(s32 size) {
   union HeapState *work = (union HeapState *)gHeapSlots;
   u32 alternateNextAddress;
   u32 primaryNextAddress;

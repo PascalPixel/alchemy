@@ -91,7 +91,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   s32 resourceSlot;
   struct WindowSprite *priceSprite;
 
-  tileBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tileBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   priceSprite = 0;
   // 0x40 words: the blank price's eight tiles, 0x100 bytes of the block
   Dma_Set(gShop_PriceTiles, tileBuffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x40,
@@ -120,7 +120,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
     priceSprite =
         WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_16X32, window, x, y);
   }
-  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   return priceSprite;
 }
 

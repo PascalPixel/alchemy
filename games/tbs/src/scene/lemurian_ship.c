@@ -913,7 +913,7 @@ static void Curtain_Close(void) {
 static void Curtain_Start(void) {
   u8 *tiles;
 
-  tiles = Heap_CallAlternatePool(AllocEwram, 0x100);
+  tiles = Heap_CallAlternatePool(Heap_AllocEwram, 0x100);
   sCurtainVramSlot = VramCache_FindFreeEntry();
   Dma_Fill32(0x11111111, tiles, 0x100);
   VramCache_Load(sCurtainVramSlot, 0x100, tiles);

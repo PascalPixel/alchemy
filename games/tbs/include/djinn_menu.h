@@ -29,7 +29,7 @@ struct DjinnListTable {
 
 /// The Djinn menu's lists, the field tiles and palette it restores on closing,
 /// and the tutorial's state. The menu allocates it outside any slot, EWRAM
-/// first, as it opens, and frees it (Free) as it closes.
+/// first, as it opens, and frees it (Heap_Release) as it closes.
 struct DjinnMenuBackdrop {
   struct DjinnListTable list;
   u8 tiles[0x2000];  ///< BG character block 1's first 0x2000 bytes

@@ -36,7 +36,7 @@ struct MindReadWork {
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
   struct MindReadWork *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_MIND_READ, 0x298);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 0x298);
   FieldPsynergy_FadeToCastColor();
   Dma_Fill32(0, work, 0x298);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
@@ -62,7 +62,7 @@ void FieldPsynergy_FinishWaveAndReleaseHeapBlock(void) {
   Actor_SetSpritePalette(Actor_GetById(((struct MindReadWork *)work)->sourceId),
                          1);
   FieldPsynergy_FadeFromCastColor();
-  FreeHeapSlot(HEAP_SLOT_MIND_READ);
+  HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }
 
 /// Task of the wave effect: once its delay has run out, writes

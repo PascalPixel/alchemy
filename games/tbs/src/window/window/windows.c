@@ -76,7 +76,7 @@ void WindowSystem_InitField(void) {
 #endif
 
   // Clear the work block before linking any of its embedded lists.
-  work = AllocHeapSlotEwram(HEAP_SLOT_WINDOW, WINDOW_WORK_SIZE);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_WINDOW, WINDOW_WORK_SIZE);
 #if TBS_PATCH_1
   fill = 0;
   Dma_Set((const void *)&fill, work, DMA_FILL32(WINDOW_WORK_SIZE / 4),
@@ -130,8 +130,8 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
         BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
   }
 
-  work = (struct WindowWork *)AllocHeapSlotEwram(HEAP_SLOT_WINDOW,
-                                                 WINDOW_WORK_SIZE);
+  work = (struct WindowWork *)HeapSlot_AllocEwram(HEAP_SLOT_WINDOW,
+                                                  WINDOW_WORK_SIZE);
 #if TBS_PATCH_1
   fill = 0;
   Dma_Set((const void *)&fill, work, DMA_FILL32(WINDOW_WORK_SIZE / 4),

@@ -155,10 +155,10 @@ static void Colosso_DrawGauge(void) {
     if (++gauge->level == 1) {
       Dma_Set(gColosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0),
               (DMA_ENABLE << 16) | 0x10, REG_DMA3);
-      buf = Heap_CallAlternatePool(AllocEwram, 512);
+      buf = Heap_CallAlternatePool(Heap_AllocEwram, 512);
       FieldDecompress_TaggedLz(gColosso_GaugeGraphics, buf);
       VramCache_Load(gauge->vramBlock, 512, buf);
-      Free(buf);
+      Heap_Release(buf);
     }
   }
   if (gauge->level == 0) {

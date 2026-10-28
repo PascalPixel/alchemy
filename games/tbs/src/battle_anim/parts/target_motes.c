@@ -261,7 +261,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *args, u32 mode) {
                   TARGET_MOTES_GLINT_OFFSETS,
               x, y + 16, gBattleAnim_GlintCellWidths[frame & 3],
               gBattleAnim_GlintCellHeights[frame & 3]);
-          FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS,

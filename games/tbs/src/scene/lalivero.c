@@ -863,10 +863,10 @@ s32 Lalivero_Initialize(void) {
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  icon = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_BLACK_ORB);
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     // A sign now stands at the north exit, and the three open cells of the

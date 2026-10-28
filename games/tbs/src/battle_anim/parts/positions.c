@@ -169,9 +169,9 @@ void BattleAnim_RunByIdRange(struct BattleAnimArgs *args) {
   // ParticleSpritesD's ten flare cells, 2x2 to 20x20 pixels, 1,540 bytes
   // (2 * MOTE_SET_BYTES); the slot's last 10 bytes are never written.
   value = 0x60e;
-  AllocHeapSlotEwram(HEAP_SLOT_BATTLE_SHEET, value);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
-  AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, value);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   value = args->kind;
   kind = value;
   value = kind - ANIM_RANGE_CASTING_IMPACT;
@@ -184,7 +184,7 @@ void BattleAnim_RunByIdRange(struct BattleAnimArgs *args) {
   } else {
     BattleAnim_RunBeam(args);
   }
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }

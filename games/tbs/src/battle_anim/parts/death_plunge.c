@@ -376,10 +376,10 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *args) {
   // The sheet slot takes ParticleSpritesD's flare cells, which
   // ANIM_DRAW_FLARE reads: the ten squares of 2x2 to 20x20 are 1540 of its
   // 0x60e (1550) bytes.
-  work = (struct BattleAnimWork *)AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM,
-                                                sizeof *work);
-  canvas = (void *)AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = (u8 *)AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  work = (struct BattleAnimWork *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_ANIM,
+                                                 sizeof *work);
+  canvas = (void *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  sheet = (u8 *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   camera = gBattleCamera;
   work->args = args;
   BattleAnim_StartCanvasLayer(0);
@@ -460,14 +460,14 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *args) {
       n = frame / 4 % 3;
       glow = work->sheet + n * 1032 + 0x1100;
       draw[1](canvas, glow, 40, ground.y - 36, 24, 43);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
       draw[1] = ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
       n = i % 4;
       draw[1](canvas, work->sheet + n * (17 * 64), 64, ground.y - 64, 17, 64);
       draw[1](canvas, glow, 64, ground.y - 36, 24, 43);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
     // A lookup with no side args whose result is dropped; the ROM keeps
     // the call.
@@ -502,12 +502,12 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *args) {
 
   // Finish: the blitter, the task and the layer, then the three slots
   // in the reverse of the order they were taken.
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   BattleAnim_EndCanvasLayer();
-  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
   /* FAKEMATCH(dead): two updates of frame that cancel, which order two stack
    * slots; without them, 9 of 420 instructions differ in tbs-en. */
   frame ^= 1;
@@ -585,10 +585,10 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *args) {
   s32 centreX;
   s32 centreY;
 
-  work = AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(*work));
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ANIM, sizeof(*work));
   size = CANVAS_BYTES;
-  canvas = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, size);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, size);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   slots = gHeapSlots + HEAP_SLOT_BATTLE;
   battle = slots[0];
   view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
@@ -908,9 +908,9 @@ void BattleAnim_RunShatteringOpening(struct BattleAnimArgs *args) {
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
                       IO_WRITE_16);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
 }
 
 /// One streak of light of the element streak burst, laid over the same
@@ -948,9 +948,9 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *args) {
   s32 frame;
   s32 i;
 
-  work = AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
-  canvas = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   work->args = args;
   BattleAnim_StartCanvasLayer(0);
   // Setup, as for the element pillar: the battle background darkens for 24
@@ -1034,7 +1034,7 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *args) {
         draw[1] = *slot;
         draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
                 ground.y + gDeathPlunge_Y[i] - 32, 32, 32);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
     }
     // The motes, shrinking as they close in.
@@ -1059,12 +1059,12 @@ void BattleAnim_RunElementBurst(struct BattleAnimArgs *args) {
   }
 
   // Finish, as for the element pillar.
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   BattleAnim_EndCanvasLayer();
-  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
 }
 
 /// Draws a frame of the element streak burst: on its first frame seeds 256
@@ -1160,8 +1160,8 @@ void BattleAnim_StartElementStreaks(s32 element) {
   void *palette;
   s32 id;
 
-  work = AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
-  AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   BattleAnim_StartCanvasLayer(0);
   work->fadeFrames = 24;
   REG_BG2PA = Q_8_8(1);
@@ -1208,8 +1208,8 @@ void BattleAnim_EndElementStreaks(void) {
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   }
   Task_Remove(Palette_StepFadeTransfer);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
 }
 
 #undef DEATH_PLUNGE_FRAMES

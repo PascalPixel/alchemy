@@ -258,7 +258,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *args) {
       if (frame <= 3)
         ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
             canvas, work->sheet + GROUND_DJINNI_OFFSETS, x, y, 20, 40);
-      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       draw[0](canvas, work->sheet + GROUND_DJINNI_OFFSETS, x, y, 20, 40);
     }
     // Every 2 frames each chip takes a random picture (velocityX, chips 3
@@ -319,7 +319,7 @@ void BattleAnim_RunGround(struct BattleAnimArgs *args) {
             draw[1](canvas, work->sheet + gHail_ChipCells[chip->velocityX],
                     chipX, chipY, gHail_ChipWidths[chip->velocityX],
                     gHail_ChipHeights[chip->velocityX]);
-            FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           }
           rock->x += rock->velocityX;
           rock->y += rock->velocityY;

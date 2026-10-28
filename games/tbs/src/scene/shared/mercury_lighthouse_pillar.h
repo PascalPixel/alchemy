@@ -419,7 +419,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
 /// remove the column of light.
 static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   struct MercuryLighthouseLights **published =
-      AllocHeapSlotEwram(HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, 4);
+      HeapSlot_AllocEwram(HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, 4);
   struct MercuryLighthouseLights *state;
   struct Actor *pillar;
 

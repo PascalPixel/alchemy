@@ -321,11 +321,11 @@ void LuckyDice_Run(void) {
   s16 affineScale;
 
   // Allocate the screen's work blocks and reset the camera and tasks.
-  AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  spritePalette = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, 0x200);
-  diceWork = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(*diceWork));
-  sprites = AllocHeapSlotEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
-  camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x200);
+  diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(*diceWork));
+  sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
+  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
   Stub_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
   Camera_ResetViewDefaults();
   Task_ResetAll();
@@ -972,9 +972,9 @@ void LuckyDice_Run(void) {
     LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     WaitFrames(1);
   }
-  FreeHeapSlot(HEAP_SLOT_CAMERA);
-  FreeHeapSlot(HEAP_SLOT_LUCKY_DICE_SPRITES);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
+  HeapSlot_Release(HEAP_SLOT_CAMERA);
+  HeapSlot_Release(HEAP_SLOT_LUCKY_DICE_SPRITES);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }

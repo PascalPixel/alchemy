@@ -196,7 +196,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Frees the two blitters, the alternate first.
 #define ANIM_RELEASE_BLITTERS()                                                \
-  (FreeHeapSlot(HEAP_SLOT_RAM_CODE_2), FreeHeapSlot(HEAP_SLOT_RAM_CODE))
+  (HeapSlot_Release(HEAP_SLOT_RAM_CODE_2), HeapSlot_Release(HEAP_SLOT_RAM_CODE))
 
 /// The usual end of a canvas animation: stops the transfer task before
 /// freeing what it reads, then the blitters, then the canvas layer.
@@ -207,7 +207,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The same for an animation that drew through one blitter.
 #define ANIM_FINISH_CANVAS_ONE_BLITTER()                                       \
   (Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer),                     \
-   FreeHeapSlot(HEAP_SLOT_RAM_CODE), BattleAnim_EndCanvasLayer())
+   HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleAnim_EndCanvasLayer())
 
 /// The bytes of one set of the ten mote cells: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770

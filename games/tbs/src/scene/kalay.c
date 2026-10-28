@@ -1248,10 +1248,10 @@ static void Kalay_PrepareTown(void) {
     nut->mode = found;
     nut->y = PIXELS(10);
     nut->visible = 1;
-    heap = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_NUT);
     VramCache_Load(sprite->palette, 128, heap + 0x400);
-    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     nut->orbitAngle = found;
     nut->orbitCenterX = nut->x;
     nut->orbitCenterY = nut->y;

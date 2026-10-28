@@ -107,7 +107,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   }
 done:
   if (original == NULL)
-    FreeHeapSlot(TEXT_WORK_BLOCK);
+    HeapSlot_Release(TEXT_WORK_BLOCK);
   *text = 0;
 }
 
@@ -409,7 +409,7 @@ void Message_Find(struct MessageReader *reader, s32 message) {
 
   RamCode_Load(routine, Message_FindArm, Message_FindCodeSize);
   routine(reader, message);
-  Free(routine);
+  Heap_Release(routine);
 }
 
 /// Decodes the next symbol of a message. Messages are Huffman coded with one

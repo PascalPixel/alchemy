@@ -5,8 +5,8 @@
 	.set import.Task_Remove, 1
 	.set import.Import_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.AllocHeapSlot, 1
-	.set import.FreeHeapSlot, 1
+	.set import.HeapSlot_Alloc, 1
+	.set import.HeapSlot_Release, 1
 	.set import.VramCache_Load, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_SetAnimationSpeed, 1

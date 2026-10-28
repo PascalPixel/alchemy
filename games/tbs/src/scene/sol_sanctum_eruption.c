@@ -1298,7 +1298,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
       FieldActor_Create(ACTOR_ELEMENTAL_STAR, starOrigin->x.fixed,
                         starOrigin->y.fixed + PIXELS(36), starOrigin->z.fixed);
   if (star != NULL) {
-    iconPixels = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    iconPixels = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     starSprite = star->sprite;
     starSprite->flags = 0;
     starSprite->count = 0;
@@ -1307,7 +1307,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     starSprite->image.priority = 1;
     Icon_DrawItem(ITEM_MARS_STAR);
     VramCache_Load(starSprite->slot, 128, iconPixels + 0x400);
-    FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
     ItemDisplay_ShowPicture(star, 3);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);

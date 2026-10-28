@@ -204,19 +204,19 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *args) {
       REG_BLDALPHA = BLEND_ALPHA(0x7c - (frame << 1), 16);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, transparent);
     ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41, size, size);
-    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       transparent);
     ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 41, size, size);
-    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       transparent);
     ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 72, size, size);
-    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP,
                       transparent);
     ANIM_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72, size, size);
-    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
       ANIM_SHOW_DAMAGE(SE_CRACK);
     ANIM_FOR_EACH_TARGET(i, work->args) {

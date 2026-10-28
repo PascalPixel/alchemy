@@ -39,7 +39,7 @@ s32 SceneSequence_Run(s32 entrance) {
   s32 code;
 
   // Set up the scene.
-  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
   gAdventure.returnScene = gAdventure.sceneId;
@@ -395,7 +395,7 @@ done:
     work->transitionActive = 0;
     WaitFrames(work->transitionFrames);
   }
-  FreeHeapSlot(HEAP_SLOT_FIELD);
+  HeapSlot_Release(HEAP_SLOT_FIELD);
   return result;
 }
 

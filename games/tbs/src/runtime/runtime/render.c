@@ -105,5 +105,5 @@ void Oam_BuildBuffer(void *work) {
 
   RamCode_Load(routine, Oam_BuildBufferKernel, LoadedRuntime_Size);
   routine(work);
-  Free((void *)routine);
+  Heap_Release((void *)routine);
 }

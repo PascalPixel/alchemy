@@ -598,7 +598,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   FieldActor_SetMoveTarget(actor, x, 0, z);
   Event_WaitFrames(6);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   Actor_StartCamera(work->camera, (s32)actor);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,

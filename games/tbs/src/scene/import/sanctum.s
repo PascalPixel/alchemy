@@ -5,8 +5,8 @@
 	.set import.ArcTan2, 1
 	.set import.Trig_Sin, 1
 	.set import.Trig_Cos, 1
-	.set import.AllocHeapSlot, 1
-	.set import.FreeHeapSlot, 1
+	.set import.HeapSlot_Alloc, 1
+	.set import.HeapSlot_Release, 1
 	.set import.VramCache_Load, 1
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1

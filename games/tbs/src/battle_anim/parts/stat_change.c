@@ -327,7 +327,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode) {
         draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
         draw[0](canvas, work->sheet + cell * (40 * 40) + STAT_BOOST_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
-        FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
 
       // The mode's picture, from frame 80.
@@ -340,7 +340,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode) {
           draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           draw[0](canvas, work->sheet + cell * (24 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
-          FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
         // Six 32x64 pictures, 4 frames each.
@@ -351,7 +351,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode) {
           draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           draw[0](canvas, work->sheet + cell * (32 * 64) + STAT_BOOST_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
-          FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_ZEPHYR) {
         // 64x32 pictures, 2 frames each, mirrored below into 64x64.
@@ -378,7 +378,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *args, u32 mode) {
           draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           draw[0](canvas, work->sheet + cell * (40 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
-          FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
     }

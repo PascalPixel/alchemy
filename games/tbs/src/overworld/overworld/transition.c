@@ -562,7 +562,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
 /// tasks; mask 0x3f3f shows every layer in both windows.
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
-      AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+      HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 
   Dma_Fill32(0, state, sizeof(*state));
   state->mode = mode;
@@ -588,7 +588,7 @@ UNUSED void ScreenTransition_SuspendCallbacks(void) {
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
   struct ScreenTransitionState *state;
 
-  state = AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   return state;
 }
@@ -1028,7 +1028,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
 void ScreenTransition_InitializeState(s32 value) {
   struct ScreenTransitionState *state;
 
-  state = AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   ScreenTransition_FillTilemapAndSolidTile(0);
   state->mode = value;

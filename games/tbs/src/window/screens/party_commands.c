@@ -96,7 +96,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_MENU, 260);
+  state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
   Link_DrawPageArrows(0x06006680);
@@ -186,7 +186,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       s32 selection;
       s32 handle;
 
-      block = Alloc(12);
+      block = Heap_Alloc(12);
       if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
         selection = BATTLE_SIDE_MASK_ENEMIES;
       } else {
@@ -195,7 +195,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       handle = BattleUnit_ListIdsFar(selection, block);
       WaitFrames(1);
       BattleStatusScreen_Run(block, handle, *(u16 *)block);
-      Free(block);
+      Heap_Release(block);
       continue;
     }
     // Flee, unless the battle forbids it: one COMMAND_FLEE for the party,
@@ -292,13 +292,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         void *block;
         s32 handle;
 
-        block = Alloc(12);
+        block = Heap_Alloc(12);
         handle = BattleUnit_ListIdsFar(1, block);
         state->iconShown[2] = 0;
         WaitFrames(1);
         BattleStatusScreen_Run(block, handle, unitId);
         state->iconShown[2] = 1;
-        Free(block);
+        Heap_Release(block);
         continue;
       }
       BattleHighlight_SetModesFar(signatureHeader, 0);
@@ -840,6 +840,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     }
   }
   BattleCamera_SetCommandViewFar(0);
-  FreeHeapSlot(HEAP_SLOT_BATTLE_MENU);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_MENU);
   return commandCount;
 }

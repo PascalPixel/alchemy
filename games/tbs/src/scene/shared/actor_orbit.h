@@ -48,11 +48,11 @@ void Scene_FloatNut(s32 id) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
 
-  transfer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItem(ITEM_NUT);
   transfer += 0x400;
   VramCache_Load(sprite->palette, 128, transfer);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
   actor->orbitCenterX = actor->x;
   actor->orbitAngle = zero;

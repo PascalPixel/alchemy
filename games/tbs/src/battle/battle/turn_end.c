@@ -619,7 +619,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
     // many levels (summonBoost), and each element's power that Unit_Calculate
     // then raises is announced against a copy taken before.
     mostOfOneElement = 0;
-    before = AllocEwram(sizeof(struct Unit));
+    before = Heap_AllocEwram(sizeof(struct Unit));
     Iwram_CopyWords(before, unit, sizeof(struct Unit));
     strongestElement = -1;
     for (i = 0; i < ELEMENT_COUNT; i++) {
@@ -654,7 +654,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattleTurn *plan) {
         BattlePlayback_WaitForReady();
       }
     }
-    Free(before);
+    Heap_Release(before);
   }
   // Damage at the turn's end, each queue played at once: the haunting
   // spirit's (the shares of its damage BattleAbility_ApplyToTarget gathered),

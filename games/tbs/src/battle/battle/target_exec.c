@@ -170,7 +170,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
   skipDamage = 0;
   affinity = 0;
   unitSize = sizeof(struct Unit);
-  savedTarget = Alloc(unitSize);
+  savedTarget = Heap_Alloc(unitSize);
 
   unitId = plan->unitId;
   targetId = plan->targetIds[slot];
@@ -1303,7 +1303,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleTurn *plan, s32 slot) {
     BattlePlayback_Push(PLAYBACK_UNIT_NAME, targetId);
     PUSH_MESSAGE(MsgWakes);
   }
-  Free(savedTarget);
+  Heap_Release(savedTarget);
   Unit_CalculateFar(targetId);
   // The party's status is drawn now, not through the queue.
   PartyStatus_DrawFar(gBattleWork->partyStatus);

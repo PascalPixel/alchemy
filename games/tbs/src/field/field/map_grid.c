@@ -114,13 +114,13 @@ void TileMap_ConvertBuffer(void) {
   u32 savedBytes;
 
   savedBytes = 0x8000;
-  savedCells = AllocEwram(savedBytes);
+  savedCells = Heap_AllocEwram(savedBytes);
   Iwram_CopyWords(savedCells, Ram_MapGridCellBuffer, savedBytes);
   RamCode_Load(convertGrid, Tile_ConvertMapGrid, Tile_ConvertMapGridCodeSize);
   convertGrid(((u8 *)gMapGridCellBuffer + 0x8000), Ram_MapGridCellBuffer,
               savedCells);
-  Free(convertGrid);
-  Free(savedCells);
+  Heap_Release(convertGrid);
+  Heap_Release(savedCells);
 }
 
 /// Copies one tile column of a cell picture into a BG map: its top and
@@ -234,7 +234,7 @@ s32 MapGrid_LoadMap(s32 index) {
   ScreenFade_FromBlack(0);
   mapResources = (struct MapResources *)&gMaps[index];
   grid =
-      AllocHeapSlotEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapGridScrollWork));
+      HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapGridScrollWork));
   Iwram_ClearWords(grid, sizeof(struct MapGridScrollWork));
   mapHeader = (struct MapHeader *)Resource_GetTableEntry(
       mapResources->resources[0] + (u32)&ResourceId_Map001);
@@ -337,7 +337,7 @@ s32 MapGrid_LoadMap(s32 index) {
     // bytes, 14 of the 16 BG palettes), the three 16 KB tilesets, and
     // last the tileset animations' tiles, which decode straight to
     // gMapGridAnimTiles. Without the memory, nothing is loaded.
-    graphicsBuffer = Alloc(0x4000);
+    graphicsBuffer = Heap_Alloc(0x4000);
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
       backdrop = *(s16 *)BG_PLTT;
@@ -368,7 +368,7 @@ s32 MapGrid_LoadMap(s32 index) {
           Resource_GetTableEntry(mapResources->resources[5] +
                                  (u32)&ResourceId_Map001),
           gMapGridAnimTiles);
-      Free(graphicsBuffer);
+      Heap_Release(graphicsBuffer);
     }
   }
   // Only BG0, the windows, is shown here; ScreenTransition_Start ORs

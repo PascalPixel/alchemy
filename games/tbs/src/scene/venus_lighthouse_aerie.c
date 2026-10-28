@@ -1559,11 +1559,11 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->retainSpriteCache = 1;
     star->speedLimit = PIXELS(8) / 5;
     star->acceleration = 0xcccc;
-    iconPixels = Heap_Allocate(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    iconPixels = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     // Display the Venus Star icon before sending it toward the beacon.
     Item_LoadIcon(ITEM_VENUS_STAR);
     Vram_Load(sprite->slot, 128, iconPixels + 0x400);
-    Heap_Release(HEAP_SLOT_GLYPH_TRANSFER);
+    HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   Actor_SetSpritePriority(ACTOR_VENUS_STAR_SHADOW, 1);
   starShadow = Actor_Get(ACTOR_VENUS_STAR_SHADOW);

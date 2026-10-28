@@ -2184,10 +2184,10 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   sprite->image.palette = 0;
   actor->velocityY = PIXELS(5) / 2;
   actor->gravity = PIXELS(1) / 4;
-  glyph = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(item);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
-  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
+  HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   Sound_PlaySong(MUS_TREASURE_FOUND);
   ItemDisplay_ShowPicture(actor, 3);
   Inventory_Discard(member, slot);

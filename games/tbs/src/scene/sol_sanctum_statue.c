@@ -979,7 +979,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   u8 *pixels;
 
   spriteWords = sScrollingSprites.words;
-  pixels = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
+  pixels = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gSolSanctumStatue_SpriteRowsGraphics, pixels);
   tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
@@ -1008,7 +1008,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | 0xc00;
   }
-  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   {
     s32 priority = 3200;
 

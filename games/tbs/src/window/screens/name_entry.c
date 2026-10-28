@@ -56,7 +56,7 @@ s32 NameEntry_CountLetters(const u8 *name) {
 void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
   struct WindowWork *work = WINDOW_WORK;
   s16 *mirror = (s16 *)work->tilemap;
-  s16 *buffer = AllocEwram(0x300);
+  s16 *buffer = Heap_AllocEwram(0x300);
   s16 *input = buffer;
   u32 cell;
   s16 *vram;
@@ -79,7 +79,7 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
     vram += 32 - window->width;
     mirror += 32 - window->width;
   }
-  Free(buffer);
+  Heap_Release(buffer);
 }
 
 /// Like Window_SetTextTileBitRect, but ORs all of `palette` into the

@@ -211,10 +211,10 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   // With a valid refreshed old list, class rebuilding can remove at most
   // sixteen actions, including any equipment actions displaced by the class.
   // Its new 32-slot list and these lost entries fit the 48-entry allocation.
-  numberText = Alloc(64 * sizeof(*numberText));
-  savedUnit = Alloc(sizeof(*savedUnit));
-  changedAbilities =
-      AllocEwram(DJINN_PREVIEW_ABILITY_CAPACITY * sizeof(*changedAbilities));
+  numberText = Heap_Alloc(64 * sizeof(*numberText));
+  savedUnit = Heap_Alloc(sizeof(*savedUnit));
+  changedAbilities = Heap_AllocEwram(DJINN_PREVIEW_ABILITY_CAPACITY *
+                                     sizeof(*changedAbilities));
   Iwram_CopyWords(savedUnit, unit, sizeof(*savedUnit));
 
   element = (encodedDjinn >> 8) & 15;
@@ -401,8 +401,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
 
   // Previewing must not change the party member's Djinn, class or battle stats.
   Iwram_CopyWords(unit, savedUnit, sizeof(*savedUnit));
-  Free(changedAbilities);
-  Free(savedUnit);
-  Free(numberText);
+  Heap_Release(changedAbilities);
+  Heap_Release(savedUnit);
+  Heap_Release(numberText);
   return win;
 }

@@ -272,8 +272,8 @@ UNUSED void PaletteCycle_Initialize(void) {
   u16 cycleIndex;
   u16 colorIndex;
 
-  paletteCycles = AllocHeapSlotEwram(HEAP_SLOT_PALETTE_CYCLES,
-                                     sizeof(struct PaletteCycleWork));
+  paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
+                                      sizeof(struct PaletteCycleWork));
   cycle = paletteCycles->entries;
   // Four cycles of up to 16 saved colours each.
   for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
@@ -327,7 +327,7 @@ UNUSED s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
 /// (HEAP_SLOT_PALETTE_CYCLES). Nothing calls it.
 UNUSED void PaletteCycle_Stop(void) {
   Task_Remove(PaletteCycle_Step);
-  FreeHeapSlot(HEAP_SLOT_PALETTE_CYCLES);
+  HeapSlot_Release(HEAP_SLOT_PALETTE_CYCLES);
 }
 
 /// Unused: starts running the palette cycles each frame.

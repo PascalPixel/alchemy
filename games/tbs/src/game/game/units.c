@@ -5,8 +5,8 @@
 #include "../game_internal.h"
 
 /// The running totals Unit_Calculate builds a unit's stats in. Each call takes
-/// a block from EWRAM first (AllocEwram) and frees it
-/// with Free before returning; only Unit_Calculate reads it.
+/// a block from EWRAM first (Heap_AllocEwram) and frees it
+/// with Heap_Release before returning; only Unit_Calculate reads it.
 struct StatWork {
   s32 hp;                 ///< maximum HP
   s32 pp;                 ///< maximum PP
@@ -162,7 +162,7 @@ void Unit_Calculate(s32 unitId) {
   s16 previousMaximum;
 
   // Start with the unit's base stats and elemental power/resistance.
-  stats = AllocEwram(sizeof(struct StatWork));
+  stats = Heap_AllocEwram(sizeof(struct StatWork));
   unit = Unit_Get(unitId);
   stats->hp = unit->baseHp;
   stats->pp = unit->basePp;
@@ -448,7 +448,7 @@ void Unit_Calculate(s32 unitId) {
     unit->pp = value;
   }
 
-  Free(stats);
+  Heap_Release(stats);
 }
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item

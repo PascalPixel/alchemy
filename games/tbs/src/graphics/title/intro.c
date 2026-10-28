@@ -317,7 +317,7 @@ s32 Title_ShowIntro(s32 prompt) {
   result = 0;
   blankTile = 0x1ff;
   savedCpuLoadDisplay = gCpuLoadDisplayEnabled;
-  work = AllocHeapSlot(HEAP_SLOT_TITLE_INTRO, 224);
+  work = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, 224);
   DebugText_Clear();
   VramCache_Reset();
   WaitFrames(1);
@@ -442,7 +442,7 @@ s32 Title_ShowIntro(s32 prompt) {
   Window_LoadGraphics();
   DebugText_Clear();
   if (prompt != 0) {
-    u8 *buffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+    u8 *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
     struct IntroSprite *sprite = work->area.prompt.sprites;
 
     Decompress_ByteLz(gTitle_PromptTiles, buffer);
@@ -456,7 +456,7 @@ s32 Title_ShowIntro(s32 prompt) {
       *spriteWords++ = 0x40004000;
       *spriteWords = vramBlock;
     }
-    FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+    HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
   ScreenFade_FromWhite(30);
   ScreenFade_Wait();
@@ -509,7 +509,7 @@ s32 Title_ShowIntro(s32 prompt) {
     WaitFrames(1);
   }
   gCpuLoadDisplayEnabled = savedCpuLoadDisplay;
-  FreeHeapSlot(HEAP_SLOT_TITLE_INTRO);
+  HeapSlot_Release(HEAP_SLOT_TITLE_INTRO);
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0;
   WaitFrames(1);
@@ -1017,7 +1017,7 @@ void TitlePaletteFade_Initialize(void) {
   struct TitlePaletteFade *buffer;
   s32 callbackPriority;
 
-  buffer = AllocHeapSlotEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
+  buffer = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(0x80), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(0x80),
@@ -1032,7 +1032,7 @@ void TitlePaletteFade_Initialize(void) {
 /// calls it.
 UNUSED void TitlePaletteFade_Release(void) {
   Task_Remove(&TitlePaletteFade_Update);
-  FreeHeapSlot(HEAP_SLOT_PALETTE_FADE);
+  HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Unused: sets the fade target by tinting the saved background and/or

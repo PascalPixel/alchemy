@@ -7,8 +7,9 @@
 /// The heap is two stacks of blocks, one in IWRAM and one in EWRAM; the
 /// runtime README's "The heap" gives the allocators and
 /// the lifetime rule. Every scene change resets both pools and clears every
-/// slot (InitHeap, from the parent sequence in overworld/parent_sequence.c), so
-/// no block outlives the scene, battle or minigame that took it.
+/// slot (Heap_Initialize, from the parent sequence in
+/// overworld/parent_sequence.c), so no block outlives the scene, battle or
+/// minigame that took it.
 
 #include "types.h"
 #include "static_assert.h"
@@ -43,7 +44,7 @@ STATIC_ASSERT(offsetof(union HeapState, heap.nextIwram) == 4);
 STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 
 /// The heap slots shared across folders, by index into gHeapSlots. Releasing a
-/// slot (FreeHeapSlot) also releases every block taken after it in
+/// slot (HeapSlot_Release) also releases every block taken after it in
 /// the same pool.
 enum HeapSlot {
   HEAP_SLOT_TRANSFORM_STACK = 2, ///< The 3D transform's one saved level.

@@ -80,9 +80,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 gainedCount;
     s32 size;
 
-    diffWork = AllocEwram(96);
+    diffWork = Heap_AllocEwram(96);
     size = sizeof(*originalUnit);
-    originalUnit = AllocEwram(size);
+    originalUnit = Heap_AllocEwram(size);
     secondElement = 0;
     secondIndex = 0;
     memberId = menu->shownMember[0];
@@ -121,8 +121,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     pageCounts[1] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
                                       diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, size);
-    Free(originalUnit);
-    Free(diffWork);
+    Heap_Release(originalUnit);
+    Heap_Release(diffWork);
   } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
     u16 *diffWork;
     struct Unit *originalUnit;
@@ -134,8 +134,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 lostCount;
     s32 gainedCount;
 
-    diffWork = AllocEwram(96);
-    originalUnit = AllocEwram(sizeof(*originalUnit));
+    diffWork = Heap_AllocEwram(96);
+    originalUnit = Heap_AllocEwram(sizeof(*originalUnit));
     firstMemberId = menu->shownMember[0];
     firstElement = menu->pairElement[0];
     firstIndex = menu->pairIndex[0] & DJINN_ENTRY_INDEX;
@@ -153,8 +153,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     Iwram_CopyWords(unit, originalUnit, sizeof(*originalUnit));
     pageCounts[1] = pageCounts[0];
     page = DJINN_COMPARE_PAGE_GIVER;
-    Free(originalUnit);
-    Free(diffWork);
+    Heap_Release(originalUnit);
+    Heap_Release(diffWork);
   }
 
   // Psynergy entries to pages of five.
@@ -252,7 +252,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       s32 size;
 
       size = 0x200;
-      saved = AllocEwram(size);
+      saved = Heap_AllocEwram(size);
       pressedKeys = 0;
       repeatedKeys = 0;
       backdrop->tutorialTimer += 1;
@@ -337,7 +337,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       default:
         break;
       }
-      Free(saved);
+      Heap_Release(saved);
     }
 
     // The help names what R shows next: `R: <giver>'s Psy` on
@@ -608,13 +608,13 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   // is taken and given back unused.
   counts = pageCounts;
   counts[1] = counts[0] = 1;
-  listedActions = AllocEwram(96);
-  saved = AllocEwram(332);
+  listedActions = Heap_AllocEwram(96);
+  saved = Heap_AllocEwram(332);
   unit = Unit_GetFar(menu->shownMember[0]);
   counts[1] = counts[0] = PsynergyList_Diff(unit->psynergy, unit->psynergy,
                                             listedActions, &gained, &lost);
-  Free(saved);
-  Free(listedActions);
+  Heap_Release(saved);
+  Heap_Release(listedActions);
   counts[0] = (counts[0] - 1) / 6 + 1;
   if (counts[0] == 0)
     counts[0] = 1;

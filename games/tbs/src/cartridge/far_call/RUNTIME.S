@@ -20,15 +20,15 @@ FarCall_RuntimeTable:
 	export Trig_CosFar, Trig_Cos
 	export Vector_AddPolarOffsetFar, Vector_AddPolarOffset
 	export Irq_SetHandlerFar, Irq_SetHandler
-	overlay_veneer InitHeap
-	export AllocHeapSlotFar, AllocHeapSlot
-	export AllocHeapSlotEwramFar, AllocHeapSlotEwram
-	export FreeHeapSlotFar, FreeHeapSlot
+	overlay_veneer Heap_Initialize
+	export HeapSlot_AllocFar, HeapSlot_Alloc
+	export HeapSlot_AllocEwramFar, HeapSlot_AllocEwram
+	export HeapSlot_ReleaseFar, HeapSlot_Release
 	overlay_veneer Heap_GetRemainingIwram
 	overlay_veneer Heap_GetRemainingEwram
-	export AllocFar, Alloc
-	export AllocEwramFar, AllocEwram
-	export FreeFar, Free
+	export Heap_AllocFar, Heap_Alloc
+	export Heap_AllocEwramFar, Heap_AllocEwram
+	export Heap_ReleaseFar, Heap_Release
 	overlay_veneer DebugText_Print
 	overlay_veneer DebugText_PrintHex
 	overlay_veneer DebugText_PrintDecimal

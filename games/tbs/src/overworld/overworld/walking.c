@@ -498,9 +498,9 @@ void WorldMap_Freeze(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    state = AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, 0x540);
+    state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, 0x540);
     if ((state != NULL) && (state->step != 0)) {
       state->start = 0;
       state->end = 0;
@@ -517,7 +517,7 @@ void WorldMap_Freeze(void) {
 void WorldMap_Unfreeze(void) {
   struct FieldWork *work;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     WorldMap_LoadAreaGraphicsFar();
     work->camera->paused = 0;

@@ -30,7 +30,7 @@ void System_Initialize(void) {
   // Clear IWRAM up to the heap's end (the stacks above it are in use), then
   // install the resident runtime before any service can use its work blocks
   Dma_Fill32(0, (void *)0x03000000, 0x7800);
-  InitHeap();
+  Heap_Initialize();
   System_InstallIwramAndIrqs();
   // UB: the count and its pad are cleared with one word store
 #ifdef UBFIX
@@ -248,7 +248,7 @@ void Overlay_Load(u32 index, void *destination) {
   RamCode_Load(patchBranches, Resource_PatchThumbBranch,
                Resource_PatchThumbBranchCodeSize);
   patchBranches(destination, codeSize);
-  Free(patchBranches);
+  Heap_Release(patchBranches);
 }
 
 /// The handler of every interrupt nobody has claimed.

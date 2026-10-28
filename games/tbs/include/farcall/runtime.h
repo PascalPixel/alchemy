@@ -27,16 +27,17 @@ void Vector_AddPolarOffsetFar(s32 radius, s32 angle, void *position);
 void Irq_SetHandlerFar(u32 irq, s32 vcount, InterruptHandler handler);
 /// Returns heap slot `kind`'s block, first allocating `size` bytes for it from
 /// IWRAM when they fit and EWRAM otherwise. Returns NULL when neither has room.
-void *AllocHeapSlotFar(s32 kind, s32 size);
-/// Returns heap slot `kind`'s block like AllocHeapSlotFar, but
+void *HeapSlot_AllocFar(s32 kind, s32 size);
+/// Returns heap slot `kind`'s block like HeapSlot_AllocFar, but
 /// tries EWRAM first, for blocks that need room more than speed.
-void *AllocHeapSlotEwramFar(s32 kind, s32 size);
+void *HeapSlot_AllocEwramFar(s32 kind, s32 size);
 /// Allocates an uncleared short-lived buffer of `size` bytes, from IWRAM when
-/// it fits (Alloc); Free frees it and everything allocated after it.
-void *AllocFar(s32 size);
-/// Takes a short-lived buffer as Alloc does, but from EWRAM first, for
+/// it fits (Heap_Alloc); Heap_Release frees it and everything allocated after
+/// it.
+void *Heap_AllocFar(s32 size);
+/// Takes a short-lived buffer as Heap_Alloc does, but from EWRAM first, for
 /// buffers too large to want IWRAM.
-void *AllocEwramFar(s32 size);
+void *Heap_AllocEwramFar(s32 size);
 /// Unpacks a byte-oriented LZ resource with a RAM copy of its ARM decoder, and
 /// returns the unpacked size in bytes.
 s32 Decompress_ByteLzFar(const void *source, void *destination);

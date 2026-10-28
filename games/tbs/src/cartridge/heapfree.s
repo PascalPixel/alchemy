@@ -1,15 +1,15 @@
-@ Why assembly: FreeHeapSlot branches on lsrs flags without cmp/cmn;
+@ Why assembly: HeapSlot_Release branches on lsrs flags without cmp/cmn;
 @ agscc's Thumb cbranchsi4 and negated_cbranchsi4 always emit a compare.
-@ Why assembly: FreeHeapSlot and Free share the one trailing literal
+@ Why assembly: HeapSlot_Release and Heap_Release share the one trailing literal
 @ pool; GCC's per-function arm_reorg emits and clears each function's pool.
-@ Free's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are
+@ Heap_Release's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are
 @ ordinary Thumb with no tell of their own. Its proof is that pool alone: the
-@ single word .L_heap_heads after Free's bx lr is loaded by Free's
-@ ldr r4, [pc, #8] and also by FreeHeapSlot's ldr r4, [pc, #32],
-@ which reaches forward over its own bx lr and the whole of Free; and
-@ FreeHeapSlot is the routine with the lsrs r3, r1, #22 / beq
+@ single word .L_heap_heads after Heap_Release's bx lr is loaded by Heap_Release's
+@ ldr r4, [pc, #8] and also by HeapSlot_Release's ldr r4, [pc, #32],
+@ which reaches forward over its own bx lr and the whole of Heap_Release; and
+@ HeapSlot_Release is the routine with the lsrs r3, r1, #22 / beq
 @ above.
-@ The two-byte alignment before Free is linker fill, outside the credited
+@ The two-byte alignment before Heap_Release is linker fill, outside the credited
 @ code.
 @ Thumb LDR cannot relocate across these sections in the stock assembler;
 @ retain the native PC-relative operands for their one shared word.
@@ -17,9 +17,9 @@
 	.section .text.release, "ax", %progbits
 	.balign 2
 	.thumb
-	.global FreeHeapSlot
+	.global HeapSlot_Release
 	.thumb_func
-FreeHeapSlot:
+HeapSlot_Release:
 	ldr	r4, [pc, #32]
 	lsls	r0, r0, #2
 	ldr	r1, [r0, r4]
@@ -34,9 +34,9 @@ FreeHeapSlot:
 	bx	lr
 	.section .text.free, "ax", %progbits
 	.balign 4
-	.global Free
+	.global Heap_Release
 	.thumb_func
-Free:
+Heap_Release:
 	ldr	r4, [pc, #8]
 	movs	r1, #4
 	lsrs	r2, r0, #22

@@ -1,8 +1,8 @@
 	.set overlay_imports, 1
 	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
-	.set import.AllocHeapSlotEwram, 1
-	.set import.FreeHeapSlot, 1
+	.set import.HeapSlot_AllocEwram, 1
+	.set import.HeapSlot_Release, 1
 	.set import.Decompress_ByteLz, 1
 	.set import.VramCache_Load, 1
 	.set import.VramCache_FindFreeEntry, 1

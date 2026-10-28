@@ -163,7 +163,7 @@ void BattleAnim_RunFlare(struct BattleAnimArgs *args) {
     ANIM_END_FRAME(work);
     frame += 1;
   } while (frame != 80);
-  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   BattleAnim_EndCanvasLayer();
 }

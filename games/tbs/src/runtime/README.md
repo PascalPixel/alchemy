@@ -123,8 +123,8 @@ their slots, pointing at memory the next request hands out again. That is why
 a battle animation stops the task that copies its pictures before it gives
 its blocks back.
 
-A block is taken with `Alloc` or, for a heap slot, `AllocHeapSlot`, and given
-back with `Free` or `FreeHeapSlot`; the slots are `gHeapSlots`.
+A block is taken with `Heap_Alloc` or, for a heap slot, `HeapSlot_Alloc`, and given
+back with `Heap_Release` or `HeapSlot_Release`; the slots are `gHeapSlots`.
 
 ## The task runner
 

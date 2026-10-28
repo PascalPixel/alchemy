@@ -82,7 +82,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);
   // 84 words: room for 4 elements of 20 Djinn and the end.
-  djinnEntries = AllocEwram(0xa8 * 2);
+  djinnEntries = Heap_AllocEwram(0xa8 * 2);
   djinnCount = 0;
   drawnFirstEntry = -1;
   encodedDjinn = 0;
@@ -571,7 +571,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   Window_Close(listWindow, 1);
   Window_MarkVisibleTextTiles();
   Text_UseExtraTiles(0);
-  Free(djinnEntries);
+  Heap_Release(djinnEntries);
   WaitFrames(1);
   return (s32)encodedDjinn;
 }

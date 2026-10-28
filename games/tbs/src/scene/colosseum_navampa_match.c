@@ -752,7 +752,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   FieldActor_SetMoveTarget(log, x, 0, z);
   Event_WaitFrames(6);
   Import_ActorSetAnimation(actorId, ANIM_WALK);
-  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Actor_StartCamera(work->camera, (s32)log);
   Actor_SetSpeed(actorId, PIXELS(1) / 2, acceleration);
   Event_PlaySong(SE_HEAVY_MOVE);

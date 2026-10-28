@@ -506,12 +506,12 @@ s32 Field_ExamineCell(s32 tile) {
         // A chest; its condition flag is set once it has been opened.
         Event_Start();
         if (GameFlag_IsConditionActive(condition) != 0) {
-          // Bit 16 of the value marks a chest the party's own characters
+          // FIND_CHEST_LOCKED marks a chest the party's own characters
           // cannot open ("Can't open it").
           searchResult = trigger->value;
           canOpen = 1;
           if ((searchResult & FIND_CHEST_LOCK_MASK) == FIND_CHEST_LOCKED &&
-              leader <= 7)
+              leader <= ALLY_MAX)
             canOpen = 0;
           if (canOpen != 0) {
             // A EXAMINE_TRIGGER(EXAMINE_CHEST) event is a chest the map shows

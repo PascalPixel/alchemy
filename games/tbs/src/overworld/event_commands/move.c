@@ -4,9 +4,10 @@
 
 #include "../event_commands_internal.h"
 
-/// Returns the direction of the d-pad (0x10000 a full turn): right 0, down
-/// 0x4000, left 0x8000, up 0xc000; DPAD_ANGLE_NONE when none or a diagonal is
-/// held. Opposite directions cancel, so a third held direction still counts.
+/// Returns the direction of the d-pad (0x10000 a full turn): right
+/// FACING_EAST, down FACING_SOUTH, left FACING_WEST, up FACING_NORTH;
+/// DPAD_ANGLE_NONE when none or a diagonal is held. Opposite directions cancel,
+/// so a third held direction still counts.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
   return gFieldEffect_CyclePatternWords[(gKeysHeld >> 4) & 15];

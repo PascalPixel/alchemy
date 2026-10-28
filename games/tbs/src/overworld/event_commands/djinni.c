@@ -185,15 +185,15 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// Djinn_ResolvePending's first call, that is after a won battle; the second
 /// call then makes this actor join the party.
 void Actor_PlaceMapActors(void) {
-  s32 flags = gMainRoutineWork.pendingDjinni & PENDING_KIND_MASK;
-  u32 event = gMainRoutineWork.pendingDjinni & PENDING_EVENT_MASK;
+  s32 flags = gMainRoutineWork.pendingDjinni & DJINN_PENDING_KIND_MASK;
+  u32 event = gMainRoutineWork.pendingDjinni & DJINN_PENDING_EVENT_MASK;
   s32 id;
 
   // Kind 0 is a Djinni battle; a mimic chest's event (CONDITION_FLAG_SET) is
   // skipped.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
     flags = event & DJINN_NO_HOP;
-    event &= PENDING_DJINNI_EVENT_MASK;
+    event &= DJINN_PENDING_BATTLE_EVENT_MASK;
     // event is unsigned: events below DJINNI_BATTLE_EVENT_FIRST fail the range
     // test too.
     if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 &&
@@ -245,12 +245,12 @@ void Actor_PlaceMapActors(void) {
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
   s16 *pending = &st->pendingDjinni;
-  s32 kind = *pending & PENDING_KIND_MASK;
-  s32 flag = *pending & PENDING_EVENT_MASK;
+  s32 kind = *pending & DJINN_PENDING_KIND_MASK;
+  s32 flag = *pending & DJINN_PENDING_EVENT_MASK;
 
   if (shown == 0) {
     if (kind == 0) {
-      flag &= PENDING_DJINNI_EVENT_MASK;
+      flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
       if (flag < DJINNI_BATTLE_EVENT_FIRST ||
           flag > DJINNI_BATTLE_EVENT_FIRST + 80)
         return;
@@ -268,10 +268,10 @@ void Djinn_ResolvePending(s32 shown) {
     return;
   }
   if (kind == 0) {
-    flag &= PENDING_DJINNI_EVENT_MASK;
+    flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
     if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
         flag <= DJINNI_BATTLE_EVENT_FIRST + 80) {
-      flag &= PENDING_DJINNI_EVENT_MASK;
+      flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
       if (st->sequenceResult > 0) {
         s32 djinni = flag - DJINNI_BATTLE_EVENT_FIRST;
         s32 element = djinni / 20;

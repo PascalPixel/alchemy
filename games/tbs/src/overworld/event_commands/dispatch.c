@@ -234,10 +234,9 @@ void Event_RunFieldPsynergy(void) {
 }
 
 /// Runs the event tied to a field Psynergy: a result below
-/// TRIGGER_RESULT_MESSAGE_END is a
-/// message, shown at target; a larger one is a routine, called with param and
-/// target (through r3). Afterwards, with FLAG_NOTHING_HAPPENS set, says "But
-/// nothing happens.". Returns 0.
+/// TRIGGER_RESULT_MESSAGE_END is a message, shown at target; a larger one is a
+/// routine, called with param and target (through r3). Afterwards, with
+/// FLAG_NOTHING_HAPPENS set, says "But nothing happens.". Returns 0.
 ///
 /// Called by Field_UsePsynergy and Field_RunPsynergyEndEvents for the before
 /// and after events, and by Force, Frost and Reveal for the events of their own

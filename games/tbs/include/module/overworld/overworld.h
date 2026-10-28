@@ -150,8 +150,13 @@ struct TriggerView {
 /// the routine to run: every routine lies above it, so one word holds either.
 #define TRIGGER_RESULT_MESSAGE_END 0x10000
 
+// These masks decode the trigger and search-result words whose bit layouts
+// and values scene_tables.h gives (struct Trigger, enum TriggerKind, FIND_).
+
 /// A trigger's control bits 3..0, its kind (enum TriggerKind).
 #define TRIGGER_KIND_MASK 0xf
+/// A Psynergy trigger's control bits 30..28, its phase (enum PsynergyPhase).
+#define PSYNERGY_PHASE_MASK (7u << 28)
 /// An examine trigger's control bits 8..0, its kind and what it is on, as
 /// EXAMINE_TRIGGER() packs them.
 #define EXAMINE_TRIGGER_MASK 0x1ff
@@ -164,9 +169,12 @@ struct TriggerView {
 /// Bits 27..24 of a search result, set only in a routine's address: the result
 /// is then a function to call.
 #define FIND_FUNCTION_BITS 0x0f000000
-/// Bits 19..16 of a chest's search result; FIND_CHEST_LOCKED there marks a
-/// chest the party's own characters cannot open.
+// XXX: what bits 19..16's other values mean; a chest table with another value
+// would settle it.
+/// Bits 19..16 of a chest's search result, which Field_ExamineCell compares
+/// only with FIND_CHEST_LOCKED.
 #define FIND_CHEST_LOCK_MASK 0xf0000
+/// A chest that stays shut while a party member (up to ALLY_MAX) leads.
 #define FIND_CHEST_LOCKED 0x10000
 
 /// A 16.16 coordinate's whole cell: a map grid cell is 16 pixels square.

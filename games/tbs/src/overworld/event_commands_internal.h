@@ -105,10 +105,10 @@
 /// bits: 15..12 kind | 11..0 event or flag. Kind 0 is a Djinni battle, its
 /// event beside DJINN_NO_HOP; CONDITION_FLAG_SET is a mimic chest's flag
 /// (Field_ExamineCell).
-#define PENDING_KIND_MASK 0xf000
-#define PENDING_EVENT_MASK 0xfff
+#define DJINN_PENDING_KIND_MASK 0xf000
+#define DJINN_PENDING_EVENT_MASK 0xfff
 /// A Djinni battle's event without DJINN_NO_HOP.
-#define PENDING_DJINNI_EVENT_MASK 0x7ff
+#define DJINN_PENDING_BATTLE_EVENT_MASK 0x7ff
 
 /// Per-frame update of an afterimage: closes half the distance to the actor
 /// it watches, on all three axes.
@@ -206,8 +206,8 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     pos.x = effectWork->x;                                                     \
     pos.y = effectWork->y + PIXELS(16);                                        \
     pos.z = effectWork->z;                                                     \
-    pair[0] = spawn(pos.x + PIXELS(32), pos.y, pos.z, 0x8000);                 \
-    pair[1] = spawn(pos.x - PIXELS(32), pos.y, pos.z, 0);                      \
+    pair[0] = spawn(pos.x + PIXELS(32), pos.y, pos.z, FACING_WEST);            \
+    pair[1] = spawn(pos.x - PIXELS(32), pos.y, pos.z, FACING_EAST);            \
                                                                                \
     wait(15);                                                                  \
     walk = pair;                                                               \

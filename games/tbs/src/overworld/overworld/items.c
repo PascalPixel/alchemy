@@ -81,7 +81,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   struct FieldWork *work;
 
   result = -1;
-  itemId = ABILITY_ID(packedItem);
+  itemId = ACT_ITEM_ID(packedItem);
   actorId = ACT_UNIT(packedItem);
   // Count the user's slots holding the item; with no user given, the user is
   // whoever holds it in the most slots, the earlier on a tie. Nobody holding
@@ -123,12 +123,11 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   trigger = (const struct Trigger *)Field_FindItemTrigger(itemId);
   if (trigger != 0 && trigger->value != 0) {
     // The scene's event: a message, or a function. A value below
-    // TRIGGER_RESULT_MESSAGE_END is
-    // a message number; anything else is a code address. Trigger bit 0x400
-    // skips the "uses the item" message.
+    // TRIGGER_RESULT_MESSAGE_END is a message number; anything else is a code
+    // address. TRIGGER_SUBJECT_OWN_EFFECT skips the "uses the item" message.
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
     GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
-    if (!(trigger->subject & 0x400)) {
+    if (!(trigger->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
       MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
@@ -240,7 +239,7 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
         (requiresFacing == 0 ||
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
         Ability_Get(((const u8 *)&trigger->kind)[1])->fieldPsynergy == group &&
-        (anyPhase || (trigger->kind & (PSYNERGY_PHASE_ANY << 28 |
+        (anyPhase || (trigger->kind & (PSYNERGY_PHASE_MASK |
                                        TRIGGER_KIND_MASK)) == eventFlags)) {
       // Any Psynergy of the same field kind (fieldPsynergy) as the event's
       // matches.

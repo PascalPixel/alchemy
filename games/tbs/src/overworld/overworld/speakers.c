@@ -6,7 +6,7 @@
 
 /// Returns the speaker definition of sprite id from
 /// gSpeakerDefinitions, or its last entry, the default, when there is
-/// none. The search stops after 0x82 entries, all but the table's last of its
+/// none. The search stops after 130 entries, all but the table's last of its
 /// 131.
 struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
   struct SpeakerDefinition *entry = gSpeakerDefinitions;

@@ -43,11 +43,11 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   z = effectWork->z;
   pos[2] = z;
   pair[0] = FieldEffect_SpawnItemBreakMode3(x + PIXELS(32), y, z, FACING_WEST);
-  pair[1] =
-      FieldEffect_SpawnItemBreakMode3(pos[0] - PIXELS(32), pos[1], pos[2], 0);
+  pair[1] = FieldEffect_SpawnItemBreakMode3(pos[0] - PIXELS(32), pos[1], pos[2],
+                                            FACING_EAST);
 
-  // Each hand faces the target (angle 0x8000 on the right, 0 on the left) and
-  // moves 14 pixels that way.
+  // Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
+  // left) and moves 14 pixels that way.
   wait(15);
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct Actor *hand = pair[handIndex];

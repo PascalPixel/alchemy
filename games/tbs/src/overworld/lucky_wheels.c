@@ -1130,10 +1130,11 @@ void LuckyWheels_Run(void) {
     Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
             (DMA_ENABLE | DMA_32BIT) << 16 | LUCKY_WHEELS_CANVAS_SIZE / 4,
             REG_DMA3);
-    Dma_Set((void *)BG_PLTT, work, (DMA_ENABLE | DMA_32BIT) << 16 | 512 / 4,
-            REG_DMA3);
-    Dma_Set((void *)OBJ_PLTT, shade, (DMA_ENABLE | DMA_32BIT) << 16 | 512 / 4,
-            REG_DMA3);
+    // Each palette RAM half: 256 colours of two bytes, counted in words.
+    Dma_Set((void *)BG_PLTT, work,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 256 * sizeof(u16) / 4, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, shade,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 256 * sizeof(u16) / 4, REG_DMA3);
     LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
     LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 0x100);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |

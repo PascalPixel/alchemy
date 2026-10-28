@@ -123,8 +123,8 @@ void Exit_PrepareAnimation(s32 animation) {
   // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
   // put the leader at its middle in x (8 pixels) and its south edge in z.
   // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + (8 << 16);
-  *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + (16 << 16);
+  *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + PIXELS(8);
+  *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + PIXELS(16);
   actor->velocityX = zero;
   actor->velocityZ = zero;
   actor->targetX = ACTOR_NO_TARGET;
@@ -169,7 +169,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   spriteAnimation->flags = zero;
   eff->colorMode = SPRITE_COLOR_HIDDEN;
   // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + (8 << 16);
+  *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + PIXELS(8);
   *(s32 *)&leader->z &= mask;
   Actor_SelectAnimationFar(leader, animation);
   wait(30);

@@ -1342,7 +1342,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(4);
   for (i = 0; i != 4; i++) {
     actor->z.fixed += PIXELS(3) / 2;
-    actor->scaleY -= 0x1999;
+    actor->scaleY -= Q16_ONE / 10;
     Event_Wait(1);
   }
   Actor_SetPosition(ACTOR_DORA, 0, 0);
@@ -1365,10 +1365,10 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
-  actor->scaleY = 0x8000;
+  actor->scaleY = Q16_ONE / 2;
   Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
   for (i = 0; i != 5; i++) {
-    actor->scaleY += 0x1999;
+    actor->scaleY += Q16_ONE / 10;
     Event_Wait(1);
   }
   Event_Wait(60);
@@ -1601,8 +1601,8 @@ s32 Vale_Initialize(void) {
       if (Event_GetFlag(FLAG_VALE_PARTY_LEFT)) {
         actor = Actor_GetById(ACTOR_DORA);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_DORA), 0);
-        actor->scaleX = 0x28f;
-        actor->scaleY = 0x28f;
+        actor->scaleX = Q16_ONE / 100;
+        actor->scaleY = Q16_ONE / 100;
       }
       if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI)) {
         Import_ActorSetPosition(ACTOR_FIRST_PUPPY, 0, 0);
@@ -1959,7 +1959,7 @@ static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
   Actor_SetSpeed(actorId, PIXELS(3) / 10, PIXELS(3) / 20);
   Import_ActorSetAnimation(actorId, departureAnimation);
   Actor_MoveToAndWait(actorId, 392, 890);
-  actor->velocityY = 0x20000;
+  actor->velocityY = PIXELS(2);
   sprite->flags = 1;
   if (restoreMotion != 0) {
     actor->motionFlags = 3;
@@ -2746,7 +2746,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(4);
   for (i = 0; i != 4; i++) {
     actor->z.fixed += PIXELS(3) / 2;
-    actor->scaleY += -0x1999;
+    actor->scaleY += -Q16_ONE / 10;
     Event_Wait(1);
   }
   Actor_SetPosition(ACTOR_DORA, 0, 0);
@@ -2773,10 +2773,10 @@ static void Vale_RoofMended(void) {
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Import_ActorSetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
-  actor->scaleY = 0x8000;
+  actor->scaleY = Q16_ONE / 2;
   Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
   for (i = 0; i != 5; i++) {
-    actor->scaleY += 0x1999;
+    actor->scaleY += Q16_ONE / 10;
     Event_Wait(1);
   }
   Event_Wait(60);
@@ -3098,7 +3098,7 @@ static void Vale_TrailSparkles(struct Actor *updated) {
                                spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
     particle->motionFlags = 2;
-    particle->gravity = 0x1999;
+    particle->gravity = PIXELS(1) / 10;
     particle->wait = 12;
     Actor_SetSpriteFlags(particle, 0);
     Actor_SelectAnimation(particle, 0);
@@ -3143,7 +3143,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
       particle->acceleration = Q16_ONE;
       particle->speedLimit = verticalSpeed;
       particle->motionFlags = 2;
-      particle->gravity = 0x0a3d;
+      particle->gravity = PIXELS(1) / 25;
 
       particle->velocityY = Import_RandomNext() - Import_RandomNext();
 
@@ -3464,12 +3464,12 @@ s32 gVale_JennaWalksToTheHouse[] = {
 s32 gVale_UnusedWaterGrows[] = {
     SC_ANIMATION(1),
     SC_POSITION(PIXELS(266), 0, PIXELS(1230)),
-    SC_SET(SW_SCALE_X, 0x1999),
-    SC_SET(SW_SCALE_Y, 0x1999),
+    SC_SET(SW_SCALE_X, Q16_ONE / 10),
+    SC_SET(SW_SCALE_Y, Q16_ONE / 10),
     SC_WAIT(1),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 3932),
-    SC_ADD(SW_SCALE_Y, 0x147a),
+    SC_ADD(SW_SCALE_Y, 2 * Q16_ONE / 25),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
     SC_POSITION(0, 0, 0),
@@ -3558,11 +3558,11 @@ struct ActorPlacement gVale_ActorPlacements[] = {
         PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, 7,
+    { 206, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, 7,
+    { 206, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, 7,
+    { 206, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -3604,11 +3604,11 @@ struct ActorPlacement gVale_ActorPlacementsAfterLeaving[] = {
         PIXELS(335), 0, PIXELS(869), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, 7,
+    { 206, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, 7,
+    { 206, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, 7,
+    { 206, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
         PIXELS(152), 0, PIXELS(1016), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -3626,11 +3626,11 @@ struct ActorPlacement gVale_ActorPlacementsAfterKalay[] = {
         PIXELS(164), 0, PIXELS(1236), FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(268), 0, PIXELS(1276), FACING_WEST, TALK_FACING_KEEP, 0 },
-    { 0xd6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xd6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xd6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
@@ -3660,13 +3660,13 @@ struct ActorPlacement gVale_RepairActorPlacements[] = {
         PIXELS(394), 0, PIXELS(584), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(373), 0, PIXELS(VALE_DORA_Z), FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 206, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 206, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xce, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 206, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xd7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_MOVE_HAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -3774,17 +3774,17 @@ struct Trigger gVale_TriggersAfterKalay[] = {
     { TRIGGER_TALK, ACTOR_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, EVENT(Vale_ReactToAnotherTremor) },
     { TRIGGER_TALK, ACTOR_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
     { TRIGGER_TALK, ACTOR_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, EVENT(Vale_AskAboutTheLackOfTravelers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_SISTER_AFTER_KALAY, FLAG_VALE_GARET_MET_SISTER, EVENT(Vale_GaretMeetsHisSister) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_GARETS_SISTER_AFTER_KALAY, FLAG_VALE_GARET_MET_SISTER, EVENT(Vale_GaretMeetsHisSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_SISTER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY, EVENT(Vale_GaretAsksToProtectFamily) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_GARETS_BROTHER_AFTER_KALAY, FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY, EVENT(Vale_GaretAsksToProtectFamily) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_BROTHER_AFTER_KALAY, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT(Vale_AskWhetherJennaHasReturned) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT(Vale_AskWhetherJennaHasReturned) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeFelixMustBeProtectingJennaIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_MAN_MISSING_TRAVELERS, FLAG_VALE_ASKED_ABOUT_TRAVELERS, EVENT(Vale_AskAboutTheLackOfTravelers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_MAN_MISSING_TRAVELERS, FLAG_VALE_ASKED_ABOUT_TRAVELERS, EVENT(Vale_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
     { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },

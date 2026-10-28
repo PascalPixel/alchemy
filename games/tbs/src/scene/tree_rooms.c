@@ -580,10 +580,10 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   PartyInventory_FindMember(ITEM_HERMES_WATER);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_GARET, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
-  Actor_SetSpeed(ACTOR_MIA, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(166), PIXELS(80));
   partyActor = Actor_Get(ACTOR_PARTY_LEADER);
   partyActor->facing = FACING_NORTH;
@@ -605,7 +605,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  FieldCamera_SetSpeed(0x13333, 0x2666);
+  FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
@@ -838,10 +838,10 @@ s32 TreeRooms_EnterRoom(void) {
   grid = HEAP_SLOT_BLOCK(8);
   // Match the first layer's parallax offset and scale to the room bounds.
   layer = &grid->layers[0];
-  layer->offsetX += Iwram_MulQ16(grid->minX + PIXELS(160), 0x1999);
-  layer->offsetY += Iwram_MulQ16(grid->minY + PIXELS(136), 0x1999);
-  layer->scaleX = 0xe666;
-  layer->scaleY = 0xe666;
+  layer->offsetX += Iwram_MulQ16(grid->minX + PIXELS(160), Q16_ONE / 10);
+  layer->offsetY += Iwram_MulQ16(grid->minY + PIXELS(136), Q16_ONE / 10);
+  layer->scaleX = 9 * Q16_ONE / 10;
+  layer->scaleY = 9 * Q16_ONE / 10;
   // The layout draws four cocoons already torn: the first step on them breaks
   // through.
   GameFlag_Set(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN);
@@ -1060,8 +1060,8 @@ static void TreeRooms_UpdateSwirlSpark(struct Actor *actor) {
     spark->y.fixed = position.y;
     spark->z.fixed = position.z;
     if (spark->timer <= SWIRL_SPARK_SHRINK_LAST_FRAME) {
-      spark->scaleX += -0x51e;
-      spark->scaleY += -0x51e;
+      spark->scaleX += -Q16_ONE / 50;
+      spark->scaleY += -Q16_ONE / 50;
     }
     spark->timer++;
   } else {
@@ -1105,7 +1105,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
         spark->targetX = sSparkOrigin.x;
         spark->targetY = sSparkOrigin.y;
         spark->targetZ = sSparkOrigin.z;
-        spark->speedLimit = 0x19999;
+        spark->speedLimit = PIXELS(8) / 5;
         spark->update = TreeRooms_UpdateSwirlSpark;
       }
     }
@@ -1162,7 +1162,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
-  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
+  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
   Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Event_StartScreenTransition();
@@ -1176,8 +1176,8 @@ static void TreeRooms_RunLandingDustEvent(void) {
   particleOptions = &options;
   particleOptions->palette = 7;
   particleOptions->update = FieldEffect_AdvanceMotion;
-  particleOptions->startScaleX = 0xcccc;
-  particleOptions->startScaleY = 0xcccc;
+  particleOptions->startScaleX = 4 * Q16_ONE / 5;
+  particleOptions->startScaleY = 4 * Q16_ONE / 5;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
     particleVelocity = &velocity;
     particleVelocity->x = Trig_Cos(particleIndex << 12);
@@ -1197,12 +1197,12 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
+  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
   Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
   Event_End();
 }
@@ -1299,8 +1299,8 @@ s32 gTreeRooms_FaceSinksActions[] = {
     SC_ADD(SW_Y, PIXELS(80)),
     SC_WAIT(4),
     SC_ADD(SW_Y, -PIXELS(78)),
-    SC_ADD(SW_SCALE_X, -0x1000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(4),
     SC_LOOP(8, SC_TOP),
     SC_POSITION(0, 0, 0),

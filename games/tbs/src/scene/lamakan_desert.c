@@ -214,8 +214,8 @@ static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
     return 0;
 #endif
   }
-  params.startScaleX = 0xcccc;
-  params.startScaleY = 0xcccc;
+  params.startScaleX = 4 * Q16_ONE / 5;
+  params.startScaleY = 4 * Q16_ONE / 5;
   params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
   FieldEffect_Spawn(
       actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
@@ -617,7 +617,7 @@ static void LamakanDesert_BatheInOasis(void) {
   }
   nearest <<= 1;
   // Hop the leader into the middle of the oasis before draining the heat gauge.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
     const struct LamakanDesertOasis *spot =
@@ -625,7 +625,7 @@ static void LamakanDesert_BatheInOasis(void) {
 
     FieldActor_SetMoveTarget(actor, spot->x, 0, spot->z);
   }
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
   Event_PlaySound(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
@@ -634,10 +634,10 @@ static void LamakanDesert_BatheInOasis(void) {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     options.type = SPRITE_SPLASH;
-    options.startScaleX = 0x8000;
-    options.startScaleY = 0xcccc;
-    options.targetScaleX = 0x10000;
-    options.targetScaleY = 0x13333;
+    options.startScaleX = Q16_ONE / 2;
+    options.startScaleY = 4 * Q16_ONE / 5;
+    options.targetScaleX = Q16_ONE;
+    options.targetScaleY = 6 * Q16_ONE / 5;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                           EFFECT_SCALE_TO_TARGET,
@@ -669,10 +669,10 @@ static void LamakanDesert_BatheInOasis(void) {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
     puff.type = SPRITE_SPLASH;
-    puff.startScaleX = 0x8000;
-    puff.startScaleY = 0xcccc;
-    puff.targetScaleX = 0x8000;
-    puff.targetScaleY = 0x13333;
+    puff.startScaleX = Q16_ONE / 2;
+    puff.startScaleY = 4 * Q16_ONE / 5;
+    puff.targetScaleX = Q16_ONE / 2;
+    puff.targetScaleY = 6 * Q16_ONE / 5;
     FieldEffect_Spawn(
         actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
@@ -680,7 +680,7 @@ static void LamakanDesert_BatheInOasis(void) {
   }
   Event_PlaySound(SE_STOP_ACTION_SE);
   Event_PlaySound(SE_JUMP);
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
   // frames is 0 here, so a running Reveal ends as the leader gets up.
@@ -706,17 +706,17 @@ static void HeatGauge_CountStep(void) {
   if (work->stepTrigger == CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) {
     return;
   }
-  if (actor->speedLimit <= 0x10000) {
+  if (actor->speedLimit <= PIXELS(1)) {
     if ((gFrameCount & 15) != 0) {
       return;
     }
-    params.startScaleX = 0x8000;
-    params.startScaleY = 0x8000;
+    params.startScaleX = Q16_ONE / 2;
+    params.startScaleY = Q16_ONE / 2;
     dx = 0;
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
       z = actor->z.fixed;
-      dx = 0x20000 - ((((z >> 20) & 1) * 5) << 16);
+      dx = PIXELS(2) - PIXELS(((z >> 20) & 1) * 5);
     } else {
       z = actor->z.fixed;
     }
@@ -731,14 +731,14 @@ static void HeatGauge_CountStep(void) {
     }
     // Reads the frame counter again and drops the value, as the native does.
     gFrameCount;
-    params.startScaleX = 0xcccc;
-    params.startScaleY = 0xcccc;
+    params.startScaleX = 4 * Q16_ONE / 5;
+    params.startScaleY = 4 * Q16_ONE / 5;
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed + 0x20000, actor->z.fixed,
-                      0, ((u32)(Import_RandomNext() * 5) >> 16) * 0x1999, phase,
-                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
-                          EFFECT_SCRIPT_MEDIUM,
-                      &params);
+    FieldEffect_Spawn(
+        actor->x.fixed, actor->y.fixed + PIXELS(2), actor->z.fixed, 0,
+        ((u32)(Import_RandomNext() * 5) >> 16) * (PIXELS(1) / 10), phase,
+        EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
+        &params);
   }
 }
 
@@ -764,8 +764,8 @@ static void LamakanDesert_FallIntoPit(void) {
     struct Actor *other = Actor_Get(id);
 
     if (other != 0) {
-      dx = (target->x.fixed - other->x.fixed) / 0x10000;
-      dz = (target->z.fixed - other->z.fixed) / 0x10000;
+      dx = (target->x.fixed - other->x.fixed) / PIXELS(1);
+      dz = (target->z.fixed - other->z.fixed) / PIXELS(1);
       {
         s32 ax = dx;
 
@@ -798,7 +798,7 @@ static void LamakanDesert_FallIntoPit(void) {
   actor->facing = (record->facing + 0x8000) & -0x1000;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 10, PIXELS(1) / 20);
   record = Actor_GetById(ACTOR_PARTY_LEADER);
 #ifdef UBFIX
   record->update = LamakanDesert_LeaderSpraySand;
@@ -846,15 +846,17 @@ static void LamakanDesert_SlideDownDune(void) {
   // First check for a ledge immediately below the sliding actor.
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + 0x18000;
+  probePosition.z = actor->z.fixed + PIXELS(3) / 2;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     x = actor->x.fixed + (((u32)(Import_RandomNext() * 12) >> 16) << 16) -
-        0x60000;
+        PIXELS(6);
     FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
-                      ((u32)(Import_RandomNext() * 5) >> 16) * 0x1999 + 0x7ffd,
+                      ((u32)(Import_RandomNext() * 5) >> 16) *
+                              (PIXELS(1) / 10) +
+                          5 * (PIXELS(1) / 10),
                       EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
@@ -862,7 +864,7 @@ static void LamakanDesert_SlideDownDune(void) {
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
-                             actor->z.fixed + 0x80000);
+                             actor->z.fixed + PIXELS(8));
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
     Actor_WaitForMove(actor);
     do {
@@ -875,27 +877,27 @@ static void LamakanDesert_SlideDownDune(void) {
   // Probe ahead and on both diagonals before advancing actor and camera.
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + 0x80000;
+  probePosition.z = actor->z.fixed + PIXELS(8);
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  probePosition.x = actor->x.fixed + 0x5b333;
+  probePosition.x = actor->x.fixed + PIXELS(57) / 10;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + 0x5b333;
+  probePosition.z = actor->z.fixed + PIXELS(57) / 10;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  probePosition.x = actor->x.fixed - 0x5b333;
+  probePosition.x = actor->x.fixed - PIXELS(57) / 10;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + 0x5b333;
+  probePosition.z = actor->z.fixed + PIXELS(57) / 10;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  center->z.fixed += 0x18000;
-  actor->z.fixed += 0x18000;
+  center->z.fixed += PIXELS(3) / 2;
+  actor->z.fixed += PIXELS(3) / 2;
 }
 
 /// Lamakan Desert, step trigger 40 in LamakanDesertManticore, until the
@@ -943,11 +945,12 @@ static void LamakanDesert_MeetManticore(void) {
       backwardOffset.y = paused;
       backwardOffset.z = paused;
       record = Actor_Get(ACTOR_PARTY_LEADER);
-      FieldVector_AddPolarOffset(-0x100000, record->facing, &backwardOffset);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+      FieldVector_AddPolarOffset(-PIXELS(16), record->facing, &backwardOffset);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / 0x10000,
-                                 backwardOffset.z / 0x10000);
+      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
+                                 backwardOffset.x / PIXELS(1),
+                                 backwardOffset.z / PIXELS(1));
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Event_Wait(2);
       Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -955,9 +958,9 @@ static void LamakanDesert_MeetManticore(void) {
       Event_PlaySound(SE_BOSS_ROAR);
       Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
       Event_Wait(20);
-      Actor_SetSpeed(ACTOR_MANTICORE, 0x28000, 0x14000);
+      Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(5) / 2, PIXELS(5) / 4);
       Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
-      Actor_SetSpeed(ACTOR_MANTICORE, 0x8000, 0x4000);
+      Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(1) / 2, PIXELS(1) / 4);
       Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
       *revealFrames = holdFrames;
       HeatGauge_SetHeld(0);
@@ -1017,7 +1020,7 @@ s32 LamakanDesert_Initialize(void) {
 /// Unused: the Manticore walks back to its spot (168, 96) and settles. Nothing
 /// calls it.
 static UNUSED void Manticore_UnusedReturn(void) {
-  Actor_SetSpeed(ACTOR_MANTICORE, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(1) / 2, PIXELS(1) / 4);
   Import_ActorSetAnimation(ACTOR_MANTICORE, 1);
   Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 96);
   Import_ActorSetAnimation(ACTOR_MANTICORE, 2);
@@ -1303,23 +1306,23 @@ struct ActorPlacement gLamakanDesertActorPlacementsOther[] = {
 };
 
 struct ActorPlacement gLamakanDesertEastActorPlacements[] = {
-    { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
+    { 195, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 193, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(400), 0, PIXELS(364), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
 struct ActorPlacement gLamakanDesertSmogActorPlacements[] = {
-    { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
+    { 195, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 193, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(352), 0, PIXELS(204), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 193, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(736), 0, PIXELS(396), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 193, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(144), 0, PIXELS(380), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 193, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(576), 0, PIXELS(716), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_SMOG), MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
@@ -1327,9 +1330,9 @@ struct ActorPlacement gLamakanDesertSmogActorPlacements[] = {
 };
 
 struct ActorPlacement gLamakanDesertManticoreActorPlacements[] = {
-    { 0xc3, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
+    { 195, FLAG_LAMAKAN_MANTICORE_BEATEN, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(104), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 193, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(128), 0, PIXELS(316), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

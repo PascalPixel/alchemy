@@ -22,12 +22,12 @@ static s32 Scene_TurnTowardTarget(struct Actor *interpreter) {
     old = actor->facing;
     delta = (s16)(angle - old);
     if (delta != 0) {
-      if (delta > 0x1000) {
-        delta = 0x1000;
+      if (delta > FACING_STEP) {
+        delta = FACING_STEP;
       }
 
-      if (delta < -0x1000) {
-        delta = -0x1000;
+      if (delta < -FACING_STEP) {
+        delta = -FACING_STEP;
       }
       actor->facing = (old + delta);
     }

@@ -391,7 +391,7 @@ static void Xian_TalkToWaterCarrier(void) {
   if ((Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 19) > 27 &&
       (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 29 &&
       (Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) != 26) {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_SetAngleToward(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
     Event_Wait(5);
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -422,8 +422,8 @@ static void Xian_TalkToWaterCarrier(void) {
   Event_Wait(10);
   Event_PlaySound(SE_SPARKLING_PASSAGE);
   // Copy the wet terrain cell and grow the puddle into view.
-  puddle->scaleX = 0x4ccc;
-  puddle->scaleY = 0x4ccc;
+  puddle->scaleX = 3 * Q16_ONE / 10;
+  puddle->scaleY = 3 * Q16_ONE / 10;
   carrier = Actor_GetById(ACTOR_WOMAN_CARRYING_WATER);
   carrierX = carrier->x.fixed;
   carrier = Actor_GetById(ACTOR_WOMAN_CARRYING_WATER);
@@ -441,8 +441,8 @@ static void Xian_TalkToWaterCarrier(void) {
     wait(3);
     scaleY = puddle->scaleY;
     scaleX = puddle->scaleX;
-    puddle->scaleY = scaleY + 0x1999;
-    scaleX += 0x1999;
+    puddle->scaleY = scaleY + Q16_ONE / 10;
+    scaleX += Q16_ONE / 10;
     puddle->scaleX = scaleX;
   } while (scaleX <= 0xffff);
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
@@ -462,7 +462,7 @@ static void Xian_TalkToWaterCarrier(void) {
   }
   // Clear the carrier's route back to the water supply.
   if (leaderMustStepAside != 0) {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -470,7 +470,7 @@ static void Xian_TalkToWaterCarrier(void) {
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
-  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, PIXELS(4) / 5, PIXELS(2) / 5);
   carrier = Actor_GetById(ACTOR_WOMAN_CARRYING_WATER);
   if ((carrier->z.fixed >> 20) != 14) {
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
@@ -546,24 +546,26 @@ static void Xian_TalkToKungFuStudent(void) {
                                (struct FieldPosition *)stepBackOffset);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER,
-                                       stepBackOffset[0] / 0x10000,
-                                       stepBackOffset[2] / 0x10000);
+                                       stepBackOffset[0] / PIXELS(1),
+                                       stepBackOffset[2] / PIXELS(1));
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
-    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
+    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), PIXELS(1) / 10,
+                      PIXELS(1) / 5, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
+    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), PIXELS(1) / 5,
+                      PIXELS(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Sound_Play(SE_WATER);
     particleFunc = Xian_SpawnTrainingParticles;
     Task_AddFrame(particleFunc, TASK_PASS_FRAME);
-    Actor_GetById(ACTOR_KUNG_FU_STUDENT)->velocityY = 0x60000;
-    Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = 0x10000;
+    Actor_GetById(ACTOR_KUNG_FU_STUDENT)->velocityY = PIXELS(6);
+    Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = PIXELS(1);
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
-    Actor_SetSpeed(ACTOR_KUNG_FU_STUDENT, 0x30000, 0x18000);
+    Actor_SetSpeed(ACTOR_KUNG_FU_STUDENT, PIXELS(3), PIXELS(3) / 2);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 168, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     Sound_Play(SE_HEAVY_IMPACT);
@@ -582,23 +584,24 @@ static void Xian_TalkToKungFuStudent(void) {
     Task_Remove((void (*)(void))particleFunc);
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0,
+    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), -PIXELS(1) / 5,
+                      PIXELS(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    reboundVelocity = -0x8000;
+    reboundVelocity = -PIXELS(1) / 2;
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Actor_RefreshSelectorById(ACTOR_TRAINING_TREE);
     Sound_Play(SE_CHEST_OPEN);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
+    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), PIXELS(1) / 5, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
+    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -PIXELS(1) / 5, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Task_Remove(Xian_RotateTrainingTree);
     Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
-    Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = 0x10000;
+    Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = PIXELS(1);
     Event_Wait(30);
     Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
@@ -664,7 +667,7 @@ static void Xian_JumpOverSpilledWater(void) {
 /// Sanctum's door the leader walks straight in, without centering on it.
 static void Xian_WalkThroughExit(s32 exitNumber) {
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   if (exitNumber == XIAN_TO_SANCTUM) {
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
@@ -735,9 +738,9 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Sound_Play(SE_CHEST_OPEN);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
+  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), PIXELS(1) / 5, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
+  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -PIXELS(1) / 5, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   Task_Remove(rotationFunc);
   Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
@@ -782,8 +785,8 @@ static void Xian_MoveAsideForWaterCarrier(void) {
                   0);
   Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Event_Wait(60);
-  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0x18000, 0xc000);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkTo(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 232);
   Actor_WaitForMoveById(ACTOR_WOMAN_CARRYING_WATER);
@@ -866,8 +869,8 @@ s32 Xian_Initialize(void) {
   actor->motionFlags = 0;
   actor->y.fixed = PIXELS(16);
   actor->targetY = PIXELS(16);
-  actor->scaleX = 0x8ccc;
-  actor->scaleY = 0x6666;
+  actor->scaleX = 11 * Q16_ONE / 20;
+  actor->scaleY = 2 * Q16_ONE / 5;
   actor->sprite->rotation = 0x8000;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FORCE_TARGET), 0);
   Actor_GetById(ACTOR_FORCE_TARGET)->motionFlags = 0;
@@ -900,8 +903,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
 /// The water carrier's round: from (280, 232) east to (424, 232), up to
 /// (424, 216) and back, pausing at each end.
 s32 gXian_WaterCarrierRoute[] = {
-    SC_SET(SW_SPEED, 0x6666),
-    SC_SET(SW_ACCELERATION, 0x1999),
+    SC_SET(SW_SPEED, PIXELS(2) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 10),
     SC_WAIT(60),
     SC_LABEL(1),
     SC_ANIMATION(3),
@@ -932,12 +935,12 @@ s32 gXian_WaterCarrierRoute[] = {
 /// The struck tree jumps 32 pixels and drops back.
 s32 gXian_TrainingTreeJump[] = {
     SC_SET(SW_SNAP, 0),
-    SC_SET(SW_SPEED, 0x30000),
-    SC_SET(SW_ACCELERATION, 0x18000),
+    SC_SET(SW_SPEED, PIXELS(3)),
+    SC_SET(SW_ACCELERATION, PIXELS(3) / 2),
     SC_MOVE(PIXELS(168), PIXELS(48), PIXELS(312)),
     SC_SYNC,
-    SC_SET(SW_SPEED, 0x30000),
-    SC_SET(SW_ACCELERATION, 0x1999),
+    SC_SET(SW_SPEED, PIXELS(3)),
+    SC_SET(SW_ACCELERATION, PIXELS(1) / 10),
     SC_SET(SW_SNAP, 1),
     SC_MOVE(PIXELS(168), PIXELS(16), PIXELS(312)),
     SC_SYNC,

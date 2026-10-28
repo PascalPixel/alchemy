@@ -178,7 +178,7 @@ static void LemurianShip_SprayUpdate(struct Actor *actor) {
     drift = Import_RandomNext();
     drift -= Import_RandomNext();
     drop->x.fixed += drift;
-    drop->y.fixed += 0xcccc;
+    drop->y.fixed += PIXELS(4) / 5;
   } else if ((s16)drop->userValue != 0) {
     drop->userValue = 0;
     Actor_SelectAnimation(drop, 1);
@@ -265,7 +265,7 @@ static void Ship_UpdateSwell(void) {
     position->x = x;
     position->y = 0;
     z += Random_Next() * 160;
-    z += 0x1e0000;
+    z += PIXELS(30);
     position->z = z;
     actor = FieldActor_Create(SPRITE_WATER_DROP, position->x, position->y,
                               position->z);
@@ -502,10 +502,10 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(40);
   // Everyone boards by their own scripts, hopping up onto the deck
   // (SE_HIGH_JUMP each); the camera follows up to the ship.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetScript(ACTOR_PARTY_LEADER, gLeaderBoardsShip);
   Event_Wait(50);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
@@ -551,14 +551,14 @@ static void LemurianShip_SetSail(void) {
   grid = gMapGridWork[0];
   ship = Actor_GetById(ACTOR_GANGWAY_NORTH);
   ship->acceleration = 131;
-  ship->speedLimit = 0x20000;
-  grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x3000;
+  ship->speedLimit = PIXELS(2);
+  grid->layers[MAPGRID_LAYER_GROUND].speedX = -PIXELS(3) / 16;
   Actor_CommitPositionAndActivate(ACTOR_GANGWAY_NORTH, 60, 0);
-  grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x6000;
+  grid->layers[MAPGRID_LAYER_GROUND].speedX = -PIXELS(3) / 8;
   Actor_CommitPositionAndActivate(ACTOR_GANGWAY_NORTH, 60, 0);
   Event_Wait(80);
   Event_Wait(100);
-  FieldCamera_SetSpeedParameters(0x23333, 0x28f);
+  FieldCamera_SetSpeedParameters(PIXELS(11) / 5, PIXELS(1) / 100);
   FieldCamera_MoveWithinMapBounds(PIXELS(808), -1, PIXELS(168), 1);
   Event_Wait(300);
   // Fade out to the clear screen.
@@ -650,20 +650,20 @@ static void LemurianShip_RaiseTheShip(void) {
   gSprayActive = 1;
   Event_Wait(20);
   Event_PlaySound(SE_RUSH);
-  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(60);
   gSprayActive = 1;
-  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Event_Wait(60);
-  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   gOrbGlowFadeFrames = 0;
   Task_AddFrame(OrbGlow_Fade, TASK_PASS_FRAME);
   // The ship rises 90 pixels, 0.2 pixels a frame.
   risen = 0;
   do {
-    grid->layers[MAPGRID_LAYER_MIDDLE].offsetY += 0x3333;
-    grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY += 0x3333;
-    risen += 0x3333;
+    grid->layers[MAPGRID_LAYER_MIDDLE].offsetY += PIXELS(1) / 5;
+    grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY += PIXELS(1) / 5;
+    risen += PIXELS(1) / 5;
     wait(1);
   } while (risen < PIXELS(90));
   Task_Remove(OrbGlow_Fade);
@@ -682,7 +682,7 @@ static void LemurianShip_RaiseTheShip(void) {
     Event_Wait(1);
   }
   Event_Wait(40);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   gShipHullY = grid->layers[MAPGRID_LAYER_MIDDLE].offsetY;
   gShipDeckY = grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY;
   gSwellActive = 1;
@@ -918,7 +918,7 @@ static void Curtain_Start(void) {
   Dma_Fill32(0x11111111, tiles, 0x100);
   VramCache_Load(sCurtainVramSlot, 0x100, tiles);
 
-  sCurtainGap = 0x30;
+  sCurtainGap = 48;
   Task_AddFrame(Curtain_Close, TASK_PASS_FRAME);
 }
 
@@ -1047,7 +1047,7 @@ s32 gLeaderBoardsShip[] = {
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-16)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, 0x80000),
+    SC_SET(SW_VELOCITY_Y, PIXELS(8)),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,
@@ -1069,7 +1069,7 @@ s32 gGaretBoardsShip[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, PIXELS(-32)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, 0x80000),
+    SC_SET(SW_VELOCITY_Y, PIXELS(8)),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,
@@ -1093,7 +1093,7 @@ s32 gIvanBoardsShip[] = {
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-32)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, 0x80000),
+    SC_SET(SW_VELOCITY_Y, PIXELS(8)),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,
@@ -1117,7 +1117,7 @@ s32 gMiaBoardsShip[] = {
     SC_SYNC,
     SC_MOVE_BY(0, 0, PIXELS(-8)),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, 0x80000),
+    SC_SET(SW_VELOCITY_Y, PIXELS(8)),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, PIXELS(-24)),
     SC_SYNC,

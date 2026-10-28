@@ -25,15 +25,15 @@ static s32 MercuryLighthouse_TrailSparks(struct Actor *updated) {
   if ((gFrameCount & 1) == 0) {
     options.palette = 5;
   }
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = 4 * Q16_ONE / 5;
+  options.startScaleY = 4 * Q16_ONE / 5;
   options.priority = 0;
-  velocityY = -((((u32)Import_RandomNext() * 8) >> 16) * 0x3333);
-  FieldEffect_Spawn(actor->x.fixed + ((8 - (gFrameCount & 15)) << 16),
-                    actor->y.fixed + 0x1a0000, actor->z.fixed, 0, velocityY, 0,
-                    EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-                        EFFECT_USE_PALETTE,
-                    &options);
+  velocityY = -((((u32)Import_RandomNext() * 8) >> 16) * (PIXELS(1) / 5));
+  FieldEffect_Spawn(
+      actor->x.fixed + ((8 - (gFrameCount & 15)) << 16),
+      actor->y.fixed + PIXELS(26), actor->z.fixed, 0, velocityY, 0,
+      EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+      &options);
 #ifdef UBFIX
   return;
 #else

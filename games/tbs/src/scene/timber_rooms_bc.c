@@ -449,7 +449,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
   Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 104, 136);
   Event_Wait(10);
@@ -738,9 +738,9 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
   // The others walk back into the leader.
-  Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -898,8 +898,8 @@ s32 Scene_Initialize(void) {
 /// spots, turning to each side, and sighs now and then.
 s32 gTimberRoomsBC_InnWorkerChores[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
-    SC_SET(SW_SPEED, 0x26666),
-    SC_SET(SW_ACCELERATION, 0x13333),
+    SC_SET(SW_SPEED, PIXELS(12) / 5),
+    SC_SET(SW_ACCELERATION, PIXELS(6) / 5),
     SC_LABEL(1),
     SC_ANIMATION(2),
     SC_MOVE(PIXELS(128), 0, PIXELS(300)),
@@ -1211,7 +1211,7 @@ struct Trigger gTimberRoomsC_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustWishSomeoneWouldPlease) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThatCoupleRaisedActorAsThough) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(TimberRoomsBC_TalkToInnWorker) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(TimberRoomsBC_TalkToInnWorker) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_INN_WORKER, FLAG_LALIVERO_INN_WORKER_APOLOGIZED, EVENT(TimberRoomsBC_TalkToInnWorker) },
     { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(TimberRoomsBC_TalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWorkingLikeThisKeepsMyMind) },
     { TRIGGER_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeMustObeyTolbiThatsWhat) },

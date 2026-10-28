@@ -718,7 +718,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(60);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
     Event_Wait(20);
-    Actor_WalkToAndWait(ACTOR_GARETS_GRANDFATHER, 0xe0, 0x78);
+    Actor_WalkToAndWait(ACTOR_GARETS_GRANDFATHER, 224, 120);
     Event_Wait(10);
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
@@ -1060,7 +1060,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_DORA, 0);
     Event_Wait(60);
-    Actor_WalkToAndWait(ACTOR_HEALER, 0xc8, 0x88);
+    Actor_WalkToAndWait(ACTOR_HEALER, 200, 136);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
     Actor_TurnToFaceEachOther(ACTOR_HEALER, ACTOR_GARET, 0);
@@ -1090,7 +1090,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(30);
-    Actor_WalkToAndWait(ACTOR_HEALER, 0xa8, 0x78);
+    Actor_WalkToAndWait(ACTOR_HEALER, 168, 120);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_HEALER, 0);
@@ -1419,7 +1419,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_WEST, 0);
-  Actor_WalkTo(ACTOR_HEALER, 200, 0x110);
+  Actor_WalkTo(ACTOR_HEALER, 200, 272);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_WEST_HEALER, FACING_SOUTH + FACING_STEP, 0);
@@ -1468,8 +1468,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Import_ActorSetAnimation(ACTOR_WEST_HEALER, 3);
   Actor_SetAnimationAndWait(ACTOR_EAST_HEALER, 3);
   Event_Wait(20);
-  Actor_WalkTo(ACTOR_WEST_HEALER, 200, 0x110);
-  Actor_WalkToAndWait(ACTOR_EAST_HEALER, 200, 0x110);
+  Actor_WalkTo(ACTOR_WEST_HEALER, 200, 272);
+  Actor_WalkToAndWait(ACTOR_EAST_HEALER, 200, 272);
   Actor_SetPosition(ACTOR_WEST_HEALER, 0, 0);
   Actor_SetPosition(ACTOR_EAST_HEALER, 0, 0);
   FieldEffect_SpawnAttached(ACTOR_GARETS_GRANDFATHER,
@@ -1976,7 +1976,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
     sprite->image.palette = 0;
     icon->velocityY = PIXELS(2);
     icon->gravity = PIXELS(1) / 4;
-    transferBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    transferBuffer =
+        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(item);
     VramCache_Load(sprite->slot, 128, transferBuffer + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
@@ -2343,7 +2344,7 @@ struct ActorPlacement gSanctum_VaultBilibinActorPlacements[] = {
         PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(200), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { 0xdd, CONDITION_ALWAYS, 7,
+    { 221, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -2361,7 +2362,7 @@ struct ActorPlacement gSanctum_QuestActorPlacements[] = {
         PIXELS(168), 0, PIXELS(208), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, 3, 0 },
-    { 0xfc, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { 252, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
@@ -2466,19 +2467,13 @@ struct Trigger gSanctum_XianTriggers[] = {
 // clang-format on
 
 s32 gSanctum_CursorBob[] = {
-    SC_WAIT(0),
-    SC_WAIT(1),
-    SC_SYNC,
-    SC_SYNC,
-    SC_POSITION(0x2, 0x3, 0x4),
-    SC_MOVE(0x2, 0x2, 0x1),
-    SC_SYNC,
-    SC_SYNC,
+    SC_WAIT(0),           SC_WAIT(1),       SC_SYNC, SC_SYNC,
+    SC_POSITION(2, 3, 4), SC_MOVE(2, 2, 1), SC_SYNC, SC_SYNC,
 };
 
 s32 gSanctum_OwnerEffectScript[] = {
-    SC_ADD(SW_Y, -0x8000),
-    SC_ADD(SW_TARGET_Y, -0x8000),
+    SC_ADD(SW_Y, -PIXELS(1) / 2),
+    SC_ADD(SW_TARGET_Y, -PIXELS(1) / 2),
     SC_WAIT(1),
     SC_LOOP(96, SC_TOP),
     SC_RELEASE,

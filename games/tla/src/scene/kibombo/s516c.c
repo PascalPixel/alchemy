@@ -15,8 +15,7 @@ void Func_02005c3c(s32 skip);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 u8 *Unit_Get(s32 unit);
 void Party_RemoveOwnerRestored(s32 unit);
 void Func_020050ac(void);
@@ -124,8 +123,8 @@ void Func_0200516c(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   {
-    /* FAKEMATCH(temporary): the priority built before the task function's address;
-     * as a plain argument, 2 of 218 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the priority built before the task function's
+     * address; as a plain argument, 2 of 218 instructions differ in tla-en. */
     s32 priority = 0x480;
 
     Task_Add(Func_02002c34, priority);

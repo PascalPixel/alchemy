@@ -164,8 +164,8 @@ void Func_02002050(void) {
   Call3(Actor_ArmCallback, 5, FACING_WEST, 0);
   Call3(Actor_ArmCallback, 6, FACING_WEST, 0);
 ask:
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     *(u16 *)(EVENT_WORK + 0x1c4) += 1;
   } else {
     Call2(Func_02005b64, 26, 0);

@@ -89,8 +89,8 @@ s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 16, 4);
   Call3((void (*)())Func_0200206c, 16, 0, 5);
-  Call3((void (*)())Actor_CommitPositionAndActivate,
-        FIELD_AT(r5_1, s32, 0), 0, 16);
+  Call3((void (*)())Actor_CommitPositionAndActivate, FIELD_AT(r5_1, s32, 0), 0,
+        16);
   Call3((void (*)())Actor_CommitPositionAndActivate, 16, 24, 0);
   Call2((void (*)())Func_0200207c, 16, FACING_SOUTH + FACING_STEP);
   v2 = Func_02001fd4();
@@ -101,8 +101,7 @@ L_0200863c:
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_CommitPositionAndActivate, 16, 24, 0);
   Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH + FACING_STEP, 0);
-  Call2((void (*)())Actor_WatchAndSetScript, 16,
-        FIELD_AT(r5_1, s32, 0));
+  Call2((void (*)())Actor_WatchAndSetScript, 16, FIELD_AT(r5_1, s32, 0));
   Call1((void (*)())GameFlag_SetBit, 0x96a);
   Call1((void (*)())GameFlag_SetBit, 0x96b);
   Call1((void (*)())Party_AddActiveOwner, 7);
@@ -113,7 +112,8 @@ L_0200863c:
   Call3((void (*)())Actor_SetSpeedParameters, 14, 0xb333, 0x5999);
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0xb333, 0x5999);
   Call3((void (*)())Actor_SetPositionAndReset, 4, 872, 528);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(408), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(408),
+        1);
   Func_020020ac();
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH + FACING_STEP, 0);
@@ -172,7 +172,8 @@ L_0200863c:
   Call1((void (*)())Actor_WaitForMoveById, 7);
   Call2((void (*)())Actor_SetModeById, 7, 1);
   Call2((void (*)())Func_0200207c, 7, FACING_SOUTH);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(496), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(496),
+        1);
   Func_020020ac();
   Call1((void (*)())FieldEvent_Wait, 5);
   Call4((void (*)())Func_020020dc, 17, 16, 0, FACING_NORTHWEST + FACING_STEP);
@@ -353,7 +354,8 @@ L_0200863c:
   Call3((void (*)())Actor_SetPositionAndReset, 15, 888, 444);
   Call2((void (*)())Func_0200207c, 15, FACING_SOUTH + FACING_STEP);
   Call1((void (*)())FieldEvent_Wait, 5);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(472), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(472),
+        1);
   Func_020020ac();
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Func_0200207c, 15, FACING_WEST);
@@ -598,7 +600,8 @@ L_02008ff2:
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(480), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(872), -1, PIXELS(480),
+        1);
   Func_020020ac();
   Call1((void (*)())FieldEvent_Wait, 10);
   Call1((void (*)())Actor_Stop, 16);

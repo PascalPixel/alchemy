@@ -31,8 +31,7 @@ void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void Func_0200193c(void);
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
   if (value == 1)

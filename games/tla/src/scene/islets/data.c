@@ -53,7 +53,7 @@ extern s16 gData_020046ba[];
 
 // clang-format off
 u32 gData_02004004[] = {
-    SC_ADD(SW_FACING, 0x1000),
+    SC_ADD(SW_FACING, FACING_STEP),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
     SC_END,

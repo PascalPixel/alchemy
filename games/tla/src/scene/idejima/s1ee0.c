@@ -14,8 +14,7 @@ extern const u8 gData_020034e4[];
 extern const u8 gData_0200350c[];
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void FieldEvent_Wait();
 void Camera_MoveWithinMapBounds();
 void Import_CameraSetSpeed();
@@ -53,12 +52,13 @@ void Func_02001ee0(void) {
   Call3((void (*)())Func_02003228, gMainRoutineWork.currentOwner, PIXELS(432),
         PIXELS(234));
   Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0xffff0000;
-  Call2((void (*)())Import_ActorSetAnimation, gMainRoutineWork.currentOwner, 41);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Call2((void (*)())Import_ActorSetAnimation, gMainRoutineWork.currentOwner,
+        41);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Call3((void (*)())Func_02003228, 10, PIXELS(392), PIXELS(172));
   Task_Wait(1);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(192), -1, PIXELS(214), 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(192), -1, PIXELS(214),
+        0);
   Func_02003180();
   Task_Wait(1);
   Call3((void (*)())Func_02003228, 5, PIXELS(208), PIXELS(218));
@@ -71,7 +71,8 @@ void Func_02001ee0(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call1((void (*)())FieldEvent_Wait, 120);
-  Call1((void (*)())Import_EventSetMessageId, (s32)MsgIdejimaHowLongWillWeDrift);
+  Call1((void (*)())Import_EventSetMessageId,
+        (s32)MsgIdejimaHowLongWillWeDrift);
   Call3((void (*)())Func_02003298, 5, 0, 40);
   Call2((void (*)())Import_EventShowMessageAndWait, 8, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 5, 263, 0);
@@ -103,8 +104,7 @@ void Func_02001ee0(void) {
   Value3((s32 (*)())Import_ActorShowEmote, 8, 257, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 5, 257, 80);
   Call2((void (*)())Import_EventShowMessageAndWait, 10, 0);
-  Call2((void (*)())Actor_SetMovementTypeById, 10,
-        gData_020033a8);
+  Call2((void (*)())Actor_SetMovementTypeById, 10, gData_020033a8);
   Call1((void (*)())FieldEvent_Wait, 40);
   Call2((void (*)())Import_ActorSetAnimation, 8, 1);
   Actor_SetSingleChildFlags(Actor_GetById(8), 1);
@@ -119,7 +119,8 @@ void Func_02001ee0(void) {
   Call2((void (*)())Actor_SetMovementTypeById, 8, gData_02003400);
   Call1((void (*)())FieldEvent_Wait, 40);
   Call2((void (*)())Import_CameraSetSpeed, 0xcccc, 0x1999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(368), -1, PIXELS(210), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(368), -1, PIXELS(210),
+        1);
   actor->action = 0;
   Call2((void (*)())Actor_SetMovementTypeById, 5, gData_0200346c);
   do {

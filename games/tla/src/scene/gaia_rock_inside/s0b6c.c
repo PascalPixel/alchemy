@@ -34,8 +34,7 @@ void Func_02000b6c(void) {
     Func_02004fcc(0);
     if (leader->x >> 20 == 38 && leader->z >> 20 == 25) {
       Call2(Func_02004f34, gMainRoutineWork.currentOwner, 258);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     }

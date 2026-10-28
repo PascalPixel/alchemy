@@ -17,8 +17,8 @@ void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_SetSpritePriority(u32 id, s32 variant);
 void Func_02004844(s32 id, s32 a, s32 b);
 
-static __inline__ void
-Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
+                                                           s32 dz) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 2 of 292
    * instructions differ in tla-en. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
@@ -57,7 +57,7 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
-                                                        s32 acceleration) {
+                                                 s32 acceleration) {
   /* FAKEMATCH(wrapper): forwarded inline; as a plain call, 2 of 292
    * instructions differ in tla-en. */
   Actor_SetSpeedParameters(actor, speed, acceleration);

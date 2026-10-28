@@ -138,21 +138,20 @@ void Func_0200253c(void) {
   Actor_SetSpeed(23, 0xcccc, 0x6666);
   Actor_SetMovementTypeById(23, gData_02005ba4);
   wait(10);
-  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
-                                          gData_02005af4);
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02005af4);
   Actor_SetMovementTypeById(5, gData_02005b1c);
   Actor_SetMovementTypeById(7, gData_02005b60);
   Actor_RefreshSelectorById(23);
   FieldEvent_Wait(20);
   Camera_SetSpeed(0x13333, 0x2666);
-  Camera_SetBounds(217 << 17, -1, 143 << 17, 1);
+  Camera_SetBounds(PIXELS(434), -1, PIXELS(286), 1);
   Actor_SetSpeed(23, 0x13333, 0x9999);
   Actor_SetMovementTypeAndWaitById(23, gData_02005be8);
   FieldEvent_Wait(40);
   Func_02005774_(23, FACING_NORTH + FACING_STEP);
   Func_02005764_(23, 0);
   Camera_SetSpeed(0x4cccc, 0x9999);
-  Camera_SetBounds(217 << 17, -1, PIXELS(168), 1);
+  Camera_SetBounds(PIXELS(434), -1, PIXELS(168), 1);
   Func_020057b4();
   FieldEvent_Wait(20);
   Actor_Turn(6, FACING_SOUTHEAST, 0);
@@ -187,15 +186,15 @@ void Func_020027cc(void) {
   Camera_SetBounds(-1, -1, -1, 0);
   Func_02005854(78);
   speed = 0x4000;
-  Actor_Slide(gMainRoutineWork.currentOwner, 174 << 17, 156 << 17, speed);
-  Actor_Slide(7, 165 << 17, 156 << 17, speed);
+  Actor_Slide(gMainRoutineWork.currentOwner, PIXELS(348), PIXELS(312), speed);
+  Actor_Slide(7, PIXELS(330), PIXELS(312), speed);
   {
     s32 slow = 0x3000;
 
-    Actor_Slide(23, 216 << 17, 156 << 17, slow);
+    Actor_Slide(23, PIXELS(432), PIXELS(312), slow);
   }
-  Actor_Slide(6, 224 << 17, 156 << 17, speed);
-  Actor_Slide(5, 234 << 17, 156 << 17, speed);
+  Actor_Slide(6, PIXELS(448), PIXELS(312), speed);
+  Actor_Slide(5, PIXELS(468), PIXELS(312), speed);
   wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
   Event_StartScreenTransition();
@@ -239,8 +238,7 @@ void Func_020027cc(void) {
       (Random16Far() * 40 >> 16) + 10;
   ((struct Wanderer *)Actor_GetById(23))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
-                                          gData_02005c74);
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02005c74);
   Actor_SetMovementTypeById(7, gData_02005c74);
   Actor_SetMovementTypeById(5, gData_02005ca0);
   Actor_SetMovementTypeById(6, gData_02005ca0);

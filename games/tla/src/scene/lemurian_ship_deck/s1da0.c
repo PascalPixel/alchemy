@@ -15,8 +15,7 @@ void Func_0200201c(const u8 *message);
 void Func_02002034(s32 id, s32 a);
 void Func_02001fc4(s32 id, s32 a, s32 b);
 void Func_02001d60(struct Actor *object);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Actor_WaitForMoveById(s32 id);
@@ -56,7 +55,7 @@ void Func_02001da0(void) {
     object = Actor_GetById(4);
     if (object != 0)
       Actor_ResetAndSetPosition(7, *(s16 *)((u8 *)object + 10),
-                                       *(s16 *)((u8 *)object + 18));
+                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(7);
     Func_02001fc4(7, 0, 0);
     Actor_GetById(7)->update = 0;

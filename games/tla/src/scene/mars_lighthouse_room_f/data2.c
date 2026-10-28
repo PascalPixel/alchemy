@@ -14,9 +14,8 @@ void Func_0200025c(void);
 void Func_02000280(void);
 void Func_020002b8(void);
 void Func_020002ec(void);
-#if (LANGUAGE == LANGUAGE_JAPANESE) /* The Japanese edition has no Func_020002ec; its  \
-                             * table contains 0.                               \
-                             */
+// The Japanese edition has no Func_020002ec; its table contains 0.
+#if (LANGUAGE == LANGUAGE_JAPANESE)
 #define MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC 0
 #else
 #define MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC ((s32)Func_020002ec)

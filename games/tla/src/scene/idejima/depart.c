@@ -90,8 +90,8 @@ void Idejima_RunAlexDeparture(void) {
   Value2(FieldMessage_ShowAtActor, 0x2008, 0);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Call3(Actor_ArmCallback, 5, FACING_SOUTHEAST, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Motion_SetModeAndWaitAnimation(8, 4);
     Call2(Import_EventShowMessageAndWait, 0x2008, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
@@ -145,8 +145,8 @@ void Idejima_RunAlexDeparture(void) {
   Call3(Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 0);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 20);
   Value2(FieldMessage_ShowAtActor, 0x2008, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Value3(Import_ActorShowEmote, 6, 0x103, 0);
     Actor_ArmCallback(6, FACING_EAST, 20);
     Import_EventShowMessageAndWait(6, 0);
@@ -219,8 +219,8 @@ void Idejima_RunAlexDeparture(void) {
   Import_EventShowMessageAndWait(5, 0);
   Call3(Actor_ArmCallback, 5, FACING_SOUTHEAST, 0);
   Value2(FieldMessage_ShowAtActor, 5, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Import_ActorSetAnimation(5, 3);
     Import_EventShowMessageAndWait(5, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;

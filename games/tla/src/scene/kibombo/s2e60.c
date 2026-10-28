@@ -54,6 +54,6 @@ void Func_02002eb0(void) {
     struct KibomboObject *object = Actor_GetById(27);
 
     Actor_SetPositionAndResetMotion(gData_02007950, object->x,
-                                     object->y + PIXELS(12), object->z);
+                                    object->y + PIXELS(12), object->z);
   }
 }

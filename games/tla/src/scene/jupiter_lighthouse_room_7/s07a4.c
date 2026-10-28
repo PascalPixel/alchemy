@@ -22,8 +22,7 @@ void FieldEvent_Wait(s32 frames);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02002c5c();
 s32 Func_02000194(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020002f0(void);
 void Actor_Stop(s32 id);
 void Func_02002ba4(s32 id, s32 a, s32 b);

@@ -79,8 +79,7 @@ void Func_02000934(void) {
     Call2(Motion_SetModeAndWaitAnimation, 30, 3);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Call3(Func_02001c7c, 30, 0, 5);
-    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 464,
-          1040);
+    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 464, 1040);
     Call2(Func_02001c94, gMainRoutineWork.currentOwner, FACING_NORTH);
     Call1(FieldEvent_Wait, 5);
     Call3(Actor_SetSpeedParameters, 30, 0x13333, 0x9999);

@@ -7,6 +7,7 @@
        ->v)
 
 #include "call.h"
+#include "scene_tables.h"
 s32 GameFlag_Test();
 s32 GameFlag_SetBit();
 s32 Func_02000070();
@@ -16,11 +17,10 @@ s32 Actor_SetPositionAndReset();
 s32 Actor_ArmCallback();
 s32 Func_020001e4();
 s32 Func_02001388();
-extern u8 gMainRoutineWork[];
 
 void Func_020000d0(void) {
   s32 t0;
-  s32 actor = FIELD_AT(gMainRoutineWork, s32, 532);
+  s32 actor = FIELD_AT(&gMainRoutineWork, s32, 532);
 
   t0 = Value1(GameFlag_Test, 0x200);
   if (t0 == 0) {
@@ -29,8 +29,8 @@ void Func_020000d0(void) {
   }
   Func_02001380();
   Call1(Func_020013f8, 0);
-  Call3(Actor_SetPositionAndReset, actor, 0x78, 0x98);
-  Call3(Actor_ArmCallback, actor, 0x4000, 0);
+  Call3(Actor_SetPositionAndReset, actor, 120, 152);
+  Call3(Actor_ArmCallback, actor, FACING_SOUTH, 0);
   Func_020001e4();
   Func_02001388();
 }

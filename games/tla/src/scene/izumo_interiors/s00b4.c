@@ -64,11 +64,11 @@ static inline void ActorAnimate(s32 actor, s32 animation, s32 frames) {
 }
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer; called as
-   * value-returning, the animation and frames are set before the owner is
-   * loaded (differ 4 as a void call). */
-  ((s32 (*)(s32, s32, s32))Func_0200226c)(gMainRoutineWork.currentOwner, animation,
-                                          frames);
+  /* FAKEMATCH: scene calls reach the main image through one inline layer;
+   * called as value-returning, the animation and frames are set before the
+   * owner is loaded (differ 4 as a void call). */
+  ((s32 (*)(s32, s32, s32))Func_0200226c)(gMainRoutineWork.currentOwner,
+                                          animation, frames);
 }
 
 const u8 *Func_020000b4(void) {

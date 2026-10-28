@@ -21,8 +21,7 @@ void Func_020001ec(void) {
       Func_02000d00();
       Func_02000dd0(0);
       Func_02000d90(gMainRoutineWork.currentOwner, 258);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16, 0);
       object->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02000d08();
@@ -71,8 +70,7 @@ void Func_0200036c(void) {
       Func_02000d00();
       Func_02000dd0(0);
       Func_02000d90(gMainRoutineWork.currentOwner, 258);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       object->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02000d08();

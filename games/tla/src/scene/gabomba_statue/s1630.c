@@ -16,8 +16,7 @@ void Func_0200580c(s32 value);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_0200565c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02005664(struct Actor *object);
 void Func_02005854(s32 sound);
@@ -40,8 +39,7 @@ static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
   Actor_ArmCallback(id, angle, frames);
 }
 
-static __inline__ void Actor_Place(struct Actor *object, s32 x, s32 y,
-                                   s32 z) {
+static __inline__ void Actor_Place(struct Actor *object, s32 x, s32 y, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200565c(object, x, y, z);
 }
@@ -67,8 +65,7 @@ void Func_02001630(void) {
   Actor_Walk(gMainRoutineWork.currentOwner, 472, 144);
   Actor_Turn(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   Actor_Place(leader, PIXELS(472), 0, PIXELS(156));
   Func_02005664(leader);

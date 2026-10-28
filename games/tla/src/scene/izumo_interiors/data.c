@@ -356,6 +356,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+// clang-format off
 struct ActorPlacement gData_02002b40[] = {
     {120, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(120), FACING_SOUTHEAST, 1, 0},
     {120, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(152), FACING_NORTHWEST, 1, 0},
@@ -376,7 +377,9 @@ struct ActorPlacement gData_02002b40[] = {
     {127, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(392), FACING_NORTHWEST, 1, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
+// clang-format off
 struct ActorPlacement gData_02002cf0[] = {
     {30, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(520), FACING_SOUTH, 1, 0},
     {120, CONDITION_ALWAYS, (s32)gData_02002324, PIXELS(136), 0, PIXELS(624), FACING_EAST, 1, 0},
@@ -385,7 +388,9 @@ struct ActorPlacement gData_02002cf0[] = {
     {124, CONDITION_ALWAYS, 1, PIXELS(198), 0, PIXELS(622), FACING_EAST, 1, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
+// clang-format off
 struct ActorPlacement gData_02002d80[] = {
     {121, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(362), FACING_SOUTH, 1, 0},
     {118, CONDITION_ALWAYS, 1, PIXELS(108), 0, PIXELS(320), FACING_SOUTHEAST, 1, 0},
@@ -409,6 +414,7 @@ struct ActorPlacement gData_02002d80[] = {
     {245, 0x63, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
 struct Trigger gData_02002f78[] = {
     {1, 1, CONDITION_ALWAYS, 1},

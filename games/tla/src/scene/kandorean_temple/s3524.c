@@ -29,8 +29,7 @@ void Func_02003584(void) {
   Func_02005370(0);
   object->motionFlags = 0;
   Actor_SetActionVariantValue(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   object->angle = 0;
   {
     s32 *owner = &gMainRoutineWork.currentOwner;
@@ -44,7 +43,7 @@ void Func_02003584(void) {
   }
   for (i = 0; i <= 7; i++) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y,
-                                     object->z + PIXELS(3));
+                                    object->z + PIXELS(3));
     wait_(1);
   }
   FieldEvent_Wait_(20);

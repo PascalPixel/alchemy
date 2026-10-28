@@ -81,8 +81,8 @@ void Func_020029ac(void) {
   Call2((void (*)())Func_02005704, 0, FACING_NORTHEAST);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);
   Call2((void (*)())Func_020056f4, 0x2007, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_WEST, 0);
   Call2((void (*)())Func_02005704, 5, FACING_NORTHEAST);
   Func_02005714_(5, 0x107, 0);
   Call3((void (*)())Actor_Jump, 5, 2, 0xa);
@@ -111,12 +111,13 @@ void Func_020029ac(void) {
   Func_02005714_(0x13, 0x109, 0);
   Call1((void (*)())Func_020057dc, 0x4e);
   Call2((void (*)())Func_02005724, 0x3333, 0x666);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(512), -1, PIXELS(320), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(512), -1, PIXELS(320),
+        1);
   ((void (*)())Func_02005734)();
   Call2((void (*)())Func_020056f4, 0x2013, 0);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTH, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHEAST, 0);
   Call3((void (*)())Actor_ArmCallback, 0, FACING_SOUTHWEST, 0);
   Call3((void (*)())Actor_ArmCallback, 1, FACING_SOUTHWEST, 0);
@@ -133,8 +134,8 @@ void Func_020029ac(void) {
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 19, 3);
   Call2((void (*)())Func_020056f4, 0x2013, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_EAST, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTHWEST,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTHWEST, 0);
   Call3((void (*)())Actor_ArmCallback, 0, FACING_EAST, 40);
   Call3((void (*)())Actor_SetSpeedParameters, 1, 0xcccc, 0x6666);
   Actor_GetById(1)->actionFlags &= 0xfe;
@@ -143,8 +144,8 @@ void Func_020029ac(void) {
   Actor_GetById(1)->actionFlags |= 1;
   Call2((void (*)())Func_02005724, 0xcccc, 0x1999);
   Func_0200573c()->motionFlags = 0;
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(540), PIXELS(76), PIXELS(340),
-        1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(540), PIXELS(76),
+        PIXELS(340), 1);
   ((void (*)())Func_02005734)();
   Call2((void (*)())Func_02005704, 1, FACING_SOUTH);
   Call3((void (*)())Actor_SetPositionAndReset, 1, 542, 340);
@@ -156,8 +157,8 @@ void Func_020029ac(void) {
   Call3((void (*)())Actor_Jump, 1, 4, 0xa);
   Call2((void (*)())Func_020056f4, 0x5001, 0);
   Call2((void (*)())Func_02005724, 0x4cccc, 0x9999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(478), PIXELS(96), PIXELS(312),
-        1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(478), PIXELS(96),
+        PIXELS(312), 1);
   ((void (*)())Func_02005734)();
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTH, 40);
   Call2((void (*)())Func_02005704, 6, FACING_WEST);
@@ -165,7 +166,8 @@ void Func_020029ac(void) {
   Call2((void (*)())Func_02005704, 6, FACING_SOUTHWEST);
   Call3((void (*)())Actor_Jump, 6, 4, 0xa);
   Call2((void (*)())Func_020056f4, 0x6006, 0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(480), -1, PIXELS(276), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(480), -1, PIXELS(276),
+        1);
   ((void (*)())Func_02005734)();
   Call3((void (*)())Actor_ArmCallback, 7, FACING_NORTHEAST, 20);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_NORTHWEST, 20);
@@ -174,10 +176,11 @@ void Func_020029ac(void) {
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 4);
   Call2((void (*)())Func_020056f4, 0x8007, 0);
   Call2((void (*)())Func_020056f4, 0x5000, 0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(512), -1, PIXELS(312), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(512), -1, PIXELS(312),
+        1);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTHEAST, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTHEAST,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTHEAST, 0);
   Call3((void (*)())Actor_ArmCallback, 3, FACING_SOUTHWEST, 0);
   Call3((void (*)())Actor_ArmCallback, 19, FACING_NORTH + FACING_STEP, 0);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTHEAST, 0);
@@ -237,8 +240,8 @@ void Func_020029ac(void) {
   Call2((void (*)())Actor_SetModeById, 19, 3);
   Call2((void (*)())Func_020056f4, 0x2013, 0);
   Call2((void (*)())Func_02005704, gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner,
-        3);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation,
+        gMainRoutineWork.currentOwner, 3);
   Call1((void (*)())GameFlag_SetBit, 0xa3d);
   Call1((void (*)())Func_020057dc, 0x1c);
   Call3((void (*)())Actor_SetSpeedParameters, 0, 0xcccc, 0x6666);

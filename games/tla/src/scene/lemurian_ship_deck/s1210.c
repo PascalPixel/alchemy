@@ -17,8 +17,7 @@ void HeapSlot_Release(s32 slot);
 s32 VramCache_Load(s32 block, s32 count, u8 *source);
 
 struct Actor *Func_02001210(void) {
-  struct Actor *object =
-      Func_02001f0c(0x1e9, 0x1680000, 0x400000, 0x1a80000);
+  struct Actor *object = Func_02001f0c(0x1e9, 0x1680000, 0x400000, 0x1a80000);
   u8 *buffer = 0;
   struct FieldSprite *sprite;
 
@@ -84,7 +83,8 @@ void Func_0200128c(void) {
   Call1((void (*)())Func_020020ac, 0);
   Call2((void (*)())Func_02001fd4, 7, gMainRoutineWork.currentOwner);
   Call1((void (*)())wait, 1);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_EAST, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0x19999, 0xcccc);
   Call3((void (*)())Actor_SetPositionAndReset, 7, 412, 424);
   Call2((void (*)())Func_02002044, 7, FACING_NORTHWEST);
@@ -94,14 +94,13 @@ void Func_0200128c(void) {
   Call2((void (*)())Func_02002044, 7, FACING_NORTHEAST);
   Call2((void (*)())Func_02002034, 7, 0);
   Call3((void (*)())Actor_SetPositionAndReset, 7, 386, 424);
-  Call3((void (*)())Actor_SetAngleToward, 7, gMainRoutineWork.currentOwner,
-        0);
+  Call3((void (*)())Actor_SetAngleToward, 7, gMainRoutineWork.currentOwner, 0);
   Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
   Call2((void (*)())Func_02002034, 7, 0);
   Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
         0xcccc, 0x6666);
-  Call2((void (*)())Actor_SetMovementTypeById,
-        gMainRoutineWork.currentOwner, (s32)gData_02002120);
+  Call2((void (*)())Actor_SetMovementTypeById, gMainRoutineWork.currentOwner,
+        (s32)gData_02002120);
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0xcccc, 0x6666);
   Call3((void (*)())Actor_SetPositionAndReset, 7, 360, 424);
   Call2((void (*)())Func_02002044, 7, FACING_NORTH);
@@ -136,8 +135,8 @@ void Func_0200128c(void) {
   Call2((void (*)())Actor_SetModeById, 7, 2);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != 0)
-    Call3((void (*)())Actor_ResetAndSetPosition, 7,
-          ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
+    Call3((void (*)())Actor_ResetAndSetPosition, 7, ((s16 *)&object->x)[1],
+          ((s16 *)&object->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, 7);
   Call3((void (*)())Func_02001fc4, 7, 0, 0);
   Flag_Set(0x985);
@@ -175,7 +174,8 @@ void Func_020014c0(void) {
   Call1((void (*)())Actor_WaitForMoveById, 4);
   Call4((void (*)())Func_020020b4, 7, 16, 8, FACING_SOUTH);
   Call2((void (*)())Func_0200205c, 0xcccc, 0x1999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(288), -1, PIXELS(208), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(288), -1, PIXELS(208),
+        1);
   Call4((void (*)())Func_020020b4, 9, 32, 0, FACING_SOUTH);
   Call4((void (*)())Func_020020b4, 6, 48, -8, FACING_SOUTH);
   Call4((void (*)())Func_020020b4, 5, -16, -8, FACING_SOUTH);
@@ -190,7 +190,8 @@ void Func_020014c0(void) {
   Value3((s32 (*)())Func_0200204c, 9, 265, 20);
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Func_0200205c, 0xcccc, 0x1999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(288), -1, PIXELS(184), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(288), -1, PIXELS(184),
+        1);
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0xcccc, 0x6666);
   Call3((void (*)())Actor_CommitPositionAndActivate, 7, 0, -16);
   Call2((void (*)())Func_02002044, 7, FACING_NORTHEAST);
@@ -223,7 +224,8 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Func_02002044, 9, FACING_WEST);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_EAST, 0);
   if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 0) {
     Value3((s32 (*)())Func_0200204c, 5, 263, 20);
     Call2((void (*)())Func_02002034, 5, 0);
@@ -244,8 +246,8 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002044, 7, FACING_NORTHEAST);
   Call2((void (*)())Actor_SetModeById, 7, 4);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTHEAST,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTHEAST, 0);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
   Value3((s32 (*)())Func_0200204c, 5, 257, 0);
   Value3((s32 (*)())Func_0200204c, 6, 257, 40);
@@ -278,11 +280,12 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTH, 0);
   Value3((s32 (*)())Func_0200204c, 9, 0x100, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 3);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_EAST, 0);
   Call2((void (*)())Func_02002054, 5, 258);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Func_02002034, 5, 0);
@@ -298,8 +301,8 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Actor_SetModeById, 7, 3);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTHEAST,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTHEAST, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_SOUTHEAST, 0);
   Value3((s32 (*)())Func_0200204c, 6, 257, 20);
   Call2((void (*)())Func_02002034, 6, 0);
@@ -338,8 +341,8 @@ void Func_020014c0(void) {
   Value3((s32 (*)())Func_0200204c, 5, 257, 40);
   Call3((void (*)())Actor_CommitPositionAndActivate, 5, 0, 16);
   Call2((void (*)())Func_02002034, 5, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHWEST, 0);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
@@ -347,7 +350,8 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002034, 7, 0);
   Call2((void (*)())Func_02002044, 7, FACING_NORTHEAST);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_EAST, 0);
   Call2((void (*)())Func_02002044, 9, FACING_WEST);
   Call2((void (*)())Actor_SetModeById, 9, 3);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
@@ -360,14 +364,15 @@ void Func_020014c0(void) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call2((void (*)())Func_02002034, 9, 0);
   }
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTH, 0);
   Call2((void (*)())Func_02002044, 9, FACING_SOUTH + FACING_STEP);
   Value3((s32 (*)())Func_0200204c, 9, 264, 20);
   Call2((void (*)())Func_02002034, 9, 0);
   Value3((s32 (*)())Func_0200204c, 7, 264, 0);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_EAST, 0);
   Call2((void (*)())Func_02002044, 9, FACING_WEST);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 9, 3);
   Call2((void (*)())Actor_SetModeById, 5, 3);

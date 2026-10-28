@@ -29,5 +29,6 @@ void Func_02001cac(void) {
     __asm__("" : : "r"(lines));
   } while (0);
   (void)dma[5];
-  Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
+  Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
+          (volatile u32 *)dma);
 }

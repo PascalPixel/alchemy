@@ -59,7 +59,7 @@ void Func_02001074(void) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)
       Actor_ResetAndSetPosition(9, *(s16 *)((u8 *)object + 10),
-                                       *(s16 *)((u8 *)object + 18));
+                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(9);
     Func_02001fc4(9, 0, 0);
     Flag_Set(0x988);

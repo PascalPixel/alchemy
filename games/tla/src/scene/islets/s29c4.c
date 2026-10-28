@@ -50,11 +50,12 @@ void Func_020029c4(void) {
   Call1(wait, 1);
   guide->angle = FACING_SOUTH;
   leader->update = Func_02001278;
-  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gMainRoutineWork.currentOwner),
-        15);
+  Call2(Actor_SetPartAttribute,
+        Value1(Actor_GetById, gMainRoutineWork.currentOwner), 15);
   Call2(Actor_SetModeById, 9, 3);
   Call1(wait, 1);
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* The Japanese edition leaves the transition word. */
+#if (LANGUAGE !=                                                               \
+     LANGUAGE_JAPANESE) /* The Japanese edition leaves the transition word. */
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
 #endif
   Event_StartScreenTransition();
@@ -80,8 +81,8 @@ void Func_020029c4(void) {
   Call2(Actor_SetModeById, 9, 1);
   Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999,
         0xcccc);
-  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gMainRoutineWork.currentOwner),
-        0);
+  Call2(Actor_SetPartAttribute,
+        Value1(Actor_GetById, gMainRoutineWork.currentOwner), 0);
   Call3(Actor_Jump, gMainRoutineWork.currentOwner, 6, 0);
   Call3(Actor_SetPositionAndCommit, gMainRoutineWork.currentOwner, 152, 742);
   Call2(Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTH);

@@ -11,8 +11,7 @@ struct EventWork154 {
 
 void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);

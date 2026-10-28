@@ -14,10 +14,10 @@ void Func_020040b4(void) {
   x >>= 20;
   z >>= 20;
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                                    (z << 4) + 8);
+                             (z << 4) + 8);
   wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
-                                   (z << 20) + PIXELS(8));
+                                  (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_020048fc()->y -= 0x80000;
 }

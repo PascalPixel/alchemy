@@ -25,8 +25,7 @@ void wait(s32 frames);
 void Func_020057e4(s32 a, s32 b);
 void Func_020057dc(s32 a, s32 b);
 void Func_020057ec(s32 a);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 s32 Func_02004d48(s32 a, s32 b);
 void Func_0200581c(void);
@@ -77,8 +76,7 @@ void Func_02000fc0(void) {
   Func_020057dc(0x7fff, 0);
   Func_020057ec(40);
   wait(80);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Func_02000f6c();
   wait(1);

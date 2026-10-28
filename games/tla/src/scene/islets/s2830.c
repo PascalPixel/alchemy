@@ -36,7 +36,8 @@ void Func_02002830(void) {
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 312, 440);
-  Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
+  Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner,
+        FACING_SOUTHWEST);
   Func_02003f2c(9, 0);
   Func_02003fb4();
   Call2((void (*)())Func_02003f3c, 9, FACING_SOUTH);

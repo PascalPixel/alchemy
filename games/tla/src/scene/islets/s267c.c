@@ -9,16 +9,16 @@ void Func_0200267c(void) {
   s32 index;
   s32 cell;
 
-  /* FAKEMATCH: the listing loads gMainRoutineWork's address before it builds the
-   * owner offset */
+  /* FAKEMATCH: the listing loads gMainRoutineWork's address before it builds
+   * the owner offset */
   asm volatile("" : "+l"(party));
   object = Actor_GetById(party->currentOwner);
   Func_02003e64();
   Func_02003fa4(0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Actor_SetModeById(party->currentOwner, 2);
-  Call3((void (*)())Actor_SetSpeedParameters, party->currentOwner,
-        0x8000, 0x4000);
+  Call3((void (*)())Actor_SetSpeedParameters, party->currentOwner, 0x8000,
+        0x4000);
   cell = object->x >> 16;
   Func_02003e0c(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z);

@@ -77,10 +77,11 @@ void Func_020010d4(void) {
    * gMainRoutineWork.currentOwner in the call, 34 of 640 instructions differ in
    * tla-en. */
   owner = gMainRoutineWork.currentOwner;
-  Call4(Func_02001e18, owner, PIXELS(360), PIXELS(184), turnA = 0xe000);
+  Call4(Func_02001e18, owner, PIXELS(360), PIXELS(184),
+        turnA = FACING_NORTHEAST);
   Call4(Func_02001e18, 7, PIXELS(376), PIXELS(184), turnA);
   Call4(Func_02001e18, 11, PIXELS(360), PIXELS(168), turnA);
-  Call4(Func_02001e18, 6, PIXELS(423), PIXELS(168), turnB = 0xa000);
+  Call4(Func_02001e18, 6, PIXELS(423), PIXELS(168), turnB = FACING_NORTHWEST);
   Call4(Func_02001e18, 5, PIXELS(408), PIXELS(184), turnB);
   if (statue != 0) {
     sprite = statue->animation;
@@ -190,8 +191,8 @@ void Func_020010d4(void) {
   Call3(Actor_SetPositionAndReset, 12, 404, 220);
   Call3(Actor_Jump, 12, 4, 10);
   Value2(FieldMessage_ShowAtActor, 12, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Call2(Func_02001e90, 12, 258);
     Call1(FieldEvent_Wait, 20);
     Call2(Func_02001e60, 12, 0);

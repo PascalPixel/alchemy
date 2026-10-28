@@ -8,8 +8,7 @@
 #include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Camera_MoveWithinMapBounds();
 void Motion_SetVarCbAndRefresh();
 void Motion_SetModeAndWaitAnimation();
@@ -61,8 +60,7 @@ void Func_02002c64(void) {
   Task_Wait(1);
   Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 41);
   Task_Wait(1);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Task_Wait(1);
   Call3(Func_02003228, gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
   Call3(Func_02003228, 11, PIXELS(384), PIXELS(702));
@@ -86,8 +84,7 @@ void Func_02002c64(void) {
   FelixWake_WaitForButton();
   FelixWake_StartStep();
   Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   Task_Wait(1);
   Actor_Jump(gMainRoutineWork.currentOwner, 4, 20);
   Import_EventSetMessageId((s32)MsgIdejimaCheckForInjuries);

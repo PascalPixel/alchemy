@@ -14,7 +14,8 @@ void Func_02002820(void) {
   if (LemurianShip_FlagCheck(0x93f)) {
     object = Actor_GetById(64);
     object->motionFlags = 0;
-    LemurianShip_ObjSetPos(Actor_GetById(64), PIXELS(136), PIXELS(-32), PIXELS(392));
+    LemurianShip_ObjSetPos(Actor_GetById(64), PIXELS(136), PIXELS(-32),
+                           PIXELS(392));
     object->height = 0xfff00000;
     Actor_SetSpritePriority(64, 3);
     Actor_SetPartAttribute(Actor_GetById(64), 1);

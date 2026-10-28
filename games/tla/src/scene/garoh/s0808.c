@@ -46,12 +46,12 @@ void Func_02000808(void) {
     Func_02005324(0);
     Actor_SetSingleChildFlags(Actor_GetById(22), 0);
     speed = 0x4000;
-    Call4(Func_02005214, 22, 180 << 17, PIXELS(199), speed);
+    Call4(Func_02005214, 22, PIXELS(360), PIXELS(199), speed);
     Camera_MoveWithinMapBounds(PIXELS(359), -1, PIXELS(220), 1);
     Func_020052b4();
     Func_020007a0(22);
     FieldEvent_Wait(30);
-    Call4(Func_02005214, 21, 180 << 17, PIXELS(199), speed);
+    Call4(Func_02005214, 21, PIXELS(360), PIXELS(199), speed);
     Actor_CommitPositionAndActivate(21, 0, 16);
     Func_020007d4(22);
     Func_0200524c((s32)MsgGaroh12);

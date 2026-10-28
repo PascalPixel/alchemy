@@ -55,11 +55,10 @@ void Func_020030cc(void) {
     Call3(Actor_SetSpeedParameters, 5, 0xb333, 0x5999);
     Call2(Func_02004da8, 5, gMainRoutineWork.currentOwner);
     Call1(FieldEvent_Wait, 1);
-    Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner,
-          256, 136);
+    Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner, 256,
+          136);
     Call3(Actor_ResetAndSetPositionInMode2, 5, 272, 136);
-    Call1(Actor_WaitForMoveById,
-          gMainRoutineWork.currentOwner);
+    Call1(Actor_WaitForMoveById, gMainRoutineWork.currentOwner);
     Call1(Actor_WaitForMoveById, 5);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Call3(Actor_ArmCallback, 5, FACING_WEST, 0);
@@ -67,8 +66,7 @@ void Func_020030cc(void) {
     Call2(Func_02004de0, 5, 0);
     Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
     Call1(FieldEvent_Wait, 30);
-    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 256,
-          152);
+    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 256, 152);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     Call1(FieldEvent_Wait, 20);
     Call3(Actor_ArmCallback, 5, FACING_SOUTH, 0);

@@ -48,6 +48,7 @@ extern u8 gData_02005830[];
 extern u8 gData_0200591c[];
 extern u8 gData_02005ae8[];
 
+// clang-format off
 struct ActorPlacement gData_02005bcc[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(120), FACING_SOUTH, 2, 0},
     {414, CONDITION_ALWAYS, (s32)gData_02004de8, PIXELS(104), 0, PIXELS(112), FACING_SOUTH, 2, 0},
@@ -66,7 +67,9 @@ struct ActorPlacement gData_02005bcc[] = {
     {412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
+// clang-format off
 struct ActorPlacement gData_02005d4c[] = {
     {414, CONDITION_ALWAYS, (s32)gData_02004eb8, PIXELS(840), 0, PIXELS(528), FACING_SOUTH, 2, 0},
     {419, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(872), 0, PIXELS(568), FACING_SOUTH, 2, 0},
@@ -84,7 +87,9 @@ struct ActorPlacement gData_02005d4c[] = {
     {412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
+// clang-format off
 struct ActorPlacement gData_02005eb4[] = {
     {418, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(72), 0, PIXELS(632), FACING_SOUTH, 2, 0},
     {419, CONDITION_ALWAYS, (s32)gData_0200591c, PIXELS(72), 0, PIXELS(680), FACING_SOUTH, 2, 0},
@@ -95,7 +100,9 @@ struct ActorPlacement gData_02005eb4[] = {
     {412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
+// clang-format off
 struct ActorPlacement gData_02005f74[] = {
     {413, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(696), FACING_SOUTH, 2, 0},
     {414, CONDITION_ALWAYS, (s32)gData_02004f44, PIXELS(120), 0, PIXELS(688), FACING_SOUTH, 2, 0},
@@ -112,6 +119,7 @@ struct ActorPlacement gData_02005f74[] = {
     {412, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
 // clang-format off
 struct ActorPlacement gData_020060c4[] = {

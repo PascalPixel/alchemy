@@ -27,7 +27,8 @@ void Func_02001c88(void) {
       Actor_SetSpritePriority(9, 1);
     else
       LemurianShip_ObjPlace(9, 0, 0);
-    LemurianShip_ObjSetPos(Actor_GetById(11), PIXELS(104), PIXELS(-32), PIXELS(536));
+    LemurianShip_ObjSetPos(Actor_GetById(11), PIXELS(104), PIXELS(-32),
+                           PIXELS(536));
     Actor_GetById(11)->height = 0xffe00000;
     Actor_SetSpritePriority(11, 1);
     wait_(1);

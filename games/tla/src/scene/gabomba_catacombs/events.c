@@ -4,7 +4,7 @@
   do {                                                                         \
     Func_0200119c();                                                           \
     Func_0200125c(0);                                                          \
-    Func_02001204(gMainRoutineWork.currentOwner, 0x102);                            \
+    Func_02001204(gMainRoutineWork.currentOwner, 0x102);                       \
   } while (0)
 
 void Func_02000038(void) { Func_0200122c(8, 10); }
@@ -29,8 +29,7 @@ void Func_02000100(void) {
     Func_020011cc_(64, PIXELS(392), PIXELS(344));
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = PIXELS(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_020011a4();
@@ -87,8 +86,7 @@ void Func_020002e0(void) {
     Func_0200119c();
     Func_0200125c_(0);
     Func_02001204_(gMainRoutineWork.currentOwner, 0x102);
-    Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, -16,
-                                               0);
+    Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, -16, 0);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
@@ -160,8 +158,7 @@ void Func_02000564(void) {
     Func_0200119c();
     Func_0200125c_(0);
     Func_02001204_(gMainRoutineWork.currentOwner, 0x102);
-    Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
-                                               -16);
+    Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0, -16);
     leader->velocityY = PIXELS(6);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();

@@ -19,8 +19,7 @@ void Func_02000fe0(const u8 *event) {
   GameFlag_SetByte(0x348, z >> 20);
   Func_02004ca8();
   Func_02004da0(0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   leader->update = 0;
   Func_02004d00(gMainRoutineWork.currentOwner, 0x100, 0);
   Func_02004bc0(leader, 27);

@@ -82,8 +82,8 @@ void Func_02001234(void) {
 }
 
 void Func_020012a4(s32 x, s32 z, s32 kind) {
-  struct Actor *object = (struct Actor *)Value4(
-      (s32 (*)())Func_02003128, 403, x << 16, 0, z << 16);
+  struct Actor *object = (struct Actor *)Value4((s32 (*)())Func_02003128, 403,
+                                                x << 16, 0, z << 16);
   struct MarsLighthouseRoomMAnimation *animation;
 
   if (object != 0) {
@@ -159,8 +159,8 @@ void Func_020013a0(void) {
     Func_020031e0();
     Func_02003280(0);
     Call2((void (*)())Func_02003218, 0x20000, 0x4000);
-    Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(224), PIXELS(64), PIXELS(216),
-          1);
+    Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(224), PIXELS(64),
+          PIXELS(216), 1);
     Func_02003228();
     Call1((void (*)())FieldEvent_Wait, 20);
     Call2((void (*)())Func_02003250, 0x10000, 0);
@@ -174,8 +174,8 @@ void Func_020013a0(void) {
     message++;
     Call1((void (*)())wait, 10);
     Func_020031c0(message, 0, 3);
-    Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(224), PIXELS(88), PIXELS(216),
-          1);
+    Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(224), PIXELS(88),
+          PIXELS(216), 1);
     Func_02003228();
     Call1((void (*)())FieldEvent_Wait, 20);
     Call1((void (*)())Func_020032b8, 560);

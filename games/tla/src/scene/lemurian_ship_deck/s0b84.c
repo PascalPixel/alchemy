@@ -76,8 +76,8 @@ void Func_020002cc(void) {
   Call1((void (*)())Func_020020ac, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_02002074()->motionFlags = 0;
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(342), PIXELS(48), PIXELS(408),
-        0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(342), PIXELS(48),
+        PIXELS(408), 0);
   Call1((void (*)())wait, 1);
   Call6((void (*)())Func_02001f2c, 60, 53, 67, 16, 7, 3);
   Call4((void (*)())Func_02001fcc, gMainRoutineWork.currentOwner, PIXELS(552),
@@ -94,20 +94,17 @@ void Func_020002cc(void) {
   Call4((void (*)())Func_02001fcc, 5, PIXELS(546), PIXELS(440), angle);
   Func_02001f1c();
   Call1((void (*)())wait, 1);
-  Call2((void (*)())Actor_SetMovementTypeById, 5,
-        (s32)gData_0200218c);
-  Call2((void (*)())Actor_SetMovementTypeById, 6,
-        (s32)gData_020021e8);
-  Call2((void (*)())Actor_SetMovementTypeById, 9,
-        (s32)gData_0200221c);
+  Call2((void (*)())Actor_SetMovementTypeById, 5, (s32)gData_0200218c);
+  Call2((void (*)())Actor_SetMovementTypeById, 6, (s32)gData_020021e8);
+  Call2((void (*)())Actor_SetMovementTypeById, 9, (s32)gData_0200221c);
   Event_StartScreenTransition();
   gData_020024b4 = 0;
   Value2(Task_Add, (s32)Func_02000258, 0x480);
   gData_020024b0 = 0;
   Value2(Task_Add, (s32)Func_02000288, 0x480);
   Call2((void (*)())Func_0200205c, 0xcccc, 0x1999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(542), PIXELS(44), PIXELS(396),
-        1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(542), PIXELS(44),
+        PIXELS(396), 1);
   Func_0200206c();
   Call1((void (*)())FieldEvent_Wait, 80);
   Call2((void (*)())Func_02002044, 7, FACING_NORTHEAST);
@@ -115,8 +112,8 @@ void Func_020002cc(void) {
   Call2((void (*)())Func_02002034, 7, 0);
   Value3(Func_0200204c, gMainRoutineWork.currentOwner, 0x100, 0);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-  Value3((s32 (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTHWEST,
-         20);
+  Value3((s32 (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+         FACING_SOUTHWEST, 20);
   Call2((void (*)())Func_02002034, 7, 0);
   Call1((void (*)())Actor_Stop, 5);
   Call1((void (*)())Actor_Stop, 9);
@@ -132,8 +129,8 @@ void Func_020002cc(void) {
   Value3(Func_0200204c, 5, 0x108, 20);
   Call2((void (*)())Func_02002034, 5, 0);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 7, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
     Value3(Func_0200204c, 9, 0x109, 20);
     Call2((void (*)())Func_02002034, 9, 0);
@@ -166,8 +163,8 @@ void Func_020002cc(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH,
-        0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_NORTH, 0);
   Value3(Func_0200204c, 7, 0x101, 20);
   Call2((void (*)())Func_02002034, 7, 0);
   Value3(Func_0200204c, 9, 0x108, 20);
@@ -197,7 +194,7 @@ static inline void RunToActor4(s32 id) {
   target = Actor_GetById(4);
   if (target != NULL)
     Actor_ResetAndSetPosition(id, ((s16 *)&target->x)[1],
-                                     ((s16 *)&target->z)[1]);
+                              ((s16 *)&target->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, id);
   Call3((void (*)())Func_02001fc4, id, 0, 0);
 }
@@ -210,8 +207,8 @@ void Func_020006e4(void) {
   Call1((void (*)())Func_020020ac, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_02002074()->motionFlags = 0;
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(458), PIXELS(48), PIXELS(408),
-        0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(458), PIXELS(48),
+        PIXELS(408), 0);
   Call1((void (*)())Func_0200201c, (s32)MsgHoldOnTo);
   Call4((void (*)())Func_02001fcc, 4, PIXELS(470), PIXELS(392), FACING_EAST);
   Call4((void (*)())Func_020020b4, 6, 0, -24, FACING_SOUTH);

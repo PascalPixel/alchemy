@@ -12,8 +12,7 @@ void Func_02003a08(s32 x, s32 z) {
   Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
   Kibombo_ObjWalk(gMainRoutineWork.currentOwner, x, z);
   Kibombo_ObjTurn(gMainRoutineWork.currentOwner, FACING_NORTH);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   Func_02005a54(leader, x << 16, PIXELS(-12), z << 16);
   Func_02005a5c(leader);

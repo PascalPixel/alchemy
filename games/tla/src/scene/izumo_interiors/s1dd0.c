@@ -45,7 +45,8 @@ void Func_02001dd0(void) {
   Call1(FieldEvent_Wait, 15);
   Value3((s32 (*)())Func_0200226c, 15, 0x100, 60);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 15, 0);
-  t9 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
+  t9 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+              0);
   if (t9 != 0)
     goto L_02009e3a;
   Call1(Func_02002244, ((s32)&MsgAhCouldIt + 1));

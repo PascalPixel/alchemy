@@ -71,7 +71,8 @@ void Func_020013f0(void) {
   Call3((void (*)())Actor_ArmCallback, 4, FACING_SOUTH, 0);
   Call1((void (*)())Actor_WaitForMoveById, 6);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(432), -1, PIXELS(368), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(432), -1, PIXELS(368),
+        1);
   Func_020028f4();
   Call1((void (*)())FieldEvent_Wait, 10);
   Value3((s32 (*)())Func_020028dc, 18, 0x101, 30);
@@ -516,8 +517,7 @@ void Func_020013f0(void) {
   target->action = 3;
   Call1((void (*)())wait, 1);
   target->update = 0;
-  Call2((void (*)())Actor_SetSingleChildFlags, (s32)Actor_GetById(18),
-        1);
+  Call2((void (*)())Actor_SetSingleChildFlags, (s32)Actor_GetById(18), 1);
   Call1((void (*)())FieldEvent_Wait, 40);
   Call3((void (*)())Func_02002814, 0, 0, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
@@ -565,7 +565,7 @@ void Func_020013f0(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, 12);
   Call3((void (*)())Func_02002874, 12, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
@@ -573,7 +573,7 @@ void Func_020013f0(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, 5);
   Call3((void (*)())Func_02002874, 5, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
@@ -581,7 +581,7 @@ void Func_020013f0(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, 6);
   Call3((void (*)())Func_02002874, 6, 0, 0);
   Func_02002834();

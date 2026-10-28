@@ -277,8 +277,8 @@ L_020089e4:
   object3 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object3 == 0)
     goto L_02008a36;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 12,
-         *(s16 *)((u8 *)object3 + 10), *(s16 *)((u8 *)object3 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 12, *(s16 *)((u8 *)object3 + 10),
+         *(s16 *)((u8 *)object3 + 18));
 L_02008a36:
   Call1((void (*)())Actor_WaitForMoveById, 12);
   Call3((void (*)())Func_02002874, 12, 0, 0);

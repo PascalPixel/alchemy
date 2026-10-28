@@ -43,8 +43,8 @@ void Func_02000e7c(s32 id) {
   Func_02001bcc();
   Call1((void (*)())Func_02001d04, 0);
   Call1((void (*)())Func_02001c6c, (s32)MsgOh2);
-  Call2((void (*)())Animation_SetIndexAndInitializeObjects, (s32)Actor_GetById(12),
-        56);
+  Call2((void (*)())Animation_SetIndexAndInitializeObjects,
+        (s32)Actor_GetById(12), 56);
   if (id == 21) {
     Call3((void (*)())Actor_SetPositionAndReset, 4, 376, 968);
     Call3((void (*)())Actor_ArmCallback, 4, FACING_EAST, 0);
@@ -94,7 +94,7 @@ void Func_02000e7c(s32 id) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, 12);
   Call3((void (*)())Func_02001c2c, 12, 0, 0);
   Call1((void (*)())FieldEvent_Wait, 10);
@@ -110,8 +110,8 @@ void Func_0200109c(void) {
   Func_02001bcc();
   Call1((void (*)())Func_02001d04, 0);
   Call1((void (*)())Func_02001c6c, (s32)MsgWhereAreYou);
-  Call2((void (*)())Animation_SetIndexAndInitializeObjects, (s32)Actor_GetById(12),
-        56);
+  Call2((void (*)())Animation_SetIndexAndInitializeObjects,
+        (s32)Actor_GetById(12), 56);
   Call2((void (*)())Func_02001c94, 4, FACING_SOUTH);
   Call2((void (*)())Actor_SetSpritePriority, 12, 1);
   Call4((void (*)())Func_02001d0c, 12, 0, 16, FACING_NORTH + FACING_STEP);
@@ -123,7 +123,7 @@ void Func_0200109c(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, 12);
   Call3((void (*)())Func_02001c2c, 12, 0, 0);
   Call1((void (*)())FieldEvent_Wait, 10);

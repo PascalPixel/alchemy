@@ -36,4 +36,3 @@ void Func_02002ba4(s32 index, s32 entry, s32 delta) {
     *dst = r;
   }
 }
-

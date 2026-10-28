@@ -8,8 +8,7 @@
 
 struct Actor *Actor_GetById(s32 id);
 void Import_ActorSetAnimation(s32 actor, s32 animation);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Task_Wait(s32 frames);
 
 struct ActorSprite {
@@ -106,7 +105,7 @@ void Func_020000f0(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(8);
   Call3(Func_02003228, 8, 0, 0);
   FieldMessage_Show(message + 8, 1);
@@ -166,7 +165,7 @@ void Func_020002b4(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(5);
   Func_02003228(5, 0, 0);
   Event_PrepareObjectAndApplyValue(5, 1);

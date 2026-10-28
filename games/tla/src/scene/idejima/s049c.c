@@ -7,8 +7,7 @@
 #include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Import_EventStart(void);
@@ -93,7 +92,7 @@ void Func_0200049c(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(6);
   Func_02003228(6, 0, 0);
   Event_PrepareObjectAndApplyValue(6, 1);
@@ -148,7 +147,8 @@ void Func_020006a8(void) {
     Call3(Func_02003228, 6, 0, 0);
     Call2(Import_CameraSetSpeed, 0x9999, 0x1333);
     Call4(Camera_MoveWithinMapBounds, PIXELS(168), -1, PIXELS(721), 1);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST,
+          0);
     Call6(Func_02003190, 38, 31, 2, 1, 25, 42);
     Call1(Func_02000098, 8);
     Call3(Func_02003228, 8, PIXELS(312), PIXELS(666));
@@ -179,7 +179,7 @@ void Func_020006a8(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != 0)
       Actor_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
-                                       ((s16 *)&leader->z)[1]);
+                                ((s16 *)&leader->z)[1]);
     Call1(Actor_WaitForMoveById, 8);
     Call3(Func_02003228, 8, 0, 0);
     Call2(FieldMessage_Show, (s32)MsgIdejimaHeyFelix + 8, 1);
@@ -200,7 +200,8 @@ void Func_020006a8(void) {
     Call4(Camera_MoveWithinMapBounds, PIXELS(168), -1, PIXELS(721), 1);
     Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
     Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003734);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST,
+          0);
     Call6(Func_02003190, 38, 31, 2, 1, 17, 46);
     Call1(Func_02000098, 5);
     Call3(Actor_SetSpeedParameters, 5, 0x19999, 0xcccc);
@@ -225,14 +226,16 @@ void Func_020006a8(void) {
     Call3(Actor_ArmCallback, 5, FACING_NORTHEAST, 40);
     Call2(Import_EventShowMessageAndWait, 0x4005, 0);
     Call3(Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 0);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHWEST, 20);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHWEST,
+          20);
     Call2(Import_ActorSetAnimation, 8, 3);
     Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
     Call3(Actor_SetPositionAndReset, 5, 178, 728);
     Call3(Actor_ArmCallback, 5, FACING_SOUTHWEST, 0);
     Call2(Import_EventShowMessageAndWait, 0x4005, 0);
     Call3(Actor_ArmCallback, 8, FACING_NORTH + FACING_STEP, 0);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 20);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST,
+          20);
     Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
     Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003790);
     Call2(Actor_SetMovementTypeAndWaitById, 5, (s32)gData_02003790);
@@ -253,7 +256,8 @@ void Func_020006a8(void) {
     Call4(Camera_MoveWithinMapBounds, PIXELS(168), -1, PIXELS(721), 1);
     Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
     Call2(Actor_SetMovementTypeById, 8, (s32)gData_02003734);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTHEAST,
+          0);
     Call6(Func_02003190, 38, 31, 2, 1, 14, 40);
     Actor_GetById(6)->motionFlags = 3;
     Call3(Actor_Jump, 6, 4, 0);

@@ -8,8 +8,7 @@ void wait(s32 frames);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetSpritePriority(u32 id, s32 variant);
 void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_020022bc(s32 a);
 
 /// Once the leader stands at height 32 or more, it rises and spins for 110

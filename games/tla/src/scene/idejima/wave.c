@@ -18,5 +18,6 @@ void Func_02001558(void) {
   do {
   } while (0);
   REG_BG3VOFS = offset;
-  Dma_Set(line + 1, (void *)&REG_BG3VOFS, DMA_HBLANK_HALFWORD_PER_LINE, REG_DMA0);
+  Dma_Set(line + 1, (void *)&REG_BG3VOFS, DMA_HBLANK_HALFWORD_PER_LINE,
+          REG_DMA0);
 }

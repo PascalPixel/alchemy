@@ -27,8 +27,9 @@ void Func_020004ac(void) {
   Func_020012ec(0x10000, 1);
   Func_020012fc(16);
   wait(16);
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field offset (2 differ without
-   * it). */
+  /* FAKEMATCH: the loop note ends the scheduling block: the native loads
+   * gMainRoutineWork's address before it builds the field offset (2 differ
+   * without it). */
   do {
   } while (0);
   gMainRoutineWork.unk2c2 = 0;
@@ -39,8 +40,9 @@ void Func_020004ac(void) {
 void Func_02000508(void) {
   Func_020000f4();
   Func_02001334();
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field offset (one row late without
-   * it). */
+  /* FAKEMATCH: the loop note ends the scheduling block: the native loads
+   * gMainRoutineWork's address before it builds the field offset (one row late
+   * without it). */
   do {
   } while (0);
   gMainRoutineWork.unk2c2 = 1;
@@ -52,8 +54,9 @@ void Func_02000508(void) {
 void Func_02000544(void) {
   Func_020000f4();
   Func_02001334();
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field offset (one row late without
-   * it). */
+  /* FAKEMATCH: the loop note ends the scheduling block: the native loads
+   * gMainRoutineWork's address before it builds the field offset (one row late
+   * without it). */
   do {
   } while (0);
   gMainRoutineWork.unk2c2 = 1;

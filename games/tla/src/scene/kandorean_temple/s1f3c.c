@@ -39,8 +39,7 @@ void Func_02002014(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   leader->motionFlags = 0;
   Actor_SetActionVariantValue(gMainRoutineWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   for (i = 0; i < 8; i++) {
     leader->z += PIXELS(1);
     wait(1);
@@ -165,7 +164,7 @@ void Func_02002314(void) {
   object = Actor_GetById(4);
   if (object)
     Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)object + 10),
-                                     *(s16 *)((u8 *)object + 18));
+                              *(s16 *)((u8 *)object + 18));
   Actor_WaitForMoveById(14);
   Func_02005230(14, 0, 0);
   Func_020051c8();

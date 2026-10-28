@@ -30,6 +30,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(9, 309, 2), SCENE_EXITS_END,
 };
 
+// clang-format off
 struct ActorPlacement gActorPlacements[] = {
     {191, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(696), FACING_SOUTH + FACING_STEP, 2, 0},
     {186, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(696), FACING_SOUTHEAST + FACING_STEP, 2, 0},
@@ -43,6 +44,7 @@ struct ActorPlacement gActorPlacements[] = {
     {489, CONDITION_ALWAYS, 1, PIXELS(10), 0, PIXELS(10), FACING_SOUTH, 2, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
 struct Trigger gSceneEvents[] = {
     {TRIGGERS_END},

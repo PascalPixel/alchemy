@@ -75,8 +75,8 @@ void Func_020030b4(void) {
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);
   Actor_SetModeById(10, 4);
   if (GameFlag_Test(0xaa3)) {
-    spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 489,
-                                             0x680000, 0x180000, 0xa00000);
+    spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 489, 0x680000,
+                                     0x180000, 0xa00000);
     if (spawned != 0) {
       spawned->motionFlags = 0;
       Func_02003e3c(spawned, 453);

@@ -254,6 +254,7 @@ struct ActorPlacement gData_02001494[] = {
 };
 // clang-format on
 
+// clang-format off
 struct ActorPlacement gData_02001644[] = {
     {272, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(120), FACING_NORTH, 2, 0},
     {272, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(120), FACING_NORTH, 2, 0},
@@ -282,6 +283,7 @@ struct ActorPlacement gData_02001644[] = {
     {29, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 1, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
 struct Trigger gData_020018b4[] = {
     {1, 1, CONDITION_ALWAYS, 1},

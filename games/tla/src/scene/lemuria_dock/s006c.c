@@ -24,8 +24,7 @@ void Func_0200006c(void) {
       Actor_SetModeById(8, 2);
       leader = Actor_GetById(party->currentOwner);
       if (leader != NULL)
-        Actor_ResetAndSetPosition(8, S16_AT(leader, 10),
-                                         S16_AT(leader, 18));
+        Actor_ResetAndSetPosition(8, S16_AT(leader, 10), S16_AT(leader, 18));
       Actor_WaitForMoveById(8);
       Func_020004bc(8, 0, 0);
     }

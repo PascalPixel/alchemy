@@ -101,7 +101,8 @@ void Func_020007dc(void) {
   Call1((void (*)())Func_02001eb8, 0);
   Call2((void (*)())Actor_SetModeById, 8, 1);
   Call3((void (*)())Func_02001db8, 4, PIXELS(400), PIXELS(888));
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(408), -1, PIXELS(848), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(408), -1, PIXELS(848),
+        1);
   ((void (*)())Event_StartScreenTransition)();
   ((void (*)())Event_WaitTransitionFrames)();
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0xcccc, 0x6666);
@@ -116,7 +117,8 @@ void Func_020007dc(void) {
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTHEAST, 0);
   Call3((void (*)())Actor_ArmCallback, 11, FACING_NORTHEAST, 0);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(488), -1, PIXELS(820), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(488), -1, PIXELS(820),
+        1);
   ((void (*)())Func_02001e68)();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 7, 2);
@@ -266,8 +268,7 @@ void Func_020007dc(void) {
   Call3((void (*)())Func_02001e28, 10, 0, 10);
   object12 = Actor_GetById(10);
   object12->actionFlags |= 1;
-  Value2((s32 (*)())Actor_SetMovementTypeById, 10,
-         gData_020033c8);
+  Value2((s32 (*)())Actor_SetMovementTypeById, 10, gData_020033c8);
   Call1((void (*)())FieldEvent_Wait, 40);
   Call1((void (*)())Actor_Stop, 4);
   Call1((void (*)())Actor_Stop, 11);

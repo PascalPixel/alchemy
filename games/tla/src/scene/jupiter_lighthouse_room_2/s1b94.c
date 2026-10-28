@@ -7,8 +7,7 @@
 void wait(s32 frames);
 void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
-                                      s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 struct Actor *Func_020022b4(void);
@@ -26,10 +25,10 @@ void Func_02001b94(void) {
   x >>= 20;
   z >>= 20;
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                                    (z << 4) + 8);
+                             (z << 4) + 8);
   wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
-                                   (z << 20) + PIXELS(8));
+                                  (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_020022b4()->y -= 0x80000;
 }

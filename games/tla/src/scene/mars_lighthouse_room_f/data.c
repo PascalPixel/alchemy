@@ -51,7 +51,7 @@ u32 gData_020057bc[] = {
     SC_SET(SW_ACCEL, 0x800),
     SC_LABEL(1),
     SC_WAIT(1),
-    SC_FLAG_CHECK(544),
+    SC_FLAG_CHECK(0x220),
     SC_IFNOT(SC_TO(1)),
     SC_LABEL(2),
     SC_MOVE(PIXELS(176), 0, PIXELS(576)),

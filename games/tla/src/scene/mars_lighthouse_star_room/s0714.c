@@ -153,7 +153,8 @@ void Func_02000714(void) {
   Call3(Func_0200438c, 14, 0, 40);
   Value3((s32 (*)())Func_020043b4, 13, 0x100, 20);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 13, 0);
-  t87 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
+  t87 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+               0);
   if (t87 != 0)
     goto L_02008a04;
   Call1(Actor_WaitForAnimationChange, gMainRoutineWork.currentOwner);

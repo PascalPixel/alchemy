@@ -1,8 +1,8 @@
 #include "local.h"
 
 void Func_02002674(void) {
-  ((struct ObjectFlags23 *)Actor_GetById(gMainRoutineWork.currentOwner))->flags |=
-      32;
+  ((struct ObjectFlags23 *)Actor_GetById(gMainRoutineWork.currentOwner))
+      ->flags |= 32;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
 }
 

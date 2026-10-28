@@ -54,13 +54,14 @@ void Func_02001160(void) {
   Call1((void (*)())Func_02001c6c, (s32)MsgThisPlaceIs);
   Call3((void (*)())Actor_SetSpeedParameters, 24, 0x10000, 0x8000);
   Call3((void (*)())Actor_SetSpeedParameters, 25, 0x10000, 0x8000);
-  Call2((void (*)())Animation_SetIndexAndInitializeObjects, (s32)Actor_GetById(12),
-        56);
+  Call2((void (*)())Animation_SetIndexAndInitializeObjects,
+        (s32)Actor_GetById(12), 56);
   Call3((void (*)())Actor_SetPositionAndReset, 4, 472, 568);
   Call4((void (*)())Func_02001d0c, 12, -16, 0, FACING_NORTH + FACING_STEP);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);
   Call1((void (*)())Actor_WaitForMoveById, 12);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(464), -1, PIXELS(544), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(464), -1, PIXELS(544),
+        1);
   Func_02001cc4();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Actor_Jump, 12, 6, 15);
@@ -156,7 +157,8 @@ void Func_02001160(void) {
   Call2((void (*)())Camera_FollowActor, 12, 1);
   Call3((void (*)())Actor_SetPositionAndReset, 12, 424, 600);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(400), -1, PIXELS(648), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(400), -1, PIXELS(648),
+        1);
   Func_02001cc4();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Actor_ArmCallback, 12, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -178,17 +180,20 @@ void Func_02001160(void) {
   Call1((void (*)())FieldEvent_Wait, 40);
   Call3((void (*)())Actor_ArmCallback, 12, FACING_NORTH + FACING_STEP, 0);
   Call1((void (*)())FieldEvent_Wait, 40);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(440), -1, PIXELS(288), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(440), -1, PIXELS(288),
+        1);
   Func_02001cc4();
   Call1((void (*)())FieldEvent_Wait, 60);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(440), -1, PIXELS(528), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(440), -1, PIXELS(528),
+        1);
   Func_02001cc4();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 12, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Camera_FollowActor, 12, 1);
   Call3((void (*)())Actor_SetPositionAndReset, 12, 456, 568);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(464), -1, PIXELS(544), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(464), -1, PIXELS(544),
+        1);
   Func_02001cc4();
   Call3((void (*)())Actor_ArmCallback, 4, FACING_WEST, 0);
   Call3((void (*)())Actor_ArmCallback, 7, FACING_SOUTH, 0);
@@ -309,7 +314,7 @@ void Func_02001160(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(7, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, 7);
   Call3((void (*)())Func_02001c2c, 7, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
@@ -317,7 +322,7 @@ void Func_02001160(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Call1((void (*)())Actor_WaitForMoveById, 12);
   Call3((void (*)())Func_02001c2c, 12, 0, 0);
   Func_020001bc();

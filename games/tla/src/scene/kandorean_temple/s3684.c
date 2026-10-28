@@ -19,13 +19,12 @@ void Func_02003684(void) {
   wait_(1);
   leader->motionFlags = 0;
   Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                    PIXELS(440), PIXELS(-20), PIXELS(200));
-  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                      0);
+                                   PIXELS(440), PIXELS(-20), PIXELS(200));
+  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPositionAndResetMotion_(Actor_GetById_(13), PIXELS(440), PIXELS(-20),
-                                    PIXELS(204));
+                                   PIXELS(204));
   Actor_SetPositionAndResetMotion_(Actor_GetById_(15), PIXELS(440), PIXELS(-20),
-                                    PIXELS(200));
+                                   PIXELS(200));
   Actor_SetSpritePriority_(13, 2);
   Actor_SetSpritePriority_(15, 3);
   {
@@ -69,13 +68,12 @@ void Func_020037e0(void) {
   wait_(1);
   leader->motionFlags = 0;
   Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                    PIXELS(600), PIXELS(-20), PIXELS(232));
-  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                      0);
+                                   PIXELS(600), PIXELS(-20), PIXELS(232));
+  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPositionAndResetMotion_(Actor_GetById_(14), PIXELS(600), PIXELS(-20),
-                                    PIXELS(236));
+                                   PIXELS(236));
   Actor_SetPositionAndResetMotion_(Actor_GetById_(16), PIXELS(600), PIXELS(-20),
-                                    PIXELS(232));
+                                   PIXELS(232));
   Actor_SetSpritePriority_(14, 2);
   Actor_SetSpritePriority_(16, 3);
   {

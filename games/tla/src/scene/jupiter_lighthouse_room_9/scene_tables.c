@@ -67,7 +67,8 @@ void Func_020000e8(s32 id) {
   struct Actor *object;
   struct Actor *motion;
 
-  if (gData_02002618 == 0 && Actor_GetById(gMainRoutineWork.currentOwner)->y > 0) {
+  if (gData_02002618 == 0 &&
+      Actor_GetById(gMainRoutineWork.currentOwner)->y > 0) {
     object = Actor_GetById(8);
     if (id == 50) {
       Value3(Func_02001c10, 8, PIXELS(488), PIXELS(280));

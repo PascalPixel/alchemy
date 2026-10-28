@@ -42,8 +42,7 @@ void Func_02002020(void) {
   v_r10 = t3;
   Func_02004e5c();
   Call1((void (*)())Func_02004fcc, 0);
-  Call2((void (*)())FieldMessage_Show,
-        (s32)&MsgGaiaRockInside01, 1);
+  Call2((void (*)())FieldMessage_Show, (s32)&MsgGaiaRockInside01, 1);
   Call1((void (*)())Func_02005014, 193);
   Call2((void (*)())Func_02004e3c, v_r10, 1);
   v_r5 = (s32)&gMainRoutineWork;
@@ -126,8 +125,8 @@ L_0200a1f8:
   t50 = Value1((s32 (*)())Actor_GetById, gMainRoutineWork.currentOwner);
   if (t50 == 0)
     goto L_0200a22e;
-  Call3((void (*)())Actor_ResetAndSetPosition, 13,
-        FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
+  Call3((void (*)())Actor_ResetAndSetPosition, 13, FIELD_AT(t50, s16, 10),
+        FIELD_AT(t50, s16, 18));
 L_0200a22e:
   FIELD_AT(v_r10, s32, 40) = 0x60000;
   Call1((void (*)())Actor_WaitForMoveById, 13);

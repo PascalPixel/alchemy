@@ -24,7 +24,7 @@ void Func_020004a8(void) {
     object = Actor_GetById(4);
     if (object)
       Actor_ResetAndSetPosition(14, ((s16 *)&object->x)[1],
-                                       ((s16 *)&object->z)[1]);
+                                ((s16 *)&object->z)[1]);
     Actor_WaitForMoveById(14);
     Func_02005230(14, 0, 0);
     Func_020051c8();

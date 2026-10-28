@@ -63,10 +63,12 @@ void Func_02001318(void) {
   Value2(Func_02005b6c, 0x2007, 0);
   Call2(Func_02005ba4, 0x6666, 0xccc);
   Call4(Camera_MoveWithinMapBounds, PIXELS(96), -1, PIXELS(372), 1);
-  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x13333, 0x9999);
+  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x13333,
+        0x9999);
   Call3(Actor_SetSpeedParameters, 7, 0x13333, 0x9999);
   Call2(Actor_SetMovementTypeById, 7, gData_02005eec);
-  Call2(Actor_SetMovementTypeAndWaitById, gMainRoutineWork.currentOwner, gData_02005e88);
+  Call2(Actor_SetMovementTypeAndWaitById, gMainRoutineWork.currentOwner,
+        gData_02005e88);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Call3(Actor_SetSpeedParameters, 26, 0xcccc, 0x6666);
   Call3(Actor_SetSpeedParameters, 5, 0xcccc, 0x6666);
@@ -151,8 +153,8 @@ void Func_02001318(void) {
   Value3(Func_02005b94, 6, 257, 40);
   Call3(Actor_ArmCallback, 26, FACING_NORTH + FACING_STEP, 0);
   Value2(FieldMessage_ShowAtActor, 0x101a, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      1) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 1) {
     Call2(Func_02005b64, 0x101a, 0);
     Call2(Motion_SetModeAndWaitAnimation, 5, 4);
     Call2(Func_02005b64, 0x1005, 0);
@@ -303,8 +305,8 @@ void Func_02001318(void) {
   Call2(Func_02005b64, 0x101a, 0);
   Call3(Actor_ArmCallback, 26, FACING_NORTH + FACING_STEP, 0);
   Value2(FieldMessage_ShowAtActor, 0x101a, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Value3(Func_02005b94, 26, 264, 20);
     Call2(Func_02005b64, 0x101a, 0);
     Call3(Actor_ArmCallback, 5, FACING_SOUTHWEST, 0);
@@ -347,10 +349,10 @@ void Func_02001318(void) {
   Call2(Motion_SetModeAndWaitAnimation, 26, 3);
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
   Call3(Actor_SetSpeedParameters, 7, 0xcccc, 0x6666);
-  Call2(Actor_SetMovementTypeById, 5, gData_02005fe0+0);
-  Call2(Actor_SetMovementTypeById, 6, gData_02005fe0+0);
-  Call2(Actor_SetMovementTypeById, 26, gData_02005fe0+0);
-  Call2(Actor_SetMovementTypeAndWaitById, 7, gData_02005fe0+0);
+  Call2(Actor_SetMovementTypeById, 5, gData_02005fe0 + 0);
+  Call2(Actor_SetMovementTypeById, 6, gData_02005fe0 + 0);
+  Call2(Actor_SetMovementTypeById, 26, gData_02005fe0 + 0);
+  Call2(Actor_SetMovementTypeAndWaitById, 7, gData_02005fe0 + 0);
   Call1(GameFlag_SetBit, 0x8f4);
   Call1(GameFlag_SetBit, 0x92e);
   Call2(Event_PrepareObjectAndApplyValue, 7, 1);

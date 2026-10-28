@@ -4,8 +4,7 @@
 #include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 GameFlag_Test(s32 flag);
 void Scene_SetArrivalFlags(s32 value);
 void Func_020006a0(s32 value);

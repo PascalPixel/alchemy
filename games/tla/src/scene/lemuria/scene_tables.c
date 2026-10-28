@@ -106,19 +106,18 @@ static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                        s32 acceleration) {
+                                                 s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
-                                                    s32 offset) {
+static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CenterOnColumn(id, column, offset);
 }
 
-static __inline__ void
-Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
+static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
+                                                           s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }

@@ -24,8 +24,8 @@ void Func_0200055c(void) {
   else
     step = 1;
   Data_02003a7c += step;
-  IO_WRITE_QUEUE_PUSH(0x04000052, BLEND_ALPHA(Data_02003a7c, 16 - Data_02003a7c),
-                      0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      BLEND_ALPHA(Data_02003a7c, 16 - Data_02003a7c), 0x20000);
   if (Data_02003a7c == 0) {
     if (gData_02003a80 == 0)
       Call6((void (*)())Func_02003170, 34, 8, 3, 3, 17, 8);

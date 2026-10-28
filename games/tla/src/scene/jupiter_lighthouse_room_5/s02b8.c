@@ -17,8 +17,7 @@ void Func_020029a8(s32 value);
 void Func_02002940(s32 id, s32 angle);
 void Func_02002a40(s32 sound);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02001718(const s32 *from, const s32 *to);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
@@ -142,8 +141,7 @@ quicken:
   wait(1);
   leader->update = 0;
   Actor_SetAnimationSpeed(leader, 16);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   Actor_SetMovementTypeById(23, gData_02002f94);
   Actor_SetMovementTypeById(24, gData_02002f94);
   gData_02003274 = 2;

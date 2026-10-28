@@ -14,9 +14,10 @@ void Func_02004cf4(void) {
   Func_02005a9c();
   Func_02005c3c(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Kibombo_CamMove(192 << 17, -1, PIXELS(601), 0);
+  Kibombo_CamMove(PIXELS(384), -1, PIXELS(601), 0);
   wait(1);
-  Func_02005b14(gMainRoutineWork.currentOwner, 185 << 17, 159 << 18, FACING_NORTH);
+  Func_02005b14(gMainRoutineWork.currentOwner, PIXELS(370), PIXELS(636),
+                FACING_NORTH);
   Func_02005a4c();
   wait(1);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -89,7 +90,7 @@ void Func_02004cf4(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(10, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(10);
   Func_02005b0c(10, 0, 0);
   work = Ram_HeapSlots->eventWork;

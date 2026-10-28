@@ -31,6 +31,7 @@ void Func_020003a4(s32 mode) {
     gData_020023bc = zero;
     Task_Add(Func_020002e8, 1152);
   } else {
-    Dma_Set(gData_0200240c, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2), REG_DMA3);
+    Dma_Set(gData_0200240c, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
+            REG_DMA3);
   }
 }

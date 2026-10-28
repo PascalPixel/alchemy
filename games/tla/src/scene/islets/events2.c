@@ -48,8 +48,7 @@ void Func_02000210(void) {
   result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
   if (result1 == 0)
     goto L_02008250;
-  Call3((void (*)())Actor_SetAngleToward, 9, gMainRoutineWork.currentOwner,
-        0);
+  Call3((void (*)())Actor_SetAngleToward, 9, gMainRoutineWork.currentOwner, 0);
   Call1((void (*)())Func_02003f24, (s32)MsgPenPenPen);
   goto L_02008256;
 L_02008250:
@@ -60,8 +59,7 @@ L_02008256:
 L_02008260:
   Call1((void (*)())Actor_Stop, 9);
   Call1((void (*)())wait, 1);
-  Call3((void (*)())Actor_SetAngleToward, 9, gMainRoutineWork.currentOwner,
-        0);
+  Call3((void (*)())Actor_SetAngleToward, 9, gMainRoutineWork.currentOwner, 0);
   Call1((void (*)())Func_02003f24, (s32)MsgPenPen3);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Call2((void (*)())Actor_WatchAndSetScript, 9, 19);
@@ -109,8 +107,7 @@ void Func_0200030c(void) {
   result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
   if (result1 == 0)
     goto L_0200834c;
-  Call3((void (*)())Actor_SetAngleToward, 19, gMainRoutineWork.currentOwner,
-        0);
+  Call3((void (*)())Actor_SetAngleToward, 19, gMainRoutineWork.currentOwner, 0);
   Call1((void (*)())Func_02003f24, (s32)MsgPenPenPehnnnn);
   goto L_02008352;
 L_0200834c:
@@ -201,8 +198,7 @@ void Func_02000440(void) {
   Call1((void (*)())FieldEvent_Wait, 20);
   Call1((void (*)())GameFlag_SetBit, 0x214);
 L_020084b6:
-  Call3((void (*)())Actor_SetAngleToward, 8, gMainRoutineWork.currentOwner,
-        0);
+  Call3((void (*)())Actor_SetAngleToward, 8, gMainRoutineWork.currentOwner, 0);
   Call1((void (*)())Func_02003f24, (s32)MsgLookWeRe);
   Call2((void (*)())Func_02003f2c, 8, 0);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
@@ -228,8 +224,7 @@ void Func_02000520(void) {
   result0 = Value1((s32 (*)())GameFlag_Test, 0xaa4);
   if (result0 == 0)
     goto L_0200854a;
-  Call2((void (*)())Actor_WatchAndSetScript, 10,
-        gMainRoutineWork.currentOwner);
+  Call2((void (*)())Actor_WatchAndSetScript, 10, gMainRoutineWork.currentOwner);
 L_0200854a:
   Call1((void (*)())Func_02003f24, (s32)MsgChirpChirp2);
   Call2((void (*)())Func_02003f2c, 10, 0);
@@ -266,12 +261,14 @@ void Func_02000568(void) {
     Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)object,
           (leader->x + object->x) / 2, leader->y, (leader->z + object->z) / 2);
     Call1((void (*)())wait, 20);
-    Actor_SetPositionAndResetMotion(object, PIXELS(120), PIXELS(128), PIXELS(312));
+    Actor_SetPositionAndResetMotion(object, PIXELS(120), PIXELS(128),
+                                    PIXELS(312));
     Call2((void (*)())Actor_SetModeById, 10, 5);
     Call1((void (*)())wait, 10);
-    Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTH);
-    spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 0x1e9,
-                                             leader->x, 0x980000, leader->z);
+    Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner,
+          FACING_SOUTH);
+    spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 0x1e9, leader->x,
+                                     0x980000, leader->z);
     if (spawned != 0) {
       Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 28);
       Call2((void (*)())Func_02003e3c, (s32)spawned, 0x1c5);
@@ -280,8 +277,7 @@ void Func_02000568(void) {
     }
     Call1((void (*)())FieldEvent_Wait, 10);
     ((void (*)())Func_02003fc4)();
-    Call2((void (*)())FieldMessage_Show, (s32)MsgOhMyThat + 1,
-          1);
+    Call2((void (*)())FieldMessage_Show, (s32)MsgOhMyThat + 1, 1);
     Call1((void (*)())PartyInventory_Remove, 0x1c4);
     Value2((s32 (*)())PartyInventory_GiveItem, 0x1c5, 0);
     ((void (*)())Func_02003fbc)();

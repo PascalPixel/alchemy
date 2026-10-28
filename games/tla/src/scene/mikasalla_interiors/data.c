@@ -110,6 +110,7 @@ struct ActorPlacement gData_02000960[] = {
 };
 // clang-format on
 
+// clang-format off
 struct Trigger gData_02000a20[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {1, 2, CONDITION_ALWAYS, 2},
@@ -145,6 +146,7 @@ struct Trigger gData_02000a20[] = {
     {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMikasallaInteriors38))},
     {TRIGGERS_END},
 };
+// clang-format on
 
 struct Trigger gData_02000bac[] = {
     {1, 1, CONDITION_ALWAYS, 1},

@@ -6,9 +6,9 @@
 extern u8 gData_02002590;
 extern s16 gData_020025a0[2][160];
 
-/// Every fourth frame rotates colours 1-14 of background palettes 7 and 8 by one
-/// place. The loops are written with goto, as overlay 689's Func_020002f8: the
-/// bytes rebuild the palette address on every pass.
+/// Every fourth frame rotates colours 1-14 of background palettes 7 and 8 by
+/// one place. The loops are written with goto, as overlay 689's Func_020002f8:
+/// the bytes rebuild the palette address on every pass.
 void Func_02000a6c(void) {
   if ((gFrameCount & 3) == 0) {
     volatile u16 *palette;
@@ -65,5 +65,6 @@ void Func_02000ad8(void) {
     __asm__("" : : "r"(lines));
   } while (0);
   (void)dma[5];
-  Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
+  Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
+          (volatile u32 *)dma);
 }

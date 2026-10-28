@@ -39,8 +39,7 @@ void Func_020005b8(void) {
     return;
 #endif
   if (((struct FixedHalves *)&map->viewZ)->whole <= 177) {
-    ((struct SpriteRecord *)((struct FieldSprite *)Actor_GetById(36)
-                                 ->animation)
+    ((struct SpriteRecord *)((struct FieldSprite *)Actor_GetById(36)->animation)
          ->record)
         ->unk05 = 1;
     if (gFrameCount & 1) {

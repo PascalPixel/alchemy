@@ -78,15 +78,18 @@ void Func_02000ce0(void) {
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Func_0200205c, 0x4cccc, 0x9999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(200), -1, PIXELS(344), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(200), -1, PIXELS(344),
+        1);
   Func_0200206c();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Func_0200205c, 0x13333, 0x2666);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(600), -1, PIXELS(344), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(600), -1, PIXELS(344),
+        1);
   Func_0200206c();
   Call1((void (*)())FieldEvent_Wait, 40);
   Call2((void (*)())Func_0200205c, 0x66666, 0xcccc);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(264), -1, PIXELS(128), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(264), -1, PIXELS(128),
+        1);
   Func_0200206c();
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 4);
   Call2((void (*)())Func_02002034, 0x2005, 0);
@@ -97,10 +100,10 @@ void Func_02000ce0(void) {
   Value3(Func_0200204c, 9, 0x101, 0);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHEAST, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTHEAST,
-        0);
-  answer =
-      Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
+        FACING_SOUTHEAST, 0);
+  answer = Value2(Event_AskYesNoWithActorAnimation,
+                  gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
@@ -139,17 +142,17 @@ void Func_02000ce0(void) {
     target = Actor_GetById(4);
     if (target != NULL)
       Actor_ResetAndSetPosition(9, ((s16 *)&target->x)[1],
-                                       ((s16 *)&target->z)[1]);
+                                ((s16 *)&target->z)[1]);
     Call2((void (*)())Actor_SetModeById, 5, 2);
     target = Actor_GetById(4);
     if (target != NULL)
       Actor_ResetAndSetPosition(5, ((s16 *)&target->x)[1],
-                                       ((s16 *)&target->z)[1]);
+                                ((s16 *)&target->z)[1]);
     Call2((void (*)())Actor_SetModeById, 6, 2);
     target = Actor_GetById(4);
     if (target != NULL)
       Actor_ResetAndSetPosition(6, ((s16 *)&target->x)[1],
-                                       ((s16 *)&target->z)[1]);
+                                ((s16 *)&target->z)[1]);
   }
   Call1((void (*)())Actor_WaitForMoveById, 6);
   Call3((void (*)())Func_02001fc4, 6, 0, 0);

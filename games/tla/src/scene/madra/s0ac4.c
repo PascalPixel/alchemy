@@ -266,7 +266,7 @@ void Func_02000ac4(void) {
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
     Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   Func_02002b88(32, 0, 0);
   GameFlag_SetBit(0x910);
@@ -568,7 +568,7 @@ void Func_020014fc(void) {
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
     Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   SetHorizontalPos(32, 0, 0);
   ArmCallbackAndRefresh(4, FACING_NORTH);
@@ -590,7 +590,7 @@ extern const struct CellPictureCopyEntry gData_02003308[];
  * tla-en. */
 #define SET_MODE(id, mode)                                                     \
   do {                                                                         \
-    Actor_SetModeById(id, mode);                                              \
+    Actor_SetModeById(id, mode);                                               \
   } while (0)
 
 /// Actor 34 questions 4 and the others; the answers are counted in the event
@@ -698,14 +698,12 @@ void Func_020019d8(void) {
 
     Func_02002bd0(MsgTheMayorTried);
     Func_02002b10(210, 2);
-    FieldMessage_Show(
-        (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
+    FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     Motion_SetVarCbAndRefresh(34, 2);
     Func_02002be8(34, 0);
     CommitPos(34, 16, 0);
     Func_02002b10(210, 2);
-    FieldMessage_Show(
-        (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
+    FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++, 5);
     CommitPos(34, -16, 0);
     ArmCallbackAndRefresh(34, FACING_SOUTH);
     SetHorizontalPos(66, PIXELS(192), PIXELS(256));
@@ -1055,7 +1053,7 @@ void Func_020019d8(void) {
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(32);
   SetHorizontalPos(32, 0, 0);
   Speed(5, 0x00013333, 0x9999);
@@ -1063,7 +1061,7 @@ void Func_020019d8(void) {
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_ResetAndSetPosition(5, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(5);
   SetHorizontalPos(5, 0, 0);
   Speed(6, 0x00013333, 0x9999);
@@ -1071,7 +1069,7 @@ void Func_020019d8(void) {
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_ResetAndSetPosition(6, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(6);
   SetHorizontalPos(6, 0, 0);
   Speed(7, 0x00013333, 0x9999);
@@ -1079,7 +1077,7 @@ void Func_020019d8(void) {
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_ResetAndSetPosition(7, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_WaitForMoveById(7);
   SetHorizontalPos(7, 0, 0);
   GameFlag_SetBit(0x980);

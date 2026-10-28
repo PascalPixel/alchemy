@@ -35,8 +35,7 @@ void FieldEvent_Wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetMovementTypeById(s32 id, const void *script);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
@@ -137,8 +136,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Func_020010c4(object);
     object->angle = FACING_NORTH;
   }
-  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
-                                          gData_0200121c);
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200121c);
   Wait(12);
   Cue(123);
   Event_FinishScreenTransition();
@@ -158,8 +156,7 @@ void Func_02000c94(void) {
   Func_0200110c();
   Func_020011ac(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Wait(1);
   Event_StartScreenTransition();
@@ -172,8 +169,7 @@ void Func_02000cf4(void) {
   Func_0200110c();
   Func_020011ac(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Wait(1);
   Event_StartScreenTransition();

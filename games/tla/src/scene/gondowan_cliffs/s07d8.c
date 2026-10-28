@@ -23,8 +23,9 @@ void Func_0200131c(s32 cue);
 void Func_020012bc(s32 countdown);
 
 static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer; as direct
-   * calls the coordinates are kept in callee-saved registers (79 differ). */
+  /* FAKEMATCH: scene calls reach the main image through one inline layer; as
+   * direct calls the coordinates are kept in callee-saved registers (79
+   * differ). */
   Actor_SetPositionAndReset(actor, x, z);
 }
 

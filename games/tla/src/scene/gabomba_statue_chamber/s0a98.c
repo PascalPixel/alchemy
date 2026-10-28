@@ -15,8 +15,7 @@ void Func_02000a98(s32 x, s32 z) {
   GabombaStatueChamber_ObjWalk(gMainRoutineWork.currentOwner, x, z);
   GabombaStatueChamber_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   Func_02001d48(object, x << 16, PIXELS(-12), z << 16);
   Func_02001d50(object);

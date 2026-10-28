@@ -92,6 +92,7 @@ s32 gData_02000850[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(20),
+    // A half turn; FACING_WEST names a heading, not a turn.
     SC_ADD(SW_FACING, -0x8000),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
@@ -134,6 +135,7 @@ s32 gData_02000850[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(20),
+    // A half turn; FACING_WEST names a heading, not a turn.
     SC_ADD(SW_FACING, -0x8000),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
@@ -185,6 +187,7 @@ s32 gData_02000bf8[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(20),
+    // A half turn; FACING_WEST names a heading, not a turn.
     SC_ADD(SW_FACING, -0x8000),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
@@ -227,6 +230,7 @@ s32 gData_02000bf8[] = {
     SC_SYNC,
     SC_ARG(1),
     SC_WAIT(20),
+    // A half turn; FACING_WEST names a heading, not a turn.
     SC_ADD(SW_FACING, -0x8000),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
@@ -288,6 +292,7 @@ struct ActorPlacement gData_020010c0[] = {
 };
 // clang-format on
 
+// clang-format off
 struct Trigger gData_020010d8[] = {
     {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_0200009c)},
     {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_0200009c)},
@@ -329,6 +334,7 @@ struct Trigger gData_020010d8[] = {
     {0x50008805, 50, CONDITION_ALWAYS, EVENT(Func_020001e0)},
     {TRIGGERS_END},
 };
+// clang-format on
 
 struct Trigger gData_020012ac[] = {
     {1, 3, CONDITION_ALWAYS, 3},

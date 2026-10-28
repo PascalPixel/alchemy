@@ -54,7 +54,8 @@ void Func_02001650(void) {
   LemurianShip_SePlay(251);
   LemurianShip_CamSet(0x2b00000, 0, 0x3a00000, 0x2200000);
   LemurianShip_CamMove(PIXELS(808), -1, PIXELS(448), 0);
-  LemurianShip_ObjPlace(gMainRoutineWork.currentOwner, PIXELS(808), PIXELS(480));
+  LemurianShip_ObjPlace(gMainRoutineWork.currentOwner, PIXELS(808),
+                        PIXELS(480));
   LemurianShip_ObjPlace(7, PIXELS(808), PIXELS(420));
   LemurianShip_ObjPlace(6, PIXELS(784), PIXELS(468));
   LemurianShip_ObjPlace(5, PIXELS(832), PIXELS(468));

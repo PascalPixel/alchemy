@@ -7,8 +7,7 @@
 #include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -66,7 +65,8 @@ void Func_020016d8(void) {
   Call1((void (*)())Func_02003310, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call1((void (*)())Task_Wait, 1);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(252), -1, PIXELS(216), 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(252), -1, PIXELS(216),
+        0);
   Call1((void (*)())Task_Wait, 1);
   Func_02003180();
   Call3((void (*)())Func_02003228, gMainRoutineWork.currentOwner, 0, 0);
@@ -157,7 +157,8 @@ void Func_020016d8(void) {
   Call3((void (*)())Actor_Jump, 5, 4, 20);
   Call3((void (*)())Func_02003298, 0x8005, 0, 40);
   Call2((void (*)())Import_CameraSetSpeed, 0x9999, 0x1333);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(262), -1, PIXELS(180), 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(262), -1, PIXELS(180),
+        1);
   Call3((void (*)())Func_02003228, 8, PIXELS(256), PIXELS(198));
   Call1((void (*)())Task_Wait, 1);
   Value3((s32 (*)())Import_ActorShowEmote, 5, 0x100, 0);

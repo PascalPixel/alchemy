@@ -18,8 +18,7 @@ void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
 void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);

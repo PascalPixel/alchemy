@@ -457,6 +457,7 @@ struct Trigger gData_02005fc4[] = {
     {TRIGGERS_END},
 };
 
+// clang-format off
 struct Trigger gData_0200615c[] = {
     {1, 1, CONDITION_ALWAYS, 1},
     {1, 2, CONDITION_ALWAYS, 2},
@@ -485,3 +486,4 @@ struct Trigger gData_0200615c[] = {
     {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgFieldHoHoIFeelTheStrength)},
     {TRIGGERS_END},
 };
+// clang-format on

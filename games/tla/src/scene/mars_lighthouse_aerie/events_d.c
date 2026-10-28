@@ -6,7 +6,7 @@ void Func_020035ec(s32 id) {
 
   Actor_SetSpritePriority(id, 1);
   Actor_SetPositionAndResetMotion(object, object->x - PIXELS(16), object->y,
-                                   object->z + PIXELS(32));
+                                  object->z + PIXELS(32));
 }
 
 void Func_0200361c(s32 id) {
@@ -14,5 +14,5 @@ void Func_0200361c(s32 id) {
 
   Actor_SetSpritePriority(id, 1);
   Actor_SetPositionAndResetMotion(object, object->x + PIXELS(16), object->y,
-                                   object->z + PIXELS(32));
+                                  object->z + PIXELS(32));
 }

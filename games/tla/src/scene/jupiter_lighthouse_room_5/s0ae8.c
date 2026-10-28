@@ -15,8 +15,7 @@ struct JupiterLighthouseRoom5EventWork1ac {
 extern u8 gData_02002fb8[];
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02002900(s32 actor, s32 x, s32 z, s32 angle);
 void Func_020029c8(void *data);
 void Func_02002860(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -30,7 +29,8 @@ s32 Func_02000ae8(void) {
   struct Actor *object;
   s32 angle;
 
-  ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
+  ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->eventWork)
+      ->value = 0x204;
   if (Flag_IsSet(0xa23))
     Flag_Clear(0xa22);
   if (Flag_IsSet(0xa22)) {

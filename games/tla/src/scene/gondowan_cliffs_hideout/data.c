@@ -23,6 +23,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+// clang-format off
 struct ActorPlacement gData_02000270[] = {
     {410, CONDITION_ALWAYS, (s32)gData_02000224, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
@@ -32,12 +33,15 @@ struct ActorPlacement gData_02000270[] = {
     {83, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_EAST, 0, 2},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
+// clang-format off
 struct ActorPlacement gData_02000318[] = {
     {410, CONDITION_ALWAYS, (s32)gData_02000224, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {306, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(184), FACING_SOUTH, 0, 0},
     {SCENE_TABLE_END},
 };
+// clang-format on
 
 struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},

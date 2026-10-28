@@ -3,8 +3,7 @@
 #include "field_event.h"
 #include "scene_tables.h"
 
-void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit,
-                                     s32 acceleration);
+void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
 void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 
 struct Actor *Actor_GetById(s32 id);
@@ -25,10 +24,10 @@ void Func_02001790(void) {
   x >>= 20;
   z >>= 20;
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                                    (z << 4) + 8);
+                             (z << 4) + 8);
   wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
-                                   (z << 20) + PIXELS(8));
+                                  (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
   Func_02001ea8()->y += 0xfff80000;
 }

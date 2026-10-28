@@ -21,7 +21,7 @@ void Func_02000c90(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(7, *(s16 *)((u8 *)leader + 10),
-                                     *(s16 *)((u8 *)leader + 18));
+                              *(s16 *)((u8 *)leader + 18));
   Actor_WaitForMoveById(7);
   Func_02005b0c(7, 0, 0);
   GameFlag_ClearBit(0x92f);

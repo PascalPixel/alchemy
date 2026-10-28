@@ -110,9 +110,9 @@ void Func_02001e58(void) {
   }
   Func_020051c0();
   Func_02005370(0);
-  /* FAKEMATCH: the flags address, the zero and gMainRoutineWork's address are taken
-   * before an empty asm, which holds the byte store below the address load as
-   * the native has it; the plain store goes first (differ 2). */
+  /* FAKEMATCH: the flags address, the zero and gMainRoutineWork's address are
+   * taken before an empty asm, which holds the byte store below the address
+   * load as the native has it; the plain store goes first (differ 2). */
   flags = &leader->motionFlags;
   zero = 0;
   party = &gMainRoutineWork;

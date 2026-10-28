@@ -15,7 +15,8 @@ void Func_02000954(void) {
      * flags are loaded before the actor: one reordered pair with the header's
      * void prototype). */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+        0) {
       Func_02000814();
     } else {
       Func_02000d60(message - 1);

@@ -14,11 +14,9 @@ void Func_0200489c(s32 actor, s32 a, s32 b);
 struct Actor *Func_020048cc(s32 actor, s32 emote, s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 d);
 void Func_020048f4(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020048b4(s32 actor, s32 a);
-void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset,
-                                         s32 z_offset);
+void Actor_OffsetPositionAndReset(u32 objectId, s32 x_offset, s32 z_offset);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_RemoveActiveOwner(s32 owner);

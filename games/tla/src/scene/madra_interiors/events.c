@@ -96,8 +96,7 @@ void Func_02001008(void) {
      * instructions differ in tla-en. */
     asm("" : "+r"(object) : "r"(z));
     if (z > 0x5f0000)
-      Call3((void (*)())Actor_SetPositionAndReset, 4,
-            object->x / 0x10000, 95);
+      Call3((void (*)())Actor_SetPositionAndReset, 4, object->x / 0x10000, 95);
   }
   Call3((void (*)())Actor_SetPositionAndReset, 4, 362, 95);
   Call2((void (*)())Func_02001e40, 4, FACING_SOUTH);
@@ -142,23 +141,17 @@ void Func_02001008(void) {
   Call3((void (*)())Actor_SetSpeedParameters, 10, 0x8000, 0x4000);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x8000, 0x4000);
   Call3((void (*)())Actor_SetSpeedParameters, 25, 0x8000, 0x4000);
-  Call2((void (*)())Actor_SetMovementTypeById, 11,
-        (s32)gData_02001f18);
-  Call2((void (*)())Actor_SetMovementTypeById, 4,
-        (s32)gData_02001f4c);
+  Call2((void (*)())Actor_SetMovementTypeById, 11, (s32)gData_02001f18);
+  Call2((void (*)())Actor_SetMovementTypeById, 4, (s32)gData_02001f4c);
   Call1((void (*)())FieldEvent_Wait, 60);
-  Call2((void (*)())Actor_SetMovementTypeById, 10,
-        (s32)gData_02001f90);
+  Call2((void (*)())Actor_SetMovementTypeById, 10, (s32)gData_02001f90);
   Call1((void (*)())Actor_RefreshSelectorById, 10);
   Call1((void (*)())FieldEvent_Wait, 120);
-  Call2((void (*)())Actor_SetMovementTypeById, 11,
-        (s32)gData_02001fc4);
+  Call2((void (*)())Actor_SetMovementTypeById, 11, (s32)gData_02001fc4);
   Call2((void (*)())Actor_WatchAndSetScript, 4, 11);
   Call1((void (*)())FieldEvent_Wait, 60);
-  Call2((void (*)())Actor_SetMovementTypeById, 10,
-        (s32)gData_02002054);
-  Call2((void (*)())Actor_SetMovementTypeById, 25,
-        (s32)gData_020020e4);
+  Call2((void (*)())Actor_SetMovementTypeById, 10, (s32)gData_02002054);
+  Call2((void (*)())Actor_SetMovementTypeById, 25, (s32)gData_020020e4);
   Call1((void (*)())Actor_RefreshSelectorById, 10);
   Call1((void (*)())Actor_RefreshSelectorById, 11);
   Call1((void (*)())Actor_RefreshSelectorById, 25);
@@ -180,7 +173,6 @@ void Func_02001008(void) {
   ((void (*)())Func_02001d58)();
 }
 
-
 void Func_02001310(void) {
   struct Actor *object0;
 
@@ -191,8 +183,7 @@ void Func_02001310(void) {
   /* FAKEMATCH: ⚓️ loads z before it builds the bound. */
   __asm__ volatile("" : "+l"(object0));
   if (object0->z > 0x5f0000)
-    Call3((void (*)())Actor_SetPositionAndReset, 4, object0->x / 0x10000,
-          95);
+    Call3((void (*)())Actor_SetPositionAndReset, 4, object0->x / 0x10000, 95);
   Call3((void (*)())Actor_SetPositionAndReset, 4, 362, 95);
   Call2((void (*)())Func_02001e40, 4, FACING_SOUTH);
   Call1((void (*)())Func_02001e18, (s32)MsgMadraInteriors110);
@@ -348,8 +339,8 @@ L_02009764:
   object2 = Actor_GetById(4);
   if (object2 == 0)
     goto L_02009832;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 31,
-         *(s16 *)((u8 *)object2 + 10), *(s16 *)((u8 *)object2 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 31, *(s16 *)((u8 *)object2 + 10),
+         *(s16 *)((u8 *)object2 + 18));
 L_02009832:
   Call1((void (*)())Actor_WaitForMoveById, 31);
   Call3((void (*)())Func_02001db8, 31, 0, 0);
@@ -358,8 +349,8 @@ L_02009832:
   object3 = Actor_GetById(4);
   if (object3 == 0)
     goto L_02009870;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 6,
-         *(s16 *)((u8 *)object3 + 10), *(s16 *)((u8 *)object3 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 6, *(s16 *)((u8 *)object3 + 10),
+         *(s16 *)((u8 *)object3 + 18));
 L_02009870:
   Call1((void (*)())Actor_WaitForMoveById, 6);
   Call3((void (*)())Func_02001db8, 6, 0, 0);
@@ -368,8 +359,8 @@ L_02009870:
   object4 = Actor_GetById(4);
   if (object4 == 0)
     goto L_020098ae;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 7,
-         *(s16 *)((u8 *)object4 + 10), *(s16 *)((u8 *)object4 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 7, *(s16 *)((u8 *)object4 + 10),
+         *(s16 *)((u8 *)object4 + 18));
 L_020098ae:
   Call1((void (*)())Actor_WaitForMoveById, 7);
   Call3((void (*)())Func_02001db8, 7, 0, 0);
@@ -378,8 +369,8 @@ L_020098ae:
   object5 = Actor_GetById(4);
   if (object5 == 0)
     goto L_020098ec;
-  Value3((s32 (*)())Actor_ResetAndSetPosition, 5,
-         *(s16 *)((u8 *)object5 + 10), *(s16 *)((u8 *)object5 + 18));
+  Value3((s32 (*)())Actor_ResetAndSetPosition, 5, *(s16 *)((u8 *)object5 + 10),
+         *(s16 *)((u8 *)object5 + 18));
 L_020098ec:
   Call1((void (*)())Actor_WaitForMoveById, 5);
   Call3((void (*)())Func_02001db8, 5, 0, 0);

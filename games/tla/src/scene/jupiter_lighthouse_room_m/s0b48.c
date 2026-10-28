@@ -9,8 +9,7 @@ extern u32 gData_02005644[];
 extern u32 gData_0200569c[];
 
 void Func_0200484c(s32 id, s32 x, s32 z, s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 void Task_Add(void (*func)(void), s32 priority);
 s32 Func_02000a78(void);
@@ -64,8 +63,8 @@ void Func_02000c08(void) {
   Actor_SetMovementTypeById(1, gData_02005524);
   {
     /* FAKEMATCH: the priority passes through a block temporary, so 0x480 is
-     * built before the task function's address is loaded; as an argument, 2 of 57
-     * instructions differ in tla-en. */
+     * built before the task function's address is loaded; as an argument, 2 of
+     * 57 instructions differ in tla-en. */
     s32 priority = 0x480;
 
     Task_Add((void (*)(void))Func_02000a78, priority);

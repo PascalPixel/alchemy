@@ -67,8 +67,7 @@ static __inline__ void I_Func_020048bc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
   Func_020048bc(a, b, c, d, e, f, g, h, i, j, k);
 }
 
-static __inline__ void I_Actor_ArmCallback(s32 id, s32 angle,
-                                                  s32 flags) {
+static __inline__ void I_Actor_ArmCallback(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 15 sites, 73 of 1568 instructions differ in tla-en. */
   Actor_ArmCallback(id, angle, flags);
@@ -81,14 +80,14 @@ static __inline__ void I_Func_02004964(s32 actor, s32 x, s32 z, s32 angle) {
 }
 
 static __inline__ struct Actor *I_Func_020048cc(s32 actor, s32 emote,
-                                                        s32 frames) {
+                                                s32 frames) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 42 sites, 171 of 1568 instructions differ in tla-en. */
   return Func_020048cc(actor, emote, frames);
 }
 
 static __inline__ void I_Actor_SetSpeedParameters(s32 actor, s32 speed,
-                                                         s32 acceleration) {
+                                                  s32 acceleration) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 14 sites, 78 of 1568 instructions differ in tla-en. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
@@ -118,22 +117,21 @@ static __inline__ void I_Func_020048d4(s32 actor, s32 a) {
   Func_020048d4(actor, a);
 }
 
-static __inline__ void
-I_Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz) {
+static __inline__ void I_Actor_OffsetPositionAndResetMotion(s32 id, s32 dx,
+                                                            s32 dz) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 6 sites, 26 of 1568 instructions differ in tla-en. */
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
 static __inline__ void I_Actor_ResetAndSetPositionInMode2(s32 id, s32 x,
-                                                                 s32 z) {
+                                                          s32 z) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its 6 sites, 25 of 1568 instructions differ in tla-en. */
   Actor_ResetAndSetPositionInMode2(id, x, z);
 }
 
-static __inline__ void I_Actor_CommitPositionAndActivate(s32 id, s32 x,
-                                                                s32 z) {
+static __inline__ void I_Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z) {
   /* FAKEMATCH(wrapper): forwarding keeps each call's own constants; called
    * directly at its one site, 7 of 1568 instructions differ in tla-en. */
   Actor_CommitPositionAndActivate(id, x, z);
@@ -205,8 +203,7 @@ void Func_02000cac(s32 arg) {
   Func_0200489c(6, 0, 5);
   I_Func_020048cc(4, 0x102, 30);
   I_Actor_SetSpeedParameters(4, 0x00013333, 0x9999);
-  Actor_SetMovementTypeById(4, arg != 0 ? gData_02005748
-                                                      : gData_0200578c);
+  Actor_SetMovementTypeById(4, arg != 0 ? gData_02005748 : gData_0200578c);
   FieldEvent_Wait(30);
   I_Actor_ArmCallback(6, FACING_WEST, 0);
   I_Actor_ArmCallback(5, FACING_EAST, 0);
@@ -222,14 +219,10 @@ void Func_02000cac(s32 arg) {
   I_Actor_SetSpeedParameters(7, 0x10000, 0x8000);
   I_Actor_SetSpeedParameters(6, 0x10000, 0x8000);
   I_Actor_SetSpeedParameters(28, 0xcccc, 0x6666);
-  Actor_SetMovementTypeById(28, arg != 0 ? gData_020057d0
-                                                       : gData_02005800);
-  Actor_SetMovementTypeById(7, arg != 0 ? gData_0200d830
-                                                      : gData_02005860);
-  Actor_SetMovementTypeById(5, arg != 0 ? gData_02005890
-                                                      : gData_020058d8);
-  Actor_SetMovementTypeById(6, arg != 0 ? gData_02005920
-                                                      : gData_02005950);
+  Actor_SetMovementTypeById(28, arg != 0 ? gData_020057d0 : gData_02005800);
+  Actor_SetMovementTypeById(7, arg != 0 ? gData_0200d830 : gData_02005860);
+  Actor_SetMovementTypeById(5, arg != 0 ? gData_02005890 : gData_020058d8);
+  Actor_SetMovementTypeById(6, arg != 0 ? gData_02005920 : gData_02005950);
   Func_020048e4(0x8000, 0x1000);
   if (arg != 0) {
     I_Motion_CamBounds(PIXELS(677), PIXELS(-64), PIXELS(287), 1);
@@ -604,22 +597,22 @@ void Func_02000cac(s32 arg) {
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_ResetAndSetPosition(7, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_SetModeById(6, 2);
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_ResetAndSetPosition(6, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_SetModeById(5, 2);
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_ResetAndSetPosition(5, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_SetModeById(28, 2);
   object = Actor_GetById(4);
   if (object != NULL)
     Actor_ResetAndSetPosition(28, ((s16 *)&object->x)[1],
-                                     ((s16 *)&object->z)[1]);
+                              ((s16 *)&object->z)[1]);
   Actor_SetMovementTypeById(7, gData_0200599c);
   Actor_SetMovementTypeById(6, gData_0200599c);
   Actor_SetMovementTypeById(5, gData_0200599c);

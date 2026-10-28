@@ -6,8 +6,7 @@
 
 void Func_020056b4(struct Actor *object);
 void Func_0200580c(s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02005794(s32 id, s32 value);
 void FieldEvent_Wait(s32 frames);
 void wait(s32 frames);

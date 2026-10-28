@@ -10,7 +10,8 @@ struct JupiterLighthouseRoom5EventWork {
   u16 message;
 };
 
-#define EVENT_WORK ((struct JupiterLighthouseRoom5EventWork *)Ram_HeapSlots->eventWork)
+#define EVENT_WORK                                                             \
+  ((struct JupiterLighthouseRoom5EventWork *)Ram_HeapSlots->eventWork)
 
 void Func_020028a0(s32 value);
 void Func_020028b0(void);

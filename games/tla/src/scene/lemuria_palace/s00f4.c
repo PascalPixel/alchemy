@@ -11,8 +11,8 @@ static inline u32 Frame_Mod6(u32 frame) {
   return frame % 6;
 }
 
-/// Every sixth frame rotates colours 1-14 of background palette 12 by one place;
-/// every frame sets its colour 15 from a twelve-step cycle.
+/// Every sixth frame rotates colours 1-14 of background palette 12 by one
+/// place; every frame sets its colour 15 from a twelve-step cycle.
 void Func_020000f4(void) {
   /* FAKEMATCH(pin): the colour stays in r1; as a plain local, 4 of 35
    * instructions differ in tla-en. */

@@ -16,13 +16,13 @@ void Func_020000ac(s32 unused, s32 actor) {
     Daila_MessageSet((s32)MsgDailaInteriorsGah);
     Daila_MessagePut(actor, 0);
     Daila_ObjWalk(actor, 360, 72);
-    Daila_ObjTurn(actor, 0x4000, 0);
+    Daila_ObjTurn(actor, FACING_SOUTH, 0);
     Daila_FlagSet(0x200);
   } else {
     Daila_MessageSet((s32)MsgDailaInteriorsYarg);
     Daila_MessagePut(actor, 0);
     Daila_ObjWalk(actor, 392, 104);
-    Daila_ObjTurn(actor, 0x8000, 0);
+    Daila_ObjTurn(actor, FACING_WEST, 0);
     Daila_FlagClr(0x200);
   }
   Daila_Wait(20);

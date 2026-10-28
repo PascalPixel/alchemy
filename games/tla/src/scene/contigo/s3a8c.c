@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "contigo.h"
 #include "call.h"
 #include "edition.h"
@@ -113,7 +114,7 @@ void Func_02003a8c(void) {
         Func_02004144(18, 0);
         Func_020041fc(item, 3);
         PartyInventory_GiveItem(item, 0);
-        Call2((void (*)())Func_0200415c, 0, 0xc000);
+        Call2((void (*)())Func_0200415c, 0, FACING_NORTH);
         prize++;
         if (*prize != -1)
           goto next;

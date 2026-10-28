@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "main_routine_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -23,7 +24,7 @@ void Func_02000fa4(void) {
     goto L_02009022;
   t2 = Value1((s32 (*)())Actor_GetById, 15);
   v_r5 = t2;
-  Call3((void (*)())Func_02004b04, 15, 0x1500000, 0x2180000);
+  Call3((void (*)())Func_02004b04, 15, PIXELS(336), PIXELS(536));
   Call2((void (*)())Actor_SetModeById, 15, 4);
   FIELD_AT(v_r5, u8, 35) = (2 | FIELD_AT(v_r5, u8, 35));
   FIELD_AT(v_r5, u8, 85) = 2;
@@ -49,7 +50,7 @@ L_02009052:
     goto L_020090a8;
   t13 = Value1((s32 (*)())Actor_GetById, 10);
   v_r5 = t13;
-  Call3((void (*)())Func_02004b04, 10, 0x1f80000, 0x2080000);
+  Call3((void (*)())Func_02004b04, 10, PIXELS(504), PIXELS(520));
   Call2((void (*)())Actor_SetModeById, 10, 2);
   FIELD_AT(v_r5, u8, 89) = 0;
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
@@ -67,7 +68,7 @@ L_020090a8:
     goto L_02009100;
   t19 = Value1((s32 (*)())Actor_GetById, 11);
   v_r5 = t19;
-  Call3((void (*)())Func_02004b04, 11, 0x1980000, 0x2180000);
+  Call3((void (*)())Func_02004b04, 11, PIXELS(408), PIXELS(536));
   Call2((void (*)())Actor_SetModeById, 11, 2);
   FIELD_AT(v_r5, u8, 89) = 0;
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as

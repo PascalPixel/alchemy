@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -34,19 +35,18 @@ void Func_0200008c(void) {
   *(s32 *)((u8 *)object0 + 40) = v6;
   Call3((void (*)())Actor_SetSpeedParameters, *(s32 *)((u8 *)v5 + 0),
         0x20000, 0x10000);
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2,
-        *(s32 *)((u8 *)v5 + 0), 136, 0x1e8);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, *(s32 *)((u8 *)v5 + 0),
+        136, 488);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Actor_ResetAndSetPosition, 15, 120, 0x1d8);
-  Call3((void (*)())Actor_SetPositionAndCommit, 14, 136, 0x1db);
+  Call3((void (*)())Actor_ResetAndSetPosition, 15, 120, 472);
+  Call3((void (*)())Actor_SetPositionAndCommit, 14, 136, 475);
   object1 = Actor_GetById(15);
   *(s32 *)((u8 *)object1 + 40) = v6;
   Call1((void (*)())Func_020032a8, 0x237);
   Call1((void (*)())Actor_WaitForMoveById,
         *(s32 *)((u8 *)v5 + 0));
   Call2((void (*)())Actor_SetModeById, *(s32 *)((u8 *)v5 + 0), 1);
-  Call3((void (*)())Actor_ArmCallback, *(s32 *)((u8 *)v5 + 0), 0xc000,
-        0);
+  Call3((void (*)())Actor_ArmCallback, *(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Actor_WaitForMoveById, 15);
   Call1((void (*)())Func_020032a8, 159);

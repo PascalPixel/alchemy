@@ -109,7 +109,7 @@ void Func_02000730(void) {
       }
     }
   }
-  Call3(Actor_ArmCallback, 22, 0, 0);
+  Call3(Actor_ArmCallback, 22, FACING_EAST, 0);
   Func_02004a9c();
 }
 
@@ -168,7 +168,7 @@ run:
   Func_02004be4(0);
   Call3(Actor_SetPositionAndReset, 4, 488, 440);
   Call4((void (*)())Func_02004bec, 5, -16, 0, 0);
-  Func_02004b5c(4, 0x8000);
+  Func_02004b5c(4, FACING_WEST);
   FieldEvent_Wait(20);
   Func_02004b3c(MsgIDonTKnowWhatWe);
   Call3((void (*)())Func_02004b4c, 5, 0, 5);

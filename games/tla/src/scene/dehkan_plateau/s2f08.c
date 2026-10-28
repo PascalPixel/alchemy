@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -189,10 +190,10 @@ void Func_02002f08(void) {
   Func_02003d78(0);
   Actor_FaceToward(16, gMainRoutineWork.currentOwner, 0);
   Func_02003cc8(16, 0x100, 40);
-  Func_02003cb0(16, 0);
+  Func_02003cb0(16, FACING_EAST);
   Pause(20);
   Motion_SetVarCbAndRefresh(16, 3);
-  Actor_SetAngle(16, 0x8000);
+  Actor_SetAngle(16, FACING_WEST);
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
   Func_02003cd0(16, 0x102);
   Pause(40);

@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "scene.h"
 #include "scene_ids.h"
 
@@ -26,14 +27,14 @@ void Func_02000208(void) {
 
   warp = &gData_02003d10;
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 168, 424);
-  Func_02003534(gMainRoutineWork.currentOwner, 0);
+  Func_02003534(gMainRoutineWork.currentOwner, FACING_EAST);
   Func_0200362c(158);
   Func_02003414(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
   Func_020034d4_(8, 184 << 16, 204 << 17);
   Actor_SetSpeedParameters_(8, 0x1cccc, 0xe666);
   Actor_CommitPositionAndActivate_(8, 0, 16);
-  Func_02003534(8, 0x8000);
+  Func_02003534(8, FACING_WEST);
   msg = (s32)MsgHasMyGrandson;
   Func_0200350c(msg);
   FieldMessage_ShowAtActor(8, 0);

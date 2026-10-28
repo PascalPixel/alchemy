@@ -5,7 +5,7 @@
 /// Field effects, their scripts and the flags that spawn them.
 
 #include "edition.h"
-#include "event_layer.h"
+#include "event.h"
 #include "vector3.h"
 #include "actor_script.h"
 

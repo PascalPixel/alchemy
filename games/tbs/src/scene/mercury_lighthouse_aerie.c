@@ -68,7 +68,7 @@
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "system_call.h"
 #include "scene_tables.h"
 #include "create_configured_actor.h"

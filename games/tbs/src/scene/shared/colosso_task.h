@@ -13,7 +13,7 @@
 #include "resource.h"
 #include "tbs_edition.h"
 #include "mem.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 #include "dma.h"
 #include "resource_ids.h"

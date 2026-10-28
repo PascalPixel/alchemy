@@ -38,7 +38,7 @@
 #include "pushed_actor.h"
 #include "actor.h"
 #include "adventure.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "songs.h"
 

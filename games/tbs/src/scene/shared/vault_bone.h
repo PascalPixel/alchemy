@@ -4,7 +4,7 @@
 /// "leftover bones from dinner".
 #include "types.h"
 #include "actor.h"
-#include "event_layer.h"
+#include "event.h"
 
 /// Searching CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL beside the girl at the inn
 /// takes a Bone after the thieves are jailed. The floor Bone remains, so the

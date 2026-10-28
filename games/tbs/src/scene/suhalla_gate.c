@@ -57,7 +57,7 @@
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

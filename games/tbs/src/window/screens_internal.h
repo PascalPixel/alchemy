@@ -61,7 +61,7 @@
 #include "songs.h"
 #include "flags.h"
 #include "static_assert.h"
-#include "event_layer.h"
+#include "event.h"
 #include "battle_type.h"
 #include "uiflow.h"
 #include "unit.h"

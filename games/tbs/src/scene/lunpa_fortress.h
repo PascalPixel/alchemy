@@ -10,7 +10,7 @@
 #include "system.h"
 
 #include "adventure.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 
 #endif

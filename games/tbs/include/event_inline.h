@@ -20,7 +20,7 @@
 #include "unit/overworld/event_commands.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
-#include "event_layer.h"
+#include "event.h"
 #include "system_call.h"
 #include "farcall.h"
 

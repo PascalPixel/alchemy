@@ -85,7 +85,7 @@
 /// scenes never read.
 
 #include "adventure.h"
-#include "event_layer.h"
+#include "event.h"
 #include "unit/import.h"
 #include "unit/scene/lunpa_fortress.h"
 #include "unit/overworld/overworld.h"

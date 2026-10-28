@@ -120,7 +120,7 @@
 #include "system.h"
 #include "fxblend.h"
 #include "map_grid_scroll.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"

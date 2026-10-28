@@ -74,7 +74,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "actor.h"

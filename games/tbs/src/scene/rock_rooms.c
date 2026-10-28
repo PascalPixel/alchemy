@@ -33,7 +33,7 @@
 /// hides the area name.
 
 #include "adventure.h"
-#include "event_layer.h"
+#include "event.h"
 #include "unit/scene/rock_rooms.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"

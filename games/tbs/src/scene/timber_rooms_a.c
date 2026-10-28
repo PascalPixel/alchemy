@@ -34,7 +34,7 @@
 /// TIMBER_ROOMS_A_HOUSE_WEST_UNUSED, to which no exit leads.
 
 #include "adventure.h"
-#include "event_layer.h"
+#include "event.h"
 #include "unit/import.h"
 #include "unit/scene/timber_rooms_a.h"
 #include "unit/overworld/overworld.h"

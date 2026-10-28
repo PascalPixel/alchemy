@@ -2,7 +2,7 @@
 #define STUCCO_ROOMS_B_H
 
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "shared/colosso_story_flags.h"
 #include "flags.h"

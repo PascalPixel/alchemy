@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "keystate.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "item_ids.h"
 

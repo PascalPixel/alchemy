@@ -34,7 +34,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 
-#include "event_layer.h"
+#include "event.h"
 #include "flags.h"
 #include "item_ids.h"
 

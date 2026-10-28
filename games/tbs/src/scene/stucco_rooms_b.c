@@ -52,7 +52,7 @@
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "stucco_rooms_b.h"
-#include "event_layer.h"
+#include "event.h"
 #include "text/msg_ids.h"
 #include "types.h"
 #include "ability_ids.h"

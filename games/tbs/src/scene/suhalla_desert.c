@@ -66,7 +66,7 @@
 #include "unit/game/game.h"
 #include "actor.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "battle.h"

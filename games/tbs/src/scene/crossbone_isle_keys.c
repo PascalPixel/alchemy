@@ -57,7 +57,7 @@
 #include "system.h"
 #include "types.h"
 #include "edition.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 #include "scene_tables.h"
 #include "pushed_actor.h"

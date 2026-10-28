@@ -42,7 +42,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 #include "field_effect.h"

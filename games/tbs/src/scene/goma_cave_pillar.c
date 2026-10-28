@@ -60,7 +60,7 @@
 #include "map_grid_copy.h"
 #include "types.h"
 #include "animspr.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "pushed_actor.h"

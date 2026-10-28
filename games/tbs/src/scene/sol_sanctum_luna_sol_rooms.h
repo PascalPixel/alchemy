@@ -2,7 +2,7 @@
 #define ALCHEMY_SOL_SANCTUM_LUNA_SOL_ROOMS_H
 
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 
 /// The placed actors, numbered in the order of

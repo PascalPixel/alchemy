@@ -297,7 +297,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
 
 - One routine can be reached by several routes, each kept where it matches: a
   game flag by `GameFlag_Get`, `GameFlag_Set` and `GameFlag_Clear` or by the
-  event layer's inlines `Event_GetFlag`, `Event_SetFlag` and
+  `event.h`'s inlines `Event_GetFlag`, `Event_SetFlag` and
   `Event_ClearFlag`; a unit by
   `Unit_Get` or, from other [banks](../glossary.md#bank), the far call
   `Unit_GetFar`; a unit copy by `Iwram_CopyWords`, through `_call_via_r3`, or
@@ -309,7 +309,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   declaration: with the exact prototype in scope the arguments are set up in
   another order. Helpers in Colosso and in `SceneId_KolimaForestFloodgate` are
   called ahead of their definitions, with the correct declarations in their
-  unit headers under `UBFIX`, and `event_layer.h` gathers the main-image routines
+  unit headers under `UBFIX`, and `event.h` gathers the main-image routines
   the scenes call that way (`Import_GameFlagSet`).
 - Code with no function type is called through a cast function pointer. Code
   copied to RAM is called through one too, or through `_call_via_r3`, the

@@ -72,7 +72,7 @@
 #include "actor.h"
 #include "types.h"
 #include "text/msg_ids.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 #include "scene_tables.h"
 #include "field_effect.h"

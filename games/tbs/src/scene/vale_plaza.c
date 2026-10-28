@@ -108,7 +108,7 @@
 #include "vale_plaza.h"
 #include "map_grid_scroll.h"
 #include "text/msg_ids.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 #include "types.h"
 #include "animspr.h"

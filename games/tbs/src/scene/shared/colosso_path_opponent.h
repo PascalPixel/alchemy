@@ -12,7 +12,7 @@
 #include "resource.h"
 #include "types.h"
 #include "mem.h"
-#include "event_layer.h"
+#include "event.h"
 #include "dma.h"
 #include "vram_cache.h"
 #include "io_reg.h"

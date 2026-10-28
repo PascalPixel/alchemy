@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_TOLBI_H
 
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 
 const struct SceneEntrance *Tolbi_GetEntrances(void);

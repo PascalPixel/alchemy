@@ -100,7 +100,7 @@
 #include "imil_fuchin_falls.h"
 #include "types.h"
 #include "glyph.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "character_ids.h"

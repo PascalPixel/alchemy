@@ -53,7 +53,7 @@
 #define NULL ((void *)0)
 #include "actor.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "map_edit.h"
 #include "iwram_call.h"

@@ -61,7 +61,7 @@
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "map_grid_copy.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "field_effect.h"

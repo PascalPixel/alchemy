@@ -1,15 +1,15 @@
-#ifndef ALCHEMY_EVENT_LAYER_H
-#define ALCHEMY_EVENT_LAYER_H
+#ifndef ALCHEMY_EVENT_H
+#define ALCHEMY_EVENT_H
 
 /// @file
-/// The event layer: the constants and small inlines a scene's events share,
-/// over the main-image routines they call by those routines' own names
-/// (Event_Start, Actor_Jump, Event_SetMessageId and the rest), whose
+/// The calls events are written in: the constants and small inlines a scene's
+/// events share, over the main-image routines they call by those routines' own
+/// names (Event_Start, Actor_Jump, Event_SetMessageId and the rest), whose
 /// declarations it includes.
 ///
-/// It is a habit of the whole game written once, as declarations and macros: a
-/// layer, not a compiler-steering device. event_inline.h's inlines are
-/// written over it. An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
+/// It is a habit of the whole game written once, as declarations and macros,
+/// not a compiler-steering device. event_inline.h's inlines are written over
+/// it. An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
 /// Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0); Event_End();`.
 
 #include "unit/overworld/overworld.h"

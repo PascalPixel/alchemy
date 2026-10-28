@@ -2,10 +2,10 @@
 #define ALCHEMY_MERCURY_H
 
 /// @file
-/// Includes event_layer.h with FIELD_STAGED_ACTOR_IMPORTS defined, so a
+/// Includes event.h with FIELD_STAGED_ACTOR_IMPORTS defined, so a
 /// scene gets the pushed actor imports.
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "event_layer.h"
+#include "event.h"
 
 #endif

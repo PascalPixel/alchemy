@@ -43,7 +43,7 @@
 #include "system.h"
 #include "heap_slots.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "iwram_call.h"

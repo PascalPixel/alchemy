@@ -34,7 +34,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 
-#include "event_layer.h"
+#include "event.h"
 #include "flags.h"
 
 // Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when

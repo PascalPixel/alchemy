@@ -32,7 +32,7 @@
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"

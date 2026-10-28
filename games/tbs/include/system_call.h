@@ -34,7 +34,7 @@ struct MenuSprite;
 /// runs it once a frame), or gives the task already running it that
 /// priority. Returns the slot it wrote, which the sort in the same call may
 /// already have moved, or -1 when all 20 task slots are taken. Task_Add under
-/// the name overlays import it by; the event layer's Task_AddOrUpdateFrame
+/// the name overlays import it by; event.h's Task_AddOrUpdateFrame
 /// calls it too.
 static inline s32 Task_AddFrame(TaskFunc callback, s32 priority) {
   return Task_Add(callback, priority);

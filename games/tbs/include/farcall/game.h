@@ -68,7 +68,7 @@ void Adventure_InitializeDefaultsFar(void);
 struct LevelUpResult *Unit_TryLevelUpFar(s32 owner_id,
                                          struct LevelUpResult *value);
 /// Returns 1 when the flag is set; the whole game tests flags here, the
-/// scenes through the event layer.
+/// scenes through event.h.
 s32 GameFlag_GetFar(s32 flag);
 /// Sets the flag and returns the number of the byte it's in.
 s32 GameFlag_SetFar(s32 flag);

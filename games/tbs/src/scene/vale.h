@@ -6,7 +6,7 @@
 #include "task.h"
 
 #include "pushed_actor.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "item_ids.h"
 

@@ -29,7 +29,7 @@
 #include "types.h"
 #include "dma.h"
 #include "ram_buffer.h"
-#include "event_layer.h"
+#include "event.h"
 #include "system_call.h"
 #include "resource_ids.h"
 #include "io_write_queue.h"

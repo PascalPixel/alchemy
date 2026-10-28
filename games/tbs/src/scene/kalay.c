@@ -111,7 +111,7 @@
 #include "types.h"
 #include "edition.h"
 #include "task.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "call.h"
 #include "text/msg_ids.h"

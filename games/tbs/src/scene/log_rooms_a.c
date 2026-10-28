@@ -88,7 +88,7 @@
 #include "types.h"
 #include "task.h"
 #include "item_ids.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "tbs_edition.h"
 #include "battle_party.h"

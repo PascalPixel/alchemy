@@ -35,7 +35,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "pushed_actor.h"
 #include "io_reg.h"
 #include "ability_ids.h"

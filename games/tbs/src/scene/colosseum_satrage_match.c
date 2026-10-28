@@ -84,7 +84,7 @@
 #include "mem.h"
 #include "resource.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "io_reg.h"
 #include "task.h"

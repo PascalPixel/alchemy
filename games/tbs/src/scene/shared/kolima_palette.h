@@ -8,7 +8,7 @@
 #include "sound.h"
 #include "system.h"
 #include "dma.h"
-#include "event_layer.h"
+#include "event.h"
 #include "io_reg.h"
 #include "speaker.h"
 

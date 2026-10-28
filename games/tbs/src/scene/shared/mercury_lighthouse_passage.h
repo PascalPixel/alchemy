@@ -3,7 +3,7 @@
 /// sparkling passages.
 #include "types.h"
 #include "actor.h"
-#include "event_layer.h"
+#include "event.h"
 #include "songs.h"
 
 /// Stepping into a passage: the leader moves north with the trail of sparks,

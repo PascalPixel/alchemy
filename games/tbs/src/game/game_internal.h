@@ -47,7 +47,7 @@
 #include "battle_type.h"
 #include "battle_effect_chance.h"
 #include "battle_party.h"
-#include "event_layer.h"
+#include "event.h"
 #include "unit/game/starting_equipment.h"
 #include "flags.h"
 #include "character_ids.h"

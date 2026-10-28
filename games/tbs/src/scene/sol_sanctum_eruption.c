@@ -55,7 +55,7 @@
 #include "sol_sanctum_eruption.h"
 #include "types.h"
 #include "animspr.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 #include "iwram_call.h"
 #include "field_effect.h"

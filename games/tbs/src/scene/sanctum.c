@@ -78,7 +78,7 @@
 #include "system.h"
 #include "edition.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "animspr.h"
 #include "field_effect.h"
 #include "scene_tables.h"

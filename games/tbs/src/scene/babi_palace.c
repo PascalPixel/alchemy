@@ -75,7 +75,7 @@
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "event_layer.h"
+#include "event.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "heap_slots.h"

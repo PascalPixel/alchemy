@@ -3,7 +3,7 @@
 
 /// @file
 /// The main-image headers that declare the routines scene overlays import, for
-/// the overlays that call them outside the event layer.
+/// the overlays that call them outside event.h.
 
 #include "types.h"
 #include "unit/field/field.h"

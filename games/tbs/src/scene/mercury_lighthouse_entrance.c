@@ -117,7 +117,7 @@
 #include "scene_ids.h"
 #include "field_effect.h"
 #include "io_reg.h"
-#include "event_layer.h"
+#include "event.h"
 #include "text/msg_ids.h"
 #include "iwram_call.h"
 #include "ability_ids.h"

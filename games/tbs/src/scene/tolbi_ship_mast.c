@@ -68,7 +68,7 @@
 #include "flags.h"
 #include "songs.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

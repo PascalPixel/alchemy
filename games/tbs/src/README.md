@@ -161,7 +161,7 @@ this folder with one header for each compiled C file.
 
 [`games/tbs/include`](../include) holds what the whole game shares: types and
 structures, the flags in `flags.h`, the songs and sound effects in
-`songs.h`, and the calls events are written in, in `event_layer.h`. The
+`songs.h`, and the calls events are written in, in `event.h`. The
 `Makefile` puts `include` and its folders `battle`, `field`, `game`,
 `graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
 includes those headers by name alone.
@@ -177,7 +177,7 @@ header beside it.
 | --- | --- |
 | `include/flags.h` | the [game flags](../glossary.md#game-flag) |
 | `include/songs.h` | the songs and sound effects |
-| `include/event_layer.h` | the calls events are written in |
+| `include/event.h` | the calls events are written in |
 | `include/unit/<path>.h` | what the C file at `<path>.c` defines |
 | `include/farcall/` | each bank's `Far` names |
 

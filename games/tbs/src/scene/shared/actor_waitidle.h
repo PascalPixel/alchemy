@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "event_layer.h"
+#include "event.h"
 
 // Babi Lighthouse and Venus Lighthouse.
 

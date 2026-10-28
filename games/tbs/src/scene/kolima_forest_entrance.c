@@ -48,7 +48,7 @@
 #include "map_grid_copy.h"
 #include "types.h"
 #include "tbs_edition.h"
-#include "event_layer.h"
+#include "event.h"
 #include "system_call.h"
 #include "scene_tables.h"
 #include "kolima.h"

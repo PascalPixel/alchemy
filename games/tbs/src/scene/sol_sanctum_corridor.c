@@ -27,7 +27,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 
-#include "event_layer.h"
+#include "event.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumCorridorEntrances;

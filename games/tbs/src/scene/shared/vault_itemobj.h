@@ -3,7 +3,7 @@
 /// the floor, drawn as its menu icon (the Bone, at (568, 16, 672)).
 #include "types.h"
 #include "actor.h"
-#include "event_layer.h"
+#include "event.h"
 
 /// Creates object 22 at the 16.16 position and draws it as the item's icon: the
 /// sprite's own animation is stopped (flags and count 0, 16-colour, palette 0),

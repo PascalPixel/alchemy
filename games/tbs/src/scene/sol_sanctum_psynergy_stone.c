@@ -25,7 +25,7 @@
 #include "resource_37c_runtime.h"
 #include "scene_tables.h"
 
-#include "event_layer.h"
+#include "event.h"
 #include "flags.h"
 #include "songs.h"
 #include "fixed_math.h"

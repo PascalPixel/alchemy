@@ -63,7 +63,7 @@
 #include "battle_actor.h"
 #include "battle_status_icon.h"
 #include "animspr.h"
-#include "event_layer.h"
+#include "event.h"
 #include "metadata_lookup.h"
 #include "fixed_math.h"
 #include "battle_motion.h"

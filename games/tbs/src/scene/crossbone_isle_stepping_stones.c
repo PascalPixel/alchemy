@@ -50,7 +50,7 @@
 #include "actor.h"
 #include "types.h"
 #include "animspr.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "field_effect.h"
 #include "create_configured_actor.h"

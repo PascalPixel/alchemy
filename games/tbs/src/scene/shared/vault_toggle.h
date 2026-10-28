@@ -10,7 +10,7 @@
 /// on a kept-position return, such as after battle.
 #include "types.h"
 #include "actor.h"
-#include "event_layer.h"
+#include "event.h"
 #include "flags.h"
 
 /// The cells under Vault's rope bridge have the deck's ground, so the leader is

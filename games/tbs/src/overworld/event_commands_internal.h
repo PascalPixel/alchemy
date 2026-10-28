@@ -48,7 +48,7 @@
 #include "animspr.h"
 #include "actor.h"
 #include "actor_builtin_scripts.h"
-#include "event_layer.h"
+#include "event.h"
 #include "heap.h"
 #include "keystate.h"
 #include "unit.h"

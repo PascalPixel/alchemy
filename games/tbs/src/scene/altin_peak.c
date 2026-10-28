@@ -92,7 +92,7 @@
 #include "heap_slots.h"
 #include "types.h"
 #include "animspr.h"
-#include "event_layer.h"
+#include "event.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
@@ -103,7 +103,7 @@
 
 #include "types.h"
 
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 

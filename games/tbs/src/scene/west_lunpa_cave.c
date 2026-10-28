@@ -44,7 +44,7 @@
 
 #include "adventure.h"
 #include "scene_ids.h"
-#include "event_layer.h"
+#include "event.h"
 #include "unit/scene/west_lunpa_cave.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/event_commands.h"

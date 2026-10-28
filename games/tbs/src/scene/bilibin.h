@@ -5,7 +5,7 @@
 
 #define NULL ((void *)0)
 
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 
 #include "item_ids.h"

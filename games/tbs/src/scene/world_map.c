@@ -104,7 +104,7 @@
 #include "heap_slots.h"
 #include "types.h"
 #include "animspr.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "world_map_render_work.h"

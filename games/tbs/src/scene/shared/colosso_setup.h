@@ -4,7 +4,7 @@
 /// path (colosso_path_opponent.h).
 #include "types.h"
 #include "actor.h"
-#include "event_layer.h"
+#include "event.h"
 #include "flags.h"
 
 /// Starts the race gauge (struct ColossoRaceWork, in HEAP_SLOT_COLOSSO_RACE):

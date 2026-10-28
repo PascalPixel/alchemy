@@ -63,7 +63,7 @@
 #include "unit/overworld/event_commands.h"
 #include "types.h"
 #include "field_effect.h"
-#include "event_layer.h"
+#include "event.h"
 #include "system_call.h"
 #include "scene_tables.h"
 #include "scene.h"

@@ -12,7 +12,7 @@
 // the same byte.
 
 /// Returns 1 when `flag` is set. Every bank tests flags through it, as
-/// GameFlag_GetFar, and the events directly or through the event layer.
+/// GameFlag_GetFar, and the events directly or through event.h.
 s32 GameFlag_Get(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -40,7 +40,7 @@ s32 GameFlag_Set(s32 flag) {
 }
 
 /// Clears `flag`. Called from every bank, as GameFlag_ClearFar, and by the
-/// events directly or through the event layer.
+/// events directly or through event.h.
 void GameFlag_Clear(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;

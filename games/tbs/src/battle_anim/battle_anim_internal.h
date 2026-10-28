@@ -46,7 +46,7 @@
 #include "transform.h"
 #include "battle_work.h"
 #include "project.h"
-#include "event_layer.h"
+#include "event.h"
 #include "keystate.h"
 #include "battle_type.h"
 #include "battle_system.h"

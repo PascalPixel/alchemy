@@ -29,7 +29,7 @@
 #include "types.h"
 #include "save.h"
 #include "mem.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 #include "scene_ids.h"
 #include "resource_ids.h"

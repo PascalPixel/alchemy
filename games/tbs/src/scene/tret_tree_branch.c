@@ -50,7 +50,7 @@
 #include "irq.h"
 #include "adventure.h"
 #include "ability_ids.h"
-#include "event_layer.h"
+#include "event.h"
 #include "system_call.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"

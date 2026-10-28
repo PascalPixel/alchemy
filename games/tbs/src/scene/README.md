@@ -250,7 +250,7 @@ frame), a task (a function the scene runs once a frame) or an update routine
 (a function one actor runs each frame). A request the event raises, like
 this exit, waits until the event has finished.
 
-An event is plain C written in the calls of `event_layer.h`,
+An event is plain C written in the calls of `event.h`,
 `event_inline.h` and `system_call.h`. A step that takes time runs the
 game's frames itself through `WaitFrames` before it returns ([System](../../system.md#waiting-and-tasks)
 explains it). A task is added with `Task_AddFrame`.

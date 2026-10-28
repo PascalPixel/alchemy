@@ -51,7 +51,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -353,7 +353,7 @@ static void CottageRoomsC_TalkToInnkeeper(void) {
 /// out orders once, then sends the party to the waitress.
 static void CottageRoomsC_TalkToBusyChef(void) {
   Event_Start();
-  // The test is the event layer's inline and the set below a direct call,
+  // The test is event.h's inline and the set below a direct call,
   // each as it matches: an inline call's argument is a pseudo of its own,
   // where a direct call keeps the flag number in a callee-saved register.
   if (Event_GetFlag(FLAG_BILIBIN_CHEF_CALLED_ORDERS) == 0) {

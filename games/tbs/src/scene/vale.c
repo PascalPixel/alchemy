@@ -100,7 +100,7 @@
 #include "vale.h"
 #include "types.h"
 #include "call.h"
-#include "event_layer.h"
+#include "event.h"
 #include "event_inline.h"
 #include "scene_tables.h"
 #include "iwram_call.h"

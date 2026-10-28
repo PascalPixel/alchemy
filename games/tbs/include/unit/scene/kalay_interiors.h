@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MAP_KALAY_INTERIORS_H
 
 #include "types.h"
-#include "event_layer.h"
+#include "event.h"
 #include "scene_tables.h"
 
 struct SceneEntrance;

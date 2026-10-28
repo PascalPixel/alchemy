@@ -741,33 +741,33 @@ const u32 gAbilityBattleEffects[] = {
     0, // ?
     0, // ?
     0, // ?
-    0x6c | EFFECT_BY_ID_RANGE, // Terra Strike
-    0x6d | EFFECT_BY_ID_RANGE, // Poison Cloud
-    0x6e | EFFECT_BY_ID_RANGE, // Deadly Poison
-    0x6f | EFFECT_BY_ID_RANGE, // Mortal Danger
-    0x70 | EFFECT_BY_ID_RANGE, // Bad Omen
-    0x71 | EFFECT_BY_ID_RANGE, // Life Nourish
-    0x72 | EFFECT_BY_ID_RANGE, // Aqua Sock
+    108 | EFFECT_BY_ID_RANGE, // Terra Strike
+    109 | EFFECT_BY_ID_RANGE, // Poison Cloud
+    110 | EFFECT_BY_ID_RANGE, // Deadly Poison
+    111 | EFFECT_BY_ID_RANGE, // Mortal Danger
+    112 | EFFECT_BY_ID_RANGE, // Bad Omen
+    113 | EFFECT_BY_ID_RANGE, // Life Nourish
+    114 | EFFECT_BY_ID_RANGE, // Aqua Sock
     BATTLE_EFFECT_BLIZZARD, // Blizzard
-    0x74 | EFFECT_BY_ID_RANGE, // Frost Bite
+    116 | EFFECT_BY_ID_RANGE, // Frost Bite
     BATTLE_EFFECT_DROWN, // Drown
-    0x76 | EFFECT_BY_ID_RANGE, // Life Leech
-    0x77 | EFFECT_BY_ID_RANGE, // Psy Leech
-    0x78 | EFFECT_BY_ID_RANGE, // Broil
-    0x79 | EFFECT_BY_ID_RANGE, // Meltdown
-    0x7a | EFFECT_BY_ID_RANGE, // Heat Mirage
-    0x7b | EFFECT_BY_ID_RANGE, // Barrage
+    118 | EFFECT_BY_ID_RANGE, // Life Leech
+    119 | EFFECT_BY_ID_RANGE, // Psy Leech
+    120 | EFFECT_BY_ID_RANGE, // Broil
+    121 | EFFECT_BY_ID_RANGE, // Meltdown
+    122 | EFFECT_BY_ID_RANGE, // Heat Mirage
+    123 | EFFECT_BY_ID_RANGE, // Barrage
     BATTLE_EFFECT_DEMON_FIRE, // Demon Fire
-    0x7d | EFFECT_BY_ID_RANGE, // Acid Bath
+    125 | EFFECT_BY_ID_RANGE, // Acid Bath
     BATTLE_EFFECT_VORPAL_SLASH, // Vorpal Slash
-    0x7f | EFFECT_BY_ID_RANGE, // Stun Voltage
-    0x80 | EFFECT_BY_ID_RANGE, // Blinding Smog
-    0x81 | EFFECT_BY_ID_RANGE, // Murk
-    0x82 | EFFECT_BY_ID_RANGE, // Cyclone Slash
-    0x83 | EFFECT_BY_ID_RANGE, // Psyphon Seal
+    127 | EFFECT_BY_ID_RANGE, // Stun Voltage
+    128 | EFFECT_BY_ID_RANGE, // Blinding Smog
+    129 | EFFECT_BY_ID_RANGE, // Murk
+    130 | EFFECT_BY_ID_RANGE, // Cyclone Slash
+    131 | EFFECT_BY_ID_RANGE, // Psyphon Seal
     BATTLE_EFFECT_RAPID_SMASH, // Rapid Smash
     BATTLE_EFFECT_RAPID_SMASH, // Sonic Smash
-    0x84 | EFFECT_BY_ID_RANGE, // Asura
+    132 | EFFECT_BY_ID_RANGE, // Asura
     BATTLE_EFFECT_TITAN_BLADE, // Titan Blade
     BATTLE_EFFECT_SHINING_STAR, // Shining Star
     0, // ?
@@ -831,13 +831,13 @@ const u32 gAbilityBattleEffects[] = {
     0, // ?
     0, // ?
     0, // ?
-    0x68 | EFFECT_BY_ID_RANGE, // Flint
+    104 | EFFECT_BY_ID_RANGE, // Flint
     BATTLE_EFFECT_GRANITE, // Granite
     BATTLE_EFFECT_QUARTZ, // Quartz
     BATTLE_EFFECT_VINE, // Vine
-    0x6b | EFFECT_BY_ID_RANGE, // Sap
+    107 | EFFECT_BY_ID_RANGE, // Sap
     BATTLE_EFFECT_GROUND, // Ground
-    0x64 | EFFECT_BY_ID_RANGE, // Bane
+    100 | EFFECT_BY_ID_RANGE, // Bane
     0, // =
     0, // =
     0, // =
@@ -853,7 +853,7 @@ const u32 gAbilityBattleEffects[] = {
     0, // =
     BATTLE_EFFECT_FIZZ, // Fizz
     BATTLE_EFFECT_SLEET, // Sleet
-    0x66 | EFFECT_BY_ID_RANGE, // Mist
+    102 | EFFECT_BY_ID_RANGE, // Mist
     BATTLE_EFFECT_SPRITZ, // Spritz
     BATTLE_EFFECT_HAIL, // Hail
     BATTLE_EFFECT_TONIC, // Tonic
@@ -872,9 +872,9 @@ const u32 gAbilityBattleEffects[] = {
     0, // =
     0, // =
     BATTLE_EFFECT_FORGE, // Forge
-    0x67 | EFFECT_BY_ID_RANGE, // Fever
+    103 | EFFECT_BY_ID_RANGE, // Fever
     BATTLE_EFFECT_CORONA, // Corona
-    0x69 | EFFECT_BY_ID_RANGE, // Scorch
+    105 | EFFECT_BY_ID_RANGE, // Scorch
     BATTLE_EFFECT_PSY_CRYSTAL, // Ember
     BATTLE_EFFECT_FLASH, // Flash
     BATTLE_EFFECT_TORCH, // Torch
@@ -894,9 +894,9 @@ const u32 gAbilityBattleEffects[] = {
     BATTLE_EFFECT_GUST, // Gust
     BATTLE_EFFECT_BREEZE, // Breeze
     BATTLE_EFFECT_ZEPHYR, // Zephyr
-    0x65 | EFFECT_BY_ID_RANGE, // Smog
+    101 | EFFECT_BY_ID_RANGE, // Smog
     BATTLE_EFFECT_KITE, // Kite
-    0x6a | EFFECT_BY_ID_RANGE, // Squall
+    106 | EFFECT_BY_ID_RANGE, // Squall
     BATTLE_EFFECT_LUFF, // Luff
     0, // =
     0, // =
@@ -1004,7 +1004,7 @@ const u32 gAbilityBattleEffects[] = {
     BATTLE_EFFECT_BACTERIA_RUSH, // Bacteria Rush
     BATTLE_EFFECT_SWIFT_STRIKE, // Swift Strike
     BATTLE_EFFECT_ROTTEN_BLOOD, // Rotten Blood
-    0x85 | EFFECT_BY_ID_RANGE, // Forcible Arm
+    133 | EFFECT_BY_ID_RANGE, // Forcible Arm
     BATTLE_EFFECT_DOUBLE_FANG, // Double Fang
     BATTLE_EFFECT_MORTAL_BLOW, // Mortal Blow
     BATTLE_EFFECT_FREEBITE_RUSH, // Freebite Rush
@@ -1014,7 +1014,7 @@ const u32 gAbilityBattleEffects[] = {
     BATTLE_EFFECT_DYNAMITE, // Dynamite
     BATTLE_EFFECT_HEADBUTT, // Headbutt
     BATTLE_EFFECT_POISON_INK, // Poison Ink
-    0x86 | EFFECT_BY_ID_RANGE, // Truncheon Fist
+    134 | EFFECT_BY_ID_RANGE, // Truncheon Fist
     BATTLE_EFFECT_COUNTERSTRIKE, // Counterstrike
     BATTLE_EFFECT_MAD_DASH, // Mad Dash
     BATTLE_EFFECT_SOOTHING_STAR, // Soothing Star
@@ -1043,8 +1043,8 @@ const u32 gAbilityBattleEffects[] = {
     0, // Can't Use
     BATTLE_EFFECT_POISON_BEAT, // Poison Beat
     BATTLE_EFFECT_SPINNING_BEAT, // Spinning Beat
-    0x7a | EFFECT_BY_ID_RANGE, // Heat Flash
-    0x6f | EFFECT_BY_ID_RANGE, // Death Size
+    122 | EFFECT_BY_ID_RANGE, // Heat Flash
+    111 | EFFECT_BY_ID_RANGE, // Death Size
     BATTLE_EFFECT_OUTER_SPACE | EFFECT_VIEW_REVERSED, // Outer Space
     BATTLE_EFFECT_DRAGON_DRIVER | EFFECT_VIEW_REVERSED, // Dragon Driver
     BATTLE_EFFECT_DRAIN_FANG, // Drain Fang

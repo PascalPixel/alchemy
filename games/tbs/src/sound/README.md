@@ -95,7 +95,7 @@ blank's way into the game's own mixer (`Mixer_Enter`), the jingle's and the
 sound effects' music players (`gMPlayInfo_Jingle` and the rest), and the
 sound layer in `sound.c`.
 
-`engine.c`, `audio.c` and `tables.c` are compiled with pret's
+`driver.c`, `audio.c` and `tables.c` are compiled with pret's
 [`old_agbcc`](../../glossary.md#the-compilers), as pret builds its
 MusicPlayer2000 C; the rest with the game's compiler. The sound layer is the
 sound bank; the driver follows the banks in the ROM's tail, and its mixer

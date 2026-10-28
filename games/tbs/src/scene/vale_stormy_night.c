@@ -89,7 +89,7 @@
 #include "fixed_math.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "io_reg.h"
 #include "fx_work.h"
 

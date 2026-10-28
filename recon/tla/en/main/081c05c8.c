@@ -7,7 +7,7 @@
 // loads both table addresses first (r2, r1) and keeps the products in r1 and
 // r3; the game compiler loads each table where it is used.
 #include "types.h"
-#include "audio_engine.h"
+#include "sound_driver.h"
 
 void MPlayStart(struct SoundPlayer *player,
                            const struct SongHeader *header);

@@ -77,7 +77,7 @@
 #include "item_ids.h"
 #include "macros.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// The actors, numbering gKolimaForestTreeActorPlacements' rows
 /// from ACTOR_FIRST_PLACED.

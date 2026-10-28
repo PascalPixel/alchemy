@@ -7,7 +7,7 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "audio_engine.h"
+#include "sound_driver.h"
 
 extern u16 gData_02005834;
 extern u16 gData_0200580c;

@@ -117,7 +117,7 @@
 #include "scene.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "item_ids.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the

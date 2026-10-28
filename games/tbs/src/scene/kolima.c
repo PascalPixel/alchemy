@@ -87,7 +87,7 @@
 #include "scene.h"
 #include "sounds.h"
 #include "io_reg.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "item_ids.h"
 
 static void Kolima_WitnessForestCurse(void);

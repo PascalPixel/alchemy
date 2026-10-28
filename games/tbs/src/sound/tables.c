@@ -52,7 +52,7 @@ void ply_xxx();
 
 /// The jump table SoundInit copies into gMPlayJumpTable (MPlayJumpTableCopy,
 /// 36 entries): entries 0 to 29 run song bytes 0xB1 to 0xCE and 30 to 35 are
-/// the driver's helpers (MPLAY_JUMP_ in audio_engine_types.h); a byte with
+/// the driver's helpers (MPLAY_JUMP_ in sound_driver_types.h); a byte with
 /// nothing to do ends the track. MPlayExtender writes nine entries again, of
 /// which only 8 (ply_memacc) and 28 (ply_xcmd) differ from these.
 // clang-format off

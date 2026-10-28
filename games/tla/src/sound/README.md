@@ -8,13 +8,13 @@ what differs here.
 
 ## What differs from ☀️
 
-- **Compilers.** The driver's C, `sound.c`, `tables.c`, `engine.c`, `tail.c`
+- **Compilers.** The driver's C, `sound.c`, `tables.c`, `driver.c`, `tail.c`
   and the `music_track_*.c` files, is compiled with pret's `old_agbcc`, the
   sound route of the `Makefile` (`SOUND_C`), as ☀️'s driver is. The rest takes
   K2's options on top of ☀️'s (`CFLAGS_tla`): `-mthumb-split-constants`,
   `-mthumb-call-via-lr` and `-mtune=arm9tdmi`, without `-mthumb-interwork`.
 - **Layout.** ⚓️ splits the driver into one file per routine where ☀️ keeps
-  `engine.c` and `audio.c` whole; the song commands' handlers are the
+  `driver.c` and `audio.c` whole; the song commands' handlers are the
   `music_track_*.c` files, and the handwritten ARM and Thumb routines are one
   file each under `driver/`.
 - **Sounds.** ⚓️ has its own song table (`games/tla/sound/songs.s`), so its

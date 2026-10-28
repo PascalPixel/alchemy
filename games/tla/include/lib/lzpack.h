@@ -9,7 +9,7 @@
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 struct LzPackNode {
   struct LzPackNode *next; ///< Next node with the same value.

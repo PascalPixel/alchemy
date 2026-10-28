@@ -1,5 +1,5 @@
 #include "types.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 extern u16 gData_02005830;
 extern u16 gData_02005834;

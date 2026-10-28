@@ -12,7 +12,7 @@
 /// Sound_Play tests the controls SOUND_FADE_OUT_BGM and
 /// SOUND_FADE_OUT_ACTION_SE first, then the ranges: from SOUND_SE_FIRST on the
 /// player its gSongTable row names, from SOUND_JINGLE_FIRST jingles, below
-/// that music, where SOUND_KEEP_BGM is also a control (audio_engine_symbols.h).
+/// that music, where SOUND_KEEP_BGM is also a control (sound_driver_symbols.h).
 
 /// Field music of Vale, of Vault, and of Altin once
 /// FLAG_HYDROS_STATUES_DEFEATED is set.

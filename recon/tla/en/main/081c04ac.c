@@ -7,7 +7,7 @@
 // 081c04cc. Adopting it needs a file the sound route (SOUND_C) compiles at
 // this place: a routing change, Pascal's (K1).
 #include "types.h"
-#include "audio_engine.h"
+#include "sound_driver.h"
 
 void Func_081c04ac(struct SoundPlayer *player, u16 speed) {
   if (player->lock == SOUND_LOCK) {

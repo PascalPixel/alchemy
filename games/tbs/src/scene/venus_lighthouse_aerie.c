@@ -80,7 +80,7 @@
 #include "event.h"
 #include "scene_tables.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "create_configured_actor.h"
 #include "battle.h"
 #include "debug.h"

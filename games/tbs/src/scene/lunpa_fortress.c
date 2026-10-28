@@ -115,7 +115,7 @@
 #include "flags.h"
 #include "djinn_ids.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "fixed_math.h"
 #include "io_reg.h"
 

@@ -8,7 +8,7 @@
 // (r5-r7 and r3 against the listing's r4-r6 and r0), the count's
 // narrowing and the game compiler's rotated loop.
 #include "types.h"
-#include "audio_engine.h"
+#include "sound_driver.h"
 #include "ram_buffer.h"
 
 extern char Sound_PlayerCount[];

@@ -57,7 +57,7 @@
 #include "map_grid_scroll.h"
 #include "macros.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "item_ids.h"
 #include "heap.h"
 

@@ -117,7 +117,7 @@
 #include "scene.h"
 #include "map_grid_scroll.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 // The rooms' floor switches, each set once flipped from its first position;
 // they are area temp flags, kept until the party leaves the mine.

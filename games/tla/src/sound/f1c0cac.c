@@ -1,5 +1,5 @@
-#include "audio_engine.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver.h"
+#include "sound_driver_symbols.h"
 
 /// The interrupt handler clears unk03 every VBlank after the sound
 /// update, reading it first as only a volatile access survives; while it is

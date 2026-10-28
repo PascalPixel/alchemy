@@ -319,7 +319,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   these casts are no `wrapper`.
 - The sound driver, compiled with pret's `old_agbcc`, calls its command table
   through a pointer read from the entry, `*(&gMPlayJumpTable[n])`; indexing
-  it directly adds an instruction. `engine.c` keeps the labelled jumps its
+  it directly adds an instruction. `driver.c` keeps the labelled jumps its
   matching forms need.
 
 ### Heap slots

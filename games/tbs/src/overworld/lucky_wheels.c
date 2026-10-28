@@ -1,4 +1,4 @@
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "module/overworld/lucky_wheels.h"
 #include "module/runtime/runtime.h"
 #include "battle.h"

@@ -94,7 +94,7 @@
 
 #include "fixed_math.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// The way in's actor placements (gValeCave_MouthActorPlacements),
 /// numbered from ACTOR_FIRST_PLACED: three stacks of crates (drawn as the

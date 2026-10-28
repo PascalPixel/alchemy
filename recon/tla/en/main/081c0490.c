@@ -5,7 +5,7 @@
 // listing does. Adopting it needs a file the sound route (SOUND_C) compiles
 // at this place, between noop_stub_work_copy.c and the driver's
 // midi_key_to_frequency.s: a routing change, Pascal's (K1).
-#include "audio_engine.h"
+#include "sound_driver.h"
 
 void Func_081c0490(struct SoundPlayer *player) {
   if (player->lock == SOUND_LOCK) {

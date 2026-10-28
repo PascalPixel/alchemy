@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_AUDIO_ENGINE_TYPES_H
-#define ALCHEMY_AUDIO_ENGINE_TYPES_H
+#ifndef ALCHEMY_SOUND_DRIVER_TYPES_H
+#define ALCHEMY_SOUND_DRIVER_TYPES_H
 
 /// @file
 /// The sound driver's types, registers and work: MusicPlayer2000, the library

@@ -152,7 +152,7 @@ main	iwram_high	games/tbs/src/cartridge/iwram_hi	.sym_iwram_high
 main	rom_tail_00	games/tbs/src/sound/clear_buffer	.text .text.command_byte_reader .text.command_byte_setters
 main	rom_tail_00	games/tbs/src/sound/audio	.text
 main	rom_tail_00	games/tbs/src/cartridge/sound_get_jump_list
-main	rom_tail_00	games/tbs/src/sound/engine	.text
+main	rom_tail_00	games/tbs/src/sound/driver	.text
 main	rom_tail_00	games/tbs/src/sound/empty_callback	.text
 main	rom_tail_00	games/tbs/src/sound/sound	.rodata
 main	rom_tail_00	games/tbs/src/sound/tables	.rodata

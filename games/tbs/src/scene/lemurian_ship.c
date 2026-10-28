@@ -65,7 +65,7 @@
 #include "item_ids.h"
 #include "sounds.h"
 #include "heap.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "flags.h"
 
 #if TBS_PATCH_3

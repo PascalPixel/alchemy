@@ -50,7 +50,7 @@
 #include "save.h"
 #include "runtime_interfaces.h"
 #include "flash.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "module/runtime/math_table.h"
 #include "module/runtime/numtext.h"
 #include "savedata.h"

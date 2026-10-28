@@ -1,5 +1,5 @@
 #include "types.h"
-#include "audio_engine.h"
+#include "sound_driver.h"
 #include "ram_buffer.h"
 
 u32 umul3232H32(u32 left, u32 right);

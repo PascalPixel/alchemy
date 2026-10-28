@@ -72,7 +72,7 @@
 #include "sounds.h"
 #include "heap.h"
 #include "io_reg.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "item_ids.h"
 #include "fx_work.h"
 

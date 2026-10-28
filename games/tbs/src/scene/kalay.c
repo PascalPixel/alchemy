@@ -131,7 +131,7 @@
 #include "flags.h"
 #include "djinn_ids.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// Kalay's actors (Kalay), numbering the rows of
 /// gKalay_TownActorPlacements from ACTOR_FIRST_PLACED, then the tour

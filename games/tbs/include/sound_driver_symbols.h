@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_AUDIO_ENGINE_SYMBOLS_H
-#define ALCHEMY_AUDIO_ENGINE_SYMBOLS_H
+#ifndef ALCHEMY_SOUND_DRIVER_SYMBOLS_H
+#define ALCHEMY_SOUND_DRIVER_SYMBOLS_H
 
 /// @file
 /// The sound driver's command masks, sound controls and the routines and

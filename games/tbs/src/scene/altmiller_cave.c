@@ -97,7 +97,7 @@
 #include "fx_work.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and
 /// the two men from Tolbi who come looking for him.

@@ -177,9 +177,9 @@ CPPFLAGS_AGBCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include -D__GNUC__=2 -D__GNUC_
                   -D__GNUC_PATCHLEVEL__=0 -D__THUMBEL__ -Dthumb -D__thumb__ -D$(DEFINE)=1 -I$(BUILD)
 CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include $(filter-out -Igames/$(GAME)/include,$(INCLUDES)) \
                   -D__GNUC__=2 -D__GNUC_MINOR__=95 -D__GNUC_PATCHLEVEL__=2 -Darm -D__arm__ -D$(DEFINE)=1 -I$(BUILD)
-SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/engine.c \
+SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/driver.c \
            games/tla/src/sound/sound.c games/tla/src/sound/tables.c \
-           $(wildcard games/tla/src/sound/engine.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
+           $(wildcard games/tla/src/sound/driver.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
 FLASH_C := $(addprefix games/tbs/src/cartridge/save/,flash.c sst.c atmel.c program_flash_sector.c) \
            $(addprefix games/tla/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \

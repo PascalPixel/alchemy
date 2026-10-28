@@ -4400,7 +4400,7 @@ main	rom_main_14	recon/tla/de/rom	.rom.001b83c4	de
 main	rom_main_14	recon/tla/raw/081b83c4	.text	en
 main	rom_main_14	recon/tla/ja/rom	.rom.001b83c4	ja
 main	rom_main_14	games/tla/src/graphics/lucky_dice/dice_game	.rodata
-main	rom_main_15	games/tla/src/system/far_call/audio_engine
+main	rom_main_15	games/tla/src/system/far_call/sound_driver
 main	rom_main_15	games/tla/src/system/far_call/table_48
 main	rom_main_15	games/tla/src/system/far_call/table_49
 main	rom_main_15	games/tla/src/system/far_call/sound	.text
@@ -4482,7 +4482,7 @@ main	rom_tail_00	games/tla/src/sound/driver/command_byte_reader
 main	rom_tail_00	games/tla/src/sound/driver/command_byte_setters
 main	rom_tail_00	games/tla/src/sound/sound	.text
 main	rom_tail_00	games/tla/src/system/sound_get_jump_list
-main	rom_tail_00	games/tla/src/sound/engine	.text
+main	rom_tail_00	games/tla/src/sound/driver	.text
 main	rom_tail_00	games/tla/src/sound/music_track_operate_work_byte	.text
 main	rom_tail_00	games/tla/src/sound/music_track_dispatch_stream_command	.text
 main	rom_tail_00	games/tla/src/sound/music_track_read_voice_target	.text

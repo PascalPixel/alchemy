@@ -103,7 +103,7 @@
 #include "colosso_gauge.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "macros.h"
 
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES 120

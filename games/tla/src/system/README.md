@@ -14,7 +14,7 @@ linked as it is and how a frame runs; this page says only what differs here.
   handlers (`setirq.c`), the task table, the link cable and the save files
   are here, beside the resident code they call.
 - **Far-call tables.** ⚓️'s are 105 files under `far_call/`, named by the
-  family of their exports (`audio_engine.s`, `object_dispatch_3.s`), where ☀️
+  family of their exports (`sound_driver.s`, `object_dispatch_3.s`), where ☀️
   has one file per bank; a bank's table is the run of these files its place
   opens with in `games/tla/objects.tsv`. As in ☀️, the banks start at fixed
   addresses (`games/tla/main.ld`), and the stub and its reasons are the same.

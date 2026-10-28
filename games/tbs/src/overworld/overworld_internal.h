@@ -56,7 +56,7 @@
 #include "unit.h"
 #include "adventure.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "fixed_math.h"
 #include "item_gift.h"
 #include "battle_calc.h"

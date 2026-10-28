@@ -82,7 +82,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "heap.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "ability_ids.h"
 
 /// Both beams have opened the hole in the floor before the centre statue.

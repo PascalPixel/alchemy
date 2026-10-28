@@ -92,7 +92,7 @@
 #include "character_ids.h"
 #include "map_grid_scroll.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// Tret's face (SPRITE_TRET), the first actor placed after the party,
 /// and a second Tret actor (SPRITE_TRET_RAISED) placed at the same spot.

@@ -119,7 +119,7 @@
 #include "field_effect.h"
 #include "fixed_math.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "item_ids.h"
 
 // Vale's area flags, kept while the party stays in Vale's scenes.

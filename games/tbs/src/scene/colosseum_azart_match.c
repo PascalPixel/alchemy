@@ -111,7 +111,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
 // call the bytes show; UBFIX calls it as declared. Each use is tagged.

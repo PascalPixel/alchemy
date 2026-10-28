@@ -9,7 +9,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "task.h"
-#include "audio_engine.h"
+#include "sound_driver.h"
 
 struct SoundVBlankState {
   u8 lastVBlank;

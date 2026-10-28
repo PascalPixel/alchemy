@@ -98,7 +98,7 @@
 #include "sounds.h"
 #include "heap.h"
 #include "item_ids.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// After the quest is refused, the Great Healer has warned that stepping
 /// outside the village is final.

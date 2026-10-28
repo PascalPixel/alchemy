@@ -130,7 +130,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "item_ids.h"
 
 /// The falling rock of Hammet's caravan event has landed and shattered.

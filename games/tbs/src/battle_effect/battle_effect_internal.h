@@ -32,7 +32,7 @@
 #include "dma.h"
 #include "resource_ids.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "blitter.h"
 #include "fixed_math.h"
 #include "task.h"

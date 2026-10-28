@@ -94,7 +94,7 @@
 #include "palbuf.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// The placed actors, numbered in the order of
 /// gValeKradensCottage_ActorPlacements; Garet and Jenna, placed between

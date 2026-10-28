@@ -140,7 +140,7 @@
 #include "battle_unit.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "macros.h"
 
 #if TBS_PATCH_1

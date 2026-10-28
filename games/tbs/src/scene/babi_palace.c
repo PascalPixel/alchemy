@@ -82,7 +82,7 @@
 #include "display_transition.h"
 #include "flags.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// The palace's actors are placed by one of three tables, as the story
 /// goes on: before Babi is rescued

@@ -9,7 +9,7 @@
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 /// A position of the LZ packer's window in the chain of the byte value it
 /// holds.

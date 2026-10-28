@@ -85,7 +85,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "io_reg.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 static void ColosseumEntrance_ApplyArrivalState(void);
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);

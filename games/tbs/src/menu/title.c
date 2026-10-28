@@ -41,7 +41,7 @@
 #include "scene_tables.h"
 #include "map_grid_scroll.h"
 #include "sounds.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);

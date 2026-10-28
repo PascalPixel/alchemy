@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_AUDIO_ENGINE_TYPES_H
-#define ALCHEMY_AUDIO_ENGINE_TYPES_H
+#ifndef ALCHEMY_SOUND_DRIVER_TYPES_H
+#define ALCHEMY_SOUND_DRIVER_TYPES_H
 
 #include "types.h"
 #include "../lib/static_assert.h"

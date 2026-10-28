@@ -38,7 +38,7 @@
 #include "adventure.h"
 #include "battle_party.h"
 #include "irqlock.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "scene_tables.h"
 #include "frame.h"
 #include "flags.h"

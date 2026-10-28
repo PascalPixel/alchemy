@@ -56,7 +56,7 @@
 #include "ability_ids.h"
 #include "djinn_ids.h"
 #include "menu_list.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 #include "ui.h"
 #include "battle_calc.h"
 #include "objdisp.h"

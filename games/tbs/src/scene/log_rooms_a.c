@@ -100,7 +100,7 @@
 #include "macros.h"
 #include "sounds.h"
 #include "heap.h"
-#include "audio_engine_symbols.h"
+#include "sound_driver_symbols.h"
 
 #if TBS_PATCH_3
 #define LOG_ROOMS_A_ENTRY_ACTOR_Z PIXELS(451)

@@ -23,7 +23,8 @@
 #include "module/menu/menu.h"
 #include "module/scene/shared/scroll_initialize_hblank_dma.h"
 #include "fixed_math.h"
-#include "map_grid_copy.h"
+#include "edition.h"
+#include "types.h"
 
 #include "static_assert.h"
 

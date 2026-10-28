@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_effect.h"
-#include "objdisp.h"
+#include "edition.h"
+#include "far_call.h"
 #include "scene_tables.h"
 #include "fixed_math.h"
 

@@ -2,7 +2,8 @@
 #ifndef LUNPA_FORTRESS_H
 #define LUNPA_FORTRESS_H
 
-#include "map_grid_copy.h"
+#include "edition.h"
+#include "types.h"
 
 #include "types.h"
 #include "static_assert.h"

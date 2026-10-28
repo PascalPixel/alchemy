@@ -67,7 +67,6 @@
 #include "event.h"
 #include "system_call.h"
 #include "scene_ids.h"
-#include "palette_map.h"
 #include "io_reg.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"

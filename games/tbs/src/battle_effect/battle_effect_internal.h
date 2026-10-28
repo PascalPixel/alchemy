@@ -51,7 +51,7 @@
 #include "event.h"
 #include "input.h"
 #include "battle_action_run.h"
-#include "battle_system.h"
+#include "playback_queue.h"
 #include "battle_action.h"
 #include "sprite.h"
 #include "battle_unit.h"

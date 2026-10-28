@@ -59,7 +59,8 @@
 #include "macros.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "map_grid_copy.h"
+#include "edition.h"
+#include "types.h"
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"

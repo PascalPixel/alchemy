@@ -74,7 +74,6 @@
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "colosso_log_rolling_stage.h"
 #include "io_reg.h"
 #include "input.h"
 #include "battle.h"

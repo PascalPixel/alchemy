@@ -34,7 +34,8 @@
 #include "iwram_call.h"
 #include "static_assert.h"
 #include "battle_side.h"
-#include "battle_system.h"
+#include "playback_queue.h"
+#include "battle_action_run.h"
 #include "frame.h"
 #include "flags.h"
 

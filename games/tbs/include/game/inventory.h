@@ -5,7 +5,11 @@
 /// gOverflowItem, an item slot the spoils code uses when items are handed out.
 
 #include "item.h"
-#include "game/unit.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
+#include "playback_queue.h"
+#include "battle_action_run.h"
 #include "main_routine_work.h"
 #include "far_call.h"
 

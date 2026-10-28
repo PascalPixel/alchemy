@@ -59,7 +59,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "map_grid_copy.h"
 #include "types.h"
 #include "sprite.h"
 #include "event.h"

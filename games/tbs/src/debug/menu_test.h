@@ -3,7 +3,10 @@
 
 #include "types.h"
 #include "input.h"
-#include "unit.h"
+#include "edition.h"
+#include "far_call.h"
+#include "playback_queue.h"
+#include "battle_action_run.h"
 #include "main_routine_work.h"
 #include "field_psynergy_work.h"
 #include "actor.h"

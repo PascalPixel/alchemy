@@ -33,7 +33,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "map_grid_copy.h"
 #include "types.h"
 #include "tbs_edition.h"
 

@@ -7,7 +7,10 @@
 
 #include "module/game/game.h"
 #include "types.h"
-#include "unit.h"
+#include "edition.h"
+#include "far_call.h"
+#include "playback_queue.h"
+#include "battle_action_run.h"
 #include "static_assert.h"
 
 struct Unit;

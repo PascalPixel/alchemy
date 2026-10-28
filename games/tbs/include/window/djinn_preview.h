@@ -4,7 +4,8 @@
 /// @file
 /// The Djinn preview's sprites and arrow tiles.
 
-#include "output.h"
+#include "edition.h"
+#include "render_input.h"
 #include "battle_sprite_id.h"
 
 /// The OAM entry of a window sprite, as the Djinn preview places its stat

@@ -92,7 +92,7 @@ STATIC_ASSERT(offsetof(struct Message, flags) == 0x24);
     (render)->dirty |= 2 << ((u32)(y) >> 2);                                   \
   } while (0)
 
-#include "output.h"
+#include "edition.h"
 
 /// Window sprites in the shared pool: every sprite the windows show at once,
 /// glyphs, icons and portraits together.

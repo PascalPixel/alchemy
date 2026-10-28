@@ -12,7 +12,6 @@
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "map_grid_copy.h"
 #include "pushed_actor.h"
 #include "fixed_point_position.h"
 #include "iwram_call.h"

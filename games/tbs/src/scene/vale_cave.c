@@ -69,7 +69,8 @@
 #include "module/system/system.h"
 
 #include "actor.h"
-#include "map_grid_copy.h"
+#include "edition.h"
+#include "types.h"
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"

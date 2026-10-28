@@ -5,7 +5,10 @@
 /// The battle command names: auto battle and the battle options (aliases of
 /// debug and key globals), and the actions' flag and status tables.
 
-#include "battle_system.h"
+#include "playback_queue.h"
+#include "battle_action_run.h"
+#include "edition.h"
+#include "far_call.h"
 #include "item.h"
 #include "input.h"
 #include "frame.h"

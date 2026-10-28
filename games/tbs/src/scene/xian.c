@@ -55,7 +55,6 @@
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "map_edit.h"
 #include "iwram_call.h"
 #include "battle.h"
 #include "debug.h"

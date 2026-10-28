@@ -112,7 +112,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "map_grid_copy.h"
 #include "call.h"
 #include "system_call.h"
 #include "scene_ids.h"

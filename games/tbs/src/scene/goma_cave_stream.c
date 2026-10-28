@@ -46,7 +46,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "map_grid_copy.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "call.h"

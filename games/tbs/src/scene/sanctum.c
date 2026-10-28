@@ -89,7 +89,6 @@
 #include "save.h"
 #include "event_inline.h"
 #include "window.h"
-#include "uiflow.h"
 #include "battle_sprite_id.h"
 #include "heap_release.h"
 #include "actor_builtin_scripts.h"

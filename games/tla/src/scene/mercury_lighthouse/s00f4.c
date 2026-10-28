@@ -2,6 +2,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "field_sprite.h"
+#include "scene_tables.h"
 
 extern u32 gData_020007e4;
 extern u32 gFrameCount;
@@ -38,7 +39,7 @@ void Func_020000f4(void) {
       z = 0x2b80000;
       object->motionFlags = phase;
       object->x = x;
-      object->y = 0xa00000;
+      object->y = PIXELS(160);
       object->z = z;
       Actor_SetSingleChildFlags(object, 0);
       object->priorityFlags &= ~1;

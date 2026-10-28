@@ -1,4 +1,5 @@
 #include "room.h"
+#include "scene_tables.h"
 
 extern char SceneId_Ov6aaRoom1;
 extern char SceneId_Ov6aaRoom2;
@@ -68,7 +69,7 @@ void Func_02000ce4(s32 unused, s32 id) {
 
     if (object->x >> 20 == 5) {
       FieldEvent_Wait(5);
-      object->z += 0x10000;
+      object->z += PIXELS(1);
       Flag_Set(0xa4e);
     }
   }

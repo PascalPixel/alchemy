@@ -7,6 +7,7 @@
 #include "call.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
@@ -64,39 +65,39 @@ void Func_02000ce0(void) {
   Call3((void (*)())Actor_SetSpeedParameters, 4, 0xcccc, 0x6666);
   Call3((void (*)())Actor_SetPositionAndReset, 4, 264, 136);
   Func_0200201c(MsgLookItS);
-  Call4((void (*)())Func_020020b4, 5, 16, -16, 0x4000);
-  Call4((void (*)())Func_020020b4, 9, 32, -16, 0x4000);
-  Call4((void (*)())Func_020020b4, 6, -16, -16, 0x4000);
+  Call4((void (*)())Func_020020b4, 5, 16, -16, FACING_SOUTH);
+  Call4((void (*)())Func_020020b4, 9, 32, -16, FACING_SOUTH);
+  Call4((void (*)())Func_020020b4, 6, -16, -16, FACING_SOUTH);
   Call1((void (*)())FieldEvent_Wait, 80);
   Value3(Func_0200204c, 9, 0x102, 20);
   Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, 0xcccc);
   Call3((void (*)())Actor_SetPositionAndReset, 9, 300, 152);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 20);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x3000, 20);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 20);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTHEAST + FACING_STEP, 20);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Func_0200205c, 0x4cccc, 0x9999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0xc80000, -1, 0x1580000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(200), -1, PIXELS(344), 1);
   Func_0200206c();
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Func_0200205c, 0x13333, 0x2666);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x2580000, -1, 0x1580000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(600), -1, PIXELS(344), 1);
   Func_0200206c();
   Call1((void (*)())FieldEvent_Wait, 40);
   Call2((void (*)())Func_0200205c, 0x66666, 0xcccc);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1080000, -1, 0x800000, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(264), -1, PIXELS(128), 1);
   Func_0200206c();
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 4);
   Call2((void (*)())Func_02002034, 0x2005, 0);
-  Call2((void (*)())Func_02002044, 6, 0);
+  Call2((void (*)())Func_02002044, 6, FACING_EAST);
   Call2((void (*)())Actor_SetModeById, 6, 4);
   Call2((void (*)())Func_02002034, 6, 0);
-  Call2((void (*)())Func_02002044, 9, 0xb000);
+  Call2((void (*)())Func_02002044, 9, FACING_NORTHWEST + FACING_STEP);
   Value3(Func_0200204c, 9, 0x101, 0);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0x2000, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x2000,
+  Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHEAST, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTHEAST,
         0);
   answer =
       Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
@@ -113,7 +114,7 @@ void Func_02000ce0(void) {
   }
   Call2((void (*)())Actor_SetModeById, 5, 4);
   Call2((void (*)())Func_02002034, 0x2005, 0);
-  Call2((void (*)())Func_02002044, 6, 0);
+  Call2((void (*)())Func_02002044, 6, FACING_EAST);
   Call2((void (*)())Actor_SetModeById, 6, 4);
   Call2((void (*)())Func_02002034, 6, 0);
   Call2((void (*)())Actor_SetModeById, 9, 4);

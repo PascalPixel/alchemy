@@ -1,4 +1,5 @@
 #include "room.h"
+#include "scene_tables.h"
 
 void Func_0200006c(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -8,11 +9,11 @@ void Func_0200006c(void) {
     Func_02000524(0);
     if (Actor_GetById(8)->x == 0) {
       Actor_CommitPositionAndActivate_(4, 0, -16);
-      Func_0200052c_(8, 0, -16, 0x3000);
+      Func_0200052c_(8, 0, -16, FACING_SOUTHEAST + FACING_STEP);
       Actor_WaitForMoveById(8);
       Actor_SetSpeedParameters_(8, 0x13333, 0x9999);
       Actor_SetPositionAndReset_(8, 472, 392);
-      Func_020004f4_(8, 0x5000);
+      Func_020004f4_(8, FACING_SOUTH + FACING_STEP);
     } else {
       struct Actor *leader;
 
@@ -49,7 +50,7 @@ void Func_02000158(void) {
     Func_020004ec(8, 0);
     FieldEvent_Wait(5);
     Actor_Jump(8, 4, 0);
-    Func_020004f4(8, 0);
+    Func_020004f4(8, FACING_EAST);
     FieldEvent_Wait(5);
     party = &gMainRoutineWork;
     z = Actor_GetById(party->currentOwner)->z;
@@ -64,7 +65,7 @@ void Func_02000158(void) {
     id = 4;
     /* FAKEMATCH: ⚓️ builds the id before the zero */
     asm volatile("" : "+l"(id));
-    Func_020004f4(id, 0);
+    Func_020004f4(id, FACING_EAST);
     FieldEvent_Wait(10);
     {
       struct MainRoutineWork *state = &gMainRoutineWork;

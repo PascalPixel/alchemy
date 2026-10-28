@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -37,10 +38,10 @@ void Func_02000f38(void) {
   s32 value = ((struct EventWork154 *)Ram_HeapSlots->eventWork)->value;
 
   if (value == 2)
-    Func_02001348_(8, 0x900000, 0xe00000);
+    Func_02001348_(8, PIXELS(144), PIXELS(224));
   else
-    Func_02001348_(8, 0xe00000, 0xe00000);
-  Actor_ArmCallback(4, 0xc000, 0);
+    Func_02001348_(8, PIXELS(224), PIXELS(224));
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;
   Func_020012a8_(96, 14, 72, 14, 2, 1);

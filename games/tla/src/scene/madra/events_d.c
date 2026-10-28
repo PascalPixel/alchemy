@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -164,7 +165,7 @@ void Func_020029c8(void) {
   next = 16;
   if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154) > 34)
     next = 15;
-  Actor_ArmCallback(4, 0xc000, 0);
+  Actor_ArmCallback(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Actor_GetById(4)->actionFlags &= 0xfe;
   Actor_OffsetPositionAndResetMotion(4, 0, 4);

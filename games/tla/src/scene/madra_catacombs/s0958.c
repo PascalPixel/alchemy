@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 
 void Func_02001134(s32 actor, s32 x, s32 z);
 void Func_0200113c(s32 actor, s32 target);
@@ -36,16 +37,16 @@ void Func_02000958(void) {
   register s32 actor __asm__("r6");
   s32 target;
 
-  MadraCatacombs_ObjPlace(14, 136 << 16, 258 << 16);
-  MadraCatacombs_ObjPlace(19, 184 << 16, 258 << 16);
-  MadraCatacombs_ObjPlace(13, 120 << 16, 226 << 16);
-  MadraCatacombs_ObjPlace(18, 200 << 16, 226 << 16);
-  MadraCatacombs_ObjPlace(12, 120 << 16, 194 << 16);
-  MadraCatacombs_ObjPlace(17, 200 << 16, 194 << 16);
-  MadraCatacombs_ObjPlace(11, 136 << 16, 162 << 16);
-  MadraCatacombs_ObjPlace(16, 184 << 16, 162 << 16);
-  MadraCatacombs_ObjPlace(10, 136 << 16, 138 << 16);
-  MadraCatacombs_ObjPlace(15, 184 << 16, 138 << 16);
+  MadraCatacombs_ObjPlace(14, PIXELS(136), PIXELS(258));
+  MadraCatacombs_ObjPlace(19, PIXELS(184), PIXELS(258));
+  MadraCatacombs_ObjPlace(13, PIXELS(120), PIXELS(226));
+  MadraCatacombs_ObjPlace(18, PIXELS(200), PIXELS(226));
+  MadraCatacombs_ObjPlace(12, PIXELS(120), PIXELS(194));
+  MadraCatacombs_ObjPlace(17, PIXELS(200), PIXELS(194));
+  MadraCatacombs_ObjPlace(11, PIXELS(136), PIXELS(162));
+  MadraCatacombs_ObjPlace(16, PIXELS(184), PIXELS(162));
+  MadraCatacombs_ObjPlace(10, PIXELS(136), PIXELS(138));
+  MadraCatacombs_ObjPlace(15, PIXELS(184), PIXELS(138));
   target = 10;
   actor = 20;
   for (i = 0; i < 10; i++) {

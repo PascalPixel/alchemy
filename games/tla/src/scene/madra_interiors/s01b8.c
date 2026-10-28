@@ -1,4 +1,5 @@
 #include "madra_interiors.h"
+#include "scene_tables.h"
 
 void Func_020001b8(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
@@ -29,7 +30,7 @@ void Func_0200023c(void) {
   Actor_SetAngleToward(4, 14, 0);
   Func_02001e18((s32)MsgMadraInteriors18);
   Func_02001e30(14, 0);
-  ActorTurn(14, 0x2000, 0);
+  ActorTurn(14, FACING_SOUTHEAST, 0);
   Func_02001d58();
 }
 
@@ -154,7 +155,7 @@ const u8 *Func_020004c4(void) {
 
 void Func_02000534(void) {
   if (FlagCheck(0x8ab)) {
-    ActorPlace(26, 0x3780000, 0x80000);
+    ActorPlace(26, PIXELS(888), PIXELS(8));
   } else {
     Func_02001d38(Actor_GetById(26), 242);
     Actor_SetSingleChildFlags(Actor_GetById(26), 0);

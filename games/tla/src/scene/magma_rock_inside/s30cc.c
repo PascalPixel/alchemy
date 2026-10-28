@@ -56,30 +56,30 @@ void Func_020030cc(void) {
     Call2(Func_02004da8, 5, gMainRoutineWork.currentOwner);
     Call1(FieldEvent_Wait, 1);
     Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner,
-          0x100, 0x88);
-    Call3(Actor_ResetAndSetPositionInMode2, 5, 0x110, 0x88);
+          256, 136);
+    Call3(Actor_ResetAndSetPositionInMode2, 5, 272, 136);
     Call1(Actor_WaitForMoveById,
           gMainRoutineWork.currentOwner);
     Call1(Actor_WaitForMoveById, 5);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
-    Call3(Actor_ArmCallback, 5, 0x8000, 0);
-    Call1(FieldEvent_Wait, 0xa);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Call3(Actor_ArmCallback, 5, FACING_WEST, 0);
+    Call1(FieldEvent_Wait, 10);
     Call2(Func_02004de0, 5, 0);
     Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 0x1e);
-    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 0x100,
-          0x98);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
-    Call1(FieldEvent_Wait, 0x14);
-    Call3(Actor_ArmCallback, 5, 0x4000, 0);
-    Call1(FieldEvent_Wait, 0x14);
+    Call1(FieldEvent_Wait, 30);
+    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 256,
+          152);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Call1(FieldEvent_Wait, 20);
+    Call3(Actor_ArmCallback, 5, FACING_SOUTH, 0);
+    Call1(FieldEvent_Wait, 20);
     Call2(Actor_SetModeById, 5, 3);
-    Call1(FieldEvent_Wait, 0x1e);
-    Call3(Actor_ArmCallback, 5, 0xc000, 0);
-    Call1(FieldEvent_Wait, 0x14);
-    Call3(Actor_SetPositionAndReset, 5, 0x108, 0x89);
-    Call3(Actor_ArmCallback, 5, 0xc000, 0);
-    Call1(FieldEvent_Wait, 0x14);
+    Call1(FieldEvent_Wait, 30);
+    Call3(Actor_ArmCallback, 5, FACING_NORTH, 0);
+    Call1(FieldEvent_Wait, 20);
+    Call3(Actor_SetPositionAndReset, 5, 264, 137);
+    Call3(Actor_ArmCallback, 5, FACING_NORTH, 0);
+    Call1(FieldEvent_Wait, 20);
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
     FieldMessage_Show(MsgBlazeTabletInscription + 3, 1);
 #else
@@ -92,10 +92,10 @@ void Func_020030cc(void) {
     Call2(Party_LearnAbility, 5, 0x9a);
     Call1(GameFlag_SetBit, 0x9fa);
     Call3(Actor_TurnToFaceEachOther, gMainRoutineWork.currentOwner, 5, 0);
-    Call1(FieldEvent_Wait, 0xa);
+    Call1(FieldEvent_Wait, 10);
     Call2(Actor_SetModeById, 5, 3);
     Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 0x14);
+    Call1(FieldEvent_Wait, 20);
     Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2(Actor_SetModeById, 5, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);

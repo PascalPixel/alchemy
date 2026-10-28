@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "scene_tables.h"
 
 /// A switch that toggles flag 0x207 and its map edits once flag 0x983 is set;
 /// before that, it does nothing. "There's no reaction... It doesn't seem to be
@@ -9,8 +10,8 @@ void Func_0200065c(void) {
   if (LemurianShip_FlagCheck(0x983)) {
     if (LemurianShip_FlagCheck(0x207)) {
       LemurianShip_SePlay(232);
-      LemurianShip_ObjSetPos(Actor_GetById(15), 0x3380000, 0xffe00000,
-                             0x480000);
+      LemurianShip_ObjSetPos(Actor_GetById(15), PIXELS(824), PIXELS(-32),
+                             PIXELS(72));
       Actor_GetById(15)->height = 0xffe00000;
       LemurianShip_MapCopy(72, 68, 50, 64, 3, 3);
       LemurianShip_BlendStart(106, 16, 3, 2, 110, 4);

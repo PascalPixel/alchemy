@@ -1,4 +1,5 @@
 #include "types.h"
+#include "io_reg.h"
 
 extern u8 gData_0200308c;
 
@@ -7,7 +8,7 @@ void wait(s32 frames);
 static __inline__ void Blend_WriteAlpha(s32 value) {
   // The s32 parameter keeps each constant a word built with shifts; a u16 store
   // loads it from the literal pool.
-  *(volatile u16 *)0x04000052 = value;
+  REG_BLDALPHA = value;
 }
 
 /* FAKEMATCH: each alpha write is a one-pass block; with the plain inline the

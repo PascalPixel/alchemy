@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -134,7 +135,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Func_020010bc(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_020010c4(object);
-    object->angle = 0xc000;
+    object->angle = FACING_NORTH;
   }
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_0200121c);

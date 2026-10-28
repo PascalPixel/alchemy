@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Func_02003610(void) {
   Task_RemoveFar(Func_02002ccc);
@@ -12,8 +13,8 @@ void Func_02003610(void) {
 void Func_02003640(s32 open, s32 hide) {
   if (open != 0) {
     Kibombo_MapCopy(49, 37, 79, 15, 3, 2);
-    Kibombo_ObjSetPos(Actor_GetById(12), 0xfd0000, 0x200000, 0x1210000);
-    Kibombo_ObjSetPos(Actor_GetById(13), 0x1130000, 0x200000, 0x1210000);
+    Kibombo_ObjSetPos(Actor_GetById(12), PIXELS(253), PIXELS(32), PIXELS(289));
+    Kibombo_ObjSetPos(Actor_GetById(13), PIXELS(275), PIXELS(32), PIXELS(289));
     if (hide != 0) {
       Actor_SetModeById(12, 0);
       Actor_SetModeById(13, 0);
@@ -33,7 +34,7 @@ void Func_020036e0(s32 open, s32 mode) {
     Kibombo_MapCopy(41, 38, 79, 16, 3, 3);
     Kibombo_BlendStart(12, 21, 1, 1, 16, 22);
     if (mode != 0)
-      Kibombo_ObjSetPos(Actor_GetById(14), 0x1080000, 0x200000, 0x1340000);
+      Kibombo_ObjSetPos(Actor_GetById(14), PIXELS(264), PIXELS(32), PIXELS(308));
     switch (mode) {
     case 0:
       Func_02005b0c(14, 0, 0);
@@ -52,11 +53,11 @@ void Func_020036e0(s32 open, s32 mode) {
       break;
     case 5:
       Actor_SetModeById(14, 6);
-      Actor_GetById(14)->y -= 0x220000;
+      Actor_GetById(14)->y -= PIXELS(34);
       break;
     case 6:
       Actor_SetModeById(14, 7);
-      Actor_GetById(14)->y -= 0x220000;
+      Actor_GetById(14)->y -= PIXELS(34);
       break;
     }
   } else {

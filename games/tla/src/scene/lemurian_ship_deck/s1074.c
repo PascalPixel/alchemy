@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 extern const u8 MsgWellThereS[];
 
@@ -48,10 +49,10 @@ void Func_02001074(void) {
     Func_020020ac(0);
     Func_02001fd4(9, gMainRoutineWork.currentOwner);
     wait(1);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     SetSpeed(9, 0xcccc, 0x6666);
     SetPosition(9, 416, 428);
-    Func_02002044(9, 0x8000);
+    Func_02002044(9, FACING_WEST);
     Func_0200201c(MsgWellThereS);
     Func_02002034(9, 0);
     Actor_SetModeById(9, 2);

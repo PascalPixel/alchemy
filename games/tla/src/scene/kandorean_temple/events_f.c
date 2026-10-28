@@ -56,12 +56,12 @@ void Func_02000c74(void) {
 
 void Func_02000c90(s32 id) {
   Actor_GetById(id)->scaleY = 0x800;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(id), 0xd80000, 0, 0xd80000);
+  Actor_SetPositionAndResetMotion_(Actor_GetById(id), PIXELS(216), 0, PIXELS(216));
 }
 
 void Func_02000cb4(s32 id) {
   Actor_GetById(id)->scaleY = 0x800;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(id), 0x1780000, 0, 0xf80000);
+  Actor_SetPositionAndResetMotion_(Actor_GetById(id), PIXELS(376), 0, PIXELS(248));
 }
 
 void Func_02000cd8(s32 id, s32 dy, s32 scale) {
@@ -101,17 +101,17 @@ void Func_02000d64(void) {
   Actor_SetModeById_(9, 0);
   Actor_SetSpritePriority_(9, 2);
   Actor_GetById_(9)->priorityFlags &= ~2;
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(9), 0xd80000, 0x80000,
-                                    0xd80000);
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(9), PIXELS(216), PIXELS(8),
+                                    PIXELS(216));
   if (GameFlag_Test_(0x208)) {
     Actor_SetModeById_(9, 4);
     Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                      0xd80000, 0xc0000, 0xd80000);
+                                      PIXELS(216), PIXELS(12), PIXELS(216));
     Actor_SetSingleChildFlags_(
         Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
   Actor_GetById_(11)->scaleY = 0x10000;
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(11), 0xd80000, 0, 0xd80000);
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(11), PIXELS(216), 0, PIXELS(216));
   Func_02000c90(13);
   Func_02000c90(14);
   if (GameFlag_Test_(0x301)) {
@@ -131,18 +131,18 @@ void Func_02000e60(void) {
   Actor_SetModeById_(10, 0);
   Actor_SetSpritePriority_(10, 2);
   Actor_GetById_(10)->priorityFlags &= ~2;
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(10), 0x1780000, 0x80000,
-                                    0xf80000);
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(10), PIXELS(376), PIXELS(8),
+                                    PIXELS(248));
   if (GameFlag_Test_(0x209)) {
     Actor_SetModeById_(10, 4);
     Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
-                                      0x1780000, 0xc0000, 0xf80000);
+                                      PIXELS(376), PIXELS(12), PIXELS(248));
     Actor_SetSingleChildFlags_(
         Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
   Actor_GetById_(12)->scaleY = 0x10000;
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(12), 0x1780000, 0,
-                                    0xf80000);
+  Actor_SetPositionAndResetMotion_(Actor_GetById_(12), PIXELS(376), 0,
+                                    PIXELS(248));
   Func_02000cb4(17);
   Func_02000cb4(18);
   if (GameFlag_Test_(0x300)) {

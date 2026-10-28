@@ -4,6 +4,8 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
+#include "io_reg.h"
 
 extern u16 gData_02007948[4];
 struct Actor *Actor_GetById(u32 id);
@@ -57,8 +59,8 @@ void Func_0200516c(void) {
   done = GameFlag_Test(265);
   if (!done) {
     actor->motionFlags = done;
-    actor->y = 0x2a0000;
-    actor->z += -0x2a0000;
+    actor->y = PIXELS(42);
+    actor->z += PIXELS(-42);
     Actor_SetSingleChildFlags(Actor_GetById(11), 0);
     Actor_SetSpritePriority(11, 1);
     if (gMainRoutineWork.entrance == 19 && GameFlag_Test(7)) {
@@ -95,10 +97,10 @@ void Func_0200516c(void) {
     }
   }
   GameFlag_SetBit(0x202);
-  gData_02007948[0] = *(u16 *)0x05000012;
-  gData_02007948[1] = *(u16 *)0x050000ae;
-  gData_02007948[2] = *(u16 *)0x050000ce;
-  gData_02007948[3] = *(u16 *)0x050000ee;
+  gData_02007948[0] = *(u16 *)&BG_PLTT_COLOR(0, 9);
+  gData_02007948[1] = *(u16 *)&BG_PLTT_COLOR(5, 7);
+  gData_02007948[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
+  gData_02007948[3] = *(u16 *)&BG_PLTT_COLOR(7, 7);
   Func_020050ac();
   Actor_SetSingleChildFlags(Actor_GetById(30), 0);
   Actor_SetSingleChildFlags(Actor_GetById(31), 0);
@@ -116,7 +118,7 @@ void Func_0200516c(void) {
     Func_02005b0c(26, 0, 0);
     Func_02005b0c(27, 0, 0);
     Func_02005b0c(28, 0, 0);
-    Call3((void (*)())Func_02005b0c, 21, 0x12e0000, 0xac0000);
+    Call3((void (*)())Func_02005b0c, 21, PIXELS(302), PIXELS(172));
   }
   GameFlag_SetBit(0x86b);
   Event_StartScreenTransition();

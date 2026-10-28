@@ -1,5 +1,6 @@
 #include "mars_lighthouse_aerie.h"
 #include "io_reg.h"
+#include "scene_tables.h"
 
 struct MarsLighthouseAerieEventWork {
   u8 unk000[0x1ac];
@@ -47,15 +48,15 @@ s32 Func_02000314(void) {
     Call2((void (*)())Actor_SetModeById, 20, 8);
     Call2((void (*)())Actor_SetModeById, 21, 8);
     Call2((void (*)())Actor_SetModeById, 22, 7);
-    Call3((void (*)())Func_0200567c, 19, 0x1f20000, 0x1400000);
-    Call3((void (*)())Func_0200567c, 1, 0x21a0000, 0x1400000);
-    Call3((void (*)())Func_0200567c, gMainRoutineWork.currentOwner, 0x1fa0000,
-          0x1180000);
+    Call3((void (*)())Func_0200567c, 19, PIXELS(498), PIXELS(320));
+    Call3((void (*)())Func_0200567c, 1, PIXELS(538), PIXELS(320));
+    Call3((void (*)())Func_0200567c, gMainRoutineWork.currentOwner, PIXELS(506),
+          PIXELS(280));
     Call1((void (*)())wait, 1);
     Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
     ((struct Actor *)Value0((s32 (*)())Func_0200573c))->motionFlags = 0;
-    Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000,
-          0x1380000, 1);
+    Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(512), PIXELS(96),
+          PIXELS(312), 1);
     Func_0200558c();
     Call1((void (*)())wait, 1);
     Event_StartScreenTransition();

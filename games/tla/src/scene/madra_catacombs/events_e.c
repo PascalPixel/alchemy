@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -149,10 +150,10 @@ void Func_02000dcc(void) {
     Actor_SetPositionAndResetMotion(object, x, y, z << 16);
   }
   if (Flag_Test(0x8ca) != 0)
-    Actor_Place(12, 712 << 16, 424 << 16);
+    Actor_Place(12, PIXELS(712), PIXELS(424));
   Func_020011dc(gData_020013c0);
   if (Flag_Test(0x9ef) != 0)
-    Actor_Place(8, 568 << 16, 280 << 16);
+    Actor_Place(8, PIXELS(568), PIXELS(280));
   Actor_GetById(8)->priorityFlags &= 0xfe;
   Func_02000038(gData_020013ca);
   Func_020011c4(gData_020013c4);
@@ -200,8 +201,8 @@ void Func_02000fd8(void) {
     object = Actor_GetById(64);
     object->collisionFlags = 8;
     object->motionFlags = 2;
-    object->y = 0x200000;
-    object->terrainHeight = 0x200000;
+    object->y = PIXELS(32);
+    object->terrainHeight = PIXELS(32);
     object->update = Func_02000a28;
     Actor_GetById(8)->scaleY = 0xcccc;
   }

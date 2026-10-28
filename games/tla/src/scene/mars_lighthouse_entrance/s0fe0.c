@@ -1,6 +1,7 @@
 #include "room.h"
 #include "call.h"
 #include "io_reg.h"
+#include "scene_tables.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02000df0(void);
@@ -25,7 +26,7 @@ void Func_02000fe0(const u8 *event) {
   Func_02004bc0(leader, 27);
   Actor_SetAnimationSpeed(leader, 48);
   wait(30);
-  leader->angle = 0x4000;
+  leader->angle = FACING_SOUTH;
   leader->motionFlags = 0;
   if ((event[3] & 64) == 0) {
     {

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "frame.h"
+#include "io_reg.h"
 
 extern s16 gData_02002608[];
 
@@ -27,7 +28,7 @@ void Func_020000f4(void) {
     {
       /* FAKEMATCH(pin): the read stays in r3; as a plain local, 6 of 35
        * instructions differ in tla-en. */
-      register s32 raw asm("r3") = *(volatile u16 *)0x0500019c;
+      register s32 raw asm("r3") = *(volatile u16 *)&BG_PLTT_COLOR(12, 14);
 
       /* FAKEMATCH(barrier): the barrier keeps the sign extension apart from
        * the read; without it, 6 of 35 instructions differ in tla-en. */
@@ -36,13 +37,13 @@ void Func_020000f4(void) {
     }
     index = 14;
   loop:
-    palette = (volatile u16 *)0x05000180;
+    palette = (volatile u16 *)&BG_PLTT_COLOR(12, 0);
     palette[index] = (palette - 1)[index];
     index--;
     if (index != 1)
       goto loop;
-    *(volatile u16 *)0x05000182 = saved;
+    *(volatile u16 *)&BG_PLTT_COLOR(12, 1) = saved;
   }
   color = gData_02002608[(gFrameCount >> 2) % 12];
-  *(volatile u16 *)0x0500019e = color;
+  *(volatile u16 *)&BG_PLTT_COLOR(12, 15) = color;
 }

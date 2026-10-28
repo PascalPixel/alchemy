@@ -1,6 +1,7 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 extern const u8 MsgThenLetS[];
 
@@ -38,9 +39,9 @@ void Func_02001da0(void) {
     Func_020020ac(0);
     Actor_SetSpeedParameters(4, 0xcccc, 0x6666);
     Actor_GetById(7)->update = (void (*)(void))Func_02001d60;
-    Func_020020b4_(7, 16, 0, 0x8000);
+    Func_020020b4_(7, 16, 0, FACING_WEST);
     Actor_SetSingleChildFlags(Actor_GetById(7), 0);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Func_0200201c(MsgThenLetS);
     Actor_WaitForMoveById(7);
     Actor_GetById(7)->update = 0;

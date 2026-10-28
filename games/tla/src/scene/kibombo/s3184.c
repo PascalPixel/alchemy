@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "io_reg.h"
 
 extern struct KibomboObject *gData_02007950;
 
@@ -48,8 +49,8 @@ static inline void Kibombo_Spawn(s32 x, s32 y, s32 z) {
 void Func_02003184(void) {
   s32 x = 0x1b80000;
 
-  *(volatile u16 *)0x04000052 = 0x0c08;
-  *(volatile u16 *)0x04000050 = 0x3f10;
+  REG_BLDALPHA = BLEND_ALPHA(8, 12);
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   Kibombo_Spawn(x, 0x280000, 0x1c20000);
   Kibombo_Spawn(x, 0x2e0000, 0x1b60000);
   Kibombo_Spawn(x, 0x340000, 0x1aa0000);

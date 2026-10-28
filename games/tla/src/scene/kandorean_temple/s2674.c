@@ -14,7 +14,7 @@ void Func_0200269c(void) {
 void Func_020026cc(void) {
   Func_020051c0();
   Func_02005370(0);
-  Camera_MoveWithinMapBounds(0x1480000, -1, 0xae0000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(328), -1, PIXELS(174), 1);
   Func_020052e8();
   FieldEvent_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
@@ -22,13 +22,13 @@ void Func_020026cc(void) {
   Motion_SetVarCbAndRefresh(11, 2);
   Func_020053d8(146);
   Actor_SetModeById(11, 2);
-  Actor_GetById(11)->velocityY = 0x40000;
+  Actor_GetById(11)->velocityY = PIXELS(4);
   FieldEvent_Wait(10);
   Func_020053d8(146);
   Actor_SetModeById(12, 2);
   Actor_SetModeById(13, 2);
-  Actor_GetById(12)->velocityY = 0x60000;
-  Actor_GetById(13)->velocityY = 0x60000;
+  Actor_GetById(12)->velocityY = PIXELS(6);
+  Actor_GetById(13)->velocityY = PIXELS(6);
   Actor_ResetAndSetPosition(12, 300, 164);
   Actor_SetPositionAndCommit(13, 356, 164);
   FieldEvent_Wait(40);

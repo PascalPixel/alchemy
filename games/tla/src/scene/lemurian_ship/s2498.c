@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "scene_tables.h"
 
 void Func_0200143c(void);
 void Func_02001944(s32 actor, s32 id);
@@ -13,7 +14,7 @@ void Func_02002498(void) {
   Actor_SetSpritePriority(8, 1);
   if (LemurianShip_FlagCheck(0x938)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 32);
-    LemurianShip_ObjSetPos(Actor_GetById(16), 0x3080000, 0, 0x2080000);
+    LemurianShip_ObjSetPos(Actor_GetById(16), PIXELS(776), 0, PIXELS(520));
     Actor_GetById(16)->height = 0;
     if (!LemurianShip_FlagCheck(0x228))
       LemurianShip_ObjPlace(9, 0, 0);
@@ -22,7 +23,7 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x939)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 53, 32);
-    LemurianShip_ObjSetPos(Actor_GetById(17), 0x3580000, 0, 0x2080000);
+    LemurianShip_ObjSetPos(Actor_GetById(17), PIXELS(856), 0, PIXELS(520));
     Actor_GetById(17)->height = 0;
     if (!LemurianShip_FlagCheck(0x229))
       LemurianShip_ObjPlace(10, 0, 0);
@@ -31,7 +32,7 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x93a)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 43, 37);
-    LemurianShip_ObjSetPos(Actor_GetById(18), 0x2b80000, 0, 0x2580000);
+    LemurianShip_ObjSetPos(Actor_GetById(18), PIXELS(696), 0, PIXELS(600));
     Actor_GetById(18)->height = 0;
     if (!LemurianShip_FlagCheck(0x22a))
       LemurianShip_ObjPlace(11, 0, 0);
@@ -40,7 +41,7 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x93b)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 37);
-    LemurianShip_ObjSetPos(Actor_GetById(19), 0x3080000, 0, 0x2580000);
+    LemurianShip_ObjSetPos(Actor_GetById(19), PIXELS(776), 0, PIXELS(600));
     Actor_GetById(19)->height = 0;
     if (!LemurianShip_FlagCheck(0x22b))
       LemurianShip_ObjPlace(12, 0, 0);
@@ -49,7 +50,7 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x93c)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 50, 37);
-    LemurianShip_ObjSetPos(Actor_GetById(20), 0x3280000, 0, 0x2580000);
+    LemurianShip_ObjSetPos(Actor_GetById(20), PIXELS(808), 0, PIXELS(600));
     Actor_GetById(20)->height = 0;
     if (!LemurianShip_FlagCheck(0x22c))
       LemurianShip_ObjPlace(13, 0, 0);
@@ -58,7 +59,7 @@ void Func_02002498(void) {
   }
   if (LemurianShip_FlagCheck(0x93e)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 43);
-    LemurianShip_ObjSetPos(Actor_GetById(22), 0x3080000, 0, 0x2b80000);
+    LemurianShip_ObjSetPos(Actor_GetById(22), PIXELS(776), 0, PIXELS(696));
     Actor_GetById(22)->height = 0;
     if (!LemurianShip_FlagCheck(0x22e))
       LemurianShip_ObjPlace(15, 0, 0);

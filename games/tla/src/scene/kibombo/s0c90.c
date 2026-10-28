@@ -1,18 +1,19 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Func_02000c90(void) {
   struct KibomboObject *leader;
 
   Func_02005a9c();
   Func_02005c3c(0);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, 0, 0);
+  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Func_02005ba4(0x26666, 0x4ccc);
-  Kibombo_CamMove(0x1180000, -1, 0x580000, 1);
+  Kibombo_CamMove(PIXELS(280), -1, PIXELS(88), 1);
   Func_02005bb4();
   FieldEvent_Wait(20);
   Func_02005b4c((s32)MsgYouVeCome);
   Func_02005b64(0x8007, 0);
-  Kibombo_ObjTurn(7, 0x8000);
+  Kibombo_ObjTurn(7, FACING_WEST);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(7, 3);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);

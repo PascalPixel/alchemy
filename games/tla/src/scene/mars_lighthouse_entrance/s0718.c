@@ -1,4 +1,5 @@
 #include "room.h"
+#include "scene_tables.h"
 
 extern char SceneId_Ov6aaRoom1;
 extern char SceneId_Ov6aaRoom2;
@@ -35,11 +36,11 @@ void Func_02000718(void) {
   Func_02004ca8();
   Func_02004da0(0);
   Func_02004d10(0x10000, 0x2000);
-  Camera_SetBounds(0xa80000, 0, 0x2980000, 1);
+  Camera_SetBounds(PIXELS(168), 0, PIXELS(664), 1);
   Func_02004d20();
   wait(10);
   Func_02004d10(0x40000, 0x8000);
-  Camera_SetBounds(0x1d80000, 0, 0x2980000, 1);
+  Camera_SetBounds(PIXELS(472), 0, PIXELS(664), 1);
   Func_02004d20();
   FieldEvent_Wait(90);
   Func_02004cb0();
@@ -90,7 +91,7 @@ void Func_020008f4(s32 unused, s32 id) {
 
     if (object->x >> 20 == 20) {
       FieldEvent_Wait(5);
-      object->z += 0x10000;
+      object->z += PIXELS(1);
       BYTE_AT(object, 98) = 1;
       Flag_Set(0xa4f);
     }

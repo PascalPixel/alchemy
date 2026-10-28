@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 void Func_020032b0(void);
 void Func_02005bdc(s32 a, s32 b);
@@ -28,12 +29,12 @@ void Func_02004424(void) {
   FieldEvent_Wait(40);
   Func_02005b4c((s32)MsgOhTheMagic);
   Kibombo_MessagePut(17, 0);
-  Kibombo_ObjTurn(17, 0x3000);
+  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Kibombo_MessagePut(0x4011, 0);
-  Kibombo_ObjTurn(17, 0x5000);
+  Kibombo_ObjTurn(17, FACING_SOUTH + FACING_STEP);
   Kibombo_MessagePut(0x4011, 0);
   Task_RemoveFar(Func_02002ccc);
-  Kibombo_ObjTurn(17, 0xd000);
+  Kibombo_ObjTurn(17, FACING_NORTH + FACING_STEP);
   Func_02005bdc(0x10000, 0);
   Func_02005bd4(0, 0);
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;

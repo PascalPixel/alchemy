@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "io_reg.h"
 
 extern u8 gData_0200635c[];
 extern s16 gData_02007948[];
@@ -29,7 +30,7 @@ void Func_02002ba4(s32 index, s32 entry, s32 delta) {
   g = Func_02002b08(g);
   b = Func_02002b08(b);
   {
-    u16 *dst = &((u16 *)0x05000000)[index];
+    u16 *dst = &((u16 *)BG_PLTT)[index];
 
     r |= (b << 10) | (g << 5);
     *dst = r;

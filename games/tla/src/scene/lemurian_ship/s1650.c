@@ -1,4 +1,5 @@
 #include "lemurian_ship.h"
+#include "scene_tables.h"
 
 extern const u8 gData_02002f1c[];
 extern const u8 gData_02002f44[];
@@ -20,7 +21,7 @@ void Func_02001650(void) {
   LemurianShip_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   LemurianShip_ObjWalk(gMainRoutineWork.currentOwner, 808, 208);
   LemurianShip_CamSpeed(0xcccc, 0x1999);
-  LemurianShip_CamMove(0x3280000, -1, 0xb00000, 1);
+  LemurianShip_CamMove(PIXELS(808), -1, PIXELS(176), 1);
   Func_02002cd8(7, gMainRoutineWork.currentOwner);
   Func_02002cd8(6, gMainRoutineWork.currentOwner);
   Func_02002cd8(5, gMainRoutineWork.currentOwner);
@@ -36,7 +37,7 @@ void Func_02001650(void) {
   Actor_SetMovementTypeAndWaitById(7, gData_02002f1c);
   LemurianShip_Wait(20);
   LemurianShip_MessagePut(7, 0);
-  LemurianShip_ObjTurn(7, 0x4000);
+  LemurianShip_ObjTurn(7, FACING_SOUTH);
   LemurianShip_MessagePut(7, 0);
   Actor_SetModeById(7, 3);
   LemurianShip_MessagePut(7, 0);
@@ -52,12 +53,12 @@ void Func_02001650(void) {
   Task_RemoveFar(Func_020015c8);
   LemurianShip_SePlay(251);
   LemurianShip_CamSet(0x2b00000, 0, 0x3a00000, 0x2200000);
-  LemurianShip_CamMove(0x3280000, -1, 0x1c00000, 0);
-  LemurianShip_ObjPlace(gMainRoutineWork.currentOwner, 0x3280000, 0x1e00000);
-  LemurianShip_ObjPlace(7, 0x3280000, 0x1a40000);
-  LemurianShip_ObjPlace(6, 0x3100000, 0x1d40000);
-  LemurianShip_ObjPlace(5, 0x3400000, 0x1d40000);
-  LemurianShip_ObjPlace(8, 0x3180000, 0x1e80000);
+  LemurianShip_CamMove(PIXELS(808), -1, PIXELS(448), 0);
+  LemurianShip_ObjPlace(gMainRoutineWork.currentOwner, PIXELS(808), PIXELS(480));
+  LemurianShip_ObjPlace(7, PIXELS(808), PIXELS(420));
+  LemurianShip_ObjPlace(6, PIXELS(784), PIXELS(468));
+  LemurianShip_ObjPlace(5, PIXELS(832), PIXELS(468));
+  LemurianShip_ObjPlace(8, PIXELS(792), PIXELS(488));
   Func_02002c10();
   LemurianShip_Wait(20);
   LemurianShip_SePlay(246);

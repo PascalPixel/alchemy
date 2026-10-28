@@ -1,4 +1,5 @@
 #include "room.h"
+#include "scene_tables.h"
 
 extern char SceneId_Ov6aaRoom1;
 extern char SceneId_Ov6aaRoom2;
@@ -30,7 +31,7 @@ void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_020009c0(void) {
   Func_02004d10(0x10000, 0x2000);
-  Camera_SetBounds(0x580000, -1, 0x2b80000, 1);
+  Camera_SetBounds(PIXELS(88), -1, PIXELS(696), 1);
   Func_020019c4();
 }
 

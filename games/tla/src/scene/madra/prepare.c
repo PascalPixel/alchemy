@@ -208,7 +208,7 @@ void Func_02000894(void) {
     }
     Func_02002be8(8, 0);
   }
-  Actor_ArmCallback(14, 0x4000, 0);
+  Actor_ArmCallback(14, FACING_SOUTH, 0);
   GameFlag_SetBit(0x300);
   Func_02002b30();
 }
@@ -251,7 +251,7 @@ void Func_02000968(void) {
     }
     Func_02002be8(8, 0);
   }
-  Actor_ArmCallback(14, 0x4000, 0);
+  Actor_ArmCallback(14, FACING_SOUTH, 0);
   GameFlag_SetBit(0x300);
   Func_02002b30();
 }

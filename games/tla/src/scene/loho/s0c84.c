@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 extern char SceneId_Ov6A6Room1;
 extern char SceneId_Ov6A6Room2;
@@ -24,7 +25,7 @@ void Func_02000c84(void) {
   GameFlag_SetBit(0x201);
   Actor_GetById(22)->collisionFlags &= 0xfe;
   if (GameFlag_Test(0xff7) == 0)
-    Func_02001348_(66, 0x2080000, 0x880000);
+    Func_02001348_(66, PIXELS(520), PIXELS(136));
 }
 
 const u8 *Func_02000cc0(void) {

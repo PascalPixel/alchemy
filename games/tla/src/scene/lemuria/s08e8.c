@@ -4,6 +4,7 @@
 #include "actor.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "scene_tables.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -59,7 +60,7 @@ void Func_02000934(void) {
     Call1((void (*)())Actor_RefreshSelectorById, 30);
     Call1(Func_02001c6c, (s32)MsgYouLookLike);
     Call2(Func_02001c84, 30, 0);
-    Call2(Func_02001c94, 30, 0xd000);
+    Call2(Func_02001c94, 30, FACING_NORTH + FACING_STEP);
     return;
   }
   Func_02001bcc();
@@ -78,14 +79,14 @@ void Func_02000934(void) {
     Call2(Motion_SetModeAndWaitAnimation, 30, 3);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Call3(Func_02001c7c, 30, 0, 5);
-    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 0x1d0,
-          0x410);
-    Call2(Func_02001c94, gMainRoutineWork.currentOwner, 0xc000);
+    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 464,
+          1040);
+    Call2(Func_02001c94, gMainRoutineWork.currentOwner, FACING_NORTH);
     Call1(FieldEvent_Wait, 5);
     Call3(Actor_SetSpeedParameters, 30, 0x13333, 0x9999);
-    Call3(Actor_SetPositionAndReset, 30, 0x1b8, 0x418);
+    Call3(Actor_SetPositionAndReset, 30, 440, 1048);
     Call1(GameFlag_SetBit, 0x908);
   }
-  Call2(Func_02001c94, 30, 0xd000);
+  Call2(Func_02001c94, 30, FACING_NORTH + FACING_STEP);
   Func_02001bd4();
 }

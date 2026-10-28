@@ -1,4 +1,5 @@
 #include "room.h"
+#include "scene_tables.h"
 
 void Func_02000670(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk166 = 0;
@@ -7,11 +8,11 @@ void Func_02000670(void) {
   Func_02005560();
   Func_02005648(0);
   Func_020055d0(0x20000, 0x4000);
-  Camera_SetBounds(0xf80000, -1, 0x2c80000, 1);
+  Camera_SetBounds(PIXELS(248), -1, PIXELS(712), 1);
   Func_020055e0();
   wait(20);
   Func_020055d0(0x50000, 0xa000);
-  Camera_SetBounds(0xf80000, -1, 0x3680000, 1);
+  Camera_SetBounds(PIXELS(248), -1, PIXELS(872), 1);
   Func_020055e0();
   FieldEvent_Wait(120);
   Func_02005568();

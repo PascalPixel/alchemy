@@ -1,5 +1,6 @@
 #include "types.h"
 #include "actor.h"
+#include "scene_tables.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -20,7 +21,7 @@ void Func_0200102c(void) {
   right->y = 0;
   if (GameFlag_Test(0x8c9) != 0) {
     if (GameFlag_Test(0x109) == 0) {
-      left->x += -0xc0000;
+      left->x += PIXELS(-12);
       {
         s32 x = right->x;
 

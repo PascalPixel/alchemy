@@ -1,4 +1,5 @@
 #include "kibombo.h"
+#include "scene_tables.h"
 
 extern const u8 gData_020061a8[];
 
@@ -17,10 +18,10 @@ void Func_020045d0(void) {
   Actor_Jump(23, 6, 0);
   Actor_Jump(24, 6, 0);
   Actor_Jump(25, 6, 40);
-  Kibombo_ObjTurn(20, 0x5000);
+  Kibombo_ObjTurn(20, FACING_SOUTH + FACING_STEP);
   Actor_Jump(20, 2, 0);
   Kibombo_MessagePut(0x4000 + 20, 0);
-  Kibombo_ObjTurn(23, 0x3000);
+  Kibombo_ObjTurn(23, FACING_SOUTHEAST + FACING_STEP);
   Actor_Jump(23, 2, 0);
   Kibombo_MessagePut(0x4000 + 23, 0);
   Actor_SetMovementTypeById(18, gData_020061a8);
@@ -32,7 +33,7 @@ void Func_020045d0(void) {
   Actor_SetMovementTypeById(24, gData_020061a8);
   Actor_SetMovementTypeById(25, gData_020061a8);
   Kibombo_Wait(40);
-  Kibombo_ObjTurn(17, 0x3000);
+  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Actor_Jump(17, 2, 10);
   Actor_Jump(17, 4, 10);
   Kibombo_MessagePut(17, 0);
@@ -45,14 +46,14 @@ void Func_020045d0(void) {
   Actor_Stop(24);
   Actor_Stop(25);
   Kibombo_Wait(40);
-  Kibombo_ObjArm(18, 0xd000, 0);
-  Kibombo_ObjArm(19, 0xd000, 0);
-  Kibombo_ObjArm(20, 0xd000, 0);
-  Kibombo_ObjArm(21, 0xd000, 0);
-  Kibombo_ObjArm(22, 0xb000, 0);
-  Kibombo_ObjArm(23, 0xb000, 0);
-  Kibombo_ObjArm(24, 0xb000, 0);
-  Kibombo_ObjArm(25, 0xb000, 0);
+  Kibombo_ObjArm(18, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(19, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(20, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(21, FACING_NORTH + FACING_STEP, 0);
+  Kibombo_ObjArm(22, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(23, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(24, FACING_NORTHWEST + FACING_STEP, 0);
+  Kibombo_ObjArm(25, FACING_NORTHWEST + FACING_STEP, 0);
   Func_02005b94(17, 0x107, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Kibombo_MessagePut(0x8000 + 17, 0);
@@ -91,7 +92,7 @@ void Func_020047e4(void) {
       __asm__("" : "+l"(limit), "+l"(object));
       if (object->y > limit << 14) {
         do {
-          Kibombo_ObjArm(17, 0xd000, 0);
+          Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
           slot = &gData_02007950;
           object = *slot;
           object->y += 0xffffc000;
@@ -102,7 +103,7 @@ void Func_020047e4(void) {
   }
   Motion_SetModeAndWaitAnimation(17, 4);
   Func_02005b64(17, 0);
-  Kibombo_ObjTurn(17, 0x3000);
+  Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Func_02005b64(0x4011, 0);
   GameFlag_SetBit(0x8fc);
   GameFlag_SetBit(265);

@@ -6,6 +6,7 @@
 #include "call.h"
 #include "text/msg_ids.h"
 #include "edition.h"
+#include "scene_tables.h"
 
 extern s32 gData_020024b4;
 extern s32 gData_020024b0;
@@ -75,22 +76,22 @@ void Func_020002cc(void) {
   Call1((void (*)())Func_020020ac, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_02002074()->motionFlags = 0;
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1560000, 0x300000, 0x1980000,
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(342), PIXELS(48), PIXELS(408),
         0);
   Call1((void (*)())wait, 1);
   Call6((void (*)())Func_02001f2c, 60, 53, 67, 16, 7, 3);
-  Call4((void (*)())Func_02001fcc, gMainRoutineWork.currentOwner, 0x2280000,
-        0x1780000, 0);
+  Call4((void (*)())Func_02001fcc, gMainRoutineWork.currentOwner, PIXELS(552),
+        PIXELS(376), FACING_EAST);
   /* FAKEMATCH: the two-instruction angle set before its call is built ahead
    * of the position arguments; as a constant argument, 4 instructions differ
    * in tla-en. */
   angle = 0xd000;
-  Call4((void (*)())Func_02001fcc, 9, 0x22e0000, 0x1590000, angle);
-  Call4((void (*)())Func_02001fcc, 7, 0x2160000, 0x1940000, 0);
+  Call4((void (*)())Func_02001fcc, 9, PIXELS(558), PIXELS(345), angle);
+  Call4((void (*)())Func_02001fcc, 7, PIXELS(534), PIXELS(404), FACING_EAST);
   turn = 0x2000;
-  Call4((void (*)())Func_02001fcc, 6, 0x2380000, 0x1980000, turn);
+  Call4((void (*)())Func_02001fcc, 6, PIXELS(568), PIXELS(408), turn);
   angle = 0x4000;
-  Call4((void (*)())Func_02001fcc, 5, 0x2220000, 0x1b80000, angle);
+  Call4((void (*)())Func_02001fcc, 5, PIXELS(546), PIXELS(440), angle);
   Func_02001f1c();
   Call1((void (*)())wait, 1);
   Call2((void (*)())Actor_SetMovementTypeById, 5,
@@ -105,25 +106,25 @@ void Func_020002cc(void) {
   gData_020024b0 = 0;
   Value2(Task_Add, (s32)Func_02000288, 0x480);
   Call2((void (*)())Func_0200205c, 0xcccc, 0x1999);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x21e0000, 0x2c0000, 0x18c0000,
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(542), PIXELS(44), PIXELS(396),
         1);
   Func_0200206c();
   Call1((void (*)())FieldEvent_Wait, 80);
-  Call2((void (*)())Func_02002044, 7, 0xe000);
+  Call2((void (*)())Func_02002044, 7, FACING_NORTHEAST);
   Call1((void (*)())Func_0200201c, (s32)MsgTakeTheTiller);
   Call2((void (*)())Func_02002034, 7, 0);
   Value3(Func_0200204c, gMainRoutineWork.currentOwner, 0x100, 0);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
-  Value3((s32 (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x6000,
+  Value3((s32 (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTHWEST,
          20);
   Call2((void (*)())Func_02002034, 7, 0);
   Call1((void (*)())Actor_Stop, 5);
   Call1((void (*)())Actor_Stop, 9);
   Call1((void (*)())Actor_Stop, 6);
   Call1((void (*)())wait, 1);
-  Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
+  Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
+  Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
   Value3(Func_0200204c, 6, 0x101, 20);
   Call2((void (*)())Func_02002034, 6, 0);
   Func_02002044(9, turn);
@@ -133,12 +134,12 @@ void Func_020002cc(void) {
   Value2((s32 (*)())FieldMessage_ShowAtActor, 7, 0);
   if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
       0) {
-    Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
+    Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
     Value3(Func_0200204c, 9, 0x109, 20);
     Call2((void (*)())Func_02002034, 9, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
-    Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
+    Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
     Value3(Func_0200204c, 9, 0x109, 20);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
     Call2((void (*)())Func_02002034, 9, 0);
@@ -148,24 +149,24 @@ void Func_020002cc(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Value3(Func_0200204c, 6, 0x101, 20);
   Call2((void (*)())Func_02002034, 6, 0);
-  Call2((void (*)())Func_02002044, 9, 0x3000);
+  Call2((void (*)())Func_02002044, 9, FACING_SOUTHEAST + FACING_STEP);
   Call2((void (*)())Func_02002034, 9, 0);
   Value3(Func_0200204c, 5, 0x100, 20);
   Call2((void (*)())Func_02002034, 5, 0);
-  Call2((void (*)())Func_02002044, 9, 0x5000);
+  Call2((void (*)())Func_02002044, 9, FACING_SOUTH + FACING_STEP);
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Func_02002034, 6, 0);
   Value3(Func_0200204c, 5, 0x108, 0);
-  Call2((void (*)())Func_02002044, 5, 0xe000);
+  Call2((void (*)())Func_02002044, 5, FACING_NORTHEAST);
   Call2((void (*)())Func_02002034, 5, 0);
   Call2((void (*)())Func_02002054, 6, 0x102);
-  Call2((void (*)())Func_02002044, 6, 0x6000);
+  Call2((void (*)())Func_02002044, 6, FACING_SOUTHWEST);
   Call2((void (*)())Func_02002034, 0x4006, 0);
   Call2((void (*)())Func_02002034, 5, 0);
   Call2((void (*)())Func_02002034, 9, 0);
-  Call3((void (*)())Actor_ArmCallback, 6, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000,
+  Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTH, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, FACING_NORTH, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH,
         0);
   Value3(Func_0200204c, 7, 0x101, 20);
   Call2((void (*)())Func_02002034, 7, 0);
@@ -209,13 +210,13 @@ void Func_020006e4(void) {
   Call1((void (*)())Func_020020ac, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Func_02002074()->motionFlags = 0;
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1ca0000, 0x300000, 0x1980000,
+  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(458), PIXELS(48), PIXELS(408),
         0);
   Call1((void (*)())Func_0200201c, (s32)MsgHoldOnTo);
-  Call4((void (*)())Func_02001fcc, 4, 0x1d60000, 0x1880000, 0);
-  Call4((void (*)())Func_020020b4, 6, 0, -24, 0x4000);
+  Call4((void (*)())Func_02001fcc, 4, PIXELS(470), PIXELS(392), FACING_EAST);
+  Call4((void (*)())Func_020020b4, 6, 0, -24, FACING_SOUTH);
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
-  Call4((void (*)())Func_020020b4, 5, -16, -16, 0x2000);
+  Call4((void (*)())Func_020020b4, 5, -16, -16, FACING_SOUTHEAST);
 #else
   {
     /* FAKEMATCH: the European editions build -16 once in r1 and copy it to r2;
@@ -223,11 +224,11 @@ void Func_020006e4(void) {
      * or in an array) it takes r2 and is copied to r1 (differ 6). */
     register s32 offset asm("r1") = -16;
 
-    Call4((void (*)())Func_020020b4, 5, offset, offset, 0x2000);
+    Call4((void (*)())Func_020020b4, 5, offset, offset, FACING_SOUTHEAST);
   }
 #endif
-  Call4((void (*)())Func_020020b4, 9, -24, 8, 0xf000);
-  Call4((void (*)())Func_020020b4, 7, -4, 24, 0xe000);
+  Call4((void (*)())Func_020020b4, 9, -24, 8, FACING_NORTHEAST + FACING_STEP);
+  Call4((void (*)())Func_020020b4, 7, -4, 24, FACING_NORTHEAST);
   Call6((void (*)())Func_02001f2c, 60, 53, 67, 16, 7, 3);
   Func_02001f1c();
   Call1((void (*)())wait, 1);
@@ -238,52 +239,52 @@ void Func_020006e4(void) {
   gData_020024b0 = 0;
   Value2(Task_Add, (s32)Func_02000288, 0x480);
   Value3(Func_0200204c, 6, 0x102, 30);
-  Call2((void (*)())Func_02002044, 6, 0x4000);
+  Call2((void (*)())Func_02002044, 6, FACING_SOUTH);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200202c, 6, 0, 5);
-  Call2((void (*)())Func_02002044, 5, 0xe000);
+  Call2((void (*)())Func_02002044, 5, FACING_NORTHEAST);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 4);
   Call3((void (*)())Func_0200202c, 5, 0, 5);
   Value3(Func_0200204c, 4, 0x102, 30);
-  Call2((void (*)())Func_02002044, 4, 0x4000);
+  Call2((void (*)())Func_02002044, 4, FACING_SOUTH);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Func_02002044, 7, 0xc000);
+  Call2((void (*)())Func_02002044, 7, FACING_NORTH);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200202c, 7, 0, 5);
-  Call3((void (*)())Actor_ArmCallback, 6, 0x4000, 0);
-  Call2((void (*)())Func_02002044, 5, 0x2000);
+  Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTH, 0);
+  Call2((void (*)())Func_02002044, 5, FACING_SOUTHEAST);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002044, 5, 0xe000);
+  Call2((void (*)())Func_02002044, 5, FACING_NORTHEAST);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200202c, 5, 0, 5);
-  Call2((void (*)())Func_02002044, 6, 0x6000);
+  Call2((void (*)())Func_02002044, 6, FACING_SOUTHWEST);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 6, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Func_02002044, 6, 0x4000);
+  Call2((void (*)())Func_02002044, 6, FACING_SOUTH);
   Call3((void (*)())Func_0200202c, 6, 0, 5);
   Value3(Func_0200204c, 7, 0x109, 30);
-  Call2((void (*)())Func_02002044, 7, 0xc000);
+  Call2((void (*)())Func_02002044, 7, FACING_NORTH);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200202c, 7, 0, 5);
-  Call2((void (*)())Func_02002044, 9, 0x2000);
+  Call2((void (*)())Func_02002044, 9, FACING_SOUTHEAST);
   Value3(Func_0200204c, 9, 0x101, 30);
   Call3((void (*)())Func_0200202c, 9, 0, 5);
-  Call2((void (*)())Func_02002044, 7, 0xa000);
+  Call2((void (*)())Func_02002044, 7, FACING_NORTHWEST);
   Call1((void (*)())FieldEvent_Wait, 10);
   Value3(Func_0200204c, 7, 0x102, 30);
   Call3((void (*)())Func_0200202c, 7, 0, 5);
   Call3((void (*)())Actor_TurnToFaceEachOther, 6, 5, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call3((void (*)())Actor_ArmCallback, 6, 0x4000, 0);
-  Call2((void (*)())Func_02002044, 5, 0x2000);
+  Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTH, 0);
+  Call2((void (*)())Func_02002044, 5, FACING_SOUTHEAST);
   Call1((void (*)())FieldEvent_Wait, 10);
   Value3(Func_0200204c, 6, 0x101, 30);
   Call3((void (*)())Func_0200202c, 6, 0, 5);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 5, 2);
   Call1((void (*)())FieldEvent_Wait, 5);
   Call3((void (*)())Func_0200202c, 5, 0, 5);
-  Call2((void (*)())Func_02002044, 7, 0xa000);
+  Call2((void (*)())Func_02002044, 7, FACING_NORTHWEST);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200202c, 7, 0, 5);
@@ -293,14 +294,14 @@ void Func_020006e4(void) {
   Call3((void (*)())Func_0200202c, 7, 0, 5);
   Value3(Func_0200204c, 9, 0x102, 30);
   Call3((void (*)())Func_0200202c, 9, 0, 5);
-  Call2((void (*)())Func_02002044, 9, 0xc000);
+  Call2((void (*)())Func_02002044, 9, FACING_NORTH);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200202c, 9, 0, 5);
-  Call3((void (*)())Actor_ArmCallback, 4, 0x6000, 0);
-  Call2((void (*)())Func_02002044, 9, 0xe000);
+  Call3((void (*)())Actor_ArmCallback, 4, FACING_SOUTHWEST, 0);
+  Call2((void (*)())Func_02002044, 9, FACING_NORTHEAST);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200202c, 9, 0, 5);
-  Call2((void (*)())Func_02002044, 9, 0xc000);
+  Call2((void (*)())Func_02002044, 9, FACING_NORTH);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 9, 4);
   Call3((void (*)())Func_0200202c, 9, 0, 5);

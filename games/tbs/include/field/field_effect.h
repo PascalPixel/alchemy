@@ -22,8 +22,8 @@ struct FieldEffect {
   s32 y;            ///< 16.16 fixed-point pixels
   s32 z;            ///< 16.16 fixed-point pixels
   s32 groundHeight; ///< Actor's; not named by this view
-  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleX;       ///< 16.16 fixed point, Q16_ONE full size
+  s32 scaleY;       ///< 16.16 fixed point, Q16_ONE full size
   u16 radius;       ///< Actor's; not named by this view
   u8 layer;         ///< Actor's; not named by this view
   /// ActorPriorityFlag bits: the spawner clears
@@ -139,10 +139,10 @@ struct EffectDurationScripts {
 struct EffectOptions {
   s32 priority;      ///< the sprite's priority
   s32 palette;       ///< passed to Actor_SetSpriteColor
-  s32 startScaleX;   ///< 16.16 fixed point, 0x10000 full size
-  s32 startScaleY;   ///< 16.16 fixed point, 0x10000 full size
-  s32 targetScaleX;  ///< 16.16 fixed point, 0x10000 full size
-  s32 targetScaleY;  ///< 16.16 fixed point, 0x10000 full size
+  s32 startScaleX;   ///< 16.16 fixed point, Q16_ONE full size
+  s32 startScaleY;   ///< 16.16 fixed point, Q16_ONE full size
+  s32 targetScaleX;  ///< 16.16 fixed point, Q16_ONE full size
+  s32 targetScaleY;  ///< 16.16 fixed point, Q16_ONE full size
   s16 type;          ///< the actor type to create; 222 without the flag
   const s32 *script; ///< the actor script, run in mode 1
   u16 rotation;      ///< 1/65536 turns

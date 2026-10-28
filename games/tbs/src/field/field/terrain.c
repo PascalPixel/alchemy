@@ -483,9 +483,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 #endif
   // Up to 8 pixels up or 12 down is a step the actor can take.
   stepHeight = targetGround - actor->groundHeight;
-  if (stepHeight > 0x80000)
+  if (stepHeight > 8 << 16)
     return COLLISION_TOO_HIGH;
-  if (stepHeight < -0xc0000)
+  if (stepHeight < -(12 << 16))
     return COLLISION_TOO_LOW;
   return COLLISION_NONE;
 }
@@ -615,12 +615,12 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
   // Bit 31 of the block word selects the second bank of 16; the snowfield
   // the third, whatever bit 31 says.
   if (((u8 *)cellPictureWord)[3] & 0x80)
-    behaviorBank = 0x10;
+    behaviorBank = 16;
 
   // The encounter region is bits 24 to 30 of the block word.
   *terrainKind = (*cellPictureWord << 1) >> 25;
   if (*terrainKind == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
-    behaviorBank = 0x20;
+    behaviorBank = 32;
 
   return gWorldMap_BattleEnvironments[behaviorBank + collisionKind];
 }

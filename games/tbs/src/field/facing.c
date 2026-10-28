@@ -1,6 +1,7 @@
 #include "module/field/facing.h"
 #include "types.h"
 #include "actor_script.h"
+#include "fixed_math.h"
 
 /// Facing tables: for each enum AnimationFacingKind, the picture to draw for
 /// each sector of the facing angle. Sprite_ComposePicture adds the low
@@ -78,9 +79,9 @@ const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 /// The fixed camera's view matrix (Q16): identity with a -0.8 shear of y by x.
 /// ActorSystem_ProjectSprites applies it while battle commands are chosen.
 const s32 gCamera_FixedViewMatrix[12] = {
-    0x10000, 0, 0,
-    -0xcccc, 0x10000, 0,
-    0, 0, 0x10000,
+    Q16_ONE, 0, 0,
+    -0xcccc, Q16_ONE, 0,
+    0, 0, Q16_ONE,
     0, 0, 0,
 };
 

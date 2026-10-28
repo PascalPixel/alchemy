@@ -215,7 +215,7 @@ void Actor_UpdateAllThumb(void) {
           distance = Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dz)) << 16;
           // Under 256 pixels, measure again in 16.16 for sub-pixel accuracy;
           // further away the squares would overflow.
-          if (distance <= 0x00ffffff) {
+          if (distance <= (256 << 16) - 1) {
             dx = actor->targetX - x;
             dz = actor->targetZ - z;
             distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
@@ -264,7 +264,7 @@ void Actor_UpdateAllThumb(void) {
           velocityZ = z + actor->velocityZ;
           ground = MapGrid_GetTerrainHeight(actor->layer, velocityX, velocityZ);
           velocityY = ground - actor->groundHeight;
-          if (ground - y > -0x40000)
+          if (ground - y > -(4 << 16))
             y += velocityY;
           if (velocityY < 0)
             velocityY = -velocityY;
@@ -441,7 +441,7 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
   squaredZ = dz * dz;
   distance = Iwram_Sqrt(dx * dx + distance * distance + squaredZ) << 16;
   // Under 16 whole pixels, measure again in 16.16 for sub-pixel accuracy.
-  if (distance < 0x100000) {
+  if (distance < 16 << 16) {
     dx = x - actor->x.fixed;
     distance = y - actor->y.fixed;
     dz = z - actor->z.fixed;
@@ -556,7 +556,7 @@ void Actor_UpdateAllMotion(void) {
         distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
         // Under 256 pixels, measure again in 16.16: the root of a 16.16
         // square is 8.8, and << 8 makes it 16.16 again.
-        if (distance <= 0xffffff) {
+        if (distance <= (256 << 16) - 1) {
           dx = actor->targetX - x;
           dz = actor->targetZ - z;
           distance = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz))

@@ -110,7 +110,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
     }
     wait(1U);
     step += 4;
-  } while (step <= 0x7fU);
+  } while (step <= 127U);
 }
 
 /// Writes the actor's screen position, in pixels, to screenPosition[0..1] and
@@ -144,7 +144,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,
   // below the view's top and above 224.
-  if ((x >= -0x1fffff && x <= 0x10fffff) && y > 0 && y < 0xe00000) {
+  if ((x >= -((32 << 16) - 1) && x <= (272 << 16) - 1) && y > 0 &&
+      y < 224 << 16) {
     *screenPosition++ = x >> 16;
     *screenPosition = y >> 16;
     return 0;
@@ -272,7 +273,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
   // The ROM searches twice and drops the first result.
   Actor_FindFree();
   spriteStorageKind = encodedSprite / 4096;
-  encodedSprite &= 0xfff;
+  encodedSprite &= ACTOR_CREATE_SPRITE_MASK;
   object = Actor_FindFree();
   if (object != NULL) {
     actor = object;
@@ -292,7 +293,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       // Take a zeroed list of four sprites, and fill it with id and id + 1.
       // A list is four words but the next starts a word later, so a second
       // list would overlap the first and its zeroing clear count. No caller
-      // passes ACTOR_CREATE_GROUP: every id is a sprite below 0x1000, an
+      // passes ACTOR_CREATE_GROUP: every id is a sprite below 4096, an
       // actor placement's (0 to 504), or a kind with no sprite.
       // XXX (no evidence): whether the lists were meant four words apart;
       // nothing in the game creates a group to show it.
@@ -322,7 +323,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
     // speed when it bounces; facing down the screen (FACING_SOUTH, the
     // heading gWorldMap_KeyHeadings gives Down).
     object->script = (s32 *)gActor_DefaultScript;
-    object->speedLimit = 0x20000;
+    object->speedLimit = 2 << 16;
     object->scriptCursor = 0;
     actor->scaleX = Q16_ONE;
     actor->scaleY = Q16_ONE;
@@ -367,7 +368,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script) {
                                                                                \
     object = rawObject;                                                        \
     if (object != 0) {                                                         \
-      switch (object->spriteStorageKind & 0xf) {                               \
+      switch (object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {            \
       case ACTOR_SPRITE_ONE:                                                   \
         apply(object->sprite, value);                                          \
         break;                                                                 \
@@ -421,7 +422,8 @@ void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step) {
 
 /// Sets the rotation of an actor's sprite, when it has just one.
 void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation) {
-  if (actor != 0 && (actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE)
+  if (actor != 0 &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
     actor->sprite->rotation = rotation;
 }
 
@@ -431,7 +433,8 @@ void Actor_SetFirstSpriteAnimation(void *rawDispatchActor, s32 animationId) {
   struct Actor *actor = rawDispatchActor;
   struct Sprite *sprite;
 
-  if (actor != NULL && (actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+  if (actor != NULL &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
     if (animationId >= 0) {
       sprite->entries[0]->animationId = animationId;
@@ -443,7 +446,8 @@ void Actor_SetFirstSpriteAnimation(void *rawDispatchActor, s32 animationId) {
 /// Adds a sprite animation of animation id animationId to a one-sprite actor's
 /// sprite. A negative animationId does nothing.
 void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
-  if (actor != 0 && (actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+  if (actor != 0 &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     struct Sprite *sprite = actor->sprite;
     if (animationId >= 0)
       Sprite_AddAnimation(sprite, animationId);
@@ -498,7 +502,7 @@ void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (watchedActorHandle != 0) {
     actor->acceleration = 0x8000;
-    actor->speedLimit = 0x40000;
+    actor->speedLimit = 4 << 16;
     actor->watchedActor = (struct Actor *)watchedActorHandle;
     actor->timer = 0;
   }
@@ -528,7 +532,7 @@ void Actor_WaitForScriptEnd(void *rawActor) {
 /// Sets the flags of a one-sprite actor's sprite (bit 0: draw its shadow).
 void Actor_SetSpriteFlags(struct Actor *actor, u32 flags) {
   if (actor != NULL) {
-    if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE)
+    if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
       actor->sprite->flags = flags;
   }
 }

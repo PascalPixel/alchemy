@@ -64,6 +64,7 @@
 #include "curve.h"
 #include "battle_party.h"
 #include "vram_cache.h"
+#include "event.h"
 #include "module/field/update.h"
 #include "module/field/vertices.h"
 #include "module/field/curve_data.h"
@@ -123,5 +124,13 @@ enum CellPicturePacking {
 
 /// A movement target coordinate that is not set.
 #define TARGET_UNSET ((s32)0x80000000)
+
+/// Actor.spriteStorageKind's low four bits, its enum ActorSpriteKind (as
+/// battle_internal.h spells it).
+#define ACTOR_SPRITE_KIND_MASK 15
+
+/// The sprite id in Actor_Create's id, below its enum ActorCreateKind (id /
+/// 4096).
+#define ACTOR_CREATE_SPRITE_MASK 0xfff
 
 #endif

@@ -236,6 +236,9 @@ extern u8 TileMap_DrawRowsCodeSize[];
 /// equal to the size (constants.ld).
 extern u8 Transform_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
+/// gWorldMap_KeyHeadings' entry when no direction is held, or only an
+/// opposite pair: no heading, which the turns of a halfword never reach.
+#define KEY_HEADING_NONE 0xffff
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 FarCall_LuckyWheelsTable(s32 entrance);
 s32 FarCall_LuckyDiceTable(s32 entrance);

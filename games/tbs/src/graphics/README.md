@@ -127,7 +127,7 @@ up by `Credits_InitTextSprites`; the text is `gCredits_Lines`.
 ## Running outside the system's frame
 
 For their length the credits run the screen themselves: they set aside the
-system's usual task list and its copy of the sprite list, send their own
+system's usual task table and its copy of the sprite list, send their own
 sprites, and switch off the debug displays and the idle sleep. When they end
 they put the display back as the next screen expects it.
 

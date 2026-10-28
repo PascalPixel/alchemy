@@ -19,7 +19,7 @@
     Dma_Set((const void *)(code), (to), 0x84000000 | (size_ >> 2), REG_DMA3);  \
   } while (0)
 
-/// Allocates a work-slot copy; release it with HeapSlot_Release.
+/// Allocates a heap-slot copy; release it with HeapSlot_Release.
 #define RamCode_LoadSlot(slot, code, bytes)                                    \
   do {                                                                         \
     u32 size_;                                                                 \

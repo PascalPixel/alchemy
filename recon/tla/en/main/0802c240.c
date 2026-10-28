@@ -5,7 +5,7 @@
 // WorldMap_UpdateView with this game's flat view (byte 0x971 scrolls BG1 by
 // the shake instead of projecting), its paused view (0x972) and the eye
 // offset skipped while 0x976 is set. Left: instruction order only, in the
-// prologue's work-slot loads and constants, the view x reload and the flat
+// prologue's heap-slot loads and constants, the view x reload and the flat
 // test's offset. Six minutes of permute: no better.
 #include "types.h"
 #include "ram_buffer.h"

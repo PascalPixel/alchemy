@@ -16,7 +16,7 @@
 // blitters released before the task function is removed, as ☀️ does.
 
 // Same frame, registers and instruction count. What is left is order: each
-// row a load (pool word, work slot, the argument spill) that the native
+// row a load (pool word, heap slot, the argument spill) that the native
 // issues one instruction earlier than agscc, and the literal pools that
 // move with them (each pool load's offset differs by 4). The prologue's
 // first row is the argument spill (str r0) that the native issues before

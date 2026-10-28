@@ -65,7 +65,7 @@ void Actor_UpdateAll(void) {
     if (object->paused != 0)
       continue;
 
-    // Count down a wait, or run commands until one yields for this frame.
+    // Count down a wait, or run commands until one waits for this frame.
     // Words above 63 are labels (SC_LABEL), which the cursor steps over; a
     // command moves the cursor past its own operands.
     if (object->wait != 0) {

@@ -47,7 +47,7 @@ s32 Save_InitializeWork(void) {
   Dma_Fill32(0, work, sizeof(*work));
   SetFlashTimerIntr(SAVE_FLASH_TIMER, &gIrqHandlers[IRQ_TIMER2]);
 
-  // Yield after every failed probe, including the last one, before
+  // Wait a frame after every failed probe, including the last one, before
   // reporting that no flash chip answered.
   for (index = 0; index < SAVE_FLASH_IDENTIFY_ATTEMPTS; index++) {
     if ((u16)IdentifyFlash() == 0)

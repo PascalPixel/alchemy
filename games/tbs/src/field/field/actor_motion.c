@@ -124,7 +124,7 @@ void Actor_UpdateAllThumb(void) {
     if (actor->paused != 0)
       continue;
 
-    // Count down a wait, or run commands until one yields for this frame.
+    // Count down a wait, or run commands until one waits for this frame.
     // Words above 63 are labels and are stepped over; a command may replace
     // the script, so it is read again after each one.
     if (actor->wait != 0) {

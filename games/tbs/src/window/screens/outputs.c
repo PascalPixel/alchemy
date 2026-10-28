@@ -245,7 +245,7 @@ void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
 /// Fills `spans`, a page of the screen transition's window edges past its WININ
-/// and WINOUT, with the window frames' horizontal extent on each of the 160
+/// and WINOUT, with the windows' horizontal extent on each of the 160
 /// scan lines: (left << 8) | right in the second halfword (WIN1H) of each
 /// line's pair, read from the UI tilemap by the ARM routine
 /// Tile_BuildCellPictures, copied into RAM for the call. Each frame of a window

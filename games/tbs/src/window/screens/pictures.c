@@ -258,7 +258,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 /// Draws the two page arrows (gPageArrowTiles) into the two tiles at
 /// VRAM address `offset`, sliding outward: the left arrow 2 or 3 pixels to
 /// the left, the right one as far to the right, eight frames each. They are
-/// drawn over the window frame's top edge tile (0x11) and top-right corner
+/// drawn over the border's top edge tile (0x11) and top-right corner
 /// tile (0x12). The battle menus call it each frame for tiles 0x334 and
 /// 0x335 (LIST_TILE_PAGES_LEFT); the field menus (menu/menu, by far call)
 /// and the password pages of the title's Send (menu/file_screen.c) call it for

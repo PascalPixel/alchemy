@@ -197,7 +197,7 @@ void Icon_DrawItemFar(s32 code);
 /// of decoded text.
 void Text_DrawWideStringAtOffsetFar(u16 *text, struct Window *window, s32 x,
                                     s32 y);
-/// Writes each scan line's window frame extent into a page of the screen
+/// Writes each scan line's window extent into a page of the screen
 /// transition's window table, as a window transition runs.
 void ScanlineWindow_FillSpansFar(void *dst);
 /// Redraws a window empty, its border and fill, at its current rectangle.
@@ -327,8 +327,8 @@ s32 Message_OpenDecodedFar(struct Window *window, s32 argument);
 /// Returns how many save files there are, leaving out the files saved at the
 /// end of the game when flag is nonzero, or SAVE_ERROR_NO_MEMORY.
 s32 Save_CountFilesExcludingSentFar(s32 excludeSent);
-/// Draws an empty window frame at tile (x, y), width by height tiles, and frees
-/// the text tiles it covers.
+/// Draws an empty window, its border, at tile (x, y), width by height tiles,
+/// and frees the text tiles it covers.
 void Window_DrawBorderFar(s32 x, s32 y, u32 width, u32 height);
 /// Erases a window's rectangle from the tilemap and frees the text tiles it
 /// showed.

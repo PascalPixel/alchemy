@@ -422,6 +422,15 @@ Which of the sixteen 16-colour palettes a tile or a sprite is drawn in, the
 
 Evidence: plain English for the hardware's own field.
 
+### Palette fade
+
+The change of every colour on screen, backgrounds and sprites alike, an equal
+step each frame towards a target, so that they all arrive together; it brings
+scenes in from black and takes them out again
+([Graphics](src/graphics/README.md#the-palette-fade)).
+
+Evidence: plain English.
+
 ### Line scroll
 
 A table that gives each of the screen's 160 lines its own background scroll,
@@ -588,6 +597,16 @@ The actor another actor's actor script faces, follows or approaches
 ([Field](field.md#actors-and-their-actor-scripts)).
 
 Evidence: plain English for what the commands do.
+
+### Field effect
+
+A small decorative actor on the field, such as a ledge jump's dust puffs, the
+World Map's footprints or an emote over someone's head, that moves at its
+velocity and grows and spins at its rates, run by its own script
+(`struct FieldEffect`)
+([Field](field.md#actors-and-their-actor-scripts)).
+
+Evidence: plain English.
 
 ### Trigger
 
@@ -766,7 +785,7 @@ Evidence: Camelot: the credits' "User Interface".
 A bordered box the game opens for text or choices, growing out of its centre
 (`struct Window`) ([Windows](src/window/README.md#windows)).
 
-Evidence: Camelot: ウインドウ, as in Window Color (`MsgWindowColorLabel`).
+Evidence: Camelot: ウインドウ, as in ウインドウカラー, "Window color" (`MsgWindowColorLabel`).
 
 ### Border
 
@@ -782,7 +801,7 @@ speaker's voice blip, waiting for a button at each page break. Up to three are
 typed at once (`struct Message`, `Message_Type`)
 ([Windows](src/window/README.md#typing)).
 
-Evidence: Camelot: Message Speed (メッセージスピード, `MsgMessageSpeedLabel`).
+Evidence: Camelot: メッセージスピード (`MsgMessageSpeedLabel`), "Message speed" in the English settings menu.
 
 ### The screens
 

@@ -20,7 +20,7 @@
 // (alchemy permute, 12 minutes, found this and nothing else).
 
 // Left: order only. Same frame, registers and instructions; at ten rows
-// the native issues a load (the argument's spill, a work slot, a spill reload,
+// the native issues a load (the argument's spill, a heap slot, a spill reload,
 // a sine operand) one instruction before the constant or store beside it,
 // starting with the prologue's str r0, [sp, #52], which agscc places after
 // the 0x03000000 base.

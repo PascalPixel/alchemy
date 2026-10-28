@@ -19,7 +19,7 @@
 // returns its store-flag and The Broken Seal's returns s32: void it is 36.
 
 // Left: order only. Same frame, registers and instructions; at about fifteen
-// rows the native issues a memory access (the argument's spill, a work slot,
+// rows the native issues a memory access (the argument's spill, a heap slot,
 // a spill reload or a field read) one instruction ahead of the constant or
 // move beside it.
 

@@ -8,7 +8,7 @@
 // and the leader is beside it or already aboard: the leader jumps to the
 // ship's deck and the party's position becomes the ship's. Japanese keeps
 // the exit set. Left: three constants the native builds after a load where
-// this draft builds them before (the work slot before 0x8de, the savedX
+// this draft builds them before (the heap slot before 0x8de, the savedX
 // and savedZ offsets) and one register copy after a store; an empty asm
 // after the work load, plain or reading it, does not move them.
 #include "types.h"

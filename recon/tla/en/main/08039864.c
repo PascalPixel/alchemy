@@ -2,8 +2,8 @@
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
 // Near miss, differ 34 of 697: The Broken Seal's English
-// Message_StepScript with ⚓️'s changes: the lag clamps at 3, the
-// page and wait codes take their countdown from gData_080aa0df by text speed
+// Message_StepScript with ⚓️'s changes: the VBlanks the last frame took clamp
+// at 3, the page and wait codes take their countdown from gData_080aa0df by text speed
 // and clear the pending presses in a window mode, the page arrow is skipped
 // for an empty window, code 176 is a no-op control code, the window effect
 // counts 11 frames, a text-mode channel with spacing[3] set draws at y / 320
@@ -48,7 +48,7 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 keys = *(volatile u32 *)&gInput.held;
   s32 glyphsLeft = gText_SpeedSteps[TEXT_SPEED];
-  s32 lag;
+  s32 frameVBlanks;
   u32 code;
   u32 nextCode;
   struct Window *window;
@@ -69,12 +69,12 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
   (void)keys;
 
   if (work->menuState != 0) {
-    lag = *(volatile u16 *)&gLastFrameVBlanks;
-    if (lag < 0)
-      lag = 0;
-    if (lag > 3)
-      lag = 3;
-    glyphsLeft = lag * 5 + 3;
+    frameVBlanks = *(volatile u16 *)&gLastFrameVBlanks;
+    if (frameVBlanks < 0)
+      frameVBlanks = 0;
+    if (frameVBlanks > 3)
+      frameVBlanks = 3;
+    glyphsLeft = frameVBlanks * 5 + 3;
   }
 
   if (channel->transition != 0) {

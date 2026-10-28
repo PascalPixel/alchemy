@@ -1,4 +1,4 @@
-@ One 64x64 sprite of 16 colours: a green panel in a window frame, drawn in
+@ One 64x64 sprite of 16 colours: a green panel in a window border, drawn in
 @ its top-left 32x32. Overlay 6b3's Func_02000098 unpacks it into one block
 @ of OBJ video memory, makes one 64x64 sprite of it with the 256-colour bit
 @ cleared and OBJ palette 14, and copies Data_02000874 to that palette: the

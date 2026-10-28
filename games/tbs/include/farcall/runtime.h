@@ -1,5 +1,6 @@
 /// @file
-/// Tasks, frames, memory, resources and core runtime services.
+/// Tasks, frames, memory, resources and the other services the System
+/// provides.
 
 /// Runs the game's frame loop for `frames` frames: the tasks, the OAM
 /// list, the idle sleep and the debug pause, then VBlank and the keys.

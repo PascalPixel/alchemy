@@ -202,7 +202,7 @@ s32 Task_SuspendAll(TaskFunc func) {
 
 /// Suspends every task whose routine is in an overlay (EWRAM, 0x02xxxxxx)
 /// unless its flag bit 0 asks to keep it running, as Task_SuspendAll
-/// does. Called by the menus' common code while a menu is open, and by the
+/// does. Called by the menus' shared code while a menu is open, and by the
 /// world map's visibility transition. Returns the last index changed, or -1.
 s32 Task_SuspendOverlayTasks(void) {
   struct Task *task;
@@ -272,7 +272,7 @@ s32 Task_ResumeAll(TaskFunc func) {
 }
 
 /// Resumes every task whose routine is in an overlay, flagged or not. Called
-/// by the menus' common code when a menu closes, and by the world map's
+/// by the menus' shared code when a menu closes, and by the world map's
 /// visibility transition. Returns the last index changed, or -1.
 s32 Task_ResumeOverlayTasks(void) {
   struct Task *task;

@@ -9,7 +9,7 @@
 /// receive its x and y in pixels, y at the top of its sprite. Returns 0, or -1
 /// if there is no such actor. Called by the message window code in
 /// messages.c to place a speaker's bubble, and through
-/// Actor_GetScreenPositionFar by the window frames to open a message
+/// Actor_GetScreenPositionFar by the window code to open a message
 /// window above or below the leader.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);

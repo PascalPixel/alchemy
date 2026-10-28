@@ -37,7 +37,7 @@ extern u8 gScreenFadeStartLevel;
  * and for the delta; as plain u8, 11 of 46 instructions differ in tbs-en. */
 extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 /// The two page arrow tiles, 4bpp, that Link_DrawPageArrows slides
-/// outward over the window frame's top edge.
+/// outward over the border's top edge.
 extern u8 gPageArrowTiles[];
 /// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.

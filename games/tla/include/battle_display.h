@@ -35,7 +35,7 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
 extern struct BattleCamera *gCameraWork;
 
-/// The battle background's work slot as the camera reads it: the yaw the
+/// The battle background's heap slot as the camera reads it: the yaw the
 /// camera eases toward and the frames left to ease it.
 struct BattlePresentationTransition {
   s32 targetYaw; ///< 1/65536 turns
@@ -69,7 +69,7 @@ STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x58);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 0x24);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, params) == 0x36);
 
-/// The battle background's work slot as the background code reads it: its
+/// The battle background's heap slot as the background code reads it: its
 /// display mode.
 struct BattleBackgroundView {
   u8 unk00[8];    ///< BattlePresentationTransition's targetYaw and frames

@@ -24,7 +24,7 @@ In order, start-up stops any screen effect left running, clears the fast
 memory, [IWRAM](../../glossary.md#iwram-and-ewram), and empties the heap,
 copies the routines that must run fastest into IWRAM, loads the windows'
 graphics, sets up the code that hands each frame to the screen, arms the
-reset buttons, starts the sound and empties the task list. It then waits ten
+reset buttons, starts the sound and empties the task table. It then waits ten
 frames and starts the loop of scenes, which never ends
 ([Running a scene](../overworld/README.md)). The reset buttons work through an
 interrupt: pressing all four marks a reset as wanted, and the next frame

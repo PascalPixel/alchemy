@@ -9,7 +9,7 @@
 // DrawRectangle the stack frame is 4 bytes short (differ 170).
 
 // The frame slots and every instruction match. What is left is order: the
-// native loads the work slot before it sets the first argument, loads each
+// native loads the heap slot before it sets the first argument, loads each
 // pool word (0x100, -0x7000) ahead of the register's address, sets r1
 // before r0 for BattleEffect_LoadBlitter, and reloads its spills one row earlier in the
 // marker loop.

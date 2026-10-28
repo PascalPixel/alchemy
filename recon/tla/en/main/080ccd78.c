@@ -8,7 +8,7 @@
 // requirements. New in ⚓️: kinds 8 and 9 match any target, there is no
 // search-ignores-condition test, and the facing test alone is skipped while
 // Data_02000452 is 2. Left: instruction order and register choice only:
-// gAdventure's pool load goes to r6 in the native before the work slot's
+// gAdventure's pool load goes to r6 in the native before the heap slot's
 // loads (r3 here), the -1 is built before the facing load, and
 // Data_02000452's address takes r1 against r3. Tried: the loop as a for
 // with (++event)->flags (differ 31); the 0xf000 mask inline without

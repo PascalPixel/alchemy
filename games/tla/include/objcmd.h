@@ -3,7 +3,7 @@
 
 /// @file
 /// Field object scripts: one s32 command word, then its operands, as the
-/// command table in field/common/script/object_script.c runs them. Each macro
+/// command table in field/shared/script/object_script.c runs them. Each macro
 /// expands to the words of one command. An unknown command keeps its number
 /// as its name.
 // The Lost Age numbers its commands as The Broken Seal does, with SC_CMD_03

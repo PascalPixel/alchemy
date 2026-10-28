@@ -3,9 +3,9 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/kandorean_temple/entry.o"(.text)
-        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
         "*/resource_653_overlay.o"(.text.x0200807e)
-        "*/games/tla/src/field/common/effect/move.o"(.text)
+        "*/games/tla/src/field/shared/effect/move.o"(.text)
         "*/resource_653_overlay.o"(.text.x020080b6)
         "*/games/tla/src/scene/kandorean_temple/s00b8.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/events_a.o"(.text)
@@ -39,7 +39,7 @@ SECTIONS
         "*/games/tla/src/scene/kandorean_temple/s2a5c.o"(.text)
         "*/resource_653_overlay.o"(.text.x0200aa84)
         "*/games/tla/src/scene/kandorean_temple/s2c1c.o"(.text)
-        "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
+        "*/games/tla/src/field/shared/effect/advance_motion.o"(.text)
         "*/resource_653_overlay.o"(.text.x0200aec2)
         "*/resource_653_overlay.o"(.text.x0200aec4)
         "*/resource_653_overlay.o"(.text.x0200b06c)

@@ -5,7 +5,7 @@
 @ 243 rows searched by ID by BattleEffect_FindDefinition, followed by one more row.
 	.global gData_080f0308
 gData_080f0308:
-	.incbin "games/tla/src/field/common/object/variant_motion.table"
+	.incbin "games/tla/src/field/shared/object/variant_motion.table"
 @ Three 128-byte actions for ObjectMotion_SetVariantCallback, plus a final word.
 	.global gObject_VariantMotionScripts
 gObject_VariantMotionScripts:

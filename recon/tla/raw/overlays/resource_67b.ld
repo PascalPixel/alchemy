@@ -3,10 +3,10 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/aqua_rock/entry.o"(.text)
-        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/common/object/prepare_object.o"(.text)
+        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/shared/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s00d0.o"(.text)
-        "*/games/tla/src/field/common/effect/move.o"(.text)
+        "*/games/tla/src/field/shared/effect/move.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s015c.o"(.text)
         "*/games/tla/src/scene/aqua_rock/scene_tables.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s0344.o"(.text)

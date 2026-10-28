@@ -3,8 +3,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/shrine_of_the_sea_god/entry.o"(.text)
-        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/common/effect/move.o"(.text)
+        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/shared/effect/move.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/s00b8.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event0.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/scene_tables.o"(.text)
@@ -19,7 +19,7 @@ SECTIONS
         "*/resource_654_overlay.o"(.text.x02008994)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event1.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event2.o"(.text)
-        "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
+        "*/games/tla/src/field/shared/effect/advance_motion.o"(.text)
         "*/resource_654_overlay.o"(.text.x02009340)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event3.o"(.text)
         "*/resource_654_overlay.o"(.text.x02009474)

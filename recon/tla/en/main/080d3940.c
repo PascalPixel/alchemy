@@ -5,7 +5,7 @@
 // zero; Func_080d3a10, differ 14 of 132: the same two kinds, the first
 // position store issued before lsls r3, r3, #6. Each is a load or store the
 // native issues a slot earlier than agscc's ARM9TDMI model. Func_080d3b28,
-// once a third function here, is adopted in field/common/object/active.c.
+// once a third function here, is adopted in field/shared/object/active.c.
 #include "types.h"
 #include "object_runtime.h"
 #include "field_sprite.h"

@@ -1,5 +1,5 @@
 // Draft, differ 516 of 556: the portrait mode task, ☀️'s Colosso_UpdateLettering
-// (scene/common/colosso_task.h) with overlay 696's variables, the French
+// (scene/shared/colosso_task.h) with overlay 696's variables, the French
 // four-graphic case and a transform of u32 bitfields (the native writes scale
 // and angle by read-modify-write). The logic and every constant agree; the
 // allocation does not: the native keeps both sprite pointers in stack slots

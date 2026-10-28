@@ -19,7 +19,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo/s2ba4.o"(.text)
         "*/games/tla/src/scene/kibombo/s2c34.o"(.text)
         "*/games/tla/src/scene/kibombo/s2e60.o"(.text)
-        "*/games/tla/src/field/common/effect/advance_motion.o"(.text)
+        "*/games/tla/src/field/shared/effect/advance_motion.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200af32)
         "*/games/tla/src/scene/kibombo/s2f34.o"(.text)
         "*/games/tla/src/scene/kibombo/s2fec.o"(.text)

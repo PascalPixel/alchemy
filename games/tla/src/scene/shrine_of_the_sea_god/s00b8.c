@@ -3,4 +3,4 @@
 #define EFFECT_SET_MODE Func_02003968
 #define EFFECT_SET_SCRIPT Func_02003970
 #define EFFECT_SCRIPTS gData_02003c04
-#include "../../field/common/effect/spawn.c"
+#include "../../field/shared/effect/spawn.c"

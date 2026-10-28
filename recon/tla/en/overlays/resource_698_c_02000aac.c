@@ -1,7 +1,7 @@
 // Draft of overlay 698's Func_02000aac, in 11 overlays of the 698 family:
 // differ 187 of 200. Queues the lit actors' sprites: for each of the
 // gData_02002202 actors in gData_02002204 with a position, projects it from
-// the map's view (as the cell sprite in field/common/map/cell_sprite.c does),
+// the map's view (as the cell sprite in field/shared/map/cell_sprite.c does),
 // skips it off screen, writes a 16 by 16 or 32 by 64 sprite (by
 // gData_02002304) at its animation frame and priority (gData_02002306, or
 // Func_02001b24 when that is -1) and pushes it at its depth. Written in the

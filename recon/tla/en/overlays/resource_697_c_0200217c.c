@@ -1,4 +1,4 @@
-// Draft, differ 105 of 87: the backward twin of Func_0802b590 (field/common/map/
+// Draft, differ 105 of 87: the backward twin of Func_0802b590 (field/shared/map/
 // edit.c): copies a width by height block of map cells and their shape-grid
 // bytes from (srcX, srcY) to (dstX, dstY), last row and column first so that a
 // block overlapping its destination copies whole. Written in the forward

@@ -1,5 +1,5 @@
 // Draft of overlay 64e's Func_0200038c (0x0200838c), ported from ☀️'s
-// StagedActor_AdvancePair (scene/common/object_staged_actor.h): differ 20 of
+// StagedActor_AdvancePair (scene/shared/staged_actor.h): differ 20 of
 // 175 (was 24; the raised probe sets z before y, and the pushed object's z is
 // written after its x velocity), all scheduling and the registers that follow
 // from it. The native keeps the leader's copy to r8 and the first argument's

@@ -23,7 +23,7 @@ tables and its events; this page says only what differs here.
   flag. A place both games have is a separate ⚓️ scene with its own number
   and map.
 - **Engine calls.** The main-image code a ⚓️ scene imports is in
-  `games/tla/src/field/common/` and the other ⚓️ folders, under the names of
+  `games/tla/src/field/shared/` and the other ⚓️ folders, under the names of
   its ☀️ twins where it does the same.
 - **Compiler.** K2's options on top of ☀️'s (`CFLAGS_tla` in the
   `Makefile`): `-mthumb-split-constants`, `-mthumb-call-via-lr` and

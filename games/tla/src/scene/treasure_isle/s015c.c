@@ -4,4 +4,4 @@
 #define EFFECT_SET_SCRIPT Func_02000f84
 #define EFFECT_SCRIPTS gData_02001170
 #define EFFECT_SPRITE_PRIORITY
-#include "../../field/common/effect/spawn.c"
+#include "../../field/shared/effect/spawn.c"

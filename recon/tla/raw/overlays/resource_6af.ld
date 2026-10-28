@@ -3,10 +3,10 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/treasure_isle/entry.o"(.text)
-        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/common/object/prepare_object.o"(.text)
+        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/shared/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s00d0.o"(.text)
-        "*/games/tla/src/field/common/effect/move.o"(.text)
+        "*/games/tla/src/field/shared/effect/move.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s015c.o"(.text)
         "*/games/tla/src/scene/treasure_isle/scene_tables.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0350.o"(.text)

@@ -3,8 +3,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/shaman_village/entry.o"(.text)
-        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/common/effect/move.o"(.text)
+        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/shared/effect/move.o"(.text)
         "*/games/tla/src/scene/shaman_village/s00b8.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0280.o"(.text)
         "*/games/tla/src/scene/shaman_village/scene_tables.o"(.text)
@@ -12,7 +12,7 @@ SECTIONS
         "*/games/tla/src/scene/shaman_village/s0378.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0420.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0458.o"(.text)
-        "*/games/tla/src/field/common/effect/circle_blink.o"(.text)
+        "*/games/tla/src/field/shared/effect/circle_blink.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0508.o"(.text)
         "*/resource_696_overlay.o"(.text.x0200857c)
         "*/games/tla/src/scene/shaman_village/s0c80.o"(.text)
@@ -21,7 +21,7 @@ SECTIONS
         "*/games/tla/src/scene/shaman_village/s10c8.o"(.text)
         "*/games/tla/src/scene/shaman_village/s1880.o"(.text)
         "*/games/tla/src/scene/shaman_village/s1cc8.o"(.text)
-        "*/games/tla/src/field/common/drift_spawn.o"(.text)
+        "*/games/tla/src/field/shared/drift_spawn.o"(.text)
         "*/games/tla/src/scene/shaman_village/s1fec.o"(.text)
         "*/games/tla/src/scene/shaman_village/s2068.o"(.text)
         "*/games/tla/src/scene/shaman_village/s279c.o"(.text)

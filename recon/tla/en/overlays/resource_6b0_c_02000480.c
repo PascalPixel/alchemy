@@ -1,5 +1,5 @@
 // Draft, differ 2 of 214: ⚓️'s Effect_Spawn as overlay 6b0 links it after
-// common/effect/move.c, the twin of ☀️'s EFFECT_SPAWN with party actor 0,
+// field/shared/effect/move.c, the twin of ☀️'s EFFECT_SPAWN with party actor 0,
 // default type 285 and the sprite priority both written and set. Left: after
 // the mode call the native loads the script table's address before it copies
 // the flags from sl (ldr r2, =gData_02003840; mov r3, sl); the draft copies

@@ -1,5 +1,5 @@
 // Draft, differ 12 of 207: overlay 6aa's effect spawner, ☀️'s EFFECT_SPAWN
-// (scene/common/effect_spawn.h) with the leader from gAdventure.currentOwner,
+// (scene/shared/effect_spawn.h) with the leader from gAdventure.currentOwner,
 // ObjectDispatch_SetSingleChildFlags for the sprite flags, the leader's sprite
 // priority through Object_SetSpritePriorityB, and the scale-to-target target
 // and frame count read before the start-scale test (the ☀️ form: 40). Left:

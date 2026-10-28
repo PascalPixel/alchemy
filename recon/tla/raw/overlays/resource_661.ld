@@ -3,9 +3,9 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/yampi_desert/entry.o"(.text)
-        "*/games/tla/src/field/common/object/set_sprite_priority.o"(.text)
+        "*/games/tla/src/field/shared/object/set_sprite_priority.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200807e)
-        "*/games/tla/src/field/common/effect/move.o"(.text)
+        "*/games/tla/src/field/shared/effect/move.o"(.text)
         "*/resource_661_overlay.o"(.text.x020080b6)
         "*/games/tla/src/scene/yampi_desert/s00b8.o"(.text)
         "*/games/tla/src/scene/yampi_desert/places.o"(.text)
@@ -24,7 +24,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert/s0994.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0a10.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0a8c.o"(.text)
-        "*/games/tla/src/field/common/effect/advance_motion_priority.o"(.text)
+        "*/games/tla/src/field/shared/effect/advance_motion_priority.o"(.text)
         "*/resource_661_overlay.o"(.text.x02008b84)
         "*/games/tla/src/scene/yampi_desert/s0c34.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0e78.o"(.text)

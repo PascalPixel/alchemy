@@ -1652,10 +1652,10 @@ static void ValeStormyNight_SetActorFrameMode(struct Actor *actor, s32 mode) {
     }
     count = animation->count;
     if (count != 0) {
-      struct SpriteAnim **entries = animation->entries;
+      struct SpriteAnimation **entries = animation->entries;
       s32 remainingEntries = count;
       do {
-        struct SpriteAnim *entry = *entries++;
+        struct SpriteAnimation *entry = *entries++;
         if (entry != NULL && entry->script != NULL) {
           entry->colorMode = animationParameter;
         }

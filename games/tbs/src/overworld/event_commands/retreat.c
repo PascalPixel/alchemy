@@ -270,7 +270,7 @@ struct DescendingArcSprite {
   u8 padding1e[8];
   u8 flags; ///< 0 drops the shadow
   u8 count;
-  struct SpriteAnim *firstEntry; ///< entries[0], its first layer
+  struct SpriteAnimation *firstEntry; ///< entries[0], its first layer
 };
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above

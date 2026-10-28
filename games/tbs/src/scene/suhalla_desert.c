@@ -936,7 +936,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   }
   actor = Actor_GetById(ACTOR_FOURTH_SANDSTORM);
   if (actor != 0) {
-    struct SpriteAnim *part;
+    struct SpriteAnimation *part;
 
     sprite = actor->sprite;
     part = sprite->entries[0];

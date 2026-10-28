@@ -109,11 +109,11 @@ void Exit_PrepareAnimation(s32 animation) {
   u8 param;
   struct Actor *actor;
   struct Sprite *context;
-  struct SpriteAnim *effect;
+  struct SpriteAnimation *effect;
 
   actor = Actor_Lookup(gAdventure.leaderActorId);
   context = actor->sprite;
-  effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
+  effect = (struct SpriteAnimation *)Sprite_AddAnimFar(context, 27);
   zero = 0;
   param = SPRITE_COLOR_HIDDEN;
 
@@ -161,8 +161,8 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   s32 mask;
   struct Actor *leader = Actor_Lookup(gAdventure.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
-  struct SpriteAnim *eff =
-      (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
+  struct SpriteAnimation *eff =
+      (struct SpriteAnimation *)Sprite_AddAnimFar(spriteAnimation, 27);
 
   zero = 0;
   mask = 0xfff00000;
@@ -176,7 +176,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
   // pixel a frame.
   spriteAnimation->count = 1;
-  SpriteAnim_ClearFar(spriteAnimation->entries[1]);
+  SpriteAnimation_ClearFar(spriteAnimation->entries[1]);
   spriteAnimation->entries[1] = (void *)zero;
   spriteAnimation->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = Q16_ONE;

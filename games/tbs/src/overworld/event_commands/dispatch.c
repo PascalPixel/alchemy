@@ -275,8 +275,8 @@ void Actor_CycleSpriteColors(struct Actor *actor) {
   struct Sprite *animation;
   s32 initialCount;
   s32 remainingParts;
-  struct SpriteAnim **parts;
-  struct SpriteAnim *spritePart;
+  struct SpriteAnimation **parts;
+  struct SpriteAnimation *spritePart;
   /* FAKEMATCH(temporary): a pointer local to gFrameCount, volatile as it is
    * declared, read on each pass; as gFrameCount read in the loop, 6 of 46
    * instructions differ in tbs-en. */

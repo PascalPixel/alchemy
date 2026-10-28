@@ -532,7 +532,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 /// frame and marks its battle object for release (BattleObject_MarkForRelease).
 /// Called by AutoBattle_ApplyDamage.
 void BattleMotion_PlayFall(s32 unitId) {
-  struct SpriteAnim *actorData;
+  struct SpriteAnimation *actorData;
   struct Sprite *animation;
   if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.

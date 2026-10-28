@@ -146,13 +146,13 @@ as it is drawn: its colours swapped round, turned grey or tinted, or filled
 with one flat colour (`enum SpriteColorMode`).
 
 A sprite is `struct Sprite` and each of its animations a
-`struct SpriteAnim`; `Sprite_ComposePicture` draws them into one picture, the
+`struct SpriteAnimation`; `Sprite_ComposePicture` draws them into one picture, the
 commands of an animation are `enum AnimationCommand`, and `facing.c` holds
 the facing tables.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `ANIM_OBJECT_COUNT` | 64 | sprites, and the sprite anims they share |
+| `ANIM_OBJECT_COUNT` | 64 | sprites, and the sprite animations they share |
 | `ANIM_LAYER_COUNT` | 4 | animations one sprite lays over each other |
 | `ANIM_NORMAL_STEP` | 16 | sixteenths of a frame off an anim's timer each frame: normal speed |
 
@@ -365,7 +365,7 @@ differences from this one.
 
 ## Limits
 
-- 64 actors; 64 sprites, sharing 64 sprite anims, up to four each.
+- 64 actors; 64 sprites, sharing 64 sprite animations, up to four each.
 - 8 sprite picture caches, 16 tileset animations and 4 palette cycles.
 - `gActorScript_CommandTable` has 47 entries: 36 commands, then 11 that act
   as `SC_END`. A label must lie within the first 1,024 words of its script.
@@ -378,11 +378,11 @@ differences from this one.
   among them by [actor id](../../glossary.md#actor-id). A slot with no
   script has been released.
 - A **sprite** is one of the 64 `struct Sprite`s: an image and a shadow, two
-  entries of OAM (the hardware's sprite list), and up to four **sprite anims**
-  (`struct SpriteAnim`), animations composed into one picture.
+  entries of OAM (the hardware's sprite list), and up to four **sprite animations**
+  (`struct SpriteAnimation`), animations composed into one picture.
 - An **actor script** is a list of 32-bit words: `SC_` commands of
   [`actor_script.h`](../../include/actor_script.h) and their operands. An **animation
-  script** is a list of byte pairs that a sprite anim plays.
+  script** is a list of byte pairs that a sprite animation plays.
 - A map **layer** is one of a town's three backgrounds
   ([Maps](../map/README.md#one-grid-three-layers)).
 - Positions are 16.16 fixed-point pixels: x across the map, y up, z down the

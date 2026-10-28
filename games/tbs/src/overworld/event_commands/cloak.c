@@ -92,7 +92,7 @@ void FieldPsynergy_CheckCloakTile(void) {
 void FieldPsynergy_EndCloak(void) {
   struct Actor *actor;
   struct Sprite *animation;
-  struct SpriteAnim *entry;
+  struct SpriteAnimation *entry;
   u32 i;
 
   actor = Actor_Lookup(gAdventure.leaderActorId);
@@ -149,7 +149,7 @@ void FieldPsynergy_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *leader = Actor_Lookup(gAdventure.leaderActorId);
   struct Sprite *animation = leader->sprite;
-  struct SpriteAnim *entry = animation->entries[0];
+  struct SpriteAnimation *entry = animation->entries[0];
   u32 n;
   void (*check)(void);
 

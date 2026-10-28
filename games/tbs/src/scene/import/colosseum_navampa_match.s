@@ -20,7 +20,7 @@
 	.set import.OamMatrix_AllocFromTransform, 1
 	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.Resource_GetTableEntry, 1
-	.set import.SpriteAnim_Clear, 1
+	.set import.SpriteAnimation_Clear, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1

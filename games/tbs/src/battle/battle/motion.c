@@ -287,7 +287,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 /// single-sprite actor takes it. Nothing in the source calls it.
 void BattleMotion_PlayHitFlash(s32 unitId) {
   struct Actor *actor;
-  struct SpriteAnim *effect;
+  struct SpriteAnimation *effect;
   s32 effectHandle;
 
   actor = BattleObject_Get(unitId)->actor;
@@ -295,8 +295,8 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
                           ACTOR_SPRITE_ONE)) {
     effectHandle = Sprite_AddAnimFar(actor->sprite, HIT_FLASH_ANIMATION);
     if (effectHandle != 0) {
-      effect = (struct SpriteAnim *)effectHandle;
-      SpriteAnim_StartFar(effect, 1);
+      effect = (struct SpriteAnimation *)effectHandle;
+      SpriteAnimation_StartFar(effect, 1);
       effect->priority = 3;
     }
     WaitFrames(0xA);

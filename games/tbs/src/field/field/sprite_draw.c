@@ -28,7 +28,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
   struct ActorSystemWork *system;
   SpriteDrawFn decodePicture;
   s32 decoderWasLoaded;
-  struct SpriteAnim *layer;
+  struct SpriteAnimation *layer;
   void *code;
   u8 *pixels;
   u8 *unpacked;
@@ -93,7 +93,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
       arg = layer->script[layer->scriptOffset++];
       switch (picture) {
       case ANIMCMD_PLAY:
-        SpriteAnim_Start(layer, arg);
+        SpriteAnimation_Start(layer, arg);
         animation->lastNo = arg;
         break;
       case ANIMCMD_JUMP:
@@ -615,10 +615,10 @@ void Sprite_SetAnimColorModes(void *rawSprite, u32 value) {
     u32 count = sprite->count;
 
     if (count != 0) {
-      struct SpriteAnim **entry = sprite->entries;
+      struct SpriteAnimation **entry = sprite->entries;
       u32 remaining = count;
       do {
-        struct SpriteAnim *layer = *entry++;
+        struct SpriteAnimation *layer = *entry++;
         if (layer->colorMode != SPRITE_COLOR_HIDDEN)
           layer->colorMode = value;
         remaining--;

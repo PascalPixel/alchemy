@@ -75,7 +75,7 @@ s32 RunFlashEraseVerifier(u8 *, u8 *);
 void StartFlashTimer(u8 index);
 #endif
 
-struct SpriteAnim;
+struct SpriteAnimation;
 struct Sprite;
 struct SelectionNode;
 
@@ -88,9 +88,9 @@ extern u8 IwramSoundReverbCode[];
 /// Save_WriteSector calls.
 extern u32 gProgramFlashSector;
 #endif
-/// HEAP_SLOT_SPRITE_ANIMS: the sprite anims (struct
-/// SpriteAnim) that SpriteAnim_Alloc takes from.
-extern struct SpriteAnim *gSpriteAnims[];
+/// HEAP_SLOT_SPRITE_ANIMATIONS: the sprite animations (struct
+/// SpriteAnimation) that SpriteAnimation_Alloc takes from.
+extern struct SpriteAnimation *gSpriteAnimations[];
 /// Where the debug text writes next on its 32 by 20 screen in BG0.
 extern u16 *gDebugTextCursor;
 /// Nonzero lets DebugText_Print write; the power-on set-up and the credits

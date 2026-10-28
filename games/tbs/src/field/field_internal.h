@@ -74,7 +74,7 @@
 
 /// Animation script commands. A script is pairs of bytes, a command and its
 /// argument; a command below 239 shows that frame for `arg` frames at normal
-/// speed (the timer counts sixteenths, less SpriteAnim.step each frame).
+/// speed (the timer counts sixteenths, less SpriteAnimation.step each frame).
 enum AnimationCommand {
   ANIMCMD_END = 239,      ///< blank the layer and stop its script
   ANIMCMD_SET_KIND = 240, ///< use facing table `arg`
@@ -89,7 +89,7 @@ enum AnimationCommand {
 enum {
   RESOURCE_SLOT_COUNT = 8, ///< ActorSystemWork.pictureCaches
   ACTOR_COUNT = 64,        ///< gActors, HEAP_SLOT_ACTORS
-  ANIM_OBJECT_COUNT = 64,  ///< sprites and sprite anims
+  ANIM_OBJECT_COUNT = 64,  ///< sprites and sprite animations
   ANIM_LAYER_COUNT = 4,    ///< Sprite.entries
   /// Sixteenths of a frame taken off an anim's timer each frame: one frame.
   ANIM_NORMAL_STEP = 16

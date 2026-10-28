@@ -232,8 +232,8 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
 /// frame with 0 to cycle its colours, and with 1 (palette 0) when it ends.
 void Anim_ApplyChildPalette(struct Actor *actor, s32 palette) {
   struct Sprite *sprite;
-  struct SpriteAnim **entrySlot;
-  struct SpriteAnim *entry;
+  struct SpriteAnimation **entrySlot;
+  struct SpriteAnimation *entry;
   s32 remainingParts;
   s32 replacement;
   u8 partCount;

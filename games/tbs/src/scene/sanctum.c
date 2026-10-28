@@ -1559,7 +1559,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
   sprite = actor->sprite;
   {
     for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
-      struct SpriteAnim *entry = sprite->entries[entryIndex];
+      struct SpriteAnimation *entry = sprite->entries[entryIndex];
 
       if (entry != 0 && entry->script != 0) {
         entry->colorMode = SPRITE_COLOR_RED_TINT;

@@ -755,10 +755,10 @@ void Actor_UpdateBlink(struct Actor *actor) {
     container = object->sprite;
     partCount = container->count;
     if (partCount != 0) {
-      struct SpriteAnim **entries = container->entries;
+      struct SpriteAnimation **entries = container->entries;
       s32 remaining = partCount;
       do {
-        struct SpriteAnim *entry = *entries++;
+        struct SpriteAnimation *entry = *entries++;
         if (entry != 0 && entry->script != 0) {
           entry->colorMode = param;
         }
@@ -781,10 +781,10 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
     u8 partCount = container->count;
 
     if (partCount != 0) {
-      struct SpriteAnim **entry = container->entries;
+      struct SpriteAnimation **entry = container->entries;
       u32 count = partCount;
       do {
-        struct SpriteAnim *part = *entry++;
+        struct SpriteAnimation *part = *entry++;
         if (part != NULL && part->script != 0) {
           part->colorMode = param;
         }

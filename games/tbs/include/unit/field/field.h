@@ -5,7 +5,7 @@
 
 #include "types.h"
 
-struct SpriteAnim;
+struct SpriteAnimation;
 struct Sprite;
 struct Actor;
 struct FieldPosition;
@@ -26,13 +26,13 @@ enum ActorSystemMode {
   ACTOR_SYSTEM_BATTLE = 4
 };
 
-/// SpriteAnim.kind: the facing table a sprite anim's pictures follow
+/// SpriteAnimation.kind: the facing table a sprite animation's pictures follow
 /// (Sprite_ComposePicture, facing.c). Each cuts the facing angle into
 /// sectors and gives each sector a picture and whether it is mirrored.
 enum AnimationFacingKind {
   /// The animation script's own picture whatever the facing; zero also marks a
   /// free
-  /// sprite anim.
+  /// sprite animation.
   ANIM_FACING_NONE = 0,
   ANIM_FACING_ONE_PICTURE = 1, ///< 8 sectors: one picture, mirrored to the left
   ANIM_FACING_FRONT_BACK = 2,  ///< 8 sectors: a front and a back picture
@@ -57,8 +57,9 @@ enum AnimationFacingKind {
   ANIM_FACING_EIGHT_PICTURES_MIRRORED = 88
 };
 
-/// SpriteAnim.mode, from the metadata's pictureCodec: how a sprite anim's
-/// pictures are stored. Any other value is raw, for the picture decoder.
+/// SpriteAnimation.mode, from the metadata's pictureCodec: how a sprite
+/// animation's pictures are stored. Any other value is raw, for the picture
+/// decoder.
 enum SpritePictureCodec {
   SPRITE_PICTURE_RAW = 0,
   SPRITE_PICTURE_TAGGED_LZ = 1, ///< Decompress_TaggedLz's format
@@ -186,20 +187,20 @@ void Sprite_SetAnimColorModes(void *rawSprite, u32 value);
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 s32 SpritePictureCache_FindByTag(s32 tag);
 s32 Sprite_ResetAnims(struct Sprite *sprite);
-void SpriteAnim_Reset(struct SpriteAnim *layer);
+void SpriteAnimation_Reset(struct SpriteAnimation *layer);
 s32 Sprite_AddAnim(struct Sprite *sprite, s32 id);
 void Sprite_RemoveAnim(struct Sprite *sprite, s32 layer);
 void Sprite_RemoveAnimAt(struct Sprite *sprite, u32 index);
-void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation);
+void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation);
 s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation);
 s32 Sprite_SetAnimTimers(struct Sprite *sprite, s32 frames);
 void Sprite_SetAnimSpeed(struct Sprite *sprite, s32 step);
 void ActorSystem_Configure(s32 mode);
-struct SpriteAnim *SpriteAnim_Alloc(s32 id);
-void SpriteAnim_Clear(struct SpriteAnim *record);
+struct SpriteAnimation *SpriteAnimation_Alloc(s32 id);
+void SpriteAnimation_Clear(struct SpriteAnimation *record);
 struct Sprite *Sprite_Create(s32 id);
 void Sprite_Destroy(struct Sprite *sprite);
-s32 SpriteAnim_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
+s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
 void SpriteDissolve_Step(u8 *obj, u32 pos);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);

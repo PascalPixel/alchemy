@@ -43,7 +43,7 @@ void BattleObject_UpdateSpritePriorities(void) {
           record = GetMotionRecord(actor, 0);
 
           if (record != 0) {
-            struct SpriteAnimHeadView *shadow;
+            struct SpriteAnimationHeadView *shadow;
             s32 shadowPriority = 0;
 
             // Off the ground.
@@ -207,8 +207,8 @@ void BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 #else
 s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 #endif
-  struct SpriteAnim *shownIcon;
-  struct SpriteAnim *icon;
+  struct SpriteAnimation *shownIcon;
+  struct SpriteAnimation *icon;
   struct Sprite *record;
   struct Actor *actor;
   s32 iconAnimation;
@@ -221,7 +221,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
 
   // Move on when the time is up, when the shown status has ended, or when a
   // status appears with no icon shown.
-  shownIcon = (struct SpriteAnim *)battleObject->animationEntry;
+  shownIcon = (struct SpriteAnimation *)battleObject->animationEntry;
   if ((shownIcon == 0
            ? (s16)battleObject->activeStatuses != 0
            : (((s16)battleObject->activeStatuses >> battleObject->shownStatus) &
@@ -268,13 +268,14 @@ s32 BattleStatusIcon_Cycle(struct BattleObject *battleObject) {
       if (iconAnimation >= 0 && changed != 0) {
         // The handle is stored first and cleared again when registration fails.
         iconHandle = Sprite_AddAnimFar(record, iconAnimation);
-        battleObject->animationEntry = (struct SpriteAnimHeadView *)iconHandle;
+        battleObject->animationEntry =
+            (struct SpriteAnimationHeadView *)iconHandle;
         if (iconHandle == -1)
           battleObject->animationEntry = 0;
-        icon = (struct SpriteAnim *)battleObject->animationEntry;
+        icon = (struct SpriteAnimation *)battleObject->animationEntry;
         if (icon != 0) {
           icon->priority = 3;
-          SpriteAnim_StartFar(icon, 0);
+          SpriteAnimation_StartFar(icon, 0);
         }
       }
 
@@ -365,7 +366,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   struct BattleObject *battleObject;
   struct BattleActor *actor;
   struct Sprite *record;
-  struct SpriteAnimHeadView *entry;
+  struct SpriteAnimationHeadView *entry;
   struct Sprite **records;
   s32 spriteId;
   s32 releasedUnitId;
@@ -439,26 +440,26 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         actor->spriteStorageKind = ACTOR_SPRITE_ONE;
         actor->sprite = record;
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
-        entry = (struct SpriteAnimHeadView *)record->entries[0];
+        entry = (struct SpriteAnimationHeadView *)record->entries[0];
         entry->priority = 1;
         entry->palette = battleObject->palette;
         if ((spriteId = battleObject->overlay) != 0) {
-          entry =
-              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
+          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimFar(record,
+                                                                      spriteId);
           entry->priority = 1;
         }
         if ((spriteId = battleObject->animation) != 0) {
-          entry =
-              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
+          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimFar(record,
+                                                                      spriteId);
           battleObject->animationEntry = entry;
-          SpriteAnim_StartFar((struct SpriteAnim *)entry, 0);
+          SpriteAnimation_StartFar((struct SpriteAnimation *)entry, 0);
           entry->priority = 3;
         }
         if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
             spriteId = NARROW_SHADOW_SPRITE;
-          entry =
-              (struct SpriteAnimHeadView *)Sprite_AddAnimFar(record, spriteId);
+          entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimFar(record,
+                                                                      spriteId);
           battleObject->shadowEntry = entry;
           entry->priority = 0;
           record->flags = 0;

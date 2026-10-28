@@ -30,7 +30,7 @@ extern u8 gPlayerActorId[];
 extern u16 gBattleUnit_WeaponKinds[];
 struct BattleObject;
 
-struct SpriteAnim;
+struct SpriteAnimation;
 struct Sprite;
 struct ArcObject;
 struct ArcParticle;

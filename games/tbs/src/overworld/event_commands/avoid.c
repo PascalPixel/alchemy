@@ -11,7 +11,7 @@
 void FieldEffect_BlinkAvoidCaster(void) {
   struct Actor *caster;
   struct Sprite *rec;
-  struct SpriteAnim *entry;
+  struct SpriteAnimation *entry;
   s32 phase;
 
   caster = Actor_Lookup(gAdventure.leaderActorId);
@@ -89,7 +89,7 @@ void FieldPsynergy_Avoid(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *actor;
   struct Sprite *group;
-  struct SpriteAnim *entry;
+  struct SpriteAnimation *entry;
   u32 angle;
   s32 slot;
   s32 count;

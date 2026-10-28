@@ -135,7 +135,7 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *interpreter) {
   {
     struct Sprite *sprite =
         *(struct Sprite **)((u8 *)actor + offsetof(struct Actor, sprite));
-    struct SpriteAnim *entry = sprite->entries[0];
+    struct SpriteAnimation *entry = sprite->entries[0];
 
     entry->colorMode = ((gFrameCount >> 1) & 1) * 7;
     sprite->dirty = 1;

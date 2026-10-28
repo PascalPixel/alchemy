@@ -14,9 +14,9 @@ FarCall_FieldTable:
 	export Sprite_AddAnimFar, Sprite_AddAnim
 	export Sprite_RemoveAnimFar, Sprite_RemoveAnim
 	overlay_veneer Sprite_RemoveAnimAt
-	export SpriteAnim_ClearFar, SpriteAnim_Clear
-	overlay_veneer SpriteAnim_Reset
-	export SpriteAnim_StartFar, SpriteAnim_Start
+	export SpriteAnimation_ClearFar, SpriteAnimation_Clear
+	overlay_veneer SpriteAnimation_Reset
+	export SpriteAnimation_StartFar, SpriteAnimation_Start
 	export ActorSystem_InitializeFar, ActorSystem_Initialize
 	export Actor_SelectAnimationFar, Actor_SelectAnimation
 	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
@@ -78,7 +78,7 @@ FarCall_FieldTable:
 	export Sprite_SetAnimColorModesFar, Sprite_SetAnimColorModes
 	export ActorScript_CheckOverlapFar, ActorScript_CheckOverlap
 	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers
-	export SpriteAnim_SumCommandLengthsFar, SpriteAnim_SumCommandLengths
+	export SpriteAnimation_SumCommandLengthsFar, SpriteAnimation_SumCommandLengths
 	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
 	export SpritePictureCache_LoadFar, SpritePictureCache_Load
 	export MapGrid_SetCellBehaviorAtFar, MapGrid_SetCellBehaviorAt

@@ -44,7 +44,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
       tile = VramCache_Load(sprite->slot, 128, (const void *)base);
       FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
       actor->retainSpriteCache = one;
-      SpriteAnim_Clear(sprite->entries[0]);
+      SpriteAnimation_Clear(sprite->entries[0]);
       sprite->entries[0] = (void *)none;
       sprite->count = none;
       sprite->image.fullColor = none;

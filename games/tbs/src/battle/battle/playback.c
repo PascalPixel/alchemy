@@ -364,7 +364,7 @@ void BattlePlayback_Run(void) {
                (record = GetMotionRecord(
                     BattleObject_Get(events->unitId)->actor, recordIndex)) != 0;
                recordIndex++) {
-            struct SpriteAnim *child;
+            struct SpriteAnimation *child;
             u8 previousPicture;
 
             *slot++ = record;

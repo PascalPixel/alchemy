@@ -2360,7 +2360,7 @@ static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   WaitFrames(30);
   sprite = actor->sprite;
   sprite->count = 1;
-  SpriteAnim_Clear(sprite->entries[1]);
+  SpriteAnimation_Clear(sprite->entries[1]);
   sprite->entries[1] = NULL;
   sprite->dirty = 1;
   leader = Actor_Lookup(gAdventure.leaderActorId);

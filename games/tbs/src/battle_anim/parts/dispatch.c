@@ -281,17 +281,17 @@ void BattleAnim_TintBattler(s32 unitId, s32 palette, s32 animation,
 
         partIndex = 0;
         if (group->count != 0) {
-          struct SpriteAnim **parts;
+          struct SpriteAnimation **parts;
 
           parts = group->entries;
           do {
-            struct SpriteAnim *part;
+            struct SpriteAnimation *part;
 
             // Every part but the unit's shadowEntry and animationEntry.
             part = *parts++;
             if (part != NULL &&
-                part != (struct SpriteAnim *)slot->shadowEntry &&
-                part != (struct SpriteAnim *)slot->animationEntry) {
+                part != (struct SpriteAnimation *)slot->shadowEntry &&
+                part != (struct SpriteAnimation *)slot->animationEntry) {
               if (palette == 0)
                 part->colorMode = BattleObject_GetPaletteFar(unitId);
               else

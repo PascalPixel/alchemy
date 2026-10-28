@@ -23,7 +23,7 @@ enum UiSpriteViewerEditMode {
   UI_SPRITE_VIEWER_EDIT_COUNT
 };
 
-/// One sprite anim the sprite viewer edits.
+/// One sprite animation the sprite viewer edits.
 struct UiSpriteViewerLayer {
   s16 spriteId;       ///< metadata record selected for this layer
   s16 animationIndex; ///< animation script selected from that metadata
@@ -33,7 +33,7 @@ struct UiSpriteViewerLayer {
 };
 
 /// A debug sprite viewer, which never returns. It shows a sprite (with up to
-/// three more sprite anims) once for each of its facings, in a ring.
+/// three more sprite animations) once for each of its facings, in a ring.
 /// Start with the direction pad moves the ring; otherwise up and down choose
 /// an anim and left and right what to edit (enum UiSpriteViewerEditMode): the
 /// animation, the sprite number (ten at a time with Start), the priority or
@@ -570,7 +570,7 @@ void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex) {
   spriteGroup = gSprites;
   spriteIndex = 0;
   do {
-    struct SpriteAnim *entry =
+    struct SpriteAnimation *entry =
         spriteGroup->entries[layerIndex & (ANIM_LAYER_COUNT - 1)];
     struct AnimationMetadata *metadata;
     s32 initialFrame = 0;
@@ -608,10 +608,10 @@ void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   layerIndex &= ANIM_LAYER_COUNT - 1;
   for (spriteIndex = 0; spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT;
        spriteIndex++) {
-    struct SpriteAnim *entry = spriteGroup->entries[layerIndex];
+    struct SpriteAnimation *entry = spriteGroup->entries[layerIndex];
 
     entry->animationId = spriteId;
-    SpriteAnim_Reset(entry);
+    SpriteAnimation_Reset(entry);
     spriteGroup++;
   }
 }

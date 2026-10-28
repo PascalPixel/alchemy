@@ -950,11 +950,11 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   entryCount = sprite->count;
   if (entryCount != 0) {
     u32 invalidFrame = 255;
-    struct SpriteAnim **entries = sprite->entries;
+    struct SpriteAnimation **entries = sprite->entries;
     u32 entriesLeft = entryCount;
 
     do {
-      struct SpriteAnim *entry = *entries++;
+      struct SpriteAnimation *entry = *entries++;
 
       if (entry->colorMode != colorVariant) {
         entry->colorMode = colorVariant;

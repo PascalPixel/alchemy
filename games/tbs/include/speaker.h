@@ -15,7 +15,7 @@
 struct SpeakerSprite {
   u8 beforeEntries[0x28]; ///< Sprite's fields before its layers
   /// Sprite.entries[0], its first layer, whose first halfword is the
-  /// sprite id it shows (SpriteAnim.animationId); null for none.
+  /// sprite id it shows (SpriteAnimation.animationId); null for none.
   s16 *firstEntry;
 };
 

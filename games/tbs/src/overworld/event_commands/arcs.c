@@ -81,7 +81,7 @@ struct SpriteArcOamView {
   u8 pad1e[8];
   u8 flags; ///< bit 0 draws its shadow; the arcs clear it
   u8 pad27;
-  struct SpriteAnim *child; ///< entries[0], its first layer
+  struct SpriteAnimation *child; ///< entries[0], its first layer
 };
 
 /// Spawns the two swelling arcs (sprite 26) on an actor, A and B (B upside

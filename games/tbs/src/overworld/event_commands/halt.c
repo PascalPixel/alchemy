@@ -180,7 +180,7 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
 /// another; the paused actor flickers through random sprite params meanwhile.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
-  struct SpriteAnim *entry;
+  struct SpriteAnimation *entry;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {

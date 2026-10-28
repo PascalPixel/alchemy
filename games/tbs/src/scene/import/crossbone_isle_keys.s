@@ -6,7 +6,7 @@
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
-	.set import.SpriteAnim_Clear, 1
+	.set import.SpriteAnimation_Clear, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_SetAnimationSpeed, 1
 	.set import.Actor_StartScript, 1

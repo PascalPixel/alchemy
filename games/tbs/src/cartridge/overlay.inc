@@ -77,7 +77,7 @@
 @ Field bank (far_call/FIELD.S)
 	import Sprite_StartAnim, Sprite_StartAnimFar
 	import Sprite_AddAnim, Sprite_AddAnimFar
-	import SpriteAnim_Clear, SpriteAnim_ClearFar
+	import SpriteAnimation_Clear, SpriteAnimation_ClearFar
 	import Actor_SelectAnimation, Actor_SelectAnimationFar
 	import Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
 	import Actor_StartScript, Actor_StartScriptFar

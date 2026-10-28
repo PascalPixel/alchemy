@@ -13,7 +13,8 @@
 /// bits a length - 2 (or, when 0, the next byte + 16 + 2), and copies that many
 /// bytes from the literals' start minus the distance. A zero halfword ends the
 /// stream. Called only by Sprite_ComposePicture, for a codec 3 (LZ)
-/// sprite anim that has a draw parameter, into a 0x400-byte scratch buffer.
+/// sprite animation that has a draw parameter, into a 0x400-byte scratch
+/// buffer.
 u8 *Decompress_Lz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;

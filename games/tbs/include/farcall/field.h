@@ -1,7 +1,7 @@
 /// @file
 /// Actors, movement, map drawing and map routines.
 
-/// Allocates the 64 sprites and their sprite anims, loads the basic sprite
+/// Allocates the 64 sprites and their sprite animations, loads the basic sprite
 /// palettes and shadow tiles, and puts the tile uploader in RAM; `mode` picks
 /// EWRAM first on the world map.
 void ActorSystem_ConfigureFar(s32 mode);
@@ -13,29 +13,29 @@ void Actor_ApplyProjectedPlacementFar(struct Sprite *sprite,
                                       const struct SpritePlacement *position,
                                       const struct SpriteScale *scale,
                                       s32 facing);
-/// Starts animation `flags & 0x7f` on every sprite anim of a sprite unless it
-/// plays it already; bit 7 keeps each anim's place and timer. Returns 0.
+/// Starts animation `flags & 0x7f` on every sprite animation of a sprite unless
+/// it plays it already; bit 7 keeps each anim's place and timer. Returns 0.
 s32 Sprite_StartAnimFar(struct Sprite *state, s32 flags);
 /// Creates a sprite for animation `id` with a VRAM cache entry for its tiles,
 /// or returns NULL when there's no room or the id has no image. The caller
 /// keeps it until Sprite_DestroyFar.
 struct Sprite *Sprite_CreateFar(s32 id);
-/// Gives back a sprite's VRAM cache entry and its four sprite anims, then
+/// Gives back a sprite's VRAM cache entry and its four sprite animations, then
 /// zeroes it so it's free again.
 void Sprite_DestroyFar(struct Sprite *sprite);
-/// Adds a sprite anim playing animation `id` to a sprite, the first free one of
-/// four. Returns the anim, 0 when none is free, or -1 when all four are
+/// Adds a sprite animation playing animation `id` to a sprite, the first free
+/// one of four. Returns the anim, 0 when none is free, or -1 when all four are
 /// taken.
 s32 Sprite_AddAnimFar(struct Sprite *state, s32 id);
-/// Takes sprite anim `handle` off a sprite and clears it; the battle's objects
-/// use it to drop an extra one.
+/// Takes sprite animation `handle` off a sprite and clears it; the battle's
+/// objects use it to drop an extra one.
 void Sprite_RemoveAnimFar(struct Sprite *state, s32 handle);
-/// Zeroes one sprite anim, which frees it; NULL is ignored.
-void SpriteAnim_ClearFar(struct SpriteAnim *layer);
-/// Starts animation `no` on one sprite anim when its metadata has it. Bit 7
-/// keeps the command cursor and timer, and unlike the sprite-wide form it stays
-/// part of the index.
-void SpriteAnim_StartFar(struct SpriteAnim *work, s32 no);
+/// Zeroes one sprite animation, which frees it; NULL is ignored.
+void SpriteAnimation_ClearFar(struct SpriteAnimation *layer);
+/// Starts animation `no` on one sprite animation when its metadata has it. Bit
+/// 7 keeps the command cursor and timer, and unlike the sprite-wide form it
+/// stays part of the index.
+void SpriteAnimation_StartFar(struct SpriteAnimation *work, s32 no);
 /// Allocates the 64 actors and registers their per-frame updates;
 /// `mode` picks the battle's script-less motion and the world map's fixed
 /// camera.
@@ -177,8 +177,8 @@ void ActorSystem_ResumeProjectionAndHideLayersFar(void);
 /// Returns -1 when the overhead layer's cell under `position`, its height
 /// taken off, is a wall (CELL_BEHAVIOR_WALL), else 0.
 s32 MapGrid_IsWallAtFar(struct WorldPosition *position);
-/// Adds a sprite anim playing animation `no` to a one-sprite actor's sprite; a
-/// negative `no` does nothing.
+/// Adds a sprite animation playing animation `no` to a one-sprite actor's
+/// sprite; a negative `no` does nothing.
 void Actor_RegisterSpriteMetadataFar(struct Actor *actor, s32 no);
 /// Freezes the world map's perspective view as a still picture on BG1, so a
 /// menu or event can use the window and VBlank.
@@ -189,8 +189,9 @@ void WorldMap_LoadAreaGraphicsFar(void);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
 /// anims, except hidden ones.
 void Anim_ApplyChildValuesFar(struct Actor *actor, u32 val);
-/// Sets every sprite anim of a sprite to colour mode `value`, skipping those
-/// drawn hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
+/// Sets every sprite animation of a sprite to colour mode `value`, skipping
+/// those drawn hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for
+/// redrawing.
 void Sprite_SetAnimColorModesFar(void *raw_parent, u32 value);
 /// Returns -1 when an actor at `values` would overlap a solid actor
 /// (ACTOR_SOLID), each radius less 2 pixels, else 0.
@@ -200,7 +201,7 @@ s32 ActorScript_CheckOverlapFar(struct Actor *actor, s32 *values);
 void MapGrid_SetShownLayersFar(u32 v);
 /// Returns how many frames the first `cnt` frames of animation `no` of `id`
 /// last, stopping at its first play, hold, jump or end command.
-s32 SpriteAnim_SumCommandLengthsFar(s32 id, u32 no, s32 cnt);
+s32 SpriteAnimation_SumCommandLengthsFar(s32 id, u32 no, s32 cnt);
 /// Returns the world map's battle environment at `position` and stores the
 /// block's terrain kind in `terrain_kind`, for the world map's encounters.
 s32 WorldMap_GetBattleEnvironmentFar(struct WorldPosition *position,
@@ -211,8 +212,8 @@ s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 /// Writes `behavior` into the cell of `layer` under (x, y), given in 16.16
 /// pixels; before the map is set up it does nothing.
 void MapGrid_SetCellBehaviorAtFar(u32 layer, s32 x, s32 y, u32 behavior);
-/// Sets the timer step of a sprite's animated sprite anims: 16 plays at normal
-/// speed, 0 stops them.
+/// Sets the timer step of a sprite's animated sprite animations: 16 plays at
+/// normal speed, 0 stops them.
 void Sprite_SetAnimSpeedFar(struct Sprite *group, s32 val);
 /// Remaps `cnt` bytes of `buf` in place through gSpriteColorRemapTables, as
 /// the command icons' colours are.

@@ -528,8 +528,8 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   // The run up: as long as the attacker's POSE_LEAP, with its class's hop
   // height (16.16).
   animation = GetMotionRecord(BattleObject_Get(plan->unitId)->actor, 0);
-  frames =
-      SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
+  frames = SpriteAnimation_SumCommandLengthsFar(
+      animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
                               BattleSprite_GetAttackHop(unit->id) << 16);
   Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor, 16);
@@ -666,8 +666,8 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
 
   missed = flags & 2;
   animation = GetMotionRecord(BattleObject_Get(savedInput->unitId)->actor, 0);
-  frames =
-      SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
+  frames = SpriteAnimation_SumCommandLengthsFar(
+      animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, savedInput->targetIds[0],
                               frames, 0);
   Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor, 16);
@@ -841,8 +841,8 @@ s32 BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   s32 childIndex;
   s32 entryCount;
   struct Sprite *record;
-  struct SpriteAnim *child;
-  struct SpriteAnim **children;
+  struct SpriteAnimation *child;
+  struct SpriteAnimation **children;
   /* FAKEMATCH(temporary): the mask in a variable and the frame read into
    * another, so 255 stays in a register across the calls and is or-ed in;
    * as child->frame |= 0xff, 10 of 46 instructions differ in tbs-en. */
@@ -1081,7 +1081,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
   void *records[4];
   struct Unit *unit;
   struct Sprite *record;
-  struct SpriteAnim *entry;
+  struct SpriteAnimation *entry;
   s32 recordCount;
 
   unit = Unit_GetFar(unitId);

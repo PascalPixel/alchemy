@@ -21,7 +21,7 @@
 #include "edition.h"
 
 struct AffineTransform;
-struct SpriteAnim;
+struct SpriteAnimation;
 struct AnimationMetadata;
 struct Sprite;
 struct BattleAction;

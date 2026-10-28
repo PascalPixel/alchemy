@@ -15,7 +15,7 @@ struct AnimationMetadata {
   u8 width;    ///< pixels
   u8 height;   ///< pixels
   u16 scale;   ///< 8.8 fixed point, 0x100 full size
-  u8 drawKind; ///< SpriteAnim.kind: the facing table its pictures follow
+  u8 drawKind; ///< SpriteAnimation.kind: the facing table its pictures follow
   /// The scripts in animation; an animation number at or past it is not
   /// played.
   u8 animationCount;
@@ -27,7 +27,8 @@ struct AnimationMetadata {
   /// Pixels; half of it is a battle unit's radius, and can be an
   /// actor's radius (Actor.radius).
   u8 boxY;
-  u8 pictureCodec; ///< SpriteAnim.mode: 1 tagged LZ, 3 LZ, anything else raw
+  u8 pictureCodec; ///< SpriteAnimation.mode: 1 tagged LZ, 3 LZ, anything else
+                   ///< raw
   /// The picture pointers; null takes them from the sprite picture cache slot
   /// holding the animation (SpritePictureCache_FindByTag).
   void **pictures;

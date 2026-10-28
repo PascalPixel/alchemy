@@ -10,7 +10,7 @@
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Irq_SetHandler, 1
 	.set import.Sprite_AddAnim, 1
-	.set import.SpriteAnim_Clear, 1
+	.set import.SpriteAnimation_Clear, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1

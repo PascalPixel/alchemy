@@ -97,7 +97,7 @@ s32 Battle_Run(s32 enemyGroup) {
   Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleMessageWork));
   battle->background = Event_GetSpecialValueFar();
   AllocHeapSlotEwram(HEAP_SLOT_SPRITES, 0xe00);
-  AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMS, 0x600);
+  AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 0x600);
   ActorSystem_InitializeFar(ACTOR_SYSTEM_BATTLE);
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0)
     WindowSystem_InitBattleFar(1);

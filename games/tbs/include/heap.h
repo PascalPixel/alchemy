@@ -47,9 +47,9 @@ STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 /// the same pool.
 enum HeapSlot {
   HEAP_SLOT_TRANSFORM_STACK = 2, ///< The 3D transform's one saved level.
-  /// The sprite anims (struct SpriteAnim) of the actor
-  /// system's sprites (gSpriteAnims).
-  HEAP_SLOT_SPRITE_ANIMS = 3,
+  /// The sprite animations (struct SpriteAnimation) of the actor
+  /// system's sprites (gSpriteAnimations).
+  HEAP_SLOT_SPRITE_ANIMATIONS = 3,
   /// The actor system's sprite pool (struct Sprite).
   HEAP_SLOT_SPRITES = 4,
   /// The 64 actors (struct Actor).

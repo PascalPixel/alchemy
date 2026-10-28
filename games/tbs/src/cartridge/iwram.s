@@ -178,8 +178,8 @@ gHeapSlots:
 	.size gHeapSlots, 0x100
 gHeapSlots:
 	.space 0x0000000c
-	.global gSpriteAnims
-gSpriteAnims:
+	.global gSpriteAnimations
+gSpriteAnimations:
 	.space 0x00000004
 	.global gSprites
 gSprites:

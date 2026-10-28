@@ -171,7 +171,7 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
     struct Sprite *sprite = picture->sprite;
     void *iconBuffer;
 
-    // No shadow, outline or sprite anims: a 16-colour sprite in OBJ
+    // No shadow, outline or sprite animations: a 16-colour sprite in OBJ
     // palette 0 whose tiles are the item's icon.
     sprite->flags = 0;
     sprite->count = 0;

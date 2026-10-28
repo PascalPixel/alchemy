@@ -64,8 +64,9 @@ struct BattleBackgroundWork {
 /// local.
 struct BattleStagingWork {
   struct BattleAnimArgs effect;
-  /// Each target's sprite anims' SpriteColorMode (SpriteAnim.colorMode), all
-  /// but its last, saved before the animation; no code reads them back by name.
+  /// Each target's sprite animations' SpriteColorMode
+  /// (SpriteAnimation.colorMode), all but its last, saved before the animation;
+  /// no code reads them back by name.
   u8 savedAnimationParameters[8][4];
 };
 

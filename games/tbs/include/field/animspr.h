@@ -10,8 +10,8 @@
 #include "static_assert.h"
 #include "render_placement.h"
 
-/// SpriteAnim.colorMode: how Render_DecodePicture colours a layer's pixels.
-/// Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
+/// SpriteAnimation.colorMode: how Render_DecodePicture colours a layer's
+/// pixels. Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
 /// gSpriteColorTables, then the four gSpriteColorRemapTables
 /// ones); the solid modes paint every drawn pixel one colour of the basic
 /// sprite palette. Mode 8 is a second white and mode 12 reads past the tables.
@@ -37,19 +37,19 @@ enum SpriteColorMode {
 /// until it is given a mode again.
 #define SPRITE_COLOR_BLINK 0x100
 
-/// One of a sprite's four sprite anims: its animation id, pictures, running
-/// script and timer.
-struct SpriteAnim {
+/// One of a sprite's four sprite animations: its animation id, pictures,
+/// running script and timer.
+struct SpriteAnimation {
   s16 animationId; ///< the sprite id whose metadata and pictures it uses
   /// Time left on the current picture in sixteenths of a frame, read signed:
   /// each timed command adds its argument times 16, each frame takes off step.
   u16 timer;
   /// The facing table its pictures follow (from the metadata, or
-  /// ANIMCMD_SET_KIND); zero marks a free sprite anim.
+  /// ANIMCMD_SET_KIND); zero marks a free sprite animation.
   u8 kind;
-  u8 colorMode;    ///< SpriteColorMode its pixels are drawn with; 0 when taken
-  u8 priority;     ///< drawing order 0 to 3 among the anims; above 3 not drawn
-  u8 mode;         ///< picture codec: 1 tagged LZ, 3 LZ, anything else raw
+  u8 colorMode; ///< SpriteColorMode its pixels are drawn with; 0 when taken
+  u8 priority; ///< drawing order 0 to 3 among the animations; above 3 not drawn
+  u8 mode;     ///< picture codec: 1 tagged LZ, 3 LZ, anything else raw
   void **pictures; ///< picture pointers, from the metadata or a picture cache
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null when stopped (ANIMCMD_END)
@@ -110,7 +110,7 @@ struct AnimationSpritePart {
 };
 
 /// An animated sprite: its image and shadow, scale, rotation, size and up to
-/// four sprite anims.
+/// four sprite animations.
 struct Sprite {
   struct AnimationSpritePart image;
   /// Its shadow, shown while flags bit 0 is set.
@@ -133,11 +133,11 @@ struct Sprite {
   /// bits: 1 outlined in ActorSystemWork's edge and fill colours |
   /// 0 shadow drawn (set when created)
   u8 flags;
-  u8 count;                      ///< layers in use, up to the last one present
-  struct SpriteAnim *entries[4]; ///< its layers; empty ones null
+  u8 count; ///< layers in use, up to the last one present
+  struct SpriteAnimation *entries[4]; ///< its layers; empty ones null
 };
 
-STATIC_ASSERT(sizeof(struct SpriteAnim) == 0x18);
+STATIC_ASSERT(sizeof(struct SpriteAnimation) == 0x18);
 STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 0x0c);
 STATIC_ASSERT(offsetof(struct Sprite, scale) == 0x18);
 STATIC_ASSERT(offsetof(struct Sprite, rotation) == 0x1e);

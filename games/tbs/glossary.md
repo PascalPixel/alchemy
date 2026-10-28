@@ -252,9 +252,10 @@ Evidence: Camelot: the credits' "Field" (`gCredits_Lines`); tradition: sequence.
 ### Transition and next sequence
 
 The handover from one sequence to the next. The field sequence names the next
-one, a scene or a battle, in the [main routine's work](#main-routines-work); a
-battle, dice or slots sequence returns its result, and the main routine picks
-the scene to go back to (`Scene_ReturnFromSequence`)
+one in the [main routine's work](#main-routines-work), `gMainRoutineWork.next`:
+a scene, which means the field sequence running that scene, or a `SEQUENCE_`
+value for a battle, dice or slots. A battle, dice or slots sequence returns its
+result, and the main routine picks the scene to go back to (`Scene_ReturnFromSequence`)
 ([System](system.md#the-main-routine)).
 
 Evidence: tradition: シーケンス遷移.

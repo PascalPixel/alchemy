@@ -29,9 +29,17 @@ cartridge's first instruction leads to `System_Entry` and
 The main routine runs one [sequence](glossary.md#sequence) after another and
 never returns; everything outside the interrupts runs under it. Each pass
 begins with a [transition](glossary.md#transition-and-next-sequence): it
-empties the [task](glossary.md#task) table, drops the HBlank and VCount
-handlers and empties the [heap](glossary.md#heap-and-pools), then reads the
-next id from the [main routine's work](glossary.md#main-routines-work). A
+empties the [task](glossary.md#task) table (`Task_ResetAll`), removes the
+handlers the last sequence set for the HBlank and VCount interrupts
+(`Irq_SetHandler`) and empties the [heap](glossary.md#heap-and-pools)
+(`Heap_Initialize`). The HBlank interrupt comes after each of the 160 lines
+the console draws, and the VCount interrupt when the drawing reaches a line
+the code chose; a sequence uses them for effects that change from one line to
+the next, such as the field's screen transitions and the battle's opening
+split, and a handler left behind would go on running under the next
+sequence. Then the main routine reads what
+runs next, `gMainRoutineWork.next`, from the
+[main routine's work](glossary.md#main-routines-work). A
 [scene](glossary.md#scene), a row of the scene table such as Vale, the Title
 or the File Screen, gets its flags and music set and its code unpacked, and
 the [field sequence](glossary.md#field-sequence) runs it until the party

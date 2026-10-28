@@ -12,16 +12,16 @@
 /// it. An event reads `Event_Start(); Actor_Stop(ACTOR_GARET);
 /// Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0); Event_End();`.
 
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/field/field.h"
-#include "unit/runtime/runtime.h"
-#include "unit/game/game.h"
-#include "unit/sound/sound.h"
-#include "unit/shop/shop.h"
-#include "unit/window/window.h"
-#include "unit/menu/menu.h"
-#include "unit/scene/shared/scroll_initialize_hblank_dma.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/field/field.h"
+#include "module/runtime/runtime.h"
+#include "module/game/game.h"
+#include "module/sound/sound.h"
+#include "module/shop/shop.h"
+#include "module/window/window.h"
+#include "module/menu/menu.h"
+#include "module/scene/shared/scroll_initialize_hblank_dma.h"
 #include "fixed_math.h"
 #include "map_grid_copy.h"
 

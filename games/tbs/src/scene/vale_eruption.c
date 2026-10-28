@@ -27,9 +27,9 @@
 /// scene does (sol_sanctum_entrance.c).
 
 #include "adventure.h"
-#include "unit/scene/vale_eruption.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/scene/vale_eruption.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

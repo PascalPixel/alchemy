@@ -1,8 +1,0 @@
-#ifndef ALCHEMY_UNIT_SCENE_SHARED_SOL_SANCTUM_ELEMENTAL_STAR_RING_SETUP_H
-#define ALCHEMY_UNIT_SCENE_SHARED_SOL_SANCTUM_ELEMENTAL_STAR_RING_SETUP_H
-
-#include "types.h"
-
-void SolSanctum_StartFloatingLights(s32 first, u32 count);
-
-#endif

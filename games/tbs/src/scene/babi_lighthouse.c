@@ -50,12 +50,12 @@
 #include "version.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
-#include "unit/import.h"
-#include "unit/scene/babi_lighthouse.h"
-#include "unit/scene/shared/effect_spawn.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/field/field.h"
+#include "module/import.h"
+#include "module/scene/babi_lighthouse.h"
+#include "module/scene/shared/effect_spawn.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/field/field.h"
 #include "macros.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS

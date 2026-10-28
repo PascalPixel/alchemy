@@ -4,7 +4,7 @@
 /// the comments are the English release's.
 
 #include "battle_command.h"
-#include "unit/battle_anim/battle_anim.h"
+#include "module/battle_anim/battle_anim.h"
 
 // clang-format off
 /// Up to ABILITY_SEVERE_BLOW; 0 leaves the choice to BattleTurn_Build.

@@ -16,9 +16,9 @@
 /// way of it.
 /// The flag is an area temp flag, so the stump is back up in the room
 /// above once the party leaves Goma Cave's four scenes.
-#include "unit/scene/goma_cave_pond.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/scene/goma_cave_pond.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

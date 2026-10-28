@@ -34,9 +34,9 @@
 
 #include "adventure.h"
 #include "flags.h"
-#include "unit/scene/log_rooms_c.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/scene/log_rooms_c.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

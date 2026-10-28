@@ -10,7 +10,7 @@
 /// area. Retreat does not work here, and once Mt. Aleph has erupted the
 /// room rumbles and shakes, as the rest of the sanctum does.
 
-#include "unit/scene/sol_sanctum_psynergy_stone.h"
+#include "module/scene/sol_sanctum_psynergy_stone.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

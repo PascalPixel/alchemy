@@ -1,4 +1,4 @@
-#include "unit/window/message_speed.h"
+#include "module/window/message_speed.h"
 #include "types.h"
 
 // Message speed tables, indexed by the player's text speed setting

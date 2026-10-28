@@ -1,0 +1,40 @@
+#ifndef ALCHEMY_MODULE_MAP_VALE_H
+#define ALCHEMY_MODULE_MAP_VALE_H
+
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Vale_GetEntrances(void);
+const struct SceneExitRegion *Vale_GetRegions(void);
+const u32 *Vale_GetExits(void);
+const struct ActorPlacement *Vale_GetActorPlacements(void);
+const struct Trigger *Vale_GetTriggers(void);
+s32 Vale_Initialize(void);
+extern s32 gPushedActor_DirectionSteps[];
+extern u32 gPushedActor_FootprintKinds[];
+extern s32 gPushedActor_FootprintBounds[];
+extern s32 gVale_AlephGuardPatrol[];
+extern s32 gVale_LeaderHammers[];
+extern s32 gVale_GaretWalksToTheHouse[];
+extern s32 gVale_UnusedWaterGrows[];
+extern s32 gVale_SparkleScript[];
+extern struct SceneEntrance gVale_Entrances[];
+extern u32 gVale_Exits[];
+extern struct ActorPlacement gVale_ActorPlacements[];
+extern struct ActorPlacement gVale_ActorPlacementsAfterLeaving[];
+extern struct ActorPlacement gVale_ActorPlacementsAfterKalay[];
+extern struct ActorPlacement gVale_RepairActorPlacements[];
+extern struct Trigger gVale_Triggers[];
+extern struct Trigger gVale_TriggersAfterLeaving[];
+extern u16 gVale_SanctumDoorOpens[];
+extern u16 gVale_IsaacsDoorOpens[];
+extern u16 gVale_GrandparentsDoorOpens[];
+extern u16 gVale_WestHouseDoorOpens[];
+extern s32 gVale_FirstWarningLeaderPath[];
+extern s32 gVale_FirstWarningGuardPath[];
+extern s32 gVale_LeaderFromWestPath[];
+extern s32 gVale_GuardFromFirstPausePath[];
+extern s32 gVale_LeaderPushedBackPath[];
+extern s32 gVale_GuardFromSecondPausePath[];
+
+#endif

@@ -34,9 +34,9 @@
 
 #include "adventure.h"
 #include "event.h"
-#include "unit/scene/rock_rooms.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/scene/rock_rooms.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "rock_rooms.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"

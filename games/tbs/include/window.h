@@ -5,8 +5,8 @@
 /// Windows, the messages that type into them, and the window renderer's
 /// work.
 
-#include "unit/window/window.h"
-#include "unit/window/screens.h"
+#include "module/window/window.h"
+#include "module/window/screens.h"
 #include "types.h"
 #include "tbs_edition.h"
 #include "static_assert.h"

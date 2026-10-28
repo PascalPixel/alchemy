@@ -4,7 +4,7 @@
 /// @file
 /// Sprite rotation and scale, and the affine matrices handed out each frame.
 
-#include "unit/runtime/runtime.h"
+#include "module/runtime/runtime.h"
 #include "types.h"
 #include "static_assert.h"
 

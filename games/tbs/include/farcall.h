@@ -61,7 +61,7 @@ struct WorldPosition;
 // (called with none), Party_ShowJoinedMessageFar (two),
 // AreaNameWindow_ShowFar, PauseMenu_RunFar and
 // BuildStamp_GetTimeFar (one each). The near call Text_ResetStyle
-// is declared the same way in unit/window/window.h (Window_Create passes it
+// is declared the same way in module/window/window.h (Window_Create passes it
 // one).
 #include "farcall/runtime.h"
 #include "farcall/field.h"

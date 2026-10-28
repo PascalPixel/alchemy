@@ -1,4 +1,4 @@
-#include "unit/game/starting_equipment.h"
+#include "module/game/starting_equipment.h"
 #include "types.h"
 #include "character_ids.h"
 

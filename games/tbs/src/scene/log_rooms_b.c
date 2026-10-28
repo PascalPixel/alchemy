@@ -42,12 +42,12 @@
 /// so what the party took then stays taken, and two bookcases can be read.
 
 #include "adventure.h"
-#include "unit/scene/log_rooms_b.h"
+#include "module/scene/log_rooms_b.h"
 #include "log_rooms_a.h"
-#include "unit/scene/shared/vault_itemobj.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/game/game.h"
+#include "module/scene/shared/vault_itemobj.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/game/game.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

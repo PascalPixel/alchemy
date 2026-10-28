@@ -8,11 +8,11 @@
 /// resolves.
 
 #include "render_placement.h"
-#include "unit/window/window.h"
-#include "unit/window/screens.h"
-#include "unit/overworld/overworld.h"
-#include "unit/window/glyph_arm.h"
-#include "unit/runtime/runtime.h"
+#include "module/window/window.h"
+#include "module/window/screens.h"
+#include "module/overworld/overworld.h"
+#include "module/window/glyph_arm.h"
+#include "module/runtime/runtime.h"
 #include "types.h"
 #include "edition.h"
 #include "window.h"
@@ -86,14 +86,14 @@
 #include "shop.h"
 #include "display_transition.h"
 #include "frame.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/window/scales.h"
+#include "module/overworld/event_commands.h"
+#include "module/window/scales.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
 
 #ifdef MODERN
 // The menu object calls these window functions with no prototype in scope, as
-// its bytes need (unit/window/window.h says why for each); a current GCC gets
+// its bytes need (module/window/window.h says why for each); a current GCC gets
 // them here.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node);

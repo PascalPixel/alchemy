@@ -28,11 +28,11 @@
 ///   SceneId_GomaCaveStream and out onto the World Map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 #include "adventure.h"
-#include "unit/scene/goma_cave_stream.h"
-#include "unit/scene/shared/effect_spawn.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/field/field.h"
+#include "module/scene/goma_cave_stream.h"
+#include "module/scene/shared/effect_spawn.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/field/field.h"
 #include "actor.h"
 #include "types.h"
 #include "event.h"

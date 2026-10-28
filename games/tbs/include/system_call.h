@@ -20,11 +20,11 @@
 // call.
 
 #include "types.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/runtime/runtime.h"
-#include "unit/window/window.h"
-#include "unit/game/game.h"
-#include "unit/import.h"
+#include "module/overworld/event_commands.h"
+#include "module/runtime/runtime.h"
+#include "module/window/window.h"
+#include "module/game/game.h"
+#include "module/import.h"
 
 struct Actor;
 struct FieldPosition;

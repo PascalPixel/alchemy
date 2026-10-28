@@ -156,8 +156,8 @@ describes the tables and how an overlay is packed.
 
 ## Headers
 
-The shared headers hold what the whole game uses, and `include/unit` mirrors
-this folder with one header for each compiled C file.
+The shared headers hold what the whole game uses, and `include/module` mirrors
+this folder with one header for each module, each compiled C file.
 
 [`games/tbs/include`](../include) holds what the whole game shares: types and
 structures, the flags in `flags.h`, the songs and sound effects in
@@ -166,19 +166,19 @@ structures, the flags in `flags.h`, the songs and sound effects in
 `graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
 includes those headers by name alone.
 
-[`include/unit`](../include/unit) mirrors this folder: each compiled C
-file has a header at the same path under `unit` that declares what it
-defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/scene/` has one
-for each scene). [`include/farcall`](../include/farcall) has a header for
-each bank with its `Far` names. An object written as parts keeps its private
-header beside it.
+[`include/module`](../include/module) mirrors this folder: each compiled C
+file, a module, has a header at the same path under `module` that declares
+what it defines (`module/battle/battle.h` for `battle/battle.c`;
+`module/scene/` has one for each scene). [`include/farcall`](../include/farcall)
+has a header for each bank with its `Far` names. An object written as parts
+keeps its private header beside it.
 
 | Header | What it holds |
 | --- | --- |
 | `include/flags.h` | the [game flags](../glossary.md#game-flag) |
 | `include/songs.h` | the songs and sound effects |
 | `include/event.h` | the calls events are written in |
-| `include/unit/<path>.h` | what the C file at `<path>.c` defines |
+| `include/module/<path>.h` | what the C file at `<path>.c` defines |
 | `include/farcall/` | each bank's `Far` names |
 
 ## C and assembly

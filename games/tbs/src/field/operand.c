@@ -1,8 +1,8 @@
 /// @file
 /// Script work values: the handler SC_SET, SC_ADD and SC_CMP call for each.
 
-#include "unit/field/operand.h"
-#include "unit/field/field.h"
+#include "module/field/operand.h"
+#include "module/field/field.h"
 #include "types.h"
 
 /// The handler for each work value number (enum ActorScriptValue).

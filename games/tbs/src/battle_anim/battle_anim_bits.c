@@ -1,4 +1,4 @@
-#include "unit/battle_anim/battle_anim_bits.h"
+#include "module/battle_anim/battle_anim_bits.h"
 #include "types.h"
 
 // ARM immediate operands used when specializing the compositor's width.

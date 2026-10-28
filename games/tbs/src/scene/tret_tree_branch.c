@@ -28,11 +28,11 @@
 /// the blend and the window again as at entry. The overlay also keeps three
 /// unused hooks and a link-cable input exchange no table reaches.
 
-#include "unit/scene/tret_tree_branch.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/field/field.h"
-#include "unit/runtime/runtime.h"
+#include "module/scene/tret_tree_branch.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/field/field.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

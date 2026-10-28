@@ -4,8 +4,8 @@
 /// @file
 /// The settings menu's work and the selection work.
 
-#include "unit/window/window.h"
-#include "unit/window/screens.h"
+#include "module/window/window.h"
+#include "module/window/screens.h"
 #include "types.h"
 #include "render_input.h"
 #include "cursor.h"

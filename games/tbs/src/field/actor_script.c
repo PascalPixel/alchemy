@@ -2,8 +2,8 @@
 /// Actor scripts: the ones the field starts itself, and the command
 /// table.
 
-#include "unit/field/actor_script.h"
-#include "unit/field/field.h"
+#include "module/field/actor_script.h"
+#include "module/field/field.h"
 #include "actor_builtin_scripts.h"
 #include "field.h"
 #include "actor_script.h"

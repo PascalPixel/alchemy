@@ -48,9 +48,9 @@
 /// Medal, and searching the ovens shows what is cooking.
 
 #include "adventure.h"
-#include "unit/scene/stucco_rooms_b.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/scene/stucco_rooms_b.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "stucco_rooms_b.h"
 #include "event.h"
 #include "text/msg_ids.h"

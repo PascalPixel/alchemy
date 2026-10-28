@@ -225,7 +225,7 @@ effect work serves the Djinn joining as well as field Psynergy.
   walk (above).
 - **field kind**: what an ability does on the field, the `type` column of
   `games/tbs/src/game/abilities.tsv`, named by `enum FieldPsynergy`
-  (`unit/overworld/event_commands.h`). Whirlwind and Gale share
+  (`module/overworld/event_commands.h`). Whirlwind and Gale share
   `FIELD_PSYNERGY_WHIRLWIND`.
 - **field effect**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
   the field Psynergy playing: the ability, its field kind (`fieldPsynergy`), its

@@ -16,10 +16,10 @@
 /// inline would have its routine's name, the routine keeps it and the inline
 /// takes the prefix.
 
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/field/field.h"
-#include "unit/runtime/runtime.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/field/field.h"
+#include "module/runtime/runtime.h"
 #include "event.h"
 #include "system_call.h"
 #include "farcall.h"

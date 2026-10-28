@@ -1,4 +1,4 @@
-#include "unit/overworld/battle_cue.h"
+#include "module/overworld/battle_cue.h"
 #include "types.h"
 
 /// Battle music: each song as 0x8000 | song, followed by the encounters that

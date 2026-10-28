@@ -4,7 +4,7 @@
 /// @file
 /// PagedList, what a menu returns.
 
-#include "unit/menu/menu.h"
+#include "module/menu/menu.h"
 #include "types.h"
 
 /// A paged list for one party member: their unit, the list's length and pages,

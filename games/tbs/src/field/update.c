@@ -1,5 +1,5 @@
-#include "unit/field/update.h"
-#include "unit/field/actor_script.h"
+#include "module/field/update.h"
+#include "module/field/actor_script.h"
 #include "types.h"
 #include "irq.h"
 #include "iwram_call.h"

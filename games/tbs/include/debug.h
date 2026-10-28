@@ -4,10 +4,10 @@
 /// @file
 /// The main-image calls the debug menus import, and their palette swatch tiles.
 
-#include "unit/overworld/overworld.h"
-#include "unit/menu/menu.h"
-#include "unit/game/game.h"
-#include "unit/window/window.h"
+#include "module/overworld/overworld.h"
+#include "module/menu/menu.h"
+#include "module/game/game.h"
+#include "module/window/window.h"
 #include "types.h"
 #include "edition.h"
 #include "farcall.h"

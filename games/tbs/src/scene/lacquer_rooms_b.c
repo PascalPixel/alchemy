@@ -27,10 +27,10 @@
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
 #include "adventure.h"
-#include "unit/scene/lacquer_rooms_b.h"
-#include "unit/scene/shared/effect_spawn.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/scene/lacquer_rooms_b.h"
+#include "module/scene/shared/effect_spawn.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"

@@ -1,4 +1,4 @@
-#include "unit/cartridge/resource/metadata_get_record.h"
+#include "module/cartridge/resource/metadata_get_record.h"
 #include "metadata_lookup.h"
 
 extern struct AnimationMetadata gSprite_AnimationMetadata[];

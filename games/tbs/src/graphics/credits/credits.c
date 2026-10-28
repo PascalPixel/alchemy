@@ -1,11 +1,11 @@
-#include "unit/graphics/credits/credits.h"
+#include "module/graphics/credits/credits.h"
 #ifdef UBFIX
 // This object uses the credits' views of the borrowed flash work cells.
 #define OWN_gProgramFlashSector
 #define OWN_gFlash
 #define OWN_gFlashNumRemainingBytes
 #endif
-#include "unit/runtime/runtime.h"
+#include "module/runtime/runtime.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "types.h"

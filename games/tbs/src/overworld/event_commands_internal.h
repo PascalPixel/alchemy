@@ -8,9 +8,9 @@
 /// resolves. It places no bytes.
 
 #include "vram_cache.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/runtime/runtime.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/runtime/runtime.h"
 #include "types.h"
 #include "battle_type.h"
 #include "adventure.h"
@@ -86,8 +86,8 @@
 #include "menu_list.h"
 #include "field_effect.h"
 #include "fixed_point_position.h"
-#include "unit/scene/shared/effect_spawn.h"
-#include "unit/scene/shared/scroll_initialize_hblank_dma.h"
+#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/scroll_initialize_hblank_dma.h"
 #include "macros.h"
 #include "ability_ids.h"
 #include "sprite_ids.h"

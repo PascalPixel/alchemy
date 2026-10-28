@@ -1,6 +1,6 @@
 #include "speaker.h"
-#include "unit/graphics/title/intro.h"
-#include "unit/runtime/runtime.h"
+#include "module/graphics/title/intro.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

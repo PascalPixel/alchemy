@@ -4,7 +4,7 @@
 /// @file
 /// ShopWork, a shop's work, and the shop screen's tiles.
 
-#include "unit/shop/shop.h"
+#include "module/shop/shop.h"
 #include "heap_slots.h"
 #include "item.h"
 #include "static_assert.h"

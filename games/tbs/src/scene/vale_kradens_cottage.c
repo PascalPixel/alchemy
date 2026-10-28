@@ -67,11 +67,11 @@
 /// third patch on.
 
 #include "adventure.h"
-#include "unit/import.h"
-#include "unit/scene/vale_kradens_cottage.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/runtime/runtime.h"
+#include "module/import.h"
+#include "module/scene/vale_kradens_cottage.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

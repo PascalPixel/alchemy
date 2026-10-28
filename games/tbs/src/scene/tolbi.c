@@ -48,13 +48,13 @@
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
 /// out onto the World Map.
 
-#include "unit/scene/tolbi.h"
+#include "module/scene/tolbi.h"
 #include "djinn_ids.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/window/window.h"
-#include "unit/window/screens.h"
-#include "unit/runtime/runtime.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/window/window.h"
+#include "module/window/screens.h"
+#include "module/runtime/runtime.h"
 #include "tolbi.h"
 #include "iwram_call.h"
 #include "call.h"

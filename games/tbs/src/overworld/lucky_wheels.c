@@ -1,6 +1,6 @@
 #include "audio_engine_symbols.h"
-#include "unit/overworld/lucky_wheels.h"
-#include "unit/runtime/runtime.h"
+#include "module/overworld/lucky_wheels.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "keystate.h"
 #include "debug.h"

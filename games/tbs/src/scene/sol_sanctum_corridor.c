@@ -10,8 +10,8 @@
 /// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles
 /// and shakes.
 
-#include "unit/scene/sol_sanctum_corridor.h"
-#include "unit/scene/shared/sol_sanctum_init_zoom.h"
+#include "module/scene/sol_sanctum_corridor.h"
+#include "module/scene/shared/sol_sanctum_init_zoom.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

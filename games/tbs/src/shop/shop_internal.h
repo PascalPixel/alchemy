@@ -7,8 +7,8 @@
 /// includes it before the parts, and each part includes it too, so that a
 /// part read on its own still resolves.
 
-#include "unit/shop/shop.h"
-#include "unit/runtime/runtime.h"
+#include "module/shop/shop.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

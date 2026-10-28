@@ -1,4 +1,4 @@
-#include "unit/window/articles.h"
+#include "module/window/articles.h"
 #include "types.h"
 
 //--------------------------------------------------------------------------

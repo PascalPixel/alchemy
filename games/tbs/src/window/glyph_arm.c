@@ -7,14 +7,14 @@
 /// which is the window height less its two border rows. Glyph_Draw and
 /// ScanlineWindow_FillSpans copy these routines into RAM for each call.
 
-#include "unit/window/glyph_arm.h"
+#include "module/window/glyph_arm.h"
 #include "types.h"
 #include "window.h"
 #include "glyph.h"
 #include "text_font.h"
 #include "edition.h"
 #include "graphics.h"
-#include "unit/window/window.h"
+#include "module/window/window.h"
 
 // ARM code copied to RAM, as the tree walker is: RamCode_Load takes IWRAM
 // when the copy fits, whose 32-bit bus fetches an ARM instruction in one read,

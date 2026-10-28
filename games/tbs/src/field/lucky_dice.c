@@ -1,5 +1,5 @@
-#include "unit/field/lucky_dice.h"
-#include "unit/runtime/runtime.h"
+#include "module/field/lucky_dice.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

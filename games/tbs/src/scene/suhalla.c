@@ -24,9 +24,9 @@
 ///   keeps the party's position, as after a battle, draws it grown again.
 
 #include "adventure.h"
-#include "unit/scene/suhalla.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/scene/suhalla.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

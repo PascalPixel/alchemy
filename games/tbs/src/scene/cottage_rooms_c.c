@@ -36,11 +36,11 @@
 /// put him behind the middle layer (`BG2`, priority 2 in this map); the fixed
 /// priority 2 draws him in front of it, as the other diners are.
 
-#include "unit/scene/cottage_rooms_c.h"
+#include "module/scene/cottage_rooms_c.h"
 #include "flags.h"
 #include "character_ids.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -17,8 +17,8 @@
 /// steps behind it, to SE_STAIRS_DOWN, and comes out walking down from a
 /// doorway in the room of steps (render probe maze-exit).
 
-#include "unit/scene/sol_sanctum_maze.h"
-#include "unit/scene/shared/sol_sanctum_init_zoom.h"
+#include "module/scene/sol_sanctum_maze.h"
+#include "module/scene/shared/sol_sanctum_init_zoom.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

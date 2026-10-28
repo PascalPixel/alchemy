@@ -3,8 +3,8 @@
 /// bank.
 
 #include "speaker.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "actor_script.h"
 #include "types.h"
 

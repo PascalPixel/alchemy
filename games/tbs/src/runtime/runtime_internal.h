@@ -6,7 +6,7 @@
 /// call two parts make. runtime.c includes it before the parts, and each part
 /// includes it too, so that a part read on its own still resolves.
 
-#include "unit/runtime/runtime.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -51,8 +51,8 @@
 #include "runtime_interfaces.h"
 #include "flash.h"
 #include "audio_engine_symbols.h"
-#include "unit/runtime/math_table.h"
-#include "unit/runtime/numtext.h"
+#include "module/runtime/math_table.h"
+#include "module/runtime/numtext.h"
 #include "savedata.h"
 #include "songs.h"
 

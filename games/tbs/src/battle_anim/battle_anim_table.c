@@ -1,5 +1,5 @@
-#include "unit/battle_anim/battle_anim_table.h"
-#include "unit/battle_anim/battle_anim.h"
+#include "module/battle_anim/battle_anim_table.h"
+#include "module/battle_anim/battle_anim.h"
 #include "types.h"
 #include "vector3.h"
 #include "render_placement.h"

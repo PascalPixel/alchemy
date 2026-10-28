@@ -3,7 +3,7 @@
 #include "edition.h"
 #include "types.h"
 #include "item.h"
-#include "unit/menu/menu.h"
+#include "module/menu/menu.h"
 #include "game/character_ids.h"
 
 // The menu tables: cursor bobbing, sort orders, highlight widths and

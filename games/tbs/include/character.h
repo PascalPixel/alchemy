@@ -5,7 +5,7 @@
 /// The definitions of characters, classes, Djinn and enemies, and a level up's
 /// result.
 
-#include "unit/game/game.h"
+#include "module/game/game.h"
 #include "types.h"
 #include "unit.h"
 #include "static_assert.h"

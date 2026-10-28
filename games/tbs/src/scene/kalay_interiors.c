@@ -30,9 +30,9 @@
 
 #include "adventure.h"
 #include "scene_ids.h"
-#include "unit/scene/kalay_interiors.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/scene/kalay_interiors.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

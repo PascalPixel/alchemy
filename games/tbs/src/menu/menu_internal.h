@@ -8,8 +8,8 @@
 /// places no bytes.
 
 #include "render_placement.h"
-#include "unit/menu/menu.h"
-#include "unit/runtime/runtime.h"
+#include "module/menu/menu.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -66,7 +66,7 @@
 #include "item_ids.h"
 #include "macros.h"
 #include "flags.h"
-#include "unit/window/message_speed.h"
+#include "module/window/message_speed.h"
 #include "game/character_ids.h"
 #include "ability_ids.h"
 

@@ -5,7 +5,7 @@
 /// The built-in scripts an actor script can hand its actor to: key checks,
 /// the player, the world map and the camera.
 
-#include "unit/field/field.h"
+#include "module/field/field.h"
 #include "types.h"
 
 extern const s32 gActor_KeyCheckScript[];

@@ -6,11 +6,11 @@
 /// and frame-loop helpers. battle_anim.c includes it before the parts, and each
 /// part includes it too, so that a part read on its own still resolves.
 
-#include "unit/battle_anim/battle_anim_table.h"
-#include "unit/battle_anim/battle_anim.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/runtime/runtime.h"
+#include "module/battle_anim/battle_anim_table.h"
+#include "module/battle_anim/battle_anim.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/runtime/runtime.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -55,7 +55,7 @@
 #include "battle_unit.h"
 #include "fixed_point_position.h"
 #include "irq.h"
-#include "unit/battle_anim/battle_anim_bits.h"
+#include "module/battle_anim/battle_anim_bits.h"
 #include "call.h"
 #include "macros.h"
 #include "sprite_ids.h"

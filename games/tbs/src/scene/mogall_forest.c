@@ -59,12 +59,12 @@
 #include "adventure.h"
 #include "system_call.h"
 #include "heap_slots.h"
-#include "unit/import.h"
-#include "unit/scene/mogall_forest.h"
-#include "unit/scene/shared/actor_orbit.h"
-#include "unit/scene/shared/effect_spawn.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
+#include "module/import.h"
+#include "module/scene/mogall_forest.h"
+#include "module/scene/shared/actor_orbit.h"
+#include "module/scene/shared/effect_spawn.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "actor.h"

@@ -51,10 +51,10 @@
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights), is never reached.
 
 #include "adventure.h"
-#include "unit/scene/sol_sanctum_luna_sol_rooms.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/field/field.h"
+#include "module/scene/sol_sanctum_luna_sol_rooms.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/field/field.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

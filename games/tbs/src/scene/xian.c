@@ -41,13 +41,13 @@
 /// shown again.
 #include "adventure.h"
 #include "djinn_ids.h"
-#include "unit/import.h"
-#include "unit/scene/xian.h"
-#include "unit/scene/shared/effect_spawn.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/field/field.h"
-#include "unit/runtime/runtime.h"
+#include "module/import.h"
+#include "module/scene/xian.h"
+#include "module/scene/shared/effect_spawn.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/field/field.h"
+#include "module/runtime/runtime.h"
 #include "macros.h"
 
 #define NULL ((void *)0)

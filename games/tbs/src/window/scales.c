@@ -1,7 +1,7 @@
 /// @file
 /// Sprite scales, motion curves and lookup tables of the window and menu code.
 
-#include "unit/window/scales.h"
+#include "module/window/scales.h"
 #include "types.h"
 #include "character_ids.h"
 

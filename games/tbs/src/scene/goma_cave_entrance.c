@@ -29,12 +29,12 @@
 /// cells that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into
 /// Goma Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out
 /// to the World Map.
-#include "unit/scene/goma_cave_entrance.h"
+#include "module/scene/goma_cave_entrance.h"
 #include "version.h"
-#include "unit/scene/shared/effect_spawn.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/game/game.h"
+#include "module/scene/shared/effect_spawn.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/game/game.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"

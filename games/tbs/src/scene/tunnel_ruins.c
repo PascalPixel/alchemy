@@ -60,12 +60,12 @@
 #include "version.h"
 #include "adventure.h"
 #include "heap_slots.h"
-#include "unit/import.h"
-#include "unit/scene/tunnel_ruins.h"
-#include "unit/scene/shared/effect_spawn.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/runtime/runtime.h"
+#include "module/import.h"
+#include "module/scene/tunnel_ruins.h"
+#include "module/scene/shared/effect_spawn.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/runtime/runtime.h"
 #include "actor_effect.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS

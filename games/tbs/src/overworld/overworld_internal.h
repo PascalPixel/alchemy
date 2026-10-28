@@ -7,12 +7,12 @@
 /// each part includes it too, so that a part read on its own resolves. It
 /// places no bytes.
 
-#include "unit/overworld/battle_cue.h"
-#include "unit/overworld/zonedata.h"
+#include "module/overworld/battle_cue.h"
+#include "module/overworld/zonedata.h"
 #include "vram_cache.h"
-#include "unit/overworld/overworld.h"
-#include "unit/overworld/event_commands.h"
-#include "unit/runtime/runtime.h"
+#include "module/overworld/overworld.h"
+#include "module/overworld/event_commands.h"
+#include "module/runtime/runtime.h"
 #include "types.h"
 #include "battle_type.h"
 #include "adventure.h"

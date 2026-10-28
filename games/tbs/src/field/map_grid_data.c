@@ -2,8 +2,8 @@
 /// Map ground: the height curve of each cell kind and the world map's battle
 /// environments.
 
-#include "unit/field/map_grid_data.h"
-#include "unit/field/field.h"
+#include "module/field/map_grid_data.h"
+#include "module/field/field.h"
 #include "field.h"
 #include "types.h"
 

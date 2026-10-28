@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "flag_call.h"
@@ -88,7 +89,7 @@ void Func_02000110(void) {
   Actor_SetPositionAndReset(12, 136, 200);
   FieldEvent_Wait(3);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xe000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
@@ -97,7 +98,7 @@ void Func_02000110(void) {
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Hop(0, 16);
   Hop(16, 0);
   Hop(16, 0);

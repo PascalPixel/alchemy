@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -36,7 +37,7 @@ void Func_02000534(void) {
     Func_02001914();
     Func_020019fc(0);
     Call4(Func_02001a0c, 11, 0, -16, 0x5000);
-    Actor_ArmCallback(4, 0xc000, 0);
+    Actor_ArmCallback(4, FACING_NORTH, 0);
     Actor_WaitForMoveById(11);
     FieldEvent_Wait(20);
     if (GameFlag_Test(7)) {
@@ -54,7 +55,7 @@ void Func_02000534(void) {
                                        *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(11);
     Func_0200195c(11, 0, 0);
-    Call3(Actor_SetPositionAndReset, 4, 168, 0x340);
+    Call3(Actor_SetPositionAndReset, 4, 168, 832);
     Func_0200191c();
   }
 }

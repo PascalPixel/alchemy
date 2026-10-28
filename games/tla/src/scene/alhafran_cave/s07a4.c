@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "local.h"
 #include "call.h"
 
@@ -80,8 +81,8 @@ void Func_0200051c(void) {
     Actor_SetSpritePriority(19, 2);
     Actor_SetSpritePriority(20, 2);
     if (!GameFlag_Test(0x8bd)) {
-      Call3((void (*)())Func_02001488, 17, 0x2c80000, 0xd80000);
-      Call3((void (*)())Func_02001488, 19, 0x2e80000, 0xd80000);
+      Call3((void (*)())Func_02001488, 17, PIXELS(712), PIXELS(216));
+      Call3((void (*)())Func_02001488, 19, PIXELS(744), PIXELS(216));
     } else {
       Func_02001488(22, 0, 0);
       Func_02001488(21, 0, 0);

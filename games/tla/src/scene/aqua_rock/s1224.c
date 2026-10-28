@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "local.h"
 
 void Func_02002834(s32 id);
@@ -46,9 +47,9 @@ void Func_02001224(s32 unused, s32 id) {
   Func_02002a28(30);
   FieldEvent_Wait(15);
   Func_02002a00(0x10000, 0x2000);
-  Camera_MoveWithinMapBounds(0xf80000, 0xffe00000, 0x2f80000, 1);
+  Camera_MoveWithinMapBounds(PIXELS(248), PIXELS(65504), PIXELS(760), 1);
   Func_02002a10();
-  Func_020029d8(15, 0x1080000, 0x3180000);
+  Func_020029d8(15, PIXELS(264), PIXELS(792));
   Actor_SetSingleChildFlags(Actor_GetById(15), 0);
   Actor_GetById(15)->collisionFlags = 0;
   Actor_GetById(15)->priorityFlags |= 2;

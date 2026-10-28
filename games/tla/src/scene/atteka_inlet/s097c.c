@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
@@ -34,15 +35,15 @@ void Func_0200097c(void) {
   Func_02001010();
   Call1(Func_02001108, 0);
   angle = 0xd000;
-  Func_02001068(24, 0x1f80000, 0x1cc0000, angle);
+  Func_02001068(24, PIXELS(504), PIXELS(460), angle);
   Call1(wait, 1);
   Call1(Func_02001098, (s32)MsgHeyWait2);
   Call2(Func_020010a8, 24, 0);
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Call3(Actor_ArmCallback, 23, 0x3000, 0);
   Call2(Func_020010d0, 0x19999, 0x3333);
   Func_020010e8()->motionFlags = 0;
-  Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x17c0000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(512), -1, PIXELS(380), 1);
   Call3(Actor_SetSpeedParameters, 24, 0x19999, 0xcccc);
   Call3(Actor_SetPositionAndReset, 24, 520, 432);
   Call3(Actor_SetPositionAndReset, 24, 520, 388);
@@ -59,7 +60,7 @@ void Func_0200097c(void) {
   Call1(FieldEvent_Wait, 1);
   Actor_GetById(24)->actionFlags |= 1;
   Call2(Motion_SetVarCbAndRefresh, 24, 2);
-  Call3(Func_02001060, 65, 0x2080000, 0x17c0000);
+  Call3(Func_02001060, 65, PIXELS(520), PIXELS(380));
   Call1(wait, 1);
   Actor_GetById(24)->actionFlags &= ~1;
   Call3(Actor_SetPositionAndReset, 24, 520, 388);
@@ -69,7 +70,7 @@ void Func_0200097c(void) {
   Call3(Actor_ArmCallback, 24, 0xb000, 10);
   Call2(Motion_SetModeAndWaitAnimation, 24, 3);
   Call3(Actor_SetPositionAndReset, 24, 520, 434);
-  Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x15c0000, 1);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(512), -1, PIXELS(348), 1);
   Call3(Actor_SetPositionAndReset, 24, 504, 460);
   Call3(Func_02001060, 24, 0, 0);
   Func_020010b8(23, angle);

@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "ankohl_ruins.h"
 #include "task.h"
 
@@ -13,7 +14,7 @@ void Func_020020fc(void) {
       Func_02002eec(207);
       AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
       FieldEvent_Wait(10);
-      Camera_MoveWithinMapBounds(0xe80000, -1, 0x1880000, 1);
+      Camera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(392), 1);
       Func_02002eb4();
       Task_Add(Func_02001f7c, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);

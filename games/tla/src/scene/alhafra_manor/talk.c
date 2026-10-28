@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -54,7 +55,7 @@ void Func_020000b8(s32 actor) {
     Actor_WatchAndSetScript(actor, gMainRoutineWork.currentOwner);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 760, 320);
     Call3((void (*)())Actor_ArmCallback, 14, 0x5000, 0);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     FieldEvent_Wait(10);
     Func_02001588((s32)&SceneId_WorldMap, 67);
   } else {
@@ -110,8 +111,8 @@ void Func_02000238(void) {
     Call3((void (*)())Func_02001560, 8, 256, 30);
   Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 304, 152);
-  Actor_ArmCallback(8, 0, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x8000, 0);
+  Actor_ArmCallback(8, FACING_EAST, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   FieldEvent_Wait(10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
@@ -122,9 +123,9 @@ void Func_02000238(void) {
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
   Call3((void (*)())Func_02001548, 0x4008, 0, 10);
-  Actor_ArmCallback(8, 0xe000, 0);
+  Actor_ArmCallback(8, FACING_NORTHEAST, 0);
   FieldEvent_Wait(50);
-  Actor_ArmCallback(8, 0, 0);
+  Actor_ArmCallback(8, FACING_EAST, 0);
   FieldEvent_Wait(10);
   Call3((void (*)())Func_02001548, 0x4008, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);

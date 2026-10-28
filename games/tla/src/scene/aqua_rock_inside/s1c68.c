@@ -1,3 +1,4 @@
+#include "scene_tables.h"
 #include "local.h"
 
 void Func_02001c68(void) {
@@ -10,7 +11,7 @@ void Func_02001c68(void) {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 152);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 184);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 184);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_02001a1c();
   }
@@ -25,7 +26,7 @@ void Func_02001cd8(void) {
   } else {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 280, 184);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 184);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_02001a1c();
   }
@@ -40,7 +41,7 @@ void Func_02001d40(void) {
   } else {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 184);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 184);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Func_02001a1c();
   }

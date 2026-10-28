@@ -1,4 +1,5 @@
 #include "types.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "io_write_queue.h"
 #include "system/io_reg.h"
@@ -94,11 +95,11 @@ blend:
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove, so each builds its own -1; called directly, 25 of
    * 188 instructions differ in tla-en. */
-  ApojiiIslands_CamMove(0x1680000, -1, 0x1480000, 1);
+  ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
   Func_02001d6c(16, 256, 20);
   Func_02001d8c();
-  ApojiiIslands_CamMove(0x1b80000, -1, 0x1780000, 1);
+  ApojiiIslands_CamMove(PIXELS(440), -1, PIXELS(376), 1);
   Func_02001d8c();
-  ApojiiIslands_CamMove(0x1d80000, -1, 0x1980000, 1);
+  ApojiiIslands_CamMove(PIXELS(472), -1, PIXELS(408), 1);
   Func_02001d94(77);
 }

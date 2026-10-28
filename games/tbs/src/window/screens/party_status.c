@@ -23,7 +23,7 @@
 /// The address of pixel row 7 - `up` of BG tile `tile` (4bpp, 32 bytes a tile,
 /// 4 bytes a row): the status bars are drawn from a tile's bottom row up.
 #define TILE_ROW_FROM_BOTTOM(tile, up)                                         \
-  ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
+  ((u32 *)((tile) * 32 - (up) * 4 + ((s32)BG_CHAR_BLOCK(0) + 7 * 4)))
 
 /// Works out where the party status window goes for `flags`: one column per
 /// party member (those in battle when a battle is on), plus the Djinn column,
@@ -187,7 +187,7 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
     tile = work->tilemap[y * 32 + x];
     bar = 0x22222222;
     shadow = 0xcccccccc;
-    tile &= 0x3ff;
+    tile &= TILE_NUMBER_MASK;
     if (length > 7) {
       bar = 0x88888888;
       shadow = 0xdddddddd;

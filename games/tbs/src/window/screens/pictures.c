@@ -12,12 +12,12 @@ extern const u8 *gMenuTitlePictures[];
 /// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
 /// valid VRAM slot.
 void MenuTitle_Load(s32 picture, s32 slot) {
-  void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   const u8 *resource = gMenuTitlePictures[picture];
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz(resource, stagingBuffer);
-    VramCache_Load(slot, 0x200, stagingBuffer);
+    VramCache_Load(slot, 512, stagingBuffer);
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
 }
@@ -38,13 +38,13 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
   if (slot >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
-  // 0x4000 is the wide shape of attribute 0, which with size 2 is 32x16, 8
+  // OUTPUT_SIZE_32X16 is the wide shape with size 2, 8
   // tiles. Neither sprite is checked for NULL.
   MenuTitle_Load(picture, slot);
   first = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x, y);
-  first->sentinel = 0xFD;
+  first->sentinel = 253;
   second = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x + 32, y);
-  second->sentinel = 0xFD;
+  second->sentinel = 253;
   // The right half's tiles, after the left half's 8.
   second->oam.index += 8;
   return first;
@@ -98,7 +98,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
     CommandIcon_Load(icon, slot, remap);
     sprite = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
     sprite->oam.fullColor = 1;
-    sprite->sentinel = 0xfb;
+    sprite->sentinel = 251;
   }
   return sprite;
 }
@@ -126,7 +126,7 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
     obj->oam.affineMode = 3;
     obj->oam.x = obj->x + 0xfff0;
     obj->oam.y = (u8)obj->y + 0xf0;
-    obj->sentinel = 0xfc;
+    obj->sentinel = 252;
   }
 }
 
@@ -135,24 +135,27 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
 #define RANGE_PATTERN_PAIR_WORDS 16
+/// The first of the range icons' BG tiles, which Window_DrawThreeTileColumn
+/// draws as tilemap entries.
+#define RANGE_ICON_FIRST_TILE 0x314
 
-// Builds the twelve range icons Window_DrawThreeTileColumn draws, as BG
-// tiles 0x314 to 0x32b (at 0x06006280): icon n is a centre tile and an end
-// tile, filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
-// gMenu_BarPatternRows (its colour 5 turns the fill to colour 1). Rows 1 to 7
-// are marked; the first set grows its pattern with the row, the second skips
-// row 1. Battle_CollectPartyCommands builds them as the command menus open.
-// Icon 10's tiles, 0x328 and 0x329, are also where BattleDjinnMenu_Run puts
-// its blinking arrow (gDjinnMenu_BlinkTile).
-// It is declared to return s32 but returns no value, and no caller reads one;
-// UBFIX makes it void, which changes the register its epilogue returns
-// through.
+// Builds the twelve range icons Window_DrawThreeTileColumn draws, as
+// the 24 BG tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an
+// end tile, filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR
+// with gMenu_BarPatternRows (its colour 5 turns the fill to colour 1). Rows 1
+// to 7 are marked; the first set grows its pattern with the row, the second
+// skips row 1. Battle_CollectPartyCommands builds them as the command menus
+// open. Icon 10's tiles, the two from DJINN_MENU_ARROW_TILE, are also where
+// BattleDjinnMenu_Run puts its blinking arrow (gDjinnMenu_BlinkTile). It is
+// declared to return s32 but returns no value, and no caller reads one; UBFIX
+// makes it void, which changes the register its epilogue returns through.
 #ifdef UBFIX
 void Menu_BuildLocalizedPatternTiles(void) {
 #else
 s32 Menu_BuildLocalizedPatternTiles(void) {
 #endif
-  u32 *vram = (u32 *)0x06006280;
+  u32 *vram =
+      (u32 *)(BG_CHAR_BLOCK(0) + RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
   s32 patternSet;
   s32 patternIndex;
 
@@ -201,10 +204,11 @@ int Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y, s32 pattern,
                                s32 unused) {
 #endif
   s32 patternOffset = pattern * 2;
-  s32 rightTile = patternOffset + 0xF315;
+  s32 rightTile = patternOffset + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
 
-  Window_SetTilemapEntry(window, 0x400 | rightTile, x, y, 0);
-  Window_SetTilemapEntry(window, patternOffset + 0xF314, x + 1, y, 0);
+  Window_SetTilemapEntry(window, TILE_HFLIP | rightTile, x, y, 0);
+  Window_SetTilemapEntry(
+      window, patternOffset + WINDOW_TILE(RANGE_ICON_FIRST_TILE), x + 1, y, 0);
   Window_SetTilemapEntry(window, rightTile, x + 2, y, 0);
 }
 
@@ -258,10 +262,10 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 /// Draws the two page arrows (gPageArrowTiles) into the two tiles at
 /// VRAM address `offset`, sliding outward: the left arrow 2 or 3 pixels to
 /// the left, the right one as far to the right, eight frames each. They are
-/// drawn over the border's top edge tile (0x11) and top-right corner
-/// tile (0x12). The battle menus call it each frame for tiles 0x334 and
-/// 0x335 (LIST_TILE_PAGES_LEFT); the field menus (menu/menu, by far call)
-/// and the password pages of the title's Send (menu/file_screen.c) call it for
+/// drawn over the border's top edge tile (WINDOW_TILE_BORDER_TOP) and top-right
+/// corner tile (WINDOW_TILE_BORDER_TOP_RIGHT). The battle menus call it each
+/// frame for LIST_PAGE_ARROW_VRAM; the field menus (menu/menu, by far call) and
+/// the password pages of the title's Send (menu/file_screen.c) call it for
 /// PAGE_ARROW_VRAM.
 void Link_DrawPageArrows(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
@@ -274,15 +278,19 @@ void Link_DrawPageArrows(s32 offset) {
     phase = 1;
   }
   phase++;
-  Graphics_MergeShiftedTileRows((u32 *)0x06000220, (u32 *)gPageArrowTiles,
-                                (u32 *)offset, -phase);
-  Graphics_MergeShiftedTileRows((u32 *)0x06000240,
-                                (u32 *)(gPageArrowTiles + 32),
-                                (u32 *)(offset + 32), phase);
+  Graphics_MergeShiftedTileRows(
+      (u32 *)(BG_CHAR_BLOCK(0) +
+              (WINDOW_TILE_BORDER_TOP & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
+      (u32 *)gPageArrowTiles, (u32 *)offset, -phase);
+  Graphics_MergeShiftedTileRows(
+      (u32 *)(BG_CHAR_BLOCK(0) +
+              (WINDOW_TILE_BORDER_TOP_RIGHT & TILE_NUMBER_MASK) *
+                  TILE_SIZE_4BPP),
+      (u32 *)(gPageArrowTiles + 32), (u32 *)(offset + 32), phase);
 }
 
-/// Copies the UI's ten digit tiles ('0' to '9', tiles 0x30 to 0x39 at
-/// 0x06000600) twice into `dst`, each pixel mapped through
+/// Copies the UI's ten digit tiles ('0' to '9', tiles 0x30 to 0x39)
+/// twice into `dst`, each pixel mapped through
 /// gGraphics_ExpandNibbleTable: first with colour 1 drawn as colour 10, then
 /// unchanged. The battle menus build their page numbers this way at tile
 /// 0x300 (LIST_TILE_PAGE_NUMBER), as do the password pages of the title's
@@ -300,7 +308,8 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 
     do {
       u16 *output = (u16 *)((u8 *)dst + destinationOffset);
-      u16 *source = (u16 *)((u8 *)0x06000600 + (row << 5));
+      u16 *source =
+          (u16 *)(BG_CHAR_BLOCK(0) + '0' * TILE_SIZE_4BPP + (row << 5));
       s32 column = 0;
 
       do {
@@ -347,16 +356,18 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
-/// Builds the icon of inventory item `resource` (style 0x1a) in a transfer
-/// block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index`
-/// with it and returns the entry's first tile. The heap block is released
-/// before it returns. The battle item list and the chosen item's window use it.
+/// Builds the icon of inventory item `resource` (the count above one and both
+/// marks) in a transfer block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM
+/// cache entry `index` with it and returns the entry's first tile. The heap
+/// block is released before it returns. The battle item list and the chosen
+/// item's window use it.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
-  ItemIcon_Compose(resource, 0x1a);
+  ItemIcon_Compose(resource,
+                   ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN);
   result = VramCache_Reload(index, (s32)work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
@@ -381,10 +392,10 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
 }
 
 /// Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any
-/// higher value shows Isaac's) into VRAM cache entry `cacheSlot`, in OBJ
-/// palette 14, and returns its first tile. In the prologue, Isaac and Garet
-/// use their childhood portraits. The Status screen
-/// and the battle command menus draw the party member's portrait with it.
+/// higher value shows Isaac's) into VRAM cache entry `cacheSlot`, in
+/// PORTRAIT_PALETTE, and returns its first tile. In the prologue, Isaac and
+/// Garet use their childhood portraits. The Status screen and the battle
+/// command menus draw the party member's portrait with it.
 s32 Portrait_Load(u32 member, s32 cacheSlot) {
   s32 tile;
   s32 slot;
@@ -405,7 +416,7 @@ s32 Portrait_Load(u32 member, s32 cacheSlot) {
       break;
     }
   }
-  Icon_LoadWithPalette(portrait, 0, &slot, &tile, 0xE, 1);
+  Icon_LoadWithPalette(portrait, 0, &slot, &tile, PORTRAIT_PALETTE, 1);
   return tile;
 }
 
@@ -488,10 +499,10 @@ void Text_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile) {
   font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Decompress_ByteLz(decoded->encoded, decoded);
-  remapped = Heap_Alloc(0x400);
+  remapped = Heap_Alloc(32 * 32);
   source = decoded->input;
   destination = remapped;
-  for (i = 0; i < 0x400; i++) {
+  for (i = 0; i < 32 * 32; i++) {
     index = *source++;
     if (palette->slot[index] == 255) {
       palette->slot[index] = palette->count;
@@ -544,11 +555,11 @@ void CommandRow_PutBg1InFront(void) {
   REG_BG1CNT = value;
 }
 
-/// Clears BG0's vertical scroll (0x04000012, REG_BG0VOFS) and installs
+/// Clears BG0's vertical scroll (REG_BG0VOFS) and installs
 /// CommandRow_PutBg1InFront as the VCount handler at line 136, as the command
 /// row does. Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
-  u32 address = 0x04000012;
+  u32 address = (u32)&REG_BG0VOFS;
   s32 zero = 0;
 
   *(volatile u16 *)address = zero;

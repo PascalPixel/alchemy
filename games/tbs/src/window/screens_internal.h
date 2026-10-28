@@ -134,13 +134,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 // The two UI tiles of the PP label before a Psynergy's cost in the lists.
-#define PSYNERGY_COST_FIRST_TILE WINDOW_TILE(0x1f)
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-#define PSYNERGY_COST_SECOND_TILE 0xf005
-#else
-#define PSYNERGY_COST_SECOND_TILE 0xf01e
-#endif
+#define PSYNERGY_COST_FIRST_TILE WINDOW_TILE_PP_LABEL
+#define PSYNERGY_COST_SECOND_TILE WINDOW_TILE_PP_LABEL_END
 
 // The Status screen's level label, after the party member's name, in pixels.
 #if (LANGUAGE == LANGUAGE_FRENCH)
@@ -304,16 +299,22 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 /// are built when the party's commands open (Battle_CollectPartyCommands).
 enum {
   /// Element icon: + enum Element, in BASIC_COLORS_PALETTE.
-  LIST_TILE_SUMMON_ELEMENT = 0x5001,
+  LIST_TILE_SUMMON_ELEMENT = (BASIC_COLORS_PALETTE << 12) | 0x001,
   /// Page n's number: + n gives digit n + 1, tile 0x301 on, the UI digits
   /// with colour 1 drawn as 10 (Graphics_ExpandVramTilesByColorTable).
-  LIST_TILE_PAGE_NUMBER = 0xf301,
+  LIST_TILE_PAGE_NUMBER = WINDOW_TILE(0x301),
   /// The current page's number, the same digits in their own colours.
-  LIST_TILE_PAGE_NUMBER_LIT = 0xf30b,
+  LIST_TILE_PAGE_NUMBER_LIT = WINDOW_TILE(0x30b),
   /// Left arrow, tile 0x334, which Link_DrawPageArrows slides.
-  LIST_TILE_PAGES_LEFT = 0xf334,
-  LIST_TILE_PAGES_RIGHT = 0xf335 ///< Right arrow, tile 0x335
+  LIST_TILE_PAGES_LEFT = WINDOW_TILE(0x334),
+  LIST_TILE_PAGES_RIGHT = WINDOW_TILE(0x335) ///< Right arrow, tile 0x335
 };
+
+/// The battle lists' two page arrow tiles in VRAM, which Link_DrawPageArrows
+/// draws each frame (LIST_TILE_PAGES_LEFT and LIST_TILE_PAGES_RIGHT).
+#define LIST_PAGE_ARROW_VRAM                                                   \
+  ((s32)BG_CHAR_BLOCK(0) +                                                     \
+   (LIST_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
 
 /// The two battle command rows BattleCommandRow_Run runs.
 enum CommandRowMode {
@@ -343,6 +344,13 @@ enum BattleTargetHint {
 };
 
 #define BATTLE_OK 0x80 ///< AbilityDefinition.flags: usable in battle
+
+/// What Save_ScanFileSummaries adds to its count of files when every file has
+/// its send flag set.
+#define SAVE_SCAN_ALL_SENT 100
+
+/// BattleMenuWork.chosenDjinn of a command that has chosen no Djinni.
+#define NO_DJINNI_CHOSEN 0x80000000
 
 /// One icon of the command row (struct BattleCommandRowWork): its sprite, where
 /// it stands and the command it stands for. pictures.c loads it, command_row.c
@@ -386,11 +394,17 @@ struct BattleCommandRowWork {
 // The Djinn menu's blinking tile, and where each element's Djinn count sits in
 // the party status window, in tiles, to blink while the Djinni under the
 // cursor is of that element, on standby and ready to summon (windata.s).
-/// The arrow tile BattleDjinnMenu_Run copies to BG tiles 0x328 and 0x329 each
-/// frame: 0x328 blinks (four frames shown, four blank), 0x329 stays. The
+/// The arrow tile BattleDjinnMenu_Run copies to the two BG tiles from
+/// DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
+/// blank), the second stays. The
 /// Djinn preview draws one of them, flipped, between the old and new class:
 /// the blinking one when the class changes.
 extern const u8 gDjinnMenu_BlinkTile[32];
+/// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
+/// the one after it stays.
+#define DJINN_MENU_ARROW_TILE 0x328
+#define DJINN_MENU_ARROW_VRAM                                                  \
+  (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
 extern const u8 gDjinnMenu_ElementXOffsets[4];
 extern const u8 gDjinnMenu_ElementYOffsets[4];
 

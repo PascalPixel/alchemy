@@ -59,7 +59,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
   lostCount = 0;
   count = 0;
   for (i = 0; i < 32 && newGrid[i].encodedAction != 0; i++) {
-    if (Ability_Get(newGrid[i].encodedAction)->flags & 0x80) {
+    if (Ability_Get(newGrid[i].encodedAction)->flags & BATTLE_OK) {
       out[count] = newGrid[i].encodedAction & ACTION_ID_MASK;
       count++;
       for (j = 0; j < 32; j++) {
@@ -74,7 +74,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
     }
   }
   for (i = 0; i < 32 && oldGrid[i].encodedAction != 0; i++) {
-    if (Ability_Get(oldGrid[i].encodedAction)->flags & 0x80) {
+    if (Ability_Get(oldGrid[i].encodedAction)->flags & BATTLE_OK) {
       for (j = 0; j < 32; j++) {
         if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
              ACTION_ID_MASK) == 0)
@@ -286,8 +286,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
          visibleRow++, i++) {
       ability = Ability_Get(changedAbilities[i]);
       if (ability->element != ELEMENT_NONE)
-        Window_SetTilemapEntry(win, 0x5001 + ability->element, 15,
-                               visibleRow * 2, 0);
+        Window_SetTilemapEntry(win, LIST_TILE_SUMMON_ELEMENT + ability->element,
+                               15, visibleRow * 2, 0);
 
       // Its element icon, range icon, icon, name and PP cost.
       rangePattern = ability->range;
@@ -337,12 +337,14 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   if (page == 0) {
     Text_DrawMessageAsTiles(MsgClassName + savedUnit->classId, win, 0, 0);
     Text_DrawMessageAsTiles(MsgClassName + unit->classId, win, 80, 0);
-    // The arrow between the classes, flipped (0x400): tile 0x328 blinks
-    // when the class changes, 0x329 stays (gDjinnMenu_BlinkTile).
+    // The arrow between the classes, flipped: DJINN_MENU_ARROW_TILE blinks
+    // when the class changes, the tile after it stays (gDjinnMenu_BlinkTile).
     if (savedUnit->classId != unit->classId)
-      Window_SetTilemapEntry(win, 0xf728, 9, 0, page);
+      Window_SetTilemapEntry(
+          win, WINDOW_TILE(DJINN_MENU_ARROW_TILE) | TILE_HFLIP, 9, 0, page);
     else
-      Window_SetTilemapEntry(win, 0xf729, 9, 0, page);
+      Window_SetTilemapEntry(
+          win, WINDOW_TILE(DJINN_MENU_ARROW_TILE + 1) | TILE_HFLIP, 9, 0, page);
 
     String_FormatNumberToHalfwords(numberText, unit->hp);
     Text_DrawWideStringInWindow(numberText + 7, win, 11, 1);

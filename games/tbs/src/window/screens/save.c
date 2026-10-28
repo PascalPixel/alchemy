@@ -105,7 +105,7 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
    (u32)&((struct SaveFileSummary *)0)->from)
 
 /// Loads the save file summaries for the File Screen and returns how many files
-/// there are: plus 100 when every file has its send flag set, or
+/// there are: plus SAVE_SCAN_ALL_SENT when every file has its send flag set, or
 /// SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. Sets
 /// gTitleBattleOptionEnabled, which offers Battle, when a file has any of game
 /// flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when a
@@ -147,7 +147,7 @@ s32 Save_ScanFileSummaries(void) {
   }
   Save_ReleaseWork();
   if (fileCount != 0 && sentCount == fileCount) {
-    return fileCount + 100;
+    return fileCount + SAVE_SCAN_ALL_SENT;
   }
   return fileCount;
 }
@@ -553,7 +553,7 @@ void FileList_StopPulse(void) { Task_Remove(FileList_UpdatePulse); }
 
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
 /// clipped to the screen as Window_SetTextTileBitRect clips, with the
-/// tile entry 0xe006: tile 6 in HIGHLIGHT_PALETTE, the palette
+/// tile entry of tile 6 in HIGHLIGHT_PALETTE, the palette
 /// FileList_UpdatePulse animates. The file list marks the file under
 /// the cursor with it.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
@@ -591,7 +591,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
       if (remaining != 0) {
         do {
           remaining--;
-          *cell++ = 0xE006;
+          *cell++ = (HIGHLIGHT_PALETTE << 12) | 6;
         } while (remaining != 0);
       }
       height--;

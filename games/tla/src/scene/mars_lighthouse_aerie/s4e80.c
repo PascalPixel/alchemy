@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "edition.h"
 
 // The Japanese overlay has no such function.
@@ -16,7 +16,7 @@ void Func_02004e80(s32 from, s32 to) {
   struct Actor *found = Actor_GetById(from);
   struct Actor *object;
   struct Actor *target;
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
 
   party->savedByte = 0;
   object = found;

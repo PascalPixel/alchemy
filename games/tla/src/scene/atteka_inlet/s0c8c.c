@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 void Actor_SetModeById(u32 id, s32 mode);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
@@ -33,9 +33,9 @@ void Func_02000c8c(void) {
   Func_02001108(0);
   Func_02001128(158);
   Func_02000ff0_(51, 38, 70, 22, 1, 2);
-  Actor_SetModeById(gAdventure.currentOwner, 2);
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Actor_CenterOnColumn_(gAdventure.currentOwner, 2, -4);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_CenterOnColumn_(gSequenceParentWork.currentOwner, 2, -4);
   FieldEvent_Wait(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

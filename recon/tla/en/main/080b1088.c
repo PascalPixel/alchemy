@@ -1,5 +1,5 @@
 // Draft, differ 79 of 165: once (marker 0x6774 at gData_020023c4) backs up
-// units 4 to 7's inventories with the adventure halfwords at 0x240 and
+// units 4 to 7's inventories with gSequenceParentWork halfwords at 0x240 and
 // 0x242 and two from Data_02000458, and strips each of those units' unequipped
 // items of types 1 to 4 and every item Func_080b106c picks, compacts the
 // inventory and refreshes the unit; always sets flag 0x9ff, runs
@@ -11,7 +11,7 @@
 // local (ldrsh, differ 98); the inventory pointer taken once (differ 79,
 // from 82).
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "battle_unit.h"
 #include "item.h"
 
@@ -39,8 +39,8 @@ void Func_080b1088(void) {
     s16 second;
 
     *backup++ = 0x6774;
-    first = gAdventure.packedEvents[0];
-    second = gAdventure.packedEvents[1];
+    first = gSequenceParentWork.packedEvents[0];
+    second = gSequenceParentWork.packedEvents[1];
     for (owner = 4; owner < 8; owner++) {
       struct BattleUnit *unit = Unit_Get(owner);
       u16 *inventory;

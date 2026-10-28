@@ -6,11 +6,11 @@
 // 261, 265, 257) and talk in turn, each line the next of the event work's
 // halfword 0x1c4 (Func_0200118c), then object 9 joins the leader again;
 // sets flag 0x9ce.
-// Left: registers: the native saves only r8 to r10 (the statue in r6, a 0 shared by the glow's stores in r8, then 0x10000 in r6 for the follower's speed limit, &gAdventure.currentOwner in r5), where the draft also saves r11 and r7.
+// Left: registers: the native saves only r8 to r10 (the statue in r6, a 0 shared by the glow's stores in r8, then 0x10000 in r6 for the follower's speed limit, &gSequenceParentWork.currentOwner in r5), where the draft also saves r11 and r7.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 extern const u8 MsgByReachingThis[];
@@ -82,17 +82,17 @@ void Func_020009d4(void) {
   glow->z = 0;
   glow->update = 0;
   TALK();
-  Actor_ResetAndSetPosition(gAdventure.currentOwner, 166, 188);
-  Actor_WaitForMoveById(gAdventure.currentOwner);
-  Func_020011d4(9, gAdventure.currentOwner);
+  Actor_ResetAndSetPosition(gSequenceParentWork.currentOwner, 166, 188);
+  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+  Func_020011d4(9, gSequenceParentWork.currentOwner);
   follower->speedLimit = 0x10000;
   Actor_ResetAndSetPosition(9, 184, 188);
   Actor_WaitForMoveById(9);
   Call3(Actor_ArmCallback, 9, 0x8000, 0);
   Func_020011ec(9, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
-  Actor_SetModeById(gAdventure.currentOwner, 3);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 3);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
   TALK();
   Func_020011fc(9, 258, 0);
   Call3(Actor_ArmCallback, 9, 0xb000, 0);
@@ -106,21 +106,21 @@ void Func_020009d4(void) {
   FieldEvent_Wait(30);
   Func_020011ec(9, 0);
   TALK();
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
   Call3(Actor_ArmCallback, 9, 0x8000, 0);
   FieldEvent_Wait(10);
-  Func_020011fc(gAdventure.currentOwner, 257, 0);
+  Func_020011fc(gSequenceParentWork.currentOwner, 257, 0);
   Func_020011fc(9, 257, 0);
   FieldEvent_Wait(60);
   TALK();
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
   Call3(Actor_ArmCallback, 9, 0xb000, 0);
-  Func_020011fc(gAdventure.currentOwner, 261, 0);
+  Func_020011fc(gSequenceParentWork.currentOwner, 261, 0);
   Func_020011fc(9, 261, 0);
   FieldEvent_Wait(60);
   TALK();
   FieldEvent_Wait(40);
-  Actor_SetModeById(gAdventure.currentOwner, 3);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 3);
   FieldEvent_Wait(40);
   Actor_SetModeById(9, 3);
   Func_020011ec(9, 0);
@@ -129,7 +129,7 @@ void Func_020009d4(void) {
   FieldEvent_Wait(30);
   Actor_SetModeById(8, 4);
   Actor_SetModeById(9, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -140,7 +140,7 @@ void Func_020009d4(void) {
   Func_02001264();
   Value2(Func_0200123c, 0x10000, 0);
   Func_0200124c(60);
-  Func_02001214(gAdventure.currentOwner, 1);
+  Func_02001214(gSequenceParentWork.currentOwner, 1);
   FieldEvent_Wait(60);
   Func_020011a4();
 }

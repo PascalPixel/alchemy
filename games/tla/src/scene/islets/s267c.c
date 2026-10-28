@@ -2,13 +2,13 @@
 
 void Func_0200267c(void) {
   struct IsletsEventWork *work = Ram_HeapSlots->eventWork;
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
   struct Actor *object;
   s16 *exit;
   s32 index;
   s32 cell;
 
-  /* FAKEMATCH: the listing loads the adventure's address before it builds the
+  /* FAKEMATCH: the listing loads gSequenceParentWork's address before it builds the
    * owner offset */
   asm volatile("" : "+l"(party));
   object = Actor_GetById(party->currentOwner);

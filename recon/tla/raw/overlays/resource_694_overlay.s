@@ -100,7 +100,7 @@ Func_02000038:
 .L_020080ec:
 	.4byte 0x05000200
 .L_020080f0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x020081d4,"ax",%progbits
 	.balign 4
 	.global Func_020001d4
@@ -525,7 +525,7 @@ Func_020015ac:
 .L_0200971c:
 	.4byte 0x02ba0000
 .L_02009720:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x0200ba8c,"ax",%progbits
 	.ifdef TLA_EDITION_ES
 	.global Func_02003a8c
@@ -770,7 +770,7 @@ Func_02003a8c:
 .L_es_0200bcaa:
 	pop {r5, r6, r7, pc}
 .L_es_0200bcac:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_es_0200bcb0:
 	.4byte gSceneState
 .L_es_0200bcb4:

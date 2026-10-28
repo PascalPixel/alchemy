@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 
 extern const u8 gData_02004688[];
@@ -15,7 +15,7 @@ extern const u8 gData_02004a48[];
 extern const u8 gData_02004b98[];
 
 const u8 *Func_0200035c(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov67cRoom1)
     return gData_020046a0;

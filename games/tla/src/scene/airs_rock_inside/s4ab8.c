@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 struct Actor *Actor_GetById(u32 id);
@@ -25,15 +25,15 @@ void Func_02004ab8(void) {
   Func_02005e14();
   Func_02005f2c(0);
   Func_02005f94(186);
-  Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
+  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags &= ~1;
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x40000, 0x20000);
   switch (*warp) {
   case 50:
     // XXX: the leader is looked up twice and neither result is used; likely
     // left from a position read, because the other warps give theirs as
     // constants.
-    Actor_GetById(gAdventure.currentOwner);
-    Actor_GetById(gAdventure.currentOwner);
+    Actor_GetById(gSequenceParentWork.currentOwner);
+    Actor_GetById(gSequenceParentWork.currentOwner);
     x = 148;
     z = 632;
     break;
@@ -58,7 +58,7 @@ void Func_02004ab8(void) {
     z = 188;
     break;
   }
-  Actor_SetPositionAndCommit(gAdventure.currentOwner, x, z);
-  Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+  Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, x, z);
+  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags |= 1;
   Func_02005e1c();
 }

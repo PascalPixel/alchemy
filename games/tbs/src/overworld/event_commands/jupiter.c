@@ -65,9 +65,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   } while (remainingParticles >= 0);
 
   wait(60);
-  Actor_ArmCallback(gAdventure.leaderActorId, FACING_SOUTH, 0);
+  Actor_ArmCallback(gSequenceParentWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gAdventure.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gSequenceParentWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(40);
   Sound_PlayFar(SE_SCATTER);
@@ -118,7 +118,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
   struct Vector3 position;
   s32 state;
 
-  owner = Actor_GetById(gAdventure.leaderActorId);
+  owner = Actor_GetById(gSequenceParentWork.leaderActorId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {

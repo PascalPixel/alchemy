@@ -1,9 +1,9 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern char SceneId_Ov694Room1;
 
-struct Adventure2c2 {
+struct SequenceParentWork2c2 {
   u8 unk000[0x2c2];
   u8 value;
 };
@@ -18,9 +18,9 @@ void Func_02001c60(void) {
   Func_020000f4();
   Func_020034b0();
   {
-    struct Adventure2c2 *party = (struct Adventure2c2 *)&gAdventure;
+    struct SequenceParentWork2c2 *party = (struct SequenceParentWork2c2 *)&gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

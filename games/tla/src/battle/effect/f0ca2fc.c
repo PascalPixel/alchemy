@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const s16 gParty_PairResolveRules[];
 
@@ -8,7 +8,7 @@ extern const s16 gParty_PairResolveRules[];
 /// the table; an entrance of -1 takes any) and saves that row's scene and
 /// entrance.
 void Func_080ca2fc(void) {
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
   s16 first;
   s16 second;
   const s16 *entry;

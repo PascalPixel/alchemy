@@ -11,7 +11,7 @@ void Func_02001f7c(void) {
   struct Actor *rider =
       ((struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork)->unk1cc;
   struct Actor *raft = Actor_GetById(9);
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct AnkohlRuinsEventWork *work =
       (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
   s32 column;
@@ -21,7 +21,7 @@ void Func_02001f7c(void) {
     return;
   raft->z += 0xcccc;
   column = leader->x >> 20;
-  if (gAdventure.renderMode != 5 && column > 12 && column <= 15) {
+  if (gSequenceParentWork.renderMode != 5 && column > 12 && column <= 15) {
     /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's
      * z before the leader's in the second test; as leader, 16 of 167
      * instructions differ in tla-en. */

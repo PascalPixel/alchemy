@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
@@ -654,7 +654,7 @@ void Func_02000d30(void) {
   Venus_FlagClr(513);
   Venus_ObjSetPos(10, 0x2980000, 0x3180000);
   Venus_CamMove(-1, -1, -1, 0);
-  gAdventure.currentOwner = 5;
+  gSequenceParentWork.currentOwner = 5;
   Venus_PartyRemove(4);
   Venus_Wait(50);
   work = Ram_HeapSlots->eventWork;

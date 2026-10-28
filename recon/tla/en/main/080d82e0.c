@@ -13,7 +13,7 @@
 #include "motobj.h"
 #include "actor.h"
 #include "objdisp.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_particle.h"
 #include "ram_buffer.h"
 
@@ -149,7 +149,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   s32 scale;
   s32 position[3];
 
-  leader = (struct CaptureObject *)Actor_GetById(gAdventure.currentOwner);
+  leader = (struct CaptureObject *)Actor_GetById(gSequenceParentWork.currentOwner);
   djinni = (struct CaptureObject *)Actor_GetById(arg);
   if (djinni == NULL)
     return;
@@ -172,9 +172,9 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   djinni->callback = (void *)BattleEffect_ShrinkObjectAndDestroyFast;
   Actor_SetMode((struct Actor *)djinni, 3);
   wait(90);
-  Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
+  Actor_SetMode(Actor_GetById(gSequenceParentWork.currentOwner), 28);
   wait(30);
   Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 

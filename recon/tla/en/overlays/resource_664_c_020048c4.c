@@ -13,7 +13,7 @@
 // permute.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_sprite.h"
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
@@ -38,7 +38,7 @@ void Func_020048c4(void) {
   u32 id, i;
   s32 busy;
 
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   pair = gData_0200621c;
   if (*pair == 0xffff)
     goto found;

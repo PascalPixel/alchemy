@@ -2,7 +2,7 @@
 // Func_020043a8 (the same listing), whose draft holds its notes.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 extern u16 gData_02004070[];
@@ -12,7 +12,7 @@ struct Actor *Actor_GetById(u32 id);
 
 struct Actor *Func_02003940(s32 *direction, s32 *number, s32 *kind) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor **slot = (struct Actor **)(work + 0x34);
   struct Actor *object;
   u32 n, k;

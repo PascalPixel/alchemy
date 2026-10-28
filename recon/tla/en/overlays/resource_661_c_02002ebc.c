@@ -8,11 +8,11 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 extern char SceneId_Ov661Room10;
-/// gAdventure.currentOwner by its own address.
+/// gSequenceParentWork.currentOwner by its own address.
 extern s32 Data_02000454;
 
 struct Actor *Actor_GetById(s32 id);
@@ -92,7 +92,7 @@ void Func_02002ebc(void) {
   monster->gravity = 0xe666;
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
   Actor_SetPositionAndCommit(8, 232, 184);
-  gAdventure.battleRule24b = 2;
+  gSequenceParentWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov661Room10, 2);
   Func_02004140(10, 0);
 }

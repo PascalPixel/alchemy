@@ -1,7 +1,7 @@
 #include "types.h"
 #include "event_work.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 void Func_080d7524(s32 element);
@@ -36,7 +36,7 @@ void Func_080d2b4c(u32 flags, u32 djinn) {
   djinn = group * 20 + index;
   if (noPrepare == 0)
     Func_080d7524(flags);
-  gAdventure.pendingDjinnEvent = (djinn + 300) | noPrepare;
+  gSequenceParentWork.pendingDjinnEvent = (djinn + 300) | noPrepare;
   *(s16 *)(work + 356) = Encounter_GetDjinnEnemyGroup(djinn);
   if (*(s8 *)(work + 394) == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(

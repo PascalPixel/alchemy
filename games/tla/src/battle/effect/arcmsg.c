@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 
@@ -43,15 +43,15 @@ void FieldMessage_ShowFar(s32 message, s32 flags);
 void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
   s16 phase;
   s32 elapsedFrames;
-  struct Adventure *party;
+  struct SequenceParentWork *party;
 
   phase = caster->phase;
-  /* FAKEMATCH(one-pass): the step's advance and the adventure's address in
+  /* FAKEMATCH(one-pass): the step's advance and gSequenceParentWork's address in
    * a one-pass block; as elapsedFrames = (s16)caster->step++ with
-   * gAdventure.map, 4 of 43 instructions differ in tla-en. */
+   * gSequenceParentWork.map, 4 of 43 instructions differ in tla-en. */
   do {
     elapsedFrames = (s16)caster->step++;
-    party = &gAdventure;
+    party = &gSequenceParentWork;
   } while (0);
 
   if (party->map == (s32)&SceneId_Ov64a) {
@@ -66,9 +66,9 @@ void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
 }
 
 void FieldEvent_ShowStatusMessage(void) {
-  gAdventure.avoidDistance = 0;
+  gSequenceParentWork.avoidDistance = 0;
   Func_080cb82c();
-  if (gAdventure.avoidByItem == 0) {
+  if (gSequenceParentWork.avoidByItem == 0) {
     MessageArgument_PushFar(150, 4);
     FieldMessage_ShowFar((s32)&MsgAbilityWoreOff, 1);
   } else {
@@ -136,8 +136,8 @@ void BattleEffect_RunEffect16(void) {
     id = slot << 16;
     tiles = gData_080ed90c;
     VramCache_Load(id >> 16, 0x100, tiles);
-    gAdventure.avoidDistance = 0x09600000;
-    gAdventure.avoidByItem = GameFlag_Test(0x145);
+    gSequenceParentWork.avoidDistance = 0x09600000;
+    gSequenceParentWork.avoidByItem = GameFlag_Test(0x145);
     Animation_ApplyChildValuesFar(object, 0);
     object->callback = BattleEffect_UpdatePairedArcSpawner;
     object->phase = zero;

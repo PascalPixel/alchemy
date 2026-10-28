@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 #define EVENT_WORD(offset)                                                     \
@@ -51,7 +51,7 @@ s32 FieldMessage_ShowAtActor();
     struct Actor *leader_;                                             \
     Call3(Actor_SetSpeedParameters, (id), 0x13333, 0x9999);             \
     Call2(Actor_SetModeById, (id), 2);                                        \
-    leader_ = Actor_GetById(gAdventure.currentOwner);                        \
+    leader_ = Actor_GetById(gSequenceParentWork.currentOwner);                        \
     if (leader_ != 0)                                                          \
       Call3(Actor_ResetAndSetPosition, (id),                            \
             ((s16 *)&leader_->x)[1], ((s16 *)&leader_->z)[1]);                 \
@@ -413,7 +413,7 @@ void Func_02000658(void) {
   WALK_TO_LEADER(5);
   WALK_TO_LEADER(6);
   WALK_TO_LEADER(13);
-  Call2(Camera_FollowActor, gAdventure.currentOwner, 1);
+  Call2(Camera_FollowActor, gSequenceParentWork.currentOwner, 1);
   Func_020014c0();
   EVENT_WORD(0x1b4) = 16;
   EVENT_WORD(0x1ac) = 521;

@@ -8,7 +8,7 @@ void Func_02004d14(void) { GameFlag_ClearBit(0x202); }
 void Func_02004d24(s32 id) {
   u8 *work = Ram_HeapSlots->windowTiles;
 
-  if (((struct MarsLighthouseAerieParty *)&gAdventure)->held == id)
+  if (((struct MarsLighthouseAerieParty *)&gSequenceParentWork)->held == id)
     work[0x138a] = 1;
 }
 #endif

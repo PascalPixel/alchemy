@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02003dba[];
 struct Actor *Actor_GetById(s32 id);

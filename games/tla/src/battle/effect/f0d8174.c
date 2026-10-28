@@ -4,7 +4,7 @@
 #include "motobj.h"
 #include "actor.h"
 #include "objdisp.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_particle.h"
 #include "ram_buffer.h"
 
@@ -134,7 +134,7 @@ void Func_080d8174(struct DescendingOrbitObject *arg) {
   s32 y;
 
   other =
-      (struct DescendingOrbitObject *)Actor_GetById(gAdventure.currentOwner);
+      (struct DescendingOrbitObject *)Actor_GetById(gSequenceParentWork.currentOwner);
   raw = arg->timer - 1;
   arg->timer = raw;
   value = arg->timer;

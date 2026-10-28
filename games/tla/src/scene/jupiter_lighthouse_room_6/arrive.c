@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern s32 gData_020023c0;
 extern s16 gData_0200242a;

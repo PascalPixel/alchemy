@@ -12,7 +12,7 @@
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern s32 gData_02002b88[3];
 
@@ -33,7 +33,7 @@ void Func_02002254(void);
 void Func_020022dc(s32 a);
 
 void Func_020000d0(s32 kind) {
-  s32 owner = gAdventure.currentOwner;
+  s32 owner = gSequenceParentWork.currentOwner;
   struct Actor *leader = Actor_GetById(owner);
   struct Actor *effect;
   s32 i;

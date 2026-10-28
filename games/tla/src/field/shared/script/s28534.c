@@ -4,7 +4,7 @@
 #include "frame.h"
 #include "map.h"
 #include "event_work.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "iwram_call.h"
 
@@ -208,11 +208,11 @@ update_object:
   else
     Actor_SelectAnimation(object, 2);
 
-  if (gInput.pressed & gAdventure.keys230) {
+  if (gInput.pressed & gSequenceParentWork.keys230) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
     collision |= 4;
   }
-  if (gInput.pressed & ((struct PartyKeys *)&gAdventure)->keys23c) {
+  if (gInput.pressed & ((struct PartyKeys *)&gSequenceParentWork)->keys23c) {
     struct WorldEventWork *keyWork = Ram_HeapSlots->eventWork;
     if (keyWork->unkd39 != 0) {
       GameFlag_ClearBit(0x147);

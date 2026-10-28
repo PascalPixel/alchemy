@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -154,7 +154,7 @@ void Func_02000ac4(void) {
   Actor_WaitForMoveById(25);
   SetPos(4, 472, 426);
   FieldEvent_Wait(10);
-  ArmCallbackAndRefresh(gAdventure.currentOwner, 0xc000);
+  ArmCallbackAndRefresh(gSequenceParentWork.currentOwner, 0xc000);
   LaunchFromFocused(32, 16, 1, 0xc000);
   Func_02002c28();
   Actor_WaitForMoveById(32);
@@ -262,7 +262,7 @@ void Func_02000ac4(void) {
   Motion_SetModeAndWaitAnimation(4, 3);
   FieldEvent_Wait(30);
   Actor_SetModeById(32, 2);
-  object = Actor_GetById(gAdventure.currentOwner);
+  object = Actor_GetById(gSequenceParentWork.currentOwner);
   if (object != NULL)
     Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);
@@ -448,7 +448,7 @@ void Func_020014fc(void) {
   CommitPos(24, -3, 8);
   SetPos(4, 472, 426);
   FieldEvent_Wait(10);
-  ArmCallbackAndRefresh(gAdventure.currentOwner, 0xc000);
+  ArmCallbackAndRefresh(gSequenceParentWork.currentOwner, 0xc000);
   LaunchFromFocused(32, 16, 1, 0xc000);
   Func_02002c28();
   Actor_WaitForMoveById(32);
@@ -564,7 +564,7 @@ void Func_020014fc(void) {
   FieldEvent_Wait(10);
   GameFlag_SetBit(0x914);
   Actor_SetModeById(32, 2);
-  object = Actor_GetById(gAdventure.currentOwner);
+  object = Actor_GetById(gSequenceParentWork.currentOwner);
   if (object != NULL)
     Actor_ResetAndSetPosition(32, ((s16 *)&object->x)[1],
                                      ((s16 *)&object->z)[1]);

@@ -4,7 +4,7 @@
 // and places its pool at the end; the -1 arguments go through Call4.
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "call.h"
 
@@ -58,8 +58,8 @@ void Func_02002ab0(void) {
   boat->scaleY = 0x13333;
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   wait(1);
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);
   Actor_SetSpeedParameters(10, 0x6666, 0x3333);
@@ -82,7 +82,7 @@ void Func_02002ab0(void) {
   Func_02004cf0(5, 0);
   Func_02004e30(78);
   Func_02004e30(162);
-  Func_02004cf0(gAdventure.currentOwner, 0);
+  Func_02004cf0(gSequenceParentWork.currentOwner, 0);
   Func_02004cf0(8, 0);
   Func_02004e30(61);
   Func_02004db0();
@@ -114,8 +114,8 @@ void Func_02002ab0(void) {
   Func_02004c88(4, 0x0e550000, 0x1df00000);
   Func_02004c88(5, 0x0e490000, 0x1dc50000);
   Func_02004c88(6, 0x0e770000, 0x1de30000);
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      1);
   wait(1);
   Func_02004da8();

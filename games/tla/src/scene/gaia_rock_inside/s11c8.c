@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 
 extern s32 gData_02005610[];
@@ -38,7 +38,7 @@ void Func_020011c8(void) {
       Actor_RefreshSelectorById(9);
     Func_02000f00();
     Func_02004f0c((s32)MsgGaiaRockInside03);
-    Actor_SetAngleToward(10, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(10, gSequenceParentWork.currentOwner, 0);
     FieldEvent_Wait(10);
     Func_02004f14(10, 0);
     Motion_SetModeAndWaitAnimation(10, 3);

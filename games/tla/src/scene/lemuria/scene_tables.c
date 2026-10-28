@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "iwram_call.h"
 #include "scene_tables.h"
 
@@ -263,10 +263,10 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   Func_02001d04_(0);
   Func_02001d7c_(158);
   Func_02001b84(warp->scene, warp->x, warp->z);
-  Actor_GetById(gAdventure.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters_(gAdventure.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById_(gAdventure.currentOwner, 2);
-  id = gAdventure.currentOwner;
+  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters_(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById_(gSequenceParentWork.currentOwner, 2);
+  id = gSequenceParentWork.currentOwner;
   if (mode == 0)
     Actor_CenterOnColumn_(id, 2, -8);
   else

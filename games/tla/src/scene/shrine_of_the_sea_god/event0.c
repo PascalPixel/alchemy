@@ -2,7 +2,7 @@
 
 void Func_02000280(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Actor_GetById(gAdventure.currentOwner);
+      Actor_GetById(gSequenceParentWork.currentOwner);
   u8 *state = &Actor_GetById(14)->state;
   s32 y;
 

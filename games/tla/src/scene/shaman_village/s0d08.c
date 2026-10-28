@@ -26,15 +26,15 @@ void Func_02000d68(void) {
   Func_02004a24(0);
   Func_0200498c((s32)MsgShamanGuardRepeatRulesBeforeTrial);
   FieldMessage_ShowAtActor(17, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
     ShamanVillage_CamMove(0xe00000, -1, 0x1180000, 1);
-    ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
-    ShamanVillage_ObjWalk(gAdventure.currentOwner, 246, 292);
-    ShamanVillage_ObjWalk(gAdventure.currentOwner, 204, 292);
-    ShamanVillage_ObjWalk(gAdventure.currentOwner, 182, 280);
-    ShamanVillage_ObjTurn(gAdventure.currentOwner, 0);
+    ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x19999, 0xcccc);
+    ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 246, 292);
+    ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 204, 292);
+    ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 182, 280);
+    ShamanVillage_ObjTurn(gSequenceParentWork.currentOwner, 0);
     ShamanVillage_MessagePut(0x200f, 0);
     GameFlag_SetBit(0x200);
     Func_02001380();
@@ -50,13 +50,13 @@ void Func_02000e3c(void) {
   Func_02004a24(0);
   Func_0200498c((s32)MsgShamanOtherGuardRepeatRulesBeforeTrial);
   FieldMessage_ShowAtActor(16, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
     ShamanVillage_CamMove(0xe00000, -1, 0x1180000, 1);
-    ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
-    ShamanVillage_ObjWalk(gAdventure.currentOwner, 182, 280);
-    ShamanVillage_ObjTurn(gAdventure.currentOwner, 0);
+    ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x19999, 0xcccc);
+    ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 182, 280);
+    ShamanVillage_ObjTurn(gSequenceParentWork.currentOwner, 0);
     ShamanVillage_MessagePut(0x200f, 0);
     GameFlag_SetBit(0x200);
     Func_02001380();
@@ -104,7 +104,7 @@ s32 Func_02000f94(void) {
   u16 turn;
   s32 facing;
 
-  turn = Actor_GetById(gAdventure.currentOwner)->facing + 0x5fff;
+  turn = Actor_GetById(gSequenceParentWork.currentOwner)->facing + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "battle_unit.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 void *Unit_Get(s32 owner);
 void GameFlag_SetBit(s32 flag);
@@ -13,52 +13,52 @@ void Scene_ReturnFromSequence(s32 result) {
   s16 scene;
   s16 entrance;
 
-  gAdventure.sequenceResult = result;
+  gSequenceParentWork.sequenceResult = result;
   if (result == -1) {
-    unit = Unit_Get(gAdventure.currentOwner);
+    unit = Unit_Get(gSequenceParentWork.currentOwner);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
     }
-    scene = gAdventure.pair1f2[0];
-    entrance = gAdventure.pair1f2[1];
+    scene = gSequenceParentWork.pair1f2[0];
+    entrance = gSequenceParentWork.pair1f2[1];
     if (scene != -1 || entrance != -1) {
       if (scene != -1)
-        gAdventure.scene = scene;
+        gSequenceParentWork.scene = scene;
       else
-        gAdventure.scene = gAdventure.primary;
+        gSequenceParentWork.scene = gSequenceParentWork.primary;
       if (entrance != -1)
-        gAdventure.entrance = entrance;
+        gSequenceParentWork.entrance = entrance;
       else
-        gAdventure.entrance = gAdventure.secondary;
+        gSequenceParentWork.entrance = gSequenceParentWork.secondary;
     } else {
-      gAdventure.scene = gAdventure.savedScene;
+      gSequenceParentWork.scene = gSequenceParentWork.savedScene;
       /* FAKEMATCH(barrier): the scene's store ends its block, so the
        * default's load comes before the shared entrance offset; as plain C,
        * 2 of 202 instructions differ in tla-en. */
       asm("");
-      gAdventure.entrance = gAdventure.savedEntrance;
+      gSequenceParentWork.entrance = gSequenceParentWork.savedEntrance;
     }
-    Func_080ca3f4(gAdventure.scene, gAdventure.entrance);
+    Func_080ca3f4(gSequenceParentWork.scene, gSequenceParentWork.entrance);
   } else {
-    scene = gAdventure.pair1ee[0];
-    entrance = gAdventure.pair1ee[1];
+    scene = gSequenceParentWork.pair1ee[0];
+    entrance = gSequenceParentWork.pair1ee[1];
     if (scene != -1 || entrance != -1) {
       if (scene != -1)
-        gAdventure.scene = scene;
+        gSequenceParentWork.scene = scene;
       else
-        gAdventure.scene = gAdventure.primary;
+        gSequenceParentWork.scene = gSequenceParentWork.primary;
       if (entrance != -1)
-        gAdventure.entrance = entrance;
+        gSequenceParentWork.entrance = entrance;
       else
-        gAdventure.entrance = gAdventure.secondary;
+        gSequenceParentWork.entrance = gSequenceParentWork.secondary;
     } else {
-      gAdventure.scene = gAdventure.primary;
+      gSequenceParentWork.scene = gSequenceParentWork.primary;
       /* FAKEMATCH(barrier): the scene's store ends its block, so the win's
        * default load comes before the shared entrance offset; as plain C,
        * 2 of 202 instructions differ in tla-en. */
       asm("");
-      gAdventure.entrance = gAdventure.secondary;
+      gSequenceParentWork.entrance = gSequenceParentWork.secondary;
       GameFlag_SetBit(0x109);
     }
   }

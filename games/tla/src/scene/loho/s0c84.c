@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern char SceneId_Ov6A6Room1;
 extern char SceneId_Ov6A6Room2;
@@ -28,15 +28,15 @@ void Func_02000c84(void) {
 }
 
 const u8 *Func_02000cc0(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov6A6Room1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6A6Room1)
     return gData_02001aec;
-  if (gAdventure.scene == (s32)&SceneId_Ov6A6Room2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6A6Room2)
     return gData_02001dd4;
   return gData_02001ae0;
 }
 
 void Func_02000d00(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
 
   /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as
    * plain statements the constant is built first (differ 2) */

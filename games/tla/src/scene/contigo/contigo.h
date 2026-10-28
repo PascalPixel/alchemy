@@ -2,7 +2,7 @@
 #define TLA_CONTIGO_H
 
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "text/msg_ids.h"

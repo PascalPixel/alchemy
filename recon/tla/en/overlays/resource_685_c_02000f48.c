@@ -42,7 +42,7 @@ static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
 void Func_02000f48(s32 actor) {
   s32 item;
 
-  if ((Actor_GetById(gAdventure.currentOwner)->x >> 20) <= 41)
+  if ((Actor_GetById(gSequenceParentWork.currentOwner)->x >> 20) <= 41)
     goto first;
   ((struct EventFlags685 *)Ram_HeapSlots->eventWork)->field15a = 1;
   return;
@@ -84,7 +84,7 @@ chosen:
       Func_0200343c_(164 << 18, 128 << 17, 0, 0);
     }
   } else {
-    Actor_SetAngleToward(actor, gAdventure.currentOwner, 5);
+    Actor_SetAngleToward(actor, gSequenceParentWork.currentOwner, 5);
     if (!GameFlag_Test_(0x975))
       Func_0200350c((s32)MsgIMeanIt);
     else if (!GameFlag_Test_(0x976))

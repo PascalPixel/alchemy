@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02000110(void) {
-  if (gAdventure.entrance == 99)
+  if (gSequenceParentWork.entrance == 99)
     GameFlag_SetBit(0x894);
   if (GameFlag_Test(0x894)) {
     Func_020009d0_(8, 0x1c80000, 0x1380000);
@@ -12,7 +12,7 @@ void Func_02000110(void) {
 
 void Func_02000168(void) {
   Func_02000978_(108, 38, 1, 1, 102, 56);
-  if (gAdventure.entrance == 99)
+  if (gSequenceParentWork.entrance == 99)
     GameFlag_SetBit(0x895);
   if (GameFlag_Test(0x895)) {
     Func_020009d0_(13, 0x24e0000, 0x3980000);
@@ -36,6 +36,6 @@ void Func_02000168(void) {
 }
 
 void Func_02000264(void) {
-  if (GameFlag_Test(0x109) == 0 && gAdventure.entrance == 99)
+  if (GameFlag_Test(0x109) == 0 && gSequenceParentWork.entrance == 99)
     Func_02000800();
 }

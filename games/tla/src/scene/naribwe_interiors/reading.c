@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
 

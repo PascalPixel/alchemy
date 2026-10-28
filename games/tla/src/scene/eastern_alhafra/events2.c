@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 struct Actor *Actor_GetById();
@@ -48,5 +48,5 @@ void Func_0200042c(s32 mode, s32 id) {
     Camera_MoveWithinMapBounds(0x1500000, -1, 0x2300000, 1);
   Func_02000200(mode, id);
   if (open)
-    Camera_FollowActor(gAdventure.currentOwner, 1);
+    Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
 }

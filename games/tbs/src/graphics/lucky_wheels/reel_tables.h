@@ -9,8 +9,8 @@
 const u16 gLuckyWheels_SparkCellOffsets[] = {0,   4,   20,  56,  120,
                                              220, 364, 560, 816, 1140};
 
-/// The prize of each wheel symbol, kept in gAdventure.wonPrizes for each
-/// winning line. Symbol 5 matches any other on a line, so a line is won by
+/// The prize of each wheel symbol, kept in gSequenceParentWork.wonPrizes for
+/// each winning line. Symbol 5 matches any other on a line, so a line is won by
 /// the symbol it shows besides 5. A line of five 5s leaves the symbol at -1
 /// and reads the byte before this table; every wheel holds three 5s
 /// (overworld/lucky_wheels.c), so such a line can happen.

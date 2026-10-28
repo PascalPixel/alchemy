@@ -10,7 +10,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 #include "flag_call.h"
 
@@ -35,7 +35,7 @@ void Func_020002f8(u16 *list) {
 
   if (Func_02003d20() != 0)
     return;
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;

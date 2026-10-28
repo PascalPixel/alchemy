@@ -53,7 +53,7 @@
 /// (CottageRoomsA_AdvanceSleepZ).
 
 #include "script_operands.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/import.h"
 #include "module/scene/cottage_rooms_a.h"
 #include "module/overworld/overworld.h"
@@ -441,7 +441,7 @@ s32 CottageRoomsA_Initialize(void) {
   }
   // The returning party gets the household reunion only on its first visit.
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    if (gAdventure.entrance == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
+    if (gSequenceParentWork.entrance == COTTAGE_ROOMS_A_FROM_VALE_EAST) {
       if (GameFlag_Get(FLAG_GARET_CAME_HOME) == 0) {
         CottageRoomsA_GaretComesHome();
       }
@@ -449,7 +449,7 @@ s32 CottageRoomsA_Initialize(void) {
     Actor_GetById(ACTOR_GARETS_FATHER)->collisionFlags |= 0x80;
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
-  if (gAdventure.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
+  if (gSequenceParentWork.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Import_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454),
                               PIXELS(150));

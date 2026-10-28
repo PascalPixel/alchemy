@@ -11,7 +11,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
@@ -80,10 +80,10 @@ void Func_02001944(void) {
   ((struct Actor *)Value0(Func_02002570))->motionFlags = 0;
   Call2(Func_02002560, 0xcccc, 0x1999);
   Call4(Camera_MoveWithinMapBounds, 0x1300000, -1, 0x36e0000, 1);
-  Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
+  Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0xcccc,
         0x6666);
-  Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 296, 872);
-  Call2(Func_02002548, gAdventure.currentOwner, 0);
+  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 296, 872);
+  Call2(Func_02002548, gSequenceParentWork.currentOwner, 0);
   Call1(Func_020025a0, 78);
   Call3(Actor_ArmCallback, 8, 0xb000, 20);
   Call2(Func_02002548, 8, 0xd000);
@@ -98,26 +98,26 @@ void Func_02001944(void) {
   Call2(Actor_SetMovementTypeAndWaitById, 11, gData_02002948);
   Call3(Func_020024f8, 5, 0x1280000, 0x3680000);
   Call1(wait, 1);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xe000, 0);
   Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call3(Actor_SetPositionAndReset, 5, 312, 854);
   Call2(Func_02002548, 5, 0x6000);
   Call2(Motion_SetModeAndWaitAnimation, 5, 3);
-  Call2(Motion_SetModeAndWaitAnimation, gAdventure.currentOwner, 3);
+  Call2(Motion_SetModeAndWaitAnimation, gSequenceParentWork.currentOwner, 3);
   Call2(Actor_SetModeById, 5, 2);
   count = &actor->action;
   leader =
-      (struct Actor *)Value1(Actor_GetById, gAdventure.currentOwner);
+      (struct Actor *)Value1(Actor_GetById, gSequenceParentWork.currentOwner);
   if (leader != 0)
     Call3(Actor_ResetAndSetPosition, 5, ((s16 *)&leader->x)[1],
           ((s16 *)&leader->z)[1]);
   Call1(Actor_WaitForMoveById, 5);
   Call3(Func_020024f8, 5, 0, 0);
-  Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0x19999,
+  Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0x19999,
         0xcccc);
-  Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 316, 0x380);
-  Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 344, 0x390);
-  Call2(Func_02002548, gAdventure.currentOwner, 0xc000);
+  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 316, 0x380);
+  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 344, 0x390);
+  Call2(Func_02002548, gSequenceParentWork.currentOwner, 0xc000);
   Call1(Func_020025a0, 17);
   Call2(Func_02002548, 8, 0xc000);
   Call2(Func_02002538, 8, 0);
@@ -131,7 +131,7 @@ void Func_02001944(void) {
   Call1(Func_02001904, 10);
   Call1(Func_02001904, 9);
   Call1(Func_02001904, 11);
-  Call1(Func_02001904, gAdventure.currentOwner);
+  Call1(Func_02001904, gSequenceParentWork.currentOwner);
   Call2(Task_Add, (s32)Func_02001688, 0x480);
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
@@ -163,13 +163,13 @@ wait3:
   Call3(Actor_Jump, 10, 4, 0);
   Call3(Actor_Jump, 9, 4, 0);
   Call3(Actor_Jump, 11, 4, 40);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
   Call3(Actor_ArmCallback, 8, 0x5000, 0);
   Call3(Actor_ArmCallback, 10, 0x5000, 0);
   Call3(Actor_ArmCallback, 9, 0x8000, 0);
   Call2(Func_02002548, 11, 0x8000);
   Value2(FieldMessage_ShowAtActor, 8, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0) ==
       0) {
     Func_02001d14();
   } else {

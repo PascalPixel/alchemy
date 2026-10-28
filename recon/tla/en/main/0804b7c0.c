@@ -27,7 +27,7 @@ void Message_CopyExpanded(s32, s16 *, s32);
 s32 Message_CopyExpanded(s32, s16 *, s32);
 #endif
 
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern void *gBattleWork;
 extern volatile s32 gKeyState;
 extern void *gLinkCountdownWork;
@@ -41,8 +41,8 @@ s32 Message_ShowLocalizedAndWait(void) {
   s32 mode;
 
   state = Ram_HeapSlots->battleWork;
-  mode = gAdventure[0x24B];
-  if (gAdventure[0x24B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
+  mode = gSequenceParentWork[0x24B];
+  if (gSequenceParentWork[0x24B] == 2 || mode <= 2 || (result = 1, mode > 4)) {
     result = 0;
   }
   if (result == 0) {

@@ -30,13 +30,13 @@ void Func_02001d3c(void) {
   ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
   FieldEvent_Wait(20);
   ShamanVillage_ObjPlace(15, 0x780000, 0xc20000);
-  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x26666, 0x13333);
-  Actor_Jump(gAdventure.currentOwner, 4, 0);
-  Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
-  ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 220);
+  ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x26666, 0x13333);
+  Actor_Jump(gSequenceParentWork.currentOwner, 4, 0);
+  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags &= ~1;
+  ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 120, 220);
   FieldEvent_Wait(1);
   {
-    u8 *flags = &Actor_GetById(gAdventure.currentOwner)->actionFlags;
+    u8 *flags = &Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags;
 
     u32 value = *flags;
 
@@ -64,14 +64,14 @@ void Func_02001d3c(void) {
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
   Func_020049fc()->motionFlags = 0;
   ShamanVillage_CamMove(0x780000, 0x320000, 0xe00000, 1);
-  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
-  ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 256);
-  ShamanVillage_ObjTurn(gAdventure.currentOwner, 0xc000);
-  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x6666, 0x3333);
-  Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
-  ShamanVillage_ObjWalk(gAdventure.currentOwner, 120, 264);
+  ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x19999, 0xcccc);
+  ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 120, 256);
+  ShamanVillage_ObjTurn(gSequenceParentWork.currentOwner, 0xc000);
+  ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x6666, 0x3333);
+  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags &= ~1;
+  ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 120, 264);
   FieldEvent_Wait(1);
-  Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags |= 1;
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(15, 259, 20)

@@ -6,9 +6,9 @@ s32 Func_020012dc(void) {
   s32 height;
 
   work->field1ac = 0x204;
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 0x20;
   Func_020014e0(0);
-  if (gAdventure.scene == (s32)&SceneId_Ov67FRoom1) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov67FRoom1) {
     Func_02001510(gData_02001654);
     Func_0200100c((u16 *)gData_02001674);
     Func_020014f8(gData_02001696);
@@ -23,12 +23,12 @@ s32 Func_020012dc(void) {
       Func_02001448();
       wait(1);
       if (GameFlag_Test(0x109)) {
-        object = Actor_GetById(gAdventure.currentOwner);
+        object = Actor_GetById(gSequenceParentWork.currentOwner);
         height = Map_GetTerrainHeight(object->terrainId, object->x,
                                       object->z - object->y);
         object->terrainHeight = height;
         object->y = height;
-        Camera_FollowActor(gAdventure.currentOwner, 0);
+        Camera_FollowActor(gSequenceParentWork.currentOwner, 0);
       }
     }
   }

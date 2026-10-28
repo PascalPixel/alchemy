@@ -5,9 +5,9 @@
 /// uncovers.
 ///
 /// The heat is a count of steps on hazard ground
-/// (gAdventure.hazardSteps): LamakanDesert_Initialize sets a limit of 600
-/// on every scene, at which the party loses a quarter of its HP, and on all but
-/// LamakanDesertCave starts the heat gauge, a thermometer down the screen's
+/// (gSequenceParentWork.hazardSteps): LamakanDesert_Initialize sets a limit of
+/// 600 on every scene, at which the party loses a quarter of its HP, and on all
+/// but LamakanDesertCave starts the heat gauge, a thermometer down the screen's
 /// left edge (HeatGauge_Draw). Each moving frame on the sand adds a step
 /// (HeatGauge_CountStep, CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and the examine
 /// triggers' cell behaviors 100 to 107). As the gauge passes a quarter, a half
@@ -75,7 +75,7 @@
 #include "iwram_call.h"
 #include "event_inline.h"
 #include "field_effect.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "task.h"
 #include "resource.h"
 #include "mem.h"
@@ -229,7 +229,7 @@ static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
 
 /// Where the party can enter each of the four scenes.
 const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_LamakanDesertEast) {
     return gLamakanDesertEastEntrances;
@@ -256,8 +256,9 @@ const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 /// way back from the Manticore's battle, marks it beaten; in the patched
 /// editions it also sets FLAG_KALAY_REACHED.
 const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
-  if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertManticore) {
-    if (gAdventure.entrance == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertManticore) {
+    if (gSequenceParentWork.entrance ==
+        LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
       // XXX (no evidence): what this patch fixed; only Camelot's notes for
       // the patch would say.
@@ -266,13 +267,13 @@ const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
 #endif
     }
   }
-  if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertEast) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertEast) {
     return gLamakanDesertEastActorPlacements;
   }
-  if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertSmog) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     return gLamakanDesertSmogActorPlacements;
   }
-  if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertManticore) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertManticore) {
     return gLamakanDesertManticoreActorPlacements;
   }
   return gLamakanDesertActorPlacementsOther;
@@ -316,7 +317,7 @@ static s32 Reveal_HideSecrets(void) {
   s32 markerId;
 
   GameFlag_Clear(FLAG_SECRETS_REVEALED);
-  if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertEast) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertEast) {
     MapGrid_CopyCells(70, 68, 4, 2, 22, 7);
     MapGrid_CopyCells(70, 68, 4, 2, 8, 10);
     MapGrid_CopyCells(70, 68, 4, 2, 23, 21);
@@ -324,7 +325,7 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(70, 68, 4, 2, 16, 42);
     MapGrid_CopyCells(70, 68, 4, 2, 36, 44);
     MapGrid_CopyCells(70, 68, 4, 2, 14, 55);
-  } else if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertSmog) {
+  } else if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     MapGrid_CopyCells(70, 68, 4, 2, 42, 5);
     MapGrid_CopyCells(70, 68, 4, 2, 20, 11);
     MapGrid_CopyCellAttributes(70, 68, 4, 1, 20, 13);
@@ -343,7 +344,8 @@ static s32 Reveal_HideSecrets(void) {
     MapGrid_CopyCells(70, 68, 4, 2, 6, 46);
     MapGrid_CopyCells(70, 68, 4, 2, 27, 55);
     MapGrid_CopyCells(70, 68, 4, 2, 43, 56);
-  } else if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertManticore) {
+  } else if (gSequenceParentWork.sceneId ==
+             (s32)&SceneId_LamakanDesertManticore) {
     MapGrid_CopyCellIndexRect(69, 99, 4, 2, 8, 16);
     MapGrid_CopyCellIndexRect(69, 99, 4, 2, 6, 20);
     MapGrid_CopyCellIndexRect(69, 99, 4, 2, 10, 23);
@@ -369,7 +371,7 @@ static s32 Reveal_HideSecrets(void) {
     TreasureSpot_SetActorPosition(markerId, 0, 0);
     markerId = markerId + 1;
   } while (markerId <= 107);
-  if (gAdventure.sceneId != (s32)&SceneId_LamakanDesertCave) {
+  if (gSequenceParentWork.sceneId != (s32)&SceneId_LamakanDesertCave) {
     LineScroll_StartWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
   }
 }
@@ -390,7 +392,7 @@ static s32 Reveal_ShowSecrets(void) {
   GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
   GameFlag_Set(FLAG_SECRETS_REVEALED);
   // Restore each hidden patch from the spare cells saved on entry.
-  if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertEast) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertEast) {
     MapGrid_CopyCells(64, 126, 4, 2, 22, 7);
     MapGrid_CopyCells(68, 126, 4, 2, 8, 10);
     MapGrid_CopyCells(72, 126, 4, 2, 23, 21);
@@ -399,7 +401,7 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(80, 126, 4, 2, 36, 44);
     MapGrid_CopyCells(84, 126, 4, 2, 14, 55);
     Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(400), PIXELS(364));
-  } else if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertSmog) {
+  } else if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     MapGrid_CopyCells(64, 126, 4, 2, 42, 5);
     MapGrid_CopyCells(68, 126, 4, 2, 20, 11);
     MapGrid_CopyCellAttributes(68, 126, 4, 2, 20, 12);
@@ -423,7 +425,8 @@ static s32 Reveal_ShowSecrets(void) {
     Actor_SetPosition(ACTOR_FIRST_PIT + 2, PIXELS(144), PIXELS(380));
     Actor_SetPosition(ACTOR_LAST_PIT, PIXELS(576), PIXELS(716));
     Actor_SetPosition(ACTOR_SMOG, PIXELS(648), PIXELS(408));
-  } else if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertManticore) {
+  } else if (gSequenceParentWork.sceneId ==
+             (s32)&SceneId_LamakanDesertManticore) {
     MapGrid_CopyCells(64, 124, 4, 4, 8, 14);
     MapGrid_CopyCells(68, 124, 4, 4, 6, 18);
     MapGrid_CopyCellAttributes(68, 124, 4, 1, 6, 20);
@@ -443,7 +446,7 @@ static s32 Reveal_ShowSecrets(void) {
     TreasureSpot_SetPosition(i, -1, -1);
   }
   TreasureSpot_MoveLeaderAway();
-  if (gAdventure.sceneId != (s32)&SceneId_LamakanDesertCave) {
+  if (gSequenceParentWork.sceneId != (s32)&SceneId_LamakanDesertCave) {
     LineScroll_Stop();
   }
 }
@@ -501,7 +504,8 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
 /// pits.
 static void HeatGauge_RaiseQuarterTriggers(void) {
   struct FieldWork *work = gFieldWork;
-  s32 percent = gAdventure.hazardSteps * 100 / gAdventure.hazardLimit;
+  s32 percent =
+      gSequenceParentWork.hazardSteps * 100 / gSequenceParentWork.hazardLimit;
 
   if (GameFlag_Get(FLAG_SECRETS_REVEALED) != 0)
     return;
@@ -586,10 +590,10 @@ static void LamakanDesert_BatheInOasis(void) {
   best = 0xf00000;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   HeatGauge_SetHeld(1);
-  if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertEast) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertEast) {
     count = 3;
     points = gLamakanDesertEast_Oases;
-  } else if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertSmog) {
+  } else if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertSmog) {
     count = 5;
     points = gLamakanDesertSmog_Oases;
   } else {
@@ -644,7 +648,7 @@ static void LamakanDesert_BatheInOasis(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
   revealFrames = (u16 *)&((struct FieldWork *)work)->revealFrames;
-  progress = &gAdventure.hazardSteps;
+  progress = &gSequenceParentWork.hazardSteps;
   zero = 0;
   // A running Reveal's countdown stays full while the leader bathes,
   // at least 60 frames and until the heat has drained.
@@ -695,12 +699,12 @@ static void HeatGauge_CountStep(void) {
   s32 dx;
   s32 z;
   s32 phase;
-  actor = Actor_GetById(gAdventure.leaderActorId);
+  actor = Actor_GetById(gSequenceParentWork.leaderActorId);
   work = gFieldWork;
   if (actor->targetX == ACTOR_NO_TARGET) {
     return;
   }
-  gAdventure.hazardSteps++;
+  gSequenceParentWork.hazardSteps++;
   if (work->stepTrigger == CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) {
     return;
   }
@@ -753,7 +757,7 @@ static void LamakanDesert_FallIntoPit(void) {
   s32 dx;
   s32 dz;
 
-  target = Actor_Get(gAdventure.leaderActorId);
+  target = Actor_Get(gSequenceParentWork.leaderActorId);
   best = ACTOR_FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = 0x100000;
@@ -837,7 +841,7 @@ static void LamakanDesert_SlideDownDune(void) {
   {
     struct FieldWork *work = gFieldWork;
 
-    id = gAdventure.leaderActorId;
+    id = gSequenceParentWork.leaderActorId;
     center = work->camera;
   }
   actor = Actor_GetById(id);
@@ -969,22 +973,22 @@ static void LamakanDesert_MeetManticore(void) {
 s32 LamakanDesert_Initialize(void) {
   s32 spareRow;
 
-  gAdventure.hazardLimit = 600;
-  gAdventure.hazardMode = HAZARD_COUNT_ON_CELLS;
-  gAdventure.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
-  if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertCave) {
+  gSequenceParentWork.hazardLimit = 600;
+  gSequenceParentWork.hazardMode = HAZARD_COUNT_ON_CELLS;
+  gSequenceParentWork.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertCave) {
   } else {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     Task_AddFrame(HeatGauge_RaiseQuarterTriggers, TASK_PASS_FRAME);
-    if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertEast) {
+    if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertEast) {
       MapGrid_CopyCells(22, 7, 4, 2, 64, 126);
       MapGrid_CopyCells(8, 10, 4, 2, 68, 126);
       MapGrid_CopyCells(23, 21, 4, 2, 72, 126);
       MapGrid_CopyCells(16, 42, 4, 2, 76, 126);
       MapGrid_CopyCells(36, 44, 4, 2, 80, 126);
       MapGrid_CopyCells(14, 55, 4, 2, 84, 126);
-    } else if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertSmog) {
+    } else if (gSequenceParentWork.sceneId == (s32)&SceneId_LamakanDesertSmog) {
       MapGrid_CopyCells(42, 5, 4, 2, 64, 126);
       MapGrid_CopyCells(20, 11, 4, 2, 68, 126);
       MapGrid_CopyCells(14, 12, 4, 2, 72, 126);
@@ -999,7 +1003,8 @@ s32 LamakanDesert_Initialize(void) {
       MapGrid_CopyCells(6, 46, 4, 2, 108, 126);
       MapGrid_CopyCells(27, 55, 4, 2, 112, 126);
       MapGrid_CopyCells(43, 56, 4, 2, 116, 126);
-    } else if (gAdventure.sceneId == (s32)&SceneId_LamakanDesertManticore) {
+    } else if (gSequenceParentWork.sceneId ==
+               (s32)&SceneId_LamakanDesertManticore) {
       spareRow = 124;
       Scene_QueueMusic(SE_AMBIENT_WIND);
       MapGrid_CopyCells(8, 14, 4, 4, 64, spareRow);
@@ -1112,7 +1117,8 @@ static void HeatGauge_Draw(void) {
   IoWriteQueue_Store32((u32)palette++, *word++);
   IoWriteQueue_Store32((u32)palette++, *word++);
 
-  gHeatGaugeLevel = gAdventure.hazardSteps * 120 / gAdventure.hazardLimit;
+  gHeatGaugeLevel =
+      gSequenceParentWork.hazardSteps * 120 / gSequenceParentWork.hazardLimit;
   if (gHeatGaugeLevel > 118) {
     gHeatGaugeFlash = 119;
   }

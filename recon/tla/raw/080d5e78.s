@@ -74,6 +74,6 @@ ObjectEffect_EndContextEffect:
 	mov r10, r6
 	pop {r5, r6, pc}
 .L_080d5f10:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080d5f14:
 	.4byte 0xfff00000

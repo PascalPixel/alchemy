@@ -57,8 +57,8 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gAdventure.windowColor[0] + 12) % 24 * 4;
-  bias = gAdventure.windowColor[1] - 7;
+  phase = (gSequenceParentWork.windowColor[0] + 12) % 24 * 4;
+  bias = gSequenceParentWork.windowColor[1] - 7;
   red = gWindowColor_WaveTable[(phase % 96)];
   green = gWindowColor_WaveTable[(phase + 32) % 96];
   blue = gWindowColor_WaveTable[(phase + 64) % 96];
@@ -227,16 +227,16 @@ UNUSED void SettingsMenu_NextRow(struct OptionMenuWork *work) {
 UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gAdventure.messageSpeed != 0)
-      gAdventure.messageSpeed--;
+    if (gSequenceParentWork.messageSpeed != 0)
+      gSequenceParentWork.messageSpeed--;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gAdventure.windowColor[0] != 0)
-      gAdventure.windowColor[0]--;
+    if (gSequenceParentWork.windowColor[0] != 0)
+      gSequenceParentWork.windowColor[0]--;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gAdventure.windowColor[1] != 0)
-      gAdventure.windowColor[1]--;
+    if (gSequenceParentWork.windowColor[1] != 0)
+      gSequenceParentWork.windowColor[1]--;
     break;
   }
 }
@@ -246,16 +246,16 @@ UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
 UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gAdventure.messageSpeed <= 1)
-      gAdventure.messageSpeed++;
+    if (gSequenceParentWork.messageSpeed <= 1)
+      gSequenceParentWork.messageSpeed++;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gAdventure.windowColor[0] <= 23)
-      gAdventure.windowColor[0]++;
+    if (gSequenceParentWork.windowColor[0] <= 23)
+      gSequenceParentWork.windowColor[0]++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gAdventure.windowColor[1] <= 14)
-      gAdventure.windowColor[1]++;
+    if (gSequenceParentWork.windowColor[1] <= 14)
+      gSequenceParentWork.windowColor[1]++;
     break;
   }
 }
@@ -317,15 +317,15 @@ void SettingsMenu_InitializeWork(void) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  work->option[0] = gAdventure.windowColor[0];
+  work->option[0] = gSequenceParentWork.windowColor[0];
   work->optionCount[0] = 24;
-  work->option[1] = gAdventure.windowColor[1];
+  work->option[1] = gSequenceParentWork.windowColor[1];
   work->optionCount[1] = 15;
-  work->option[2] = gAdventure.messageSpeed;
+  work->option[2] = gSequenceParentWork.messageSpeed;
   work->optionCount[2] = 3;
-  work->option[3] = gAdventure.speech;
+  work->option[3] = gSequenceParentWork.speech;
   work->optionCount[3] = 2;
-  work->option[4] = gAdventure.idleSleepEnabled;
+  work->option[4] = gSequenceParentWork.idleSleepEnabled;
   work->optionCount[4] = 2;
   Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_FRAME);
 }
@@ -630,14 +630,15 @@ s32 SettingsMenu_Run(void) {
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
-    gAdventure.windowColor[0] = work->option[0];
-    gAdventure.windowColor[1] = work->option[1];
-    gAdventure.messageSpeed = work->option[2];
-    gAdventure.speech = work->option[3];
-    gAdventure.idleSleepEnabled = work->option[4];
-    gIdleSleepEnabled = gAdventure.idleSleepEnabled;
+    gSequenceParentWork.windowColor[0] = work->option[0];
+    gSequenceParentWork.windowColor[1] = work->option[1];
+    gSequenceParentWork.messageSpeed = work->option[2];
+    gSequenceParentWork.speech = work->option[3];
+    gSequenceParentWork.idleSleepEnabled = work->option[4];
+    gIdleSleepEnabled = gSequenceParentWork.idleSleepEnabled;
   } else {
-    WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
+    WindowColor_Apply(gSequenceParentWork.windowColor[0],
+                      gSequenceParentWork.windowColor[1]);
   }
   SettingsMenu_Release();
   wait(1);

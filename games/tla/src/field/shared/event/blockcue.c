@@ -12,7 +12,7 @@ struct CueEvent {
   u16 cue;
 };
 
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
 s32 Func_080dbd48(s32 x, s32 z, s32 layer);
@@ -20,7 +20,7 @@ s32 Func_080e4244(struct Actor *object);
 
 void Func_080e42d4(void) {
   struct CueEvent *event = Ram_HeapSlots->eventWork;
-  u8 *party = gAdventure;
+  u8 *party = gSequenceParentWork;
   struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
   s32 reason = 0;
 

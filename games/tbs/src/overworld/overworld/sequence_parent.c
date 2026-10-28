@@ -22,7 +22,7 @@
 /// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
 /// exits falls back to the scene of its first exit, at entrance 0.
 /// Called by SequenceParent_Run with SceneSequence_Run's result; sets
-/// gAdventure.sceneId and .entrance, and leaves them alone for
+/// gSequenceParentWork.sceneId and .entrance, and leaves them alone for
 /// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
 /// no header in the table.
 void Scene_TakeExit(s32 exitId) {
@@ -37,7 +37,7 @@ void Scene_TakeExit(s32 exitId) {
   s32 kind;
   s32 flag;
 
-  currentMap = gAdventure.sceneId;
+  currentMap = gSequenceParentWork.sceneId;
   exitTable = gOverlayArea.exits();
   destinationScene = EXIT_KEEP_DESTINATION;
   destinationEntrance = 0;
@@ -82,8 +82,8 @@ void Scene_TakeExit(s32 exitId) {
 
   // Commit the chosen exit only after a matching scene was found.
   if (destinationScene != EXIT_KEEP_DESTINATION) {
-    gAdventure.sceneId = destinationScene;
-    gAdventure.entrance = destinationEntrance;
+    gSequenceParentWork.sceneId = destinationScene;
+    gSequenceParentWork.entrance = destinationEntrance;
   }
 }
 
@@ -98,18 +98,19 @@ void Scene_TakeExit(s32 exitId) {
 /// point (the scene the battle or minigame was started from) with the party
 /// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
 /// SequenceParent_Run after each sequence other than the scene sequence (the
-/// ids from SEQUENCE_NONE up); stores result in gAdventure.sequenceResult and
-/// sets gAdventure.sceneId and .entrance.
+/// ids from SEQUENCE_NONE up); stores result in
+/// gSequenceParentWork.sequenceResult and sets gSequenceParentWork.sceneId and
+/// .entrance.
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;
   s32 sceneId;
   s32 entrance;
 
-  gAdventure.sequenceResult = result;
+  gSequenceParentWork.sequenceResult = result;
   if (result == -1) {
     // Revive the leader before choosing the restart point.
-    unit = Unit_GetFar(gAdventure.leaderActorId);
+    unit = Unit_GetFar(gSequenceParentWork.leaderActorId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
@@ -122,37 +123,37 @@ void Scene_ReturnFromSequence(s32 result) {
         Unit_UpdateGauges(unit);
       }
     }
-    sceneId = gAdventure.defeatScene;
-    entrance = gAdventure.defeatEntrance;
+    sceneId = gSequenceParentWork.defeatScene;
+    entrance = gSequenceParentWork.defeatEntrance;
     if (sceneId == -1 && entrance == -1) {
-      gAdventure.sceneId = gAdventure.restartScene;
-      gAdventure.entrance = gAdventure.restartEntrance;
+      gSequenceParentWork.sceneId = gSequenceParentWork.restartScene;
+      gSequenceParentWork.entrance = gSequenceParentWork.restartEntrance;
     } else {
       if (sceneId != -1)
-        gAdventure.sceneId = sceneId;
+        gSequenceParentWork.sceneId = sceneId;
       else
-        gAdventure.sceneId = gAdventure.returnScene;
+        gSequenceParentWork.sceneId = gSequenceParentWork.returnScene;
       if (entrance != -1)
-        gAdventure.entrance = entrance;
+        gSequenceParentWork.entrance = entrance;
       else
-        gAdventure.entrance = gAdventure.returnEntrance;
+        gSequenceParentWork.entrance = gSequenceParentWork.returnEntrance;
     }
   } else {
     // An after-battle destination an event set overrides the return point.
-    sceneId = gAdventure.afterBattleScene;
-    entrance = gAdventure.afterBattleEntrance;
+    sceneId = gSequenceParentWork.afterBattleScene;
+    entrance = gSequenceParentWork.afterBattleEntrance;
     if (sceneId != -1 || entrance != -1) {
       if (sceneId != -1)
-        gAdventure.sceneId = sceneId;
+        gSequenceParentWork.sceneId = sceneId;
       else
-        gAdventure.sceneId = gAdventure.returnScene;
+        gSequenceParentWork.sceneId = gSequenceParentWork.returnScene;
       if (entrance != -1)
-        gAdventure.entrance = entrance;
+        gSequenceParentWork.entrance = entrance;
       else
-        gAdventure.entrance = gAdventure.returnEntrance;
+        gSequenceParentWork.entrance = gSequenceParentWork.returnEntrance;
     } else {
-      gAdventure.sceneId = gAdventure.returnScene;
-      gAdventure.entrance = gAdventure.returnEntrance;
+      gSequenceParentWork.sceneId = gSequenceParentWork.returnScene;
+      gSequenceParentWork.entrance = gSequenceParentWork.returnEntrance;
       GameFlag_SetFar(FLAG_KEEP_PARTY_POSITION);
     }
   }
@@ -223,18 +224,19 @@ void SequenceParent_Run(s32 mode) {
   table = gScenes;
   // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == GAME_START_DEBUG_VALE) {
-    gAdventure.sceneId = (s32)&SceneId_ValePlaza;
-    gAdventure.entrance = mode;
+    gSequenceParentWork.sceneId = (s32)&SceneId_ValePlaza;
+    gSequenceParentWork.entrance = mode;
   } else if (gDebugMode && mode == GAME_START_DEBUG_FILE_SCREEN) {
-    gAdventure.sceneId = (s32)&SceneId_FileScreen;
-    gAdventure.entrance = FILE_SCREEN_FROM_SANCTUM;
+    gSequenceParentWork.sceneId = (s32)&SceneId_FileScreen;
+    gSequenceParentWork.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {
-    Adventure_InitializeDefaultsFar();
-    gAdventure.sceneId = (s32)&SceneId_Title;
-    gAdventure.entrance = TITLE_AFTER_RUN;
+    SequenceParentWork_InitializeDefaultsFar();
+    gSequenceParentWork.sceneId = (s32)&SceneId_Title;
+    gSequenceParentWork.entrance = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
-  WindowColor_ApplyFar(gAdventure.windowColor[0], gAdventure.windowColor[1]);
+  WindowColor_ApplyFar(gSequenceParentWork.windowColor[0],
+                       gSequenceParentWork.windowColor[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();
@@ -245,8 +247,8 @@ void SequenceParent_Run(s32 mode) {
       GameFlag_ClearFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
       Sound_PlayFar(SE_STOP_ACTION_SE);
-    record = &table[gAdventure.sceneId];
-    entrance = gAdventure.entrance;
+    record = &table[gSequenceParentWork.sceneId];
+    entrance = gSequenceParentWork.entrance;
 
     // Stop DMA 0, which a scene may have left running for an HBlank effect.
     {
@@ -265,9 +267,10 @@ void SequenceParent_Run(s32 mode) {
     DebugText_Clear();
     VramCache_Reset();
     // The battle, dice and slots sequences return a result, not an exit: the
-    // return scene is chosen from the adventure, and no overlay is loaded.
-    if (gAdventure.sceneId >= SEQUENCE_NONE) {
-      switch (gAdventure.sceneId) {
+    // return scene is chosen from the sequence parent's work, and no overlay is
+    // loaded.
+    if (gSequenceParentWork.sceneId >= SEQUENCE_NONE) {
+      switch (gSequenceParentWork.sceneId) {
       case SEQUENCE_BATTLE:
         entrance = Battle_RunFar(entrance);
         break;
@@ -286,7 +289,8 @@ void SequenceParent_Run(s32 mode) {
     }
 
     // A scene: set its flags and music, load its code and run it.
-    Scene_Arrive(gAdventure.sceneId, GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
+    Scene_Arrive(gSequenceParentWork.sceneId,
+                 GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
     Scene_ChooseMusic();
     if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
       // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC_ONCE for
@@ -296,15 +300,15 @@ void SequenceParent_Run(s32 mode) {
         GameFlag_ClearFar(FLAG_KEEP_MUSIC_ONCE);
       else
         Scene_PlayMusic();
-    } else if (gAdventure.returnMusic != -1) {
+    } else if (gSequenceParentWork.returnMusic != -1) {
       // Back where the party was: resume the music saved when the Pause menu
       // last opened (scene_sequence.c). A random battle and every normal entry
       // set returnMusic to -1, so the scene's own music plays instead.
-      Sound_PlayFar(gAdventure.returnMusic);
+      Sound_PlayFar(gSequenceParentWork.returnMusic);
     } else {
       Scene_PlayMusic();
     }
-    gAdventure.mapId = record->mapIndex;
+    gSequenceParentWork.mapId = record->mapIndex;
     Scene_LoadOverlay(0);
     Scene_TakeExit(SceneSequence_Run(entrance));
   }
@@ -316,7 +320,7 @@ void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
   table = gScenes;
-  Overlay_Load(table[gAdventure.sceneId].resourceId, &gOverlayArea);
+  Overlay_Load(table[gSequenceParentWork.sceneId].resourceId, &gOverlayArea);
 }
 
 #define MAP_HEADER(id) (&gScenes[id])
@@ -328,29 +332,29 @@ void Scene_LoadOverlay(s32 unused) {
 /// counters, the area name is shown and the entrance becomes the
 /// point Retreat returns to. Then the area's visited flag
 /// (FLAG_AREA_VISITED) is set. Called by SequenceParent_Run before each
-/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gAdventure.area
-/// and .sceneType.
+/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets
+/// gSequenceParentWork.area and .sceneType.
 void Scene_Arrive(s32 unused, s32 keep) {
-  s32 area = MAP_HEADER(gAdventure.sceneId)->area;
+  s32 area = MAP_HEADER(gSequenceParentWork.sceneId)->area;
   s32 flag;
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal entry to a scene.
     for (flag = FLAG_SCENE_TEMP_FIRST; flag <= FLAG_SCENE_TEMP_LAST; flag++)
       GameFlag_ClearFar(flag);
-    if (area != gAdventure.area) {
+    if (area != gSequenceParentWork.area) {
       // Area state and Retreat's destination survive moves within it.
       for (flag = FLAG_AREA_TEMP_FIRST; flag <= FLAG_AREA_TEMP_LAST; flag++)
         GameFlag_ClearFar(flag);
       GameFlag_SetFar(FLAG_SHOW_AREA_NAME);
-      gAdventure.encounterSteps = 0;
-      gAdventure.hazardSteps = 0;
+      gSequenceParentWork.encounterSteps = 0;
+      gSequenceParentWork.hazardSteps = 0;
       GameFlag_ClearFar(FLAG_VENUS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
-      gAdventure.retreatScene = gAdventure.sceneId;
-      gAdventure.retreatEntrance = gAdventure.entrance;
+      gSequenceParentWork.retreatScene = gSequenceParentWork.sceneId;
+      gSequenceParentWork.retreatEntrance = gSequenceParentWork.entrance;
     }
     // The Djinn's hiding flags last for one scene, even within an area,
     // and so do the 16 after them to 0xdf, which nothing else uses.
@@ -363,12 +367,13 @@ void Scene_Arrive(s32 unused, s32 keep) {
     GameFlag_ClearFar(FLAG_NO_ENCOUNTERS_IN_AREA);
     GameFlag_ClearFar(FLAG_IN_TOWN);
     GameFlag_ClearFar(FLAG_WORLD_MAP_LEFT);
-    gAdventure.returnMusic = -1;
+    gSequenceParentWork.returnMusic = -1;
   }
-  gAdventure.area = area;
+  gSequenceParentWork.area = area;
   GameFlag_SetFar(FLAG_AREA_VISITED(area & 0x7f));
-  gAdventure.sceneType = MAP_HEADER(gAdventure.sceneId)->sceneType;
-  if (gAdventure.sceneType == SCENE_TYPE_TOWN)
+  gSequenceParentWork.sceneType =
+      MAP_HEADER(gSequenceParentWork.sceneId)->sceneType;
+  if (gSequenceParentWork.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
@@ -376,7 +381,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
 /// Starts the current scene's field music, chosen by
 /// Scene_ChooseMusic. Called by SequenceParent_Run, and by
 /// 34 scene overlays through Scene_PlayMusicFar.
-void Scene_PlayMusic(void) { Sound_PlayFar(gAdventure.sceneMusic); }
+void Scene_PlayMusic(void) { Sound_PlayFar(gSequenceParentWork.sceneMusic); }
 
 #undef EXIT_SCENE_MASK
 #undef ENTRANCE

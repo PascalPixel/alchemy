@@ -9,7 +9,7 @@ void Func_0200030c(void) {
   Func_02003258(30);
   FieldEvent_Wait(30);
   Func_020032b8(190);
-  switch (gAdventure.entrance) {
+  switch (gSequenceParentWork.entrance) {
   case 1:
     GameFlag_SetBit(0xa32);
     break;

@@ -1,15 +1,15 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 s32 Party_SetPackedEvent(s32 kind, s32 id, s32 second) {
   u32 packed = (kind << 10) | (id & 0x3fff);
 
   if (second == 0)
-    gAdventure.packedEvents[0] = packed;
+    gSequenceParentWork.packedEvents[0] = packed;
   else {
-    struct Adventure *party = &gAdventure;
+    struct SequenceParentWork *party = &gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

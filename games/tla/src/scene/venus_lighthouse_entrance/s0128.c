@@ -23,7 +23,7 @@ s32 Party_RemoveActiveOwner();
 s32 Func_0200299c();
 s32 Func_02002a04();
 s32 Actor_SetActionCallback();
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern char SceneId_VenusLighthouseEntrance;
 
 s32 Func_02000128(void) {
@@ -35,7 +35,7 @@ s32 Func_02000128(void) {
   s32 t33;
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
-  t0 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
+  t0 = Value1(Actor_GetById, FIELD_AT(gSequenceParentWork, s32, 532));
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   Call2(Actor_SetModeById, 0xa, 5);
   Call2(Actor_SetSpritePriority, 0xa, 1);
@@ -61,7 +61,7 @@ s32 Func_02000128(void) {
     Call3(Func_0200290c, 0x14, 0, 0);
     Call3(Func_0200290c, 0x15, 0, 0);
   }
-  if (FIELD_AT(gAdventure, s16, 482) == 9) {
+  if (FIELD_AT(gSequenceParentWork, s16, 482) == 9) {
     t21 = Value1(GameFlag_Test, 0x891);
     if (t21 == 0) {
       Func_020028b4();
@@ -70,17 +70,17 @@ s32 Func_02000128(void) {
       Func_020028bc();
     }
   }
-  if (FIELD_AT(gAdventure, s16, 482) == 0x62) {
-    FIELD_AT(gAdventure, u16, 490) = 1;
-    *(u16 *)(gAdventure + 482) = 1;
+  if (FIELD_AT(gSequenceParentWork, s16, 482) == 0x62) {
+    FIELD_AT(gSequenceParentWork, u16, 490) = 1;
+    *(u16 *)(gSequenceParentWork + 482) = 1;
     Call1(Func_020028a4, 1);
     Func_02001c30();
   }
-  if (FIELD_AT(gAdventure, s16, 482) == 0x63) {
+  if (FIELD_AT(gSequenceParentWork, s16, 482) == 0x63) {
     Call1(GameFlag_SetBit, 0x893);
   }
-  if (FIELD_AT(gAdventure, s16, 482) == 0x5a) {
-    FIELD_AT(gAdventure, s32, 532) = 5;
+  if (FIELD_AT(gSequenceParentWork, s16, 482) == 0x5a) {
+    FIELD_AT(gSequenceParentWork, s32, 532) = 5;
     Call1(Party_RemoveActiveOwner, 4);
     Call1(Party_RemoveActiveOwner, 6);
     Call1(Party_RemoveActiveOwner, 7);

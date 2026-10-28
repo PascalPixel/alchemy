@@ -1,13 +1,13 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 struct Actor *Func_080eaf28(s32 *position, s32 check_y);
 
 struct Actor *Func_080eaeb4(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 position[3];
   s32 angle = ((leader->angle >> 12) + 2) & 12;
   struct Actor *found;

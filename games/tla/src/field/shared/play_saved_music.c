@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_event.h"
 
-void Party_PlaySavedMusic(void) { Sound_PlayFar(gAdventure.cue); }
+void Party_PlaySavedMusic(void) { Sound_PlayFar(gSequenceParentWork.cue); }

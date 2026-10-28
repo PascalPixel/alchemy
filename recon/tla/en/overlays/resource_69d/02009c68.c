@@ -1,7 +1,7 @@
 // Near miss of overlay 69d's Func_02001c68 (698's Func_020018bc and 6ad's
 // Func_02003fc8 are the same routine): differ 10 of 79 in two places. The
-// native loads gAdventure's address before it spills the third argument (ldr
-// r3, =gAdventure; str r2, [sp, #0]), and it shifts and stores the new x after
+// native loads gSequenceParentWork's address before it spills the third argument (ldr
+// r3, =gSequenceParentWork; str r2, [sp, #0]), and it shifts and stores the new x after
 // it has stored z and started the follower's address (str r3, [r6, #16]; movs
 // r3, #230; lsls r3, r3, #1; add r3, r10; lsls r2, r2, #20; adds r2, r2, r1;
 // ldr r1, [r3]; str r2, [r6, #8]; str r2, [r1, #8]). Tried: the follower loaded
@@ -11,7 +11,7 @@
 // results are masked.
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -25,7 +25,7 @@ void Func_02001dd0(void);
 void Func_02001a20(void);
 
 void Func_02001c68(s32 x, s32 z, s32 value) {
-  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
   void *work = Ram_HeapSlots->eventWork;
   s32 stepX = GameFlag_GetByte(gData_02002864[1]);
   s32 stepZ = GameFlag_GetByte(gData_02002864[1] + 8);

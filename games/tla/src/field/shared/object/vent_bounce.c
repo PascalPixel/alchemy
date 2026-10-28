@@ -21,7 +21,7 @@ s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
 /// of the objects the vent work lists.
 void VENT_BOUNCE(struct Actor *object) {
   struct VentWork *work = VENT_WORK;
-  struct Actor *other = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *other = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 dx = object->bounce;
   s32 dz;
   struct FieldSprite *sprite;

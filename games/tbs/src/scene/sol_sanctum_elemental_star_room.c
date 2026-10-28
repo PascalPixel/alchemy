@@ -37,7 +37,7 @@
 /// grows with him: the platform's actor, ACTOR_PLATFORM_SHADOW,
 /// draws that shadow.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/import.h"
 #include "module/scene/sol_sanctum_elemental_star_room.h"
 #include "module/scene/shared/effect_spawn.h"
@@ -2147,7 +2147,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     SolSanctumElementalStarRoom_LineUpCaptors();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
-    if (gAdventure.entrance ==
+    if (gSequenceParentWork.entrance ==
         SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
       SolSanctumElementalStarRoom_EnterStarRoom();
     }

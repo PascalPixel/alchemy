@@ -31,20 +31,20 @@ void Func_020030bc(void) {
   ShamanVillage_CamMove(-1, -1, -1, 0);
   ShamanVillage_CamSpeed(0x6666, 0xccc);
   ShamanVillage_CamMove(0xa80000, -1, 0x2100000, 1);
-  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
-  ShamanVillage_ObjWalk(gAdventure.currentOwner, 168, 536);
-  Func_02004944(18, gAdventure.currentOwner);
-  Func_02004944(7, gAdventure.currentOwner);
-  Func_02004944(5, gAdventure.currentOwner);
-  Func_02004944(7, gAdventure.currentOwner);
-  Func_02004944(6, gAdventure.currentOwner);
+  ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
+  ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 168, 536);
+  Func_02004944(18, gSequenceParentWork.currentOwner);
+  Func_02004944(7, gSequenceParentWork.currentOwner);
+  Func_02004944(5, gSequenceParentWork.currentOwner);
+  Func_02004944(7, gSequenceParentWork.currentOwner);
+  Func_02004944(6, gSequenceParentWork.currentOwner);
   wait(1);
   ShamanVillage_ObjArm(6, 0xc000, 0);
   ShamanVillage_ObjSpeed(18, 0x10000, 0x8000);
   ShamanVillage_ObjSpeed(7, 0x10000, 0x8000);
   ShamanVillage_ObjSpeed(5, 0x10000, 0x8000);
-  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x10000, 0x8000);
-  Actor_SetMovementTypeById(gAdventure.currentOwner,
+  ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetMovementTypeById(gSequenceParentWork.currentOwner,
                                           gData_02004f80);
   Actor_SetMovementTypeById(5, gData_02004fc4);
   Actor_SetMovementTypeById(18, gData_02004f3c);
@@ -94,7 +94,7 @@ void Func_020030bc(void) {
   ShamanVillage_ObjTurn(15, 0xe000);
   Actor_SetModeById(15, 4);
   ShamanVillage_MessagePut(15, 0);
-  ShamanVillage_ObjArm(gAdventure.currentOwner, 0x4000, 0);
+  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0x4000, 0);
   ShamanVillage_ObjArm(18, 0, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
@@ -255,9 +255,9 @@ void Func_020030bc(void) {
   ShamanVillage_ObjArm(5, 0, 0);
   ShamanVillage_ObjArm(18, 0, 0);
   ShamanVillage_ObjArm(7, 0xa000, 0);
-  result = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
+  result = Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0);
   done = &object->unk63;
-  owner = gAdventure.currentOwner;
+  owner = gSequenceParentWork.currentOwner;
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
     Motion_SetModeAndWaitAnimation(15, 4);
@@ -272,7 +272,7 @@ void Func_020030bc(void) {
   }
   ShamanVillage_ObjWalk(15, 212, 582);
   ShamanVillage_CamMove(0xa80000, -1, 0x1f40000, 1);
-  Actor_WatchAndSetScript(gAdventure.currentOwner, 15);
+  Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 15);
   Actor_WatchAndSetScript(18, 15);
   Actor_WatchAndSetScript(5, 15);
   Actor_WatchAndSetScript(7, 15);
@@ -286,7 +286,7 @@ void Func_020030bc(void) {
   do {
     wait(1);
   } while (*done == 0);
-  Actor_Stop(gAdventure.currentOwner);
+  Actor_Stop(gSequenceParentWork.currentOwner);
   Actor_Stop(18);
   Actor_Stop(5);
   Actor_Stop(7);
@@ -299,7 +299,7 @@ void Func_020030bc(void) {
   ShamanVillage_ObjPut(15, 0xe00000, 0x1180000, angle);
   ShamanVillage_ObjPut(16, 0xd00000, 0x1080000, angle);
   ShamanVillage_ObjPut(17, 0xf00000, 0x1080000, angle);
-  ShamanVillage_ObjArm(gAdventure.currentOwner, 0x8000, 0);
+  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0x8000, 0);
   ShamanVillage_ObjArm(18, 0, 0);
   ShamanVillage_ObjArm(5, 0, 0);
   ShamanVillage_ObjArm(7, 0xa000, 0);
@@ -309,12 +309,12 @@ void Func_020030bc(void) {
   Actor_SetModeById(5, 3);
   Actor_SetModeById(7, 3);
   Motion_SetModeAndWaitAnimation(6, 3);
-  Actor_Stop(gAdventure.currentOwner);
+  Actor_Stop(gSequenceParentWork.currentOwner);
   Actor_Stop(18);
   Actor_Stop(5);
   Actor_Stop(7);
   Actor_Stop(6);
-  Actor_GetById(gAdventure.currentOwner)->update = NULL;
+  Actor_GetById(gSequenceParentWork.currentOwner)->update = NULL;
   Actor_GetById(18)->update = NULL;
   Actor_GetById(5)->update = NULL;
   Actor_GetById(7)->update = NULL;

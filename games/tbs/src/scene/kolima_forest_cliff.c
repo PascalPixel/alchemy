@@ -37,7 +37,7 @@
 
 #include "pushed_actor.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "sounds.h"

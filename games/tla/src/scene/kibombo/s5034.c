@@ -1,7 +1,7 @@
 #include "kibombo.h"
 
 s32 Func_02005034(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
     Func_02005114();

@@ -274,7 +274,7 @@ Func_020006f4:
 	b .L_02008d80
 	.2byte 0x0000
 .L_0200896c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008970:
 	.4byte MsgAreYouGiving
 .L_02008974:
@@ -614,7 +614,7 @@ Func_020006f4:
 .L_02008c90:
 	.4byte MsgOhThatRed
 .L_02008c94:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008c98:
 	.4byte 0x00019999
 .L_02008c9c:
@@ -1179,7 +1179,7 @@ Func_02000e38:
 	b .L_0200925a
 	.2byte 0x0000
 .L_02009230:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009234:
 	.4byte Func_02000df8
 .L_02009238:
@@ -1454,7 +1454,7 @@ Func_0200129c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_ja_020094c4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_ja_020094c8:
 	.4byte gData_02004004
 .L_ja_020094cc:
@@ -1706,7 +1706,7 @@ Func_0200129c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_020094c4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_020094c8:
 	.4byte gData_02004004
 .L_020094cc:
@@ -2139,7 +2139,7 @@ Func_020014e0:
 	b .L_ja_02009a3e
 	.2byte 0x0000
 .L_ja_02009894:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_ja_02009898:
 	.4byte Func_02000df8
 .L_ja_0200989c:
@@ -2327,7 +2327,7 @@ Func_020014e0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_ja_02009a50:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_ja_02009a54:
 	.4byte MsgWantToGo
 .L_ja_02009a58:
@@ -2756,7 +2756,7 @@ Func_020014e0:
 	b .L_02009a3e
 	.2byte 0x0000
 .L_02009894:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009898:
 	.4byte Func_02000df8
 .L_0200989c:
@@ -2944,7 +2944,7 @@ Func_020014e0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009a50:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009a54:
 	.4byte MsgWantToGo
 .L_02009a58:
@@ -3201,7 +3201,7 @@ Func_02002d7c:
 .L_0200aec0:
 	.4byte gSceneState
 .L_0200aec4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200aec8:
 	.4byte 0xfff40000
 .L_0200aecc:
@@ -3391,7 +3391,7 @@ Func_02003164:
 	add sp, #8
 	pop {r5, r6, r7, pc}
 .L_0200b298:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x0200b29c,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.global Func_0200329c
@@ -3548,7 +3548,7 @@ Func_0200329c:
 	bl Func_02003e6c
 	pop {r5, pc}
 .L_ja_0200b31c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_ja_0200b320:
 	.4byte Func_02001c4c
 .L_ja_0200b324:
@@ -3710,7 +3710,7 @@ Func_0200329c:
 	bl Func_02003e6c
 	pop {r5, pc}
 .L_0200b400:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200b404:
 	.4byte Func_02001c4c
 .L_0200b408:
@@ -4409,7 +4409,7 @@ Func_02003940:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200ba4c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200ba50:
 	.4byte gData_02004070
 .L_0200ba54:
@@ -4732,7 +4732,7 @@ Func_02003a5c:
 	bx r3
 	.2byte 0x0000
 .L_0200bcfc:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200bd00:
 	.4byte gData_0200407c
 .L_0200bd04:

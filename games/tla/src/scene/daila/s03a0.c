@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_event.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
@@ -22,7 +22,7 @@ static inline void Actor_JoinLeader(s32 actor) {
   struct FieldActor *leader;
 
   Import_ActorSetAnimation(actor, 2);
-  leader = Import_ActorGet(gAdventure.currentOwner);
+  leader = Import_ActorGet(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -78,8 +78,8 @@ void Func_020003a0(void) {
   Import_EventSetMessageId(msg);
   Func_02000ca8_(27, 472 << 16, 264 << 16);
   Import_EventWait(30);
-  Actor_SetPositionAndReset_(gAdventure.currentOwner, 504, 296);
-  Actor_ArmCallback_(gAdventure.currentOwner, 0xa000, 0);
+  Actor_SetPositionAndReset_(gSequenceParentWork.currentOwner, 504, 296);
+  Actor_ArmCallback_(gSequenceParentWork.currentOwner, 0xa000, 0);
   Actor_SetPositionAndCommit_(27, 472, 280);
   Actor_ArmCallback_(27, 0x2000, 0);
   Import_EventWait(30);
@@ -112,10 +112,10 @@ void Func_020003a0(void) {
   Import_EventWait(30);
   Import_EventShowMessageAndWait(6, 0);
   Import_EventWait(30);
-  Actor_TurnToFaceEachOther(gAdventure.currentOwner, 28, 0);
+  Actor_TurnToFaceEachOther(gSequenceParentWork.currentOwner, 28, 0);
   Import_EventWait(30);
   Actor_SetAngleToward(28, 27, 0);
-  Actor_SetAngleToward(gAdventure.currentOwner, 27, 0);
+  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 27, 0);
   Import_EventWait(60);
   Import_EventShowMessageAndWait(28, 0);
   Import_EventWait(30);
@@ -127,7 +127,7 @@ void Func_020003a0(void) {
   Actor_ArmCallback_(27, 0xc000, 0);
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
-  Actor_SetAngleToward(27, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(27, gSequenceParentWork.currentOwner, 0);
   Import_EventWait(60);
   Actor_StartRepeatedMotion(28, 1);
   Import_EventWait(60);
@@ -137,7 +137,7 @@ void Func_020003a0(void) {
   Import_EventWait(30);
   Import_EventShowMessageAndWait(27, 0);
   Import_EventWait(30);
-  Actor_SetAngleToward(5, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(5, gSequenceParentWork.currentOwner, 0);
   Import_FieldMessageShowAtActor(5, 0);
   if (Import_EventAskYesNoWithActorAnimation(Import_PartyGetLeaderActor(), 0) == 0) {
     Import_EventWait(30);
@@ -177,17 +177,17 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
   Actor_SetPositionAndReset_(27, 504, 328);
-  Actor_SetAngleToward(gAdventure.currentOwner, 27, 0);
+  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 27, 0);
   Actor_SetAngleToward(5, 27, 0);
   Actor_SetAngleToward(6, 27, 0);
   Actor_SetAngleToward(28, 27, 0);
   Actor_SetPositionAndReset_(27, 456, 328);
-  Actor_SetAngleToward(gAdventure.currentOwner, 27, 0);
+  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 27, 0);
   Actor_SetAngleToward(5, 27, 0);
   Actor_SetAngleToward(6, 27, 0);
   Actor_SetAngleToward(28, 27, 0);
   Actor_SetPositionAndReset_(27, 424, 472);
-  Actor_SetAngleToward(gAdventure.currentOwner, 27, 0);
+  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 27, 0);
   Actor_SetAngleToward(5, 27, 0);
   Actor_SetAngleToward(6, 27, 0);
   Actor_SetAngleToward(28, 27, 0);
@@ -205,13 +205,13 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Import_EventShowMessageAndWait(6, 0);
   Import_EventWait(60);
-  Actor_SetAngleToward(28, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(28, gSequenceParentWork.currentOwner, 0);
   Import_EventWait(60);
   Actor_ArmCallback_(28, 0x4000, 0);
   Import_EventWait(30);
   Import_EventShowMessageAndWait(28, 0);
   Import_EventWait(60);
-  Import_ActorSetAnimation(gAdventure.currentOwner, 3);
+  Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 3);
   Import_ActorSetAnimation(5, 3);
   Import_ActorSetAnimation(6, 3);
   Import_EventWait(120);

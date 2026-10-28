@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -43,17 +43,17 @@ void Func_020004dc(void) {
   Call1((void (*)())Func_0200062c, 0);
   Call1((void (*)())Func_02000604, (s32)MsgMikasallaInteriors19);
   Value3((s32 (*)())Func_02000624, 18, 0x100, 60);
-  Call3((void (*)())Actor_SetAngleToward, 18, gAdventure.currentOwner,
+  Call3((void (*)())Actor_SetAngleToward, 18, gSequenceParentWork.currentOwner,
         0);
   Call2((void (*)())Func_02000614, 18, 0);
-  Value3((s32 (*)())Func_02000624, gAdventure.currentOwner, 0x100, 60);
+  Value3((s32 (*)())Func_02000624, gSequenceParentWork.currentOwner, 0x100, 60);
   Call2((void (*)())Actor_SetModeById, 18, 4);
   Call1((void (*)())FieldEvent_Wait, 15);
   Call2((void (*)())Func_02000614, 18, 0);
   Value3((s32 (*)())Func_02000624, 18, 0x108, 60);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 18, 0);
   result0 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation,
-                   gAdventure.currentOwner, 0);
+                   gSequenceParentWork.currentOwner, 0);
   if (result0 != 0)
     goto L_02008568;
   Call2((void (*)())Func_02000614, 18, 0);

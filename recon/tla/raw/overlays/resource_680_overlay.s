@@ -255,7 +255,7 @@ Func_020006ec:
 .L_02008778:
 	.4byte 0x00000000
 .L_0200877c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008780:
 	.4byte 0x000000ae
 .L_02008784:
@@ -654,7 +654,7 @@ Func_02000ab4:
 .L_02008b1e:
 	pop {r5, r6, pc}
 .L_02008b20:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008b24:
 	.4byte 0x000fffff
 .L_02008b28:
@@ -966,7 +966,7 @@ Func_02000bc0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008dc0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008dc4:
 	.4byte gData_020016cc
 .L_02008dc8:

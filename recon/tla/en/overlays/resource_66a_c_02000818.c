@@ -343,6 +343,6 @@ void Func_02000818(void) {
   Call3((void (*)())Func_02001488, 22, 0, 0);
   Call3((void (*)())Func_02001488, 21, 0, 0);
   Call2((void (*)())Actor_SetActionCallback, (s32)Actor_GetById(24), 9);
-  Call2((void (*)())Camera_FollowActor, gAdventure.currentOwner, 1);
+  Call2((void (*)())Camera_FollowActor, gSequenceParentWork.currentOwner, 1);
   ((void (*)())Func_02001438)();
 }

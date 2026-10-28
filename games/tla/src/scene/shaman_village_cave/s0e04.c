@@ -55,12 +55,12 @@ s32 Func_02000e04(void) {
   Actor_SetPartAttribute(Actor_GetById(20), 0);
   Actor_SetPartAttribute(Actor_GetById(21), 2);
   if ((!GameFlag_Test(265) &&
-       (gAdventure.entrance == 20 || gAdventure.entrance == 21)) ||
+       (gSequenceParentWork.entrance == 20 || gSequenceParentWork.entrance == 21)) ||
       GameFlag_Test(0xa71)) {
     Func_020003cc();
-    if (!GameFlag_Test(265) && gAdventure.entrance == 20) {
+    if (!GameFlag_Test(265) && gSequenceParentWork.entrance == 20) {
       Func_02000a24();
-    } else if (!GameFlag_Test(265) && gAdventure.entrance == 21) {
+    } else if (!GameFlag_Test(265) && gSequenceParentWork.entrance == 21) {
       GameFlag_SetBit(0xa71);
       Func_0200087c();
     }

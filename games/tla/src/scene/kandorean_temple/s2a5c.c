@@ -58,9 +58,9 @@ void Func_0200290c(void) {
   gData_020062a8 = 0;
   gData_020062aa = 0;
   if (GameFlag_Test(0x109) == 0) {
-    if (gAdventure.entrance == 5)
+    if (gSequenceParentWork.entrance == 5)
       Func_02003684();
-    else if (gAdventure.entrance == 6)
+    else if (gSequenceParentWork.entrance == 6)
       Func_020037e0();
   }
   if (GameFlag_Test(0x301))
@@ -74,7 +74,7 @@ void Func_0200290c(void) {
 void Func_02002a5c(void) {
   Func_02005338(0);
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
-  if (gAdventure.entrance == 1)
+  if (gSequenceParentWork.entrance == 1)
     GameFlag_ClearBit(0x12f);
 #endif
 }

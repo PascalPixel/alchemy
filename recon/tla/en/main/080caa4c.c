@@ -8,19 +8,19 @@
 // Draft, differ 36 of 292 (38 before Event_SpawnObjectTable was declared void,
 // as its listing returns nothing), written from the listing in the form of The
 // Broken Seal's ObjectEvent_ResetForObject: the leader's placement row from
-// gAdventure (and its height when it enters above ground), then the
+// gSequenceParentWork (and its height when it enters above ground), then the
 // scene's table from slot 8, the leader's movement mode (world map, the
 // stand-in actor 8 under ownerOverride, climbing where its cell and the one
 // north of it have bit 6 of attributeB set), the camera that follows the
 // leader or the stand-in, and the world map's sprite metadata. Left,
 // instruction order only, about 19 pairs: the native issues pool and memory
-// loads and the renderMode store earlier (the gAdventure pool load before
+// loads and the renderMode store earlier (the gSequenceParentWork pool load before
 // the currentOwner offset, the placement offset's halves around the load,
 // the store of renderMode 0 before the layer is read again), and sets r0
 // before r1 for Event_SpawnObjectTable(table, 8).
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "event_work.h"
 #include "actor.h"
 #include "scene_tables.h"
@@ -59,7 +59,7 @@ void Func_080caa4c(s32 table) {
 
   work = Ram_HeapSlots->eventWork;
   placements = (struct EventWorkPlacements *)work;
-  leader = gAdventure.currentOwner;
+  leader = gSequenceParentWork.currentOwner;
   entry = placements->leader;
   entry[0] = gData_080f21d4[0];
   entry[1] = gData_080f21d4[1];
@@ -68,13 +68,13 @@ void Func_080caa4c(s32 table) {
   ObjectTable_Clear();
   entry->condition = -1;
   entry->sprite = leader;
-  entry->x = gAdventure.x;
+  entry->x = gSequenceParentWork.x;
   entry->y = 0;
-  entry->z = gAdventure.z;
-  entry->facing = gAdventure.heading;
+  entry->z = gSequenceParentWork.z;
+  entry->facing = gSequenceParentWork.heading;
   Event_SpawnObjectTable((s32)entry, leader);
   {
-    s32 y = gAdventure.y;
+    s32 y = gSequenceParentWork.y;
 
     if (y != 0) {
       object = work->objects[leader];
@@ -85,26 +85,26 @@ void Func_080caa4c(s32 table) {
   Event_SpawnObjectTable(table, 8);
 
   object = work->objects[leader];
-  object->terrainId = gAdventure.turn;
+  object->terrainId = gSequenceParentWork.turn;
   object->action = 0;
   object->unk66 = 0;
   if (work->controlMode == 3) {
-    if (gAdventure.ownerOverride != 0)
-      gAdventure.renderMode = 7;
+    if (gSequenceParentWork.ownerOverride != 0)
+      gSequenceParentWork.renderMode = 7;
     else
-      gAdventure.renderMode = 1;
-  } else if (gAdventure.ownerOverride != 0) {
-    gAdventure.renderMode = 6;
+      gSequenceParentWork.renderMode = 1;
+  } else if (gSequenceParentWork.ownerOverride != 0) {
+    gSequenceParentWork.renderMode = 6;
   } else {
     // Stored through a byte pointer, which may alias the terrain layer's load
     // after it; as a plain field store that load moves above it (differ 26).
-    *(u8 *)&gAdventure.renderMode = 0;
+    *(u8 *)&gSequenceParentWork.renderMode = 0;
     cell = Ram_HeapSlots->mapWork->layers[object->terrainId].cells +
            ((object->x / 0x100000) + ((object->z / 0x100000) << 7));
     above = cell - 128;
-    if (gAdventure.y != 0 && (cell->attributeB & 0x40) &&
+    if (gSequenceParentWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
-      gAdventure.renderMode = 2;
+      gSequenceParentWork.renderMode = 2;
       height = Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) -
                0x200000;
       object->y += height;
@@ -115,7 +115,7 @@ void Func_080caa4c(s32 table) {
     }
   }
 
-  if (gAdventure.ownerOverride != 0) {
+  if (gSequenceParentWork.ownerOverride != 0) {
     struct Actor *stand = work->objects[8];
 
     stand->x = object->x;

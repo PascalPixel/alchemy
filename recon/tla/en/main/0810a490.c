@@ -13,7 +13,7 @@
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct ShopRuntime {
   u8 unk000[0x4ca];
@@ -53,12 +53,12 @@ void Func_0810a490(void *window, void *itemWindow) {
   u32 savedSelectedItem = shop->selectedItem;
   s32 memberIndex = 0;
   s32 unitId = 0;
-  s32 creditCost = Data_0810c38e[gAdventure.counterC];
+  s32 creditCost = Data_0810c38e[gSequenceParentWork.counterC];
   s32 redraw;
   s32 slot;
   s32 message;
 
-  if (creditCost > gAdventure.counterB)
+  if (creditCost > gSequenceParentWork.counterB)
     return;
   shop->selectedItem = 228;
   MessageArgument_PushFar(228, 2);

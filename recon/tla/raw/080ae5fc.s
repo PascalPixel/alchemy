@@ -102,4 +102,4 @@ Func_080ae5fc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080ae6c4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork

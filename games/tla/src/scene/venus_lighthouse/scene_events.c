@@ -11,7 +11,7 @@
 #include "scene_tables.h"
 #include "field_event.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "tla_edition.h"
 #include "scene_ids.h"
 #include "edition.h"
@@ -51,7 +51,7 @@ struct AerieEventWork {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
-  if (gAdventure.entrance == ENTRANCE_OPENING) {
+  if (gSequenceParentWork.entrance == ENTRANCE_OPENING) {
     Import_EventStart();
     Import_EventResolvePendingActions(0);
     Func_02000b2c();

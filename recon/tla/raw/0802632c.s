@@ -425,7 +425,7 @@ Func_0802632c:
 	b .L_080266ac
 	.2byte 0x0000
 .L_08026688:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0802668c:
 	.4byte gInput
 .L_08026690:
@@ -584,6 +584,6 @@ Func_0802632c:
 .L_080267b0:
 	.4byte 0xfffff000
 .L_080267b4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080267b8:
 	.4byte gInput

@@ -24,7 +24,7 @@
 ///   thieves' talk and the Vault door. ★ Named from what the player sees: a
 ///   hidden stone room of six chests behind barred windows (its render)
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/scene/stone_rooms.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
@@ -111,7 +111,7 @@ const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 /// (STONE_ROOMS_FROM_VAULT_REVISIT, after they have broken out), the lone
 /// prisoner.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gAdventure.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  if (gSequenceParentWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerActorPlacements;
   }
   return gStoneRooms_ThiefActorPlacements;
@@ -121,7 +121,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// exit, or the prisoner's when the party came in from Vault's revisit scene,
 /// matching Scene_GetActorPlacements.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gAdventure.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
+  if (gSequenceParentWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerTriggers;
   }
   return gStoneRooms_ThiefTriggers;
@@ -243,7 +243,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gAdventure.entrance;
+  entrance = gSequenceParentWork.entrance;
 
   if (entrance == STONE_ROOMS_FROM_LUNPA) {
     // XXX (no evidence): why, when gArea_NameRules gives "Lunpa" for this

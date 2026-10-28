@@ -73,7 +73,7 @@ extern u8 gData_020060b4[];
 extern u8 gData_020060fc[];
 extern u8 gData_02006120[];
 extern u8 gData_02006150[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_02003658(void) {
   s32 v_r0, v_r10, v_r11, v_r9, v_r7, v_r5, v_r8, v_r6, t6, t20;
@@ -112,9 +112,9 @@ L_0200b71c:
   Call1((void (*)())Func_02003648, 2);
   Call1((void (*)())Func_02003648, 1);
   Call2((void (*)())Event_PrepareObjectAndApplyValue, 0, 0);
-  t20 = FIELD_AT((s32)gAdventure, s32, 532);
+  t20 = FIELD_AT((s32)gSequenceParentWork, s32, 532);
   Call3((void (*)())Actor_SetSpeedParameters, t20, 0xcccc, 0x6666);
-  v_r9 = ((s32)gAdventure + 0x214);
+  v_r9 = ((s32)gSequenceParentWork + 0x214);
   t22 = *(s32 *)v_r9;
   Actor_SetPositionAndReset(t22, 0x200, 0x118);
   t24 = *(s32 *)v_r9;
@@ -341,7 +341,7 @@ L_0200bcea:
   Func_02005714(1, 0x103, 40);
   Call2((void (*)())Func_020056f4, 1, 0);
   Call3((void (*)())Actor_ArmCallback, 7, 0, 0);
-  v_r5 = ((s32)gAdventure + 0x214);
+  v_r5 = ((s32)gSequenceParentWork + 0x214);
   t183 = *(s32 *)v_r5;
   Call3((void (*)())Actor_ArmCallback, t183, 0, 0);
   Call3((void (*)())Actor_ArmCallback, 5, 0, 0);

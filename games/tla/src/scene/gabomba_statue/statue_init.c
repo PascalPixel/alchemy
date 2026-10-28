@@ -1,7 +1,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02005944[];
 extern const u8 gData_02005d7c[];
@@ -40,7 +40,7 @@ static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
 }
 
 void Func_020034f4(void) {
-  if ((u16)(gAdventure.entrance - 3) <= 1) {
+  if ((u16)(gSequenceParentWork.entrance - 3) <= 1) {
     Actor_SetMovementTypeById(27, gData_02005944);
     Actor_SetMovementTypeById(28, gData_02005944);
     Map_CopyBlock(33, 24, 3, 3, 27, 29);

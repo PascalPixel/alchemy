@@ -3,10 +3,10 @@
 // frame (with the object the event work holds at 0x1cc) unless something
 // blocks it ahead or both diagonals; with nothing below it falls (cue 258)
 // to the ground; in Ov67bRoom1 a pull ahead lifts it out of
-// the water for 60 frames, spinning, and runs Func_02002a18. Left: a rough reading: the native keeps gAdventure in r10 (loading it after the flag test), the owner in r8, the carried object in r9 and the scene's address in r0 and 0x9e in r11, and places the flag-clear branch at the end; the alignment is poor.
+// the water for 60 frames, spinning, and runs Func_02002a18. Left: a rough reading: the native keeps gSequenceParentWork in r10 (loading it after the flag test), the owner in r8, the carried object in r9 and the scene's address in r0 and 0x9e in r11, and places the flag-clear branch at the end; the alignment is poor.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "system/vector3.h"
 
@@ -34,7 +34,7 @@ void Func_02002a18(s32 mode);
 void Func_02000d80(void) {
   struct Actor *leader, *carried;
   struct Vector3 ahead;
-  s16 *scene = &gAdventure.scene;
+  s16 *scene = &gSequenceParentWork.scene;
   u32 owner;
   s32 result, i;
 
@@ -42,7 +42,7 @@ void Func_02000d80(void) {
     Func_02001e00();
     return;
   }
-  owner = gAdventure.currentOwner;
+  owner = gSequenceParentWork.currentOwner;
   carried = *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0x1cc);
   leader = Actor_GetById(owner);
   if (*scene == (s32)&SceneId_Ov67bRoom1 && leader->terrainHeight == 0)
@@ -77,7 +77,7 @@ void Func_02000d80(void) {
     Func_02002a48(0);
     leader->motionFlags = 0;
     Actor_SetSingleChildFlags(leader, 0);
-    gAdventure.renderMode = 2;
+    gSequenceParentWork.renderMode = 2;
     Func_02001d30(leader);
     FieldEvent_Wait(5);
     for (i = 59; i >= 0; i--) {
@@ -87,7 +87,7 @@ void Func_02000d80(void) {
         Func_02001d30(leader);
       wait(1);
     }
-    gAdventure.renderMode = 0;
+    gSequenceParentWork.renderMode = 0;
     Func_020029a0();
     Func_02002a18(6);
     return;

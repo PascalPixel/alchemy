@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "flag_call.h"
 
@@ -15,7 +15,7 @@ void Func_020028f8(s32 id, s32 x, s32 z);
 s32 Func_02000bf0(void) {
   Scene_SetArrivalFlags(0);
   Func_02000d80(0);
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 0x40;
   if (Flag_IsSet(0xa00))
     Func_02002a28(0xd00000, 0x2a00000, 2, 236);
   if (Flag_IsSet(0xa00)) {

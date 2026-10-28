@@ -33,7 +33,7 @@
 /// always answers first, and the entrance
 /// TIMBER_ROOMS_A_HOUSE_WEST_UNUSED, to which no exit leads.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "event.h"
 #include "module/import.h"
 #include "module/scene/timber_rooms_a.h"
@@ -525,7 +525,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
-  if (gAdventure.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
+  if (gSequenceParentWork.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

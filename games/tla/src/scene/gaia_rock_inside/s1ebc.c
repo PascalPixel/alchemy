@@ -3,7 +3,7 @@
 // the four flags 0x9bc to 0x9bf) and leaves. The destination setters take s32:
 // as u16 the scene symbol loads through ldrh and the pools break up.
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 
 extern char SceneId_Ov681Room1;
@@ -30,7 +30,7 @@ void Func_02001ebc(void) {
     /* FAKEMATCH(barrier): the count is summed before the battle rule store;
      * without it, 8 of 68 instructions differ in tla-en. */
     __asm__ volatile("");
-    gAdventure.battleRule24b = 2;
+    gSequenceParentWork.battleRule24b = 2;
     /* FAKEMATCH(barrier): the scene address is loaded after the battle rule
      * store; without it, 4 of 68 instructions differ in tla-en. */
     __asm__ volatile("");

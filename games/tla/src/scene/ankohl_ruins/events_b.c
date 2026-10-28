@@ -27,27 +27,27 @@ extern const u8 gData_02003750[];
 extern const u8 gData_02003768[];
 
 const u8 *Func_02000600(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room1)
     return gData_020032b8;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room2)
     return gData_020034f8;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room3)
     return gData_02003570;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room4)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room4)
     return gData_020035d0;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room5)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room5)
     return gData_02003708;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room6)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room6)
     return gData_02003750;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room8)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room8)
     return gData_02003768;
   return gData_020032a0;
 }
 
 void Func_02000698(void) {
-  Actor_GetById(gAdventure.currentOwner)->terrainId = 2;
+  Actor_GetById(gSequenceParentWork.currentOwner)->terrainId = 2;
 }
 
 void Func_020006b4(void) {
-  Actor_GetById(gAdventure.currentOwner)->terrainId = 0;
+  Actor_GetById(gSequenceParentWork.currentOwner)->terrainId = 0;
 }

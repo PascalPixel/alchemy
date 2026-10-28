@@ -56,7 +56,7 @@ extern u8 gData_02003a28[];
 extern u8 gData_02003b08[];
 extern u8 gData_02003b78[];
 extern u8 gData_02003a98[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_02000aa0(s32 a0) {
   Call1(GameFlag_SetBit, 0x8b3);
@@ -457,7 +457,7 @@ void Func_02000aa0(s32 a0) {
   Call3(Func_02001c3c, 0x22, 0, 0);
   Call3(Func_02001c3c, 0x23, 0, 0);
   Call1(FieldEvent_Wait, 0xf);
-  Call2(Camera_FollowActor, FIELD_AT(gAdventure, s32, 532), 1);
+  Call2(Camera_FollowActor, FIELD_AT(gSequenceParentWork, s32, 532), 1);
   Func_02001ccc();
   Func_02001bec();
 }

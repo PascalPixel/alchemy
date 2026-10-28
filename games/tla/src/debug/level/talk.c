@@ -1,6 +1,6 @@
 #include "types.h"
 #include "input.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 
 extern const u8 gData_02000744[];
@@ -41,7 +41,7 @@ void Func_020001a8(void) {
   s32 flag;
   s32 msg;
 
-  record = Unit_Get(gAdventure.currentOwner);
+  record = Unit_Get(gSequenceParentWork.currentOwner);
   win = Window_Create(0, 0, 30, 9, 2);
 
   msg = (s32)MsgRaiseEveryoneS;

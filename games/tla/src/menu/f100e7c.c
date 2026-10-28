@@ -4,7 +4,7 @@
 // (220, 0xcec), menu work and calls (Func_0810106c is the screen loop).
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "iwram_call.h"
 
 struct ObjectSystemWork {
@@ -79,8 +79,8 @@ s32 Func_08100e7c(void) {
   s32 zero;
 
   menu = HeapSlot_Alloc(220, 0xcec);
-  savedEventMode = gAdventure.eventMode;
-  gAdventure.eventMode = 2;
+  savedEventMode = gSequenceParentWork.eventMode;
+  gSequenceParentWork.eventMode = 2;
   enabled = Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
@@ -135,6 +135,6 @@ s32 Func_08100e7c(void) {
   Heap_Release(menu->backdrop);
   HeapSlot_Release(220);
   Event_ClearInvalidPackedValuesFar();
-  gAdventure.eventMode = savedEventMode;
+  gSequenceParentWork.eventMode = savedEventMode;
   return 1;
 }

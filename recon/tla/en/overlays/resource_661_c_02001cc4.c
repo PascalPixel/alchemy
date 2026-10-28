@@ -9,7 +9,7 @@
 // second test's mask (a one-pass block around the sprite store leaves 2).
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 #define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
@@ -37,9 +37,9 @@ struct DustSprite {
 };
 
 void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
-  if (gAdventure.renderMode != 5) {
+  if (gSequenceParentWork.renderMode != 5) {
     u32 odd = gFrameCount & 1;
 
     if (odd == 0) {

@@ -32,7 +32,7 @@
 /// it is a storeroom of crates and sacks with the ladder down in its floor, and
 /// the family is put out of sight (places/kolima-interiors_cursed/map-8.png).
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "flags.h"
 #include "module/scene/log_rooms_c.h"
 #include "module/overworld/overworld.h"
@@ -276,7 +276,7 @@ s32 LogRoomsC_Initialize(void) {
     } while ((u32)actorId <= ACTOR_LAST_VILLAGER);
   }
 
-  entrance = (u16)gAdventure.entrance;
+  entrance = (u16)gSequenceParentWork.entrance;
 
   // LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH uses one layout;
   // LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH and

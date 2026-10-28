@@ -1,7 +1,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"

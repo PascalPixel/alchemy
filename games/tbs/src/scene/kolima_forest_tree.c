@@ -39,7 +39,7 @@
 /// Switch's scene (SceneId_KolimaForestFloodgate).
 
 #include "speaker.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/scene/kolima_forest_tree.h"
 #include "module/scene/shared/kolima_palette.h"
 #include "module/overworld/overworld.h"
@@ -789,8 +789,8 @@ s32 KolimaForestTree_Initialize(void) {
   Actor_ConfigureSpriteColor(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gAdventure.retreatScene = (s32)&SceneId_KolimaForestEntrance;
-  gAdventure.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
+  gSequenceParentWork.retreatScene = (s32)&SceneId_KolimaForestEntrance;
+  gSequenceParentWork.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
   Actor_GetById(ACTOR_TRET)->radius = 6;

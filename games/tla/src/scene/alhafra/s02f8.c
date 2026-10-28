@@ -21,7 +21,7 @@ void Func_02000398(s32 a);
 void Actor_ArmCallback(s32 a, s32 b, s32 c);
 void Func_02001bec(void);
 extern u8 MsgAlhafra69[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_020002f8(void) {
   Call1(GameFlag_SetBit, 0x8b5);
@@ -30,7 +30,7 @@ void Func_020002f8(void) {
   Call1(Func_02001cfc, 0);
   Call1(Func_02001c74, (s32)MsgAlhafra69);
   Call1(FieldEvent_Wait, 0xa);
-  Call3(Actor_SetAngleToward, 0x1b, FIELD_AT(gAdventure, s32, 532), 0);
+  Call3(Actor_SetAngleToward, 0x1b, FIELD_AT(gSequenceParentWork, s32, 532), 0);
   Call1(FieldEvent_Wait, 0xa);
   Call3(Func_02001c84, 0x1b, 0, 0xa);
   Call3(Func_02001c84, -1, 0, 0xa);

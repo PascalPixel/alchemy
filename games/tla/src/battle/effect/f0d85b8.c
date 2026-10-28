@@ -4,7 +4,7 @@
 #include "motobj.h"
 #include "actor.h"
 #include "objdisp.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_particle.h"
 #include "ram_buffer.h"
 
@@ -138,7 +138,7 @@ void Func_080d85b8(struct FieldParticle *effect) {
   s8 *statePointer;
   s32 state;
 
-  source = Actor_GetById(gAdventure.currentOwner);
+  source = Actor_GetById(gSequenceParentWork.currentOwner);
   statePointer = &effect->state;
   state = *statePointer;
 

@@ -1,6 +1,6 @@
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "item.h"
 
 void Event_RunMessage(s32 actor, s32 message) {
@@ -22,15 +22,15 @@ void Event_ResolvePendingActions(s32 skip) {
     Event_ExecutePackedAction(0x2090);
   if (state->pendingSecond != 0 && !(skip & 2))
     Event_ExecutePackedAction(0x209b);
-  if (gAdventure.pendingThird != 0 && !(skip & 4))
+  if (gSequenceParentWork.pendingThird != 0 && !(skip & 4))
     Event_ExecutePackedAction(0x208b);
 }
 
 s32 Party_GetLeaderActor(void) {
-  struct Adventure *state = &gAdventure;
+  struct SequenceParentWork *state = &gSequenceParentWork;
   s32 actor;
 
-  /* FAKEMATCH: load the adventure's address before the default owner. */
+  /* FAKEMATCH: load gSequenceParentWork's address before the default owner. */
   asm("");
   actor = 8;
   if (state->ownerOverride == 0)

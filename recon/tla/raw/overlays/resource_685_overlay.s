@@ -128,7 +128,7 @@ Func_020004d4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020085d4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_020085d8:
 	.4byte 0x000000b9
 .L_020085dc:
@@ -798,7 +798,7 @@ Func_02000a34:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008f3c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008f40:
 	.4byte gData_02003634
 .L_02008f44:
@@ -1026,7 +1026,7 @@ Func_02000f48:
 	mov r10, r5
 	pop {r5, r6, pc}
 .L_02009124:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009128:
 	.4byte MsgIMeanIt
 .L_0200912c:
@@ -1438,7 +1438,7 @@ Func_0200115c:
 	b .L_02009746
 	.2byte 0x0000
 .L_02009544:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009548:
 	.4byte MsgBackForMore
 .L_0200954c:
@@ -1684,7 +1684,7 @@ Func_0200115c:
 .L_0200976c:
 	.4byte 0x000000bc
 .L_02009770:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x0200a9f8,"ax",%progbits
 	.global Func_020029f8
 	.thumb_func

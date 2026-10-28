@@ -13,7 +13,7 @@ void Func_02000d74(void) {
   Func_02005c9c(0);
   Func_02005b64(17, 0);
   Kibombo_ObjArm(7, 0, 0);
-  Kibombo_ObjArm(gAdventure.currentOwner, 0, 0);
+  Kibombo_ObjArm(gSequenceParentWork.currentOwner, 0, 0);
   Kibombo_ObjArm(26, 0, 0);
   Kibombo_ObjArm(5, 0, 0);
   Kibombo_ObjArm(6, 0, 10);
@@ -102,7 +102,7 @@ void Func_02000d74(void) {
   Func_02005b64(0x2007, 0);
   Kibombo_ObjArm(5, 0x2000, 0);
   Func_02005b64(5, 0);
-  Kibombo_ObjArm(gAdventure.currentOwner, 0xe000, 40);
+  Kibombo_ObjArm(gSequenceParentWork.currentOwner, 0xe000, 40);
   Kibombo_ObjSpeed(26, 0xcccc, 0x6666);
   Actor_ResetAndSetPositionInMode2(26, 104, 0x170);
   FieldEvent_Wait(20);
@@ -113,12 +113,12 @@ void Func_02000d74(void) {
   Kibombo_ObjArm(26, 0xd000, 40);
   Func_02005b94(26, 0x100, 20);
   Func_02005b64(26, 0);
-  Kibombo_ObjArm(gAdventure.currentOwner, 0xc000, 0);
+  Kibombo_ObjArm(gSequenceParentWork.currentOwner, 0xc000, 0);
   Kibombo_ObjArm(5, 0xc000, 0);
   Kibombo_ObjArm(6, 0xc000, 0);
   Kibombo_ObjArm(26, 0x5000, 20);
   Kibombo_MessageOpen(0x601a, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Kibombo_MessagePut(0x601a, 0);
     ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
   } else {

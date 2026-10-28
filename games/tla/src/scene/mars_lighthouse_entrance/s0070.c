@@ -34,19 +34,19 @@ s32 Func_02000070(void) {
 }
 
 const u8 *Func_02000080(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom1)
     return gData_02005b0c;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom2)
     return gData_02005b54;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom3)
     return gData_02005bcc;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom4)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom4)
     return gData_02005d4c;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom5)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom5)
     return gData_02005eb4;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom6)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom6)
     return gData_02005f74;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom7)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom7)
     return gData_020060c4;
   return gData_02005af4;
 }

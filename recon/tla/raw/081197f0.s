@@ -327,7 +327,7 @@ Func_081197f0:
 .L_08119ab4:
 	.4byte IwramFillWords
 .L_08119ab8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_08119abc:
 	.4byte gBattleRandomSeed
 .L_08119ac0:
@@ -591,7 +591,7 @@ Func_081197f0:
 	strh r3, [r5, #62]
 	b .L_08119eb8
 .L_08119cc8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_08119ccc:
 	.4byte gCpuLoadDisplayEnabled
 .L_08119cd0:
@@ -999,6 +999,6 @@ Func_081197f0:
 .L_0811a02c:
 	.4byte 0x00000c83
 .L_0811a030:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0811a034:
 	.4byte Func_0811b9fc

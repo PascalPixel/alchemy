@@ -1,13 +1,13 @@
 // Draft, differ 64 of 153: 688's scene setup, decompiled from the listing. The
 // native builds the screen effect 0x204 from the event work offset already in
 // r2 (adds r2, #88) and keeps it in r10, reads the entrance with ldrsh at each
-// test, and reloads gAdventure from the pool for the last test; here 0x204 is
+// test, and reloads gSequenceParentWork from the pool for the last test; here 0x204 is
 // built fresh in r1, the second test shares an ldrh, and the address stays in a
 // register. Tried: 0x204 in a local (64), the heap slots in a local (71).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "event_work.h"
 
 extern char SceneId_Ov688;
@@ -28,7 +28,7 @@ s32 Func_02000190(void) {
   s32 effect = 0x204;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
   Actor_SetSingleChildFlags(Actor_GetById(19), 0);
   GameFlag_SetBit(0x907);
   GameFlag_ClearBit(0x9b4);
@@ -44,19 +44,19 @@ s32 Func_02000190(void) {
   Actor_SetSingleChildFlags(Actor_GetById(16), 0);
   Actor_SetSingleChildFlags(Actor_GetById(17), 0);
   Actor_SetSingleChildFlags(Actor_GetById(18), 0);
-  if (gAdventure.entrance == 90) {
-    gAdventure.ownerOverride = 1;
+  if (gSequenceParentWork.entrance == 90) {
+    gSequenceParentWork.ownerOverride = 1;
     Func_020005a4((s32)&SceneId_Ov688, 1);
   }
-  if (gAdventure.entrance == 3 || gAdventure.entrance == 5) {
-    gAdventure.currentOwner = 8;
+  if (gSequenceParentWork.entrance == 3 || gSequenceParentWork.entrance == 5) {
+    gSequenceParentWork.currentOwner = 8;
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    gAdventure.currentOwner = 4;
+    gSequenceParentWork.currentOwner = 4;
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
   }
-  if (gAdventure.entrance == 3 && GameFlag_Test(0x96b)) {
+  if (gSequenceParentWork.entrance == 3 && GameFlag_Test(0x96b)) {
     GameFlag_ClearBit(0x96b);
     Func_020003cc();
   }

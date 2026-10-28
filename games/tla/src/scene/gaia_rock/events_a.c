@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "actor.h"
 #include "edition.h"
@@ -17,11 +17,11 @@ extern const u8 gData_02001194[];
 extern const u8 gData_020012cc[];
 
 const struct Trigger *Func_02000080(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov680Room1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct Trigger *)gData_02001044;
-  if (gAdventure.scene == (s32)&SceneId_Ov680Room2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov680Room2)
     return (const struct Trigger *)gData_02001194;
-  if (gAdventure.scene == (s32)&SceneId_Ov680Room3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov680Room3)
     return (const struct Trigger *)gData_020012cc;
   return (const struct Trigger *)gData_0200102c;
 }

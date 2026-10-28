@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 
 extern char MsgFoundItem;
@@ -27,7 +27,7 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
     // Four messages on: "But <protagonist>'s party can't carry any more".
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
     Actor_GetById(actor)->scaleX = 0x10000;
-    Actor_SetAngleToward(gAdventure.currentOwner, actor, 0);
+    Actor_SetAngleToward(gSequenceParentWork.currentOwner, actor, 0);
     Event_Wait(20);
     return -1;
   }

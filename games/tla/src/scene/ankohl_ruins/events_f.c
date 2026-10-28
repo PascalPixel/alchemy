@@ -69,19 +69,19 @@ void Func_02002318(void) { GameFlag_SetBit(0x205); }
 void Func_02002328(void) { GameFlag_ClearBit(0x205); }
 
 const u8 *Func_02002338(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room1)
     return gData_020037b4;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room2)
     return gData_02003a78;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room3)
     return gData_02003b98;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room4)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room4)
     return gData_02003c94;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room5)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room5)
     return gData_02003e38;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room6)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room6)
     return gData_02003f4c;
-  if (gAdventure.scene == (s32)&SceneId_Ov686Room8)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov686Room8)
     return gData_02004018;
   return gData_02003790;
 }

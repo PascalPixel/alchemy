@@ -32,7 +32,7 @@ void Func_0200113c(void) {
   } else {
     Func_0200498c((s32)MsgShamanMoapaAsksVictorsNames);
     FieldMessage_ShowAtActor(11, 0);
-    if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
+    if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 1) {
       Func_020049a4(11, 0);
     } else {
       ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
@@ -80,7 +80,7 @@ void Func_0200122c(void) {
     else
       Func_0200498c((s32)MsgShamanFortuneOfferBeforeTrial);
     FieldMessage_ShowAtActor(17, 0);
-    if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
+    if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 1) {
       Func_020049a4(17, 0);
     } else {
       ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
@@ -120,9 +120,9 @@ void Func_02001380(void) {
     Func_02004a24(0);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
     ShamanVillage_CamMove(0xe00000, -1, 0x1180000, 1);
-    ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x13333, 0x9999);
-    ShamanVillage_ObjWalk(gAdventure.currentOwner, 182, 280);
-    ShamanVillage_ObjArm(gAdventure.currentOwner, 0, 0);
+    ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x13333, 0x9999);
+    ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 182, 280);
+    ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0, 0);
     Import_SoundPlay(76);
     ShamanVillage_ObjArm(15, 0x8000, 0);
     ShamanVillage_ObjArm(16, 0x8000, 0);
@@ -164,7 +164,7 @@ void Func_02001380(void) {
   ShamanVillage_ObjSpeed(17, 0x19999, 0xcccc);
   ShamanVillage_ObjWalk2(16, 184, 256);
   ShamanVillage_ObjWalk(17, 264, 256);
-  ShamanVillage_ObjArm(gAdventure.currentOwner, 0xc000, 0);
+  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0xc000, 0);
   ShamanVillage_ObjArm(15, 0xc000, 0);
   Func_020049e4(0x26666, 0x4ccc);
   ShamanVillage_CamMove(0xe00000, -1, 0xb60000, 1);
@@ -189,22 +189,22 @@ void Func_02001644(void) {
   Func_020049f4();
   Func_0200498c((s32)MsgShamanGiveUpTrialPrompt);
   FieldMessage_ShowAtActor(15, 0);
-  Actor_SetModeById(gAdventure.currentOwner, 1);
-  ShamanVillage_ObjArm(gAdventure.currentOwner, 0xe000, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0xe000, 0);
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Func_020049a4(15, 0);
     Func_020049e4(0x4cccc, 0x9999);
     ShamanVillage_CamMove(0xa80000, -1, 0x1700000, 1);
-    ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
-    ShamanVillage_ObjWalk(gAdventure.currentOwner, 168, 368);
+    ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x19999, 0xcccc);
+    ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 168, 368);
     GameFlag_ClearBit(0x201);
   } else {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     Func_020049a4(15, 0);
     Func_020049e4(0x13333, 0x2666);
     ShamanVillage_CamMove(0xa80000, -1, 0x1180000, 1);
-    ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x19999, 0xcccc);
-    ShamanVillage_ObjWalk(gAdventure.currentOwner, 168, 280);
+    ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x19999, 0xcccc);
+    ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 168, 280);
   }
   Func_020048cc();
 }
@@ -214,21 +214,21 @@ void Func_02001764(void) {
   Func_02004a24(0);
   Func_020049e4(0x26666, 0x4ccc);
   ShamanVillage_CamMove(0xe00000, -1, 0x1180000, 1);
-  ShamanVillage_ObjSpeed(gAdventure.currentOwner, 0x1cccc, 0xe666);
-  ShamanVillage_ObjWalk(gAdventure.currentOwner, 182, 280);
-  ShamanVillage_ObjArm(gAdventure.currentOwner, 0, 0);
+  ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x1cccc, 0xe666);
+  ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 182, 280);
+  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0, 0);
   ShamanVillage_ObjArm(16, 0x8000, 0);
   ShamanVillage_ObjArm(17, 0x8000, 0);
   ShamanVillage_ObjTurn(15, 0x8000);
   Func_0200498c((s32)MsgShamanChallengeTrialRoadPrompt);
   ShamanVillage_MessageOpen(0x200f, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 1) {
     ShamanVillage_MessagePut(0x200f, 0);
     Func_0200289c();
   } else {
     ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->field1c4++;
     ShamanVillage_MessageOpen(0x200f, 0);
-    if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
       Import_SoundPlay(76);
       ShamanVillage_MessagePut(0x200f, 0);
       GameFlag_SetBit(0x200);

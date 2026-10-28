@@ -54,10 +54,10 @@ void Actor_StartPlayerControlFar(struct Actor *actor);
 /// Hands an actor to the player's control on the world map (SC_WORLD).
 void Actor_StartWorldMapControlFar(struct Actor *actor);
 /// Runs the script that walks an actor wherever the keys point (SC_KEYS),
-/// which the leader gets when gAdventure.movementMode is 1.
+/// which the leader gets when gSequenceParentWork.movementMode is 1.
 void Actor_StartMoveByKeysFar(struct Actor *actor);
 /// Runs SC_KEY_COUNT on an actor every frame, which the leader gets when
-/// gAdventure.movementMode is 2.
+/// gSequenceParentWork.movementMode is 2.
 void Actor_StartKeyCheckFar(struct Actor *actor);
 #ifndef OWN_Actor_CreateFar
 /// Creates an actor at (x, y, z) in 16.16 pixels, or returns 0 when every

@@ -44,8 +44,8 @@ void InventorySnapshot_Save(void) {
   save = gInventorySnapshot;
   if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
-    firstShortcut = gAdventure.firstShortcut;
-    secondShortcut = gAdventure.secondShortcut;
+    firstShortcut = gSequenceParentWork.firstShortcut;
+    secondShortcut = gSequenceParentWork.secondShortcut;
     // Save each inventory before retaining its Psynergy-granting items.
     for (unitId = 0; unitId < 4; unitId++) {
       unit = Unit_Get(unitId);
@@ -65,10 +65,12 @@ void InventorySnapshot_Save(void) {
     *save++ = secondShortcut;
 #ifdef UBFIX
     // Party order is a byte array; pack its two saved halfwords explicitly.
-    save[0] = gAdventure.party[0] | (gAdventure.party[1] << 8);
-    save[1] = gAdventure.party[2] | (gAdventure.party[3] << 8);
+    save[0] =
+        gSequenceParentWork.party[0] | (gSequenceParentWork.party[1] << 8);
+    save[1] =
+        gSequenceParentWork.party[2] | (gSequenceParentWork.party[3] << 8);
 #else
-    inventory = (s16 *)gAdventure.party;
+    inventory = (s16 *)gSequenceParentWork.party;
     save[0] = inventory[0];
     save[1] = inventory[1];
 #endif
@@ -100,17 +102,17 @@ void InventorySnapshot_Restore(void) {
       unitId++;
     } while (unitId <= 3);
 
-    gAdventure.firstShortcut = *source++;
-    gAdventure.secondShortcut = *source++;
+    gSequenceParentWork.firstShortcut = *source++;
+    gSequenceParentWork.secondShortcut = *source++;
 #ifdef UBFIX
-    gAdventure.party[0] = source[0];
-    gAdventure.party[1] = source[0] >> 8;
-    gAdventure.party[2] = source[1];
-    gAdventure.party[3] = source[1] >> 8;
+    gSequenceParentWork.party[0] = source[0];
+    gSequenceParentWork.party[1] = source[0] >> 8;
+    gSequenceParentWork.party[2] = source[1];
+    gSequenceParentWork.party[3] = source[1] >> 8;
     source++;
 #else
-    *(u16 *)gAdventure.party = *source++;
-    *(u16 *)((u8 *)gAdventure.party + 2) = *source;
+    *(u16 *)gSequenceParentWork.party = *source++;
+    *(u16 *)((u8 *)gSequenceParentWork.party + 2) = *source;
 #endif
     source = gInventorySnapshot;
     *source = 0;

@@ -3,7 +3,7 @@
 void Func_02000280(void) { Func_02004a34(18, 3, 13); }
 
 u8 *Func_02000290(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage5)
     return gData_020052b4;

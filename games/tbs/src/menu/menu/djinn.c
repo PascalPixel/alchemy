@@ -82,8 +82,8 @@ s32 DjinnMenu_Run(void) {
   s32 zero;
 
   menu = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  savedMessageSpeed = gAdventure.messageSpeed;
-  gAdventure.messageSpeed = MESSAGE_SPEED_FAST;
+  savedMessageSpeed = gSequenceParentWork.messageSpeed;
+  gSequenceParentWork.messageSpeed = MESSAGE_SPEED_FAST;
   enabled = gActorSystemWork->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
@@ -139,7 +139,7 @@ s32 DjinnMenu_Run(void) {
   Heap_Release(menu->backdrop);
   HeapSlot_Release(HEAP_SLOT_MENU);
   Event_ClearInvalidPackedValuesFar();
-  gAdventure.messageSpeed = savedMessageSpeed;
+  gSequenceParentWork.messageSpeed = savedMessageSpeed;
   return 1;
 }
 
@@ -1182,7 +1182,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         if (backdrop->tutorialTimer == 60) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialRecovery, 9, 9, 1);
-          gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSequenceParentWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(messageWindow, 1);
@@ -1190,7 +1190,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           wait(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAgain, 9, 9, 1);
-          gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSequenceParentWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(messageWindow, 1);
@@ -1209,7 +1209,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       case DJINN_TUTORIAL_GIVE:
         if (backdrop->tutorialTimer == 60) {
           messageWindow = Message_OpenWindowFar(MsgDjinnTutorialGive, 9, 9, 1);
-          gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSequenceParentWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(messageWindow, 1);
@@ -1243,7 +1243,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         if (backdrop->tutorialTimer == 60) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAfterGive, 9, 9, 1);
-          gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSequenceParentWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(messageWindow, 1);
@@ -1270,7 +1270,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       case 15:
         if (backdrop->tutorialTimer == 60) {
-          gAdventure.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSequenceParentWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialPowers, 9, 9, 1);
           MenuCursor_Slide(2, 146);

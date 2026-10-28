@@ -33,7 +33,7 @@ void Func_02002de0(void) {
 }
 
 void Func_02002e60(void) {
-  struct KibomboObject *leader = Actor_GetById(gAdventure.currentOwner);
+  struct KibomboObject *leader = Actor_GetById(gSequenceParentWork.currentOwner);
 
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the leader's
    * height before it builds the limit (2 differ without it). */

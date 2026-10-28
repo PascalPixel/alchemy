@@ -246,8 +246,8 @@
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
 /// The next field scene starts where the party was, as after a battle: the
 /// scene's flags are not reset, the actors come back from their snapshot,
-/// and the music saved in gAdventure.returnMusic resumes if there is one
-/// (a random battle clears it, so the scene's own music plays).
+/// and the music saved in gSequenceParentWork.returnMusic resumes if there is
+/// one (a random battle clears it, so the scene's own music plays).
 /// SceneSequence_Run clears it once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
 /// The scene shows its area's name once it is on screen; entering a new

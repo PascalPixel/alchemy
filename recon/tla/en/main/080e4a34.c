@@ -16,7 +16,7 @@
 // rippled (Func_080e446c) and copied to sprite VRAM while 33 particles play.
 // On frame 60 it takes animation 251 with its sprite flags reset, its mode
 // returns, the effect target is shown and followed and its height and motion
-// flags are restored. Afterwards the adventure's renderMode becomes 9 when the
+// flags are restored. Afterwards gSequenceParentWork's renderMode becomes 9 when the
 // event mode is 3, else 5, the owner's action clears, 0xd4a becomes 3,
 // and Func_080e42d4 runs as a callback unless 0xd48 was set, in which case
 // Func_080e4730 follows.
@@ -24,7 +24,7 @@
 #include "actor.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern char ResourceId_DustPuffA;
 
@@ -175,13 +175,13 @@ void Func_080e4a34(void) {
     ripple += 3;
   }
   if (event->mode == 3)
-    gAdventure.renderMode = 9;
+    gSequenceParentWork.renderMode = 9;
   else
-    gAdventure.renderMode = 5;
+    gSequenceParentWork.renderMode = 5;
   owner->action = 0;
   owner->unk66 = 0;
   event->phase = 3;
-  gAdventure.pendingThird = 1;
+  gSequenceParentWork.pendingThird = 1;
   if (event->standing == 0)
     Task_Add(Func_080e42d4, 0x480);
   Actor_SetOthersPaused(owner, 0, 16);

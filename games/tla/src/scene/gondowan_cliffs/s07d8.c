@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
 
@@ -52,46 +52,46 @@ void Func_020007d8(void) {
   Func_020012e4(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 552, 488);
-  Func_02001254(5, gAdventure.currentOwner);
-  Actor_WatchAndSetScript(5, gAdventure.currentOwner);
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 568, 480);
-  Actor_WatchAndSetScript(6, gAdventure.currentOwner);
-  Func_02001254(6, gAdventure.currentOwner);
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 584, 472);
-  Actor_WatchAndSetScript(22, gAdventure.currentOwner);
-  Func_02001254(22, gAdventure.currentOwner);
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 608, 472);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 552, 488);
+  Func_02001254(5, gSequenceParentWork.currentOwner);
+  Actor_WatchAndSetScript(5, gSequenceParentWork.currentOwner);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 568, 480);
+  Actor_WatchAndSetScript(6, gSequenceParentWork.currentOwner);
+  Func_02001254(6, gSequenceParentWork.currentOwner);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 584, 472);
+  Actor_WatchAndSetScript(22, gSequenceParentWork.currentOwner);
+  Func_02001254(22, gSequenceParentWork.currentOwner);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 608, 472);
   Func_0200128c((s32)MsgWhereDoYou);
   GondowanCliffs_Jump(22, 258, 20);
   Func_02001294(22, 0);
-  Actor_ArmCallback(gAdventure.currentOwner, 0x8000, 10);
+  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0x8000, 10);
   Actor_Jump(5, 6, 15);
   Actor_Jump(5, 6, 23);
   Func_02001294(5, 0);
   Actor_Stop(6);
   Actor_SetAngleToward(6, 5, 0);
   Func_02001294(6, 0);
-  Actor_WatchAndSetScript(6, gAdventure.currentOwner);
-  GondowanCliffs_ObjEmote(gAdventure.currentOwner, 258);
+  Actor_WatchAndSetScript(6, gSequenceParentWork.currentOwner);
+  GondowanCliffs_ObjEmote(gSequenceParentWork.currentOwner, 258);
   FieldEvent_Wait(30);
   Motion_SetModeAndWaitAnimation(22, 3);
   Func_02001294(22, 0);
-  Actor_SetModeById(gAdventure.currentOwner, 3);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 3);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_Wait(30);
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 584, 472);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 584, 472);
   Func_0200124c(22, 0, 0);
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 568, 480);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 568, 480);
   Func_0200124c(6, 0, 0);
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 552, 488);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 552, 488);
   Func_0200124c(5, 0, 0);
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 528, 488);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 528, 488);
   Event_FinishScreenTransition();
   Func_0200131c(123);
-  GondowanCliffs_ObjWalk(gAdventure.currentOwner, 512, 488);
+  GondowanCliffs_ObjWalk(gSequenceParentWork.currentOwner, 512, 488);
   Event_WaitTransitionFrames();
   Func_020012bc(1);
 }

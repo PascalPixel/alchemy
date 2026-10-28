@@ -383,7 +383,7 @@ Func_02000390:
 .L_ja_02008724:
 	.4byte 0x00001ec1
 .L_ja_02008728:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_ja_0200872c:
 	.4byte 0x00001ec4
 .L_ja_02008730:
@@ -788,7 +788,7 @@ Func_02000390:
 .L_02008728:
 	.4byte MsgVeryWellShow
 .L_0200872c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008730:
 	.4byte MsgShallIGive
 .L_02008734:

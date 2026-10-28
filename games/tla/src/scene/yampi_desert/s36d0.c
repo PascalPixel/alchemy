@@ -3,7 +3,7 @@
 void Func_020036d0(void) {
   if (Actor_GetById(64) != 0)
     Func_02004090(64, 0, 0);
-  if (gAdventure.entrance == 2) {
+  if (gSequenceParentWork.entrance == 2) {
     GameFlag_ClearBit(0xa29);
     GameFlag_ClearBit(0xa2a);
     GameFlag_SetBit(0xa2b);
@@ -19,14 +19,14 @@ void Func_02003e3c(s32 a, s32 b, s32 c, s32 d, s32 e);
 void Func_0200371c(void) {
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   GameFlag_SetBit(0x144);
-  if (gAdventure.entrance == 1 && !GameFlag_Test(0x88c)) {
+  if (gSequenceParentWork.entrance == 1 && !GameFlag_Test(0x88c)) {
     Func_02002ebc();
   } else {
-    /* FAKEMATCH: the memory clobber keeps GCSE from carrying the adventure's
+    /* FAKEMATCH: the memory clobber keeps GCSE from carrying gSequenceParentWork's
      * address from the first test into this one, which reloads it; plainly,
      * 13 instructions differ in tla-en. */
     asm("" ::: "memory");
-    if (gAdventure.entrance == 2 && !GameFlag_Test(0x88c))
+    if (gSequenceParentWork.entrance == 2 && !GameFlag_Test(0x88c))
       Func_02001bec();
   }
   if (GameFlag_Test(0x8ed)) {

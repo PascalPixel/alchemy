@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "dma.h"
 #include "mem.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 
@@ -70,23 +70,23 @@ void SequenceParent_Run(s32 mode) {
 
   table = gScenes;
   if (gDebugMode && mode == 1) {
-    gAdventure.scene = (s32)&SceneId_VenusLighthouseEntrance;
-    gAdventure.entrance = 10;
+    gSequenceParentWork.scene = (s32)&SceneId_VenusLighthouseEntrance;
+    gSequenceParentWork.entrance = 10;
   } else if (gDebugMode && mode == 2) {
-    gAdventure.scene = (s32)&SceneId_Ov64a;
-    gAdventure.entrance = 1;
+    gSequenceParentWork.scene = (s32)&SceneId_Ov64a;
+    gSequenceParentWork.entrance = 1;
   } else if (gDebugMode && mode == 3) {
-    gAdventure.scene = (s32)&SceneId_Ov6b4;
-    gAdventure.entrance = 1;
+    gSequenceParentWork.scene = (s32)&SceneId_Ov6b4;
+    gSequenceParentWork.entrance = 1;
   } else if (gDebugMode && mode == 4) {
-    gAdventure.scene = (s32)&SceneId_Title;
-    gAdventure.entrance = 8;
+    gSequenceParentWork.scene = (s32)&SceneId_Title;
+    gSequenceParentWork.entrance = 8;
   } else {
     Func_080ad090();
-    gAdventure.scene = (s32)&SceneId_Title;
-    gAdventure.entrance = 1;
+    gSequenceParentWork.scene = (s32)&SceneId_Title;
+    gSequenceParentWork.entrance = 1;
   }
-  Func_08038348(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+  Func_08038348(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();
@@ -95,8 +95,8 @@ void SequenceParent_Run(s32 mode) {
       GameFlag_ClearBit(0x101);
     else
       Sound_PlayFar(0x120);
-    record = &table[gAdventure.scene];
-    entrance = gAdventure.entrance;
+    record = &table[gSequenceParentWork.scene];
+    entrance = gSequenceParentWork.entrance;
     {
       volatile u16 *dma0 = REG_DMA0;
 
@@ -111,8 +111,8 @@ void SequenceParent_Run(s32 mode) {
     Heap_Initialize();
     Func_08014b70();
     VramCache_Reset();
-    if (gAdventure.scene >= SEQUENCE_UNK_1FB) {
-      switch (gAdventure.scene) {
+    if (gSequenceParentWork.scene >= SEQUENCE_UNK_1FB) {
+      switch (gSequenceParentWork.scene) {
       case SEQUENCE_BATTLE:
         entrance = Battle_RunEncounterFar(entrance);
         break;
@@ -130,19 +130,19 @@ void SequenceParent_Run(s32 mode) {
       continue;
     }
 
-    Func_080c9c38(gAdventure.scene, GameFlag_Test(0x109));
+    Func_080c9c38(gSequenceParentWork.scene, GameFlag_Test(0x109));
     Scene_ResolveInteractionResult();
     if (!GameFlag_Test(0x109)) {
       if (GameFlag_Test(0x11a) || GameFlag_Test(0x11b))
         GameFlag_ClearBit(0x11a);
       else
         Party_PlaySavedMusic();
-    } else if (gAdventure.returnCue != -1) {
-      Sound_PlayFar(gAdventure.returnCue);
+    } else if (gSequenceParentWork.returnCue != -1) {
+      Sound_PlayFar(gSequenceParentWork.returnCue);
     } else {
       Party_PlaySavedMusic();
     }
-    gAdventure.map = record->mapIndex;
+    gSequenceParentWork.map = record->mapIndex;
     BattleEffect_LoadResourceGroup(0);
     entrance = SceneSequence_Run(entrance);
     Scene_TakeExit(entrance);

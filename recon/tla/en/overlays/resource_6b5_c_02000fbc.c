@@ -8,7 +8,7 @@
 // for(;;) loops, loop.c hoists the input address (differ 73 to 158).
 #include "types.h"
 #include "input.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern u8 MsgYouHaveA[];
 extern u8 MsgComeBackWhen[];
@@ -38,7 +38,7 @@ void Func_02000fbc(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  Actor_SetAngleToward(actor, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(actor, gSequenceParentWork.currentOwner, 0);
   Func_02001a64((s32)MsgYouHaveA);
   Func_02001a74(actor, 0);
   song = 0;
@@ -71,7 +71,7 @@ next:
       song = 96;
     if ((u32)song > 96)
       song = 0;
-    if (all == 0 && gAdventure.unk22d[2] == 0 && gData_02003860 == 0)
+    if (all == 0 && gSequenceParentWork.unk22d[2] == 0 && gData_02003860 == 0)
       goto skip;
   }
 keys:

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "game_flags.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -26,10 +26,10 @@ s32 Party_AddActiveOwner(s32 value) {
   GameFlag_SetBit(value);
   index = 0;
   while (index < count) {
-    if (gAdventure.activeOwners[index] == value)
+    if (gSequenceParentWork.activeOwners[index] == value)
       return count;
     index++;
   }
-  gAdventure.activeOwners[index] = value;
+  gSequenceParentWork.activeOwners[index] = value;
   return count + 1;
 }

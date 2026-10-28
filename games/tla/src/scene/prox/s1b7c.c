@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -23,20 +23,20 @@ void Func_0200458c(s32 entrance);
 void Func_02001b7c(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   s32 entrance = work->returnEntrance;
-  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 cell;
   s32 id;
 
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
   cell = object->x >> 16;
   Func_020043f4(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z - 0x40000);
   Func_020043fc(object);
   object->angle = 0xc000;
   Func_0200463c(128);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
-  id = gAdventure.currentOwner;
+  id = gSequenceParentWork.currentOwner;
   if (entrance == 6)
     Actor_SetModeById(id, 25);
   else

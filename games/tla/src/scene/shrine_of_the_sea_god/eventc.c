@@ -9,7 +9,7 @@ void Func_020024e4(void) {
 
   Func_020039d8();
   Func_02003b08(0);
-  Value3((s32 (*)())Func_02003aa8, gAdventure.currentOwner, 0x100, 0);
+  Value3((s32 (*)())Func_02003aa8, gSequenceParentWork.currentOwner, 0x100, 0);
   Func_02003ad0()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
   Func_02003ac8();
@@ -18,14 +18,14 @@ void Func_020024e4(void) {
   angle = 0xc000;
   ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 624 << 16, angle);
   wait(1);
-  Actor_WatchAndSetScript(gAdventure.currentOwner, 14);
+  Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 14);
   object->priorityFlags &= ~2;
   Actor_SetSpritePriority(14, 3);
   ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
   ShrineOfTheSeaGod_ObjWalk(14, 328, 568);
   ShrineOfTheSeaGod_ObjWalk(14, 328, 496);
   ShrineOfTheSeaGod_ObjWalk(14, 280, 432);
-  Actor_Stop(gAdventure.currentOwner);
+  Actor_Stop(gSequenceParentWork.currentOwner);
   wait(1);
   angle = 0x4000;
   ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
@@ -52,7 +52,7 @@ void Func_020025fc(void) {
   if (done == 0) {
     Func_020039d8();
     Func_02003b08(0);
-    Func_02003aa8(gAdventure.currentOwner, 0x100, 0);
+    Func_02003aa8(gSequenceParentWork.currentOwner, 0x100, 0);
     Func_02003ad0()->motionFlags = done;
     ShrineOfTheSeaGod_CamMove(328 << 16, 48 << 16, 552 << 16, 1);
     Func_02003ac8();
@@ -61,13 +61,13 @@ void Func_020025fc(void) {
     done = 0x4000;
     ShrineOfTheSeaGod_ObjPlaceTurn(14, 424 << 16, 520 << 16, done);
     wait(1);
-    Actor_WatchAndSetScript(gAdventure.currentOwner, 14);
+    Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 14);
     Actor_SetSpritePriority(14, 1);
     ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
     ShrineOfTheSeaGod_ObjWalk(14, 380, 552);
     ShrineOfTheSeaGod_ObjWalk(14, 264, 552);
     ShrineOfTheSeaGod_ObjWalk(14, 264, 540);
-    Actor_Stop(gAdventure.currentOwner);
+    Actor_Stop(gSequenceParentWork.currentOwner);
     wait(1);
     ShrineOfTheSeaGod_ObjPlace(14, 0, 0);
     Actor_SetSpritePriority(14, 2);
@@ -91,7 +91,7 @@ void Func_020026f8(void) {
     ShrineOfTheSeaGod_ObjSpeed(14, 0x13333, 0x9999);
     ShrineOfTheSeaGod_ObjWalk(14, 345, 296);
     ShrineOfTheSeaGod_ObjWalk(14, 392, 296);
-    Actor_WatchAndSetScript(14, gAdventure.currentOwner);
+    Actor_WatchAndSetScript(14, gSequenceParentWork.currentOwner);
     Actor_GetById(14)->state = off;
     wait(10);
     GameFlag_SetBit(0x87c);
@@ -109,7 +109,7 @@ void Func_0200279c(void) {
 }
 
 void Func_020027d4(void) {
-  Actor_WatchAndSetScript(14, gAdventure.currentOwner);
+  Actor_WatchAndSetScript(14, gSequenceParentWork.currentOwner);
   FieldEvent_Wait(5);
   Func_020039e0();
 }

@@ -101,7 +101,7 @@ s32 Message_Type(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   // The ROM reads gKeysHeld here once and never uses the value.
   u32 keys = gKeysHeld;
-  s32 glyphsLeft = gMessageSpeed_Steps[gAdventure.messageSpeed];
+  s32 glyphsLeft = gMessageSpeed_Steps[gSequenceParentWork.messageSpeed];
   s32 frameVBlanks;
   u32 code;
   u32 nextCode;
@@ -334,7 +334,7 @@ s32 Message_Type(struct Message *message) {
       // A character: draw it at the pen position, rounded to whole pixels.
       pixelX = (message->x + 128) / 256;
       pixelY = (message->y + 128) / 256;
-      voiceGap = gMessageSpeed_VoiceGaps[gAdventure.messageSpeed];
+      voiceGap = gMessageSpeed_VoiceGaps[gSequenceParentWork.messageSpeed];
       nextEntryIndex = message->textIndex;
       // Under Mind Read the text starts 8 pixels further in (Japanese and
       // English), in the window Window_FitOnScreen made 2 tiles wider.
@@ -387,7 +387,8 @@ s32 Message_Type(struct Message *message) {
 #endif
       glyphWidth = Glyph_Draw(message->window, code, pixelX, pixelY,
                               GLYPH_DRAW_CHARACTER);
-      message->glyphDelay = gMessageSpeed_Delays[gAdventure.messageSpeed];
+      message->glyphDelay =
+          gMessageSpeed_Delays[gSequenceParentWork.messageSpeed];
       if (glyphWidth != 0) {
         // The speaker's voice blip (voiceSound, the first of four
         // sounds, one picked by the code's low two bits) every few characters

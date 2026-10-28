@@ -10,7 +10,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "map.h"
 #include "task.h"
 
@@ -98,9 +98,9 @@ void Func_02003284(void) {
   s32 zero;
 
   if (Flag_Test(265) == 0) {
-    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
-    Actor_SetVariant(gAdventure.currentOwner, 2);
-    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+    Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
+    Actor_SetVariant(gSequenceParentWork.currentOwner, 2);
+    Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
   }
   Actor_SetVariant(8, 1);
   Actor_SetVariant(9, 1);

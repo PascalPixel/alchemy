@@ -62,7 +62,8 @@ enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 /// A scene's entrance: where and facing which way the party arrives,
 /// and the camera's bounds there (-1 for none).
 struct SceneEntrance {
-  s16 entrance;     ///< the entrance number the adventure names; -1 ends
+  s16 entrance; ///< the entrance number the sequence parent's work names; -1
+                ///< ends
   s16 requiredFlag; ///< a flag that must be set, or -1 for none
   s16 x;            ///< pixels
   s16 y;            ///< pixels

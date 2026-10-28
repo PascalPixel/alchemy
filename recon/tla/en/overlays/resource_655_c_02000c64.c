@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -95,7 +95,7 @@ void Func_02000c64(u16 *list) {
     list++;
     *shapes = shape;
   }
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < height) {
     leader->terrainHeight = height;

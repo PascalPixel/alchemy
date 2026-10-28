@@ -44,11 +44,11 @@ void Shop_BuySpecialItem(struct Window *window, struct Window *itemWindow) {
   redraw = 1;
   unitId = 0;
   savedSelectedItem = shop->selectedItem;
-  creditCost = sGameTicketCreditCosts[gAdventure.shopGifts];
+  creditCost = sGameTicketCreditCosts[gSequenceParentWork.shopGifts];
   memberIndex = 0;
 
   // Gifts spend accumulated shop credit; they do not debit the party's coins.
-  if (creditCost > gAdventure.shopCredit)
+  if (creditCost > gSequenceParentWork.shopCredit)
     return;
   shop->selectedItem = ITEM_GAME_TICKET;
   MessageArgument_PushFar(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);

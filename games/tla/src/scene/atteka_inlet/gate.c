@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_event.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -48,13 +48,13 @@ void Func_020007ac(void) {
 
   MapCopy(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Test(63)) {
-    object = Actor_GetById(gAdventure.currentOwner);
+    object = Actor_GetById(gSequenceParentWork.currentOwner);
     Func_02001010();
     Func_02001108(0);
     moved = 0;
     if ((object->x >> 20) == 7 && (object->z >> 20) == 23) {
-      Actor_Jump(gAdventure.currentOwner, 6, 0);
-      Place(gAdventure.currentOwner, 104, 376);
+      Actor_Jump(gSequenceParentWork.currentOwner, 6, 0);
+      Place(gSequenceParentWork.currentOwner, 104, 376);
       moved = 1;
     }
     Func_02001060(14, 120 << 16, 376 << 16);
@@ -62,7 +62,7 @@ void Func_020007ac(void) {
     Actor_Jump(14, 4, 10);
     GameFlag_SetBit(0x300);
     if (moved)
-      Func_020010b8(gAdventure.currentOwner, 0);
+      Func_020010b8(gSequenceParentWork.currentOwner, 0);
     Func_02001018();
   }
 }

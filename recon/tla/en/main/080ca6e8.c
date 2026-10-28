@@ -13,7 +13,7 @@
 #include "ram_buffer.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "iwram_call.h"
 
 // The field's event work (heap slot 0x6c): the placement tables spawned so
@@ -138,7 +138,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         }
       }
     } else {
-      if (entry->sprite == gAdventure.currentOwner)
+      if (entry->sprite == gSequenceParentWork.currentOwner)
         continue;
       Actor_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }

@@ -59,7 +59,7 @@
 /// the island, the sliding logs' footprints, the corridor's sunk pillars and
 /// the chests the mimics leave.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "version.h"
 #include "heap_slots.h"
 #include "module/import.h"
@@ -236,7 +236,7 @@ static void CrossboneIsle_DrawLogPuzzleFootprints(void);
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleEntrances;
@@ -261,7 +261,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gCrossboneIsleExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleActorPlacements;
@@ -311,7 +311,8 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
 static void CrossboneIsle_FightDeadbeard(void) {
 
   Event_Start();
-  Event_SetAfterBattleDestination(gAdventure.sceneId, ENTRANCE_AFTER_BATTLE);
+  Event_SetAfterBattleDestination(gSequenceParentWork.sceneId,
+                                  ENTRANCE_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
@@ -319,7 +320,7 @@ static void CrossboneIsle_FightDeadbeard(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_CrossboneIsle) {
     return gCrossboneIsle_IsleTriggers;
@@ -365,7 +366,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // CrossboneIsleFloatingLogs's sliding logs restore their map footprints
   // alone.
-  sceneId = gAdventure.sceneId;
+  sceneId = gSequenceParentWork.sceneId;
   if (sceneId == (s32)&SceneId_CrossboneIsleFloatingLogs) {
     CrossboneIsle_DrawLogPuzzleFootprints();
     return 0;
@@ -376,8 +377,8 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(0, 2, 1, 1, 15, 40);
       TreasureSpot_SetPosition(101, PIXELS(216), PIXELS(648));
     }
-    if (gAdventure.sceneId == sceneId) {
-      if (gAdventure.entrance != ENTRANCE_AFTER_BATTLE) {
+    if (gSequenceParentWork.sceneId == sceneId) {
+      if (gSequenceParentWork.entrance != ENTRANCE_AFTER_BATTLE) {
         if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
           return 0;
         }
@@ -388,7 +389,7 @@ s32 Scene_Initialize(void) {
       return 0;
     }
   }
-  current = gAdventure.sceneId;
+  current = gSequenceParentWork.sceneId;
   if (current == (s32)&SceneId_CrossboneIsle) {
     CrossboneIsle_RestoreIvy();
     Actor_Get(ACTOR_ISLE_NUT)->targetX = PIXELS(129);
@@ -447,11 +448,11 @@ s32 Scene_Initialize(void) {
       TreasureSpot_SetPosition(100, PIXELS(600), PIXELS(168));
     }
   }
-  current = gAdventure.sceneId;
+  current = gSequenceParentWork.sceneId;
   if (current >= first) {
     if (current <= (s32)&SceneId_CrossboneIsleNinthFloor) {
       CrossboneIsle_RestoreSunkPillar();
-      if (gAdventure.entrance == ENTRANCE_AFTER_BATTLE) {
+      if (gSequenceParentWork.entrance == ENTRANCE_AFTER_BATTLE) {
         CrossboneIsle_OpenEastDoorAfterBattle();
       }
     }
@@ -467,8 +468,8 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 
   actor = Actor_Get(ACTOR_SINKING_PILLAR);
   cleared = GameFlag_Get(
-      (gAdventure.sceneId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                             (s32)&SceneId_CrossboneIsleFirstFloor)));
+      (gSequenceParentWork.sceneId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                                      (s32)&SceneId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
     Actor_SetPosition(ACTOR_SINKING_PILLAR, PIXELS(650), PIXELS(168));
     actor->y.fixed = -PIXELS(32);
@@ -489,7 +490,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 static void CrossboneIsle_MovePillar(void) {
   struct Actor *pillar;
   s16 *mapNumber;
-  struct Adventure *state;
+  struct SequenceParentWork *state;
   s32 column;
 
   pillar = Actor_GetById(ACTOR_SINKING_PILLAR);
@@ -499,10 +500,10 @@ static void CrossboneIsle_MovePillar(void) {
   }
 
 #if TBS_PATCH_1
-  // Through state, the map's address is built as the adventure's plus an
-  // offset, as the bytes have it; &gAdventure.sceneId folds into one
+  // Through state, the map's address is built as gSequenceParentWork's plus an
+  // offset, as the bytes have it; &gSequenceParentWork.sceneId folds into one
   // literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja).
-  state = &gAdventure;
+  state = &gSequenceParentWork;
   mapNumber = &state->sceneId;
   if (GameFlag_Get(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                  (s32)&SceneId_CrossboneIsleFirstFloor)) != 0) {
@@ -528,7 +529,7 @@ static void CrossboneIsle_MovePillar(void) {
   MapGrid_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
 #if !TBS_PATCH_1
-  state = &gAdventure;
+  state = &gSequenceParentWork;
   mapNumber = &state->sceneId;
 #endif
   GameFlag_Set(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
@@ -557,15 +558,17 @@ static void CrossboneIsle_OpenWestDoor(void) {
 /// party comes back at ENTRANCE_AFTER_BATTLE; once they are beaten, the door
 /// opens onto the side room.
 static void CrossboneIsle_OpenEastDoor(void) {
-  if (GameFlag_Get(gAdventure.sceneId +
+  if (GameFlag_Get(gSequenceParentWork.sceneId +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                     (s32)&SceneId_CrossboneIsleFirstFloor)) == 0) {
     Event_Start();
-    Event_SetAfterBattleDestination(gAdventure.sceneId, ENTRANCE_AFTER_BATTLE);
+    Event_SetAfterBattleDestination(gSequenceParentWork.sceneId,
+                                    ENTRANCE_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
     // next five use ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
-    switch (gAdventure.sceneId - (s32)&SceneId_CrossboneIsleFirstFloor) {
+    switch (gSequenceParentWork.sceneId -
+            (s32)&SceneId_CrossboneIsleFirstFloor) {
     case 0:
       Field_RequestBattleFromEncounterTable(
           ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 0);
@@ -618,7 +621,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  GameFlag_Set((gAdventure.sceneId +
+  GameFlag_Set((gSequenceParentWork.sceneId +
                 (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                  (s32)&SceneId_CrossboneIsleFirstFloor)));
   Event_Wait(30);
@@ -775,7 +778,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   s32 fixedX;
   s32 fixedZ;
 
-  selectedActor = Actor_GetById(gAdventure.leaderActorId);
+  selectedActor = Actor_GetById(gSequenceParentWork.leaderActorId);
   logActor = Actor_GetById(actorId);
   Event_Start();
   {

@@ -30,7 +30,7 @@
 /// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the battle message
 /// window and others), sets FLAG_IN_BATTLE, and on its way out resets the
-/// party's battle state, sets gAdventure.battleType back to
+/// party's battle state, sets gSequenceParentWork.battleType back to
 /// BATTLE_TYPE_NORMAL and releases heap block 10. A broken link also sets flag
 /// FLAG_AREA_TEMP_E8, which the Battle Arena reads
 /// (BattleArena_RunRoundResult).
@@ -152,7 +152,7 @@ s32 Battle_Run(s32 enemyGroup) {
 
   // The battle music: the song an event set for this battle, or the usual
   // battle songs.
-  cue = gAdventure.battleMusic;
+  cue = gSequenceParentWork.battleMusic;
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
@@ -200,7 +200,7 @@ s32 Battle_Run(s32 enemyGroup) {
   battle->firstStrike = FIRST_STRIKE_NONE;
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0) {
     battle->firstStrike = FIRST_STRIKE_PARTY;
-  } else if (gAdventure.battleType == BATTLE_TYPE_NORMAL) {
+  } else if (gSequenceParentWork.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
       battle->firstStrike = FIRST_STRIKE_PARTY;
     else if ((Battle_RandomFar() & 31) == 0)
@@ -351,7 +351,7 @@ party_lost:
   Battle_ClearSerialTransferPayload();
   Sound_PlayFar(MUS_DEFEAT);
   MessageArgument_ClearAllFar();
-  MessageArgument_PushFar(gAdventure.party[0], MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_PushFar(gSequenceParentWork.party[0], MESSAGE_ARGUMENT_ACTOR);
   if (BattleParty_PrepareMembers(0) == 1)
     BattleMessage_ShowAndWaitFar(MsgGoesDownInDefeat);
   else
@@ -401,7 +401,7 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
     count = limit;
 
   for (index = 0; index < count; index++) {
-    s32 unitId = gAdventure.party[index];
+    s32 unitId = gSequenceParentWork.party[index];
 
     if (unitIds != 0)
       *unitIds++ = unitId;

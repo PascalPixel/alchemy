@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_080f1140[];
 
@@ -10,15 +10,15 @@ void wait(s32 frames);
 void Func_080d46a4(s32 a0, s32 a1);
 
 void BattleEffect_RunVisibilityTransition(void) {
-  struct Adventure *party;
+  struct SequenceParentWork *party;
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
     Leader_StopMoving();
     Func_080d46a4(0x9d89, 6);
     while (gInput.held & 0x200)
       wait(1);
-    party = &gAdventure;
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    party = &gSequenceParentWork;
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

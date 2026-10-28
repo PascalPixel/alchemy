@@ -238,7 +238,7 @@ Func_0200015c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200832c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008330:
 	.4byte gData_02003e6c
 .L_02008334:
@@ -429,7 +429,7 @@ Func_020003b4:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_0200852c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008530:
 	.4byte gData_02003d10
 .L_02008534:
@@ -974,7 +974,7 @@ Func_02000a48:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_02008be8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008bec:
 	.4byte 0x000000df
 .L_02008bf0:
@@ -1258,7 +1258,7 @@ Func_02000dc0:
 .L_02008ec8:
 	.4byte 0x00009000
 .L_02008ecc:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008ed0:
 	.4byte 0xfff80000
 .L_02008ed4:
@@ -1634,7 +1634,7 @@ Func_020011e4:
 .L_0200943c:
 	.4byte gData_02003d50
 .L_02009440:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x02009528,"ax",%progbits
 	.balign 4
 	.global Func_02001528
@@ -2236,7 +2236,7 @@ Func_02001738:
 .L_020099c0:
 	.4byte Func_02001528
 .L_020099c4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_020099c8:
 	.4byte 0x000000df
 .L_020099cc:
@@ -2482,7 +2482,7 @@ Func_02001c00:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009df8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009dfc:
 	.4byte 0xfff80000
 .L_02009e00:
@@ -2587,7 +2587,7 @@ Func_02001e08:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_02009ed4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009ed8:
 	.4byte gData_02003de4
 	.section .text.x02009edc,"ax",%progbits
@@ -2686,7 +2686,7 @@ Func_02001edc:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_02009fa4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009fa8:
 	.4byte 0xfff00000
 .L_02009fac:
@@ -2960,7 +2960,7 @@ Func_020022ac:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a438:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200a43c:
 	.4byte Effect_AdvanceMotion
 .L_0200a440:
@@ -3136,7 +3136,7 @@ Func_02002618:
 .L_0200a660:
 	.4byte 0x00000000
 .L_0200a664:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200a668:
 	.4byte 0x000000df
 .L_0200a66c:
@@ -4061,7 +4061,7 @@ Func_02002d08:
 .L_0200ae28:
 	.4byte gMapShapeGrid
 .L_0200ae2c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x0200ae30,"ax",%progbits
 	.global Func_02002e30
 	.thumb_func
@@ -4233,7 +4233,7 @@ Func_02002e30:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200afc0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x0200afc4,"ax",%progbits
 	.global Func_02002fc4
 	.thumb_func
@@ -4494,7 +4494,7 @@ Func_020030bc:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200b218:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200b21c:
 	.4byte 0xfdff0000
 .L_0200b220:
@@ -4705,7 +4705,7 @@ Func_02003240:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b428:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x0200b4ac,"ax",%progbits
 	.global Func_020034ac
 	.thumb_func
@@ -4838,7 +4838,7 @@ Func_020034ac:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b5b8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200b5bc:
 	.4byte 0xfff80000
 .L_0200b5c0:
@@ -4982,7 +4982,7 @@ Func_020035e0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b6e0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200b6e4:
 	.4byte gData_02003e3c
 .L_0200b6e8:

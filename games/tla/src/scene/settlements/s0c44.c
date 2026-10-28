@@ -33,14 +33,14 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  if (gAdventure.scene == (s32)&SceneId_Ov690Room4)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov690Room4)
     CopyCells(33, 30, 23, 14, 1, 2);
   else
     CopyCells(27, 29, 40, 16, 1, 2);
   Func_020021b0(158);
-  Actor_SetModeById(gAdventure.currentOwner, 2);
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  CenterOn(gAdventure.currentOwner, 2, -4);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  CenterOn(gSequenceParentWork.currentOwner, 2, -4);
   FieldEvent_Wait(6);
   Func_02002110(2);
   Event_FinishScreenTransition();

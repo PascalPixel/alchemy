@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_particle.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct EffectVector {
   s32 x;
@@ -34,7 +34,7 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   s32 magnitude;
   s32 angle;
 
-  source = Actor_GetById(gAdventure.currentOwner);
+  source = Actor_GetById(gSequenceParentWork.currentOwner);
   state = effect->state;
 
   if (state == 0) {

@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -57,7 +57,7 @@ s32 Func_02002618(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 stack[16];
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork), s32, 428) = 0x204;
-  r8 = (s32)&gAdventure;
+  r8 = (s32)&gSequenceParentWork;
   FIELD_AT(r8, u16, 608) = 223;
   FIELD_AT(r8, u16, 610) = 1;
   /* sub (s32)stack, #8 */

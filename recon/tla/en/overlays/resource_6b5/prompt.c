@@ -14,7 +14,7 @@
 #include "types.h"
 #include "input.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 
 void Func_020019e4(s32 value, s32 digits);
@@ -37,17 +37,17 @@ s32 Func_02000da0(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  Actor_SetAngleToward(actor, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(actor, gSequenceParentWork.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
-    count = &gAdventure.linkTallies[4];
+    count = &gSequenceParentWork.linkTallies[4];
     if (*count == 0) {
       Func_02001a64((s32)MsgIWillTell);
       return Func_02001a74(actor, 0);
     }
   } else {
     base = (s32)MsgItLooksLikeThisIsYour;
-    count = &gAdventure.linkTallies[7];
+    count = &gSequenceParentWork.linkTallies[7];
     if (*count == 0)
       goto none;
   }

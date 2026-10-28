@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "owner_state.h"
 #include "item.h"
 
@@ -16,7 +16,7 @@ void GameFlag_RefreshLureCap(void) {
     struct OwnerInventoryState *unit;
     s32 inventorySlot;
 
-    unit = Unit_Get(gAdventure.activeOwners[partyIndex]);
+    unit = Unit_Get(gSequenceParentWork.activeOwners[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct ItemEffect *effect;

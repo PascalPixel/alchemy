@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -84,7 +84,7 @@ void Func_02000714(void) {
   FIELD_AT(v8, s32, 24) = 0x4000;
   FIELD_AT(v8, s32, 28) = 0x4000;
   Call4(Camera_MoveWithinMapBounds, 0x2a80000, -1, 0xe40000, 0);
-  Call3(Func_0200432c, gAdventure.currentOwner, 0x2a80000, 0x1080000);
+  Call3(Func_0200432c, gSequenceParentWork.currentOwner, 0x2a80000, 0x1080000);
   Call1(wait, 1);
   Func_020041fc();
   Call1(wait, 1);
@@ -152,10 +152,10 @@ void Func_02000714(void) {
   Call3(Func_0200438c, 14, 0, 40);
   Value3((s32 (*)())Func_020043b4, 13, 0x100, 20);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 13, 0);
-  t87 = Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0);
+  t87 = Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0);
   if (t87 != 0)
     goto L_02008a04;
-  Call1(Actor_WaitForAnimationChange, gAdventure.currentOwner);
+  Call1(Actor_WaitForAnimationChange, gSequenceParentWork.currentOwner);
   Call2(Actor_SetModeById, 13, 7);
   Call2(Func_02004394, 13, 0);
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), s16, 0) =
@@ -168,7 +168,7 @@ L_02008a04:
    * the listing orders it; without it, 2 of 343 instructions differ in
    * tla-en. */
   asm("");
-  Call1(Actor_WaitForAnimationChange, gAdventure.currentOwner);
+  Call1(Actor_WaitForAnimationChange, gSequenceParentWork.currentOwner);
   Call2(Actor_SetModeById, 13, 6);
   Call2(Func_02004394, 13, 0);
 L_02008a2c:

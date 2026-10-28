@@ -58,7 +58,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "version.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/scene/tolbi_ship_deck.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
@@ -1297,7 +1297,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) == 0) {
     TolbiShipDeck_RestOars();
   }
-  switch (gAdventure.entrance) {
+  switch (gSequenceParentWork.entrance) {
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST:
     Actor_GetById(ACTOR_PARTY_LEADER)->sprite->image.priority = 1;
     break;
@@ -1520,7 +1520,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
     record = Actor_GetById(ACTOR_SEA_OURANOS);
     record->facing = FACING_NORTHWEST + FACING_STEP;
   }
-  if (gAdventure.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
+  if (gSequenceParentWork.entrance == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
     TolbiShipDeck_ReturnFromIsland();
   }
   Event_End();
@@ -2064,8 +2064,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_WalkTo(ACTOR_IVAN, 248, 564);
   Actor_WalkTo(ACTOR_MIA, 248, 564);
   Event_Wait(20);
-  gAdventure.restartScene = (s32)&SceneId_ShipRooms;
-  gAdventure.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+  gSequenceParentWork.restartScene = (s32)&SceneId_ShipRooms;
+  gSequenceParentWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(
       (s32)&SceneId_TolbiShipDeck,

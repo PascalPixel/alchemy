@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "call.h"
 
@@ -33,7 +33,7 @@ void Func_02000d80(void) {
 }
 
 void Func_02000da8(s32 id) {
-  s32 owner = gAdventure.currentOwner;
+  s32 owner = gSequenceParentWork.currentOwner;
 
   Func_02001084();
   Func_02001164(0);
@@ -52,7 +52,7 @@ void Func_02000da8(s32 id) {
 }
 
 void Func_02000e28(s32 id) {
-  s32 owner = gAdventure.currentOwner;
+  s32 owner = gSequenceParentWork.currentOwner;
 
   Func_02001084();
   Func_02001164(0);
@@ -71,7 +71,7 @@ void Func_02000e28(s32 id) {
 }
 
 void Func_02000ea8(void) {
-  struct Actor *owner = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *owner = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *guard = Actor_GetById(14);
 
   if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) <
@@ -82,7 +82,7 @@ void Func_02000ea8(void) {
 }
 
 void Func_02000ef4(void) {
-  struct Actor *owner = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *owner = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *guard = Actor_GetById(15);
 
   if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) <

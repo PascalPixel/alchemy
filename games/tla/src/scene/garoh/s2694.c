@@ -47,7 +47,7 @@ s32 Actor_WatchAndSetScript();
 s32 Actor_SetModeById();
 s32 FieldMessage_ShowAtActor();
 extern u8 MsgGaroh14[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_02002694(void) {
   s32 v5;
@@ -932,7 +932,7 @@ L_0200b71c:;
   Call1(FieldEvent_Wait, 10);
   Call3(Actor_SetSpeedParameters, 9, 0x13333, 0x9999);
   Call2(Actor_SetModeById, 9, 2);
-  p1 = (s32)gAdventure;
+  p1 = (s32)gSequenceParentWork;
   v5 = (p1 + 0x214);
   t20 = Value1(Actor_GetById, *(s32 *)(v5));
   if (t20 == 0)
@@ -976,7 +976,7 @@ L_0200b83e:;
   Call1(Actor_WaitForMoveById, 7);
   Call3(Func_0200520c, 7, 0, 0);
 L_0200b84e:;
-  p2 = (s32)gAdventure;
+  p2 = (s32)gSequenceParentWork;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
     Camera_FollowActor(a0, 1);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "io_reg.h"
 
@@ -38,7 +38,7 @@ s32 Func_02002614(void) {
     GameFlag_SetBit(0x17c);
     GameFlag_SetBit(0x144);
   }
-  scene = gAdventure.scene;
+  scene = gSequenceParentWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room4) {
     ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
     Func_020029c8();
@@ -86,7 +86,7 @@ s32 Func_02002614(void) {
       Func_0200440c(5);
       Func_0200440c(6);
     }
-    scene = gAdventure.scene;
+    scene = gSequenceParentWork.scene;
     if (scene == (s32)&SceneId_Ov6a8Room2) {
       if (!Flag_Test(0x300))
         Actor_SetWideSprite(64, 1);

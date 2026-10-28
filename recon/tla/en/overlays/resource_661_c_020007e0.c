@@ -11,7 +11,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "map.h"
 
 extern char SceneId_Ov661Room3;
@@ -34,11 +34,11 @@ void Func_020007e0(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u16 *list = NULL;
 
-  if (gAdventure.scene == (s32)&SceneId_Ov661Room3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov661Room3)
     list = gData_0200478e;
-  else if (gAdventure.scene == (s32)&SceneId_Ov661Room4)
+  else if (gSequenceParentWork.scene == (s32)&SceneId_Ov661Room4)
     list = gData_020047d2;
-  else if (gAdventure.scene == (s32)&SceneId_Ov661Room5)
+  else if (gSequenceParentWork.scene == (s32)&SceneId_Ov661Room5)
     list = gData_020047ec;
   if (list == NULL)
     return;

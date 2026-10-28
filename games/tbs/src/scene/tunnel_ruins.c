@@ -18,7 +18,7 @@
 ///   statues of a woman that open the door to Venus Lighthouse once all five
 ///   stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
-/// The getters choose by gAdventure.sceneId; the actor placements of
+/// The getters choose by gSequenceParentWork.sceneId; the actor placements of
 /// TunnelRuinsLadyStatues answer any other scene number, and
 /// TunnelRuins_GetActorPlacements prepares each table's actors to
 /// appear only in view. TunnelRuins_Initialize works room by room, one case for
@@ -58,7 +58,7 @@
 
 #include "script_operands.h"
 #include "version.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "heap_slots.h"
 #include "module/import.h"
 #include "module/scene/tunnel_ruins.h"
@@ -331,8 +331,8 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   effectWork = gFadeOverlayWork;
   depthLimit = 0;
   // Each tracked entrance measures depth in eight-pixel steps.
-  if (gAdventure.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
-    switch (gAdventure.entrance) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
+    switch (gSequenceParentWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
       depthLimit = 94;
@@ -346,7 +346,7 @@ static void TunnelRuins_UpdateTrackedActor(void) {
       depthLimit = 118;
       break;
     }
-  } else if (gAdventure.entrance ==
+  } else if (gSequenceParentWork.entrance ==
              TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST) {
     depthLimit = 93;
   }
@@ -533,7 +533,7 @@ static void TunnelRuins_HopDownStep(void) {
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
 /// a table for any other scene number.
 const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsGreatStatueEntrances;
@@ -545,7 +545,7 @@ const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
 }
 
 const struct SceneExitRegion *TunnelRuins_GetRegions(void) {
-  if (gAdventure.sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
     return gTunnelRuinsLadyStatuesRegions;
   }
   return 0;
@@ -558,7 +558,7 @@ const u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 const struct ActorPlacement *TunnelRuins_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
-  if (gAdventure.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
     table = gTunnelRuinsGreatStatueActorPlacements;
   } else {
     table = gTunnelRuinsActorPlacementsOther;
@@ -1407,7 +1407,7 @@ static void TunnelRuins_SearchLockedDoor(void) {
 /// The triggers of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
 /// any other scene.
 const struct Trigger *TunnelRuins_GetTriggers(void) {
-  if (gAdventure.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsGreatStatueTriggers;
   }
   return gTunnelRuinsTriggersOther;
@@ -1514,15 +1514,15 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 s32 TunnelRuins_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gAdventure.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue ||
-      gAdventure.sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue ||
+      gSequenceParentWork.sceneId == (s32)&SceneId_TunnelRuinsLadyStatues) {
     FieldEffect_StartFadeOverlay(0);
-    gAdventure.retreatEntrance =
+    gSequenceParentWork.retreatEntrance =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
-    gAdventure.retreatScene = (s32)&SceneId_TunnelRuinsGreatStatue;
+    gSequenceParentWork.retreatScene = (s32)&SceneId_TunnelRuinsGreatStatue;
   }
-  if (gAdventure.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
-    switch (gAdventure.entrance) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TunnelRuinsGreatStatue) {
+    switch (gSequenceParentWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
     case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
@@ -1643,15 +1643,15 @@ s32 TunnelRuins_Initialize(void) {
       break;
     }
   } else {
-    switch (gAdventure.entrance) {
+    switch (gSequenceParentWork.entrance) {
     case ENTRANCE_DEFAULT:
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST:
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
-      gAdventure.retreatEntrance =
+      gSequenceParentWork.retreatEntrance =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
-      gAdventure.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
+      gSequenceParentWork.retreatScene = (s32)&SceneId_BabiLighthouseEntry;
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       Actor_ConfigureSpriteColor(ACTOR_EAST_PILLAR_A, SPRITE_COLOR_GREY);
       Actor_ConfigureSpriteColor(ACTOR_EAST_PILLAR_B, SPRITE_COLOR_GREY);
@@ -1706,7 +1706,8 @@ s32 TunnelRuins_Initialize(void) {
         Actor_GetById(ACTOR_WEST_CARRY_STONE)->timer = 0;
         Actor_GetById(ACTOR_MIDDLE_CARRY_STONE)->timer = 0;
         Actor_GetById(ACTOR_EAST_CARRY_STONE)->timer = 0;
-        if (gAdventure.entrance != TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
+        if (gSequenceParentWork.entrance !=
+            TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
           break;
         Actor_GetById(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(32);
         Actor_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);

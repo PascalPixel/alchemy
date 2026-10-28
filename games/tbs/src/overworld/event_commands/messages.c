@@ -92,14 +92,15 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
       }
     } else if (actorId <= 7) {
       sprite = actorId;
-      actor = Actor_Lookup(gAdventure.leaderActorId);
+      actor = Actor_Lookup(gSequenceParentWork.leaderActorId);
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Transform_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
       } else {
-        if (Actor_GetScreenPosition(gAdventure.leaderActorId, pos) != -1)
+        if (Actor_GetScreenPosition(gSequenceParentWork.leaderActorId, pos) !=
+            -1)
           found = 1;
         else
           found = 0;
@@ -307,10 +308,10 @@ void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames) {
 s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
   s32 answer;
   struct FieldWork *runtime;
-  struct Adventure *save;
+  struct SequenceParentWork *save;
 
   FieldMessage_ShowAtActor(actorId, flags);
-  save = &gAdventure;
+  save = &gSequenceParentWork;
   answer = Event_AskYesNoWithActorAnimation(save->leaderActorId, 0);
   if (answer == 0) {
     Event_ShowMessageAndWait(actorId, flags);
@@ -506,7 +507,7 @@ void Message_SetVoiceFromActor(s32 actorId) {
     *(s16 *)&state->voiceCountdown = rate;
   } else {
     voice = Speaker_GetVoice(Actor_ReadActiveValue(actorId));
-    rate = gMessageSpeed_VoiceRates[gAdventure.messageSpeed];
+    rate = gMessageSpeed_VoiceRates[gSequenceParentWork.messageSpeed];
     *(s16 *)&state->voiceSound = voice;
     *(s16 *)&state->voiceCountdown = rate;
   }

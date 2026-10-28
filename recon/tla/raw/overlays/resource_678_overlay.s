@@ -394,7 +394,7 @@ Func_020004c8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008634:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008638:
 	.4byte 0x00000093
 .L_0200863c:
@@ -1108,7 +1108,7 @@ Func_02001774:
 	b .L_ja_02009e50
 	.2byte 0x0000
 .L_ja_02009ad0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_ja_02009ad4:
 	.4byte 0x00000090
 .L_ja_02009ad8:
@@ -1538,7 +1538,7 @@ Func_02001774:
 .L_ja_02009e68:
 	.4byte 0x00000099
 .L_ja_02009e6c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.endif
 	.section .text.x02009ff0,"ax",%progbits
 	.balign 4

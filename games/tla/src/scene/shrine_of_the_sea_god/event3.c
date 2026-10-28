@@ -5,7 +5,7 @@ extern s32 gData_02004a18[];
 
 void Func_0200142c(struct ShrineOfTheSeaGodObject *object) {
   struct ShrineOfTheSeaGodObject *leader =
-      Actor_GetById(gAdventure.currentOwner);
+      Actor_GetById(gSequenceParentWork.currentOwner);
   s32 *offset = gData_02004a18;
 
   SET_POSITION(object, leader->x + offset[0], leader->y + offset[1],

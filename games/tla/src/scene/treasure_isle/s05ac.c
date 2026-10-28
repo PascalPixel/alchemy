@@ -1,6 +1,6 @@
 #include "types.h"
 #include "flag_call.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "field_event.h"
 
@@ -105,7 +105,7 @@ struct FieldActor *Actor_GetById(s32 id);
 void Func_02000760(s32 unused, s32 id) {
   struct FieldActor *object = Actor_GetById(id);
 
-  if (gAdventure.scene == (s32)&SceneId_Ov6afRoom1) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6afRoom1) {
     if (id == 8 && object->x >> 20 == 16)
       GameFlag_SetBit(0x300);
     if (id == 9 && object->x >> 20 == 20)
@@ -114,22 +114,22 @@ void Func_02000760(s32 unused, s32 id) {
       GameFlag_SetBit(0x302);
   }
   /* FAKEMATCH: the memory barriers before the second, third and fourth room
-   * tests make each reload the adventure, as the native does; with any two
+   * tests make each reload gSequenceParentWork, as the native does; with any two
    * of the three, 29 instructions differ in tla-en. */
   __asm__ volatile("" : : : "memory");
-  if (gAdventure.scene == (s32)&SceneId_Ov6afRoom2) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6afRoom2) {
     if (id == 10 && object->x >> 19 == 33)
       GameFlag_SetBit(0x308);
     if (id == 11 && object->x >> 19 == 85 && object->z >> 19 == 83)
       Func_02000728();
   }
   __asm__ volatile("" : : : "memory");
-  if (gAdventure.scene == (s32)&SceneId_Ov6afRoom3) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6afRoom3) {
     if (id == 10 && object->x >> 19 == 83)
       GameFlag_SetBit(0x309);
   }
   __asm__ volatile("" : : : "memory");
-  if (gAdventure.scene == (s32)&SceneId_Ov6afRoom4) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (id == 8 && object->x >> 19 == 87)
       GameFlag_SetBit(0x30d);
   }

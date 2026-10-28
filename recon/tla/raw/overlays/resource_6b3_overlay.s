@@ -578,7 +578,7 @@ Func_02000318:
 	b .L_de_020086ce
 	.2byte 0x0000
 .L_de_020086a4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_de_020086a8:
 	.4byte gData_02000a28
 .L_de_020086ac:
@@ -700,7 +700,7 @@ Func_02000318:
 .L_de_020087b4:
 	.4byte 0x00000080
 .L_de_020087b8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_de_020087bc:
 	.4byte gRenderOamEnabled
 .L_de_020087c0:
@@ -1052,7 +1052,7 @@ Func_02000318:
 	b .L_02008692
 	.2byte 0x0000
 .L_02008668:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200866c:
 	.4byte gData_02000a28
 .L_02008670:
@@ -1174,7 +1174,7 @@ Func_02000318:
 .L_02008778:
 	.4byte 0x00000080
 .L_0200877c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008780:
 	.4byte gRenderOamEnabled
 .L_02008784:

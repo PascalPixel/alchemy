@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "io_reg.h"
 
 struct CellTargetEntry;
@@ -35,7 +35,7 @@ void Event_WaitTransitionFrames(void);
 #include "iowrite.h"
 
 void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);
 
@@ -45,13 +45,13 @@ void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
   FieldEvent_Wait(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   x = 0;
   table->shown = 1;
-  Actor_SetModeById(gAdventure.currentOwner, 28);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 28);
   FieldEvent_Wait(16);
   do {
     if (x == 5)
@@ -62,7 +62,7 @@ void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
     x++;
     wait(1);
   } while (x <= 39);
-  Actor_GetById(gAdventure.currentOwner)->animationKind = 0;
+  Actor_GetById(gSequenceParentWork.currentOwner)->animationKind = 0;
   table->shown = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();

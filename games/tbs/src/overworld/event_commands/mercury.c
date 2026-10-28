@@ -101,9 +101,9 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   wait(10);
-  Actor_ArmCallback(gAdventure.leaderActorId, FACING_SOUTH, 0);
+  Actor_ArmCallback(gSequenceParentWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gAdventure.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gSequenceParentWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(20);
 

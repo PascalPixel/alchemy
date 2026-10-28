@@ -3,7 +3,7 @@
 // of 130, from the listing. Every call's constants matched the native once
 // routed through local.h's inline layer except the repeated ones: 920 and
 // 0x4000 still end in callee-saved registers shared between calls (here r6
-// and r5), which moves gAdventure out of r6 and its owner address out of
+// and r5), which moves gSequenceParentWork out of r6 and its owner address out of
 // r5. Four minutes of alchemy permute: 28, by a char temporary.
 #include "../../../../games/tla/src/scene/suhalla_gate/local.h"
 
@@ -29,12 +29,12 @@ void Func_02000494(void) {
   Func_02000988();
   Func_02000a70(0);
   Func_02000a00((s32)MsgHaThatWas);
-  Actor_CommitPositionAndActivate_(gAdventure.currentOwner, 0, -4);
+  Actor_CommitPositionAndActivate_(gSequenceParentWork.currentOwner, 0, -4);
   FieldEvent_Wait(30);
-  Actor_GetById(gAdventure.currentOwner)->actionFlags &= 0xfe;
-  Actor_CommitPositionAndActivate_(gAdventure.currentOwner, 0, 12);
+  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags &= 0xfe;
+  Actor_CommitPositionAndActivate_(gSequenceParentWork.currentOwner, 0, 12);
   FieldEvent_Wait(10);
-  Actor_CommitPositionAndActivate_(gAdventure.currentOwner, 0, 16);
+  Actor_CommitPositionAndActivate_(gSequenceParentWork.currentOwner, 0, 16);
   FieldEvent_Wait(30);
   Func_020009d0_(13, 0x2680000, 0x3900000);
   Actor_SetPositionAndReset_(13, 600, 920);
@@ -56,7 +56,7 @@ void Func_02000494(void) {
   Motion_SetModeAndWaitAnimation_(15, 3);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate2, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
-  gAdventure.battleRule24b = 2;
+  gSequenceParentWork.battleRule24b = 2;
   Func_02000a40(9, 2);
   Func_02000990();
 }

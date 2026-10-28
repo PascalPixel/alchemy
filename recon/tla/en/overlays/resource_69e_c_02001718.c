@@ -13,7 +13,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 struct Spark {
@@ -66,7 +66,7 @@ void Func_02001538(void);
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work =
       HeapSlot_AllocFar(220, sizeof(struct SparkWork));
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct SparkSprite *sprite;
   struct Spark *spark;
   s32 entry;

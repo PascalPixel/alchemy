@@ -28,7 +28,7 @@ s32 Func_020001e8(void) {
   }
   if (GameFlag_Test(0x200))
     Func_020000b4(0);
-  if ((u16)(gAdventure.entrance - 5) <= 1) {
+  if ((u16)(gSequenceParentWork.entrance - 5) <= 1) {
     Func_02001250(33, 0x280, 0x380, 20, 31);
   } else {
     Func_02001250(43, 0x280, 0x380, 21, 31);

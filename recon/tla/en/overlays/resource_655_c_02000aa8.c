@@ -3,7 +3,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -65,7 +65,7 @@ struct EffectView {
 extern const u8 gData_02003e30[];
 
 void Func_02000aa8(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 frame;
   u32 i;
 

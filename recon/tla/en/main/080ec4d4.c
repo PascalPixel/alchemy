@@ -19,7 +19,7 @@
 // nearly every row.
 #include "types.h"
 #include "input.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "io_write_queue.h"
 #include "iwram_call.h"
 
@@ -224,13 +224,13 @@ void Func_080ec4d4(void) {
       if (tile == 15) {
         if (!GameFlag_Test(0x8de))
           continue;
-        if (gAdventure.ownerOverride != 0)
+        if (gSequenceParentWork.ownerOverride != 0)
           continue;
         name = -2;
-        placeX = ((s16 *)&gAdventure.savedX)[1] * 853 / 16384 - 269;
+        placeX = ((s16 *)&gSequenceParentWork.savedX)[1] * 853 / 16384 - 269;
         tile = 2;
         always = 0;
-        placeY = ((s16 *)&gAdventure.savedZ)[1] * 640 / 16384 - 112;
+        placeY = ((s16 *)&gSequenceParentWork.savedZ)[1] * 640 / 16384 - 112;
       } else {
         if (!GameFlag_Test(x))
           continue;

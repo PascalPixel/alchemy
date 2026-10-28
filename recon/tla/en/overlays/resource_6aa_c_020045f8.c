@@ -37,6 +37,6 @@ void Func_020045f8(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)0x05000000, saved, 0x84000070, REG_DMA3);
   Dma_Set((const void *)0x05000200, saved + 448, 0x84000070, REG_DMA3);
   Func_02004d58(0x10000, 0);
-  if ((s8)gAdventure.unk2c2 == 2)
+  if ((s8)gSequenceParentWork.unk2c2 == 2)
     Func_020048e8();
 }

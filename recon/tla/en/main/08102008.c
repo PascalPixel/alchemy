@@ -22,7 +22,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "battle_unit.h"
 
 struct DjinnMenuBackdrop {
@@ -137,7 +137,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
   do {                                                                         \
     (window) = Message_OpenWindowFar(                                    \
         Menu_GetDjinnGiveMessage() + (offset), 9, 9, 1);                       \
-    gAdventure.eventMode = 1;                                                 \
+    gSequenceParentWork.eventMode = 1;                                                 \
     while (Message_AllTypedFar() == 0)                                        \
       wait(1);                                                           \
   } while (0)
@@ -454,7 +454,7 @@ s32 Func_08102008(s32 mode) {
         break;
       case 15:
         if (backdrop->tutorialTimer == 60) {
-          gAdventure.eventMode = 1;
+          gSequenceParentWork.eventMode = 1;
           messageWindow = Message_OpenWindowFar(
               Menu_GetDjinnGiveMessage() + 4, 9, 9, 1);
           Func_080f8ab4(2, 146);

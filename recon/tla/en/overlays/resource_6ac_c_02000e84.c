@@ -40,8 +40,8 @@ static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g)
 }
 
 s32 Func_02000e84(void) {
-  s16 scene = gAdventure.scene;
-  s32 entrance = gAdventure.entrance;
+  s16 scene = gSequenceParentWork.scene;
+  s32 entrance = gSequenceParentWork.entrance;
   struct Actor *object;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6 || scene == (s32)&SceneId_Ov6ACRoom2 ||
@@ -112,7 +112,7 @@ s32 Func_02000e84(void) {
     }
   }
   if (GameFlag_Test(0xa30))
-    Func_020031b8(gAdventure.map +
+    Func_020031b8(gSequenceParentWork.map +
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
   return 0;

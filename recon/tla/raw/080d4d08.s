@@ -435,7 +435,7 @@ Func_080d4d08:
 	b .L_080d507e
 	.2byte 0x0000
 .L_080d5064:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080d5068:
 	.4byte 0xfff00000
 .L_080d506c:

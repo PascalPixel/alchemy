@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "event_work.h"
 #include "scene_tables.h"
 
@@ -21,11 +21,11 @@ s32 Func_02000290(void) {
   Actor_SetSpritePriority(64, 3);
   gData_02002618 = 0;
   Actor_GetById(8)->motionFlags = 0;
-  if ((u16)(gAdventure.entrance - 6) <= 1) {
+  if ((u16)(gSequenceParentWork.entrance - 6) <= 1) {
     Func_0200130c(33, 0x280, 0x380, 48, 1);
     Func_02001a28(0, 0, 0x204);
-  } else if (gAdventure.entrance == 3 || gAdventure.entrance == 5 ||
-             gAdventure.entrance == 13) {
+  } else if (gSequenceParentWork.entrance == 3 || gSequenceParentWork.entrance == 5 ||
+             gSequenceParentWork.entrance == 13) {
     Func_0200130c(43, 0x280, 0x380, 49, 1);
     Func_02001a28(-21, 32, 0x204);
   } else {

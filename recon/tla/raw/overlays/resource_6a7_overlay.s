@@ -513,7 +513,7 @@ Func_02000618:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008678:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200867c:
 	.4byte 0x0000010c
 	.section .text.x020086b0,"ax",%progbits

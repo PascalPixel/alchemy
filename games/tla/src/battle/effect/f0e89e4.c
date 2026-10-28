@@ -3,7 +3,7 @@
 #include "event_work.h"
 #include "actor.h"
 #include "map.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "view_move.h"
 
 // How far the view stays from the edge it is beside, in pixels.
@@ -17,7 +17,7 @@ struct MapBounds {
   s32 maxZ;
 };
 
-extern struct Adventure gAdventure;
+extern struct SequenceParentWork gSequenceParentWork;
 
 void Func_08020328(s32 map, struct MapBounds *bounds);
 void Map_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
@@ -65,7 +65,7 @@ void Func_080e89e4(s32 direction) {
     }
   }
 
-  Func_08020328(gAdventure.map, &bounds);
+  Func_08020328(gSequenceParentWork.map, &bounds);
   minX = bounds.minX;
   maxX = bounds.maxX;
   minZ = bounds.minZ;

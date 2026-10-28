@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 
 void Actor_Destroy(struct Actor *object);
@@ -11,7 +11,7 @@ void BattleEffect_UpdateDescendingParticlePositiveArc(
   s32 y;
   s32 limit;
   s32 scale;
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;

@@ -8,11 +8,11 @@
 
 #include "call.h"
 s32 Func_02002b88();
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern u8 MsgCurePoison2[];
 
 s32 Func_02003a7c(void) {
-  if (FIELD_AT(gAdventure, s16, 480) == (s32)MsgCurePoison2) {
+  if (FIELD_AT(gSequenceParentWork, s16, 480) == (s32)MsgCurePoison2) {
     Func_02002b88();
   }
   return 0;

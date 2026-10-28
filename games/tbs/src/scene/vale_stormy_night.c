@@ -54,7 +54,7 @@
 /// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
 #include "script_operands.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/import.h"
 #include "module/scene/vale_stormy_night.h"
 #include "module/scene/shared/effect_psynergy.h"
@@ -695,7 +695,8 @@ s32 ValeStormyNight_Initialize(void) {
     Import_ActorSetPosition(ACTOR_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's event.
-  if (gAdventure.entrance != VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
+  if (gSequenceParentWork.entrance !=
+          VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
@@ -720,7 +721,8 @@ s32 ValeStormyNight_Initialize(void) {
   }
   wait(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gAdventure.entrance == VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
+      gSequenceParentWork.entrance ==
+          VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
     ValeStormyNight_DoraSendsIsaacToThePlaza();
     return 0;
   }

@@ -13,7 +13,7 @@ void Actor_SetModeById(u32 id, s32 mode);
 #define OBJ(p) ((struct Actor *)(p))
 
 void Func_02000fc8(void) {
-  struct Actor *leader = OBJ(Actor_GetById(gAdventure.currentOwner));
+  struct Actor *leader = OBJ(Actor_GetById(gSequenceParentWork.currentOwner));
   struct Actor *partner = OBJ(Actor_GetById(21));
   u32 i;
   s32 angle;
@@ -43,9 +43,9 @@ loop_3:
   Scene_Call4090(22, 0, 0);
   FieldEvent_Wait(20);
   Scene_CamBounds(0xe80000, -1, 0xc40000, 1);
-  Func_02004100(gAdventure.currentOwner, 0x101, 0);
-  Scene_SetSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
-  Scene_SetPositionAndReset(gAdventure.currentOwner, 232, 164);
+  Func_02004100(gSequenceParentWork.currentOwner, 0x101, 0);
+  Scene_SetSpeed(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
+  Scene_SetPositionAndReset(gSequenceParentWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
   angle = 0x4000;
   Scene_Call4098(21, 232 << 16, 184 << 16, angle);
@@ -63,19 +63,19 @@ loop_3:
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
   Scene_SetPositionAndCommit(21, 216, 184);
-  Actor_ArmCallback(gAdventure.currentOwner, angle, 0);
+  Actor_ArmCallback(gSequenceParentWork.currentOwner, angle, 0);
   Func_020040e8(21, 0);
   FieldEvent_Wait(20);
   Func_02002ca0();
   Func_020041f8(136);
   Func_02000f24();
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
   FieldEvent_Wait(20);
-  Func_02004108(gAdventure.currentOwner, 0x102);
-  Actor_SetModeById(gAdventure.currentOwner, 27);
+  Func_02004108(gSequenceParentWork.currentOwner, 0x102);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 27);
   FieldEvent_Wait(30);
-  Actor_SetModeById(gAdventure.currentOwner, 28);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 28);
   FieldEvent_Wait(10);
   Func_020041f8(204);
   i = 0;
@@ -87,7 +87,7 @@ step_13:
   i++;
   if (i <= 13)
     goto step_13;
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
   Func_020041f8(153);
   partner->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(21), 0);

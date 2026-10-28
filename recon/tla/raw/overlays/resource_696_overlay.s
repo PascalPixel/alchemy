@@ -136,7 +136,7 @@ Func_0200057c:
 .L_02008654:
 	.4byte 0x0600ec00
 .L_02008658:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200865c:
 	.4byte 0x06002000
 .L_02008660:
@@ -365,7 +365,7 @@ Func_0200057c:
 .L_02008840:
 	.4byte Effect_CircleAndBlink
 .L_02008844:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008848:
 	.4byte Func_02000378
 .L_0200884c:
@@ -863,7 +863,7 @@ Func_0200057c:
 .L_02008c68:
 	.4byte 0x00000400
 .L_02008c6c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008c70:
 	bl GameFlag_SetBit
 	add sp, #72
@@ -1008,7 +1008,7 @@ Func_0200290c:
 .L_0200aa18:
 	.4byte MsgShamanMissingShamanRod
 .L_0200aa1c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x0200aa20,"ax",%progbits
 	.global Func_02002a20
 	.thumb_func

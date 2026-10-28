@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_sprite.h"
 #include "io_reg.h"
 
@@ -32,9 +32,9 @@ void Func_020019a8(void) {
   struct FieldSprite *sprite;
   s32 position[3];
 
-  if (gAdventure.entrance == 1)
+  if (gSequenceParentWork.entrance == 1)
     object = Actor_GetById(8);
-  else if (gAdventure.entrance == 3)
+  else if (gSequenceParentWork.entrance == 3)
     object = Actor_GetById(9);
   else
     object = Actor_GetById(10);

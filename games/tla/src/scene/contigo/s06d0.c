@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -20,7 +20,7 @@ s32 Func_020006d0(struct Actor *self) {
   s8 *effect;
   struct Actor *other;
 
-  Func_0200402c(self, Func_02004254(Actor_GetById(gAdventure.currentOwner)));
+  Func_0200402c(self, Func_02004254(Actor_GetById(gSequenceParentWork.currentOwner)));
   mode = 0x3ff & *(u16 *)(event + 0x166);
   state = &self->movementState;
   if (mode == 141) {
@@ -30,7 +30,7 @@ s32 Func_020006d0(struct Actor *self) {
   }
   if (BYTE_AT(self, 99) == 1)
     goto near;
-  other = Actor_GetById(gAdventure.currentOwner);
+  other = Actor_GetById(gSequenceParentWork.currentOwner);
   if (Func_02000620(&self->x, &other->x) <= 11)
     goto far;
   if (BYTE_AT(self, 98) == 1)
@@ -39,7 +39,7 @@ s32 Func_020006d0(struct Actor *self) {
     other = Actor_GetById(14);
   if (Func_02000658(self, other, 18) != 0)
     goto near;
-  if (Func_02000658(self, Actor_GetById(gAdventure.currentOwner), 26) != 0)
+  if (Func_02000658(self, Actor_GetById(gSequenceParentWork.currentOwner), 26) != 0)
     goto near;
 far:
   *state = 0;

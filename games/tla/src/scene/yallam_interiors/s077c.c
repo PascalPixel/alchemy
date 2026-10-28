@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "flag_call.h"
 
 extern const u8 MsgAhSoYou[];
@@ -50,7 +50,7 @@ void Func_0200077c(s32 actor) {
     } else if (Func_020009a0(item) < 0) {
       Func_02000a18(message + 2);
       Func_02000a28(actor, 0);
-    } else if ((u32)gAdventure.coins < price) {
+    } else if ((u32)gSequenceParentWork.coins < price) {
       Func_02000a18(message + 3);
       Func_02000a28(actor, 0);
     } else {

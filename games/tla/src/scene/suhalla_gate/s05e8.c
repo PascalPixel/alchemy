@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 
 extern char SceneId_VenusLighthouseEntrance;
@@ -18,14 +18,14 @@ void Func_020005e8(void) {
   struct Actor *owner;
 
   Actor_Jump(8, 4, 0);
-  owner = Actor_GetById(gAdventure.currentOwner);
+  owner = Actor_GetById(gSequenceParentWork.currentOwner);
   if (owner != NULL)
     Actor_ResetAndSetPosition(8, *(s16 *)((u8 *)owner + 10),
                                      *(s16 *)((u8 *)owner + 18));
   FieldEvent_Wait(20);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
-  gAdventure.battleRule24b = 2;
+  gSequenceParentWork.battleRule24b = 2;
   Func_02000a40(9, 3);
   Func_02000990();
 }

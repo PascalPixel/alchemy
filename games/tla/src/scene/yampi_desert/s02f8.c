@@ -12,7 +12,7 @@ extern const u8 gData_0200506c[];
 extern const u8 gData_020050b4[];
 
 const u8 *Func_020002f8(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
     return gData_020049dc;

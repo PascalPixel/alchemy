@@ -22,7 +22,7 @@ void Func_02001158(s32 a, s32 b) { Func_02001104(17, a, b); }
 void Func_02001168(s32 a, s32 b) { Func_02001104(18, a, b); }
 
 void Func_02001178(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *block = Actor_GetById(15);
 
   if (block->x >> 20 == leader->x >> 20 && block->z >> 20 == leader->z >> 20) {

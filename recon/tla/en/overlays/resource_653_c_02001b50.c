@@ -5,7 +5,7 @@
 
 void Func_02001b50(void) {
   struct Actor *lift;
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x;
   s32 z = leader->z;
   s32 cellX = x >> 20;
@@ -20,7 +20,7 @@ void Func_02001b50(void) {
     return;
   if (cellX == 27 && cellZ == 12) {
     lift = Actor_GetById(13);
-    Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+    Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                        0);
     Actor_SetModeById(13, 4);
     leader->motionFlags = riding;
@@ -30,7 +30,7 @@ void Func_02001b50(void) {
   }
   if (cellX == 37 && cellZ == 14) {
     lift = Actor_GetById(14);
-    Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+    Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                        0);
     Actor_SetModeById(14, 4);
     leader->motionFlags = 0;
@@ -44,7 +44,7 @@ void Func_02001b50(void) {
   }
   Actor_SetModeById(13, 0);
   Actor_SetModeById(14, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      1);
   leader->motionFlags = 3;
   GameFlag_ClearBit(0x208);

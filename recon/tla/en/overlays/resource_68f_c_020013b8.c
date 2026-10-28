@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -51,9 +51,9 @@ s32 Func_020013b8(s32 a0, s32 a1, s32 a2, s32 a3) {
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork), s32, 428) = 0x204;
   /* sub (s32)stack, #8 */
-  r1 = (s32)&gAdventure;
-  r2 = FIELD_AT((s32)(s32)&gAdventure, s16, 480);
-  if ((FIELD_AT((s32)(s32)&gAdventure, s16, 480)) != (206))
+  r1 = (s32)&gSequenceParentWork;
+  r2 = FIELD_AT((s32)(s32)&gSequenceParentWork, s16, 480);
+  if ((FIELD_AT((s32)(s32)&gSequenceParentWork, s16, 480)) != (206))
     goto L_020093e0;
   goto L_020097c4;
 L_020093e0:
@@ -150,7 +150,7 @@ L_02009568:
   MapCell_SetAttributes(0, 26, 33, 0xff00);
 L_02009584:
   Call2((void (*)())Actor_WatchAndSetScript, 8,
-        FIELD_AT((s32)(s32)&gAdventure, s32, 532));
+        FIELD_AT((s32)(s32)&gSequenceParentWork, s32, 532));
 L_02009594:
   v11 = GameFlag_Test(0x109);
   if (v11 == 0)
@@ -159,8 +159,8 @@ L_02009594:
 L_020095a2:
   r0 = 0x1e2;
   r2 = 0;
-  r3 = FIELD_AT((s32)(s32)&gAdventure, s16, 482);
-  if ((FIELD_AT((s32)(s32)&gAdventure, s16, 482)) == 7)
+  r3 = FIELD_AT((s32)(s32)&gSequenceParentWork, s16, 482);
+  if ((FIELD_AT((s32)(s32)&gSequenceParentWork, s16, 482)) == 7)
     goto L_020095b4;
   goto L_020097c4;
 L_020095b4:

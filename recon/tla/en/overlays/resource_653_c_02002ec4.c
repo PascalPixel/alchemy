@@ -22,7 +22,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
 void Func_02002ec4(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct EffectOptions options;
   u32 i;
 
@@ -59,16 +59,16 @@ void Func_02002ec4(void) {
                   velocity[2], 0x01090001, &options);
   }
   Func_020053d8(188);
-  Func_020052d0(gAdventure.currentOwner, 0x101);
-  Actor_SetModeById(gAdventure.currentOwner, 49);
+  Func_020052d0(gSequenceParentWork.currentOwner, 0x101);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 49);
   Call3((void (*)())Func_02005198, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02005198, -1, -1, 0xe666);
   Func_020051a0();
-  Func_020052d0(gAdventure.currentOwner, 0x100);
+  Func_020052d0(gSequenceParentWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   FieldEvent_Wait(10);
-  Actor_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_020051c8();
 }

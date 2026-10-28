@@ -1,10 +1,10 @@
 // Draft, differ 106 (121 before statements reordered 2026-10-26).
-// Near miss, differ 125 of 219 (146 before gAdventure's byte pointer was
+// Near miss, differ 125 of 219 (146 before gSequenceParentWork's byte pointer was
 // taken just before the coins, where the native loads it, 2026-10-25), written from the listing: takes
 // over a The Broken Seal save (`save`, laid out as that game's: flag bits at
-// 0x40, the adventure at 0x240, the units at 0x520): its djinn flags and six
+// 0x40, gSequenceParentWork at 0x240, the units at 0x520): its djinn flags and six
 // flags from Data_080b1284 set or clear this game's flags from 0x800 and
-// 0x820, flag 0x822 toggles, its coins go to 0x28c of the adventure,
+// 0x820, flag 0x822 toggles, its coins go to 0x28c of gSequenceParentWork,
 // unless `keepSettings` five settings bytes are copied; each of the four
 // units is copied in keeping its first 15 bytes, items flagged 0x20 are
 // removed, and the units recomputed; the djinn are set, flags
@@ -13,12 +13,12 @@
 // on i, unsigned inner counter). Left: the native keeps the unit loop's bound
 // 4 in sl with no entry test (count = 4 here is tested on entry, a constant
 // bound keeps it in no register), the owner in r7 and the unit pointer in r8
-// (swapped here); it keeps gAdventure in r4 through the settings copy (this
+// (swapped here); it keeps gSequenceParentWork in r4 through the settings copy (this
 // reloads it), takes the djinn flag counter in sl and the base in r8
 // (swapped), and orders the prologue's three pointers otherwise.
 #include "types.h"
 #include "string.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "owner_state.h"
 #include "item.h"
 #include "iwram_call.h"
@@ -76,7 +76,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   else
     GameFlag_SetBit(0x822);
 
-  state = (u8 *)&gAdventure;
+  state = (u8 *)&gSequenceParentWork;
   *(s32 *)(state + 0x28c) = *(s32 *)(party + 0x10);
   if (keepSettings == 0) {
     state[0x225] = party[0x225];
@@ -111,5 +111,5 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   Func_080ae16c(1);
   GameFlag_SetBit((keepSettings & 1) + 44);
   GameFlag_SetBit(47);
-  gFrameWaitCount = gAdventure.playTime;
+  gFrameWaitCount = gSequenceParentWork.playTime;
 }

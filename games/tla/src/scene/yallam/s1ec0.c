@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -40,7 +40,7 @@ void Func_02001ec0(void) {
   Call3(Actor_ArmCallback, 10, 0, 0);
   Call3(Actor_ArmCallback, 9, 0x3000, 0);
   Call3(Actor_ArmCallback, 11, 0x5000, 0);
-  Call2(Func_02002548, gAdventure.currentOwner, 0x6000);
+  Call2(Func_02002548, gSequenceParentWork.currentOwner, 0x6000);
   Call1(Func_02002520, (s32)&MsgIfYouWantTo);
   v5 = v6;
   Call2(Func_02002538, 8, 0);
@@ -134,11 +134,11 @@ L_02009f9c:
   Call3(Actor_Jump, 11, 4, 0);
   Call4(Func_02002450, v6, v7, 0, v8);
   Call1(Actor_WaitForMoveById, 11);
-  Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
+  Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0xcccc,
         0x6666);
-  Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 184, 0x2ae);
-  Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 186, 0x2a2);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
+  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 184, 0x2ae);
+  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 186, 0x2a2);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xe000, 0);
   t63 = Value1(Actor_GetById, 8);
   FIELD_AT(t63, u8, 90) = (FIELD_AT(t63, u8, 90) | 1);
   t64 = Value1(Actor_GetById, 10);

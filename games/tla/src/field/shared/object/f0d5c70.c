@@ -4,7 +4,7 @@
 #include "io_reg.h"
 #include "iowrite.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 void wait(s32 frames);
@@ -19,7 +19,7 @@ void Func_080d5c70(s32 unused) {
   s32 c;
 
   work = Ram_HeapSlots->eventWork;
-  Sound_PlayFar(gAdventure.sceneCue);
+  Sound_PlayFar(gSequenceParentWork.sceneCue);
   Sound_PlayFar(298);
   Sound_PlayFar(147);
   if (work->controlMode == 3) {

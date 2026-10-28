@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 
 struct EventWork154 {
@@ -58,7 +58,7 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   Func_020034b8(158);
-  if (gAdventure.scene == (s32)&SceneId_Ov6B0Room1) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6B0Room1) {
     Func_02003320_(gData_020043e4, 33, 7);
   } else {
     s32 index = work->value / 2 - 1;
@@ -66,9 +66,9 @@ loop:
     Func_02003320_(gData_02004410[index].data, gData_02004410[index].a,
                    gData_02004410[index].b);
   }
-  Actor_SetModeById(gAdventure.currentOwner, 2);
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -4);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 0, -4);
   FieldEvent_Wait(6);
   Func_02003450(work->value);
   Event_FinishScreenTransition();

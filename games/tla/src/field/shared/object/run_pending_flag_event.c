@@ -11,7 +11,7 @@
 #include "types.h"
 #include "system.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -38,7 +38,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         struct Actor *object;
 
         GameFlag_ClearBit(flag);
-        id = gAdventure.currentOwner;
+        id = gSequenceParentWork.currentOwner;
         object = ObjectTable_Get(id);
         object->y += 0x00a00000;
         Camera_MoveWithinMapBounds(-1, -1, -1, 0);
@@ -60,7 +60,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
 u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 
 void Func_080d5fd4(void) {
-  struct Actor *object = ObjectTable_Get(gAdventure.currentOwner);
+  struct Actor *object = ObjectTable_Get(gSequenceParentWork.currentOwner);
   u8 *metadata =
       ResourceMetadata_RegisterFar(*(void **)((u8 *)object + 0x50), 268);
 

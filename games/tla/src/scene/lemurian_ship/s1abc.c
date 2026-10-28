@@ -14,8 +14,8 @@ s32 Func_02001abc(void) {
       0x209;
   if (GameFlag_Test(0x9b4))
     GameFlag_SetBit(0x144);
-  if (gAdventure.scene == (s32)&SceneId_Ov656Room1) {
-    switch (gAdventure.entrance) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov656Room1) {
+    switch (gSequenceParentWork.entrance) {
     case 3:
     case 4:
     case 5:
@@ -43,8 +43,8 @@ s32 Func_02001abc(void) {
       Func_02002498();
       break;
     }
-  } else if (gAdventure.scene == (s32)&SceneId_Ov656Room2) {
-    switch (gAdventure.entrance) {
+  } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov656Room2) {
+    switch (gSequenceParentWork.entrance) {
     case 1:
     case 2:
     case 3:

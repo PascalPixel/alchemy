@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "save.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "battle_unit.h"
 #include "owner_state.h"
 #include "frame.h"
@@ -16,7 +16,7 @@ struct SaveGameWords {
   u32 playTime;
 };
 
-#define SAVE_GAME_WORDS ((struct SaveGameWords *)&gAdventure)
+#define SAVE_GAME_WORDS ((struct SaveGameWords *)&gSequenceParentWork)
 
 extern u8 gData_02000000[];
 extern u32 gData_02001000;
@@ -40,8 +40,8 @@ s32 Save_BuildFileSummary(void) {
   SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
   SAVE_GAME_WORDS->playTime = gFrameWaitCount;
   gData_02001000 = gFrameWaitCount;
-  gAdventure.unk244[6] = gAutoSleepEnabled;
-  owner = Unit_Get(gAdventure.currentOwner);
+  gSequenceParentWork.unk244[6] = gAutoSleepEnabled;
+  owner = Unit_Get(gSequenceParentWork.currentOwner);
   destination = summary->name;
   source = owner->name;
   for (i = 11; i >= 0; i--)
@@ -49,9 +49,9 @@ s32 Save_BuildFileSummary(void) {
   summary->level = owner->level;
   summary->playTime = SAVE_GAME_WORDS->playTime;
   summary->area =
-      Scene_GetAreaNameIndexFar(gAdventure.scene, gAdventure.entrance);
+      Scene_GetAreaNameIndexFar(gSequenceParentWork.scene, gSequenceParentWork.entrance);
   summary->classId = owner->classIndex;
-  summary->coins = gAdventure.coins;
+  summary->coins = gSequenceParentWork.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
@@ -60,9 +60,9 @@ s32 Save_BuildFileSummary(void) {
   for (i = 0; i <= 3 && owners[i] != 255; i++)
     summary->party[i] = owners[i];
   summary->party[i] = -1;
-  summary->paletteGlow = gAdventure.unk220[5];
-  summary->paletteGlowSub = gAdventure.unk220[6];
-  summary->sendFlag = gAdventure.unk22d[2];
+  summary->paletteGlow = gSequenceParentWork.unk220[5];
+  summary->paletteGlowSub = gSequenceParentWork.unk220[6];
+  summary->sendFlag = gSequenceParentWork.unk22d[2];
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
     if (GameFlag_Test(i))

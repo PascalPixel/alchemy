@@ -174,4 +174,4 @@ Func_0200200c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200a18c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork

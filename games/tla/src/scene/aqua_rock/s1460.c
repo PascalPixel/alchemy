@@ -9,12 +9,12 @@ void Func_02001d30(struct Actor *object);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
 void Func_02001460(void) {
-  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 saved = object->motionFlags;
   s32 i;
   s32 angle;
   s32 up;
-  struct Adventure *state;
+  struct SequenceParentWork *state;
 
   Func_02002a70(612);
   Func_02002998();
@@ -23,7 +23,7 @@ void Func_02001460(void) {
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->y = -0x100000;
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x20000, 0x10000);
   for (i = 15; i >= 0; i--) {
     object->y += 0x10000;
     angle = object->angle;
@@ -39,7 +39,7 @@ void Func_02001460(void) {
   object->velocityY = 0x80000;
   Actor_SetSingleChildFlags(object, 1);
   up = gInput.held & 0x40;
-  state = &gAdventure;
+  state = &gSequenceParentWork;
   if (up)
     Actor_SetPositionAndCommit(state->currentOwner, 264, 760);
   else

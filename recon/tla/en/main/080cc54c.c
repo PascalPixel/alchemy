@@ -5,14 +5,14 @@
 // leader lookup Func_080cb8e8, a 16-pixel height window, the search event
 // test Func_080ccd78(3, code) and, on the world map with ownerOverride set,
 // 99 where the world map collision is 3. The one-pass block (FAKEMATCH on
-// adoption) loads gAdventure before ownerOverride's offset (differ 10
+// adoption) loads gSequenceParentWork before ownerOverride's offset (differ 10
 // without it). Left: the native sets the probe argument (adds r2, r5)
 // before loading the angle (ldrh r1), where sched2 ties them at priority 7
 // and takes RTL order; and outside the world map it builds the cells
 // offset in r0 where agscc takes r2 (z and cells read first, or z kept in
 // a function-wide local, differ 24 or 8; a struct copy of the position 79).
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 struct EffectVector {
@@ -89,7 +89,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
       result = collisionCode;
     }
     if (result == 0 && (s8)workBytes[0x18a] == 3) {
-      struct Adventure *party = &gAdventure;
+      struct SequenceParentWork *party = &gSequenceParentWork;
 
       do {
       } while (0);

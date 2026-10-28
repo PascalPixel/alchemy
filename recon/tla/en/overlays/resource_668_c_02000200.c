@@ -21,7 +21,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -152,7 +152,7 @@ void Func_02000200(s32 mode, s32 id) {
     if (i <= 2)
       goto create;
     Func_02000fa4();
-    Actor_Stop(gAdventure.currentOwner);
+    Actor_Stop(gSequenceParentWork.currentOwner);
     wait(30);
     for (i = 0; i <= 2; i++)
       Func_02004a24(sparks[i]);
@@ -168,7 +168,7 @@ void Func_02000514(void) {
 
   door = Actor_GetById(15);
   block = Actor_GetById(16);
-  facing = (Actor_GetById(gAdventure.currentOwner)->angle + 0x2000) & 0xc000;
+  facing = (Actor_GetById(gSequenceParentWork.currentOwner)->angle + 0x2000) & 0xc000;
   if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
     Func_02004c7c(block->x, block->z, 2, 255);
   if (Func_02004240(&plan) != 0) {
@@ -202,7 +202,7 @@ void Func_02000514(void) {
       Func_02004c9c(240);
       Actor_SetModeById(15, 8);
       FieldEvent_Wait(60);
-      Camera_FollowActor(gAdventure.currentOwner, 1);
+      Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
       Func_02004a9c();
     }
   }

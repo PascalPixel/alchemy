@@ -407,7 +407,7 @@ Func_08039864:
 .L_08039ba4:
 	.4byte gInput
 .L_08039ba8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_08039bac:
 	.4byte gText_SpeedSteps
 .L_08039bb0:
@@ -500,7 +500,7 @@ Func_08039864:
 .L_08039c50:
 	.4byte 0x000001ff
 .L_08039c54:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_08039c58:
 	.4byte gData_080aa0df
 .L_08039c5c:
@@ -646,7 +646,7 @@ Func_08039864:
 	b .L_08039d74
 	.2byte 0x0000
 .L_08039d64:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_08039d68:
 	.4byte gText_SpeedCueGaps
 .L_08039d6c:
@@ -769,7 +769,7 @@ Func_08039864:
 	ldr r4, [sp, #12]
 	b .L_08039e66
 .L_08039e54:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_08039e58:
 	.4byte gText_SpeedDelays
 .L_08039e5c:

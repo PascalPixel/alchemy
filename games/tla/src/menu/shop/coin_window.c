@@ -1,7 +1,7 @@
 #include "types.h"
 #include "graphics.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "shop.h"
 
 struct ShopWork_08109188 {
@@ -28,11 +28,11 @@ void Func_08109188(void) {
     message = (s32)MsgYourCoins;
     Text_DrawCharacterAtOffsetFar(message, window, 0, 0);
     message -= 2;
-    Text_DrawNumberInWindowFar(gAdventure.coins, 6, (s32)window, 0, 8);
+    Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6, (s32)window, 0, 8);
     Text_DrawCharacterAtOffsetFar(message, window, 48, 8);
 #else
     Text_DrawCharacterAtOffsetFar((s32)MsgYourCoins, window, 0, 0);
-    Text_DrawNumberInWindowFar(gAdventure.coins, 6, (s32)window, 32, 8);
+    Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6, (s32)window, 32, 8);
 #endif
   }
 }

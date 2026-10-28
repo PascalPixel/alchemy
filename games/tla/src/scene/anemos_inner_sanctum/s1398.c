@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x154];
@@ -44,7 +44,7 @@ static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
 /// 0x207.
 void Func_02001398(void) {
   struct AnemosInnerSanctumEventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *object;
   s32 all;
   s32 i;
@@ -53,7 +53,7 @@ void Func_02001398(void) {
   s32 z;
   s32 scene;
 
-  scene = gAdventure.scene;
+  scene = gSequenceParentWork.scene;
   x = leader->x;
   z = leader->z;
   if (scene == (s32)&SceneId_Ov6B0Room4)
@@ -85,7 +85,7 @@ next:
     FieldEvent_Wait(10);
     Func_02003420(0xcccc, 0x1999);
     id = 9;
-    if (gAdventure.scene == (s32)&SceneId_Ov6B0Room4)
+    if (gSequenceParentWork.scene == (s32)&SceneId_Ov6B0Room4)
       id = 8;
     Func_02003438(id, 1);
     Func_02003430();

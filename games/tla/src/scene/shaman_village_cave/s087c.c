@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -103,9 +103,9 @@ void Func_0200087c(void) {
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(18, 261, 1)
   Call1(FieldEvent_Wait, 20);
-  Call2(Func_02001190, (s16)gAdventure.savedScene,
-        (s16)gAdventure.savedEntrance);
-  Call2(Func_02001208, gAdventure.scene, gAdventure.entrance);
+  Call2(Func_02001190, (s16)gSequenceParentWork.savedScene,
+        (s16)gSequenceParentWork.savedEntrance);
+  Call2(Func_02001208, gSequenceParentWork.scene, gSequenceParentWork.entrance);
   ((struct {
      u8 unk000[0x1ac];
      s32 value;

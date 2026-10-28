@@ -289,7 +289,7 @@ Func_080ce0ac:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080ce30c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080ce310:
 	.4byte 0x00000dc3
 .L_080ce314:

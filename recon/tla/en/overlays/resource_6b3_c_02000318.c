@@ -29,14 +29,14 @@ extern u8 gBgScroll[];
 extern u8 gData_02000a28[];
 extern u8 gInput[];
 extern u8 gMapCellBuffer[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern u8 gRenderOamEnabled[];
 
 s32 Func_02000318(void) {
   s32 v_r6, v_r7, v_r5, t0, t1, t2, t5, t90, t103, t105;
 
-  t0 = *(s32 *)((s32)gAdventure + 0x214);
-  v_r6 = ((s32)gAdventure + 0x22c);
+  t0 = *(s32 *)((s32)gSequenceParentWork + 0x214);
+  v_r6 = ((s32)gSequenceParentWork + 0x22c);
   t1 = *(u8 *)v_r6;
   t2 = Value1((s32 (*)())Actor_GetById, t0);
   *(u8 *)(t2 + 85) = 0;
@@ -153,7 +153,7 @@ L_02008692:
   Call3((void (*)())Func_0200084c, 128, (s32)gMapCellBuffer, 0);
   Call1((void (*)())FieldEvent_Wait, 180);
   Call1((void (*)())Func_0200086c, 78);
-  *(u8 *)((s32)gAdventure + 0x22c) = v_r7;
+  *(u8 *)((s32)gSequenceParentWork + 0x22c) = v_r7;
   Call1((void (*)())FieldEvent_Wait, 0x12c);
   t103 = FIELD_AT((s32)gInput, s32, 4);
   v_r5 = 0;

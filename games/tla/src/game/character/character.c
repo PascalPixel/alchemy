@@ -8,13 +8,13 @@
 #include "system.h"
 #include "types.h"
 #include "owner_state.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct TradeOfferState *Djinn_GetRecoveryTable(s32 which) {
   if (which != 0) {
     return Unit_Get(0x83);
   }
-  return (struct TradeOfferState *)&gAdventure.unk000[0xc];
+  return (struct TradeOfferState *)&gSequenceParentWork.unk000[0xc];
 }
 
 u32 Party_GetAverageLevel(void) {
@@ -28,7 +28,7 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (i = 0; i < count; i++) {
-    total += ((struct BattleUnit *)Unit_Get(gAdventure.activeOwners[i]))->level;
+    total += ((struct BattleUnit *)Unit_Get(gSequenceParentWork.activeOwners[i]))->level;
   }
   total = total / count;
   return total;

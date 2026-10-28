@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -38,9 +38,9 @@ s32 Func_02000a48(s32 a0, s32 a1, s32 a2, s32 a3) {
   v0 = Func_02003bcc(0);
   Func_02003c1c();
   r4 = 0;
-  r1 = (s32)&gAdventure;
-  r2 = *(s16 *)(((s32)(s32)&gAdventure + 480) + r4);
-  if ((*(s16 *)(((s32)(s32)&gAdventure + 480) + r4)) != (223))
+  r1 = (s32)&gSequenceParentWork;
+  r2 = *(s16 *)(((s32)(s32)&gSequenceParentWork + 480) + r4);
+  if ((*(s16 *)(((s32)(s32)&gSequenceParentWork + 480) + r4)) != (223))
     goto L_02008aaa;
   r5 = 78;
   Call6((void (*)())Func_02003aa4, 98, 21, 4, 3, r5, 21);
@@ -74,12 +74,12 @@ L_02008af2:
   Func_020006cc((s32)gData_02003de8);
 L_02008b1e:
   r4 = 0;
-  r0 = *(s16 *)((480 + (s32)&gAdventure) + r4);
+  r0 = *(s16 *)((480 + (s32)&gSequenceParentWork) + r4);
   r1 = (FIELD_AT(r6, s32, 16)) >> 20;
   r2 = (FIELD_AT(r6, s32, 8)) >> 20;
-  ip = (s32)&gAdventure;
+  ip = (s32)&gSequenceParentWork;
   r3 = 223;
-  if ((*(s16 *)((480 + (s32)&gAdventure) + r4)) != (223))
+  if ((*(s16 *)((480 + (s32)&gSequenceParentWork) + r4)) != (223))
     goto L_02008b62;
   if (r2 != 15)
     goto L_02008b4e;

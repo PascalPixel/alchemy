@@ -57,7 +57,7 @@
 /// exit, table or code leads there; only the debug scene selector, which
 /// reaches every scene, can.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/mercury_lighthouse_aerie.h"
@@ -194,7 +194,8 @@ const u32 *MercuryLighthouseAerie_GetExits(void) {
 /// (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) places Jenna, Kraden, Felix
 /// and Menardi.
 const struct ActorPlacement *MercuryLighthouseAerie_GetActorPlacements(void) {
-  if (gAdventure.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+  if (gSequenceParentWork.entrance !=
+      MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
     GameFlag_Set(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAerieActorPlacements;
@@ -220,7 +221,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gAdventure.sceneId == (s32)&SceneId_MercuryLighthouseAerie) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_MercuryLighthouseAerie) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Task_AddFrame(MercuryLighthouseAerie_FlickerBeacon, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
@@ -257,11 +258,12 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_BEACON_STATUE + 3), 0);
     Actor_GetById(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
     Actor_GetById(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
-    if (gAdventure.entrance == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+    if (gSequenceParentWork.entrance ==
+        MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
-    } else if (gAdventure.entrance ==
+    } else if (gSequenceParentWork.entrance ==
                MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
       if (!GameFlag_Get(FLAG_LIFT_UP)) {
         {
@@ -278,7 +280,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
-    } else if (gAdventure.entrance ==
+    } else if (gSequenceParentWork.entrance ==
                MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) {
       GameFlag_Set(FLAG_LIFT_UP);
     }

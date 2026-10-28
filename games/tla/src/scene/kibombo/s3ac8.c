@@ -2,7 +2,7 @@
 #include "input.h"
 
 void Func_02003ac8(void) {
-  struct KibomboObject *leader = Actor_GetById(gAdventure.currentOwner);
+  struct KibomboObject *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
@@ -14,7 +14,7 @@ void Func_02003ac8(void) {
 }
 
 void Func_02003b20(void) {
-  struct KibomboObject *leader = Actor_GetById(gAdventure.currentOwner);
+  struct KibomboObject *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
@@ -30,7 +30,7 @@ void Func_02003b20(void) {
 }
 
 void Func_02003b88(void) {
-  struct KibomboObject *leader = Actor_GetById(gAdventure.currentOwner);
+  struct KibomboObject *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 

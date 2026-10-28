@@ -14,7 +14,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "frame.h"
 #include "call.h"
 
@@ -35,7 +35,7 @@ void Func_02001a84(void);
 
 void Func_020003cc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *actor = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *actor = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
   s32 facing;
@@ -94,8 +94,8 @@ void Func_020003cc(void) {
       goto settle;
   }
   Func_02001a34(shadow);
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
-  Camera_FollowActor(gAdventure.currentOwner, 1);
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
+  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
   *(u16 *)(work + 0xd46) = 1;
   *(u16 *)(work + 0x154) = 0;
   Func_02001a84();

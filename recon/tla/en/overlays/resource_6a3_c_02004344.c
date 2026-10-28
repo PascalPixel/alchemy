@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_effect.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -37,7 +37,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 }
 
 void Func_02004344(void) {
-  struct Actor *actor = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *actor = Actor_GetById(gSequenceParentWork.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
    * plain local, 22 of 177 instructions differ in tla-en. */
   register u32 i asm("r10");
@@ -79,15 +79,15 @@ void Func_02004344(void) {
     i++;
   } while (i <= 16);
   Func_020049c4(188);
-  Func_020048d4(gAdventure.currentOwner, 0x101);
-  Actor_SetModeById(gAdventure.currentOwner, 49);
+  Func_020048d4(gSequenceParentWork.currentOwner, 0x101);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 49);
   SetWorkTriple(0x50000, 0x50000, 0x10000);
   SetWorkTriple(-1, -1, 0xe666);
   Func_02004764();
-  Func_020048d4(gAdventure.currentOwner, 0x100);
+  Func_020048d4(gSequenceParentWork.currentOwner, 0x100);
   actor->gravity = 0x10000;
   actor->bounce = 0x4000;
   FieldEvent_Wait(10);
-  Actor_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
   Func_020047dc();
 }

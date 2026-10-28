@@ -56,7 +56,7 @@
 /// rebuilds the cells of each puzzle already solved and, once Kite has run
 /// behind its ledge, puts it back there.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "djinn_ids.h"
 #include "version.h"
 #include "system_call.h"
@@ -290,7 +290,7 @@ static s32 ValeCave_FaceActorTowardLeader(struct Actor *updated) {
 /// Selects entrance positions and camera bounds for the current cave
 /// room.
 const struct SceneEntrance *ValeCave_GetEntrances(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthEntrances;
@@ -312,7 +312,7 @@ const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 /// Selects the current room's actor placements: Kite, and the crates and
 /// logs.
 const struct ActorPlacement *ValeCave_GetActorPlacements(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthActorPlacements;
@@ -597,7 +597,7 @@ static void ValeCave_KiteKeepsAway(void) {
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
-    if (gAdventure.haltedActor != ACTOR_KITE) {
+    if (gSequenceParentWork.haltedActor != ACTOR_KITE) {
       // Preserve the speed reads before resolving this route point.
       routeIndex = work->stepTrigger;
       djinni = Actor_GetById(ACTOR_KITE);
@@ -773,7 +773,7 @@ static void ValeCave_PushLogNorth(void) {
 
 /// Selects the current room's coord, Psynergy and examine triggers.
 const struct Trigger *ValeCave_GetTriggers(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_ValeCaveMouth) {
     return gValeCave_MouthTriggers;
@@ -798,7 +798,7 @@ s32 ValeCave_Initialize(void) {
 
   *request =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gAdventure.sceneId == (s32)&SceneId_ValeCaveMouth) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_ValeCaveMouth) {
     *request = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     wait(1);
     Actor_SetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
@@ -895,8 +895,8 @@ static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
   // Each room reuses the temporary flags for its own puzzle state.
-  if (gAdventure.sceneId == (s32)&SceneId_ValeCaveKite) {
-    switch (gAdventure.entrance) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_ValeCaveKite) {
+    switch (gSequenceParentWork.entrance) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
     case VALE_CAVE_KITE_WEST_FROM_EAST:
     case VALE_CAVE_KITE_WEST_FROM_SOUTH:
@@ -919,7 +919,7 @@ static void ValeCave_ApplyEntryState(void) {
         break;
       }
       GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
-      if (gAdventure.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
+      if (gSequenceParentWork.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
         GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
       }
       wait(1);
@@ -946,8 +946,8 @@ static void ValeCave_ApplyEntryState(void) {
       }
       break;
     }
-  } else if (gAdventure.sceneId == (s32)&SceneId_ValeCaveLogs) {
-    switch (gAdventure.entrance) {
+  } else if (gSequenceParentWork.sceneId == (s32)&SceneId_ValeCaveLogs) {
+    switch (gSequenceParentWork.entrance) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:

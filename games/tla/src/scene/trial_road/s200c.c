@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -24,8 +24,8 @@ s32 Actor_GetById();
 void Func_0200200c(void) {
   s32 t7, t8, t10, t13, t16, p3;
 
-  if (FIELD_AT(&gAdventure, s16, 482) != 4) {
-    p3 = FIELD_AT(&gAdventure, s16, 482);
+  if (FIELD_AT(&gSequenceParentWork, s16, 482) != 4) {
+    p3 = FIELD_AT(&gSequenceParentWork, s16, 482);
     goto L_0200a02e;
   }
   Func_02005868();
@@ -56,7 +56,7 @@ L_0200a064:
 L_0200a078:
   Func_02002db4();
 L_0200a07c:
-  t13 = Value1(Actor_GetById, gAdventure.currentOwner);
+  t13 = Value1(Actor_GetById, gSequenceParentWork.currentOwner);
   FIELD_AT(t13, u8, 35) = (64 | FIELD_AT(t13, u8, 35));
   Call1(Func_02001fc4, 1);
   Call1(Func_020006b4, 10);

@@ -128,7 +128,7 @@ flowchart TD
   class dice,wheels step
 ```
 
-Each pass reads one id from the adventure and runs one thing to its end: a
+Each pass reads one id from the sequence parent's work and runs one thing to its end: a
 scene, any row of the scene table, the Title and the File Screen included,
 which `SceneSequence_Run` runs until the party takes an exit; or the battle,
 dice or slots sequence. The sequence then names the next one, and in the
@@ -177,8 +177,8 @@ battle, or else to the last Sanctum.
 ### How a sequence finds its way back
 
 Sequences pass nothing to each other directly. Everything goes through the
-[adventure](glossary.md#adventure), `gAdventure`, the one struct every sequence
-shares:
+[sequence parent's work](glossary.md#sequence-parents-work),
+`gSequenceParentWork`, the one struct every sequence shares:
 
 | When                       | What is written                                                                              |
 | -------------------------- | -------------------------------------------------------------------------------------------- |
@@ -191,7 +191,7 @@ shares:
 after-battle destination, or else to the return point with everyone where they
 stood; a defeat goes to the defeat destination, or else to the last Sanctum
 with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
-result stays in `gAdventure.sequenceResult` for the scene that comes back.
+result stays in `gSequenceParentWork.sequenceResult` for the scene that comes back.
 The Title and the File Screen need none of this: they are ordinary scenes.
 
 **Reference:** `SequenceParent_Run` · `Scene_ReturnFromSequence`

@@ -56,8 +56,8 @@ s16 DebugMapSelect_Run(void) {
 
   window = 0;
   selectedField = 0;
-  sceneId = gAdventure.returnScene;
-  entrance = gAdventure.returnEntrance;
+  sceneId = gSequenceParentWork.returnScene;
+  entrance = gSequenceParentWork.returnEntrance;
   window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
   DebugMapSelect_DrawRow(window, sceneId, &entrance);
   MenuArrow_Create(&cursor, &cursorSlot);

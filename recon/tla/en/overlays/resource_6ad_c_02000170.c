@@ -17,7 +17,7 @@ extern const u8 gData_02006a0c[];
 
 void Func_02000170(void) {
   s32 position[3];
-  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 angle = object->angle >> 12;
 
   angle = ((angle + 2) & 12) << 12;

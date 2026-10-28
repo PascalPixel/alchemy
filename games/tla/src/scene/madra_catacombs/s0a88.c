@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -85,11 +85,11 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
 
 void Func_02000a88(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
   struct Actor *object;
   s32 cell;
 
-  /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
    * built (one reordered row). */
   do {
   } while (0);

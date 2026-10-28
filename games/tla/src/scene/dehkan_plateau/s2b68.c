@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Func_02003df8(s32 cue);
@@ -21,7 +21,7 @@ void Func_02002b68(void) {
     Func_02003df8(229);
     Func_02003be0(64, 64, 15, 8, 1, 1);
     Func_02003be0(64, 66, 15, 72, 1, 2);
-    Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+    Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                        0);
   }
 }

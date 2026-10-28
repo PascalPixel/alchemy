@@ -22,16 +22,16 @@ void Func_020005b0(void) {
   Func_02000d88();
   Call1((void (*)())Func_0200446c, 0);
   Call1((void (*)())FieldEvent_Wait, 40);
-  Actor_GetById(gAdventure.currentOwner)->actionFlags &= ~1;
-  Call2((void (*)())Func_020043bc, gAdventure.currentOwner, 0x102);
-  Call3((void (*)())Actor_SetSpeedParameters, gAdventure.currentOwner,
+  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags &= ~1;
+  Call2((void (*)())Func_020043bc, gSequenceParentWork.currentOwner, 0x102);
+  Call3((void (*)())Actor_SetSpeedParameters, gSequenceParentWork.currentOwner,
         0x19999, 0xcccc);
   Call3((void (*)())Actor_OffsetPositionAndResetMotion,
-        gAdventure.currentOwner, 0, 8);
-  Call3((void (*)())Actor_Jump, gAdventure.currentOwner, 4, 10);
+        gSequenceParentWork.currentOwner, 0, 8);
+  Call3((void (*)())Actor_Jump, gSequenceParentWork.currentOwner, 4, 10);
   Call3((void (*)())Actor_OffsetPositionAndResetMotion,
-        gAdventure.currentOwner, 0, 16);
-  Call3((void (*)())Actor_Jump, gAdventure.currentOwner, 6, 20);
+        gSequenceParentWork.currentOwner, 0, 16);
+  Call3((void (*)())Actor_Jump, gSequenceParentWork.currentOwner, 6, 20);
   Call1((void (*)())Func_0200446c, 53);
   Call2((void (*)())Actor_SetModeById, 11, 2);
   Call2((void (*)())Actor_SetModeById, 12, 2);
@@ -52,8 +52,8 @@ void Func_020005b0(void) {
   Call2((void (*)())Actor_SetModeById, 11, 4);
   Call2((void (*)())Actor_SetModeById, 12, 4);
   Call1((void (*)())FieldEvent_Wait, 60);
-  gAdventure.battleRule24b = 2;
+  gSequenceParentWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov6abRoom1, 20);
-  gAdventure.special = (s32)&SceneId_Ov66c;
+  gSequenceParentWork.special = (s32)&SceneId_Ov66c;
   Call2((void (*)())Func_020043e4, 102, 0);
 }

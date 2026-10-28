@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -182,7 +182,7 @@ static __inline__ struct Actor *Actor_Get(s32 id) {
 void Func_02002bcc(void) {
   Func_02003d50(134, 1);
   Task_Add(Func_02002b68, 0x480);
-  Func_02003d58(9, gAdventure.currentOwner);
+  Func_02003d58(9, gSequenceParentWork.currentOwner);
   Func_02003d70();
   Field_DispatchTypeHandler(1);
   Func_02003d60();

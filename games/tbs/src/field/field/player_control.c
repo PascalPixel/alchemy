@@ -96,19 +96,19 @@ s32 Field_CheckConfiguredKeys(void) {
 
   if (work == NULL)
     return 0;
-  if (gKeysPressed & gAdventure.selectKeys) {
+  if (gKeysPressed & gSequenceParentWork.selectKeys) {
     work->fieldMenu = 1;
     result = 1;
-  } else if (gKeysPressed & gAdventure.aKeys) {
+  } else if (gKeysPressed & gSequenceParentWork.aKeys) {
     work->aButton = 1;
     result = 1;
-  } else if (gKeysPressed & gAdventure.startKeys) {
+  } else if (gKeysPressed & gSequenceParentWork.startKeys) {
     work->pauseMenu = 1;
     result = 1;
-  } else if (gKeysPressed & gAdventure.firstShortcutKeys) {
-    result = Field_RequestShortcut(gAdventure.firstShortcut);
-  } else if (gKeysPressed & gAdventure.secondShortcutKeys) {
-    result = Field_RequestShortcut(gAdventure.secondShortcut);
+  } else if (gKeysPressed & gSequenceParentWork.firstShortcutKeys) {
+    result = Field_RequestShortcut(gSequenceParentWork.firstShortcut);
+  } else if (gKeysPressed & gSequenceParentWork.secondShortcutKeys) {
+    result = Field_RequestShortcut(gSequenceParentWork.secondShortcut);
   }
   return result;
 }
@@ -223,7 +223,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
   }
   // Walk, or run with the dash keys (animation 5 instead of 2); with
   // FLAG_FAST_WALK, B moves faster still.
-  if (gKeysHeld & gAdventure.dashKeys) {
+  if (gKeysHeld & gSequenceParentWork.dashKeys) {
     actor->speedLimit = FIELD_RUN_SPEED;
     actor->acceleration = FIELD_ACCELERATION;
     movementAnimation = 5;
@@ -429,7 +429,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
     s32 action;
 
     action = 9;
-    if (Unit_GetFar(gAdventure.leaderActorId)->hp == 0)
+    if (Unit_GetFar(gSequenceParentWork.leaderActorId)->hp == 0)
       action = 22;
     Actor_SelectAnimation(actor, action);
   } else {
@@ -568,7 +568,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
 #endif
   // Walk, or run with the dash keys. L, as it repeats, raises the limit
   // further; unlike the field's fast walk, no debug test or flag guards it.
-  if (gKeysHeld & gAdventure.dashKeys) {
+  if (gKeysHeld & gSequenceParentWork.dashKeys) {
     actor->speedLimit = WORLD_MAP_RUN_SPEED;
     actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
     movementAnimation = 5;

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_TurnToFaceEachOther(s32 id, s32 other, s32 mode);
@@ -34,7 +34,7 @@ void Func_02000308(void) {
   Func_02001d04(0);
   if (*(s16 *)(work + 0x166) == 0) {
     Func_02001c6c((s32)&MsgItHasBeen);
-    Actor_TurnToFaceEachOther(18, gAdventure.currentOwner, 2);
+    Actor_TurnToFaceEachOther(18, gSequenceParentWork.currentOwner, 2);
   } else {
     Func_02001c6c((s32)&MsgEveryoneSpoilsMe);
   }
@@ -60,7 +60,7 @@ void Func_02000398(void) {
   Func_02001d04(0);
   if (*(s16 *)(work + 0x166) == 0) {
     Func_02001c6c((s32)&MsgWeAreThe);
-    Actor_TurnToFaceEachOther(19, gAdventure.currentOwner, 2);
+    Actor_TurnToFaceEachOther(19, gSequenceParentWork.currentOwner, 2);
   } else {
     Func_02001c6c((s32)&MsgAreThereOther);
   }

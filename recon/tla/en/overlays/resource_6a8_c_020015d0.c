@@ -33,7 +33,7 @@ s32 Func_02004404();
 s32 Func_0200442c();
 s32 GameFlag_SetBit();
 s32 Func_0200446c();
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_020015d0(void) {
   s32 t12;
@@ -46,27 +46,27 @@ void Func_020015d0(void) {
 
   Func_02004464();
   Call1(Func_020045ec, 0);
-  Call3(Actor_SetSpeedParameters, FIELD_AT(gAdventure, s32, 532),
+  Call3(Actor_SetSpeedParameters, FIELD_AT(gSequenceParentWork, s32, 532),
         0x20000, 0x10000);
   Call3(Actor_SetSpeedParameters, 0x14, 0x20000, 0x10000);
   t4 = Value1(Actor_GetById, 0x14);
   FIELD_AT((t4 + 0x22), u8, 0) = 1;
   Call2(Actor_SetSpritePriority, 0x14, 3);
-  t6 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
+  t6 = Value1(Actor_GetById, FIELD_AT(gSequenceParentWork, s32, 532));
   FIELD_AT((t6 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t6 + 0x5a), u8, 0));
   /* FAKEMATCH: the barrier keeps the flag store ahead of the next call's
    * arguments; without it the store follows the first two (one reordered row).
    */
   asm volatile("");
-  Call3(Actor_SetPositionAndReset, FIELD_AT(gAdventure, s32, 532),
+  Call3(Actor_SetPositionAndReset, FIELD_AT(gSequenceParentWork, s32, 532),
         0x198, 0x146);
   Call1(FieldEvent_Wait, 1);
-  t9 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
+  t9 = Value1(Actor_GetById, FIELD_AT(gSequenceParentWork, s32, 532));
   FIELD_AT((t9 + 0x5a), u8, 0) = (FIELD_AT((t9 + 0x5a), u8, 0) | 1);
   /* FAKEMATCH: the barrier keeps the flag store ahead of the next call's
    * arguments; without it the store follows the first (one reordered row). */
   asm volatile("");
-  Call3(Actor_ArmCallback, FIELD_AT(gAdventure, s32, 532), 0xc000, 0);
+  Call3(Actor_ArmCallback, FIELD_AT(gSequenceParentWork, s32, 532), 0xc000, 0);
   Call1(Func_0200463c, 0xa1);
   t12 = Func_02004584();
   FIELD_AT(t12, s32, 12) = (FIELD_AT(t12, s32, 12) + 0x20000);
@@ -85,7 +85,7 @@ void Func_020015d0(void) {
   Call1(FieldEvent_Wait, 0x1e);
   Call1(Func_0200463c, 0x92);
   Call1(FieldEvent_Wait, 0x14);
-  Call3(Func_0200455c, FIELD_AT(gAdventure, s32, 532), 0x105, 0x28);
+  Call3(Func_0200455c, FIELD_AT(gSequenceParentWork, s32, 532), 0x105, 0x28);
   Call2(Actor_SetSpritePriority, 0x14, 2);
   t28 = Value1(Actor_GetById, 0x14);
   FIELD_AT((t28 + 0x23), u8, 0) = (1 | FIELD_AT((t28 + 0x23), u8, 0));

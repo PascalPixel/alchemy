@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "edition.h"
 
 void Event_NoOp(void) {}
@@ -68,5 +68,5 @@ void Func_080d2d08(struct CueObject *object, s32 cue) {
   Sound_PlayFar(cue);
 }
 
-void Func_080d2d70(void) { gAdventure.counter274++; }
+void Func_080d2d70(void) { gSequenceParentWork.counter274++; }
 #endif

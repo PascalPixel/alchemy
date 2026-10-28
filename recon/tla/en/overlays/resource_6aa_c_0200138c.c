@@ -69,7 +69,7 @@ extern u8 gData_0200586c[];
 extern u8 gData_0200587c[];
 extern u8 gData_020058a8[];
 extern u8 gData_020058d4[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern char SceneId_Ov6aaRoom1;
 extern char SceneId_Ov6aaRoom2;
 extern char SceneId_Ov6aaRoom3;
@@ -85,8 +85,8 @@ s32 Func_0200138c(void) {
   s32 t93, t96, t97, t98, t99, t100, t101, t102, t103, t104;
   s32 t105, t106, t107, t108, t109, t110, t111;
 
-  t0 = FIELD_AT((s32)gAdventure, s16, 480);
-  t1 = FIELD_AT((s32)gAdventure, s16, 482);
+  t0 = FIELD_AT((s32)gSequenceParentWork, s16, 480);
+  t1 = FIELD_AT((s32)gSequenceParentWork, s16, 482);
   *(s32 *)(s32)Data_02006878 = 0;
   t2 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t2, s32, 428) = 0x204;
@@ -188,7 +188,7 @@ L_020095b4:
   Call1((void (*)())Func_02004da0, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call3((void (*)())Func_02004c50, 0, 0x20000, 0x10000);
-  t48 = FIELD_AT((s32)gAdventure, s32, 532);
+  t48 = FIELD_AT((s32)gSequenceParentWork, s32, 532);
   Call3((void (*)())Func_02004cd8, t48, 0, 0);
   Call3((void (*)())Func_02004cd8, 18, 0, 0);
   t51 = Value1((s32 (*)())Actor_GetById, 18);

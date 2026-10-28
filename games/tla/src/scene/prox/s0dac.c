@@ -38,10 +38,10 @@ void Func_02000dac(void) {
   Call1(Func_020045ec, 0);
   Call2(Func_0200456c, 0xcccc, 0x1999);
   Call4(Camera_MoveWithinMapBounds, 0xa00000, -1, 0xa00000, 1);
-  Call3(Actor_SetSpeedParameters, gAdventure.currentOwner, 0xcccc,
+  Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0xcccc,
         0x6666);
-  Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 0x86, 0x9c);
-  Call2(Func_0200454c, gAdventure.currentOwner, 0xc000);
+  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 0x86, 0x9c);
+  Call2(Func_0200454c, gSequenceParentWork.currentOwner, 0xc000);
   Prox_Jump(0xb, 0x100, 0x14);
   Call2(Func_0200454c, 0xb, 0x5000);
   Call1(Func_0200451c, (s32)MsgProx75);
@@ -49,10 +49,10 @@ void Func_02000dac(void) {
   Prox_Jump(0xa, 0x100, 0);
   Call3(Actor_ArmCallback, 0xa, 0x8000, 0x28);
   Call2(Func_02004534, 0xa, 0);
-  Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 0x90, 0x9a);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
-  Call2(Func_020044dc, 0x12, gAdventure.currentOwner);
-  Call2(Func_020044dc, 0, gAdventure.currentOwner);
+  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 0x90, 0x9a);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
+  Call2(Func_020044dc, 0x12, gSequenceParentWork.currentOwner);
+  Call2(Func_020044dc, 0, gSequenceParentWork.currentOwner);
   Call1(wait, 1);
   Call3(Actor_ArmCallback, 0xe, 0xb000, 0);
   Call3(Actor_SetSpeedParameters, 0x12, 0xcccc, 0x6666);
@@ -91,7 +91,7 @@ void Func_02000dac(void) {
   Call3(Actor_ArmCallback, 0xf, 0xd000, 0);
   Call3(Actor_ArmCallback, 0x10, 0xd000, 0);
   Call3(Actor_ArmCallback, 0x11, 0xd000, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xe000, 0);
   Call2(Func_0200454c, 0x12, 0xb000);
   Call2(Func_02004534, 0x8012, 0);
   Call2(Actor_SetModeById, 0, 0);
@@ -101,7 +101,7 @@ void Func_02000dac(void) {
   Call2(Func_0200454c, 0, 0x2000);
   Call2(Actor_SetModeById, 0x12, 3);
   Call2(Func_02004534, 0x8012, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
   Call3(Actor_SetSpeedParameters, 0, 0xcccc, 0x6666);
   Call3(Actor_SetPositionAndReset, 0, 0xa0, 0x9a);
   Call3(Actor_ArmCallback, 0, 0xa000, 0);
@@ -113,7 +113,7 @@ void Func_02000dac(void) {
   Prox_Jump(0xa, 0x105, 0x3c);
   Prox_Jump(0, 0x109, 0x14);
   Call2(Func_02004534, 0xa000, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
   Call3(Actor_ArmCallback, 0x12, 0x8000, 0x28);
   Call2(Motion_SetModeAndWaitAnimation, 0, 4);
   Call2(Func_02004534, 0xa000, 0);
@@ -156,7 +156,7 @@ test_wait:
   Call2(Actor_SetModeById, 0x11, 4);
   Call2(Func_02004534, 0x11, 0);
   Call3(Actor_ArmCallback, 0, 0x6000, 0x14);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
   Call3(Actor_ArmCallback, 0x12, 0xb000, 0x14);
   Prox_Jump(0xb, 0x109, 0x28);
   Call2(Func_02004534, 0xb, 0);
@@ -177,10 +177,10 @@ test_wait:
   Call2(Func_02004534, 0xb, 0);
   Call2(Func_0200454c, 0, 0x8000);
   Prox_MessageOpen(0xa000, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
   result =
-      Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0);
-  owner = gAdventure.currentOwner;
+      Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0);
+  owner = gSequenceParentWork.currentOwner;
   if (result == 0) {
     Call1(Actor_WaitForAnimationChange, owner);
     Call2(Func_02004534, 0xa000, 0);
@@ -203,10 +203,10 @@ test_wait:
   Call2(Func_02004534, 0xa, 0);
   Call2(Actor_SetModeById, 0xb, 3);
   Call2(Func_02004534, 0xb, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
   Call3(Actor_ArmCallback, 0, 0xa000, 0);
   Call2(Func_0200454c, 0x12, 0xa000);
-  Call2(Actor_SetModeById, gAdventure.currentOwner, 3);
+  Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
   Call2(Actor_SetModeById, 0, 3);
   Call2(Motion_SetModeAndWaitAnimation, 0x12, 3);
   Call3(Actor_ArmCallback, 0xc, 0x8000, 0);
@@ -223,18 +223,18 @@ test_wait:
   Call2(Motion_SetModeAndWaitAnimation, 0x11, 3);
   Call2(Func_0200454c, 0x12, 0x8000);
   Call2(Func_02004534, 0x8012, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
   Call2(Func_0200454c, 0, 0);
-  Call2(Actor_SetModeById, gAdventure.currentOwner, 3);
+  Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
   Call2(Motion_SetModeAndWaitAnimation, 0, 3);
   Call2(Actor_SetMovementTypeById, 0, (s32)gData_02004a08);
   Call2(Actor_SetMovementTypeAndWaitById, 0x12, (s32)gData_02004a08);
-  Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 0xa0, 0x9a);
-  Call2(Func_0200454c, gAdventure.currentOwner, 0xc000);
+  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 0xa0, 0x9a);
+  Call2(Func_0200454c, gSequenceParentWork.currentOwner, 0xc000);
   Call2(Motion_SetVarCbAndRefresh, 0xa, 1);
   Call2(Func_02004534, 0xa, 0);
-  Prox_Jump(gAdventure.currentOwner, 0x101, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xe000, 0x14);
+  Prox_Jump(gSequenceParentWork.currentOwner, 0x101, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xe000, 0x14);
   Call2(Actor_SetModeById, 0xa, 4);
   Call2(Func_02004534, 0xa, 0);
   Prox_Jump(0xb, 0x100, 0x14);
@@ -244,7 +244,7 @@ test_wait:
   Call2(Motion_SetModeAndWaitAnimation, 0xa, 3);
   Call2(Func_0200454c, 0xa, 0x5000);
   Call2(Func_02004534, 0xa, 0);
-  Call2(Motion_SetModeAndWaitAnimation, gAdventure.currentOwner, 3);
+  Call2(Motion_SetModeAndWaitAnimation, gSequenceParentWork.currentOwner, 3);
   Call2(Func_0200454c, 0xb, 0x3000);
   Call2(Motion_SetModeAndWaitAnimation, 0xb, 3);
   Call2(Func_02004534, 0xb, 0);

@@ -12,7 +12,7 @@
 /// object; README.md gives the words and prefixes. Where to start:
 ///
 ///   Units           units.c: Unit_Get, Unit_Calculate,
-///   Adventure_InitializeDefaults Items           inventory.c:
+///   SequenceParentWork_InitializeDefaults Items           inventory.c:
 ///   Inventory_AddItem, Inventory_Equip,
 ///                   PartyInventory_Add
 ///   Levels          levels.c: Unit_RefreshPsynergy, Unit_LevelUp

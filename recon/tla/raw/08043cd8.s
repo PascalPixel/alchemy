@@ -691,7 +691,7 @@ Func_08043cd8:
 .L_08044224:
 	.4byte 0x00000e58
 .L_08044228:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0804422c:
 	.4byte gInput
 .L_08044230:
@@ -830,4 +830,4 @@ Func_08043cd8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_08044340:
-	.4byte gAdventure
+	.4byte gSequenceParentWork

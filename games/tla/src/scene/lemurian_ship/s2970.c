@@ -8,7 +8,7 @@ void Func_0200155c(void);
 void Func_02002970(void) {
   struct LemurianShipObject *object;
 
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
   Func_02002dc8(gData_0200304e);
   if (LemurianShip_FlagCheck(0x982)) {
     LemurianShip_MapCopy(4, 124, 31, 64, 3, 2);

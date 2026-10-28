@@ -1,10 +1,10 @@
 // Draft, differ 27 of 80: the scene start that sets the event work's 0x1ac
 // word to 0x100, the leader's bit 5 at 0x23, blending 0x3f42 and 0x80c, modes
-// 2 for objects 24 and 25 and, when the adventure's 0x1e2 halfword is 1 and
+// 2 for objects 24 and 25 and, when gSequenceParentWork's 0x1e2 halfword is 1 and
 // flag 0x200 is set, alpha 0x1000.
 // The blend value as one local set at its first store places it in r10 as the
 // native does (33 to 27). Left: the native gives BLDCNT's address r8 and
-// BLDALPHA's r7 (here the other way round), and loads gAdventure before the
+// BLDALPHA's r7 (here the other way round), and loads gSequenceParentWork before the
 // 0x100 store. Tried: register pointers in either order (47), BLDCNT pinned to
 // r8 (25, with its copies then reversed), u16 or volatile stores.
 #include "types.h"
@@ -21,7 +21,7 @@ s32 Actor_SetModeById();
 s32 Event_StartScreenTransition();
 s32 Func_020010f4();
 s32 GameFlag_Test();
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 s32 Func_0200012c(void) {
   s32 t0;
@@ -31,7 +31,7 @@ s32 Func_0200012c(void) {
   s32 blend;
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x100;
-  t0 = Value1(Actor_GetById, FIELD_AT(gAdventure, s32, 532));
+  t0 = Value1(Actor_GetById, FIELD_AT(gSequenceParentWork, s32, 532));
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
@@ -43,7 +43,7 @@ s32 Func_0200012c(void) {
   t4 = Value1(Actor_GetById, 0x19);
   FIELD_AT((t4 + 0x23), u8, 0) = 2;
   Event_StartScreenTransition();
-  if (FIELD_AT(gAdventure, s16, 482) == 1) {
+  if (FIELD_AT(gSequenceParentWork, s16, 482) == 1) {
     Func_020010f4();
     t7 = Value1(GameFlag_Test, 0x200);
     if (t7 != 0) {

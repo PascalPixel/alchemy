@@ -1,6 +1,6 @@
 // Near miss, differ 10 of 237 (2026-10-26): the twin of The Broken Seal's
 // FieldEffect_RunMercuryDjinnCapture, with The Lost Age's effect work
-// (Ram_HeapSlots->effectWork), leader (gAdventure.currentOwner), droplet
+// (Ram_HeapSlots->effectWork), leader (gSequenceParentWork.currentOwner), droplet
 // object 301, sprite slots from 80 and the cache slot byte at 16. Only
 // instruction order is left: after each store the native issues another
 // instruction before the next load (the afterimage setup, the position copy).
@@ -8,7 +8,7 @@
 #include "types.h"
 #include "actor_view.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 
 void BattleEffect_HalveDistanceToTarget(void);
@@ -149,9 +149,9 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
   wait(10);
-  Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById(gAdventure.currentOwner), 28);
+  Actor_SetMode(Actor_GetById(gSequenceParentWork.currentOwner), 28);
   wait(20);
 
   position.x = djinni->x;

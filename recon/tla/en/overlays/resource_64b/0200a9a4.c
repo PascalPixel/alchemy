@@ -5,7 +5,7 @@
 // again).
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 struct EventTransition {
@@ -67,8 +67,8 @@ void Func_020029a4(void) {
   object->scaleY = 0x13333;
   Camera_FollowActor(8, 1);
   wait(1);
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
   Actor_SetSpeedParameters_(8, 0x6666, 0x3333);

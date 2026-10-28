@@ -11,7 +11,7 @@
 #include "battle_system.h"
 #include "battle_type.h"
 #include "battle_work.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners) {
@@ -28,7 +28,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
     count = limit;
 
   for (index = 0; index < count; index++) {
-    s32 owner = gAdventure.activeOwners[index];
+    s32 owner = gSequenceParentWork.activeOwners[index];
 
     if (owners != 0)
       *owners++ = owner;

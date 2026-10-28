@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
@@ -15,7 +15,7 @@ void Func_02000150(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
   struct FieldEffect *party =
-      (struct FieldEffect *)Import_ActorGet(gAdventure.currentOwner);
+      (struct FieldEffect *)Import_ActorGet(gSequenceParentWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -561,7 +561,7 @@ void Func_020013f0(void) {
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 12, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -569,7 +569,7 @@ void Func_020013f0(void) {
   Call3((void (*)())Func_02002874, 12, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 5, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -577,7 +577,7 @@ void Func_020013f0(void) {
   Call3((void (*)())Func_02002874, 5, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 6, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(6, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

@@ -44,10 +44,10 @@ s32 Func_020001d4(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   Func_02002440(12, 1);
   Func_02002440(13, 1);
-  if (GameFlag_Test(0x109) == 0 && gAdventure.entrance == 12)
-    Func_02002468(gAdventure.currentOwner);
-  if (GameFlag_Test(0x109) == 0 && gAdventure.entrance == 13)
-    Func_02002468(gAdventure.currentOwner);
+  if (GameFlag_Test(0x109) == 0 && gSequenceParentWork.entrance == 12)
+    Func_02002468(gSequenceParentWork.currentOwner);
+  if (GameFlag_Test(0x109) == 0 && gSequenceParentWork.entrance == 13)
+    Func_02002468(gSequenceParentWork.currentOwner);
   return 0;
 }
 

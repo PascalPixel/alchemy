@@ -8,7 +8,7 @@
 // The native holds the drop prompt's address in r8 and recomputes the field
 // address from sl (226 * 2) at the retry path's two returns.
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "item.h"
 #include "text/msg_ids.h"
@@ -84,7 +84,7 @@ s32 Func_02000878(s32 item, s32 unused) {
       Unit_Calculate(member);
       owner = PartyInventory_Add(item);
       Func_02000dfc(83);
-      if (owner == gAdventure.currentOwner) {
+      if (owner == gSequenceParentWork.currentOwner) {
         Func_02000ccc(item, 2);
         FieldMessage_Show((s32)MsgItemReceived, 3);
       } else {
@@ -99,7 +99,7 @@ s32 Func_02000878(s32 item, s32 unused) {
     Func_02000dfc(83);
     Func_02000ccc(item, 2);
     FieldMessage_Show((s32)MsgItemReceived, 3);
-    if (owner != gAdventure.currentOwner) {
+    if (owner != gSequenceParentWork.currentOwner) {
       Func_02000ccc(item, 2);
       Func_02000ccc(owner, 1);
       FieldMessage_Show((s32)MsgItemReceived + 1, 1);

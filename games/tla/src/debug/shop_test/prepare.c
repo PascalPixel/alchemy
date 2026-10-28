@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "event_work.h"
 
 void Actor_SetModeById(s32 id, s32 mode);
@@ -16,7 +16,7 @@ s32 Func_02000688(void) {
    * before the screen effect is stored, as the native does; plain, 2
    * instructions differ in tla-en. */
   register s32 *effect asm("r3") = &work->screenEffect;
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
 
   asm volatile("" : "+r"(party));
   *effect = 256;

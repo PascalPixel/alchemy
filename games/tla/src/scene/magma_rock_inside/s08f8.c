@@ -19,7 +19,7 @@ void Func_0200075c(s32 value);
 void Func_02004ee0(s16 *cells);
 
 u8 *Func_020008f8(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene != (s32)&SceneId_Ov692Room1) {
     if (scene == (s32)&SceneId_Ov692Room2)
@@ -45,10 +45,10 @@ void Func_0200099c(void) {
   s16 scene;
 
   work = (u8 *)Ram_HeapSlots->eventWork;
-  /* FAKEMATCH: the native loads the event work before it addresses gAdventure;
+  /* FAKEMATCH: the native loads the event work before it addresses gSequenceParentWork;
    * without the barrier the scene offset is built first (differ 2). */
   __asm__("");
-  scene = gAdventure.scene;
+  scene = gSequenceParentWork.scene;
   if (scene == (s32)&SceneId_Ov692Room2)
     Func_02004ee0(gData_020054fc);
   else if (scene == (s32)&SceneId_Ov692Room3)

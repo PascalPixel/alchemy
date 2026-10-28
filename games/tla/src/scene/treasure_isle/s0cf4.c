@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "flag_call.h"
 #include "task.h"
 
@@ -40,7 +40,7 @@ s32 Func_02000cf4(void) {
 
   ((struct TreasureIsleEventWork *)Ram_HeapSlots->eventWork)->route = 0x204;
   Func_0200105c();
-  if (gAdventure.scene == (s32)&SceneId_Ov6afRoom1) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6afRoom1) {
     Flag_Set(0x300);
     Flag_Set(0x301);
     Flag_Set(0x302);
@@ -52,10 +52,10 @@ s32 Func_02000cf4(void) {
       PlaceObject(10, 0x1b80000, 0x1580000);
   }
   /* FAKEMATCH(barrier): an empty asm with a memory clobber before each later
-   * room test, so GCSE does not carry gAdventure's address from one test to
+   * room test, so GCSE does not carry gSequenceParentWork's address from one test to
    * the next; without this one, 27 of 241 instructions differ in tla-en. */
   __asm__("" : : : "memory");
-  if (gAdventure.scene == (s32)&SceneId_Ov6afRoom2) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6afRoom2) {
     Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x308))
@@ -74,7 +74,7 @@ s32 Func_02000cf4(void) {
   /* FAKEMATCH(barrier): as above; without it, 35 of 241 instructions differ in
    * tla-en. */
   __asm__("" : : : "memory");
-  if (gAdventure.scene == (s32)&SceneId_Ov6afRoom3) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6afRoom3) {
     Task_Add(Func_02000ba0, TASK_PASS_VBLANK);
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x309))
@@ -89,7 +89,7 @@ s32 Func_02000cf4(void) {
   /* FAKEMATCH(barrier): as above; without it, 39 of 241 instructions differ in
    * tla-en. */
   __asm__("" : : : "memory");
-  if (gAdventure.scene == (s32)&SceneId_Ov6afRoom4) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (Flag_IsSet(0x30d))
       PlaceObject(8, 0x2b80000, 0x2580000);
     /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it

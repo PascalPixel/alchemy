@@ -9,13 +9,13 @@ extern const u8 *const gData_02007e00[];
 const u8 *Func_02001890(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gAdventure.scene == (s32)&SceneId_Ov697Room1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov697Room1)
     return gData_02007e00[pattern & 7];
-  if (gAdventure.scene == (s32)&SceneId_Ov697Room3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov697Room3)
     return gData_02007cf8;
-  if (gAdventure.scene == (s32)&SceneId_Ov697Room4)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov697Room4)
     return gData_02007d40;
-  if (gAdventure.scene == (s32)&SceneId_Ov697Room2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov697Room2)
     return gData_02007d94;
   return gData_02007044;
 }

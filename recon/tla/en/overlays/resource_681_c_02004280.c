@@ -11,7 +11,7 @@
 // Data_0202de00 stays in r5 where the native loads it from the pool twice.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
@@ -47,17 +47,17 @@ void Func_02000aac(void);
 void Func_02000a60(void);
 
 s32 Func_02004280(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov681Room1) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov681Room1) {
     u8 *map = (u8 *)Ram_HeapSlots->mapWork;
 
-    if (gAdventure.entrance <= 4) {
+    if (gSequenceParentWork.entrance <= 4) {
       u8 *unit;
       s32 total;
       s32 *stage;
       s32 i;
 
       total = 0;
-      unit = Unit_Get(gAdventure.currentOwner);
+      unit = Unit_Get(gSequenceParentWork.currentOwner);
 
       for (i = 0; i <= 13; i++)
         total += unit[i];
@@ -86,7 +86,7 @@ s32 Func_02004280(void) {
         climber->collisionFlags = 1;
         GameFlag_SetBit(0x200);
       }
-    } else if (gAdventure.entrance > 8) {
+    } else if (gSequenceParentWork.entrance > 8) {
       u8 *layer;
 
       *(s32 *)(gData_020023c4 + 0x288) = 1;
@@ -110,8 +110,8 @@ s32 Func_02004280(void) {
       Iwram_CopyWords(Data_0202de00, gData_020053e4, 24);
       Func_02004de4(Data_0202de00);
     }
-  } else if (gAdventure.scene == (s32)&SceneId_Ov681Room2) {
-    switch (gAdventure.entrance) {
+  } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov681Room2) {
+    switch (gSequenceParentWork.entrance) {
     case 1:
     case 2:
     case 5:
@@ -131,8 +131,8 @@ s32 Func_02004280(void) {
       Func_02004274(101);
       break;
     }
-  } else if (gAdventure.scene == (s32)&SceneId_Ov681Room5) {
-    switch (gAdventure.entrance) {
+  } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov681Room5) {
+    switch (gSequenceParentWork.entrance) {
     case 1:
     case 3:
     case 5:

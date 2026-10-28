@@ -2,7 +2,7 @@
 #define TLA_SHAMAN_VILLAGE_H
 
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "game.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "flag_call.h"
 
 extern char SceneId_Ov69dRoom1;
@@ -34,9 +34,9 @@ void Func_08040e84(void) {
   GameFlag_SetBit(0x8aa);
   Inventory_AddItemFar(4, 457);
   {
-    struct Adventure *party = &gAdventure;
+    struct SequenceParentWork *party = &gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);
@@ -52,9 +52,9 @@ void Func_08040ed4(void) {
   GameFlag_SetBit(0x8a7);
   GameFlag_SetBit(0x8aa);
   {
-    struct Adventure *party = &gAdventure;
+    struct SequenceParentWork *party = &gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);
@@ -69,9 +69,9 @@ void Func_08040f14(void) {
   PartyInventory_AddFar(441);
   GameFlag_SetBit(0x97f);
   {
-    struct Adventure *party = &gAdventure;
+    struct SequenceParentWork *party = &gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

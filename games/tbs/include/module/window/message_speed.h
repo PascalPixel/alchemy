@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/// Adventure.messageSpeed, as the settings name it
+/// SequenceParentWork.messageSpeed, as the settings name it
 /// (MsgMessageSpeedSetting
 /// + speed): it indexes the speed tables below.
 enum MessageSpeed {

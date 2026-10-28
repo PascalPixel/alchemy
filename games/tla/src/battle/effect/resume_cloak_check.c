@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 void Task_Add(void (*func)(void), s32 priority);
 void FieldEffect_CheckCloakTile(void);
 
@@ -9,10 +9,10 @@ void FieldEffect_ResumeCloakCheck(void) {
   s8 *flag;
 
   /* FAKEMATCH: the one-pass block's end is a scheduling barrier: the native
-   * loads the adventure's address before it builds the offset 0x26d (one
+   * loads gSequenceParentWork's address before it builds the offset 0x26d (one
    * reordered row, differ 2 without). */
   do {
-    state = gAdventure;
+    state = gSequenceParentWork;
   } while (0);
   flag = (s8 *)state + 0x26d;
   if (*flag != 0)

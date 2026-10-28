@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "task.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -26,7 +26,7 @@ s32 Func_02002ec8(void) {
     /* FAKEMATCH: the party address pinned to r3 for the switch's read, apart
      * from case 4's; unpinned, gcse merges the two into r1 and 8 instructions
      * differ in tla-en. */
-    register struct Adventure *party asm("r3") = &gAdventure;
+    register struct SequenceParentWork *party asm("r3") = &gSequenceParentWork;
 
     entrance = party->entrance;
   }
@@ -35,7 +35,7 @@ s32 Func_02002ec8(void) {
     if (GameFlag_Test(0x109) == 0)
       Func_020031a8(1);
   case 4: {
-    struct Adventure *party = &gAdventure;
+    struct SequenceParentWork *party = &gSequenceParentWork;
 
     /* FAKEMATCH: a one-pass block after the party address loads the scene id
      * before the saved scene's offset; without it, 2 instructions differ in

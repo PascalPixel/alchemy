@@ -10,7 +10,7 @@
 // r7, which moves most rows.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -28,14 +28,14 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
 void Func_02000d48(struct Actor *shot) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   u8 *work = Ram_HeapSlots->eventWork;
   u8 *hit;
   s32 near;
 
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
-      gAdventure.renderMode == 5) {
+      gSequenceParentWork.renderMode == 5) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -53,7 +53,7 @@ void Func_02000d48(struct Actor *shot) {
   hit = (u8 *)shot + 0x62;
   if (*hit == 0) {
     near = 0;
-    if (gAdventure.renderMode == 2) {
+    if (gSequenceParentWork.renderMode == 2) {
       if (Func_02000d18(&leader->x, &shot->x) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         near = 1;
@@ -74,7 +74,7 @@ void Func_02000d48(struct Actor *shot) {
 
         *counter = value;
       }
-      gAdventure.renderMode = 0;
+      gSequenceParentWork.renderMode = 0;
       *hit = 1;
       ((u8 *)shot)[0x63] = 1;
     }

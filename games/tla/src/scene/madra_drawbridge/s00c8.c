@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "text/msg_ids.h"
 
@@ -57,7 +57,7 @@ void Func_020000c8(void) {
     if (FlagCheck(0x301) == 0) {
       Func_02000328(0x18000, 0x3000);
       Camera_MoveWithinMapBounds(0xa40000, -1, 0x1040000, 1);
-      ObjPlace(gAdventure.currentOwner, 158, 316);
+      ObjPlace(gSequenceParentWork.currentOwner, 158, 316);
     }
     Actor_GetById(8)->actionFlags &= ~1;
     Actor_GetById(9)->actionFlags &= ~1;
@@ -68,8 +68,8 @@ void Func_020000c8(void) {
     Actor_GetById(9)->actionFlags |= 1;
     ObjArm(8, 0x4000, 0);
     ObjArm(9, 0x4000, 0);
-    Actor_WaitForMoveById(gAdventure.currentOwner);
-    Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xc000, 0);
     FlagSet(0x200);
     Func_02000338();
     MapCopyAttr(11, 9, 4, 1, 8, 14);

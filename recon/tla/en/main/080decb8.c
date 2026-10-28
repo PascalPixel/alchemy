@@ -7,7 +7,7 @@
 // The task priority through a local set before the stores after the loop
 // (found by alchemy-devtools permute, tagged) gives the native's allocation: the
 // flicker count in r5, the 2 in r6. Left: four loads one row late after the
-// loop (the check literal, the adventure literal, the event work from the
+// loop (the check literal, gSequenceParentWork literal, the event work from the
 // stack, and the check copied to r0 for the call); a one-pass block round the
 // call and the party pointer, or the check set first, measured 12 and 56.
 // Tried: ☀️'s do/while with n reused as the zero after the loop, differ 59
@@ -15,7 +15,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "animspr.h"
 
@@ -91,7 +91,7 @@ void Func_080decb8(void) {
   sprite->dirty = 1;
   check = FieldEffect_CheckCloakTile;
   Task_Add(check, order);
-  gAdventure.cloaked = 1;
+  gSequenceParentWork.cloaked = 1;
   check();
   if (event->psynergyRequest == CLOAK_END) {
     Func_080debd8();

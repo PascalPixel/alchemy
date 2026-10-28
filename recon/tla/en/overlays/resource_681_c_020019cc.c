@@ -4,7 +4,7 @@
 #include "types.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "system/io_reg.h"
 #include "text/msg_ids.h"
 
@@ -37,46 +37,46 @@ void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 s32 Func_02004e64(void);
 
 s32 Func_020019cc(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   volatile u16 level;
   s32 message = (s32)MsgGaiaRockInside09;
 
   Func_02004e5c();
   Call1((void (*)())Func_02004fcc, 0);
   Call2((void (*)())FieldMessage_Show, message, 1);
-  Call3((void (*)())Func_02004f2c, gAdventure.currentOwner, 0x100, 0);
+  Call3((void (*)())Func_02004f2c, gSequenceParentWork.currentOwner, 0x100, 0);
   if (leader->z >> 19 <= 39) {
     Call3((void (*)())Actor_ResetAndSetPositionInMode2,
-          gAdventure.currentOwner, 0x1b8, 0x148);
-    Actor_WaitForMoveById(gAdventure.currentOwner);
+          gSequenceParentWork.currentOwner, 0x1b8, 0x148);
+    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
   }
-  Call2((void (*)())Func_02004ec4, 11, gAdventure.currentOwner);
+  Call2((void (*)())Func_02004ec4, 11, gSequenceParentWork.currentOwner);
   Call3((void (*)())Actor_ResetAndSetPositionInMode2,
-        gAdventure.currentOwner, 0x1d6, 0x162);
+        gSequenceParentWork.currentOwner, 0x1d6, 0x162);
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, 11, 0x1be, 0x162);
-  Actor_WaitForMoveById(gAdventure.currentOwner);
+  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
   Call1((void (*)())Actor_WaitForMoveById, 11);
-  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0xc000,
+  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000,
         0);
   Call3((void (*)())Actor_ArmCallback, 11, 0, 0);
   Func_02004f0c(message + 1);
   Call2((void (*)())Func_02004f14, 11, 0);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0x8000,
+  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x8000,
         0);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, gAdventure.currentOwner,
+  Call2((void (*)())Motion_SetModeAndWaitAnimation, gSequenceParentWork.currentOwner,
         3);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 11, 3);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0xc000,
+  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000,
         0);
   Call3((void (*)())Actor_ArmCallback, 11, 0xc000, 0);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_ResetAndSetPositionInMode2,
-        gAdventure.currentOwner, 0x1d2, 0x156);
-  Actor_WaitForMoveById(gAdventure.currentOwner);
+        gSequenceParentWork.currentOwner, 0x1d2, 0x156);
+  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
   Call2((void (*)())FieldMessage_Show, message + 2, 1);
   Call3((void (*)())Func_02004e24, 0x50000, 0x70000, 0x10000);
   Call3((void (*)())Func_02004e24, -1, -1, 0xe666);
@@ -110,7 +110,7 @@ s32 Func_020019cc(void) {
   Call1((void (*)())GameFlag_SetBit, 0x9ba);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 11, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Call3((void (*)())Actor_ResetAndSetPosition, 11,
           ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);

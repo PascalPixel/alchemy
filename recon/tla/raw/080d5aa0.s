@@ -155,7 +155,7 @@ Func_080d5aa0:
 .L_080d5bd4:
 	.4byte 0x00000000
 .L_080d5bd8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080d5bdc:
 	.4byte gInput
 .L_080d5be0:

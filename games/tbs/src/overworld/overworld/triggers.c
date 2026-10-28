@@ -117,7 +117,8 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
   struct TriggerView *trigger = (struct TriggerView *)work->triggers;
   s32 flags;
-  u32 facing = ((struct Actor *)Actor_Lookup(gAdventure.leaderActorId))->facing;
+  u32 facing =
+      ((struct Actor *)Actor_Lookup(gSequenceParentWork.leaderActorId))->facing;
 
   flags = trigger->flags;
   // Preserve the full control word: direction and push-delay bits refine kind.
@@ -174,16 +175,16 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk trigger of actor id, or 0: for the actor
 /// stopped with Halt
-/// (gAdventure.haltedActor), its TRIGGER_TALK_HALTED event if it has one,
-/// the event for talking to it while it is stopped (Crossbone Isle's Bane has
-/// one).
+/// (gSequenceParentWork.haltedActor), its TRIGGER_TALK_HALTED event if it has
+/// one, the event for talking to it while it is stopped (Crossbone Isle's Bane
+/// has one).
 ///
 /// Called by SceneSequence_Run for the A button, to choose between talking and
 /// searching, and by the field Psynergy dispatch, which Halts only an
 /// actor with a talk trigger; both test the result only for non-zero.
 s32 Scene_FindActorTalkTrigger(s32 id) {
   struct TriggerView *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
-  s32 pausedActorId = gAdventure.haltedActor;
+  s32 pausedActorId = gSequenceParentWork.haltedActor;
 
   if (pausedActorId == id) {
     struct TriggerView *pausedTrigger =
@@ -205,7 +206,7 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 /// stood in for it; SceneSequence_Run ignores the result.
 ///
 /// Called by SceneSequence_Run for its talk request (work->talk). Resumes
-/// the stopped actor and sets gAdventure.haltedActor back to -1
+/// the stopped actor and sets gSequenceParentWork.haltedActor back to -1
 /// afterwards.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement = Scene_FindActorPlacement(id);
@@ -217,7 +218,7 @@ s32 Scene_TalkToActor(s32 id) {
   u32 talkFacing;
   s32 usePausedDialogue = 0;
 
-  if (gAdventure.haltedActor == id) {
+  if (gSequenceParentWork.haltedActor == id) {
     actorPaused = 1;
     trigger = Scene_FindTrigger(7, id);
     if (trigger == 0) {
@@ -256,13 +257,13 @@ s32 Scene_TalkToActor(s32 id) {
       savedAngle = actor->facing;
       talkFacing = (u8)placement->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
-        struct Actor *leader = Actor_GetById(gAdventure.leaderActorId);
+        struct Actor *leader = Actor_GetById(gSequenceParentWork.leaderActorId);
 
         leader->targetX = leader->x.fixed;
         leader->targetY = leader->y.fixed;
         leader->targetZ = leader->z.fixed;
         SET_VELOCITY(leader, 0, 0, 0);
-        Actor_TurnToFaceEachOther(id, gAdventure.leaderActorId, 0);
+        Actor_TurnToFaceEachOther(id, gSequenceParentWork.leaderActorId, 0);
       }
     }
     // A result below 0x10000 is a message; above, a function to call.
@@ -281,7 +282,8 @@ s32 Scene_TalkToActor(s32 id) {
       // talk facing says: following the leader (3) or its old angle (1).
       if (actor->script[actor->scriptCursor] == 16) {
         if ((s8)placement->talkFacing == 3) {
-          actor->watchedActor = Actor_GetById(gAdventure.leaderActorId);
+          actor->watchedActor =
+              Actor_GetById(gSequenceParentWork.leaderActorId);
           actor->steeringFlags |= 1;
           Actor_SetMovementType(actor, (s32)gActor_FaceWatchedScript);
         } else if ((s8)placement->talkFacing == 1) {
@@ -298,8 +300,8 @@ finish:
   // Both a normal event and the paused actor's fallback line release
   // the pause.
   if (actorPaused) {
-    FieldPsynergy_ResumeHaltedActor(gAdventure.haltedActor);
-    gAdventure.haltedActor = -1;
+    FieldPsynergy_ResumeHaltedActor(gSequenceParentWork.haltedActor);
+    gSequenceParentWork.haltedActor = -1;
   }
   return result;
 }
@@ -401,7 +403,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// CELL_BEHAVIOR_JUMP_FORWARD. Clears work->blockedSteps when it acts.
 s32 Field_RunPushCell(s32 behavior) {
   struct FieldWork *work = gFieldWork;
-  s32 leader = gAdventure.leaderActorId;
+  s32 leader = gSequenceParentWork.leaderActorId;
 
   switch (behavior) {
   case CELL_BEHAVIOR_LEDGE:
@@ -449,7 +451,7 @@ s32 Field_ExamineCell(s32 tile) {
   s32 rewardType;
   s32 canOpen;
 
-  leader = gAdventure.leaderActorId;
+  leader = gSequenceParentWork.leaderActorId;
   // Each fixed spot has its own pair of lines, chosen through
   // gField_ExamineTriggerMessageOffsets; the unsigned compare also rejects
   // codes below CELL_BEHAVIOR_JAR.
@@ -489,7 +491,7 @@ s32 Field_ExamineCell(s32 tile) {
         if ((searchResult & 0x0f000000) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
-            ((void (*)(s32))trigger->value)(gAdventure.leaderActorId);
+            ((void (*)(s32))trigger->value)(gSequenceParentWork.leaderActorId);
           if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0)
             FieldMessage_ShowFar(MsgTileResult + messageOffset,
                                  FIELD_MESSAGE_ZOOM);
@@ -552,7 +554,8 @@ s32 Field_ExamineCell(s32 tile) {
               // which SceneSequence_Run resolves when the scene is entered
               // again after the battle.
               if (condition != -1) {
-                condition = gAdventure.pendingDjinni = condition | 0x1000;
+                condition = gSequenceParentWork.pendingDjinni =
+                    condition | 0x1000;
               }
               // BATTLE_TYPE_NO_ESCAPE (battle/battle/turn.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
@@ -563,14 +566,14 @@ s32 Field_ExamineCell(s32 tile) {
               Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)trigger->value);
-              Sound_PlayFar(gAdventure.battleMusic);
+              Sound_PlayFar(gSequenceParentWork.battleMusic);
               FieldMessage_ShowFar(MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
               void *object;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gAdventure.leaderActorId, 0);
+                  gSequenceParentWork.leaderActorId, 0);
               wait(30);
               if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_ShowOpened(tile);
@@ -591,7 +594,7 @@ s32 Field_ExamineCell(s32 tile) {
               s32 recipient;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gAdventure.leaderActorId, trigger->value & 0xfff);
+                  gSequenceParentWork.leaderActorId, trigger->value & 0xfff);
               wait(30);
               recipient = PartyInventory_AddFar((u16)trigger->value);
               // messageOffset is reused here as the item id's 0xffff mask.
@@ -611,7 +614,7 @@ s32 Field_ExamineCell(s32 tile) {
                 Sound_PlayFar(MUS_TREASURE_FOUND);
                 MessageArgument_PushFar(trigger->value & messageOffset,
                                         MESSAGE_ARGUMENT_ITEM);
-                if (recipient == gAdventure.leaderActorId) {
+                if (recipient == gSequenceParentWork.leaderActorId) {
                   FieldMessage_ShowFar(MsgColossoIsaacGotItem,
                                        FIELD_MESSAGE_ZOOM |
                                            FIELD_MESSAGE_WAITING_FOR_SOUND);

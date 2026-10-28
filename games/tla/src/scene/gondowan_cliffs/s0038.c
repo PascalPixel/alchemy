@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 
 extern const u8 gData_02001698[];
@@ -28,7 +28,7 @@ s32 Func_02000038(struct Actor *object) {
 void Func_02000058(void) { Func_020012c4(21, 49); }
 
 const u8 *Func_02000064(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov66bRoom2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov66bRoom2)
     return gData_02001728;
   return gData_02001698;
 }

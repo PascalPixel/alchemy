@@ -349,7 +349,7 @@ Func_080ce61c:
 .L_080ce900:
 	.4byte 0x00000dbb
 .L_080ce904:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080ce908:
 	.4byte 0x00000dbd
 .L_080ce90c:

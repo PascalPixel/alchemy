@@ -6,7 +6,7 @@
 #include "types.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
@@ -113,7 +113,7 @@ s32 Func_02000a34(s32 value) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 452)++;
     Call3((void (*)())Func_0200351c, 8, 0, 5);
   }
-  Call3((void (*)())Actor_ArmCallback, gAdventure.currentOwner, 0x2000,
+  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x2000,
         0);
   Call2((void (*)())Func_02003534, 8, 0x5000);
   Call1((void (*)())FieldEvent_Wait, 10);
@@ -145,15 +145,15 @@ s32 Func_02000a34(s32 value) {
     Call3((void (*)())Func_02000734, dim, bright, 48);
     Call1((void (*)())FieldEvent_Wait, 10);
   }
-  object = Actor_GetById(gAdventure.currentOwner);
+  object = Actor_GetById(gSequenceParentWork.currentOwner);
   object->actionFlags &= ~1;
   Call3((void (*)())Actor_CommitPositionAndActivate,
-        gAdventure.currentOwner, 12, 12);
+        gSequenceParentWork.currentOwner, 12, 12);
   Call1((void (*)())FieldEvent_Wait, 1);
-  Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
-  Call2((void (*)())Func_02003534, gAdventure.currentOwner, 0x2000);
+  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags |= 1;
+  Call2((void (*)())Func_02003534, gSequenceParentWork.currentOwner, 0x2000);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Actor_SetModeById, gAdventure.currentOwner, 22);
+  Call2((void (*)())Actor_SetModeById, gSequenceParentWork.currentOwner, 22);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Actor_SetModeById, 8, 7);
   Call1((void (*)())FieldEvent_Wait, 60);
@@ -163,9 +163,9 @@ s32 Func_02000a34(s32 value) {
   Call1((void (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Func_0200362c, 220);
   Call3((void (*)())Func_02000734, bright, dim, 48);
-  Call2((void (*)())Actor_StartRepeatedMotion, gAdventure.currentOwner,
+  Call2((void (*)())Actor_StartRepeatedMotion, gSequenceParentWork.currentOwner,
         3);
-  Call2((void (*)())Func_0200354c, gAdventure.currentOwner, 0x102);
+  Call2((void (*)())Func_0200354c, gSequenceParentWork.currentOwner, 0x102);
   Call1((void (*)())FieldEvent_Wait, 50);
   Call3((void (*)())Func_02003544, 8, 0x101, 60);
   Call2((void (*)())Func_0200360c, 16, 0x1090);

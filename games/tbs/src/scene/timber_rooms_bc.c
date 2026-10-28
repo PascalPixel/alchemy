@@ -38,7 +38,7 @@
 /// barrel holds a Lucky Medal.
 
 #include "script_operands.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/timber_rooms_bc.h"
@@ -224,7 +224,7 @@ const struct SceneEntrance *TimberRoomsBC_GetEntrances(void) {
 }
 
 const struct SceneExitRegion *TimberRoomsBC_GetRegions(void) {
-  if (gAdventure.sceneId == (s32)&SceneId_TimberRoomsB) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TimberRoomsB) {
     return gTimberRoomsB_Regions;
   }
   return gTimberRoomsC_Regions;
@@ -234,7 +234,7 @@ const u32 *TimberRoomsBC_GetExits(void) { return gTimberRoomsBC_Exits; }
 
 /// The people of each scene; Faran's house fills up after Venus Lighthouse.
 const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
-  if (gAdventure.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_ActorPlacementsAfterLighthouse;
@@ -418,7 +418,7 @@ static void TimberRoomsBC_LeaveBuilding(void) {
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
 const struct Trigger *TimberRoomsBC_GetTriggers(void) {
-  if (gAdventure.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TimberRoomsC) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gTimberRoomsC_TriggersAfterLighthouse;
     }
@@ -842,12 +842,12 @@ s32 Scene_Initialize(void) {
   s16 entrance;
   struct Actor *actor;
 
-  if (gAdventure.entrance == ENTRANCE_FROM_AERIE) {
+  if (gSequenceParentWork.entrance == ENTRANCE_FROM_AERIE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  sceneId = gAdventure.sceneId;
+  sceneId = gSequenceParentWork.sceneId;
   if (sceneId == (s32)&SceneId_TimberRoomsB) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (ACTOR_NEAR_TALK) so that the leader reaches it across the
@@ -865,13 +865,13 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     actor->sprite->image.priority = 2;
     Import_ActorSetAnimation(ACTOR_NAPPING_WORKER, ANIM_WORKER_LIE_ASLEEP);
-    entrance = gAdventure.entrance;
+    entrance = gSequenceParentWork.entrance;
     if (entrance == TIMBER_ROOMS_B_SANCTUM) {
-      gAdventure.restartScene = sceneId;
-      gAdventure.restartEntrance = entrance;
+      gSequenceParentWork.restartScene = sceneId;
+      gSequenceParentWork.restartEntrance = entrance;
     }
   }
-  if (gAdventure.sceneId == (s32)&SceneId_TimberRoomsC) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_TimberRoomsC) {
     actor = Actor_GetById(ACTOR_INNKEEPER);
     actor->collisionFlags |= ACTOR_NEAR_TALK;
     actor->priorityFlags = 0;
@@ -879,7 +879,8 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
       Actor_SetScript(ACTOR_INN_WORKER, gTimberRoomsBC_InnWorkerChores);
     }
-    if (gAdventure.entrance == TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
+    if (gSequenceParentWork.entrance ==
+        TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE) {
       TimberRoomsBC_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later actor
       // placements do.
@@ -887,7 +888,7 @@ s32 Scene_Initialize(void) {
                             MOVEMENT_TYPE_FACE_LEADER);
       Actor_SetMovementType(Actor_GetById(ACTOR_FARAN),
                             MOVEMENT_TYPE_FACE_LEADER);
-      gAdventure.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
+      gSequenceParentWork.entrance = TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST;
     }
   }
   return 0;

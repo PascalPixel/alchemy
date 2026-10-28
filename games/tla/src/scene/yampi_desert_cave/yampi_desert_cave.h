@@ -2,7 +2,7 @@
 #define TLA_YAMPI_DESERT_CAVE_H
 
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 extern char SceneId_Ov662Room1;

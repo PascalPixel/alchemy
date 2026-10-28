@@ -993,7 +993,7 @@ Func_081b83c4:
 .L_081b8bec:
 	.4byte 0x00000d69
 .L_081b8bf0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_081b8bf4:
 	.4byte 0x00000d77
 .L_081b8bf8:
@@ -2185,7 +2185,7 @@ Func_081b83c4:
 .L_081b950c:
 	.4byte 0x00000d77
 .L_081b9510:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_081b9514:
 	.4byte 0x00000d7c
 .L_081b9518:
@@ -4003,4 +4003,4 @@ Func_081b83c4:
 .L_081ba304:
 	.4byte 0x05000200
 .L_081ba308:
-	.4byte gAdventure
+	.4byte gSequenceParentWork

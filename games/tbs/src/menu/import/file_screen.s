@@ -38,7 +38,7 @@
 	.set import.Link_DrawPageArrows, 1
 	.set import.Unit_Get, 1
 	.set import.Item_GetDirect, 1
-	.set import.Adventure_InitializeDefaults, 1
+	.set import.SequenceParentWork_InitializeDefaults, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1
 	.set import.GameFlag_Clear, 1

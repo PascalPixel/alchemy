@@ -43,7 +43,7 @@ s32 Party_SetFields1f2And1f4();
 s32 GameFlag_ClearBit();
 s32 Func_0200593c();
 extern u8 MsgAlhafra19[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern u8 MsgShield[];
 
 static __inline__ void W_020058fc(s32 a, s32 b, s32 c) {
@@ -183,10 +183,10 @@ void Func_020016e8(void) {
   t81 = Value1(Actor_GetById, 0x1c);
   FIELD_AT(t81, s32, 40) = 0x40000;
   Call1(FieldEvent_Wait, 4);
-  if (FIELD_AT(gAdventure, s16, 598) == -1) {
+  if (FIELD_AT(gSequenceParentWork, s16, 598) == -1) {
     Call2(Unit_AddHp, 4, -10);
   }
-  FIELD_AT(gAdventure, u8, 587) = 2;
+  FIELD_AT(gSequenceParentWork, u8, 587) = 2;
   Call2(Party_SetFields1eeAnd1f0, (s32)MsgShield, 0xc);
   Call2(Party_SetFields1f2And1f4, (s32)MsgShield, 0xd);
   Call1(GameFlag_ClearBit, 0x11b);

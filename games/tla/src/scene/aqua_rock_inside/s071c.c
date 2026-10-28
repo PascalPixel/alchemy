@@ -5,7 +5,7 @@ void Func_0200071c(void) {
 
   Func_02003d7c();
   Func_02003eac(0);
-  Actor_ArmCallback_(gAdventure.currentOwner, 0x4000, 0);
+  Actor_ArmCallback_(gSequenceParentWork.currentOwner, 0x4000, 0);
   Func_02003ef4(0x22d);
   priority = 0x480;
   Task_Add(Func_020006d0, priority);

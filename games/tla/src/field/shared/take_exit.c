@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_tables.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -36,7 +36,7 @@ void Scene_TakeExit(s32 exitKind) {
   s32 kind;
   s32 flag;
 
-  currentScene = gAdventure.scene;
+  currentScene = gSequenceParentWork.scene;
   exitTable = gOverlayArea.exits();
   nextScene = EXIT_NONE;
   nextEntrance = 0;
@@ -86,7 +86,7 @@ void Scene_TakeExit(s32 exitKind) {
 
   // Commit the chosen exit only after a matching scene header was found.
   if (nextScene != EXIT_NONE) {
-    gAdventure.scene = nextScene;
-    gAdventure.entrance = nextEntrance;
+    gSequenceParentWork.scene = nextScene;
+    gSequenceParentWork.entrance = nextEntrance;
   }
 }

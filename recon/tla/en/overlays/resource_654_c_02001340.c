@@ -15,7 +15,7 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   u32 n;
   u32 i;
 
-  Func_02003ab0(gAdventure.currentOwner, 258);
+  Func_02003ab0(gSequenceParentWork.currentOwner, 258);
   Func_02003b48(210);
   object->motionFlags = 0;
   for (n = 0; n <= 1; n++) {
@@ -40,6 +40,6 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
   gData_02004a18[0] = other->x - object->x;
   gData_02004a18[1] = other->y - object->y;
   gData_02004a18[2] = other->z - object->z;
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
 }

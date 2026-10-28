@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -15,7 +15,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
 
 void Func_080cdd80(void) {
   s32 position[3];
-  struct Actor *owner = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *owner = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *target;
   s32 terrain;
   s32 result;

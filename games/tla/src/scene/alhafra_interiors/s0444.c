@@ -11,11 +11,11 @@ s32 Actor_TurnToFaceEachOther();
 s32 Func_02000b24();
 s32 Func_02000b3c();
 s32 Actor_ArmCallback();
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern u8 MsgAlhafraInteriors08[];
 
 void Func_02000444(s32 a0) {
-  Call3(Actor_TurnToFaceEachOther, a0, FIELD_AT(gAdventure, s32, 532), 0);
+  Call3(Actor_TurnToFaceEachOther, a0, FIELD_AT(gSequenceParentWork, s32, 532), 0);
   Call1(Func_02000b24, (s32)MsgAlhafraInteriors08);
   Call2(Func_02000b3c, a0, 0);
   Call3(Actor_ArmCallback, 0xe, 0x3000, 0);

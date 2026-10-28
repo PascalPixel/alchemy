@@ -20,11 +20,11 @@
 ///   the Mystic Draught behind the wall the puzzle opens.
 ///
 /// The rooms share one entrance table and one exit table, and the other
-/// getters choose by gAdventure.sceneId. AltmillerCave_Initialize sends
-/// an entry from outside the cave (entrance 0) to the room's first entrance,
-/// darkens the dark rooms and puts back what the party has done. Saving Babi
-/// (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on; the
-/// overlay's own state is in scene temp flags and gSceneLocalState, so it
+/// getters choose by gSequenceParentWork.sceneId. AltmillerCave_Initialize
+/// sends an entry from outside the cave (entrance 0) to the room's first
+/// entrance, darkens the dark rooms and puts back what the party has done.
+/// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
+/// the overlay's own state is in scene temp flags and gSceneLocalState, so it
 /// starts over on every ordinary arrival.
 ///
 /// Every room but the two lit ones is dark (FLAG_ALTMILLER_CAVE_DARK): BG1 is
@@ -52,7 +52,7 @@
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "version.h"
 #include "heap_slots.h"
 #include "module/import.h"
@@ -310,7 +310,7 @@ const struct SceneExitRegion *AltmillerCave_GetRegions(void) { return NULL; }
 const u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
 
 const struct ActorPlacement *AltmillerCave_GetActorPlacements(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
     return gAltmillerCave_BabiActorPlacements;
@@ -469,12 +469,12 @@ static void AltmillerCave_InitializeDarkness(void) {
 /// Reveal's light: AltmillerCaveEntrance is lit and AltmillerCaveDraught's
 /// rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
-  if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
     s32 alpha = BLEND_ALPHA(0, 16);
 
     REG_BLDALPHA = alpha;
   }
-  if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     Actor_ConfigureSpriteColor(ACTOR_BLUE_ROCK, COLOR_BLUE);
     Actor_ConfigureSpriteColor(ACTOR_GREEN_ROCK, COLOR_GREEN);
     Actor_ConfigureSpriteColor(ACTOR_WHITE_ROCK, COLOR_WHITE);
@@ -493,7 +493,7 @@ static void AltmillerCave_EndReveal(void) {
     AltmillerCave_InitializeDarkness();
     effectWork->childOption = 1;
   }
-  if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     Actor_ConfigureSpriteColor(ACTOR_BLUE_ROCK, COLOR_NONE);
     Actor_ConfigureSpriteColor(ACTOR_GREEN_ROCK, COLOR_NONE);
     Actor_ConfigureSpriteColor(ACTOR_WHITE_ROCK, COLOR_NONE);
@@ -588,7 +588,7 @@ static void AltmillerCave_FreezePuddle(void) {
 /// Walking into AltmillerCaveSquall's puddle while it is not frozen: the leader
 /// hops 32 pixels over it, if the landing is clear.
 static void AltmillerCave_HopSelectedActor(void) {
-  struct Actor *actor = Actor_GetById(gAdventure.leaderActorId);
+  struct Actor *actor = Actor_GetById(gSequenceParentWork.leaderActorId);
   s32 motionFlags = actor->motionFlags;
   union {
     struct FieldPosition position;
@@ -2006,7 +2006,7 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
 }
 
 const struct Trigger *AltmillerCave_GetTriggers(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_AltmillerCaveBabi) {
     return gAltmillerCave_BabiTriggers;
@@ -2054,43 +2054,47 @@ s32 AltmillerCave_Initialize(void) {
   struct Actor *actor;
   s32 i;
 
-  if (gAdventure.entrance == 0) {
-    if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
-      gAdventure.entrance = ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
+  if (gSequenceParentWork.entrance == 0) {
+    if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
+      gSequenceParentWork.entrance =
+          ALTMILLER_CAVE_BABI_FROM_ALTMILLER_CAVE_ENTRANCE;
     }
-    if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
-      gAdventure.entrance = ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
+    if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveVialChest) {
+      gSequenceParentWork.entrance =
+          ALTMILLER_CAVE_VIAL_CHEST_FROM_ALTMILLER_CAVE_BABI;
     }
-    if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
-      gAdventure.entrance =
+    if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
+      gSequenceParentWork.entrance =
           ALTMILLER_CAVE_SQUALL_FROM_ALTMILLER_CAVE_VIAL_CHEST;
     }
-    if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
-      gAdventure.entrance =
+    if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveCookieChest) {
+      gSequenceParentWork.entrance =
           ALTMILLER_CAVE_COOKIE_CHEST_FROM_ALTMILLER_CAVE_SQUALL;
     }
-    if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
-      gAdventure.entrance =
+    if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+      gSequenceParentWork.entrance =
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
   GameFlag_Set(FLAG_ALTMILLER_CAVE_DARK);
   Event_ClearFlag(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
-  if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
-    if (gAdventure.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveEntrance) {
+    if (gSequenceParentWork.entrance ==
+        ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gSceneLocalState + 4) = 0;
       }
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
-    if (gAdventure.entrance == ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
+    if (gSequenceParentWork.entrance ==
+        ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gSceneLocalState + 4) = 5;
       }
       GameFlag_Set(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS);
     }
   }
-  if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveBabi) {
     if (GameFlag_Get(FLAG_BABI_SAVED)) {
       Import_ActorSetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     } else {
@@ -2101,7 +2105,7 @@ s32 AltmillerCave_Initialize(void) {
     }
   }
   // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
-  if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveSquall) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
@@ -2120,7 +2124,7 @@ s32 AltmillerCave_Initialize(void) {
 #endif
   }
   // Rebuild the final rock puzzle from its saved phase and chosen light.
-  if (gAdventure.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_AltmillerCaveDraught) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the update routines are stored through an s32 view of update, which
@@ -2143,7 +2147,8 @@ s32 AltmillerCave_Initialize(void) {
 #endif
     // Coming up to the rocks (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE)
     // starts the puzzle over, with the red light first.
-    if (gAdventure.entrance == ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
+    if (gSequenceParentWork.entrance ==
+        ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
       Dma_Fill32(0, gAltmillerCave_LightWheel, 12);
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         u8 *puzzleState = gSceneLocalState;

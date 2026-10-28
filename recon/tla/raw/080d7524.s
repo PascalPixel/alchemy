@@ -276,7 +276,7 @@ Func_080d7524:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080d7770:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080d7774:
 	.4byte FieldEffect_AdvanceSpinAngle
 .L_080d7778:

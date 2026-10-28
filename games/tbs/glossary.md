@@ -196,8 +196,9 @@ Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 
 The loop that runs one [sequence](#sequence) after another for as long as the
 console is on, `SequenceParent_Run`. Each pass reads one id from the
-[adventure](#adventure) and runs one thing: a [scene](#scene), any row of the
-scene table, the Title and the File Screen included, which the
+[sequence parent's work](#sequence-parents-work) and runs one
+thing: a [scene](#scene), any row of the scene table, the Title and the File
+Screen included, which the
 [scene sequence](#scene-sequence) runs until the party takes an exit; or the
 battle, dice or slots sequence. In each transition it tears down what the last
 sequence set up (its tasks, its interrupt handlers, the heap) and starts the
@@ -223,21 +224,28 @@ whole game's code.
 ### Transition and next sequence
 
 The handover from one sequence to the next. A sequence that ends names the
-next sequence in the [adventure](#adventure), and the sequence parent starts it
+next sequence in the [sequence parent's work](#sequence-parents-work), and the
+sequence parent starts it
 ([The front page](README.md#how-a-sequence-finds-its-way-back)).
 
 Evidence: Sega: 平山尚's シーケンス遷移 and its 遷移判定 (2008).
 
-### Adventure
+### Sequence parent's work
 
 The one struct every sequence shares and that outlives each of them,
-`gAdventure` (`struct Adventure`, `adventure.h`): the party, where it stands,
-the coins and play time, the options, the next sequence and what the last one
-reported. Save Game writes it to the cartridge with the game flags
-([The front page](README.md#how-a-sequence-finds-its-way-back)).
+`gSequenceParentWork` (`struct SequenceParentWork`, `sequence_parent_work.h`).
+It holds the sequence parent's own transition data (the scene and entrance it
+runs next, what the last sequence reported in `sequenceResult`, the return
+point, the after-battle and defeat destinations and the restart point) and
+what every sequence shares: the party, where it stands, the coins, the Djinn,
+the play time and the options. It is a fixed struct in EWRAM, never freed and
+in no [heap slot](#heap-slot). Save Game writes it to the cartridge with the
+game flags ([The front page](README.md#how-a-sequence-finds-its-way-back)).
 
-Evidence: Camelot: ぼうけんを きろくしますか?, "Save your adventure?"
-(`MsgSaveAdventureQuestion`).
+Evidence: Sega: 平山尚's `Sequence::Parent` keeps what its children share
+(2008); work: working memory, as the [work](#work) entry says. The game's
+"Save your adventure?" (`MsgSaveAdventureQuestion`) names what the player
+saves, not a memory structure.
 
 ### Frame
 
@@ -293,7 +301,8 @@ Evidence: tradition: タスク and its 実行関数 (田村祐樹, DCAJ 2008).
 
 The working memory a piece of code keeps its state in, held in a
 [heap slot](#heap-slot) and named `g<Slot>Work`: the field's is `gFieldWork`,
-the menus' `gMenuWork`.
+the menus' `gMenuWork`. The sequence parent's is the one kept in a fixed
+struct instead, [`gSequenceParentWork`](#sequence-parents-work).
 
 Evidence: tradition, extended: ワーク names working memory in general in the
 console's own Work RAM (GBATEK's On-board and On-chip Work RAM), 山口's
@@ -696,7 +705,7 @@ Evidence: plain English.
 
 ### Destination
 
-The scene and entrance the sequence parent runs next (`gAdventure.sceneId`
+The scene and entrance the sequence parent runs next (`gSequenceParentWork.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Three others are read only at given moments: after a battle the party goes to

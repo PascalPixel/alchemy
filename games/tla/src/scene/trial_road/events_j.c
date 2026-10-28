@@ -13,7 +13,7 @@ void Func_020010b4(void) { Func_02000e40(18, 0, -1, 1); }
 void Func_020010c8(void) { Func_02000e40(18, 0, 1, 1); }
 
 void Func_020010d8(void) {
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
 
   /* FAKEMATCH: loads the party base before it builds the render-mode offset
    * (differ 2 without it). */

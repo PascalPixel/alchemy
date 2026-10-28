@@ -48,7 +48,7 @@ void Func_02000fd0(void) {
     Actor_OffsetPositionAndResetMotion(10, 0, 8);
     Actor_WaitForMoveById(10);
     FieldEvent_Wait(10);
-    Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 0);
+    Actor_ArmCallback(gSequenceParentWork.currentOwner, 0x4000, 0);
     Speed(10, 0x26666, 0x13333);
     Actor_OffsetPositionAndResetMotion(10, 0, 80);
     Actor_WaitForMoveById(10);

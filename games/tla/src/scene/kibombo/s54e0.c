@@ -11,7 +11,7 @@ void Func_020054e0(void) {
     Func_020036e0(1, 5);
   }
   wait(1);
-  entrance = gAdventure.entrance;
+  entrance = gSequenceParentWork.entrance;
   if (entrance == 99) {
     Func_02003640(0, 0);
     Func_020036e0(0, 0);

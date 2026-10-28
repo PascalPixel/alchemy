@@ -1,4 +1,4 @@
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/import.h"
 #include "module/debug/test.h"
 #include "module/overworld/overworld.h"
@@ -131,7 +131,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
   struct Window *window;
   s32 messageIndex;
 
-  gAdventure.messageSpeed = 2;
+  gSequenceParentWork.messageSpeed = 2;
   window = Portrait_OpenWindow(125, 0, 0, 0);
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // Supply sample name, item and number substitutions before each message:
@@ -821,7 +821,7 @@ s32 MenuTest_Initialize(void) {
   Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
   Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
 #if !TBS_PATCH_1
-  gAdventure.coins = 777777;
+  gSequenceParentWork.coins = 777777;
 #endif
 #if TBS_PATCH_1
   Unit_LevelUpTo(ISAAC, 50);

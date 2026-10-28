@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -76,9 +76,9 @@ void Func_02000fc0(void) {
   Func_020057dc(0x7fff, 0);
   Func_020057ec(40);
   wait(80);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
   Func_02000f6c();
   wait(1);
   Func_020057dc(0x10000, 0);

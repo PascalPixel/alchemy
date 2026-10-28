@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -64,12 +64,12 @@ void Func_02001368(void) {
 
   Func_02000708(gData_02003f52);
   Func_020012d8();
-  y = Actor_GetById(gAdventure.currentOwner)->y;
+  y = Actor_GetById(gSequenceParentWork.currentOwner)->y;
   /* FAKEMATCH: ⚓️ loads the height before it builds the limit; the plain test
    * starts the constant first (one pair of instructions swapped). */
   __asm__ volatile("");
   if (y < 0x80000) {
-    Actor_SetSpritePriority(gAdventure.currentOwner, 2);
-    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+    Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 2);
+    Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
   }
 }

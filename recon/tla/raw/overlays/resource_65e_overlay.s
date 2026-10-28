@@ -130,7 +130,7 @@ Func_02000340:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008444:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008448:
 	.4byte 0x00000039
 .L_0200844c:

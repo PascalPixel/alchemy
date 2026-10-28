@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_effect.h"
 #include "field_sprite.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const s32 *gData_020033f4[];
 
@@ -23,7 +23,7 @@ enum {
 void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Actor_GetById(gAdventure.currentOwner);
+  struct FieldActor *party = Actor_GetById(gSequenceParentWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

@@ -7,7 +7,7 @@
 // order.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
     SceneId_Ov664Room8, SceneId_Ov664Room9;
@@ -29,7 +29,7 @@ void Func_02001690(void) {
   frame = gFrameCount;
   if ((frame & 6) != 0)
     return;
-  scene = gAdventure.scene;
+  scene = gSequenceParentWork.scene;
   if (scene == (s32)&SceneId_Ov664Room3) {
     s32 x;
 
@@ -40,8 +40,8 @@ void Func_02001690(void) {
     Func_0200160c(x, 0, 0x2680000);
   } else if (scene == (s32)&SceneId_Ov664Room8) {
     if (frame & 1) {
-      if (Actor_GetById(gAdventure.currentOwner)->z >> 19 > 41) {
-        if (Actor_GetById(gAdventure.currentOwner)->x >> 19 <= 44)
+      if (Actor_GetById(gSequenceParentWork.currentOwner)->z >> 19 > 41) {
+        if (Actor_GetById(gSequenceParentWork.currentOwner)->x >> 19 <= 44)
           Func_0200160c(0xa80000, 0, 0x25b0000);
         else if (!GameFlag_Test(0x201))
           Func_0200160c(0x1f80000, 0, 0x1c80000);
@@ -51,8 +51,8 @@ void Func_02001690(void) {
         Func_0200160c(0x2680000, -0x200000, 0x880000);
       }
     } else {
-      if (Actor_GetById(gAdventure.currentOwner)->z >> 19 > 41) {
-        if (Actor_GetById(gAdventure.currentOwner)->x >> 19 > 49)
+      if (Actor_GetById(gSequenceParentWork.currentOwner)->z >> 19 > 41) {
+        if (Actor_GetById(gSequenceParentWork.currentOwner)->x >> 19 > 49)
           Func_0200160c(0x2280000, 0, 0x1c80000);
         else if (GameFlag_Test(0x200))
           Func_0200160c(0xa80000, 0, 0x25b0000);

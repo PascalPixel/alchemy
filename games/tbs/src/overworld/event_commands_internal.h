@@ -13,7 +13,7 @@
 #include "module/runtime/runtime.h"
 #include "types.h"
 #include "battle_type.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene.h"
 #include "battle_system.h"
 #include "battle.h"
@@ -52,7 +52,7 @@
 #include "heap.h"
 #include "keystate.h"
 #include "unit.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "fixed_math.h"
@@ -96,9 +96,9 @@
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// gAdventure.pendingDjinni of Djinni 0 (requests.c, djinni.c): a Djinni
-/// battle's event is 300 plus the Djinni's number (element * 20 + index),
-/// with DJINN_NO_HOP (0x800) beside it.
+/// gSequenceParentWork.pendingDjinni of Djinni 0 (requests.c, djinni.c): a
+/// Djinni battle's event is 300 plus the Djinni's number (element * 20 +
+/// index), with DJINN_NO_HOP (0x800) beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// Per-frame update of an afterimage: closes half the distance to the actor

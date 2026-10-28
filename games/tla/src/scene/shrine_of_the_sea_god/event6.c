@@ -18,17 +18,17 @@ void Func_02001a3c(void) {
   Func_02003b08(0);
   Func_02003a70((s32)MsgFieldRopeThrownAgain);
   ShrineOfTheSeaGod_MessagePut(0x200c, 0);
-  ShrineOfTheSeaGod_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
+  ShrineOfTheSeaGod_ObjSpeed(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
-  ShrineOfTheSeaGod_ObjWalk(gAdventure.currentOwner, 272, 336);
-  ShrineOfTheSeaGod_ObjTurn(gAdventure.currentOwner, 0xc000, 0);
+  ShrineOfTheSeaGod_ObjWalk(gSequenceParentWork.currentOwner, 272, 336);
+  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0xc000, 0);
   ShrineOfTheSeaGod_ObjPlace(14, 272 << 16, 336 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 256, 336);
   ShrineOfTheSeaGod_ObjTurn(14, 0, 0);
-  ShrineOfTheSeaGod_ObjTurn(gAdventure.currentOwner, 0x8000, 40);
+  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0x8000, 40);
   ShrineOfTheSeaGod_ObjTurn(14, 0xd000, 0);
-  ShrineOfTheSeaGod_ObjTurn(gAdventure.currentOwner, 0xc000, 0);
+  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0xc000, 0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
   ShrineOfTheSeaGod_CamMove(288 << 16, -1, 126 << 16, 1);
@@ -67,12 +67,12 @@ void Func_02001a3c(void) {
   ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
   ShrineOfTheSeaGod_CamMove(264 << 16, -1, 320 << 16, 1);
   Func_02003ac8();
-  ShrineOfTheSeaGod_ObjTurn(gAdventure.currentOwner, 0x8000, 0);
+  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0x8000, 0);
   ShrineOfTheSeaGod_ObjTurn(14, 0, 20);
-  ShrineOfTheSeaGod_ObjMode(gAdventure.currentOwner, 3);
+  ShrineOfTheSeaGod_ObjMode(gSequenceParentWork.currentOwner, 3);
   ShrineOfTheSeaGod_ObjModeWait(14, 3);
   ShrineOfTheSeaGod_ObjMode(14, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != NULL)
     Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

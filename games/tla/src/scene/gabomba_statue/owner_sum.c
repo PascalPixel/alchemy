@@ -1,7 +1,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02005944[];
 extern const u8 gData_02005d7c[];
@@ -28,7 +28,7 @@ void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
 void Func_0200582c(s32 index, s32 a, s32 b);
 
 s32 Func_02003604(void) {
-  u8 *state = Unit_Get(gAdventure.currentOwner);
+  u8 *state = Unit_Get(gSequenceParentWork.currentOwner);
   s32 sum = 0;
   u32 i;
 

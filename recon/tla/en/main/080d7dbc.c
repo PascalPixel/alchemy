@@ -8,7 +8,7 @@
 #include "motobj.h"
 #include "actor.h"
 #include "objdisp.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_particle.h"
 #include "ram_buffer.h"
 
@@ -131,7 +131,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
   struct EffectVector position;
   s32 state;
 
-  owner = (struct EffectOwner *)Actor_GetById(gAdventure.currentOwner);
+  owner = (struct EffectOwner *)Actor_GetById(gSequenceParentWork.currentOwner);
   state = effect->state;
 
   if (state == 0) {

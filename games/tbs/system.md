@@ -108,7 +108,7 @@ off at the wrong moment never loses one. A file is kept as two parts, and a
 new copy of a part, numbered one higher than the old, is written into an empty
 sector of the flash chip before the old copy is marked free; whenever
 the power goes, one whole copy remains, and the game keeps the higher number.
-What a file holds is the [adventure](glossary.md#adventure) and the game
+What a file holds is the [sequence parent's work](glossary.md#sequence-parents-work) and the game
 flags.
 
 The Save command is `Save_ToChosenFile`, and `Save_WritePart` writes a part.
@@ -139,14 +139,14 @@ the players,
 Every sequence starts cold. In each transition `SequenceParent_Run` empties
 the task table (`Task_ResetAll`), drops the HBlank and VCount handlers and
 empties the heap (`Heap_Initialize`), and the next sequence builds what it
-needs from the [adventure](glossary.md#adventure) alone: a scene from the
-destination and entrance in `gAdventure`, a battle from the formation named
+needs from the [sequence parent's work](glossary.md#sequence-parents-work) alone: a scene from the
+destination and entrance in `gSequenceParentWork`, a battle from the formation named
 there. Nothing a scene or a battle set up outlives it, so any scene or battle
 can follow any other.
 
 The debug menus rely on this. The debug scene selector exits to any scene by
-number, and the debug battle menu, `DebugBattle_RunMenu`, sets up a default
-adventure and empties the task table and the heap itself before each battle,
+number, and the debug battle menu, `DebugBattle_RunMenu`, gives the sequence
+parent's work a new game's defaults and empties the task table and the heap itself before each battle,
 as the sequence parent would.
 
 Memory is never freed at random. The tasks, the heap slots and the actors are

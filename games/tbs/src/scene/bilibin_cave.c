@@ -4,7 +4,7 @@
 /// SceneId_BilibinCaveEntrance, and Bilibin Cave is SceneId_BilibinCaveRapier
 /// and, beyond it, SceneId_BilibinCaveIce, whose far end opens onto the World
 /// Map farther north. No one speaks here: each scene is a run of Psynergy
-/// puzzles, the getters pick its tables by gAdventure.sceneId, and
+/// puzzles, the getters pick its tables by gSequenceParentWork.sceneId, and
 /// BilibinCave_Initialize restores what the party has already solved in the
 /// scene being entered.
 ///
@@ -59,7 +59,7 @@
 /// and Water of Life.
 
 #include "script_operands.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "system_call.h"
 #include "scene_ids.h"
 #include "module/import.h"
@@ -194,7 +194,7 @@ BilibinCave_ClearScriptedActorSpriteFlags(struct Actor *interpreter) {
 }
 
 const struct SceneEntrance *BilibinCave_GetEntrances(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceEntrances;
@@ -213,7 +213,7 @@ const struct SceneExitRegion *BilibinCave_GetRegions(void) { return NULL; }
 const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 
 const struct ActorPlacement *BilibinCave_GetActorPlacements(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceActorPlacements;
@@ -228,7 +228,7 @@ const struct ActorPlacement *BilibinCave_GetActorPlacements(void) {
 }
 
 const struct Trigger *BilibinCave_GetTriggers(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceTriggers;
@@ -428,7 +428,7 @@ static void BilibinCave_StopFootprints(void) {
 /// Sets up the scene being entered, with its puzzles already solved. The scene
 /// is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
-  s16 variant = gAdventure.sceneId;
+  s16 variant = gSequenceParentWork.sceneId;
 
   if (variant == (s32)&SceneId_BilibinCaveEntrance) {
     BilibinCave_RestoreEntrance();

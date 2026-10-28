@@ -136,7 +136,7 @@ struct PartyCommandWork {
 extern u16 gData_02003a74[];
 extern u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern u8 gDebugMode;
 extern u8 Msg_0c59[];
 
@@ -352,7 +352,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       old = battle->partyUnits[state->swappedPlace];
       battle->partyUnits[state->swappedPlace] = swapped;
       for (k = 7; k >= 0; k--) {
-        u8 *owner = &gAdventure[0x218 + 7 - k];
+        u8 *owner = &gSequenceParentWork[0x218 + 7 - k];
 
         if (*owner == (s16)swapped)
           *owner = old;

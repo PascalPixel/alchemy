@@ -9,12 +9,11 @@ void Func_020041ac(s32 scene, s32 entrance);
 void Func_02001250(void) {
   Func_020000f4();
   Func_0200428c();
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
-   * adventure's address before it builds the field offset (2 differ without it;
+  /* FAKEMATCH: the loop note ends the scheduling block: the native loads hegSequenceParentWork's address before it builds the field offset (2 differ without it;
    * an inline accessor and an inline setter the same or worse). */
   do {
   } while (0);
-  gAdventure.unk2c2 = 2;
+  gSequenceParentWork.unk2c2 = 2;
   Func_020041ac((s32)&SceneId_Ov6B0Room1, 99);
   FieldEvent_Wait(40);
   Func_02000158();

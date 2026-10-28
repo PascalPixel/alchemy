@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "scene_call.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "daila.h"
 
@@ -42,13 +42,12 @@ s32 DailaInteriors_Start(void) {
   s32 *effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   s32 value = 0x209;
 
-  /* FAKEMATCH(barrier): an empty asm after the address and the value, so the
-   * adventure's address loads just before the store; as one assignment, 2
+  /* FAKEMATCH(barrier): an empty asm after the address and the value, so hegSequenceParentWork's address loads just before the store; as one assignment, 2
    * of 174 instructions differ in tla-en. */
   __asm__("");
   *effect = value;
-  if (gAdventure.scene == (s32)&SceneId_DailaInteriors1) {
-    if (gAdventure.entrance == 7) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_DailaInteriors1) {
+    if (gSequenceParentWork.entrance == 7) {
       Func_02000c58();
     } else {
       if (GameFlag_Test(0x873)) {
@@ -57,13 +56,13 @@ s32 DailaInteriors_Start(void) {
         Actor_SetModeById(25, 5);
         Actor_SetSingleChildFlags(Actor_GetById(25), 0);
       }
-      Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
       Actor_GetById(13)->priorityFlags |= 32;
       Actor_GetById(19)->priorityFlags |= 32;
       Import_ActorSetSpritePriority(19, 2);
       Actor_GetById(19)->collisionFlags |= 4;
     }
-  } else if (gAdventure.scene == (s32)&SceneId_DailaInteriors2) {
+  } else if (gSequenceParentWork.scene == (s32)&SceneId_DailaInteriors2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
     Import_EventStart();
     Import_EventResolvePendingActions(0);
@@ -95,7 +94,7 @@ s32 DailaInteriors_Start(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gAdventure.scene == (s32)&SceneId_DailaInteriors2 &&
+  if (gSequenceParentWork.scene == (s32)&SceneId_DailaInteriors2 &&
       GameFlag_Test(0x873)) {
     Func_02000ca4(0);
     Daila_CopyCells(29, 33, 10, 6, 10, 12);

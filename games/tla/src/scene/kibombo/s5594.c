@@ -28,7 +28,7 @@ void Func_02005594(void) {
     Func_020036e0(1, 4);
   }
   wait(1);
-  switch (gAdventure.entrance) {
+  switch (gSequenceParentWork.entrance) {
   case 10:
     Func_020040cc();
     return;
@@ -84,23 +84,23 @@ void Func_02005594(void) {
   if (GameFlag_Test(0x8f1)) {
     if (!GameFlag_Test(0x8fd))
       Func_020032b0();
-  } else if (gAdventure.entrance == 5) {
+  } else if (gSequenceParentWork.entrance == 5) {
     Func_02003dec();
   }
   Func_02005aa4();
-  if (gAdventure.entrance == 99) {
+  if (gSequenceParentWork.entrance == 99) {
     Func_02003640(0, 0);
     Func_020036e0(0, 0);
     Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
-  } else if (gAdventure.entrance == 98) {
+  } else if (gSequenceParentWork.entrance == 98) {
     Func_02003640(1, 1);
     Func_020036e0(1, 0);
     Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
-  } else if (gAdventure.entrance == 97) {
+  } else if (gSequenceParentWork.entrance == 97) {
     Func_02003640(1, 1);
     Func_020036e0(1, 4);
     Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
-  } else if (gAdventure.entrance == 96) {
+  } else if (gSequenceParentWork.entrance == 96) {
     Func_02003640(1, 1);
     Func_020036e0(1, 4);
     Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -305,7 +305,7 @@ void Func_02001160(void) {
   Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 7, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(7, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -313,7 +313,7 @@ void Func_02001160(void) {
   Call3((void (*)())Func_02001c2c, 7, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 12, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

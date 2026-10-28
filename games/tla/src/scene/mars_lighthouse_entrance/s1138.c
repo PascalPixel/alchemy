@@ -45,13 +45,13 @@ void Func_02004d98(void);
 
 void Func_02001138(void) {
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
   struct Actor *object;
   s32 x;
   s32 z;
   u8 *cell;
 
-  /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
    * built (one reordered row). */
   do {
   } while (0);
@@ -67,19 +67,19 @@ void Func_02001138(void) {
 }
 
 const u8 *Func_0200119c(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom1)
     return gData_02006118;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom2)
     return gData_0200613c;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom3)
     return gData_02006250;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom4)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom4)
     return gData_020063b8;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom5)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom5)
     return gData_020064fc;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom6)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom6)
     return gData_02006628;
-  if (gAdventure.scene == (s32)&SceneId_Ov6aaRoom7)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom7)
     return gData_02006778;
   return gData_0200610c;
 }

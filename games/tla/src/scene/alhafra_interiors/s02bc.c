@@ -24,16 +24,16 @@ s32 Actor_StartRepeatedMotion();
 s32 Func_02000b64();
 s32 Actor_SetModeById();
 void Func_02000a9c(void);
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern u8 MsgAlhafraInteriors07[];
 
 void Func_020002bc(void) {
   Call1(GameFlag_SetBit, 0x8b1);
   Func_02000a94();
   Call1(Func_02000b8c, 0);
-  Call3(Actor_SetPositionAndReset, FIELD_AT(gAdventure, s32, 532), 0x98,
+  Call3(Actor_SetPositionAndReset, FIELD_AT(gSequenceParentWork, s32, 532), 0x98,
         0x148);
-  Call3(Actor_ArmCallback, FIELD_AT(gAdventure, s32, 532), 0xc000, 0);
+  Call3(Actor_ArmCallback, FIELD_AT(gSequenceParentWork, s32, 532), 0xc000, 0);
   Call1(Func_02000b24, (s32)MsgAlhafraInteriors07);
   Call3(Actor_ArmCallback, 0xe, 0, 0);
   Call1(FieldEvent_Wait, 0x14);

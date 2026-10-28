@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "flag_call.h"
 
@@ -9,7 +9,7 @@ s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Camera_FollowActor(s32 id, s32 a);
 
 void Func_020024c8(void) {
-  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
   /* FAKEMATCH: one zero for the velocity store and, through a 64-bit copy, the
    * call's argument clears r1 after the owner's load (one reordered pair;
    * alchemy permute). */
@@ -27,7 +27,7 @@ void Func_020024c8(void) {
     {
       s64 flags = zero;
 
-      Camera_FollowActor(gAdventure.currentOwner, flags);
+      Camera_FollowActor(gSequenceParentWork.currentOwner, flags);
     }
   }
 }

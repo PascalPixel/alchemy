@@ -254,6 +254,6 @@ Func_080d8740:
 .L_080d8970:
 	.4byte Actor_MoveHalfwayTowardTargetCopy
 .L_080d8974:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080d8978:
 	.4byte Func_080d85b8

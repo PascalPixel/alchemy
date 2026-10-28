@@ -1,7 +1,7 @@
 #include "lemurian_ship.h"
 
 void Func_020023f8(void) {
-  struct LemurianShipObject *leader = Actor_GetById(gAdventure.currentOwner);
+  struct LemurianShipObject *leader = Actor_GetById(gSequenceParentWork.currentOwner);
 
   Actor_SetSpritePriority(8, leader->sprite->priority);
 }

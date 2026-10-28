@@ -74,7 +74,7 @@ void Func_02004ddc(void) {
   struct TrialRoadLinkWork *work =
       *(struct TrialRoadLinkWork **)((u8 *)Ram_HeapSlots + 236);
   struct Actor *rival = Actor_GetById(state->id);
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct LinkSignature *signature;
   s32 x;
   s32 z;
@@ -90,7 +90,7 @@ void Func_02004ddc(void) {
     z = leader->z;
     if ((u32)(z - 0x1000000) > 0x1300000)
       x = 0x2100000 - (x & 0xffff0000);
-    if (gAdventure.entrance & 1)
+    if (gSequenceParentWork.entrance & 1)
       x += 0x1300000;
     else
       x -= 0x1300000;
@@ -160,7 +160,7 @@ void Func_02004ddc(void) {
     z <<= 16;
     if (state->mirrored != 0 && (u32)(z - 0x1000000) > 0x1300000)
       x = 0x2100000 - x;
-    if (gAdventure.entrance & 1)
+    if (gSequenceParentWork.entrance & 1)
       x += 0x1300000;
     else
       x -= 0x1300000;

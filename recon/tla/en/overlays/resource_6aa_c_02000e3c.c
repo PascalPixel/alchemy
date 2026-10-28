@@ -23,14 +23,14 @@ s32 Actor_GetById();
 s32 Actor_SetModeById();
 s32 wait();
 extern u8 gMapCellBuffer[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_02000e3c(s32 p0) {
   s32 v_r5, v_r0, v_r4, v_r2, v_r6, v_r7, v_r1, t0, t1, t4;
   s32 t5, t7, t12, t13, t14, t15, t16, t17, t18, t20;
   s32 t24, t25, t26, t28, t29, t30;
 
-  v_r5 = ((s32)gAdventure + 0x214);
+  v_r5 = ((s32)gSequenceParentWork + 0x214);
   t0 = *(s32 *)v_r5;
   t1 = Actor_GetById(t0);
   Func_02004ca8();
@@ -70,7 +70,7 @@ L_02008ed4:
   *(u16 *)0x4000000 = (t18 | 0x8000);
   Func_02000df0();
 L_02008f0a:
-  t20 = FIELD_AT((s32)gAdventure, s32, 532);
+  t20 = FIELD_AT((s32)gSequenceParentWork, s32, 532);
   Actor_SetModeById(t20, 28);
   FieldEvent_Wait(16);
   v_r5 = 0;
@@ -92,7 +92,7 @@ L_02008f48:
   v_r5 = (v_r5 + 1);
   if (v_r5 <= 39)
     goto L_02008f22;
-  t28 = FIELD_AT((s32)gAdventure, s32, 532);
+  t28 = FIELD_AT((s32)gSequenceParentWork, s32, 532);
   t29 = Actor_GetById(t28);
   FIELD_AT(t29, u8, 84) = 0;
   t30 = FIELD_AT(0x3000000, s32, 108);

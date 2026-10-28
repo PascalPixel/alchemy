@@ -17,7 +17,7 @@ extern const u8 gData_020057e0[];
 /// Returns the current room's table.
 // As ☀️'s Scene_GetEntrances picks one.
 const u8 *Func_020003c8(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room1)
     return gData_02005198;

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_0200466c[];
 
@@ -27,8 +27,8 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
     Func_02004004(a, b + 2, c + 1, d, width, height);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Actor_SetMovementTypeById(gAdventure.currentOwner,
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetMovementTypeById(gSequenceParentWork.currentOwner,
                                           gData_0200466c);
   wait(12);
   Func_020042b4(123);

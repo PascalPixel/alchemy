@@ -1,7 +1,7 @@
 #include "types.h"
 #include "input.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern s32 gData_080f3944;
 
@@ -21,7 +21,7 @@ void Func_080d9978(struct Actor *object) {
 struct Actor *Actor_GetById(s32 id);
 
 s32 Func_080d99b8(s32 firstId, s32 secondId) {
-  struct Actor *owner = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *owner = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
   s32 x = owner->x >> 20;

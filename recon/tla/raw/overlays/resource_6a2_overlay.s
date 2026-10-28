@@ -239,7 +239,7 @@ Func_02000538:
 .L_02008640:
 	.4byte 0x00000001
 .L_02008644:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008648:
 	.4byte 0x0003ffff
 .L_0200864c:
@@ -343,7 +343,7 @@ Func_02000538:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008720:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x02008750,"ax",%progbits
 	.balign 4
 	.global Func_02000750
@@ -401,7 +401,7 @@ Func_02000750:
 	bl Actor_SetAnimationSpeed
 	b .L_020088fa
 .L_020087b8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_020087bc:
 	adds r0, r6, #0
 	movs r1, #16
@@ -538,7 +538,7 @@ Func_02000750:
 .L_020088cc:
 	.4byte 0xffe00000
 .L_020088d0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_020088d4:
 	.4byte IwramMulQ16
 .L_020088d8:
@@ -1389,7 +1389,7 @@ Func_0200130c:
 .L_02009540:
 	.4byte IwramClearWords
 .L_02009544:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009548:
 	.4byte 0x11111111
 .L_0200954c:
@@ -1480,7 +1480,7 @@ Func_02001648:
 .L_020096f4:
 	.4byte 0x00008000
 .L_020096f8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_020096fc:
 	movs r3, #1
 	mov r1, r8
@@ -1546,7 +1546,7 @@ Func_02001648:
 .L_02009780:
 	.4byte 0xffff6667
 .L_02009784:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x020097de,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020097e0,"ax",%progbits
@@ -1724,7 +1724,7 @@ Func_020017e0:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_02009964:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009968:
 	.4byte Effect_AdvanceMotion
 .L_0200996c:
@@ -1820,7 +1820,7 @@ Func_02001978:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009a20:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009a24:
 	.4byte Data_02002764
 	.section .bss,"aw",%nobits

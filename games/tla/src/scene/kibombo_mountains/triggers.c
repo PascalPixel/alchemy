@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -17,9 +17,9 @@ void Func_02000f40(void) { Func_02000da8(11); }
 void Func_02000f4c(void) { Func_02000da8(11); }
 
 void Func_02000f58(void) {
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
 
-  /* FAKEMATCH: ⚓️ loads the adventure before it builds the offset */
+  /* FAKEMATCH: ⚓️ loads gSequenceParentWork before it builds the offset */
   asm volatile("" : "+l"(party));
   if (party->renderMode != 3)
     Func_02000da8(12);

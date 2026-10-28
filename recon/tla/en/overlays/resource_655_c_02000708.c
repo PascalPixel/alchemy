@@ -3,7 +3,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -70,7 +70,7 @@ void Func_02000708(u16 *list) {
 
   if (Func_02003d20() != 0)
     return;
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   helper = Actor_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;

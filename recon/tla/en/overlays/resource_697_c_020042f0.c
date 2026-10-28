@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern u8 gMapShapeGrid[];
 
@@ -56,7 +56,7 @@ next:
   if (*table != 0xffff)
     goto next;
 done:
-  object = Actor_GetById(gAdventure.currentOwner);
+  object = Actor_GetById(gSequenceParentWork.currentOwner);
   height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
   if (object->y < height) {
     object->terrainHeight = height;

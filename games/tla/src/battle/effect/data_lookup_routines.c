@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 #define BattleEffect_GetResourceGroup ((s32 (*)(s32))BattleEffect_GetResourceGroup)
 
@@ -67,9 +67,9 @@ struct SceneCueRule {
 
 void Scene_ResolveInteractionResult(void) {
   s16 cue = 79;
-  s16 scene = gAdventure.scene;
-  s16 entrance = gAdventure.entrance;
-  s16 group = gAdventure.sceneGroup;
+  s16 scene = gSequenceParentWork.scene;
+  s16 entrance = gSequenceParentWork.entrance;
+  s16 group = gSequenceParentWork.sceneGroup;
   const struct SceneCueRule *rule = gScene_CueRuleTable;
 
   for (; rule->id != -1; rule++) {
@@ -94,7 +94,7 @@ void Scene_ResolveInteractionResult(void) {
     }
   }
 
-  gAdventure.cue = cue;
+  gSequenceParentWork.cue = cue;
 }
 
 struct SceneAreaNameRule {

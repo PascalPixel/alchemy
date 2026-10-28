@@ -10,13 +10,13 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
                    s32 *params);
 
 void Func_02001f90(s32 arg0) {
-  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 i;
   s32 angle;
 
   Func_02002998();
   Func_02002a48(0);
-  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
   object->motionFlags = 0;
   /* FAKEMATCH: keeps the flag store before the next address is formed (differ 2
    * without) */

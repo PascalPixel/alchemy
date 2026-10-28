@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 #include "edition.h"
 
@@ -46,7 +46,7 @@ void Func_02002828(void);
 // recon/tla/raw/overlays (S4).
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 s32 Func_02001774(void) {
-  s32 scene = gAdventure.scene;
+  s32 scene = gSequenceParentWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *effect = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac);
   struct Actor *object, *dummy, *piece;
@@ -54,8 +54,8 @@ s32 Func_02001774(void) {
 
   *effect = 0;
   if (scene == (s32)&SceneId_Ov678Room2) {
-    gAdventure.retreatScene = (s32)&SceneId_Ov678Room1;
-    gAdventure.retreatEntrance = 1;
+    gSequenceParentWork.retreatScene = (s32)&SceneId_Ov678Room1;
+    gSequenceParentWork.retreatEntrance = 1;
     Func_02002120();
     for (id = 8; id <= 12; id++) {
       if (GameFlag_Test(id + 0x8d8))
@@ -103,7 +103,7 @@ s32 Func_02001774(void) {
     *effect = 516;
     Func_02002960(0);
     Task_Add(Func_02001684, 0x480);
-    if (gAdventure.entrance == 3 || gAdventure.entrance == 5)
+    if (gSequenceParentWork.entrance == 3 || gSequenceParentWork.entrance == 5)
       Func_02002614(gData_02002abc, 0, Func_02001424);
     piece = Actor_GetById(8);
     piece->motionFlags = 0;
@@ -128,13 +128,13 @@ s32 Func_02001774(void) {
     }
   } else if (scene == (s32)&SceneId_Ov678Room8) {
     *effect = 516;
-    if (gAdventure.entrance != 2 && gAdventure.entrance != 4 &&
-        gAdventure.entrance != 9) {
+    if (gSequenceParentWork.entrance != 2 && gSequenceParentWork.entrance != 4 &&
+        gSequenceParentWork.entrance != 9) {
       Func_02002980();
       Call4(Func_02002988, 0, 776, 8, 9);
     } else {
       Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0, (s32)Func_020014a0);
-      Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
       Call2(Task_Add, Func_020016fc, 0x480);
       Call2(Task_Add, Func_02001618, 0x480);
       object = Actor_GetById(10);
@@ -224,7 +224,7 @@ s32 Func_02001774(void) {
       Actor_SetModeById(9, 0);
     if (!GameFlag_Test(840))
       Actor_SetWideSprite(0x40, 0);
-    entrance = gAdventure.entrance;
+    entrance = gSequenceParentWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
       if (GameFlag_Test(0x340))
         Func_02002084(0);

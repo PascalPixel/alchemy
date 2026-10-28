@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02003f92[];
 extern const u8 gData_02003fb8[];
@@ -20,11 +20,11 @@ void Func_02003aa0(void) {
   s32 *route = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac);
 
   /* FAKEMATCH(barrier): an empty asm between the route's address and its
-   * store, so the adventure's address loads after the address is added; as
+   * store, so gSequenceParentWork's address loads after the address is added; as
    * one assignment, 2 of 57 instructions differ in tla-en. */
   __asm__("");
   *route = 0x204;
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
   if (GameFlag_Test(95) != 0)
     GameFlag_SetBit(521);
   Func_02000038(gData_02003fb8);
@@ -35,8 +35,8 @@ void Func_02003aa0(void) {
   }
   Func_02001ff4();
   if (GameFlag_Test(265) == 0) {
-    if (gAdventure.entrance > 5) {
-      if (gAdventure.entrance <= 39)
+    if (gSequenceParentWork.entrance > 5) {
+      if (gSequenceParentWork.entrance <= 39)
         Func_02003764();
     }
   }

@@ -22,7 +22,7 @@
 #include "types.h"
 #include "field_sprite.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 struct Work9cItemPosition {
@@ -46,7 +46,7 @@ struct EventWorkGrab {
 };
 
 s32 Func_080d5720(void) {
-  struct Actor *leader = ObjectTable_Get(gAdventure.currentOwner);
+  struct Actor *leader = ObjectTable_Get(gSequenceParentWork.currentOwner);
   struct FieldSprite *sprite = leader->animation;
   struct Work9cItemPosition *item = Func_080d5670(&leader->x);
   u8 *flags;
@@ -69,6 +69,6 @@ s32 Func_080d5720(void) {
   leader->priorityFlags = *flags & ~1;
   sprite->nextFrame = 0;
   sprite->priority = 1;
-  gAdventure.renderMode = 3;
+  gSequenceParentWork.renderMode = 3;
   return 1;
 }

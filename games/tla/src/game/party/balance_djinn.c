@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "owner_state.h"
 
 s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out);
@@ -20,7 +20,7 @@ void Func_080ae358(void) {
     s32 index;
 
     for (i = 0; i < count; i++) {
-      s32 owner = gAdventure.activeOwners[i];
+      s32 owner = gSequenceParentWork.activeOwners[i];
       struct OwnerDjinnState *unit = Unit_Get(owner);
       u8 *counts;
       s32 j;

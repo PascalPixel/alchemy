@@ -9,7 +9,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -32,7 +32,7 @@ void Func_02001930();
 void Func_02000d04(void) {
   ((void (*)())Func_02001870)();
   Call1((void (*)())Func_02001930, 0);
-  Call3((void (*)())Func_020018d0, gAdventure.currentOwner, 0x101, 32);
+  Call3((void (*)())Func_020018d0, gSequenceParentWork.currentOwner, 0x101, 32);
   ((void (*)())Func_02001878)();
   return;
 }

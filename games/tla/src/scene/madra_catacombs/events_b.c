@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -124,7 +124,7 @@ void Func_020008f4(void) {
   struct Actor *object;
 
   if (Func_020011fc() != 0) {
-    object = Actor_GetById(Func_02001184(gAdventure.currentOwner));
+    object = Actor_GetById(Func_02001184(gSequenceParentWork.currentOwner));
     Func_0200014c(gData_020013ca);
     Func_02001204();
     Func_020008d0(object);

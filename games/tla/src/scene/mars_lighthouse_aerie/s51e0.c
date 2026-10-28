@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct MarsLighthouseAerieEventWork {
   u8 unk000[0x1ac];
@@ -46,9 +46,9 @@ void Func_020051e0(void) {
   Func_0200576c(16);
   wait(16);
   {
-    struct Adventure *party = &gAdventure;
+    struct SequenceParentWork *party = &gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

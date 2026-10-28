@@ -29,10 +29,10 @@ struct StatWork {
 /// The distance between `a` and `b`, |a - b|.
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-/// Starts a new game: clears the adventure and restarts at the opening.
-/// Only GAME.S's bare veneer reaches it; nothing calls it by name.
+/// Starts a new game: clears the sequence parent's work and restarts at the
+/// opening. Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_RestartQuest(void) {
-  Adventure_InitializeDefaults();
+  SequenceParentWork_InitializeDefaults();
   SequenceParent_RunFar(0);
 }
 
@@ -45,7 +45,7 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
     return Unit_Get(0x83);
   }
-  return &gAdventure.summonMask;
+  return &gSequenceParentWork.summonMask;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -63,16 +63,16 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += Unit_Get(gAdventure.party[partyIndex])->level;
+    totalLevels += Unit_Get(gSequenceParentWork.party[partyIndex])->level;
   }
   totalLevels = totalLevels / partySize;
   return totalLevels;
 }
 
 /// Returns the unit of `unitId`: ISAAC to PIERS are the playable
-/// characters in the adventure, 0x80 to 0x85 the enemies of the current
-/// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
-/// bank calls it, through GAME.S as Unit_GetFar.
+/// characters in the sequence parent's work, 0x80 to 0x85 the enemies of the
+/// current battle. Anything else, or an enemy outside a battle, is NULL. Nearly
+/// every bank calls it, through GAME.S as Unit_GetFar.
 struct Unit *Unit_Get(u32 unitId) {
   struct Unit *states;
   struct Unit *unit;
@@ -85,7 +85,7 @@ struct Unit *Unit_Get(u32 unitId) {
      * instructions differ in tbs-en. */
     __asm__("" : : "l"(caller));
   }
-  states = gAdventure.units;
+  states = gSequenceParentWork.units;
   if (unitId <= PIERS) {
     unit = &states[unitId];
     return unit;
@@ -465,7 +465,7 @@ void GameFlag_RefreshLureCap(void) {
     struct Unit *unit;
     s32 inventorySlot;
 
-    unit = Unit_Get(gAdventure.party[partyIndex]);
+    unit = Unit_Get(gSequenceParentWork.party[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct EquipEffect *effect;
@@ -488,7 +488,7 @@ void GameFlag_RefreshLureCap(void) {
 
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
-/// Adventure_InitializeDefaults stores it as a new game's start stamp,
+/// SequenceParentWork_InitializeDefaults stores it as a new game's start stamp,
 /// and the file list (FileList_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
 u32 BuildStamp_GetTime(void) {
@@ -535,7 +535,7 @@ u32 BuildStamp_GetTime(void) {
 }
 
 /// A view of EWRAM from gSceneLocalState on, which
-/// Adventure_InitializeDefaults writes one byte through.
+/// SequenceParentWork_InitializeDefaults writes one byte through.
 /// gSceneLocalState's 0x78 bytes and gInventorySnapshot's 0x8c come first, so
 /// firstSnapshotSlot is the first byte of gActorSnapshot.
 struct MapLocalStateSnapshotView {
@@ -555,16 +555,16 @@ struct MapLocalStateSnapshotView {
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the File Screen's new game, by
 /// Game_RestartQuest and SequenceParent_Run, and by the debug battle menu.
-void Adventure_InitializeDefaults(void) {
+void SequenceParentWork_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, scene state, flags and save metadata in DMA order:
-  // 0xb0 words are gAdventure up to the characters (units, which
+  // 0xb0 words are gSequenceParentWork up to the characters (units, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneLocalState
   // through gInventorySnapshot and gActorSnapshot; 0x80 words are all
   // 4096 flags.
   zero = 0;
-  START_DMA(&zero, &gAdventure,
+  START_DMA(&zero, &gSequenceParentWork,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
   zero = 0;
   START_DMA(&zero, gSceneLocalState,
@@ -580,47 +580,47 @@ void Adventure_InitializeDefaults(void) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
-  gAdventure.aKeys = KEY_A;
-  gAdventure.bKeys = KEY_B;
-  gAdventure.selectKeys = KEY_SELECT;
-  gAdventure.startKeys = KEY_START;
-  gAdventure.firstShortcutKeys = KEY_L;
-  gAdventure.secondShortcutKeys = KEY_R;
-  gAdventure.dashKeys = KEY_B;
-  gAdventure.firstShortcut = 0;
-  gAdventure.secondShortcut = 0;
-  gAdventure.leaderActorId = 0;
+  gSequenceParentWork.aKeys = KEY_A;
+  gSequenceParentWork.bKeys = KEY_B;
+  gSequenceParentWork.selectKeys = KEY_SELECT;
+  gSequenceParentWork.startKeys = KEY_START;
+  gSequenceParentWork.firstShortcutKeys = KEY_L;
+  gSequenceParentWork.secondShortcutKeys = KEY_R;
+  gSequenceParentWork.dashKeys = KEY_B;
+  gSequenceParentWork.firstShortcut = 0;
+  gSequenceParentWork.secondShortcut = 0;
+  gSequenceParentWork.leaderActorId = 0;
   Party_AddMember(0);
-  gAdventure.coins = 0;
-  gAdventure.messageSpeed = 1;
-  gAdventure.speech = 1;
-  gAdventure.unusedAfterSpeech = 1;
-  gAdventure.windowColor[0] = 0;
-  gAdventure.windowColor[1] = 8;
-  gAdventure.buildStamp = 0;
-  gAdventure.startStamp = BuildStamp_GetTime();
+  gSequenceParentWork.coins = 0;
+  gSequenceParentWork.messageSpeed = 1;
+  gSequenceParentWork.speech = 1;
+  gSequenceParentWork.unusedAfterSpeech = 1;
+  gSequenceParentWork.windowColor[0] = 0;
+  gSequenceParentWork.windowColor[1] = 8;
+  gSequenceParentWork.buildStamp = 0;
+  gSequenceParentWork.startStamp = BuildStamp_GetTime();
   gPlayTimeFrames = 0;
-  gAdventure.playTime = 0;
+  gSequenceParentWork.playTime = 0;
   gIdleSleepEnabled = 0;
-  gAdventure.idleSleepEnabled = gIdleSleepEnabled;
+  gSequenceParentWork.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
   // Three prizes share each successive slot-machine weight.
-  gAdventure.prizeWeights[0] = 4;
-  gAdventure.prizeWeights[1] = 4;
-  gAdventure.prizeWeights[2] = 4;
-  gAdventure.prizeWeights[3] = 8;
-  gAdventure.prizeWeights[4] = 8;
-  gAdventure.prizeWeights[5] = 8;
-  gAdventure.prizeWeights[6] = 16;
-  gAdventure.prizeWeights[7] = 16;
-  gAdventure.prizeWeights[8] = 16;
-  gAdventure.prizeWeights[9] = 32;
-  gAdventure.prizeWeights[10] = 32;
-  gAdventure.prizeWeights[11] = 32;
-  gAdventure.prizeWeights[12] = 64;
-  gAdventure.prizeWeights[13] = 64;
-  gAdventure.prizeWeights[14] = 64;
+  gSequenceParentWork.prizeWeights[0] = 4;
+  gSequenceParentWork.prizeWeights[1] = 4;
+  gSequenceParentWork.prizeWeights[2] = 4;
+  gSequenceParentWork.prizeWeights[3] = 8;
+  gSequenceParentWork.prizeWeights[4] = 8;
+  gSequenceParentWork.prizeWeights[5] = 8;
+  gSequenceParentWork.prizeWeights[6] = 16;
+  gSequenceParentWork.prizeWeights[7] = 16;
+  gSequenceParentWork.prizeWeights[8] = 16;
+  gSequenceParentWork.prizeWeights[9] = 32;
+  gSequenceParentWork.prizeWeights[10] = 32;
+  gSequenceParentWork.prizeWeights[11] = 32;
+  gSequenceParentWork.prizeWeights[12] = 64;
+  gSequenceParentWork.prizeWeights[13] = 64;
+  gSequenceParentWork.prizeWeights[14] = 64;
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
@@ -677,7 +677,7 @@ void Party_EndChildhood(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
 
-  gAdventure.coins += 300;
+  gSequenceParentWork.coins += 300;
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -691,7 +691,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = Unit_Get(gAdventure.party[partyIndex]);
+    unit = Unit_Get(gSequenceParentWork.party[partyIndex]);
 
     unit->hp = unit->hpMax;
     unit->pp = unit->ppMax;
@@ -717,7 +717,7 @@ void Party_RestorePpOfLitElements(void) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unitId = gAdventure.party[partyIndex];
+    unitId = gSequenceParentWork.party[partyIndex];
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == 0) {

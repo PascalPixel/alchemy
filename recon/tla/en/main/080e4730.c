@@ -18,7 +18,7 @@
 
 struct PendingEvent;
 
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 extern u8 Data_02000452;
 
 void *HeapSlot_Alloc(s32 slot, s32 size);
@@ -76,7 +76,7 @@ void Func_080e4730(void) {
   s32 delay;
 
   Func_080dc954();
-  gAdventure[620] = 0;
+  gSequenceParentWork[620] = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(Func_080e42d4);
   Resource_DecodeType01(Resource_GetTableEntry(0x1e1), work);
@@ -97,7 +97,7 @@ void Func_080e4730(void) {
   *motionFlags = 0;
   Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                       owner->z);
-  party = gAdventure;
+  party = gSequenceParentWork;
   Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
   animation = owner->animation;
   animation[5] &= 63;

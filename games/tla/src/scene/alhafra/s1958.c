@@ -27,7 +27,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 a, s32 b);
 void Func_02001c3c(s32 a, s32 b, s32 c);
 void Func_02001bec(void);
 extern u8 MsgAlhafra28[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_02001958(s32 a0) {
   s32 t22;
@@ -42,9 +42,9 @@ void Func_02001958(s32 a0) {
   Call1(Func_02001c74, (s32)MsgAlhafra28);
   if (a0 == 1) {
     Call1(FieldEvent_Wait, 0xa);
-    Call3(Actor_SetPositionAndReset, FIELD_AT(gAdventure, s32, 532),
+    Call3(Actor_SetPositionAndReset, FIELD_AT(gSequenceParentWork, s32, 532),
           0xa8, 0x2e0);
-    Call3(Actor_ArmCallback, FIELD_AT(gAdventure, s32, 532), 0, 0);
+    Call3(Actor_ArmCallback, FIELD_AT(gSequenceParentWork, s32, 532), 0, 0);
   }
   {
     s32 b = 0x102, c = 0x1e;

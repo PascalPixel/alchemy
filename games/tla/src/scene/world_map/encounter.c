@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "edition.h"
 
 /// The world map's event work, as far as the encounter events read it.
@@ -20,14 +20,14 @@ void Func_02004d50(s32 a, s32 b);
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
     struct EncounterWork *work;                                                \
-    struct Adventure *party;                                                  \
+    struct SequenceParentWork *party;                                                  \
                                                                                \
     work = Ram_HeapSlots->eventWork;                                           \
     /* FAKEMATCH: an empty asm after the work load keeps it ahead of           \
-       gAdventure's address, which the native loads before it builds          \
+       gSequenceParentWork's address, which the native loads before it builds          \
        the 0x258 offset; plain, the offset starts first (differ 2). */         \
     asm("");                                                                   \
-    party = &gAdventure;                                                      \
+    party = &gSequenceParentWork;                                                      \
     if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
       if (Random16Far() < 0x8000) {                                            \
         Func_02004d50(a, b);                                                   \
@@ -40,11 +40,11 @@ void Func_02004d50(s32 a, s32 b);
 #else
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
-    struct Adventure *party;                                                  \
+    struct SequenceParentWork *party;                                                  \
     struct EncounterWork *work;                                                \
                                                                                \
-    party = &gAdventure;                                                      \
-    /* FAKEMATCH: an empty asm after gAdventure's address keeps it            \
+    party = &gSequenceParentWork;                                                      \
+    /* FAKEMATCH: an empty asm after gSequenceParentWork's address keeps it            \
        ahead of the 0x212 offset and the work load; as no asm, 2               \
        instructions differ in tla-en. */                                       \
     asm("");                                                                   \

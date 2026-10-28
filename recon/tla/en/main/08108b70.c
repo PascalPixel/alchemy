@@ -51,7 +51,7 @@ struct PartyCoins {
   u32 coins;
 };
 
-extern struct PartyCoins gAdventure;
+extern struct PartyCoins gSequenceParentWork;
 extern char MsgItemPlainName[], MsgWhoGetsThis[], MsgPackFull[],
     MsgCannotCarryItem[], MsgCannotEquipStillWant[], MsgBuyAnythingElse[],
     MsgBuyNotEnoughMoney[];
@@ -231,7 +231,7 @@ next_page:
         continue;
       }
       Inventory_RemoveFar(unitId, capacitySlot);
-      if (selectedDefinition->price > gAdventure.coins) {
+      if (selectedDefinition->price > gSequenceParentWork.coins) {
         Sound_PlayFar(113);
         Func_0810857c((s32)MsgBuyNotEnoughMoney);
         selectionResult = -1;

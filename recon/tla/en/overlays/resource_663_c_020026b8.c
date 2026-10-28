@@ -16,7 +16,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_sprite.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
@@ -144,7 +144,7 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  Camera_FollowActor(gAdventure.currentOwner, 1);
+  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
   Func_02003c30();
   Call2((void (*)())Func_02003c20, 0x10000, 0x2000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x980000, -1, 0x900000, 1);
@@ -210,13 +210,13 @@ fade:
   REG_BLDCNT = 0;
   Func_02003b00();
   Func_02003af8();
-  Func_02003bb8(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+  Func_02003bb8(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags &= ~32;
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags &= ~32;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
   Actor_GetById(12)->priorityFlags |= 1;
-  Camera_FollowActor(gAdventure.currentOwner, 1);
+  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
   Func_02003c30();
   GameFlag_SetBit(0x87a);
   Func_02003bd0();

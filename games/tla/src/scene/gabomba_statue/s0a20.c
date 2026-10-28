@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 void Func_020056b4(struct Actor *object);
 void Func_0200580c(s32 value);
@@ -21,7 +21,7 @@ static __inline__ void Actor_Cue(s32 id, s32 value) {
 void Func_02000a20(struct Actor *object) {
   u32 i;
   s32 delta;
-  struct Adventure *party;
+  struct SequenceParentWork *party;
 
   Func_020056b4(object);
   Func_0200580c(0);
@@ -30,8 +30,8 @@ void Func_02000a20(struct Actor *object) {
   object->y = 0x60000;
   object->z = 0xf741cf;
   object->angle = 0x4000;
-  party = &gAdventure;
-  /* FAKEMATCH: the native loads the adventure's address among the stores
+  party = &gSequenceParentWork;
+  /* FAKEMATCH: the native loads gSequenceParentWork's address among the stores
    * above and builds the owner's offset after them; the plain order builds the
    * offset before the angle store (differ 4). */
   asm volatile("" : "+l"(party));

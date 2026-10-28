@@ -20,7 +20,7 @@
 // 0x800 base is formed a place later; the flag loop closes with bls for the
 // native ble.
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -50,7 +50,7 @@ void Func_080ae868(void) {
 
   count = Party_CountActiveOwners();
   for (i = 0; i < count; i++)
-    saved[i] = gAdventure.activeOwners[i];
+    saved[i] = gSequenceParentWork.activeOwners[i];
   for (i = 0; i < count; i++)
     Party_RemoveActiveOwner(saved[i]);
   for (i = 0; i < 4; i++)

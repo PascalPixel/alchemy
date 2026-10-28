@@ -360,7 +360,7 @@
 #include "motobj.h"
 #include "mem.h"
 #include "battle_display.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 #define ALLY 2 /* Ally. */
@@ -1009,7 +1009,7 @@ power_end:
         }
         dmg += Battle_RandomFar() & 3;
         GUARD_CUT();
-        if ((gAdventure.battleRule24b == 6 ||
+        if ((gSequenceParentWork.battleRule24b == 6 ||
              (GameFlag_Test(366) != 0 && plan->command == 6)) &&
             cur > dmg) {
           dmg = cur;
@@ -1032,7 +1032,7 @@ power_end:
 
       if (cur <= 0 && BattleUnit_KeepsOneHp(tid) != 0)
         cur = 1;
-      if (gAdventure.battleRule24b == 6)
+      if (gSequenceParentWork.battleRule24b == 6)
         cur = 0;
       if (cur <= 0) {
         BattleEvent_Push(BATTLE_EVENT_DEFEAT, tid);

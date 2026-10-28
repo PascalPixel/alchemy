@@ -39,7 +39,7 @@
 /// (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the Sanctum
 /// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_AREA_NAME, so the name is not
 /// shown again.
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "djinn_ids.h"
 #include "module/import.h"
 #include "module/scene/xian.h"
@@ -813,7 +813,7 @@ s32 Xian_Initialize(void) {
   // Back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name
   // is not shown.
-  if (gAdventure.entrance >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
+  if (gSequenceParentWork.entrance >= XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {

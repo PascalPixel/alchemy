@@ -4,7 +4,7 @@
 #include "mapcopy.h"
 #include "game_flags.h"
 #include "resource.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern u8 gMapShapeGrid[];
 
@@ -160,7 +160,7 @@ void Tilemap_ConvertBuffer(void);
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
   struct MapHeader *header = Resource_GetTableEntry(
-      *(const u16 *)(gAdventure.map * 12 + (u32)gData_0802f380) +
+      *(const u16 *)(gSequenceParentWork.map * 12 + (u32)gData_0802f380) +
       (u32)&ResourceId_Map000);
 
   source = (u8 *)header + header->cells;

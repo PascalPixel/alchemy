@@ -1,41 +1,41 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
 
-  value = gAdventure.coins;
+  value = gSequenceParentWork.coins;
   value += amount;
   if (value > 0xf423f)
     value = 0xf423f;
   if (value < 0)
     value = 0;
-  gAdventure.coins = value;
+  gSequenceParentWork.coins = value;
   return value;
 }
 
 s32 Party_AdjustShopCredit(s32 amount) {
   s32 value;
 
-  value = gAdventure.counterB;
+  value = gSequenceParentWork.counterB;
   value += amount;
   if (value > 0xf423f)
     value = 0xf423f;
   if (value < 0)
     value = 0;
-  gAdventure.counterB = value;
+  gSequenceParentWork.counterB = value;
   return value;
 }
 
 s32 Party_AdjustShopGifts(s32 amount) {
   s32 value;
 
-  value = gAdventure.counterC;
+  value = gSequenceParentWork.counterC;
   value += amount;
   if (value > 28)
     value = 28;
   if (value < 0)
     value = 0;
-  gAdventure.counterC = value;
+  gSequenceParentWork.counterC = value;
   return value;
 }

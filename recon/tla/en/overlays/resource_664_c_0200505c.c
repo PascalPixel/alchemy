@@ -13,7 +13,7 @@
 // pointer; permute found nothing better.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
@@ -43,7 +43,7 @@ void Func_02005dcc(s32 a, s32 b, s32 c);
 void Func_02005dd4(void);
 
 void Func_0200505c(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct EffectOptions options;
   u32 i;
 
@@ -83,12 +83,12 @@ void Func_0200505c(void) {
         &options);
   }
   Func_02005f94(188);
-  Func_02005ec4(gAdventure.currentOwner, 257);
-  Actor_SetModeById(gAdventure.currentOwner, 22);
+  Func_02005ec4(gSequenceParentWork.currentOwner, 257);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 22);
   Call3((void (*)())Func_02005dcc, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02005dcc, -1, -1, 0xe666);
   Func_02005dd4();
-  Func_02005ec4(gAdventure.currentOwner, 256);
+  Func_02005ec4(gSequenceParentWork.currentOwner, 256);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;

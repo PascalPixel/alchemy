@@ -186,7 +186,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->watchedActor;
-  if (gAdventure.mapId == MAP_INDEX_WORLD)
+  if (gSequenceParentWork.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;
@@ -216,7 +216,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
 
   limit = particle->groundHeight + 0xA0000;
   source = particle->watchedActor;
-  if (gAdventure.mapId == MAP_INDEX_WORLD)
+  if (gSequenceParentWork.mapId == MAP_INDEX_WORLD)
     limit = particle->groundHeight + 0x40000;
 
   y = particle->y.fixed;

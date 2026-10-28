@@ -17,7 +17,7 @@
 // constants; the message names stand for 0xdba to 0xdbd.
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "scene_ids.h"
 
@@ -104,7 +104,7 @@ s32 Func_080ce61c(u32 code) {
       return 0;
     }
     if (abilityId == 153) {
-      if (gAdventure.ownerOverride != 0 && GameFlag_Test(0x8df)) {
+      if (gSequenceParentWork.ownerOverride != 0 && GameFlag_Test(0x8df)) {
         GameFlag_SetBit(327);
         *(s16 *)(event + 362) = 253;
         return 0;
@@ -113,7 +113,7 @@ s32 Func_080ce61c(u32 code) {
       return 0;
     }
   }
-  if (gAdventure.ownerOverride != 0 && abilityId == 139) {
+  if (gSequenceParentWork.ownerOverride != 0 && abilityId == 139) {
     FIELD_PSYNERGY_MESSAGE(userId, 139, MsgNothingHappened);
     return 0;
   }
@@ -129,7 +129,7 @@ s32 Func_080ce61c(u32 code) {
     if (cost != 0)
       return 0;
     {
-      struct Adventure *state = &gAdventure;
+      struct SequenceParentWork *state = &gSequenceParentWork;
       s32 scene, entrance;
 
       scene = (u16)state->retreatScene;
@@ -156,7 +156,7 @@ s32 Func_080ce61c(u32 code) {
   before = Func_080ce458(0x10000005, group, selector);
   after = Func_080ce458(5, group, selector);
   during = Func_080ce458(0x50000005, group, selector);
-  if (abilityId == 156 && gAdventure.scene != (s32)&SceneId_Ov64a &&
+  if (abilityId == 156 && gSequenceParentWork.scene != (s32)&SceneId_Ov64a &&
       before == NULL && after == NULL && during == NULL) {
     FIELD_PSYNERGY_MESSAGE(userId, 156, MsgDoesNotWorkHere);
     return 0;

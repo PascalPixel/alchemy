@@ -1,9 +1,10 @@
 /// @file
 /// The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
 /// (SceneId_LamaTemple), two scenes on Silk Road west of Xian that share this
-/// overlay. The getters pick each scene's tables by gAdventure.sceneId,
-/// both scenes share one exit table, and Scene_Initialize sets up the scene
-/// being entered from the story flags of Hsu's rescue, which runs through both.
+/// overlay. The getters pick each scene's tables by
+/// gSequenceParentWork.sceneId, both scenes share one exit table, and
+/// Scene_Initialize sets up the scene being entered from the story flags of
+/// Hsu's rescue, which runs through both.
 ///
 /// At the Alpine Crossing boulders block Silk Road. Once Feizhi has left Xian
 /// (FLAG_FEIZHI_WENT_TO_HSU, set in fuchin_temple.c), stepping onto the road
@@ -53,7 +54,7 @@
 /// sprout into a vine; a chest holds Power Bread.
 
 #include "script_operands.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/scene/alpine_crossing_lama_temple.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
@@ -235,7 +236,7 @@ static s32 AlpineCrossing_LeaderFaceFeizhi(struct Actor *updated) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gAdventure.sceneId == MAP_ALPINE_CROSSING) {
+  if (gSequenceParentWork.sceneId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_Entrances;
   }
   return gLamaTemple_Entrances;
@@ -247,7 +248,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gAdventure.sceneId == MAP_ALPINE_CROSSING) {
+  if (gSequenceParentWork.sceneId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_ActorPlacements;
   }
   return gLamaTemple_ActorPlacements;
@@ -903,7 +904,7 @@ static void AlpineCrossing_GrowSprout(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gAdventure.sceneId == MAP_ALPINE_CROSSING) {
+  if (gSequenceParentWork.sceneId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_Triggers;
   }
   return gLamaTemple_Triggers;
@@ -914,7 +915,7 @@ s32 Scene_Initialize(void) {
   s32 entrance;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gAdventure.sceneId == MAP_LAMA_TEMPLE) {
+  if (gSequenceParentWork.sceneId == MAP_LAMA_TEMPLE) {
     // Lama Temple: the temple's queued sound (SE_AMBIENT_WIND) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
@@ -928,14 +929,14 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_CHI_MONK, PIXELS(136), PIXELS(256));
       Actor_ArmCallback(ACTOR_CHI_MONK, FACING_EAST, 0);
     }
-    entrance = gAdventure.entrance;
+    entrance = gSequenceParentWork.entrance;
     if (entrance == LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     } else if (entrance == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
     }
-  } else if (gAdventure.sceneId == MAP_ALPINE_CROSSING) {
+  } else if (gSequenceParentWork.sceneId == MAP_ALPINE_CROSSING) {
     // Alpine Crossing: restore the Psynergy puzzles already solved.
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_WATER_FOR_FROST), 0);
     Actor_GetById(ACTOR_WATER_FOR_FROST)->priorityFlags |=
@@ -948,9 +949,9 @@ s32 Scene_Initialize(void) {
       Import_ActorSetAnimation(ACTOR_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
-    if (gAdventure.entrance ==
+    if (gSequenceParentWork.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST ||
-        gAdventure.entrance ==
+        gSequenceParentWork.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     }
@@ -966,7 +967,7 @@ s32 Scene_Initialize(void) {
     // Hsu: he has been freed without it and the boulder is gone.
     if (!Event_GetFlag(FLAG_HSU_RESCUED) &&
         GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
-        gAdventure.entrance == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
+        gSequenceParentWork.entrance == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
       Import_ActorSetPosition(ACTOR_BOULDER, 0, 0);
       GameFlag_Set(FLAG_HSU_RESCUED);
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
@@ -1000,7 +1001,7 @@ s32 Scene_Initialize(void) {
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Actor_GetById(ACTOR_HSU)->scaleX = -0x10000;
     }
-    if (gAdventure.entrance ==
+    if (gSequenceParentWork.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST &&
         !GameFlag_Get(FLAG_HAMA_REACHED_HSU) &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&

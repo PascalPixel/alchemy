@@ -171,11 +171,11 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
 }
 
 /// Pauses actor id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gAdventure. Called by FieldPsynergy_Run and
-/// FieldPsynergy_Dispatch for Halt, which then record the id in
-/// gAdventure.haltedActor, and by the Colosso scenes to stop their
-/// operators. Sets gAdventure.pausedUpdate and pausedPose, the actor's
-/// update and paused fields, and stops its animation. gAdventure keeps
+/// first animation's param in gSequenceParentWork. Called by FieldPsynergy_Run
+/// and FieldPsynergy_Dispatch for Halt, which then record the id in
+/// gSequenceParentWork.haltedActor, and by the Colosso scenes to stop their
+/// operators. Sets gSequenceParentWork.pausedUpdate and pausedPose, the actor's
+/// update and paused fields, and stops its animation. gSequenceParentWork keeps
 /// one actor's state, so Halt resumes the one it stopped before it stops
 /// another; the paused actor flickers through random sprite params meanwhile.
 void FieldPsynergy_HaltActor(s32 actorId) {
@@ -184,12 +184,12 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    gAdventure.pausedUpdate = (u32)actor->update;
-    gAdventure.pausedPose = 0;
+    gSequenceParentWork.pausedUpdate = (u32)actor->update;
+    gSequenceParentWork.pausedPose = 0;
     if (actor->spriteStorageKind == 1) {
       entry = actor->sprite->entries[0];
       if (entry != NULL) {
-        gAdventure.pausedPose = entry->colorMode;
+        gSequenceParentWork.pausedPose = entry->colorMode;
       }
     }
     actor->update = FieldPsynergy_UpdateHaltedActor;
@@ -199,16 +199,16 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 }
 
 /// Resumes actor id with the update and param kept by
-/// FieldPsynergy_HaltActor. Called for gAdventure.haltedActor by
+/// FieldPsynergy_HaltActor. Called for gSequenceParentWork.haltedActor by
 /// FieldPsynergy_Run and FieldPsynergy_Dispatch before Halt stops
 /// another actor, and by Scene_TalkToActor after talking to the paused
-/// actor. Clears gAdventure.pausedUpdate and the actor's paused field,
+/// actor. Clears gSequenceParentWork.pausedUpdate and the actor's paused field,
 /// and restarts its animation at speed 16.
 void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   if (actor != 0) {
     if (actor->update == FieldPsynergy_UpdateHaltedActor) {
-      struct Adventure *state = &gAdventure;
+      struct SequenceParentWork *state = &gSequenceParentWork;
       actor->update = (void (*)(struct Actor *))state->pausedUpdate;
       state->pausedUpdate = 0;
       Actor_SetSpriteColorModeFar(actor, state->pausedPose);

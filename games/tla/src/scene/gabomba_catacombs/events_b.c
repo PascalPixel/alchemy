@@ -3,7 +3,7 @@
 void Func_020008a0(struct Actor *object, s32 dz);
 
 void Func_0200094c(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {

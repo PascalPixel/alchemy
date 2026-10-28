@@ -8,8 +8,8 @@
 /// the World Map the encounter region and battle environment under the leader
 /// pick the battle background. Sets the field work's battle request, which
 /// the scene sequence then handles, and the battle music;
-/// ENCOUNTER_ZONE_SCRIPTED's first slot also sets gAdventure.special to the
-/// Aerie's storm battle background. About 35 scenes reach it through
+/// ENCOUNTER_ZONE_SCRIPTED's first slot also sets gSequenceParentWork.special
+/// to the Aerie's storm battle background. About 35 scenes reach it through
 /// Field_RequestBattleFromEncounterTableFar, and the Battle Arena calls it
 /// directly. The battle starts only once the event that asked for it has
 /// returned.
@@ -20,9 +20,10 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 
   work->encounter = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
-    gAdventure.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
+    gSequenceParentWork.special =
+        (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    struct Actor *leader = Actor_Lookup(gAdventure.leaderActorId);
+    struct Actor *leader = Actor_Lookup(gSequenceParentWork.leaderActorId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
   }
@@ -32,13 +33,13 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
 /// Djinni's actor, which hops first unless DJINN_NO_HOP is set. Djinn
 /// are numbered 20 to an element (Djinn_ResolvePending). Sets
-/// gAdventure.pendingDjinni and the field work's encounter request; when
-/// the scene is entered again after the battle, Djinn_ResolvePending
-/// reads the pending event to make the Djinni join or hide it. About 20
-/// scenes reach it through Field_RequestDjinnBattleFar.
+/// gSequenceParentWork.pendingDjinni and the field work's encounter request;
+/// when the scene is entered again after the battle, Djinn_ResolvePending reads
+/// the pending event to make the Djinni join or hide it. About 20 scenes reach
+/// it through Field_RequestDjinnBattleFar.
 void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct FieldWork *work;
-  struct Adventure *state;
+  struct SequenceParentWork *state;
   s32 skipHop;
 
   work = gFieldWork;
@@ -48,7 +49,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   if (skipHop == 0)
     Djinn_RunBattleStartHop(flag);
 
-  state = &gAdventure;
+  state = &gSequenceParentWork;
   // DJINN_NO_HOP rides along: it tells Actor_PlaceMapActors to put
   // the Djinni back 32 pixels north of the leader, not at its placement's
   // position.
@@ -64,32 +65,32 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   Encounter_SelectBattleMusic(0, 0);
 }
 
-/// Sets the after-battle destination (gAdventure.afterBattleScene and
+/// Sets the after-battle destination (gSequenceParentWork.afterBattleScene and
 /// afterBattleEntrance), where the party goes once the coming battle is won.
 /// About 30 scenes and the Battle Arena reach it through
 /// Event_SetAfterBattleDestinationFar.
 void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
-  gAdventure.afterBattleScene = sceneId;
-  gAdventure.afterBattleEntrance = entrance;
+  gSequenceParentWork.afterBattleScene = sceneId;
+  gSequenceParentWork.afterBattleEntrance = entrance;
 }
 
 /// Sets where the party wakes up after losing a battle
-/// (gAdventure.defeatScene and defeatEntrance). The scenes before event
-/// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
-/// through Event_SetDefeatDestinationFar.
+/// (gSequenceParentWork.defeatScene and defeatEntrance). The scenes before
+/// event battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena
+/// reach it through Event_SetDefeatDestinationFar.
 void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
-  gAdventure.defeatScene = sceneId;
-  gAdventure.defeatEntrance = entrance;
+  gSequenceParentWork.defeatScene = sceneId;
+  gSequenceParentWork.defeatEntrance = entrance;
 }
 
 /// Makes the event leave for entrance entrance of scene sceneId: sets
-/// gAdventure.sceneId and entrance and raises the exit request
+/// gSequenceParentWork.sceneId and entrance and raises the exit request
 /// EXIT_KEEP_DESTINATION (999), so the scene sequence leaves on its next pass.
 /// Only Tolbi's spring reaches it, through Event_LeaveForFar.
 void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
-  gAdventure.sceneId = sceneId;
-  gAdventure.entrance = entrance;
+  gSequenceParentWork.sceneId = sceneId;
+  gSequenceParentWork.entrance = entrance;
   work->exit = EXIT_KEEP_DESTINATION;
 }
 

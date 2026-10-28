@@ -15,7 +15,7 @@
 #include "types.h"
 #include "flag_call.h"
 #include "iwram_call.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 struct SwingSlot {
@@ -53,8 +53,8 @@ void Func_080d8c10(void) {
   s32 i = 0;
 
   if (!GameFlag_Test(260) && event->timer > 12) {
-    if (gAdventure.renderMode == 0) {
-      s32 target = Field_FindNearbyTalkTarget(gAdventure.currentOwner);
+    if (gSequenceParentWork.renderMode == 0) {
+      s32 target = Field_FindNearbyTalkTarget(gSequenceParentWork.currentOwner);
 
       if (target != -1) {
         slot = work->slots;
@@ -66,7 +66,7 @@ void Func_080d8c10(void) {
         if (i < 8 && Func_080d99b8(work->slots[i].id, work->slots[i].value))
           event->prompt = 0xfc85;
       }
-    } else if (gAdventure.renderMode == 3) {
+    } else if (gSequenceParentWork.renderMode == 3) {
       event->prompt = 0xfc86;
     }
   }

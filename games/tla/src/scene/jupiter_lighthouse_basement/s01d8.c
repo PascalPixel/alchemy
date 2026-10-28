@@ -2,7 +2,7 @@
 
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "frame.h"
 #include "field_sprite.h"

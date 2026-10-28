@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 #include "call.h"
 
@@ -47,12 +47,12 @@ void Func_0200225c(void) {
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
-  Func_02004ec4(12, gAdventure.currentOwner);
+  Func_02004ec4(12, gSequenceParentWork.currentOwner);
   Call3(Actor_ResetAndSetPosition, 12, 528, 372);
   partner->velocityY = 0x60000;
   Actor_WaitForMoveById(12);
   FieldEvent_Wait(45);
-  Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(8, gSequenceParentWork.currentOwner, 0);
   Func_02005014(576);
   Actor_SetModeById(8, 5);
   wait(30);
@@ -87,7 +87,7 @@ void Func_0200225c(void) {
     Func_02005014(564);
     Actor_SetModeById(8, 4);
     FieldEvent_Wait(30);
-    leader = Actor_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gSequenceParentWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -111,7 +111,7 @@ void Func_0200225c(void) {
     FieldEvent_Wait(30);
     Actor_SetModeById(8, 4);
     FieldEvent_Wait(30);
-    leader = Actor_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gSequenceParentWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -135,12 +135,12 @@ void Func_020024b8(void) {
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
-  Func_02004ec4(12, gAdventure.currentOwner);
+  Func_02004ec4(12, gSequenceParentWork.currentOwner);
   Call3(Actor_ResetAndSetPosition, 12, 672, 372);
   partner->velocityY = 0x60000;
   Actor_WaitForMoveById(12);
   FieldEvent_Wait(45);
-  Actor_SetAngleToward(9, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(9, gSequenceParentWork.currentOwner, 0);
   Func_02005014(576);
   Actor_SetModeById(9, 5);
   wait(30);
@@ -175,7 +175,7 @@ void Func_020024b8(void) {
     Func_02005014(564);
     Actor_SetModeById(9, 4);
     FieldEvent_Wait(30);
-    leader = Actor_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gSequenceParentWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -199,7 +199,7 @@ void Func_020024b8(void) {
     FieldEvent_Wait(30);
     Actor_SetModeById(9, 4);
     FieldEvent_Wait(30);
-    leader = Actor_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gSequenceParentWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(12, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -223,12 +223,12 @@ void Func_02002718(void) {
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Func_02005014(193);
   Func_02004e3c(partner, 1);
-  Func_02004ec4(14, gAdventure.currentOwner);
+  Func_02004ec4(14, gSequenceParentWork.currentOwner);
   Call3(Actor_ResetAndSetPosition, 14, 336, 396);
   partner->velocityY = 0x60000;
   Actor_WaitForMoveById(14);
   FieldEvent_Wait(45);
-  Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(8, gSequenceParentWork.currentOwner, 0);
   Func_02005014(576);
   Actor_SetModeById(8, 5);
   wait(30);
@@ -263,7 +263,7 @@ void Func_02002718(void) {
     Func_02005014(564);
     Actor_SetModeById(8, 4);
     FieldEvent_Wait(30);
-    leader = Actor_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gSequenceParentWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));
@@ -287,7 +287,7 @@ void Func_02002718(void) {
     FieldEvent_Wait(30);
     Actor_SetModeById(8, 4);
     FieldEvent_Wait(30);
-    leader = Actor_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gSequenceParentWork.currentOwner);
     if (leader != NULL)
       Actor_ResetAndSetPosition(14, *(s16 *)((u8 *)leader + 10),
                                        *(s16 *)((u8 *)leader + 18));

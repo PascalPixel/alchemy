@@ -1,7 +1,7 @@
 // Under -mthumb-slow-loads (2026-10-26): differ 8 of 311 in tla-en, instruction
 // order and register choice. The same temporary as Func_080d50f8's (ground)
-// gives the native's registers (24 before). Left: as in Func_080d50f8, plus the
-// gAdventure pool load before the action flags' store, which an empty asm
+// gives the native's registers (24 before). Left: as in Func_080d50f8, plus
+// gSequenceParentWork pool load before the action flags' store, which an empty asm
 // before Actor_SetPositionAndCommit fixes (differ 6).
 // Near miss, differ 34 of 311: The Broken Seal twin (Field_ClimbUp), with this
 // game's checks. On the ground, when the leader's map cell and the one north
@@ -21,7 +21,7 @@
 #include "types.h"
 #include "map.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 struct ClimbSprite {
@@ -44,7 +44,7 @@ void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 
 s32 Func_080d53b8(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s16 spriteFlags = 1;
   struct MapCell *ground;
@@ -57,7 +57,7 @@ s32 Func_080d53b8(void) {
   Event_Start();
   if (leader->animationKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
-  if (gAdventure.renderMode == 0) {
+  if (gSequenceParentWork.renderMode == 0) {
     struct MapCell *cell;
     struct MapCell *north;
     s32 cellX = gridX >> 4;
@@ -86,7 +86,7 @@ s32 Func_080d53b8(void) {
 
     // Step to the middle of the tile, crouch, jump and grab the wall.
     leader->actionFlags = result;
-    Actor_SetPositionAndCommit(gAdventure.currentOwner, gridX, gridZ);
+    Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, gridX, gridZ);
     Actor_SetMode(leader, 6);
     wait(4);
     Actor_SetMode(leader, 7);
@@ -99,7 +99,7 @@ s32 Func_080d53b8(void) {
     leader->velocityY = result;
     Actor_SetMode(leader, 12);
     wait(4);
-    gAdventure.renderMode = 2;
+    gSequenceParentWork.renderMode = 2;
     leader->actionFlags = 1;
     wait(8);
     leader->z = (leader->z & 0xfff00000) + 0x80000;
@@ -126,13 +126,13 @@ s32 Func_080d53b8(void) {
     Actor_SetMode(leader, 11);
     Actor_SetTargetPosition(leader, gridX << 16, leader->y + 0x80000,
                        (gridZ << 16) - 0x100000);
-    Actor_WaitForMoveById(gAdventure.currentOwner);
+    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
     leader->motionFlags = 3;
     leader->terrainHeight = leader->y;
     spriteFlags |= 1;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags);
     Event_Wait(4);
-    gAdventure.renderMode = 0;
+    gSequenceParentWork.renderMode = 0;
     leader->actionFlags = 1;
     leader->action = 0;
     leader->unk66 = 0;

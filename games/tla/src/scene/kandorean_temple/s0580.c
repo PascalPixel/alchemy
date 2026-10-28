@@ -12,7 +12,7 @@ extern s32 gData_02005fc4[];
 extern s32 gData_0200615c[];
 
 void *Func_02000580(void) {
-  s32 scene = gAdventure.scene;
+  s32 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov653Room1)
     return gData_02005d54;

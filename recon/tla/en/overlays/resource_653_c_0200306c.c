@@ -13,7 +13,7 @@ void Func_02005158(void);
 void Func_020053d8(s32 cue);
 
 void Func_0200306c(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *statue = Actor_GetById(9);
   struct Actor *ride = Func_020052f0();
   s16 i;
@@ -77,7 +77,7 @@ fall:
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(9, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      1);
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;

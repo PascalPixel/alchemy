@@ -113,7 +113,7 @@ try makes the rest of the turn one the enemies began.
 
 `BattleWork.firstStrike` records which side has the jump, and
 `BattleFlee_CheckSuccess` (`turn.c`) rolls the escape. What kind of battle it
-is, `gAdventure.battleType`, decides the rest:
+is, `gSequenceParentWork.battleType`, decides the rest:
 
 | Kind | What it changes |
 | --- | --- |

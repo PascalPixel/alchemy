@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "call.h"
 
@@ -33,12 +33,12 @@ void Func_02000120(void) {
   Func_02001108(0);
   Func_02001098(MsgAreWeSetting);
   FieldMessage_ShowAtActor(18, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Actor_SetModeById(18, 3);
     Func_020010a8(18, 0);
-    gAdventure.ownerOverride = 1;
+    gSequenceParentWork.ownerOverride = 1;
     /* FAKEMATCH: the flag test forwards through call.h's Value1; called
-     * directly, the adventure's offsets take r3 instead of r2 (differ 22,
+     * directly, gSequenceParentWork's offsets take r3 instead of r2 (differ 22,
      * found by alchemy permute). */
     if (Value1(GameFlag_Test, 0x9d0)) {
       GameFlag_SetBit(0x8df);
@@ -50,7 +50,7 @@ void Func_02000120(void) {
     Func_020010a8(18, 0);
     Call3(Actor_SetSpeedParameters, 18, 0x19999, 0xcccc);
     Actor_SetModeById(18, 2);
-    object = Actor_GetById(gAdventure.currentOwner);
+    object = Actor_GetById(gSequenceParentWork.currentOwner);
     if (object != NULL)
       Actor_ResetAndSetPosition(18, *(s16 *)((u8 *)object + 10),
                                        *(s16 *)((u8 *)object + 18));

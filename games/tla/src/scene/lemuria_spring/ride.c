@@ -1,6 +1,6 @@
 #include "types.h"
 #include "task.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct SpringPoint {
   s32 x;
@@ -106,7 +106,7 @@ start:
   /* FAKEMATCH: the volatile read keeps the frame's reload where both paths
    * meet; plain, PRE copies it onto the cue's path (differ 2). */
   if (*(volatile s32 *)&gData_02001820 == 16) {
-    Actor_SetModeById(gAdventure.currentOwner, 39);
+    Actor_SetModeById(gSequenceParentWork.currentOwner, 39);
     ride->hold = 0;
     ride->velocity.x = 0x14ccc;
     ride->velocity.y = 0x40000;

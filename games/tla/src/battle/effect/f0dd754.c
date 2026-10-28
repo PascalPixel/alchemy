@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "iwram_call.h"
 
@@ -13,10 +13,10 @@ void Func_080dd754(void) {
   s16 *timer;
   s32 dx;
   s32 dz;
-  struct Adventure *party;
+  struct SequenceParentWork *party;
 
   work = Ram_HeapSlots->eventWork;
-  party = &gAdventure;
+  party = &gSequenceParentWork;
   actor = ObjectTable_Get(party->currentOwner);
   if (*(s8 *)(work + 0xca5) != 0) {
     timer = (s16 *)(work + 0xca6);

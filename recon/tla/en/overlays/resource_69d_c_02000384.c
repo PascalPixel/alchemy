@@ -7,11 +7,11 @@
 // each pass) behind its own entry test, storing y before the ground height,
 // with the count after the wait. Left: the y read by the entry test is carried
 // into the first pass in r2 where the native keeps it in r3, and the gravity
-// store comes after the adventure's pool load.
+// store comes after gSequenceParentWork's pool load.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -43,13 +43,13 @@ s32 Func_02000384(void) {
     Func_020001ac();
   Func_02000300();
   flag = GameFlag_Test(265);
-  if (flag == 0 && gAdventure.entrance == 11) {
-    leader = Actor_GetById(gAdventure.currentOwner);
+  if (flag == 0 && gSequenceParentWork.entrance == 11) {
+    leader = Actor_GetById(gSequenceParentWork.currentOwner);
     leader->priorityFlags &= ~64;
     Func_02001e48();
     Func_02001ed0(0);
-    Actor_SetSpritePriority(gAdventure.currentOwner, 1);
-    Actor_SetModeById(gAdventure.currentOwner, 2);
+    Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
+    Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
     leader->y = leader->terrainHeight = -0x780000;
@@ -70,14 +70,14 @@ s32 Func_02000384(void) {
     leader->motionFlags = 3;
     leader->velocityY = 0x30000;
     leader->gravity = 0x8000;
-    Actor_SetModeById(gAdventure.currentOwner, 1);
+    Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
     FieldEvent_Wait(40);
     leader->gravity = 0x10000;
     leader->priorityFlags |= 64;
-    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+    Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
     Func_02001e50();
   }
-  if (!GameFlag_Test(265) && gAdventure.entrance == 12)
-    Func_02001f00(gAdventure.currentOwner);
+  if (!GameFlag_Test(265) && gSequenceParentWork.entrance == 12)
+    Func_02001f00(gSequenceParentWork.currentOwner);
   return 0;
 }

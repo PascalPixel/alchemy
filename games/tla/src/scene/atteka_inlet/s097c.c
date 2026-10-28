@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 #include "call.h"
 
@@ -38,7 +38,7 @@ void Func_0200097c(void) {
   Call1(wait, 1);
   Call1(Func_02001098, (s32)MsgHeyWait2);
   Call2(Func_020010a8, 24, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 23, 0x3000, 0);
   Call2(Func_020010d0, 0x19999, 0x3333);
   Func_020010e8()->motionFlags = 0;

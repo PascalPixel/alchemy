@@ -2,7 +2,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 #include "field_sprite.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"

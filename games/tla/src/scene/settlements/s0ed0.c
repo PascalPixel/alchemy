@@ -25,6 +25,6 @@ void Func_02000ed0(void) {
 void Func_02000ef0(void) { Func_02002190(gData_0200226c); }
 
 void Func_02000f00(void) {
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 2;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 2;
   Func_02002190(gData_0200226c);
 }

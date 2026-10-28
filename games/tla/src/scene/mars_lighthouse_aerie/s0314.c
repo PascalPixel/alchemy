@@ -27,7 +27,7 @@ s32 Func_02000314(void) {
       ->screenEffect = 0x204;
   Func_020001d8();
   Call1((void (*)())GameFlag_SetBit, 0x112);
-  if (gAdventure.entrance == 5) {
+  if (gSequenceParentWork.entrance == 5) {
     {
       /* FAKEMATCH(pin): the blend word pinned to r3 as a halfword loads from
        * the pool before the register address, as native; as a plain store, 2
@@ -41,7 +41,7 @@ s32 Func_02000314(void) {
     }
     REG_BLDCNT = 0x3f10;
     Func_02003ff4();
-  } else if (gAdventure.entrance == 4) {
+  } else if (gSequenceParentWork.entrance == 4) {
     Func_0200560c();
     Call1((void (*)())Func_02005784, 0);
     Call2((void (*)())Actor_SetModeById, 20, 8);
@@ -49,7 +49,7 @@ s32 Func_02000314(void) {
     Call2((void (*)())Actor_SetModeById, 22, 7);
     Call3((void (*)())Func_0200567c, 19, 0x1f20000, 0x1400000);
     Call3((void (*)())Func_0200567c, 1, 0x21a0000, 0x1400000);
-    Call3((void (*)())Func_0200567c, gAdventure.currentOwner, 0x1fa0000,
+    Call3((void (*)())Func_0200567c, gSequenceParentWork.currentOwner, 0x1fa0000,
           0x1180000);
     Call1((void (*)())wait, 1);
     Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
@@ -63,13 +63,13 @@ s32 Func_02000314(void) {
     Call1((void (*)())FieldEvent_Wait, 40);
     Func_02003658();
     Func_02005614();
-  } else if (gAdventure.entrance == 3) {
+  } else if (gSequenceParentWork.entrance == 3) {
     Call2((void (*)())Actor_SetModeById, 20, 8);
     Call2((void (*)())Actor_SetModeById, 21, 8);
     Call2((void (*)())Actor_SetModeById, 22, 7);
     if (Value1((s32 (*)())GameFlag_Test, 0xa3d) == 0)
       Func_020029ac();
-  } else if (gAdventure.entrance == 2) {
+  } else if (gSequenceParentWork.entrance == 2) {
     Func_02001f10();
   }
   return 0;

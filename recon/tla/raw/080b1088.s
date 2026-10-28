@@ -117,7 +117,7 @@ Func_080b1088:
 .L_080b115c:
 	.4byte gData_020023c4
 .L_080b1160:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080b1164:
 	subs r6, #1
 	cmp r6, #0

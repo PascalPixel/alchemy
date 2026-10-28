@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 
@@ -33,10 +33,10 @@ void Func_02000080(const void *warp, s32 door, s32 mode) {
   Func_02002a44();
   Func_02002b64(0);
   Func_02002bc4(158);
-  Actor_GetById(gAdventure.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gAdventure.currentOwner, 2);
-  id = gAdventure.currentOwner;
+  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
+  id = gSequenceParentWork.currentOwner;
   if (mode == 0)
     Actor_CenterOnColumn_(id, 2, -8);
   else
@@ -56,7 +56,7 @@ void Func_020000fc(s32 door) {
   s32 *table = gData_020031fc;
 
   if ((u32)(door - 1) <= 1)
-    *(void **)((u8 *)Actor_GetById(gAdventure.currentOwner) + 108) =
+    *(void **)((u8 *)Actor_GetById(gSequenceParentWork.currentOwner) + 108) =
         Func_0200006c;
   if (door == 7) {
     Func_020029f4(8);

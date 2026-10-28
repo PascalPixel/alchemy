@@ -99,7 +99,7 @@ Func_02000038:
 .L_020080ec:
 	.4byte 0x05000200
 .L_020080f0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x020081d4,"ax",%progbits
 	.balign 4
 	.global Func_020001d4
@@ -1032,7 +1032,7 @@ Func_02000ac8:
 	b .L_02009078
 	.2byte 0x0000
 .L_02008bc8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008bcc:
 	lsls r5, r6, #16
 	lsrs r7, r5, #16
@@ -1184,7 +1184,7 @@ Func_02000ac8:
 .L_02008d10:
 	.4byte 0x00001000
 .L_02008d14:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008d18:
 	.4byte gData_020035cc
 .L_02008d1c:
@@ -1583,7 +1583,7 @@ Func_02000ac8:
 .L_02009088:
 	.4byte gData_02003620
 .L_0200908c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x02009e64,"ax",%progbits
 	.global Func_02001e64
 	.thumb_func
@@ -1968,7 +1968,7 @@ Func_02001e64:
 	b .L_0200a6e6
 	.2byte 0x0000
 .L_0200a194:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200a198:
 	.4byte 0x0000012f
 .L_0200a19c:
@@ -2610,7 +2610,7 @@ Func_02001e64:
 .L_0200a6f0:
 	.4byte .L_0200a550
 .L_0200a6f4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200a6f8:
 	.4byte 0xfff00000
 	.section .text.x0200a746,"ax",%progbits
@@ -2904,7 +2904,7 @@ Func_02002a74:
 .L_0200aca8:
 	.4byte IwramClearWords
 .L_0200acac:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200acb0:
 	.4byte 0x11111111
 .L_0200acb4:
@@ -2995,7 +2995,7 @@ Func_02002db0:
 .L_0200ae5c:
 	.4byte 0x00008000
 .L_0200ae60:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200ae64:
 	movs r3, #1
 	mov r1, r8
@@ -3061,7 +3061,7 @@ Func_02002db0:
 .L_0200aee8:
 	.4byte 0xffff6667
 .L_0200aeec:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x0200af46,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200af48,"ax",%progbits
@@ -3239,7 +3239,7 @@ Func_02002f48:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200b0cc:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200b0d0:
 	.4byte Effect_AdvanceMotion
 .L_0200b0d4:
@@ -3335,7 +3335,7 @@ Func_020030e0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b188:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200b18c:
 	.4byte Data_02004458
 	.section .bss,"aw",%nobits

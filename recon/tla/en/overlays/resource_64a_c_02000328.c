@@ -5,7 +5,7 @@
 // the message numbers are written as numbers.
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "iwram_call.h"
 #include "frame.h"
 
@@ -59,8 +59,8 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
-#define PARTY_BYTE(offset) (*((u8 *)&gAdventure + (offset)))
-#define PARTY_WORD(offset) (*(u32 *)((u8 *)&gAdventure + (offset)))
+#define PARTY_BYTE(offset) (*((u8 *)&gSequenceParentWork + (offset)))
+#define PARTY_WORD(offset) (*(u32 *)((u8 *)&gSequenceParentWork + (offset)))
 
 /// Swaps the map cell buffer out around a password or link screen.
 #define SAVE_CELLS() Iwram_CopyWords(gMapCellBuffer, gData_02000000, 0x3000)
@@ -73,9 +73,9 @@ void GameFlag_ClearBit(s32 flag);
 /// Goes back to the saved scene and entrance.
 #define RETURN_TO_SAVED()                                                      \
   {                                                                            \
-    gAdventure.scene = gAdventure.savedScene;                                \
-    gAdventure.entrance = gAdventure.savedEntrance;                          \
-    Func_020023e0(gAdventure.scene, gAdventure.entrance);                    \
+    gSequenceParentWork.scene = gSequenceParentWork.savedScene;                                \
+    gSequenceParentWork.entrance = gSequenceParentWork.savedEntrance;                          \
+    Func_020023e0(gSequenceParentWork.scene, gSequenceParentWork.entrance);                    \
     GameFlag_ClearBit(0x109);                                                  \
   }
 
@@ -88,7 +88,7 @@ s32 Func_02000328(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  if (gAdventure.entrance == 2) {
+  if (gSequenceParentWork.entrance == 2) {
     do {
       FieldMessage_Show(8, 5);
       choice = Func_020023d8(1);
@@ -131,7 +131,7 @@ top:
     result = 0;
   if (result == 0) {
     Func_02002350();
-    Func_02002310(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+    Func_02002310(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
     i = 4;
     limit = 5;
   open:
@@ -202,7 +202,7 @@ top:
           SAVE_CELLS();
           if (Func_020022d8(5) != 0)
             goto save;
-          Func_02002310(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+          Func_02002310(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
           RESTORE_CELLS()
           Func_020023a0(Data_02012f94 + 0x6c);
           PARTY_BYTE(0x287) = 1;
@@ -233,7 +233,7 @@ top:
     if (Func_020022d8(1) == -1)
       goto top;
     GameFlag_SetBit(0x109);
-    Func_02002310(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+    Func_02002310(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
     if (PARTY_WORD(0) != Func_02002388()) {
       RETURN_TO_SAVED()
     } else if ((gInput[0] & 0x208) == 0x208) {
@@ -275,13 +275,13 @@ top:
   if (result == 4) {
     if (Func_020022d8(4) == -1)
       goto top;
-    gAdventure.currentOwner = 4;
+    gSequenceParentWork.currentOwner = 4;
     if (GameFlag_Test(0x9ff))
       Func_02002390();
-    Func_02002310(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+    Func_02002310(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
     GameFlag_ClearBit(0x109);
     GameFlag_ClearBit(0x106);
-    gAdventure.ownerOverride = 0;
+    gSequenceParentWork.ownerOverride = 0;
     gSleepDisabled = 1;
     Func_020023b8(0x138, 1);
     goto finish;
@@ -291,7 +291,7 @@ top:
 link:
   if (Func_020022d8(6) == -1)
     goto top;
-  Func_02002310(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+  Func_02002310(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
 again:
   result = Func_020022b0(2);
   if (result == -1)

@@ -45,7 +45,7 @@
 #include "keystate.h"
 #include "paged_list.h"
 #include "tbs_edition.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "sounds.h"
 #include "iwram_call.h"
 #include "heap.h"

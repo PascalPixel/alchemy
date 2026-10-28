@@ -1,12 +1,12 @@
-#ifndef ALCHEMY_ADVENTURE_H
-#define ALCHEMY_ADVENTURE_H
+#ifndef ALCHEMY_SEQUENCE_PARENT_WORK_H
+#define ALCHEMY_SEQUENCE_PARENT_WORK_H
 
 #include "types.h"
 
-/// The adventure, the state a save file keeps (☀️'s struct Adventure, 0x20
+/// gSequenceParentWork, the state a save file keeps (☀️'s struct SequenceParentWork, 0x20
 /// bytes further on from the shop credit): play time, coins, the scene and the
 /// leader's position, the active party and the options.
-struct Adventure {
+struct SequenceParentWork {
   u8 unk000[4];  ///< 0 on a new game; not named by ⚓️ code
   u32 playTime;  ///< frames
   /// Not named by ⚓️ code. Djinn_GetRecoveryTable's TradeOfferState starts at
@@ -35,7 +35,7 @@ struct Adventure {
   s16 special;  ///< the battle backdrop chosen for the scene or terrain
   u8 unk1f8[2]; ///< not named by ⚓️ code
   s16 map;
-  s32 x; ///< the party's position on entering, as ☀️'s gAdventure
+  s32 x; ///< the party's position on entering, as ☀️'s gSequenceParentWork
   s32 y;
   s32 z;
   s32 heading;
@@ -117,7 +117,7 @@ struct Adventure {
   u16 linkTallies[8];
 };
 
-extern struct Adventure gAdventure;
+extern struct SequenceParentWork gSequenceParentWork;
 s32 Party_CountActiveOwners(void);
 s32 Party_ListActiveOwners(s16 *owners);
 void Unit_LevelUpTo(s32 owner, s32 level);

@@ -10,10 +10,10 @@ void Func_02005548(s32 scene, s32 a1);
 s32 Func_0200328c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
 s32 Func_0200140c(void) {
-  struct Adventure *party;
+  struct SequenceParentWork *party;
   s32 flag = 0xa30;
 
-  party = &gAdventure;
+  party = &gSequenceParentWork;
   if (GameFlag_Test(flag))
     Func_02005548(party->map +
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),

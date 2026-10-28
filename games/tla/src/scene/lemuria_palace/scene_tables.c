@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 struct DoorStep {
@@ -44,10 +44,10 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_020020cc(0);
   Func_02002124(158);
   Func_02001fb4(step->script, step->x, step->z);
-  Actor_GetById(gAdventure.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gAdventure.currentOwner, 2);
-  Call3((void (*)())Actor_CenterOnColumn, gAdventure.currentOwner, 2,
+  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
+  Call3((void (*)())Actor_CenterOnColumn, gSequenceParentWork.currentOwner, 2,
         -8);
   FieldEvent_Wait(10);
   Func_020020b4(countdown);

@@ -6,7 +6,7 @@
 // constants 45).
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern s16 gData_02003de8[];
 
@@ -20,7 +20,7 @@ void Func_020003b4(void);
 void Func_020006cc(s16 *ids);
 
 void Func_02001edc(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 position[3];
   struct Actor *object;
   s32 column;

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "edition.h"
@@ -34,7 +34,7 @@ s32 Func_020005b8(void) {
   Actor_GetById(14)->update = Func_02000578;
   Actor_GetById(15)->update = Func_02000598;
   if (GameFlag_Test(0x8a7)) {
-    if (Actor_GetById(gAdventure.currentOwner)->x >= 0x2000000)
+    if (Actor_GetById(gSequenceParentWork.currentOwner)->x >= 0x2000000)
       GameFlag_SetBit(0x200);
     else
       GameFlag_ClearBit(0x200);

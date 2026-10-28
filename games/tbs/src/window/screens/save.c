@@ -152,10 +152,10 @@ s32 Save_ScanFileSummaries(void) {
   return fileCount;
 }
 
-/// Prepares the save buffer for writing: stamps the adventure with the
-/// time and options, then fills the file summary shown on the file menus (the
-/// leader's name, level and class, the play time, area, coins, Djinn of each
-/// element, the party, the send flag and how many of game flags 48-127 are
+/// Prepares the save buffer for writing: stamps the sequence parent's work with
+/// the time and options, then fills the file summary shown on the file menus
+/// (the leader's name, level and class, the play time, area, coins, Djinn of
+/// each element, the party, the send flag and how many of game flags 48-127 are
 /// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
 /// Returns the checksum.
 u32 Save_BuildFileSummary(void) {
@@ -170,8 +170,8 @@ u32 Save_BuildFileSummary(void) {
 
   // The summary's 16-byte header comes before the save buffer.
   summary = (struct SaveFileSummary *)((u32)gSaveBuffer - 16);
-  gAdventure.buildStamp = BuildStamp_GetTimeFar(0);
-  gAdventure.playTime = gPlayTimeFrames;
+  gSequenceParentWork.buildStamp = BuildStamp_GetTimeFar(0);
+  gSequenceParentWork.playTime = gPlayTimeFrames;
   // A second copy of the play time, 256 bytes from gSceneLocalState: past its
   // 0x78 bytes, in gInventorySnapshot's last word. gSceneLocalState opens the
   // save buffer's second half, so this lands at offset 0x110 of the file's
@@ -183,18 +183,19 @@ u32 Save_BuildFileSummary(void) {
     u32 *copy = (u32 *)gSceneLocalState;
     copy[64] = gPlayTimeFrames;
   }
-  gAdventure.idleSleepEnabled = gIdleSleepEnabled;
+  gSequenceParentWork.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = Unit_GetFar(gAdventure.leaderActorId);
+  leader = Unit_GetFar(gSequenceParentWork.leaderActorId);
   destination = summary->name;
   source = leader->name;
   for (i = 11; i >= 0; i--)
     *destination++ = *source++;
   summary->level = leader->level;
-  summary->playTime = gAdventure.playTime;
-  summary->area = Area_GetNameIndexFar(gAdventure.sceneId, gAdventure.entrance);
+  summary->playTime = gSequenceParentWork.playTime;
+  summary->area = Area_GetNameIndexFar(gSequenceParentWork.sceneId,
+                                       gSequenceParentWork.entrance);
   summary->classId = leader->classId;
-  summary->coins = gAdventure.coins;
+  summary->coins = gSequenceParentWork.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
@@ -204,9 +205,9 @@ u32 Save_BuildFileSummary(void) {
   for (i = 0; i <= 3 && members[i] != 255; i++)
     summary->party[i] = members[i];
   summary->party[i] = -1;
-  summary->windowHue = gAdventure.windowColor[0];
-  summary->windowBrightness = gAdventure.windowColor[1];
-  summary->sendFlag = gAdventure.sendFlag;
+  summary->windowHue = gSequenceParentWork.windowColor[0];
+  summary->windowBrightness = gSequenceParentWork.windowColor[1];
+  summary->sendFlag = gSequenceParentWork.sendFlag;
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
     if (GameFlag_GetFar(i))
@@ -215,7 +216,7 @@ u32 Save_BuildFileSummary(void) {
   summary->childhood = GameFlag_GetFar(FLAG_CHILDHOOD) != 0;
   {
     s32 n;
-    u32 *frame = &gAdventure.buildStamp;
+    u32 *frame = &gSequenceParentWork.buildStamp;
     u32 frames;
 
     // The checksum covers 242 * 4 = 968 words (3872 bytes) from the flags.
@@ -965,7 +966,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, y);
     } else if (summary->frames < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
-      // file resumes at Adventure.restartScene, not where it was saved
+      // file resumes at SequenceParentWork.restartScene, not where it was saved
       // (menu/file_screen.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->secondPartPlayTime) {
@@ -1106,7 +1107,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
+        WindowColor_Apply(gSequenceParentWork.windowColor[0],
+                          gSequenceParentWork.windowColor[1]);
         FileList_HideDjinnSprites();
         FileList_HidePartySprites();
         Window_Close(djinnWindow, 2);
@@ -1185,7 +1187,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
 #endif
   // 55 is HEAP_SLOT_MENU, spriteWork's block.
   HeapSlot_Release(HEAP_SLOT_MENU);
-  WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
+  WindowColor_Apply(gSequenceParentWork.windowColor[0],
+                    gSequenceParentWork.windowColor[1]);
   wait(1);
 done:
   return result;
@@ -1284,8 +1287,8 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
         FieldMessage_Show(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_READ;
       } else {
-        gPlayTimeFrames = gAdventure.playTime;
-        gIdleSleepEnabled = gAdventure.idleSleepEnabled;
+        gPlayTimeFrames = gSequenceParentWork.playTime;
+        gIdleSleepEnabled = gSequenceParentWork.idleSleepEnabled;
         gIdleFrames = 0;
         gSaveSlot = file;
       }

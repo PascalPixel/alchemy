@@ -30,7 +30,7 @@ extern u8 gData_0200384c[];
 extern u8 gData_0200385c[];
 extern u8 gData_02003888[];
 extern u8 gData_020038b4[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 s32 Func_02001e64(void) {
   s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1, t3;
@@ -46,10 +46,10 @@ s32 Func_02001e64(void) {
 
   t0 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t0, s32, 428) = 0x204;
-  t1 = FIELD_AT((s32)gAdventure, s16, 480);
+  t1 = FIELD_AT((s32)gSequenceParentWork, s16, 480);
   v_r2 = 0x3000000;
   v_r7 = 0x204;
-  v_r6 = (s32)gAdventure;
+  v_r6 = (s32)gSequenceParentWork;
   v_r1 = t1;
   if (v_r1 != 0x12f)
     goto L_02009f86;
@@ -123,7 +123,7 @@ L_02009fd4:
   Call2((void (*)())Actor_SetModeById, 9, 2);
   Call3((void (*)())Func_020033e0, 9, 0x2d80000, 0x780000);
 L_0200a03c:
-  t35 = FIELD_AT((s32)gAdventure, s16, 482);
+  t35 = FIELD_AT((s32)gSequenceParentWork, s16, 482);
   if (t35 != 18)
     goto L_0200a05c;
   t36 = Value1((s32 (*)())GameFlag_Test, 0x300);
@@ -131,8 +131,8 @@ L_0200a03c:
     goto L_0200a05c;
   Func_02001d68();
 L_0200a05c:
-  t38 = FIELD_AT((s32)gAdventure, s16, 482);
-  v_r5 = (s32)gAdventure;
+  t38 = FIELD_AT((s32)gSequenceParentWork, s16, 482);
+  v_r5 = (s32)gSequenceParentWork;
   if (t38 == 10)
     goto L_0200a06e;
   goto L_0200a6e6;
@@ -404,7 +404,7 @@ L_0200a580:
     goto L_0200a596;
   Call3((void (*)())Func_020033e0, 11, 0, 0);
 L_0200a596:
-  t130 = FIELD_AT((s32)gAdventure, s32, 532);
+  t130 = FIELD_AT((s32)gSequenceParentWork, s32, 532);
   t131 = Value1((s32 (*)())Actor_GetById, t130);
   t132 = FIELD_AT(t131, u8, 35);
   FIELD_AT(t131, u8, 35) = (64 | t132);
@@ -416,7 +416,7 @@ L_0200a596:
   FIELD_AT(t135, u8, 35) = (128 | t136);
   Call2((void (*)())Actor_SetModeById, 11, 2);
   t138 = Value1((s32 (*)())GameFlag_Test, 0x304);
-  v_r6 = (s32)gAdventure;
+  v_r6 = (s32)gSequenceParentWork;
   if (t138 != 0)
     goto L_0200a5fa;
   t139 = FIELD_AT(v_r6, s16, 482);

@@ -195,7 +195,7 @@ Func_08044558:
 	b .L_08044a0c
 	.2byte 0x0000
 .L_080446f4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080446f8:
 	.4byte gNameEntry_KeyboardTilemap
 .L_080446fc:

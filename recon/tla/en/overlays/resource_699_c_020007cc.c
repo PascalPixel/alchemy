@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_sprite.h"
 
 extern const s32 gData_0200238c[];
@@ -24,7 +24,7 @@ void Func_02001bfc(struct Actor *object, const s32 *script);
 
 void Func_020007cc(struct Actor *self) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -65,7 +65,7 @@ void Func_020007cc(struct Actor *self) {
             s32 delay = 200;
             *(u16 *)(work + 362) = delay;
           }
-          gAdventure.renderMode = 0;
+          gSequenceParentWork.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
         }

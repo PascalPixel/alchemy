@@ -1,11 +1,11 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 
 void Func_02001514(s32 show, s32 first, u32 count);
 
 void Func_02001474(s32 show) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
     Func_02001514(show, 13, 14);

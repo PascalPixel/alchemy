@@ -1,7 +1,7 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
-s16 Event_GetSpecialValue(void) { return gAdventure.special; }
+s16 Event_GetSpecialValue(void) { return gSequenceParentWork.special; }
 
 s32 GameFlag_Test(s32 flag);
 
@@ -15,7 +15,7 @@ extern char ResourceId_DragonHallBBackdrop;
 /// keeps the last marked backdrop before it; with flag 0xa30 set, the second
 /// dragon hall backdrop becomes the first.
 void Func_080ca4a8(void) {
-  s32 target = gAdventure.scene;
+  s32 target = gSequenceParentWork.scene;
   s32 *table = gData_080ef984;
   s32 entry = *table++;
   s32 result; // not initialised: with no marked row before the scene it keeps
@@ -31,5 +31,5 @@ void Func_080ca4a8(void) {
   }
   if (result == (s32)&ResourceId_DragonHallBBackdrop && GameFlag_Test(0xa30))
     result = (s32)&ResourceId_DragonHallABackdrop;
-  gAdventure.special = result;
+  gSequenceParentWork.special = result;
 }

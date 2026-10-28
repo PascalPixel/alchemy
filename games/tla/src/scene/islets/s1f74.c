@@ -23,7 +23,7 @@ void Func_02001f74(void) {
   Actor_SetModeById(10, 5);
   object->motionFlags = 3;
   Actor_SetSpritePriority(10, 2);
-  Actor_SetAngleToward(10, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(10, gSequenceParentWork.currentOwner, 0);
   FieldEvent_Wait(10);
   Actor_Jump(10, 4, 0);
   Actor_SetPositionAndCommit(10, 120, 312);

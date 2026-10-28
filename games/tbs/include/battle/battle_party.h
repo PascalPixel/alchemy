@@ -66,11 +66,11 @@ struct DjinnRecoveryList {
 };
 
 /// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
-/// party's inside gAdventure from its byte 12, the enemies' over battle
-/// unit 0x83.
+/// party's inside gSequenceParentWork from its byte 12, the enemies' over
+/// battle unit 0x83.
 struct DjinnRecoveryTable {
   u32 summonMask; ///< BattleSummonState's availableMask; not named here
-  /// In the party's table, gAdventure.coins; not named here.
+  /// In the party's table, gSequenceParentWork.coins; not named here.
   u32 partyCoins;
   struct DjinnRecoveryList list;
 };

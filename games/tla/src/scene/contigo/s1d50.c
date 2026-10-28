@@ -24,19 +24,19 @@ void Func_02001d50(void) {
   Contigo_Se(78);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Contigo_ObjFollow(0, gAdventure.currentOwner);
-  Contigo_ObjFollow(1, gAdventure.currentOwner);
-  Contigo_ObjFollow(3, gAdventure.currentOwner);
-  Contigo_ObjFollow(2, gAdventure.currentOwner);
-  Contigo_ObjFollow(8, gAdventure.currentOwner);
+  Contigo_ObjFollow(0, gSequenceParentWork.currentOwner);
+  Contigo_ObjFollow(1, gSequenceParentWork.currentOwner);
+  Contigo_ObjFollow(3, gSequenceParentWork.currentOwner);
+  Contigo_ObjFollow(2, gSequenceParentWork.currentOwner);
+  Contigo_ObjFollow(8, gSequenceParentWork.currentOwner);
   Contigo_Wait(10);
-  Contigo_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
-  Contigo_ObjWalk(gAdventure.currentOwner, 160, 382);
-  Contigo_ObjTurn(gAdventure.currentOwner, 0x8000, 0);
-  Contigo_ObjMoveTo(5, gAdventure.currentOwner);
-  Contigo_ObjMoveTo(7, gAdventure.currentOwner);
-  Contigo_ObjMoveTo(6, gAdventure.currentOwner);
-  Contigo_ObjMoveTo(9, gAdventure.currentOwner);
+  Contigo_ObjSpeed(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
+  Contigo_ObjWalk(gSequenceParentWork.currentOwner, 160, 382);
+  Contigo_ObjTurn(gSequenceParentWork.currentOwner, 0x8000, 0);
+  Contigo_ObjMoveTo(5, gSequenceParentWork.currentOwner);
+  Contigo_ObjMoveTo(7, gSequenceParentWork.currentOwner);
+  Contigo_ObjMoveTo(6, gSequenceParentWork.currentOwner);
+  Contigo_ObjMoveTo(9, gSequenceParentWork.currentOwner);
   wait(1);
   Contigo_ObjSpeed(5, 0xcccc, 0x6666);
   Contigo_ObjSpeed(7, 0xcccc, 0x6666);
@@ -46,7 +46,7 @@ void Func_02001d50(void) {
   Contigo_ObjAction(9, gData_02004980);
   Contigo_ObjAction(6, gData_0200493c);
   Contigo_ObjActionRefresh(7, gData_020048f8);
-  Contigo_ObjReset(gAdventure.currentOwner);
+  Contigo_ObjReset(gSequenceParentWork.currentOwner);
   Contigo_ObjReset(1);
   Contigo_ObjReset(3);
   Contigo_ObjReset(2);
@@ -147,8 +147,8 @@ void Func_02001d50(void) {
   Contigo_ObjTurn(5, 0x4000, 0);
   Contigo_ObjTurn(7, 0x6000, 0);
   Contigo_ObjTurn(9, 0x3000, 0);
-  answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
-  owner = gAdventure.currentOwner;
+  answer = Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0);
+  owner = gSequenceParentWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
     Contigo_ObjMode(2, 3);
@@ -163,7 +163,7 @@ void Func_02001d50(void) {
   Contigo_ObjFace(9, 0x5000);
   Contigo_ObjModeWait(9, 4);
   Contigo_MessagePut(9, 0);
-  Contigo_ObjTurn(gAdventure.currentOwner, 0x8000, 0);
+  Contigo_ObjTurn(gSequenceParentWork.currentOwner, 0x8000, 0);
   Contigo_ObjTurn(5, 0xa000, 0);
   Contigo_ObjTurn(7, 0x8000, 0);
   Contigo_ObjTurn(3, 0, 0);
@@ -207,11 +207,11 @@ void Func_02001d50(void) {
   Contigo_MessagePut(9, 0);
   Contigo_ObjFace(1, 0x2000);
   Contigo_MessageOpen(0x4001, 0);
-  Contigo_ObjTurn(gAdventure.currentOwner, 0xa000, 0);
+  Contigo_ObjTurn(gSequenceParentWork.currentOwner, 0xa000, 0);
   Contigo_ObjTurn(5, 0x4000, 0);
   Contigo_ObjTurn(9, 0x3000, 0);
-  answer = Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0);
-  owner = gAdventure.currentOwner;
+  answer = Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0);
+  owner = gSequenceParentWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
     Contigo_ObjEmote(1, 258);
@@ -240,7 +240,7 @@ void Func_02001d50(void) {
   Func_020040dc(8, 0xa00000, 0x1d20000, angle);
   wait(1);
   Contigo_MessagePut(8, 0);
-  Contigo_ObjFollow(gAdventure.currentOwner, 8);
+  Contigo_ObjFollow(gSequenceParentWork.currentOwner, 8);
   Contigo_ObjFollow(5, 8);
   Contigo_ObjFollow(7, 8);
   Contigo_ObjFollow(6, 8);
@@ -258,7 +258,7 @@ void Func_02001d50(void) {
   Contigo_ObjWalk(8, 146, 406);
   Contigo_Jump(3, 264, 20);
   Contigo_MessagePut(3, 0);
-  Contigo_ObjReset(gAdventure.currentOwner);
+  Contigo_ObjReset(gSequenceParentWork.currentOwner);
   Contigo_ObjReset(5);
   Contigo_ObjReset(7);
   Contigo_ObjReset(6);
@@ -269,7 +269,7 @@ void Func_02001d50(void) {
   Contigo_Se(705);
   Contigo_ObjModeWait(8, 3);
   Contigo_MessagePut(8, 0);
-  Contigo_ObjMode(gAdventure.currentOwner, 3);
+  Contigo_ObjMode(gSequenceParentWork.currentOwner, 3);
   Contigo_ObjMode(5, 3);
   Contigo_ObjMode(7, 3);
   Contigo_ObjMode(6, 3);
@@ -289,7 +289,7 @@ void Func_02001d50(void) {
   Contigo_PairShow(0, 5, 5, 8, 10, 8, 9, 20, 18, 10, 10);
 #endif
   Contigo_ObjTurn(0, 0x2000, 0);
-  Contigo_Jump(gAdventure.currentOwner, 256, 0);
+  Contigo_Jump(gSequenceParentWork.currentOwner, 256, 0);
   Contigo_Jump(5, 256, 0);
   Contigo_Jump(7, 256, 0);
   Contigo_Jump(6, 256, 0);
@@ -320,7 +320,7 @@ void Func_02001d50(void) {
   Contigo_ObjTurn(0, 0xe000, 0);
   Contigo_ObjTurn(1, 0xa000, 0);
   Contigo_ObjTurn(3, 0, 0);
-  Contigo_ObjTurn(gAdventure.currentOwner, 0xc000, 0);
+  Contigo_ObjTurn(gSequenceParentWork.currentOwner, 0xc000, 0);
   Contigo_ObjTurn(5, 0x4000, 0);
   Contigo_ObjTurn(7, 0x4000, 0);
   Contigo_ObjTurn(6, 0xc000, 40);
@@ -329,7 +329,7 @@ void Func_02001d50(void) {
   Contigo_ObjTurn(0, 0x2000, 0);
   Contigo_ObjTurn(1, 0x2000, 0);
   Contigo_ObjTurn(3, 0x2000, 0);
-  Contigo_ObjTurn(gAdventure.currentOwner, 0x6000, 0);
+  Contigo_ObjTurn(gSequenceParentWork.currentOwner, 0x6000, 0);
   Contigo_ObjTurn(5, 0x4000, 0);
   Contigo_ObjTurn(7, 0x6000, 0);
   Contigo_ObjTurn(6, 0x6000, 0);
@@ -352,7 +352,7 @@ void Func_02001d50(void) {
   Contigo_ObjEmote(0, 258);
   Contigo_ObjEmote(1, 258);
   Contigo_ObjEmote(3, 258);
-  Contigo_ObjEmote(gAdventure.currentOwner, 258);
+  Contigo_ObjEmote(gSequenceParentWork.currentOwner, 258);
   Contigo_ObjEmote(5, 258);
   Contigo_ObjEmote(7, 258);
   Contigo_ObjEmote(6, 258);
@@ -365,7 +365,7 @@ void Func_02001d50(void) {
   Contigo_ObjTurn(1, 0, 0);
   Contigo_ObjTurn(3, 0, 0);
   Contigo_ObjTurn(2, 0xe000, 0);
-  Contigo_ObjTurn(gAdventure.currentOwner, 0x8000, 0);
+  Contigo_ObjTurn(gSequenceParentWork.currentOwner, 0x8000, 0);
   Contigo_ObjTurn(5, 0x8000, 0);
   Contigo_ObjTurn(6, 0x8000, 0);
   Contigo_ObjTurn(7, 0x8000, 0);
@@ -375,7 +375,7 @@ void Func_02001d50(void) {
   Contigo_ObjMode(1, 3);
   Contigo_ObjMode(3, 3);
   Contigo_ObjMode(2, 3);
-  Contigo_ObjMode(gAdventure.currentOwner, 3);
+  Contigo_ObjMode(gSequenceParentWork.currentOwner, 3);
   Contigo_ObjMode(5, 3);
   Contigo_ObjMode(6, 3);
   Contigo_ObjMode(7, 3);
@@ -421,8 +421,8 @@ void Func_02001d50(void) {
   Contigo_Jump(5, 264, 0);
   Contigo_ObjTurn(5, 0x4000, 20);
   Contigo_MessageOpen(5, 0);
-  Contigo_ObjTurn(gAdventure.currentOwner, 0xc000, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  Contigo_ObjTurn(gSequenceParentWork.currentOwner, 0xc000, 0);
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Contigo_ObjFace(9, 0x3000);
     Contigo_ObjMode(9, 3);
     Contigo_MessagePut(0x1009, 0);
@@ -442,7 +442,7 @@ void Func_02001d50(void) {
   Contigo_ObjMode(1, 3);
   Contigo_ObjMode(3, 3);
   Contigo_ObjMode(2, 3);
-  Contigo_ObjMode(gAdventure.currentOwner, 3);
+  Contigo_ObjMode(gSequenceParentWork.currentOwner, 3);
   Contigo_ObjMode(5, 3);
   Contigo_ObjMode(6, 3);
   Contigo_ObjModeWait(7, 3);

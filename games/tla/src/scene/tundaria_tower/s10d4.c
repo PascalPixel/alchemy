@@ -1,7 +1,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct ReflectionSprite {
   u8 unk00[2];
@@ -20,7 +20,7 @@ struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 
 void Func_020010d4(struct Actor *object) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct ReflectionAnimation *leaderAnimation = leader->animation;
   struct ReflectionAnimation *animation = object->animation;
 

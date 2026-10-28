@@ -3,7 +3,7 @@
 #include "window.h"
 #include "task.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene.h"
 #include "edition.h"
 
@@ -31,11 +31,11 @@ void UiTimedNotice_Create(void) {
   s32 x;
   s32 resource;
   struct Window *window;
-  struct Adventure *state;
+  struct SequenceParentWork *state;
 
   work = TIMED_NOTICE_WORK;
-  state = &gAdventure;
-  /* FAKEMATCH: Without it the adventure's address loads after the 8 (differ
+  state = &gSequenceParentWork;
+  /* FAKEMATCH: Without it gSequenceParentWork's address loads after the 8 (differ
    * 2); keep the load before it. */
   __asm__("" : : "r"(state));
   x = 8;

@@ -71,4 +71,4 @@ Func_0200006c:
 .L_02008100:
 	.4byte gData_02003308
 .L_02008104:
-	.4byte gAdventure
+	.4byte gSequenceParentWork

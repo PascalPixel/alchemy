@@ -18,7 +18,7 @@ s32 Func_0200014c(struct Actor *object) {
   else
     target = Actor_GetById(9);
   if (Func_02000088(object, target, 24, 0) == 0) {
-    struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+    struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
 
     if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;

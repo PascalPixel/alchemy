@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 
 struct Actor *Actor_GetById();
@@ -18,7 +18,7 @@ s32 Func_02000cc4(void) {
   u16 turn;
   s32 facing;
 
-  turn = Actor_GetById(gAdventure.currentOwner)->angle + 0x5fff;
+  turn = Actor_GetById(gSequenceParentWork.currentOwner)->angle + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;

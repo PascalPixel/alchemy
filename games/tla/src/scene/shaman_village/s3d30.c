@@ -28,7 +28,7 @@ void Func_02003d30(void) {
   ShamanVillage_CamMove(0xe00000, -1, 0x1180000, 1);
   ShamanVillage_ObjWalk2(16, 184, 256);
   ShamanVillage_ObjWalk(17, 264, 256);
-  ShamanVillage_ObjArm(gAdventure.currentOwner, 0xe000, 0);
+  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0xe000, 0);
   ShamanVillage_ObjWalk2(16, 208, 264);
   ShamanVillage_ObjWalk(17, 240, 264);
   Actor_SetModeById(16, 1);
@@ -36,15 +36,15 @@ void Func_02003d30(void) {
   ShamanVillage_ObjArm(16, angle, 0);
   ShamanVillage_ObjArm(17, angle, 0);
   ShamanVillage_ObjTurn(15, 0x8000);
-  ShamanVillage_ObjArm(gAdventure.currentOwner, 0, 0);
+  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0, 0);
   Func_020049f4();
   Func_0200498c((s32)MsgShamanMustFinishTrialRoad);
   ShamanVillage_MessagePut(0x200f, 0);
   Actor_SetModeById(15, 3);
   ShamanVillage_MessageOpen(0x200f, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 1) {
     ShamanVillage_MessageOpen(0x200f, 0);
-    if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
       Motion_SetModeAndWaitAnimation(15, 3);
       Import_SoundPlay(76);
       ShamanVillage_MessagePut(0x200f, 0);
@@ -57,7 +57,7 @@ void Func_02003d30(void) {
     EVENT_WORK->field1c4 += 2;
   }
   ShamanVillage_MessageOpen(0x200f, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 1) {
     ShamanVillage_MessagePut(0x200f, 0);
     Func_0200289c();
   } else {

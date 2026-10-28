@@ -16,12 +16,12 @@ s32 Func_020033e0();
 s32 Func_020034b8();
 s32 GameFlag_SetBit();
 s32 Func_020033a0();
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_02001660(void) {
   Func_02003398();
   Call1(Func_02003488, 0);
-  Call3(Actor_SetPositionAndReset, FIELD_AT(gAdventure, s32, 532),
+  Call3(Actor_SetPositionAndReset, FIELD_AT(gSequenceParentWork, s32, 532),
         0x218, 0x168);
   Call1(FieldEvent_Wait, 8);
   Call6(Func_02003328, 0x32, 0x16, 0x21, 0x16, 1, 1);

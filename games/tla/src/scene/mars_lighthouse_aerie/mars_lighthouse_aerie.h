@@ -5,7 +5,7 @@
 #include "ram_buffer.h"
 #include "frame.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 struct Trigger;

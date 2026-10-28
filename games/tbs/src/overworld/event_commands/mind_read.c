@@ -297,7 +297,8 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
   BG_PLTT_COLOR(WINDOW_PALETTE, 3) = 0;
   BG_PLTT_COLOR(WINDOW_PALETTE, 11) = RGB(10, 10, 10);
   BG_PLTT_COLOR(WINDOW_PALETTE, 12) = RGB(20, 20, 20);
-  WindowColor_ApplyFar(gAdventure.windowColor[0], gAdventure.windowColor[1]);
+  WindowColor_ApplyFar(gSequenceParentWork.windowColor[0],
+                       gSequenceParentWork.windowColor[1]);
   ((struct WindowWork *)work)->mindRead = 0;
 }
 

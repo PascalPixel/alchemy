@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -47,7 +47,7 @@ static __inline__ void Actor_Place(struct Actor *object, s32 x, s32 y,
 
 /// Jumps down the hole.
 void Func_02001630(void) {
-  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct Actor *leader;
@@ -58,20 +58,20 @@ void Func_02001630(void) {
   if (x == 29 && z == 10 && !(gInput.held & 0x40))
     return;
   work = Ram_HeapSlots->eventWork;
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   Func_020056b4(leader);
   Func_0200580c(0);
   leader->motionFlags = 0;
-  Actor_SetSpeed(gAdventure.currentOwner, 0x10000, 0x8000);
-  Actor_Walk(gAdventure.currentOwner, 472, 144);
-  Actor_Turn(gAdventure.currentOwner, 0xc000, 0);
-  Actor_RefreshSelectorById(gAdventure.currentOwner);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetSpeed(gSequenceParentWork.currentOwner, 0x10000, 0x8000);
+  Actor_Walk(gSequenceParentWork.currentOwner, 472, 144);
+  Actor_Turn(gSequenceParentWork.currentOwner, 0xc000, 0);
+  Actor_RefreshSelectorById(gSequenceParentWork.currentOwner);
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
-  Actor_SetModeById(gAdventure.currentOwner, 13);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 13);
   Actor_Place(leader, 472 << 16, 0, 156 << 16);
   Func_02005664(leader);
-  Actor_SetModeById(gAdventure.currentOwner, 10);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 10);
   Func_02005854(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

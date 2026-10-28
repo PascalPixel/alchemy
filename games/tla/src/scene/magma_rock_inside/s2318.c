@@ -34,7 +34,7 @@ void Func_02002364(void) {
   FieldMessage_Show(message, 1);
   Func_02004dd0(message + 1);
   FieldMessage_ShowAtActor(12, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Value2((s32 (*)())PartyInventory_GiveItem, 460, 0);
     if (Value1((s32 (*)())PartyInventory_FindOwner, 460) == -1) {
       Func_02004d48();

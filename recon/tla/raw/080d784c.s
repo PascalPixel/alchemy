@@ -116,7 +116,7 @@ Func_080d784c:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_080d7930:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080d7934:
 	.4byte 0xfffffed4
 .L_080d7938:

@@ -16,7 +16,7 @@
 #include "window.h"
 #include "uiwindow.h"
 #include "render_input.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "input.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -80,7 +80,7 @@ s32 Func_08044558(s32 member) {
   u16 *palette;
 
   Window_LoadGraphics();
-  Func_0803f9c0(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+  Func_0803f9c0(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
   keyboardWindow = Window_Create(3, 6, 24, 9, 2);
   nameWindow = Window_Create(8, 3, 8, 3, 2);
   Func_0803d3c0(member, 0, 3, 1);

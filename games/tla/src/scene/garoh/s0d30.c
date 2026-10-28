@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -32,7 +32,7 @@ void Func_02000d30(void) {
   t4 = Value1(GameFlag_Test, 0x310);
   if (t4 == 0)
     goto L_02008da6;
-  if (FIELD_AT(&gAdventure, s16, 482) != 12)
+  if (FIELD_AT(&gSequenceParentWork, s16, 482) != 12)
     goto L_02008d72;
   Call2(Func_020052cc, 0x2048c9, 1);
   goto L_02008d7e;

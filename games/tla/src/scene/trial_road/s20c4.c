@@ -12,8 +12,8 @@ void Func_02001eb0(void);
 void Func_0200200c(void);
 
 s32 Func_020020c4(void) {
-  s32 scene = gAdventure.scene;
-  s32 entrance = gAdventure.entrance;
+  s32 scene = gSequenceParentWork.scene;
+  s32 entrance = gSequenceParentWork.entrance;
   s32 pattern = gTrialRoadState->pattern;
 
   if (*(s16 *)((u8 *)Ram_HeapSlots->eventWork + 344) != 0)
@@ -21,7 +21,7 @@ s32 Func_020020c4(void) {
   if (scene == (s32)&SceneId_Ov697Room1) {
     if (entrance <= 7) {
       GameFlag_SetBit(324);
-      Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 64;
+      Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 64;
       gData_02005b64[pattern & 7]();
     } else if (entrance == 55) {
       Func_02003900();

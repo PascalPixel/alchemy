@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
@@ -30,11 +30,11 @@ void Func_02001a94(void) {
   s32 column;
   s32 target[3];
 
-  if (gAdventure.entrance == 1) {
+  if (gSequenceParentWork.entrance == 1) {
     object = Actor_GetById(8);
     GameFlag_SetBit(0x301);
     column = 11;
-  } else if (gAdventure.entrance == 3) {
+  } else if (gSequenceParentWork.entrance == 3) {
     object = Actor_GetById(9);
     GameFlag_SetBit(0x302);
     column = 26;

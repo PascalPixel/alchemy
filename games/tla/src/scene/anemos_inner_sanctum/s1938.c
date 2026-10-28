@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x1ac];
@@ -23,17 +23,17 @@ void Func_020034a8(void);
 void Func_02001938(void) {
   struct Actor *object;
 
-  if (gAdventure.entrance == 1)
+  if (gSequenceParentWork.entrance == 1)
     object = Actor_GetById(8);
-  else if (gAdventure.entrance == 3)
+  else if (gSequenceParentWork.entrance == 3)
     object = Actor_GetById(9);
   else
     object = Actor_GetById(10);
-  if (*(s16 *)((u8 *)Actor_GetById(gAdventure.currentOwner) + 18) <= 247) {
+  if (*(s16 *)((u8 *)Actor_GetById(gSequenceParentWork.currentOwner) + 18) <= 247) {
     object->motionFlags = 0;
     object->update = Func_020017b4;
-    object->unk4c = Actor_GetById(gAdventure.currentOwner)->x;
-    object->acceleration = Actor_GetById(gAdventure.currentOwner)->z;
+    object->unk4c = Actor_GetById(gSequenceParentWork.currentOwner)->x;
+    object->acceleration = Actor_GetById(gSequenceParentWork.currentOwner)->z;
     GameFlag_SetBit(0x200);
   }
 }

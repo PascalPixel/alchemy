@@ -1,5 +1,5 @@
 #include "sea_of_time.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 
@@ -103,9 +103,9 @@ void Func_020015ec(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov687Room1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov687Room1)
     return (const struct Trigger *)gData_020022d0;
-  if (gAdventure.entrance <= 4)
+  if (gSequenceParentWork.entrance <= 4)
     return (const struct Trigger *)gData_0200242c;
   return (const struct Trigger *)gData_0200251c;
 }

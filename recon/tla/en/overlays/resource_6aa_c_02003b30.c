@@ -1,16 +1,16 @@
 // Draft, differ 12 of 207: overlay 6aa's effect spawner, ☀️'s EFFECT_SPAWN
-// (scene/shared/effect_spawn.h) with the leader from gAdventure.currentOwner,
+// (scene/shared/effect_spawn.h) with the leader from gSequenceParentWork.currentOwner,
 // Actor_SetSingleChildFlags for the sprite flags, the leader's sprite
 // priority through Actor_SetSpritePriorityB, and the scale-to-target target
 // and frame count read before the start-scale test (the ☀️ form: 40). Left:
 // three pairs where the native schedules a load before a register copy and this
-// form the copy first: the gAdventure load before z's copy to sl in the
+// form the copy first: the gSequenceParentWork load before z's copy to sl in the
 // prologue, the sprite load before flags' copy (sched2 priority 60 against 61),
 // and the script table address before flags' copy. Tried: an asm operand on the
 // sprite (32); alchemy permute 6 minutes (no gain).
 #include "types.h"
 #include "field_effect.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const s32 *gData_0200686c[];
 
@@ -25,7 +25,7 @@ void Actor_SetPartAttribute(struct FieldEffect *effect, s32 value);
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Actor_GetById(gAdventure.currentOwner);
+  struct FieldActor *party = Actor_GetById(gSequenceParentWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

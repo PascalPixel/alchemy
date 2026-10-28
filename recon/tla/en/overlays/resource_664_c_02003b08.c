@@ -24,14 +24,14 @@ static inline void FlagOn(u8 *flags, s32 bit) {
 }
 
 void Func_02003b08(void) {
-  if (*(s16 *)((u8 *)Actor_GetById(gAdventure.currentOwner) + 18) <= 653) {
+  if (*(s16 *)((u8 *)Actor_GetById(gSequenceParentWork.currentOwner) + 18) <= 653) {
     Func_02005e14();
     Func_02005f2c(0);
     Func_02005f94(186);
-    BYTE_AT(Actor_GetById(gAdventure.currentOwner), 90) &= ~1;
-    Actor_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
-    Actor_SetPositionAndCommit(gAdventure.currentOwner, 376, 668);
-    FlagOn(&BYTE_AT(Actor_GetById(gAdventure.currentOwner), 90), 1);
+    BYTE_AT(Actor_GetById(gSequenceParentWork.currentOwner), 90) &= ~1;
+    Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x40000, 0x20000);
+    Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, 376, 668);
+    FlagOn(&BYTE_AT(Actor_GetById(gSequenceParentWork.currentOwner), 90), 1);
     Func_02005e1c();
   }
 }
@@ -45,7 +45,7 @@ static inline s32 RowTop(s32 row) {
 
 void Func_02003cac(void) {
   s16 *room = (s16 *)Ram_HeapSlots->eventWork;
-  struct FieldActor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 kind = Func_02000690(2, leader->x >> 20, leader->z >> 20) >> 8;
   s32 row;
 

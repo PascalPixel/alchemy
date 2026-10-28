@@ -28,7 +28,7 @@
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "module/scene/stucco_rooms_a.h"
 #include "module/overworld/overworld.h"
@@ -185,7 +185,7 @@ static void StuccoRoomsA_ApplyRoomState(void);
 /// Selects the entrance table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
 const struct SceneEntrance *StuccoRoomsA_GetEntrances(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
     return gStuccoRoomsA_HouseEntrances;
@@ -203,10 +203,10 @@ const u32 *StuccoRoomsA_GetExits(void) { return gStuccoRoomsA_Exits; }
 /// The inn's rooms share one actor placement table and the houses
 /// another, chosen by entrance and clipped to the current view.
 const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
-  s32 sceneId = gAdventure.sceneId;
+  s32 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
-    s32 entrance = gAdventure.entrance;
+    s32 entrance = gSequenceParentWork.entrance;
     struct ActorPlacement *table;
 
     switch (entrance) {
@@ -236,10 +236,10 @@ const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
 /// Selects room dialogue with the same entrance grouping as the
 /// actor placements.
 const struct Trigger *StuccoRoomsA_GetTriggers(void) {
-  s32 sceneId = gAdventure.sceneId;
+  s32 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == (s32)&SceneId_StuccoRoomsA) {
-    s32 entrance = gAdventure.entrance;
+    s32 entrance = gSequenceParentWork.entrance;
 
     switch (entrance) {
     case STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE:
@@ -390,7 +390,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
 s32 StuccoRoomsA_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gAdventure.sceneId == (s32)&SceneId_StuccoRoomsA) {
+  if (gSequenceParentWork.sceneId == (s32)&SceneId_StuccoRoomsA) {
     StuccoRoomsA_ApplyRoomState();
   }
   return 0;
@@ -404,7 +404,7 @@ s32 StuccoRoomsA_Initialize(void) {
 /// otherwise show at the bottom edge of the view (the room's render with and
 /// without the copy).
 static void StuccoRoomsA_ApplyRoomState(void) {
-  s16 entrance = gAdventure.entrance;
+  s16 entrance = gSequenceParentWork.entrance;
 
   switch (entrance) {
   case STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER: {

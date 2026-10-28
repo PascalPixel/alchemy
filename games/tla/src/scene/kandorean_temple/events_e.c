@@ -11,7 +11,7 @@ s32 Func_02000824(struct Actor *a, struct Actor *b) {
 }
 
 void Func_02000864(struct Actor *object) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *other = Actor_GetById(8);
   s32 vx = object->bounce;
   s32 vz;

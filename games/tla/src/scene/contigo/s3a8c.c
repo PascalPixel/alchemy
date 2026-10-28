@@ -38,8 +38,8 @@ void Func_02003a8c(void) {
   if (!Value1((s32 (*)())GameFlag_Test, 0x9e5))
     return;
   GameFlag_ClearBit(0x9e5);
-  if (gAdventure.entrance == 18) {
-    diff = gAdventure.coins - *(s32 *)gSceneState;
+  if (gSequenceParentWork.entrance == 18) {
+    diff = gSequenceParentWork.coins - *(s32 *)gSceneState;
     Func_0200406c();
     Func_02004204(0);
     Event_StartScreenTransition();
@@ -62,8 +62,8 @@ void Func_02003a8c(void) {
       Func_02004144(14, 0);
     }
     Func_02004074();
-  } else if (gAdventure.entrance == 19) {
-    diff = gAdventure.coins - *(s32 *)gSceneState;
+  } else if (gSequenceParentWork.entrance == 19) {
+    diff = gSequenceParentWork.coins - *(s32 *)gSceneState;
     Func_0200406c();
     Func_02004204(0);
     Event_StartScreenTransition();
@@ -86,8 +86,8 @@ void Func_02003a8c(void) {
       Func_02004144(14, 0);
     }
     Func_02004074();
-  } else if (gAdventure.entrance == 20) {
-    list = ((struct ContigoPrizes *)&gAdventure)->list;
+  } else if (gSequenceParentWork.entrance == 20) {
+    list = ((struct ContigoPrizes *)&gSequenceParentWork)->list;
     Func_0200406c();
     Func_02004204(0);
     Event_StartScreenTransition();
@@ -118,7 +118,7 @@ void Func_02003a8c(void) {
         if (*prize != -1)
           goto next;
       }
-      ((struct ContigoPrizes *)&gAdventure)->list[0] = -2;
+      ((struct ContigoPrizes *)&gSequenceParentWork)->list[0] = -2;
       Func_0200412c((s32)MsgContigo17);
       Func_02004144(18, 0);
     }

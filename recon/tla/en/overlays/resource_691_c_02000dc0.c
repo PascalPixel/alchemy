@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -33,7 +33,7 @@ s32 Func_02000dc0(s32 a0, s32 a1) {
   r4 = 133;
   r4 = r4 << 2;
   r8_1 = v1;
-  v2 = Actor_GetById(FIELD_AT((s32)(s32)&gAdventure + r4, s32, 0));
+  v2 = Actor_GetById(FIELD_AT((s32)(s32)&gSequenceParentWork + r4, s32, 0));
   r5_1 = r5_1 << 1;
   r7_1 = v2;
   FIELD_AT(r6_1, s32, 8) = (FIELD_AT(r6_1, s32, 8)) + r5_1;

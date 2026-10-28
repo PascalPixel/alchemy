@@ -10,7 +10,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "field_event.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 #define Actor_SetSingleChildFlags                                     \
   ((void (*)(void *, s32))Actor_SetSingleChildFlags)
@@ -36,7 +36,7 @@ s32 SceneActor_ClearSingleChildField(void *actor) {
 }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gAdventure.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
+  if (gSequenceParentWork.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
     return gActorPlacementsEntrance99;
   return gActorPlacements;
 }

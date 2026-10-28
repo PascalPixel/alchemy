@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "flag_call.h"
 
 extern const u8 MsgAhSoYou[];

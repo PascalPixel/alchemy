@@ -13,7 +13,7 @@
 // count (64), the loop's object in a variable of its own (no change).
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
     SceneId_Ov664Room8, SceneId_Ov664Room9;
@@ -26,7 +26,7 @@ s32 Func_02000cec(s32 *a, s32 *b);
 
 void Func_02001458(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *other;
   s32 *pos;
   u8 i;
@@ -63,14 +63,14 @@ void Func_02001458(struct Actor *object) {
     object->speedLimit = -object->speedLimit >> 1;
     object->z = leader->z - 0x80000;
   }
-  if (gAdventure.scene == (s32)&SceneId_Ov664Room3) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room3) {
     other = Actor_GetById(8);
     if (Func_02000cec(&other->x, pos) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->unk4c = 0;
       object->z = other->z - 0x80000;
     }
-  } else if (gAdventure.scene == (s32)&SceneId_Ov664Room8) {
+  } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room8) {
     for (i = 0; i != 3; i++) {
       other = Actor_GetById(i + 12);
       if (Func_02000cec(&other->x, pos) <= 8) {

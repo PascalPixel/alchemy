@@ -113,4 +113,4 @@ Func_080ea7c0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080ea8a4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork

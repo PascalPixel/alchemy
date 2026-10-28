@@ -26,7 +26,7 @@
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
 /// scene does (sol_sanctum_entrance.c).
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/scene/vale_eruption.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
@@ -124,7 +124,7 @@ const struct Trigger *ValeEruption_GetTriggers(void) {
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
-  if (gAdventure.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
+  if (gSequenceParentWork.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     ValeEruption_ReturnFromMtAleph();
   }
   return 0;

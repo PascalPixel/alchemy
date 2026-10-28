@@ -82,7 +82,7 @@ SceneSequence_Run:
 .L_080cb9bc:
 	.4byte IwramClearWords
 .L_080cb9c0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080cb9c4:
 	.4byte 0x00000001
 .L_080cb9c8:
@@ -180,7 +180,7 @@ SceneSequence_Run:
 .L_080cba94:
 	.4byte gOverlayArea
 .L_080cba98:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080cba9c:
 	bl Func_08020180
 	ldr r0, [r6, #52]
@@ -279,7 +279,7 @@ SceneSequence_Run:
 .L_080cbb64:
 	.4byte 0x00000000
 .L_080cbb68:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080cbb6c:
 	.4byte gMapCellBuffer
 .L_080cbb70:
@@ -576,7 +576,7 @@ SceneSequence_Run:
 .L_080cbddc:
 	.4byte gOverlayArea
 .L_080cbde0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080cbde4:
 	.4byte 0x00000002
 .L_080cbde8:
@@ -989,7 +989,7 @@ SceneSequence_Run:
 .L_080cc110:
 	.4byte 0xfffffc89
 .L_080cc114:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080cc118:
 	.4byte 0xfffffc88
 .L_080cc11c:
@@ -1123,7 +1123,7 @@ SceneSequence_Run:
 .L_080cc21c:
 	.4byte Data_02000498
 .L_080cc220:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080cc224:
 	.4byte Data_02000454
 .L_080cc228:

@@ -129,7 +129,7 @@ Func_0200021c:
 .L_0200831c:
 	.4byte gData_02003904
 .L_02008320:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .text.x02008870,"ax",%progbits
 	.balign 4
 	.global Func_02000870
@@ -400,7 +400,7 @@ Func_02000870:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008ae4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008ae8:
 	.4byte 0x00019999
 .L_02008aec:

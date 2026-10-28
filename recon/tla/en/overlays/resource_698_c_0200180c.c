@@ -6,7 +6,7 @@
 // local (47 to 49) or as a u16 field (76).
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Spot {
   s16 x;
@@ -35,7 +35,7 @@ void Func_0200146c(struct SpotState *state, struct Spot *spot);
 void Func_020014dc(struct SpotState *state, struct Spot *spot);
 
 s32 Func_0200180c(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &gData_02002308;

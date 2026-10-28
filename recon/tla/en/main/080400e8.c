@@ -6,7 +6,7 @@
 // with the volatile reads made plain; `work->preset++;` moved after `redraw =
 // 1;`, and finds nothing closer.
 // Draft, differ 52 of 535 (145 before the saved settings were written as
-// gAdventure's fields rather than through a byte pointer, 2026-10-25): the
+// gSequenceParentWork's fields rather than through a byte pointer, 2026-10-25): the
 // option screen, as ☀️'s Menu_RunWorkspaceOptions
 // (games/tbs/src/window/window.c). The five messages (0x113b, 0x1141, 0x1144,
 // 0x1146 and 0x1161 in English) are pool symbols the catalogs must name before
@@ -19,7 +19,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "render_input.h"
 
 struct OptionScreen {
@@ -219,18 +219,18 @@ s32 Func_080400e8(void) {
   Window_Close(helpWindow, 2);
   Window_Close(settingsWindow, 2);
   if (result == 0) {
-    if (gAdventure.unk244[6] == 0 && work->option[4] == 1)
+    if (gSequenceParentWork.unk244[6] == 0 && work->option[4] == 1)
       FieldMessage_Show((s32)MsgOptionE, 1);
   }
   if (result == 0) {
-    gAdventure.paletteGlow[0] = work->option[0];
-    gAdventure.paletteGlow[1] = work->option[1];
-    gAdventure.eventMode = work->option[2];
-    gAdventure.battleFxEnabled = work->option[3];
-    gAdventure.unk244[6] = work->option[4];
-    gAutoSleepEnabled = gAdventure.unk244[6];
+    gSequenceParentWork.paletteGlow[0] = work->option[0];
+    gSequenceParentWork.paletteGlow[1] = work->option[1];
+    gSequenceParentWork.eventMode = work->option[2];
+    gSequenceParentWork.battleFxEnabled = work->option[3];
+    gSequenceParentWork.unk244[6] = work->option[4];
+    gAutoSleepEnabled = gSequenceParentWork.unk244[6];
   } else {
-    Func_0803f9c0(gAdventure.paletteGlow[0], gAdventure.paletteGlow[1]);
+    Func_0803f9c0(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
   }
   Func_0803fd14();
   wait(1);

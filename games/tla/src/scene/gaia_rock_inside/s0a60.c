@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern char SceneId_Ov681Room2;
 extern char SceneId_Ov681Room3;
@@ -32,15 +32,15 @@ void wait(s32 frames);
 
 /// Return the table for the current room.
 const void *Func_020009e8(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov681Room2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov681Room2)
     return gData_02005a54;
-  if (gAdventure.scene == (s32)&SceneId_Ov681Room3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov681Room3)
     return gData_02005afc;
-  if (gAdventure.scene == (s32)&SceneId_Ov681Room4)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov681Room4)
     return gData_02005b8c;
-  if (gAdventure.scene == (s32)&SceneId_Ov681Room5)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov681Room5)
     return gData_02005c7c;
-  if (gAdventure.entrance > 8)
+  if (gSequenceParentWork.entrance > 8)
     return gData_020059a0;
   return gData_02005970;
 }

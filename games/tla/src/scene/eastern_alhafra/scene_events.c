@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -62,7 +62,7 @@ void Func_02004c9c(s32);
 void Func_020006ec(s32 mode) {
   s32 tile;
 
-  tile = Func_02004bb4(gAdventure.currentOwner);
+  tile = Func_02004bb4(gSequenceParentWork.currentOwner);
   if (tile == 16) {
     Func_02000394(mode, 16);
     if (Func_02004c44() != 0)
@@ -79,7 +79,7 @@ void Func_02000730(void) {
   Func_02004be4(0);
   Func_02004b3c(MsgWhatSYour);
   Func_02004b6c(22, 0x101, 40);
-  Actor_SetAngleToward(22, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(22, gSequenceParentWork.currentOwner, 0);
   FieldEvent_Wait(20);
   Call3((void (*)())Func_02004b4c, 22, 0, 10);
   Motion_SetVarCbAndRefresh(22, 2);
@@ -136,10 +136,10 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02004be4(0);
   Func_02004c9c(158);
   Func_02004a44(step->script, step->x, step->z);
-  Actor_GetById(gAdventure.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gAdventure.currentOwner, 2);
-  Call3((void (*)())Actor_CenterOnColumn, gAdventure.currentOwner, 2,
+  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
+  Call3((void (*)())Actor_CenterOnColumn, gSequenceParentWork.currentOwner, 2,
         -8);
   FieldEvent_Wait(10);
   Func_02004bac(countdown);
@@ -173,7 +173,7 @@ run:
   Func_02004b3c(MsgIDonTKnowWhatWe);
   Call3((void (*)())Func_02004b4c, 5, 0, 5);
   Actor_SetModeById(5, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != NULL)
     Actor_ResetAndSetPosition(5, ((s16 *)leader)[5], ((s16 *)leader)[9]);
   Actor_WaitForMoveById(5);

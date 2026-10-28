@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -86,8 +86,8 @@ void Func_020013b0(void) {
 void Func_020013fc(void) {
   Func_020002f8(gData_02003f80);
   Func_020013b0();
-  if (Actor_GetById(gAdventure.currentOwner)->y < -0x180000) {
-    Actor_SetSpritePriority(gAdventure.currentOwner, 2);
-    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  if (Actor_GetById(gSequenceParentWork.currentOwner)->y < -0x180000) {
+    Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 2);
+    Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
   }
 }

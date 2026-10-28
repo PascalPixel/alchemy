@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void wait(s32 frames);
@@ -32,27 +32,27 @@ static __inline__ void Func_02004df8_(s32 value, s32 mode) {
 void Func_02003490(void) {
   Func_02004c20();
   Func_02004db8(0);
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
-  Actor_GetById(gAdventure.currentOwner)->update = Func_0200343c;
-  Actor_GetById(gAdventure.currentOwner)->acceleration = 0x2000;
-  Actor_GetById(gAdventure.currentOwner)->speedLimit = 0x20000;
+  Actor_GetById(gSequenceParentWork.currentOwner)->update = Func_0200343c;
+  Actor_GetById(gSequenceParentWork.currentOwner)->acceleration = 0x2000;
+  Actor_GetById(gSequenceParentWork.currentOwner)->speedLimit = 0x20000;
   wait(5);
   Func_02004df8_(0xc000, 60);
   Event_StartScreenTransition();
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14537, 8577);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14465, 8662);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14452, 8766);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14387, 8828);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14331, 8888);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14284, 8904);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8870);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8831);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14255, 8772);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14537, 8577);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14465, 8662);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14452, 8766);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14387, 8828);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14331, 8888);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14284, 8904);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14255, 8870);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14255, 8831);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14255, 8772);
   Func_02004df8_(0x14000, 120);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14275, 8736);
-  Actor_SetPositionAndCommit_(gAdventure.currentOwner, 14257, 8720);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14275, 8736);
+  Actor_SetPositionAndCommit_(gSequenceParentWork.currentOwner, 14257, 8720);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004c28();

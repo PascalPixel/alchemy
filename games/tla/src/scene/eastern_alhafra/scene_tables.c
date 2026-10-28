@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 extern u8 gData_02004d0c[];
@@ -101,7 +101,7 @@ void Func_02000190(s32 unused, s32 id) {
   s32 x;
   s32 z;
 
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   object = Actor_GetById(id);
   object->motionFlags = 0;
   if (id == 10) {

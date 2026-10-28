@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "edition.h"
 
 extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
@@ -31,15 +31,15 @@ void Func_02001c44(void) {
     Func_02000f88();
   }
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* The Japanese edition does not set the retreat. */
-  if (gAdventure.entrance == 2) {
+  if (gSequenceParentWork.entrance == 2) {
     if (GameFlag_Test(0xa27)) {
       /* FAKEMATCH(one-pass): the scene id through a temporary and a once-only
        * block, which issues its literal load first; as plain stores, 4 of 71
        * instructions differ in tla-en. */
       scene = &SceneId_Ov671Room7;
       do {
-        gAdventure.retreatScene = (s32)scene;
-        gAdventure.retreatEntrance = 1;
+        gSequenceParentWork.retreatScene = (s32)scene;
+        gSequenceParentWork.retreatEntrance = 1;
       } while (0);
     } else if (GameFlag_Test(0xa28)) {
       /* FAKEMATCH(one-pass): the scene id through a temporary and a once-only
@@ -47,8 +47,8 @@ void Func_02001c44(void) {
        * differ in tla-en. */
       scene = &SceneId_Ov672Room1;
       do {
-        gAdventure.retreatScene = (s32)scene;
-        gAdventure.retreatEntrance = 3;
+        gSequenceParentWork.retreatScene = (s32)scene;
+        gSequenceParentWork.retreatEntrance = 3;
       } while (0);
     }
   }

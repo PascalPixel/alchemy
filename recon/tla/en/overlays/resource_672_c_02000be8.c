@@ -5,7 +5,7 @@
 // out (frames 33 to 95 counted down); then cues 298 and 125 and flag 0x206.
 // Left: the first loop's registers and the order of the layer updates; the second loop is close.
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "system/io_reg.h"
 
@@ -51,11 +51,11 @@ rise:
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gAdventure.currentOwner, 328, 184);
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 328, 184);
   FieldEvent_Wait(20);
   Func_02001f10(308);
-  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 2);
   if (i != 0) {
   sink:
     if ((u32)(i - 33) <= 62) {
@@ -71,7 +71,7 @@ rise:
     if (i != 0)
       goto sink;
   }
-  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
   Func_02001f10(298);
   wait(1);
   Func_02001f10(125);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -51,7 +51,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       }
       object->scaleX = 0x10000;
       object->scaleY = 0x10000;
-      object->angle = Actor_GetById(gAdventure.currentOwner)->angle + 0x8000;
+      object->angle = Actor_GetById(gSequenceParentWork.currentOwner)->angle + 0x8000;
       Func_02000e20(scene, entrance);
     }
   }

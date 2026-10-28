@@ -18,7 +18,7 @@
 #include "macros.h"
 #include "map.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 struct JumpSprite {
@@ -50,7 +50,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self,
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 
 s32 Func_080d4d08(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   u8 *flags = &leader->motionFlags;
   s32 result = -1;
   u8 saved = *flags;
@@ -63,9 +63,9 @@ s32 Func_080d4d08(void) {
   s32 canJump;
   s32 i;
 
-  if (gAdventure.renderMode == 2)
+  if (gSequenceParentWork.renderMode == 2)
     return result;
-  if (gAdventure.renderMode == 3)
+  if (gSequenceParentWork.renderMode == 3)
     return result;
   if ((angle + 0x1000) & 0x2000) // not facing a quarter turn
     return result;
@@ -131,7 +131,7 @@ again:
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
-    Actor_SetPositionAndCommit(gAdventure.currentOwner,
+    Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner,
                                       ((s16 *)&position[0])[1],
                                       ((s16 *)&position[2])[1]);
     Actor_SetMode(leader, 6);

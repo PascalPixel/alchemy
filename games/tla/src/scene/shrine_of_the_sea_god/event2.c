@@ -4,7 +4,7 @@
 void Func_02001250(s32 show, s32 first, u32 count);
 
 void Func_02001200(s32 show) {
-  if (gAdventure.scene == (s32)&SceneId_ShrineOfTheSeaGod6)
+  if (gSequenceParentWork.scene == (s32)&SceneId_ShrineOfTheSeaGod6)
     Func_02001250(show, 9, 3);
 }
 
@@ -35,12 +35,12 @@ void Func_02001250(s32 show, s32 first, u32 count) {
 }
 
 void Func_02001290(void) {
-  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
   GameFlag_SetBit(0x20a);
 }
 
 void Func_020012b4(void) {
-  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 2);
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
   GameFlag_ClearBit(0x20a);
 }

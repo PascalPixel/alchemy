@@ -41,11 +41,11 @@ typedef struct WorldMapEncounterRule {
 /// and entrance. Ground 0 has none, and grounds 1 to 7 take consecutive
 /// zones from the rule's first one. With useRules 0, or no matching rule, no
 /// ground has encounters. Also resets the random bias and the battle threshold
-/// (the count itself, gAdventure.encounterSteps, is reset only when a
+/// (the count itself, gSequenceParentWork.encounterSteps, is reset only when a
 /// random battle starts or a new area is entered) and chooses the battle
 /// background. Called by SceneSequence_Run on scene load, with useRules 0 on
 /// the World Map and 1 in a scene; writes work->encounterZones, encounterBias
-/// and encounterThreshold, and gAdventure.special.
+/// and encounterThreshold, and gSequenceParentWork.special.
 void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work;
   s32 sceneId;
@@ -57,8 +57,8 @@ void Encounter_SelectMapZones(s32 useRules) {
   u32 i;
 
   work = gFieldWork;
-  sceneId = gAdventure.sceneId;
-  entrance = gAdventure.entrance;
+  sceneId = gSequenceParentWork.sceneId;
+  entrance = gSequenceParentWork.entrance;
   groundZones = work->encounterZones;
   rule = gScene_EncounterRules;
   zone = 0;
@@ -90,16 +90,17 @@ void Encounter_SelectMapZones(s32 useRules) {
   }
   work->encounterBias = 0;
   // 16 in 16.16: Encounter_CountStepsAndSelectFormation starts a battle once
-  // gAdventure.encounterSteps reaches it.
+  // gSequenceParentWork.encounterSteps reaches it.
   work->encounterThreshold = 16 * Q16_ONE;
   BattleBackground_SelectForMap();
 }
 
 /// Returns the World Map encounter zone for the ground at pos (0 for none), and
 /// chooses the battle background for its battle environment
-/// (gAdventure.special). Called by Encounter_RollWorldMap on each step,
-/// and by Field_RequestBattleFromEncounterTable and Field_RequestDjinnBattle on
-/// the World Map, which use only the battle background.
+/// (gSequenceParentWork.special). Called by Encounter_RollWorldMap on each
+/// step, and by Field_RequestBattleFromEncounterTable and
+/// Field_RequestDjinnBattle on the World Map, which use only the battle
+/// background.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   s32 kind;
   WorldMapEncounterRule *rule =
@@ -123,16 +124,17 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// Advances the encounter counter for zone and returns the formation to fight
 /// (a row of formations.c), or 0 for no battle. steps (16.16) scales how far
 /// the counter moves; a battle starts once it reaches encounterThreshold.
-/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_AREA and gAdventure.cloaked
-/// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_AREA is set by Venus
-/// Lighthouse while its Reveal path is shown (the international editions), by
-/// Mercury Lighthouse while the leader carries the pillar's lights and by the
-/// World Map's debug entrance 99, and cleared by every entry that does
-/// not keep the party's position. Flag 351 (0x15f), which no Broken Seal C code
-/// sets, skips the checks and the counting and draws a formation at once.
-/// Called by Encounter_RollMapStep and Encounter_RollWorldMap; adds to
-/// gAdventure.encounterSteps, sets or clears work->encounterBias, and on
-/// a battle sets gAdventure.battleMusic.
+/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_AREA and
+/// gSequenceParentWork.cloaked (Cloak) prevent battles.
+/// FLAG_NO_ENCOUNTERS_IN_AREA is set by Venus Lighthouse while its Reveal path
+/// is shown (the international editions), by Mercury Lighthouse while the
+/// leader carries the pillar's lights and by the World Map's debug entrance 99,
+/// and cleared by every entry that does not keep the party's position. Flag 351
+/// (0x15f), which no Broken Seal C code sets, skips the checks and the counting
+/// and draws a formation at once. Called by Encounter_RollMapStep and
+/// Encounter_RollWorldMap; adds to gSequenceParentWork.encounterSteps, sets or
+/// clears work->encounterBias, and on a battle sets
+/// gSequenceParentWork.battleMusic.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
@@ -158,7 +160,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       return 0;
     if (zone == 0)
       return 0;
-    if (gAdventure.cloaked != 0)
+    if (gSequenceParentWork.cloaked != 0)
       return 0;
     entry = (struct EncounterZone *)gEncounterZones + zone;
     rate = entry->rate;
@@ -180,7 +182,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     // the rate by 5; with Avoid active such a zone has no encounters at all.
     level = Party_GetAverageLevelFar() - entry->level;
     CLAMP(level, 0, 5);
-    if (level > 0 && gAdventure.avoidDistance != 0)
+    if (level > 0 && gSequenceParentWork.avoidDistance != 0)
       return 0;
     rate += level * 5;
 
@@ -201,7 +203,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     // not cleared here: SceneSequence_Run clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
-    total = gAdventure.encounterSteps += Iwram_MulQ16(step, steps);
+    total = gSequenceParentWork.encounterSteps += Iwram_MulQ16(step, steps);
     if (total < work->encounterThreshold)
       return 0;
   }
@@ -289,15 +291,15 @@ struct MapMusicRule {
 
 extern const struct MapMusicRule gScene_MusicRules[];
 
-/// Chooses the current scene's field music (gAdventure.cue) from the
+/// Chooses the current scene's field music (gSequenceParentWork.cue) from the
 /// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
 /// when none does. Called by SequenceParent_Run on entering each scene, before
 /// Scene_PlayMusic plays it.
 void Scene_ChooseMusic(void) {
   s16 music = SOUND_KEEP_BGM;
-  s16 sceneId = gAdventure.sceneId;
-  s16 entrance = gAdventure.entrance;
-  s16 group = gAdventure.area;
+  s16 sceneId = gSequenceParentWork.sceneId;
+  s16 entrance = gSequenceParentWork.entrance;
+  s16 group = gSequenceParentWork.area;
   const struct MapMusicRule *rule = gScene_MusicRules;
 
   for (; rule->id != -1; rule++) {
@@ -321,7 +323,7 @@ void Scene_ChooseMusic(void) {
     break;
   }
 
-  gAdventure.sceneMusic = music;
+  gSequenceParentWork.sceneMusic = music;
 }
 
 /// A rule naming the area a scene is in (gArea_NameRules, scene_rules.s),
@@ -371,20 +373,20 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 }
 
 /// Sets the scene the party returns to after a defeat
-/// (gAdventure.restartScene and restartEntrance), from the first rule of
-/// gScene_RestartRules that matches the current scene and entrance: {scene,
+/// (gSequenceParentWork.restartScene and restartEntrance), from the first rule
+/// of gScene_RestartRules that matches the current scene and entrance: {scene,
 /// entrance (-1 for any), return scene, return entrance}, ended by scene -1.
 /// Without a match the restart point stays as it was. Called by
 /// SceneSequence_Run on scene load.
 void Scene_SetRestartPoint(void) {
-  s16 sceneId = gAdventure.sceneId;
-  s16 entrance = gAdventure.entrance;
+  s16 sceneId = gSequenceParentWork.sceneId;
+  s16 entrance = gSequenceParentWork.entrance;
   const s16 *rule = gScene_RestartRules;
 
   while (rule[0] != -1) {
     if (rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
-      gAdventure.restartScene = rule[2];
-      gAdventure.restartEntrance = rule[3];
+      gSequenceParentWork.restartScene = rule[2];
+      gSequenceParentWork.restartEntrance = rule[3];
       return;
     }
     rule += 4;
@@ -394,15 +396,15 @@ void Scene_SetRestartPoint(void) {
 /// Returns the battle background chosen for the current scene. The battle setup
 /// (battle/encounter.c) reads it through Event_GetSpecialValueFar as the
 /// battle's background.
-s16 Event_GetSpecialValue(void) { return gAdventure.special; }
+s16 Event_GetSpecialValue(void) { return gSequenceParentWork.special; }
 
 /// Chooses the battle background for the current scene.
 /// gScene_BattleBackgroundRules lists each battle background (a word with bit
 /// 31 set) followed by the scenes that use it, ended by 0; a scene takes the
 /// one listed last before it, and a scene not listed takes the last one. Called
-/// by Encounter_SelectMapZones; sets gAdventure.special.
+/// by Encounter_SelectMapZones; sets gSequenceParentWork.special.
 void BattleBackground_SelectForMap(void) {
-  s32 target = gAdventure.sceneId;
+  s32 target = gSequenceParentWork.sceneId;
   s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
   // The first scene_rules.s word names a battle background. It cannot match the
@@ -418,12 +420,12 @@ void BattleBackground_SelectForMap(void) {
       entry = *table++;
     } while (entry != 0 && entry != target);
   }
-  gAdventure.special = backdrop;
+  gSequenceParentWork.special = backdrop;
 }
 
 /// Chooses the battle background for a World Map battle environment (enum
 /// BattleEnvironment; any other gives Sol Sanctum's) and sets
-/// gAdventure.special. Called by
+/// gSequenceParentWork.special. Called by
 /// Encounter_ResolveWorldMapZoneAndBackdrop.
 void BattleBackground_SelectForEnvironment(s32 behavior) {
   u16 backdrop;
@@ -450,10 +452,10 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
     backdrop = (u32)&ResourceId_SolSanctumBackdrop;
     break;
   }
-  gAdventure.special = backdrop;
+  gSequenceParentWork.special = backdrop;
 }
 
-/// Chooses the battle music for slot of zone (gAdventure.battleMusic).
+/// Chooses the battle music for slot of zone (gSequenceParentWork.battleMusic).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
 /// last before it. Link battles always use SOUND_KEEP_BGM. Called by
@@ -482,5 +484,5 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
         music = value & 0xfff;
     }
   }
-  gAdventure.battleMusic = music;
+  gSequenceParentWork.battleMusic = music;
 }

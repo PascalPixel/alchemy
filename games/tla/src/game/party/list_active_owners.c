@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 void GameFlag_ClearBit(s32);
 
@@ -10,11 +10,11 @@ s32 Party_RemoveActiveOwner(s32 value) {
 
   GameFlag_ClearBit(value);
   for (i = 0; i < count; i++) {
-    if (gAdventure.activeOwners[i] == value)
+    if (gSequenceParentWork.activeOwners[i] == value)
       break;
   }
   for (j = i; j < count - 1; j++)
-    gAdventure.activeOwners[j] = gAdventure.activeOwners[j + 1];
+    gSequenceParentWork.activeOwners[j] = gSequenceParentWork.activeOwners[j + 1];
   return Party_CountActiveOwners();
 }
 
@@ -28,7 +28,7 @@ s32 Party_ListActiveOwners(s16 *owners) {
     index = 0;
     if (count != 0) {
       do {
-        *owners++ = gAdventure.activeOwners[index];
+        *owners++ = gSequenceParentWork.activeOwners[index];
         index++;
       } while (index != count);
     }

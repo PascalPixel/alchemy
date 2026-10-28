@@ -5,7 +5,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "map.h"
 
 extern u8 gMapShapeGrid[];
@@ -47,7 +47,7 @@ void Func_020001d0(u16 *list) {
     }
     list += 2;
   }
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < height) {
     leader->terrainHeight = height;

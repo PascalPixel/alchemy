@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02003f52[];
 extern const u8 gData_02003fa0[];
@@ -52,10 +52,10 @@ static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
 
 void Func_02003164(void) {
   if (Flag_Test(265) == 0) {
-    Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 32;
-    if (gAdventure.entrance == 5) {
-      Actor_SetSpritePriority(gAdventure.currentOwner, 2);
-      Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
+    Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
+    if (gSequenceParentWork.entrance == 5) {
+      Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 2);
+      Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
     }
   }
   Func_02000584(gData_02003f52);

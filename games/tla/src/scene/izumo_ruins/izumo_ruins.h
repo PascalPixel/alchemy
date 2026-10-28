@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "call.h"

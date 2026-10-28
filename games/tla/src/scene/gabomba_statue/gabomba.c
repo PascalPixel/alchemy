@@ -1,7 +1,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 extern const u8 gData_02005944[];
@@ -123,7 +123,7 @@ void Func_02002f70(void) {
   Func_02005714(22, 0, 0);
   wait(1);
   Camera_SetBounds(220 << 17, -1, 182 << 16, 0);
-  Func_02005714(gAdventure.currentOwner, 0, 0);
+  Func_02005714(gSequenceParentWork.currentOwner, 0, 0);
   fast = 0x4000;
   Actor_Slide(5, 236 << 17, 216 << 16, fast);
   slow = 0x3000;
@@ -175,7 +175,7 @@ void Func_02002f70(void) {
   Func_02005794(24, 258);
   FieldEvent_Wait(20);
   Func_02005764(24, 0);
-  Actor_Slide(gAdventure.currentOwner, 236 << 17, 204 << 16, fast);
+  Actor_Slide(gSequenceParentWork.currentOwner, 236 << 17, 204 << 16, fast);
   Actor_Slide(7, 220 << 17, 204 << 16, fast);
   Actor_Slide(23, 228 << 17, 204 << 16, slow);
   Actor_Slide(6, 244 << 17, 204 << 16, fast);
@@ -203,7 +203,7 @@ void Func_02002f70(void) {
 
 void Func_02003338(void) {
   Func_0200533c();
-  Func_02005724(23, gAdventure.currentOwner);
+  Func_02005724(23, gSequenceParentWork.currentOwner);
   Actor_SetPartAttribute(Actor_GetById(23), 15);
   wait(10);
   Func_02005754(MsgGabombaChannelTiming);

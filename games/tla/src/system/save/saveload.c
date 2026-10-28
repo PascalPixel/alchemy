@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "save.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "frame.h"
 #include "system.h"
 #include "menu.h"
@@ -12,7 +12,7 @@ struct SaveGameWords {
   u32 playTime;
 };
 
-#define SAVE_GAME_WORDS ((struct SaveGameWords *)&gAdventure)
+#define SAVE_GAME_WORDS ((struct SaveGameWords *)&gSequenceParentWork)
 
 extern u8 MsgNoBackupMemory;
 extern u8 MsgSaveFailed;
@@ -46,7 +46,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
       result = -2;
     } else {
       gFrameWaitCount = SAVE_GAME_WORDS->playTime;
-      gAutoSleepEnabled = gAdventure.unk244[6];
+      gAutoSleepEnabled = gSequenceParentWork.unk244[6];
       gIdleFrameCount = 0;
       gData_020036d0 = file;
     }

@@ -10,8 +10,8 @@ extern u32 gData_020037d0[];
 extern u32 gData_02003848[];
 
 u32 *Func_020000b8(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov656Room1) {
-    switch (gAdventure.entrance) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov656Room1) {
+    switch (gSequenceParentWork.entrance) {
     case 3:
     case 4:
     case 5:
@@ -30,8 +30,8 @@ u32 *Func_020000b8(void) {
     case 30:
       return gData_02003590;
     }
-  } else if (gAdventure.scene == (s32)&SceneId_Ov656Room2) {
-    switch (gAdventure.entrance) {
+  } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov656Room2) {
+    switch (gSequenceParentWork.entrance) {
     case 1:
     case 2:
     case 3:

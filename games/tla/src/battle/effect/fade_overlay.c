@@ -5,7 +5,7 @@
 #include "iowrite.h"
 #include "mem.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "resource.h"
 
 void Func_080d1840(void);
@@ -29,7 +29,7 @@ void BattleEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, 28);
   if (object == NULL)
-    object = ObjectTable_Get(gAdventure.currentOwner);
+    object = ObjectTable_Get(gSequenceParentWork.currentOwner);
   work[6] = (u32)object;
 }
 

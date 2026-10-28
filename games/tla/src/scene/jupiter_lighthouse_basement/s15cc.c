@@ -2,7 +2,7 @@
 
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "frame.h"
 #include "field_sprite.h"
@@ -45,18 +45,18 @@ void Func_02001d4c(s32 cue);
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 void Func_020015cc(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x;
   s32 z = leader->z;
 
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x40000, 0x20000);
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads x and z before
    * it copies the object to r10 (one reordered row). */
   do {
   } while (0);
   x >>= 20;
   z >>= 20;
-  Actor_SetPositionAndCommit(gAdventure.currentOwner, (x << 4) + 8,
+  Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   wait(1);
   Actor_SetPositionAndResetMotion(leader, (x << 20) + 0x80000, leader->y,
@@ -76,7 +76,7 @@ struct CellTargetEntry;
 /// row's 64 bit; Func_020019f4 calls it the first time the leader steps on
 /// one of the table's cells.
 void Func_02001654(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;

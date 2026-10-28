@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -68,7 +68,7 @@ void Func_020016d8(void) {
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xfc0000, -1, 0xd80000, 0);
   Call1((void (*)())Task_Wait, 1);
   Func_02003180();
-  Call3((void (*)())Func_02003228, gAdventure.currentOwner, 0, 0);
+  Call3((void (*)())Func_02003228, gSequenceParentWork.currentOwner, 0, 0);
   east = 0x4000;
   Func_02003230(5, 0xb80000, 0xa80000, east);
   {

@@ -582,7 +582,7 @@ Func_0200063c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_ja_02008954:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_ja_02008958:
 	.4byte 0x0000006b
 .L_ja_0200895c:
@@ -950,7 +950,7 @@ Func_0200063c:
 	add sp, #8
 	pop {r5, r6, r7, pc}
 .L_02008950:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008954:
 	.4byte 0x0000006b
 .L_02008958:

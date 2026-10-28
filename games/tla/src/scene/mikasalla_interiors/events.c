@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -35,7 +35,7 @@ extern const u8 gData_02000a20[];
 extern const u8 gData_02000bac[];
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov65ERoom2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65ERoom2)
     return (const struct Trigger *)gData_02000bac;
   return (const struct Trigger *)gData_02000a20;
 }

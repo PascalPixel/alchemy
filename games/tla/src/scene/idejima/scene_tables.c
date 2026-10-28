@@ -25,7 +25,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  switch (gAdventure.entrance) {
+  switch (gSequenceParentWork.entrance) {
   case 1:
   case 3:
     return gIdejimaEventsEntrance1;

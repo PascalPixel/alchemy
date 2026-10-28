@@ -24,7 +24,7 @@ void Func_0200182c(void) {
   object->unk66 = gData_02002fc0[3].mode;
   BYTE_AT(object, 98) = gData_02002fc0[3].byte98;
   BYTE_AT(object, 99) = gData_02002fc0[3].byte99;
-  object = Actor_GetById(gAdventure.currentOwner);
+  object = Actor_GetById(gSequenceParentWork.currentOwner);
   object->action = gData_02002fc0[4].action;
   object->unk66 = gData_02002fc0[4].mode;
   BYTE_AT(object, 98) = gData_02002fc0[4].byte98;

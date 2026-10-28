@@ -5,7 +5,7 @@
 // overlay 691's Func_020035e0 (differ 49 of 116).
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02001570[];
 
@@ -28,7 +28,7 @@ struct DustSprite {
 };
 
 void Func_02000aa8(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 frame;
   u32 i;
 

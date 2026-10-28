@@ -3,7 +3,7 @@
 // (was 63).
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "field_effect.h"
 
@@ -38,7 +38,7 @@ static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
 }
 
 void Func_0200539c(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct EffectOptions options;
   struct Vector3 velocity;
   u32 i;
@@ -75,15 +75,15 @@ void Func_0200539c(void) {
                   velocity.z, 0x1090001, &options);
   }
   Func_020059f4(188);
-  Func_02005904(gAdventure.currentOwner, 0x101);
-  Actor_SetModeById(gAdventure.currentOwner, 49);
+  Func_02005904(gSequenceParentWork.currentOwner, 0x101);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 49);
   Func_020057ac_(0x50000, 0x50000, 0x10000);
   Func_020057ac_(-1, -1, 0xe666);
   Func_020057b4();
-  Func_02005904(gAdventure.currentOwner, 0x100);
+  Func_02005904(gSequenceParentWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   FieldEvent_Wait(10);
-  Actor_SetModeById(gAdventure.currentOwner, 1);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
   Func_0200581c();
 }

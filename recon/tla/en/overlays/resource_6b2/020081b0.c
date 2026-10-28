@@ -2,7 +2,7 @@
 // the event delay store
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_event.h"
 #include "task.h"
 #include "text/msg_ids.h"
@@ -63,7 +63,7 @@ void Func_020001b0(void) {
 
   Func_02000568();
   Func_020005f8(0);
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
   wait(1);
   gData_020007e4 = 0;
   Task_Add(Func_020000f4, TASK_PASS_VBLANK);

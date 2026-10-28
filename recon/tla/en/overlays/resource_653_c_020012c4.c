@@ -109,7 +109,7 @@ void Func_020012c4(void) {
   carry:
     if (GameFlag_Test(0x209) == 0)
       goto count;
-    leader = Actor_GetById(gAdventure.currentOwner);
+    leader = Actor_GetById(gSequenceParentWork.currentOwner);
     leader->y = statue->y + 0x40000;
     leader->targetY = 0x80000000;
     leader->velocityY = 0;
@@ -129,10 +129,10 @@ void Func_020012c4(void) {
     Actor_GetById(10)->priorityFlags |= 2;
     Actor_SetSpritePriority(10, 3);
     if (GameFlag_Test(0x209)) {
-      leader = Actor_GetById(gAdventure.currentOwner);
+      leader = Actor_GetById(gSequenceParentWork.currentOwner);
       Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
       Actor_SetSingleChildFlags(
-          Actor_GetById(gAdventure.currentOwner), 1);
+          Actor_GetById(gSequenceParentWork.currentOwner), 1);
     }
     goto count;
   }

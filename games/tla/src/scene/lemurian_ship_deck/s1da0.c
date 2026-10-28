@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 
 extern const u8 MsgThenLetS[];
@@ -40,16 +40,16 @@ void Func_02001da0(void) {
     Actor_GetById(7)->update = (void (*)(void))Func_02001d60;
     Func_020020b4_(7, 16, 0, 0x8000);
     Actor_SetSingleChildFlags(Actor_GetById(7), 0);
-    Actor_ArmCallback(gAdventure.currentOwner, 0, 0);
+    Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 0);
     Func_0200201c(MsgThenLetS);
     Actor_WaitForMoveById(7);
     Actor_GetById(7)->update = 0;
     Func_02002034(7, 0);
     Motion_SetModeAndWaitAnimation(4, 3);
-    Actor_GetById(gAdventure.currentOwner)->update =
+    Actor_GetById(gSequenceParentWork.currentOwner)->update =
         (void (*)(void))Func_02001d60;
     Actor_CommitPositionAndActivate(4, 0, 16);
-    Actor_GetById(gAdventure.currentOwner)->update = 0;
+    Actor_GetById(gSequenceParentWork.currentOwner)->update = 0;
     Actor_GetById(7)->update = (void (*)(void))Func_02001d60;
     Actor_SetModeById(7, 2);
     object = Actor_GetById(4);

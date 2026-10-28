@@ -24,7 +24,7 @@ void Motion_SetVarCbAndRefresh(s32 a, s32 b);
 void Camera_FollowActor(s32 a, s32 b);
 void Func_02000a9c(void);
 extern u8 MsgAlhafraInteriors31[];
-extern u8 gAdventure[];
+extern u8 gSequenceParentWork[];
 
 void Func_02000084(void) {
   Call1(GameFlag_SetBit, 0x8b2);
@@ -56,7 +56,7 @@ void Func_02000084(void) {
   Call3(Func_02000b34, 0x801f, 0, 0xa);
   Call3(Actor_ArmCallback, 0x1f, 0xc000, 0);
   Call1(FieldEvent_Wait, 0x14);
-  Call2(Camera_FollowActor, FIELD_AT(gAdventure, s32, 532), 1);
+  Call2(Camera_FollowActor, FIELD_AT(gSequenceParentWork, s32, 532), 1);
   Func_02000b7c();
   Func_02000a9c();
 }

@@ -1,6 +1,6 @@
 // Draft, differ 37 of 171 (was 41; 6 of 160 in tla-ja before): the Kandorean
 // Temple's prepare step. Japanese lacks the final flag 0x12f clear. Left: the
-// native reloads gAdventure's address for the final test; this draft keeps it.
+// native reloads gSequenceParentWork's address for the final test; this draft keeps it.
 // Measured: gcse inserts the address load on the path that skips the inner
 // tests and keeps it in r5 across their calls, where the native loads it into
 // r2 there and again at the join. The final entrance read through a volatile
@@ -50,9 +50,9 @@ void Func_02002a84(void) {
     Func_02005230_(13, 0, 0);
   }
   if (GameFlag_Test(0x109) == 0) {
-    if (gAdventure.entrance == 2) {
-      Actor_GetById(gAdventure.currentOwner)->y = 0x400000;
-    } else if (gAdventure.entrance == 3 && Flag_IsSet(0x92d) == 0) {
+    if (gSequenceParentWork.entrance == 2) {
+      Actor_GetById(gSequenceParentWork.currentOwner)->y = 0x400000;
+    } else if (gSequenceParentWork.entrance == 3 && Flag_IsSet(0x92d) == 0) {
       Func_02005230_(11, 0, 0);
       Func_02005230_(12, 0, 0);
       Func_02005230_(13, 0, 0);
@@ -60,7 +60,7 @@ void Func_02002a84(void) {
     }
   }
 #if LANGUAGE != LANGUAGE_JAPANESE
-  if (gAdventure.entrance == 2)
+  if (gSequenceParentWork.entrance == 2)
     GameFlag_ClearBit(0x12f);
 #endif
 }

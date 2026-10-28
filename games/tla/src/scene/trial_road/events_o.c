@@ -1,11 +1,11 @@
 #include "trial_road.h"
 
 void Func_020011c0(void) {
-  Actor_GetById(gAdventure.currentOwner)->terrainId = 2;
+  Actor_GetById(gSequenceParentWork.currentOwner)->terrainId = 2;
 }
 
 void Func_020011dc(void) {
-  Actor_GetById(gAdventure.currentOwner)->terrainId = 0;
+  Actor_GetById(gSequenceParentWork.currentOwner)->terrainId = 0;
 }
 
 void Func_020011f8(void) {

@@ -11,7 +11,7 @@
 // more minutes of permute (17).
 #include "types.h"
 #include "owner_state.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 void Unit_Calculate(s32 owner);
 

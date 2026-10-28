@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct EventWorkRoute {
   u8 unk000[0x1ac];
@@ -72,9 +72,9 @@ static __inline__ void Show(s32 kind, s32 frames) {
 }
 
 void Func_02000060(s32 arg) {
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
   /* FAKEMATCH: pinned to r6 and assigned after the barrier, the countdown's
-   * copy follows gAdventure's address, as native; as a plain parameter, 2
+   * copy follows gSequenceParentWork's address, as native; as a plain parameter, 2
    * instructions differ in tla-en. */
   register s32 countdown asm("r6");
 
@@ -92,8 +92,8 @@ void Func_02000060(s32 arg) {
 }
 
 void Func_020000b0(s32 arg) {
-  struct Adventure *party = &gAdventure;
-  /* FAKEMATCH: as in Func_02000060, the pin and the barrier put gAdventure's
+  struct SequenceParentWork *party = &gSequenceParentWork;
+  /* FAKEMATCH: as in Func_02000060, the pin and the barrier put gSequenceParentWork's
    * address before the countdown's copy (differ 2 without them). */
   register s32 countdown asm("r6");
 

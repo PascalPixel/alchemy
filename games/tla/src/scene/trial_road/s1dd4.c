@@ -7,7 +7,7 @@ void Actor_SetMovementTypeById(s32 id, const void *script);
 
 void Func_02001dd4(void) {
   struct Actor *partner = Actor_GetById(8);
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 dx;
   s32 dz;
   s32 near;

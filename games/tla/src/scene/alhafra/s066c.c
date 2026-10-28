@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 s32 GameFlag_Test();
@@ -37,13 +37,13 @@ void Func_0200066c(s32 actor) {
       Call1(FieldEvent_Wait, 20);
       Call1(Func_02001c74, message + 2);
       Call2(Func_02001c8c, actor, 0);
-      Call3(Actor_SetPositionAndReset, gAdventure.currentOwner, 72,
+      Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 72,
             344);
-      Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xc000, 0);
+      Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
       Call1(FieldEvent_Wait, 10);
       Call3(Actor_SetSpeedParameters, actor, 0x10000, 0x8000);
       Call3(Actor_SetPositionAndReset, actor, 56, 328);
-      Call3(Actor_ArmCallback, gAdventure.currentOwner, 0xa000, 0);
+      Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xa000, 0);
       Call3(Actor_ArmCallback, actor, 0x2000, 0);
       Call1(FieldEvent_Wait, 20);
       Call2(Motion_SetModeAndWaitAnimation, actor, 3);

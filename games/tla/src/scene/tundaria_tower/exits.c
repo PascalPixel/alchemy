@@ -21,17 +21,17 @@ extern const u8 gData_02003708[];
 extern const u8 gData_020037c8[];
 
 const struct Trigger *Func_020004c8(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov68fRoom2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom2)
     return (const struct Trigger *)gData_02003618;
-  if (gAdventure.scene == (s32)&SceneId_Ov68fRoom3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom3)
     return (const struct Trigger *)gData_02003648;
-  if (gAdventure.scene == (s32)&SceneId_Ov68fRoom4)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom4)
     return (const struct Trigger *)gData_02003660;
-  if (gAdventure.scene == (s32)&SceneId_Ov68fRoom5)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom5)
     return (const struct Trigger *)gData_02003690;
-  if (gAdventure.scene == (s32)&SceneId_Ov68fRoom6)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom6)
     return (const struct Trigger *)gData_02003708;
-  if (gAdventure.scene == (s32)&SceneId_Ov68fRoom7)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom7)
     return (const struct Trigger *)gData_020037c8;
   return (const struct Trigger *)gData_02003618;
 }

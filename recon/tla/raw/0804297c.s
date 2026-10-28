@@ -98,7 +98,7 @@ PartyStatus_Draw:
 	b .L_08042a3e
 	.2byte 0x0000
 .L_08042a34:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_08042a38:
 	mov r1, sp
 	adds r1, #36

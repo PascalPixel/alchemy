@@ -15,7 +15,7 @@ next:
   id++;
   if (id < 64)
     goto next;
-  Actor_GetById(gAdventure.currentOwner)->motionFlags = 0;
+  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 0;
   {
     s32 mode = 2;
 
@@ -23,9 +23,9 @@ next:
      * loaded after it as the native has; plain, or with the mode pinned to r1,
      * the leader is loaded first (one reordered row). */
     __asm__("" : "+l"(mode) : : "r0");
-    Actor_SetModeById(gAdventure.currentOwner, mode);
+    Actor_SetModeById(gSequenceParentWork.currentOwner, mode);
   }
-  Actor_CenterOnColumn(gAdventure.currentOwner, 2, -8);
+  Actor_CenterOnColumn(gSequenceParentWork.currentOwner, 2, -8);
   FieldEvent_Wait(5);
   Func_02001210(123);
   Func_02001198(work->value154);

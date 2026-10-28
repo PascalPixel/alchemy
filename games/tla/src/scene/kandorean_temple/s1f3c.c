@@ -11,17 +11,17 @@ void Func_02001f3c(void) {
 void Func_02001f7c(void) {
   Func_020051c0();
   Func_02005370(0);
-  Actor_SetSpeedParameters_(gAdventure.currentOwner, 0x10000, 0x8000);
-  Actor_SetPositionAndReset_(gAdventure.currentOwner, 400, 648);
-  Func_020052b0(gAdventure.currentOwner, 0xc000);
+  Actor_SetSpeedParameters_(gSequenceParentWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetPositionAndReset_(gSequenceParentWork.currentOwner, 400, 648);
+  Func_020052b0(gSequenceParentWork.currentOwner, 0xc000);
   if (GameFlag_Test(0x212) == 0) {
     Func_020053d8(188);
     Func_02001f3c();
   }
-  Actor_SetModeById(gAdventure.currentOwner, 2);
-  Actor_SetSpeedParameters_(gAdventure.currentOwner, 0x8000, 0x4000);
-  Actor_SetSpritePriority(gAdventure.currentOwner, 3);
-  Actor_ResetAndSetPositionInMode2_(gAdventure.currentOwner, 400, 640);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
+  Actor_SetSpeedParameters_(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 3);
+  Actor_ResetAndSetPositionInMode2_(gSequenceParentWork.currentOwner, 400, 640);
   Func_020053d8(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -29,23 +29,23 @@ void Func_02001f7c(void) {
 }
 
 void Func_02002014(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   u32 i;
 
   Func_020051c0();
   Func_02005370(0);
-  Actor_SetPositionAndReset(gAdventure.currentOwner, 416, 288);
-  Actor_ArmCallback(gAdventure.currentOwner, 0x4000, 10);
-  Actor_ArmCallback(gAdventure.currentOwner, 0xc000, 0);
+  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 416, 288);
+  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0x4000, 10);
+  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xc000, 0);
   leader->motionFlags = 0;
-  Actor_SetActionVariantValue(gAdventure.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gAdventure.currentOwner),
+  Actor_SetActionVariantValue(gSequenceParentWork.currentOwner, 1);
+  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
                                      0);
   for (i = 0; i < 8; i++) {
     leader->z += 0x10000;
     wait(1);
   }
-  Actor_SetModeById(gAdventure.currentOwner, 13);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 13);
   for (i = 0; i < 8; i++) {
     leader->y -= 0x10000;
     wait(1);
@@ -116,18 +116,18 @@ void Func_020021dc(void) {
 }
 
 void Func_02002248(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
 
   Func_020051c0();
   Func_02005370(0);
-  Func_020052c8(gAdventure.currentOwner, 0x100, 20);
+  Func_020052c8(gSequenceParentWork.currentOwner, 0x100, 20);
   Func_020053d8(132);
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 10);
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 10);
   leader->velocityY = 0x60000;
   wait(20);
   while (leader->velocityY != 0)
     wait(1);
-  Actor_SetPartAttribute(Actor_GetById(gAdventure.currentOwner), 0);
+  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 0);
   Func_020051c8();
 }
 

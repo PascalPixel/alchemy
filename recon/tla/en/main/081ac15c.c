@@ -23,7 +23,7 @@
 #include "dma.h"
 #include "iwram_call.h"
 #include "input.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "bg_scroll.h"
 
 struct DiceParticle {
@@ -259,7 +259,7 @@ void LuckyDice_Run(void) {
   window = Window_CreateFar(18, 0, 12, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
-  Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow, 0,
+  Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6, sprites->coinsWindow, 0,
                                0);
   window = Window_CreateFar(22, 16, 8, 4, 6);
   sprites->helpWindow = window;
@@ -371,7 +371,7 @@ void LuckyDice_Run(void) {
       if (payoutTimer == 0) {
         winnings = 0;
         Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 56, 0);
-        Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
+        Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6, sprites->coinsWindow,
                                      0, 0);
       }
       if (payoutTimer == 15) {
@@ -408,7 +408,7 @@ void LuckyDice_Run(void) {
       if (diceWork->particles[1].y > 0xa00000) {
         diceWork->particles[1].y = 0xa00000;
       }
-      if ((u32)gAdventure.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
+      if ((u32)gSequenceParentWork.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
         Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
@@ -422,11 +422,11 @@ void LuckyDice_Run(void) {
         Window_CloseFar(sprites->helpWindow, 1);
         state = 1;
         bet = Party_GetAverageLevelFar() * 10;
-        if ((u32)bet > (u32)gAdventure.coins) {
-          bet = gAdventure.coins;
+        if ((u32)bet > (u32)gSequenceParentWork.coins) {
+          bet = gSequenceParentWork.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
+        Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6, sprites->coinsWindow,
                                      0, 0);
         for (index = 0; index != 2; index++) {
           rollingDie = &diceWork->particles[index];
@@ -666,7 +666,7 @@ void LuckyDice_Run(void) {
           } else {
             winnings = bet * 5;
           }
-          Text_DrawNumberInWindowFar(gAdventure.coins, 6,
+          Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           Sound_PlayFar(93);
         } else {
@@ -681,13 +681,13 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 1) {
             winnings = bet;
-            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
+            Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
-            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
+            Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
@@ -695,7 +695,7 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 3) {
             winnings = bet * 3;
-            Text_DrawNumberInWindowFar(gAdventure.coins, 6,
+            Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;

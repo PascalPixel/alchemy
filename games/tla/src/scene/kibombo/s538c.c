@@ -20,7 +20,7 @@ void Func_0200538c(void) {
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
     wait(10);
   }
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x20;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 0x20;
   if (GameFlag_Test(0x86a))
     Func_020005e0();
   if (GameFlag_Test(0x204))

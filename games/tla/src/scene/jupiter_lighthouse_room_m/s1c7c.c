@@ -95,7 +95,7 @@ void Func_02001c7c(void) {
     /* FAKEMATCH: the one-pass block ends CSE's block, so the byte store's dead
      * zero is not kept in r8 for the store of the owner below (without: differ
      * 31 of 160). */
-    gAdventure.battleRule24b = 6;
+    gSequenceParentWork.battleRule24b = 6;
   } while (0);
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov6a3, 77);
   Party_SetFields1f2And1f4((s32)&SceneId_Ov6a3, 77);
@@ -116,6 +116,6 @@ void Func_02001c7c(void) {
   JupiterLighthouseRoomM_AddHp(0, 173);
   JupiterLighthouseRoomM_AddPp(2, -10000);
   JupiterLighthouseRoomM_AddPp(0, -10000);
-  gAdventure.currentOwner = 0;
+  gSequenceParentWork.currentOwner = 0;
   Func_02004904(102, 4);
 }

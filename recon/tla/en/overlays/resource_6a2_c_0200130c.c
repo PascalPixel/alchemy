@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "iwram_call.h"
 
 struct CellTargetEntry {
@@ -123,7 +123,7 @@ s32 Func_0200130c(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     }
   }
   if (GameFlag_Test(0x109)) {
-    struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+    struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
     s32 leaderX = leader->x >> 20;
     s32 leaderZ = leader->z >> 20;
 

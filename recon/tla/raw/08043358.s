@@ -193,7 +193,7 @@ Save_BuildFileSummary:
 .L_080434d4:
 	.4byte gData_02000000
 .L_080434d8:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080434dc:
 	.4byte gFrameWaitCount
 .L_080434e0:

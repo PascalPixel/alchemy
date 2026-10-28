@@ -391,7 +391,7 @@ Func_02000564:
 	bl .L_020093d6
 	.2byte 0x0000
 .L_020085bc:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_020085c0:
 	.4byte 0x00000003
 .L_020085c4:

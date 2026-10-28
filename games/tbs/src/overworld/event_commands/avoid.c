@@ -14,7 +14,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
   struct SpriteAnimation *entry;
   s32 phase;
 
-  caster = Actor_Lookup(gAdventure.leaderActorId);
+  caster = Actor_Lookup(gSequenceParentWork.leaderActorId);
   rec = caster->sprite;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
@@ -41,7 +41,7 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
   phase = caster->arcPhase;
   elapsedFrames = caster->arcFrames++;
 
-  if (gAdventure.mapId == MAP_INDEX_WORLD) {
+  if (gSequenceParentWork.mapId == MAP_INDEX_WORLD) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {
@@ -55,12 +55,12 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
 /// Avoid (or the Sacred Feather) has worn off, and the game says so.
 /// "Avoid's effects wore off." (or "Sacred Feather's ...").
 ///
-/// Clears gAdventure.avoidDistance. Reached through
+/// Clears gSequenceParentWork.avoidDistance. Reached through
 /// Event_RunFieldPsynergy when the Psynergy request the leader's walking raises
 /// as Avoid runs out (overworld/walking.c) is handled.
 void Event_ShowStatusMessage(void) {
-  gAdventure.avoidDistance = 0;
-  if (gAdventure.avoidByItem == 0) {
+  gSequenceParentWork.avoidDistance = 0;
+  if (gSequenceParentWork.avoidByItem == 0) {
     MessageArgument_PushFar(ABILITY_AVOID, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar(MsgAbilityWoreOff, FIELD_MESSAGE_ZOOM);
     return;
@@ -83,8 +83,9 @@ void Event_ShowStatusMessage(void) {
 /// marks it as cast from the Sacred Feather.
 ///
 /// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch. Sets
-/// gAdventure.avoidDistance and avoidByItem; the leader's walking counts
-/// the distance down by its speed (overworld/walking.c), 2,400 pixels in all.
+/// gSequenceParentWork.avoidDistance and avoidByItem; the leader's walking
+/// counts the distance down by its speed (overworld/walking.c), 2,400 pixels in
+/// all.
 void FieldPsynergy_Avoid(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *actor;
@@ -108,8 +109,8 @@ void FieldPsynergy_Avoid(void) {
     // distance is 2,400 pixels in 16.16.
     *tileSlot = slot;
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
-    gAdventure.avoidDistance = 0x09600000;
-    gAdventure.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
+    gSequenceParentWork.avoidDistance = 0x09600000;
+    gSequenceParentWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
     Actor_SetSpriteColorModeFar(actor, zero);
     actor->update = FieldEffect_UpdatePairedArcSpawner;
     actor->arcPhase = zero;
@@ -138,7 +139,7 @@ void FieldPsynergy_Avoid(void) {
   Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
-  if (gAdventure.cloaked != 0)
+  if (gSequenceParentWork.cloaked != 0)
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_OUTLINED);
   else
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);

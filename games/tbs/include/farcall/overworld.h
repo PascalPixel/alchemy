@@ -3,7 +3,7 @@
 
 /// Runs the scene the party entered by entrance until it leaves,
 /// and returns the exit kind for Scene_TakeExit, or EXIT_KEEP_DESTINATION when
-/// gAdventure already holds the next scene.
+/// gSequenceParentWork already holds the next scene.
 s32 SceneSequence_RunFar(s32 entrance);
 /// The sequence parent, which never returns; mode, an enum GameStart,
 /// picks the first scene. System_Initialize starts it at power-on with
@@ -189,7 +189,7 @@ void MapGrid_SetCameraBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
 /// Battle Arena and the debug menus use it as well as a few scenes.
 void Event_SetDestinationFar(s32 first, s32 second);
 /// Raises the field's exit request; 999 leaves for the scene and entrance
-/// in gAdventure.
+/// in gSequenceParentWork.
 void Event_SetExitRequestFar(u16 value);
 /// Sets up a battle with one formation of an encounter table, which starts
 /// once the event that asked for it has returned.
@@ -390,8 +390,8 @@ void Actor_CommitPositionAndActivateFar(u32 actorId, s32 x_offset,
                                         s32 z_offset);
 /// Makes an actor follow another through the watched actor script.
 void Actor_WatchAndSetScriptFar(u32 actorId, u32 watchedActorId);
-/// Pauses an actor, keeping its update and pose in gAdventure for later;
-/// Halt and the Colosso operators use it.
+/// Pauses an actor, keeping its update and pose in gSequenceParentWork for
+/// later; Halt and the Colosso operators use it.
 void FieldPsynergy_HaltActorFar(s32 id);
 /// Captures up to 32 actors into gActorSnapshot, for
 /// Actor_Restore (Actor_Snapshot); the save menu calls it.

@@ -5,8 +5,8 @@
 /// of them Altin's: its houses, shops and inn, entered by the village's doors
 /// (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
 /// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each scene's tables
-/// by gAdventure.sceneId, both share one exit table, and a third, empty
-/// set of tables serves any other scene.
+/// by gSequenceParentWork.sceneId, both share one exit table, and a third,
+/// empty set of tables serves any other scene.
 ///
 /// The village is flooded by the water beasts of its mine, whose scenes the
 /// area names call Altin Peak (altin_peak.c), and two things in Altin's code
@@ -47,7 +47,7 @@
 /// across the counter once the shop has dried, and a cook from Xian paces
 /// between his pots (gCottageRoomsD_CookScript).
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "version.h"
 #include "scene_ids.h"
 #include "module/scene/altin.h"
@@ -294,7 +294,7 @@ static void CottageRoomsD_PlaceSheltering(void);
 static void Altin_BeastSpawnSpray(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == MAP_ALTIN_VILLAGE) {
     return gAltin_Entrances;
@@ -313,7 +313,7 @@ const u32 *Scene_GetExits(void) { return gAltin_Exits; }
 /// Some villagers only turn back after talking once the flood is over or
 /// their family has gone home.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 sceneId = gAdventure.sceneId;
+  s32 sceneId = gSequenceParentWork.sceneId;
   if (sceneId == MAP_ALTIN_VILLAGE) {
     if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED)) {
       gAltin_ActorPlacements[ACTOR_WOMAN_WATER_LUCK - ACTOR_FIRST_PLACED]
@@ -340,7 +340,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 sceneId = gAdventure.sceneId;
+  s16 sceneId = gSequenceParentWork.sceneId;
 
   if (sceneId == MAP_ALTIN_VILLAGE) {
     return gAltin_Triggers;
@@ -780,7 +780,7 @@ s32 Scene_Initialize(void) {
     GameFlag_Set(FLAG_ALTIN_WATER_DRAINED);
   }
 
-  sceneId = gAdventure.sceneId;
+  sceneId = gSequenceParentWork.sceneId;
   if (sceneId == MAP_ALTIN_VILLAGE) {
     Altin_ApplyWaterLevel();
   } else if (sceneId == MAP_ALTIN_HOUSES) {
@@ -833,7 +833,7 @@ static void Altin_ApplyWaterLevel(void) {
     Import_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
     Task_AddFrame(Altin_BeastSpawnSpray, TASK_PASS_FRAME);
   }
-  if (gAdventure.entrance == ALTIN_FROM_SANCTUM) {
+  if (gSequenceParentWork.entrance == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);

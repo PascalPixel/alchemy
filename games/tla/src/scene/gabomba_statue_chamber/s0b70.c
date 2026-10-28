@@ -3,7 +3,7 @@
 
 void Func_02000b70(void) {
   struct GabombaStatueChamberObject *leader =
-      Actor_GetById(gAdventure.currentOwner);
+      Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 

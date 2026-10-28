@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_effect.h"
 
 extern const s32 *const gData_0200270c[];
@@ -22,7 +22,7 @@ static inline void Effect_SetScript(struct FieldActor *object,
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Actor_GetById(gAdventure.currentOwner);
+  struct FieldActor *party = Actor_GetById(gSequenceParentWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

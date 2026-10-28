@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "event_work.h"
 #include "call.h"
 
@@ -21,7 +21,7 @@ s32 Func_02000104(void) {
   work->screenEffect = 256;
   ((struct EventFlags *)work)->unkd37 = 0;
   ((struct EventFlags *)work)->unkd36 = 0;
-  gAdventure.eventMode = 2;
+  gSequenceParentWork.eventMode = 2;
   Func_020005e0();
   Value3((s32 (*)())Func_020005e8, 0, 10, 11);
   Actor_SetModeById(9, 4);

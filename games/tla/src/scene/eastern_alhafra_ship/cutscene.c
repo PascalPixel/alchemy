@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -289,12 +289,11 @@ void Func_020004f4(void) {
   Call3((void (*)())Actor_OffsetPositionAndReset, 9, 0, -16);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Party_SetFields1eeAnd1f0, (s32)&SceneId_Ov669, 99);
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
-   * adventure's address before it builds the field offset (differ 2 without
+  /* FAKEMATCH: the loop note ends the scheduling block: the native loads hegSequenceParentWork's address before it builds the field offset (differ 2 without
    * it). */
   do {
   } while (0);
-  gAdventure.battleRule24b = 2;
+  gSequenceParentWork.battleRule24b = 2;
   Call2((void (*)())Func_02003220, 10, 1);
   Func_02003138();
 }
@@ -1310,7 +1309,7 @@ L_0200afe8:
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 5, 2);
-  object20 = Actor_GetById(gAdventure.currentOwner);
+  object20 = Actor_GetById(gSequenceParentWork.currentOwner);
   if (object20 == 0)
     goto L_0200b03c;
   Call3((void (*)())Actor_ResetAndSetPosition, 5,
@@ -1320,7 +1319,7 @@ L_0200b03c:
   Call3((void (*)())Func_02003198, 5, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 6, 2);
-  object21 = Actor_GetById(gAdventure.currentOwner);
+  object21 = Actor_GetById(gSequenceParentWork.currentOwner);
   if (object21 == 0)
     goto L_0200b07a;
   Call3((void (*)())Actor_ResetAndSetPosition, 6,
@@ -1330,7 +1329,7 @@ L_0200b07a:
   Call3((void (*)())Func_02003198, 6, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 25, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 25, 2);
-  object22 = Actor_GetById(gAdventure.currentOwner);
+  object22 = Actor_GetById(gSequenceParentWork.currentOwner);
   if (object22 == 0)
     goto L_0200b0b8;
   Call3((void (*)())Actor_ResetAndSetPosition, 25,
@@ -1338,7 +1337,7 @@ L_0200b07a:
 L_0200b0b8:
   Call1((void (*)())Actor_WaitForMoveById, 25);
   Call3((void (*)())Func_02003198, 25, 0, 0);
-  Call2((void (*)())Camera_FollowActor, gAdventure.currentOwner, 1);
+  Call2((void (*)())Camera_FollowActor, gSequenceParentWork.currentOwner, 1);
   ((void (*)())Func_02003138)();
   return;
 }

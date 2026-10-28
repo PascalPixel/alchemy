@@ -1,4 +1,4 @@
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/debug/level.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
@@ -18,7 +18,7 @@
 #include "level.h"
 #include "event_inline.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "types.h"
 #include "io_reg.h"
 #include "inventory.h"
@@ -164,7 +164,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gAdventure.leaderActorId);
+  unit = Unit_Get(gSequenceParentWork.leaderActorId);
   window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
   messageId = MsgDebugRaiseEveryonesLevel;

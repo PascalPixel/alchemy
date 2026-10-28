@@ -98,7 +98,7 @@
 /// ValeKradensCottage, Vale and ValeStormyNight) or between this scene's own
 /// parts.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "vram_cache.h"
 #include "module/scene/cottage_rooms_b.h"
 #include "module/scene/shared/effect_psynergy.h"
@@ -333,7 +333,7 @@ const u32 *CottageRoomsB_GetExits(void) {
 const struct ActorPlacement *CottageRoomsB_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
-  if (gAdventure.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
+  if (gSequenceParentWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
     return gCottageRoomsB_BabiScholarsActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     table = gCottageRoomsB_ActorPlacementsAfterKalay;
@@ -366,7 +366,7 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
 const struct Trigger *CottageRoomsB_GetTriggers(void) {
-  if (gAdventure.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
+  if (gSequenceParentWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gCottageRoomsB_BabiScholarsLaterTriggers;
     }
@@ -541,7 +541,7 @@ static void CottageRoomsB_ExitToValeStormyNightEast(void) {
 s32 CottageRoomsB_Initialize(void) {
   struct Actor *actor;
 
-  if (gAdventure.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
+  if (gSequenceParentWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -560,8 +560,9 @@ s32 CottageRoomsB_Initialize(void) {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       actor = Actor_GetById(ACTOR_INVISIBLE_AFTER_KALAY);
       Actor_SetSpriteFlags(actor, 0);
-      if (gAdventure.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
-          gAdventure.entrance == COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
+      if (gSequenceParentWork.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
+          gSequenceParentWork.entrance ==
+              COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
             TilesetAnim_Resume(12);
@@ -574,15 +575,16 @@ s32 CottageRoomsB_Initialize(void) {
         }
       }
     } else {
-      if (gAdventure.entrance ==
+      if (gSequenceParentWork.entrance ==
           COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
         CottageRoomsB_HurryToThePlaza();
       } else {
-        if (gAdventure.entrance == COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST) {
+        if (gSequenceParentWork.entrance ==
+            COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST) {
           GameFlag_Set(FLAG_VALE_STORM);
           CottageRoomsB_DoraWakesIsaac();
         } else {
-          if (gAdventure.entrance ==
+          if (gSequenceParentWork.entrance ==
               COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG) {
             CottageRoomsB_ShowMythrilBag();
           } else {

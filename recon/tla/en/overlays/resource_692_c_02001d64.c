@@ -7,7 +7,7 @@
 // returns to the leader.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_effect.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -103,7 +103,7 @@ void Func_02001d64(void) {
   Func_02004f30(288);
   FieldEvent_Wait(40);
   GameFlag_SetBit(2552);
-  Camera_FollowActor(gAdventure.currentOwner, 1);
+  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
   Func_02004e20();
   wait(10);
   Func_02004d48();

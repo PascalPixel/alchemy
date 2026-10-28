@@ -29,7 +29,7 @@ s32 Func_0200158c(struct Actor *a, struct Actor *b);
 
 void Func_020015ec(struct Actor *object) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   s32 dx = object->bounce;
   s32 dz;
@@ -47,7 +47,7 @@ void Func_020015ec(struct Actor *object) {
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->animation)->unk12 += object->action;
   if (leader->y == leader->terrainHeight && Func_02001528(object, leader) &&
-      gAdventure.renderMode == 0) {
+      gSequenceParentWork.renderMode == 0) {
     if (object->unk4c != 0) {
       work->value68 = 0;
       {

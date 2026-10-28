@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -188,7 +188,7 @@ struct AnimationFacing {
 
 void Func_020030c0(void) {
   Actor_SetSpritePriority(
-      64, ((struct AnimationFacing *)Actor_GetById(gAdventure.currentOwner)
+      64, ((struct AnimationFacing *)Actor_GetById(gSequenceParentWork.currentOwner)
                ->animation)
               ->facing);
 }

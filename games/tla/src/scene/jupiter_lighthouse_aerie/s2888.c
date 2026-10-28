@@ -1,7 +1,7 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   struct JupiterLighthouseAerieWork *work =
       (struct JupiterLighthouseAerieWork *)gData_02003488;

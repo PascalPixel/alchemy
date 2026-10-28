@@ -79,7 +79,7 @@
 
 #include "script_operands.h"
 #include "version.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "heap.h"
 #include "vram_cache.h"
 #include "module/import.h"
@@ -448,13 +448,13 @@ enum {
 static void WorldMap_MeetVine(void) {
   struct FieldWork *work = gFieldWork;
 
-  if (gAdventure.encounterSteps >=
+  if (gSequenceParentWork.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
     if ((u32)Import_RandomNext() < 0x8000) {
       Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_VENUS_DJINNI, DJINNI_VINE);
       work->encounterBias = 0;
     } else {
-      gAdventure.encounterSteps = work->encounterThreshold;
+      gSequenceParentWork.encounterSteps = work->encounterThreshold;
     }
   }
 }
@@ -464,7 +464,7 @@ static void WorldMap_MeetVine(void) {
 /// Reached by talking to ACTOR_CORONA, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_CORONA until Corona is caught.
 static void WorldMap_MeetCorona(void) {
-  struct Adventure *state = &gAdventure;
+  struct SequenceParentWork *state = &gSequenceParentWork;
   s32 *steps = &state->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
@@ -479,7 +479,7 @@ static void WorldMap_MeetCorona(void) {
 /// Reached by talking to ACTOR_HAIL, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_HAIL until Hail is caught.
 static void WorldMap_MeetHail(void) {
-  struct Adventure *state = &gAdventure;
+  struct SequenceParentWork *state = &gSequenceParentWork;
   s32 *steps = &state->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
@@ -654,7 +654,7 @@ static s32 WorldMap_BlinkActorSprite(struct Actor *interpreter) {
 /// (gWorldMapActorPlacements) and sets
 /// FLAG_WORLD_MAP_ORDINARY_ACTORS.
 const struct ActorPlacement *WorldMap_GetActorPlacements(void) {
-  switch (gAdventure.entrance) {
+  switch (gSequenceParentWork.entrance) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (GameFlag_Get(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
         GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -699,7 +699,7 @@ static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct Actor *other;
 
   subject = Actor_GetById(trigger - STEP_TRIGGER_AREA_BASE);
-  other = Actor_GetById(gAdventure.leaderActorId);
+  other = Actor_GetById(gSequenceParentWork.leaderActorId);
   work = gFieldWork;
   if (other->x.fixed < subject->x.fixed) {
     work->exit = exitBefore;
@@ -716,7 +716,7 @@ static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct Actor *other;
 
   subject = Actor_GetById(trigger - STEP_TRIGGER_AREA_BASE);
-  other = Actor_GetById(gAdventure.leaderActorId);
+  other = Actor_GetById(gSequenceParentWork.leaderActorId);
   work = gFieldWork;
   if (other->z.fixed < subject->z.fixed) {
     work->exit = exitBefore;
@@ -791,7 +791,7 @@ static void WorldMap_UpdateAreaContacts(void) {
   s32 leaderReach;
   u32 i;
 
-  leader = Actor_GetById(gAdventure.leaderActorId);
+  leader = Actor_GetById(gSequenceParentWork.leaderActorId);
   leaderReach = leader->sprite->scale * leader->radius;
   work = gFieldWork;
   actor = work->camera;
@@ -874,7 +874,7 @@ static void WorldMap_ReturnToTolbiShip(void) {
 /// encounters off, and leaving Vale the first time sets FLAG_VALE_PARTY_LEFT
 /// and flag 0x85c, which nothing reads.
 s32 WorldMap_Initialize(void) {
-  struct Adventure *state = &gAdventure;
+  struct SequenceParentWork *state = &gSequenceParentWork;
   s16 *entrance = &state->entrance;
 
   if (*entrance == WORLD_MAP_FROM_DEBUG) {
@@ -973,7 +973,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM:
       GameFlag_Set(FLAG_WORLD_MAP_LEFT);
       if (FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT) != 0) {
-        gAdventure.movementMode = LEADER_MOVEMENT_AIRBORNE;
+        gSequenceParentWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
         Task_AddFrame(WorldMap_UpdateStormTimer, TASK_PASS_FRAME);
       }
       break;
@@ -1959,8 +1959,8 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Event_Wait(20);
   GameFlag_Set(FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
-  gAdventure.restartScene = (s32)&SceneId_WorldMap;
-  gAdventure.restartEntrance = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
+  gSequenceParentWork.restartScene = (s32)&SceneId_WorldMap;
+  gSequenceParentWork.restartEntrance = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   Event_End();
 }
 
@@ -2224,7 +2224,8 @@ u16 gWorldMapBlend;
 /// Felix and Sheba, and the Title returns (TITLE_FROM_WORLD_MAP).
 /// Called by WorldMap_Initialize at WORLD_MAP_JENNA_AND_KRADEN_ADRIFT.
 static void WorldMap_ShowEndingEvent(void) {
-  WindowColor_Apply(gAdventure.windowColor[0], gAdventure.windowColor[1]);
+  WindowColor_Apply(gSequenceParentWork.windowColor[0],
+                    gSequenceParentWork.windowColor[1]);
   Event_Start();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 300);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -2591,7 +2592,7 @@ static void WorldMap_UpdateStormTimer(void) {
   struct FieldWork *work;
   s32 progress;
 
-  actor = Actor_GetById(gAdventure.leaderActorId);
+  actor = Actor_GetById(gSequenceParentWork.leaderActorId);
   work = gFieldWork;
   actor->facing = (gFrameCount << 12);
 
@@ -2615,7 +2616,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
   struct Actor *record;
   s32 id;
 
-  id = gAdventure.leaderActorId;
+  id = gSequenceParentWork.leaderActorId;
   actor = Actor_GetById(id);
   alreadyTraveling = Event_GetFlag(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
   if (alreadyTraveling == 0) {
@@ -2636,7 +2637,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     Actor_WaitForMoveById(id);
     actor->velocityY = alreadyTraveling;
     actor->motionFlags = ACTOR_FLOATS;
-    gAdventure.movementMode = LEADER_MOVEMENT_AIRBORNE;
+    gSequenceParentWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
     FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 180);
     Event_End();
@@ -2674,7 +2675,7 @@ static void WorldMap_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  selectedActor = Actor_GetById(gAdventure.leaderActorId);
+  selectedActor = Actor_GetById(gSequenceParentWork.leaderActorId);
   selectedActor->motionFlags = ACTOR_FALLS;
 }
 
@@ -2684,7 +2685,7 @@ static void WorldMap_DouseMapStorm(void) {
 /// raised as the timer runs out. Sets FLAG_ARRIVE_FALLING and sends the party
 /// to WORLD_MAP_FROM_SUHALLA.
 static void WorldMap_StormDropsParty(void) {
-  struct Actor *actor = Actor_Get(gAdventure.leaderActorId);
+  struct Actor *actor = Actor_Get(gSequenceParentWork.leaderActorId);
   struct Actor *other = Actor_Get(ACTOR_STORM);
   s32 frames;
 
@@ -2734,7 +2735,7 @@ static void WorldMap_JitterTransitionCamera(void) {
   s32 sy;
   u32 mode;
 
-  record = Actor_Get(gAdventure.leaderActorId);
+  record = Actor_Get(gSequenceParentWork.leaderActorId);
   sx = record->x.part.pixel;
   sy = record->z.part.pixel;
   if (gFrameCount % 3 == 0) {
@@ -2791,7 +2792,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
   WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
-  Actor_GetById(gAdventure.leaderActorId)->spriteStorageKind = 0;
+  Actor_GetById(gSequenceParentWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

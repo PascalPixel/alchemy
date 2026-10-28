@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "macros.h"
 
 extern char SceneId_Ov676Room1;
@@ -23,8 +23,8 @@ void Func_02002244(void) {
 }
 
 s32 Func_02002278(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov676Room1) {
-    if (gAdventure.entrance == 15)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov676Room1) {
+    if (gSequenceParentWork.entrance == 15)
       Func_020023c8();
     else
       Func_02002244();
@@ -33,7 +33,7 @@ s32 Func_02002278(void) {
 }
 
 s32 Func_020022b0(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov676Room1 && GameFlag_Test(0x300))
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov676Room1 && GameFlag_Test(0x300))
     Func_02002470_(8, 12, 1, 1, 10, 12);
   return 0;
 }

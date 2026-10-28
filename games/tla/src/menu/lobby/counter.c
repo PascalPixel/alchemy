@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "flag_call.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 
 void Func_02000044(void);
@@ -29,7 +29,7 @@ s32 Func_02000bb0(void) {
   msg = (s32)MsgPleaseSpeakTo;
   Func_02001a14();
   Func_02001ab4(0);
-  Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(8, gSequenceParentWork.currentOwner, 0);
   if (Func_0200006c(0) == 0)
     wait(1);
   if (Func_0200006c(0) == 0) {
@@ -46,7 +46,7 @@ s32 Func_02000bb0(void) {
         Flag_Clear(0x16c);
         Flag_Set(0x202);
         line = msg + 7;
-        gAdventure.linkTallies[3] = answer;
+        gSequenceParentWork.linkTallies[3] = answer;
         goto message;
       }
       Flag_Clear(0x173);

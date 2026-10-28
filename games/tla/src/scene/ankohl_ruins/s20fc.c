@@ -17,7 +17,7 @@ void Func_020020fc(void) {
       Func_02002eb4();
       Task_Add(Func_02001f7c, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);
-      Camera_FollowActor(gAdventure.currentOwner, 1);
+      Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
       Func_02002eb4();
       AnkohlRuins_Call2dfc(13, 30, 3, 2, 13, z);
       AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);

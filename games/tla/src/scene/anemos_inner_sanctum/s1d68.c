@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
@@ -25,8 +25,8 @@ void Func_02001d68(void) {
   Actor_SetModeById(9, 2);
   object->y = -0x400000;
   Func_020033e0_(9, 0x2d80000, 0x780000);
-  Func_020033e0_(gAdventure.currentOwner, 0x2d80000, 0x780000);
-  Actor_GetById(gAdventure.currentOwner)->y = -0x300000;
+  Func_020033e0_(gSequenceParentWork.currentOwner, 0x2d80000, 0x780000);
+  Actor_GetById(gSequenceParentWork.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;
@@ -43,7 +43,7 @@ void Func_02001df4(void) {
   Func_02003488(0);
   object->motionFlags = 0;
   object->y = -0x400000;
-  Actor_GetById(gAdventure.currentOwner)->y = -0x300000;
+  Actor_GetById(gSequenceParentWork.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;
   object->speedLimit = 0x10000;

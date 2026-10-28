@@ -1,7 +1,7 @@
 #include "local.h"
 
 void Func_02000de0(s32 actor) {
-  s32 angle = Actor_GetById(gAdventure.currentOwner)->angle;
+  s32 angle = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));
@@ -36,7 +36,7 @@ void Func_02000e40(s32 actor) {
 }
 
 void Func_02000e98(s32 actor) {
-  s32 angle = Actor_GetById(gAdventure.currentOwner)->angle;
+  s32 angle = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
 
   /* FAKEMATCH: the native loads the angle before building the quarter turn. */
   __asm__ volatile("" : "+r"(angle));

@@ -91,7 +91,7 @@ Func_080e807c:
 .L_080e812c:
 	.4byte 0x00000040
 .L_080e8130:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080e8134:
 	.4byte gBgScroll
 .L_080e8138:

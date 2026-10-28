@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 #include "animspr.h"
 
@@ -68,5 +68,5 @@ void Func_080debd8(void) {
   }
 
   sprite->blend = 1;
-  gAdventure.cloaked = 0;
+  gSequenceParentWork.cloaked = 0;
 }

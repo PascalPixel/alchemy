@@ -1,9 +1,9 @@
 #include "yampi_desert_cave.h"
 
 u32 *Func_02000d44(void) {
-  if (gAdventure.scene == (s32)&SceneId_Ov662Room2)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov662Room2)
     return (u32 *)gData_02001bd0;
-  if (gAdventure.scene == (s32)&SceneId_Ov662Room3)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov662Room3)
     return (u32 *)gData_02001c18;
   return gData_02001b58;
 }
@@ -19,9 +19,9 @@ void Func_02000dac(void) {
   Func_02000898();
   Func_02001958();
   {
-    u8 *party = (u8 *)&gAdventure;
+    u8 *party = (u8 *)&gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);
@@ -36,9 +36,9 @@ void Func_02000de0(void) {
   Func_02000898();
   Func_02001958();
   {
-    u8 *party = (u8 *)&gAdventure;
+    u8 *party = (u8 *)&gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);
@@ -51,7 +51,7 @@ void Func_02000de0(void) {
 
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"

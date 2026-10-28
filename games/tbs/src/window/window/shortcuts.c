@@ -29,7 +29,8 @@ void AreaNameWindow_Show(void) {
   notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
-  areaMessage = Area_GetNameIndexFar(gAdventure.sceneId, gAdventure.entrance) +
+  areaMessage = Area_GetNameIndexFar(gSequenceParentWork.sceneId,
+                                     gSequenceParentWork.entrance) +
                 RENDER_RESOURCE_BASE;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
@@ -81,12 +82,12 @@ s32 Item_ReturnTrue(void) { return 1; }
 /// otherwise. The hue wraps in a byte (0 back is 255), not at the option
 /// screen's 24 hues.
 UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
-  u8 hue = gAdventure.windowColor[0];
+  u8 hue = gSequenceParentWork.windowColor[0];
   if (keys & KEY_LEFT)
     hue += 0xff;
   else
     hue += 1;
-  gAdventure.windowColor[0] = hue;
+  gSequenceParentWork.windowColor[0] = hue;
 }
 
 /// A Psynergy the debug shortcut picker lists: its party member and the
@@ -98,9 +99,9 @@ struct AbilityListEntry {
 
 /// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
 /// showing each one's cost and description, and stores them in
-/// gAdventure.firstShortcut and secondShortcut (member << 10 | Psynergy).
-/// This debug path seeds extra Psynergy before enumerating the party's
-/// shortcuts.
+/// gSequenceParentWork.firstShortcut and secondShortcut (member << 10 |
+/// Psynergy). This debug path seeds extra Psynergy before enumerating the
+/// party's shortcuts.
 void Debug_SelectAbilityPair(void) {
   struct AbilityListEntry *list;
   struct Window *win;
@@ -233,8 +234,9 @@ void Debug_SelectAbilityPair(void) {
     // Persist both member/ability pairs before releasing the picker resources.
     // A, B and START all keep the picks. The cursor's window sprite and VRAM
     // entry go with its window.
-    gAdventure.firstShortcut = (list[first].member << 10) | list[first].ability;
-    gAdventure.secondShortcut =
+    gSequenceParentWork.firstShortcut =
+        (list[first].member << 10) | list[first].ability;
+    gSequenceParentWork.secondShortcut =
         (list[second].member << 10) | list[second].ability;
     Window_Close(win, 1);
     Window_Close(title, 1);
@@ -291,16 +293,20 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
   *secondIndex = 0;
 
   for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
-    if (entries[entryIndex].ability == (gAdventure.firstShortcut & 0x3ff) &&
-        entries[entryIndex].member == (gAdventure.firstShortcut >> 10)) {
+    if (entries[entryIndex].ability ==
+            (gSequenceParentWork.firstShortcut & 0x3ff) &&
+        entries[entryIndex].member ==
+            (gSequenceParentWork.firstShortcut >> 10)) {
       *firstIndex = entryIndex;
       break;
     }
   }
 
   for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
-    if (entries[entryIndex].ability == (gAdventure.secondShortcut & 0x3ff) &&
-        entries[entryIndex].member == (gAdventure.secondShortcut >> 10)) {
+    if (entries[entryIndex].ability ==
+            (gSequenceParentWork.secondShortcut & 0x3ff) &&
+        entries[entryIndex].member ==
+            (gSequenceParentWork.secondShortcut >> 10)) {
       *secondIndex = entryIndex;
       break;
     }

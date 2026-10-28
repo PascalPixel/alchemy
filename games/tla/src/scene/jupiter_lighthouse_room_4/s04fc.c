@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetSingleChildFlags(struct Actor *object,
@@ -14,7 +14,7 @@ void Func_02001e70(s32 id, s32 x, s32 z);
 s32 Func_020004fc(void) {
   Scene_SetArrivalFlags(0);
   Func_020006a0(0);
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 0x40;
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 0x40;
   if (GameFlag_Test(0xa00)) {
     Func_02000724(8);
     Func_02000724(9);

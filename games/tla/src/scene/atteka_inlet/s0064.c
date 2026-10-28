@@ -1,5 +1,5 @@
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -12,7 +12,7 @@ extern u8 gData_0200159c[];
 extern u8 gData_0200165c[];
 
 void *Func_02000064(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1) {
     if (GameFlag_Test(0x9b2))

@@ -5,7 +5,7 @@
 // layer 1 and flags 0x206 and 0x207 are set. Left: the native writes the blend after building both halves, with the count in r1, and tests the 352 frames against 351 where this draft compares with 352.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "system/io_reg.h"
 
@@ -32,12 +32,12 @@ void Func_02000d3c(void) {
   Func_02001da0();
   Func_02001ee8(0);
   Func_02001d60();
-  Actor_SetSpeedParameters(gAdventure.currentOwner, 0xcccc, 0x6666);
-  Actor_OffsetPositionAndResetMotion(gAdventure.currentOwner, 0, -8);
-  Actor_WaitForMoveById(gAdventure.currentOwner);
-  Func_02001e70(gAdventure.currentOwner, 0x4000);
+  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
+  Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 0, -8);
+  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+  Func_02001e70(gSequenceParentWork.currentOwner, 0x4000);
   Func_02001f10(308);
-  Actor_SetSpritePriority(gAdventure.currentOwner, 2);
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 2);
   step = 1;
   i = 0;
 climb:
@@ -53,12 +53,12 @@ climb:
   i++;
   if (i <= 351)
     goto climb;
-  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
   Func_02001f10(298);
   wait(1);
   Func_02001f10(125);
   FieldEvent_Wait(20);
-  Actor_GetById(gAdventure.currentOwner)->terrainId = 1;
+  Actor_GetById(gSequenceParentWork.currentOwner)->terrainId = 1;
   GameFlag_SetBit(0x206);
   GameFlag_SetBit(0x207);
   Func_02001da8();

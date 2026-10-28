@@ -3,7 +3,7 @@
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 Func_020059c0(void);
@@ -33,7 +33,7 @@ void Func_02004418(const u16 *table) {
 
   if (Func_020059c0() != 0)
     return;
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;

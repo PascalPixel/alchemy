@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -80,7 +80,7 @@ void Func_020000f0(void) {
   actor->motionFlags = 3;
   Task_Wait(40);
   Call2(Import_EventShowMessageAndWait, 8, 0);
-  Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(8, gSequenceParentWork.currentOwner, 0);
   Call2(Import_ActorSetAttachedEffect, 8, 0x102);
   Call1(FieldEvent_Wait, 20);
   Call3(Func_02003298, 8, 0, 20);
@@ -93,16 +93,16 @@ void Func_020000f0(void) {
   Call3(Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
   Call3(Actor_SetPositionAndReset, 8, 0x1a0, 0x2a8);
   Call2(Import_EventShowMessageAndWait, 8, 0);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0x8000, 20);
-  Call2(Import_ActorSetAttachedEffect, gAdventure.currentOwner, 0x102);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x8000, 20);
+  Call2(Import_ActorSetAttachedEffect, gSequenceParentWork.currentOwner, 0x102);
   Call1(FieldEvent_Wait, 20);
   Call2(Import_EventShowMessageAndWait, 8, 0);
-  Actor_SetAngleToward(8, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(8, gSequenceParentWork.currentOwner, 0);
   Call1(FieldEvent_Wait, 20);
-  Actor_SetAngleToward(gAdventure.currentOwner, 8, 0);
+  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 8, 0);
   Call2(Import_EventShowMessageAndWait, 8, 0);
   Call2((void (*)())Import_ActorSetAnimation, 8, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -144,16 +144,16 @@ void Func_020002b4(void) {
   Call3(Actor_ArmCallback, 5, 0x8000, 40);
   Actor_Jump(5, 4, 20);
   Import_EventShowMessageAndWait(5, 0);
-  Actor_SetAngleToward(5, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(5, gSequenceParentWork.currentOwner, 0);
   FieldEvent_Wait(20);
-  Actor_SetAngleToward(gAdventure.currentOwner, 5, 0);
+  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 5, 0);
   Import_ActorShowEmote(5, 0x108, 0);
   Import_EventShowMessageAndWait(5, 0);
-  Motion_SetModeAndWaitAnimation(gAdventure.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
   FieldEvent_Wait(40);
   Value3(Import_ActorShowEmote, 5, 0x101, 0);
   Value2(FieldMessage_ShowAtActor, 5, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Import_ActorSetAnimation(5, 3);
     Import_EventShowMessageAndWait(5, 0);
   } else {
@@ -162,7 +162,7 @@ void Func_020002b4(void) {
   }
   Call3(Actor_SetSpeedParameters, 5, 0x19999, 0xcccc);
   Import_ActorSetAnimation(5, 2);
-  leader = Actor_GetById(gAdventure.currentOwner);
+  leader = Actor_GetById(gSequenceParentWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(5, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

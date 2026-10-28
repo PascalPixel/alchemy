@@ -19,16 +19,16 @@ struct ActorSystemSuspendView {
 /// The scene sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
-/// gAdventure: a random battle, a party that fell outside battle, Retreat or an
-/// event's destination. Sets the scene up (map, actors, encounters, return
-/// points), runs its initialization, fades it in, then loops: the party walks
-/// (Field_UpdateWalking each frame) until a request is made, and then the
-/// requests are handled until none is left.
+/// gSequenceParentWork: a random battle, a party that fell outside battle,
+/// Retreat or an event's destination. Sets the scene up (map, actors,
+/// encounters, return points), runs its initialization, fades it in, then
+/// loops: the party walks (Field_UpdateWalking each frame) until a request is
+/// made, and then the requests are handled until none is left.
 ///
 /// Called by SequenceParent_Run for every scene, which
 /// passes the result to Scene_TakeExit. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
-/// block the scene took after it from the same pool; sets gAdventure's
+/// block the scene took after it from the same pool; sets gSequenceParentWork's
 /// return point, after-battle and defeat destinations, and clears
 /// FLAG_IN_BATTLE and, once the scene has started, FLAG_KEEP_PARTY_POSITION.
 s32 SceneSequence_Run(s32 entrance) {
@@ -42,21 +42,21 @@ s32 SceneSequence_Run(s32 entrance) {
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearFar(FLAG_IN_BATTLE);
-  gAdventure.returnScene = gAdventure.sceneId;
-  gAdventure.returnEntrance = gAdventure.entrance;
-  gAdventure.afterBattleScene = -1;
-  gAdventure.afterBattleEntrance = -1;
-  gAdventure.defeatScene = -1;
-  gAdventure.defeatEntrance = -1;
+  gSequenceParentWork.returnScene = gSequenceParentWork.sceneId;
+  gSequenceParentWork.returnEntrance = gSequenceParentWork.entrance;
+  gSequenceParentWork.afterBattleScene = -1;
+  gSequenceParentWork.afterBattleEntrance = -1;
+  gSequenceParentWork.defeatScene = -1;
+  gSequenceParentWork.defeatEntrance = -1;
   Task_ResetAll();
   Djinn_ResolvePending(0);
-  if (gAdventure.mapId == MAP_INDEX_WORLD) {
+  if (gSequenceParentWork.mapId == MAP_INDEX_WORLD) {
     WorldMap_InitializePerspectiveFar();
-    gAdventure.perspectiveMap = 1;
+    gSequenceParentWork.perspectiveMap = 1;
     mode = ACTOR_SYSTEM_WORLD_MAP;
     Encounter_SelectMapZones(0);
   } else {
-    MapGrid_LoadMapFar(gAdventure.mapId);
+    MapGrid_LoadMapFar(gSequenceParentWork.mapId);
     mode = ACTOR_SYSTEM_MAP;
     Encounter_SelectMapZones(1);
   }
@@ -69,11 +69,11 @@ s32 SceneSequence_Run(s32 entrance) {
   Actor_ResetForLeader((struct ActorPlacement *)gOverlayArea.actorPlacements());
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
     Actor_Restore();
-  if (gAdventure.pendingDjinni != 0)
+  if (gSequenceParentWork.pendingDjinni != 0)
     Actor_PlaceMapActors();
   if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
-    WorldMap_LoadGraphicsFar(gAdventure.x, gAdventure.z);
+    WorldMap_LoadGraphicsFar(gSequenceParentWork.x, gSequenceParentWork.z);
   } else {
     MapGrid_CenterOnFollowedPointFar();
   }
@@ -91,7 +91,7 @@ s32 SceneSequence_Run(s32 entrance) {
   // off and block Retreat.
   work->walkingDistanceScale = 0x199;
   work->walkingDistance = 0;
-  if (gAdventure.sceneType == SCENE_TYPE_TOWN) {
+  if (gSequenceParentWork.sceneType == SCENE_TYPE_TOWN) {
     work->walkingDistanceScale = 0;
     GameFlag_SetFar(FLAG_RETREAT_BLOCKED);
   }
@@ -100,11 +100,11 @@ s32 SceneSequence_Run(s32 entrance) {
   // defaults (damage 1 every 16 steps), the stopped actor and Cloak.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetRestartPoint();
-    gAdventure.hazardLimit = 16;
-    gAdventure.hazardMode = HAZARD_COUNT_ON_CELLS;
-    gAdventure.hazardDamage = 1;
-    gAdventure.haltedActor = -1;
-    gAdventure.cloaked = 0;
+    gSequenceParentWork.hazardLimit = 16;
+    gSequenceParentWork.hazardMode = HAZARD_COUNT_ON_CELLS;
+    gSequenceParentWork.hazardDamage = 1;
+    gSequenceParentWork.haltedActor = -1;
+    gSequenceParentWork.cloaked = 0;
   }
   FieldPsynergy_ResumeCloakCheck();
   work->queuedSound = -1;
@@ -131,31 +131,31 @@ s32 SceneSequence_Run(s32 entrance) {
       }
       if (GameFlag_GetFar(FLAG_SHOW_AREA_NAME) != 0) {
         GameFlag_ClearFar(FLAG_SHOW_AREA_NAME);
-        AreaNameWindow_ShowFar(gAdventure.sceneId);
+        AreaNameWindow_ShowFar(gSequenceParentWork.sceneId);
       }
-      if (gAdventure.pendingDjinni != 0) {
-        Djinn_ResolvePending(gAdventure.pendingDjinni, 1);
-        gAdventure.pendingDjinni = 0;
+      if (gSequenceParentWork.pendingDjinni != 0) {
+        Djinn_ResolvePending(gSequenceParentWork.pendingDjinni, 1);
+        gSequenceParentWork.pendingDjinni = 0;
       }
-      if (gAdventure.pendingItem != 0) {
+      if (gSequenceParentWork.pendingItem != 0) {
         WorldMap_Freeze();
-        if (Party_CheckItemLimit(gAdventure.pendingItem) == 0)
-          PartyInventory_GiveItem(gAdventure.pendingItem, 0);
+        if (Party_CheckItemLimit(gSequenceParentWork.pendingItem) == 0)
+          PartyInventory_GiveItem(gSequenceParentWork.pendingItem, 0);
         WorldMap_Unfreeze();
-        gAdventure.pendingItem = 0;
+        gSequenceParentWork.pendingItem = 0;
       }
     }
 
     for (;;) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
-      actor = work->actors[gAdventure.leaderActorId];
+      actor = work->actors[gSequenceParentWork.leaderActorId];
       Actor_StartIdleFar(actor);
-      gAdventure.x = actor->x.fixed;
-      gAdventure.y = 0;
-      gAdventure.z = actor->z.fixed;
-      gAdventure.heading = actor->facing;
-      gAdventure.layer = actor->layer;
+      gSequenceParentWork.x = actor->x.fixed;
+      gSequenceParentWork.y = 0;
+      gSequenceParentWork.z = actor->z.fixed;
+      gSequenceParentWork.heading = actor->facing;
+      gSequenceParentWork.layer = actor->layer;
 
       // Handle the pending requests, most urgent first.
       while (Field_CountRequests() != 0) {
@@ -185,7 +185,7 @@ s32 SceneSequence_Run(s32 entrance) {
               // The whole party fell: back to the last sanctum with 1 HP.
               struct Unit *vitals;
 
-              if (gAdventure.leaderActorId == 0) {
+              if (gSequenceParentWork.leaderActorId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
                   Actor_SelectAnimationFar(actor, 21);
                 else
@@ -196,11 +196,12 @@ s32 SceneSequence_Run(s32 entrance) {
               Sound_PlayFar(MUS_DEFEAT);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
                                    FIELD_MESSAGE_ZOOM);
-              vitals = Unit_GetFar(gAdventure.leaderActorId);
+              vitals = Unit_GetFar(gSequenceParentWork.leaderActorId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
-              gAdventure.sceneId = gAdventure.restartScene;
-              gAdventure.entrance = gAdventure.restartEntrance;
+              gSequenceParentWork.sceneId = gSequenceParentWork.restartScene;
+              gSequenceParentWork.entrance =
+                  gSequenceParentWork.restartEntrance;
               WorldMap_Unfreeze();
               result = EXIT_KEEP_DESTINATION;
               goto done;
@@ -225,14 +226,14 @@ s32 SceneSequence_Run(s32 entrance) {
           // clears transitionActive, so the scene ends without another fade.
           Leader_StopMoving();
           Actor_Snapshot();
-          gAdventure.returnMusic = -1;
-          gAdventure.sceneId = SEQUENCE_BATTLE;
-          gAdventure.entrance = work->encounter;
+          gSequenceParentWork.returnMusic = -1;
+          gSequenceParentWork.sceneId = SEQUENCE_BATTLE;
+          gSequenceParentWork.entrance = work->encounter;
           work->exit = EXIT_KEEP_DESTINATION;
           Field_StartEncounterTransition(work->encounter);
           work->encounterBias = 0;
           work->encounter = 0;
-          gAdventure.encounterSteps = 0;
+          gSequenceParentWork.encounterSteps = 0;
         } else if (work->stepTrigger != 0) {
           work->busy = 1;
           Scene_RunStepTriggerOrExit(work->stepTrigger);
@@ -247,7 +248,8 @@ s32 SceneSequence_Run(s32 entrance) {
           s32 object;
 
           AreaNameWindow_HideFar();
-          object = Field_FindNearbyTalkTarget(gAdventure.leaderActorId);
+          object =
+              Field_FindNearbyTalkTarget(gSequenceParentWork.leaderActorId);
           mode = 0;
           if (object != -1) {
             mode = Scene_FindActorTalkTrigger(object) != 0;
@@ -331,7 +333,7 @@ s32 SceneSequence_Run(s32 entrance) {
           } else {
             Field_EndBusyAndReveal();
             AreaNameWindow_HideFar();
-            gAdventure.returnMusic = Sound_GetCurrentBgmFar();
+            gSequenceParentWork.returnMusic = Sound_GetCurrentBgmFar();
             if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
               // each) free, sprite drawing stays suspended while the menu
@@ -368,11 +370,11 @@ s32 SceneSequence_Run(s32 entrance) {
       // air (only a key check runs), on the World Map or walking, and run the
       // walking update until the next request.
       GameFlag_ClearFar(FLAG_FIELD_HANDLING_REQUESTS);
-      actor = work->actors[gAdventure.leaderActorId];
+      actor = work->actors[gSequenceParentWork.leaderActorId];
       if (actor != NULL) {
-        if (gAdventure.movementMode == LEADER_MOVEMENT_AIRBORNE)
+        if (gSequenceParentWork.movementMode == LEADER_MOVEMENT_AIRBORNE)
           Actor_StartKeyCheckFar(actor);
-        else if (gAdventure.movementMode == LEADER_MOVEMENT_CLIMB)
+        else if (gSequenceParentWork.movementMode == LEADER_MOVEMENT_CLIMB)
           Actor_StartMoveByKeysFar(actor);
         else if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
           Actor_StartWorldMapControlFar(actor);
@@ -381,7 +383,7 @@ s32 SceneSequence_Run(s32 entrance) {
       }
       do {
         wait(1);
-        actor = work->actors[gAdventure.leaderActorId];
+        actor = work->actors[gSequenceParentWork.leaderActorId];
         if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_UpdateWalking(actor->layer, actor->x.fixed, actor->y.fixed,
                               actor->z.fixed);
@@ -420,7 +422,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = Actor_Lookup(gAdventure.leaderActorId);
+  leader = Actor_Lookup(gSequenceParentWork.leaderActorId);
   workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {
@@ -463,10 +465,11 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
 /// Called by SceneSequence_Run once the scene's events are set. Writes
-/// gAdventure's position, heading and turn, and the scene's minX to maxY.
+/// gSequenceParentWork's position, heading and turn, and the scene's minX to
+/// maxY.
 void Scene_ApplyEntrance(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
-  s32 entrance = gAdventure.entrance;
+  s32 entrance = gSequenceParentWork.entrance;
   const struct SceneEntrance *entranceEntry = gOverlayArea.entrances();
   s32 foundEntrance = 0;
 
@@ -484,11 +487,11 @@ void Scene_ApplyEntrance(void) {
 
   // Camera bounds apply even when returning to a saved party position.
   if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
-    gAdventure.x = REGION_FIXED(entranceEntry->x);
-    gAdventure.y = REGION_FIXED(entranceEntry->y);
-    gAdventure.z = REGION_FIXED(entranceEntry->z);
-    gAdventure.heading = entranceEntry->facing;
-    gAdventure.layer = 0;
+    gSequenceParentWork.x = REGION_FIXED(entranceEntry->x);
+    gSequenceParentWork.y = REGION_FIXED(entranceEntry->y);
+    gSequenceParentWork.z = REGION_FIXED(entranceEntry->z);
+    gSequenceParentWork.heading = entranceEntry->facing;
+    gSequenceParentWork.layer = 0;
   }
 
   if (entranceEntry->cameraLeft != -1)

@@ -1,7 +1,7 @@
 #include "islets.h"
 
 u8 *Func_0200004c(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov674Room1)
     return gData_0200476c;

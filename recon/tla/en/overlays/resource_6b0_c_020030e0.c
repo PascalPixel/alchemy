@@ -2,7 +2,7 @@
 // this overlay's symbols; that header says what is left.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct Spot {
   s16 x;
@@ -31,7 +31,7 @@ void Func_02002d40(struct SpotState *state, struct Spot *spot);
 void Func_02002db0(struct SpotState *state, struct Spot *spot);
 
 s32 Func_020030e0(void) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &Data_02004458;

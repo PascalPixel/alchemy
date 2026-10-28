@@ -139,4 +139,4 @@ BattleEscape_CheckSuccess:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0811cfa0:
-	.4byte gAdventure
+	.4byte gSequenceParentWork

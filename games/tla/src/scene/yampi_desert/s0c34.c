@@ -7,7 +7,7 @@ void Func_02000c34(void) {
   Func_02004040();
   Func_020041b8(0);
   Func_020021d4();
-  Actor_WatchAndSetScript(gAdventure.currentOwner, 16);
+  Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 16);
   Func_02004118(0x26666, 0x4ccc);
   Scene_CamBounds(0x12c0000, -1, 0xf80000, 1);
   Scene_SetPositionAndCommit(16, 254, 248);
@@ -24,7 +24,7 @@ void Func_02000c34(void) {
   Actor_SetPartAttribute(Actor_GetById(16), 0);
   Actor_SetSingleChildFlags(Actor_GetById(16), 1);
   Scene_SetPositionAndCommit(16, 380, 248);
-  Actor_Stop(gAdventure.currentOwner);
+  Actor_Stop(gSequenceParentWork.currentOwner);
   Func_020041f8(241);
   Scene_SetSpeed(16, 0xcccc, 0x6666);
   Scene_SetPositionAndReset(16, 428, 248);
@@ -38,7 +38,7 @@ void Func_02000d50(void) {
   Func_02004040();
   Func_020041b8(0);
   Func_020021d4();
-  Actor_WatchAndSetScript(gAdventure.currentOwner, 21);
+  Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 21);
   Func_02004118(0x26666, 0x4ccc);
   Scene_CamBounds(0xf60000, -1, 0x2680000, 1);
   Scene_SetPositionAndCommit(21, 248, 648);
@@ -56,7 +56,7 @@ void Func_02000d50(void) {
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
   Scene_SetPositionAndCommit(21, 256, 560);
   FieldEvent_Wait(20);
-  Actor_Stop(gAdventure.currentOwner);
+  Actor_Stop(gSequenceParentWork.currentOwner);
   Func_020041f8(241);
   Scene_SetSpeed(21, 0xcccc, 0x6666);
   Scene_SetPositionAndReset(21, 248, 496);

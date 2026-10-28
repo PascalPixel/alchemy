@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "call.h"
@@ -45,7 +45,7 @@ s32 Func_02000988(void) {
   s32 height;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
-  if (gAdventure.scene == (s32)&SceneId_Ov66bRoom2) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov66bRoom2) {
     Func_02000768();
     return 0;
   }
@@ -55,10 +55,10 @@ s32 Func_02000988(void) {
   }
   Actor_GetById(Func_02001314())->priorityFlags |= 32;
   /* FAKEMATCH(one-pass): the room test through the placing of actor 17 in a
-   * once-only block, which loads gAdventure before the scene offset; as
+   * once-only block, which loads gSequenceParentWork before the scene offset; as
    * plain statements, 2 of 227 instructions differ in tla-en. */
   do {
-    if (gAdventure.scene != (s32)&SceneId_Ov66bRoom1)
+    if (gSequenceParentWork.scene != (s32)&SceneId_Ov66bRoom1)
       goto done;
     Func_020012f4();
     Func_0200130c(0, 0x200, 10, 11);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_event.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "scene_ids.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -37,19 +37,19 @@ void Func_02000a9c(void) {
 
 s32 Func_02000ac8(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
-  if (gAdventure.scene == (s32)&SceneId_Daila1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Daila1)
     Func_02000d68(12, 0);
-  else if (gAdventure.scene == (s32)&SceneId_Daila2)
+  else if (gSequenceParentWork.scene == (s32)&SceneId_Daila2)
     Func_02000d50(gData_02000d80);
   Import_ActorSetSpritePriority(21, 1);
-  if (gAdventure.scene == (s32)&SceneId_Daila2 &&
+  if (gSequenceParentWork.scene == (s32)&SceneId_Daila2 &&
       Import_GameFlagIsSet(0x300) == 0)
     Actor_SetWideSprite(66, 0);
   return 0;
 }
 
 s32 Func_02000b44(void) {
-  if (gAdventure.scene == (s32)&SceneId_Daila2) {
+  if (gSequenceParentWork.scene == (s32)&SceneId_Daila2) {
     if (Import_GameFlagIsSet(0x210))
       MapCopyAttr(10, 19, 1, 1, 11, 19);
     if (Import_GameFlagIsSet(0x211))

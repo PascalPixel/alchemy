@@ -523,7 +523,8 @@ void FieldMessage_Show(s32 message, s32 flags) {
 
     // The character's screen y in pixels, as a tile row. In the lower half
     // the window's top goes 5 rows above it; otherwise 4 rows below.
-    Actor_GetScreenPositionFar(gAdventure.leaderActorId, actorPosition);
+    Actor_GetScreenPositionFar(gSequenceParentWork.leaderActorId,
+                               actorPosition);
     actorTileY = actorPosition[1] >> 3;
     if (actorTileY > 9) {
       y = actorTileY - 5;

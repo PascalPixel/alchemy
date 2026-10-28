@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 extern u8 MsgHereTheIntruder[];
@@ -25,7 +25,7 @@ void Func_0200111c(s32 actor, s32 a, s32 b);
 void Func_02001164(s32 value);
 
 void Func_02000af0(void) {
-  s32 owner = gAdventure.currentOwner;
+  s32 owner = gSequenceParentWork.currentOwner;
 
   /* FAKEMATCH: Call3 and Value3, as in Func_02000960, build each call's
    * constants again in the native's argument order; as direct calls, 126

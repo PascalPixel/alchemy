@@ -47,7 +47,7 @@
 /// (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED). Barrels hold a Vial and a Lucky
 /// Medal, and searching the ovens shows what is cooking.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/scene/stucco_rooms_b.h"
 #include "module/overworld/overworld.h"
 #include "module/overworld/event_commands.h"
@@ -328,7 +328,7 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
       Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_WEST, 0);
     }
     // Each short event plays once, only when entering its room.
-    if (gAdventure.entrance ==
+    if (gSequenceParentWork.entrance ==
         STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE) {
       if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) == 0) {
         GameFlag_Set(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN);
@@ -336,7 +336,7 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
         StuccoRoomsB_WatchWomanHideMedal();
       }
     }
-    if (gAdventure.entrance ==
+    if (gSequenceParentWork.entrance ==
         STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE) {
       if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN) == 0) {
         GameFlag_Set(FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN);

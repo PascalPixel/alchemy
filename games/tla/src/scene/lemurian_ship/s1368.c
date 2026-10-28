@@ -60,7 +60,7 @@ void Func_02001464(void) {
 }
 
 void Func_02001474(void) {
-  struct LemurianShipObject *leader = Actor_GetById(gAdventure.currentOwner);
+  struct LemurianShipObject *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 

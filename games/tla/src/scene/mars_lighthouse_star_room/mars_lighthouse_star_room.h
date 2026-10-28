@@ -28,7 +28,7 @@ static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y,
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Func_020041e4(kind, x, y, z);
 }
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_sprite.h"
 #include "tla_edition.h"
 

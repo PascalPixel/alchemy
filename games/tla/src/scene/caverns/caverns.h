@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_event.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))

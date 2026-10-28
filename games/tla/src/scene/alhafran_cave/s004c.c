@@ -2,7 +2,7 @@
 #include "edition.h"
 
 u8 *Func_0200004c(void) {
-  s32 scene = gAdventure.scene;
+  s32 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1)
     return gData_02001778;
@@ -65,7 +65,7 @@ void Func_020001d4(void) {
 }
 
 u8 *Func_020001e8(void) {
-  s32 scene = gAdventure.scene;
+  s32 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1)
     return gData_02001a18;
@@ -75,16 +75,16 @@ u8 *Func_020001e8(void) {
 }
 
 void Func_02000220(void) {
-  s32 y = Actor_GetById(gAdventure.currentOwner)->y;
+  s32 y = Actor_GetById(gSequenceParentWork.currentOwner)->y;
 
   /* FAKEMATCH: a one-pass block loads the height before the threshold is built
    * (one reordered row). */
   do {
   } while (0);
   if (y < 0x80000)
-    ((u8 *)&gAdventure)[0x2c3] = 0;
+    ((u8 *)&gSequenceParentWork)[0x2c3] = 0;
   else
-    ((u8 *)&gAdventure)[0x2c3] = 1;
+    ((u8 *)&gSequenceParentWork)[0x2c3] = 1;
 }
 
 s32 Func_02000258(void) {
@@ -98,20 +98,20 @@ s32 Func_0200027c(void) {
 #if (LANGUAGE == LANGUAGE_JAPANESE) /* The Japanese edition does not check the         \
                                entrance. */
   ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
-  if (gAdventure.scene == (s32)&SceneId_Ov66aRoom1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov66aRoom1)
     Func_020002f8();
-  else if (gAdventure.scene == (s32)&SceneId_Ov66aRoom2)
+  else if (gSequenceParentWork.scene == (s32)&SceneId_Ov66aRoom2)
     Func_0200051c();
   return 0;
 #else
-  s32 scene = gAdventure.scene;
+  s32 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Ov66aRoom1) {
     ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
         0x201;
     Func_020002f8();
   } else if (scene == (s32)&SceneId_Ov66aRoom2) {
-    if (gAdventure.entrance == 8 || gAdventure.entrance == 9)
+    if (gSequenceParentWork.entrance == 8 || gSequenceParentWork.entrance == 9)
       ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
           0x209;
     else

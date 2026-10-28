@@ -14,7 +14,7 @@ extern u32 gData_02005998[];
 extern u32 gData_02005a40[];
 
 void *Func_020002dc(void) {
-  s32 scene = gAdventure.scene;
+  s32 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
     return gData_02005428;

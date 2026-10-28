@@ -206,7 +206,7 @@ Func_080e87c4:
 .L_080e8970:
 	.4byte 0xfffffc00
 .L_080e8974:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_080e8978:
 	.4byte Func_080e807c
 .L_080e897c:

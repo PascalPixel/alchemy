@@ -4,7 +4,7 @@
 // first; the swap stays.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern char SceneId_Ov676Room1;
 

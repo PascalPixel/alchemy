@@ -215,6 +215,6 @@ Func_02000878:
 .L_02008a44:
 	.4byte MsgItemDropPrompt
 .L_02008a48:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008a4c:
 	.4byte MsgItemGiven

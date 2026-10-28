@@ -41,7 +41,7 @@
 /// counter. A jar, two barrels and a wooden box keep the first visit's flags,
 /// so what the party took then stays taken, and two bookcases can be read.
 
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "module/scene/log_rooms_b.h"
 #include "log_rooms_a.h"
 #include "module/scene/shared/vault_itemobj.h"
@@ -416,7 +416,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gAdventure.entrance;
+  entrance = gSequenceParentWork.entrance;
 
   if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
     // Draw the table bare, its stone gone, and set the gem owner back on the

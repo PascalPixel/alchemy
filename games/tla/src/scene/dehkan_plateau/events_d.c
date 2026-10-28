@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -175,7 +175,7 @@ void Func_020017a0(void) {
   u8 *flags;
 
   if ((Actor_GetById(20)->x >> 20) == 38) {
-    flags = &Actor_GetById(gAdventure.currentOwner)->motionFlags;
+    flags = &Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags;
     Func_02003c28();
     Func_02003d78(0);
     *flags = 0;

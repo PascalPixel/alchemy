@@ -23,7 +23,7 @@ void Func_02004060(void) {
   Actor_SetModeById(12, 2);
   Actor_SetModeById(13, 2);
   if (!GameFlag_Test(0x109)) {
-    s32 entrance = gAdventure.entrance;
+    s32 entrance = gSequenceParentWork.entrance;
 
     if (entrance == 11)
       Func_02003d30();

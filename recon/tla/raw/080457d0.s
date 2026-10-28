@@ -180,7 +180,7 @@ Func_080457d0:
 	mov r10, r3
 	b .L_08045ff8
 .L_08045928:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0804592c:
 	movs r3, #192
 	lsls r3, r3, #18

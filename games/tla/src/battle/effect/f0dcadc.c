@@ -1,6 +1,6 @@
 #include "types.h"
 #include "task.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 #define BG_PLTT_COLOR(bank, color)                                             \
@@ -19,6 +19,6 @@ void Func_080dcadc(void) {
   BG_PLTT_COLOR(15, 3) = 0;       // Black.
   BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).
   BG_PLTT_COLOR(15, 12) = 0x5294; // Gray (20).
-  Func_08038348(gAdventure.unk220[5], gAdventure.unk220[6]);
+  Func_08038348(gSequenceParentWork.unk220[5], gSequenceParentWork.unk220[6]);
   work[4] = 0;
 }

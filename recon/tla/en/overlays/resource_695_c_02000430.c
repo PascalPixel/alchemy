@@ -6,7 +6,7 @@
 // this form for Japanese (the #if removed) fails tla-ja until ja.po's names in
 // that stretch are moved to the lines they belong to.
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -189,10 +189,10 @@ void Func_02000430(void) {
   Call3(Actor_OffsetPositionAndResetMotion, 21, -16, 24);
   Call3(Actor_OffsetPositionAndResetMotion, 19, -16, 24);
   Call1(Actor_WaitForMoveById, 19);
-  /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
    * built (one reordered row). */
   do {
-    gAdventure.battleRule24b = 2;
+    gSequenceParentWork.battleRule24b = 2;
   } while (0);
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov695, 20);
   Party_SetFields1f2And1f4((s32)&SceneId_Ov695, 21);

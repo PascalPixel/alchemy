@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "scene_ids.h"
@@ -1029,7 +1029,7 @@ void Func_02003274(void) {
   Call3((void (*)())Actor_SetSpeedParameters, 0x1a, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 0x1a, 2);
   {
-    struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+    struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
 
     if (leader != NULL)
       Call3((void (*)())Actor_ResetAndSetPosition, 0x1a,

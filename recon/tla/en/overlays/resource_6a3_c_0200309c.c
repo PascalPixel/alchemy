@@ -9,7 +9,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "frame.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -33,7 +33,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode
 
 void Func_0200309c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *actor = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *actor = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
   s32 facing;
@@ -92,8 +92,8 @@ void Func_0200309c(void) {
       goto settle;
   }
   Func_0200472c(shadow);
-  Actor_GetById(gAdventure.currentOwner)->priorityFlags |= 1;
-  Camera_FollowActor(gAdventure.currentOwner, 1);
+  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
+  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
   *(u16 *)(work + 0xd46) = 1;
   *(u16 *)(work + 0x154) = 0;
   Func_020047dc();

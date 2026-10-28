@@ -13,7 +13,7 @@
 // (- the listing, + this draft). Tried: Call, Value and direct forms of each
 // call, empty asms and one-pass blocks between statements.
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

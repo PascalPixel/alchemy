@@ -2,9 +2,9 @@
 
 void Func_02000bfc(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Adventure *party = &gAdventure;
+  struct SequenceParentWork *party = &gSequenceParentWork;
 
-  /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
    * built (one reordered row). */
   do {
   } while (0);

@@ -32,9 +32,9 @@ void Func_0200093c(void) {
   Func_020046b4();
   Func_02004dd0();
   {
-    u8 *party = (u8 *)&gAdventure;
+    u8 *party = (u8 *)&gSequenceParentWork;
 
-    /* FAKEMATCH: a one-pass block loads the adventure before its offset is
+    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

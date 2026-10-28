@@ -7,7 +7,7 @@
 // leader's place until released, R and L step to the next and previous shown
 // place (Func_080ec2b8), Select toggles the whole-map view, and the first
 // time flag 284 or 286 is set message 0xe2a is shown. Choosing with A stores
-// the place in the adventure and calls Func_080ca368; B stores -1. The
+// the place in gSequenceParentWork and calls Func_080ca368; B stores -1. The
 // field is then restored (mode 0 in event mode 3) or flag 265 set and the
 // event work's 0x158 set to 999.
 // Same calls, offsets and control flow; left: the native spills mode and the
@@ -16,7 +16,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "bg_scroll.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -233,7 +233,7 @@ redraw:
       if (gWorldMapWork.shown == -1)
         continue;
       place = &FlagEntries_GetTable()[gWorldMapWork.shown];
-      *(s16 *)gAdventure.unk2be = (s32)&SceneId_Ov64a;
+      *(s16 *)gSequenceParentWork.unk2be = (s32)&SceneId_Ov64a;
       Data_02000500 = place->flag;
       Func_080ca368(place->scene, place->entrance);
       break;
@@ -242,7 +242,7 @@ redraw:
       continue;
     if (mode == 0)
       break;
-    *(s16 *)gAdventure.unk2be = -1;
+    *(s16 *)gSequenceParentWork.unk2be = -1;
     Data_02000500 = -1;
     break;
   }

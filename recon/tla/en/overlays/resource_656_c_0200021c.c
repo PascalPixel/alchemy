@@ -58,15 +58,15 @@ next2:
   if (i < 10)
     goto next2;
   Func_02002de0(158);
-  Actor_SetSpritePriority(gAdventure.currentOwner, 1);
+  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
   LemurianShip_MapCopy(0, 0, gData_02003904[found].x, gData_02003904[found].z,
                        1, 2);
   Func_02002c28(gData_02003904[found].value, gData_02003904[found].x,
                 gData_02003904[found].z + 60);
-  Actor_SetModeById(gAdventure.currentOwner, 2);
-  LemurianShip_ObjSpeed(gAdventure.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
+  LemurianShip_ObjSpeed(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
   {
-    s32 owner = gAdventure.currentOwner;
+    s32 owner = gSequenceParentWork.currentOwner;
 
     if (found == 12)
       LemurianShip_ObjOffset(owner, 0, -4);

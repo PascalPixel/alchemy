@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -38,15 +38,15 @@ void Func_0200102c(void);
 
 s32 Func_02000d54(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
-  if (gAdventure.scene == (s32)&SceneId_Ov65aRoom1)
+  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom1)
     Func_02000dcc();
-  else if (gAdventure.scene == (s32)&SceneId_Ov65aRoom3)
+  else if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom3)
     Func_02000f2c();
-  else if (gAdventure.scene == (s32)&SceneId_Ov65aRoom4)
+  else if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom4)
     Func_02000fbc();
-  else if (gAdventure.scene == (s32)&SceneId_Ov65aRoom5)
+  else if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom5)
     Func_02000fd8();
-  else if (gAdventure.scene == (s32)&SceneId_Ov65aRoom6)
+  else if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom6)
     Func_0200102c();
   return 0;
 }

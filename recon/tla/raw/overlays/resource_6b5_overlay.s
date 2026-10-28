@@ -1059,7 +1059,7 @@ Func_02000864:
 .L_02008b24:
 	.4byte Func_02000134
 .L_02008b28:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008b2c:
 	.4byte MsgGoodLuck2
 .L_02008b30:
@@ -1116,7 +1116,7 @@ Func_02000864:
 .L_02008b98:
 	.4byte 0x00000043
 .L_02008b9c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02008ba0:
 	.4byte gData_02003a74
 .L_02008ba4:
@@ -1299,7 +1299,7 @@ Func_02000fbc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009118:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_0200911c:
 	.4byte MsgYouHaveA
 .L_02009120:
@@ -1394,7 +1394,7 @@ Func_0200145c:
 .L_02009508:
 	.4byte 0x0000004b
 .L_0200950c:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_02009510:
 	.4byte gData_020022bc
 .L_02009514:
@@ -1720,7 +1720,7 @@ Func_0200145c:
 	bl GameFlag_ClearBit
 	b .L_020096e4
 .L_020097f4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 .L_020097f8:
 	.4byte MsgNotBadWould
 .L_020097fc:
@@ -1811,7 +1811,7 @@ Func_0200145c:
 .L_020098c0:
 	.4byte Func_02000134
 .L_020098c4:
-	.4byte gAdventure
+	.4byte gSequenceParentWork
 	.section .bss,"aw",%nobits
 	.global gData_020022b8
 gData_020022b8:

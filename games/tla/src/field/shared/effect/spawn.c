@@ -7,7 +7,7 @@
 /// sprite the requested priority themselves before Scene_SetActorSpritePriority,
 /// as overlays 663, 664, 66b, 679 and 67b do.
 #include "types.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
@@ -29,7 +29,7 @@ extern void Actor_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
 void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,
                   const struct EffectOptions *options) {
-  struct FieldEffect *party = Actor_GetById(gAdventure.currentOwner);
+  struct FieldEffect *party = Actor_GetById(gSequenceParentWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

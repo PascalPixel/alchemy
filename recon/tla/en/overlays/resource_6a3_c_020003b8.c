@@ -47,7 +47,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode
 }
 
 void Func_020003b8(s32 unused, s32 id) {
-  struct Actor *leader = Actor_GetById(gAdventure.currentOwner);
+  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
   struct Actor *object = Actor_GetById(id);
   s32 x;
   s32 i;
@@ -71,39 +71,39 @@ void Func_020003b8(s32 unused, s32 id) {
     Func_0200494c(0);
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
     Func_020048f4();
-    Actor_SetSpeedParameters(gAdventure.currentOwner, 0x10000, 0x8000);
+    Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x10000, 0x8000);
     x = leader->x >> 20;
     if (x == 64) {
-      Actor_SetPositionAndReset(gAdventure.currentOwner, 1032, 232);
-      Actor_SetPositionAndReset(gAdventure.currentOwner, 1000, 232);
+      Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 1032, 232);
+      Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 1000, 232);
     } else if (x == 63) {
-      Actor_SetPositionAndReset(gAdventure.currentOwner, 1000, 232);
+      Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 1000, 232);
     }
-    Actor_SetPositionAndReset(gAdventure.currentOwner, 1000, 248);
-    Func_020048b4_(gAdventure.currentOwner, 0);
+    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 1000, 248);
+    Func_020048b4_(gSequenceParentWork.currentOwner, 0);
     Func_02004924(0x10000, 0);
     Func_0200491c(0x10003, 0);
     Func_0200492c(60);
     FieldEvent_Wait(50);
-    Func_020048b4_(gAdventure.currentOwner, 0x6000);
+    Func_020048b4_(gSequenceParentWork.currentOwner, 0x6000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gAdventure.currentOwner, 0x2000);
+    Func_020048b4_(gSequenceParentWork.currentOwner, 0x2000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gAdventure.currentOwner, 0x6000);
+    Func_020048b4_(gSequenceParentWork.currentOwner, 0x6000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gAdventure.currentOwner, 0x2000);
+    Func_020048b4_(gSequenceParentWork.currentOwner, 0x2000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gAdventure.currentOwner, 0x4000);
+    Func_020048b4_(gSequenceParentWork.currentOwner, 0x4000);
     FieldEvent_Wait(20);
-    Func_020048cc(gAdventure.currentOwner, 257, 50);
-    Func_020048b4_(gAdventure.currentOwner, 0);
+    Func_020048cc(gSequenceParentWork.currentOwner, 257, 50);
+    Func_020048b4_(gSequenceParentWork.currentOwner, 0);
     FieldEvent_Wait(20);
-    Actor_SetModeById(gAdventure.currentOwner, 22);
+    Actor_SetModeById(gSequenceParentWork.currentOwner, 22);
     FieldEvent_Wait(40);
     Func_02002efc(0);
     Func_020000c4();
-    Actor_SetModeById(gAdventure.currentOwner, 1);
-    Actor_GetById(gAdventure.currentOwner)->actionFlags |= 1;
+    Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+    Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags |= 1;
     Actor_StartRepeatedMotion(4, 3);
     Func_020048d4(4, 258);
     FieldEvent_Wait(40);

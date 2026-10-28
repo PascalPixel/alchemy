@@ -6,7 +6,7 @@ void Func_02001c5c(void) {
 
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a = gData_02004808;
   if (gData_0200480c != 0) {
-    scene = gAdventure.scene;
+    scene = gSequenceParentWork.scene;
     if (scene == (s32)&SceneId_Ov661Room4)
       object = Actor_GetById(16);
     else if (scene == (s32)&SceneId_Ov661Room5)

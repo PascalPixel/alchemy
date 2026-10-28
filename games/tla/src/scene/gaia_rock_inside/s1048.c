@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "text/msg_ids.h"
 #include "call.h"
 
@@ -46,7 +46,7 @@ void Func_02001048(void) {
     Actor_RefreshSelectorById(9);
   Func_02000f00();
   Actor_SetModeById(10, 1);
-  Actor_SetAngleToward(10, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(10, gSequenceParentWork.currentOwner, 0);
   Value3(Func_02004f2c, 10, 256, 0);
   Call1(FieldEvent_Wait, 30);
   Call2(Func_02004f14, 10, 0);

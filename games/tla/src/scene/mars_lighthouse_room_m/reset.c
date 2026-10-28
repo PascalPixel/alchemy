@@ -51,7 +51,7 @@ void Func_02003130(void *handle);
 void Func_020024e4(void);
 void Func_02002708(void);
 void Func_02002e6c(struct Actor *object);
-#include "adventure.h"
+#include "sequence_parent_work.h"
 
 void Func_02003118(struct Actor *object, s32 value);
 void Func_020032b8(s32 value);

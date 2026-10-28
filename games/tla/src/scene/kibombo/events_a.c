@@ -15,7 +15,7 @@ extern u8 gData_02006ee8[];
 extern const u8 gData_02006324[];
 
 u8 *Func_0200012c(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
     return gData_02006510;
@@ -34,7 +34,7 @@ u8 *Func_0200012c(void) {
 }
 
 u8 *Func_020001b4(void) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo1)
     return gData_02006ef4;
@@ -70,7 +70,7 @@ void Func_02000270(void) {
   Func_02005c3c(0);
   Func_02005b4c((s32)MsgNowThatAkafubu);
   Func_02005b64(24, 0);
-  Actor_SetAngleToward(24, gAdventure.currentOwner, 0);
+  Actor_SetAngleToward(24, gSequenceParentWork.currentOwner, 0);
   FieldEvent_Wait(20);
   Func_02005b64(24, 0);
   Kibombo_ObjTurn(24, 0x3000);
@@ -89,7 +89,7 @@ s32 Func_020002e8(void) {
   u16 turn;
   s32 facing;
 
-  turn = Actor_GetById(gAdventure.currentOwner)->facing + 0x5fff;
+  turn = Actor_GetById(gSequenceParentWork.currentOwner)->facing + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;
@@ -160,7 +160,7 @@ void Func_0200042c(void) {
   if (Kibombo_FlagCheck(0x9df)) {
     Func_02005a9c();
     Func_02005c3c(0);
-    Actor_SetAngleToward(36, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(36, gSequenceParentWork.currentOwner, 0);
     FieldEvent_Wait(10);
     Func_02005c8c(36);
     Kibombo_ObjArm(36, 0xb000, 0);
@@ -171,7 +171,7 @@ void Func_0200042c(void) {
     Func_02005b4c((s32)MsgOhOhMy);
     Func_02005b5c(36, 0, 40);
     Func_02005b64(36, 0);
-    Actor_SetAngleToward(36, gAdventure.currentOwner, 0);
+    Actor_SetAngleToward(36, gSequenceParentWork.currentOwner, 0);
     FieldEvent_Wait(10);
     Func_02005c8c(36);
     Kibombo_ObjArm(36, 0xb000, 0);
@@ -197,7 +197,7 @@ void Func_02000500(void) {
 }
 
 void Func_02000524(s32 show) {
-  s16 scene = gAdventure.scene;
+  s16 scene = gSequenceParentWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo2 || scene == (s32)&SceneId_Kibombo5)
     Func_02000590(show, 15, 2);
@@ -318,15 +318,15 @@ void Func_020007c8(void) {
   Func_02005bbc()->motionFlags = 0;
   Func_02005ba4(0x9999, 0x1333);
   Kibombo_CamMove(0x580000, -1, 0x1880000, 1);
-  Kibombo_ObjSpeed(gAdventure.currentOwner, 0xcccc, 0x6666);
-  Kibombo_ObjWalk(gAdventure.currentOwner, 72, 392);
-  Kibombo_ObjWalk(gAdventure.currentOwner, 88, 392);
+  Kibombo_ObjSpeed(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
+  Kibombo_ObjWalk(gSequenceParentWork.currentOwner, 72, 392);
+  Kibombo_ObjWalk(gSequenceParentWork.currentOwner, 88, 392);
   Kibombo_ObjArm(7, 0x6000, 10);
   Func_02005b4c((s32)MsgWhWhoAre);
   Func_02005b64(7, 0);
-  Func_02005b1c(26, gAdventure.currentOwner);
-  Func_02005b1c(5, gAdventure.currentOwner);
-  Func_02005b1c(6, gAdventure.currentOwner);
+  Func_02005b1c(26, gSequenceParentWork.currentOwner);
+  Func_02005b1c(5, gSequenceParentWork.currentOwner);
+  Func_02005b1c(6, gSequenceParentWork.currentOwner);
   wait(1);
   Actor_SetSpritePriority(26, 2);
   Actor_SetSpritePriority(5, 2);
@@ -354,10 +354,10 @@ void Func_020007c8(void) {
 }
 
 void Func_02000978(void) {
-  Kibombo_ObjArm(gAdventure.currentOwner, 0x8000, 20);
+  Kibombo_ObjArm(gSequenceParentWork.currentOwner, 0x8000, 20);
   Func_02005b4c((s32)MsgItLooksLikeHas);
   FieldMessage_ShowAtActor(6, 0);
-  if (Event_AskYesNoWithActorAnimation(gAdventure.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
     Kibombo_ObjArm(5, 0x4000, 10);
     Actor_SetModeById(5, 3);
     Func_02005b64(5, 0);
@@ -370,11 +370,11 @@ void Func_02000978(void) {
   }
   Kibombo_ObjEmote(7, 0x101, 20);
   Func_02005b64(7, 0);
-  Kibombo_ObjArm(gAdventure.currentOwner, 0x2000, 0);
+  Kibombo_ObjArm(gSequenceParentWork.currentOwner, 0x2000, 0);
   Kibombo_ObjArm(26, 0xb000, 0);
   Kibombo_ObjArm(5, 0x6000, 0);
   Kibombo_ObjArm(6, 0xe000, 40);
-  Kibombo_ObjArm(gAdventure.currentOwner, 0xe000, 0);
+  Kibombo_ObjArm(gSequenceParentWork.currentOwner, 0xe000, 0);
   Kibombo_ObjArm(26, 0xd000, 0);
   Kibombo_ObjArm(5, 0, 0);
   Kibombo_ObjArm(6, 0xe000, 20);
@@ -405,11 +405,11 @@ void Func_02000b2c(void) {
   Func_02005b64(5, 0);
   Kibombo_ObjEmote(7, 0x101, 20);
   Func_02005b64(7, 0);
-  Kibombo_ObjArm(gAdventure.currentOwner, 0x2000, 0);
+  Kibombo_ObjArm(gSequenceParentWork.currentOwner, 0x2000, 0);
   Kibombo_ObjArm(26, 0xb000, 0);
   Kibombo_ObjArm(5, 0x6000, 0);
   Kibombo_ObjArm(6, 0xe000, 40);
-  Kibombo_ObjArm(gAdventure.currentOwner, 0xe000, 0);
+  Kibombo_ObjArm(gSequenceParentWork.currentOwner, 0xe000, 0);
   Kibombo_ObjArm(26, 0xd000, 0);
   Kibombo_ObjArm(5, 0, 0);
   Kibombo_ObjArm(6, 0xe000, 0);

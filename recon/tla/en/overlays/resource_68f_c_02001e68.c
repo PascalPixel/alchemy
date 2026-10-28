@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -33,7 +33,7 @@ s32 Func_02001e68(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 stack[8];
 
   /* sub (s32)stack, #32 */
-  v0 = ObjectTable_Get(FIELD_AT((s32)(s32)&gAdventure, s32, 532));
+  v0 = ObjectTable_Get(FIELD_AT((s32)(s32)&gSequenceParentWork, s32, 532));
   r5 = v0;
   stack[4] = ((((FIELD_AT(r5, u16, 6)) + 8192) & -16384) << 16) >> 16;
   r0 = v0;

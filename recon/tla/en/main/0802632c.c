@@ -16,7 +16,7 @@
 #include "input.h"
 #include "frame.h"
 #include "event_work.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "actor.h"
 
 struct FieldPosition {
@@ -65,7 +65,7 @@ s32 Func_0802632c(struct Actor *object) {
   movementAnimation = 2;
   collision = 0;
   object->motionFlags = 4;
-  if (gInput.held & ((struct PartyKeys *)&gAdventure)->dashKeys) {
+  if (gInput.held & ((struct PartyKeys *)&gSequenceParentWork)->dashKeys) {
     object->speedLimit = 0x8000;
     object->acceleration = 0x2000;
     movementAnimation = 5;
@@ -197,7 +197,7 @@ s32 Func_0802632c(struct Actor *object) {
     s32 action;
 
     action = 9;
-    if (((struct UnitHp *)Unit_Get(gAdventure.currentOwner))->hp == 0)
+    if (((struct UnitHp *)Unit_Get(gSequenceParentWork.currentOwner))->hp == 0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {
@@ -230,11 +230,11 @@ s32 Func_0802632c(struct Actor *object) {
   if (Ram_HeapSlots->eventWork == NULL)
     return 0;
   pressed = 0;
-  if ((gInput.pressed & gAdventure.keys234) ||
-      (gInput.pressed & gAdventure.keys230) ||
-      (gInput.pressed & gAdventure.keys236) ||
-      (gInput.pressed & gAdventure.keys238) ||
-      (gInput.pressed & gAdventure.keys23a))
+  if ((gInput.pressed & gSequenceParentWork.keys234) ||
+      (gInput.pressed & gSequenceParentWork.keys230) ||
+      (gInput.pressed & gSequenceParentWork.keys236) ||
+      (gInput.pressed & gSequenceParentWork.keys238) ||
+      (gInput.pressed & gSequenceParentWork.keys23a))
     pressed = 1;
   if (pressed) {
     Sound_PlayFar(113);

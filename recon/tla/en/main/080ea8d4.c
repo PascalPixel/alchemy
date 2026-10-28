@@ -20,7 +20,7 @@
 // controlled owner is set onto the terrain when Func_08020310 asks for it.
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "ram_buffer.h"
 
 struct ActorFlag {

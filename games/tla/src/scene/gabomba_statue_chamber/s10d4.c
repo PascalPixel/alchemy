@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "call.h"
 #include "field_sprite.h"
 
@@ -73,9 +73,9 @@ void Func_020010d4(void) {
         0, 0x10c0000);
   Call1(wait, 1);
   /* FAKEMATCH(temporary): the leader read before the first turn is built; as
-   * gAdventure.currentOwner in the call, 34 of 640 instructions differ in
+   * gSequenceParentWork.currentOwner in the call, 34 of 640 instructions differ in
    * tla-en. */
-  owner = gAdventure.currentOwner;
+  owner = gSequenceParentWork.currentOwner;
   Call4(Func_02001e18, owner, 0x1680000, 0xb80000, turnA = 0xe000);
   Call4(Func_02001e18, 7, 0x1780000, 0xb80000, turnA);
   Call4(Func_02001e18, 11, 0x1680000, 0xa80000, turnA);
@@ -115,7 +115,7 @@ void Func_020010d4(void) {
   Call1(wait, 40);
   Call2(Actor_SetModeById, 9, 2);
   Call2(Actor_SetModeById, 10, 2);
-  Call2(Actor_WatchAndSetScript, gAdventure.currentOwner, 13);
+  Call2(Actor_WatchAndSetScript, gSequenceParentWork.currentOwner, 13);
   Call2(Actor_WatchAndSetScript, 5, 13);
   Call2(Actor_WatchAndSetScript, 6, 13);
   Call2(Actor_WatchAndSetScript, 7, 13);
@@ -135,7 +135,7 @@ void Func_020010d4(void) {
   Call4(Camera_MoveWithinMapBounds, 0x1880000, -1, 0xa80000, 1);
   Call3(Actor_SetSpeedParameters, 13, 0xcccc, 0x6666);
   Call3(Actor_SetPositionAndCommit, 13, 392, 0xa0);
-  Call1(Actor_Stop, gAdventure.currentOwner);
+  Call1(Actor_Stop, gSequenceParentWork.currentOwner);
   Call1(Actor_Stop, 5);
   Call1(Actor_Stop, 6);
   Call1(Actor_Stop, 7);
@@ -166,7 +166,7 @@ void Func_020010d4(void) {
   Call2(Func_02001e60, 0x400b, 0);
   Call2(Func_02001e70, 11, 0x3000);
   Call2(Func_02001e60, 0x400b, 0);
-  Call2(Motion_SetModeAndWaitAnimation, gAdventure.currentOwner, 3);
+  Call2(Motion_SetModeAndWaitAnimation, gSequenceParentWork.currentOwner, 3);
   Call1(Func_02001f10, 0);
   {
     /* FAKEMATCH(temporary): the turn built before the other arguments; as a
@@ -178,7 +178,7 @@ void Func_020010d4(void) {
   Call2(Func_02001e60, 12, 0);
   Call2(Actor_SetModeById, 6, 1);
   Call1(wait, 1);
-  Call3(Actor_ArmCallback, gAdventure.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   Call3(Actor_ArmCallback, 6, 0x4000, 0);
   Call3(Actor_ArmCallback, 7, 0x4000, 0);
@@ -189,7 +189,7 @@ void Func_020010d4(void) {
   Call3(Actor_SetPositionAndReset, 12, 404, 220);
   Call3(Actor_Jump, 12, 4, 10);
   Value2(FieldMessage_ShowAtActor, 12, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gAdventure.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0) ==
       0) {
     Call2(Func_02001e90, 12, 258);
     Call1(FieldEvent_Wait, 20);
@@ -209,7 +209,7 @@ void Func_020010d4(void) {
   Call2(Func_02001e90, 12, 258);
   Call1(FieldEvent_Wait, 20);
   Call2(Func_02001e60, 12, 0);
-  Call2(Actor_SetModeById, gAdventure.currentOwner, 3);
+  Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
   Call2(Actor_SetModeById, 5, 3);
   Call2(Actor_SetModeById, 6, 3);
   Call2(Actor_SetModeById, 7, 3);

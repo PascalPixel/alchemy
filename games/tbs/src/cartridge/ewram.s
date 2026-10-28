@@ -5,8 +5,8 @@ gSaveBuffer:
 	.global gGameFlagBytes
 gGameFlagBytes:
 	.space 0x00000200
-	.global gAdventure
-gAdventure:
+	.global gSequenceParentWork
+gSequenceParentWork:
 	.space 0x00000140
 	.global gRareItemStock
 gRareItemStock:

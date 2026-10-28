@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "adventure.h"
+#include "sequence_parent_work.h"
 #include "flag_call.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -87,8 +87,8 @@ void Func_02000110(void) {
   Actor_GetById(12)->priorityFlags |= 1;
   Actor_SetPositionAndReset(12, 136, 200);
   FieldEvent_Wait(3);
-  Actor_SetModeById(gAdventure.currentOwner, 1);
-  Actor_ArmCallback(gAdventure.currentOwner, 0xe000, 0);
+  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xe000, 0);
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
@@ -97,7 +97,7 @@ void Func_02000110(void) {
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
-  Actor_ArmCallback(gAdventure.currentOwner, 0, 0);
+  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 0);
   Hop(0, 16);
   Hop(16, 0);
   Hop(16, 0);

@@ -166,9 +166,8 @@
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
 
-// Actor.spriteStorageKind holds an enum ActorSpriteKind in its low four
-// bits; a group's sprite word points to a table of four sprites.
-#define ACTOR_SPRITE_KIND_MASK 15
+// A group's sprite word (ACTOR_SPRITE_GROUP) points to a table of four
+// sprites.
 #define ACTOR_SPRITE_GROUP_SIZE 4
 
 /// BattleActionRun_Build's results besides 0, which stages the action.

@@ -37,6 +37,16 @@ enum SpriteColorMode {
 /// until it is given a mode again.
 #define SPRITE_COLOR_BLINK 0x100
 
+/// A sprite animation's picture or pictureBase when it shows none:
+/// Sprite_ComposePicture skips it until an animation is selected.
+#define SPRITE_PICTURE_NONE 0xff
+
+/// An animation number's bit 7: keep the place and timer of the script already
+/// running. Sprite_StartAnimation masks it off with
+/// SPRITE_ANIMATION_INDEX_MASK; SpriteAnimation_Start keeps it in the index.
+#define SPRITE_ANIMATION_KEEP_PLACE 0x80
+#define SPRITE_ANIMATION_INDEX_MASK 0x7f
+
 /// One of a sprite's four sprite animations: its animation id, pictures,
 /// running script and timer.
 struct SpriteAnimation {
@@ -55,8 +65,10 @@ struct SpriteAnimation {
   u8 *script;      ///< the running script; null when stopped (ANIMCMD_END)
   u8 scriptOffset; ///< byte offset of the next command in script
   u8 step;         ///< taken off timer each frame; 16 is normal speed
-  u8 picture; ///< picture shown, pictureBase plus the facing offset; 255 none
-  u8 pictureBase; ///< picture the script chose, before facing; 255 blank
+  u8 picture;      ///< picture shown, pictureBase plus the facing offset;
+                   ///< SPRITE_PICTURE_NONE for none
+  u8 pictureBase;  ///< picture the script chose, before facing;
+                   ///< SPRITE_PICTURE_NONE for none
 };
 
 /// A sprite picture cache: the tag of the animation loaded into it (slot number
@@ -115,7 +127,7 @@ struct Sprite {
   struct AnimationSpritePart image;
   /// Its shadow, shown while flags bit 0 is set.
   struct AnimationSpritePart shadow;
-  s32 scale; ///< 16.16 fixed point, 0x10000 full size
+  s32 scale; ///< 16.16 fixed point, Q16_ONE full size
   u8 slot;   ///< VRAM cache entry holding its tiles
   /// Keeps the VRAM cache entry when it is released or off screen.
   u8 retainCacheEntry : 1;

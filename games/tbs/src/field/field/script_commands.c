@@ -214,7 +214,7 @@ s32 ActorScript_ToggleFlagAndTest(struct Actor *interpreter) {
   previousFlagValue = GameFlag_GetFar(flagId);
   interpreter->conditionResult = previousFlagValue;
   // The test's low byte is 1 when the flag was set.
-  if ((previousFlagValue << 0x18) == 0x01000000) {
+  if ((previousFlagValue << 24) == 1 << 24) {
     GameFlag_ClearFar(flagId);
   } else {
     GameFlag_SetFar(flagId);
@@ -523,8 +523,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *interpreter) {
   actor->acceleration = watchedActor->acceleration;
   dx = watchedActor->x.fixed - actor->x.fixed;
   dz = watchedActor->z.fixed - actor->z.fixed;
-  deltaXPixels = dx >> 0x10;
-  deltaZPixels = dz >> 0x10;
+  deltaXPixels = dx >> 16;
+  deltaZPixels = dz >> 16;
   distancePixels =
       Iwram_Sqrt((deltaXPixels * deltaXPixels) + (deltaZPixels * deltaZPixels));
   // Further than 16 pixels: aim at the point 16 pixels short of the watched

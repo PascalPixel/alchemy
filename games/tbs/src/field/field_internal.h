@@ -64,6 +64,7 @@
 #include "curve.h"
 #include "battle_party.h"
 #include "vram_cache.h"
+#include "event.h"
 #include "module/field/update.h"
 #include "module/field/vertices.h"
 #include "module/field/curve_data.h"

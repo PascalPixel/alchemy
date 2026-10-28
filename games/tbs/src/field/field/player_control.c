@@ -10,10 +10,10 @@
 // Japan and 7 from the English release on.
 #if TBS_PATCH_1
 #define FIELD_SHORTCUT_KEYS gKeysPressed
-#define WORLD_MAP_PROBE_RADIUS 0x70000
+#define WORLD_MAP_PROBE_RADIUS (7 << 16)
 #else
 #define FIELD_SHORTCUT_KEYS gKeysHeld
-#define WORLD_MAP_PROBE_RADIUS 0x80000
+#define WORLD_MAP_PROBE_RADIUS (8 << 16)
 #endif
 
 // The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
@@ -34,6 +34,9 @@ enum FieldShortcutKind {
   FIELD_SHORTCUT_PSYNERGY = 0, ///< fieldWork->psynergy, an ability
   FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
 };
+
+/// A shortcut key's request id: the assignment's low 14 bits, below its kind.
+#define FIELD_SHORTCUT_ID_MASK 0x3fff
 
 /// Unused: stores value as a word in the actor's update routine.
 UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
@@ -57,7 +60,7 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
-  u32 requestId = 0x3FFF & encodedAssignment;
+  u32 requestId = FIELD_SHORTCUT_ID_MASK & encodedAssignment;
   struct FieldWork *work = gFieldWork;
 
   if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
@@ -135,7 +138,7 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
   // and only the distance decides. No two actors on a 2,048-pixel map are
   // far enough apart for the squares to overflow, so nothing the player sees
   // changes.
-  if (!(dx > 0x400000) && !(dz > 0x400000) &&
+  if (!(dx > 64 << 16) && !(dz > 64 << 16) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
     return 0;
   return -1;
@@ -179,8 +182,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
     s32 blockIndex;
 
     freeBlocks = 0;
-    for (blockIndex = 0; blockIndex < 512; blockIndex++) {
-      if (gVramCacheBlockOwners[blockIndex] == 0xff)
+    for (blockIndex = 0; blockIndex < VRAM_BLOCK_COUNT; blockIndex++) {
+      if (gVramCacheBlockOwners[blockIndex] == VRAM_BLOCK_OWNER_FREE)
         freeBlocks++;
     }
     if (freeBlocks - 136 < 0)
@@ -244,14 +247,14 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
   // collision means no direction is held, bit 0 that every heading is
   // blocked.
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
-  if ((u16)angle == 0xffff) {
+  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= 4;
   } else {
     collision = 0;
     position.x = actor->x.fixed;
     position.y = actor->y.fixed;
     position.z = actor->z.fixed;
-    Vector_AddPolarOffset(0x80000, (u16)angle, &position);
+    Vector_AddPolarOffset(8 << 16, (u16)angle, &position);
     if (gDebugMode != 0 && (gKeysHeld & KEY_L)) {
       heading = angle;
     } else {
@@ -259,23 +262,23 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)angle + 0x1000, &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE) {
           testPosition.x = actor->x.fixed;
           testPosition.y = actor->y.fixed;
           testPosition.z = actor->z.fixed;
-          Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
+          Vector_AddPolarOffset(8 << 16, (u16)angle - 0x1000, &testPosition);
           if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE) {
             testPosition.x = actor->x.fixed;
             testPosition.y = actor->y.fixed;
             testPosition.z = actor->z.fixed;
-            Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
+            Vector_AddPolarOffset(8 << 16, (u16)angle + 0x2000, &testPosition);
             if (MapGrid_CheckCollision(actor, &testPosition) ==
                 COLLISION_NONE) {
               testPosition.x = actor->x.fixed;
               testPosition.y = actor->y.fixed;
               testPosition.z = actor->z.fixed;
-              Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000,
+              Vector_AddPolarOffset(8 << 16, (u16)angle - 0x2000,
                                     &testPosition);
               if (MapGrid_CheckCollision(actor, &testPosition) ==
                   COLLISION_NONE) {
@@ -302,31 +305,31 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
         position.x = actor->x.fixed;
         position.y = actor->y.fixed;
         position.z = actor->z.fixed;
-        Vector_AddPolarOffset(0x80000, (u16)heading, &position);
+        Vector_AddPolarOffset(8 << 16, (u16)heading, &position);
         if (MapGrid_CheckCollision(actor, &position) != COLLISION_NONE)
           continue;
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)heading + 0x1000, &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)heading - 0x1000, &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)heading + 0x2000, &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)heading - 0x2000, &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE)
           goto push_objects;
       }
@@ -343,7 +346,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       contact.x = actor->x.fixed;
       contact.y = actor->y.fixed;
       contact.z = actor->z.fixed;
-      Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
+      Vector_AddPolarOffset(4 << 16, (u16)heading, &contact);
       pushedActor = gActors;
       for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, pushedActor++) {
         s32 radius;
@@ -374,13 +377,14 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
             testPosition.x = pushedActor->x.fixed;
             testPosition.y = pushedActor->y.fixed;
             testPosition.z = pushedActor->z.fixed;
-            Vector_AddPolarOffset(0xa0000, direction, &testPosition);
+            Vector_AddPolarOffset(10 << 16, direction, &testPosition);
             if (MapGrid_CheckCollision(pushedActor, &testPosition) ==
                 COLLISION_NONE) {
               testPosition.x = pushedActor->x.fixed;
               testPosition.y = pushedActor->y.fixed;
               testPosition.z = pushedActor->z.fixed;
-              Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
+              Vector_AddPolarOffset(10 << 16, direction + 0x1000,
+                                    &testPosition);
               // The same probe is tested twice.
               if (MapGrid_CheckCollision(pushedActor, &testPosition) ==
                       COLLISION_NONE &&
@@ -389,7 +393,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
                 testPosition.x = pushedActor->x.fixed;
                 testPosition.y = pushedActor->y.fixed;
                 testPosition.z = pushedActor->z.fixed;
-                Vector_AddPolarOffset(0xa0000, direction - 0x1000,
+                Vector_AddPolarOffset(10 << 16, direction - 0x1000,
                                       &testPosition);
                 if (MapGrid_CheckCollision(pushedActor, &testPosition) ==
                     COLLISION_NONE) {
@@ -581,7 +585,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
 
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   direction = angle;
-  if (direction == 0xffff) {
+  if (direction == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= 4;
   } else {
     collision = 0;
@@ -876,7 +880,7 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
   actor->acceleration = 0x4000;
   animation = 12;
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
-  if (angle == 0xffff) {
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = 4;
   } else {
     // The animation by the pad's heading: 14 for headings below 0x1000, 15
@@ -891,7 +895,7 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
     position.x = 0;
     position.y = 0;
     position.z = 0;
-    Vector_AddPolarOffset(0x80000, angle, &position);
+    Vector_AddPolarOffset(8 << 16, angle, &position);
     // The step's depth becomes height: pad up climbs, pad down descends, and
     // the actor's angle becomes FACING_NORTH going up the map and FACING_SOUTH
     // going down.
@@ -903,15 +907,15 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
       actor->facing = FACING_SOUTH;
     position.y = actor->y.fixed - position.z;
     position.z = actor->z.fixed;
-    // The cells (16 pixels, 0x100000) under the actor and the step; a step
+    // The cells (16 pixels) under the actor and the step; a step
     // into a cell with another cell behavior is refused.
     sourceCell = &((struct MapGridCell *)
-                       Ram_MapGridCellBuffer)[actor->x.fixed / 0x100000 +
-                                              (position.z / 0x100000) * 128];
+                       Ram_MapGridCellBuffer)[actor->x.fixed / (16 << 16) +
+                                              (position.z / (16 << 16)) * 128];
     destinationCell =
         &((struct MapGridCell *)
-              Ram_MapGridCellBuffer)[position.x / 0x100000 +
-                                     (position.z / 0x100000) * 128];
+              Ram_MapGridCellBuffer)[position.x / (16 << 16) +
+                                     (position.z / (16 << 16)) * 128];
     if (MapGrid_IsWallAt((struct WorldPosition *)&position) != 0 ||
         sourceCell->behavior != destinationCell->behavior) {
       collisionFlags = 4;
@@ -921,13 +925,13 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
       // pixels above the actor; descending needs the ground at the step
       // at least 8 pixels below it.
       groundHeight = MapGrid_GetTerrainHeight(actor->layer, position.x,
-                                              position.z - 0x100000);
-      if (groundHeight - actor->y.fixed < 0x100000)
+                                              position.z - (16 << 16));
+      if (groundHeight - actor->y.fixed < 16 << 16)
         goto refused;
     } else if (gKeysHeld & KEY_DOWN) {
       groundHeight =
           MapGrid_GetTerrainHeight(actor->layer, position.x, position.z);
-      if (groundHeight - actor->y.fixed > -0x80000) {
+      if (groundHeight - actor->y.fixed > -(8 << 16)) {
       refused:
         collisionFlags = 1;
         animation = 12;
@@ -965,3 +969,4 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
 #undef WORLD_MAP_RUN_ACCELERATION
 #undef WORLD_MAP_ACCELERATION
 #undef WORLD_MAP_FAST_SPEED
+#undef FIELD_SHORTCUT_ID_MASK

@@ -192,6 +192,14 @@ struct LuckyDiceSprites {
 #define DICE_RESULT_COUNT 4
 #define DICE_BET_PER_LEVEL 10
 
+/// A die's roll angle (its particle's variant) crosses a face in
+/// DICE_TILES_PER_FACE tiles, and LuckyDice_Run reads the tile as angle /
+/// DICE_ROLL_PER_TILE and the face as angle / DICE_ROLL_PER_FACE.
+#define DICE_TILES_PER_FACE 3
+#define DICE_ROLL_PER_TILE 1024
+#define DICE_ROLL_PER_FACE (DICE_TILES_PER_FACE * DICE_ROLL_PER_TILE)
+#define DICE_ROLL_TURN (DICE_FACE_COUNT * DICE_ROLL_PER_FACE) ///< six faces
+
 /// What the Lucky Dice screen is doing.
 enum LuckyDiceState {
   LUCKY_DICE_AIM,    ///< the dice wait to be thrown; Up and Down raise them
@@ -201,7 +209,7 @@ enum LuckyDiceState {
 };
 
 /// Copies count RGB555 colours from source to destination with each channel
-/// multiplied by scale (16.16: 0 is black, 0x10000 unchanged), for fades.
+/// multiplied by scale (16.16: 0 is black, Q16_ONE unchanged), for fades.
 /// Returns 0. Called only by LuckyDice_Run, to fade both palettes in and out.
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
@@ -215,9 +223,9 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
   u32 blue;
 
   if (count > 0) {
-    redMask = 0x1f;
-    greenMask = 0x3e0;
-    blueMask = 0x7c00;
+    redMask = RGB(31, 0, 0);
+    greenMask = RGB(0, 31, 0);
+    blueMask = RGB(0, 0, 31);
     remaining = count;
     do {
       pixel = *source;
@@ -301,7 +309,7 @@ void LuckyDice_Run(void) {
   struct Window *window;
   s32 index;
   s32 otherIndex;
-  s32 rollAngle; // a die's roll angle: 0x400 per face tile, 0xc00 per face
+  s32 rollAngle; // a die's roll angle, in DICE_ROLL_PER_TILE steps
   s32 x;
   s32 y;
   s32 halfSize;
@@ -343,11 +351,10 @@ void LuckyDice_Run(void) {
 
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
-  Dma_Set((void *)resourceAddress, (void *)BG_PLTT,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
-  Dma_Set((void *)BG_PLTT, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+  Dma_Set((void *)resourceAddress, (void *)BG_PLTT, DMA_COPY_WORDS(112),
           REG_DMA3);
-  resourceAddress += 0x1c0;
+  Dma_Set((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
+  resourceAddress += 112 * 4;
   // UB: Call2 passes integers to the decoder's two pointer parameters.
   // Plain typed calls add four bytes to LuckyDice_Run in tbs-en.
 #ifdef UBFIX
@@ -355,22 +362,22 @@ void LuckyDice_Run(void) {
 #else
   Call2(Decompress_TaggedLz, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
-  Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
+  Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8), DMA_COPY_WORDS(9600),
+          REG_DMA3);
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
-  Dma_Set((void *)resourceAddress, spritePalette,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
-  Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
-  resourceAddress += 0x200;
+  Dma_Set((void *)resourceAddress, spritePalette, DMA_COPY_WORDS(128),
+          REG_DMA3);
+  Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT, DMA_COPY_WORDS(128),
+          REG_DMA3);
+  resourceAddress += 128 * 4;
 #ifdef UBFIX
   Decompress_TaggedLz((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
   Call2(Decompress_TaggedLz, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
-  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
+  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),
+          REG_DMA3);
   LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
   LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
@@ -390,9 +397,9 @@ void LuckyDice_Run(void) {
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   REG_BG1HOFS = 0;
-  REG_BG1VOFS = 0xff60;
+  REG_BG1VOFS = -160;
   REG_BG2HOFS = 0;
-  REG_BG2VOFS = 0xff60;
+  REG_BG2VOFS = -160;
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN0V = WIN_RANGE(0, DISPLAY_HEIGHT);
   REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
@@ -422,12 +429,12 @@ void LuckyDice_Run(void) {
   do {
     luckyNumbers[1] = Random16() % DICE_FACE_COUNT;
   } while (luckyNumbers[0] == luckyNumbers[1]);
-  diceWork->particles[0].x = 0x280000;
-  diceWork->particles[0].y = 0x600000;
-  diceWork->particles[0].z = -0xa00000;
-  diceWork->particles[1].x = -0x280000;
-  diceWork->particles[1].y = 0x600000;
-  diceWork->particles[1].z = -0xa00000;
+  diceWork->particles[0].x = 40 << 16;
+  diceWork->particles[0].y = 96 << 16;
+  diceWork->particles[0].z = -(160 << 16);
+  diceWork->particles[1].x = -(40 << 16);
+  diceWork->particles[1].y = 96 << 16;
+  diceWork->particles[1].z = -(160 << 16);
 
   // Open the coins window and the Throw / Quit help.
   WindowSystem_InitFieldFar();
@@ -585,24 +592,24 @@ void LuckyDice_Run(void) {
       (void)gKeysRepeat;
       (void)gKeysRepeat;
       if (gKeysHeld & KEY_UP) {
-        diceWork->particles[0].y += 0x40000;
-        diceWork->particles[1].y += 0x40000;
+        diceWork->particles[0].y += 4 << 16;
+        diceWork->particles[1].y += 4 << 16;
       }
       if (gKeysHeld & KEY_DOWN) {
-        diceWork->particles[0].y += -0x40000;
-        diceWork->particles[1].y += -0x40000;
+        diceWork->particles[0].y += -(4 << 16);
+        diceWork->particles[1].y += -(4 << 16);
       }
-      if (diceWork->particles[0].y < 0x200000) {
-        diceWork->particles[0].y = 0x200000;
+      if (diceWork->particles[0].y < 32 << 16) {
+        diceWork->particles[0].y = 32 << 16;
       }
-      if (diceWork->particles[0].y > 0xa00000) {
-        diceWork->particles[0].y = 0xa00000;
+      if (diceWork->particles[0].y > 160 << 16) {
+        diceWork->particles[0].y = 160 << 16;
       }
-      if (diceWork->particles[1].y < 0x200000) {
-        diceWork->particles[1].y = 0x200000;
+      if (diceWork->particles[1].y < 32 << 16) {
+        diceWork->particles[1].y = 32 << 16;
       }
-      if (diceWork->particles[1].y > 0xa00000) {
-        diceWork->particles[1].y = 0xa00000;
+      if (diceWork->particles[1].y > 160 << 16) {
+        diceWork->particles[1].y = 160 << 16;
       }
       if (gMainRoutineWork.coins <
           (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
@@ -630,13 +637,13 @@ void LuckyDice_Run(void) {
           // DEAD: never true with DICE_COUNT 2; a third die would start
           // further back and higher up.
           if (index > 1) {
-            rollingDie->z = -0xb40000;
-            rollingDie->y = 0x600000;
+            rollingDie->z = -(180 << 16);
+            rollingDie->y = 96 << 16;
           }
           SET_VELOCITY(rollingDie, ((Random16() & 127) - 64) << 12,
                        ((Random16() & 15) + 48) << 13,
                        (((Random16() & 63) + 140) << 12) + rollingDie->y / 6);
-          rollingDie->variant = Random16() % 0x4800;
+          rollingDie->variant = Random16() % DICE_ROLL_TURN;
           spinRate[index] = 300;
         }
       }
@@ -644,12 +651,12 @@ void LuckyDice_Run(void) {
 
     // Back to the throwing line, with two new lucky numbers.
     if (resetDice == 1) {
-      diceWork->particles[0].x = 0x280000;
-      diceWork->particles[0].y = 0x600000;
-      diceWork->particles[0].z = -0xa00000;
-      diceWork->particles[1].x = -0x280000;
-      diceWork->particles[1].y = 0x600000;
-      diceWork->particles[1].z = -0xa00000;
+      diceWork->particles[0].x = 40 << 16;
+      diceWork->particles[0].y = 96 << 16;
+      diceWork->particles[0].z = -(160 << 16);
+      diceWork->particles[1].x = -(40 << 16);
+      diceWork->particles[1].y = 96 << 16;
+      diceWork->particles[1].z = -(160 << 16);
       luckyNumbers[0] = Random16() % DICE_FACE_COUNT;
       do {
         luckyNumbers[1] = Random16() % DICE_FACE_COUNT;
@@ -681,14 +688,14 @@ void LuckyDice_Run(void) {
       // Copying them to an array grows native EN from 0x1274 to 0x1294 bytes.
       Transform_ProjectPoint(rollingDie, screen);
       // Depth is clamped to 350..650; the nearer, the larger the die.
-      if (screen[2] < 0x15e) {
-        screen[2] = 0x15e;
+      if (screen[2] < 350) {
+        screen[2] = 350;
       }
-      if (screen[2] > 0x28a) {
-        screen[2] = 0x28a;
+      if (screen[2] > 650) {
+        screen[2] = 650;
       }
-      spriteDepth[drawOrder[index]] = screen[2] - 0x15e;
-      halfSize = 0x800 / (spriteDepth[drawOrder[index]] / 2 + 128);
+      spriteDepth[drawOrder[index]] = screen[2] - 350;
+      halfSize = 2048 / (spriteDepth[drawOrder[index]] / 2 + 128);
       dieX = screen[0] - halfSize;
       dieY = screen[1] - halfSize;
       // An affine, double-size, 256-colour sprite using the die's own
@@ -700,7 +707,9 @@ void LuckyDice_Run(void) {
              ((dieY + 0x160) & 255)) |
             0x40002300;
         sprites->oam[spriteCount].attr2 =
-            (gLuckyDice_FaceTiles[rollingDie->variant / 1024] << 3) | 0x400;
+            (gLuckyDice_FaceTiles[rollingDie->variant / DICE_ROLL_PER_TILE]
+             << 3) |
+            0x400;
         spriteCount++;
       }
     }
@@ -709,8 +718,8 @@ void LuckyDice_Run(void) {
     if (state == LUCKY_DICE_AIM) {
       for (index = 0; index != DICE_COUNT; index++) {
         Transform_ProjectPoint(&diceWork->particles[index], screen);
-        x = screen[0] - 0x800 / (spriteDepth[drawOrder[index]] / 2 + 128);
-        y = screen[1] + 0x300 / (spriteDepth[drawOrder[index]] / 2 + 128);
+        x = screen[0] - 2048 / (spriteDepth[drawOrder[index]] / 2 + 128);
+        y = screen[1] + 768 / (spriteDepth[drawOrder[index]] / 2 + 128);
         sprites->oam[spriteCount].attr01 =
             ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
         if (index == 1) {
@@ -730,13 +739,13 @@ void LuckyDice_Run(void) {
                  diceWork->particles[index].z);
       Transform_ProjectPoint(groundPoint, screen);
       // A shadow shrinks as its die rises.
-      if (screen[2] < 0x15e) {
-        screen[2] = 0x15e;
+      if (screen[2] < 350) {
+        screen[2] = 350;
       }
-      if (screen[2] > 0x28a) {
-        screen[2] = 0x28a;
+      if (screen[2] > 650) {
+        screen[2] = 650;
       }
-      spriteDepth[2 + index] = screen[2] - 0x15e;
+      spriteDepth[2 + index] = screen[2] - 350;
       spriteDepth[2 + index] += diceWork->particles[index].y >> 16;
       shadowX = screen[0];
       shadowY = screen[1];
@@ -768,7 +777,7 @@ void LuckyDice_Run(void) {
             separationZ = (rollingDie->z - otherDie->z) >> 16;
             if (separationX * separationX + separationY * separationY +
                     separationZ * separationZ <=
-                0x9c3) {
+                50 * 50 - 1) {
               separation = Iwram_Sqrt(separationX * separationX +
                                       separationY * separationY +
                                       separationZ * separationZ);
@@ -790,20 +799,20 @@ void LuckyDice_Run(void) {
           }
         }
         // Bounce off the board's sides and back wall.
-        if (rollingDie->x < -0xc80000) {
-          rollingDie->x = -0xc80000;
+        if (rollingDie->x < -(200 << 16)) {
+          rollingDie->x = -(200 << 16);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
-        if (rollingDie->x > 0xc80000) {
-          rollingDie->x = 0xc80000;
+        if (rollingDie->x > 200 << 16) {
+          rollingDie->x = 200 << 16;
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
-        if (rollingDie->z < -0x960000) {
-          rollingDie->z = -0x960000;
+        if (rollingDie->z < -(150 << 16)) {
+          rollingDie->z = -(150 << 16);
           rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
         }
-        if (rollingDie->z > rollingDie->y + 0xb40000) {
-          rollingDie->z = rollingDie->y + 0xb40000;
+        if (rollingDie->z > rollingDie->y + (180 << 16)) {
+          rollingDie->z = rollingDie->y + (180 << 16);
           if (rollingDie->velocityZ > 0) {
             rollingDie->velocityY += rollingDie->velocityZ / 2;
             rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
@@ -835,25 +844,25 @@ void LuckyDice_Run(void) {
           if (spinRate[index] > 19) {
             spinRate[index] -= 20;
           }
-          if (rollingDie->velocityY < 0x30000) {
+          if (rollingDie->velocityY < 3 << 16) {
             SET_VELOCITY(rollingDie, 0, 0, 0);
             spinRate[index] = 0;
             rollAngle = rollingDie->variant;
-            faceTile = rollAngle / 1024 % 3;
+            faceTile = rollAngle / DICE_ROLL_PER_TILE % DICE_TILES_PER_FACE;
             if (faceTile == 1) {
-              rollingDie->variant = rollAngle + 0x800;
+              rollingDie->variant = rollAngle + 2 * DICE_ROLL_PER_TILE;
             } else if (faceTile == 2) {
-              rollingDie->variant = rollAngle + 0x400;
+              rollingDie->variant = rollAngle + DICE_ROLL_PER_TILE;
             }
           }
         }
         SET_VELOCITY(rollingDie, rollingDie->velocityX * 63 / 64,
                      rollingDie->velocityY * 63 / 64,
                      rollingDie->velocityZ * 63 / 64);
-        // The roll angle wraps at six faces of 0xc00.
+        // The roll angle wraps after six faces, at DICE_ROLL_TURN.
         rollingDie->variant += spinRate[index];
-        if (rollingDie->variant > 0x47ff) {
-          rollingDie->variant -= 0x4800;
+        if (rollingDie->variant > DICE_ROLL_TURN - 1) {
+          rollingDie->variant -= DICE_ROLL_TURN;
         }
         if (spinRate[index] > 0) {
           spinRate[index]--;
@@ -861,7 +870,7 @@ void LuckyDice_Run(void) {
         // At rest: read the face from the roll and the row from the depth.
         if (rollingDie->velocityX == 0 && rollingDie->velocityY == 0 &&
             rollingDie->velocityZ == 0 && rollingDie->y == 0) {
-          numbers[index] = rollingDie->variant / 0xc00;
+          numbers[index] = rollingDie->variant / DICE_ROLL_PER_FACE;
           for (otherIndex = 0; otherIndex != DICE_FACE_COUNT; otherIndex++) {
             // Row boundaries include negative signed halfwords.
             s32 rowDepth;
@@ -960,8 +969,7 @@ void LuckyDice_Run(void) {
       sprites->oam[index * 4 + 3].attr2 |= affineD << 16;
     }
 
-    Dma_Set(sprites->oam, OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
-            REG_DMA3);
+    Dma_Set(sprites->oam, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
     wait(1);
     frame++;
   }

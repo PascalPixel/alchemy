@@ -17,8 +17,7 @@ the [actor scripts](../../glossary.md#actor-script) they run are described under
 [everything that moves runs a
 script](../field/README.md#everything-that-moves-runs-an-actor-script). What happens
 in each scene comes from its own code in [Scenes](../scene/README.md).
-[Field](../../field.md) gives the whole layer in brief. The folder takes pret's
-name for the same loop, overworld.
+[Field](../../field.md) gives the whole layer in brief.
 
 ## The scene sequence serves requests
 

@@ -147,7 +147,7 @@ second entry of `ld_r3_tp_adr_i`), `Mixer_CallViaR3` (the `bx r3` at the end of
 `SoundMainRAM`), `SoundMainRAM_Rom` (the mixer's ROM copy), the `MPLAY_JUMP_`
 indices and the music players beyond `gMPlayInfo_BGM`. The sound layer's names
 come from what `Sound_Play` does with each range, and the sounds' from
-`sounds.h`, named as pret names its songs: music by the place or moment the
+`sounds.h`: music by the place or moment the
 player knows it from (`MUS_DJINN_LESSON`), a sound effect by what it sounds
 like or the moment it marks (`SE_THUMP`).
 

@@ -7,7 +7,7 @@ party member, every enemy picks one of its own, and the game plays the
 actions one after another, fastest first. When one side has nobody left
 standing, or the party runs away, the field comes back.
 
-Two kinds of code share the work. The rules decide what happens: who acts when,
+Two kinds of code divide a battle between them. The rules decide what happens: who acts when,
 who is hit and for how much, which statuses take hold. The
 [battle effects](glossary.md#battle-effect) draw it.
 [Battles](src/battle/README.md) goes through the rules in detail,
@@ -85,7 +85,8 @@ side has been beaten, so a battle can end in the middle of a turn.
 The party's actions come from the command menu (or are picked automatically
 in the auto battle), the enemies' from each enemy's habits. They are sorted
 by Agility, except that the Djinn Granite, Flash and Ground go before
-everyone. Then each action in turn is announced, staged and animated, and its
+everyone. Then each action, one after another, is announced, staged and
+animated, and its
 targets take its effect; the unit's action ends; and when every action has
 played, the turn ends with statuses counting down. The loop in `Battle_Run`,
 simplified:
@@ -152,9 +153,9 @@ front. The battlefield is one flat picture of the place, 256 by 120 pixels,
 with the depth already painted in; the hardware only zooms and slides it.
 
 The screen is built from layers: the windows on one, the battlefield on
-another that the hardware can scale and turn, and the units as
+another that the hardware can scale and rotate, and the units as
 [sprites](glossary.md#sprite-and-oam) over them. Once a frame the camera's
-distance sets the zoom and its turn the sideways scroll. The zooming layer can
+distance sets the zoom and its swing the sideways scroll. The zooming layer can
 only name 256 small tiles and the battlefield picture has 480, so the picture
 is kept in two halves, and on every screen line the game tells the hardware
 which half to read next, switching at the line where the lower half starts at

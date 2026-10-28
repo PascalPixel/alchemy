@@ -24,7 +24,7 @@ must pass, while short tasks run once a frame to keep the world moving:
   frame while the player walks, and acts on what the tasks noted down.
 - **A battle's rules and battle effects run together.** Damage appears while the
   attack is still on screen ([Battles](#battles)).
-- **A frame that runs long slows the game instead of skipping work.** The
+- **A frame that runs long slows the game instead of skipping ahead.** The
   picture and every movement slow down; the music doesn't
   ([When a frame runs long](#when-a-frame-runs-long)).
 
@@ -87,7 +87,7 @@ throughout, is red.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   power(["Power on"]) --> memory["Clear the fast memory"] --> irq["Install the resident code and the interrupt handlers"]
-  irq --> services["Start the sound and the task queue"] --> seq(["Parent sequence"])
+  irq --> services["Start the sound and the task table"] --> seq(["Parent sequence"])
   classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
@@ -100,14 +100,14 @@ flowchart TD
 
 Power-on runs once. It clears the fast memory, installs the code that stays
 resident and the interrupt handlers, loads the window graphics, starts the
-sound and empties the task queue. Then it hands control to the parent
+sound and empties the task table. Then it hands control to the parent
 sequence, which never returns.
 
 **Reference:** `System_Initialize` · [System: Start-up](system.md#start-up)
 
 ## The parent sequence
 
-![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
+![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing around the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -130,8 +130,8 @@ flowchart TD
 
 Each pass runs one sequence to its end. The sequence then names the next one,
 and in the transition the parent sequence clears everything the last one left
-behind (its tasks, its screen effects, the memory it borrowed) before starting
-it.
+behind (its tasks, its interrupt handlers, the memory it borrowed) before
+starting it.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -166,7 +166,7 @@ flowchart TD
   style s3 fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
 ```
 
-A battle replaces the scene for a turn. Its code is always loaded, so there is
+A battle stands in for the scene for a while. Its code is always loaded, so there is
 nothing to unpack, and afterwards the party stands where it stood. After a
 defeat the game goes where an [event](glossary.md#event) chose for losing that
 battle, or else to the last Sanctum.
@@ -181,7 +181,7 @@ shares:
 | -------------------------- | -------------------------------------------------------------------------------------------- |
 | a scene starts             | the return point (this scene and entrance), and empty after-battle and defeat destinations   |
 | an event prepares a battle | the after-battle or defeat destination, where the story should continue                      |
-| a random battle starts     | the battle as the next scene, its enemy group as the entrance, every actor's position        |
+| a random battle starts     | the battle as the next sequence, its formation as the entrance, every actor's position     |
 | the battle ends            | its result: won, fled or lost                                                                |
 
 `Scene_ReturnFromSequence` reads them back. A win or a flight goes to the
@@ -386,7 +386,7 @@ flowchart TD
 ```
 
 Isaac stands still and the player presses nothing, yet the village moves: the
-water carrier walks her round and the water flows.
+water carrier walks her path and the water flows.
 
 ### Talking to the water carrier
 
@@ -457,10 +457,10 @@ for (;;) {                                  /* one turn */
 ```
 
 An attack's battle effect is an ordinary function that waits frame by frame.
-Its damage comes from a task, playback, which stays idle until the effect
-signals that the blow has landed and then applies it target by target. So
-Quake's damage messages appear while the rock is still rising, rather than
-after it: the rules decide how much, the effect only when. The battle's
+Its damage comes from a task, playback, which stays idle until the battle
+effect signals that the blow has landed and then applies it target by target.
+So Quake's damage messages appear while the rock is still rising, rather than
+after it: the rules decide how much, the battle effect only when. The battle's
 code also stays loaded between battles, so starting one unpacks nothing.
 
 **Reference:** [Battle](battle.md) ·
@@ -644,10 +644,10 @@ section pages follow them.
 
 | Page                                                 | Covers                                                                   |
 | ---------------------------------------------------- | ------------------------------------------------------------------------ |
-| [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, sound         |
+| [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, saving, sound |
 | [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its battle effects   |
 | [Field](field.md)                                    | actors and movement, the maps, the requests, field Psynergy, debug rooms |
-| [User Interface](user_interface.md)                  | the field menu and its screens, shops and inns, windows                  |
+| [User Interface](user_interface.md)                  | windows and messages, the field menu, the Pause menu, shops and inns     |
 | [Places](src/field/scenes.s)                         | every scene in story order, with its actor placements and triggers       |
 | [Game rules](src/game/README.md)                     | stats, items, Djinn, classes, levels and the flags                       |
 | [Unused](https://alchemy.pascalpixel.com/tbs/unused) | what the game keeps but never plays, and why                             |

@@ -90,7 +90,7 @@ The kind says which device it is:
   code copied into RAM, is not (see Runtime below).
 - `volatile` is a qualifier that forces a load or store to stay where it's
   written. One that is part of a macro's own form, such as the fill word of
-  `Dma_Fill32` ([pret](../glossary.md#pret)'s `DmaFill32`), is no device. Nor is one on memory an
+  `Dma_Fill32`, is no device. Nor is one on memory an
   interrupt handler shares with the code it interrupts, such as `gVBlankDone` and
   `gFrameCount` (`include/frame.h`): there the C needs it to be correct.
 - `temporary` is a variable holding a value the plain form wouldn't name.

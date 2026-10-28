@@ -1,7 +1,8 @@
 # Field
 
-Everywhere the [party](glossary.md#the-party) walks, a town, a dungeon or the
-World Map, is run by the same four parts. The loop in `src/overworld` lets the
+Everywhere the [party](glossary.md#the-party) walks, a town, a
+[room](glossary.md#room), a dungeon or the World Map, is run by the same four
+parts. The loop in `src/overworld` lets the
 party walk and deals with whatever interrupts it. The code in `src/field`
 moves everything that moves and draws the [map](glossary.md#map), and the
 map's own data, in `src/map`, says what the ground is like. And each
@@ -221,7 +222,7 @@ covers every moment a scene can answer and each Psynergy's cast.
 
 ## Debug rooms
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and round to the menu test room, and An exits there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and on to the menu test room, and An exits there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
 
 The cartridge keeps three test rooms no player can walk into: one that hands
 out [Djinn](glossary.md#djinn), one for raising levels and browsing items,

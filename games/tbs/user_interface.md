@@ -1,9 +1,11 @@
 # User Interface
 
 Everything the player reads or chooses outside the [scene](glossary.md#scene)
-itself comes in a bordered box: what people say, the field menu and its screens,
-the Pause menu, the shop and inn counters. The user interface draws those boxes
-(windows), types the game's text into them, runs the field menu's four screens
+itself comes in a box with a [border](glossary.md#border): what people say,
+the field menu and its screens, the Pause menu, the shop and inn counters. The
+user interface draws those boxes ([windows](glossary.md#window)), types the
+game's [messages](glossary.md#message) into them, runs the field menu's four
+screens
 ([Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn), Item and
 Status), and runs the counters where the [party](glossary.md#the-party) spends
 its coins.
@@ -53,7 +55,7 @@ symbol (`MsgGameSaved`).
 
 ## The field menu
 
-![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats, turns to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
+![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats, moves to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
 Pressing A with nothing in front of the leader (or Select) opens a row of
 icons: Psynergy, Djinn, Item and Status, the Djinn icon only once the first
@@ -62,8 +64,8 @@ back. While a screen is open the field holds still behind it: its people stop,
 and so do the weather and the map's animations.
 
 `FieldMenu_Run` draws the row and calls the chosen screen through the menu
-[bank](glossary.md#bank). The screens take turns with one block of memory, the
-menu work, since only one runs at a time.
+[bank](glossary.md#bank). The screens share one block of memory, the menu
+[work](glossary.md#work), since only one runs at a time.
 
 [Menus](src/menu/README.md#the-screens) goes through each screen.
 
@@ -130,7 +132,7 @@ are never open together.
 All windows share `BG0` so that the map keeps the other three backgrounds,
 however many windows are open. Unpacking a message once, ahead of typing it,
 puts the slow work in one place and leaves each frame's typing cheap. The
-field menu's screens and the counters take turns in one block of memory
+field menu's screens and the counters share one block of memory
 because only one of them runs at a time. Field Psynergy is passed back as a
 request because it needs the field running, the leader facing something and
 the scene's events, none of which exist while the menu runs.

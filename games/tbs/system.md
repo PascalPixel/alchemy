@@ -5,9 +5,10 @@ sixty times a second, and the game prepares one picture for each. The system
 is the code that keeps that beat and that the field, the battles and the user
 interface are built on; Camelot's credits name it System, the first of the
 groups they list the programmers under, and credit it to Yasuhiro Taguchi.
-It starts the console, lets code wait without the screen freezing, splits the
-main image into [banks](glossary.md#bank), swaps each
-[scene](glossary.md#scene)'s code in and out of memory and plays the music.
+It starts the console, runs one [sequence](glossary.md#sequence) after another,
+lets code wait without the screen freezing, splits the main image into
+[banks](glossary.md#bank), swaps each [scene](glossary.md#scene)'s code in and
+out of memory, saves the game and plays the music.
 
 The console draws each picture one line at a time, 160 lines from top to
 bottom, then pauses for about as long as 68 more lines, the vertical blank
@@ -51,7 +52,9 @@ battle's figures have moved, so that it follows where they are rather than
 where they were. A wait can be asked for from deep inside other code, so the
 system sets the waiting code's memory aside while the frames pass; the tasks
 always start with the same room to work in. The one rule that follows is that
-a task must never wait itself, and none does.
+a task must never wait itself, and none does. A frame that runs past one
+VBlank still finishes, so the game slows down rather than skipping ahead:
+that is its [slowdown](glossary.md#slowdown).
 
 Waiting is `WaitFrames(n)`; a task is added with `Task_Add` and stopped with
 `Task_Remove`. [Runtime](src/runtime/README.md#the-frame-loop) has the
@@ -96,24 +99,60 @@ The entry table is `struct SceneEntryPoints`, and `Overlay_Load` unpacks an over
 [Cartridge and memory](src/cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes both tables.
 
+## Saving
+
+![In Vale, Start opens the Pause menu; Save your quest is chosen, then the first of three empty files, and the game says "Saving..." and then "Your game was saved."](https://alchemy.pascalpixel.com/guides/runtime/save.gif)
+
+The cartridge holds three [files](glossary.md#file-and-part), and switching
+off at the wrong moment never loses one. A file is kept as two parts, and a
+new copy of a part, numbered one higher than the old, is written into an empty
+sector of the flash chip before the old copy is marked free; whenever
+the power goes, one whole copy remains, and the game keeps the higher number.
+What a file holds is the [adventure](glossary.md#adventure) and the game
+flags.
+
+The Save command is `Save_ToChosenFile`, and `Save_WritePart` writes a part.
+[Runtime](src/runtime/README.md#saving) has the sectors and how a free one is
+chosen.
+
 ## Sound
 
-Every sound, music or effect, is asked for with one call and a number, and the
-number's range says what kind of sound it is: below 80 music, from 80 to 99 a
+Every [sound](glossary.md#sound), music, a jingle or a sound effect, is asked
+for with one call and a number, and the number's range says what kind of
+sound it is: below 80 music, from 80 to 99 a
 jingle, such as the short tune when a chest is opened, which silences the
 music until it ends, and from 100 up the sound effects. The sound driver has
 eight players, and each kind of sound has its own, so a sound effect never
 stops the music. Asking for the music already playing does nothing, so a scene
 can name its music on every arrival without restarting it. A few numbers are
 orders rather than sounds, such as "fade the music out". The driver is
-Nintendo's MusicPlayer2000, which [pret](glossary.md#pret)'s decompilations
-call m4a.
+Nintendo's MusicPlayer2000, the sound library many Game Boy Advance games ship.
 
 A sound is played with `Sound_Play`; the ranges are `SOUND_JINGLE_FIRST` and
 `SOUND_SE_FIRST`. [Sound](src/sound/README.md#what-a-sound-number-means) covers
 the players,
 [the jingle's return](src/sound/README.md#the-jingles-return-to-the-music) and
 [the driver's ident](src/sound/README.md#the-drivers-ident).
+
+## Design
+
+Every sequence starts cold. In each transition `ParentSequence_Run` empties
+the task table (`Task_ResetAll`), drops the HBlank and VCount handlers and
+empties the heap (`Heap_Initialize`), and the next sequence builds what it
+needs from the [adventure](glossary.md#adventure) alone: a scene from the
+destination and entrance in `gAdventure`, a battle from the formation named
+there. Nothing a scene or a battle set up outlives it, so any scene or battle
+can follow any other.
+
+The debug menus rely on this. The debug scene selector exits to any scene by
+number, and the debug battle menu, `DebugBattle_RunMenu`, sets up a default
+adventure and empties the task table and the heap itself before each battle,
+as the parent sequence would.
+
+Memory is never freed at random. The tasks, the heap slots and the actors are
+fixed tables of 20, 62 and 64; heap blocks go back in the reverse of the order
+they were taken, and the whole heap starts again at each transition, so what a
+sequence borrowed is given back at moments known in advance.
 
 ## Limits
 
@@ -123,3 +162,4 @@ the players,
 - A scene's code has the 32 KB of the overlay area, and a bank the space up to
   the next bank's fixed start.
 - Eight music players; sound numbers run from 0 to 4,095.
+- Three files, each two parts, in the flash chip's 16 sectors.

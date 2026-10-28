@@ -76,7 +76,7 @@ Resource_DirectoryTable:
 	resource , FarCall_BattleTable
 	resource , FarCall_CreditsTable
 	resource TitleFarCalls, FarCall_TitleTable
-	resource BattleAnimFarCalls, FarCall_BattleAnimTable
+	resource BattleEffectFarCalls, FarCall_BattleEffectTable
 	resource , FarCall_LuckyDiceTable
 	resource , FarCall_LuckyWheelsTable
 	resource , FarCall_SoundTable
@@ -101,35 +101,35 @@ Resource_DirectoryTable:
 	resource LuckyWheelsJackpot, LuckyWheels_Jackpot
 	resource LuckyDiceBoard, LuckyDice_Board
 	resource LuckyDiceSprites, LuckyDice_Sprites
-	group BattleAnim, TileAnimationMask, CyanSparkSheet, VioletPaletteA, RedPaletteA, YellowPaletteA
-	group BattleAnim, StarBurstSheet, CrescentSheet, RevealMaskA, RevealMaskB, RevealMaskC
-	group BattleAnim, RevealMaskD, RevealMaskE, RevealMaskF, LimeColumnSheet, RainSheet
-	group BattleAnim, FlameSheetA, DemonFaceSheet, FlameBladeSheet, SwordSheet, IceTileSheet
-	group BattleAnim, FiveModeImage, SpiderWebSheet, VioletLightningSheetA, YellowSparkSheet, ProjectileVolleyImage
-	group BattleAnim, ShurikenSheet, FlareSheet, FlareImage, VioletPaletteB, FireSwirlSheet
-	group BattleAnim, VioletLightningSheetB, FireBurstSheet, BlueCrescentSheet, OverlayImageA, VioletMoteSheet
-	group BattleAnim, OverlayImageB, FireballSheet, MemberBurstImage, SlashSheet, WaveSheet
-	group BattleAnim, TargetBurstImage, PinkStarSheet, WaterSpraySheet, BlueFlameSheet, ExplosionSheet
-	group BattleAnim, MagentaSwirlSheet, MagentaTailSheet, ParticleSpritesA, ParticleSpritesB, ParticleSpritesC
-	group BattleAnim, ParticleSpritesD, GreenPalette, SwordSlashSheet, RuneSheet, FlameColumnSheet
-	group BattleAnim, EarthWallSheet, OrangePaletteA, FlashBurstSheet, ThornSheet, CometSheetA
-	group BattleAnim, CometSheetB, CometSheetC, WhirlwindSheet, GreenPillarSheet, VineSheet
-	group BattleAnim, FirePillarSheetA, RedPaletteB, OrangePaletteB, VioletCometSheet, FlameballSheet
-	group BattleAnim, BoulderSheet, RockWallSheet, StarDotSheet, MarsDjinnSheet, MarsDjinnSmallSheet
-	group BattleAnim, JupiterDjinnSheet, JupiterDjinnSmallSheet, MercuryDjinnSheet, MercuryDjinnSmallSheet, VenusDjinnSheet
-	group BattleAnim, VenusDjinnSmallSheet, FireBlobSheet, FireStreakSheet, LavaOrbSheet, YellowRingSheet
-	group BattleAnim, YellowOrbSheet, BubbleSheet, ShieldSheet, DaggerSheet, PaletteRampImage
-	group BattleAnim, SmokeSheet, BluePalette, LimePalette, PinkPalette, VioletPaletteC
-	group BattleAnim, CyanPalette, TanPalette, WispSheet, GreenVineSheet, PortalSheet
-	group BattleAnim, SheepSheet, SkullSheet, HeartSheet, CounterRevealSheet, RedCrescentSheetA
-	group BattleAnim, BlueBeastSheet, RedCrescentSheetB, SpiralSheet, VioletStreakSheet, CrescentMoonSheet
-	group BattleAnim, ThornVineSheet, IceShardSheet, EmberStreakSheet, BlueArcSheetA, BlueArcSheetB
-	group BattleAnim, GlowOrbSheet, IceChipSheet, IceBlockSheet, SparkleDots, PinkBurstSheet
-	group BattleAnim, LightFanSheet, BlueBurstSheet, DustPuffSheet, GoldShellSheet, BlastSheet
-	group BattleAnim, FlameSheetB, FirePillarSheetB, RockSpireSheet, LightningBoltSheet, BeamImage
-	group BattleAnim, TwelveModeImage, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
-	group BattleAnim, VioletPaletteD, BlueBeamSheet, VortexSheet, TornadoSheet, CrystalSheet
-	group BattleAnim, WaterSparkleSheet, LightningPillarSheet, StagedParticlePath, DualStreamPath
+	group BattleEffect, TileAnimationMask, CyanSparkSheet, VioletPaletteA, RedPaletteA, YellowPaletteA
+	group BattleEffect, StarBurstSheet, CrescentSheet, RevealMaskA, RevealMaskB, RevealMaskC
+	group BattleEffect, RevealMaskD, RevealMaskE, RevealMaskF, LimeColumnSheet, RainSheet
+	group BattleEffect, FlameSheetA, DemonFaceSheet, FlameBladeSheet, SwordSheet, IceTileSheet
+	group BattleEffect, FiveModeImage, SpiderWebSheet, VioletLightningSheetA, YellowSparkSheet, ProjectileVolleyImage
+	group BattleEffect, ShurikenSheet, FlareSheet, FlareImage, VioletPaletteB, FireSwirlSheet
+	group BattleEffect, VioletLightningSheetB, FireBurstSheet, BlueCrescentSheet, OverlayImageA, VioletMoteSheet
+	group BattleEffect, OverlayImageB, FireballSheet, MemberBurstImage, SlashSheet, WaveSheet
+	group BattleEffect, TargetBurstImage, PinkStarSheet, WaterSpraySheet, BlueFlameSheet, ExplosionSheet
+	group BattleEffect, MagentaSwirlSheet, MagentaTailSheet, ParticleSpritesA, ParticleSpritesB, ParticleSpritesC
+	group BattleEffect, ParticleSpritesD, GreenPalette, SwordSlashSheet, RuneSheet, FlameColumnSheet
+	group BattleEffect, EarthWallSheet, OrangePaletteA, FlashBurstSheet, ThornSheet, CometSheetA
+	group BattleEffect, CometSheetB, CometSheetC, WhirlwindSheet, GreenPillarSheet, VineSheet
+	group BattleEffect, FirePillarSheetA, RedPaletteB, OrangePaletteB, VioletCometSheet, FlameballSheet
+	group BattleEffect, BoulderSheet, RockWallSheet, StarDotSheet, MarsDjinnSheet, MarsDjinnSmallSheet
+	group BattleEffect, JupiterDjinnSheet, JupiterDjinnSmallSheet, MercuryDjinnSheet, MercuryDjinnSmallSheet, VenusDjinnSheet
+	group BattleEffect, VenusDjinnSmallSheet, FireBlobSheet, FireStreakSheet, LavaOrbSheet, YellowRingSheet
+	group BattleEffect, YellowOrbSheet, BubbleSheet, ShieldSheet, DaggerSheet, PaletteRampImage
+	group BattleEffect, SmokeSheet, BluePalette, LimePalette, PinkPalette, VioletPaletteC
+	group BattleEffect, CyanPalette, TanPalette, WispSheet, GreenVineSheet, PortalSheet
+	group BattleEffect, SheepSheet, SkullSheet, HeartSheet, CounterRevealSheet, RedCrescentSheetA
+	group BattleEffect, BlueBeastSheet, RedCrescentSheetB, SpiralSheet, VioletStreakSheet, CrescentMoonSheet
+	group BattleEffect, ThornVineSheet, IceShardSheet, EmberStreakSheet, BlueArcSheetA, BlueArcSheetB
+	group BattleEffect, GlowOrbSheet, IceChipSheet, IceBlockSheet, SparkleDots, PinkBurstSheet
+	group BattleEffect, LightFanSheet, BlueBurstSheet, DustPuffSheet, GoldShellSheet, BlastSheet
+	group BattleEffect, FlameSheetB, FirePillarSheetB, RockSpireSheet, LightningBoltSheet, BeamImage
+	group BattleEffect, TwelveModeImage, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
+	group BattleEffect, VioletPaletteD, BlueBeamSheet, VortexSheet, TornadoSheet, CrystalSheet
+	group BattleEffect, WaterSparkleSheet, LightningPillarSheet, StagedParticlePath, DualStreamPath
 	group Field, PerspectiveDataA, DefaultGridCells, DefaultTileAnimation, DefaultCellPictureAttributes
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource WorldMapTilesA, WorldMap_TilesA

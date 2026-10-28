@@ -11,7 +11,7 @@
 #include "farcall.h"
 
 struct BattleAction;
-struct BattleAnimArgs;
+struct BattleEffectParams;
 struct BattleActionRun;
 struct Unit;
 struct Actor;
@@ -36,7 +36,7 @@ struct ArcObject;
 struct ArcParticle;
 struct AbilityDefinition;
 struct BattleAction;
-struct BattleAnimArgs;
+struct BattleEffectParams;
 struct BattlePlaybackWork;
 struct BattleSideOrder;
 struct SceneEncounterRule;
@@ -49,7 +49,7 @@ struct TriggerView;
 struct FieldParticle;
 struct EnemyDefinition;
 struct Actor;
-struct BattleAnimObject;
+struct BattleEffectObject;
 struct SpriteScale;
 struct ItemBreakFragmentSource;
 struct LinkedCaptureObject;
@@ -136,10 +136,10 @@ extern u16 gEncounterZones[];
 /// runs.
 extern struct MindReadWork *gMindReadWork;
 #endif
-#ifndef OWN_gBattleAnimWork
-/// The heap slots from HEAP_SLOT_BATTLE_ANIM, then the canvas and sheet:
-/// the running battle animation's BattleAnimWork first.
-extern void *gBattleAnimWork[];
+#ifndef OWN_gBattleEffectWork
+/// The heap slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet:
+/// the running battle effect's BattleEffectWork first.
+extern void *gBattleEffectWork[];
 #endif
 #ifndef OWN_gEnemyUnits
 /// The HEAP_SLOT_ENEMY_UNITS heap slot: the six enemy battle units,
@@ -171,8 +171,8 @@ extern u16 gBattleUnit_WeaponAnimationsIsaac[];
 /// below) and then its scenes, ended by 0; a scene not listed takes the last
 /// background (BattleBackground_SelectForMap).
 extern s32 gScene_BattleBackgroundRules[];
-/// The template BattleAnim_BuildBlitter walks word by word to write a blitter
-/// (battle_anim_composite.s); none of it runs where it is.
+/// The template BattleEffect_BuildBlitter walks word by word to write a blitter
+/// (battle_effect_composite.s); none of it runs where it is.
 extern const u32 gBlitterTemplate[];
 /// The message voice's rate by message speed option: 1, 3, then 10
 /// (Message_SetVoiceFromActor). The same values as

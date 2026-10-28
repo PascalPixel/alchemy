@@ -30,7 +30,7 @@
 // by DMA, the spark sheet, the orb sheet, the transfer callback (half the
 // last frame left behind), and the sparks at the target.
 
-// Port of The Broken Seal's BattleAnim_RunBeam, with The Lost
+// Port of The Broken Seal's BattleEffect_RunBeam, with The Lost
 // Age's heap slots, blitter modes (3 minus ☀️'s) and callback order, no
 // work->effect store, and these changes: kind 6 joins kind 5, kind 3 has
 // its own test, the beam is drawn additive (☀️ draws it with max), the

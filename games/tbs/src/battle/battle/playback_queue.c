@@ -212,7 +212,7 @@ void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
 /// Plays the queued playback at once, in order (BattlePlayback_Run
 /// plays them over frames instead): the messages with their arguments, the
 /// hit flashes, the downed units, the redraws. Then empties the queue.
-/// Called where an outcome is shown outside an animation: by the staging
+/// Called where an outcome is shown outside an effect: by the staging
 /// runners (a blocked cast, a dodge, a broken item, an action's targets one by
 /// one), BattleActionRun_Build's debug defeat, and the end of an action or a
 /// turn (turn_end.c). Each message, flash and fall waits its frames here. Ends

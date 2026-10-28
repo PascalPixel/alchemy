@@ -14,7 +14,7 @@ enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 /// action's targets. Its message phases (PLAY_MESSAGE and the like) are
 /// private to playback.c.
 enum BattlePlaybackPhase {
-  BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the animation resumes it
+  BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the effect resumes it
   BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET =
       1,                              ///< resolves the next target's commands
   BATTLE_PLAYBACK_PHASE_DISPATCH = 2, ///< plays the queued commands in order

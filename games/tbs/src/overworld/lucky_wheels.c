@@ -11,7 +11,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "battle_anim_work.h"
+#include "battle_effect_work.h"
 #include "heap.h"
 #include "adventure.h"
 #include "types.h"
@@ -45,7 +45,7 @@
 #define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapGridCellBuffer)
 
 /// Lucky Wheels' own work block (struct LuckyWheelsWork), beside the
-/// battle animation blocks it borrows.
+/// battle effect blocks it borrows.
 #define LUCKY_WHEELS_HEAP_SLOT 45
 
 /// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
@@ -104,12 +104,12 @@ s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
 /// clears it or fades it into trails as transferMode says.
 void LuckyWheels_TransferCanvas(void) {
-  struct BattleAnimWork *work;
+  struct BattleEffectWork *work;
   u8 *buf;
 
-  work = gBattleAnimWork[0];
+  work = gBattleEffectWork[0];
   if (work->transferPending == 1) {
-    buf = gBattleAnimWork[1];
+    buf = gBattleEffectWork[1];
     switch (work->transferMode) {
     case 1:
       // Then fill the canvas with transferValue.
@@ -219,7 +219,7 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80; // 0.5 in 8-bit fixed point
-  u8 *canvas = ((u8 **)gBattleAnimWork)[1];
+  u8 *canvas = ((u8 **)gBattleEffectWork)[1];
   s32 step;
   s32 i;
   s32 x;
@@ -356,7 +356,7 @@ void LuckyWheels_Update(void) {
    * each list loop's offset givs; as plain u32 words, 1242 of 1729
    * instructions differ in tbs-en. */
   struct LuckyWheelsWork *work;
-  struct BattleAnimWork *fx;
+  struct BattleEffectWork *fx;
   volatile u16 *dma;
   s32 sprite;
   s32 objMode;
@@ -373,9 +373,10 @@ void LuckyWheels_Update(void) {
   s32 k;
   s32 i;
 
-  work = ((struct LuckyWheelsWork **)
-              gBattleAnimWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_ANIM];
-  fx = gBattleAnimWork[0];
+  work =
+      ((struct LuckyWheelsWork **)
+           gBattleEffectWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
+  fx = gBattleEffectWork[0];
   sprite = 0;
   objMode = 0x400;
 
@@ -898,7 +899,7 @@ void LuckyWheels_Update(void) {
 /// screen's lines and the betting window, and starts at betting.
 void LuckyWheels_InitializeTitle(void) {
   struct LuckyWheelsWork *state;
-  struct BattleAnimWork *work;
+  struct BattleEffectWork *work;
   struct Particle *letter;
   const u8 *width;
   s32 left;
@@ -909,9 +910,10 @@ void LuckyWheels_InitializeTitle(void) {
   struct Window *window;
   s32 message;
 
-  state = ((struct LuckyWheelsWork **)
-               gBattleAnimWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_ANIM];
-  work = gBattleAnimWork[0];
+  state =
+      ((struct LuckyWheelsWork **)
+           gBattleEffectWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
+  work = gBattleEffectWork[0];
   left = 0;
   for (i = 0; i != 0x800; i++)
     LUCKY_WHEELS_SPARKS[i].variant = 0;
@@ -963,7 +965,7 @@ void LuckyWheels_Run(void) {
   DrawRectangle draw[2];
   u8 *sheet;
   void *canvas;
-  struct BattleAnimWork *work;
+  struct BattleEffectWork *work;
   struct LuckyWheelsWork *state;
   struct AdventureWonPrizesView *save;
   u8 *entry;
@@ -976,13 +978,13 @@ void LuckyWheels_Run(void) {
 
   sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
-  work =
-      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleAnimWork));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT,
+                             sizeof(struct BattleEffectWork));
   state = HeapSlot_AllocEwram(LUCKY_WHEELS_HEAP_SLOT,
                               sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
   save = (struct AdventureWonPrizesView *)((u8 *)&gAdventure + 12);
-  Stub_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
+  Stub_NoOpHook((s32)&ResourceId_BattleEffectFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;
@@ -1119,9 +1121,9 @@ void LuckyWheels_Run(void) {
       }
     }
 
-    BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 8, 7, 3, 2);
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 8, 7, 3, 2);
     draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
-    BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 8, 7, 3, 3);
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 8, 7, 3, 3);
     draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     Iwram_FillWords(canvas, size, 0);
     Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
@@ -1286,7 +1288,7 @@ void LuckyWheels_Run(void) {
     Task_Remove(LuckyWheels_Update);
     HeapSlot_Release(LUCKY_WHEELS_HEAP_SLOT);
     HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
-    HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
     HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   }
 }

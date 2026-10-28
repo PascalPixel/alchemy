@@ -104,7 +104,7 @@ runs from [IWRAM](../../glossary.md#iwram-and-ewram).
 ## How it fits with the rest of the game
 
 Every part of the game plays sound through `Sound_PlaySongFar`: scenes name
-their music on entry, menus click, battle animations play their impacts. The
+their music on entry, menus click, battle effects play their impacts. The
 blank's code in [Runtime](../runtime/README.md#the-frame-loop) steps the
 music's volume and enters the mixer every VBlank, and the mixer's resident
 code is part of what start-up copies into IWRAM

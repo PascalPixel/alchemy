@@ -20,9 +20,9 @@ void Dma_StopAllThenRunHook(void) {
   _call_via_r0(IwramIrqModeWord);
 }
 
-/// Starts playback of the action's targets when the animation's blow lands.
-/// Reached as ANIM_SHOW_DAMAGE(hitSound), through
-/// BattlePlayback_StartFar, from the battle animations (see the folder README).
+/// Starts playback of the action's targets when the effect's blow lands.
+/// Reached as EFFECT_SHOW_DAMAGE(hitSound), through
+/// BattlePlayback_StartFar, from the battle effects (see the folder README).
 /// Only while playback is idle: sets the phase to
 /// BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET, and a nonzero cue to pendingSong; a
 /// later call before the reset does nothing.
@@ -100,7 +100,7 @@ void BattlePlayback_Run(void) {
     Iwram_ClearWords(tiles, record->width * record->height);
   }
 
-  // Idle until the animation's blow lands; ready once every target is played.
+  // Idle until the effect's blow lands; ready once every target is played.
   if (battle->playback.phase == BATTLE_PLAYBACK_PHASE_IDLE)
     return;
   for (;;) {
@@ -451,9 +451,9 @@ void BattlePlayback_Reset(void) {
 
 /// Waits, a frame at a time, until BattlePlayback_Run has played every
 /// target, then removes the task and resets the playback.
-/// Called after the animation by the staging runners in staging.c, and after a
-/// Djinn's animation by BattleActionRun_Build and turn_end.c. Playback still
-/// idle (the animation never called ANIM_SHOW_DAMAGE) is started here.
+/// Called after the effect by the staging runners in staging.c, and after a
+/// Djinn's effect by BattleActionRun_Build and turn_end.c. Playback still
+/// idle (the effect never called EFFECT_SHOW_DAMAGE) is started here.
 #ifdef UBFIX
 void BattlePlayback_WaitForReady(void) {
 #else

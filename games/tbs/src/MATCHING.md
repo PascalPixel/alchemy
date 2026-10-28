@@ -204,7 +204,7 @@ is the struct an [actor](../glossary.md#actor) is read through.
 - Palette RAM and VRAM are written through either a volatile pointer or a
   plain one. Palette RAM is either `BG_PLTT_COLOR`, which is volatile, or a
   plain pointer to it such as `(u16 *)&BG_PLTT_COLOR(14, 0)`.
-  `BattleAnim_RunJudgment`'s brightening ramp keeps a `volatile u16 *`,
+  `BattleEffect_RunJudgment`'s brightening ramp keeps a `volatile u16 *`,
   because with a plain pointer the mask that picks out red is hoisted out of
   the loop.
 - A cast to a narrower type can be part of the spelling: `(u16)~(...)` makes
@@ -252,7 +252,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   prefix (`FieldEvent_ShowMessageThenWait`), and where folding changes no
   function the two are one name (`Actor_Stop`, `Event_WaitFrames`).
 - A statement macro takes the shape all its uses match with. In
-  `BattleAnim_BuildBlitter`'s second walk, `PUT`, `COPY` and `PATCH` are
+  `BattleEffect_BuildBlitter`'s second walk, `PUT`, `COPY` and `PATCH` are
   `do { } while (0)` blocks and the others plain statements or a block.
 - A register write is either `Io_Write16(value, &REG_X)`, which builds the
   value in a word first and keeps the store where it's written, or plain
@@ -269,7 +269,7 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   (`speed = 0x3ff; speed &= Random16();`). Written as `Random16() & 0x3ff`,
   the mask goes into a scratch register and the result is copied before the
   `and`, so 3 instructions differ at each site (`LuckyWheels_Run` and several
-  battle animations).
+  battle effects).
 - Where a statement sits and which variable holds a value decide the
   schedule and the registers: `Glyph_DrawArm` writes `nextRow = row + 1` in
   both arms of a test rather than once ahead of it, and `Message_Decode`
@@ -332,7 +332,7 @@ several ways: `HEAP_SLOT_BLOCK(n)`, `gHeapSlots[n]`, `*(gHeapSlots + n)`, the
 slot's own name (`gWindowWork[0]`, `WINDOW_WORK`), from a neighbouring slot
 (`gFieldBlendWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD_BLEND]` in
 `Weather_UpdateLightning`), through a base pointer (`slots[n - base]`,
-`ANIM_SLOT`, `ANIM_BLITTERS[n]`), or with `HeapSlot_AllocEwram`, which returns
+`EFFECT_SLOT`, `EFFECT_BLITTERS[n]`), or with `HeapSlot_AllocEwram`, which returns
 the existing block. Indexing past a named pointer (`(void **)&gBattleCamera`) is
 undefined behaviour, with its defined form behind `UBFIX`. Not every site has
 been measured against the other spellings; each keeps its spelling until it

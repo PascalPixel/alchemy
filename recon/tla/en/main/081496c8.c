@@ -1,5 +1,5 @@
 // Near miss, differ 23 of 96 (2026-10-26; 47 before): The Broken Seal's
-// BattleAnim_UpdatePhasePalette (games/tbs/src/battle_anim/parts/prism.c)
+// BattleEffect_UpdatePhasePalette (games/tbs/src/battle_effect/parts/prism.c)
 // with ⚓️'s levels: each channel's offset plus 16, times the index, over 64.
 // The levels written inside the loop (loop.c hoists the + 16, as the native
 // adds it in place after the calls) and the palette indexed by the counter

@@ -122,12 +122,12 @@ enum HeapSlot {
   HEAP_SLOT_FADE_OVERLAY = 36,
   /// The battle message window's work (struct BattleMessageWork).
   HEAP_SLOT_BATTLE_MESSAGE = 37,
-  /// The running battle animation's own work (gBattleAnimWork). Lucky Dice
+  /// The running battle effect's own work (gBattleEffectWork). Lucky Dice
   /// keeps its own work in this slot and the next two.
-  HEAP_SLOT_BATTLE_ANIM = 39,
-  /// The running battle animation's pixel canvas.
+  HEAP_SLOT_BATTLE_EFFECT = 39,
+  /// The running battle effect's pixel canvas.
   HEAP_SLOT_BATTLE_CANVAS = 40,
-  /// The running battle animation's tile sheet, or its set of mote cells.
+  /// The running battle effect's tile sheet, or its set of mote cells.
   HEAP_SLOT_BATTLE_SHEET = 41,
   /// The battle's entry transition timer, in frames (gBattleEntryTimer).
   HEAP_SLOT_BATTLE_ENTRY_TIMER = 42,
@@ -139,11 +139,11 @@ enum HeapSlot {
   /// Lucky Dice's sprites (0x618 bytes), for as long as the game runs.
   HEAP_SLOT_LUCKY_DICE_SPRITES = 45,
   /// A routine run from RAM: the canvas drawing routine
-  /// BattleAnim_BuildBlitter writes, called as a DrawRectangle and released
+  /// BattleEffect_BuildBlitter writes, called as a DrawRectangle and released
   /// before its canvas, or the world map's copy of Transform_UpdateVertices.
   HEAP_SLOT_RAM_CODE = 46,
   /// A second routine as HEAP_SLOT_RAM_CODE, released before it: always a
-  /// BattleAnim_BuildBlitter routine, the second of a pair whose first is in
+  /// BattleEffect_BuildBlitter routine, the second of a pair whose first is in
   /// HEAP_SLOT_RAM_CODE.
   HEAP_SLOT_RAM_CODE_2 = 47,
   /// Copied field row drawer or window tile decoder, released after each call.

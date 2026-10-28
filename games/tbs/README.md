@@ -6,7 +6,7 @@ use the Japanese subtitle, or TBS, to keep it apart from
 
 ## How the game is built
 
-Every sequence, event, menu and battle animation in The Broken Seal is code
+Every sequence, event, menu and battle effect in The Broken Seal is code
 that runs from its start to its end and waits where it stands whenever time
 must pass, while short tasks run once a frame to keep the world moving:
 
@@ -22,7 +22,7 @@ must pass, while short tasks run once a frame to keep the world moving:
   ([Waiting in place](#waiting-in-place)).
 - **The scene's loop only listens.** The scene sequence goes round once a
   frame while the player walks, and acts on what the tasks noted down.
-- **A battle's rules and animations run together.** Damage appears while the
+- **A battle's rules and battle effects run together.** Damage appears while the
   attack is still on screen ([Battles](#battles)).
 - **A frame that runs long slows the game instead of skipping work.** The
   picture and every movement slow down; the music doesn't
@@ -199,7 +199,7 @@ The screen refreshes about 60 times a second, at each
 [VBlank](glossary.md#vblank). The game moves in
 [frames](glossary.md#frame), and every frame happens inside one function,
 `WaitFrames`. Whatever code is in charge (the scene sequence, an event, a
-menu, a battle animation) calls it when time must pass:
+menu, a battle effect) calls it when time must pass:
 
 ```c
 void WaitFrames(s32 frames) {         /* simplified */
@@ -456,15 +456,15 @@ for (;;) {                                  /* one turn */
 }
 ```
 
-An attack's animation is an ordinary function that waits frame by frame.
-Its damage comes from a task, playback, which stays idle until the animation
+An attack's battle effect is an ordinary function that waits frame by frame.
+Its damage comes from a task, playback, which stays idle until the effect
 signals that the blow has landed and then applies it target by target. So
 Quake's damage messages appear while the rock is still rising, rather than
-after it: the rules decide how much, the animation only when. The battle's
+after it: the rules decide how much, the effect only when. The battle's
 code also stays loaded between battles, so starting one unpacks nothing.
 
 **Reference:** [Battle](battle.md) ·
-[Rules and animations run together](battle.md#rules-and-animations-run-together)
+[Rules and battle effects run together](battle.md#rules-and-battle-effects-run-together)
 
 ## Scenes and overlays
 
@@ -619,7 +619,7 @@ the sound code, the music and the packed pictures and maps.
 
 | Folder                                    | Holds                                         |
 | ----------------------------------------- | --------------------------------------------- |
-| `runtime`, `field`, `window`, `game`, `overworld`, `menu`, `shop`, `battle`, `battle_anim` | the nine large banks, in cartridge order; the five small banks' code sits with the folder it belongs to |
+| `runtime`, `field`, `window`, `game`, `overworld`, `menu`, `shop`, `battle`, `battle_effect` | the nine large banks, in cartridge order; the five small banks' code sits with the folder it belongs to |
 | `graphics`, `map`, `sound`, `cartridge`   | code grouped by topic, linked wherever needed |
 | `scene`, `debug`                          | overlays                                      |
 
@@ -645,7 +645,7 @@ section pages follow them.
 | Page                                                 | Covers                                                                   |
 | ---------------------------------------------------- | ------------------------------------------------------------------------ |
 | [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, songs         |
-| [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its animations       |
+| [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its battle effects   |
 | [Field](field.md)                                    | actors and movement, the maps, the requests, field Psynergy, debug rooms |
 | [User Interface](user_interface.md)                  | the field menu and its screens, shops and inns, windows                  |
 | [Places](src/field/scenes.s)                         | every scene in story order, with its actor placements and triggers       |

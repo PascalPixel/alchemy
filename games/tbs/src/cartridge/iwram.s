@@ -252,8 +252,8 @@ gFadeOverlayWork:
 	.global gBattleMessageWork
 gBattleMessageWork:
 	.space 0x00000008
-	.global gBattleAnimWork
-gBattleAnimWork:
+	.global gBattleEffectWork
+gBattleEffectWork:
 	.space 0x0000000c
 	.global gBattleEntryTimer
 gBattleEntryTimer:

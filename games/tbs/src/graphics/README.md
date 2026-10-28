@@ -8,8 +8,8 @@ screens that are mostly pictures, the title intro and the credits, the
 handwritten decoders that unpack tiles and animation pictures for the rest of
 the game, and a few helpers of the German and Italian message text that sit
 beside them on the cartridge.
-[Battle animations](../battle_anim/README.md) load their sheets from
-`battle_anims/`, and each [map](../../glossary.md#map) in
+[Battle effects](../battle_effect/README.md) load their sheets from
+`battle_effects/`, and each [map](../../glossary.md#map) in
 [Maps](../map/README.md) places its tiles from `tileset/`.
 
 ## How a picture is built and placed
@@ -151,7 +151,7 @@ The title intro and the credits are main-image code the title overlay calls
 through their banks' [far-call](../../glossary.md#far-call) tables. The
 decoders are called by the code that loads pictures everywhere else, many
 from a copy in a [heap slot](../../glossary.md#heap-slot). The pictures
-belong to the code that loads them: battle animations, scenes, maps, windows
+belong to the code that loads them: battle effects, scenes, maps, windows
 and menus.
 
 ## Limits

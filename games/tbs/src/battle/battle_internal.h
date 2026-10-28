@@ -77,7 +77,7 @@
 #include "irqlock.h"
 #include "transform.h"
 #include "blitter.h"
-#include "battle_anim_work.h"
+#include "battle_effect_work.h"
 #include "character.h"
 #include "io_write_queue.h"
 #include "item.h"
@@ -182,7 +182,7 @@
 /// glow.
 enum BattleCastKind {
   CAST_PSYNERGY = 0, ///< the star field gathers on the caster
-  CAST_DJINNI = 1,   ///< no glow; the animation plays its prelude
+  CAST_DJINNI = 1,   ///< no glow; the effect plays its prelude
   CAST_ENEMY = 2     ///< the element's streaks
 };
 
@@ -205,7 +205,7 @@ enum BattleCastKind {
 #define YAW_PARTY_ACTION 0x2000
 #define YAW_ENEMY_ACTION -0x2000
 
-/// The camera's yaw from behind the enemies, which an enemy's staged animation
+/// The camera's yaw from behind the enemies, which an enemy's staged effect
 /// and cast take in place of YAW_ENEMY_ACTION.
 #define YAW_BEHIND_ENEMIES 0x5000
 

@@ -66,7 +66,7 @@ void *GetMotionRecordFar(struct Actor *actor, s32 record_index);
 /// semi-transparent, or stops the highlight with HIGHLIGHT_OFF.
 void BattleHighlight_SetModesFar(u16 *actors, s32 mode);
 /// Starts playback of the targets' results as an animation's blow lands, with
-/// `cue` as the hit's sound (0 keeps the one set); see ANIM_SHOW_DAMAGE.
+/// `cue` as the hit's sound (0 keeps the one set); see EFFECT_SHOW_DAMAGE.
 void BattlePlayback_StartFar(s32 cue);
 /// Copies `count` colours with each channel scaled by `scale` (16.16, at most
 /// 1), to darken a palette; returns 0.

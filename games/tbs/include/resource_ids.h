@@ -15,9 +15,9 @@ extern char ResourceId_BuildStamp;
 /// The row of FarCall_TitleTable. The Title hands it to
 /// Stub_NoOpHook, which ignores it.
 extern char ResourceId_TitleFarCalls;
-/// The row of FarCall_BattleAnimTable. Lucky Dice and Lucky Wheels hand it to
+/// The row of FarCall_BattleEffectTable. Lucky Dice and Lucky Wheels hand it to
 /// Stub_NoOpHook as they start.
-extern char ResourceId_BattleAnimFarCalls;
+extern char ResourceId_BattleEffectFarCalls;
 /// The row of FarCall_ResourceTable, which the sprite viewer passes to
 /// Stub_ReturnZero when Select is pressed with B held.
 extern char ResourceId_ResourceFarCalls;
@@ -137,7 +137,7 @@ extern char ResourceId_LuckyDiceBoard;
 /// The Lucky Dice sprites and their colours.
 extern char ResourceId_LuckyDiceSprites;
 
-// The flashing strikes' pictures (battle_anim/parts/thrash.c). Each holds two
+// The flashing strikes' pictures (battle_effect/parts/thrash.c). Each holds two
 // pictures; the first of a pair fills work->imageStorage, the second the start
 // of Ram_MapGridCellBuffer.
 
@@ -150,7 +150,7 @@ extern char ResourceId_RevealMaskE;
 /// Second of the pair for FLASHING_STRIKE_UNUSED.
 extern char ResourceId_RevealMaskF;
 
-// Battle animation pictures. A sheet holds 64 colours (128 bytes) and then its
+// Battle effect pictures. A sheet holds 64 colours (128 bytes) and then its
 // compressed pictures, which the animation parts load with
 // Resource_LoadAndDecompress; a palette holds colours alone, which a part
 // copies over a shared sheet's to recolour it, and some parts borrow a sheet's
@@ -178,7 +178,7 @@ extern char ResourceId_ParticleSpritesA;
 /// A second shared particle sheet: the beams, Bind, Death Plunge,
 /// Ice and Douse, the Neptune summon, the stat changes, and Lucky Wheels.
 extern char ResourceId_ParticleSpritesD;
-/// Curse's flames (BattleAnim_RunCurse).
+/// Curse's flames (BattleEffect_RunCurse).
 extern char ResourceId_FlameColumnSheet;
 /// Shared by the blessings' showers, the casting impact, Death Plunge, Dragon
 /// Cloud, Planet Diver, Plasma, Ragnarok, Tiamat and Titan Blade.
@@ -191,10 +191,10 @@ extern char ResourceId_CometSheetA;
 extern char ResourceId_CometSheetB;
 /// Cutting Edge's large comet, and one of Slash's.
 extern char ResourceId_CometSheetC;
-/// GROWING_COLUMNS_PILLARS, in BattleAnim_RunGrowingColumns.
+/// GROWING_COLUMNS_PILLARS, in BattleEffect_RunGrowingColumns.
 extern char ResourceId_GreenPillarSheet;
 extern char
-    ResourceId_VineSheet; ///< BattleAnim_RunGrowingColumns' other modes.
+    ResourceId_VineSheet; ///< BattleEffect_RunGrowingColumns' other modes.
 extern char ResourceId_StarDotSheet; ///< The swirling stars of orbiting.c.
 /// Borrowed mostly for its colours: by the showers, the casting impact,
 /// Rumble's lights, the healing motes, the lobbed shells, the walls, the
@@ -303,7 +303,7 @@ extern char ResourceId_CommandIcons;
 /// MapGrid_LoadMap adds them to it.
 extern char ResourceId_Map001;
 
-// Battle animation pictures, continued.
+// Battle effect pictures, continued.
 
 extern char ResourceId_SheepSheet; ///< Sleep's sheep, among the status motes.
 /// Poison Beat, Spinning Beat and Spider Web.
@@ -404,7 +404,7 @@ extern char ResourceId_BlueBeamSheet;
 /// Froth and Whirlwind, and the status motes.
 extern char ResourceId_VortexSheet;
 extern char ResourceId_LightningPillarSheet; ///< Plasma and the Thor summon.
-/// The shattering opening (BattleAnim_RunShatteringOpening).
+/// The shattering opening (BattleEffect_RunShatteringOpening).
 extern char ResourceId_TileAnimationMask;
 extern char ResourceId_VioletPaletteA;  ///< Colours for Death Plunge.
 extern char ResourceId_RedPaletteA;     ///< Colours for Death Plunge.

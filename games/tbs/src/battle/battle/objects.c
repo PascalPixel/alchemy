@@ -358,7 +358,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
 /// sets every listed unit's pose again afterwards. Called by BattleObject_Put
 /// (refreshing) and BattleUnit_ListAllAndSubmit, by the staging and
 /// entry transition code, and through its far stub by
-/// BattleAnim_SelectLivingTargets. Writes the actors' sprites, their storage
+/// BattleEffect_SelectLivingTargets. Writes the actors' sprites, their storage
 /// kind and height, and the battle objects' icon and shadow entries.
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;

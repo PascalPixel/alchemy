@@ -25,7 +25,7 @@ struct SpriteAnimation;
 struct AnimationMetadata;
 struct Sprite;
 struct BattleAction;
-struct BattleAnimArgs;
+struct BattleEffectParams;
 struct AbilityDefinition;
 struct BattleObject;
 struct Unit;
@@ -37,7 +37,7 @@ struct Vector3;
 struct EnemyDefinition;
 struct Actor;
 struct FieldPosition;
-struct BattleAnimObject;
+struct BattleEffectObject;
 struct ItemDefinition;
 struct LevelUpResult;
 struct MenuSprite;
@@ -71,7 +71,7 @@ struct WorldPosition;
 #include "farcall/menu.h"
 #include "farcall/shop.h"
 #include "farcall/battle.h"
-#include "farcall/battle_anim.h"
+#include "farcall/battle_effect.h"
 #include "farcall/credits.h"
 #include "farcall/title.h"
 #include "farcall/lucky_dice.h"

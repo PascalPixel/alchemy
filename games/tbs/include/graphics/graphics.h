@@ -130,7 +130,7 @@ extern const u8 PaletteFade_DarkenKernel[];
 /// Darkens as PaletteFade_DarkenKernel, writing back only groups of four
 /// pixels not all 0 already.
 extern const u8 PaletteFade_DarkenPartialKernel[];
-/// Halves each pixel step; the battle animation canvas's transfers use it.
+/// Halves each pixel step; the battle effect canvas's transfers use it.
 extern const u8 PaletteFade_HalveKernel[];
 /// Halves each pixel step, skipping all-zero groups; Lucky Wheels' canvas uses
 /// it.
@@ -305,12 +305,12 @@ extern u8 Message_FindCodeSize[];
 /// The party status window's column lines, ended by -1: the Djinn column's
 /// first, then one between members.
 extern const s8 gWindow_PartyColumnOffsets[];
-#ifndef OWN_FarCall_BattleAnimTable
-/// The battle animation bank's far-call table, declared as a function so that a
-/// call reaches its first stub, BattleAnim_BuildBlitterFar; nothing in this
+#ifndef OWN_FarCall_BattleEffectTable
+/// The battle effect bank's far-call table, declared as a function so that a
+/// call reaches its first stub, BattleEffect_BuildBlitterFar; nothing in this
 /// game calls it by this name.
-s32 FarCall_BattleAnimTable(s32 slot, s32 width_shift, s32 height_shift,
-                            s32 flags, u32 mode);
+s32 FarCall_BattleEffectTable(s32 slot, s32 width_shift, s32 height_shift,
+                              s32 flags, u32 mode);
 #endif
 
 #endif

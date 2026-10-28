@@ -118,18 +118,19 @@ finish:
   return fled;
 }
 
-/// Fills an animation command from an action run: its kind and strength,
+/// Fills a battle effect command from an action run: its kind and strength,
 /// the acting unit and the targets still standing (or every target, for an
-/// animation that revives), at least the first. Called by each staging runner
-/// before its animation plays: RunUnitTransition, RunAttack, RunPlainAttack,
-/// RunItem and RunPsynergyCast. Writes args' prelude (0), kind, variant, user,
-/// targets, firstTarget, targetCount and range (1); the caller sets its side.
+/// battle effect that revives), at least the first. Called by each staging
+/// runner before its battle effect plays: RunUnitTransition, RunAttack,
+/// RunPlainAttack, RunItem and RunPsynergyCast. Writes args' prelude (0), kind,
+/// variant, user, targets, firstTarget, targetCount and range (1); the caller
+/// sets its side.
 #ifdef UBFIX
 void BattleStaging_BuildTargetList(struct BattleActionRun *plan,
-                                   struct BattleAnimArgs *args) {
+                                   struct BattleEffectParams *args) {
 #else
 s32 BattleStaging_BuildTargetList(struct BattleActionRun *plan,
-                                  struct BattleAnimArgs *args) {
+                                  struct BattleEffectParams *args) {
 #endif
   s16 *outputTarget;
   u32 flags;
@@ -139,9 +140,9 @@ s32 BattleStaging_BuildTargetList(struct BattleActionRun *plan,
 
   livingTargets = 0;
   args->prelude = 0;
-  flags = plan->animation;
-  args->kind = flags & ANIM_ID_MASK;
-  args->variant = (flags & ANIM_VARIANT_MASK) >> ANIM_VARIANT_SHIFT;
+  flags = plan->battleEffect;
+  args->kind = flags & EFFECT_ID_MASK;
+  args->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
   args->user = plan->unitId;
   targetIndex = 0;
   if (targetIndex < plan->targetCount) {
@@ -149,7 +150,7 @@ s32 BattleStaging_BuildTargetList(struct BattleActionRun *plan,
     outputTarget = args->targets;
     do {
       if (Unit_GetFar(*inputTarget)->hp != 0 ||
-          (plan->animation & ANIM_ON_DOWNED)) {
+          (plan->battleEffect & EFFECT_ON_DOWNED)) {
         livingTargets++;
         *outputTarget++ = *inputTarget;
       }
@@ -245,15 +246,15 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
 }
 
 /// Plays a summon or a full-screen Psynergy. The camera turns to the target
-/// side (or to the acting unit's, for a staged animation), the unit glows in
-/// its element and the other side fades out; then, unless the cast failed
+/// side (or to the acting unit's, for a staged battle effect), the unit glows
+/// in its element and the other side fades out; then, unless the cast failed
 /// ("blocked" or too little PP), the target side's units are readied alone
-/// and the animation plays during playback. Everyone fades back in.
+/// and the battle effect plays during playback. Everyone fades back in.
 /// Called by BattleStaging_DispatchAction for STAGING_SUMMON (with
 /// STAGING_HIDE_ACTOR) and STAGING_FULL_SCREEN. Sets gBattleBackgroundWork's
-/// yaw (and its frames, for an animation), REG_BLDCNT and REG_BLDALPHA for the
-/// fades, and the units' colour modes; schedules BattlePlayback_Run around the
-/// animation.
+/// yaw (and its frames, for a battle effect), REG_BLDCNT and REG_BLDALPHA for
+/// the fades, and the units' colour modes; schedules BattlePlayback_Run around
+/// the battle effect.
 /// @param mode STAGING_HIDE_ACTOR hides the acting unit too (the summons)
 s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   u16 units[14];
@@ -271,13 +272,13 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   void **slots = (void **)&gBattleWork;
 #endif
 
-  // The camera: a staged animation turns to the acting unit's side over 60
+  // The camera: a staged battle effect turns to the acting unit's side over 60
   // frames (an enemy's to YAW_BEHIND_ENEMIES); otherwise the acting side's
   // usual view.
   BattleStaging_BuildTargetList(plan, &work.effect);
   actor = plan->unitId;
   target = plan->targetIds[0];
-  if (plan->animation & ANIM_SUMMON) {
+  if (plan->battleEffect & EFFECT_SUMMON) {
     struct BattleBackgroundWork *view;
     s32 yaw;
 #ifdef UBFIX
@@ -362,12 +363,11 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
       units[n] = plan->targetIds[n];
     units[n] = BATTLE_UNIT_LIST_END;
     // Save each target's layer colour modes (all but its last layer) in
-    // work, beside the animation command. RunItem and RunPsynergyCast do the
-    // same.
-    // Nothing reads them back: every animation reads its command only
-    // through struct BattleAnimArgs's named fields, which end before them,
-    // and the colour modes are put back from BattleObject_GetPalette
-    // (BattleAnim_SetupBlendedDisplay) or cleared afterwards.
+    // work, beside the battle effect command. RunItem and RunPsynergyCast do
+    // the same. Nothing reads them back: every battle effect reads its command
+    // only through struct BattleEffectParams's named fields, which end before
+    // them, and the colour modes are put back from BattleObject_GetPalette
+    // (BattleEffect_SetupBlendedDisplay) or cleared afterwards.
     // XXX (no evidence): what they were kept for; no reader in this game's
     // battle code shows it.
     for (i = 0; i != work.effect.targetCount; i++) {
@@ -380,29 +380,29 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
         work.savedAnimationParameters[i][child] =
             animation->entries[child]->colorMode;
     }
-    // The side the animation plays on: the targets'.
-    if (plan->animation & ANIM_SUMMON) {
+    // The side the battle effect plays on: the targets'.
+    if (plan->battleEffect & EFFECT_SUMMON) {
       if (target > ALLY_MAX)
-        work.effect.side = ANIM_SIDE_ENEMIES;
+        work.effect.side = EFFECT_SIDE_ENEMIES;
       else
-        work.effect.side = ANIM_SIDE_PARTY;
+        work.effect.side = EFFECT_SIDE_PARTY;
     } else {
       if (plan->targetIds[0] <= ALLY_MAX)
-        work.effect.side = ANIM_SIDE_PARTY;
+        work.effect.side = EFFECT_SIDE_PARTY;
       else
-        work.effect.side = ANIM_SIDE_ENEMIES;
+        work.effect.side = EFFECT_SIDE_ENEMIES;
     }
-    if (plan->animation & ANIM_OTHER_SIDE)
+    if (plan->battleEffect & EFFECT_OTHER_SIDE)
       work.effect.side ^= 1;
-    // The animation runs to its end while playback, a task, plays
+    // The battle effect runs to its end while playback, a task, plays
     // each target's outcome from the frame the blow lands.
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
-    if (plan->animation & ANIM_SUMMON)
-      BattleAnim_RunSummonFar(&work.effect);
-    else if (plan->animation & ANIM_BY_ID_RANGE)
-      BattleAnim_RunByIdRangeFar(&work.effect);
+    if (plan->battleEffect & EFFECT_SUMMON)
+      BattleEffect_RunSummonFar(&work.effect);
+    else if (plan->battleEffect & EFFECT_BY_ID_RANGE)
+      BattleEffect_RunByIdRangeFar(&work.effect);
     else
-      BattleAnim_RunFromTableFar(&work.effect);
+      BattleEffect_RunFromTableFar(&work.effect);
     BattlePlayback_WaitForReady();
   }
 
@@ -431,7 +431,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
 /// Clears the highlights, then applies the action to each target in turn and
 /// plays its events; with no target, only waits for the player.
 /// Called by BattleStaging_DispatchAction for STAGING_MESSAGES, an
-/// action with no animation: each target's BattleAbility_ApplyToTarget is
+/// action with no battle effect: each target's BattleAbility_ApplyToTarget is
 /// played at once by BattlePlayback_RunAll.
 #ifdef UBFIX
 void BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused) {
@@ -454,14 +454,13 @@ s32 BattleStaging_RunActorEntries(struct BattleActionRun *plan, s32 unused) {
 
 /// Plays an attack: the camera turns halfway to the attacker's view, the
 /// attacker runs up to its first target over its swing's frames, and the
-/// blow lands: a miss makes the target hop back; a hit plays its animation and
-/// its playback, and a critical hit zooms in on the pair with only those two
-/// shown. Both then return. A miss "nimbly dodges the blow".
-/// Called by BattleStaging_DispatchAction for STAGING_ATTACK; mode is
-/// unused. Sets gBattleBackgroundWork's yaw (and its flag for a critical hit's
-/// zoom), the window registers (WIN0 and WIN1 to the battlefield, rows 16 to
-/// 136, both turned on), and schedules BattlePlayback_Run around the
-/// animation.
+/// blow lands: a miss makes the target hop back; a hit plays its battle effect
+/// and its playback, and a critical hit zooms in on the pair with only those
+/// two shown. Both then return. A miss "nimbly dodges the blow". Called by
+/// BattleStaging_DispatchAction for STAGING_ATTACK; mode is unused. Sets
+/// gBattleBackgroundWork's yaw (and its flag for a critical hit's zoom), the
+/// window registers (WIN0 and WIN1 to the battlefield, rows 16 to 136, both
+/// turned on), and schedules BattlePlayback_Run around the battle effect.
 s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   struct BattleStagingWork work;
   struct Actor *actor;
@@ -517,7 +516,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   BattleStaging_BuildTargetList(plan, &work.effect);
   // Severe Blow drops the status window's PP row while it plays.
-  if (work.effect.kind == ANIM_ID_SEVERE_BLOW)
+  if (work.effect.kind == EFFECT_ID_SEVERE_BLOW)
     PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
 
   unit = Unit_GetFar(work.effect.user);
@@ -536,9 +535,9 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   BattleObject_Get(work.effect.targets[0]);
 
   if ((u16)work.effect.targets[0] <= ALLY_MAX)
-    work.effect.side = ANIM_SIDE_PARTY;
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = ANIM_SIDE_ENEMIES;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
 
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN0V = WIN_RANGE(16, 136);
@@ -561,16 +560,16 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
     BattlePlayback_RunAll();
     BattleMotion_ReturnToSpot(work.effect.targets[0]);
   } else {
-    // A hit. A critical hit plays the animation's critical version, with only
-    // the pair on the field and the camera zooming in on them (scale 100 to
-    // 130) over the rest of the run up.
+    // A hit. A critical hit plays the battle effect's critical version, with
+    // only the pair on the field and the camera zooming in on them (scale 100
+    // to 130) over the rest of the run up.
     zoomOnCritical = 0;
     work.effect.prelude = 0;
-    if (plan->animation != 0)
+    if (plan->battleEffect != 0)
       work.effect.prelude = 1;
 
     if (critical != 0) {
-      work.effect.kind += ANIM_ID_CRITICAL_OFFSET;
+      work.effect.kind += EFFECT_ID_CRITICAL_OFFSET;
       zoomOnCritical = 1;
       view->flag = 1;
       criticalPair[0] = work.effect.user;
@@ -579,8 +578,8 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
       BattleObject_SpawnObjectsForList(criticalPair, 0);
     }
 
-    // The animation starts 8 frames before the run up ends, at least one frame
-    // after it began.
+    // The battle effect starts 8 frames before the run up ends, at least one
+    // frame after it began.
     frames -= 8;
     if (frames <= 0)
       frames = 1;
@@ -601,10 +600,10 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
 
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.effect.kind != 0) {
-      if (plan->animation & ANIM_BY_ID_RANGE)
-        BattleAnim_RunByIdRangeFar(&work.effect);
+      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
+        BattleEffect_RunByIdRangeFar(&work.effect);
       else
-        BattleAnim_RunFromTableFar(&work.effect);
+        BattleEffect_RunFromTableFar(&work.effect);
     }
     BattlePlayback_WaitForReady();
     // After a critical hit every unit is shown again and the zoom ends.
@@ -620,11 +619,11 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
 }
 
 /// Unused. Plays a plain attack run: the attacker runs up to its first target
-/// and the blow's animation and playback play, or, with bit 1 of flags (a
+/// and the blow's battle effect and playback play, or, with bit 1 of flags (a
 /// miss), the target hops back; both then return. Nothing calls it.
 /// BattleStaging_RunAttack without the hop height, the windows, the critical
 /// zoom, the dodge message or playback; its playback is played at once after
-/// the animation, and the camera's slower turn waits 20 frames.
+/// the battle effect, and the camera's slower turn waits 20 frames.
 UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
                                         s32 flags) {
   struct BattleStagingWork work;
@@ -675,9 +674,9 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   BattleObject_Get(savedInput->targetIds[0]);
 
   if (savedInput->targetIds[0] <= ALLY_MAX)
-    work.effect.side = ANIM_SIDE_PARTY;
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = ANIM_SIDE_ENEMIES;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
   if (missed != 0) {
     WaitFrames(10);
     BattleMotion_HopBack(savedInput->targetIds[0]);
@@ -686,7 +685,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
     WaitFrames(10);
     BattleMotion_ReturnToSpot(savedInput->targetIds[0]);
   } else {
-    BattleAnim_RunByIdRangeFar(&work.effect);
+    BattleEffect_RunByIdRangeFar(&work.effect);
     BattlePlayback_RunAll();
     BattleMotion_ReturnToSpot(savedInput->targetIds[0]);
   }
@@ -695,15 +694,15 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
 }
 
 /// Plays an item's use: the camera turns to the user's side, the user raises
-/// the item and, for an item with an animation, the screen dims while it plays
-/// with its playback. Then the item is spent as its use type says; when its
-/// slot empties, later item commands of the same party member this turn follow
-/// their items to their new slots (or lose theirs, -1).
-/// Called by BattleStaging_DispatchAction for STAGING_ITEM, with the
-/// action's entry as selection. Sets gBattleBackgroundWork's yaw and, while an
-/// animation plays, dims gBattleWork->brightness and BG palettes 6 to 13;
-/// changes the user's inventory (Inventory_RemoveFar, Inventory_BreakFar, or
-/// the Empty Bottle) and the parameters of gBattleWork->actions.
+/// the item and, for an item with a battle effect, the screen dims while it
+/// plays with its playback. Then the item is spent as its use type says; when
+/// its slot empties, later item commands of the same party member this turn
+/// follow their items to their new slots (or lose theirs, -1). Called by
+/// BattleStaging_DispatchAction for STAGING_ITEM, with the action's entry as
+/// selection. Sets gBattleBackgroundWork's yaw and, while an battle effect
+/// plays, dims gBattleWork->brightness and BG palettes 6 to 13; changes the
+/// user's inventory (Inventory_RemoveFar, Inventory_BreakFar, or the Empty
+/// Bottle) and the parameters of gBattleWork->actions.
 s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
                           struct BattleAction *selection) {
   struct BattleStagingWork work;
@@ -735,9 +734,9 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   Actor_SelectAnimationFar(actor, POSE_CAST);
   Actor_SetAnimationSpeedFar(actor, 16);
   if (plan->targetIds[0] <= ALLY_MAX)
-    work.effect.side = ANIM_SIDE_PARTY;
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = ANIM_SIDE_ENEMIES;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
 
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.targetCount;
        targetOrFadeIndex++) {
@@ -750,9 +749,9 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
           animation->entries[entryIndex]->colorMode;
   }
 
-  // An item with an animation dims the background over 20 frames, to about two
-  // thirds of its brightness (19 steps of 0x444 in 16.16), then plays it; one
-  // with none waits a second.
+  // An item with a battle effect dims the background over 20 frames, to about
+  // two thirds of its brightness (19 steps of 0x444 in 16.16), then plays it;
+  // one with none waits a second.
   Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
   if (work.effect.kind != 0) {
     s32 fade;
@@ -774,10 +773,10 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
       targetOrFadeIndex++;
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
-    if (plan->animation & ANIM_BY_ID_RANGE)
-      BattleAnim_RunByIdRangeFar(&work.effect);
+    if (plan->battleEffect & EFFECT_BY_ID_RANGE)
+      BattleEffect_RunByIdRangeFar(&work.effect);
     else
-      BattleAnim_RunFromTableFar(&work.effect);
+      BattleEffect_RunFromTableFar(&work.effect);
   } else {
     WaitFrames(60);
   }
@@ -869,13 +868,13 @@ s32 BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
 /// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
 /// the targets from the caster's side, the caster raises its hand and glows
 /// in its element (no glow for a Djinni); then the cast fails ("blocked" or
-/// too little PP) or its animation plays with its playback, and the targets
+/// too little PP) or its battle effect plays with its playback, and the targets
 /// return to their spots.
 /// Called by BattleStaging_DispatchAction for STAGING_CAST
 /// (CAST_PSYNERGY), STAGING_DJINNI (CAST_DJINNI) and STAGING_ENEMY_CAST
 /// (CAST_ENEMY). Sets gBattleBackgroundWork's yaw (and its frames for a fixed
 /// view), redraws the party status window without its PP row, and schedules
-/// BattlePlayback_Run around the animation.
+/// BattlePlayback_Run around the battle effect.
 s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   struct BattleStagingWork work;
   struct BattleBackgroundWork *view = gBattleBackgroundWork;
@@ -883,13 +882,13 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   s32 isDjinni;
   s32 targetIndex;
 
-  // The camera. ANIM_VIEW_ACROSS takes the other side's view (an enemy's
+  // The camera. EFFECT_VIEW_ACROSS takes the other side's view (an enemy's
   // cast YAW_BEHIND_ENEMIES) over 60 frames. Otherwise it starts 0x1800 off the
   // caster's bearing (less for the party, more for an enemy) and goes three
   // quarters of the way to the caster's side's view; a cast on the caster's own
-  // side takes 0x2400 instead (-0x2400 for an enemy). ANIM_VIEW_REVERSED
+  // side takes 0x2400 instead (-0x2400 for an enemy). EFFECT_VIEW_REVERSED
   // then overrides it with the opposite side's view.
-  if (plan->animation & ANIM_VIEW_ACROSS) {
+  if (plan->battleEffect & EFFECT_VIEW_ACROSS) {
     view->targetYaw =
         plan->unitId <= ALLY_MAX ? YAW_ENEMY_ACTION : YAW_BEHIND_ENEMIES;
     view->frames = 60;
@@ -912,14 +911,14 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
     if (view->targetYaw != targetYaw)
       view->targetYaw = targetYaw;
   }
-  if (plan->animation & ANIM_VIEW_REVERSED) {
+  if (plan->battleEffect & EFFECT_VIEW_REVERSED) {
     view->targetYaw =
         plan->unitId <= ALLY_MAX ? YAW_ENEMY_ACTION : YAW_PARTY_ACTION;
     view->frames = 60;
   }
 
   // The caster raises its hand (POSE_CAST) and glows in its element (its
-  // streaks for an enemy's cast); a Djinni does not glow, and its animation
+  // streaks for an enemy's cast); a Djinni does not glow, and its battle effect
   // plays its prelude instead.
   BattleStaging_BuildTargetList(plan, &work.effect);
   isDjinni = mode & CAST_DJINNI;
@@ -936,9 +935,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   else if (!isDjinni)
     ElementGlow_Play(work.effect.user, plan->element, GLOW_STAR_FIELD, 0);
   if (plan->targetIds[0] <= ALLY_MAX)
-    work.effect.side = ANIM_SIDE_PARTY;
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = ANIM_SIDE_ENEMIES;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
 
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++) {
     struct Sprite *animation = GetMotionRecord(
@@ -950,8 +949,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
           animation->entries[entryIndex]->colorMode;
   }
 
-  // A failed cast is shown at once; otherwise the animation plays during
-  // playback, and an ability with no animation only restores the palette.
+  // A failed cast is shown at once; otherwise the battle effect plays during
+  // playback, and an ability with no battle effect only restores the palette.
   if (plan->failure != ACTION_FAILURE_NONE) {
     if (plan->failure == ACTION_FAILURE_SEALED) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
@@ -964,10 +963,10 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   } else {
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.effect.kind) {
-      if (plan->animation & ANIM_BY_ID_RANGE)
-        BattleAnim_RunByIdRangeFar(&work.effect);
+      if (plan->battleEffect & EFFECT_BY_ID_RANGE)
+        BattleEffect_RunByIdRangeFar(&work.effect);
       else
-        BattleAnim_RunFromTableFar(&work.effect);
+        BattleEffect_RunFromTableFar(&work.effect);
     } else {
       BattleBackground_RestorePalette();
     }

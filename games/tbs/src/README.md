@@ -27,10 +27,10 @@ too.
 placements, [triggers](../glossary.md#trigger) and [events](../glossary.md#event). [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
 
-[Battles](battle/README.md) runs a fight: turn order, the enemies' choices,
+[Battles](battle/README.md) runs a fight: action order, the enemies' choices,
 what each ability does to its targets and the spoils.
-[Battle animations](battle_anim/README.md) draws what each ability shows on screen,
-one function for each animation.
+[Battle effects](battle_effect/README.md) draws what each ability shows on screen,
+one function for each battle effect.
 
 [Windows](window/README.md) draws the bordered boxes text appears in, decodes
 the compressed messages and types them out, and holds the screens built from
@@ -234,8 +234,8 @@ is the first C to run; it ends by calling `ParentSequence_Run`, which is short
 enough to read whole. [Runtime](runtime/README.md) follows the same path.
 
 To find the code behind something in the game, search for its English name.
-Each animation's comment names the abilities that play it, so searching
-`battle_anim/` for Quake finds [battle_anim/parts/quake.c](battle_anim/parts/quake.c). Each
+Each battle effect's comment names the abilities that play it, so searching
+`battle_effect/` for Quake finds [battle_effect/parts/quake.c](battle_effect/parts/quake.c). Each
 place's code is the scene named for it. The game's text is in
 [`games/tbs/text`](../text), a PO catalog for each language, where each message
 carries its linker name: "(No saved data)" is `MsgSaveNoData`, which leads to

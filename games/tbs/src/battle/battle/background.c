@@ -35,7 +35,7 @@
 
 /// Copies the background's saved palette to BG palettes 6 to 13, darkened by
 /// level (0 for none).
-/// Called by BattleBackground_RestorePalette with 0, and by battle animations
+/// Called by BattleBackground_RestorePalette with 0, and by battle effects
 /// that dim the background (beams.c, canvas.c). Sets BattleWork.brightness when
 /// it darkens. Interrupts are off while it writes: REG_IME is given its own
 /// address, whose bit 0 is clear, as irqlock.h's IME_DISABLE does, and is
@@ -78,7 +78,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// fade 0x80 restores the saved palette, another nonzero fade takes that
 /// much from each colour channel, and 0 leaves the palette alone;
 /// BATTLE_BACKGROUND_FIXED queues BATTLE_BG1CNT for BG1. Called with
-/// BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the battle animations'
+/// BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the battle effects'
 /// canvas layers (canvas.c), and with BATTLE_BACKGROUND_ZOOMED by
 /// BattleStaging_DispatchAction and Battle_ProcessTurnEnd. Sets
 /// BattleBackgroundWork.mode (enum BattleBackgroundMode), adds

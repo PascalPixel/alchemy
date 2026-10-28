@@ -81,11 +81,14 @@ within it, chosen as a `struct BattleAction` and carried out as a
 Evidence: the game's own words, from its text: `HP recovery / turn`, and in
 Japanese ターン for the pass and 行動 (action) for one unit's go.
 
-### Battle animation
+### Battle effect
 
 The picture an ability plays over a battle, drawn by code: Quake's shaking
 ground, a summon's arrival. It decides when a hit shows, never what it does
-([Battle animations](src/battle_anim/README.md)).
+([Battle effects](src/battle_effect/README.md)).
+
+Evidence: the game's own word, from its credits: "Battle Effects", beside
+"Battle Characters" and "Battle Backgrounds".
 
 ## The project
 

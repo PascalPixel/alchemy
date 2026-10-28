@@ -9,7 +9,7 @@
 /// Battle_Run as the battle is set up, by
 /// BattleStaging_DispatchAction, BattleStaging_HideField,
 /// the auto battle and BattleAbility_ApplyToTarget after a call for help, and
-/// through the far stub BattleObject_PutFar by BattleAnim_RunParticleStreams.
+/// through the far stub BattleObject_PutFar by BattleEffect_RunParticleStreams.
 void BattleObject_Put(void) {
   s16 unitIds[14];
 
@@ -29,7 +29,7 @@ void BattleUnit_ListAllAndSubmit(void) {
 
 /// Returns the palette of unit id's battle object. Called by
 /// BattlePlayback_Run and BattleMotion_FlashHit, and through its far stub
-/// by the battle animation dispatcher (battle_anim/parts/dispatch.c).
+/// by the battle effect dispatcher (battle_effect/parts/dispatch.c).
 s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 
 /// The battle has six enemy sprite slots; a large enemy takes two side by

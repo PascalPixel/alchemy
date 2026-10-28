@@ -123,12 +123,12 @@ main	rom_main_07	games/tbs/src/battle/debug_presets
 main	rom_main_07	games/tbs/src/battle/battle_vars
 main	rom_main_07	games/tbs/src/battle/formations
 main	rom_main_07	games/tbs/src/battle/battle_sprites
-main	rom_main_08	games/tbs/src/cartridge/far_call/BATTLE_ANIM
-main	rom_main_08	games/tbs/src/battle_anim/battle_anim	.text .data
-main	rom_main_08	games/tbs/src/battle_anim/battle_anim_composite
-main	rom_main_08	games/tbs/src/battle_anim/battle_anim_table	.data
-main	rom_main_08	games/tbs/src/battle_anim/battle_anim_composite_color
-main	rom_main_08	games/tbs/src/battle_anim/battle_anim_bits	.data
+main	rom_main_08	games/tbs/src/cartridge/far_call/BATTLE_EFFECT
+main	rom_main_08	games/tbs/src/battle_effect/battle_effect	.text .data
+main	rom_main_08	games/tbs/src/battle_effect/battle_effect_composite
+main	rom_main_08	games/tbs/src/battle_effect/battle_effect_table	.data
+main	rom_main_08	games/tbs/src/battle_effect/battle_effect_composite_color
+main	rom_main_08	games/tbs/src/battle_effect/battle_effect_bits	.data
 main	rom_main_09	games/tbs/src/cartridge/far_call/CREDITS
 main	rom_main_09	games/tbs/src/graphics/tile/dot_product
 main	rom_main_09	games/tbs/src/graphics/tile/expand	.rodata
@@ -439,8 +439,8 @@ main	rom_tail_02	games/tbs/src/graphics/title/title
 main	rom_tail_02	games/tbs/src/graphics/battle_bg/battle_bg
 main	rom_tail_02	games/tbs/src/graphics/lucky_wheels/lucky_wheels
 main	rom_tail_02	games/tbs/src/graphics/lucky_dice/lucky_dice
-main	rom_tail_02	games/tbs/src/graphics/battle_anims/battle_anims
-main	rom_tail_02	games/tbs/src/graphics/battle_anims/paths
+main	rom_tail_02	games/tbs/src/graphics/battle_effects/battle_effects
+main	rom_tail_02	games/tbs/src/graphics/battle_effects/paths
 main	rom_tail_02	games/tbs/src/map/world_map
 main	rom_tail_02	games/tbs/src/graphics/world_map/worldmap
 main	rom_tail_02	games/tbs/src/map/colosso/colosso

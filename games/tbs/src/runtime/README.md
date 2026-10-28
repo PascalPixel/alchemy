@@ -105,7 +105,7 @@ The line is `Ram_FrameWaitStackTop`, and the copy goes to `gSavedStack`.
 ## The heap
 
 The heap lends blocks of memory to the rest of the game: a scene's working
-state, a menu's buffers, a battle animation's pictures. It works like a pile:
+state, a menu's buffers, a battle effect's pictures. It works like a pile:
 each block goes on top of the last, and giving one back gives back everything
 taken after it. That makes both almost free, at the price of one rule: blocks
 go back in the reverse of the order they were taken. The whole heap is
@@ -120,7 +120,7 @@ holds a block simply returns that block. Blocks are not cleared when lent.
 
 Giving blocks back out of order doesn't fail at once: later blocks stay in
 their slots, pointing at memory the next request hands out again. That is why
-a battle animation stops the task that copies its pictures before it gives
+a battle effect stops the task that copies its pictures before it gives
 its blocks back.
 
 A block is taken with `Heap_Alloc` or, for a heap slot, `HeapSlot_Alloc`, and
@@ -208,7 +208,7 @@ The exchange is `Serial_ExchangePayloads`, and larger data starts with
 ## Design
 
 The game is written as ordinary functions that run until they are done. A
-battle animation, an event or a menu screen is a function with its own loop
+battle effect, an event or a menu screen is a function with its own loop
 that waits when time has to pass and carries on from the same place; none of
 them returns between frames to be called again. Most of the runtime's shape
 follows: tasks keep the world moving while such a function waits, the stack

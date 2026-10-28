@@ -89,13 +89,13 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 /// The most targets an action holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
 /// Announces the action and builds it for its targets: its targets and
-/// animation. Returns 0 to stage the action, ACTION_REPORTED when the action
+/// effect. Returns 0 to stage the action, ACTION_REPORTED when the action
 /// failed (its message shown), or ACTION_NOTHING_TO_SHOW. Called by
 /// BattleStaging_DispatchAction for each action of the turn. Fills plan (its
 /// acting unit, targets, hit and critical rolls, ability, element, staging,
-/// animation word and failure), resets the playback and shows the announcing
+/// effect word and failure), resets the playback and shows the announcing
 /// message. The command's costs are paid here: a caster's PP, a Djinni set or
-/// put on standby (with its own animation), the standby Djinn a summon uses
+/// put on standby (with its own effect), the standby Djinn a summon uses
 /// (DJINN_RECOVERY_SUMMONED). A unit that cannot act, or finds no target, may
 /// be set to Defend (defendLevel).
 ///
@@ -219,7 +219,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
   plan->hauntDamage = 0;
   plan->unitId = request->unitId;
   plan->targetCount = 0;
-  plan->animation = 0;
+  plan->battleEffect = 0;
   plan->failure = ACTION_FAILURE_NONE;
   plan->element = ELEMENT_NONE;
   MessageArgument_ClearAllFar();
@@ -487,7 +487,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
   } break;
 
   case COMMAND_DJINN:
-    // A Djinni not set: one ready again is set, with its own short animation
+    // A Djinni not set: one ready again is set, with its own short effect
     // played through the playback queue, and nothing else happens
     // (ACTION_NOTHING_TO_SHOW); one still recovering says so (ACTION_REPORTED).
     // A set Djinni is unleashed below.
@@ -610,29 +610,29 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);
     plan->staging = STAGING_ATTACK;
-    // An enemy's attack animation comes from its class; a party member's is
-    // animation 1 for Isaac, Garet and Jenna and 4 for Ivan and Mia, any other
-    // none. Each is played by id range (ANIM_BY_ID_RANGE).
+    // An enemy's attack effect comes from its class; a party member's is
+    // effect 1 for Isaac, Garet and Jenna and 4 for Ivan and Mia, any other
+    // none. Each is played by id range (EFFECT_BY_ID_RANGE).
     if (actor->classId == CLASS_NONE) {
-      plan->animation =
-          BattleSprite_GetAttackAnim(actor->id) | ANIM_BY_ID_RANGE;
+      plan->battleEffect =
+          BattleSprite_GetAttackAnim(actor->id) | EFFECT_BY_ID_RANGE;
     } else {
-      plan->animation = 0;
+      plan->battleEffect = 0;
       switch (actor->id) {
       case ISAAC:
-        plan->animation = ANIM_BY_ID_RANGE | 1;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | 1;
         break;
       case GARET:
-        plan->animation = ANIM_BY_ID_RANGE | 1;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | 1;
         break;
       case IVAN:
-        plan->animation = ANIM_BY_ID_RANGE | 4;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | 4;
         break;
       case MIA:
-        plan->animation = ANIM_BY_ID_RANGE | 4;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | 4;
         break;
       case JENNA:
-        plan->animation = ANIM_BY_ID_RANGE | 1;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | 1;
         break;
       }
     }
@@ -673,7 +673,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     struct AbilityDefinition *ability = Ability_Get(abilityId);
 
     plan->element = ability->element;
-    plan->animation = 0;
+    plan->battleEffect = 0;
     plan->abilityId = abilityId;
     if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
         ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
@@ -737,7 +737,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
       }
     } else if (abilityId == ABILITY_ANNIHILATION) {
       // Annihilation rolls its hit now, at full rate whatever the distance,
-      // so that the animation can show it (the variant below).
+      // so that the effect can show it (the variant below).
       s32 index;
 
       for (index = 0; index < plan->targetCount; index++)
@@ -745,23 +745,24 @@ s32 BattleActionRun_Build(struct BattleAction *request,
             Battle_RollEffectSuccessFar(request->unitId, plan->targetIds[index],
                                         ability->element, ability->effect, 100);
     }
-    // How it is staged: the ability's row of gAbilityAnimations, its variant
+    // How it is staged: the ability's row of gAbilityBattleEffects, its variant
     // raised to the first target's multiplier less one (a double or triple
     // blow); then the staging, from gAbilityStaging where it gives one. The
     // two tables end at ABILITY_THRASH and ABILITY_SEVERE_BLOW.
     if (abilityId >= 0 && abilityId <= ABILITY_THRASH) {
-      plan->animation = gAbilityAnimations[abilityId];
+      plan->battleEffect = gAbilityBattleEffects[abilityId];
       if (plan->targetMultiplier[0] > 1)
-        plan->animation = gAbilityAnimations[abilityId] +
-                          (plan->targetMultiplier[0] << ANIM_VARIANT_SHIFT) -
-                          (1 << ANIM_VARIANT_SHIFT);
+        plan->battleEffect =
+            gAbilityBattleEffects[abilityId] +
+            (plan->targetMultiplier[0] << EFFECT_VARIANT_SHIFT) -
+            (1 << EFFECT_VARIANT_SHIFT);
     }
     if ((abilityId >= 0 && abilityId <= ABILITY_SEVERE_BLOW) &&
         gAbilityStaging[abilityId] != 0)
       plan->staging = gAbilityStaging[abilityId];
     else if (Ability_IsPsynergy(abilityId))
       plan->staging = STAGING_CAST;
-    else if (plan->animation != 0) {
+    else if (plan->battleEffect != 0) {
       if (actor->classId == CLASS_NONE)
         plan->staging = STAGING_ENEMY_CAST;
       else
@@ -769,12 +770,12 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     } else
       plan->staging = STAGING_MESSAGES;
     if (Battle_IsReviveEffectFar(ability->effect))
-      plan->animation |= ANIM_ON_DOWNED;
+      plan->battleEffect |= EFFECT_ON_DOWNED;
     // When Annihilation's instant death lands on its first target, the
     // variant becomes 1: the burst then shows its second picture and plays a
-    // sound (BattleAnim_RunAnnihilation).
+    // sound (BattleEffect_RunAnnihilation).
     if (abilityId == ABILITY_ANNIHILATION && plan->targetHit[0] != 0)
-      plan->animation |= 1 << ANIM_VARIANT_SHIFT;
+      plan->battleEffect |= 1 << EFFECT_VARIANT_SHIFT;
   }
   // An item is staged as an item, unless its ability takes the whole screen.
   if (request->command == COMMAND_ITEM && plan->staging != STAGING_SUMMON &&

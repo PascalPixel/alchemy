@@ -254,7 +254,7 @@
 /// render)
 #define SE_SHOP_SELL 102
 /// A cursed item equipped from the menu or in a shop; it also plays as Hydros
-/// is beaten on Altin Peak, and in the lobbed-shell battle animations.
+/// is beaten on Altin Peak, and in the lobbed-shell battle effects.
 #define SE_CURSE 103
 /// Each water drop landing in Vault Cave; also the curse's sparkles meeting
 /// Mia's Psynergy at Kolima and Kolima Forest's barrier, and the villagers
@@ -286,7 +286,7 @@
 /// A choice that can't be made: not enough PP, no target, a pushed or lifted
 /// thing that won't move.
 #define SE_MENU_ERROR 114
-/// Ice forming: Frost on the field, and the Ice and Frost battle animations.
+/// Ice forming: Frost on the field, and the Ice and Frost battle effects.
 /// ★ Named from what the player sees: the ice of Frost and of Ice, Ice Horn and
 /// Ice Missile (its render)
 #define SE_ICE 115
@@ -349,13 +349,13 @@
 #define SE_CLICK 135
 /// Plays as a Djinni hops into battle, with Whirlwind on the field, as pillars
 /// move on Crossbone Isle, during the spinning leap in Gondowan Cave, and in
-/// the Fire, Flare, Frost, Mars, Cybele, Kirin and other battle animations.
+/// the Fire, Flare, Frost, Mars, Cybele, Kirin and other battle effects.
 #define SE_WHOOSH 136
 /// Plays in the Kirin summon only, 46 frames after its shake begins.
 /// ★ Named from what the player sees: the Kirin summon (its render)
 #define SE_KIRIN 137
 /// An item breaking, and a lifted, pushed or caught thing shattering; also the
-/// Bolt and Ray battle animations, rumbling at Sol Sanctum's entrance, and
+/// Bolt and Ray battle effects, rumbling at Sol Sanctum's entrance, and
 /// Venus Lighthouse's aerie.
 #define SE_ITEM_BREAK 138
 /// A Djinni set in the Djinn menu, and a Djinni recovering to Set as the party
@@ -371,14 +371,14 @@
 /// rooms after the eruption, the stumps in Goma Cave, the Lunpa Fortress
 /// trap, Mercury Lighthouse's waterfall passage, the boulders of the stormy
 /// night, the wagons setting off from Kalay and Hammet's caravan, and the
-/// Quake, Gaia, Judgment and other battle animations.
+/// Quake, Gaia, Judgment and other battle effects.
 #define SE_RUMBLE 141
-/// Light swirling into its target as stats rise (BattleAnim_RunStatBoost), and
-/// in the Bind, Drain, Haunt, Sleep, Judgment and Neptune battle animations;
+/// Light swirling into its target as stats rise (BattleEffect_RunStatBoost),
+/// and in the Bind, Drain, Haunt, Sleep, Judgment and Neptune battle effects;
 /// also a statue searched in Venus Lighthouse.
 #define SE_SWIRL 142
-/// The picture breaking up as stats fall (BattleAnim_RunStatReduction), and the
-/// Break, Vine, Spider Web and Curse battle animations; also a Venus Djinni's
+/// The picture breaking up as stats fall (BattleEffect_RunStatReduction), and
+/// the Break, Vine, Spider Web and Curse battle effects; also a Venus Djinni's
 /// sparks landing and Vale's roof mended.
 /// It sounds like a sharp noise crack trailing into a low buzz for half a
 /// second.
@@ -427,11 +427,11 @@
 /// the Lunpa Fortress, and the passengers at the Kalay docks.
 #define SE_SWITCH 155
 /// The mechanism Vault Cave's switch starts, after SE_SWITCH; also the Cybele,
-/// Judgment and Ramses battle animations.
+/// Judgment and Ramses battle effects.
 #define SE_SWITCH_MECHANISM 156
 /// A gate or door sliding: Babi Lighthouse's truth door, Crossbone Isle's red
 /// and blue doors, the Lunpa Fortress doors, West Lunpa Cave's gates, and the
-/// Cybele and Judgment battle animations.
+/// Cybele and Judgment battle effects.
 #define SE_GATE_MOVE 157
 /// A door opening as the leader goes through.
 #define SE_DOOR_OPEN 158
@@ -454,7 +454,7 @@
 /// It sounds like a steady rushing noise held until it is stopped.
 #define SE_RUSH 163
 /// The light particles a joining Jupiter Djinni scatters, and the Neptune,
-/// Nereid, Titan Blade and Froth battle animations.
+/// Nereid, Titan Blade and Froth battle effects.
 #define SE_SCATTER 164
 /// A map transition effect.
 #define SE_MAP_TRANSITION 167
@@ -473,7 +473,7 @@
 #define SE_AMBIENT_WATER 170
 /// Thunder: lightning on the field (Weather_UpdateLightning), the flash in
 /// Sol Sanctum's Luna room as the event opens on Kraden, the flash of a Lucky
-/// Wheels win, and the Jupiter battle animation.
+/// Wheels win, and the Jupiter battle effect.
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)
 #define SE_THUNDER 171
@@ -574,7 +574,7 @@
 /// Plays as a Djinni returns to Set or elemental power rises in battle and the
 /// unit takes its casting pose, as field Psynergy is cast where it shows, with
 /// Frost on its target, and in the Annihilation, Atalanta, Gaia, Procne,
-/// Ragnarok, Titan Blade and other battle animations.
+/// Ragnarok, Titan Blade and other battle effects.
 #define SE_POWER_UP 212
 /// A pushed log or pillar coming to rest, after SE_STOP_ACTION_SE cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,

@@ -84,7 +84,7 @@ enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
 /// It lives in the HEAP_SLOT_BATTLE heap slot: Battle_Run takes and
 /// zeroes it, sets arrowTiles to -1 and formation, and the next scene change
 /// clears the heap. Every battle part reads it through gBattleWork, and the
-/// battle animations read its background id and palette.
+/// battle effects read its background id and palette.
 struct BattleWork {
   s32 formation;      ///< the encounter's enemy formation
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free

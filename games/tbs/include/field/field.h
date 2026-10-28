@@ -32,7 +32,7 @@ extern u8 Render_DecodePictureCodeSize[];
 extern const u8 gSpriteColorRemapTables[];
 
 struct AbilityListEntry;
-struct BattleAnimArgs;
+struct BattleEffectParams;
 struct Unit;
 struct BurstParticle;
 struct ScreenPoint;

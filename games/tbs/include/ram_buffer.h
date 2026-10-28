@@ -37,7 +37,7 @@
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
 // IWRAM variables the code reaches as constants; German moves them 16 bytes
-// up. Only BattleAnim_RunSpiderWeb takes the heap slot table's address as
+// up. Only BattleEffect_RunSpiderWeb takes the heap slot table's address as
 // Ram_HeapSlots; other code uses gHeapSlots (MATCHING.md).
 // The 16 bytes are space German alone reserves before gOamDepthLists
 // (cartridge/iwram.s), so the test is on the language: French, Spanish and

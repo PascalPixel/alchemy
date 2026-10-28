@@ -82,7 +82,7 @@
 #include "icon_menu.h"
 #include "battle_summon.h"
 #include "serial_runtime.h"
-#include "battle_anim_work.h"
+#include "battle_effect_work.h"
 #include "shop.h"
 #include "display_transition.h"
 #include "frame.h"

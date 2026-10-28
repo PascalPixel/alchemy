@@ -6,7 +6,7 @@
 /// work.
 
 #include "battle_session.h"
-#include "battle_anim_args.h"
+#include "battle_effect_params.h"
 
 #include "types.h"
 #include "static_assert.h"
@@ -63,7 +63,7 @@ struct BattleBackgroundWork {
 /// auto_battle.c, BattleTransition_Run and ElementGlow_Play keep one as a
 /// local.
 struct BattleStagingWork {
-  struct BattleAnimArgs effect;
+  struct BattleEffectParams effect;
   /// Each target's sprite animations' SpriteColorMode
   /// (SpriteAnimation.colorMode), all but its last, saved before the animation;
   /// no code reads them back by name.
@@ -120,6 +120,6 @@ STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);
 
 struct BattleActionRun;
-struct BattleAnimArgs;
+struct BattleEffectParams;
 
 #endif

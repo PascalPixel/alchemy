@@ -115,7 +115,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "ui.h"
 #include "adventure.h"
 #include "map_grid_scroll.h"
-#include "battle_anim_work.h"
+#include "battle_effect_work.h"
 #include "transform.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
@@ -278,7 +278,7 @@ void LuckyDice_Run(void) {
   UNUSED s32 matchedNumbers[2]; // written, never read
 #endif
   u16 *spritePalette;
-  struct BattleAnimWork *diceWork;
+  struct BattleEffectWork *diceWork;
   /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
    * words are volatile (oambuf.h); as plain u32 words, 1550 of 2046
    * instructions differ in tbs-en. */
@@ -323,10 +323,10 @@ void LuckyDice_Run(void) {
   // Allocate the screen's work blocks and reset the camera and tasks.
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x200);
-  diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(*diceWork));
+  diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
   sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
-  Stub_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
+  Stub_NoOpHook((s32)&ResourceId_BattleEffectFarCalls);
   Camera_ResetViewDefaults();
   Task_ResetAll();
   gOamCopyEnabled = 0;
@@ -975,6 +975,6 @@ void LuckyDice_Run(void) {
   HeapSlot_Release(HEAP_SLOT_CAMERA);
   HeapSlot_Release(HEAP_SLOT_LUCKY_DICE_SPRITES);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
-  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }

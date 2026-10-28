@@ -2,7 +2,7 @@
 #define ALCHEMY_PALBUF_H
 
 /// @file
-/// Palette fades, the battle animation palette buffers and the colour channel
+/// Palette fades, the battle effect palette buffers and the colour channel
 /// curves.
 
 #include "edition.h"

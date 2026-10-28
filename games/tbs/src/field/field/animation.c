@@ -325,7 +325,7 @@ void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
 /// offsets. Returns 0. The field's usual way to change what a sprite plays:
 /// called by the actor dispatch and the player control, and as
 /// Sprite_StartAnimationFar by the battle, the shops, the menus,
-/// the battle animations, field Psynergy and the events.
+/// the battle effects, field Psynergy and the events.
 s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation) {
   s32 keepPlace;
   s32 i;
@@ -525,7 +525,7 @@ void SpriteAnimation_Clear(struct SpriteAnimation *record) {
 /// Sprite_Destroy. When no sprite animation is free the sprite is still
 /// returned, with no sprite animation and a width of 0, so it also counts as
 /// free. Called by Actor_Create and the sprite viewer, and as Sprite_CreateFar
-/// by the battle, the battle animations, field Psynergy and the menus.
+/// by the battle, the battle effects, field Psynergy and the menus.
 struct Sprite *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct Sprite *sprite;

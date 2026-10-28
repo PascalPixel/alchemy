@@ -386,7 +386,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
 ///
 /// Called by ActorSystem_PlaceSprites for each one-sprite actor on a
 /// layered map, by the sprite viewer, and as Actor_ApplyProjectedPlacementFar
-/// by the battle animations, field Psynergy and the menus.
+/// by the battle effects, field Psynergy and the menus.
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,

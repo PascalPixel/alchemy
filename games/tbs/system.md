@@ -38,7 +38,7 @@ The cartridge's first instruction leads to `System_Entry`, which calls
 
 While a line of dialogue waits for A, the code that showed it simply stops
 and waits, yet the arrow keeps bobbing and the river keeps rippling. A
-talk, an event, a menu screen or a battle animation is not called once a frame
+talk, an event, a menu screen or a battle effect is not called once a frame
 to do its share: it is an ordinary piece of code that runs from start to
 finish, and when time has to pass it asks to wait a number of frames. What
 must keep moving meanwhile is a task, a short routine run once every frame

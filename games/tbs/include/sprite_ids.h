@@ -684,7 +684,7 @@ enum SpriteId {
   /// (spr_279.png)
   SPRITE_WORLD_MAP_GATEHOUSE = 0x117,
   // The summons' figures: each summon's event creates its objects of its own
-  // sprite (BattleAnim_SpawnObjects), each playing one of its animations.
+  // sprite (BattleEffect_SpawnObjects), each playing one of its animations.
   /// ★ Named from the game: "Atalanta" (MsgDjinnName)
   SPRITE_ATALANTA = 0x172,
   /// ★ Named from the game: "Thor" (MsgDjinnName)

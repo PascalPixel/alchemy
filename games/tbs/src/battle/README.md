@@ -7,7 +7,7 @@ take hold. The answers come from tables and dice rolls, and each shows up on
 screen as a message such as `Ivan takes 15 damage!`.
 
 [Battle](../../battle.md) explains a battle as a whole and is the place to
-start. [Battle animations](../battle_anim/README.md) draws the animations,
+start. [Battle effects](../battle_effect/README.md) draws them,
 [Windows](../window/README.md) holds the command menu and the
 [party](../../glossary.md#the-party)'s status window, and
 [Game rules](../game/README.md) holds the ability, item and enemy tables and
@@ -129,7 +129,7 @@ is, `gAdventure.battleType`, decides the rest:
 
 Just before a unit acts, the player reads its announcement, such as
 `Isaac casts Spire!`. By then the game has built the chosen command into an
-action run: which ability it is, who it reaches, and the rolls the animation must
+action run: which ability it is, who it reaches, and the rolls the battle effect must
 show. An action that fails at this point (an item already used up, no one
 left in range) shows its own message instead and the action ends there.
 
@@ -190,7 +190,7 @@ cursor wraps round. Where the units stand on screen changes none of this.
 
 ![Isaac attacks Ivan twice: the first time `Ivan nimbly dodges the blow!`, the second a critical hit bursts in light and `Ivan takes 110 damage!`.](https://alchemy.pascalpixel.com/guides/battle/rolls.gif)
 
-A dodge and a critical hit look different from a plain blow, so the animation
+A dodge and a critical hit look different from a plain blow, so the battle effect
 has to know which it is before it starts. The action therefore rolls them while
 it is built, before anything is drawn.
 
@@ -204,7 +204,7 @@ An ability with a double or triple blow makes one roll for all its targets:
 153 in 256 for Gust, Rapid Smash, Slice and Sonic Smash, one time in four for
 Flying Attack, Double Fang, Twin Beaks and Swift Strike; Sonic Smash and Swift
 Strike strike three times. A success raises each target's blows and the
-animation's strength, so the extra blows show. Annihilation rolls its instant
+battle effect's strength, so the extra blows show. Annihilation rolls its instant
 death here too; every other added effect is rolled for each target as it is
 hit.
 
@@ -212,7 +212,7 @@ hit.
 
 ![Isaac casts Rockslide at Garet, Ivan and Mia: a column of light opens into a wall of fire with rocks tumbling through it.](https://alchemy.pascalpixel.com/abilities/rockslide.gif)
 
-The staging is what happens around an animation: whether the unit runs up and
+The staging is what happens around a battle effect: whether the unit runs up and
 strikes, raises a hand to cast, or nothing moves. Rockslide is staged full
 screen: the camera turns and the side that isn't targeted fades out.
 
@@ -234,7 +234,7 @@ The stagings are `enum BattleStaging`:
 
 | Name | What the player sees |
 | --- | --- |
-| `STAGING_MESSAGES` | no animation, only each target's messages |
+| `STAGING_MESSAGES` | no battle effect, only each target's messages |
 | `STAGING_ATTACK` | the acting unit runs up and strikes |
 | `STAGING_CAST` | a cast: Psynergy, and Venus, Mercury, Mars and Jupiter |
 | `STAGING_ITEM` | the user raises an item |
@@ -248,7 +248,7 @@ The stagings are `enum BattleStaging`:
 
 ![Mia casts Ply on Garet: motes of light swirl in to him and `Garet recovers 150 HP!`.](https://alchemy.pascalpixel.com/abilities/ply.gif)
 
-Once the animation shows the blow land, or the healing reach its target, each
+Once the battle effect shows the blow land, or the healing reach its target, each
 target in turn learns what the ability does to it: how much damage it takes or
 how much it heals, and whether the ability's added effect (Sleep, a lowered
 Defense, poison) takes hold.
@@ -458,29 +458,29 @@ target come. The rules leave a list of what to show, in order, and the
 screen plays the list.
 
 That list, the playback queue, is the one way the rules reach the screen: the
-rules never draw or wait, and an animation never works out an outcome.
-[Battle](../../battle.md#rules-and-animations-run-together) shows how
-playback runs alongside the animation and starts on the frame the blow lands.
+rules never draw or wait, and a battle effect never works out an outcome.
+[Battle](../../battle.md#rules-and-battle-effects-run-together) shows how
+playback runs alongside the battle effect and starts on the frame the blow lands.
 Playback takes the targets in their order along the battlefield, not the aimed
 one first. Only the flinch (nine [frames](../../glossary.md#frame) of
 flashing) and the message (until the player presses A) make it wait; the names
 and numbers a message needs play within one frame, just before it. An
-outcome shown with no animation, such as a cast that is sealed or short of
+outcome shown with no battle effect, such as a cast that is sealed or short of
 PP, plays the same queue straight through.
 
 The queue is `struct BattlePlaybackQueue`, filled by `BattlePlayback_Push`
 and played by `BattlePlayback_Run` ([`battle/playback.c`](battle/playback.c)),
-or by `BattlePlayback_RunAll` when there is no animation.
+or by `BattlePlayback_RunAll` when there is no battle effect.
 
 ## Design
 
 The rules and the pictures are kept apart on purpose. The rules decide
-everything before or while the animation plays, and leave only a list of what
-to show; the animation decides only when the damage appears. So the same
-arithmetic serves every animation, and an animation can be replaced or
+everything before or while the battle effect plays, and leave only a list of what
+to show; the battle effect decides only when the damage appears. So the same
+arithmetic serves every battle effect, and a battle effect can be replaced or
 skipped without changing an outcome.
 
-Actions are worked out in two stages for the same reason: what the animation
+Actions are worked out in two stages for the same reason: what the battle effect
 must show (a miss, a critical hit, a double blow) is rolled while the action is
 built, before anything is drawn, and everything else is rolled target by
 target as the blow lands.
@@ -502,12 +502,12 @@ borrows the system's [tasks](../../glossary.md#task) and heap, the field's actor
 window code for its menus and status window, and the
 [game rules](../game/README.md) for its tables and arithmetic, which sit in
 another [bank](../../glossary.md#bank) and are reached by far calls. The
-animations ([Battle animations](../battle_anim/README.md)) are called by the
+battle effects ([Battle effects](../battle_effect/README.md)) are called by the
 staging and hand back control when they finish.
 
 ## Limits
 
-- There are 519 abilities. The action reads `gAbilityAnimations` only up to
+- There are 519 abilities. The action reads `gAbilityBattleEffects` only up to
   Thrash, and `gAbilityStaging`, a row shorter, up to Severe Blow.
 - An action reaches at most `TARGET_MAX` targets.
 - The party fights four at a time and the enemies six at most; in a link
@@ -524,10 +524,10 @@ staging and hand back control when they finish.
   (`FIRST_ENEMY_UNIT`). A unit is a `struct Unit` (`Unit_GetFar`).
 - **ability**, **ability id**: anything a unit does when it acts, from Attack
   to Quake, a Djinni, a summon, an item's use or an enemy's move. The id is a
-  row number in three tables: `../game/abilities.c`, `gAbilityAnimations` and
+  row number in three tables: `../game/abilities.c`, `gAbilityBattleEffects` and
   `gAbilityStaging`.
 - **ability kind**: which formula an ability's targets go through. The
-  animation an ability plays is chosen separately.
+  battle effect an ability plays is chosen separately.
 - **power**: what an ability's power counts depends on its kind. A unit's
   **Power** and **Resist**, capitalized as the Status screen writes them,
   are its stats in each element.
@@ -545,7 +545,7 @@ staging and hand back control when they finish.
   turn is gathered, then, once built, the action under way
   (`struct BattleActionRun`): the acting unit, the
   ability, its element, its targets with their distances and rolls, its
-  staging and its animation.
+  staging and its battle effect.
 - **battle object**: a unit's figure on the battlefield
   (`struct BattleObject`), with its shadow and status icon. The Kraken and the
   Fusion Dragon are drawn in two parts.
@@ -583,8 +583,8 @@ while both Defense changes ran their 7 turns. Aiming Quake along four large
 enemies moved the cursor from the last place round to the first. The party at
 level 20 ran from two Gryphons on its second try, the first forced to fail.
 
-Bits 0 and 1 of the `flags` column of `gAbilityAnimations` (`ANIM_ON_DOWNED`,
-`ANIM_OTHER_SIDE`) are read, but no row in either game sets them. Building
+Bits 0 and 1 of the `flags` column of `gAbilityBattleEffects` (`EFFECT_ON_DOWNED`,
+`EFFECT_OTHER_SIDE`) are read, but no row in either game sets them. Building
 the action adds the first itself for the revive effects; nothing adds the second, so the
 side flip it asks for is unused. Only the Mars Lighthouse bosses (Saturos's
 second fight, Menardi and the Fusion Dragon) set the class bit that makes a
@@ -596,4 +596,4 @@ when it turns the sprites to face the camera. Every camera setup (the
 battle's, the World Map's and Lucky Dice's) clears it and nothing sets it, so
 the sprites always face the real eye. The last two words of
 `BattleBackgroundWork`, `unusedAfterFlag`, are cleared when a battle starts;
-no code in the battle, its animations or the field reads them.
+no code in the battle, its battle effects or the field reads them.

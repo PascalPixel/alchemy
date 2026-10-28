@@ -5,7 +5,7 @@
 
 struct BattleAction;
 struct BattlePlaybackWork;
-struct BattleAnimArgs;
+struct BattleEffectParams;
 struct BattleSummonState;
 struct BattleTransitionEntry;
 struct AbilityDefinition;
@@ -193,10 +193,10 @@ void Battle_TurnStartNoOp(void);
 s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay);
 #ifdef UBFIX
 void BattleStaging_BuildTargetList(struct BattleActionRun *plan,
-                                   struct BattleAnimArgs *args);
+                                   struct BattleEffectParams *args);
 #else
 s32 BattleStaging_BuildTargetList(struct BattleActionRun *plan,
-                                  struct BattleAnimArgs *args);
+                                  struct BattleEffectParams *args);
 #endif
 s32 BattleStaging_RunFlee(struct BattleActionRun *plan);
 s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode);

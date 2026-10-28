@@ -402,7 +402,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
           BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
       work.effect.targets[work.effect.targetCount] = BATTLE_UNIT_LIST_END;
       BattleObject_SpawnObjectsForList(work.effect.targets, 0);
-      BattleAnim_RunShatteringOpeningFar(&work.effect);
+      BattleEffect_RunShatteringOpeningFar(&work.effect);
       BattleCamera_SetView(0, 0, 0, 100);
       *timer = start;
     }

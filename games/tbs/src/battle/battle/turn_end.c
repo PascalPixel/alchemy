@@ -334,8 +334,8 @@ s32 Battle_ProcessTurnEnd(void) {
       } while (recoveryIndex < list->count);
     }
     // Set each recovered Djinni, as DjinnRecovery_CountDown does, with its
-    // message, the unit's POSE_CAST and its element's animation. As there, the
-    // cursor stays on a removed entry; it would stay for ever on one whose
+    // message, the unit's POSE_CAST and its element's battle effect. As there,
+    // the cursor stays on a removed entry; it would stay for ever on one whose
     // unit is off the field, but only a unit on the field counts down to 0
     // above.
     recoveryIndex = 0;

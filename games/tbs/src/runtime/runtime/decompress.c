@@ -76,7 +76,7 @@ void PaletteFade_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup,
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
-/// Halves every pixel. Called by the battle animation canvas's transfers.
+/// Halves every pixel. Called by the battle effect canvas's transfers.
 void PaletteFade_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes) {
   u32 words = (u32)PaletteFade_BackupAndHalveCodeSize >> 2;
   u32 routine[words];

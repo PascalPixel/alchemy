@@ -210,7 +210,7 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
 
 /// Auto battle: casts Psynergy. The camera turns to the caster's side and
 /// the caster raises its hand; the target side fades out, its living units
-/// are readied alone, the Psynergy's animation (kind action->parameter) plays
+/// are readied alone, the Psynergy's effect (kind action->parameter) plays
 /// on them, and everyone fades back in. Returns -1 for an invalid unit or
 /// target. Called by AutoBattle_RunAction for COMMAND_PSYNERGY. Writes
 /// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
@@ -308,11 +308,11 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   }
   context.effect.targetCount = livingCount;
   if (targetId >= 0 && targetId <= ALLY_MAX) {
-    context.effect.side = ANIM_SIDE_PARTY;
+    context.effect.side = EFFECT_SIDE_PARTY;
   } else {
-    context.effect.side = ANIM_SIDE_ENEMIES;
+    context.effect.side = EFFECT_SIDE_ENEMIES;
   }
-  BattleAnim_RunSummonFar(&context.effect);
+  BattleEffect_RunSummonFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
@@ -369,13 +369,13 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
 
   work.effect.targetCount = 1;
   if ((u16)work.effect.targets[0] <= ALLY_MAX)
-    work.effect.side = ANIM_SIDE_PARTY;
+    work.effect.side = EFFECT_SIDE_PARTY;
   else
-    work.effect.side = ANIM_SIDE_ENEMIES;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
   work.effect.prelude = 0;
 
   WaitFrames(4);
-  BattleAnim_RunByIdRangeFar(&work.effect);
+  BattleEffect_RunByIdRangeFar(&work.effect);
   BattleMotion_ReturnToSpot(work.effect.targets[0]);
   BattleMotion_ReturnToSpot(work.effect.user);
   return 0;
@@ -426,11 +426,11 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   Actor_SelectAnimationFar(object, POSE_CAST);
   Actor_SetAnimationSpeedFar(object, 16);
   if ((u16)action->target <= ALLY_MAX) {
-    work.effect.side = ANIM_SIDE_PARTY;
+    work.effect.side = EFFECT_SIDE_PARTY;
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
     work.effect.targetCount = 1;
   } else {
-    work.effect.side = ANIM_SIDE_ENEMIES;
+    work.effect.side = EFFECT_SIDE_ENEMIES;
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, work.effect.targets);
     work.effect.targetCount = 1;
   }
@@ -451,15 +451,15 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   do {
     work.effect.kind = ELEMENT_VENUS;
     work.effect.variant = 0;
-    BattleAnim_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_MERCURY;
-    BattleAnim_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_MARS;
-    BattleAnim_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = ELEMENT_JUPITER;
-    BattleAnim_RunElementPillarFar(&work.effect);
+    BattleEffect_RunElementPillarFar(&work.effect);
     work.effect.kind = 0;
-    BattleAnim_RunFromTableFar(&work.effect);
+    BattleEffect_RunFromTableFar(&work.effect);
     Actor_SelectAnimationFar(object, POSE_STANDING);
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
@@ -529,7 +529,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   Actor_SelectAnimationFar(battleObject->actor, POSE_STANDING);
 }
 
-/// For a unit whose HP has run out: plays its falling animation to the last
+/// For a unit whose HP has run out: plays its falling effect to the last
 /// frame and marks its battle object for release (BattleObject_MarkForRelease).
 /// Called by AutoBattle_ApplyDamage.
 void BattleMotion_PlayFall(s32 unitId) {

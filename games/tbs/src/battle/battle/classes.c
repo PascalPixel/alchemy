@@ -59,7 +59,7 @@ s32 BattleSprite_IsSmall(s32 index) {
 /// Returns the animation a class's plain attack shows, 1 for none or out of
 /// range.
 /// Called by BattleActionRun_Build, which stages it by id range
-/// (ANIM_BY_ID_RANGE).
+/// (EFFECT_BY_ID_RANGE).
 u32 BattleSprite_GetAttackAnim(u32 index) {
   u16 value;
 

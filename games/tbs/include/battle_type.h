@@ -26,7 +26,7 @@ enum BattleCritical {
 /// ability lands; BattleActionRun_Build rolls it ahead only for Annihilation.
 #define HIT_NOT_ROLLED -1
 
-/// BattleActionRun.failure: why a cast plays no animation, which the staging
+/// BattleActionRun.failure: why a cast plays no effect, which the staging
 /// shows.
 enum BattleActionFailure {
   ACTION_FAILURE_NONE,
@@ -51,11 +51,11 @@ struct BattleActionRun {
   s32 abilityId;
   s32 element; ///< enum Element
   s32 staging; ///< enum BattleStaging: how the action is shown
-  /// The animation word: how it is staged (STAGING_ in battle_internal.h).
+  /// The effect word: how it is staged (STAGING_ in battle_internal.h).
   /// bits: 19 view reversed | 18 view across | 17 other side | 16 on downed |
-  /// 15 large animation | 14 by id range | 13..12 variant | 11..0 animation
+  /// 15 large effect | 14 by id range | 13..12 variant | 11..0 effect
   /// kind
-  u32 animation;
+  u32 battleEffect;
   s32 failure; ///< enum BattleActionFailure
   /// The damage the evil spirit deals a haunted unit at the end of its action.
   u32 hauntDamage;

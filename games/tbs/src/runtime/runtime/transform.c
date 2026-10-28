@@ -25,7 +25,7 @@ void Transform_Reset(void) {
 }
 
 /// Saves gTransform into the save area (one level deep; a second save is
-/// ignored). Called by the battle animations that draw a part with its own
+/// ignored). Called by the battle effects that draw a part with its own
 /// transform, with Transform_Pop after.
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
@@ -35,13 +35,13 @@ void Transform_Push(void) {
   }
 }
 
-/// Copies gTransform to `dst`. Called by BattleAnim_RunAtalanta.
+/// Copies gTransform to `dst`. Called by BattleEffect_RunAtalanta.
 void Transform_Store(void *dst) {
   Dma_Set(gTransform, dst, TRANSFORM_DMA, REG_DMA3);
 }
 
 /// Copies the matrix at `src` into gTransform. Called by
-/// BattleAnim_RunAtalanta.
+/// BattleEffect_RunAtalanta.
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, TRANSFORM_DMA, REG_DMA3);
 }
@@ -125,7 +125,7 @@ void Transform_ApplyYaw(s32 angle) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates gTransform about the Z axis by `angle`. Called by battle animations
+/// Rotates gTransform about the Z axis by `angle`. Called by battle effects
 /// that spin their picture.
 void Transform_ApplyRoll(s32 angle) {
   s32 matrix[12];
@@ -142,7 +142,7 @@ void Transform_ApplyRoll(s32 angle) {
 }
 
 /// Translates gTransform by `position` (x, y, z in 16.16). Called by the
-/// battle and field cameras and the battle animations.
+/// battle and field cameras and the battle effects.
 void Transform_ApplyPosition(const s32 *position) {
   s32 matrix[12];
 
@@ -155,7 +155,7 @@ void Transform_ApplyPosition(const s32 *position) {
 }
 
 /// Scales gTransform by `scale` (x, y, z factors in 16.16). Called by a few
-/// battle animations (Bind, Astral Blast, Thor).
+/// battle effects (Bind, Astral Blast, Thor).
 void Transform_ApplyScale(const s32 *scale) {
   s32 matrix[12];
 

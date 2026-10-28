@@ -101,7 +101,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// Unit_RecalculateGaugesFar its HP and PP gauges after either changes.
 ///
 /// Called for each target in turn by BattlePlayback_Run (an action with an
-/// animation) and BattleStaging_RunActorEntries (one without). Changes the
+/// battle effect) and BattleStaging_RunActorEntries (one without). Changes the
 /// target's HP, PP, statuses, stat stages and turns, and its guard; the user's
 /// HP or PP for a drain, and plan->hauntDamage; adds an enemy to
 /// gBattleWork->enemyIds when one is called; sets gBattleWork->challengeFlag

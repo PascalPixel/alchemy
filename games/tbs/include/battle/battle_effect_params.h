@@ -1,0 +1,53 @@
+#ifndef ALCHEMY_BATTLE_EFFECT_PARAMS_H
+#define ALCHEMY_BATTLE_EFFECT_PARAMS_H
+
+/// @file
+/// BattleEffectParams, the command an effect's caller, dispatcher and
+/// handlers share, and the macros that define effect kinds.
+
+#include "types.h"
+#include "static_assert.h"
+
+/// BattleEffectParams.side: the side the targets are on.
+enum BattleEffectSide { EFFECT_SIDE_ENEMIES, EFFECT_SIDE_PARTY };
+
+/// What a critical hit adds to an attack's effect kind:
+/// BattleStaging_RunAttack plays the critical version of the blow. Only
+/// plain attacks score critical hits, and their kinds are 1 to 5, all
+/// dispatched by id range, so it reaches kinds 201 to 205: the ring and spark
+/// effect, the same for each.
+#define EFFECT_ID_CRITICAL_OFFSET 200
+
+/// The command shared by an effect's caller, dispatcher and handlers.
+struct BattleEffectParams {
+  s32 kind;        ///< handler table index; a critical hit adds
+                   ///< EFFECT_ID_CRITICAL_OFFSET
+  s32 side;        ///< enum BattleEffectSide
+  s32 user;        ///< the user's unit id
+  s32 firstTarget; ///< the action's first target, standing or not
+  s32 range;       ///< forwarded action range, otherwise initialized to 1
+  s32 targetCount; ///< entries in targets, at least 1
+  s32 variant;     ///< the ability's size, from 0 (Quake, then Earthquake)
+  s32 prelude;     ///< 1 plays a prelude: in some effects a Djinni appears
+  s32 unused;      ///< no code names it
+  s16 targets[8];  ///< the targets' unit ids, count of them
+};
+
+STATIC_ASSERT(sizeof(struct BattleEffectParams) == 0x34);
+STATIC_ASSERT(offsetof(struct BattleEffectParams, targetCount) == 0x14);
+STATIC_ASSERT(offsetof(struct BattleEffectParams, targets) == 0x24);
+
+/// Defines the battle effect kind `name` as a call of a shared runner with
+/// one fixed argument, its style or variant. The strike, volley, shower, mote
+/// and stat-change families each have one runner and a kind like this for each
+/// ability that uses it.
+#define DEFINE_BATTLE_EFFECT_KIND(name, runner, arg)                           \
+  void name(struct BattleEffectParams *args) { runner(args, arg); }
+
+/// Loops `i` over the effect's targets, effect->targets[0] to
+/// effect->targets[effect->targetCount - 1]: the loops that flash, shake,
+/// strike or aim at each target in turn.
+#define EFFECT_FOR_EACH_TARGET(i, effect)                                      \
+  for ((i) = 0; (i) != (effect)->targetCount; (i)++)
+
+#endif

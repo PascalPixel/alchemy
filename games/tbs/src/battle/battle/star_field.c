@@ -12,7 +12,7 @@ struct Spark {
 };
 
 /// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
-/// in the HEAP_SLOT_BATTLE_ANIM heap slot from
+/// in the HEAP_SLOT_BATTLE_EFFECT heap slot from
 /// ElementGlow_InitializeStarField to
 /// ElementGlow_ReleaseVramAndHeapBlocks, the 45 frames of a cast's glow
 /// (ElementGlow_Play, GLOW_STAR_FIELD). ElementGlow_UpdateStarField draws from
@@ -33,7 +33,7 @@ struct SparkWork {
 };
 
 STATIC_ASSERT(offsetof(struct SparkWork, canvasOrigin) ==
-              offsetof(struct BattleAnimWork, trackedCanvas.origin));
+              offsetof(struct BattleEffectWork, trackedCanvas.origin));
 
 /// A blitter loaded into a heap slot: draws a width by height picture at
 /// (x, y) on the canvas.
@@ -79,7 +79,7 @@ s32 ElementGlow_UpdateStarField(void) {
   s32 life;
 
   canvas = gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  work = gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
+  work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   work->ready = 0;
   draw = (DrawFunc)gHeapSlots[HEAP_SLOT_RAM_CODE];
   for (sparkIndex = 0; sparkIndex < 16; sparkIndex++) {
@@ -174,7 +174,7 @@ void ElementGlow_UploadStarField(void) {
 u32 ElementGlow_UploadStarField(void) {
 #endif
   void *source = gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  struct SparkWork *work = gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
+  struct SparkWork *work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
 
   if (source != 0) {
     if (work->ready != 0) {
@@ -196,7 +196,7 @@ u32 ElementGlow_UploadStarField(void) {
 
 /// Starts a star field of the element mode (0 to 3, enum Element order):
 /// sixteen sparks on random rings and three rings 120 degrees apart.
-/// Allocates the field's work (HEAP_SLOT_BATTLE_ANIM) and a cleared
+/// Allocates the field's work (HEAP_SLOT_BATTLE_EFFECT) and a cleared
 /// 128 by 128 canvas (HEAP_SLOT_BATTLE_CANVAS), decodes the blue ring sheet
 /// into the work, loads the element's 64 colours over the first of BG palette
 /// RAM, sets BG2's affine parameters to no zoom, loads both blitters and adds
@@ -217,7 +217,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 
   // Word 2 of the background's work is BattleBackgroundWork.mode.
   ((s32 *)gBattleBackgroundWork)[2] = BATTLE_BACKGROUND_FIXED;
-  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_ANIM, sizeof *work);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
   /* FAKEMATCH(one-pass): an empty one-pass loop, a scheduling barrier that
    * keeps the multiply routine's address ahead of the spark cursor; without
@@ -288,8 +288,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(Q_8_8(1), &REG_BG2PD);
-  BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
-  BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
+  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
+  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
   Task_Add(STAR_FIELD_UPDATE_FUNC, TASK_PASS_FRAME);
   return Task_Add(STAR_FIELD_UPLOAD_FUNC, TASK_PASS_FRAME);
 }
@@ -304,7 +304,7 @@ s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
-  HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
+  HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
   Task_Remove(STAR_FIELD_UPLOAD_FUNC);
@@ -316,7 +316,7 @@ s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused) {
 /// Called to darken the background's palette by
 /// BattleBackground_SetPaletteLevel, BattleBackground_Load,
 /// ElementGlow_Play, the item staging (staging.c) and the
-/// battle animations' canvas (canvas.c).
+/// battle effects' canvas (canvas.c).
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
@@ -409,7 +409,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
          frame++) {
       brightness = &battle->brightness;
       ime = &REG_IME;
-      work = gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
+      work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
       if (frame <= 24)
         Graphics_ScaleRgb555Clamped(battle->palette, BATTLE_BG_PALETTE,
                                     *brightness = 0x10000 - frame * 1092, 128);
@@ -425,12 +425,12 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     ElementGlow_ReleaseVramAndHeapBlocks(element);
   } else if (mode == GLOW_STREAKS) {
     // The streaks for 40 frames, their canvas centred on the unit likewise.
-    struct BattleAnimWork *effectWork;
+    struct BattleEffectWork *effectWork;
 
     // The animation uses its image area to stage the tracked canvas origin.
-    BattleAnim_StartElementStreaksFar(element);
+    BattleEffect_StartElementStreaksFar(element);
     for (frame = 0; frame < 40; frame++) {
-      effectWork = gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
+      effectWork = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
       BattleMotion_ProjectScaledPosition(
           unitId, ScreenPoint_Coordinates(&streakPosition));
       effectWork->trackedCanvas.origin.x = (64U - (u32)streakPosition.x) << 8;
@@ -441,7 +441,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       effectWork->trackedCanvas.origin.queued = 1;
       WaitFrames(1);
     }
-    BattleAnim_EndElementStreaksFar();
+    BattleEffect_EndElementStreaksFar();
   } else if (mode == GLOW_PILLAR) {
     // The pillar and the burst run an animation with the unit as its user and
     // only target.
@@ -453,7 +453,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     pillarLaunch.effect.firstTarget = unitId;
     pillarLaunch.effect.targetCount = 1;
     pillarLaunch.effect.range = 1;
-    BattleAnim_RunElementPillarFar(&pillarLaunch.effect);
+    BattleEffect_RunElementPillarFar(&pillarLaunch.effect);
   } else {
     burstLaunch.effect.kind = element;
     burstLaunch.effect.prelude = 0;
@@ -463,7 +463,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     burstLaunch.effect.firstTarget = unitId;
     burstLaunch.effect.targetCount = 1;
     burstLaunch.effect.range = 1;
-    BattleAnim_RunElementBurstFar(&burstLaunch.effect);
+    BattleEffect_RunElementBurstFar(&burstLaunch.effect);
   }
 }
 

@@ -92,7 +92,7 @@ enum AbilityId {
   ABILITY_CANT_USE = 0x1fd,
   /// The last row of gAbilityStaging.
   ABILITY_SEVERE_BLOW = 0x205,
-  /// The last row of abilities.c and gAbilityAnimations.
+  /// The last row of abilities.c and gAbilityBattleEffects.
   ABILITY_THRASH = 0x206
 };
 

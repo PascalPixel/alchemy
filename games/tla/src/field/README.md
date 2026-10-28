@@ -1,52 +1,29 @@
 # The Lost Age: field
 
-This folder holds The Lost Age's scene table and, in `shared/`, the field
-code its scenes use: the object script interpreter (`shared/script/`),
-the map's cells and animation (`shared/map/`), field objects
-(`shared/object/`), events, effects and the camera. In ☀️ the same code is
-spread over [The field bank](../../../tbs/src/field/README.md) and
+The Lost Age keeps its [scene](../../../tbs/glossary.md#scene) table (`scenes.s`) here and, under
+`shared/`, the field code its scenes use: [actor scripts](../../../tbs/glossary.md#actor-script)
+(`shared/script/`), the [map](../../../tbs/glossary.md#map)'s cells and animation (`shared/map/`),
+[actors](../../../tbs/glossary.md#actor) (`shared/object/`), [events](../../../tbs/glossary.md#event),
+[field effects](../../../tbs/glossary.md#field-effect) and the camera. The Broken Seal spreads the
+same code over [The field bank](../../../tbs/src/field/README.md) and
 [Running a scene](../../../tbs/src/overworld/README.md), which explain how it
-works; this page says only what differs here.
+works.
 
-## What differs from ☀️
+## What differs from The Broken Seal
 
-- **Grouping.** ⚓️'s folder is by family of the field's code, not by ☀️'s objects:
-  the script interpreter, the map code and the field objects are subfolders
-  of `shared/`, one function or small family to a file. `work9c/` and
-  `worka0/` are named for the offset of the heap slot their code works in
-  (0x9c and 0xa0 in the slot table, slots 39 and 40), and their files and
-  functions for their addresses (`Func_080d8d40`), until their meaning is
-  read.
-- **The scene table.** `scenes.s` has a sixth column, a flag, that ☀️'s
-  table does not have, and ⚓️'s scenes run overlays numbered from 0x649
-  (`scene Title, 0x649, ...`), where ☀️'s start at 0x36f.
-- **Compiler.** K2's options on top of ☀️'s (`CFLAGS_tla` in the
-  `Makefile`): `-mthumb-split-constants`, `-mthumb-call-via-lr` and
-  `-mtune=arm9tdmi`, without `-mthumb-interwork`.
-- **Names.** A function that does what its ☀️ twin does takes its name, so
-  the command protocol and the map's words in ☀️'s guides apply here as
-  written.
-
-## Status
-
-Functions not yet matched are drafts under `recon/tla/en/main`, by address.
-`make progress` gives the counts.
-
-## Function prefixes
-
-Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
-`Actor_`, `ActorSystem_`, `Animation_`, `Battle_`, `BattleEffect_`,
-`BattleUnit_`, `Camera_`, `EffectPosition_`, `EffectStep_`, `Event_`,
-`FacingObject_`, `Field_`, `FieldEffect_`, `FieldMotes_`, `Graphics_`, `Item_`,
-`Leader_`, `Map_`, `MapAnimation_`, `Motion_`, `ObjectCamera_`, `ObjectEffect_`,
-`ObjectSystem_`, `ObjectTable_`, `ObjectVisual_`, `OverlayObject_`, `Party_`,
-`ResourceTable_`, `Scene_`, `SceneActor_`, `Script_` and `ScriptObject_`. Those
-only The Lost Age's code has so far:
-
-| Prefix | What it acts on |
-| --- | --- |
-| `ObjectEvent_`, `ObjectList_` | an event's objects (posing, placing on the ground, removing), and the list of active objects |
-| `Effect_`, `DriftScene_` | moving an effect, and the objects that drift through a scene (here and in `scene/idejima`) |
-| `MapCell_`, `Tilemap_` | a map cell's collision code and attributes, and decoding staged tilemap buffers |
-| `WaveScroll_` | the wave scroll's line offsets |
-| `Vitals_` | the HP and PP ratios |
+- The main routine, `MainRoutine_Run`, is here in `shared/main_routine.c`,
+  where The Broken Seal keeps it with Running a scene; it adds four debug
+  starts and keeps background palettes 14 and 15 across three of its
+  sequences.
+- The folder is grouped by family of the field's code rather than by The
+  Broken Seal's objects, one function or small family to a file.
+  `shared/work9c/` and `shared/worka0/` are named for the
+  [heap slot](../../../tbs/glossary.md#heap-slot) their code works in, by its offset in the slot
+  table (`0x9c` and `0xa0`, slots 39 and 40), and their files and functions
+  by address (`Func_080d8d40`) until their meaning is read.
+- Each row of the scene table is 8 bytes in both games, but here its last
+  halfword is a sixth column, `flag`, which The Broken Seal's rows leave
+  zero. This game's scene [overlays](../../../tbs/glossary.md#overlay) are numbered from `0x649`
+  (`scene Title, 0x649, ...`).
+- The actor script commands keep `Script_` where The Broken Seal says
+  `ActorScript_`.

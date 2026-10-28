@@ -1,57 +1,23 @@
 # The Lost Age: battle
 
-This folder holds The Lost Age's battle code and, in `effect/`, its battle
-effects: ☀️'s [Battles](../../../tbs/src/battle/README.md) and
-[Battle effects](../../../tbs/src/battle_effect/README.md) in one folder. Those
-guides explain how a battle runs, how an ability resolves and how an effect
-draws; this page says only what differs here.
+The Lost Age keeps its battle code and, under `effect/`, its
+[battle effects](../../../tbs/glossary.md#battle-effect) in one folder, where The Broken Seal has
+two: [Battles](../../../tbs/src/battle/README.md) and
+[Battle effects](../../../tbs/src/battle_effect/README.md). Those guides
+explain how a battle runs, how an ability resolves and how an effect is drawn.
 
-## What differs from ☀️
+## What differs from The Broken Seal
 
-- **Compiler.** Every Thumb file is compiled with K2's options on top of
-  ☀️'s: `-mthumb-split-constants`, `-mthumb-call-via-lr` and
-  `-mtune=arm9tdmi`, without `-mthumb-interwork` (the `Makefile`'s
-  `CFLAGS_tla`). They were measured across ⚓️'s whole code, so the same C can
-  compile to different instructions than its ☀️ twin.
-- **Layout.** The code is not yet grouped into objects with parts. Most files
-  hold one function or one small family, named for it
-  (`battle_event.c`, `actor_reset_runtime_fields.c`); `effect/` alone has
-  294 files, and `presentation/`, `motion/`, `party/` and `summon/` group the
-  rest. Some data files are still named by their address (`d01297c4.s`).
-- **Tables.** `actflags.tsv`, `actstat.tsv` and `formatn.tsv` are ⚓️'s own,
-  with its own abilities and enemy groups; their rows are not ☀️'s.
-- **Names.** A function that does what its ☀️ twin does takes the twin's
-  name (`BattleEvent_Push`, `BattleTarget_Execute`), so a search finds both.
-
-## Status
-
-Functions not yet matched are drafts under `recon/tla/en/main`, one file per
-address, each with its remaining difference in its header. An edition whose
-bytes differ from English stays on its scaffold under `recon/tla/<lang>`.
-`make progress` gives the counts.
-
-## Function prefixes
-
-Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
-`Ability_`, `Actor_`, `AutoBattle_`, `Battle_`, `BattleAction_`, `BattleBackground_`,
-`BattleCamera_`, `BattleClass_`, `BattleEffect_`, `BattleEnemy_`,
-`BattleEscape_`, `BattleEvent_`, `BattleFormation_`, `BattleHighlight_`,
-`BattleMessage_`, `BattleMotion_`, `BattleObject_`, `BattleParty_`,
-`BattlePlacement_`, `BattlePlayback_`, `BattleQueue_`, `BattleStaging_`, `BattleStatusIcon_`,
-`BattleTransition_`, `BattleUnit_`, `Camera_`, `ColorBuffer_`, `Display_`,
-`Djinn_`, `DjinnRecovery_`, `Encounter_`, `Enemy_`, `Event_`, `FadeOverlay_`,
-`Field_`, `FieldEffect_`, `FieldEvent_`, `FieldParticle_`, `Graphics_`,
-`LinkBattle_`, `Marker_`, `Motion_`, `Palette_`, `Party_`, `RamCode_`,
-`Render_`, `Resource_`, `Scene_`, `Summon_`, `SummonSlot_`, `Tile_` and
-`Window_`.
-Those only The Lost Age's code has so far:
-
-| Prefix | What it acts on |
-| --- | --- |
-| `BattleActor_` | taking a unit out of the formations and the planned actions |
-| `BattlePalette_` | stopping a palette blend and freeing its buffer |
-| `EffectSprite_` | a sprite drawn at a world position |
-| `SummonEffect_` | the summons' canvas modes |
-| `FlagEntries_` | the table of flag entries, 20 bytes each and ended by a zero flag |
-| `Tutorial_` | the message a Djinni's gift shows |
-| `ViewMove_` | saving and restoring the sprites near the scene's main object |
+- The code is not yet gathered into objects with parts. Most files hold one
+  function or a small family and are named for it (`battle_event.c`,
+  `actor_reset_runtime_fields.c`); `effect/`, `presentation/`, `motion/`,
+  `party/` and `summon/` group the rest, and some files are still named by
+  their address (`f11b2c4.c`, `d01297c4.s`).
+- The tables (`actflags.tsv`, `actstat.tsv`, and the
+  [formations](../../../tbs/glossary.md#formation) in `formatn.tsv`) are still TSV, packed by the
+  build into the `.table` files that `battle_action.s` and `battle_vars.s`
+  include; The Broken Seal writes its tables as C arrays (`gFormations` in
+  [formations.c](../../../tbs/src/battle/formations.c)).
+- This game's Thumb files are compiled with options of their own
+  ([The Lost Age: system](../system/README.md)), so the same C can compile to
+  different instructions here.

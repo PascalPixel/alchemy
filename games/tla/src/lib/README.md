@@ -1,35 +1,24 @@
 # The Lost Age: lib
 
-This folder holds The Lost Age's maths: the sine and cosine (`trig.s`,
-`sine_table.s`), the arctangent (`mathtan.s`), fixed-point multiplies and
-reciprocals, the 16.16 dot product, and the curves and steps that ease a
-value towards a target. ☀️ has no folder of this name: its twin of this code
-is part of [Runtime](../../../tbs/src/runtime/README.md) (`trig.s`,
-`q16_dot_product.s`, the math part) and of the field's curves
-([The field bank](../../../tbs/src/field/README.md), `Curve_`). Those guides explain
-the units; this page says only what differs here.
+The Lost Age's maths: the sine and cosine (`trig.s`, `sine_table.s`), the
+tangent table the arctangent searches (`mathtan.s`), fixed-point multiplies
+and the reciprocal, the 16.16 dot product, and the ground height functions
+that work out the height at any pixel of a map [cell](../../../tbs/glossary.md#cell) (`curve.c`,
+`step.c` and the files beside them). The Broken Seal has no folder of this
+name.
 
-## What differs from ☀️
+## What differs from The Broken Seal
 
-- **Grouping.** ⚓️ keeps these routines together in one folder by subject,
-  though the ROM places them apart: the trigonometry and the dot product in
-  the first bank with the runtime (`rom_main_00`), the curves and steps in
-  the second with the field (`rom_main_01`), and the small multiplies and the
-  reciprocal in `rom_main_12` (`games/tla/objects.tsv`). ☀️'s twins sit in
-  the folders of their banks.
-- **Compiler.** K2's options on top of ☀️'s (`CFLAGS_tla` in the
-  `Makefile`): `-mthumb-split-constants`, `-mthumb-call-via-lr` and
-  `-mtune=arm9tdmi`, without `-mthumb-interwork`. The `.s` files are
-  handwritten, each proven in its header.
-- **Names.** Routines that do what their ☀️ twins do take their names
-  (`Trig_Sin`, `Trig_Cos`).
-
-## Status
-
-Functions not yet matched are drafts under `recon/tla/en/main`, by address.
-`make progress` gives the counts.
-
-## Function prefixes
-
-Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
-`FixedPoint_`, `Math_`, `Palette_` and `Vector_`.
+- These routines are kept together by subject, though the ROM places them
+  apart: the trigonometry, `math.c`, the long multiplies and the dot product
+  in the first [bank](../../../tbs/glossary.md#bank) with the runtime code (`rom_main_00`), the
+  ground heights in the second with the field (`rom_main_01`), and the small
+  multiplies and the reciprocal in `rom_main_12` (`games/tla/objects.tsv`).
+  The Broken Seal's twins sit in the folders of their banks: `trig.s`,
+  `q16_dot_product.s` and `runtime/math.c` under
+  [Runtime](../../../tbs/src/runtime/README.md), and the ground heights in
+  [terrain.c](../../../tbs/src/field/field/terrain.c), described under
+  [How high a step can go](../../../tbs/src/field/README.md#how-high-a-step-can-go).
+- The ground height functions keep their older names here: `Curve_` where The
+  Broken Seal says `Terrain_` (`Curve_LerpTwoSamples` is
+  `Terrain_LerpTwoSamples`).

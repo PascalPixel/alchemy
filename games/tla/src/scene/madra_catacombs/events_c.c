@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -127,16 +127,16 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Cue(158);
   Map_CopyCells(a, b, c, d, mode, f);
   FieldEvent_Wait(20);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     cell = object->x >> 16;
     Func_020010bc(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_020010c4(object);
     object->angle = 0xc000;
   }
-  Actor_SetMovementTypeById(gSequenceParentWork.currentOwner,
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_0200121c);
   Wait(12);
   Cue(123);
@@ -157,9 +157,9 @@ void Func_02000c94(void) {
   Func_0200110c();
   Func_020011ac(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
-  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -171,9 +171,9 @@ void Func_02000cf4(void) {
   Func_0200110c();
   Func_020011ac(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
-  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

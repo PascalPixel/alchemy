@@ -15,7 +15,7 @@
 #include "battle_party.h"
 #include "battle_escape.h"
 #include "owner_state.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 s32 __divsi3(s32, s32);
@@ -36,7 +36,7 @@ s32 BattleEscape_CheckSuccess(void) {
   s32 unitIndex;
   s32 chance;
   struct BattleEscapeState *escapeState;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   escaped = 0;
   escapeState = (struct BattleEscapeState *)Ram_HeapSlots->battleWork;
@@ -63,9 +63,9 @@ s32 BattleEscape_CheckSuccess(void) {
     }
     *failedAttempts += 1;
   }
-  party = &gSequenceParentWork;
-  /* FAKEMATCH(barrier): gSequenceParentWork's address loaded before 0x24b is
-   * built; as gSequenceParentWork.battleRule24b, 8 of 126 instructions differ in
+  party = &gMainRoutineWork;
+  /* FAKEMATCH(barrier): gMainRoutineWork's address loaded before 0x24b is
+   * built; as gMainRoutineWork.battleRule24b, 8 of 126 instructions differ in
    * tla-en. */
   __asm__ volatile("" : "+l"(party));
   if (party->battleRule24b == 2) {

@@ -25,7 +25,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "iwram_call.h"
 #include "uiwindow.h"
 
@@ -379,7 +379,7 @@ s32 Func_081039fc(u32 mode) {
             menu->cursor->active = 1;
           } while (0);
           Func_080f8ab4(2, 96);
-          gSequenceParentWork.eventMode = 1;
+          gMainRoutineWork.eventMode = 1;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(window, 1);
@@ -411,7 +411,7 @@ s32 Func_081039fc(u32 mode) {
             menu->cursor->active = 1;
           } while (0);
           Func_080f8ab4(106, 56);
-          gSequenceParentWork.eventMode = 1;
+          gMainRoutineWork.eventMode = 1;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(window, 1);

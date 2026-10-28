@@ -9,12 +9,12 @@ void Func_020024f0(void) {
   struct Actor *object;
 
   if (gInput.held & 0x40) {
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     Func_02003e64();
     Func_02003fa4(0);
     object->motionFlags = 0;
     Call3((void (*)())Actor_SetPositionAndReset,
-          gSequenceParentWork.currentOwner, 72, 280);
+          gMainRoutineWork.currentOwner, 72, 280);
     object->motionFlags = 3;
     Func_02003e6c();
   }
@@ -29,7 +29,7 @@ void Func_0200253c(void) {
 
   if (gInput.held & 0x80) {
     state = gSceneState;
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     value = *state;
     /* FAKEMATCH(barrier): clobbering r2 loads the word before 0xfff6 is built
      * in r2; as the plain load, 2 of 41 instructions differ in tla-en. */
@@ -39,7 +39,7 @@ void Func_0200253c(void) {
       Func_02003fa4(0);
       object->motionFlags = 0;
       Call3((void (*)())Actor_SetPositionAndReset,
-            gSequenceParentWork.currentOwner, 72, 296);
+            gMainRoutineWork.currentOwner, 72, 296);
       object->motionFlags = 3;
       Func_02003e6c();
     }

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "scene.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
 
@@ -14,7 +14,7 @@ void *Colosso_FindActorAhead(void) {
   struct FieldPosition position;
   struct Actor *occupant;
 
-  record = Actor_GetById(gSequenceParentWork.leaderActorId);
+  record = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   facing = (record->facing + 0x2000) & 0xc000;
 

@@ -1,5 +1,5 @@
 /// @file
-/// The field object: the sequence parent and scene changes, random encounters,
+/// The field object: the main routine and scene changes, random encounters,
 /// a field scene's actors, the leader's walking and the requests they raise,
 /// the scene's triggers, using items and Psynergy on the field, the map's
 /// treasure spots, and the screen transitions and palette fade that the field
@@ -15,7 +15,7 @@
 #include "overworld_internal.h"
 
 // The parts, in ROM order (src/README.md, "Objects and parts").
-#include "overworld/sequence_parent.c"
+#include "overworld/main_routine.c"
 #include "overworld/encounter.c"
 #include "overworld/actors.c"
 #include "overworld/walking.c"

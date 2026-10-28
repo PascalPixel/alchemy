@@ -129,7 +129,7 @@ Func_080cd808:
 .L_080cd908:
 	.4byte 0xfff00000
 .L_080cd90c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080cd910:
 	.4byte 0x00000e1f
 .L_080cd914:

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "task.h"
 #include "call.h"
 #include "flag_call.h"
@@ -81,9 +81,9 @@ void Func_0200128c(void) {
     return;
   Func_02001f5c();
   Call1((void (*)())Func_020020ac, 0);
-  Call2((void (*)())Func_02001fd4, 7, gSequenceParentWork.currentOwner);
+  Call2((void (*)())Func_02001fd4, 7, gMainRoutineWork.currentOwner);
   Call1((void (*)())wait, 1);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0x19999, 0xcccc);
   Call3((void (*)())Actor_SetPositionAndReset, 7, 412, 424);
   Call2((void (*)())Func_02002044, 7, 0xa000);
@@ -93,14 +93,14 @@ void Func_0200128c(void) {
   Call2((void (*)())Func_02002044, 7, 0xe000);
   Call2((void (*)())Func_02002034, 7, 0);
   Call3((void (*)())Actor_SetPositionAndReset, 7, 386, 424);
-  Call3((void (*)())Actor_SetAngleToward, 7, gSequenceParentWork.currentOwner,
+  Call3((void (*)())Actor_SetAngleToward, 7, gMainRoutineWork.currentOwner,
         0);
-  Call2((void (*)())Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
+  Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, gSequenceParentWork.currentOwner,
+  Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
         0xcccc, 0x6666);
   Call2((void (*)())Actor_SetMovementTypeById,
-        gSequenceParentWork.currentOwner, (s32)gData_02002120);
+        gMainRoutineWork.currentOwner, (s32)gData_02002120);
   Call3((void (*)())Actor_SetSpeedParameters, 7, 0xcccc, 0x6666);
   Call3((void (*)())Actor_SetPositionAndReset, 7, 360, 424);
   Call2((void (*)())Func_02002044, 7, 0xc000);
@@ -133,7 +133,7 @@ void Func_0200128c(void) {
   Call2((void (*)())Actor_SetModeById, 7, 3);
   Call2((void (*)())Func_02002034, 7, 0);
   Call2((void (*)())Actor_SetModeById, 7, 2);
-  object = Actor_GetById(gSequenceParentWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != 0)
     Call3((void (*)())Actor_ResetAndSetPosition, 7,
           ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
@@ -222,7 +222,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Func_02002044, 9, 0x8000);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   if (Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0) == 0) {
     Value3((s32 (*)())Func_0200204c, 5, 263, 20);
     Call2((void (*)())Func_02002034, 5, 0);
@@ -243,7 +243,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002044, 7, 0xe000);
   Call2((void (*)())Actor_SetModeById, 7, 4);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x2000,
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x2000,
         0);
   Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
   Value3((s32 (*)())Func_0200204c, 5, 257, 0);
@@ -271,17 +271,17 @@ void Func_020014c0(void) {
   Value3((s32 (*)())Func_0200204c, 5, 0x100, 0);
   Value3((s32 (*)())Func_0200204c, 6, 0x100, 0);
   Call3((void (*)())Actor_ArmCallback, 5, 0, 20);
-  Call2((void (*)())Func_02002044, gSequenceParentWork.currentOwner, 0);
+  Call2((void (*)())Func_02002044, gMainRoutineWork.currentOwner, 0);
   Call3((void (*)())Actor_ArmCallback, 9, 0x8000, 40);
   Call2((void (*)())Func_02002044, 9, 0x4000);
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 7, 3);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000,
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000,
         0);
   Value3((s32 (*)())Func_0200204c, 9, 0x100, 20);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 3);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call2((void (*)())Func_02002054, 5, 258);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call2((void (*)())Func_02002034, 5, 0);
@@ -297,7 +297,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002034, 9, 0);
   Call2((void (*)())Actor_SetModeById, 7, 3);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x2000,
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x2000,
         0);
   Call3((void (*)())Actor_ArmCallback, 5, 0x2000, 0);
   Value3((s32 (*)())Func_0200204c, 6, 257, 20);
@@ -337,7 +337,7 @@ void Func_020014c0(void) {
   Value3((s32 (*)())Func_0200204c, 5, 257, 40);
   Call3((void (*)())Actor_CommitPositionAndActivate, 5, 0, 16);
   Call2((void (*)())Func_02002034, 5, 0);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000,
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000,
         0);
   Call3((void (*)())Actor_ArmCallback, 6, 0x6000, 0);
   Call3((void (*)())Actor_ArmCallback, 9, 0x5000, 0);
@@ -346,7 +346,7 @@ void Func_020014c0(void) {
   Call2((void (*)())Func_02002034, 7, 0);
   Call2((void (*)())Func_02002044, 7, 0xe000);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call2((void (*)())Func_02002044, 9, 0x8000);
   Call2((void (*)())Actor_SetModeById, 9, 3);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
@@ -359,14 +359,14 @@ void Func_020014c0(void) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Call2((void (*)())Func_02002034, 9, 0);
   }
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000,
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000,
         0);
   Call2((void (*)())Func_02002044, 9, 0x5000);
   Value3((s32 (*)())Func_0200204c, 9, 264, 20);
   Call2((void (*)())Func_02002034, 9, 0);
   Value3((s32 (*)())Func_0200204c, 7, 264, 0);
   Call2((void (*)())Func_02002034, 7, 0);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call2((void (*)())Func_02002044, 9, 0x8000);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 9, 3);
   Call2((void (*)())Actor_SetModeById, 5, 3);

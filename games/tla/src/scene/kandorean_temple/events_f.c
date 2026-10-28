@@ -2,7 +2,7 @@
 #include "macros.h"
 
 void Func_02000b5c(void) {
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      1);
 }
 
@@ -105,10 +105,10 @@ void Func_02000d64(void) {
                                     0xd80000);
   if (GameFlag_Test_(0x208)) {
     Actor_SetModeById_(9, 4);
-    Actor_SetPositionAndResetMotion_(Actor_GetById(gSequenceParentWork.currentOwner),
+    Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
                                       0xd80000, 0xc0000, 0xd80000);
     Actor_SetSingleChildFlags_(
-        Actor_GetById(gSequenceParentWork.currentOwner), 0);
+        Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
   Actor_GetById_(11)->scaleY = 0x10000;
   Actor_SetPositionAndResetMotion_(Actor_GetById_(11), 0xd80000, 0, 0xd80000);
@@ -135,10 +135,10 @@ void Func_02000e60(void) {
                                     0xf80000);
   if (GameFlag_Test_(0x209)) {
     Actor_SetModeById_(10, 4);
-    Actor_SetPositionAndResetMotion_(Actor_GetById(gSequenceParentWork.currentOwner),
+    Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
                                       0x1780000, 0xc0000, 0xf80000);
     Actor_SetSingleChildFlags_(
-        Actor_GetById(gSequenceParentWork.currentOwner), 0);
+        Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
   Actor_GetById_(12)->scaleY = 0x10000;
   Actor_SetPositionAndResetMotion_(Actor_GetById_(12), 0x1780000, 0,

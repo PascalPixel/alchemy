@@ -11,7 +11,7 @@
 // from it; and argument order at about 20 calls, where sched2 issues the last
 // argument first (a direct call and a CallN wrapper make no difference there).
 #include "../../../../games/tla/src/scene/garoh/garoh.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 #include "call.h"
 void Func_020013b0(s32 id);
@@ -21,7 +21,7 @@ void Func_020013b0(s32 id);
                                                                                \
     Actor_SetSpeedParameters(id, 0x13333, 0x9999);                      \
     Actor_SetModeById(id, 2);                                                 \
-    leader_ = Actor_GetById(gSequenceParentWork.currentOwner);                        \
+    leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                        \
     if (leader_ != NULL)                                                       \
       Actor_ResetAndSetPosition(id, *(s16 *)((u8 *)leader_ + 10),       \
                                        *(s16 *)((u8 *)leader_ + 18));          \
@@ -427,6 +427,6 @@ loop2:
   if (GameFlag_Test(7)) {
     FOLLOW_LEADER(7);
   }
-  Call2((void (*)())Camera_FollowActor, gSequenceParentWork.currentOwner, 1);
+  Call2((void (*)())Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
   Func_020051b4();
 }

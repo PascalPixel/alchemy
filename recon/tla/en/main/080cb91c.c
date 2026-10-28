@@ -4,18 +4,18 @@
 // warp, or 999 after the party falls). It sets the scene up in the event
 // work (heap slot 108, 0xd50 bytes, cleared), the world map (scene map 1,
 // event mode 3) or a layout (mode 2), places objects and the camera, fades
-// in (with the ship's arrival wait when gSequenceParentWork's 0x2c2 is 1) and
+// in (with the ship's arrival wait when gMainRoutineWork's 0x2c2 is 1) and
 // gives what was left pending, then loops: the leader walks (Func_080cb2b8
 // each frame) until a request is made, and the requests are handled until none
 // is left: a raised event (the party fell, the world map, its zoom, the
 // four ship commands), a touch or exit, a push, a battle, examining, the
 // menu, talking, searching, Psynergy, an item or the pause menu.
 // The same calls, offsets and control flow; left: register and stack
-// allocation throughout (the native stack frame is 12 bytes against 16, with hegSequenceParentWork at sp 8, the event work in r8 and the transition fields in
+// allocation throughout (the native stack frame is 12 bytes against 16, with gMainRoutineWork at sp 8, the event work in r8 and the transition fields in
 // r9 to r11), which shifts most rows.
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "input.h"
 #include "actor.h"
 #include "iwram_call.h"
@@ -183,7 +183,7 @@ void Func_080cb2b8(s32 terrain, s32 x, s32 y, s32 z);
 
 s32 FieldSequence_Run(void) {
   struct FieldWork *work;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   struct Actor *leader;
   struct FieldUnit *unit;
   s32 result;
@@ -205,18 +205,18 @@ s32 FieldSequence_Run(void) {
   work = HeapSlot_AllocEwram(108, 0xd50);
   Iwram_ClearWords(work, 0xd50);
   GameFlag_ClearBit(259);
-  gSequenceParentWork.primary = gSequenceParentWork.scene;
-  gSequenceParentWork.secondary = gSequenceParentWork.entrance;
-  gSequenceParentWork.pair1ee[0] = -1;
-  gSequenceParentWork.pair1ee[1] = -1;
-  gSequenceParentWork.pair1f2[0] = -1;
-  gSequenceParentWork.pair1f2[1] = -1;
-  gSequenceParentWork.unk2c3 = 0;
+  gMainRoutineWork.primary = gMainRoutineWork.scene;
+  gMainRoutineWork.secondary = gMainRoutineWork.entrance;
+  gMainRoutineWork.pair1ee[0] = -1;
+  gMainRoutineWork.pair1ee[1] = -1;
+  gMainRoutineWork.pair1f2[0] = -1;
+  gMainRoutineWork.pair1f2[1] = -1;
+  gMainRoutineWork.unk2c3 = 0;
   Task_ResetAll();
   Func_080d793c(0);
-  if (gSequenceParentWork.map == (s32)&SceneId_WorldMap) {
+  if (gMainRoutineWork.map == (s32)&SceneId_WorldMap) {
     Func_08020110();
-    gSequenceParentWork.unk244[0] = 1;
+    gMainRoutineWork.unk244[0] = 1;
     mode = 3;
     Func_080c9e48(0);
   } else {
@@ -239,12 +239,12 @@ s32 FieldSequence_Run(void) {
   Func_080cec34();
   if (GameFlag_Test(265))
     Func_080cae5c();
-  if (gSequenceParentWork.pendingDjinnEvent != 0)
+  if (gMainRoutineWork.pendingDjinnEvent != 0)
     Func_080d784c();
   work->queuedSound = -1;
   if (mode == 3) {
     Map_UpdateCurrentTileBlockFar();
-    WorldMap_LoadGraphicsFar(gSequenceParentWork.x, gSequenceParentWork.z);
+    WorldMap_LoadGraphicsFar(gMainRoutineWork.x, gMainRoutineWork.z);
   } else {
     Func_08020180();
     OVERLAY_CALL(13);
@@ -259,24 +259,24 @@ s32 FieldSequence_Run(void) {
   work->transitionActive = zero;
   work->walkingScale = 409;
   work->walkingDistance = zero;
-  if (gSequenceParentWork.sceneVariant == 2) {
+  if (gMainRoutineWork.sceneVariant == 2) {
     work->walkingScale = zero;
     GameFlag_SetBit(324);
   }
   work->previousCell = gMapCellBuffer;
   if (!GameFlag_Test(265)) {
     Func_080ca2fc();
-    *(u16 *)gSequenceParentWork.unk24c = 16;
-    *(u16 *)&gSequenceParentWork.unk24c[2] = zero;
-    *(u16 *)&gSequenceParentWork.unk24c[4] = 1;
-    gSequenceParentWork.pausedObject = -1;
-    gSequenceParentWork.cloaked = 0;
+    *(u16 *)gMainRoutineWork.unk24c = 16;
+    *(u16 *)&gMainRoutineWork.unk24c[2] = zero;
+    *(u16 *)&gMainRoutineWork.unk24c[4] = 1;
+    gMainRoutineWork.pausedObject = -1;
+    gMainRoutineWork.cloaked = 0;
   }
   FieldEffect_ResumeCloakCheck();
-  attributes = Field_GetSceneAttributes(gSequenceParentWork.scene);
+  attributes = Field_GetSceneAttributes(gMainRoutineWork.scene);
   work->sceneAttributeHigh = (attributes >> 4) & 15;
   work->sceneAttributeLow = attributes & 15;
-  arrival = (s8 *)&gSequenceParentWork.unk2c2;
+  arrival = (s8 *)&gMainRoutineWork.unk2c2;
   if (*arrival == 2) {
     Actor_GetById(Party_GetLeaderActor())->scaleX = zero;
     Actor_SetSingleChildFlagsFar(
@@ -310,39 +310,39 @@ s32 FieldSequence_Run(void) {
       if (!ObjectEffect_RunPendingFlagEvent())
         wait((work->transitionFrames + 1) / 2);
     }
-    n = *(s8 *)&gSequenceParentWork.unk2c2;
+    n = *(s8 *)&gMainRoutineWork.unk2c2;
     if (n == 1) {
-      gSequenceParentWork.unk2c2 = 2;
+      gMainRoutineWork.unk2c2 = 2;
       Func_080e7804();
-      if (*(s16 *)gSequenceParentWork.unk2be != (s32)&SceneId_Ov64a ||
-          ((flags = Func_080c9e1c(*(s16 *)&gSequenceParentWork.unk2be[2])) & 16))
-        gSequenceParentWork.ownerOverride = 0;
+      if (*(s16 *)gMainRoutineWork.unk2be != (s32)&SceneId_Ov64a ||
+          ((flags = Func_080c9e1c(*(s16 *)&gMainRoutineWork.unk2be[2])) & 16))
+        gMainRoutineWork.ownerOverride = 0;
       else if (flags & 32)
-        gSequenceParentWork.ownerOverride = 1;
-      Event_SetDestination(*(s16 *)gSequenceParentWork.unk2be,
-                                  *(s16 *)&gSequenceParentWork.unk2be[2]);
+        gMainRoutineWork.ownerOverride = 1;
+      Event_SetDestination(*(s16 *)gMainRoutineWork.unk2be,
+                                  *(s16 *)&gMainRoutineWork.unk2be[2]);
     } else if (n == 2) {
-      gSequenceParentWork.unk2c2 = 0;
+      gMainRoutineWork.unk2c2 = 0;
       Func_080e7238();
     }
     if (GameFlag_Test(303)) {
       GameFlag_ClearBit(303);
-      Func_08038200(gSequenceParentWork.scene);
+      Func_08038200(gMainRoutineWork.scene);
     }
-    if (gSequenceParentWork.pendingDjinnEvent != 0) {
-      Func_080d793c(gSequenceParentWork.pendingDjinnEvent, 1);
-      gSequenceParentWork.pendingDjinnEvent = 0;
+    if (gMainRoutineWork.pendingDjinnEvent != 0) {
+      Func_080d793c(gMainRoutineWork.pendingDjinnEvent, 1);
+      gMainRoutineWork.pendingDjinnEvent = 0;
     }
-    if (gSequenceParentWork.tally25c != 0) {
+    if (gMainRoutineWork.tally25c != 0) {
       Func_080cb82c();
-      if (Func_080d25c8(gSequenceParentWork.tally25c) == 0)
-        PartyInventory_GiveItem(gSequenceParentWork.tally25c, 0);
+      if (Func_080d25c8(gMainRoutineWork.tally25c) == 0)
+        PartyInventory_GiveItem(gMainRoutineWork.tally25c, 0);
       Func_080cb8a4();
-      gSequenceParentWork.tally25c = 0;
+      gMainRoutineWork.tally25c = 0;
     }
   }
 
-  party = &gSequenceParentWork;
+  party = &gMainRoutineWork;
   for (;;) {
     GameFlag_SetBit(260);
     leader = Func_080cb8e8();
@@ -404,8 +404,8 @@ s32 FieldSequence_Run(void) {
         } else if (work->raisedEvent == -0x377) {
           Leader_StopMoving();
           Func_080ed2a4(1);
-          if (*(s16 *)gSequenceParentWork.unk2be != -1)
-            gSequenceParentWork.unk2c2 = 1;
+          if (*(s16 *)gMainRoutineWork.unk2be != -1)
+            gMainRoutineWork.unk2c2 = 1;
         } else if (work->raisedEvent == -0x378) {
           Leader_StopMoving();
           n = 0;
@@ -478,7 +478,7 @@ s32 FieldSequence_Run(void) {
         UiTimedNotice_CloseIfActiveFar();
         talk = 0;
         target = Field_FindNearbyTalkTarget(
-            gSequenceParentWork.ownerOverride == 0 ? Data_02000454 : 8);
+            gMainRoutineWork.ownerOverride == 0 ? Data_02000454 : 8);
         if (target != -1) {
           talk = 1;
           if (target <= 63)

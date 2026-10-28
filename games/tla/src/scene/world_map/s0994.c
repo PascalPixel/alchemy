@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
@@ -37,7 +37,7 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
   Actor_SetModeById(actor, 2);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -84,7 +84,7 @@ void Func_02000994(void) {
   s32 seen;
 
   if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0)) {
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     x = object->x;
     z = object->z;
     Func_02004c20();
@@ -96,35 +96,35 @@ void Func_02000994(void) {
     z <<= 4;
     if (seen) {
       Func_02004df8_(0x16666, 6);
-      Func_02004c98(5, gSequenceParentWork.currentOwner);
+      Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
       Actor_SetPositionAndReset_(5, x + 24, z - 12);
       Actor_ArmCallback_(5, 0x6000, 0);
-      Func_02004d00_(gSequenceParentWork.currentOwner, 0xe000);
+      Func_02004d00_(gMainRoutineWork.currentOwner, 0xe000);
       Func_02004da8();
       Func_02004cd8((s32)MsgWeShouldnT);
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
       wait(1);
-      Actor_SetPositionAndReset_(gSequenceParentWork.currentOwner, 7312, 0x2000);
+      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 7312, 0x2000);
       Func_02004df8_(0x10000, 6);
     } else {
       Func_02004df8_(0x16666, 6);
-      Func_02004c98(5, gSequenceParentWork.currentOwner);
+      Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
       z -= 12;
       Actor_SetPositionAndReset_(5, x + 24, z);
       Actor_ArmCallback_(5, 0x6000, 0);
-      Func_02004d00_(gSequenceParentWork.currentOwner, 0xe000);
+      Func_02004d00_(gMainRoutineWork.currentOwner, 0xe000);
       Func_02004da8();
       Func_02004cd8((s32)MsgYouReNot);
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_ArmCallback_(5, 0x8000, 0);
-      Func_02004d10_(gSequenceParentWork.currentOwner, 258);
-      Actor_SetPositionAndReset_(gSequenceParentWork.currentOwner, x + 12, z);
-      Func_02004d00_(gSequenceParentWork.currentOwner, 0);
+      Func_02004d10_(gMainRoutineWork.currentOwner, 258);
+      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, x + 12, z);
+      Func_02004d00_(gMainRoutineWork.currentOwner, 0);
       Actor_SetModeById(5, 4);
       Func_02004da8();
       Func_02004cf0(5, 0);
@@ -135,7 +135,7 @@ void Func_02000994(void) {
       Func_02004db0();
       Actor_JoinLeader(5);
       wait(1);
-      Actor_SetPositionAndReset_(gSequenceParentWork.currentOwner, 7312, 0x2000);
+      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 7312, 0x2000);
       Flag_Set(0x9b3);
       Func_02004df8_(0x10000, 6);
     }

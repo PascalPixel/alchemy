@@ -16,7 +16,7 @@ s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_02000454(const u8 *data) {
   struct Actor *leader =
-      (struct Actor *)Actor_GetById(gSequenceParentWork.currentOwner);
+      (struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object;
   s32 height;
   s32 cell;
@@ -47,6 +47,6 @@ done:
         Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
     leader->velocityY = 0;
     leader->targetY = 0x80000000;
-    Camera_FollowActor(gSequenceParentWork.currentOwner, 0);
+    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
   }
 }

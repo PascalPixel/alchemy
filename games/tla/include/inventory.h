@@ -4,7 +4,7 @@
 #include "item.h"
 
 #include "owner_state.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 Inventory_Count(s32 owner);
 s32 Inventory_CountItem(s32 owner, s32 item);

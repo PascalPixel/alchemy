@@ -13,13 +13,13 @@
 // where the native sets it after the mode's offset, and starts the work
 // offset 0x102c after the y store, where the native starts it before.
 // Measured before the block: an empty asm before the render mode
-// store (8), gSequenceParentWork through a pointer behind a one-pass block (24)
+// store (8), gMainRoutineWork through a pointer behind a one-pass block (24)
 // or a non-volatile asm (6), the pointer pinned to r3 behind a volatile asm
 // (6, the zero then moves up).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "task.h"
 
 s32 Party_GetLeaderActor(void);
@@ -41,7 +41,7 @@ void Func_080e9db4(void) {
   Actor_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
   object->motionFlags = 3;
   do {
-    gSequenceParentWork.renderMode = 0;
+    gMainRoutineWork.renderMode = 0;
     i = 0;
     goto test;
     do {

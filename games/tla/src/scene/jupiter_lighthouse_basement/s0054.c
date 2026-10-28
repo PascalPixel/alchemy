@@ -3,10 +3,10 @@
 
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 
-struct SequenceParentWork254 {
+struct MainRoutineWork254 {
   u8 unk000[0x254];
   u16 value;
 };
@@ -42,8 +42,8 @@ void Func_02000094(void) {
   Func_02001d1c_(64, 0, 4, 3, 89, 28, 1);
   if (!GameFlag_Test(0x9b8)) {
     Func_02001d44_(249, 424, 488);
-    ((struct SequenceParentWork254 *)&gSequenceParentWork)->value = 0x19b8;
-    gSequenceParentWork.battleRule24b = 2;
+    ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b8;
+    gMainRoutineWork.battleRule24b = 2;
     Func_02001cec(106, 3);
   }
 }
@@ -55,7 +55,7 @@ void Func_02000118(void) { Func_02001ce4(4); }
 void Func_02000124(void) { Func_02001ce4(6); }
 
 const u8 *Func_02000130(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov699Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2)
     return gData_0200236c;
   return gData_020022e8;
 }

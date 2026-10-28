@@ -64,9 +64,9 @@ void Func_02000bd8(void) {
   Func_02004394(13, 0);
   Actor_SetModeById(13, 10);
   if (!GameFlag_Test(0xa3a)) {
-    leader = Actor_GetById(gSequenceParentWork.currentOwner);
-    Func_020043a4(gSequenceParentWork.currentOwner, 0x4000);
-    Actor_SetModeById(gSequenceParentWork.currentOwner, 28);
+    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    Func_020043a4(gMainRoutineWork.currentOwner, 0x4000);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
     object = Data_02004cec;
     object->motionFlags = 0;
     object->speedLimit = 0x40000;
@@ -89,7 +89,7 @@ void Func_02000bd8(void) {
         goto next;
       Func_020042c4(4, i);
     }
-    Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
     GameFlag_SetBit(0xa3a);
     Actor_SetPositionAndResetMotion(Data_02004cec, 0, 0, 0);
     wait(1);

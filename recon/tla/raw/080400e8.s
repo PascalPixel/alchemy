@@ -564,7 +564,7 @@ Func_080400e8:
 .L_08040564:
 	.4byte gOptionMenu_SecondColorPresets
 .L_08040568:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0804056c:
 	.4byte 0x00001161
 .L_08040570:
@@ -596,4 +596,4 @@ Func_080400e8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080405a8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork

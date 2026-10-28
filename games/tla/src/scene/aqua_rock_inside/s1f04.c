@@ -3,7 +3,7 @@
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
 void Func_02001f04(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
   s32 speed;
@@ -34,10 +34,10 @@ fall:
     goto fall;
   Func_02002bd4(object);
   Animation_ApplyChildValues(object, 0);
-  Actor_SetSpeedParameters_(gSequenceParentWork.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   *flags = saved;
   object->velocityY = 0x80000;
   Func_02003ef4(215);
-  Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, 168, 200);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 168, 200);
   Func_02003d84();
 }

@@ -8,7 +8,7 @@ extern const u8 gData_02000ea4[];
 extern u8 MsgIAmTheShadow;
 
 const u8 *Func_0200035c(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6b1Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
     return gData_020019f4;
   return gData_020019dc;
 }
@@ -25,7 +25,7 @@ void Func_02000388(void) {
   Func_02000d2c(60);
   FieldEvent_Wait(60);
   Func_02000ca4((s32)&MsgIAmTheShadow, 0, 6);
-  party = (struct AnemosInnerSanctumEntranceParty *)&gSequenceParentWork;
+  party = (struct AnemosInnerSanctumEntranceParty *)&gMainRoutineWork;
   party->battleGroup = 0x1a9f;
   party->battleRule = 2;
   Func_02000d04(103, 3);

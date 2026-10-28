@@ -43,9 +43,9 @@ void Func_02002e70(void) {
 }
 
 void Func_02002e8c(void) {
-  Actor_GetById(gSequenceParentWork.currentOwner)->layer = 2;
+  Actor_GetById(gMainRoutineWork.currentOwner)->layer = 2;
 }
 
 void Func_02002ea8(void) {
-  Actor_GetById(gSequenceParentWork.currentOwner)->layer = 0;
+  Actor_GetById(gMainRoutineWork.currentOwner)->layer = 0;
 }

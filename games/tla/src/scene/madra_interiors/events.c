@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"

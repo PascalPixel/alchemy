@@ -7,7 +7,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_sprite.h"
 
 extern const u16 gData_02002478[];
@@ -22,7 +22,7 @@ struct Actor *Actor_GetById(s32 id);
 struct Actor *Func_02000f34(s32 *step, s32 *id, s32 *footprint) {
   struct Actor **objects =
       (struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 52);
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object;
   u32 index;
   u32 k;

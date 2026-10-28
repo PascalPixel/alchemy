@@ -54,7 +54,7 @@
 /// battle once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
 #include "script_operands.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "module/import.h"
 #include "module/scene/vale_prologue.h"
 #include "module/scene/shared/effect_psynergy.h"
@@ -693,7 +693,7 @@ s32 ValePrologue_Initialize(void) {
     Import_ActorSetPosition(ACTOR_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's event.
-  if (gSequenceParentWork.entrance !=
+  if (gMainRoutineWork.entrance !=
           VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
@@ -719,7 +719,7 @@ s32 ValePrologue_Initialize(void) {
   }
   wait(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gSequenceParentWork.entrance ==
+      gMainRoutineWork.entrance ==
           VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA) {
     ValePrologue_DoraSendsIsaacToThePlaza();
     return 0;

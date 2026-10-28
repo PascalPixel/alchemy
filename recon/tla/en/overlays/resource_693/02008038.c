@@ -3,7 +3,7 @@
 // scenes.s table (O3). Func_02000c14 differ 10: the native reloads
 // gFrameCount's address for the second test instead of keeping it in r1.
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_event.h"
 #include "field_sprite.h"
 
@@ -29,7 +29,7 @@ void Actor_SetSpritePriority(u32, s32);
 void Func_02000ff0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 u8 *Func_02000064(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == 0xea) {
     if (GameFlag_Test(0x9b2))
@@ -47,7 +47,7 @@ u8 *Func_02000064(void) {
 }
 
 u8 *Func_020000e0(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == 0xea)
     return gData_02001728;
@@ -83,7 +83,7 @@ void Func_02000c14(void) {
 }
 
 s32 Func_02000d08(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == 0xea)
     Func_02000dc4();
@@ -93,7 +93,7 @@ s32 Func_02000d08(void) {
 }
 
 s32 Func_02000d3c(void) {
-  if (gSequenceParentWork.scene == 0xea && GameFlag_Test(0x9d0)) {
+  if (gMainRoutineWork.scene == 0xea && GameFlag_Test(0x9d0)) {
     Func_02000ff0(54, 47, 4, 15, 10, 4);
     Func_02000ff0(54, 38, 73, 7, 10, 4);
     Func_02000ff0(54, 43, 21, 55, 10, 3);

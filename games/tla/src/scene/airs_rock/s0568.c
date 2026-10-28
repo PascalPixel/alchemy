@@ -20,7 +20,7 @@ s32 Event_WaitTransitionFrames();
 s32 Actor_WaitForMoveById();
 s32 Func_02003c48();
 s32 Func_02003bd0();
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_02000568(void) {
   Func_02003bc8();
@@ -29,15 +29,15 @@ void Func_02000568(void) {
   Call6(Func_02003b68, 0x40, 0x40, 0x53, 0x23, 1, 2);
   Call1(Func_02003b70, 0);
   Call1(FieldEvent_Wait, 0x2d);
-  Call3(Actor_SetSpeedParameters, FIELD_AT(gSequenceParentWork, s32, 532),
+  Call3(Actor_SetSpeedParameters, FIELD_AT(gMainRoutineWork, s32, 532),
         0x8000, 0x4000);
   Call3(Actor_ResetAndSetPositionInMode2,
-        FIELD_AT(gSequenceParentWork, s32, 532), 0x138, 0x2a8);
+        FIELD_AT(gMainRoutineWork, s32, 532), 0x138, 0x2a8);
   Call1(FieldEvent_Wait, 5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Call1(Actor_WaitForMoveById,
-        FIELD_AT(gSequenceParentWork, s32, 532));
+        FIELD_AT(gMainRoutineWork, s32, 532));
   Call1(Func_02003cd8, 0x7b);
   Call1(Func_02003c48, 4);
   Func_02003bd0();

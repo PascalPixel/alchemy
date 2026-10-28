@@ -19,7 +19,7 @@
 // the same list, and the leader is lifted onto the terrain if below it.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct ActorFlag {
@@ -72,7 +72,7 @@ void Func_080ea7c0(struct ActorFlag *actors) {
     }
   }
   Func_080eaa14(list);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;

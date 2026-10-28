@@ -21,7 +21,7 @@ static inline void ClearLayer2Shape(s32 x, s32 z) {
 /// Runs each room's list on entering it; room 7 also clears two cells' shapes
 /// and room 9 stops object 10's timer.
 void Func_02003254(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov664Room1) {
     Func_02005f74(gData_02006050);

@@ -17,7 +17,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_sprite.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
@@ -55,7 +55,7 @@ void Func_02003c38(s32 actor, s32 a);
 void Func_02003c30(void);
 
 void Func_0200095c(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
   struct Actor *gust, *spark, *target;
   struct EffectOptions dust, leaves;
@@ -210,7 +210,7 @@ void Func_0200095c(void) {
   }
   Func_02003b48(gust);
   FieldEvent_Wait(30);
-  Func_02003c38(gSequenceParentWork.currentOwner, 1);
+  Func_02003c38(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   Func_02003bd0();
 }

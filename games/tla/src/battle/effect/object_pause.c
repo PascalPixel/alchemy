@@ -12,7 +12,7 @@
 #include "actor_view.h"
 #include "types.h"
 #include "system.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "animspr.h"
 
 #define Actor_SetAnimationSpeedFar                                 \
@@ -30,12 +30,12 @@ void BattleEffect_PauseObject(s32 id) {
 
   object = ObjectTable_Get(id);
   if (object != NULL) {
-    gSequenceParentWork.savedCallback = (u32)object->update;
-    gSequenceParentWork.savedByte = 0;
+    gMainRoutineWork.savedCallback = (u32)object->update;
+    gMainRoutineWork.savedByte = 0;
     if (object->kind == 1) {
       entry = object->target.animation->entries[0];
       if (entry != NULL) {
-        gSequenceParentWork.savedByte = entry->param;
+        gMainRoutineWork.savedByte = entry->param;
       }
     }
     object->update = BattleEffect_SetRandomTableValueOnObject;
@@ -49,9 +49,9 @@ void BattleEffect_ResumeObject(s32 id) {
 
   if (object != NULL) {
     if (object->update == BattleEffect_SetRandomTableValueOnObject) {
-      object->update = (void *)gSequenceParentWork.savedCallback;
-      gSequenceParentWork.savedCallback = 0;
-      Animation_ApplyChildValuesFar(object, (s8)gSequenceParentWork.savedByte);
+      object->update = (void *)gMainRoutineWork.savedCallback;
+      gMainRoutineWork.savedCallback = 0;
+      Animation_ApplyChildValuesFar(object, (s8)gMainRoutineWork.savedByte);
     }
     object->value5b = 0;
     Actor_SetAnimationSpeedFar(object, 16);

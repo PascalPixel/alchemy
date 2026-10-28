@@ -28,7 +28,7 @@ extern const u8 gData_020013fc[];
 extern const u8 gData_020014a4[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_DailaInteriors2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2)
     return (const struct ActorPlacement *)gData_020013fc;
   if (GameFlag_Test(0x873))
     return (const struct ActorPlacement *)gData_020014a4;

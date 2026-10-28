@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 
 extern const u8 gData_02001548[];
@@ -10,7 +10,7 @@ extern const u8 gData_02001914[];
 extern const u8 gData_020019b0[];
 
 const u8 *Func_0200042c(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room1)
     return gData_02001668;
@@ -20,7 +20,7 @@ const u8 *Func_0200042c(void) {
 }
 
 const u8 *Func_0200046c(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov675Room2)
     return gData_02001914;

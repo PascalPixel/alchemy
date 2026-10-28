@@ -56,8 +56,8 @@ s16 DebugSceneSelect_Run(void) {
 
   window = 0;
   selectedField = 0;
-  sceneId = gSequenceParentWork.returnScene;
-  entrance = gSequenceParentWork.returnEntrance;
+  sceneId = gMainRoutineWork.returnScene;
+  entrance = gMainRoutineWork.returnEntrance;
   window = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
   DebugSceneSelect_DrawRow(window, sceneId, &entrance);
   MenuArrow_Create(&cursor, &cursorSlot);

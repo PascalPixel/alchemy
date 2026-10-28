@@ -4,7 +4,7 @@
 // past the line ja.po names MsgTheseGuysWere (12450), so it can link for
 // Japanese only once ja.po's names in that stretch are corrected.
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"

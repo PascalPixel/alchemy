@@ -7,7 +7,7 @@
        ->v)
 
 #include "call.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "owner_state.h"
 s32 Func_020059c4();
 s32 Actor_GetById();
@@ -51,9 +51,9 @@ void Func_02001b04(s32 clearStatus) {
   count = Party_CountActiveOwners();
   for (n = 0; n < count; n++) {
     {
-      struct SequenceParentWork *party = &gSequenceParentWork;
+      struct MainRoutineWork *party = &gMainRoutineWork;
 
-      /* FAKEMATCH: the barrier loads gSequenceParentWork before the owner list's
+      /* FAKEMATCH: the barrier loads gMainRoutineWork before the owner list's
        * offset, as in the main image's Func_080ae16c (differ 2 without). */
       asm volatile("");
       member = Unit_Get(party->activeOwners[n]);

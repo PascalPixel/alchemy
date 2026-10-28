@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 
 struct LightTile {
@@ -31,7 +31,7 @@ void Func_02001818(struct LightPuzzle *puzzle, struct LightTile *tile);
 void Func_02001888(struct LightPuzzle *puzzle, struct LightTile *tile);
 
 s32 Func_02001bb8(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct LightPuzzle *puzzle = &gData_02002864;

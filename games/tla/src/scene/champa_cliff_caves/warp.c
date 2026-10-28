@@ -7,10 +7,10 @@ void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode) {
   Func_020035b4(0);
   Func_0200362c(158);
   Func_02003414(warp->scene, warp->x, warp->z);
-  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  id = gSequenceParentWork.currentOwner;
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterOnColumn_(id, 2, -8);
   else

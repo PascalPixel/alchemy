@@ -485,7 +485,7 @@ Func_08108b70:
 .L_08108f78:
 	.4byte 0x00001257
 .L_08108f7c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_08108f80:
 	.4byte 0x00001250
 .L_08108f84:

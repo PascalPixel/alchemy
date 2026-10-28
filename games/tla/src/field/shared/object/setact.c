@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_StartScriptFar(struct Actor *object,
@@ -36,7 +36,7 @@ void Actor_SetActionCallback(struct Actor *object, s32 kind) {
     kind = (s32)gData_080f373c;
     break;
   case 6:
-    object->watchedObject = Actor_GetById(gSequenceParentWork.currentOwner);
+    object->watchedObject = Actor_GetById(gMainRoutineWork.currentOwner);
     kind = (s32)gData_080f3750;
     break;
   case 7:

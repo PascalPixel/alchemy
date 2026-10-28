@@ -20,13 +20,13 @@ struct EventWork1cc {
 
 void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
-  s32 owner = gSequenceParentWork.currentOwner;
+  s32 owner = gMainRoutineWork.currentOwner;
   struct Actor *anchor = work->object;
   struct Actor *leader = Actor_GetById(owner);
   s32 position[3];
   s32 result;
 
-  if (gSequenceParentWork.scene != (s32)&SceneId_Ov67bRoom1 ||
+  if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1 ||
       leader->terrainHeight != 0) {
     position[0] = leader->x;
     position[1] = leader->y;

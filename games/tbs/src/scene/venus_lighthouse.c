@@ -76,7 +76,7 @@
 /// FLAG_VENUS_LIGHTHOUSE_LIT.
 
 #include "script_operands.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "module/import.h"
 #include "module/scene/venus_lighthouse.h"
 #include "module/scene/shared/effect_spawn.h"
@@ -1098,7 +1098,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
 /// Selects the scene's entrances; VenusLighthouseGroundFloor takes the
 /// fallback table.
 const struct SceneEntrance *VenusLighthouse_GetEntrances(void) {
-  s16 sceneId = gSequenceParentWork.sceneId;
+  s16 sceneId = gMainRoutineWork.sceneId;
 
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryEntrances;
@@ -1131,7 +1131,7 @@ const struct ActorPlacement *VenusLighthouse_GetActorPlacements(void) {
   struct ActorPlacement *placements;
   s16 sceneId;
 
-  sceneId = gSequenceParentWork.sceneId;
+  sceneId = gMainRoutineWork.sceneId;
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryActorPlacements;
   }
@@ -2695,7 +2695,7 @@ static void VenusLighthouse_EnterRisingPassage(void) {
 /// Selects the puzzle interactions and dialogue for the current lighthouse
 /// scene.
 const struct Trigger *VenusLighthouse_GetTriggers(void) {
-  s32 sceneId = gSequenceParentWork.sceneId;
+  s32 sceneId = gMainRoutineWork.sceneId;
 
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryTriggers;
@@ -2772,7 +2772,7 @@ s32 VenusLighthouse_Initialize(void) {
     VenusLighthouse_RestoreScriptedChildValues();
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  sceneId = gSequenceParentWork.sceneId;
+  sceneId = gMainRoutineWork.sceneId;
   // Restore the scholars and soldiers outside and each interior puzzle by its
   // entrance.
   if (sceneId == (s32)&SceneId_VenusLighthouseEntry) {
@@ -2790,7 +2790,7 @@ s32 VenusLighthouse_Initialize(void) {
     VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_HEADED_FOR_BABI);
     VenusLighthouse_LayDownHurtActor(ACTOR_SOLDIER_COLOSSO_VICTORS);
   } else if (sceneId == (s32)&SceneId_VenusLighthouseGroundFloor) {
-    switch (gSequenceParentWork.entrance) {
+    switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS:
       VenusLighthouse_LayDownHurtActor(ACTOR_SCHOLAR_ATTACKED_ANYWAY);
@@ -2840,7 +2840,7 @@ s32 VenusLighthouse_Initialize(void) {
     }
   } else if (sceneId == (s32)&SceneId_VenusLighthouseFirstFloor) {
     // Restore depth pillars, the Carry puzzle and the paired tile-wave passage.
-    switch (gSequenceParentWork.entrance) {
+    switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       break;
@@ -2908,7 +2908,7 @@ s32 VenusLighthouse_Initialize(void) {
     }
   } else if (sceneId == (s32)&SceneId_VenusLighthouseSecondFloor) {
     // Restore the first sliding wall and its sunken-pillar gate.
-    switch (gSequenceParentWork.entrance) {
+    switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
       Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -2968,7 +2968,7 @@ s32 VenusLighthouse_Initialize(void) {
         MapGrid_CopyCellAttributes(15, 32, 3, 1, 9, 32);
         MapGrid_CopyCellAttributes(12, 32, 3, 1, 15, 32);
       }
-      if (gSequenceParentWork.entrance !=
+      if (gMainRoutineWork.entrance !=
           VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH)
         break;
       Event_StartScreenTransition();
@@ -2981,7 +2981,7 @@ s32 VenusLighthouse_Initialize(void) {
     }
   } else if (sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
     // Restore the two tile waves and the three-pillar socket puzzle.
-    switch (gSequenceParentWork.entrance) {
+    switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST:
       VenusLighthouse_AnimateWestTileWave();
       break;
@@ -3007,11 +3007,11 @@ s32 VenusLighthouse_Initialize(void) {
         Task_AddFrame(VenusLighthouse_EmitEastPassageParticles,
                       TASK_PASS_FRAME);
       }
-      if (gSequenceParentWork.entrance ==
+      if (gMainRoutineWork.entrance ==
           VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SOUTHWEST_ROOM)
         VenusLighthouse_ArriveThroughSparkPassage();
       else if (
-          gSequenceParentWork.entrance ==
+          gMainRoutineWork.entrance ==
           VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST)
         VenusLighthouse_AnimateEastTileWave();
       break;
@@ -3085,7 +3085,7 @@ s32 VenusLighthouse_Initialize(void) {
   } else if (sceneId == (s32)&SceneId_VenusLighthouseFourthFloor) {
     // Restore floating supports, opposing walls and the four-pillar pillar
     // puzzle.
-    switch (gSequenceParentWork.entrance) {
+    switch (gMainRoutineWork.entrance) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -3182,15 +3182,15 @@ s32 VenusLighthouse_Initialize(void) {
         MapGrid_CopyCellsTo(63, 29, 49, 20, 1, 1);
         MapGrid_CopyCellsTo(41, 56, 44, 17, 3, 4);
       }
-      if (gSequenceParentWork.entrance ==
+      if (gMainRoutineWork.entrance ==
               VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST ||
-          gSequenceParentWork.entrance ==
+          gMainRoutineWork.entrance ==
               VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
         gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
       }
-      if (gSequenceParentWork.entrance ==
+      if (gMainRoutineWork.entrance ==
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING)
         VenusLighthouse_RaiseLeaderWithSpray();
       break;
@@ -3312,7 +3312,7 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   {
     struct FieldWork *work = gFieldWork;
 
-    actorId = gSequenceParentWork.leaderActorId;
+    actorId = gMainRoutineWork.leaderActorId;
     viewCenter = work->camera;
   }
   actor = Actor_GetById(actorId);
@@ -3798,8 +3798,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
       Actor_StartScript(light, gVenusLightGoesOut);
       return 0;
     }
-    if (gSequenceParentWork.sceneId ==
-        (s32)&SceneId_VenusLighthouseThirdFloor) {
+    if (gMainRoutineWork.sceneId == (s32)&SceneId_VenusLighthouseThirdFloor) {
       for (socket = 0;
            socket <= 3 &&
            !(light->x.fixed >> 20 == gVenusThirdFloorSockets[socket].x &&

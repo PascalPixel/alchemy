@@ -1,7 +1,7 @@
 #include "izumo_ruins.h"
 
 u8 *Func_020010b0(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov67FRoom1)
     return gData_0200176c;
@@ -14,11 +14,11 @@ u8 *Func_020010b0(void) {
 /// runs Func_02000f30 on the effect work's object.
 void Func_020010f0(s32 aArg, s32 b) {
   struct IzumoRuinsEffectWork *work = Ram_HeapSlots->effectWork;
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   s16 scene;
 
   /* FAKEMATCH: the loop note makes the scene offset's first instruction a
-   * barrier: ⚓️ loads gSequenceParentWork's address before it copies b (plain, the
+   * barrier: ⚓️ loads gMainRoutineWork's address before it copies b (plain, the
    * copy comes first: differ 2). */
   do {
   } while (0);

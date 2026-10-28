@@ -1,12 +1,12 @@
 #include "scene.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 void GameFlag_ClearBit();
 void Func_020018f4();
 void Func_020018ec();
 
 s32 Func_020007a4(void) {
-  s32 entrance = gSequenceParentWork.entrance;
+  s32 entrance = gMainRoutineWork.entrance;
 
   if (entrance == 1)
     GameFlag_SetBit(0x960);

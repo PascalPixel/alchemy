@@ -1,7 +1,7 @@
 #include "scene.h"
 #include "game_flags.h"
 #include "inventory.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "types.h"
 #include "owner_state.h"
 #include "fixed_math.h"
@@ -24,9 +24,9 @@ void Func_080ae16c(s32 arg0) {
   count = Party_CountActiveOwners();
   for (n = 0; n < count; n++) {
     {
-      struct SequenceParentWork *party = &gSequenceParentWork;
+      struct MainRoutineWork *party = &gMainRoutineWork;
 
-      /* FAKEMATCH: ⚓️ loads gSequenceParentWork before it starts the owner list's
+      /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it starts the owner list's
        * offset; read as a plain field the offset is started first (differ 2) */
       asm volatile("");
       obj = Unit_Get(party->activeOwners[n]);
@@ -95,9 +95,9 @@ void Func_080ae220(void) {
   count = Party_CountActiveOwners();
   for (n = 0; n < count; n++) {
     {
-      struct SequenceParentWork *party = &gSequenceParentWork;
+      struct MainRoutineWork *party = &gMainRoutineWork;
 
-      /* FAKEMATCH: ⚓️ loads gSequenceParentWork before it starts the owner list's
+      /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it starts the owner list's
        * offset; read as a plain field the offset is started first (differ 2) */
       asm volatile("");
       ownerId = party->activeOwners[n];

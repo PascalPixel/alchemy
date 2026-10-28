@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "frame.h"
 #include "field_effect.h"
 
@@ -13,11 +13,11 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 
 void Func_020014e4(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   s32 velocity[3];
 
-  if (gSequenceParentWork.renderMode == 4)
+  if (gMainRoutineWork.renderMode == 4)
     return;
   leader->z += 0x10000;
   if ((gFrameCount & 7) != 0)

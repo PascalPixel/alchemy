@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 #include "magma_rock.h"
 
@@ -13,9 +13,9 @@ void Func_020014bc(s32 mode, s32 cue);
 /// 0x200.
 void Func_020019e8(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH(one-pass): an empty one-pass block, so gSequenceParentWork's address
+  /* FAKEMATCH(one-pass): an empty one-pass block, so gMainRoutineWork's address
    * loads before the scene offset is built; without it, 4 of 31 instructions
    * differ in tla-en. */
   do {
@@ -40,7 +40,7 @@ void Func_020019e8(s32 mode, s32 cue) {
 /// 0x201.
 void Func_02001a38(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
   /* FAKEMATCH(one-pass): an empty one-pass block, as in Func_020019e8; without
    * it, 4 of 32 instructions differ in tla-en. */

@@ -72,7 +72,7 @@
 /// hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west, the pillar
 /// cycling its colour modes too, and sheds sparkles.
 
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "vram_cache.h"
 #include "module/import.h"
 #include "module/scene/vale.h"
@@ -421,9 +421,8 @@ const u32 *Vale_GetExits(void) { return gVale_Exits; }
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
 const struct ActorPlacement *Vale_GetActorPlacements(void) {
-  u8 *gameStateBytes = (u8 *)&gSequenceParentWork;
-  if (((struct SequenceParentWork *)gameStateBytes)->entrance ==
-      VALE_FROM_TITLE)
+  u8 *gameStateBytes = (u8 *)&gMainRoutineWork;
+  if (((struct MainRoutineWork *)gameStateBytes)->entrance == VALE_FROM_TITLE)
     return gVale_RepairActorPlacements;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ActorPlacementsAfterKalay;
@@ -1555,9 +1554,9 @@ s32 Vale_Initialize(void) {
   struct Actor *actor;
   s32 set;
 
-  if (gSequenceParentWork.entrance == VALE_FROM_TITLE) {
-    WindowColor_Apply(((u8 *)&gSequenceParentWork)[517],
-                      ((u8 *)&gSequenceParentWork)[518]);
+  if (gMainRoutineWork.entrance == VALE_FROM_TITLE) {
+    WindowColor_Apply(((u8 *)&gMainRoutineWork)[517],
+                      ((u8 *)&gMainRoutineWork)[518]);
     Vale_MendingTheRoof();
   } else {
     if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
@@ -1630,13 +1629,13 @@ s32 Vale_Initialize(void) {
           Actor_GetById(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
           GameFlag_Clear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
         }
-        if (gSequenceParentWork.entrance != VALE_FROM_TITLE &&
+        if (gMainRoutineWork.entrance != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
           Task_AddFrame(Vale_SynchronizeAlephGuardPause, TASK_PASS_FRAME);
         }
       }
       if (!Event_GetFlag(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED) &&
-          gSequenceParentWork.entrance == VALE_FROM_ROOF_MENDED) {
+          gMainRoutineWork.entrance == VALE_FROM_ROOF_MENDED) {
         Vale_RoofMended();
         GameFlag_Set(FLAG_VALE_ROOF_MENDED_EVENT_PLAYED);
       }

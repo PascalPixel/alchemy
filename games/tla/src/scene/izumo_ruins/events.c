@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -13,7 +13,7 @@ void Func_02001184(void) {
   struct Actor *object0;
   s32 result1;
 
-  object0 = Actor_GetById(gSequenceParentWork.currentOwner);
+  object0 = Actor_GetById(gMainRoutineWork.currentOwner);
   result1 = Value3((s32 (*)())Func_02000eac, 2, (object0->x >> 20),
                    (object0->z >> 20));
   if ((result1 >> 8) != 232)
@@ -26,7 +26,7 @@ L_020091b2:
 void Func_020011b8(void) {
   struct Actor *object0;
 
-  object0 = Actor_GetById(gSequenceParentWork.currentOwner);
+  object0 = Actor_GetById(gMainRoutineWork.currentOwner);
   object0->terrainId = 0;
   return;
 }

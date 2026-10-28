@@ -9,7 +9,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "task.h"
 #include "game_flags.h"
@@ -30,7 +30,7 @@ void Leader_StopMoving(void) {
   object->targetZ = 0x80000000;
   object->velocityX = 0;
   object->velocityZ = 0;
-  if (gSequenceParentWork.renderMode == 2)
+  if (gMainRoutineWork.renderMode == 2)
     Actor_SetMode(object, 12);
   else
     Actor_SetMode(object, 1);
@@ -53,7 +53,7 @@ void Event_Start(void) {
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_VBLANK);
   GameFlag_ClearBit(0x132);
   {
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
     /* FAKEMATCH: the pointer handoff keeps its load before the destination
      * offset. */
     __asm__ volatile("" : "+r"(party));
@@ -65,7 +65,7 @@ void Event_Start(void) {
 void Event_End(void) {
   Task_Remove((u32)Event_UpdateDebugSkip);
   {
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
     /* FAKEMATCH: the pointer handoff keeps its load before the override offset.
      */
     __asm__ volatile("" : "+r"(party));

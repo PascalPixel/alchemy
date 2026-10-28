@@ -227,7 +227,7 @@ Altmiller Cave bursts.
   `SHOP_TYPE_WEAPONS` or `SHOP_TYPE_ARMOR`.
 - **artifact**: a rare item, which a shop sells only while its counter
   (`Item_AdjustCounter`) is above zero.
-- **shop credit**: `gSequenceParentWork.shopCredit`, the coins spent buying, which
+- **shop credit**: `gMainRoutineWork.shopCredit`, the coins spent buying, which
   earns Game Tickets.
 - **action**: what the player chose at a shop's counter (`enum ShopAction`).
 - **service**: what a sanctum does for one party member (`enum SanctumService`).

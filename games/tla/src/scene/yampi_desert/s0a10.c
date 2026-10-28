@@ -5,8 +5,8 @@
 void Func_02000a10(void) {
   s16 scene;
 
-  BYTE_AT(Actor_GetById(gSequenceParentWork.currentOwner), 34) = 0;
-  scene = gSequenceParentWork.scene;
+  BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 34) = 0;
+  scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov661Room1)
     Func_0200095c((u16 *)gData_02004768);
   else if (scene == (s32)&SceneId_Ov661Room3)

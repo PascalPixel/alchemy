@@ -108,7 +108,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   // unions change tbs-en setup from 368 to 364 bytes.
   oam = (u32 *)work->markers;
 #endif
-  actor = Actor_GetById(gSequenceParentWork.leaderActorId);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   work->markerVramBlock = VramCache_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   markerTiles[0] = 255;
@@ -231,14 +231,14 @@ void WorldPicture_UpdateMarkers(void) {
   s32 angle;
 
 #if WORLD_PICTURE_CURSOR_SNAPS
-  leader = gSequenceParentWork.leaderActorId;
+  leader = gMainRoutineWork.leaderActorId;
   work = (struct WorldPictureWork *)Ram_MapGridCellBuffer;
   marker = work->markers;
   place = gWorldPicture_AreaMarkers;
   tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
 #else
   work = (struct WorldPictureWork *)Ram_MapGridCellBuffer;
-  leader = gSequenceParentWork.leaderActorId;
+  leader = gMainRoutineWork.leaderActorId;
   place = gWorldPicture_AreaMarkers;
   tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
   marker = work->markers;
@@ -252,7 +252,7 @@ void WorldPicture_UpdateMarkers(void) {
   // opens this screen. No actor task removes it while the marker task runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current area.
-    areaActor = Actor_Lookup(gSequenceParentWork.leaderActorId);
+    areaActor = Actor_Lookup(gMainRoutineWork.leaderActorId);
 #ifdef UBFIX
     // The native null branch leaves this frame's cursor coordinates unset.
     // A missing selected actor violates the screen's lifetime contract;
@@ -525,7 +525,7 @@ void Field_UpdateActorVisibilityBounds(void) {
 
   // The selected actor lookup has no used result; the bounds follow the
   // camera.
-  Actor_GetById(gSequenceParentWork.leaderActorId);
+  Actor_GetById(gMainRoutineWork.leaderActorId);
   object = gFieldWork->camera;
   x = object->x.fixed;
   left = x - (320 << 16);

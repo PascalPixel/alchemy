@@ -33,7 +33,7 @@ extern const u8 gData_020049f4[];
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
     return (const struct ActorPlacement *)gData_02003f20;
@@ -55,7 +55,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
     return (const struct Trigger *)gData_02004664;

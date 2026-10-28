@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -37,29 +37,29 @@ void Func_02000fd8(void);
 void Func_0200102c(void);
 
 const u8 *Func_02000388(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
     return gData_020015b4;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
     return gData_0200165c;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
     return gData_020016bc;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom6)
     return gData_020016ec;
   return gData_0200159c;
 }
 
 const u8 *Func_020003ec(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
     return gData_02001920;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom2)
     return gData_020019f8;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom3)
     return gData_02001a1c;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
     return gData_02001aac;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
     return gData_02001b54;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom6)
     return gData_02001bcc;
   return gData_02001914;
 }

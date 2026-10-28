@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "io_reg.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "serial_runtime.h"
 
 s32 Func_0200039c(void);

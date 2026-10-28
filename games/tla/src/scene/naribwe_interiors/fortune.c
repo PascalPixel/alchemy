@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_call.h"
 #include "text/msg_ids.h"
 
@@ -23,7 +23,7 @@ void Func_02000304(void) {
     Func_02001138((s32)(message + 2));
     FieldMessage_ShowAtActor(10, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) == 0) {
-      if ((u32)gSequenceParentWork.coins > 19) {
+      if ((u32)gMainRoutineWork.coins > 19) {
         Func_02000390();
         Func_020010e8();
       } else {

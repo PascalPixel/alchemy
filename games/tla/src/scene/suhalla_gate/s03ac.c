@@ -24,11 +24,11 @@ void Func_020003ac(void) {
   Func_02000988();
   Func_02000a70(0);
   Func_02000a00((s32)MsgWaahhhItS);
-  Actor_ResetAndSetPositionInMode2(gSequenceParentWork.currentOwner, 472, 320);
+  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 472, 320);
   Camera_MoveWithinMapBounds(0x1c80000, -1, 0x1180000, 1);
   Func_02000a30();
-  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xa000, 0);
+  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 0);
   FieldEvent_Wait(10);
   Actor_Jump(8, 6, 20);
   FieldEvent_Wait(20);
@@ -49,7 +49,7 @@ void Func_020003ac(void) {
   Actor_SetPositionAndReset_(8, 456, 312);
   Party_SetFields1eeAnd1f0((s32)&SceneId_SuhallaGate1, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
-  gSequenceParentWork.battleRule24b = 2;
+  gMainRoutineWork.battleRule24b = 2;
   Func_02000a40(9, 1);
   Func_02000990();
 }

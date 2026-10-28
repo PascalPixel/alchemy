@@ -8,7 +8,7 @@
 // constants, and the pool offsets that follow.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern u32 gFrameCount;
 struct Actor *Actor_GetById(u32 id);
@@ -36,7 +36,7 @@ void Actor_SetModeById(u32 id, s32 mode);
 void Func_02005d7c(struct Actor *object);
 
 void Func_02004cc8(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *prepared, *lift;
   u8 priorityFlags;
   s32 height;
@@ -66,7 +66,7 @@ void Func_02004cc8(void) {
   }
   Func_02005f94(288);
   FieldEvent_Wait(10);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xc000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
   height = Map_GetTerrainHeight(0, lift->x, lift->z - 0x100000);
   leader->y = height;
   leader->terrainHeight = height;
@@ -82,7 +82,7 @@ void Func_02004cc8(void) {
   Func_02005d8c(leader, leader->x, leader->y, leader->z - 0x100000);
   OverlayObject_WaitUntilIdle(leader);
   Func_02005d94(leader);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Func_02005d5c(lift, 5);
   wait(12);
   Func_02005d7c(lift);

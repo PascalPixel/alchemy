@@ -3,7 +3,7 @@
 // symbols: differ 47 of 76. Left: what that draft's header records.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Spot {
   s16 x;
@@ -32,7 +32,7 @@ void Func_020040f0(struct SpotState *state, struct Spot *spot);
 void Func_02004160(struct SpotState *state, struct Spot *spot);
 
 s32 Func_02004490(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &Data_020068b4;

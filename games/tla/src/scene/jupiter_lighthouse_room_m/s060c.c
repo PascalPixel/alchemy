@@ -157,7 +157,7 @@ void Func_0200060c(void) {
     FieldEvent_Wait(10);
   }
   FieldEvent_Wait(20);
-  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020048f4();
   Func_020047dc();
 }

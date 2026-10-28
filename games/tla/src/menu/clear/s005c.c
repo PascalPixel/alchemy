@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "resource.h"
@@ -104,7 +104,7 @@ scroll_pair:
      * loop's zero kept in r5 (differ 20 with a byte pin). */
     register u16 zero asm("r5");
 
-    leader = Actor_GetById(gSequenceParentWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.currentOwner);
     zero = 0;
     leader->motionFlags = zero;
   }

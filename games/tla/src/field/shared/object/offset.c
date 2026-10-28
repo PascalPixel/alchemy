@@ -1,6 +1,6 @@
 #include "actor.h"
 #include "objdisp.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
   struct Actor *object;
@@ -87,7 +87,7 @@ void Func_080d3070(u32 objectId, s32 xOffset, s32 zOffset, s32 action) {
 
   if (object != NULL) {
     Actor_SetSpeedParameters(objectId, 0xcccc, 0x6666);
-    Actor_MoveToObject(objectId, gSequenceParentWork.currentOwner);
+    Actor_MoveToObject(objectId, gMainRoutineWork.currentOwner);
     Actor_SetPositionAndResetMotionFar(object, object->x, object->y,
                                         object->z - 0x10000);
     object->movementState = 0;

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 
 void wait(s32 frames);
@@ -26,37 +26,37 @@ void Func_020004ac(void) {
   Func_020012ec(0x10000, 1);
   Func_020012fc(16);
   wait(16);
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads hegSequenceParentWork's address before it builds the field offset (2 differ without
+  /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field offset (2 differ without
    * it). */
   do {
   } while (0);
-  gSequenceParentWork.unk2c2 = 0;
-  Func_020012bc(gSequenceParentWork.currentOwner, 0);
+  gMainRoutineWork.unk2c2 = 0;
+  Func_020012bc(gMainRoutineWork.currentOwner, 0);
   work->screenEffect = effect;
 }
 
 void Func_02000508(void) {
   Func_020000f4();
   Func_02001334();
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads hegSequenceParentWork's address before it builds the field offset (one row late without
+  /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field offset (one row late without
    * it). */
   do {
   } while (0);
-  gSequenceParentWork.unk2c2 = 1;
+  gMainRoutineWork.unk2c2 = 1;
   FieldEvent_Wait(40);
-  Func_0200129c(gSequenceParentWork.currentOwner, 232 << 16, 136 << 16);
+  Func_0200129c(gMainRoutineWork.currentOwner, 232 << 16, 136 << 16);
   Func_020004ac();
 }
 
 void Func_02000544(void) {
   Func_020000f4();
   Func_02001334();
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads hegSequenceParentWork's address before it builds the field offset (one row late without
+  /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field offset (one row late without
    * it). */
   do {
   } while (0);
-  gSequenceParentWork.unk2c2 = 1;
+  gMainRoutineWork.unk2c2 = 1;
   FieldEvent_Wait(40);
-  Func_0200129c(gSequenceParentWork.currentOwner, 240 << 16, 480 << 16);
+  Func_0200129c(gMainRoutineWork.currentOwner, 240 << 16, 480 << 16);
   Func_020004ac();
 }

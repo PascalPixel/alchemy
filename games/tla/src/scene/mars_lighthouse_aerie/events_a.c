@@ -1,9 +1,9 @@
 #include "mars_lighthouse_aerie.h"
 
 const struct Trigger *Func_02000164(void) {
-  if (gSequenceParentWork.entrance == 2)
+  if (gMainRoutineWork.entrance == 2)
     return (const struct Trigger *)gData_0200644c;
-  if ((u16)(gSequenceParentWork.entrance - 3) <= 2)
+  if ((u16)(gMainRoutineWork.entrance - 3) <= 2)
     return (const struct Trigger *)gData_020066bc;
   return (const struct Trigger *)gData_0200626c;
 }
@@ -12,9 +12,9 @@ void Func_020001a0(void) {
   Func_02004fac();
   Func_020057cc();
   {
-    u8 *party = (u8 *)&gSequenceParentWork;
+    u8 *party = (u8 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

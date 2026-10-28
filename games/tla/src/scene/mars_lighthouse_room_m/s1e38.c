@@ -1,7 +1,7 @@
 #include "mars_lighthouse_room_m.h"
 
 void Func_02001e38(struct Actor *object) {
-  struct Actor *target = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *target = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 vx;
   s32 vz;
   s32 rate;

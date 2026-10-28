@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "task.h"
 
 s32 Task_Add(void (*func)(void), s32 order);
@@ -19,14 +19,14 @@ void Func_02001054(void) {
   Func_02001e04(0, 0x200, 8, 9);
   Func_02001dec(170);
   Func_02000f98();
-  if (gSequenceParentWork.entrance == 3)
+  if (gMainRoutineWork.entrance == 3)
     Func_02001500();
   do {
   } while (0);
-  if (gSequenceParentWork.entrance == 4)
+  if (gMainRoutineWork.entrance == 4)
     Func_02001500();
   do {
   } while (0);
-  if (gSequenceParentWork.entrance == 5)
+  if (gMainRoutineWork.entrance == 5)
     Func_02001500();
 }

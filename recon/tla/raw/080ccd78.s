@@ -145,6 +145,6 @@ Func_080ccd78:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080cce7c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080cce80:
 	.4byte Data_02000452

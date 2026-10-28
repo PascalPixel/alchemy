@@ -33,7 +33,7 @@ void Func_020055c4(s32 a, s32 b) {
 
   link->a = a;
   link->b = b;
-  if (a == gSequenceParentWork.currentOwner)
+  if (a == gMainRoutineWork.currentOwner)
     link->height = 0xa00000;
   else
     link->height = 0x700000;

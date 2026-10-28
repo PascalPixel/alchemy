@@ -7,7 +7,7 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_event.h"
 #include "ram_buffer.h"
 #include "call.h"
@@ -44,33 +44,33 @@ void Idejima_RunAlexDeparture(void) {
   Func_02003310(0);
   Call2(Import_CameraSetSpeed, 0x9999, 0x1333);
   Call4(Camera_MoveWithinMapBounds, 0x6c0000, -1, 0x2d00000, 1);
-  Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0xcccc,
+  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
         0x6666);
-  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 86, 0x2c8);
-  Import_ActorPlaceAtActor(8, gSequenceParentWork.currentOwner);
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 86, 0x2c8);
+  Import_ActorPlaceAtActor(8, gMainRoutineWork.currentOwner);
   Task_Wait(1);
   Call3(Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
   Call3(Actor_SetPositionAndReset, 8, 104, 0x2c8);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Call3(Actor_ArmCallback, 8, 0x8000, 20);
   Call1(Import_EventSetMessageId, (s32)MsgIdejimaWhereHasAlexGone);
   Call2(Import_EventShowMessageAndWait, 0x2008, 0);
   Actor_ArmCallback(8, 0, 40);
   Call3(Actor_ArmCallback, 8, 0x5000, 20);
   Actor_ArmCallback(8, 0, 0);
-  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 104, 0x2d8);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 20);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x2000, 20);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 0);
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 104, 0x2d8);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 20);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x2000, 20);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Import_EventShowMessageAndWait(8, 0);
   Call3(Actor_ArmCallback, 8, 0x3000, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 20);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 20);
   Import_ActorSetAnimation(8, 3);
   Value2(Import_EventAskYesNoWithActorAnimation, 8, 0);
   Value3(Import_ActorShowEmote, 8, 0x106, 40);
   Import_EventShowMessageAndWait(8, 0);
-  Call2(Import_ActorPlaceAtActor, 5, gSequenceParentWork.currentOwner);
-  Import_ActorPlaceAtActor(6, gSequenceParentWork.currentOwner);
+  Call2(Import_ActorPlaceAtActor, 5, gMainRoutineWork.currentOwner);
+  Import_ActorPlaceAtActor(6, gMainRoutineWork.currentOwner);
   Task_Wait(1);
   Call3(Actor_SetSpeedParameters, 6, 0xcccc, 0x6666);
   Call3(Actor_SetSpeedParameters, 5, 0xcccc, 0x6666);
@@ -81,15 +81,15 @@ void Idejima_RunAlexDeparture(void) {
   Import_ActorSetAnimation(5, 1);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   Import_EventShowMessageAndWait(5, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x8000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x8000, 0);
   Actor_ArmCallback(6, 0, 40);
   Call3(Actor_ArmCallback, 6, 0xe000, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
   Import_ActorSetAnimation(8, 4);
   Value2(FieldMessage_ShowAtActor, 0x2008, 0);
   Actor_ArmCallback(6, 0, 0);
   Call3(Actor_ArmCallback, 5, 0x2000, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
       0) {
     Motion_SetModeAndWaitAnimation(8, 4);
     Call2(Import_EventShowMessageAndWait, 0x2008, 0);
@@ -106,7 +106,7 @@ void Idejima_RunAlexDeparture(void) {
   Import_EventShowMessageAndWait(6, 0);
   Call3(Actor_ArmCallback, 8, 0x5000, 0);
   Call2(Import_EventShowMessageAndWait, 0x2008, 0);
-  Call3(Import_ActorShowEmote, gSequenceParentWork.currentOwner, 0x101, 40);
+  Call3(Import_ActorShowEmote, gMainRoutineWork.currentOwner, 0x101, 40);
   Call3(Actor_ArmCallback, 8, 0x3000, 0);
   Import_ActorSetAnimation(8, 4);
   Call2(Import_EventShowMessageAndWait, 0x2008, 0);
@@ -142,9 +142,9 @@ void Idejima_RunAlexDeparture(void) {
   Call3(Actor_ArmCallback, 5, 0x4000, 20);
   Import_EventShowMessageAndWait(5, 0);
   Call3(Actor_ArmCallback, 8, 0x3000, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 20);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 20);
   Value2(FieldMessage_ShowAtActor, 0x2008, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
       0) {
     Value3(Import_ActorShowEmote, 6, 0x103, 0);
     Actor_ArmCallback(6, 0, 20);
@@ -163,7 +163,7 @@ void Idejima_RunAlexDeparture(void) {
   Import_EventShowMessageAndWait(6, 0);
   Value3(Import_ActorShowEmote, 5, 0x101, 40);
   Import_EventShowMessageAndWait(5, 0);
-  Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 6);
+  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 6);
   Actor_WatchAndSetScript(8, 6);
   Actor_WatchAndSetScript(5, 6);
   Call3(Actor_SetSpeedParameters, 6, 0x6666, 0x3333);
@@ -171,7 +171,7 @@ void Idejima_RunAlexDeparture(void) {
   FieldEvent_Wait(40);
   Value3(Import_ActorShowEmote, 6, 0x109, 80);
   Call2(Import_EventShowMessageAndWait, 0x2008, 0);
-  Actor_Stop(gSequenceParentWork.currentOwner);
+  Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(8);
   Actor_Stop(5);
   Motion_SetModeAndWaitAnimation(6, 3);
@@ -183,15 +183,15 @@ void Idejima_RunAlexDeparture(void) {
   Import_ActorSetAnimation(6, 4);
   Import_EventShowMessageAndWait(6, 0);
   Call3(Actor_ArmCallback, 8, 0x3000, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 40);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 40);
   Call3(Actor_ArmCallback, 8, 0x5000, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x6000, 20);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x6000, 20);
   Call2(Import_EventShowMessageAndWait, 0x2008, 0);
   Motion_SetModeAndWaitAnimation(6, 3);
   Import_EventShowMessageAndWait(6, 0);
   Import_ActorSetAnimation(8, 3);
   Import_ActorSetAnimation(5, 3);
-  Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   Call3(Actor_ArmCallback, 6, 0xe000, 0);
   Import_EventShowMessageAndWait(6, 0);
   Call3(Actor_ArmCallback, 8, 0x3000, 0);
@@ -218,7 +218,7 @@ void Idejima_RunAlexDeparture(void) {
   Import_EventShowMessageAndWait(5, 0);
   Call3(Actor_ArmCallback, 5, 0x2000, 0);
   Value2(FieldMessage_ShowAtActor, 5, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
       0) {
     Import_ActorSetAnimation(5, 3);
     Import_EventShowMessageAndWait(5, 0);

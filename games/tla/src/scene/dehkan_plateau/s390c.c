@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "task.h"
 
 extern const u8 gData_02003fb0[];
@@ -42,7 +42,7 @@ static __inline__ void Actor_SetPosition(struct Actor *object, s32 x,
 }
 
 void Func_0200390c(void) {
-  struct Actor *owner = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 entrance;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
@@ -59,7 +59,7 @@ void Func_0200390c(void) {
   }
   Func_02000038(gData_02003fb0);
   Func_020019b8();
-  entrance = gSequenceParentWork.entrance;
+  entrance = gMainRoutineWork.entrance;
   if (entrance > 10) {
     Func_02001804();
     GameFlag_SetBit(entrance + 789);
@@ -68,8 +68,8 @@ void Func_0200390c(void) {
     Func_02003c68(9, 0, 0);
   Func_020035ec();
   if (Flag_Test(265) == 0) {
-    if (gSequenceParentWork.entrance > 16) {
-      if (gSequenceParentWork.entrance == 37 && Flag_Test(0x871) == 0)
+    if (gMainRoutineWork.entrance > 16) {
+      if (gMainRoutineWork.entrance == 37 && Flag_Test(0x871) == 0)
         Func_02002c14();
       else
         Func_02003764();

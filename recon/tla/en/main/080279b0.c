@@ -7,12 +7,12 @@
 // (three probes 30 degrees apart, six retry headings), with this game's dash
 // keys, flag 0x163 beside the debug L key, and Field_CheckConfiguredKeys'
 // shortcut setting the event work's unk16a. Left, all scheduling: the opening
-// stores of collision and the animation around gSequenceParentWork's load, the
+// stores of collision and the animation around gMainRoutineWork's load, the
 // retry list's first index load, the copy of the right probe's address, the
 // yaw table's and the input's pool loads (native earlier), and two ripple
 // stores. Measured: angleOffsets[22] as ☀️'s (as [6] the stack frame is 32 bytes
 // short), the ripple sprite's mode and priority as 2-bit fields (as byte
-// masks, differ 70); an empty asm passing gSequenceParentWork and the input
+// masks, differ 70); an empty asm passing gMainRoutineWork and the input
 // through before the shortcut test orders those loads but swaps r1 and r2
 // (differ 30); the opening assignments in other orders (differ 28 to 243).
 // Permute 8 minutes: nothing better by differ.
@@ -22,7 +22,7 @@
 #include "frame.h"
 #include "map.h"
 #include "event_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "iwram_call.h"
 
@@ -101,7 +101,7 @@ s32 Func_080279b0(struct Actor *object) {
   movementAnimation = 2;
   collision = 0;
   count = 0;
-  if (gInput.held & ((struct PartyKeys *)&gSequenceParentWork)->dashKeys) {
+  if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->dashKeys) {
     object->speedLimit = 0x10000;
     object->acceleration = 0x8000;
     movementAnimation = 5;
@@ -246,7 +246,7 @@ update_object:
     }
   }
   Field_CheckConfiguredKeys();
-  if (gInput.pressed & gSequenceParentWork.keys230)
+  if (gInput.pressed & gMainRoutineWork.keys230)
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 251;
   object->step++;
   return 1;

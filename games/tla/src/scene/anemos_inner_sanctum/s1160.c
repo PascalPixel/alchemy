@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern char SceneId_Ov6B0Room2;
 extern char SceneId_Ov6B0Room3;
@@ -49,16 +49,16 @@ void Func_02001160(void) {
   Func_020034a0();
   x = leader->x >> 19;
   z = leader->z >> 19;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6B0Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
     SetCell(2, 0x480000, 0x1b80000, 232);
     if (x != 8)
       SetCell(2, 0x480000, 0x1a80000, 232);
   }
   /* FAKEMATCH(barrier): an empty asm with a memory clobber, so GCSE does not
-   * keep gSequenceParentWork's address from the first test; without it, 11 of 243
+   * keep gMainRoutineWork's address from the first test; without it, 11 of 243
    * instructions differ in tla-en. */
   __asm__("" : : : "memory");
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6B0Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
     SetCell(2, 0x1180000, 0x1580000, 0);
     SetCell(2, 0x1180000, 0x1780000, 232);
     SetCell(2, 0x1280000, 0x1680000, 0);
@@ -68,14 +68,14 @@ void Func_02001160(void) {
    * below rather than loaded early by GCSE; without it, 46 of 243 instructions
    * differ in tla-en. */
   __asm__("" : : : "memory");
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6B0Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room2) {
     if (x == 37 && z == 31) {
       GameFlag_SetBit(0xa80);
       Actor_SetSpritePriority(8, 2);
     }
     if (x == 55 && z == 95)
       GameFlag_SetBit(0xa81);
-  } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov6B0Room3) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
     if (x == 7 && z == 53)
       GameFlag_SetBit(0xa82);
     if (x == 67 && z == 45) {
@@ -103,7 +103,7 @@ void Func_02001160(void) {
       GameFlag_SetBit(0xa85);
     }
   }
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6B0Room4 && x == 33 && z == 45)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4 && x == 33 && z == 45)
     GameFlag_SetBit(0xa86);
   Func_020033a0();
 }

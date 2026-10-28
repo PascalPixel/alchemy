@@ -23,7 +23,7 @@ static __inline__ void Func_02004c50_(s32 a, s32 b, s32 c) {
 }
 
 void Func_020042f8(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   struct Vector3 velocity;
   u32 i;
@@ -64,15 +64,15 @@ next:
   if (++i <= 16)
     goto next;
   Func_02004de0(188);
-  Func_02004d08(gSequenceParentWork.currentOwner, 0x101);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 49);
+  Func_02004d08(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   Func_02004c50_(0x50000, 0x50000, 0x10000);
   Func_02004c50_(-1, -1, 0xe666);
   Func_02004c58();
-  Func_02004d08(gSequenceParentWork.currentOwner, 0x100);
+  Func_02004d08(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   FieldEvent_Wait(10);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Func_02004cb0();
 }

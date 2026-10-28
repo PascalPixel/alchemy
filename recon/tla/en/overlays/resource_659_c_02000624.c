@@ -1,5 +1,5 @@
 // Draft, differ 2 of 161 under -mthumb-slow-loads: the compiler issues
-// gSequenceParentWork's load (ldr r5) before lsls r2, r2, #1 and the add into the event
+// gMainRoutineWork's load (ldr r5) before lsls r2, r2, #1 and the add into the event
 // work; the native issues it after them, as in its twin, overlay 65e's
 // Func_02000340. Adopted in 3c40e77e72, when it matched without the option;
 // back on the listing since.
@@ -7,7 +7,7 @@
 #include "scene_tables.h"
 #include "actor.h"
 #include "field_sprite.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -78,9 +78,9 @@ s32 Func_02000624(void) {
   void *event;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02001e80(0);
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov659Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room1) {
     event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!FlagCheck(0x821)) {
@@ -95,9 +95,9 @@ s32 Func_02000624(void) {
       Func_02001d20(2, 46, 16, 10, 16, 0);
     }
   }
-  if (gSequenceParentWork.entrance == 20)
+  if (gMainRoutineWork.entrance == 20)
     Func_02000570();
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov659Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2) {
     if (FlagCheck(0x8ab)) {
       ActorPlace(10, 0, 0);
     } else {

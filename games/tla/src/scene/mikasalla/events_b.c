@@ -50,14 +50,14 @@ s32 Func_020002f8(void) {
 }
 
 s32 Func_0200030c(void) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   struct Actor *object;
   u8 flags;
 
   object = Actor_GetById(16);
   flags = object->priorityFlags & ~1;
-  party = &gSequenceParentWork;
-  /* FAKEMATCH: the empty asm holds the store below gSequenceParentWork's address load,
+  party = &gMainRoutineWork;
+  /* FAKEMATCH: the empty asm holds the store below gMainRoutineWork's address load,
    * which sched2 otherwise puts above the ands (differ 2 with the plain
    * statement). */
   asm("");

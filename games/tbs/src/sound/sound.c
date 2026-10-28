@@ -350,9 +350,9 @@ void Sound_UpdateCommandMask(u32 command) {
 
 /// Returns the music Sound_Play last chose: 0xff before any,
 /// MUS_SILENCE after a fade, else the last music. FieldSequence_Run saves it
-/// as gSequenceParentWork.returnMusic before the Pause menu, so the music can
+/// as gMainRoutineWork.returnMusic before the Pause menu, so the music can
 /// be started again when the party is put back where it was
-/// (SequenceParent_Run, overworld/overworld/sequence_parent.c).
+/// (MainRoutine_Run, overworld/overworld/main_routine.c).
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
 /// Waits a frame at a time for jingle restoration, giving up after 300

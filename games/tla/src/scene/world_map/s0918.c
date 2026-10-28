@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
@@ -35,21 +35,21 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200050c(void);
 
-/// Back to the map: actor 8's position is kept in gSequenceParentWork.
+/// Back to the map: actor 8's position is kept in gMainRoutineWork.
 void Func_02000918(void) {
   struct EventDestination *work = Ram_HeapSlots->eventWork;
   struct Actor *leader = Actor_GetById(8);
 
   Func_02004c20();
   Func_02004db8(0);
-  if (gSequenceParentWork.renderMode == 8)
+  if (gMainRoutineWork.renderMode == 8)
     Func_0200050c();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  gSequenceParentWork.savedX = leader->x;
-  gSequenceParentWork.savedZ = leader->z;
-  gSequenceParentWork.unk280 = 0;
-  gSequenceParentWork.ownerOverride = 0;
+  gMainRoutineWork.savedX = leader->x;
+  gMainRoutineWork.savedZ = leader->z;
+  gMainRoutineWork.unk280 = 0;
+  gMainRoutineWork.ownerOverride = 0;
   GameFlag_ClearBit(0x176);
   Func_02004e30(123);
   Func_02004d40(work->scene);

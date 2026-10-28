@@ -6,9 +6,9 @@ void Func_0200083c(void) {
   Func_02001080();
   Func_020011e0(0);
   {
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

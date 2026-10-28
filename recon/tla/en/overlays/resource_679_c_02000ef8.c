@@ -38,7 +38,7 @@ void Func_02000f58(void) {
 }
 
 void Func_02001054(void) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   s16 *entrance;
 
   Task_Add(Func_020003e8, 0x480);
@@ -46,8 +46,8 @@ void Func_02001054(void) {
   Func_02001e04(0, 0x200, 8, 9);
   Func_02001dec(170);
   Func_02000f98();
-  party = &gSequenceParentWork;
-  /* FAKEMATCH: the native loads gSequenceParentWork before it builds the entrance
+  party = &gMainRoutineWork;
+  /* FAKEMATCH: the native loads gMainRoutineWork before it builds the entrance
    * offset. */
   __asm__ volatile("" : "+l"(party));
   entrance = &party->entrance;

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 #include "field_sprite.h"
 #include "flag_call.h"
@@ -45,10 +45,10 @@ s32 Func_020006ac(void) {
       Call3((void (*)())Func_02002b88, 26, 0, 0);
     }
   }
-  if (gSequenceParentWork.entrance == 9 && Flag_IsSet(0x913) == 0)
+  if (gMainRoutineWork.entrance == 9 && Flag_IsSet(0x913) == 0)
     Func_02000f80();
   if (Flag_IsSet(0x8ff) != 0 && Flag_IsSet(0x989) != 0) {
-    if (gSequenceParentWork.entrance == 7 && Flag_IsSet(0x98e) == 0) {
+    if (gMainRoutineWork.entrance == 7 && Flag_IsSet(0x98e) == 0) {
       Func_020019d8();
       Flag_Set(0x98e);
     }

@@ -21,7 +21,7 @@ s32 Actor_GetById();
 s32 wait();
 extern u8 Func_020024bc[];
 extern u8 gData_020023c4[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 s32 Func_020024e4(void) {
   s32 sp_[1];
@@ -31,8 +31,8 @@ s32 Func_020024e4(void) {
   s32 t23, t24, t25, t26, t27, t28, t30, t31, t32, t33;
   s32 t34, t35, t37, t38, t39, t40, t41, t44;
 
-  t0 = *(u8 *)((s32)gSequenceParentWork + 0x212);
-  v_r5 = (s32)gSequenceParentWork;
+  t0 = *(u8 *)((s32)gMainRoutineWork + 0x212);
+  v_r5 = (s32)gMainRoutineWork;
   if (t0 == 0)
     goto L_0200a506;
   goto L_0200a6c4;
@@ -103,7 +103,7 @@ L_0200a5ba:
   if (v_r0 >= 0)
     goto L_0200a604;
   FIELD_AT(v_r6, u16, 6) = 0x4000;
-  t28 = *(s32 *)((s32)gSequenceParentWork + 0x214);
+  t28 = *(s32 *)((s32)gMainRoutineWork + 0x214);
   Call3((void (*)())Func_02003200, t28, 6, -1);
   goto L_0200a6b8;
 L_0200a604:

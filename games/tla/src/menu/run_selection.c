@@ -1,7 +1,7 @@
 #include "types.h"
 #include "system.h"
 #include "tla_edition.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct InputState {
   u32 held;
@@ -39,8 +39,8 @@ s16 Menu_RunSelection(void) {
 
   work = 0;
   mode = 0;
-  primary = gSequenceParentWork.primary;
-  secondary = gSequenceParentWork.secondary;
+  primary = gMainRoutineWork.primary;
+  secondary = gMainRoutineWork.secondary;
   work = Window_Create(0, 7, 30, 5, 2);
   Menu_DrawSelectionRow(work, primary, &secondary);
   UiTextResource_Initialize(&object, &resource);

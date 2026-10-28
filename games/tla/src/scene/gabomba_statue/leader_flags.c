@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "mem.h"
 #include "resource.h"
 
@@ -12,8 +12,8 @@ void GameFlag_ClearBit(s32 flag);
 void Func_020055cc(const u8 *data, void *buffer);
 
 void Func_02003868(void) {
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
-  if (gSequenceParentWork.entrance == 1) {
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  if (gMainRoutineWork.entrance == 1) {
     GameFlag_SetBit(0xa27);
     GameFlag_ClearBit(0xa28);
   }

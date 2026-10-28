@@ -357,7 +357,7 @@ Func_02000e58:
 .L_02008f60:
 	.4byte 0x00000001
 .L_02008f64:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008f68:
 	.4byte 0x0003ffff
 .L_02008f6c:
@@ -461,7 +461,7 @@ Func_02000e58:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02009040:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x02009070,"ax",%progbits
 	.balign 4
 	.global Func_02001070
@@ -519,7 +519,7 @@ Func_02001070:
 	bl Actor_SetAnimationSpeed
 	b .L_0200921a
 .L_020090d8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020090dc:
 	adds r0, r6, #0
 	movs r1, #16
@@ -656,7 +656,7 @@ Func_02001070:
 .L_020091ec:
 	.4byte 0xffe00000
 .L_020091f0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020091f4:
 	.4byte IwramMulQ16
 .L_020091f8:
@@ -1350,7 +1350,7 @@ Func_02001718:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009850:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009854:
 	.4byte 0x000001ef
 .L_02009858:
@@ -1818,7 +1818,7 @@ Func_02001c88:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02009e40:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009e44:
 	.4byte gData_020033f4
 .L_02009e48:
@@ -2114,7 +2114,7 @@ Func_02001f7c:
 .L_0200a1b0:
 	.4byte IwramClearWords
 .L_0200a1b4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a1b8:
 	.4byte 0x11111111
 .L_0200a1bc:
@@ -2205,7 +2205,7 @@ Func_020022b8:
 .L_0200a364:
 	.4byte 0x00008000
 .L_0200a368:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a36c:
 	movs r3, #1
 	mov r1, r8
@@ -2271,7 +2271,7 @@ Func_020022b8:
 .L_0200a3f0:
 	.4byte 0xffff6667
 .L_0200a3f4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200a44e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200a450,"ax",%progbits
@@ -2449,7 +2449,7 @@ Func_02002450:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200a5d4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a5d8:
 	.4byte Effect_AdvanceMotion
 .L_0200a5dc:
@@ -2545,7 +2545,7 @@ Func_020025e8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a690:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a694:
 	.4byte Data_0200354c
 	.section .bss,"aw",%nobits

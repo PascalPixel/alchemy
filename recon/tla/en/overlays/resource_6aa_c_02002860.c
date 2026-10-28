@@ -73,7 +73,7 @@ void Func_02002860(void) {
   event->field164 = 0;
   Func_020024c0(-10, 0);
   Func_02004d10(0x70000, 0xe000);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
   Call1((void (*)())GameFlag_SetBit, 0x106);
   Func_02004ca8();

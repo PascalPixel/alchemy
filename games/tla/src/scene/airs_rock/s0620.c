@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 s32 Actor_GetById();
@@ -37,7 +37,7 @@ void Func_02000620(void) {
     Call4(Func_02000384, 2, 33, 54, value);
   }
   leader =
-      (struct Actor *)Value1(Actor_GetById, gSequenceParentWork.currentOwner);
+      (struct Actor *)Value1(Actor_GetById, gMainRoutineWork.currentOwner);
   if ((leader->y >> 19) == 26)
     Call6(Func_02003b80, 70, 67, 1, 1, 33, 54);
   Func_02003bd0();

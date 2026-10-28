@@ -1,9 +1,9 @@
 #include "local.h"
 
 void Func_02002f60(s32 entrance) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 mode;
-  s32 *owner = &gSequenceParentWork.currentOwner;
+  s32 *owner = &gMainRoutineWork.currentOwner;
 
   Func_02003d7c();
   Func_02003eac(0);
@@ -28,9 +28,9 @@ void Func_02002f60(s32 entrance) {
 }
 
 void Func_02002ffc(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 flag = GameFlag_Test(0x109);
-  s32 *owner = &gSequenceParentWork.currentOwner;
+  s32 *owner = &gMainRoutineWork.currentOwner;
   s32 offset;
 
   if (flag == 0) {

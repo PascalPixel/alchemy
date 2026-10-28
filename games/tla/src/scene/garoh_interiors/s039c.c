@@ -14,10 +14,10 @@ void Func_02000318(s32 actor) {
   message = (s32)MsgGarohInteriors01;
   Func_02000844(message);
   Message_Open(actor, 0);
-  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Func_02000844(message + 2);
     Message_Open(actor, 0);
-    if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
       Func_0200085c(actor, 0);
     } else {
       ((struct EventWork1c4 *)Ram_HeapSlots->eventWork)->count++;
@@ -93,7 +93,7 @@ void Func_0200049c(void) {
 /// first room, the entrance.
 const u8 *Func_020004f0(void) {
   s32 moved = GameFlag_Test(0x91b);
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   s32 room1 = (s32)&SceneId_Ov660Room1;
   s32 scene;
 

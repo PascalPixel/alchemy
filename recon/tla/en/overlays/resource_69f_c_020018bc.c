@@ -3,7 +3,7 @@
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Spot {
   s16 x;
@@ -32,7 +32,7 @@ void Func_0200151c(struct SpotState *state, struct Spot *spot);
 void Func_0200158c(struct SpotState *state, struct Spot *spot);
 
 s32 Func_020018bc(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &gData_02002530;

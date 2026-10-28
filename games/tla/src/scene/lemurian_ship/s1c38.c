@@ -6,9 +6,9 @@ s32 Func_02001c38(void) {
   i = 0;
 next:
   if (GameFlag_Test(i + 0x300)) {
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: the loop note ends the scheduling block: the native loads hegSequenceParentWork's address before it builds the field's offset (2 differ
+    /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field's offset (2 differ
      * without it). */
     do {
     } while (0);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 
 void Func_02003c28(void);
@@ -22,8 +22,8 @@ void Func_02002ff4(void) {
 
   Func_02003c28();
   Func_02003d78(0);
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov655Room1)
-    Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 3);
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov655Room1)
+    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
   Func_02003df8(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -31,7 +31,7 @@ void Func_02002ff4(void) {
 }
 
 s32 Func_0200304c(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov655Room1)
     Func_020030e4();

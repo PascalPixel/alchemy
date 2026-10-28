@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -36,7 +36,7 @@ s32 Func_0200189c(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 stack[10];
 
   /* sub (s32)stack, #40 */
-  v0 = ObjectTable_Get(FIELD_AT((s32)(s32)&gSequenceParentWork, s32, 532));
+  v0 = ObjectTable_Get(FIELD_AT((s32)(s32)&gMainRoutineWork, s32, 532));
   r7 = v0;
   r0 = v0;
 L_020098bc:

@@ -2,7 +2,7 @@
 /// Party: raise a character to a specified level.
 
 #include "owner_state.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "battle_unit.h"
 
 struct LevelUpResult;

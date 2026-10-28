@@ -6,7 +6,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -20,7 +20,7 @@ void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
 
 void Func_0200369c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02001fdc();
   if (GameFlag_Test(0x86c) != 0) {
     Func_02003be0(3, 8, 30, 33, 1, 1);
@@ -28,7 +28,7 @@ void Func_0200369c(void) {
     Func_02003be0(3, 69, 30, 93, 1, 4);
   }
   {
-    s16 entrance = gSequenceParentWork.entrance;
+    s16 entrance = gMainRoutineWork.entrance;
 
     if (entrance >= 11 && entrance <= 39) {
       Func_02001804();
@@ -37,8 +37,8 @@ void Func_0200369c(void) {
   }
   Func_0200353c();
   if (GameFlag_Test(265) == 0) {
-    if (gSequenceParentWork.entrance > 10) {
-      if (gSequenceParentWork.entrance <= 39)
+    if (gMainRoutineWork.entrance > 10) {
+      if (gMainRoutineWork.entrance <= 39)
         Func_02003764();
     }
   }

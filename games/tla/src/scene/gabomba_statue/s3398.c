@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 
 struct EventWork1ac {
@@ -30,10 +30,10 @@ static __inline__ void Map_CopyBlock(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 /// Prepares the current room.
 s32 Func_02003398(void) {
   s16 scene;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
-  if (gSequenceParentWork.scene != (s32)&SceneId_Ov671Room1) {
+  if (gMainRoutineWork.scene != (s32)&SceneId_Ov671Room1) {
     if (GameFlag_Test(515))
       Func_020020f0(0);
     else if (GameFlag_Test(0x8cd))
@@ -43,8 +43,8 @@ s32 Func_02003398(void) {
     Func_02001c10();
   }
   Actor_GetById(Func_0200584c())->priorityFlags |= 0x20;
-  party = &gSequenceParentWork;
-  /* FAKEMATCH: the native loads gSequenceParentWork's address before it builds the
+  party = &gMainRoutineWork;
+  /* FAKEMATCH: the native loads gMainRoutineWork's address before it builds the
    * scene's offset; the plain read builds the offset first (one reordered pair,
    * differ 2). */
   asm volatile("" : "+l"(party));

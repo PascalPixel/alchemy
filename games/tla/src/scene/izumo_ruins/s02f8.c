@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -28,7 +28,7 @@ void Func_020002f8(u16 *list) {
 
   if (Func_020014d8() != 0)
     return;
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;

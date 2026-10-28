@@ -42,8 +42,8 @@ void Func_02004524(void) {
   Func_02005c3c(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
-  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
   Func_02003640(1, 1);

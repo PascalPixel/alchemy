@@ -30,7 +30,7 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
 }
 
 /// Empties the battle's spoils (BattleWork.spoils) and
-/// gSequenceParentWork.pendingItem. Called once by Battle_Run as the battle
+/// gMainRoutineWork.pendingItem. Called once by Battle_Run as the battle
 /// opens.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle = gBattleWork;
@@ -38,7 +38,7 @@ void BattleSpoils_Clear(void) {
   u16 *items;
   s32 index;
 
-  gSequenceParentWork.pendingItem = 0;
+  gMainRoutineWork.pendingItem = 0;
   spoils->coins = 0;
   spoils->experience = 0;
   spoils->defeated = 0;

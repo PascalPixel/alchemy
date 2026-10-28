@@ -51,7 +51,7 @@ extern char ResourceId_IntroTilesB;
 // Battle backgrounds. BattleBackground_SelectForMap picks one for the current
 // scene from gScene_BattleBackgroundRules (overworld/scene_rules.s), and on the
 // world map BattleBackground_SelectForEnvironment picks one by battle
-// environment; either leaves it in gSequenceParentWork.special for the battle.
+// environment; either leaves it in gMainRoutineWork.special for the battle.
 // The credits (gCredits_Backgrounds) shows every one but DesertBackdrop and
 // AerialViewBackdrop, and some summons draw one as their sky.
 

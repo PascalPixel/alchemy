@@ -1,5 +1,5 @@
 #include "owner_state.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 Unit_AddPp();
 
@@ -20,7 +20,7 @@ s32 Func_080adc90(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = Unit_Get(gSequenceParentWork.activeOwners[i]);
+    struct BattleUnit *unit = Unit_Get(gMainRoutineWork.activeOwners[i]);
 
     pp += unit->pp;
     max += unit->maxPp;
@@ -39,11 +39,11 @@ s32 Func_080adcec(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    s32 ratio = Owner_GetPpRatio(gSequenceParentWork.activeOwners[i]);
+    s32 ratio = Owner_GetPpRatio(gMainRoutineWork.activeOwners[i]);
 
     if (ratio > best) {
       best = ratio;
-      bestOwner = gSequenceParentWork.activeOwners[i];
+      bestOwner = gMainRoutineWork.activeOwners[i];
     }
   }
   if (bestOwner == -1)

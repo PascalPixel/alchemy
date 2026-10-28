@@ -266,7 +266,7 @@ void PartyStatus_Draw(s32 flags) {
   } else {
     count = Party_CountMembersFar();
     for (i = 0; i < count; i++)
-      members[i] = gSequenceParentWork.party[i];
+      members[i] = gMainRoutineWork.party[i];
     members[i] = 255;
   }
   count = i;

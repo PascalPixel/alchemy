@@ -4,7 +4,7 @@
 // and the two random terms' pool constants load one row late.
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "call.h"
 
@@ -49,7 +49,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    struct MagmaRockEffectOptions *options);
 
 void Func_020022ac(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MagmaRockEffectOptions options;
   u32 i;
   s32 angle;
@@ -89,12 +89,12 @@ loop:
   if (i <= 16)
     goto loop;
   Func_02003c54(188);
-  Func_02003b44(gSequenceParentWork.currentOwner, 0x101);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 22);
+  Func_02003b44(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Call3((void (*)())Func_02003ac4, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
   Func_02003acc();
-  Func_02003b44(gSequenceParentWork.currentOwner, 0x100);
+  Func_02003b44(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;

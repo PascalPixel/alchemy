@@ -3,7 +3,7 @@
 // derives one from another.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "event_work.h"
@@ -15,10 +15,10 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 void Task_Add(void (*func)(void), s32 priority);
 
 void Func_02000ab4(void) {
-  if (gSequenceParentWork.renderMode == 2) {
+  if (gMainRoutineWork.renderMode == 2) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+    struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
     s32 x = object->x / 0x100000;
     s32 z = (object->z - object->y + 0x7fff) / 0x100000;
     s32 code = map->layers[2].cells[x + z * 128].collisionCode;

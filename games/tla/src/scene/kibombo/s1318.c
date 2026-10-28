@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
@@ -56,17 +56,17 @@ void Func_02001318(void) {
   Call4(Camera_MoveWithinMapBounds, 0x600000, -1, 0x1540000, 1);
   Func_02005bb4();
   Call3(Actor_ArmCallback, 7, 0xa000, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x2000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x2000, 0);
   Call2(Func_02005b9c, 7, 258);
   Call1(FieldEvent_Wait, 20);
   Value2(Func_02005b6c, 0x2007, 0);
   Call2(Func_02005ba4, 0x6666, 0xccc);
   Call4(Camera_MoveWithinMapBounds, 0x600000, -1, 0x1740000, 1);
-  Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0x13333, 0x9999);
+  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x13333, 0x9999);
   Call3(Actor_SetSpeedParameters, 7, 0x13333, 0x9999);
   Call2(Actor_SetMovementTypeById, 7, gData_02005eec);
-  Call2(Actor_SetMovementTypeAndWaitById, gSequenceParentWork.currentOwner, gData_02005e88);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call2(Actor_SetMovementTypeAndWaitById, gMainRoutineWork.currentOwner, gData_02005e88);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call3(Actor_SetSpeedParameters, 26, 0xcccc, 0x6666);
   Call3(Actor_SetSpeedParameters, 5, 0xcccc, 0x6666);
   Call3(Actor_SetSpeedParameters, 6, 0xcccc, 0x6666);
@@ -83,7 +83,7 @@ void Func_02001318(void) {
   Call2(Func_02005b64, 0x1005, 0);
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
   Call2(Func_02005b64, 0x2007, 0);
-  Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
+  Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
   Call2(Actor_SetModeById, 26, 3);
   Call2(Actor_SetModeById, 5, 3);
   Call2(Motion_SetModeAndWaitAnimation, 6, 3);
@@ -96,11 +96,11 @@ void Func_02001318(void) {
   Value3(Func_02005b94, 26, 257, 0);
   Call2(Func_02005b64, 0x101a, 0);
   Call3(Actor_ArmCallback, 26, 0x3000, 20);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   Call3(Actor_ArmCallback, 6, 0x4000, 40);
   Call2(Func_02005b64, 0x101a, 0);
-  Value3(Func_02005b94, gSequenceParentWork.currentOwner, 257, 0);
+  Value3(Func_02005b94, gMainRoutineWork.currentOwner, 257, 0);
   Value3(Func_02005b94, 5, 257, 0);
   Value3(Func_02005b94, 6, 257, 40);
   Call3(Actor_ArmCallback, 26, 0xd000, 0);
@@ -110,14 +110,14 @@ void Func_02001318(void) {
   Value3(Func_02005b94, 5, 257, 0);
   Call3(Actor_ArmCallback, 5, 0, 20);
   Call2(Func_02005b64, 0x1005, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call3(Actor_ArmCallback, 6, 0, 0);
   Call3(Actor_ArmCallback, 26, 0, 0);
   Call2(Func_02005b7c, 7, 0x8000);
   Call2(Actor_SetModeById, 7, 4);
   Call2(Func_02005b64, 0x2007, 0);
   Call3(Actor_ArmCallback, 26, 0x3000, 0);
-  Value3(Func_02005b94, gSequenceParentWork.currentOwner, 257, 0);
+  Value3(Func_02005b94, gMainRoutineWork.currentOwner, 257, 0);
   Value3(Func_02005b94, 5, 257, 0);
   Value3(Func_02005b94, 6, 257, 40);
   Value3(Func_02005b94, 7, 261, 20);
@@ -142,15 +142,15 @@ void Func_02001318(void) {
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
   Value3(Func_02005b94, 26, 264, 20);
   Call2(Func_02005b64, 0x101a, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   Call3(Actor_ArmCallback, 6, 0x4000, 0);
-  Value3(Func_02005b94, gSequenceParentWork.currentOwner, 257, 0);
+  Value3(Func_02005b94, gMainRoutineWork.currentOwner, 257, 0);
   Value3(Func_02005b94, 5, 257, 0);
   Value3(Func_02005b94, 6, 257, 40);
   Call3(Actor_ArmCallback, 26, 0xd000, 0);
   Value2(FieldMessage_ShowAtActor, 0x101a, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
       1) {
     Call2(Func_02005b64, 0x101a, 0);
     Call2(Motion_SetModeAndWaitAnimation, 5, 4);
@@ -173,14 +173,14 @@ void Func_02001318(void) {
   Call2(Motion_SetModeAndWaitAnimation, 26, 3);
   Call2(Func_02005b64, 0x101a, 0);
   Call3(Actor_ArmCallback, 7, 0x8000, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call3(Actor_ArmCallback, 5, 0, 0);
   Call3(Actor_ArmCallback, 6, 0, 0);
   Call3(Actor_ArmCallback, 26, 0, 20);
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
   Call2(Actor_SetModeById, 26, 4);
   Call2(Func_02005b64, 0x101a, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   Call3(Actor_ArmCallback, 6, 0x4000, 0);
   Call3(Actor_ArmCallback, 7, 0x6000, 0);
@@ -189,11 +189,11 @@ void Func_02001318(void) {
   Call2(Func_02005b64, 0x101a, 0);
   Value3(Func_02005b94, 7, 262, 40);
   Call2(Func_02005b64, 0x2007, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call3(Actor_ArmCallback, 5, 0, 0);
   Call3(Actor_ArmCallback, 6, 0, 0);
   Call3(Actor_ArmCallback, 26, 0, 0);
-  Value3(Func_02005b94, gSequenceParentWork.currentOwner, 0x100, 0);
+  Value3(Func_02005b94, gMainRoutineWork.currentOwner, 0x100, 0);
   Value3(Func_02005b94, 5, 0x100, 0);
   Value3(Func_02005b94, 6, 0x100, 40);
   Call3(Actor_ArmCallback, 7, 0x8000, 20);
@@ -201,7 +201,7 @@ void Func_02001318(void) {
   Call2(Func_02005b64, 0x2007, 0);
   Call2(Motion_SetModeAndWaitAnimation, 26, 3);
   Call2(Func_02005b64, 0x101a, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   Call3(Actor_ArmCallback, 6, 0x4000, 0);
   Call3(Actor_ArmCallback, 7, 0x5000, 20);
@@ -221,7 +221,7 @@ void Func_02001318(void) {
   Call2(Actor_SetModeById, 7, 4);
   Call2(Func_02005b64, 0x2007, 0);
   Call3(Actor_ArmCallback, 5, 0, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call3(Actor_ArmCallback, 6, 0, 0);
   Call3(Actor_ArmCallback, 26, 0, 0);
   Value3(Func_02005b94, 5, 0x100, 20);
@@ -231,14 +231,14 @@ void Func_02001318(void) {
   Call2(Actor_SetModeById, 26, 3);
   Call2(Func_02005b64, 0x101a, 0);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 6, 0x4000, 0);
   Call2(Func_02005b7c, 7, 0x6000);
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
   Call2(Func_02005b64, 0x2007, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x8000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x8000, 0);
   Call3(Actor_ArmCallback, 6, 0, 40);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
   Call3(Actor_ArmCallback, 6, 0, 20);
   Call2(Func_02005b64, 0x1006, 0);
   Call3(Actor_ArmCallback, 5, 0, 0);
@@ -261,7 +261,7 @@ void Func_02001318(void) {
   Call2(Func_02005b64, 0x2007, 0);
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
   Call2(Func_02005b64, 0x2007, 0);
-  Call2(Actor_WatchAndSetScript, gSequenceParentWork.currentOwner, 7);
+  Call2(Actor_WatchAndSetScript, gMainRoutineWork.currentOwner, 7);
   Call2(Actor_WatchAndSetScript, 5, 7);
   Call2(Actor_WatchAndSetScript, 6, 7);
   Call2(Actor_WatchAndSetScript, 26, 7);
@@ -271,7 +271,7 @@ void Func_02001318(void) {
   Call3(Actor_SetPositionAndReset, 7, 40, 348);
   Call3(Actor_SetPositionAndReset, 7, 40, 332);
   Call3(Actor_ArmCallback, 7, 0xe000, 0);
-  Call1(Actor_Stop, gSequenceParentWork.currentOwner);
+  Call1(Actor_Stop, gMainRoutineWork.currentOwner);
   Call1(Actor_Stop, 5);
   Call1(Actor_Stop, 6);
   Call1(Actor_Stop, 26);
@@ -296,13 +296,13 @@ void Func_02001318(void) {
   Call2(Func_02005b64, 0x1007, 0);
   Call2(Actor_SetModeById, 26, 4);
   Call2(Func_02005b64, 0x101a, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x4000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   Call3(Actor_ArmCallback, 6, 0x4000, 40);
   Call2(Func_02005b64, 0x101a, 0);
   Call3(Actor_ArmCallback, 26, 0xd000, 0);
   Value2(FieldMessage_ShowAtActor, 0x101a, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0) ==
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
       0) {
     Value3(Func_02005b94, 26, 264, 20);
     Call2(Func_02005b64, 0x101a, 0);
@@ -319,14 +319,14 @@ void Func_02001318(void) {
     Call2(Func_02005b64, 0x1005, 0);
     Call2(Func_02005b7c, 6, 0);
     Call2(Func_02005b64, 0x1006, 0);
-    Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x8000, 0);
-    Call2(Func_02005b9c, gSequenceParentWork.currentOwner, 258);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x8000, 0);
+    Call2(Func_02005b9c, gMainRoutineWork.currentOwner, 258);
     Call1(FieldEvent_Wait, 40);
     Func_02005c7c();
   }
   Value3(Func_02005b94, 7, 265, 40);
   Call2(Func_02005b64, 0x1007, 0);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
   Call3(Actor_ArmCallback, 6, 0xc000, 0);
   Call3(Actor_ArmCallback, 26, 0xb000, 0);
   Call2(Func_02005b7c, 5, 0xc000);
@@ -340,7 +340,7 @@ void Func_02001318(void) {
   Call2(Motion_SetModeAndWaitAnimation, 7, 3);
   Call3(Actor_SetSpeedParameters, 7, 0x6666, 0x3333);
   Call3(Actor_SetPositionAndReset, 7, 40, 350);
-  Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
+  Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
   Call2(Actor_SetModeById, 5, 3);
   Call2(Actor_SetModeById, 6, 3);
   Call2(Motion_SetModeAndWaitAnimation, 26, 3);

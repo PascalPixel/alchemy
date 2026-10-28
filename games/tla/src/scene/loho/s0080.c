@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern char SceneId_Ov6A6Room2;
 extern char MsgLoho23;
@@ -26,7 +26,7 @@ struct EventWork15a {
 };
 
 const u8 *Func_02000080(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6A6Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room2)
     return gData_02001a80;
   return gData_02001900;
 }

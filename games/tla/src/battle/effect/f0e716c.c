@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 #include "battle_unit.h"
 
@@ -39,7 +39,7 @@ void Func_080e716c(void) {
 
   anchor = work->anchor;
   event = Ram_HeapSlots->eventWork;
-  unit = Unit_Get(gSequenceParentWork.currentOwner);
+  unit = Unit_Get(gMainRoutineWork.currentOwner);
 
   object = Actor_GetById(id);
   if (object == NULL) {

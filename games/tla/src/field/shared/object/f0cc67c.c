@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "scene_tables.h"
@@ -18,7 +18,7 @@ s32 GameFlag_Test(s32 flag);
 /// returns 0 when there is none; without, it takes the first row.
 s32 Func_080cc67c(s32 findEntrance) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 entrance = gSequenceParentWork.entrance;
+  s32 entrance = gMainRoutineWork.entrance;
   const struct SceneEntrance *entry = gOverlayArea.entrances();
   s32 found = 0;
   s32 left;
@@ -37,11 +37,11 @@ s32 Func_080cc67c(s32 findEntrance) {
   }
 
   if (!GameFlag_Test(0x109)) {
-    gSequenceParentWork.x = entry->x << 16;
-    gSequenceParentWork.y = entry->y << 16;
-    gSequenceParentWork.z = entry->z << 16;
-    gSequenceParentWork.heading = entry->facing;
-    gSequenceParentWork.turn = 0;
+    gMainRoutineWork.x = entry->x << 16;
+    gMainRoutineWork.y = entry->y << 16;
+    gMainRoutineWork.z = entry->z << 16;
+    gMainRoutineWork.heading = entry->facing;
+    gMainRoutineWork.turn = 0;
   }
 
   left = entry->cameraLeft;

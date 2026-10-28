@@ -720,7 +720,7 @@ LuckyDice_Run:
 .L_081ac71c:
 	.4byte 0x00000d69
 .L_081ac720:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_081ac724:
 	.4byte 0x05000200
 .L_081ac728:
@@ -1120,7 +1120,7 @@ LuckyDice_Run:
 	b .L_081aca66
 	.2byte 0x0000
 .L_081aca44:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_081aca48:
 	.4byte 0x00000d73
 .L_081aca4c:
@@ -1990,7 +1990,7 @@ LuckyDice_Run:
 .L_081ad0c8:
 	.4byte gLuckyDice_FaceHeights
 .L_081ad0cc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_081ad0d0:
 	ldr r5, .L_081ad264
 	movs r4, #0
@@ -2202,7 +2202,7 @@ LuckyDice_Run:
 .L_081ad268:
 	.4byte 0xfffffd78
 .L_081ad26c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_081ad270:
 	.4byte 0x40f02000
 .L_081ad274:

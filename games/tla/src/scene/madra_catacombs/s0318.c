@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -37,15 +37,15 @@ void Func_02000fd8(void);
 void Func_0200102c(void);
 
 const u8 *Func_02000318(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom4)
     return gData_02001400;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65aRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom5)
     return gData_02001430;
   return gData_020013d0;
 }
 
 const u8 *Func_02000358(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65aRoom2)
     return gData_020014a8;

@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -55,7 +55,7 @@ s32 Func_020001e4(s32 a0, s32 a1) {
   r7 = 0;
   Call1((void (*)())Func_020013f8, 0);
 L_020081fc:
-  r9 = FIELD_AT((s32)&gSequenceParentWork, s32, 16);
+  r9 = FIELD_AT((s32)&gMainRoutineWork, s32, 16);
   v0 = PartyInventory_CountItem(229);
   r10 = v0;
   r8 = (s32)MsgWhatWillYou;
@@ -187,7 +187,7 @@ L_020083e8:
   r0 = (r5 << 1) + r5;
   if (r6 >= (((r5 << 1) + r5) + 3))
     goto L_0200840a;
-  r1 = (s32)&gSequenceParentWork;
+  r1 = (s32)&gMainRoutineWork;
 L_020083f6:
   r6 = r6 + 1;
   r7 = r7 + (*(s8 *)((r1 + 1) + (r6 + 316)));
@@ -196,10 +196,10 @@ L_020083f6:
 L_0200840a:
   v13 = Random16Far();
   r6 = 0;
-  r1 = ((u32)(r7 * v13) >> 16) - (*(s8 *)(((s32)(s32)&gSequenceParentWork + 1) + 316));
-  r0 = (s32)&gSequenceParentWork;
+  r1 = ((u32)(r7 * v13) >> 16) - (*(s8 *)(((s32)(s32)&gMainRoutineWork + 1) + 316));
+  r0 = (s32)&gMainRoutineWork;
   if ((((u32)(r7 * v13) >> 16) -
-       (*(s8 *)(((s32)(s32)&gSequenceParentWork + 1) + 316))) < 0)
+       (*(s8 *)(((s32)(s32)&gMainRoutineWork + 1) + 316))) < 0)
     goto L_0200843c;
 L_02008426:
   r6 = r6 + 1;
@@ -213,12 +213,12 @@ L_0200843c:
     r6 = 14;
   }
   Func_0200049c(*(s32 *)(((s32)gData_02001700) + (r6 << 2)));
-  r3 = (s32)&gSequenceParentWork;
+  r3 = (s32)&gMainRoutineWork;
   r0 = r3 + 1;
-  r1 = ((*(u8 *)(((s32)(s32)&gSequenceParentWork + 1) + (r6 + 316))) << 24) >> 24;
+  r1 = ((*(u8 *)(((s32)(s32)&gMainRoutineWork + 1) + (r6 + 316))) << 24) >> 24;
   r2 = r6 + 316;
-  r3 = (*(u8 *)(((s32)(s32)&gSequenceParentWork + 1) + (r6 + 316))) << 24;
-  if ((((*(u8 *)(((s32)(s32)&gSequenceParentWork + 1) + (r6 + 316))) << 24) >> 24) <= 1)
+  r3 = (*(u8 *)(((s32)(s32)&gMainRoutineWork + 1) + (r6 + 316))) << 24;
+  if ((((*(u8 *)(((s32)(s32)&gMainRoutineWork + 1) + (r6 + 316))) << 24) >> 24) <= 1)
     goto L_02008468;
   *(u8 *)(r0 + r2) = (r1 + ((u32)r3 >> 31)) >> 1;
   r3 = (r1 + ((u32)r3 >> 31)) >> 1;

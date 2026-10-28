@@ -1,6 +1,6 @@
 #include "types.h"
 #include "io_reg.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 GameFlag_Test(s32 flag);
 void Func_0200191c(void);
@@ -23,7 +23,7 @@ s32 Func_02000f6c(s32 owner) {
   s32 count = Party_CountActiveOwners();
   s32 limit = 3;
   s32 i;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   if (!GameFlag_Test(370))
     limit = 4;
@@ -33,8 +33,8 @@ s32 Func_02000f6c(s32 owner) {
   if (i >= count)
     goto none;
 next:
-  party = &gSequenceParentWork;
-  /* FAKEMATCH: gSequenceParentWork's address loads before the owner list's offset is
+  party = &gMainRoutineWork;
+  /* FAKEMATCH: gMainRoutineWork's address loads before the owner list's offset is
    * built; without it the offset's movs comes first (differ 2) */
   __asm__ volatile("");
   if (party->activeOwners[i] == 0xff)
@@ -42,7 +42,7 @@ next:
   /* FAKEMATCH: the native reads the owner byte again for the second test
    * (differ 8 without) */
   __asm__ volatile("" ::: "memory");
-  if (gSequenceParentWork.activeOwners[i] == owner)
+  if (gMainRoutineWork.activeOwners[i] == owner)
     return 1;
   i++;
   if (i < count)

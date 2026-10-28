@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_effect.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern const s32 *gData_02002aa0[];
 
@@ -15,7 +15,7 @@ void Actor_SetPartAttribute(struct FieldEffect *effect, s32 value);
 void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

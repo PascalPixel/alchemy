@@ -11,7 +11,7 @@
 // the work in r7, here chooseAgain takes r7 and the work r6.
 #include "types.h"
 #include "input.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct ShopCursorAnchor {
@@ -126,7 +126,7 @@ s32 Func_0810abf0(void) {
         chooseAgain = 1;
         continue;
       }
-      if ((u32)price > gSequenceParentWork.coins) {
+      if ((u32)price > gMainRoutineWork.coins) {
         Sound_PlayFar(113);
         Func_0810a9fc(messageBase + 1);
         chooseAgain = 1;

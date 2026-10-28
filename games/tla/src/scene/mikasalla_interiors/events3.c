@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
 
@@ -46,7 +46,7 @@ void Func_0200014c(s32 actor) {
   struct Actor *leader;
   u16 facing;
 
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;
@@ -62,7 +62,7 @@ void Func_0200019c(s32 actor) {
   struct Actor *leader;
   u16 facing;
 
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;
@@ -81,7 +81,7 @@ void Func_020001fc(s32 actor) {
   struct Actor *leader;
   u16 facing;
 
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;
@@ -109,7 +109,7 @@ void Func_02000288(s32 actor) {
   struct Actor *leader;
   u16 facing;
 
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;
@@ -128,7 +128,7 @@ void Func_020002e4(s32 actor) {
   struct Actor *leader;
   u16 facing;
 
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH: ⚓️ loads the facing before it builds the quarter turn. */
   __asm__ volatile("" : "+l"(leader));
   facing = (leader->angle + 0x2000) & 0xc000;

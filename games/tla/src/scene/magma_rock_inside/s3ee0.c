@@ -4,8 +4,8 @@ extern char SceneId_Ov692Room2;
 extern char SceneId_Ov692Room7;
 
 s32 Func_02003ee0(void) {
-  s32 scene = gSequenceParentWork.scene;
-  s32 entrance = gSequenceParentWork.entrance;
+  s32 scene = gMainRoutineWork.scene;
+  s32 entrance = gMainRoutineWork.entrance;
 
   if (!GameFlag_Test(0x109)) {
     if ((scene == (s32)&SceneId_Ov692Room2 && entrance == 8) ||

@@ -18,9 +18,9 @@ extern const u8 gData_02003ed8[];
 extern const u8 gData_02003f88[];
 
 const struct SceneEntrance *Func_0200088c(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov691Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2)
     return (const struct SceneEntrance *)gData_02003ed8;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov691Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
     return (const struct SceneEntrance *)gData_02003f88;
   return (const struct SceneEntrance *)gData_02003ea8;
 }

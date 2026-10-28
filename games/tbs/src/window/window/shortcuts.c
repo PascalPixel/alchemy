@@ -29,8 +29,8 @@ void AreaNameWindow_Show(void) {
   notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
-  areaMessage = Area_GetNameIndexFar(gSequenceParentWork.sceneId,
-                                     gSequenceParentWork.entrance) +
+  areaMessage = Area_GetNameIndexFar(gMainRoutineWork.sceneId,
+                                     gMainRoutineWork.entrance) +
                 RENDER_RESOURCE_BASE;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
@@ -82,12 +82,12 @@ s32 Item_ReturnTrue(void) { return 1; }
 /// otherwise. The hue wraps in a byte (0 back is 255), not at the option
 /// screen's 24 hues.
 UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
-  u8 hue = gSequenceParentWork.windowColor[0];
+  u8 hue = gMainRoutineWork.windowColor[0];
   if (keys & KEY_LEFT)
     hue += 0xff;
   else
     hue += 1;
-  gSequenceParentWork.windowColor[0] = hue;
+  gMainRoutineWork.windowColor[0] = hue;
 }
 
 /// A Psynergy the debug shortcut picker lists: its party member and the
@@ -99,7 +99,7 @@ struct AbilityListEntry {
 
 /// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
 /// showing each one's cost and description, and stores them in
-/// gSequenceParentWork.firstShortcut and secondShortcut (member << 10 |
+/// gMainRoutineWork.firstShortcut and secondShortcut (member << 10 |
 /// Psynergy). This debug path seeds extra Psynergy before enumerating the
 /// party's shortcuts.
 void Debug_SelectAbilityPair(void) {
@@ -234,9 +234,9 @@ void Debug_SelectAbilityPair(void) {
     // Persist both member/ability pairs before releasing the picker resources.
     // A, B and START all keep the picks. The cursor's window sprite and VRAM
     // entry go with its window.
-    gSequenceParentWork.firstShortcut =
+    gMainRoutineWork.firstShortcut =
         (list[first].member << 10) | list[first].ability;
-    gSequenceParentWork.secondShortcut =
+    gMainRoutineWork.secondShortcut =
         (list[second].member << 10) | list[second].ability;
     Window_Close(win, 1);
     Window_Close(title, 1);
@@ -294,9 +294,8 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 
   for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
     if (entries[entryIndex].ability ==
-            (gSequenceParentWork.firstShortcut & 0x3ff) &&
-        entries[entryIndex].member ==
-            (gSequenceParentWork.firstShortcut >> 10)) {
+            (gMainRoutineWork.firstShortcut & 0x3ff) &&
+        entries[entryIndex].member == (gMainRoutineWork.firstShortcut >> 10)) {
       *firstIndex = entryIndex;
       break;
     }
@@ -304,9 +303,8 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 
   for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
     if (entries[entryIndex].ability ==
-            (gSequenceParentWork.secondShortcut & 0x3ff) &&
-        entries[entryIndex].member ==
-            (gSequenceParentWork.secondShortcut >> 10)) {
+            (gMainRoutineWork.secondShortcut & 0x3ff) &&
+        entries[entryIndex].member == (gMainRoutineWork.secondShortcut >> 10)) {
       *secondIndex = entryIndex;
       break;
     }

@@ -21,7 +21,7 @@ u32 Random16Far(void);
 /// z up to 31 and 127 pixels past the leader's. Then it keeps its action as the
 /// previous one and sets mode 9 after action 212, mode 10 otherwise.
 void Func_020004d4(struct FieldActor *object) {
-  struct FieldActor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *self = (struct Actor *)object;
 
   if (Random16Far() & 0xff) {

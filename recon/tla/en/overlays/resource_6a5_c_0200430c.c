@@ -20,7 +20,7 @@ s32 Actor_GetById();
 extern u8 Data_02006a28[];
 extern u8 IwramMulQ16[];
 extern u8 gData_020069fc[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_0200430c(s32 p0) {
   s32 sp_[1];
@@ -31,7 +31,7 @@ void Func_0200430c(s32 p0) {
   s32 t35, t36, t37, t38, t39;
 
   t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = FIELD_AT((s32)gSequenceParentWork, s32, 532);
+  t1 = FIELD_AT((s32)gMainRoutineWork, s32, 532);
   t2 = Actor_GetById(t1);
   t3 = FIELD_AT(t0, s16, 358);
   v_r7 = t2;
@@ -114,7 +114,7 @@ L_0200c418:
   t29 = FIELD_AT(v_r7, u8, 35);
   FIELD_AT(v_r7, u8, 35) = (254 & t29);
   FIELD_AT(v_r10, u16, 362) = 200;
-  FIELD_AT((s32)gSequenceParentWork, u8, 530) = 0;
+  FIELD_AT((s32)gMainRoutineWork, u8, 530) = 0;
   *(u8 *)v_r9 = 1;
   FIELD_AT(v_r6, u8, 99) = 1;
 L_0200c460:

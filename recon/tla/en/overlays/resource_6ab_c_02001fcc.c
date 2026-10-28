@@ -3,7 +3,7 @@
 // symbols: differ 90 of 108. Left: what that draft's header records.
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "battle_unit.h"
 
 struct MarsLighthouseEventWork {
@@ -33,7 +33,7 @@ void Func_02001fcc(void) {
   i = 0;
   if (i < count) {
   save:
-    hp[i] = Unit_Get(gSequenceParentWork.activeOwners[i])->hp;
+    hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;
     i++;
     if (i < count)
       goto save;
@@ -47,7 +47,7 @@ void Func_02001fcc(void) {
   check:
     {
       struct BattleUnit *unit;
-      u8 *owner = &gSequenceParentWork.activeOwners[i];
+      u8 *owner = &gMainRoutineWork.activeOwners[i];
       unit = Unit_Get(*owner);
 
       if (unit->hp > 0) {

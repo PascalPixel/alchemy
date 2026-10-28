@@ -1,7 +1,7 @@
 #include "types.h"
 #include "text/msg_ids.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct Wanderer {
@@ -125,19 +125,19 @@ void Func_0200253c(void) {
   FieldEvent_Wait(40);
   Func_02005754(MsgGabombaFocusEnergies);
   Func_02005764_(24, 0);
-  Func_02005724(23, gSequenceParentWork.currentOwner);
-  Func_02005724(5, gSequenceParentWork.currentOwner);
-  Func_02005724(6, gSequenceParentWork.currentOwner);
-  Func_02005724(7, gSequenceParentWork.currentOwner);
+  Func_02005724(23, gMainRoutineWork.currentOwner);
+  Func_02005724(5, gMainRoutineWork.currentOwner);
+  Func_02005724(6, gMainRoutineWork.currentOwner);
+  Func_02005724(7, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   Actor_SetSpeed(5, 0xcccc, 0x6666);
   Actor_SetSpeed(6, 0xcccc, 0x6666);
   Actor_SetSpeed(7, 0xcccc, 0x6666);
   Actor_SetSpeed(23, 0xcccc, 0x6666);
   Actor_SetMovementTypeById(23, gData_02005ba4);
   wait(10);
-  Actor_SetMovementTypeById(gSequenceParentWork.currentOwner,
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_02005af4);
   Actor_SetMovementTypeById(5, gData_02005b1c);
   Actor_SetMovementTypeById(7, gData_02005b60);
@@ -156,18 +156,18 @@ void Func_0200253c(void) {
   FieldEvent_Wait(20);
   Actor_Turn(6, 0x2000, 0);
   Actor_Turn(5, 0xa000, 0);
-  Actor_Turn(gSequenceParentWork.currentOwner, 0xa000, 0);
+  Actor_Turn(gMainRoutineWork.currentOwner, 0xa000, 0);
   Actor_Turn(7, 0x2000, 40);
   Actor_GetById(7)->angle = 0x4000;
-  Actor_GetById(gSequenceParentWork.currentOwner)->angle = 0x4000;
+  Actor_GetById(gMainRoutineWork.currentOwner)->angle = 0x4000;
   Actor_GetById(6)->angle = 0x4000;
   Actor_GetById(5)->angle = 0x4000;
   Actor_GetById(7)->actionFlags &= 0xfe;
-  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags &= 0xfe;
+  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
   Actor_GetById(6)->actionFlags &= 0xfe;
   Actor_GetById(5)->actionFlags &= 0xfe;
   Actor_Place(7, 400, 272);
-  Actor_Place(gSequenceParentWork.currentOwner, 420, 272);
+  Actor_Place(gMainRoutineWork.currentOwner, 420, 272);
   Actor_Place(6, 444, 272);
   Actor_Place(5, 468, 272);
   FieldEvent_Wait(20);
@@ -186,7 +186,7 @@ void Func_020027cc(void) {
   Camera_SetBounds(-1, -1, -1, 0);
   Func_02005854(78);
   speed = 0x4000;
-  Actor_Slide(gSequenceParentWork.currentOwner, 174 << 17, 156 << 17, speed);
+  Actor_Slide(gMainRoutineWork.currentOwner, 174 << 17, 156 << 17, speed);
   Actor_Slide(7, 165 << 17, 156 << 17, speed);
   {
     s32 slow = 0x3000;
@@ -211,12 +211,12 @@ void Func_020027cc(void) {
   Func_020057dc_(0x10000, 0);
   Func_020057ec(10);
   wait(20);
-  Func_0200578c_(gSequenceParentWork.currentOwner, 256, 0);
+  Func_0200578c_(gMainRoutineWork.currentOwner, 256, 0);
   Func_0200578c_ArgsFirst(5, 256, 0);
   Func_0200578c_ArgsFirst(6, 256, 0);
   Func_0200578c_ArgsFirst(7, 256, 0);
   Func_0200578c_ArgsFirst(23, 256, 0);
-  Actor_Turn(gSequenceParentWork.currentOwner, 0xc000, 0);
+  Actor_Turn(gMainRoutineWork.currentOwner, 0xc000, 0);
   Actor_Turn(5, 0xc000, 0);
   Actor_Turn(6, 0xc000, 0);
   Actor_Turn(7, 0xc000, 0);
@@ -228,7 +228,7 @@ void Func_020027cc(void) {
   Actor_SetPartAttribute(Actor_GetById(10), 3);
   Actor_SetPartAttribute(Actor_GetById(9), 0);
   wait(8);
-  ((struct Wanderer *)Actor_GetById(gSequenceParentWork.currentOwner))->timer =
+  ((struct Wanderer *)Actor_GetById(gMainRoutineWork.currentOwner))->timer =
       (Random16Far() * 40 >> 16) + 10;
   ((struct Wanderer *)Actor_GetById(7))->timer =
       (Random16Far() * 40 >> 16) + 10;
@@ -238,7 +238,7 @@ void Func_020027cc(void) {
       (Random16Far() * 40 >> 16) + 10;
   ((struct Wanderer *)Actor_GetById(23))->timer =
       (Random16Far() * 40 >> 16) + 10;
-  Actor_SetMovementTypeById(gSequenceParentWork.currentOwner,
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_02005c74);
   Actor_SetMovementTypeById(7, gData_02005c74);
   Actor_SetMovementTypeById(5, gData_02005ca0);

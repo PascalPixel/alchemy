@@ -8,7 +8,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "map.h"
 #include "vram_tab.h"
 
@@ -58,12 +58,12 @@ void CELL_SPRITE_DRAW(void) {
 
   if (table->current == -1)
     return;
-  /* FAKEMATCH(one-pass): the entry's address in a one-pass block, so hegSequenceParentWork's address loads before the constant that offsets it; as a
+  /* FAKEMATCH(one-pass): the entry's address in a one-pass block, so gMainRoutineWork's address loads before the constant that offsets it; as a
    * plain statement, 2 of 136 instructions differ in tla-en. */
   do {
     entry = &table->entries[table->current];
   } while (0);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if ((leader->x >> 20) != entry->x || (leader->z >> 20) != entry->z)
     table->current = -1;
   {

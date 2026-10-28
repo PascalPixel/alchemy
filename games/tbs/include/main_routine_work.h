@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_SEQUENCE_PARENT_WORK_H
-#define ALCHEMY_SEQUENCE_PARENT_WORK_H
+#ifndef ALCHEMY_MAIN_ROUTINE_WORK_H
+#define ALCHEMY_MAIN_ROUTINE_WORK_H
 
 /// @file
-/// The sequence parent's work: the transition data the sequence parent reads
+/// The main routine's work: the transition data the main routine reads
 /// between sequences and the state every sequence shares, which a save file
 /// keeps.
 
@@ -10,7 +10,7 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A scene's type (Scene.sceneType, copied to SequenceParentWork.sceneType).
+/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneType).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
@@ -19,7 +19,7 @@ enum SceneType {
   SCENE_TYPE_TOWN = 2
 };
 
-/// gSequenceParentWork.hazardMode: what advances the hazard count
+/// gMainRoutineWork.hazardMode: what advances the hazard count
 /// (Field_UpdateWalking).
 enum HazardMode {
   /// The distance the leader walks on CELL_BEHAVIOR_DESERT_SAND ground.
@@ -28,11 +28,11 @@ enum HazardMode {
   HAZARD_COUNT_FRAMES = 1
 };
 
-/// gSequenceParentWork.hazardDamage's bit 8: its low byte is a percentage of
+/// gMainRoutineWork.hazardDamage's bit 8: its low byte is a percentage of
 /// maximum HP rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// gSequenceParentWork.battleType: how the next battle starts (Battle_SetType);
+/// gMainRoutineWork.battleType: how the next battle starts (Battle_SetType);
 /// it is set back to BATTLE_TYPE_NORMAL as the battle ends. Any start but that
 /// one stops the opening's first-strike and surprise rolls (Battle_Run).
 enum BattleType {
@@ -52,20 +52,20 @@ enum BattleType {
   BATTLE_TYPE_DEBUG = 5
 };
 
-/// The sequence parent's work: the transition data the sequence parent reads
+/// The main routine's work: the transition data the main routine reads
 /// between sequences (the scene and entrance it runs next, sequenceResult,
 /// the return point, the after-battle and defeat destinations and the restart
 /// point), and what every sequence shares (the party, coins, Djinn, play time
 /// and options). A save file keeps it.
 ///
 /// It is a fixed struct, never freed and in no heap slot: the one
-/// gSequenceParentWork in EWRAM, right after the 0x200 bytes of game
+/// gMainRoutineWork in EWRAM, right after the 0x200 bytes of game
 /// flags. Saving writes it whole in a file's first part, with the flags
 /// before it, and a file's checksum covers the 968 words from gGameFlagBytes
 /// to the end of this struct (Save_BuildFileSummary, Save_WriteCurrentFile). A
-/// new game sets its defaults (SequenceParentWork_InitializeDefaults), and the
+/// new game sets its defaults (MainRoutineWork_InitializeDefaults), and the
 /// field, battle, menus and scenes read and write it directly.
-struct SequenceParentWork {
+struct MainRoutineWork {
   /// BuildStamp_GetTime's value when the game was last saved; its low
   /// half goes into the file's summary.
   u32 buildStamp;
@@ -89,7 +89,7 @@ struct SequenceParentWork {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The destination: the sequence the sequence parent runs next, a
+  /// The destination: the sequence the main routine runs next, a
   /// SceneId_ row of gScenes or a SEQUENCE_ value above the table's rows.
   /// During a scene it is the scene running. An exit-table lookup overwrites
   /// it, and EXIT_KEEP_DESTINATION keeps it.
@@ -209,38 +209,38 @@ struct SequenceParentWork {
   struct Unit units[8];        ///< the characters
 };
 
-STATIC_ASSERT(offsetof(struct SequenceParentWork, buildStamp) == 0);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, playTime) == 4);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, idleSleepEnabled) == 0x22a);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, coins) == 0x10);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, shopCredit) == 0x118);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, shopGifts) == 0x11c);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, units) == 0x2c0);
-STATIC_ASSERT(sizeof(struct SequenceParentWork) == 0xd20);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, wonPrizes) == 0x12c);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, area) == 0x1cc);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, dashKeys) == 0x21c);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, avoidDistance) == 0x244);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, entrance) == 0x1c2);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, special) == 0x1d6);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, x) == 0x1dc);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, leaderActorId) == 0x1f4);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, party) == 0x1f8);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, speech) == 0x20a);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, messageSpeed) == 0x20c);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, aKeys) == 0x210);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, firstShortcutKeys) == 0x218);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, secondShortcutKeys) == 0x21a);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, firstShortcut) == 0x220);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, retreatEntrance) == 0x242);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, cloaked) == 0x24c);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, linkTallies) == 0x2a4);
-STATIC_ASSERT(offsetof(struct SequenceParentWork, startStamp) == 0x2b8);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, buildStamp) == 0);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, playTime) == 4);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, idleSleepEnabled) == 0x22a);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, coins) == 0x10);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, shopCredit) == 0x118);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, shopGifts) == 0x11c);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, units) == 0x2c0);
+STATIC_ASSERT(sizeof(struct MainRoutineWork) == 0xd20);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, wonPrizes) == 0x12c);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, area) == 0x1cc);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, dashKeys) == 0x21c);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, avoidDistance) == 0x244);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, entrance) == 0x1c2);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, special) == 0x1d6);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, x) == 0x1dc);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, movementMode) == 0x1f2);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, leaderActorId) == 0x1f4);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, party) == 0x1f8);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, speech) == 0x20a);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, messageSpeed) == 0x20c);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, aKeys) == 0x210);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, firstShortcutKeys) == 0x218);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, secondShortcutKeys) == 0x21a);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, firstShortcut) == 0x220);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, retreatEntrance) == 0x242);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, cloaked) == 0x24c);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 0x2a4);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, startStamp) == 0x2b8);
 
-#ifndef OWN_gSequenceParentWork
+#ifndef OWN_gMainRoutineWork
 /// The game's state (cartridge/ewram.s).
-extern struct SequenceParentWork gSequenceParentWork;
+extern struct MainRoutineWork gMainRoutineWork;
 #endif
 
 /// Sets the battle type.
@@ -248,7 +248,7 @@ extern struct SequenceParentWork gSequenceParentWork;
 // place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
-    gSequenceParentWork.battleType = (mode);                                   \
+    gMainRoutineWork.battleType = (mode);                                      \
   } while (0)
 
 #endif

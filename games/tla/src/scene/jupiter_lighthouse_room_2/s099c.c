@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 #include "io_reg.h"
 #include "iowrite.h"
@@ -52,9 +52,9 @@ s32 Func_02000854(void) {
     Func_02001498();
     Func_020015a0(17, 0);
   }
-  if (gSequenceParentWork.entrance == 3 || gSequenceParentWork.entrance == 6 ||
-      gSequenceParentWork.entrance == 7)
-    Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 64;
+  if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 6 ||
+      gMainRoutineWork.entrance == 7)
+    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
   if (GameFlag_Test(0xa00)) {
     Func_02000b28(8);
     Func_02000b28(9);

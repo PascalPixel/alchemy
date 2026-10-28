@@ -63,12 +63,12 @@ void Func_02000524(void) {
       Call2((void (*)())Func_02000a60, 14, 0xc000);
       Actor_SetSingleChildFlags(Actor_GetById(14), 1);
       Call3((void (*)())Actor_ResetAndSetPosition,
-            gSequenceParentWork.currentOwner, 488, 408);
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
-      YallamInteriors_ObjArm(gSequenceParentWork.currentOwner, 0, 0);
+            gMainRoutineWork.currentOwner, 488, 408);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      YallamInteriors_ObjArm(gMainRoutineWork.currentOwner, 0, 0);
       Call3((void (*)())Actor_ResetAndSetPosition, 14, 504, 408);
       Actor_WaitForMoveById(14);
-      Actor_SetAngleToward(14, gSequenceParentWork.currentOwner, 0);
+      Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
       Func_02000a80(14);
       if (Func_02000a90()) {
         YallamInteriors_ObjSpeed(14, 0x6666, 0x3333);

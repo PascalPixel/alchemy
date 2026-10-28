@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "actor.h"
@@ -41,7 +41,7 @@ static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 s32 Func_02000c80(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov657Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov657Room1) {
     Func_02001f2c_(2, 2, 10, 24, 18, 10);
     Func_02001f2c_(0, 62, 26, 62, 3, 8);
     Func_02001f2c_(50, 65, 25, 61, 6, 1);
@@ -96,11 +96,11 @@ void Func_02000ce0(void) {
   Value3(Func_0200204c, 9, 0x101, 0);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
   Call3((void (*)())Actor_ArmCallback, 6, 0x2000, 0);
-  Call3((void (*)())Actor_ArmCallback, gSequenceParentWork.currentOwner, 0x2000,
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x2000,
         0);
   answer =
-      Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0);
-  owner = gSequenceParentWork.currentOwner;
+      Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
+  owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
     Call2((void (*)())Actor_SetModeById, 9, 3);

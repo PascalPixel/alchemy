@@ -1,6 +1,6 @@
 #include "types.h"
 #include "frame.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 
 void Func_02001860(s32 x, s32 y, s32 z);
@@ -11,7 +11,7 @@ void Func_02001860(s32 x, s32 y, s32 z);
 #define FRAME_COUNT (*(volatile u32 *)&gFrameCount)
 
 void Func_020018e0(void) {
-  s32 scene = gSequenceParentWork.scene;
+  s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room2) {
     if ((FRAME_COUNT & 63) == 0)

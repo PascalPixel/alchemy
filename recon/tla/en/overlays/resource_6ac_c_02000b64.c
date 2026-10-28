@@ -39,14 +39,14 @@ extern u8 gData_0200338c[];
 extern u8 gData_0200339c[];
 extern u8 gData_020033c8[];
 extern u8 gData_020033f4[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 s32 Func_02000b64(void) {
   s32 v_r6, v_r7, v_r5, v_r1, v_r2, v_r0, t0, t1, t2, t6;
   s32 t7, t8, t9, t10, t11, t34;
 
-  t0 = FIELD_AT((s32)gSequenceParentWork, s16, 480);
-  t1 = FIELD_AT((s32)gSequenceParentWork, s16, 482);
+  t0 = FIELD_AT((s32)gMainRoutineWork, s16, 480);
+  t1 = FIELD_AT((s32)gMainRoutineWork, s16, 482);
   t2 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t2, s32, 428) = 0x100;
   Call1((void (*)())GameFlag_SetBit, 0x112);

@@ -4,7 +4,7 @@
   do {                                                                         \
     Func_0200119c();                                                           \
     Func_0200125c(0);                                                          \
-    Func_02001204(gSequenceParentWork.currentOwner, 0x102);                            \
+    Func_02001204(gMainRoutineWork.currentOwner, 0x102);                            \
   } while (0)
 
 void Func_02000038(void) { Func_0200122c(8, 10); }
@@ -22,17 +22,17 @@ void Func_020000c0(void) { Func_02001274_(16, 13, 0, 4, 8, 61, 52); }
 void Func_020000e0(void) { Func_02001274_(21, 9, 0, 2, 2, 57, 52); }
 
 void Func_02000100(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Test(0xf53) == 0) {
     Func_020011cc_(64, 0x1880000, 0x1580000);
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
-      Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 16,
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
                                                 0);
       leader->velocityY = 0x60000;
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_020011a4();
     }
   }
@@ -51,119 +51,119 @@ void Func_020001b0(void) {
 void Func_020001d4(void) { Func_0200121c(5); }
 
 void Func_020001e0(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(7, 22, 0, 3, 3, 56, 58);
   Func_020011cc_(8, 0x880000, 0x1780000);
   if (leader->x >> 20 == 8 && leader->z >> 20 == 23) {
     LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_02000260(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(9, 0x880000, 0xf80000);
   if (leader->x >> 20 == 8 && leader->z >> 20 == 15) {
     LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_020002e0(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(10, 0x980000, 0x1080000);
   if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
     Func_0200119c();
     Func_0200125c_(0);
-    Func_02001204_(gSequenceParentWork.currentOwner, 0x102);
-    Actor_OffsetPositionAndResetMotion_(gSequenceParentWork.currentOwner, -16,
+    Func_02001204_(gMainRoutineWork.currentOwner, 0x102);
+    Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, -16,
                                                0);
     leader->velocityY = 0x60000;
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_02000364(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(11, 0x880000, 0x1180000);
   if (leader->x >> 20 == 8 && leader->z >> 20 == 17) {
     LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_020003e4(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(12, 0x680000, 0x1180000);
   if (leader->x >> 20 == 6 && leader->z >> 20 == 17) {
     LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_02000464(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(13, 0x580000, 0x1080000);
   if (leader->x >> 20 == 5 && leader->z >> 20 == 16) {
     LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_020004e4(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(5, 13, 0, 5, 3, 56, 52);
   Func_020011cc_(14, 0x680000, 0xf80000);
   if (leader->x >> 20 == 6 && leader->z >> 20 == 15) {
     LEADER_HOP();
-    Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 16, 0);
+    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
     leader->velocityY = 0x60000;
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
   }
 }
 
 void Func_02000564(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001274_(16, 13, 0, 4, 8, 61, 52);
   Func_020011cc_(8, 0x1180000, 0x1280000);
   if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
     Func_0200119c();
     Func_0200125c_(0);
-    Func_02001204_(gSequenceParentWork.currentOwner, 0x102);
-    Actor_OffsetPositionAndResetMotion_(gSequenceParentWork.currentOwner, 0,
+    Func_02001204_(gMainRoutineWork.currentOwner, 0x102);
+    Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
                                                -16);
     leader->velocityY = 0x60000;
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Func_020011a4();
   }
 }
@@ -174,8 +174,8 @@ void Func_02000608(void) {
   Func_02001274_(7, 23, 0, 4, 5, 60, 56);
   if (GameFlag_Test(0x9b5) == 0) {
     Func_0200127c_(249, 168, 424);
-    ((struct GabombaCatacombsParty *)&gSequenceParentWork)->value254 = 0x19b5;
-    gSequenceParentWork.battleRule24b = 2;
+    ((struct GabombaCatacombsParty *)&gMainRoutineWork)->value254 = 0x19b5;
+    gMainRoutineWork.battleRule24b = 2;
     Func_02001224(106, 0);
   }
 }

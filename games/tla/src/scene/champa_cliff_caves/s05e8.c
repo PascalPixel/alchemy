@@ -18,21 +18,21 @@ static __inline__ void Actor_CommitPositionAndActivate_(s32 actor,
 }
 
 void Func_020005e8(s32 actor) {
-  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 648, 200);
-  Func_02003534(gSequenceParentWork.currentOwner, 0);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 648, 200);
+  Func_02003534(gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(5);
-  Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 6);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 6);
   FieldEvent_Wait(7);
   Func_0200361c(10, actor);
   Func_020034d4(10, 648 << 16, 196 << 16);
-  Actor_GetById(gSequenceParentWork.currentOwner)->unk5a[0] &= ~1;
-  Actor_CommitPositionAndActivate(gSequenceParentWork.currentOwner, -16, -8);
+  Actor_GetById(gMainRoutineWork.currentOwner)->unk5a[0] &= ~1;
+  Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, -16, -8);
   FieldEvent_Wait(1);
   /* FAKEMATCH: the bit is set through the 8-bit field: read as a plain byte the
    * store aliases the owner's load that follows, which the scheduler then puts
    * before the zero (differ 2). */
-  ((struct ActorSolid *)Actor_GetById(gSequenceParentWork.currentOwner))->solid |= 1;
-  Func_02003534(gSequenceParentWork.currentOwner, 0);
+  ((struct ActorSolid *)Actor_GetById(gMainRoutineWork.currentOwner))->solid |= 1;
+  Func_02003534(gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(10);
 }
 

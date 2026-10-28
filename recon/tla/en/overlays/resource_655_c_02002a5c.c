@@ -6,7 +6,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -92,26 +92,26 @@ void Func_02003d00(s32 exit);
 void Func_02003d78(s32 skip);
 
 void Func_02002a5c(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u32 i;
 
   Func_02003c28();
   Func_02003d78(0);
-  Call4((void (*)())Func_02003c70, gSequenceParentWork.currentOwner, 0xf80000, 0x880000,
+  Call4((void (*)())Func_02003c70, gMainRoutineWork.currentOwner, 0xf80000, 0x880000,
         0xc000);
   Func_02003be0(65, 64, 15, 8, 1, 1);
   GameFlag_SetBit(0x245);
   Func_02003df8(161);
   Func_020021b4();
-  Actor_SetAngleToward(9, gSequenceParentWork.currentOwner, 0);
+  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
   Func_02003cc8(9, 0x100, 20);
   Func_02002bcc();
   FieldEvent_Wait(20);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
   Actor_SetSpritePriority(9, 3);
-  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 3);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 28);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(16);
   for (i = 0; i <= 39;) {
     if (i == 5)

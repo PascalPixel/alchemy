@@ -427,7 +427,7 @@ Func_02000328:
 .L_ja_020086a8:
 	.4byte Func_020001f4
 .L_ja_020086ac:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_020086b0:
 	.4byte 0x00000008
 .L_ja_020086b4:
@@ -859,7 +859,7 @@ Func_02000328:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_ja_02008a30:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_02008a34:
 	.4byte gInput
 .L_ja_02008a38:
@@ -1307,7 +1307,7 @@ Func_02000328:
 .L_fr_020086a0:
 	.4byte Func_020001f4
 .L_fr_020086a4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_fr_020086a8:
 	.4byte 0x00000008
 .L_fr_020086ac:
@@ -1743,7 +1743,7 @@ Func_02000328:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_fr_02008a30:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_fr_02008a34:
 	.4byte gInput
 .L_fr_02008a38:
@@ -2191,7 +2191,7 @@ Func_02000328:
 .L_de_020086a0:
 	.4byte Func_020001f4
 .L_de_020086a4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_de_020086a8:
 	.4byte 0x00000008
 .L_de_020086ac:
@@ -2627,7 +2627,7 @@ Func_02000328:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_de_02008a30:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_de_02008a34:
 	.4byte gInput
 .L_de_02008a38:
@@ -3072,7 +3072,7 @@ Func_02000328:
 .L_es_020086a0:
 	.4byte Func_020001f4
 .L_es_020086a4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_es_020086a8:
 	.4byte 0x00000008
 .L_es_020086ac:
@@ -3508,7 +3508,7 @@ Func_02000328:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_es_02008a30:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_es_02008a34:
 	.4byte gInput
 .L_es_02008a38:
@@ -3953,7 +3953,7 @@ Func_02000328:
 .L_it_020086a0:
 	.4byte Func_020001f4
 .L_it_020086a4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_it_020086a8:
 	.4byte 0x00000008
 .L_it_020086ac:
@@ -4389,7 +4389,7 @@ Func_02000328:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_it_02008a30:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_it_02008a34:
 	.4byte gInput
 .L_it_02008a38:
@@ -4837,7 +4837,7 @@ Func_02000328:
 .L_020086a8:
 	.4byte Func_020001f4
 .L_020086ac:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020086b0:
 	.4byte 0x00000008
 .L_020086b4:
@@ -5273,7 +5273,7 @@ Func_02000328:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008a38:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008a3c:
 	.4byte gInput
 .L_02008a40:
@@ -5618,7 +5618,7 @@ Func_02000b24:
 .L_fr_02008da4:
 	.4byte 0x02013240
 .L_fr_02008da8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.else
 	.global Func_02000b24
 	.thumb_func
@@ -5932,7 +5932,7 @@ Func_02000b24:
 .L_es_02008da0:
 	.4byte 0x02013240
 .L_es_02008da4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.else
 	push {r5, r6, r7, lr}
 	mov r7, r10
@@ -6252,7 +6252,7 @@ Func_02000b24:
 .L_02008dac:
 	.4byte Data_02012f94 + 0x2ac
 .L_02008db0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.endif
 	.endif
 	.section .text.x02008db4,"ax",%progbits
@@ -6407,7 +6407,7 @@ Func_02000e44:
 .L_ja_02008e88:
 	.4byte 0x00006318
 .L_ja_02008e8c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_02008e90:
 	.4byte 0x050001c0
 .L_ja_02008e94:
@@ -7548,7 +7548,7 @@ Func_02000e44:
 .L_ja_020097d8:
 	.4byte 0x00000d92
 .L_ja_020097dc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_020097e0:
 	.4byte IwramCopyWords
 .L_ja_020097e4:
@@ -7726,7 +7726,7 @@ Func_02000e44:
 .L_fr_02008ec0:
 	.4byte 0x00006318
 .L_fr_02008ec4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_fr_02008ec8:
 	.4byte 0x050001c0
 .L_fr_02008ecc:
@@ -8802,7 +8802,7 @@ Func_02000e44:
 .L_fr_0200975c:
 	.4byte 0x00000f5e
 .L_fr_02009760:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_fr_02009764:
 	.4byte IwramCopyWords
 .L_fr_02009768:
@@ -8950,7 +8950,7 @@ Func_02000e44:
 .L_02008ec8:
 	.4byte 0x00006318
 .L_02008ecc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008ed0:
 	.4byte 0x050001c0
 .L_02008ed4:
@@ -10026,7 +10026,7 @@ Func_02000e44:
 .L_02009764:
 	.4byte MsgFieldPasswordAccepted
 .L_02009768:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200976c:
 	.4byte IwramCopyWords
 .L_02009770:
@@ -10572,7 +10572,7 @@ Func_020018e0:
 .L_ja_02009d04:
 	.4byte gData_020026c0
 .L_ja_02009d08:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.else
 	.global Func_020018e0
 	.thumb_func
@@ -11045,7 +11045,7 @@ Func_020018e0:
 .L_02009c74:
 	.4byte gData_020026c0
 .L_02009c78:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.endif
 	.section .text.x02009c7c,"ax",%progbits
 	.global Func_02001c7c
@@ -11592,7 +11592,7 @@ Func_02001c7c:
 .L_0200a060:
 	.4byte gData_0200271c
 .L_0200a064:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200a068,"ax",%progbits
 	.global Func_02002068
 	.thumb_func

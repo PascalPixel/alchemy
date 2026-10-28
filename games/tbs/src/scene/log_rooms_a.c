@@ -60,7 +60,7 @@
 /// FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
 /// log-rooms-a: the room has no GUESTS_ROOM cell once the flag is set).
 
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "flags.h"
 #include "animspr.h"
 #include "version.h"
@@ -309,7 +309,7 @@ const u32 *Scene_GetExits(void) { return gLogRoomsA_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -535,7 +535,7 @@ static void LogRoomsA_SearchEmptyChest(void) {
 /// Returns the loft's events for the loft's three entrances, else the
 /// houses' events, which change once FLAG_VAULT_THIEVES_JAILED is set.
 const struct Trigger *Scene_GetTriggers(void) {
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
   case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
   case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
@@ -2111,7 +2111,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
     s32 zero = 0;
 

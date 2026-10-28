@@ -29,10 +29,10 @@ void Func_020004e4(s32 a, s32 b) {
 }
 
 void Func_02000534(s32 a) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   s32 held = Func_02000d4c();
 
-  party = &gSequenceParentWork;
+  party = &gMainRoutineWork;
   if (held) {
     if (Func_02000d0c(party->currentOwner) != -1) {
       Func_02000d54();

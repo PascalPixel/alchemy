@@ -2,7 +2,7 @@
 #include "owner_value.h"
 #include "battle_unit.h"
 #include "owner_state.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "fixed_math.h"
 
 s32 Party_CountActiveOwnersFar(void);
@@ -27,7 +27,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
   }
   count = Party_CountActiveOwnersFar();
   for (i = 0; i < count; i++) {
-    unit = Unit_Get(gSequenceParentWork.activeOwners[i]);
+    unit = Unit_Get(gMainRoutineWork.activeOwners[i]);
     if (!scaled) {
       value = amount;
     } else {
@@ -38,7 +38,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled) {
           value = -value;
       }
     }
-    Unit_AddHpFar(gSequenceParentWork.activeOwners[i], value);
+    Unit_AddHpFar(gMainRoutineWork.activeOwners[i], value);
   }
 }
 
@@ -52,7 +52,7 @@ s32 BattleParty_ApplyStatusDamage(void) {
     s32 remaining;
 
     offset <<= 2;
-    entry = (u8 *)&gSequenceParentWork + offset;
+    entry = (u8 *)&gMainRoutineWork + offset;
     remaining = count;
 
     do {

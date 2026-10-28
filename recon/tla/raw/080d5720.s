@@ -90,7 +90,7 @@ Func_080d5720:
 .L_080d57d4:
 	.4byte 0x00000000
 .L_080d57d8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080d57dc:
 	pop {r3}
 	mov r8, r3

@@ -7,15 +7,15 @@ struct Actor *Actor_GetById(s32 id);
 /// and 3 the same calls run with their first and last pairs swapped, each
 /// followed by more.
 void Func_02001040(void) {
-  Actor_GetById(gSequenceParentWork.currentOwner)->terrainId = 2;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov662Room1) {
+  Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1) {
     YampiDesertCave_Call1848(55, 71, 4, 1, 43, 70);
     YampiDesertCave_Call1848(43, 71, 4, 1, 55, 71);
   }
   /* FAKEMATCH: the native reads the scene again here, as Func_02001120 does;
    * without the barrier the read is moved up both paths */
   __asm__("" : : : "memory");
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov662Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
     YampiDesertCave_Call1848(110, 45, 5, 2, 90, 50);
     YampiDesertCave_Call1848(113, 47, 2, 1, 90, 52);
     YampiDesertCave_Call1848(107, 48, 3, 2, 90, 53);
@@ -26,13 +26,13 @@ void Func_02001040(void) {
 }
 
 void Func_02001120(void) {
-  Actor_GetById(gSequenceParentWork.currentOwner)->terrainId = 0;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov662Room1)
+  Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 0;
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room1)
     YampiDesertCave_Call1848(43, 70, 4, 1, 55, 71);
   /* FAKEMATCH: the native reads the scene again here; without the barrier the
    * read is moved up both paths (differ 18) */
   __asm__("" : : : "memory");
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov662Room3) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov662Room3) {
     YampiDesertCave_Call1848(90, 50, 5, 2, 110, 45);
     YampiDesertCave_Call1848(90, 52, 2, 1, 113, 47);
     YampiDesertCave_Call1848(90, 53, 3, 2, 107, 48);

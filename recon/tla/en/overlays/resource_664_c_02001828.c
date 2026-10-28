@@ -20,7 +20,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_sprite.h"
 #include "call.h"
 #include "system/field_effect.h"
@@ -90,7 +90,7 @@ void Func_02005ee4(void);
    Call3(Func_02005dcc, -1, -1, 0xe666))
 
 void Func_02001828(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
   struct Actor *gust, *spark, *object;
   struct EffectOptions dust, leaves;
@@ -181,16 +181,16 @@ void Func_02001828(void) {
   Camera_MoveWithinMapBounds(x << 16, -1, z << 16, 1);
   carried = 0;
   while (Func_02005dec(gust) == 0) {
-    if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room6) {
+    if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
       object = Actor_GetById(8);
       if (gust->x >> 19 == object->x >> 19 && carried == 0)
         PICK_UP(object, 0x270025);
-    } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room8) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
       object = Actor_GetById(9);
       if (gust->x >> 20 == object->x >> 20 &&
           gust->z >> 20 == object->z >> 20 && carried == 0)
         PICK_UP(object, 0x290069);
-    } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room9) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
       object = Actor_GetById(10);
       if (gust->x >> 20 == object->x >> 20 &&
           gust->z >> 20 == object->z >> 20 && carried == 0)
@@ -219,11 +219,11 @@ void Func_02001828(void) {
     object->priorityFlags = (object->priorityFlags | 1) & ~6;
     Actor_SetSingleChildFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
-    if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room6) {
+    if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
       object->terrainHeight = 0xffe00000;
       Call6(Func_02005dac, 19, 16, 1, 1, 19, 18);
       GameFlag_SetBit(0x89f);
-    } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room8) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
       Call6(Func_02005dac, 19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
       wait(1);
@@ -232,7 +232,7 @@ void Func_02001828(void) {
       object->terrainHeight = 0;
       object->y = 0;
       Func_02005df4(0x1400000, 0x3400000, 0, 4);
-    } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room9) {
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
       OverlayObject_WaitUntilIdle(object);
       wait(1);
       OverlayObject_WaitUntilIdle(object);
@@ -274,7 +274,7 @@ void Func_02001828(void) {
                       &dust);
       }
       if ((gFrameCount & 3) == 0) {
-        if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room4) {
+        if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
           GameFlag_SetBit(0x300);
           x = (gust->x >> 20) + 64;
           z = gust->z >> 20;
@@ -282,7 +282,7 @@ void Func_02001828(void) {
           Call6(Func_02005d9c, 21, 88, 24, 89, 1, 2);
           Call6(Func_02005dac, 23, 92, 2, 1, 23, 89);
           Call6(Func_02005dac, 18, 33, 2, 1, 23, 25);
-        } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room7) {
+        } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
           x = gust->x >> 20;
           z = ((gust->z - gust->y) >> 20) + 64;
           if (hit == 0) {
@@ -296,7 +296,7 @@ void Func_02001828(void) {
             Call6(Func_02005dac, 38, 98, 1, 1, 38, 99);
             Call6(Func_02005dac, 38, 35, 1, 1, 38, 37);
           }
-        } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room9) {
+        } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
           GameFlag_SetBit(774);
           x = gust->x >> 20;
           Call6(Func_02005d9c, 15, 80, x, 77, 1, 3);
@@ -322,7 +322,7 @@ shrink:
     FieldEvent_Wait(1);
   }
   Func_02005d7c(gust);
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     if (hit == 5) {
       SHAKE();
       Call6(Func_02005d9c, 79, 0x40, 29, 85, 5, 7);
@@ -344,7 +344,7 @@ shrink:
       Call6(Func_02005dac, 0x30, 88, 1, 1, 31, 89);
       GameFlag_ClearBit(769);
     }
-  } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov664Room6) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
     if (hit == 5) {
       SHAKE();
       Call6(Func_02005d9c, 79, 0x40, 0x20, 79, 5, 7);
@@ -399,7 +399,7 @@ shrink:
     }
   }
   FieldEvent_Wait(30);
-  Func_02005eec(gSequenceParentWork.currentOwner, 1);
+  Func_02005eec(gMainRoutineWork.currentOwner, 1);
   Func_02005ee4();
   Func_02005e1c();
 }

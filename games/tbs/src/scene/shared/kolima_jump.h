@@ -5,7 +5,7 @@
 #include "system_call.h"
 #include "actor.h"
 #include "scene.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "sounds.h"
 
 /// Hops the leader to the pixel of the 16.16 position request, unless something
@@ -65,9 +65,9 @@ static void KolimaForest_HopEast(void) {
   target.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   target.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
 #else
-  // gSequenceParentWork.leaderActorId
+  // gMainRoutineWork.leaderActorId
   s32 off = 500;
-  struct Actor *p = Actor_GetById(*(s32 *)((u8 *)&gSequenceParentWork + off));
+  struct Actor *p = Actor_GetById(*(s32 *)((u8 *)&gMainRoutineWork + off));
   u32 base = p->x.fixed & 0xfff00000;
 
   target.x = base + PIXELS(8);

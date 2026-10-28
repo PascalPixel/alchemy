@@ -14,7 +14,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct ItemHead {
   u8 unk00[3];
@@ -93,7 +93,7 @@ s32 PartyInventory_GiveItem(s32 item) {
       Unit_CalculateFar(member);
       owner = PartyInventory_AddFar(item);
       Sound_PlayFar(83);
-      if (owner == gSequenceParentWork.currentOwner) {
+      if (owner == gMainRoutineWork.currentOwner) {
         MessageArgument_PushFar(item, 2);
         FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
       } else {
@@ -109,7 +109,7 @@ s32 PartyInventory_GiveItem(s32 item) {
   Sound_PlayFar(83);
   MessageArgument_PushFar(item, 2);
   FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
-  if (owner != gSequenceParentWork.currentOwner) {
+  if (owner != gMainRoutineWork.currentOwner) {
     MessageArgument_PushFar(item, 2);
     MessageArgument_PushFar(owner, 1);
     FieldMessage_ShowFar((s32)&MsgItemReceived + 1, 1);

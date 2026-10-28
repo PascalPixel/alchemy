@@ -325,4 +325,4 @@ Func_0810abf0:
 .L_0810ae9c:
 	.4byte 0x000012d8
 .L_0810aea0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork

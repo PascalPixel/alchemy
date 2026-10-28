@@ -6,7 +6,7 @@
 // of 2414 in tla-en (was 543). Read-modify-writes are compound assignments and
 // scene numbers their SceneId symbols, as the native's pool shows. Left:
 // register choice and order through the function. The leader is read through a
-// pointer to gSequenceParentWork, which keeps its address in r5 as the native does.
+// pointer to gMainRoutineWork, which keeps its address in r5 as the native does.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -86,7 +86,7 @@ extern u8 gData_02005e3c[];
 extern u8 gData_02005e80[];
 extern u8 gData_02005ec4[];
 extern u8 gData_02006c20[];
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 extern char SceneId_Ov6aeRoom1;
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
@@ -94,7 +94,7 @@ static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
 }
 
 void Func_0200065c(void) {
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   s32 v_r5, v_r2, v_r1, v_r8, v_r6, v_r0, v_r7, v_r10, v_r3, t0;
   s32 t1, t4, t16, t18, t21, t23, t25, t27, t48, t50;
   s32 t53, t55, t57, t59, t61, t88, t91, t94, t98, t99;
@@ -737,7 +737,7 @@ L_02009638:
   Call2(Func_0200575c, 0x7fff, 0);
   Call1(Func_0200576c, 1);
   Call1(wait, 1);
-  v_r8 = (s32)&gSequenceParentWork;
+  v_r8 = (s32)&gMainRoutineWork;
   v_r6 = 0x4000000;
   v_r3 = 0x1180000;
   v_r2 = 0x580000;

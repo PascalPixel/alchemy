@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -164,7 +164,7 @@ void Func_02000dcc(void) {
   if (Flag_Test(0x8ab) != 0) {
     Map_CopyCells(82, 74, 116, 16, 5, 3);
     Map_CopyAttributes(52, 11, 5, 1, 52, 18);
-    if (gSequenceParentWork.entrance == 3)
+    if (gMainRoutineWork.entrance == 3)
       Func_02000c94();
     else
       Wait(10);
@@ -179,7 +179,7 @@ void Func_02000f2c(void) {
     Map_CopyCells(68, 70, 113, 11, 5, 3);
     Map_CopyCells(50, 74, 50, 75, 2, 1);
     Map_CopyAttributes(49, 9, 5, 1, 49, 13);
-    if (gSequenceParentWork.entrance == 8)
+    if (gMainRoutineWork.entrance == 8)
       Func_02000cf4();
     else
       Wait(1);

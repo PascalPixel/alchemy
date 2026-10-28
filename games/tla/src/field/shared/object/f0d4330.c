@@ -2,7 +2,7 @@
 // Message_SetVoiceFromActor): the voice sound from its value and the
 // countdown from the event mode's table; 0x80000000 clears both.
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "window.h"
 
@@ -20,7 +20,7 @@ void Func_080d4330(s32 key) {
     *(s16 *)&work->speakerVoiceCountdown = value;
   } else {
     id = Func_080d1eac(ObjectTable_ReadActiveValue(key));
-    value = gData_080f330c[gSequenceParentWork.eventMode];
+    value = gData_080f330c[gMainRoutineWork.eventMode];
     *(s16 *)&work->speakerVoiceSound = id;
     *(s16 *)&work->speakerVoiceCountdown = value;
   }

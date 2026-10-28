@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -80,9 +80,9 @@ loop:
   work = (u8 *)&((struct EventWork154 *)work)->value;
   Func_02001448(158);
   Func_020012a0_(gData_02001f14.data, gData_02001f14.a, gData_02001f14.b);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
-  Offset_(gSequenceParentWork.currentOwner, 0, -4);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Offset_(gMainRoutineWork.currentOwner, 0, -4);
   Func_02001448(123);
   FieldEvent_Wait(6);
   Func_020013d0(*(s16 *)work);

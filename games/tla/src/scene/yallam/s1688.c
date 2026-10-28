@@ -5,7 +5,7 @@ void Func_02001688(void) {
   struct Actor *b = Actor_GetById(10);
   struct Actor *c = Actor_GetById(9);
   struct Actor *d = Actor_GetById(11);
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 value = (s16)a->unk66;
 
   switch (value) {
@@ -36,7 +36,7 @@ void Func_02001688(void) {
   Func_020006bc(10);
   Func_020006bc(9);
   Func_020006bc(11);
-  Func_020006bc(gSequenceParentWork.currentOwner);
+  Func_020006bc(gMainRoutineWork.currentOwner);
 }
 
 void Func_02001730(void) {
@@ -62,7 +62,7 @@ void Func_02001730(void) {
   gData_02002fc0[3].mode = (s16)object->unk66;
   gData_02002fc0[3].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[3].byte99 = BYTE_AT(object, 99);
-  object = Actor_GetById(gSequenceParentWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.currentOwner);
   gData_02002fc0[4].action = object->action;
   gData_02002fc0[4].mode = (s16)object->unk66;
   gData_02002fc0[4].byte98 = BYTE_AT(object, 98);

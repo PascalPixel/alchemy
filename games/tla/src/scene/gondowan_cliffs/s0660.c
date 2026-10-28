@@ -2,7 +2,7 @@
 #include "actor.h"
 #include "ram_buffer.h"
 #include "call.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -23,7 +23,7 @@ void Actor_ArmCallback();
 void Func_02001214(void);
 
 void Func_02000660(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   struct {
     s32 x, y, z;
   } position;
@@ -38,7 +38,7 @@ void Func_02000660(void) {
   } else {
     Func_0200120c();
     Func_020012e4(0);
-    Actor_TurnToFaceEachOther(16, gSequenceParentWork.currentOwner, 0);
+    Actor_TurnToFaceEachOther(16, gMainRoutineWork.currentOwner, 0);
     Func_0200128c((s32)MsgRrruffRrruff2);
     Func_02001294(16, 0);
     Call3(Actor_ArmCallback, 16, 0x8000, 0);

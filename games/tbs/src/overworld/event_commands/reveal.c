@@ -44,7 +44,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   s32 distanceZ;
 
   work = gFieldWork;
-  actor = Actor_Lookup(gSequenceParentWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
     if (*timer != 0)
@@ -90,7 +90,7 @@ void FieldPsynergy_Reveal(void) {
   Actor_SetRevealSpriteColor(6);
   ScreenTransition_InitializeBattleEffectState(8);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
-  target = Actor_Lookup(gSequenceParentWork.leaderActorId);
+  target = Actor_Lookup(gMainRoutineWork.leaderActorId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG palettes
@@ -106,8 +106,7 @@ void FieldPsynergy_Reveal(void) {
   event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                     FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
-    Field_RunPsynergyEvent(event, gSequenceParentWork.leaderActorId,
-                           eventTarget);
+    Field_RunPsynergyEvent(event, gMainRoutineWork.leaderActorId, eventTarget);
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
 
   // Record the centre (in pixels) and the time in the field work, and put
@@ -169,7 +168,7 @@ void FieldPsynergy_EndReveal(void) {
     event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES),
                                       FIELD_PSYNERGY_REVEAL, &eventTarget);
     if (event != NULL)
-      Field_RunPsynergyEvent(event, gSequenceParentWork.leaderActorId,
+      Field_RunPsynergyEvent(event, gMainRoutineWork.leaderActorId,
                              eventTarget);
 
     if (effectWork->childOption == 0) {

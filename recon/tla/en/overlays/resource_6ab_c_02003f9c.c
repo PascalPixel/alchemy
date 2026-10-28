@@ -8,7 +8,7 @@
 // other declaration orders and permute for 4 minutes change nothing).
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Spot {
   s16 x;
@@ -37,7 +37,7 @@ void Func_02003bfc(struct SpotState *state, struct Spot *spot);
 void Func_02003c6c(struct SpotState *state, struct Spot *spot);
 
 s32 Func_02003f9c(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &gData_02004cf4;

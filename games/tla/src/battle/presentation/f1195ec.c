@@ -4,7 +4,7 @@
 #include "battle_session.h"
 #include "motobj.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 Func_0811a24c(s32 side, s32 value);
 
@@ -37,11 +37,11 @@ void Func_081195ec(void) {
     to->anchorZ = from->anchorZ;
     Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
                                         place->z);
-    gSequenceParentWork.activeOwners[i] = id;
+    gMainRoutineWork.activeOwners[i] = id;
     work->partyUnits[i] = id;
   }
   for (i = 0; i < count; i++)
-    gSequenceParentWork.activeOwners[actorCount + i] = actors[i];
+    gMainRoutineWork.activeOwners[actorCount + i] = actors[i];
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   BattleObject_Put();
   BattleHighlight_SetModes(reserves, 6);

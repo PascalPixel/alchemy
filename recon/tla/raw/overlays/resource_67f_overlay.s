@@ -216,7 +216,7 @@ Func_020001d0:
 .L_020082f0:
 	.4byte gMapShapeGrid
 .L_020082f4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200848c,"ax",%progbits
 	.global Func_0200048c
 	.thumb_func
@@ -477,7 +477,7 @@ Func_02000584:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_020086e0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020086e4:
 	.4byte 0xfdff0000
 .L_020086e8:
@@ -687,7 +687,7 @@ Func_02000708:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020088f0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x02008974,"ax",%progbits
 	.global Func_02000974
 	.thumb_func
@@ -820,7 +820,7 @@ Func_02000974:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008a80:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008a84:
 	.4byte 0xfff80000
 .L_02008a88:
@@ -964,7 +964,7 @@ Func_02000aa8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008ba8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008bac:
 	.4byte gData_02001570
 .L_02008bb0:
@@ -1276,7 +1276,7 @@ Func_02000ce4:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008e9c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008ea0:
 	.4byte gData_02001668
 .L_02008ea4:

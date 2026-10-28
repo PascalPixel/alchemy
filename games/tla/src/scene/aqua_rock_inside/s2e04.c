@@ -14,12 +14,12 @@ void Func_02002e04(s32 id) {
 }
 
 void Func_02002e34(s32 entrance) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 i;
 
   Func_02003d7c();
   Func_02003eac(0);
-  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   leader->motionFlags = 0;
   /* FAKEMATCH: the native clears the motion flags before it addresses the
    * priority flags (differ 2 without the barrier). */

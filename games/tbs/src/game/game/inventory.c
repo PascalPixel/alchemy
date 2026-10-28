@@ -102,7 +102,7 @@ s32 PartyInventory_HasSpace(void) {
   s32 unitIndex;
   s16 *unitCursor;
 
-  if (Inventory_Count(gSequenceParentWork.leaderActorId) != INVENTORY_SLOTS)
+  if (Inventory_Count(gMainRoutineWork.leaderActorId) != INVENTORY_SLOTS)
     return 1;
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
@@ -234,8 +234,8 @@ s32 PartyInventory_FindMember(s32 itemId) {
   s16 *unitCursor;
   s16 unitId;
 
-  if (Inventory_Find(gSequenceParentWork.leaderActorId, itemId) != -1)
-    return gSequenceParentWork.leaderActorId;
+  if (Inventory_Find(gMainRoutineWork.leaderActorId, itemId) != -1)
+    return gMainRoutineWork.leaderActorId;
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
   unitIndex = 0;

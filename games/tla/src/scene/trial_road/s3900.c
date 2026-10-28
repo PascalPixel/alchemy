@@ -89,7 +89,7 @@ void Func_02003900(void) {
 
   Func_02005880();
   Func_020059e8(0);
-  Func_020058e0_(gSequenceParentWork.currentOwner, 0, 0x3f80000);
+  Func_020058e0_(gMainRoutineWork.currentOwner, 0, 0x3f80000);
   Func_020058e0_(8, 0x3f80000, 0x3f80000);
   for (i = 9; i < 80; i++) {
     struct Actor *object = Actor_GetById(i);

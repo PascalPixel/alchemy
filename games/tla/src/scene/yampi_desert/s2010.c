@@ -1,7 +1,7 @@
 #include "scene.h"
 
 void Func_02002010(void) {
-  struct FieldActor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x;
   s32 y;
   s32 z;
@@ -10,10 +10,10 @@ void Func_02002010(void) {
   asm volatile(
       ""); /* FAKEMATCH: ⚓️ reads the height before it builds 0x100000 */
   if (y > 0x100000)
-    gSequenceParentWork.unk2c3 = 1;
+    gMainRoutineWork.unk2c3 = 1;
   else
-    gSequenceParentWork.unk2c3 = 0;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov661Room3) {
+    gMainRoutineWork.unk2c3 = 0;
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3) {
     Actor_SetSpritePriority(18, leader->sprite->priority);
     x = leader->x;
     asm volatile(""); /* FAKEMATCH: ⚓️ reads x before it builds 0x1d80000 */
@@ -23,9 +23,9 @@ void Func_02002010(void) {
       if (z <= 0x1e80000)
         return;
       if (leader->y > (s32)0xfff00000)
-        gSequenceParentWork.unk2c3 = 1;
+        gMainRoutineWork.unk2c3 = 1;
       else
-        gSequenceParentWork.unk2c3 = 0;
+        gMainRoutineWork.unk2c3 = 0;
     }
   }
 }

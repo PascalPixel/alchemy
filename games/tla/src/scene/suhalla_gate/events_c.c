@@ -5,8 +5,8 @@ void Func_02000650(void) {
   Func_02000a70(0);
   Func_020009d0_(8, 0x1d80000, 0x1e00000);
   FieldEvent_Wait(16);
-  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 8, 0);
-  Func_02000a18(gSequenceParentWork.currentOwner, 0x100, 0);
+  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
+  Func_02000a18(gMainRoutineWork.currentOwner, 0x100, 0);
   Camera_FollowActor(8, 1);
   Func_02000a30();
   Actor_Jump_(8, 4, 0);
@@ -30,14 +30,14 @@ void Func_0200071c(void) {
   Func_02000a70(0);
   Func_020009d0_(8, 0x1d80000, 0x1e00000);
   FieldEvent_Wait(16);
-  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 8, 0);
+  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
   z = 0;
   /* FAKEMATCH: the native builds both arguments before loading the leader. */
   __asm__ volatile("" : "+r"(x), "+r"(z));
-  Func_02000a18(gSequenceParentWork.currentOwner, x, z);
+  Func_02000a18(gMainRoutineWork.currentOwner, x, z);
   FieldEvent_Wait(16);
-  Actor_ResetAndSetPositionInMode2_(gSequenceParentWork.currentOwner, 488, 440);
+  Actor_ResetAndSetPositionInMode2_(gMainRoutineWork.currentOwner, 488, 440);
   FieldEvent_Wait(16);
   Camera_FollowActor(8, 1);
   Func_02000a30();
@@ -62,20 +62,20 @@ void Func_02000800(void) {
   Func_02000a70(0);
   Func_02000a00((s32)&MsgMyThatWas);
   Func_020009d0_(9, 0x2000000, 0x1b00000);
-  Func_020009d0_(gSequenceParentWork.currentOwner, 0x2100000, 0x1b00000);
+  Func_020009d0_(gMainRoutineWork.currentOwner, 0x2100000, 0x1b00000);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02000a08(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(30);
   Motion_SetVarCbAndRefresh(9, 2);
   FieldEvent_Wait(20);
   Func_02000a08(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(30);
   GameFlag_SetBit(0x896);
   Actor_SetModeById(9, 2);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
     Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
@@ -95,13 +95,13 @@ void Func_020008cc(void) {
   Actor_WaitForMoveById(16);
   Func_02000a08(0x1010, 0, 10);
   Actor_SetModeById(16, 2);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
     Actor_ResetAndSetPosition(16, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(16);
   Func_020009d0(16, 0, 0);
   FieldEvent_Wait(10);
-  Actor_CommitPositionAndActivate(gSequenceParentWork.currentOwner, 16, 0);
+  Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 16, 0);
   Func_02000990();
 }

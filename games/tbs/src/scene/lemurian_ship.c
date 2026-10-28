@@ -22,7 +22,7 @@
 
 #include "script_operands.h"
 #include "version.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "vram_cache.h"
 #include "module/scene/lemurian_ship.h"
 #include "module/scene/shared/scroll_initialize_hblank_dma.h"
@@ -709,7 +709,7 @@ s32 LemurianShip_SetupMap(void) {
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
-  if (gSequenceParentWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
+  if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
   }
   ((struct FieldWork *)gMapGridWork[19])->transition =

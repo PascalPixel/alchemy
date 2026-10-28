@@ -903,7 +903,7 @@ Func_08027e20:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08028520:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_08028524:
 	.4byte gInput
 .L_08028528:

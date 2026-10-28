@@ -243,7 +243,7 @@ Func_0200015c:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200832c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008330:
 	.4byte gData_020044f8
 .L_02008334:
@@ -412,7 +412,7 @@ Func_020007d4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200894c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008950:
 	.4byte Func_020006d0
 .L_02008954:
@@ -554,7 +554,7 @@ Func_02000cc8:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008dcc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008dd0:
 	.4byte 0x000000a4
 .L_02008dd4:
@@ -1464,7 +1464,7 @@ Func_02002340:
 	b .L_0200abc4
 	.2byte 0x0000
 .L_0200a644:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a648:
 	.4byte 0x000000a0
 .L_0200a64c:
@@ -1959,7 +1959,7 @@ Func_02002340:
 .L_0200aa60:
 	.4byte 0x000000a8
 .L_0200aa64:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200aa68:
 	movs r0, #160
 	lsls r0, r0, #4
@@ -2288,7 +2288,7 @@ Func_02002ca4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200adf0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200adf4:
 	.4byte 0x0000009e
 .L_0200adf8:

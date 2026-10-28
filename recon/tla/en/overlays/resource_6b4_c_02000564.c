@@ -60,7 +60,7 @@ extern u8 MsgGoldenSunFormation[];
 extern u8 gBgScroll[];
 extern u8 gInput[];
 extern u8 gIoWriteQueue[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 s32 Func_02000564(s32 p0, s32 p1, s32 p2, s32 p3) {
   s32 v_r5, v_r9, v_r6, v_r12, v_r7, v_r3, v_r0, v_r1, v_r4, v_r8;
@@ -75,11 +75,11 @@ s32 Func_02000564(s32 p0, s32 p1, s32 p2, s32 p3) {
 
   t0 = Value4((s32 (*)())Heap_AllocEwram, 0x200, p1, p2, p3);
   Func_02001454();
-  t2 = FIELD_AT((s32)gSequenceParentWork, u8, 549);
-  t3 = FIELD_AT((s32)gSequenceParentWork, u8, 550);
+  t2 = FIELD_AT((s32)gMainRoutineWork, u8, 549);
+  t3 = FIELD_AT((s32)gMainRoutineWork, u8, 550);
   Call2((void (*)())Func_02001484, t2, t3);
   Call3((void (*)())Func_020014b4, 4, 0, 0);
-  t6 = FIELD_AT((s32)gSequenceParentWork, s16, 482);
+  t6 = FIELD_AT((s32)gMainRoutineWork, s16, 482);
   v_r9 = t0;
   v_r5 = t6;
   if (v_r5 != 10)

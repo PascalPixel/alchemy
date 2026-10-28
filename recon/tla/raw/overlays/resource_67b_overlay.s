@@ -946,7 +946,7 @@ Func_02000d80:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008f6c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008f70:
 	.4byte Data_0200024c + 0x1d4
 .L_02008f74:
@@ -1124,7 +1124,7 @@ Func_02001e00:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009f4c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009f50:
 	.4byte 0x0000009e
 .L_02009f54:

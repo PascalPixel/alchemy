@@ -1,7 +1,7 @@
 #include "types.h"
 #include "input.h"
 #include "field_event.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -58,12 +58,12 @@ void Func_02002c64(void) {
   Task_Wait(1);
   Call4(Camera_MoveWithinMapBounds, 0x1800000, -1, 0x2d80000, 0);
   Task_Wait(1);
-  Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 41);
+  Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 41);
   Task_Wait(1);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Task_Wait(1);
-  Call3(Func_02003228, gSequenceParentWork.currentOwner, 0x1800000, 0x2d80000);
+  Call3(Func_02003228, gMainRoutineWork.currentOwner, 0x1800000, 0x2d80000);
   Call3(Func_02003228, 11, 0x1800000, 0x2be0000);
   Task_Wait(1);
   Func_02003180();
@@ -74,67 +74,67 @@ void Func_02002c64(void) {
   Task_Wait(10);
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Motion_SetVarCbAndRefresh(gSequenceParentWork.currentOwner, 2);
+  Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
   Task_Wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 42);
+  Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 42);
   Task_Wait(1);
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      1);
   Task_Wait(1);
-  Actor_Jump(gSequenceParentWork.currentOwner, 4, 20);
+  Actor_Jump(gMainRoutineWork.currentOwner, 4, 20);
   Import_EventSetMessageId((s32)MsgIdejimaCheckForInjuries);
   Value2(FieldMessage_ShowAtActor, 11, 0);
   Task_Wait(1);
-  answer = Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0);
-  leader = gSequenceParentWork.currentOwner;
+  answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+  leader = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(leader);
-    Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 45);
+    Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 45);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_Wait(50);
     FelixWake_StartStep();
-    Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 46);
+    Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 46);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_Wait(50);
     FelixWake_StartStep();
     Import_EventShowMessageAndWait(11, 0);
     Task_Wait(1);
-    Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
     FelixWake_EndStep();
     FieldEvent_Wait(20);
     FelixWake_StartStep();
-    Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 47);
+    Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 47);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_Wait(50);
     FelixWake_StartStep();
-    Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 48);
+    Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 48);
     Task_Wait(1);
     FelixWake_EndStep();
     FieldEvent_Wait(50);
     FelixWake_StartStep();
     Import_EventShowMessageAndWait(11, 0);
     Task_Wait(1);
-    Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   } else {
     Actor_WaitForAnimationChange(leader);
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
-    Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x6666, 0x3333);
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 384, 746);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x6666, 0x3333);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 384, 746);
     FelixWake_EndStep();
     FieldEvent_Wait(20);
     FelixWake_StartStep();
     Import_EventShowMessageAndWait(11, 0);
-    Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   }
   Func_02003228(11, 0, 0);
   GameFlag_ClearBit(0x12f);

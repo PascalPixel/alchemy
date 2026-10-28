@@ -46,7 +46,7 @@ s32 wait();
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
 extern u8 gData_020036fc[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_02000ac8(s32 p0, s32 p1, s32 p2, s32 p3, s32 p4, s32 p5) {
   s32 sp_[1];
@@ -62,7 +62,7 @@ void Func_02000ac8(s32 p0, s32 p1, s32 p2, s32 p3, s32 p4, s32 p5) {
 
   t0 = FIELD_AT(0x3000000, s32, 108);
   p5 = t0;
-  t1 = FIELD_AT((s32)gSequenceParentWork, s32, 532);
+  t1 = FIELD_AT((s32)gMainRoutineWork, s32, 532);
   t2 = Value1((s32 (*)())Actor_GetById, t1);
   t3 = *(u16 *)0x4000052;
   v_r9 = ((s32)spo_ + 106);
@@ -150,7 +150,7 @@ L_02008bfe:
 L_02008c06:
   Func_02003398();
   Call1((void (*)())Func_02003488, 0);
-  v_r5 = ((s32)gSequenceParentWork + 0x214);
+  v_r5 = ((s32)gMainRoutineWork + 0x214);
   t10 = *(s32 *)v_r5;
   Call3((void (*)())Actor_SetSpeedParameters, t10, 0xcccc, 0x6666);
   Call2((void (*)())Func_02003420, 0xcccc, 0x1999);
@@ -358,7 +358,7 @@ L_02008eea:
 L_0200904c:
   Call1((void (*)())Func_020032f8, v_r10);
   Call1((void (*)())GameFlag_SetBit, 0x200);
-  t126 = FIELD_AT((s32)gSequenceParentWork, s32, 532);
+  t126 = FIELD_AT((s32)gMainRoutineWork, s32, 532);
   Call2((void (*)())Camera_FollowActor, t126, 1);
   Func_02003430();
   Call1((void (*)())FieldEvent_Wait, 60);

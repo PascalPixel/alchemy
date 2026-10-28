@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern u8 gData_020017b0[];
 extern u8 gData_02001860[];
@@ -27,10 +27,10 @@ void GameFlag_SetBit(s32);
 struct Actor *Actor_GetById(s32);
 
 void Func_02000660(void) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   Func_02000f14(249, 40, 168);
-  party = &gSequenceParentWork;
+  party = &gMainRoutineWork;
   /* FAKEMATCH: ⚓️ loads the party's address before it builds the field offset.
    */
   __asm__ volatile("" : "+l"(party));
@@ -77,10 +77,10 @@ void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
   Func_02000c4c(Actor_GetById(actor), gData_02001860);
-  Func_02000c4c(Actor_GetById(gSequenceParentWork.currentOwner), gData_020017b0);
+  Func_02000c4c(Actor_GetById(gMainRoutineWork.currentOwner), gData_020017b0);
   wait(100);
   Func_02000d4c(Actor_GetById(actor));
-  Func_02000d4c(Actor_GetById(gSequenceParentWork.currentOwner));
+  Func_02000d4c(Actor_GetById(gMainRoutineWork.currentOwner));
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }

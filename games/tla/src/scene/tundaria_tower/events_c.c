@@ -19,19 +19,19 @@ void Func_02000fb8(s32 mode, s32 cue) {
 }
 
 const struct Trigger *Func_02001044(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom1)
     return (const struct Trigger *)gData_020037f8;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom2)
     return (const struct Trigger *)gData_0200381c;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom3)
     return (const struct Trigger *)gData_0200393c;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom4)
     return (const struct Trigger *)gData_020039e4;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom5)
     return (const struct Trigger *)gData_02003a5c;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom6)
     return (const struct Trigger *)gData_02003b28;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov68fRoom7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov68fRoom7)
     return (const struct Trigger *)gData_02003c90;
   return (const struct Trigger *)gData_0200381c;
 }

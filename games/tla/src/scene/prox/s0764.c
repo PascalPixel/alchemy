@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetAngleToward(s32 id, s32 other, s32 flags);
@@ -27,7 +27,7 @@ void Func_02000764(void) {
   Func_020045ec(0);
   ((u8 *)object)[99] = 1;
   if (*(s16 *)(work + 358) == 0) {
-    Actor_SetAngleToward(16, gSequenceParentWork.currentOwner, 0);
+    Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
     Func_0200451c((s32)MsgProx113);
   } else {
     Func_0200451c((s32)MsgProx117);
@@ -48,7 +48,7 @@ void Func_020007f4(void) {
   Func_020045ec(0);
   ((u8 *)object)[99] = 1;
   if (*(s16 *)(work + 358) == 0) {
-    Actor_SetAngleToward(17, gSequenceParentWork.currentOwner, 0);
+    Actor_SetAngleToward(17, gMainRoutineWork.currentOwner, 0);
     Func_0200451c((s32)MsgProx114);
   } else {
     Func_0200451c((s32)MsgProx118);
@@ -69,7 +69,7 @@ void Func_02000884(void) {
   Func_020045ec(0);
   ((u8 *)object)[99] = 1;
   if (*(s16 *)(work + 358) == 0) {
-    Actor_SetAngleToward(18, gSequenceParentWork.currentOwner, 0);
+    Actor_SetAngleToward(18, gMainRoutineWork.currentOwner, 0);
     Func_0200451c((s32)MsgProx115);
   } else {
     Func_0200451c((s32)MsgProx119);

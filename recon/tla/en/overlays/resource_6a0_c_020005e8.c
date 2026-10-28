@@ -10,7 +10,7 @@
 // (- the listing, + this draft). Tried: Call, Value and direct forms of each
 // call, empty asms and one-pass blocks between statements.
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -86,7 +86,7 @@ L_020086a2:
   Call6((void (*)())Func_02002b2c, 70, 47, 1, 1, 8, 74);
   Call4((void (*)())Func_02002b54, 0x800000, 0xc00000, 0, 6);
   Call1((void (*)())Actor_Stop,
-        gSequenceParentWork.currentOwner);
+        gMainRoutineWork.currentOwner);
   Call3((void (*)())Func_02002ba4, 20, 0, 0);
   if (v_r6 != 1)
     goto L_02008742;

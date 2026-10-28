@@ -5,7 +5,7 @@
 // sets the second flag.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 Func_02004e38(void);
@@ -35,7 +35,7 @@ void Func_0200406c(const u16 *table) {
 
   if (Func_02004e38() != 0)
     return;
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;

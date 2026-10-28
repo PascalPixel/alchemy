@@ -3,7 +3,7 @@
 #include "dma.h"
 #include "io_reg.h"
 #include "task.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct OptionMarkerOutput {
   u8 unk00[14];
@@ -40,15 +40,15 @@ void Func_0803fc38(void) {
   work = (struct OptionWork *)HeapSlot_AllocEwram(208, 0x628);
   zero = 0;
   Dma_Set((const void *)&zero, work, 0x8500018a, REG_DMA3);
-  work->option[0] = gSequenceParentWork.paletteGlow[0];
+  work->option[0] = gMainRoutineWork.paletteGlow[0];
   work->optionCount[0] = 24;
-  work->option[1] = gSequenceParentWork.paletteGlow[1];
+  work->option[1] = gMainRoutineWork.paletteGlow[1];
   work->optionCount[1] = 15;
-  work->option[2] = gSequenceParentWork.eventMode;
+  work->option[2] = gMainRoutineWork.eventMode;
   work->optionCount[2] = 3;
-  work->option[3] = gSequenceParentWork.battleFxEnabled;
+  work->option[3] = gMainRoutineWork.battleFxEnabled;
   work->optionCount[3] = 2;
-  work->option[4] = gSequenceParentWork.unk244[6];
+  work->option[4] = gMainRoutineWork.unk244[6];
   work->optionCount[4] = 2;
   Task_Add(
       GraphicsPalette_LoadSelectionResourcesAndAdvance, TASK_PASS_VBLANK);

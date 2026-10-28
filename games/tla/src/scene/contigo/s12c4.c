@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -46,7 +46,7 @@ static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 }
 
 void Func_020012c4(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Test_(0xfc7) == 0) {
@@ -54,11 +54,11 @@ void Func_020012c4(void) {
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
       Func_0200406c();
       Func_02004204_(0);
-      Func_0200417c_(gSequenceParentWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion_(gSequenceParentWork.currentOwner, 0,
+      Func_0200417c_(gMainRoutineWork.currentOwner, 0x102);
+      Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02004074();
     }
   }

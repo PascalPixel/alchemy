@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 void Inventory_EquipFar(s32 owner, s32 slot);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
@@ -7,8 +7,8 @@ u8 *Unit_Get(s32 owner);
 void Func_081082c4(s32 mode, s32 shop);
 
 s32 Debug_ApplyPresetItemsAndFlags(void) {
-  gSequenceParentWork.coins = 200000;
-  gSequenceParentWork.counterC = 28;
+  gMainRoutineWork.coins = 200000;
+  gMainRoutineWork.counterC = 28;
   Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
   Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
   Inventory_AddItemFar(2, 0xe7);

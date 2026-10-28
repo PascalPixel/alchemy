@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "map.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
@@ -90,7 +90,7 @@ void Func_02003d00(s32 exit);
 void Func_02003d78(s32 skip);
 
 void Func_02002c14(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *helper = Actor_GetById(9);
 
   Func_02003c28();
@@ -117,7 +117,7 @@ void Func_02002c14(void) {
     gData_02004420->acceleration = 0x19999;
     gData_02004420->velocityY = 0x80000;
   }
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   Actor_SetSpeedParameters(9, 0x19999, 0xcccc);
   leader->velocityY = 0x60000;
   helper->velocityY = 0x60000;
@@ -128,7 +128,7 @@ void Func_02002c14(void) {
   Func_02003bd8(leader);
   FieldEvent_Wait(20);
   Func_02003cc8(9, 0x103, 0);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_ArmCallback(9, 0x8000, 60);
   Call3((void (*)())Actor_SetPositionAndReset, 9, 296, 104);
   Call3((void (*)())Actor_SetPositionAndReset, 9, 296, 80);

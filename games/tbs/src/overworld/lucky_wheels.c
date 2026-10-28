@@ -13,7 +13,7 @@
 #include "system.h"
 #include "battle_effect_work.h"
 #include "heap.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "types.h"
 #include "macros.h"
 #include "dma.h"
@@ -57,7 +57,7 @@
 /// play time and runs the game. Returns 0.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  gRandomSeed = gSequenceParentWork.playTime;
+  gRandomSeed = gMainRoutineWork.playTime;
   Sound_PlayFar(MUS_DJINN_LESSON);
   LuckyWheels_Run();
   return 0;
@@ -336,11 +336,11 @@ struct LuckyWheelsWork {
 #endif
 };
 
-/// gSequenceParentWork seen from +12, the base the bytes load: wonPrizes is
-/// gSequenceParentWork.wonPrizes (through the field itself LuckyWheels_Update
+/// gMainRoutineWork seen from +12, the base the bytes load: wonPrizes is
+/// gMainRoutineWork.wonPrizes (through the field itself LuckyWheels_Update
 /// differs 12)
 struct LuckyWheelsWonPrizesView {
-  u8 beforeWonPrizes[0x120]; ///< gSequenceParentWork from summonMask to
+  u8 beforeWonPrizes[0x120]; ///< gMainRoutineWork from summonMask to
                              ///< wonPrizes
   s8 wonPrizes[16];
 };
@@ -417,8 +417,7 @@ void LuckyWheels_Update(void) {
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
         struct LuckyWheelsWonPrizesView *save =
-            (struct LuckyWheelsWonPrizesView *)((u8 *)&gSequenceParentWork +
-                                                12);
+            (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
 
         work->state = LUCKY_WHEELS_DONE;
         save->wonPrizes[0] = -2;
@@ -632,8 +631,7 @@ void LuckyWheels_Update(void) {
 
       if (stoppedReels == 5) {
         struct LuckyWheelsWonPrizesView *save =
-            (struct LuckyWheelsWonPrizesView *)((u8 *)&gSequenceParentWork +
-                                                12);
+            (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
         s32 hits = 0;
 
         for (col = 0; col != 7; col++) {
@@ -986,7 +984,7 @@ void LuckyWheels_Run(void) {
   state = HeapSlot_AllocEwram(LUCKY_WHEELS_HEAP_SLOT,
                               sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
-  save = (struct LuckyWheelsWonPrizesView *)((u8 *)&gSequenceParentWork + 12);
+  save = (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
   Stub_NoOpHook((s32)&ResourceId_BattleEffectFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;

@@ -14,7 +14,7 @@
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 #include "bg_scroll.h"
 #include "animspr.h"
@@ -80,7 +80,7 @@ void Func_020042e0(void) {
   wait(1);
   Func_02004ad8();
   Func_02004ac8();
-  Func_02004bb8(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
+  Func_02004bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
 }

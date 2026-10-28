@@ -186,6 +186,6 @@ Func_02000250:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_020083dc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020083e0:
 	.4byte 0x01db0000

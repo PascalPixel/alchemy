@@ -1,14 +1,14 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "owner_state.h"
 
 s32 Party_AddActiveOwner(s32 owner);
 s32 Party_RemoveActiveOwner(s32 owner);
 
-void Party_SetLeaderJenna(void) { gSequenceParentWork.currentOwner = 5; }
+void Party_SetLeaderJenna(void) { gMainRoutineWork.currentOwner = 5; }
 
 void Party_SetLeaderFelix(void) {
-  gSequenceParentWork.currentOwner = 4;
+  gMainRoutineWork.currentOwner = 4;
   Party_AddActiveOwner(4);
   Party_RemoveActiveOwner(5);
   Party_RemoveActiveOwner(6);
@@ -30,5 +30,5 @@ void Func_080ae118(void) {
   Func_080ae358(0);
   count = Party_CountActiveOwners();
   for (i = 0; i < count; i++)
-    Unit_Calculate(gSequenceParentWork.activeOwners[i]);
+    Unit_Calculate(gMainRoutineWork.activeOwners[i]);
 }

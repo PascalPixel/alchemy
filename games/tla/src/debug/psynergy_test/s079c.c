@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "call.h"
@@ -38,7 +38,7 @@ s32 Func_0200079c(void) {
   Item_AdjustCounter(130, 1);
   Item_AdjustCounter(140, 1);
   Item_AdjustCounter(151, 1);
-  gSequenceParentWork.eventMode = 2;
+  gMainRoutineWork.eventMode = 2;
   Actor_SetModeById(15, 2);
   Actor_SetModeById(16, 2);
   Call3((void (*)())Func_02000edc, 9, 0x8000, 0);
@@ -52,7 +52,7 @@ s32 Func_0200079c(void) {
     Call3((void (*)())Func_02000e74, 19, 200 << 16, 200 << 16);
   Func_02000dc4(Actor_GetById(19), 50);
   {
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->entrance == 6)
       Func_02000f04(party->currentOwner);

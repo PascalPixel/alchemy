@@ -15,7 +15,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern u8 gData_0200635c[];
 
 u8 *Func_020000fc(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo3)
     return gData_0200635c;

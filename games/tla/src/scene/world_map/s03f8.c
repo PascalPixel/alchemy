@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
@@ -23,7 +23,7 @@ void Func_02004db0(void);
 s32 Func_02004e10(void);
 
 u8 *Func_020003f8(void) {
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case 64:
     return gData_02006500;
   case 65:
@@ -43,7 +43,7 @@ u8 *Func_020003f8(void) {
 void Func_02000458(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  gSequenceParentWork.renderMode = 8;
+  gMainRoutineWork.renderMode = 8;
   if (Flag_IsSet(0x147)) {
     Func_02004da8();
     Func_02004ba8(153, 4);

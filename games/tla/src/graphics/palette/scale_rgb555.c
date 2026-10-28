@@ -1,6 +1,6 @@
 #include "types.h"
 #include "io_reg.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "system.h"
 
 void Sound_PlayFar(s32 cue);
@@ -13,7 +13,7 @@ void LuckyWheels_Run(void);
 // Seal plays MUS_DJINN_LESSON here.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  gRandomState = gSequenceParentWork.playTime;
+  gRandomState = gMainRoutineWork.playTime;
   Sound_PlayFar(709);
   LuckyWheels_Run();
   return 0;

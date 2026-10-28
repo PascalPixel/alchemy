@@ -5,7 +5,7 @@
 #include "types.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
@@ -50,7 +50,7 @@ s32 Func_02002438(s32 a0) {
       v55, v56, r8, v57, v58, v59;
   s32 stack[2];
 
-  r7 = (s32)&gSequenceParentWork;
+  r7 = (s32)&gMainRoutineWork;
   /* sub (s32)stack, #8 */
   r1 = 0;
   r2 = FIELD_AT(r7, s16, 480);
@@ -333,8 +333,8 @@ L_0200a994:
     goto L_0200a9f6;
   r1 = 0x40000;
   r2 = 0x1e2;
-  r3 = ((FIELD_AT((s32)(s32)&gSequenceParentWork, u16, 482)) - 13) << 16;
-  if ((u32)(((FIELD_AT((s32)(s32)&gSequenceParentWork, u16, 482)) - 13) << 16) >
+  r3 = ((FIELD_AT((s32)(s32)&gMainRoutineWork, u16, 482)) - 13) << 16;
+  if ((u32)(((FIELD_AT((s32)(s32)&gMainRoutineWork, u16, 482)) - 13) << 16) >
       (u32)262144)
     goto L_0200a9d0;
   Call1((void (*)())Func_02002eec, 0x23f);
@@ -349,13 +349,13 @@ L_0200a9f6:
     goto L_0200aa16;
   r1 = 0;
   r2 = 0x1e2;
-  r3 = FIELD_AT((s32)(s32)&gSequenceParentWork, s16, 482);
-  if ((FIELD_AT((s32)(s32)&gSequenceParentWork, s16, 482)) != 17)
+  r3 = FIELD_AT((s32)(s32)&gMainRoutineWork, s16, 482);
+  if ((FIELD_AT((s32)(s32)&gMainRoutineWork, s16, 482)) != 17)
     goto L_0200aa16;
   v49 = Func_02000418();
   r0 = v49;
 L_0200aa16:
-  r5 = (s32)&gSequenceParentWork;
+  r5 = (s32)&gMainRoutineWork;
   r1 = 0;
   r2 = 0x1e2;
   r3 = FIELD_AT(r5, s16, 482);
@@ -394,8 +394,8 @@ L_0200aaa8:
   Call1((void (*)())GameFlag_SetBit, 0x109);
   Call1((void (*)())Func_02002ebc, 20);
 L_0200aac2:
-  r3 = ((FIELD_AT((s32)(s32)&gSequenceParentWork, u16, 482)) - 13) << 16;
-  if ((u32)(((FIELD_AT((s32)(s32)&gSequenceParentWork, u16, 482)) - 13) << 16) <=
+  r3 = ((FIELD_AT((s32)(s32)&gMainRoutineWork, u16, 482)) - 13) << 16;
+  if ((u32)(((FIELD_AT((s32)(s32)&gMainRoutineWork, u16, 482)) - 13) << 16) <=
       (u32)196608)
     goto L_0200aada;
   goto L_0200ad2a;

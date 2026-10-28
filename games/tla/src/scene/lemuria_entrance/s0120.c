@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct EventWorkRoute {
   u8 unk000[0x1ac];
@@ -63,9 +63,9 @@ void Func_02000120(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     {
-      struct SequenceParentWork *state = &gSequenceParentWork;
+      struct MainRoutineWork *state = &gMainRoutineWork;
 
-      /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+      /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
        * built (one reordered row). */
       do {
       } while (0);
@@ -75,7 +75,7 @@ void Func_02000120(void) {
     Actor_SetModeById(8, 7);
     Func_02000564();
   } else {
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
     party->currentOwner = 4;
     party->renderMode = 0;

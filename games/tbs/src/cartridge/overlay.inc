@@ -177,7 +177,7 @@
 	import PartyInventory_Remove, PartyInventory_RemoveFar
 	import Inventory_Equip, Inventory_EquipFar
 	import Ability_GetDirect, Ability_Get
-	import SequenceParentWork_InitializeDefaults, SequenceParentWork_InitializeDefaultsFar
+	import MainRoutineWork_InitializeDefaults, MainRoutineWork_InitializeDefaultsFar
 	import GameFlag_Get, GameFlag_GetFar
 	import GameFlag_Set, GameFlag_SetFar
 	import Import_GameFlagSet, GameFlag_SetFar

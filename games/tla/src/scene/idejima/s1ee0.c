@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "call.h"
@@ -49,11 +49,11 @@ void Func_02001ee0(void) {
   Call3((void (*)())Func_02003228, 6, 0x1bc0000, 0xd40000);
   Call2((void (*)())Import_ActorSetAnimation, 6, 19);
   Actor_SetSingleChildFlags(Actor_GetById(6), 0);
-  Call3((void (*)())Func_02003228, gSequenceParentWork.currentOwner, 0x1b00000,
+  Call3((void (*)())Func_02003228, gMainRoutineWork.currentOwner, 0x1b00000,
         0xea0000);
-  Actor_GetById(gSequenceParentWork.currentOwner)->scaleX = 0xffff0000;
-  Call2((void (*)())Import_ActorSetAnimation, gSequenceParentWork.currentOwner, 41);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0xffff0000;
+  Call2((void (*)())Import_ActorSetAnimation, gMainRoutineWork.currentOwner, 41);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Call3((void (*)())Func_02003228, 10, 0x1880000, 0xac0000);
   Task_Wait(1);

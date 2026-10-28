@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -58,16 +58,16 @@ static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
 }
 
 void Func_02000eec(void) {
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before the event work
+  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before the event work
    * (one reordered row). */
   do {
   } while (0);
   Actor_SetModeById(party->currentOwner, 2);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Func_02001448(123);
-  Offset_(gSequenceParentWork.currentOwner, 0, -4);
+  Offset_(gMainRoutineWork.currentOwner, 0, -4);
   Func_020013d0(work->value);
 }

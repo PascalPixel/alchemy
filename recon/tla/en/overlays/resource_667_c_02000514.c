@@ -7,7 +7,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 #include "input.h"
 #include "scene_ids.h"
@@ -36,8 +36,8 @@ s32 Func_02000514(void) {
 
   work->screenEffect = 0x209;
   Actor_GetById(15)->update = Func_02001488;
-  if (gSequenceParentWork.entrance == 80) {
-    gSequenceParentWork.entrance = gSequenceParentWork.secondary = 14;
+  if (gMainRoutineWork.entrance == 80) {
+    gMainRoutineWork.entrance = gMainRoutineWork.secondary = 14;
     Actor_ArmCallback(14, 0x5000, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -46,15 +46,15 @@ s32 Func_02000514(void) {
     Func_02001550(14, 0);
     GameFlag_ClearBit(0x12f);
   }
-  if (gSequenceParentWork.entrance == 81) {
-    gSequenceParentWork.entrance = gSequenceParentWork.secondary = 8;
+  if (gMainRoutineWork.entrance == 81) {
+    gMainRoutineWork.entrance = gMainRoutineWork.secondary = 8;
     Func_02000658();
   }
   if (!GameFlag_Test(0x8a7) && GameFlag_Test(0x8ff)) {
     Func_02001500(18, 0, 0);
     Func_02001500(19, 0, 0);
   }
-  if (gSequenceParentWork.entrance == 99) {
+  if (gMainRoutineWork.entrance == 99) {
     Camera_MoveWithinMapBounds(152 << 17, -1, 160 << 17, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
     Event_StartScreenTransition();

@@ -6,7 +6,7 @@
 /// placements and triggers, as The Broken Seal's scene_tables.h has them.
 
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Scene {
   s16 resourceId;

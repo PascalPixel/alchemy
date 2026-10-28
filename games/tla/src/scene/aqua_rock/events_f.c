@@ -19,7 +19,7 @@ void Func_0200169c(void) {
   Func_02002998();
   Func_02002a48(0);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  Func_020029d8(gSequenceParentWork.currentOwner, 0, 0);
+  Func_020029d8(gMainRoutineWork.currentOwner, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02002a70(184);

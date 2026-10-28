@@ -1,6 +1,6 @@
 #include "types.h"
 #include "owner_state.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct OwnerStart {
   u8 unk00[150];

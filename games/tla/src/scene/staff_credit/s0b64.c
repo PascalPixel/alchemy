@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 
 extern char ResourceId_FarCall00A;
@@ -31,7 +31,7 @@ s32 Func_02000b64(void) {
   Func_02002044(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_0200101c();
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case 0:
     Func_02001f8c((s32)&ResourceId_FarCall00A);
     Func_020020ac(2);

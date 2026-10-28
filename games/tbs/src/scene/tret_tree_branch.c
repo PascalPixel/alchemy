@@ -48,7 +48,7 @@
 #include "task.h"
 #include "io_reg.h"
 #include "irq.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ability_ids.h"
 #include "event.h"
 #include "system_call.h"
@@ -104,7 +104,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   s32 offsetZ = cellOffsetZ;
   s32 groundHeight;
 
-  actor = Actor_GetById(gSequenceParentWork.leaderActorId);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   // Multiplication keeps negative cell offsets defined; every caller is within
   // six cells, so the fixed-point result fits in s32.
   offsetX *= PIXELS(16);

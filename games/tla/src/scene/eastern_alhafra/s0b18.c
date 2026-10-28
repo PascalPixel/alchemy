@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
@@ -36,7 +36,7 @@ s32 Func_02000b18(void) {
 
   *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
   Func_02000af8();
-  OBJECT(gSequenceParentWork.currentOwner)->priorityFlags |= 32;
+  OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (Value1(GameFlag_Test, 0x8a7) != 0) {
     if (Value1(GameFlag_Test, 0x905) != 0 &&
         Value1(GameFlag_Test, 0x90f) == 0) {
@@ -72,9 +72,9 @@ s32 Func_02000b18(void) {
       Call3(Func_02004b04, 15, 0, 0);
     }
   }
-  if (gSequenceParentWork.entrance == 99) {
-    gSequenceParentWork.secondary = 1;
-    gSequenceParentWork.entrance = 1;
+  if (gMainRoutineWork.entrance == 99) {
+    gMainRoutineWork.secondary = 1;
+    gMainRoutineWork.entrance = 1;
     Call3(Func_02004b04, 4, 0x880000, 0x2280000);
     Call3(Func_02004b04, 26, 0x780000, 0x2280000);
     Call3(Func_02004b04, 30, 0xb80000, 0x2680000);

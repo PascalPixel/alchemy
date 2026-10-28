@@ -1,6 +1,6 @@
 #include "types.h"
 #include "edition.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -20,7 +20,7 @@ s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080cdc74(void) {
   s32 position[3];
   s32 above[3];
-  struct Actor *owner = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *target;
   struct Actor *hit;
   s32 id;
@@ -47,7 +47,7 @@ s32 Func_080cdc74(void) {
   if (BYTE_AT(target, 98) != 0)
     return 0;
 #if LANGUAGE != LANGUAGE_JAPANESE
-  id = gSequenceParentWork.pausedObject;
+  id = gMainRoutineWork.pausedObject;
   if (id != 1 && target == Actor_GetById(id))
     return 0;
 #endif

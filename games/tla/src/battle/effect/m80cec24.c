@@ -1,6 +1,6 @@
 #include "types.h"
 #include "macros.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 GameFlag_Test(s32 flag);
 extern s16 Data_080f2204[];
@@ -9,7 +9,7 @@ extern s16 Data_080f2204[];
 /// after the first header for this scene whose flag is -1 or not yet set, or
 /// NULL.
 s16 *Func_080ceba8(void) {
-  s32 scene = gSequenceParentWork.scene;
+  s32 scene = gMainRoutineWork.scene;
   s16 *p = Data_080f2204;
   s16 *found = NULL;
   s32 header;

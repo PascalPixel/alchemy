@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -53,7 +53,7 @@ s32 Func_020005d0(s32 a0, s32 a1, s32 a2, s32 a3) {
   Call1((void (*)())FieldEvent_Wait, 10);
   Call6((void (*)())Func_02002fc0, 32, 38, r6, 49, r8, r5);
   Call1((void (*)())FieldEvent_Wait, 10);
-  r6 = (s32)&gSequenceParentWork;
+  r6 = (s32)&gMainRoutineWork;
   r6 = r6 + 532;
   Call3((void (*)())Actor_SetSpeedParameters, FIELD_AT(r6, s32, 0),
         0x8000, 0x4000);

@@ -47,9 +47,9 @@ void Func_0200290c(void) {
     if (remaining == 0) {
       EVENT_WORK->field1c4++;
       ShamanVillage_MessagePut(0x200f, 0);
-      Actor_WatchAndSetScript(16, gSequenceParentWork.currentOwner);
-      Actor_WatchAndSetScript(17, gSequenceParentWork.currentOwner);
-      Actor_WatchAndSetScript(15, gSequenceParentWork.currentOwner);
+      Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
+      Actor_WatchAndSetScript(17, gMainRoutineWork.currentOwner);
+      Actor_WatchAndSetScript(15, gMainRoutineWork.currentOwner);
       GameFlag_SetBit(0x9e0);
       GameFlag_SetBit(0x201);
       return;

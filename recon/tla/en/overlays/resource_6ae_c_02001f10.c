@@ -68,7 +68,7 @@ extern u8 gData_02006b64[];
 extern u8 gData_02006b6c[];
 extern u8 gData_02006b70[];
 extern u8 gData_02006c20[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
   Func_02005714(a0, a1, a2);
@@ -104,7 +104,7 @@ void Func_02001f10(void) {
   Call2(Actor_SetModeById, 30, 7);
   Call2(Actor_SetModeById, 31, 7);
   Call2(Actor_SetModeById, 32, 6);
-  v_r10 = ((s32)gSequenceParentWork + 0x214);
+  v_r10 = ((s32)gMainRoutineWork + 0x214);
   t16 = *(s32 *)v_r10;
   Call4(Func_02005684, t16, 0x1f80000, 0x1400000, 0xc000);
   Call1(wait, 1);
@@ -311,7 +311,7 @@ L_0200a47a:
   Call2(Func_02005704, 21, 0);
   Call2(Func_020056f4, 0x8015, 0);
   Call3(Actor_ArmCallback, 22, 0xc000, 0);
-  v_r6 = ((s32)gSequenceParentWork + 0x214);
+  v_r6 = ((s32)gMainRoutineWork + 0x214);
   t180 = *(s32 *)v_r6;
   Call3(Actor_ArmCallback, t180, 0xa000, 0);
   Call3(Actor_ArmCallback, 23, 0xa000, 0);

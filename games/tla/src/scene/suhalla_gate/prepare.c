@@ -22,7 +22,7 @@ void Func_02000308(void) {
 void Func_02000378(void) {
   s32 value = *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 0x154);
 
-  gSequenceParentWork.currentOwner = 4;
+  gMainRoutineWork.currentOwner = 4;
   Func_02000aa0(123);
   Func_02000a38(value);
 }

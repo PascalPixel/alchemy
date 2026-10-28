@@ -14,7 +14,7 @@
 // terrain if below it, as in Func_080ea7c0.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct SwitchCell {
@@ -72,7 +72,7 @@ void Func_080eabd0(u16 *actors) {
     shapes[slot] = tag;
     blocks[slot].block = 0xff;
   }
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;

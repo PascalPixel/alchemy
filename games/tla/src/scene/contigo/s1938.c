@@ -27,7 +27,7 @@ void Func_02001938(s32 spoken) {
     Func_0200412c(message + 2);
     Func_0200403c(tickets, 5);
     FieldMessage_ShowAtActor(18, 0);
-    if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 1) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
       Func_02004144(18, 0);
       return;
     }
@@ -40,7 +40,7 @@ void Func_02001938(s32 spoken) {
       FieldMessage_ShowAtActor(18, 0);
     }
     if (room <= 6 &&
-        Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 1) {
+        Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
       Func_0200412c((s32)MsgContigo12);
       Func_02004144(18, 0);
       return;

@@ -7,7 +7,7 @@
 
 void Func_02004d50(s32 id) {
   u8 *work = Ram_HeapSlots->windowTiles;
-  struct MarsLighthouseAerieParty *party = (struct MarsLighthouseAerieParty *)&gSequenceParentWork;
+  struct MarsLighthouseAerieParty *party = (struct MarsLighthouseAerieParty *)&gMainRoutineWork;
   s32 held = party->held;
 
   if (held == id) {

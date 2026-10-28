@@ -117,7 +117,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
 }
 
 // The party: the FLAG_IN_PARTY flags say who is in it, and
-// gSequenceParentWork.party lists them in order.
+// gMainRoutineWork.party lists them in order.
 
 /// Returns the number of party members, counted from its FLAG_IN_PARTY flags.
 s32 Party_CountMembers(void) {
@@ -135,7 +135,7 @@ s32 Party_CountMembers(void) {
 }
 
 /// Adds character `unitId` to the end of the party: sets its game flag and
-/// appends it to gSequenceParentWork.party unless it is already listed.
+/// appends it to gMainRoutineWork.party unless it is already listed.
 /// Returns the party size. Called by the events where a character joins, by
 /// the party member chooser and the File Screen, and by the debug presets.
 s32 Party_AddMember(s32 unitId) {
@@ -145,16 +145,16 @@ s32 Party_AddMember(s32 unitId) {
   GameFlag_Set(FLAG_IN_PARTY(unitId));
   partyIndex = 0;
   while (partyIndex < partySize) {
-    if (gSequenceParentWork.party[partyIndex] == unitId)
+    if (gMainRoutineWork.party[partyIndex] == unitId)
       return partySize;
     partyIndex++;
   }
-  gSequenceParentWork.party[partyIndex] = unitId;
+  gMainRoutineWork.party[partyIndex] = unitId;
   return partySize + 1;
 }
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
-/// the gap it leaves in gSequenceParentWork.party. Returns the party size.
+/// the gap it leaves in gMainRoutineWork.party. Returns the party size.
 /// Called by the events where a character leaves, by the party member chooser
 /// and the File Screen, and by the debug presets.
 s32 Party_RemoveMember(s32 unitId) {
@@ -164,12 +164,11 @@ s32 Party_RemoveMember(s32 unitId) {
 
   GameFlag_Clear(FLAG_IN_PARTY(unitId));
   for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
-    if (gSequenceParentWork.party[removedIndex] == unitId)
+    if (gMainRoutineWork.party[removedIndex] == unitId)
       break;
   }
   for (partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
-    gSequenceParentWork.party[partyIndex] =
-        gSequenceParentWork.party[partyIndex + 1];
+    gMainRoutineWork.party[partyIndex] = gMainRoutineWork.party[partyIndex + 1];
   return Party_CountMembers();
 }
 
@@ -186,7 +185,7 @@ s32 Party_ListMembers(s16 *unitIds) {
     index = 0;
     if (count != 0) {
       do {
-        *unitIds++ = gSequenceParentWork.party[index];
+        *unitIds++ = gMainRoutineWork.party[index];
         index++;
       } while (index != count);
     }
@@ -200,10 +199,10 @@ s32 Party_ListMembers(s16 *unitIds) {
 /// by the battle spoils to pay, and by the Lucky Dice game.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
-  struct SequenceParentWork *work;
-  struct SequenceParentWork *store;
+  struct MainRoutineWork *work;
+  struct MainRoutineWork *store;
 
-  work = &gSequenceParentWork;
+  work = &gMainRoutineWork;
   value = work->coins;
   value += amount;
   store = work;
@@ -226,14 +225,14 @@ struct TradeFlags {
   u32 flags;
 };
 
-/// Each adds `amount` to a counter in the sequence parent's work, kept between
+/// Each adds `amount` to a counter in the main routine's work, kept between
 /// 0 and `max`, and returns the new value. The shops call the two: each
 /// purchase adds its price to the credit, and each Game Ticket given spends
 /// credit and counts one more gift.
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
-    struct SequenceParentWork *progress = &gSequenceParentWork;                \
+    struct MainRoutineWork *progress = &gMainRoutineWork;                      \
                                                                                \
     value = progress->field;                                                   \
     value += amount;                                                           \

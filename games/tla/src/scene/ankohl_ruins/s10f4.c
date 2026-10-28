@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "map.h"
 
 struct AnkohlRuinsEventWork {
@@ -18,7 +18,7 @@ struct Actor *Actor_GetById(s32 id);
 s32 Func_02002e0c(struct Actor *object, s32 *position);
 
 void Func_020010f4(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct AnkohlRuinsEventWork *work =
       (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
@@ -42,7 +42,7 @@ void Func_020010f4(void) {
   upper += index;
   if (((ground->attributeB & 4) | (upper->collisionCode & 232)) != 236)
     return;
-  if (gSequenceParentWork.renderMode == 5)
+  if (gMainRoutineWork.renderMode == 5)
     return;
   position[0] = leader->x;
   position[1] = leader->y;

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -15,7 +15,7 @@ s32 Func_02000f28(void) {
   struct Actor *object;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 0x20;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   Func_02001158(17);
   Func_02001158(18);
   Actor_SetSpritePriority(10, 2);

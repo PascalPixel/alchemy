@@ -9,7 +9,7 @@ extern struct ActorPlacement gData_02005b20[];
 extern struct ActorPlacement gData_02005be0[];
 
 void *Func_020003d0(void) {
-  s32 scene = gSequenceParentWork.scene;
+  s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov653Room1)
     return gData_020057c0;

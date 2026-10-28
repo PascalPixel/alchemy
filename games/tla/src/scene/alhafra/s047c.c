@@ -26,7 +26,7 @@ s32 Func_02001ca4();
 s32 Camera_FollowActor();
 s32 Func_02001bec();
 extern u8 MsgAlhafra74[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_0200047c(void) {
   Call1(GameFlag_SetBit, 0x8b7);
@@ -44,9 +44,9 @@ void Func_0200047c(void) {
   Call3(Actor_ArmCallback, 0x1e, 0x6000, 0);
   Call2(Actor_SetModeById, 0x1d, 5);
   Call1(Func_02001d4c, 0x59);
-  FIELD_AT(gSequenceParentWork, s32, 532) = 0x1d;
+  FIELD_AT(gMainRoutineWork, s32, 532) = 0x1d;
   Call2(Func_02001cec, 0, 3);
-  FIELD_AT(gSequenceParentWork, s32, 532) = 4;
+  FIELD_AT(gMainRoutineWork, s32, 532) = 4;
   Call1(FieldEvent_Wait, 0x32);
   Call3(Actor_Jump, 0x1c, 6, 0xf);
   Call3(Actor_Jump, 0x1c, 6, 0x17);
@@ -82,7 +82,7 @@ void Func_0200047c(void) {
   Call2(Actor_SetModeById, 0x1e, 6);
   Call3(Actor_ArmCallback, 0x1d, 0x4000, 0);
   Call3(Actor_ArmCallback, 0x1c, 0xc000, 0);
-  Call2(Camera_FollowActor, FIELD_AT(gSequenceParentWork, s32, 532), 1);
+  Call2(Camera_FollowActor, FIELD_AT(gMainRoutineWork, s32, 532), 1);
   Func_02001ccc();
   Func_02001bec();
 }

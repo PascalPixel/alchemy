@@ -34,13 +34,13 @@ void Func_0200043c(s32 actor) {
 void Func_02000488(void) { Window(5, 70, 9, 7, 5, 43, 1); }
 
 void Func_020004a8(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
   if (x == 5 && z == 17) {
-    Actor_Jump(gSequenceParentWork.currentOwner, 2, 0);
-    SetPosCommit(gSequenceParentWork.currentOwner, 88, 296);
+    Actor_Jump(gMainRoutineWork.currentOwner, 2, 0);
+    SetPosCommit(gMainRoutineWork.currentOwner, 88, 296);
   }
   Func_020021a0(5, 70, 9, 7, 5, 43, 1);
   Func_02002018(4, 25, 5, 17, 1, 1);

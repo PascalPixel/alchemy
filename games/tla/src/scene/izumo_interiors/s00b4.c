@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
@@ -66,14 +66,14 @@ static inline void LeaderAnimate(s32 animation, s32 frames) {
   /* FAKEMATCH: scene calls reach the main image through one inline layer; called as
    * value-returning, the animation and frames are set before the owner is
    * loaded (differ 4 as a void call). */
-  ((s32 (*)(s32, s32, s32))Func_0200226c)(gSequenceParentWork.currentOwner, animation,
+  ((s32 (*)(s32, s32, s32))Func_0200226c)(gMainRoutineWork.currentOwner, animation,
                                           frames);
 }
 
 const u8 *Func_020000b4(void) {
   if (FlagCheck(0x927))
     return gData_02002d80;
-  if (gSequenceParentWork.entrance == 7)
+  if (gMainRoutineWork.entrance == 7)
     return gData_02002cf0;
   return gData_02002b40;
 }
@@ -81,13 +81,13 @@ const u8 *Func_020000b4(void) {
 const u8 *Func_020000f0(void) {
   if (FlagCheck(0x927))
     return gData_0200323c;
-  if (gSequenceParentWork.entrance == 7)
+  if (gMainRoutineWork.entrance == 7)
     return gData_02003164;
   return gData_02002f78;
 }
 
 void Func_0200012c(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
@@ -111,7 +111,7 @@ void Func_0200012c(s32 actor) {
 }
 
 void Func_020001a8(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
@@ -133,7 +133,7 @@ void Func_020001a8(s32 actor) {
 }
 
 void Func_02000220(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
@@ -193,7 +193,7 @@ void Func_02000378(void) {
 
   Func_020021c4();
   Func_020022bc(0);
-  Actor_SetAngleToward(15, gSequenceParentWork.currentOwner, 0);
+  Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   if (FlagCheck(0x92c)) {
     Func_02002244((s32)MsgWithThisDancing);
     Func_02002254(15, 0);
@@ -229,7 +229,7 @@ void Func_02000400(void) {
 void Func_02000458(void) {
   Func_020021c4();
   Func_020022bc(0);
-  Actor_SetAngleToward(15, gSequenceParentWork.currentOwner, 0);
+  Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   if (FlagCheck(0x92b)) {
     Func_02002244((s32)MsgTryingAgainWhat);
     Func_02002254(15, 0);

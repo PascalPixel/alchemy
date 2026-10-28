@@ -115,7 +115,7 @@ void FadeOverlay_DrawMarks(void) {
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
 /// work's actor. No ☀️ code stops it (FadeOverlay_Suspend has no
 /// named caller): the work and the task last until the next scene change
-/// resets the heap and the task table (SequenceParent_Run).
+/// resets the heap and the task table (MainRoutine_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;
@@ -136,7 +136,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
-    object = Actor_Lookup(gSequenceParentWork.leaderActorId);
+    object = Actor_Lookup(gMainRoutineWork.leaderActorId);
   work->actor = object;
 }
 

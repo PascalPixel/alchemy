@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "task.h"
 
@@ -50,8 +50,8 @@ void Func_020029a4(void) {
   actor->scaleY = 0x13333;
   Camera_FollowActor(8, 1);
   wait(1);
-  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
   Actor_SetSpeedParameters_(8, 0x6666, 0x3333);

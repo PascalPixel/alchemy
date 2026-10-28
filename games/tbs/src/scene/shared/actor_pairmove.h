@@ -1,7 +1,7 @@
 #include "module/field/field.h"
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 // Imil and Fuchin Falls, and Vale's cave.
 
@@ -14,7 +14,7 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   s32 x;
   s32 z;
 
-  actor = Actor_GetById(gSequenceParentWork.leaderActorId);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   other = Actor_GetById(id);
   Event_Start();
   {

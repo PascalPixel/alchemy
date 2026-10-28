@@ -9,7 +9,7 @@
 #include "system.h"
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct ContextAnimation {
   u8 unk00[0x1a];
@@ -35,11 +35,11 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   struct Actor *object;
   struct ContextAnimation *context;
   struct ContextEffect *effect;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   s32 mode;
 
-  party = &gSequenceParentWork;
-  /* FAKEMATCH: the empty asm takes gSequenceParentWork's address before the
+  party = &gMainRoutineWork;
+  /* FAKEMATCH: the empty asm takes gMainRoutineWork's address before the
    * argument is copied to r8 (differ 2 without it: the native loads the
    * address first). */
   asm("" : "=r"(mode) : "0"(animation), "r"(party));

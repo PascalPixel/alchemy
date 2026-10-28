@@ -7,7 +7,7 @@
 // its bitfield mask comes from r0 through a copy.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "iwram_call.h"
 
 extern const u8 gData_02001540[];
@@ -31,7 +31,7 @@ struct DustSprite {
 };
 
 void Func_02000974(s32 spread) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 frame = 0;
   u32 i;
 

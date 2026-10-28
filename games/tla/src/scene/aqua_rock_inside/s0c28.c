@@ -23,6 +23,6 @@ void Func_02000c28(s32 unused, s32 id) {
 }
 
 void Func_02000ca8(void) {
-  Func_02003df4(gSequenceParentWork.currentOwner, 6, 0);
+  Func_02003df4(gMainRoutineWork.currentOwner, 6, 0);
   Func_02003d84();
 }

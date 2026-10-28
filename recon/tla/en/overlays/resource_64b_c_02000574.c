@@ -14,7 +14,7 @@
 #include "types.h"
 #include "edition.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 
@@ -46,8 +46,8 @@ void Func_02000574(void) {
 
   if (GameFlag_Test(0x8de) == 0)
     return;
-  kind = Func_02004d68(gSequenceParentWork.currentOwner);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  kind = Func_02004d68(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   ship = Actor_GetById(8);
   dx = (leader->x - ship->x) >> 16;
   dz = (leader->z - ship->z) >> 16;
@@ -56,13 +56,13 @@ void Func_02000574(void) {
     return;
   Func_02004c20();
   Func_02004db8(0);
-  gSequenceParentWork.renderMode = 7;
-  gSequenceParentWork.ownerOverride = 1;
+  gMainRoutineWork.renderMode = 7;
+  gMainRoutineWork.ownerOverride = 1;
   GameFlag_SetBit(0x176);
-  gSequenceParentWork.savedX = ship->x;
-  gSequenceParentWork.savedZ = ship->z;
+  gMainRoutineWork.savedX = ship->x;
+  gMainRoutineWork.savedZ = ship->z;
   do {
-  gSequenceParentWork.unk280 = ship->angle;
+  gMainRoutineWork.unk280 = ship->angle;
   } while (0);
   Func_02004e30(78);
   Func_02004b18(leader, 6);
@@ -80,7 +80,7 @@ void Func_02000574(void) {
   Func_02004b18(leader, 6);
   wait(6);
   leader->terrainHeight = 0;
-  Func_02004c88(gSequenceParentWork.currentOwner, 0, 0);
+  Func_02004c88(gMainRoutineWork.currentOwner, 0, 0);
   Func_02004dc8();
   Func_02004dc0();
   Func_02004c28();

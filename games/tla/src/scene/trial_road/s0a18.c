@@ -9,7 +9,7 @@ void Func_02000a18(s32 id, s32 mode, s32 frame) {
   s32 other = gData_02005a88[(id - 18) & 3];
   struct Actor *object = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   if (frame <= 10)
     object->scaleY = 0x10000 - (frame << 12);

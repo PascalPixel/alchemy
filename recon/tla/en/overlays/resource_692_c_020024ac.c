@@ -43,7 +43,7 @@ void Func_020024ac(void) {
   gData_02006710 = -1;
   CopyCells(73, 72, Data_020067ec, Data_020067f0, Data_020067f4,
             Data_020067f8);
-  if (gSequenceParentWork.scene != (s32)&SceneId_Ov692Room8)
+  if (gMainRoutineWork.scene != (s32)&SceneId_Ov692Room8)
     return;
   work = Ram_HeapSlots->eventWork;
   value = Func_02000658(2, x, z) >> 8;

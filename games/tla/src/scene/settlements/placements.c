@@ -1,7 +1,7 @@
 #include "local.h"
 
 const u8 *Func_02000318(void) {
-  s32 scene = gSequenceParentWork.scene;
+  s32 scene = gMainRoutineWork.scene;
   const u8 *placements;
 
   if (scene == (s32)&SceneId_Ov690Room5)

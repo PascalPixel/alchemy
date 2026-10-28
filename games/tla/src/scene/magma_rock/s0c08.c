@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 void Func_02003bac(s32 a, s32 b);
 void Func_02003bb4(s32 owner, u16 value);
@@ -8,10 +8,10 @@ s32 Func_02003bbc(void);
 s32 Func_02003bc4(void);
 
 void Func_02000c08(s16 value) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   Func_02003bac(151, 1);
-  party = &gSequenceParentWork;
+  party = &gMainRoutineWork;
   Func_02003bb4(party->currentOwner, value);
   Field_DispatchTypeHandler(1);
   Func_02003bbc();

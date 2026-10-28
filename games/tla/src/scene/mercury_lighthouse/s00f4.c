@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "field_sprite.h"
 
@@ -24,7 +24,7 @@ void Func_020000f4(void) {
 
   Actor_SetSpritePriority(8, 3);
   Actor_SetSpritePriority(9, 3);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   phase = gFrameCount & 15;
   if (phase == 0) {

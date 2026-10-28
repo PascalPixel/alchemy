@@ -460,14 +460,14 @@ void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
 
 /// Starts an actor on the script that runs SC_KEY_COUNT every frame.
 /// The field sequence (overworld/overworld/field_sequence.c) gives it to the
-/// leader when gSequenceParentWork.movementMode is 2.
+/// leader when gMainRoutineWork.movementMode is 2.
 void Actor_StartKeyCheck(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeyCheckScript);
 }
 
 /// Starts an actor on the script that moves it by the keys (SC_KEYS).
 /// The field sequence gives it to the leader when
-/// gSequenceParentWork.movementMode is 1.
+/// gMainRoutineWork.movementMode is 1.
 void Actor_StartMoveByKeys(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeysScript);
 }

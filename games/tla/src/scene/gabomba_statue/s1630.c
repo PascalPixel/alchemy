@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -47,7 +47,7 @@ static __inline__ void Actor_Place(struct Actor *object, s32 x, s32 y,
 
 /// Jumps down the hole.
 void Func_02001630(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct Actor *leader;
@@ -58,20 +58,20 @@ void Func_02001630(void) {
   if (x == 29 && z == 10 && !(gInput.held & 0x40))
     return;
   work = Ram_HeapSlots->eventWork;
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_020056b4(leader);
   Func_0200580c(0);
   leader->motionFlags = 0;
-  Actor_SetSpeed(gSequenceParentWork.currentOwner, 0x10000, 0x8000);
-  Actor_Walk(gSequenceParentWork.currentOwner, 472, 144);
-  Actor_Turn(gSequenceParentWork.currentOwner, 0xc000, 0);
-  Actor_RefreshSelectorById(gSequenceParentWork.currentOwner);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_Walk(gMainRoutineWork.currentOwner, 472, 144);
+  Actor_Turn(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 13);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
   Actor_Place(leader, 472 << 16, 0, 156 << 16);
   Func_02005664(leader);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 10);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Func_02005854(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

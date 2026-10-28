@@ -1,7 +1,7 @@
 #include "scene.h"
 
 void Func_020032c4(void) {
-  s32 variant = Actor_GetById(gSequenceParentWork.currentOwner)->sprite->priority;
+  s32 variant = Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority;
 
   Actor_SetSpritePriority(13, variant);
   Actor_SetSpritePriority(14, variant);

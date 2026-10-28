@@ -137,4 +137,4 @@ Func_080d7b04:
 	str r3, [r5, #8]
 	pop {r5, r6, r7, pc}
 .L_080d7c00:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork

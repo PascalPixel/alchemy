@@ -8,7 +8,7 @@ void Func_02003ac4(void) {
   Func_02005e14();
   Func_02005f2c(0);
   OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
-  Func_02005e84(gSequenceParentWork.currentOwner, 6, 0);
+  Func_02005e84(gMainRoutineWork.currentOwner, 6, 0);
   Func_02005efc(3);
   Func_02005e1c();
 }

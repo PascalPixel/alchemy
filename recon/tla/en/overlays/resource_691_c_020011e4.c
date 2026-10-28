@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -149,7 +149,7 @@ L_0200931a:
     goto L_0200931a;
   Call1((void (*)())wait, 24);
   Call2((void (*)())Camera_FollowActor,
-        FIELD_AT((s32)(s32)&gSequenceParentWork, s32, 532), 1);
+        FIELD_AT((s32)(s32)&gMainRoutineWork, s32, 532), 1);
   Func_02003b6c();
   Call1((void (*)())wait, 10);
   v9 = Func_02003af4();
@@ -173,7 +173,7 @@ L_020093ae:
   Func_02000c08((u32)(r9 << 16) >> 16);
   Call1((void (*)())GameFlag_ClearBit, 0x2f0);
   Call2((void (*)())Camera_FollowActor,
-        FIELD_AT((s32)(s32)&gSequenceParentWork, s32, 532), 1);
+        FIELD_AT((s32)(s32)&gMainRoutineWork, s32, 532), 1);
   Func_02003b6c();
   Call1((void (*)())wait, 10);
   v12 = Func_02003af4();

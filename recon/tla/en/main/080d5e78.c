@@ -2,7 +2,7 @@
 // order and register choice. No empty asm before any one statement lowers it.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "system.h"
 
 struct ContextSprite {
@@ -27,7 +27,7 @@ void ResourceMetadata_ClearRecordFar(void *record);
 void ObjectEffect_EndContextEffect(s32 mode) {
   s32 zero;
   s32 mask;
-  struct Actor *obj = ObjectTable_Get(gSequenceParentWork.currentOwner);
+  struct Actor *obj = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct ContextSprite *ctx = obj->animation;
   struct ContextEffectEntry *eff = ResourceMetadata_RegisterFar(ctx, 0x10b);
 

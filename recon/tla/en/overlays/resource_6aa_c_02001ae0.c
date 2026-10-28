@@ -1,7 +1,7 @@
 // Draft, differ 95 of 168: a rolling ride object's step (overlays 6ab, 6ac and
 // 6ad hold copies). Left: the native keeps the leader in r4, saving it around
 // __divsi3 (caller-save is profitable only with five references, this has
-// four), so gSequenceParentWork takes r10 and the event work r9; here the leader takes
+// four), so gMainRoutineWork takes r10 and the event work r9; here the leader takes
 // r10 and the event work r11. The slot loop in the native loads the first id
 // into r0 and reuses it as the call's argument. Measured: the direction as a
 // ternary (pool load of a halfword 0xffff) or a u16 local (negs).
@@ -33,7 +33,7 @@ s32 Func_02001a80(struct Actor *a, struct Actor *b);
 
 void Func_02001ae0(struct Actor *object) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   s32 dx = object->bounce;
   s32 dz;
@@ -51,7 +51,7 @@ void Func_02001ae0(struct Actor *object) {
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->animation)->unk12 += object->action;
   if (leader->y == leader->terrainHeight && Func_02001a1c(object, leader) &&
-      gSequenceParentWork.renderMode == 0) {
+      gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {
       work->value68 = 0;
       {

@@ -2,7 +2,7 @@
 // resource_663_c_0200015c.c (overlay 663's Func_0200015c, differ 30 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_effect.h"
 
 extern const s32 *gData_02005698[];
@@ -19,7 +19,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags_,
                    const struct EffectOptions *options) {
   register u32 flags __asm__("r10") = flags_;
-  struct FieldActor *party = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

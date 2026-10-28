@@ -45,26 +45,26 @@ void Func_02004534(void) {
   } else {
     Call1(Func_02005ea4, (s32)MsgCheckedTheTablet);
     EVENT_WORK->messageId++;
-    Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0xb333,
+    Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
           0x5999);
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
-    Call2(Func_02005e74, 6, gSequenceParentWork.currentOwner);
+    Call2(Func_02005e74, 6, gMainRoutineWork.currentOwner);
     Call1(FieldEvent_Wait, 1);
-    Call3(Actor_ResetAndSetPositionInMode2, gSequenceParentWork.currentOwner,
+    Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner,
           0x100, 0x88);
     Call3(Actor_ResetAndSetPositionInMode2, 6, 0x110, 0x88);
     Call1(Actor_WaitForMoveById,
-          gSequenceParentWork.currentOwner);
+          gMainRoutineWork.currentOwner);
     Call1(Actor_WaitForMoveById, 6);
-    Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
     Call3(Actor_ArmCallback, 6, 0x8000, 0);
     Call1(FieldEvent_Wait, 0xa);
     Call2(Func_02005eac, 6, 0);
-    Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
+    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
     Call1(FieldEvent_Wait, 0x1e);
-    Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 0x100,
+    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 0x100,
           0x98);
-    Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
     Call1(FieldEvent_Wait, 0x14);
     Call3(Actor_ArmCallback, 6, 0x4000, 0);
     Call1(FieldEvent_Wait, 0x14);
@@ -85,14 +85,14 @@ void Func_02004534(void) {
     Call2(Func_02004138, 8, 6);
     Call2(Party_LearnAbility, 6, 0x90);
     Call1(GameFlag_SetBit, 0x8d4);
-    Call3(Actor_TurnToFaceEachOther, gSequenceParentWork.currentOwner, 6, 0);
+    Call3(Actor_TurnToFaceEachOther, gMainRoutineWork.currentOwner, 6, 0);
     Call1(FieldEvent_Wait, 0xa);
     Call2(Actor_SetModeById, 6, 3);
-    Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
+    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
     Call1(FieldEvent_Wait, 0x14);
     Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
     Call2(Actor_SetModeById, 6, 2);
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)
       Call3(Actor_ResetAndSetPosition, 6, FIELD_AT(object, s16, 10),
             FIELD_AT(object, s16, 18));
@@ -110,10 +110,10 @@ void Func_02004740(void) {
     FieldMessage_Show(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 248, 107);
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 248, 136);
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 107);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
     FieldEvent_Wait(10);
     Func_02004534();
   }
@@ -126,9 +126,9 @@ void Func_020047b0(void) {
     FieldMessage_Show(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 280, 136);
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 280, 136);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
     FieldEvent_Wait(10);
     Func_02004534();
   }
@@ -141,9 +141,9 @@ void Func_02004818(void) {
     FieldMessage_Show(MsgCheckedTheTablet, 1);
     Func_02005e1c();
   } else {
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 248, 136);
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xc000, 0);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 248, 136);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
     FieldEvent_Wait(10);
     Func_02004534();
   }

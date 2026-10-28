@@ -20,7 +20,7 @@
 #include "dma.h"
 #include "iwram_call.h"
 #include "input.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "bg_scroll.h"
 
 struct DiceParticle {
@@ -320,7 +320,7 @@ void Func_081b83c4(void) {
   window = Window_CreateFar(18, 0, 12, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
-  Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6, sprites->coinsWindow, 0,
+  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
                                0);
   window = Window_CreateFar(18, 3, 12, 3, 6);
   sprites->betWindow = window;
@@ -331,8 +331,8 @@ void Func_081b83c4(void) {
   Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
                                   sprites->helpWindow, 0, 8);
   bet = Party_GetAverageLevelFar() * 10;
-  if ((u32)bet > (u32)gSequenceParentWork.coins)
-    bet = gSequenceParentWork.coins;
+  if ((u32)bet > (u32)gMainRoutineWork.coins)
+    bet = gMainRoutineWork.coins;
   Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
   Sound_PlayFar(1);
 
@@ -350,7 +350,7 @@ void Func_081b83c4(void) {
 
     if (state == 0) {
       if (frame > 17) {
-        if ((u32)gSequenceParentWork.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
+        if ((u32)gMainRoutineWork.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
           Window_CloseFar(sprites->helpWindow, 1);
           break;
         }
@@ -365,11 +365,11 @@ void Func_081b83c4(void) {
           Sound_PlayFar(302);
           DICE_GAME_THROW(dice, spinRate);
           bet = Party_GetAverageLevelFar() * 10;
-          if ((u32)bet > (u32)gSequenceParentWork.coins)
-            bet = gSequenceParentWork.coins;
+          if ((u32)bet > (u32)gMainRoutineWork.coins)
+            bet = gMainRoutineWork.coins;
           Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           Party_AdjustCoinsFar(-bet);
-          Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           state = 2;
           timer = 0;
@@ -406,11 +406,11 @@ void Func_081b83c4(void) {
         Window_CloseFar(sprites->helpWindow, 1);
         if (round == 0) {
           bet = Party_GetAverageLevelFar() * 10;
-          if ((u32)bet > (u32)gSequenceParentWork.coins)
-            bet = gSequenceParentWork.coins;
+          if ((u32)bet > (u32)gMainRoutineWork.coins)
+            bet = gMainRoutineWork.coins;
           Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           Party_AdjustCoinsFar(-bet);
-          Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                        sprites->coinsWindow, 0, round);
         }
       } else {
@@ -685,14 +685,14 @@ void Func_081b83c4(void) {
           if (winnings > 0) {
             Sound_PlayFar(105);
             Party_AdjustCoinsFar(winnings);
-            Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                          sprites->coinsWindow, 0, state);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
             Sound_PlayFar(105);
           Party_AdjustCoinsFar(1);
-          Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                        sprites->coinsWindow, 0, 0);
           bet--;
           Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);

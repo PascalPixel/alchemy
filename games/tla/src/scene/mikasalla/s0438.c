@@ -16,7 +16,7 @@ void Func_02000438(void) {
   s32 sound;
   s32 drop;
 
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov65dRoom1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov65dRoom1) {
     sound = 12;
     drop = 17;
   } else {

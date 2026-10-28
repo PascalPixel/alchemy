@@ -8,7 +8,7 @@
 // pending event read as (s16) for the flags changes nothing.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct ActorDescriptor {
   s16 action;
@@ -25,7 +25,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
 
 void Func_080d784c(void) {
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   s32 flags = *(s16 *)&party->unk24c[8] & 0xf000;
   u32 scene = *(s16 *)&party->unk24c[8] & 0xfff;
   s32 id;

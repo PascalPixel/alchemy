@@ -11,14 +11,14 @@
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 
 extern s32 gData_02000fa0[];
 extern u32 gData_020010c0[];
 
 void *Func_02000070(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65dRoom1)
     return gData_02000fa0;

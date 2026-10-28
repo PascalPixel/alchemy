@@ -17,13 +17,13 @@ s32 Func_02001acc();
 s32 Actor_OffsetPositionAndResetMotion();
 s32 Actor_WaitForMoveById();
 s32 Func_02001a84();
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_020000f4(void) {
   s32 t0;
   s32 t2;
 
-  t0 = Value1(Actor_GetById, FIELD_AT(gSequenceParentWork, s32, 532));
+  t0 = Value1(Actor_GetById, FIELD_AT(gMainRoutineWork, s32, 532));
   Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
   t2 = Value1(GameFlag_Test, 0xfe2);
   if (t2 == 0) {
@@ -32,12 +32,12 @@ void Func_020000f4(void) {
       if ((FIELD_AT(t0, s32, 16) >> 20) == 0x1b) {
         Func_02001a7c();
         Call1(Func_02001b0c, 0);
-        Call2(Func_02001acc, FIELD_AT(gSequenceParentWork, s32, 532), 0x102);
+        Call2(Func_02001acc, FIELD_AT(gMainRoutineWork, s32, 532), 0x102);
         Call3(Actor_OffsetPositionAndResetMotion,
-              FIELD_AT(gSequenceParentWork, s32, 532), -16, 0);
+              FIELD_AT(gMainRoutineWork, s32, 532), -16, 0);
         FIELD_AT(t0, s32, 40) = 0x60000;
         Call1(Actor_WaitForMoveById,
-              FIELD_AT(gSequenceParentWork, s32, 532));
+              FIELD_AT(gMainRoutineWork, s32, 532));
         Func_02001a84();
       }
     }

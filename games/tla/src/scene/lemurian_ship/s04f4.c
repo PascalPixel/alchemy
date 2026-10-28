@@ -11,8 +11,8 @@ extern s32 gData_02003dfc[];
 extern s32 gData_02003ebc[];
 
 s32 *Func_020004f4(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov656Room1) {
-    switch (gSequenceParentWork.entrance) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
+    switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
     case 5:
@@ -33,8 +33,8 @@ s32 *Func_020004f4(void) {
     default:
       return gData_020039d0;
     }
-  } else if (gSequenceParentWork.scene == (s32)&SceneId_Ov656Room2) {
-    switch (gSequenceParentWork.entrance) {
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room2) {
+    switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
     case 3:

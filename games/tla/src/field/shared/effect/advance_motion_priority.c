@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_effect.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 /// The sprite's priority bits, read as the byte that holds them.
 struct EffectSpriteBits {
@@ -22,7 +22,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
   s32 velocityZ;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   struct FieldSprite *sprite;
   union FieldObject *leader;
   struct EffectSpriteAttributes *to;
@@ -56,8 +56,8 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   asm volatile("");
   sprite->rotation += effect->spin;
 
-  party = &gSequenceParentWork;
-  /* FAKEMATCH(one-pass): an empty one-pass block after gSequenceParentWork's
+  party = &gMainRoutineWork;
+  /* FAKEMATCH(one-pass): an empty one-pass block after gMainRoutineWork's
    * address; without it, 2 of 59 instructions differ in tla-en. */
   do {
   } while (0);

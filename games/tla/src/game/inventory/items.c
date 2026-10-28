@@ -36,7 +36,7 @@ s32 PartyInventory_HasSpace(void) {
   s32 ownerIndex;
   s16 *ownerCursor;
 
-  if (Inventory_Count(gSequenceParentWork.currentOwner) != 15)
+  if (Inventory_Count(gMainRoutineWork.currentOwner) != 15)
     return 1;
   ownerCount = Party_ListActiveOwners(owners);
   ownerCursor = owners;

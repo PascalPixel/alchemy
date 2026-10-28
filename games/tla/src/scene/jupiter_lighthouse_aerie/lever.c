@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct JupiterLighthouseAerieObject {
   u8 unk00[8];
@@ -28,8 +28,8 @@ void Func_020001b4(void) {
   GameFlag_SetBit(0xa0a);
   Func_02002a88();
   Func_02002b18(0);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 0);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Func_020017a8(11, 9, 0);
   FieldEvent_Wait(40);
   if (GameFlag_Test(0xa0b) == 0) {
@@ -38,7 +38,7 @@ void Func_020001b4(void) {
   } else {
     Func_02000054(2);
   }
-  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
   Func_02001070(Actor_GetById(9));
   Func_02001070(Actor_GetById(10));
@@ -52,8 +52,8 @@ void Func_02000264(void) {
   GameFlag_SetBit(0xa0b);
   Func_02002a88();
   Func_02002b18(0);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0x8000, 0);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x8000, 0);
   Func_020017a8(12, 10, 1);
   FieldEvent_Wait(40);
   if (GameFlag_Test(0xa0a) == 0) {
@@ -62,7 +62,7 @@ void Func_02000264(void) {
   } else {
     Func_02000054(3);
   }
-  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
   Func_02001070(Actor_GetById(9));
   Func_02001070(Actor_GetById(10));

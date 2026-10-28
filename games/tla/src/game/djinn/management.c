@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "owner_state.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 GameFlag_Test(s32);
 void GameFlag_SetBit(s32 flag);
@@ -36,7 +36,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit) {
 
   result = Party_CountActiveOwners();
   if (bestNo < result) {
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
     owners = party->activeOwners;
     count = result;

@@ -52,7 +52,7 @@ static __inline__ void Marker(u32 **cursor, struct TrialRoadLinkWork *work,
 
   if (dx < 0)
     dx += 0xfffff;
-  if (gSequenceParentWork.entrance & 1)
+  if (gMainRoutineWork.entrance & 1)
     x = (dx >> 20) + work->scrollX * 6 + work->scrollY +
         (which ? 189 : -19);
   else

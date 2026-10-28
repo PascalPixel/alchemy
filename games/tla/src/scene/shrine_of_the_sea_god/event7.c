@@ -18,7 +18,7 @@ void Func_020004e0(void) {
   Func_02003b08(0);
   Actor_Stop(11);
   ShrineOfTheSeaGod_Jump(11, 0x100, 20);
-  Actor_SetAngleToward(11, gSequenceParentWork.currentOwner, 0);
+  Actor_SetAngleToward(11, gMainRoutineWork.currentOwner, 0);
   Func_02003a70((s32)MsgFieldStartledCompanion);
   Func_02003a80(11, 0);
   Func_02003a80(11, 0);

@@ -12,7 +12,7 @@
 // registers, and the usual order differences (pool loads and stores early).
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "map.h"
 #include "iwram_call.h"
@@ -45,10 +45,10 @@ struct UnitStepView {
   s8 poison;
 };
 
-// gSequenceParentWork as this function reads it: struct SequenceParentWork's unk24c[6] holds the
+// gMainRoutineWork as this function reads it: struct MainRoutineWork's unk24c[6] holds the
 // hazard's limit, mode (0 counts steps on hazard cells, 1 counts frames) and
-// damage, which adoption names in sequence_parent_work.h; read through one struct,
-// as the native's alias order needs (through struct SequenceParentWork and a view of the
+// damage, which adoption names in main_routine_work.h; read through one struct,
+// as the native's alias order needs (through struct MainRoutineWork and a view of the
 // hazard fields, differ 103).
 struct PartyStepView {
   u8 unk000[0x212];
@@ -65,7 +65,7 @@ struct PartyStepView {
   u8 unk260[4];
   s32 avoidDistance;
 };
-#define gPartyStep (*(struct PartyStepView *)&gSequenceParentWork)
+#define gPartyStep (*(struct PartyStepView *)&gMainRoutineWork)
 extern struct MapCell gMapBlocks[];
 extern struct MapCell gMapCellBuffer[];
 

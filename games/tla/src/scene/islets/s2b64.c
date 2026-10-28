@@ -5,7 +5,7 @@ s32 Func_02002b64(void) {
   s16 scene;
 
   work->field1ac = 0x100;
-  scene = gSequenceParentWork.scene;
+  scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov674Room1)
     Func_02002c38();
   else if (scene == (s32)&SceneId_Ov674Room2)
@@ -20,7 +20,7 @@ s32 Func_02002b64(void) {
 }
 
 void Func_02002bd8(void) {
-  s32 y = Actor_GetById(gSequenceParentWork.currentOwner)->y;
+  s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   asm volatile(
       ""

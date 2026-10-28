@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_particle.h"
 #include "motobj.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
@@ -95,9 +95,9 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
 
   // The current owner turns to 0x4000 and takes mode 28.
   wait(60);
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0x4000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById(gSequenceParentWork.currentOwner), 28);
+  Actor_SetMode(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(40);
   Sound_PlayFar(164);
   wait(100);

@@ -20,7 +20,7 @@
 #include "window.h"
 #include "uiwindow.h"
 #include "battle_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "dma.h"
 #include "io_reg.h"
 
@@ -94,7 +94,7 @@ void PartyStatus_Draw(s32 flags) {
     if (count > 4)
       count = 4;
     for (i = 0; i < count; i++)
-      members[i] = gSequenceParentWork.activeOwners[i];
+      members[i] = gMainRoutineWork.activeOwners[i];
     members[i] = 255;
   }
   count = i;

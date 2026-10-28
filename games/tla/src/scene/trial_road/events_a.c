@@ -20,13 +20,13 @@ s32 Func_02000058(struct Actor *object) {
 const u8 *Func_02000088(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov697Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room1)
     return gData_02007024[pattern & 7];
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov697Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room3)
     return gData_02006ea4;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov697Room4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room4)
     return gData_02006ed4;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov697Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov697Room2)
     return gData_02006f04;
   return gData_0200646c;
 }

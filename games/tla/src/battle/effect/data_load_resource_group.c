@@ -8,14 +8,14 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_tables.h"
 
 extern u8 gOverlayArea[];
 
 void BattleEffect_LoadResourceGroup(void) {
   const struct Scene *table = gScenes;
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   Resource_LoadCode(table[scene].resourceId, gOverlayArea);
 }

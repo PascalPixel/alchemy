@@ -171,7 +171,7 @@ Func_02000580:
 	movs r0, #0
 	pop {r5, r6, pc}
 .L_020086fc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008700:
 	.4byte 0x00000040
 .L_02008704:

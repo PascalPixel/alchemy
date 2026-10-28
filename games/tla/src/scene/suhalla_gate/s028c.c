@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 
 extern char SceneId_SuhallaGate1;
@@ -17,7 +17,7 @@ s32 Func_0200028c(void) {
 
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 256;
-  scene = gSequenceParentWork.scene;
+  scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_SuhallaGate1)
     Func_02000110();
   else if (scene == (s32)&SceneId_SuhallaGate2)

@@ -220,6 +220,6 @@ BattleEffect_UpdatePhasedRadialParticle:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d7f78:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080d7f7c:
 	.4byte gVBlankCount

@@ -11,7 +11,7 @@
 #include "system.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "display_transition.h"
 
@@ -37,24 +37,24 @@ void Event_WaitTransitionFrames(void) {
 
 void Event_SetDestination(s32 scene, s32 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   event->countdown = 999;
   /* FAKEMATCH: materialize the party pointer before building the scene offset.
    */
-  asm volatile("" : "=r"(party) : "0"(&gSequenceParentWork));
+  asm volatile("" : "=r"(party) : "0"(&gMainRoutineWork));
   party->scene = scene;
   party->entrance = entrance;
 }
 
 void Event_SetRestartPoint(s32 scene, s32 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   event->countdown = 999;
   /* FAKEMATCH: materialize the party pointer before building the saved-scene
    * offset. */
-  asm volatile("" : "=r"(party) : "0"(&gSequenceParentWork));
+  asm volatile("" : "=r"(party) : "0"(&gMainRoutineWork));
   party->savedScene = scene;
   party->savedEntrance = entrance;
 }

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct DisplayBlock {
@@ -24,10 +24,10 @@ void Func_080cb8a4(void) {
 }
 
 void *Func_080cb8e8(void) {
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   void **event;
 
-  /* FAKEMATCH: gSequenceParentWork's address is loaded first; without the barrier the
+  /* FAKEMATCH: gMainRoutineWork's address is loaded first; without the barrier the
    * two constants beside it are begun before it (2 differ) */
   asm volatile("" : "+l"(party));
   event = Ram_HeapSlots->eventWork;

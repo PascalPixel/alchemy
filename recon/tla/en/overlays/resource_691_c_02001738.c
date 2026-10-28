@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -133,10 +133,10 @@ L_02009818:
   Call2((void (*)())Actor_SetPartAttribute, FIELD_AT(r7, s32, 0), 3);
   r4 = 0;
   r0 = 0;
-  r1 = (s32)&gSequenceParentWork;
-  r2 = *(s16 *)(((s32)(s32)&gSequenceParentWork + 480) + r4);
+  r1 = (s32)&gMainRoutineWork;
+  r2 = *(s16 *)(((s32)(s32)&gMainRoutineWork + 480) + r4);
   r3 = 223;
-  if ((*(s16 *)(((s32)(s32)&gSequenceParentWork + 480) + r4)) != (223))
+  if ((*(s16 *)(((s32)(s32)&gMainRoutineWork + 480) + r4)) != (223))
     goto L_020098de;
   v6 = Func_020010cc(FIELD_AT(r8, s32, 8), FIELD_AT(r8, s32, 16),
                      (s32)gData_02003d9e);

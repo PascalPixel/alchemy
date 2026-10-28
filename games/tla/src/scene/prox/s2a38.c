@@ -2,7 +2,7 @@
 // 1 for entrances 7 and 8, then schedules Func_02002a08. The entrance is read
 // unsigned first and tested signed against 6, as the native reads it twice.
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 GameFlag_Test(s32 flag);
 void Task_Add(void (*func)(void), s32 priority);
@@ -14,9 +14,9 @@ void Func_02002a38(void) {
   s32 priority;
 
   if (GameFlag_Test(0x109) == 0) {
-    s32 entrance = (u16)gSequenceParentWork.entrance;
+    s32 entrance = (u16)gMainRoutineWork.entrance;
 
-    if (gSequenceParentWork.entrance == 6)
+    if (gMainRoutineWork.entrance == 6)
       Func_02001c24(0);
     else if ((u32)((entrance - 7) << 16) <= 0x10000)
       Func_02001c24(1);

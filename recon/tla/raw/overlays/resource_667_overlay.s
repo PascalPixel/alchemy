@@ -143,7 +143,7 @@ Func_02000514:
 .L_02008640:
 	.4byte Func_02001488
 .L_02008644:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008648:
 	.4byte MsgAlhafraManor10
 .L_0200864c:

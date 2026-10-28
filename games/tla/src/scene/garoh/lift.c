@@ -1,7 +1,7 @@
 #include "garoh.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
-extern struct SequenceParentWork gSequenceParentWork;
+extern struct MainRoutineWork gMainRoutineWork;
 
 struct GarohEventWork {
   u8 unk000[0xca4];
@@ -173,7 +173,7 @@ void Func_02001144(void) {
 
   if (!Flag_IsSet(0x91b)) {
     Flag_Set(0x210);
-    if (gSequenceParentWork.entrance == 1) {
+    if (gMainRoutineWork.entrance == 1) {
       Func_020052cc(0x10003, 1);
       Flag_Set(0x310);
       Flag_Set(0x318);
@@ -197,7 +197,7 @@ void Func_020011c8(void) {
 
   if (!Flag_IsSet(0x91b)) {
     Flag_Set(0x211);
-    if (gSequenceParentWork.entrance == 2) {
+    if (gMainRoutineWork.entrance == 2) {
       Func_020052cc(0x10003, 1);
       Flag_Set(0x310);
       Flag_Set(0x318);

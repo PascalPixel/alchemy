@@ -16,11 +16,11 @@ s32 Actor_SetPositionAndReset();
 s32 Actor_ArmCallback();
 s32 Func_020001e4();
 s32 Func_02001388();
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_020000d0(void) {
   s32 t0;
-  s32 actor = FIELD_AT(gSequenceParentWork, s32, 532);
+  s32 actor = FIELD_AT(gMainRoutineWork, s32, 532);
 
   t0 = Value1(GameFlag_Test, 0x200);
   if (t0 == 0) {

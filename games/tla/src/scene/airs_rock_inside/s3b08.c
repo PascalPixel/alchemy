@@ -9,15 +9,15 @@ void Func_02003b08(void) {
   u8 *flags;
   u8 bit;
 
-  if (((s16 *)&Actor_GetById(gSequenceParentWork.currentOwner)->z)[1] > 653)
+  if (((s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->z)[1] > 653)
     return;
   Func_02005e14();
   Func_02005f2c(0);
   Func_02005f94(186);
-  BYTE_AT(Actor_GetById(gSequenceParentWork.currentOwner), 90) &= ~1;
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x40000, 0x20000);
-  Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, 376, 668);
-  flags = &BYTE_AT(Actor_GetById(gSequenceParentWork.currentOwner), 90);
+  BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90) &= ~1;
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 376, 668);
+  flags = &BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90);
   /* FAKEMATCH: the bit as a u8 local is built in the register it ORs into, as
    * the native does; as |= 1 the byte loads there instead (differ 4, also as an
    * s32 local). */

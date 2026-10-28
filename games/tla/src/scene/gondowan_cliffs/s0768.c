@@ -1,7 +1,7 @@
 #include "types.h"
 #include "iwram_call.h"
 #include "call.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 
 extern u16 gData_02001ae0[];
@@ -13,9 +13,9 @@ void Task_Add();
 void Func_02000738(void);
 
 void Func_02000768(void) {
-  if (gSequenceParentWork.entrance == 99) {
-    gSequenceParentWork.renderMode = 7;
-    gSequenceParentWork.ownerOverride = 1;
+  if (gMainRoutineWork.entrance == 99) {
+    gMainRoutineWork.renderMode = 7;
+    gMainRoutineWork.ownerOverride = 1;
     Func_020012b4((s32)&SceneId_Ov66bRoom2, 1);
   }
   Func_020012fc();

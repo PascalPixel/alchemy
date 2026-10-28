@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct BattleFxDefinition {
   u16 id;
@@ -12,10 +12,10 @@ struct BattleFxDefinition *BattleEffect_FindDefinition(s32 id);
 s32 BattleEffect_GetAnimationValue(void);
 
 s32 Func_080d1eac(s32 id) {
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   u8 value;
 
-  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
    * built (one reordered row). */
   do {
   } while (0);

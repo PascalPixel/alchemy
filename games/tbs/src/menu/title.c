@@ -3,7 +3,7 @@
 /// ending, and the screens that lead from the prologue and the last event on
 /// to Vale and the File Screen. Title_Run chooses by entrance.
 
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "vram_cache.h"
 #include "module/menu/title.h"
 #include "module/overworld/overworld.h"
@@ -70,7 +70,7 @@ u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
 /// - Entrance 9, after the ship sails (lemurian_ship.c's SetSail): the
 ///   credits, then the File Screen's entrance 2, which offers to
 ///   save the cleared game.
-/// - Entrance 2, at power-on (SequenceParent_Run) and after the logo:
+/// - Entrance 2, at power-on (MainRoutine_Run) and after the logo:
 /// the
 ///   Nintendo and Camelot logos and, when a save file exists, the title intro
 ///   with its "Press Start" prompt; then the File Screen's
@@ -83,8 +83,8 @@ s32 Title_Run(void) {
 
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
-  if (gSequenceParentWork.entrance == TITLE_FROM_WORLD_MAP) {
-    Actor_GetById(gSequenceParentWork.leaderActorId)->motionFlags = 0;
+  if (gMainRoutineWork.entrance == TITLE_FROM_WORLD_MAP) {
+    Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
     Sound_Play(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     wait(120);
@@ -99,7 +99,7 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
     return 0;
   }
-  if (gSequenceParentWork.entrance == TITLE_FROM_LEMURIAN_SHIP) {
+  if (gMainRoutineWork.entrance == TITLE_FROM_LEMURIAN_SHIP) {
     Sound_Play(MUS_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
@@ -117,7 +117,7 @@ s32 Title_Run(void) {
   // evidence): what the call once did; the stub is empty in every edition, so
   // only an earlier build of the game would show.
   Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
-  if (gSequenceParentWork.entrance == TITLE_AFTER_RUN) {
+  if (gMainRoutineWork.entrance == TITLE_AFTER_RUN) {
     for (;;) {
       Sound_Play(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).

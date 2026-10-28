@@ -442,7 +442,7 @@ Func_080279b0:
 	b .L_08027d4c
 	.2byte 0x0000
 .L_08027d14:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_08027d18:
 	.4byte 0x00000000
 .L_08027d1c:
@@ -563,6 +563,6 @@ Func_080279b0:
 .L_08027e00:
 	.4byte gData_0802ec94
 .L_08027e04:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_08027e08:
 	.4byte gInput

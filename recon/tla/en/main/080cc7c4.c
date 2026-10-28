@@ -8,7 +8,7 @@
 // Data_0200044c comes from the literal pool where the native has movs, and
 // the first pool is placed after the return 0 instead of at the end.
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
 
@@ -24,7 +24,7 @@ s32 GameFlag_Test(s32 flag);
 s32 Func_080cc7c4(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u8 *cursor = gData_0202e000;
-  s32 entrance = gSequenceParentWork.entrance;
+  s32 entrance = gMainRoutineWork.entrance;
   s32 height;
   s32 x;
   s32 z;
@@ -48,12 +48,12 @@ s32 Func_080cc7c4(void) {
       height = Map_GetTerrainHeightFar(0, x << 16, z << 16) >> 16;
       flags = *cursor;
       if (!GameFlag_Test(0x109)) {
-        gSequenceParentWork.x = x << 16;
-        gSequenceParentWork.z = z << 16;
+        gMainRoutineWork.x = x << 16;
+        gMainRoutineWork.z = z << 16;
         Data_02000448 = (flags & 15) << 12;
         Data_0200044c = 0;
         if (flags & 16)
-          gSequenceParentWork.y = 0x80000;
+          gMainRoutineWork.y = 0x80000;
       }
       if (flags & 32)
         return 1;

@@ -14,7 +14,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
   struct SpriteAnimation *entry;
   s32 phase;
 
-  caster = Actor_Lookup(gSequenceParentWork.leaderActorId);
+  caster = Actor_Lookup(gMainRoutineWork.leaderActorId);
   rec = caster->sprite;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
@@ -41,7 +41,7 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
   phase = caster->arcPhase;
   elapsedFrames = caster->arcFrames++;
 
-  if (gSequenceParentWork.mapId == MAP_INDEX_WORLD) {
+  if (gMainRoutineWork.mapId == MAP_INDEX_WORLD) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {
@@ -55,12 +55,12 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
 /// Avoid (or the Sacred Feather) has worn off, and the game says so.
 /// "Avoid's effects wore off." (or "Sacred Feather's ...").
 ///
-/// Clears gSequenceParentWork.avoidDistance. Reached through
+/// Clears gMainRoutineWork.avoidDistance. Reached through
 /// Event_RunFieldPsynergy when the Psynergy request the leader's walking raises
 /// as Avoid runs out (overworld/walking.c) is handled.
 void Event_ShowStatusMessage(void) {
-  gSequenceParentWork.avoidDistance = 0;
-  if (gSequenceParentWork.avoidByItem == 0) {
+  gMainRoutineWork.avoidDistance = 0;
+  if (gMainRoutineWork.avoidByItem == 0) {
     MessageArgument_PushFar(ABILITY_AVOID, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar(MsgAbilityWoreOff, FIELD_MESSAGE_ZOOM);
     return;
@@ -83,7 +83,7 @@ void Event_ShowStatusMessage(void) {
 /// marks it as cast from the Sacred Feather.
 ///
 /// Called by FieldPsynergy_Run and FieldPsynergy_Dispatch. Sets
-/// gSequenceParentWork.avoidDistance and avoidByItem; the leader's walking
+/// gMainRoutineWork.avoidDistance and avoidByItem; the leader's walking
 /// counts the distance down by its speed (overworld/walking.c), 2,400 pixels in
 /// all.
 void FieldPsynergy_Avoid(void) {
@@ -109,8 +109,8 @@ void FieldPsynergy_Avoid(void) {
     // distance is 2,400 pixels in 16.16.
     *tileSlot = slot;
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
-    gSequenceParentWork.avoidDistance = 0x09600000;
-    gSequenceParentWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
+    gMainRoutineWork.avoidDistance = 0x09600000;
+    gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
     Actor_SetSpriteColorModeFar(actor, zero);
     actor->update = FieldEffect_UpdatePairedArcSpawner;
     actor->arcPhase = zero;
@@ -139,7 +139,7 @@ void FieldPsynergy_Avoid(void) {
   Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
-  if (gSequenceParentWork.cloaked != 0)
+  if (gMainRoutineWork.cloaked != 0)
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_OUTLINED);
   else
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);

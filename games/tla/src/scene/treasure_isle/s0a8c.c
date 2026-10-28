@@ -19,7 +19,7 @@ s32 Actor_GetById();
 s32 Actor_ResetAndSetPosition();
 s32 Func_0200101c();
 extern u8 MsgIAmTheGuardian[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_02000a8c(void) {
   s32 t12;
@@ -36,13 +36,13 @@ void Func_02000a8c(void) {
   Call2(Func_02001034, 0x10000, 0);
   Call1(Func_02001044, 0x3c);
   Call1(FieldEvent_Wait, 0x3c);
-  t12 = Value1(Actor_GetById, FIELD_AT(gSequenceParentWork, s32, 532));
+  t12 = Value1(Actor_GetById, FIELD_AT(gMainRoutineWork, s32, 532));
   if (t12 != 0) {
     Call3(Actor_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
           FIELD_AT(t12, s16, 18));
   }
   Call1(FieldEvent_Wait, 0x14);
-  FIELD_AT(gSequenceParentWork, u16, 596) = 0x19bb;
-  FIELD_AT(gSequenceParentWork, u8, 587) = 2;
+  FIELD_AT(gMainRoutineWork, u16, 596) = 0x19bb;
+  FIELD_AT(gMainRoutineWork, u8, 587) = 2;
   Call2(Func_0200101c, 0x67, 0);
 }

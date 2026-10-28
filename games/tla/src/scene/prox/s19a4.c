@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -61,16 +61,16 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Map_CopyCells(a, b, c, d, mode, f);
     FieldEvent_Wait(20);
   }
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     cell = object->x >> 16;
     Func_020043f4(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Func_020043fc(object);
     object->angle = 0xc000;
   }
-  Actor_SetMovementTypeById(gSequenceParentWork.currentOwner,
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_020046f8);
   Wait(12);
   Cue(123);

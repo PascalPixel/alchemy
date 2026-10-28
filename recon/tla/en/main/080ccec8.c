@@ -17,7 +17,7 @@
 // names stand for 0xdc4, 0xdef, 0xe0f to 0xe1c, 0xde5 and 0x15b5.
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "scene_ids.h"
 
@@ -167,7 +167,7 @@ s32 Func_080ccec8(s32 id) {
       if (silent == 0)
         FieldMessage_ShowFar(
             found + (s32)&MsgCheckedContainer, 1);
-      if (gSequenceParentWork.scene == (s32)&SceneId_DailaInteriors1 && noHint == 0 &&
+      if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors1 && noHint == 0 &&
           !GameFlag_Test(flag)) {
         MessageArgument_PushFar(contents, 2);
         FieldMessage_ShowFar((s32)&MsgContainerHint, 1);
@@ -223,15 +223,15 @@ s32 Func_080ccec8(s32 id) {
         work = Ram_HeapSlots->eventWork;
         ObjectEvent_Spring(index);
         if (flag != -1)
-          gSequenceParentWork.pendingDjinnEvent = flag | 0x1000;
+          gMainRoutineWork.pendingDjinnEvent = flag | 0x1000;
         if (contents > 7)
           *(u16 *)(work + 356) =
               Encounter_GetEnemyGroupAtSlot(105, contents - 8);
         else
           *(u16 *)(work + 356) = Encounter_GetEnemyGroupAtSlot(104, contents);
-        gSequenceParentWork.battleRule24b = 2;
+        gMainRoutineWork.battleRule24b = 2;
         BattleEffect_SelectBattleCue(104, contents);
-        Sound_PlayFar(gSequenceParentWork.sceneCue);
+        Sound_PlayFar(gMainRoutineWork.sceneCue);
         FieldMessage_ShowFar((s32)&MsgContainerMonster, 1);
         goto done;
       }
@@ -297,7 +297,7 @@ s32 Func_080ccec8(s32 id) {
       Func_080cf350(shown);
       Sound_PlayFar(83);
       MessageArgument_PushFar(contents, 2);
-      if (slot == gSequenceParentWork.currentOwner) {
+      if (slot == gMainRoutineWork.currentOwner) {
         FieldMessage_ShowFar((s32)&MsgFoundItem, 3);
       } else {
         MessageArgument_PushFar(slot, 1);
@@ -326,7 +326,7 @@ s32 Func_080ccec8(s32 id) {
     }
   }
 
-  if (gSequenceParentWork.pausedObject == id) {
+  if (gMainRoutineWork.pausedObject == id) {
     paused = 1;
     talk = Func_080ccd78(7, id);
     if (talk == NULL) {
@@ -354,10 +354,10 @@ s32 Func_080ccec8(s32 id) {
     Actor_SetAnimationSpeedFar(object, 0);
     savedAngle = object->angle;
     if ((u8)placement->kind <= 1 || placement->kind == 3) {
-      leader = Actor_GetById(gSequenceParentWork.currentOwner);
+      leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
                                           leader->z);
-      Actor_TurnToFaceEachOther(id, gSequenceParentWork.currentOwner, 0);
+      Actor_TurnToFaceEachOther(id, gMainRoutineWork.currentOwner, 0);
     }
   }
   if (talk->script < 0x10000) {
@@ -370,7 +370,7 @@ s32 Func_080ccec8(s32 id) {
   if (!paused) {
     if (object->script[object->step] == 17) {
       if (placement->kind == 3) {
-        object->watchedObject = Actor_GetById(gSequenceParentWork.currentOwner);
+        object->watchedObject = Actor_GetById(gMainRoutineWork.currentOwner);
         object->actionFlags |= 1;
         Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
       } else if (placement->kind == 1) {
@@ -384,8 +384,8 @@ s32 Func_080ccec8(s32 id) {
   result = 0;
 resume:
   if (paused) {
-    BattleEffect_ResumeObject(gSequenceParentWork.pausedObject);
-    gSequenceParentWork.pausedObject = -1;
+    BattleEffect_ResumeObject(gMainRoutineWork.pausedObject);
+    gMainRoutineWork.pausedObject = -1;
   }
   return result;
 }

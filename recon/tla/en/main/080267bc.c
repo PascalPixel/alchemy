@@ -10,7 +10,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "event_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 
 struct FieldPosition {
@@ -65,7 +65,7 @@ s32 Func_080267bc(struct Actor *object) {
   collision = 0;
   pushed = 0;
   movementAnimation = 2;
-  if (gInput.held & ((struct PartyKeys *)&gSequenceParentWork)->keys23c) {
+  if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->keys23c) {
     object->speedLimit = 0x10000;
     object->acceleration = 0xccc;
     movementAnimation = 5;
@@ -271,7 +271,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (Unit_Get(gSequenceParentWork.currentOwner)->hp == 0)
+    if (Unit_Get(gMainRoutineWork.currentOwner)->hp == 0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {

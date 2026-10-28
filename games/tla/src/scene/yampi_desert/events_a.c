@@ -19,7 +19,7 @@ void Func_020015d4(s32 mode) {
 }
 
 void Func_020015ec(s32 show) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov661Room8)
     Func_02001650(show, 11, 2);

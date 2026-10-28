@@ -23,12 +23,12 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
     *flags = mask;
     Actor_SetSingleChildFlags(object, 0);
     {
-      struct SequenceParentWork *party = &gSequenceParentWork;
+      struct MainRoutineWork *party = &gMainRoutineWork;
       s32 x = position[1];
       s32 z = position[5];
       s32 owner = party->currentOwner;
 
-      /* FAKEMATCH: the one-pass block keeps gSequenceParentWork's address loaded
+      /* FAKEMATCH: the one-pass block keeps gMainRoutineWork's address loaded
        * before the position (plain call: differ 2; owner read without the party
        * pointer: differ 12). */
       do {
@@ -45,7 +45,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
 }
 
 void Func_02000cdc(void) {
-  struct FieldActor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 x;
 

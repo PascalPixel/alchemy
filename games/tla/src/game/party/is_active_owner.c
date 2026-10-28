@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern char ResourceId_GrasslandBBackdrop;
 extern char ResourceId_RockyBeachBackdrop;
@@ -46,7 +46,7 @@ void Func_080ca514(s32 terrain) {
     value = (u32)&ResourceId_ShipDeckBackdrop;
     break;
   }
-  gSequenceParentWork.special = value;
+  gMainRoutineWork.special = value;
 }
 
 s32 Func_080ca5a0(s32 owner) {
@@ -56,13 +56,13 @@ s32 Func_080ca5a0(s32 owner) {
   if (count > 4)
     count = 4;
   for (i = 0; i < count; i++) {
-    if (gSequenceParentWork.activeOwners[i] == owner)
+    if (gMainRoutineWork.activeOwners[i] == owner)
       return 1;
   }
   return 0;
 }
 
-/// Chooses the battle music for slot of zone (gSequenceParentWork.sceneCue): a key
+/// Chooses the battle music for slot of zone (gMainRoutineWork.sceneCue): a key
 /// takes the song listed last before it in Data_080efd1c, and flag 0x16c's
 /// battles always use music 79. With no song found, it is 56 while
 /// ownerOverride is set and flag 0x8df clear, else 50 when owner 4 is active,
@@ -73,7 +73,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   const s16 *table = Data_080efd1c;
   u16 music;
   u16 value;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   if (GameFlag_Test(0x16c)) {
     music = 79;
@@ -89,8 +89,8 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
     }
   }
   if (music == 0) {
-    party = &gSequenceParentWork;
-    /* FAKEMATCH(one-pass block): loads gSequenceParentWork's address before
+    party = &gMainRoutineWork;
+    /* FAKEMATCH(one-pass block): loads gMainRoutineWork's address before
      * ownerOverride's offset; as plain statements, 2 of 92 instructions differ
      * in tla-en. */
     do {
@@ -106,8 +106,8 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
     else
       music = 50;
   }
-  party = &gSequenceParentWork;
-  /* FAKEMATCH(one-pass block): loads gSequenceParentWork's address before sceneCue's
+  party = &gMainRoutineWork;
+  /* FAKEMATCH(one-pass block): loads gMainRoutineWork's address before sceneCue's
    * offset; as plain statements, 2 of 92 instructions differ in tla-en. */
   do {
   } while (0);

@@ -6,7 +6,7 @@ extern s32 gData_020062a4;
 
 /// The leader and actor 13 rise into view while actor 15 scales.
 void Func_02003684(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *first = Actor_GetById(13);
   /* FAKEMATCH: the second actor pinned to r6 leaves the leader in r8 as the
    * native has; unpinned, the two trade registers (differ 24). */
@@ -18,9 +18,9 @@ void Func_02003684(void) {
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   wait_(1);
   leader->motionFlags = 0;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
                                     0x1b80000, -0x140000, 0xc80000);
-  Actor_SetSingleChildFlags_(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),
                                       0);
   Actor_SetPositionAndResetMotion_(Actor_GetById_(13), 0x1b80000, -0x140000,
                                     0xcc0000);
@@ -57,7 +57,7 @@ rise:
 
 /// As Func_02003684, for actors 14 and 16 at another place.
 void Func_020037e0(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *first = Actor_GetById(14);
   /* FAKEMATCH: as in Func_02003684, the second actor pinned to r6. */
   register struct Actor *second asm("r6") = Actor_GetById(16);
@@ -68,9 +68,9 @@ void Func_020037e0(void) {
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   wait_(1);
   leader->motionFlags = 0;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
                                     0x2580000, -0x140000, 0xe80000);
-  Actor_SetSingleChildFlags_(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),
                                       0);
   Actor_SetPositionAndResetMotion_(Actor_GetById_(14), 0x2580000, -0x140000,
                                     0xec0000);

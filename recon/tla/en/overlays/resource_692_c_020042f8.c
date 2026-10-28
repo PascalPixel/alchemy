@@ -8,7 +8,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern u8 gMapShapeGrid[];
 
@@ -37,9 +37,9 @@ void Func_020042f8(const u16 *table) {
   s32 shape;
   s32 height;
 
-  Func_02004da8(8, gSequenceParentWork.currentOwner);
-  Func_02004da8(9, gSequenceParentWork.currentOwner);
-  Func_02004da8(10, gSequenceParentWork.currentOwner);
+  Func_02004da8(8, gMainRoutineWork.currentOwner);
+  Func_02004da8(9, gMainRoutineWork.currentOwner);
+  Func_02004da8(10, gMainRoutineWork.currentOwner);
   wait(1);
   Func_020042e0(8);
   Func_020042e0(9);

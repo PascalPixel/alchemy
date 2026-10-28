@@ -2,7 +2,7 @@
 /// Kibombo's setup.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 extern u16 gData_02007948[4];
@@ -61,7 +61,7 @@ void Func_0200516c(void) {
     actor->z += -0x2a0000;
     Actor_SetSingleChildFlags(Actor_GetById(11), 0);
     Actor_SetSpritePriority(11, 1);
-    if (gSequenceParentWork.entrance == 19 && GameFlag_Test(7)) {
+    if (gMainRoutineWork.entrance == 19 && GameFlag_Test(7)) {
       unit = Unit_Get(7);
       *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
       *(u16 *)(unit + 0x3a) = *(u16 *)(unit + 0x36);

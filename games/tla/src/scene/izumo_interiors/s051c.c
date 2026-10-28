@@ -1,7 +1,7 @@
 #include "types.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
@@ -65,7 +65,7 @@ static inline void ActorAnimate(s32 actor, s32 animation, s32 frames) {
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200226c(gSequenceParentWork.currentOwner, animation, frames);
+  Func_0200226c(gMainRoutineWork.currentOwner, animation, frames);
 }
 
 s32 Func_0200051c(void) {
@@ -92,10 +92,10 @@ s32 Func_0200051c(void) {
     Func_02002244((s32)MsgSusaPleaseDon);
     Func_02002254(17, 0);
   }
-  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags &= ~1;
-  Actor_OffsetPositionAndReset(gSequenceParentWork.currentOwner, 0, 16);
-  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
-  Actor_GetById(gSequenceParentWork.currentOwner)->actionFlags |= 1;
+  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
+  Actor_OffsetPositionAndReset(gMainRoutineWork.currentOwner, 0, 16);
+  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   Func_020021cc();
   return 0;
 }
@@ -131,7 +131,7 @@ void Func_0200061c(s32 mode) {
   Func_020021c4();
   Call1((void (*)())Func_020022bc, 0);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x8f0000, -1, 0x2300000, 1);
-  party = (s32)&gSequenceParentWork;
+  party = (s32)&gMainRoutineWork;
   if (mode == 0) {
     Call3((void (*)())Actor_SetPositionAndReset, *(s32 *)(party + 532),
           184, 0x238);
@@ -169,7 +169,7 @@ void Func_0200061c(s32 mode) {
   Call2((void (*)())Actor_StartRepeatedMotion, 20, 2);
   Call1((void (*)())FieldEvent_Wait, 15);
   Call2((void (*)())Func_02002254, 0x8014, 0);
-  Call3((void (*)())Actor_SetAngleToward, 15, gSequenceParentWork.currentOwner,
+  Call3((void (*)())Actor_SetAngleToward, 15, gMainRoutineWork.currentOwner,
         0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_OffsetPositionAndResetMotion, 15, 0, 16);
@@ -182,7 +182,7 @@ void Func_0200061c(s32 mode) {
     Call3((void (*)())Actor_SetPositionAndReset, 15, 120, 0x218);
   }
   Call3((void (*)())Actor_ArmCallback, 15, 0x4000, 0);
-  owner = (s32)&gSequenceParentWork;
+  owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Call3((void (*)())Actor_SetAngleToward, 20, *(s32 *)owner, 0);
   Call2((void (*)())Func_02002254, 0x800f, 0);
@@ -224,7 +224,7 @@ void Func_0200061c(s32 mode) {
   } else {
     Call3((void (*)())Actor_ArmCallback, 22, 0x8000, 0);
   }
-  party = (s32)&gSequenceParentWork;
+  party = (s32)&gMainRoutineWork;
   owner = party + 532;
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, *(s32 *)owner, 144,
         0x230);
@@ -495,7 +495,7 @@ void Func_0200061c(s32 mode) {
     u8 *priority = &person->priorityFlags;
     s32 flags = *priority | 1;
 
-    owner = (s32)&gSequenceParentWork;
+    owner = (s32)&gMainRoutineWork;
     /* FAKEMATCH(barrier): the leader's address loads before the byte store, as
      the native schedules it; without it, 2 of 2325 instructions differ in
      tla-en. */
@@ -644,7 +644,7 @@ void Func_0200061c(s32 mode) {
   ActorAnimate(21, 0x108, 30);
   Call2((void (*)())Func_02002254, 21, 0);
   ActorAnimate(6, 0x106, 30);
-  owner = (s32)&gSequenceParentWork;
+  owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Call3((void (*)())Actor_SetAngleToward, 6, *(s32 *)owner, 0);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 6, 0);
@@ -676,7 +676,7 @@ void Func_0200061c(s32 mode) {
   Call2((void (*)())Actor_SetModeById, 23, 3);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Func_02002254, 23, 0);
-  owner = (s32)&gSequenceParentWork;
+  owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Call2((void (*)())Actor_SetModeById, *(s32 *)owner, 3);
   Call2((void (*)())Actor_SetModeById, 5, 3);
@@ -719,7 +719,7 @@ void Func_0200061c(s32 mode) {
   Call2((void (*)())Actor_SetModeById, 15, 3);
   Call2((void (*)())Actor_SetModeById, 20, 3);
   Call1((void (*)())FieldEvent_Wait, 30);
-  party = (s32)&gSequenceParentWork;
+  party = (s32)&gMainRoutineWork;
   owner = party + 532;
   Call3((void (*)())Actor_SetAngleToward, 15, *(s32 *)owner, 0);
   Call3((void (*)())Actor_SetAngleToward, 20, *(s32 *)owner, 0);

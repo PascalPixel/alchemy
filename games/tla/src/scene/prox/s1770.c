@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -33,7 +33,7 @@ void Func_02001770(void) {
     }
     wait(1);
     Actor_Jump(20, 4, 20);
-    Actor_SetAngleToward(20, gSequenceParentWork.currentOwner, 0);
+    Actor_SetAngleToward(20, gMainRoutineWork.currentOwner, 0);
     FIELD_AT(work, u16, 362) = 200;
     Func_0200446c();
   }

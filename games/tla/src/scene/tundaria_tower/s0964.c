@@ -31,7 +31,7 @@ void Func_02000964(void) {
   Func_02002f90(object, gData_02003370);
   Actor_WaitForMoveById(8);
   GameFlag_SetBit(0x200);
-  Actor_WatchAndSetScript(8, gSequenceParentWork.currentOwner);
+  Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
   MapCell_SetAttributes(0, 21, 33, 0x3200);
   MapCell_SetAttributes(0, 22, 33, 0x3200);
   MapCell_SetAttributes(0, 26, 33, 0xff00);

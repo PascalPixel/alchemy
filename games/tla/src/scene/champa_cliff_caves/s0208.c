@@ -25,8 +25,8 @@ void Func_02000208(void) {
   s32 msg;
 
   warp = &gData_02003d10;
-  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 168, 424);
-  Func_02003534(gSequenceParentWork.currentOwner, 0);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 168, 424);
+  Func_02003534(gMainRoutineWork.currentOwner, 0);
   Func_0200362c(158);
   Func_02003414(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;

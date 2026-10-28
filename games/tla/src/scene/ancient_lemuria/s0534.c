@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "call.h"
 
@@ -48,7 +48,7 @@ void Func_02000534(void) {
     }
     Call3(Actor_SetSpeedParameters, 11, 0x13333, 0x9999);
     Actor_SetModeById(11, 2);
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
       Actor_ResetAndSetPosition(11, *(s16 *)((u8 *)object + 10),
                                        *(s16 *)((u8 *)object + 18));

@@ -2,7 +2,7 @@
 #define TLA_CHAMPA_CLIFF_CAVES_SCENE_H
 
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "scene_call.h"

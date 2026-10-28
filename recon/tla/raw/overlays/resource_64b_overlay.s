@@ -154,7 +154,7 @@ Func_02000574:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_ja_0200867c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.else
 	.global Func_02000574
 	.thumb_func
@@ -312,7 +312,7 @@ Func_02000574:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_020086cc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.endif
 	.section .text.x020086d0,"ax",%progbits
 	.global Func_020006d0
@@ -409,7 +409,7 @@ Func_020006d0:
 	b .L_02008800
 	.2byte 0x0000
 .L_02008784:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008788:
 	.4byte 0x001fffff
 .L_0200878c:
@@ -525,7 +525,7 @@ Func_020006d0:
 .L_02008874:
 	.4byte 0xfff40000
 .L_02008878:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200887c:
 	movs r5, #128
 	mov r0, r10
@@ -737,7 +737,7 @@ Func_02000be0:
 .L_02008d0c:
 	.4byte MsgGazedIntoThe
 .L_02008d10:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008d14:
 	.4byte MsgThereAreSome
 .L_02008d18:
@@ -1110,7 +1110,7 @@ Func_02000dc4:
 	b .L_020091ee
 	.2byte 0x0000
 .L_02009188:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200918c:
 	.4byte .L_02008ef8
 .L_02009190:
@@ -1470,7 +1470,7 @@ Func_020012bc:
 .L_020095b4:
 	.4byte MsgHeyWaitA
 .L_020095b8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020095bc:
 	.4byte 0x00000002
 .L_020095c0:
@@ -1895,7 +1895,7 @@ Func_020012bc:
 .L_020099d4:
 	.4byte MsgItLooksLike
 .L_020099d8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020099dc:
 	.4byte 0x25a00000
 .L_020099e0:
@@ -2410,7 +2410,7 @@ Func_02001e34:
 	b .L_0200a0d8
 	.2byte 0x0000
 .L_0200a08c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a090:
 	.4byte 0xd8780000
 .L_0200a094:
@@ -3367,7 +3367,7 @@ Func_02002ab0:
 .L_0200adac:
 	.4byte 0x00013333
 .L_0200adb0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200adb4:
 	.4byte 0x27ff0000
 .L_0200adb8:
@@ -3996,7 +3996,7 @@ Func_020036a8:
 .L_0200b8dc:
 	.4byte IwramMulQ16
 .L_0200b8e0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200bd44,"ax",%progbits
 	.global Func_02003d44
 	.thumb_func
@@ -4152,7 +4152,7 @@ Func_02003d44:
 .L_0200be84:
 	.4byte 0x00000e00
 .L_0200be88:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200be8c:
 	.4byte gWorldMapPackedTiles
 .L_0200be90:
@@ -4952,7 +4952,7 @@ Func_020042e0:
 .L_0200c4f8:
 	.4byte gBgScroll
 .L_0200c4fc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200c634,"ax",%progbits
 	.balign 4
 	.global Func_02004634

@@ -21,7 +21,7 @@
 #include "types.h"
 #include "map.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct ClimbSprite {
@@ -44,7 +44,7 @@ void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 flags);
 
 s32 Func_080d50f8(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 gridX;
   s16 spriteFlags;
@@ -60,7 +60,7 @@ s32 Func_080d50f8(void) {
   Event_Start();
   if (leader->animationKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
-  if (gSequenceParentWork.renderMode == 0) {
+  if (gMainRoutineWork.renderMode == 0) {
     struct Actor *entry;
     struct MapCell *cell;
     struct MapCell *south;
@@ -102,10 +102,10 @@ s32 Func_080d50f8(void) {
     }
 
     // Step to the middle of the tile, face north and climb down a tile.
-    Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, gridX, gridZ);
+    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, gridX, gridZ);
     leader->speedLimit = 0x10000;
-    Actor_ArmCallback(gSequenceParentWork.currentOwner, 0xc000, 0);
-    Actor_RefreshSelectorById(gSequenceParentWork.currentOwner);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+    Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
     leader->actionFlags = 1;
     leader->motionFlags = 0;
     spriteFlags &= 0xfe;
@@ -113,8 +113,8 @@ s32 Func_080d50f8(void) {
     Actor_SetMode(leader, 13);
     Actor_SetTargetPosition(leader, gridX << 16, leader->y - 0x100000,
                        (gridZ << 16) + 0x100000);
-    Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
-    gSequenceParentWork.renderMode = 2;
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+    gMainRoutineWork.renderMode = 2;
     leader->z = (leader->z & 0xfff00000) + 0x80000;
   } else {
     // Let go of the wall and fall.
@@ -125,7 +125,7 @@ s32 Func_080d50f8(void) {
     spriteFlags |= 1;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags);
     Event_Wait(6);
-    gSequenceParentWork.renderMode = 0;
+    gMainRoutineWork.renderMode = 0;
     leader->actionFlags = 1;
     leader->angle = 0xc000;
     leader->action = 0;

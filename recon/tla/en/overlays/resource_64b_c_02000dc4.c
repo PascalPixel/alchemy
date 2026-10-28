@@ -1,10 +1,10 @@
 // Draft, differ 104 of 270: the world map's entrance handler: restores the
 // ship's place, then runs the script for the entrance taken. Left: register
-// choice in the ship block (the native keeps gSequenceParentWork in r5, the override
+// choice in the ship block (the native keeps gMainRoutineWork in r5, the override
 // in r6, savedX's address in r7) and the pool reload it does at the join.
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 #include "call.h"
@@ -50,16 +50,16 @@ s32 Func_02000dc4(void) {
   struct EventWork *work;
 
   if (GameFlag_Test(0x109) == 0 && GameFlag_Test(0x8de) != 0 &&
-      gSequenceParentWork.ownerOverride == 0 && gSequenceParentWork.savedX != 0) {
+      gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.savedX != 0) {
     struct Actor *ship = Actor_GetById(8);
 
-    ship->x = gSequenceParentWork.savedX;
-    ship->z = gSequenceParentWork.savedZ;
-    ship->angle = gSequenceParentWork.unk280;
+    ship->x = gMainRoutineWork.savedX;
+    ship->z = gMainRoutineWork.savedZ;
+    ship->angle = gMainRoutineWork.unk280;
     ship->action = 0;
     ship->unk66 = 0;
   }
-  if (gSequenceParentWork.ownerOverride != 0)
+  if (gMainRoutineWork.ownerOverride != 0)
     Func_02004df8(0x10000, 1);
   GameFlag_SetBit(0x144);
   work = Ram_HeapSlots->eventWork;
@@ -77,7 +77,7 @@ s32 Func_02000dc4(void) {
   }
   if (GameFlag_Test(0xa77))
     Func_02000d4c();
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case 39:
     if (GameFlag_Test(0x927))
       GameFlag_SetBit(0x9ab);
@@ -86,7 +86,7 @@ s32 Func_02000dc4(void) {
   case 73:
   case 74:
     if (GameFlag_Test(0xa76))
-      Func_020012bc(gSequenceParentWork.entrance);
+      Func_020012bc(gMainRoutineWork.entrance);
     break;
   case 77:
     Func_020029a4();
@@ -138,7 +138,7 @@ s32 Func_02000dc4(void) {
     Func_02004d38((s32)&SceneId_Ov6a5, 9);
     break;
   case 98:
-    gSequenceParentWork.ownerOverride = 1;
+    gMainRoutineWork.ownerOverride = 1;
     GameFlag_SetBit(0x8de);
     GameFlag_SetBit(0x8df);
     GameFlag_SetBit(0x163);

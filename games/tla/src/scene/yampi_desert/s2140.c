@@ -1,7 +1,7 @@
 #include "scene.h"
 
 void Func_02002140(void) {
-  struct FieldActor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u32 x = leader->x >> 20;
   u32 z = leader->z >> 20;
 

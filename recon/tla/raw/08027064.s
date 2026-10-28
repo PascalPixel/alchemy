@@ -381,7 +381,7 @@ Func_08027064:
 .L_08027358:
 	.4byte gInput
 .L_0802735c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_08027360:
 	.4byte gData_0802ec5c
 .L_08027364:
@@ -829,7 +829,7 @@ Func_08027064:
 .L_080276e4:
 	.4byte gInput
 .L_080276e8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080276ec:
 	mov r0, r8
 	ldr r1, [sp, #16]

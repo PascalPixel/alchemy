@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "magma_rock.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -41,9 +41,9 @@ void Func_02001af4(s32 mode, s32 cue) {
 }
 
 void Func_02001b24(void) {
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
    * built (one reordered row). */
   do {
   } while (0);
@@ -52,9 +52,9 @@ void Func_02001b24(void) {
 }
 
 void Func_02001b44(void) {
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
    * built (one reordered row). */
   do {
   } while (0);

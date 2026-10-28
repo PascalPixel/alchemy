@@ -15,8 +15,8 @@ void Func_02004bc4(void) {
   Func_02005704(19, 0x5000);
   Func_020056dc(MsgDoNotLet);
   Func_020056f4(0x8013, 0);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 480, 348);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 480, 348);
   MarsLighthouseAerie_ObjTurn(19, 0xb000);
   Func_02005614();
 }
@@ -27,8 +27,8 @@ void Func_02004c2c(void) {
   Func_02005704(19, 0x3000);
   Func_020056dc(MsgDoNotLet);
   Func_020056f4(0x8013, 0);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
-  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 544, 348);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 544, 348);
   MarsLighthouseAerie_ObjTurn(19, 0xb000);
   Func_02005614();
 }
@@ -40,7 +40,7 @@ void Func_02004c94(void) {
   wait(1);
   Func_020056dc(MsgWillYouCast);
   FieldMessage_ShowAtActor(18, 0);
-  if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Func_0200567c(18, 0, 0);
     wait(1);
     Func_02003658();

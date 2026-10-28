@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_event.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "text/msg_ids.h"
 
 void Daila_TalkBeenBefore(void) {
@@ -67,7 +67,7 @@ void Daila_TalkBoat(void) {
 }
 
 void Func_02000288(s32 keeper) {
-  u16 facing = Import_ActorGet(gSequenceParentWork.currentOwner)->facing;
+  u16 facing = Import_ActorGet(gMainRoutineWork.currentOwner)->facing;
 
   /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
    * facing before it builds the quadrant offset (2 differ without it). */

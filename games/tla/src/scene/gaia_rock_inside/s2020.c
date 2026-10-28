@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -46,7 +46,7 @@ void Func_02002020(void) {
         (s32)&MsgGaiaRockInside01, 1);
   Call1((void (*)())Func_02005014, 193);
   Call2((void (*)())Func_02004e3c, v_r10, 1);
-  v_r5 = (s32)&gSequenceParentWork;
+  v_r5 = (s32)&gMainRoutineWork;
   v_r5 = (v_r5 + 0x214);
   Call2((void (*)())Func_02004ec4, 13, FIELD_AT(v_r5, s32, 0));
   Call3((void (*)())Actor_ResetAndSetPosition, 13, 0x1f0, 0x2c8);
@@ -123,7 +123,7 @@ L_0200a1f8:
   Call2((void (*)())Actor_SetModeById, 8, 4);
   Call2((void (*)())Actor_SetModeById, 9, 4);
   Call1((void (*)())FieldEvent_Wait, 30);
-  t50 = Value1((s32 (*)())Actor_GetById, gSequenceParentWork.currentOwner);
+  t50 = Value1((s32 (*)())Actor_GetById, gMainRoutineWork.currentOwner);
   if (t50 == 0)
     goto L_0200a22e;
   Call3((void (*)())Actor_ResetAndSetPosition, 13,

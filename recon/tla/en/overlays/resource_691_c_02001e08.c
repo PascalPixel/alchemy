@@ -5,7 +5,7 @@
 // this form builds the address with add sp and swaps the two constants.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern s16 gData_02003de4[];
 
@@ -19,7 +19,7 @@ void Func_020003b4(void);
 void Func_020006cc(s16 *ids);
 
 void Func_02001e08(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct { s32 x, y, z; } position;
   struct { s32 x, y, z; } *cell = (void *)&position;
   struct Actor *object;

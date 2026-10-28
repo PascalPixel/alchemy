@@ -226,7 +226,7 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 }
 
 /// Creates a scene's actors on entering it: the party leader where the
-/// sequence parent's work puts it, then the scene's actor placement table from
+/// main routine's work puts it, then the scene's actor placement table from
 /// actor slot 8, and the camera that follows the leader. A leader entering
 /// above ground where its cell and the cell north of it are climbing spots
 /// (CELL_BEHAVIOR_CLIMB) is raised by the ground height of the cell north of it
@@ -236,7 +236,7 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 /// Event_RunActorUpdateAndWait.
 /// Empties every actor slot and table first, without releasing the
 /// actors in them; sets work->camera, the map's origin and
-/// gSequenceParentWork.movementMode.
+/// gMainRoutineWork.movementMode.
 void Actor_ResetForLeader(struct ActorPlacement *table) {
   struct FieldWork *work;
   struct ActorPlacement *entry;
@@ -249,7 +249,7 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   s32 height;
 
   work = gFieldWork;
-  leader = gSequenceParentWork.leaderActorId;
+  leader = gMainRoutineWork.leaderActorId;
   // Build the leader's temporary actor placement before the scene's placed
   // actors. The two-row table, the leader's row and an end row, lives in
   // the field work at 0x200 (FieldWork's leaderPlacements) and lasts with it.
@@ -261,22 +261,22 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   Actor_ClearAll();
   entry->condition = -1;
   entry->sprite = leader;
-  SET_POSITION(entry, gSequenceParentWork.x, 0, gSequenceParentWork.z);
-  entry->facing = gSequenceParentWork.heading;
+  SET_POSITION(entry, gMainRoutineWork.x, 0, gMainRoutineWork.z);
+  entry->facing = gMainRoutineWork.heading;
   Event_SpawnActorPlacements(entry, leader);
   Event_SpawnActorPlacements(table, ACTOR_FIRST_PLACED);
 
   object = work->actors[leader];
-  // gSequenceParentWork.layer keeps the leader's map grid layer
+  // gMainRoutineWork.layer keeps the leader's map grid layer
   // (FieldSequence_Run saves its layer there). Its cell: 16 pixels square, 128
   // to a row, so above is the cell north of it.
-  object->layer = gSequenceParentWork.layer;
+  object->layer = gMainRoutineWork.layer;
   pos = (object->x.fixed / 0x100000) + (object->z.fixed / 0x100000) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];
-  if (gSequenceParentWork.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
+  if (gMainRoutineWork.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
       above->behavior == CELL_BEHAVIOR_CLIMB) {
-    gSequenceParentWork.movementMode = LEADER_MOVEMENT_CLIMB;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
                                          object->z.fixed - 0x100000) -
              0x200000;
@@ -286,7 +286,7 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
     Actor_SetSpriteFlagsFar(object, 0);
     Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
   } else {
-    gSequenceParentWork.movementMode = LEADER_MOVEMENT_WALK;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   }
 
   // The camera follows this leader and starts at its resolved ground height;
@@ -595,7 +595,7 @@ void Actor_Restore(void) {
   s32 animation;
   s32 priority;
   s32 y;
-  s32 *leaderId = &gSequenceParentWork.leaderActorId;
+  s32 *leaderId = &gMainRoutineWork.leaderActorId;
   struct FieldWork **fieldWork = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 

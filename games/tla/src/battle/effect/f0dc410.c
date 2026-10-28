@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 #include "iwram_call.h"
 #include "battle_unit.h"
@@ -91,21 +91,21 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->savedShakeX = map->shakeX;
   work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
-  if (gSequenceParentWork.map == (s32)&SceneId_Ov673Room5)
+  if (gMainRoutineWork.map == (s32)&SceneId_Ov673Room5)
     work->lit = 1;
-  if (gSequenceParentWork.map == (s32)&SceneId_Ov68fRoom1)
+  if (gMainRoutineWork.map == (s32)&SceneId_Ov68fRoom1)
     *((u8 *)work + 0x41) = 1;
-  if (gSequenceParentWork.map == (s32)&SceneId_Ov68fRoom2)
+  if (gMainRoutineWork.map == (s32)&SceneId_Ov68fRoom2)
     *((u8 *)work + 0x41) = 1;
-  if (gSequenceParentWork.map == (s32)&SceneId_Ov68fRoom7)
+  if (gMainRoutineWork.map == (s32)&SceneId_Ov68fRoom7)
     *((u8 *)work + 0x41) = 1;
-  if (gSequenceParentWork.map == (s32)&SceneId_Ov6a4)
+  if (gMainRoutineWork.map == (s32)&SceneId_Ov6a4)
     *((u8 *)work + 0x41) = 1;
-  if (gSequenceParentWork.map == (s32)&SceneId_Ov6a5)
+  if (gMainRoutineWork.map == (s32)&SceneId_Ov6a5)
     *((u8 *)work + 0x41) = 1;
-  if (gSequenceParentWork.map == (s32)&SceneId_Ov6A6Room1)
+  if (gMainRoutineWork.map == (s32)&SceneId_Ov6A6Room1)
     *((u8 *)work + 0x41) = 1;
-  BattleEffect_SetupObjectPair(gSequenceParentWork.currentOwner, -1);
+  BattleEffect_SetupObjectPair(gMainRoutineWork.currentOwner, -1);
   if (work->animation != 8)
     event->unkca5 = 0;
   if (work->animation != 28)

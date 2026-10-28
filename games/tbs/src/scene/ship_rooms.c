@@ -97,7 +97,7 @@
 #include "heap.h"
 #include "sound_driver_symbols.h"
 #include "macros.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "module/import.h"
 #include "module/scene/ship_rooms.h"
 #include "module/overworld/overworld.h"
@@ -702,7 +702,7 @@ static s32 ShipRooms_LayFlat(struct Actor *interpreter) {
 }
 
 const struct SceneEntrance *ShipRooms_SelectEntrances(void) {
-  if (gSequenceParentWork.sceneId == (s32)&SceneId_ShipRooms) {
+  if (gMainRoutineWork.sceneId == (s32)&SceneId_ShipRooms) {
     return gShipRooms_Entrances;
   }
   return gShipRooms_EntrancesOther;
@@ -724,7 +724,7 @@ const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
 const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
   u8 *placementBytes;
 
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
@@ -820,7 +820,7 @@ const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
 
 /// Chooses the room's interactions for the current stage of the voyage.
 const struct Trigger *ShipRooms_SelectTriggers(void) {
-  s32 entrance = gSequenceParentWork.entrance;
+  s32 entrance = gMainRoutineWork.entrance;
 
   switch (entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
@@ -2299,7 +2299,7 @@ s32 ShipRooms_ApplyEntryState(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
@@ -2330,7 +2330,7 @@ s32 ShipRooms_ApplyEntryState(void) {
     }
     break;
   }
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK:
     ShipRooms_SetUpHold();

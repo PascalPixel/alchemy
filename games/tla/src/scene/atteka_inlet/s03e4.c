@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "text/msg_ids.h"
 #include "call.h"
 
@@ -68,7 +68,7 @@ void Func_020003e4(void) {
     Call2(Func_020010a8, 23, 0);
     Call2(Actor_SetModeById, 23, 4);
     Call2(Func_020010a8, 23, 0);
-    Value3(Func_020010c8, gSequenceParentWork.currentOwner, 257, 40);
+    Value3(Func_020010c8, gMainRoutineWork.currentOwner, 257, 40);
     Value3(Func_020010c8, 23, 265, 20);
     Call2(Func_020010a8, 23, 0);
     Value3(Func_020010c8, 23, 264, 20);

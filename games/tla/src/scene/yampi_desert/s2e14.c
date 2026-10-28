@@ -6,7 +6,7 @@ void Func_02002e14(void) {
   s32 z;
 
   if (GameFlag_Test(0x88d)) {
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     x = object->x >> 20;
     z = object->z >> 20;
     if (x == 8) {

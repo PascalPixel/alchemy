@@ -46,7 +46,7 @@ Func_02000198:
 	pop {pc}
 	.2byte 0x0000
 .L_020081ec:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020081f0:
 	.4byte 0x000000ed
 	.section .text.x0200822a,"ax",%progbits
@@ -288,7 +288,7 @@ Func_020003cc:
 .L_020084d4:
 	.4byte 0x00000001
 .L_020084d8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020084dc:
 	.4byte 0x0003ffff
 .L_020084e0:
@@ -392,7 +392,7 @@ Func_020003cc:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_020085b4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x020085e4,"ax",%progbits
 	.global Func_020005e4
 	.thumb_func
@@ -449,7 +449,7 @@ Func_020005e4:
 	bl Actor_SetAnimationSpeed
 	b .L_0200878e
 .L_0200864c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008650:
 	adds r0, r6, #0
 	movs r1, #16
@@ -586,7 +586,7 @@ Func_020005e4:
 .L_02008760:
 	.4byte 0xffe00000
 .L_02008764:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008768:
 	.4byte IwramMulQ16
 .L_0200876c:
@@ -1437,7 +1437,7 @@ Func_020011a0:
 .L_020093d4:
 	.4byte IwramClearWords
 .L_020093d8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020093dc:
 	.4byte 0x11111111
 .L_020093e0:
@@ -1528,7 +1528,7 @@ Func_020014dc:
 .L_02009588:
 	.4byte 0x00008000
 .L_0200958c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009590:
 	movs r3, #1
 	mov r1, r8
@@ -1594,7 +1594,7 @@ Func_020014dc:
 .L_02009614:
 	.4byte 0xffff6667
 .L_02009618:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x02009672,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009674,"ax",%progbits
@@ -1772,7 +1772,7 @@ Func_02001674:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_020097f8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020097fc:
 	.4byte Effect_AdvanceMotion
 .L_02009800:
@@ -1868,7 +1868,7 @@ Func_0200180c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020098b4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020098b8:
 	.4byte gData_02002308
 	.section .bss,"aw",%nobits

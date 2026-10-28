@@ -4,7 +4,7 @@
 // reads the offset x once for both paths, and builds the shake's -1s apart.
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 
@@ -37,7 +37,7 @@ void Func_02000be0(void) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
     s32 slot = 79;
     struct Actor *leader = Actor_GetById(Func_02004e10());
-    u8 *unit = Unit_Get(gSequenceParentWork.currentOwner);
+    u8 *unit = Unit_Get(gMainRoutineWork.currentOwner);
     s32 amount = (((unit[15] * Random16Far()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;

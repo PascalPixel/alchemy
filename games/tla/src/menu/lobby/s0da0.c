@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "text/msg_ids.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -28,10 +28,10 @@ s32 Func_02000da0(s32 actor) {
 
   Func_02001a14();
   Func_02001ab4(0);
-  Actor_SetAngleToward(actor, gSequenceParentWork.currentOwner, 0);
+  Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
-    count = &gSequenceParentWork.linkTallies[4];
+    count = &gMainRoutineWork.linkTallies[4];
     if (*count != 0) {
       MessageArgument_ClearAll();
       Func_020019e4(*count, 5);
@@ -43,7 +43,7 @@ s32 Func_02000da0(s32 actor) {
     }
   } else {
     base = (s32)MsgItLooksLikeThisIsYour;
-    count = &gSequenceParentWork.linkTallies[7];
+    count = &gMainRoutineWork.linkTallies[7];
     if (*count != 0) {
       MessageArgument_ClearAll();
       Func_020019e4(*count, 5);

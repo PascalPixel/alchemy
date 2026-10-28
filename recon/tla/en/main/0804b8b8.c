@@ -2,7 +2,7 @@
 // battle work is read): lets the player pick which
 // reserve member takes party slot `slot` in battle, previewing each choice
 // in place (left and right cycle, A confirms through Func_08118140 and
-// swaps the two in gSequenceParentWork.activeOwners, B restores the slot). The
+// swaps the two in gMainRoutineWork.activeOwners, B restores the slot). The
 // loop enters at its test, as the native does (a while loop's test gets
 // copied ahead of the body: differ 84 more); the keys are read through a
 // volatile view of gInput, as the native reloads them (plain: differ 82).
@@ -16,7 +16,7 @@
 // after the target object's read reach 14 (instruction order in the redraw).
 #include "types.h"
 #include "battle_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -69,10 +69,10 @@ s32 Func_0804b8b8(s32 slot) {
       reserve[65] = current;
       reserve[66] = slot;
       for (i = 0; i < 8; i++) {
-        if (gSequenceParentWork.activeOwners[i] == current)
-          gSequenceParentWork.activeOwners[i] = newId;
-        else if (gSequenceParentWork.activeOwners[i] == newId)
-          gSequenceParentWork.activeOwners[i] = current;
+        if (gMainRoutineWork.activeOwners[i] == current)
+          gMainRoutineWork.activeOwners[i] = newId;
+        else if (gMainRoutineWork.activeOwners[i] == newId)
+          gMainRoutineWork.activeOwners[i] = current;
       }
       goto done;
     }

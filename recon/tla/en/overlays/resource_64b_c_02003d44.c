@@ -11,7 +11,7 @@
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 #include "lib/call.h"
@@ -51,7 +51,7 @@ void Func_02003d44(s32 mode) {
   wait(1);
   GameFlag_ClearBit(0x109);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
-  Actor_GetById(gSequenceParentWork.currentOwner)->animationKind = 0;
+  Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

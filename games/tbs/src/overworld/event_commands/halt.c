@@ -171,11 +171,11 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
 }
 
 /// Pauses actor id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gSequenceParentWork. Called by FieldPsynergy_Run
+/// first animation's param in gMainRoutineWork. Called by FieldPsynergy_Run
 /// and FieldPsynergy_Dispatch for Halt, which then record the id in
-/// gSequenceParentWork.haltedActor, and by the Colosso scenes to stop their
-/// operators. Sets gSequenceParentWork.pausedUpdate and pausedPose, the actor's
-/// update and paused fields, and stops its animation. gSequenceParentWork keeps
+/// gMainRoutineWork.haltedActor, and by the Colosso scenes to stop their
+/// operators. Sets gMainRoutineWork.pausedUpdate and pausedPose, the actor's
+/// update and paused fields, and stops its animation. gMainRoutineWork keeps
 /// one actor's state, so Halt resumes the one it stopped before it stops
 /// another; the paused actor flickers through random sprite params meanwhile.
 void FieldPsynergy_HaltActor(s32 actorId) {
@@ -184,12 +184,12 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    gSequenceParentWork.pausedUpdate = (u32)actor->update;
-    gSequenceParentWork.pausedPose = 0;
+    gMainRoutineWork.pausedUpdate = (u32)actor->update;
+    gMainRoutineWork.pausedPose = 0;
     if (actor->spriteStorageKind == 1) {
       entry = actor->sprite->entries[0];
       if (entry != NULL) {
-        gSequenceParentWork.pausedPose = entry->colorMode;
+        gMainRoutineWork.pausedPose = entry->colorMode;
       }
     }
     actor->update = FieldPsynergy_UpdateHaltedActor;
@@ -199,16 +199,16 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 }
 
 /// Resumes actor id with the update and param kept by
-/// FieldPsynergy_HaltActor. Called for gSequenceParentWork.haltedActor by
+/// FieldPsynergy_HaltActor. Called for gMainRoutineWork.haltedActor by
 /// FieldPsynergy_Run and FieldPsynergy_Dispatch before Halt stops
 /// another actor, and by Scene_TalkToActor after talking to the paused
-/// actor. Clears gSequenceParentWork.pausedUpdate and the actor's paused field,
+/// actor. Clears gMainRoutineWork.pausedUpdate and the actor's paused field,
 /// and restarts its animation at speed 16.
 void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   if (actor != 0) {
     if (actor->update == FieldPsynergy_UpdateHaltedActor) {
-      struct SequenceParentWork *state = &gSequenceParentWork;
+      struct MainRoutineWork *state = &gMainRoutineWork;
       actor->update = (void (*)(struct Actor *))state->pausedUpdate;
       state->pausedUpdate = 0;
       Actor_SetSpriteColorModeFar(actor, state->pausedPose);

@@ -1,14 +1,14 @@
 #include "local.h"
 
 void Func_02000e18(s32 value) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 speed;
   s32 i;
   u8 *flags;
 
   Func_02003d7c();
   Func_02003eac(0);
-  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   flags = &object->motionFlags;
   speed = 0;
   *flags = 0;

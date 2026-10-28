@@ -2,9 +2,9 @@
 #include "edition.h"
 
 const u8 *Func_0200004c(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov659Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
     return gData_02002828;
-  if (gSequenceParentWork.entrance == 20)
+  if (gMainRoutineWork.entrance == 20)
     return gData_02002750;
   if (FlagCheck(0x8ff))
     return gData_02002480;
@@ -31,7 +31,7 @@ void Func_020000a4(void) {
 }
 
 void Func_020000fc(void) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
    * load. */

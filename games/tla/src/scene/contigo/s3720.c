@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -74,7 +74,7 @@ void Func_02003720(void) {
     Actor_SetSingleChildFlags(Actor_GetById(17), 0);
   }
   if (GameFlag_Test(0x109) == 0) {
-    switch (gSequenceParentWork.entrance) {
+    switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
     case 3:
@@ -88,7 +88,7 @@ void Func_02003720(void) {
   }
   if (GameFlag_Test(0x200) != 0) {
     Func_020041a4_(0, 0x2000000, 0x3700000, 0x4000000);
-    Camera_FollowActor(gSequenceParentWork.currentOwner, 0);
+    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Func_02003ffc();
     wait(1);
   }

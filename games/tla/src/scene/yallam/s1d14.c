@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -37,7 +37,7 @@ void Func_02001d14(void) {
   Call3(Actor_ArmCallback, 10, 0x8000, 0);
   Call3(Actor_ArmCallback, 9, 0xb000, 0);
   Call3(Actor_ArmCallback, 11, 0xb000, 0);
-  Call2(Func_02002548, gSequenceParentWork.currentOwner, 0);
+  Call2(Func_02002548, gMainRoutineWork.currentOwner, 0);
   Call1(Func_02002520, (s32)&MsgIfYouWant);
   v5 = v7;
   Call2(Func_02002538, 8, 0);
@@ -82,7 +82,7 @@ L_02009de8:
   Call3(Actor_Jump, 10, 4, 0);
   Call3(Actor_Jump, 9, 4, 0);
   Call3(Actor_Jump, 11, 4, 40);
-  v5 = (s32)&gSequenceParentWork;
+  v5 = (s32)&gMainRoutineWork;
   v5 = (v5 + 0x214);
   Call3(Actor_ArmCallback, FIELD_AT(v5, s32, 0), 0x4000, 0);
   Call3(Actor_ArmCallback, 8, 0xd000, 0);

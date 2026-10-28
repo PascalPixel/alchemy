@@ -22,7 +22,7 @@
 #include "frame.h"
 #include "map.h"
 #include "event_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "iwram_call.h"
 
@@ -296,7 +296,7 @@ update_object:
   }
 
   flightWork = Ram_HeapSlots->eventWork;
-  if (gInput.held & (gSequenceParentWork.keys230 | gSequenceParentWork.unk232)) {
+  if (gInput.held & (gMainRoutineWork.keys230 | gMainRoutineWork.unk232)) {
     flightWork->climbing = 1;
     object->y += 0x2000;
   } else {

@@ -18,11 +18,11 @@ void Func_02000958(s32 value) {
   FieldEvent_Wait(8);
   Func_02003cf4(108, 98, 19, 29, width, height);
   FieldEvent_Wait(15);
-  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 0;
-  Actor_GetById(gSequenceParentWork.currentOwner)->speedLimit =
-      Actor_GetById(gSequenceParentWork.currentOwner)->acceleration = 0x8000;
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
+  Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit =
+      Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
   Func_02003ef4(123);
-  Actor_ResetAndSetPositionInMode2(gSequenceParentWork.currentOwner, 312, 496);
+  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 312, 496);
   FieldEvent_Wait(5);
   Func_02003e5c(value);
 }

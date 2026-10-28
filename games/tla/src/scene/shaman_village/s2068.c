@@ -22,14 +22,14 @@ void Func_02002068(void) {
   Func_02004a24(0);
   Import_SoundPlay(78);
   angle = 0xc000;
-  Actor_GetById(gSequenceParentWork.currentOwner)->facing = angle;
+  Actor_GetById(gMainRoutineWork.currentOwner)->facing = angle;
   wait(1);
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
   Func_020049fc()->motionFlags = 0;
   ShamanVillage_CamMove(0x780000, 0x280000, 0xf60000, 1);
-  ShamanVillage_ObjSpeed(gSequenceParentWork.currentOwner, 0x13333, 0x9999);
-  ShamanVillage_ObjWalk(gSequenceParentWork.currentOwner, 120, 264);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 28);
+  ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x13333, 0x9999);
+  ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 120, 264);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   rod = Func_02001fec();
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
@@ -42,12 +42,12 @@ void Func_02002068(void) {
   FieldEvent_Wait(20);
   if (rod != NULL)
     Func_0200481c(rod);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
-  ShamanVillage_ObjTurn(gSequenceParentWork.currentOwner, angle);
-  Func_02004944(18, gSequenceParentWork.currentOwner);
-  Func_02004944(7, gSequenceParentWork.currentOwner);
-  Func_02004944(5, gSequenceParentWork.currentOwner);
-  Func_02004944(6, gSequenceParentWork.currentOwner);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  ShamanVillage_ObjTurn(gMainRoutineWork.currentOwner, angle);
+  Func_02004944(18, gMainRoutineWork.currentOwner);
+  Func_02004944(7, gMainRoutineWork.currentOwner);
+  Func_02004944(5, gMainRoutineWork.currentOwner);
+  Func_02004944(6, gMainRoutineWork.currentOwner);
   wait(1);
   ShamanVillage_ObjSpeed(18, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(7, 0x19999, 0xcccc);
@@ -108,7 +108,7 @@ void Func_02002068(void) {
   ShamanVillage_MessagePut(15, 0);
   ShamanVillage_ObjArm(6, 0, 0);
   ShamanVillage_ObjArm(5, 0x8000, 0);
-  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0, 0);
+  ShamanVillage_ObjArm(gMainRoutineWork.currentOwner, 0, 0);
   ShamanVillage_ObjArm(7, 0x8000, 0);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
@@ -122,7 +122,7 @@ void Func_02002068(void) {
   ShamanVillage_MessagePut(15, 0);
   ShamanVillage_ObjArm(6, 0xc000, 0);
   ShamanVillage_ObjArm(5, 0xc000, 0);
-  ShamanVillage_ObjArm(gSequenceParentWork.currentOwner, 0xc000, 0);
+  ShamanVillage_ObjArm(gMainRoutineWork.currentOwner, 0xc000, 0);
   ShamanVillage_ObjArm(7, 0xc000, 0);
   ShamanVillage_ObjTurn(15, 0x4000);
   Motion_SetModeAndWaitAnimation(15, 4);
@@ -189,7 +189,7 @@ void Func_02002068(void) {
   }
   object = Actor_GetById(16);
   object->unk63 = 0;
-  Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 15);
+  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
   Actor_WatchAndSetScript(5, 15);
   Actor_WatchAndSetScript(6, 15);
   Actor_WatchAndSetScript(7, 15);
@@ -205,7 +205,7 @@ void Func_02002068(void) {
   do {
     wait(1);
   } while (object->unk63 == 0);
-  Actor_Stop(gSequenceParentWork.currentOwner);
+  Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(18);
   Actor_Stop(7);
   Actor_Stop(5);
@@ -227,8 +227,8 @@ void Func_02002068(void) {
   ShamanVillage_MessagePut(18, 0);
   ShamanVillage_ObjArm(7, 0, 0);
   ShamanVillage_ObjArm(5, 0, 0);
-  ShamanVillage_ObjTurn(gSequenceParentWork.currentOwner, 0);
-  Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
+  ShamanVillage_ObjTurn(gMainRoutineWork.currentOwner, 0);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   ShamanVillage_ObjSpeed(6, 0x10000, 0x8000);
   ShamanVillage_ObjSpeed(5, 0x10000, 0x8000);
   ShamanVillage_ObjSpeed(7, 0x10000, 0x8000);

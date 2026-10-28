@@ -55,7 +55,7 @@ extern void (*gVBlankCallback)(void);
 extern volatile u8 gSleepDisabled;
 /// Sleep after three idle minutes.
 /* FAKEMATCH(volatile): as plain u8, 45 of 203 instructions differ in tbs-en
- * (SequenceParentWork_InitializeDefaults). */
+ * (MainRoutineWork_InitializeDefaults). */
 extern volatile u8 gIdleSleepEnabled;
 /// 1: sleep this frame; more: count down to it.
 /* FAKEMATCH(volatile): as plain u8, 26 of 403 instructions differ in tbs-en

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern s32 gData_02005af0;
 struct Actor *Actor_GetById(s32 id);
@@ -100,10 +100,10 @@ void Func_02000cf0(struct Actor *object) {
   Camera_SetSpeed(0x10000, 0x2000);
   Func_02005714(39, 164 << 17, 148 << 17);
   FieldEvent_Wait(30);
-  Actor_Turn(gSequenceParentWork.currentOwner, 0x2000, 0);
+  Actor_Turn(gMainRoutineWork.currentOwner, 0x2000, 0);
   FieldEvent_Wait(15);
-  Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 39);
-  Func_0200578c(gSequenceParentWork.currentOwner, 257, 30);
+  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 39);
+  Func_0200578c(gMainRoutineWork.currentOwner, 257, 30);
   Camera_FollowActor(39, 1);
   FieldEvent_Wait(30);
   Actor_GetById(39)->priorityFlags |= 0x20;
@@ -113,7 +113,7 @@ void Func_02000cf0(struct Actor *object) {
   Actor_Walk(39, 280, 216);
   Actor_Walk(39, 280, 184);
   FieldEvent_Wait(20);
-  Actor_SetAngleToward(39, gSequenceParentWork.currentOwner, 0);
+  Actor_SetAngleToward(39, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(10);
   Func_02005854(262);
   {

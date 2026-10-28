@@ -1,7 +1,7 @@
 #include "types.h"
 #include "edition.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 // Japanese keeps its own form of this function, still in its listing: it
@@ -26,11 +26,11 @@ s32 Func_020003bc(struct Actor *actor) {
   struct Actor *target;
 
   {
-    /* FAKEMATCH(pin): gSequenceParentWork's address pinned to r3 loads from the
+    /* FAKEMATCH(pin): gMainRoutineWork's address pinned to r3 loads from the
      * pool before the leader's offset, as native; as
-     * Actor_GetById(gSequenceParentWork.currentOwner), 2 of 85 instructions differ in
+     * Actor_GetById(gMainRoutineWork.currentOwner), 2 of 85 instructions differ in
      * tla-en. */
-    register struct SequenceParentWork *party asm("r3") = &gSequenceParentWork;
+    register struct MainRoutineWork *party asm("r3") = &gMainRoutineWork;
 
     /* FAKEMATCH(barrier): the barrier of the pin above: it holds r2 until the
      * address is loaded. */
@@ -49,7 +49,7 @@ s32 Func_020003bc(struct Actor *actor) {
   else
     target = Actor_GetById(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
-    target = Actor_GetById(gSequenceParentWork.currentOwner);
+    target = Actor_GetById(gMainRoutineWork.currentOwner);
     if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->action & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);

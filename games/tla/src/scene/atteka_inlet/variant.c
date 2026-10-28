@@ -7,14 +7,14 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_event.h"
 #include "field_sprite.h"
 
 struct FieldActor *Actor_GetById(s32 id);
 
 void Func_02000bb8(void) {
-  s32 variant = Actor_GetById(gSequenceParentWork.currentOwner)->sprite->priority;
+  s32 variant = Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority;
 
   Actor_SetSpritePriority(16, variant);
   Actor_SetSpritePriority(8, variant);
@@ -23,5 +23,5 @@ void Func_02000bb8(void) {
 
 void Func_02000bf0(void) {
   Actor_SetSpritePriority(
-      13, Actor_GetById(gSequenceParentWork.currentOwner)->sprite->priority);
+      13, Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority);
 }

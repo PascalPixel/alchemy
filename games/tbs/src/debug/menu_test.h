@@ -4,7 +4,7 @@
 #include "types.h"
 #include "keystate.h"
 #include "unit.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "fx_work.h"
 #include "actor.h"
 #include "text/msg_ids.h"

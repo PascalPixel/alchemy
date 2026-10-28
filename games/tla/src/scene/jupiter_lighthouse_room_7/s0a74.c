@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -74,6 +74,6 @@ void Func_02000a74(void) {
   }
   object->motionFlags = 0;
   FieldEvent_Wait(30);
-  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02002bd4();
 }

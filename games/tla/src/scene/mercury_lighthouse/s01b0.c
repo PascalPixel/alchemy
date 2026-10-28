@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "call.h"
@@ -38,7 +38,7 @@ void Func_020001b0(void) {
 
   Func_02000568();
   Func_020005f8(0);
-  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   wait(1);
   gData_020007e4 = 0;
   Task_Add(Func_020000f4, TASK_PASS_VBLANK);

@@ -45,13 +45,13 @@ void Func_02004d98(void);
 
 void Func_02001138(void) {
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
   s32 x;
   s32 z;
   u8 *cell;
 
-  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
    * built (one reordered row). */
   do {
   } while (0);
@@ -67,19 +67,19 @@ void Func_02001138(void) {
 }
 
 const u8 *Func_0200119c(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom1)
     return gData_02006118;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom2)
     return gData_0200613c;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom3)
     return gData_02006250;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom4)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom4)
     return gData_020063b8;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom5)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom5)
     return gData_020064fc;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom6)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom6)
     return gData_02006628;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6aaRoom7)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6aaRoom7)
     return gData_02006778;
   return gData_0200610c;
 }

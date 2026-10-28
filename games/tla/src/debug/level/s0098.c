@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern const u8 MsgFixingThisWill[];
 extern const u8 MsgFortuneTeller2[];
@@ -14,11 +14,11 @@ void Func_0200071c(s32 index, s32 flags);
 void Func_02000098(s32 index) {
   Func_020006e4();
   Func_0200072c(0);
-  if (gSequenceParentWork.entrance == 99)
+  if (gMainRoutineWork.entrance == 99)
     Func_02000714(index + (s32)MsgFixingThisWill);
-  else if (gSequenceParentWork.entrance == 98)
+  else if (gMainRoutineWork.entrance == 98)
     Func_02000714(index + (s32)MsgFortuneTeller2);
-  else if (gSequenceParentWork.entrance == 97)
+  else if (gMainRoutineWork.entrance == 97)
     Func_02000714(index + (s32)MsgConfirmGraphic2);
   else
     Func_02000714(index + (s32)MsgPiers2);

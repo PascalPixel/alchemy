@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct SceneEventEntry {
   s32 flags;
@@ -34,7 +34,7 @@ struct SceneEventEntry *Func_080ccd78(s32 kind, s32 target);
 void Event_RunMessage(s32 actor, s32 message);
 
 /// The field's push and button handler for keys, idle while
-/// gSequenceParentWork.pendingThird is set. After the leader has pushed for more than
+/// gMainRoutineWork.pendingThird is set. After the leader has pushed for more than
 /// 12 frames: key 0x20 on a 0x80 push makes the leader jump
 /// (Actor_JumpDownLedge(owner, 6, 0)); key 0x80 runs
 /// Func_080d4d08; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the push kind
@@ -44,12 +44,12 @@ void Event_RunMessage(s32 actor, s32 message);
 /// target). Always returns 0.
 s32 Func_080cd680(s32 keys) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
-  s32 owner = gSequenceParentWork.currentOwner;
+  s32 owner = gMainRoutineWork.currentOwner;
   struct SceneEventEntry *event;
   s32 target;
   s32 result;
 
-  if (gSequenceParentWork.pendingThird != 0)
+  if (gMainRoutineWork.pendingThird != 0)
     return 0;
   if ((keys & 0x20) && work->blockedSteps > 12 && (work->pushKind & 0x80)) {
     Actor_JumpDownLedge(owner, 6, 0);
@@ -75,7 +75,7 @@ s32 Func_080cd680(s32 keys) {
     }
   }
   if ((keys & 2) && work->blockedSteps > 12 && Func_080cdc74()) {
-    target = Field_FindNearbyTalkTarget(gSequenceParentWork.currentOwner);
+    target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
     if (target != -1) {
       event = Func_080ccd78(8, target);
       if (event != NULL && (result = event->result) != 0) {

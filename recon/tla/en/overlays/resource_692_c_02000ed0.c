@@ -9,7 +9,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "frame.h"
 #include "field_effect.h"
 
@@ -119,7 +119,7 @@ end:
     Func_02004d48();
     return;
   }
-  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   wait(10);
   Func_02004d48();
@@ -137,7 +137,7 @@ hit:
   GameFlag_SetBit(752);
   Func_02000ce4((u16)id);
   GameFlag_ClearBit(752);
-  Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   wait(10);
   Func_02004d48();

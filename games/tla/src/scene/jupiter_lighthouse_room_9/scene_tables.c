@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -32,9 +32,9 @@ s32 Func_02001c90();
 struct Actor *Func_02000910();
 
 void Func_02000054(void) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
-  party = &gSequenceParentWork;
+  party = &gMainRoutineWork;
   /* FAKEMATCH: ⚓️ loads the party's address before it builds the field offset.
    */
   __asm__ volatile("" : "+l"(party));
@@ -67,7 +67,7 @@ void Func_020000e8(s32 id) {
   struct Actor *object;
   struct Actor *motion;
 
-  if (gData_02002618 == 0 && Actor_GetById(gSequenceParentWork.currentOwner)->y > 0) {
+  if (gData_02002618 == 0 && Actor_GetById(gMainRoutineWork.currentOwner)->y > 0) {
     object = Actor_GetById(8);
     if (id == 50) {
       Value3(Func_02001c10, 8, 0x1e80000, 0x1180000);
@@ -94,7 +94,7 @@ void Func_020000e8(s32 id) {
 }
 
 void Func_0200018c(s32 arg) {
-  if (Actor_GetById(gSequenceParentWork.currentOwner)->y == 0 &&
+  if (Actor_GetById(gMainRoutineWork.currentOwner)->y == 0 &&
       Func_02001978(arg) != 0)
     Func_02001c50(13);
 }
@@ -104,14 +104,14 @@ void Func_020001bc(s32 arg) {
   s32 x;
   s32 z;
 
-  if (Actor_GetById(gSequenceParentWork.currentOwner)->y == 0) {
-    leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  if (Actor_GetById(gMainRoutineWork.currentOwner)->y == 0) {
+    leader = Actor_GetById(gMainRoutineWork.currentOwner);
     x = leader->x >> 20;
     z = leader->z >> 20;
     if (x == 18 && z == 34)
-      Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 3);
+      Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
     if (x == 8 && z == 39)
-      Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 3);
+      Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
     if (Func_02001978(arg) != 0)
       Func_02001c50(14);
   }
@@ -122,7 +122,7 @@ void Func_02000228(s32 arg) {
   s32 x;
   s32 z;
 
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader->y <= 0) {
     Func_0200018c(arg);
   } else {

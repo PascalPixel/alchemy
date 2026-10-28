@@ -401,7 +401,7 @@ Func_080ec4d4:
 .L_080ec7d0:
 	.4byte gData_0202a642
 .L_080ec7d4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080ec7d8:
 	.4byte 0xfffffef3
 .L_080ec7dc:

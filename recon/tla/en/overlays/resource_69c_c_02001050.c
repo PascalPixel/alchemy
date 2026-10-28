@@ -12,7 +12,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 struct PushTarget {
@@ -46,7 +46,7 @@ void Func_02001300(void);
 
 void Func_02001050(struct PushTarget target) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_GetById(target.id);
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
@@ -67,30 +67,30 @@ void Func_02001050(struct PushTarget target) {
   width = (ABS(rect[0]) + ABS(rect[2])) >> 4;
   height = (ABS(rect[1]) + ABS(rect[3])) >> 4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, gSequenceParentWork.currentOwner,
+  Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
         0x8000, 0x1999);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 8);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   wait(15);
-  Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner,
+  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
                                             (target.x - from[0]) >> 17,
                                             (target.z - from[2]) >> 17);
-  Actor_GetById(gSequenceParentWork.currentOwner)->update = Func_02001300;
+  Actor_GetById(gMainRoutineWork.currentOwner)->update = Func_02001300;
   wait(4);
   Func_020022e0(object, 2);
   Func_02002470(239);
   Call3((void (*)())Actor_SetSpeedParameters, target.id, 0x8000, 0x1999);
   Func_02002310(object, target.x, target.y, target.z);
-  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  Call3((void (*)())Actor_SetSpeedParameters, gSequenceParentWork.currentOwner,
+  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
         0x4ccc, 0x1999);
-  Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner,
+  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
                                             (gData_0200249c[step] << 16) >> 31,
                                             (gData_0200249c[step] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
-  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;

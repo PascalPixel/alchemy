@@ -22,14 +22,14 @@ void Func_02001460(void);
 void Func_0200153c(void);
 
 s32 Func_020017f4(void) {
-  s32 scene = gSequenceParentWork.scene;
+  s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 id, x, z;
   s16 *entrance;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
-  gSequenceParentWork.retreatScene = (s32)&SceneId_Ov67bRoom1;
-  gSequenceParentWork.retreatEntrance = 1;
+  gMainRoutineWork.retreatScene = (s32)&SceneId_Ov67bRoom1;
+  gMainRoutineWork.retreatEntrance = 1;
   ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 4;
   Func_02002a58(170);
   if (scene == (s32)&SceneId_Ov67bRoom1) {
@@ -81,7 +81,7 @@ s32 Func_020017f4(void) {
       Actor_GetById(26)->update = Func_02000b58;
     }
     Actor_SetSpritePriority(26, 1);
-    if (gSequenceParentWork.entrance == 5)
+    if (gMainRoutineWork.entrance == 5)
       Func_0200169c();
     if (GameFlag_Test(0x955)) {
       Call3(Func_020029d8, 17, 0x1880000, 0x3380000);
@@ -100,7 +100,7 @@ s32 Func_020017f4(void) {
       Func_02001f60(12);
     }
     Func_02000844();
-    if (gSequenceParentWork.entrance == 4)
+    if (gMainRoutineWork.entrance == 4)
       Func_02002158();
   } else if (scene == (s32)&SceneId_Ov67bRoom2) {
     Actor_SetSingleChildFlags(Actor_GetById(14), 0);
@@ -120,7 +120,7 @@ s32 Func_020017f4(void) {
       Call3(Func_020029d8, 13, 0x3580000, 0x3a80000);
       Call6(Func_02002960, 54, 58, 1, 1, 53, 58);
     }
-    if (gSequenceParentWork.entrance == 5 || gSequenceParentWork.entrance == 7) {
+    if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
       Func_02002550();
       Func_0200276c();
       if (GameFlag_Test(0xa68)) {
@@ -152,9 +152,9 @@ s32 Func_020017f4(void) {
       }
     }
     if (!GameFlag_Test(265)) {
-      if (gSequenceParentWork.entrance == 1)
+      if (gMainRoutineWork.entrance == 1)
         Func_02001460();
-      if (*(entrance = &gSequenceParentWork.entrance) == 6)
+      if (*(entrance = &gMainRoutineWork.entrance) == 6)
         Func_0200153c();
     }
   }

@@ -62,8 +62,8 @@ enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 /// A scene's entrance: where and facing which way the party arrives,
 /// and the camera's bounds there (-1 for none).
 struct SceneEntrance {
-  s16 entrance; ///< the entrance number the sequence parent's work names; -1
-                ///< ends
+  s16 entrance;     ///< the entrance number the main routine's work names; -1
+                    ///< ends
   s16 requiredFlag; ///< a flag that must be set, or -1 for none
   s16 x;            ///< pixels
   s16 y;            ///< pixels
@@ -100,7 +100,7 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 #define SCENE_EXITS_END 0x1ff
 
 /// Sequence ids above the scene table's rows: the sequences other than the
-/// field sequence, which SequenceParent_Run runs in its place. They have no row
+/// field sequence, which MainRoutine_Run runs in its place. They have no row
 /// in gScenes.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.

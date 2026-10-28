@@ -195,7 +195,7 @@ Encounter_SelectEnemyGroup:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080ca154:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080ca158:
 	.4byte gEncounter_EnemyGroupTable
 .L_080ca15c:

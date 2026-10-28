@@ -30,7 +30,7 @@ s32 Actor_SetSpritePriority();
 s32 Actor_GetById();
 s32 wait();
 extern u8 Data_02004cec[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 extern char SceneId_Ov6abRoom1;
 
 s32 Func_020002f4(void) {
@@ -38,8 +38,8 @@ s32 Func_020002f4(void) {
   s32 t13, t14, t15, t16, t17, t18, t20, t22, t24, t27;
   s32 t28, t31, t34, t35, t40, t42, t45, t46;
 
-  t0 = FIELD_AT((s32)gSequenceParentWork, s16, 480);
-  t1 = FIELD_AT((s32)gSequenceParentWork, s16, 482);
+  t0 = FIELD_AT((s32)gMainRoutineWork, s16, 480);
+  t1 = FIELD_AT((s32)gMainRoutineWork, s16, 482);
   t2 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t2, s32, 428) = 0x204;
   *(s32 *)(s32)Data_02004cec = 0;
@@ -47,7 +47,7 @@ s32 Func_020002f4(void) {
   Func_02001d7c();
   Call4((void (*)())Func_02001df0, 0, 0, 0, 88);
   v_r10 = 0x3000000;
-  v_r8 = (s32)gSequenceParentWork;
+  v_r8 = (s32)gMainRoutineWork;
   v_r7 = t1;
   if (t0 == (s32)&SceneId_Ov6abRoom1)
     goto L_02008350;

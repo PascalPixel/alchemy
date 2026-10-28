@@ -104,4 +104,4 @@ Func_080e9db4:
 .L_080e9e84:
 	.4byte Func_080e9940
 .L_080e9e88:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork

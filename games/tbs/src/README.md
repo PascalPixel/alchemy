@@ -21,7 +21,7 @@ loading, scrolling and drawing the map grid. [Running a scene](overworld/README.
 the `overworld` folder, runs one scene on that code, from its set-up to the
 [exit](../glossary.md#exit) the party leaves by, with random encounters, field
 [Psynergy](../glossary.md#psynergy-and-pp) and the commands events use;
-`SequenceParent_Run`, the loop that runs one sequence after another, is there
+`MainRoutine_Run`, the loop that runs one sequence after another, is there
 too.
 [Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
 placements, [triggers](../glossary.md#trigger) and [events](../glossary.md#event). [Maps](map/README.md)
@@ -129,7 +129,7 @@ packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([System](../system.md#overlays)). The scene table,
 `gScenes` in [field/scenes.s](field/scenes.s), has 201 scenes, and the
 rooms of one dungeon often share one overlay. `Scene_LoadOverlay`
-([overworld/overworld/sequence_parent.c](overworld/overworld/sequence_parent.c))
+([overworld/overworld/main_routine.c](overworld/overworld/main_routine.c))
 unpacks the overlay a scene's row names before `FieldSequence_Run` runs it; a
 battle or a minigame is main-image code and loads none.
 
@@ -230,7 +230,7 @@ a table from its `.tsv`, or a map, under the name the code uses.
 ## Where to start reading
 
 `System_Initialize`, in [runtime/runtime/system.c](runtime/runtime/system.c),
-is the first C to run; it ends by calling `SequenceParent_Run`, which is short
+is the first C to run; it ends by calling `MainRoutine_Run`, which is short
 enough to read whole. [Runtime](runtime/README.md) follows the same path.
 
 To find the code behind something in the game, search for its English name. Each

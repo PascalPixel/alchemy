@@ -542,7 +542,7 @@ Func_080ed2a4:
 .L_080ed6cc:
 	.4byte Data_0202a634
 .L_080ed6d0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080ed6d4:
 	.4byte 0x00000002
 .L_080ed6d8:

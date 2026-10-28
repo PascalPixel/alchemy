@@ -9,7 +9,7 @@
 // and sound calls go through the call layer, each as the native has it.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -77,7 +77,7 @@ void Func_020007a4(s32 unused, s32 id) {
       Call1(Func_02002c5c, 167);
     if (spot == 4 && Value1(GameFlag_Test, 2577))
       Call1(Func_02002c5c, 167);
-    Actor_Stop(gSequenceParentWork.currentOwner);
+    Actor_Stop(gMainRoutineWork.currentOwner);
     Func_02002ba4(id, 0, 0);
     if (Func_02000290() != 2 || !Value1(GameFlag_Test, 2582))
       return;
@@ -94,7 +94,7 @@ void Func_020007a4(s32 unused, s32 id) {
     object->priorityFlags &= ~2;
     Func_02002c3c(object->x, object->z, object->terrainId, 255);
     FieldEvent_Wait(30);
-    Camera_FollowActor(gSequenceParentWork.currentOwner, 1);
+    Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
     Func_02002bd4();
     Func_02002b74();
     return;

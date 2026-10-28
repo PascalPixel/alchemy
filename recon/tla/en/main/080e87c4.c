@@ -5,14 +5,14 @@
 // takes r5 and the second loop's sprite r7, where the ROM has r7 and r5
 // (separate block-scoped pointers 44, the count fixed in r7 93, other
 // declaration orders 36); and reordered pairs where the native loads
-// gSequenceParentWork's address, the second pool word and the mote's y before the
+// gMainRoutineWork's address, the second pool word and the mote's y before the
 // constants beside them, copies the angle after them, and builds the 13 of
 // the priority mask before the store before it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "task.h"
 #include "resource.h"
 #include "effect_sprite.h"
@@ -64,7 +64,7 @@ extern char ResourceId_SparkleFade;
 void Func_080e87c4(void) {
   struct BurstWork *work = Ram_HeapSlots->battleFxWork[0];
   struct BurstEvent *event = Ram_HeapSlots->eventWork;
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   struct BurstMote *mote;
   struct EffectSprite *sprite;
   s32 slot;

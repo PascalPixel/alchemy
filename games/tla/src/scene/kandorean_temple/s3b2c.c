@@ -40,7 +40,7 @@ void Func_02003b2c(void) {
     Func_02005178_(32, 30, 2, 1, 17, 25);
   }
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
-  if (gSequenceParentWork.entrance == 3 || gSequenceParentWork.entrance == 4)
+  if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4)
     GameFlag_ClearBit(0x12f);
 #endif
 }

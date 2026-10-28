@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 void Camera_MoveWithinMapBounds();
@@ -35,11 +35,11 @@ void Func_020027e0(void) {
   actor = (struct Actor *)Value1((s32 (*)())Actor_GetById, 25);
   Func_02003c28();
   Call1(Func_02003d78, 0);
-  Call2(Actor_WatchAndSetScript, gSequenceParentWork.currentOwner, 25);
+  Call2(Actor_WatchAndSetScript, gMainRoutineWork.currentOwner, 25);
   ((struct Actor *)Value0((s32 (*)())Func_02003cf8))->motionFlags = 0;
   Call4(Camera_MoveWithinMapBounds, 0x2680000, -1, 0x1180000, 1);
   Func_02003cf0();
-  Call3(Actor_SetAngleToward, 25, gSequenceParentWork.currentOwner, 0);
+  Call3(Actor_SetAngleToward, 25, gMainRoutineWork.currentOwner, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
   Func_02003cc8(25, 0x100, 40);
   Call2(Actor_SetSpritePriority, 25, 1);
@@ -70,7 +70,7 @@ void Func_020027e0(void) {
   Call2(Actor_SetSpritePriority, 25, 1);
   Call3(Actor_SetPositionAndReset, 25, 0x2c8, 200);
   Call3(Actor_SetPositionAndReset, 25, 0x2c8, 168);
-  Call1(Actor_Stop, gSequenceParentWork.currentOwner);
+  Call1(Actor_Stop, gMainRoutineWork.currentOwner);
   Call2(Func_02003cb0, 25, 0);
   Call3(Actor_SetSpeedParameters, 25, 0x20000, 0x10000);
   Call1(Func_02003df8, 153);

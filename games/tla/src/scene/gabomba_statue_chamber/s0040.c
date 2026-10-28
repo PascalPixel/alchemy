@@ -1,7 +1,7 @@
 #include "gabomba_statue_chamber.h"
 
 u8 *Func_02000040(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov672Room1)
     return gData_0200a08c;

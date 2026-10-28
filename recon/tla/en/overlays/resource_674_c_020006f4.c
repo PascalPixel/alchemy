@@ -9,13 +9,13 @@
 // flag 513. Without the item object 10 says MsgYupANice after the trade or
 // MsgIVeBeenFeeling before it.
 // Left: register choice through the body (the native keeps
-// &gSequenceParentWork.currentOwner in r7, -1 in r5, the messages' bases in r9 and r10
+// &gMainRoutineWork.currentOwner in r7, -1 in r5, the messages' bases in r9 and r10
 // and the bit masks in r5 and r2), and the first answer's refusal sits after
 // its trade.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 extern const u8 MsgAreYouGiving[], MsgOhThatRed[], MsgYupANice[],
@@ -72,7 +72,7 @@ void FieldMessage_Show(const u8 *message, s32 a);
     item = (struct Actor *)Value4(Func_02003df4, 489, trader->x,       \
                                           trader->y + 0x180000, trader->z);    \
     if (item != 0) {                                                           \
-      Actor_SetModeById(gSequenceParentWork.currentOwner, 28);                        \
+      Actor_SetModeById(gMainRoutineWork.currentOwner, 28);                        \
       item->motionFlags = 0;                                                   \
       Func_02003e3c(item, 454);                                                \
       FieldEvent_Wait(20);                                               \
@@ -93,20 +93,20 @@ void Func_020006f4(void) {
       Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
       Func_02003f64(0xcccc, 0x1999);
       Call4(Camera_MoveWithinMapBounds, 0x8c0000, -1, 0xbe0000, 1);
-      Actor_SetAngleToward(10, gSequenceParentWork.currentOwner, 0);
+      Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
       Func_02003f24(MsgAreYouGiving);
       Func_02003f2c(10, 0);
       Func_02003f74();
       Func_02003fc4();
-      if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
-        Actor_GetById(gSequenceParentWork.currentOwner);
-        Actor_WatchAndSetScript(10, gSequenceParentWork.currentOwner);
-        Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0xcccc,
+      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+        Actor_GetById(gMainRoutineWork.currentOwner);
+        Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
+        Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
               0x6666);
-        Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 98,
+        Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 98,
               168);
-        Func_02003f3c(gSequenceParentWork.currentOwner, 0xc000);
-        Actor_Jump(gSequenceParentWork.currentOwner, 4, 10);
+        Func_02003f3c(gMainRoutineWork.currentOwner, 0xc000);
+        Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         item = (struct Actor *)Value4(Func_02003df4, 489, 0x680000,
                                               0x180000, 0xa00000);
         if (item != 0) {
@@ -118,7 +118,7 @@ void Func_020006f4(void) {
         FieldEvent_Wait(10);
         Func_02003fbc();
         Actor_Stop(10);
-        Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 0);
+        Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
         Func_02003f54(10, 264, 20);
         Func_02003f24(MsgAreYouGiving + 1);
         Func_02003f2c(0x800a, 0);
@@ -136,12 +136,12 @@ void Func_020006f4(void) {
       Func_02003f64(0xcccc, 0x1999);
       Call4(Camera_MoveWithinMapBounds, 0x8c0000, -1, 0xbe0000, 1);
       Actor_ArmCallback(10, 0x5000, 0);
-      Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0xcccc,
+      Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
             0x6666);
-      Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 120,
+      Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 120,
             190);
-      Func_02003f3c(gSequenceParentWork.currentOwner, 0);
-      STEP(gSequenceParentWork.currentOwner, 132, 190);
+      Func_02003f3c(gMainRoutineWork.currentOwner, 0);
+      STEP(gMainRoutineWork.currentOwner, 132, 190);
       item = (struct Actor *)Value4(Func_02003df4, 489, 0x8c0000, 0,
                                             0xbe0000);
       if (item != 0) {
@@ -150,22 +150,22 @@ void Func_020006f4(void) {
         item->motionFlags = 0;
         item->unk5c[0] = 1;
       }
-      STEP(gSequenceParentWork.currentOwner, 120, 190);
+      STEP(gMainRoutineWork.currentOwner, 120, 190);
       Actor_ArmCallback(10, 0x3000, 0);
       Actor_Jump(10, 4, 10);
       Func_02003f2c(10, 0);
-      Actor_WatchAndSetScript(10, gSequenceParentWork.currentOwner);
-      STEP(gSequenceParentWork.currentOwner, 132, 190);
+      Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
+      STEP(gMainRoutineWork.currentOwner, 132, 190);
       Actor_SetPositionAndResetMotion(item, 0xc30000, 0, 0x730000);
-      STEP(gSequenceParentWork.currentOwner, 120, 190);
+      STEP(gMainRoutineWork.currentOwner, 120, 190);
       FieldEvent_Wait(20);
-      Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 98,
+      Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 98,
             168);
-      Actor_Jump(gSequenceParentWork.currentOwner, 4, 10);
+      Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
       Actor_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
       FieldEvent_Wait(10);
       Func_02003fc4();
-      Func_02003f3c(gSequenceParentWork.currentOwner, 0x4000);
+      Func_02003f3c(gMainRoutineWork.currentOwner, 0x4000);
       FieldMessage_Show(MsgOhThatRed + 2, 1);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003fbc();
@@ -173,10 +173,10 @@ void Func_020006f4(void) {
       Func_02003f24(MsgOhThatRed + 3);
       Func_02003f2c(10, 0);
       Actor_Stop(10);
-      Func_02003f3c(gSequenceParentWork.currentOwner, 0);
+      Func_02003f3c(gMainRoutineWork.currentOwner, 0);
       Func_02003fc4();
-      if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
-        Actor_GetById(gSequenceParentWork.currentOwner);
+      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+        Actor_GetById(gMainRoutineWork.currentOwner);
         Func_02003fbc();
         Func_02003f54(10, 264, 20);
         Func_02003f24(MsgOhThatRed + 4);
@@ -185,7 +185,7 @@ void Func_020006f4(void) {
       given:
         if (item != 0) {
           Func_02003dfc(item);
-          Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+          Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
         }
         Func_02003fbc();
         GameFlag_SetBit(0xaa3);
@@ -194,11 +194,11 @@ void Func_020006f4(void) {
         Func_02003f54(10, 265, 20);
         Func_02003f24(MsgOhThatRed + 7);
         Func_02003f2c(0x800a, 0);
-        Func_02003f3c(gSequenceParentWork.currentOwner, 0xc000);
-        Actor_Jump(gSequenceParentWork.currentOwner, 4, 10);
+        Func_02003f3c(gMainRoutineWork.currentOwner, 0xc000);
+        Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         if (item != 0)
           Func_02003dfc(item);
-        Func_02003f3c(gSequenceParentWork.currentOwner, 0x4000);
+        Func_02003f3c(gMainRoutineWork.currentOwner, 0x4000);
         GameFlag_SetBit(513);
       }
     }

@@ -9,7 +9,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "input.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "text/msg_ids.h"
 
 extern u8 gData_02001300[];
@@ -144,7 +144,7 @@ void Func_02000224(void) {
   s32 i;
 
   FieldMessage_Show((s32)MsgYouGotTreasure, 1);
-  gSequenceParentWork.coins = 777777;
+  gMainRoutineWork.coins = 777777;
   for (i = 9; i >= 0; i--) {
     Inventory_AddItem(4, 228);
     Inventory_AddItem(4, 229);

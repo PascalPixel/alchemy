@@ -7,7 +7,7 @@
 // if around a do-while.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -47,7 +47,7 @@ void Func_0200032c(s32 unused, s32 id) {
         } while (object->y > object->terrainHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
-      Actor_Stop(gSequenceParentWork.currentOwner);
+      Actor_Stop(gMainRoutineWork.currentOwner);
       Func_02002ab8(id, 0, 0);
       Func_02002b68(134);
       Func_02002a50(66, 39, 1, 1, 70, 10);
@@ -80,7 +80,7 @@ void Func_0200032c(s32 unused, s32 id) {
         } while (object->y > object->terrainHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
-      Actor_Stop(gSequenceParentWork.currentOwner);
+      Actor_Stop(gMainRoutineWork.currentOwner);
       Func_02002ab8(id, 0, 0);
       Func_02002b68(134);
       Func_02002a50(68, 39, 1, 1, 121, 10);

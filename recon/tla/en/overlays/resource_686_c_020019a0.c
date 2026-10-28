@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -37,7 +37,7 @@ s32 Func_020019a0(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r5, v0, r7, r6, r9, r8, r10, r4, r0, r2, r3, r1, r11, v1, v2;
   s32 stack[5];
 
-  r5 = (s32)&gSequenceParentWork;
+  r5 = (s32)&gMainRoutineWork;
   r5 = r5 + 532;
   /* sub (s32)stack, #20 */
   v0 = Actor_GetById(FIELD_AT(r5, s32, 0));

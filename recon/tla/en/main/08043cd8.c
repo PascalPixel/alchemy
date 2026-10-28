@@ -13,11 +13,11 @@
 // order only: the native finishes the name pointer and stores it before it
 // builds the level pointer after the file list window is made, stores the
 // cleared redraw flag before it builds the file's offset, and loads
-// gSequenceParentWork before it builds 0x225 at both glow restores.
+// gMainRoutineWork before it builds 0x225 at both glow restores.
 #include "types.h"
 #include "ram_buffer.h"
 #include "save.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "uiwindow.h"
 #include "input.h"
 #include "dma.h"
@@ -216,7 +216,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        Func_0803f9c0(gSequenceParentWork.unk220[5], gSequenceParentWork.unk220[6]);
+        Func_0803f9c0(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
         Func_080f8080(0);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         Window_Close(djinnWindow, 2);
@@ -277,7 +277,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   Window_Close(fileList, 2);
   PaletteGlow_Stop();
   HeapSlot_Release(220);
-  Func_0803f9c0(gSequenceParentWork.unk220[5], gSequenceParentWork.unk220[6]);
+  Func_0803f9c0(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
   wait(1);
 done:
   return result;

@@ -8,13 +8,13 @@ void TrialRoad_Idle(void);
 s32 Func_020000fc(s32 value);
 
 void Func_02000428(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct TrialRoadState *state = gTrialRoadState;
   s32 found;
 
   Func_02005880();
   Func_020059e8(0);
-  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner,
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner,
                                    ((leader->x >> 20) << 4) + 8,
                                    ((leader->z >> 20) << 4) + 8);
   TrialRoad_Idle();

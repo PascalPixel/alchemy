@@ -95,7 +95,7 @@ void Func_02000900(void) {
 }
 
 void Func_02000944(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 frame;
   s32 delta;
 
@@ -104,7 +104,7 @@ void Func_02000944(void) {
   (void)&object;
   Func_02005608();
   Actor_SetSingleChildFlags(object, 0);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 28);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(16);
   frame = 0;
 step:
@@ -124,7 +124,7 @@ step:
   /* FAKEMATCH: the one-pass block keeps the store ahead of the heap slots'
    * address; plainly sched2 builds the address first (differ 2). */
   do {
-    Actor_GetById(gSequenceParentWork.currentOwner)->animationKind = 0;
+    Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
   } while (0);
   SCENE_WORK->unk1ac = 521;
   Event_FinishScreenTransition();

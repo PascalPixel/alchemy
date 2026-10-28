@@ -84,13 +84,13 @@ void Func_02004534(void) {
     Func_02004934(18, 0, 0);
     Func_02004934(19, 0, 0);
   }
-  if ((gSequenceParentWork.entrance == 30 || gSequenceParentWork.entrance == 31) &&
+  if ((gMainRoutineWork.entrance == 30 || gMainRoutineWork.entrance == 31) &&
       !GameFlag_Test(0x109)) {
     Func_020048ac(1);
     Func_020048c4();
     Func_02004a24(0);
-    Actor_SetModeById(gSequenceParentWork.currentOwner, 41);
-    Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                        0);
     wait(1);
     Event_StartScreenTransition();
@@ -106,7 +106,7 @@ void Func_02004534(void) {
       if (gInput.held == 0)
         goto next_stand;
     }
-    Actor_SetModeById(gSequenceParentWork.currentOwner, 42);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 42);
     FieldEvent_Wait(10);
     i = 0;
     goto test_turn;
@@ -118,14 +118,14 @@ void Func_02004534(void) {
       if (gInput.held == 0)
         goto next_turn;
     }
-    Actor_Jump(gSequenceParentWork.currentOwner, 4, 0);
-    Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
-    Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x19999, 0xcccc);
-    Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, 813, 120);
-    Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+    Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 813, 120);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                        1);
     Func_020048cc();
-    if (gSequenceParentWork.entrance == 30) {
+    if (gMainRoutineWork.entrance == 30) {
       GameFlag_SetBit(0x9fe);
       GameFlag_SetBit(0x94d);
     }

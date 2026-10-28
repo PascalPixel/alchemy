@@ -80,7 +80,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  leader = work->actors[gSequenceParentWork.leaderActorId];
+  leader = work->actors[gMainRoutineWork.leaderActorId];
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
 
@@ -197,7 +197,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// per frame. Sets work->stepTrigger, pushCell, encounter, psynergy and
 /// raisedTrigger
 /// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
-/// fallenOwners and survivorCount, and gSequenceParentWork's hazard and Avoid
+/// fallenOwners and survivorCount, and gMainRoutineWork's hazard and Avoid
 /// counts.
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct UnitHpPoisonView, whose
@@ -205,7 +205,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
    * 2 of 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  s32 leaderId = gSequenceParentWork.leaderActorId;
+  s32 leaderId = gMainRoutineWork.leaderActorId;
   struct Actor *leader = work->actors[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
@@ -234,7 +234,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   // Note each character's HP, to see who falls.
   partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
-    previousHp[i] = Unit_GetFar(gSequenceParentWork.party[i])->hp;
+    previousHp[i] = Unit_GetFar(gMainRoutineWork.party[i])->hp;
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     tile =
@@ -260,8 +260,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     work->pushCell = event;
 
   // Only while walking (not climbing) towards a target.
-  if (gSequenceParentWork.movementMode == LEADER_MOVEMENT_WALK &&
-      leader != NULL && leader->targetX != ACTOR_NO_TARGET) {
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
+      leader->targetX != ACTOR_NO_TARGET) {
     // Encounters: the zone comes from the World Map's encounter region and
     // battle environment, or from the ground the leader stands on.
     // FLAG_LURE_CAP doubles the speed the roll counts.
@@ -305,20 +305,20 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     // frame walked on it adds the leader's speed limit in whole pixels, so
     // the count follows the distance walked there (the Lamakan Desert's
     // limit is 600).
-    if (gSequenceParentWork.hazardMode == HAZARD_COUNT_ON_CELLS &&
+    if (gMainRoutineWork.hazardMode == HAZARD_COUNT_ON_CELLS &&
         event == CELL_BEHAVIOR_DESERT_SAND) {
       if (work->previousCell->behavior == CELL_BEHAVIOR_DESERT_SAND)
-        gSequenceParentWork.hazardSteps += leader->speedLimit / Q16_ONE;
+        gMainRoutineWork.hazardSteps += leader->speedLimit / Q16_ONE;
       else
-        gSequenceParentWork.hazardSteps = gSequenceParentWork.hazardLimit / 2;
+        gMainRoutineWork.hazardSteps = gMainRoutineWork.hazardLimit / 2;
     }
 
     // Avoid wears off with distance, outside towns.
-    if (gSequenceParentWork.avoidDistance != 0 &&
-        gSequenceParentWork.sceneType != SCENE_TYPE_TOWN) {
-      gSequenceParentWork.avoidDistance -= leader->speedLimit;
-      if (gSequenceParentWork.avoidDistance <= 0) {
-        gSequenceParentWork.avoidDistance = 1;
+    if (gMainRoutineWork.avoidDistance != 0 &&
+        gMainRoutineWork.sceneType != SCENE_TYPE_TOWN) {
+      gMainRoutineWork.avoidDistance -= leader->speedLimit;
+      if (gMainRoutineWork.avoidDistance <= 0) {
+        gMainRoutineWork.avoidDistance = 1;
         // Raise Avoid as a Psynergy request that pays no PP; Avoid's end
         // handler says it wore off.
         if (work->psynergy == 0)
@@ -332,19 +332,19 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   // SPRITE_ATTACHED_EFFECT is attached to the leader until removed (0x101, at
   // sprite priority 1); at the limit it is removed (0x100) and the party takes
   // the hazard's damage.
-  if (gSequenceParentWork.hazardMode == HAZARD_COUNT_FRAMES) {
-    gSequenceParentWork.hazardSteps++;
-    if (gSequenceParentWork.hazardSteps == gSequenceParentWork.hazardLimit / 2)
+  if (gMainRoutineWork.hazardMode == HAZARD_COUNT_FRAMES) {
+    gMainRoutineWork.hazardSteps++;
+    if (gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit / 2)
       FieldEffect_SetAttached(leaderId, ATTACHED_EFFECT_IN_FRONT |
                                             ATTACHED_EFFECT_ATTACH);
-    if (gSequenceParentWork.hazardSteps == gSequenceParentWork.hazardLimit)
+    if (gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit)
       FieldEffect_SetAttached(leaderId, ATTACHED_EFFECT_IN_FRONT |
                                             ATTACHED_EFFECT_REMOVE);
   }
-  if (gSequenceParentWork.hazardSteps >= gSequenceParentWork.hazardLimit) {
+  if (gMainRoutineWork.hazardSteps >= gMainRoutineWork.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
-    amount = gSequenceParentWork.hazardDamage;
-    gSequenceParentWork.hazardSteps = 0;
+    amount = gMainRoutineWork.hazardDamage;
+    gMainRoutineWork.hazardSteps = 0;
     Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
@@ -361,15 +361,15 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
-      unitVitals = Unit_GetFar(gSequenceParentWork.party[i]);
+      unitVitals = Unit_GetFar(gMainRoutineWork.party[i]);
 #else
       unitVitals =
-          (struct UnitHpPoisonView *)Unit_GetFar(gSequenceParentWork.party[i]);
+          (struct UnitHpPoisonView *)Unit_GetFar(gMainRoutineWork.party[i]);
 #endif
       if (unitVitals->hp > 0) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
-        work->fallenOwners[work->fallenCount++] = gSequenceParentWork.party[i];
+        work->fallenOwners[work->fallenCount++] = gMainRoutineWork.party[i];
         work->raisedTrigger = -1;
         unitVitals->poison = 0;
       }
@@ -388,7 +388,7 @@ void Party_AddPp(s32 amount, s32 unused) {
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    Unit_AddPpFar(gSequenceParentWork.party[partyIndex], amount);
+    Unit_AddPpFar(gMainRoutineWork.party[partyIndex], amount);
 }
 
 // The fallback drops the damage's sign, so a damaging percentage that
@@ -421,7 +421,7 @@ void Party_AddHp(s32 amount, s32 percent) {
 
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    unit = Unit_GetFar(gSequenceParentWork.party[partyIndex]);
+    unit = Unit_GetFar(gMainRoutineWork.party[partyIndex]);
     if (!percent) {
       hpDelta = amount;
     } else {
@@ -432,7 +432,7 @@ void Party_AddHp(s32 amount, s32 percent) {
           hpDelta = -hpDelta;
       }
     }
-    Unit_AddHpFar(gSequenceParentWork.party[partyIndex], hpDelta);
+    Unit_AddHpFar(gMainRoutineWork.party[partyIndex], hpDelta);
   }
 }
 
@@ -450,7 +450,7 @@ s32 Party_ApplyPoisonDamage(void) {
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    struct Unit *unit = Unit_GetFar(gSequenceParentWork.party[partyIndex]);
+    struct Unit *unit = Unit_GetFar(gMainRoutineWork.party[partyIndex]);
     s32 hpDelta;
 
     switch (unit->poison) {
@@ -472,7 +472,7 @@ s32 Party_ApplyPoisonDamage(void) {
       hpDelta = 0;
       break;
     }
-    Unit_AddHpFar(gSequenceParentWork.party[partyIndex], hpDelta);
+    Unit_AddHpFar(gMainRoutineWork.party[partyIndex], hpDelta);
   }
 
   if (worstPoison != 0) {

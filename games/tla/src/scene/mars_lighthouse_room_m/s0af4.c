@@ -1,7 +1,7 @@
 #include "mars_lighthouse_room_m.h"
 
 const u8 *Func_02000af4(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)
     return gData_020036c8;

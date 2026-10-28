@@ -5,7 +5,7 @@
 // Measured against its copies: overlay 681's Func_02004af0 (differ 163 of 218).
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "iwram_call.h"
 
 extern const u8 gData_020016cc[];
@@ -34,7 +34,7 @@ void Func_02000e7c(void);
 void GameFlag_SetBit(s32 flag);
 
 void Func_02000bc0(s32 id, s32 flag) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 gravity = leader->gravity;
   struct Actor *pillar;
   s32 i;
@@ -75,7 +75,7 @@ dust:
   Func_02000f24(0x24e);
   Func_02000f24(217);
   Func_02000e54(0x20000, 0x20000, 0xe666);
-  Func_02000ebc(gSequenceParentWork.currentOwner, 0x101);
+  Func_02000ebc(gMainRoutineWork.currentOwner, 0x101);
   Func_02000e24(leader, 40);
   FieldEvent_Wait(40);
   Func_02000f24(204);
@@ -93,7 +93,7 @@ fall:
   }
   Func_02000f24(188);
   leader->gravity = gravity;
-  Func_02000ebc(gSequenceParentWork.currentOwner, 0);
+  Func_02000ebc(gMainRoutineWork.currentOwner, 0);
   Func_02000e24(leader, 38);
   Func_02000e54(0x10000, 0x40000, 0x10000);
   wait(10);
@@ -106,7 +106,7 @@ fall:
   Func_02000e24(leader, 1);
   leader->velocityY = 0x40000;
   wait(20);
-  gSequenceParentWork.renderMode = 0;
+  gMainRoutineWork.renderMode = 0;
   Func_02000e7c();
   GameFlag_SetBit(flag);
 }

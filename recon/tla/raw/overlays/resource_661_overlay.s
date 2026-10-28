@@ -145,7 +145,7 @@ Func_020006ac:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020087bc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020087c0:
 	.4byte 0x00000045
 .L_020087c4:
@@ -305,7 +305,7 @@ Func_020007e0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020088f4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020088f8:
 	.4byte 0x00000045
 .L_020088fc:
@@ -546,7 +546,7 @@ Func_020013f8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009514:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x02009690,"ax",%progbits
 	.balign 4
 	.global Func_02001690
@@ -967,7 +967,7 @@ Func_02001690:
 .L_02009a98:
 	.4byte MsgHeyLookUp
 .L_02009a9c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009aa0:
 	.4byte 0x00019999
 .L_02009aa4:
@@ -1245,7 +1245,7 @@ Func_02001cc4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009e40:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009e44:
 	.4byte gFrameCount
 .L_02009e48:
@@ -1326,7 +1326,7 @@ Func_02002d6c:
 	mov r10, r6
 	pop {r5, r6, pc}
 .L_0200ae0c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200ae10:
 	.4byte 0xfff60000
 	.section .text.x0200aebc,"ax",%progbits
@@ -1526,7 +1526,7 @@ Func_02002ebc:
 .L_0200b088:
 	.4byte 0x00019999
 .L_0200b08c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200b090:
 	.4byte 0x0000004c
 	.section .text.x0200b88c,"ax",%progbits

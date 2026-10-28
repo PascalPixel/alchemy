@@ -122,16 +122,16 @@ void Func_0200115c(void) {
   struct Position position;
   const u16 *colour;
   u16 *to;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   struct FieldActor *object = Actor_GetById(13);
 
   if (Flag_IsSet(0x97e))
     return;
   Func_0200345c();
   Func_020035b4(0);
-  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 584, 248);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 584, 248);
   if (Flag_IsSet(0x974)) {
-    Func_02003534_(gSequenceParentWork.currentOwner, 0);
+    Func_02003534_(gMainRoutineWork.currentOwner, 0);
     Func_0200350c((s32)MsgBackForMore);
     Func_0200351c_(11, 0, 5);
     Func_0200362c(36);
@@ -147,7 +147,7 @@ void Func_0200115c(void) {
     Func_0200350c((s32)MsgHoldItRight);
     Func_0200351c_(11, 0, 5);
     Func_0200362c(36);
-    Actor_ArmCallback(gSequenceParentWork.currentOwner, 0, 0);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
     Camera_MoveWithinMapBounds_(664 << 16, -1, 0x1000000, 1);
     Func_02003564();
     FieldEvent_Wait(5);
@@ -303,7 +303,7 @@ void Func_0200115c(void) {
     Actor_SetPositionAndReset_(13, 584, 248);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov685Room4, 99);
-    party = &gSequenceParentWork;
+    party = &gMainRoutineWork;
     /* FAKEMATCH: barrier, see the header. */
     __asm__("");
     party->battleRule24b = 2;

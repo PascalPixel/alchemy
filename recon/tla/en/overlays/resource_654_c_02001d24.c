@@ -32,20 +32,20 @@ void Func_02001d24(void) {
   Func_02003b08(0);
   Func_02003ad0()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(170 << 17, -1, 176 << 16, 1);
-  ShrineOfTheSeaGod_ObjSpeed(gSequenceParentWork.currentOwner, 0xcccc, 0x6666);
+  ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
-  ShrineOfTheSeaGod_ObjWalk(gSequenceParentWork.currentOwner, 344, 184);
-  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0x2000, 0);
+  ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 344, 184);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x2000, 0);
   ShrineOfTheSeaGod_ObjPlace(14, 344 << 16, 184 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 356, 196);
   ShrineOfTheSeaGod_ObjAngle(14, 0xb000);
   Func_02003a70((s32)MsgFieldPraiseRopeWork);
   ShrineOfTheSeaGod_MessagePut(14, 0);
-  ShrineOfTheSeaGod_ObjModeWait(gSequenceParentWork.currentOwner, 3);
+  ShrineOfTheSeaGod_ObjModeWait(gMainRoutineWork.currentOwner, 3);
   ShrineOfTheSeaGod_MessagePut(13, 0);
   ShrineOfTheSeaGod_ObjPlace(13, 184 << 16, 168 << 16);
-  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0x8000, 0);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x8000, 0);
   ShrineOfTheSeaGod_ObjTurn(14, 0x8000, 0);
   ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
   ShrineOfTheSeaGod_CamMove(232 << 16, 64 << 16, 176 << 16, 1);
@@ -100,7 +100,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_MessagePut(0x400c, 0);
   ShrineOfTheSeaGod_Jump(13, 256, 0);
   ShrineOfTheSeaGod_ObjTurn(13, 0x3000, 0);
-  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0x2000, 0);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x2000, 0);
   ShrineOfTheSeaGod_ObjTurn(14, 0x3000, 0);
   ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
   ShrineOfTheSeaGod_CamMove(188 << 17, -1, 264 << 16, 1);
@@ -108,7 +108,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_MessagePut(12, 0);
   ShrineOfTheSeaGod_CamSpeed(0x26666, 0x4ccc);
   ShrineOfTheSeaGod_CamMove(174 << 17, -1, 216 << 16, 1);
-  Actor_WatchAndSetScript(gSequenceParentWork.currentOwner, 12);
+  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 12);
   Actor_WatchAndSetScript(14, 12);
   Actor_WatchAndSetScript(13, 12);
   ShrineOfTheSeaGod_ObjWalk(12, 394, 220);
@@ -160,18 +160,18 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_Wait(10);
   Actor_SetMovementTypeAndWaitById(13, callback);
   ShrineOfTheSeaGod_Wait(40);
-  Actor_Stop(gSequenceParentWork.currentOwner);
+  Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(14);
   wait(1);
   Func_02003a78(14, 0, 40);
   ShrineOfTheSeaGod_ObjPlace(13, 0, 0);
   ShrineOfTheSeaGod_ObjPlace(12, 0, 0);
   ShrineOfTheSeaGod_MessagePut(14, 0);
-  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0, 0);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0, 0);
   ShrineOfTheSeaGod_ObjTurn(14, 0x8000, 20);
   ShrineOfTheSeaGod_MessagePut(14, 0);
   ShrineOfTheSeaGod_ObjMode(14, 2);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != NULL)
     Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
                                      ((s16 *)&leader->z)[1]);

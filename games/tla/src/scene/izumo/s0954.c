@@ -14,7 +14,7 @@ void Func_02000954(void) {
      * flags are loaded before the actor: one reordered pair with the header's
      * void prototype). */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(32, 0);
-    if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
       Func_02000814();
     } else {
       Func_02000d60(message - 1);
@@ -42,7 +42,7 @@ s32 Func_020009d0(void) {
     Actor_SetModeById(29, 6);
     Actor_SetModeById(30, 6);
     Actor_SetModeById(31, 5);
-    if (gSequenceParentWork.entrance == 8 && GameFlag_Test(0x928) &&
+    if (gMainRoutineWork.entrance == 8 && GameFlag_Test(0x928) &&
         !GameFlag_Test(0x929) && !GameFlag_Test(0x92a)) {
       Event_StartScreenTransition();
       Func_020006a4();

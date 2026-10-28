@@ -402,7 +402,7 @@ Func_020009d4:
 .L_02008d88:
 	.4byte Func_020009bc
 .L_02008d8c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x02008ecc,"ax",%progbits
 	.global Func_02000ecc
 	.thumb_func
@@ -691,7 +691,7 @@ Func_02000ecc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_ja_0200911c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_02009120:
 	.4byte 0x0000007e
 .L_ja_02009124:
@@ -988,7 +988,7 @@ Func_02000ecc:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_02009118:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200911c:
 	.4byte 0x0000007e
 .L_02009120:

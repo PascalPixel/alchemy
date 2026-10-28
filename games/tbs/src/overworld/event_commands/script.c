@@ -71,14 +71,14 @@ void Event_Wait(s32 frames) {
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
-  actor = Actor_Lookup(gSequenceParentWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   actor->speedLimit = Q16_ONE;
   actor->acceleration = 0x8000;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  if (gSequenceParentWork.movementMode == LEADER_MOVEMENT_CLIMB) {
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB) {
     Actor_SelectAnimationFar(actor, 0xC);
     return;
   }
@@ -112,7 +112,7 @@ void Event_Start(void) {
   // XXX (no evidence): what flag 0x132 marks; it is cleared at every event,
   // and no code or table in the game sets or tests it.
   GameFlag_ClearFar(0x132);
-  runtime->speaker = gSequenceParentWork.leaderActorId;
+  runtime->speaker = gMainRoutineWork.leaderActorId;
   runtime->messageWindow = 0;
 }
 
@@ -121,7 +121,7 @@ void Event_Start(void) {
 /// event that opens with Event_Start closes with it.
 void Event_End(void) {
   Task_Remove(Event_UpdateDebugSkip);
-  FieldCamera_FollowActor(gSequenceParentWork.leaderActorId, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -140,7 +140,7 @@ void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
   wait(1);
   // XXX (no evidence): why the leader's actor is fetched and dropped; no
   // code calls this function, so no caller reads a result.
-  Actor_Lookup(gSequenceParentWork.leaderActorId);
+  Actor_Lookup(gMainRoutineWork.leaderActorId);
 }
 
 /// Spawns the actors of an actor placement table after the last
@@ -198,14 +198,14 @@ s32 Event_ValidatePackedId(u32 shortcut) {
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
-/// gSequenceParentWork.firstShortcut or secondShortcut. Called whenever the
+/// gMainRoutineWork.firstShortcut or secondShortcut. Called whenever the
 /// party or what it knows may have changed: by Party_RemoveMemberRestored,
 /// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
 void Event_ClearInvalidPackedValues(void) {
-  if (Event_ValidatePackedId(gSequenceParentWork.firstShortcut) != 0)
-    gSequenceParentWork.firstShortcut = 0;
-  if (Event_ValidatePackedId(gSequenceParentWork.secondShortcut) != 0)
-    gSequenceParentWork.secondShortcut = 0;
+  if (Event_ValidatePackedId(gMainRoutineWork.firstShortcut) != 0)
+    gMainRoutineWork.firstShortcut = 0;
+  if (Event_ValidatePackedId(gMainRoutineWork.secondShortcut) != 0)
+    gMainRoutineWork.secondShortcut = 0;
 }
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
@@ -229,12 +229,12 @@ void Party_RemoveMemberRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = Unit_GetFar(gSequenceParentWork.party[partyIndex]);
+    vitals = Unit_GetFar(gMainRoutineWork.party[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_GetFar(gSequenceParentWork.leaderActorId);
+    vitals = Unit_GetFar(gMainRoutineWork.leaderActorId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -244,7 +244,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 /// carries at most 30 of one item. When they are all full, says `Isaac's party
 /// cannot carry any more <item>s...` and `Isaac threw the <item> as far away as
 /// possible.` and returns -1; otherwise returns 0. FieldSequence_Run calls it
-/// before it gives gSequenceParentWork.pendingItem with
+/// before it gives gMainRoutineWork.pendingItem with
 /// PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
@@ -254,7 +254,7 @@ s32 Party_CheckItemLimit(s32 item) {
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
     heldQuantity +=
-        Inventory_CountItemFar(gSequenceParentWork.party[partyIndex], item);
+        Inventory_CountItemFar(gMainRoutineWork.party[partyIndex], item);
 
   if (heldQuantity >= partyCount * 30) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -346,7 +346,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       Sound_PlayFar(MUS_TREASURE_FOUND);
-      if (owner == gSequenceParentWork.leaderActorId) {
+      if (owner == gMainRoutineWork.leaderActorId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -363,7 +363,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     // <member>." when someone other than the leader carries it.
     Sound_PlayFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
-    if (owner != gSequenceParentWork.leaderActorId) {
+    if (owner != gMainRoutineWork.leaderActorId) {
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
       FieldMessage_ShowFar(GIFT_RECEIVED_MESSAGE, GIFT_RECEIVED_MESSAGE_MODE);
@@ -509,13 +509,13 @@ void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
 /// Makes the event leave for the given entrance of the given scene:
 /// raises the exit request EXIT_KEEP_DESTINATION and writes
-/// gSequenceParentWork.sceneId and entrance. Called by the Title, the File
+/// gMainRoutineWork.sceneId and entrance. Called by the Title, the File
 /// Screen, the Battle Arena, the debug battle command and five events (the
 /// Lemurian ship and the World Map among them).
 void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
-  gSequenceParentWork.sceneId = sceneId;
-  gSequenceParentWork.entrance = entrance;
+  gMainRoutineWork.sceneId = sceneId;
+  gMainRoutineWork.entrance = entrance;
 }
 
 /// Makes the event leave and records scene and entrance as the restart
@@ -524,12 +524,12 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
   state->exit = EXIT_KEEP_DESTINATION;
-  gSequenceParentWork.restartScene = sceneId;
-  gSequenceParentWork.restartEntrance = entrance;
+  gMainRoutineWork.restartScene = sceneId;
+  gMainRoutineWork.restartEntrance = entrance;
 }
 
 /// The event command "request exit": sets the field's exit request (999 leaves
-/// for gSequenceParentWork's sceneId and entrance). Events reach it as
+/// for gMainRoutineWork's sceneId and entrance). Events reach it as
 /// Import_EventSetExitRequest (about 61 of them).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;

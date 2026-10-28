@@ -169,8 +169,7 @@ void FieldPsynergy_Force(void) {
   event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                     FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunPsynergyEvent(event, gSequenceParentWork.leaderActorId,
-                           eventTarget);
+    Field_RunPsynergyEvent(event, gMainRoutineWork.leaderActorId, eventTarget);
   wait(10);
   FieldPsynergy_FadeFromCastColor();
   wait(20);

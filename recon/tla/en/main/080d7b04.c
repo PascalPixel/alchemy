@@ -30,7 +30,7 @@ struct Target {
   struct Vec pos;
 };
 
-extern s32 gSequenceParentWork[];
+extern s32 gMainRoutineWork[];
 
 void Vector_AddPolarOffset(s32, s32, struct Vec *);
 struct Target *Actor_GetById(s32);
@@ -41,7 +41,7 @@ void BattleEffect_RunAngledApproachPhases(struct Actor *actor) {
   struct Target *target;
   struct Vec pos;
 
-  target = Actor_GetById(gSequenceParentWork[133]);
+  target = Actor_GetById(gMainRoutineWork[133]);
   if (actor->phase == 0) {
     actor->yaw += 1;
     actor->pitch += 1;

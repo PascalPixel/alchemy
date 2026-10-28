@@ -79,7 +79,7 @@
 /// through his colour modes while pairs of sparks rise and fall about him every
 /// 16 frames (ValePlaza_CyclePsynergyPaletteAndSpawnEffects).
 
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "flags.h"
 #include "character_ids.h"
 #include "version.h"
@@ -471,7 +471,7 @@ const struct ActorPlacement *ValePlaza_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValePlaza_StormActorPlacements;
   }
-  if (gSequenceParentWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
+  if (gMainRoutineWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
     return gValePlaza_DepartureActorPlacements;
   }
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -505,7 +505,7 @@ const struct Trigger *ValePlaza_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValePlaza_TriggersAfterLeaving;
   }
-  if (gSequenceParentWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
+  if (gMainRoutineWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
     return gValePlaza_DepartureTriggers;
   }
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -960,7 +960,7 @@ s32 ValePlaza_Initialize(void) {
   if (GameFlag_Get((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
     Import_ActorSetPosition(ACTOR_THIRD_IVY, 0, 0);
   }
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case VALE_PLAZA_DEBUG_CHILDHOOD:
     GameFlag_Set(FLAG_CHILDHOOD);
     Import_EventSetExitRequest(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST);
@@ -1007,7 +1007,7 @@ s32 ValePlaza_Initialize(void) {
         wait(1);
       }
     }
-    if (gSequenceParentWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
+    if (gMainRoutineWork.entrance == VALE_PLAZA_FROM_SANCTUM) {
       ValePlaza_DepartForQuest();
     } else {
       if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -1040,7 +1040,7 @@ s32 ValePlaza_Initialize(void) {
         Import_ActorSetPosition(ACTOR_STORM_JENNA, 0, 0);
         Import_ActorSetPosition(ACTOR_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
-      if (gSequenceParentWork.entrance == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
+      if (gMainRoutineWork.entrance == VALE_PLAZA_AFTER_TRAVELERS_BATTLE) {
         ValePlaza_TravelersLeaveAfterBattle();
       } else {
         if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&

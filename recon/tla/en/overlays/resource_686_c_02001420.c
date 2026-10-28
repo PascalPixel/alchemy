@@ -2,7 +2,7 @@
 // to do.
 #include "iwram_call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "types.h"
@@ -58,8 +58,8 @@ L_0200945e:
   FIELD_AT(67108864, u16, 0) = (FIELD_AT(67108864, u16, 0)) | (32768);
   Task_Add((s32)Func_020012c4, 0x480);
   r0 = 0x10000;
-  ip = 482 + (s32)(s32)&gSequenceParentWork;
-  if ((u32)(((FIELD_AT(482 + (s32)(s32)&gSequenceParentWork, u16, 0)) - 1) << 16) >
+  ip = 482 + (s32)(s32)&gMainRoutineWork;
+  if ((u32)(((FIELD_AT(482 + (s32)(s32)&gMainRoutineWork, u16, 0)) - 1) << 16) >
       (u32)65536)
     goto L_0200953e;
   goto L_020094e8;

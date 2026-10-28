@@ -17,7 +17,7 @@
 // buy.c's barrier before the 0x1ff mask now orders the mask (10 to 8); a
 // barrier ahead of the work's load puts its build after sub sp as native but
 // swaps r5 and r6 and two spill slots (differ 20).
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "battle_system.h"
 #include "battle_unit.h"
 #include "item.h"
@@ -85,7 +85,7 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
     Func_0810857c((s32)Msg04717);
     return;
   }
-  if (price > gSequenceParentWork.coins) {
+  if (price > gMainRoutineWork.coins) {
     Func_0810857c((s32)Msg04718);
     return;
   }

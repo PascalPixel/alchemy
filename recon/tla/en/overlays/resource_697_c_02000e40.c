@@ -19,7 +19,7 @@ void Func_02000d70(void);
 
 void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *object = Actor_GetById(id);
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 fromX = object->x >> 20;
   s32 fromZ = object->z >> 20;
   s32 toX = fromX;
@@ -55,7 +55,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     return;
   Func_02005880();
   Func_020059e8(0);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 8);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   FieldEvent_Wait(6);
   object->speedLimit = 0x8000;
   object->acceleration = 0x3333;
@@ -66,12 +66,12 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   targetZ = (toZ << 20) + 0x80000;
   Func_020057f8(object, (toX << 20) + 0x80000, 0, targetZ);
   FieldEvent_Wait(6);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x4ccc, 0x3333);
-  Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, dx << 3,
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x3333);
+  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, dx << 3,
                                             dz << 3);
   FieldEvent_Wait(24);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Func_02005800(object);
   if (toX <= 17) {
     Func_020057c8(object, 1);

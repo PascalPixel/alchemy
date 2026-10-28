@@ -18,8 +18,8 @@ void Func_02002f1c(void) {
   s32 angle;
   s32 i;
 
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 64;
-  if (gSequenceParentWork.entrance == 2)
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
+  if (gMainRoutineWork.entrance == 2)
     GameFlag_ClearBit(0x12f);
   i = 11;
   do {
@@ -69,7 +69,7 @@ void Func_02002f1c(void) {
 void Func_020030b4(void) {
   struct Actor *spawned;
 
-  if (gSequenceParentWork.entrance == 3)
+  if (gMainRoutineWork.entrance == 3)
     GameFlag_ClearBit(0x12f);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);
   Actor_SetModeById(10, 4);

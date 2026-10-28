@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct JupiterLighthouseRoom8Puzzle {
   s16 unk00;
@@ -24,7 +24,7 @@ void Func_02002838(void);
 void Func_02002450(void);
 
 void Func_02002698(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
   s32 dx = GameFlag_GetByte(Data_0200354c.flag);
   s32 dz = GameFlag_GetByte(Data_0200354c.flag + 8);

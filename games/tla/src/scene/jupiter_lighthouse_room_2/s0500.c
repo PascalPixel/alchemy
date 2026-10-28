@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 void GameFlag_SetBit(s32 flag);
 struct Actor *Actor_GetById(s32 id);
@@ -29,15 +29,15 @@ static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
 /// three steps, each with cue 167.
 void Func_02000500(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   s32 i;
 
   object->motionFlags = 3;
   Actor_GetById(id)->priorityFlags |= 1;
-  /* FAKEMATCH: the one-pass block loads gSequenceParentWork's address before the
+  /* FAKEMATCH: the one-pass block loads gMainRoutineWork's address before the
    * owner's offset is built (one reordered row without it). */
   do {
-    party = &gSequenceParentWork;
+    party = &gMainRoutineWork;
   } while (0);
   Actor_GetById(party->currentOwner)->priorityFlags |= 1;
   if (object->x >> 20 == 20 && object->z >> 20 == 39)

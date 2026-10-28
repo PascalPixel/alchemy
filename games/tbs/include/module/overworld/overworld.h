@@ -17,15 +17,15 @@ struct ActorPlacement;
 struct Window;
 struct Actor;
 
-/// The exit request whose destination is already in gSequenceParentWork.sceneId
+/// The exit request whose destination is already in gMainRoutineWork.sceneId
 /// and .entrance, so that Scene_TakeExit leaves them as they are. Random
 /// battles, Retreat and the event commands that set a destination
 /// (Event_SetDestination) raise it, and FieldSequence_Run returns it when
 /// the whole party falls; Scene_TakeExit also uses it for "no exit found"
-/// (sequence_parent.c, field_sequence.c).
+/// (main_routine.c, field_sequence.c).
 #define EXIT_KEEP_DESTINATION 999
 
-/// gSequenceParentWork.movementMode: how the field sequence hands the party
+/// gMainRoutineWork.movementMode: how the field sequence hands the party
 /// leader back to the player (FieldSequence_Run).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the World Map or a layered map.
@@ -36,7 +36,7 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
-/// SequenceParent_Run's mode: where the game starts.
+/// MainRoutine_Run's mode: where the game starts.
 enum GameStart {
   GAME_START_TITLE = 0,            ///< the Title, with the work cleared
   GAME_START_DEBUG_VALE = 1,       ///< in debug mode, SceneId_ValePlaza
@@ -105,7 +105,7 @@ enum EncounterZoneId {
 void Scene_TakeExit(s32 exitId);
 void Scene_ReturnFromSequence(s32 result);
 s32 Scene_GetArea(s32 sceneId);
-void SequenceParent_Run(s32 mode);
+void MainRoutine_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);
 void Scene_Arrive(s32 unused, s32 keep);
 void Scene_PlayMusic(void);

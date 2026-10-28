@@ -20,11 +20,11 @@ void Func_02000ce8(void) {
   u32 i;
   s32 frames;
 
-  /* FAKEMATCH(barrier): the layer's address waits for gSequenceParentWork's; without
+  /* FAKEMATCH(barrier): the layer's address waits for gMainRoutineWork's; without
    * it, 2 of 142 instructions differ in tla-en. */
-  asm("" : "+l"(map) : "l"(&gSequenceParentWork));
+  asm("" : "+l"(map) : "l"(&gMainRoutineWork));
   layer = &map->layers[1];
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_020039d8();
   Func_02003b08(0);
@@ -33,7 +33,7 @@ void Func_02000ce8(void) {
   ShrineOfTheSeaGod_CamMove(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   wait(1);
-  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 2);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   leader->motionFlags = 0;
   leader->y = -50 << 16;
   leader->height = -50 << 16;
@@ -67,7 +67,7 @@ loop:
   Call3((void (*)())Func_020039b8, 0, 0, 0);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 521;
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 1;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
   wait(1);
   Func_020039e0();
@@ -85,19 +85,19 @@ void Func_02000e38(void) {
   /* FAKEMATCH(barrier): the map pointer is ready before the layer offset; with
    * only the next barrier, 4 of 95 instructions differ in tla-en. */
   asm("" : "+l"(map));
-  /* FAKEMATCH(barrier): the layer's address waits for gSequenceParentWork's; with only
+  /* FAKEMATCH(barrier): the layer's address waits for gMainRoutineWork's; with only
    * the barrier above, 4 of 95 differ, and with neither 2, in tla-en. */
-  asm("" : "+l"(map) : "l"(&gSequenceParentWork));
+  asm("" : "+l"(map) : "l"(&gMainRoutineWork));
   layer = &map->layers[1];
-  object = Actor_GetById(gSequenceParentWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_020039d8();
   Func_02003b08(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   ShrineOfTheSeaGod_CamMove(344 << 16, -1, 248 << 16, 1);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
-  ShrineOfTheSeaGod_ObjTurn(gSequenceParentWork.currentOwner, 0x4000, 20);
-  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 2);
+  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x4000, 20);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   object->motionFlags = 0;
   Func_02003b48(245);
   Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
@@ -188,7 +188,7 @@ void Func_02001038(void) {
 
 void Func_02001088(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Actor_GetById(gSequenceParentWork.currentOwner);
+      Actor_GetById(gMainRoutineWork.currentOwner);
   u32 id;
 
   for (id = 9; id <= 13;) {
@@ -209,7 +209,7 @@ void Func_02001088(void) {
 
 void Func_020010e8(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Actor_GetById(gSequenceParentWork.currentOwner);
+      Actor_GetById(gMainRoutineWork.currentOwner);
   s32 y;
 
   Func_02003b28();
@@ -217,14 +217,14 @@ void Func_020010e8(void) {
   /* FAKEMATCH: loads the leader height before it builds the threshold. */
   __asm__("");
   if (y < 0x100000)
-    ((u8 *)&gSequenceParentWork)[0x2c3] = 0;
+    ((u8 *)&gMainRoutineWork)[0x2c3] = 0;
   else
-    ((u8 *)&gSequenceParentWork)[0x2c3] = 1;
+    ((u8 *)&gMainRoutineWork)[0x2c3] = 1;
 }
 
 void Func_02001128(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Actor_GetById(gSequenceParentWork.currentOwner);
+      Actor_GetById(gMainRoutineWork.currentOwner);
   s32 y;
   s32 z;
 
@@ -259,9 +259,9 @@ void Func_020011a0(void) {
 }
 
 void Func_020011c0(void) {
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags &= ~0x20;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~0x20;
 }
 
 void Func_020011e0(void) {
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags |= 0x20;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
 }

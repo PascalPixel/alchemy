@@ -21,7 +21,7 @@ void Func_02000584(void) {
   Func_02002590(0);
   BYTE_AT(object, 99) = 1;
   if (*(s16 *)(event + 358) == 0) {
-    Actor_SetAngleToward(9, gSequenceParentWork.currentOwner, 0);
+    Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
     Func_02002520(MsgRunningAroundIn);
   } else {
     Func_02002520(MsgThereSALot);
@@ -42,7 +42,7 @@ void Func_02000614(void) {
   Func_02002590(0);
   BYTE_AT(object, 99) = 1;
   if (*(s16 *)(event + 358) == 0) {
-    Actor_SetAngleToward(10, gSequenceParentWork.currentOwner, 0);
+    Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
     Func_02002520(MsgThereSAGame);
   } else {
     Func_02002520(MsgIOnceHeard);

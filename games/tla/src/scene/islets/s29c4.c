@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 #include "edition.h"
 
@@ -40,16 +40,16 @@ void Func_02000df8(void);
 /// turned; ends with Func_020034d8. The Japanese edition does not set the
 /// event work's transition word 0x1ac.
 void Func_020029c4(void) {
-  struct Actor *leader = OBJECT(gSequenceParentWork.currentOwner);
+  struct Actor *leader = OBJECT(gMainRoutineWork.currentOwner);
   struct Actor *guide = OBJECT(9);
   u8 *done;
 
-  Call2(Func_02003eec, 9, gSequenceParentWork.currentOwner);
+  Call2(Func_02003eec, 9, gMainRoutineWork.currentOwner);
   Call3(Func_02003edc, 10, 0xf00000, 0x21c0000);
   Call1(wait, 1);
   guide->angle = 0x4000;
   leader->update = Func_02001278;
-  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gSequenceParentWork.currentOwner),
+  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gMainRoutineWork.currentOwner),
         15);
   Call2(Actor_SetModeById, 9, 3);
   Call1(wait, 1);
@@ -73,17 +73,17 @@ void Func_020029c4(void) {
   guide->update = 0;
   OBJECT(10)->update = 0;
   Call2(Func_02003f3c, 9, 0xc000);
-  Call2(Func_02003fac, gSequenceParentWork.currentOwner, 9);
+  Call2(Func_02003fac, gMainRoutineWork.currentOwner, 9);
   Call1(Func_02003f24, MsgWellHereWe);
   Call2(Func_02003f2c, 9, 0);
   Call2(Actor_SetModeById, 9, 1);
-  Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0x19999,
+  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999,
         0xcccc);
-  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gSequenceParentWork.currentOwner),
+  Call2(Actor_SetPartAttribute, Value1(Actor_GetById, gMainRoutineWork.currentOwner),
         0);
-  Call3(Actor_Jump, gSequenceParentWork.currentOwner, 6, 0);
-  Call3(Actor_SetPositionAndCommit, gSequenceParentWork.currentOwner, 152, 742);
-  Call2(Func_02003f3c, gSequenceParentWork.currentOwner, 0x4000);
+  Call3(Actor_Jump, gMainRoutineWork.currentOwner, 6, 0);
+  Call3(Actor_SetPositionAndCommit, gMainRoutineWork.currentOwner, 152, 742);
+  Call2(Func_02003f3c, gMainRoutineWork.currentOwner, 0x4000);
   Call2(Func_02003f2c, 9, 0);
   Func_02003fb4();
   Call2(Func_02003f3c, 9, 0x4000);

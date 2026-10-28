@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_effect.h"
 
 void *Actor_GetById(s32 id);
@@ -14,7 +14,7 @@ void Effect_AdvanceMotionAndSpin(union FieldObject *object) {
   s32 velocityZ;
   s32 scaleRateX;
 
-  Actor_GetById(gSequenceParentWork.currentOwner);
+  Actor_GetById(gMainRoutineWork.currentOwner);
   velocityX = effect->velocity.x;
   effect->x += velocityX;
   effect->y += effect->velocity.y;

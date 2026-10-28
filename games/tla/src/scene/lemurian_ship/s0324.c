@@ -45,14 +45,14 @@ next2:
   if (found < 2 && GameFlag_Test(0x93f) && GameFlag_Test(0x9e4) == 0)
     found += 4;
   Func_02002de0(158);
-  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   LemurianShip_MapCopy(0, 0, gData_0200397c[found].x, gData_0200397c[found].z,
                        1, 2);
   Func_02002c28(gData_0200397c[found].value, gData_0200397c[found].x,
                 gData_0200397c[found].z + 60);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
-  Actor_CenterOnColumn(gSequenceParentWork.currentOwner, 2, -4);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
   FieldEvent_Wait(4);
   Func_02002d70(work->exit);
 }

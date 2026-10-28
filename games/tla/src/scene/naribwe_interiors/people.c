@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "text/msg_ids.h"
 
@@ -23,7 +23,7 @@ const u8 *Func_020000a4(void) {
 }
 
 void Func_020000c4(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2
    * without it; a quadrant temporary, inline helpers and step-by-step
@@ -43,7 +43,7 @@ void Func_020000c4(s32 actor) {
 }
 
 void Func_02000124(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2
    * without it, as in Func_020000c4). */
@@ -62,7 +62,7 @@ void Func_02000124(s32 actor) {
 }
 
 void Func_02000184(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2
    * without it, as in Func_020000c4). */
@@ -81,7 +81,7 @@ void Func_02000184(s32 actor) {
 }
 
 void Func_020001e4(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2
    * without it, as in Func_020000c4). */
@@ -100,7 +100,7 @@ void Func_020001e4(s32 actor) {
 }
 
 void Func_02000244(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2
    * without it, as in Func_020000c4). */
@@ -119,7 +119,7 @@ void Func_02000244(s32 actor) {
 }
 
 void Func_020002a4(s32 actor) {
-  u16 facing = Actor_GetById(gSequenceParentWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
   /* FAKEMATCH: keeps the quadrant offset after the facing load (differ 2
    * without it, as in Func_020000c4). */

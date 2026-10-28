@@ -240,7 +240,7 @@ Func_020005e8:
 .L_02008770:
 	.4byte 0xfffe0000
 .L_02008774:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200915a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009168,"ax",%progbits
@@ -480,7 +480,7 @@ Func_020012fc:
 .L_02009404:
 	.4byte 0x00000001
 .L_02009408:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200940c:
 	.4byte 0x0003ffff
 .L_02009410:
@@ -584,7 +584,7 @@ Func_020012fc:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_020094e4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x02009514,"ax",%progbits
 	.global Func_02001514
 	.thumb_func
@@ -641,7 +641,7 @@ Func_02001514:
 	bl Actor_SetAnimationSpeed
 	b .L_020096be
 .L_0200957c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009580:
 	adds r0, r6, #0
 	movs r1, #16
@@ -778,7 +778,7 @@ Func_02001514:
 .L_02009690:
 	.4byte 0xffe00000
 .L_02009694:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009698:
 	.4byte IwramMulQ16
 .L_0200969c:
@@ -1701,7 +1701,7 @@ Func_02002268:
 .L_0200a49c:
 	.4byte IwramClearWords
 .L_0200a4a0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a4a4:
 	.4byte 0x11111111
 .L_0200a4a8:
@@ -1792,7 +1792,7 @@ Func_020025a4:
 .L_0200a650:
 	.4byte 0x00008000
 .L_0200a654:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a658:
 	movs r3, #1
 	mov r1, r8
@@ -1858,7 +1858,7 @@ Func_020025a4:
 .L_0200a6dc:
 	.4byte 0xffff6667
 .L_0200a6e0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200a73a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200a73c,"ax",%progbits
@@ -2036,7 +2036,7 @@ Func_0200273c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200a8c0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a8c4:
 	.4byte Effect_AdvanceMotion
 .L_0200a8c8:
@@ -2132,7 +2132,7 @@ Func_020028d4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a97c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a980:
 	.4byte gData_02003704
 	.section .bss,"aw",%nobits

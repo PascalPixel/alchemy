@@ -249,6 +249,6 @@ Func_0804b8b8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0804bab4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0804bab8:
 	.4byte gInput

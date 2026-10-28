@@ -1,8 +1,8 @@
 #include "local.h"
 
 void Func_02000428(s32 a) {
-  Actor_SetSpritePriority_(gSequenceParentWork.currentOwner, 3);
-  Func_020028e0_(gSequenceParentWork.currentOwner, 6, 0x1000);
+  Actor_SetSpritePriority_(gMainRoutineWork.currentOwner, 3);
+  Func_020028e0_(gMainRoutineWork.currentOwner, 6, 0x1000);
   Func_020029b0_(0x136);
   GameFlag_SetBit_(0x122);
   Func_02002930(a);

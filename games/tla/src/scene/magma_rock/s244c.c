@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
 
@@ -11,7 +11,7 @@ s32 Camera_FollowActor(s32 id, s32 a);
 s32 Func_02003a7c(void);
 
 void Func_0200244c(s32 height) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   if (!Flag_IsSet(0x109)) {
     object->motionFlags = 0;
@@ -19,9 +19,9 @@ void Func_0200244c(s32 height) {
     object->y += height;
     object->speedLimit = 0x10000;
     object->velocityY = 0;
-    gSequenceParentWork.renderMode = 2;
+    gMainRoutineWork.renderMode = 2;
     object->actionFlags = 1;
-    Camera_FollowActor(gSequenceParentWork.currentOwner, 0);
+    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
     Func_02003a7c();
     wait(1);
   }

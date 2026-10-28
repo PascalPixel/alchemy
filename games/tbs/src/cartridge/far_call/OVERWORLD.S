@@ -3,7 +3,7 @@
 	.global FarCall_OverworldTable
 FarCall_OverworldTable:
 	export FieldSequence_RunFar, FieldSequence_Run
-	export SequenceParent_RunFar, SequenceParent_Run
+	export MainRoutine_RunFar, MainRoutine_Run
 	export Event_WaitFar, Event_Wait
 	export Event_StartFar, Event_Start
 	export Event_EndFar, Event_End

@@ -22,7 +22,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s8 *slotState;
 
   djinni = Actor_GetById(djinniId);
-  leader = Actor_GetById(gSequenceParentWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (djinni == NULL)
     return;
 
@@ -74,9 +74,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   wait(60);
-  Actor_ArmCallback(gSequenceParentWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_ArmCallback(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gSequenceParentWork.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
 
   // Every spark still in use stops its fountain. The cursor walks
@@ -149,7 +149,7 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *actor) {
   s16 frames;
   s32 y;
 
-  leader = Actor_GetById(gSequenceParentWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   timer = mote->orbitFrames - 1;
   mote->orbitFrames = timer;
   frames = mote->orbitFrames;
@@ -178,7 +178,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   s32 state;
   u32 random;
 
-  source = Actor_GetById(gSequenceParentWork.leaderActorId);
+  source = Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {

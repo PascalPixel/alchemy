@@ -1,6 +1,6 @@
 #include "types.h"
 #include "dma.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 u8 *HeapSlot_AllocEwram();
 void *HeapSlot_Alloc();
@@ -22,6 +22,6 @@ void Func_080d1cc0(s32 object) {
   Task_Add(Func_080d1ae4, 0x480);
   HeapSlot_Release(56);
   if (object == 0)
-    object = ObjectTable_Get(gSequenceParentWork.currentOwner);
+    object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   *(s32 *)(work + 24) = object;
 }

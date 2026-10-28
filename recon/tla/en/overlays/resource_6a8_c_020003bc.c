@@ -5,7 +5,7 @@
 // load, a pin on it and the locals assigned apart do not move the copy.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -25,7 +25,7 @@ s32 Func_020003bc(struct Actor *actor) {
   else
     target = Actor_GetById(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
-    target = Actor_GetById(gSequenceParentWork.currentOwner);
+    target = Actor_GetById(gMainRoutineWork.currentOwner);
     if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->action & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);

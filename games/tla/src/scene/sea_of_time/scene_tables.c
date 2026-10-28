@@ -20,7 +20,7 @@ extern const u8 gData_020021e4[];
 extern const u8 gData_02002214[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov687Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
     return (const struct ActorPlacement *)gData_02002214;
   return (const struct ActorPlacement *)gData_020021e4;
 }

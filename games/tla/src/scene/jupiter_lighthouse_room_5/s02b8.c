@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 extern s32 gData_02003274;
@@ -62,7 +62,7 @@ static __inline__ void Bring(s32 id) {
 /// frame for 16 frames, take their next state (Func_02000e04) and sound 80
 /// plays.
 void Func_020002b8(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u32 pulseState;
   struct Actor *a = Actor_GetById(13);
   struct Actor *b = Actor_GetById(14);
@@ -76,7 +76,7 @@ void Func_020002b8(void) {
     return;
   GameFlag_SetBit(2560);
   Func_020029a8(0);
-  Func_02002940(gSequenceParentWork.currentOwner, 0xc000);
+  Func_02002940(gMainRoutineWork.currentOwner, 0xc000);
   /* FAKEMATCH(temporary): the pulse state 3 held from the turn on, so its
    * register spans the quickening loop and the pulse's address and zero take
    * r9 and r11; as a plain 3, 30 of 395 instructions differ in tla-en. */
@@ -141,7 +141,7 @@ quicken:
   wait(1);
   leader->update = 0;
   Actor_SetAnimationSpeed(leader, 16);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      1);
   Actor_SetMovementTypeById(23, gData_02002f94);
   Actor_SetMovementTypeById(24, gData_02002f94);

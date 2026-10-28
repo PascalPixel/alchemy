@@ -1,9 +1,9 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern char SceneId_Ov694Room1;
 
-struct SequenceParentWork2c2 {
+struct MainRoutineWork2c2 {
   u8 unk000[0x2c2];
   u8 value;
 };
@@ -18,9 +18,9 @@ void Func_02001c60(void) {
   Func_020000f4();
   Func_020034b0();
   {
-    struct SequenceParentWork2c2 *party = (struct SequenceParentWork2c2 *)&gSequenceParentWork;
+    struct MainRoutineWork2c2 *party = (struct MainRoutineWork2c2 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

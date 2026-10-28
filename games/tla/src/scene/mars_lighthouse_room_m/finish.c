@@ -50,7 +50,7 @@ void Func_02003130(void *handle);
 void Func_020024e4(void);
 void Func_02002708(void);
 void Func_02002e6c(struct Actor *object);
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 void Func_02003118(struct Actor *object, s32 value);
 void Func_020032b8(s32 value);
@@ -69,9 +69,9 @@ void Func_02000abc(void) {
   Func_02001608();
   Func_020032a8();
   {
-    u8 *party = (u8 *)&gSequenceParentWork;
+    u8 *party = (u8 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: ⚓️ loads gSequenceParentWork before it builds the offset */
+    /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the offset */
     asm volatile("" : "+l"(party));
     party[706] = 2;
   }

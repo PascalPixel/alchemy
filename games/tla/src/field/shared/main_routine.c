@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "dma.h"
 #include "mem.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 
@@ -60,33 +60,33 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
     Heap_Release(saved);                                                            \
   }
 
-/// The sequence parent, as The Broken Seal's SequenceParent_Run, with this
+/// The main routine, as The Broken Seal's MainRoutine_Run, with this
 /// game's four debug starts, gRenderOamEnabled set after stopping DMA 0, and
 /// three sequences that keep BG palettes 14 and 15.
-void SequenceParent_Run(s32 mode) {
+void MainRoutine_Run(s32 mode) {
   const struct Scene *table;
   const struct Scene *record;
   s32 entrance;
 
   table = gScenes;
   if (gDebugMode && mode == 1) {
-    gSequenceParentWork.scene = (s32)&SceneId_VenusLighthouseEntrance;
-    gSequenceParentWork.entrance = 10;
+    gMainRoutineWork.scene = (s32)&SceneId_VenusLighthouseEntrance;
+    gMainRoutineWork.entrance = 10;
   } else if (gDebugMode && mode == 2) {
-    gSequenceParentWork.scene = (s32)&SceneId_Ov64a;
-    gSequenceParentWork.entrance = 1;
+    gMainRoutineWork.scene = (s32)&SceneId_Ov64a;
+    gMainRoutineWork.entrance = 1;
   } else if (gDebugMode && mode == 3) {
-    gSequenceParentWork.scene = (s32)&SceneId_Ov6b4;
-    gSequenceParentWork.entrance = 1;
+    gMainRoutineWork.scene = (s32)&SceneId_Ov6b4;
+    gMainRoutineWork.entrance = 1;
   } else if (gDebugMode && mode == 4) {
-    gSequenceParentWork.scene = (s32)&SceneId_Title;
-    gSequenceParentWork.entrance = 8;
+    gMainRoutineWork.scene = (s32)&SceneId_Title;
+    gMainRoutineWork.entrance = 8;
   } else {
     Func_080ad090();
-    gSequenceParentWork.scene = (s32)&SceneId_Title;
-    gSequenceParentWork.entrance = 1;
+    gMainRoutineWork.scene = (s32)&SceneId_Title;
+    gMainRoutineWork.entrance = 1;
   }
-  Func_08038348(gSequenceParentWork.paletteGlow[0], gSequenceParentWork.paletteGlow[1]);
+  Func_08038348(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();
@@ -95,8 +95,8 @@ void SequenceParent_Run(s32 mode) {
       GameFlag_ClearBit(0x101);
     else
       Sound_PlayFar(0x120);
-    record = &table[gSequenceParentWork.scene];
-    entrance = gSequenceParentWork.entrance;
+    record = &table[gMainRoutineWork.scene];
+    entrance = gMainRoutineWork.entrance;
     {
       volatile u16 *dma0 = REG_DMA0;
 
@@ -111,8 +111,8 @@ void SequenceParent_Run(s32 mode) {
     Heap_Initialize();
     Func_08014b70();
     VramCache_Reset();
-    if (gSequenceParentWork.scene >= SEQUENCE_UNK_1FB) {
-      switch (gSequenceParentWork.scene) {
+    if (gMainRoutineWork.scene >= SEQUENCE_UNK_1FB) {
+      switch (gMainRoutineWork.scene) {
       case SEQUENCE_BATTLE:
         entrance = Battle_RunEncounterFar(entrance);
         break;
@@ -130,19 +130,19 @@ void SequenceParent_Run(s32 mode) {
       continue;
     }
 
-    Func_080c9c38(gSequenceParentWork.scene, GameFlag_Test(0x109));
+    Func_080c9c38(gMainRoutineWork.scene, GameFlag_Test(0x109));
     Scene_ResolveInteractionResult();
     if (!GameFlag_Test(0x109)) {
       if (GameFlag_Test(0x11a) || GameFlag_Test(0x11b))
         GameFlag_ClearBit(0x11a);
       else
         Party_PlaySavedMusic();
-    } else if (gSequenceParentWork.returnCue != -1) {
-      Sound_PlayFar(gSequenceParentWork.returnCue);
+    } else if (gMainRoutineWork.returnCue != -1) {
+      Sound_PlayFar(gMainRoutineWork.returnCue);
     } else {
       Party_PlaySavedMusic();
     }
-    gSequenceParentWork.map = record->mapIndex;
+    gMainRoutineWork.map = record->mapIndex;
     BattleEffect_LoadResourceGroup(0);
     entrance = FieldSequence_Run(entrance);
     Scene_TakeExit(entrance);

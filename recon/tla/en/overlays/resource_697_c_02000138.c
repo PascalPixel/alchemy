@@ -21,7 +21,7 @@ void Func_02000138(s32 direction) {
     if (state->field16[0] <= 0) {
       if (GameFlag_Test(2559)) {
         if (Func_02000330(0) == 0)
-          Actor_CommitPositionAndActivate(gSequenceParentWork.currentOwner, 0,
+          Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 0,
                                                  -16);
         return;
       }

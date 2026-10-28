@@ -50,26 +50,26 @@ void Func_020030cc(void) {
   } else {
     Call1(Func_02004dd0, (s32)MsgBlazeTabletInscription);
     EVENT_WORK->messageId++;
-    Call3(Actor_SetSpeedParameters, gSequenceParentWork.currentOwner, 0xb333,
+    Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
           0x5999);
     Call3(Actor_SetSpeedParameters, 5, 0xb333, 0x5999);
-    Call2(Func_02004da8, 5, gSequenceParentWork.currentOwner);
+    Call2(Func_02004da8, 5, gMainRoutineWork.currentOwner);
     Call1(FieldEvent_Wait, 1);
-    Call3(Actor_ResetAndSetPositionInMode2, gSequenceParentWork.currentOwner,
+    Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner,
           0x100, 0x88);
     Call3(Actor_ResetAndSetPositionInMode2, 5, 0x110, 0x88);
     Call1(Actor_WaitForMoveById,
-          gSequenceParentWork.currentOwner);
+          gMainRoutineWork.currentOwner);
     Call1(Actor_WaitForMoveById, 5);
-    Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
     Call3(Actor_ArmCallback, 5, 0x8000, 0);
     Call1(FieldEvent_Wait, 0xa);
     Call2(Func_02004de0, 5, 0);
-    Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
+    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
     Call1(FieldEvent_Wait, 0x1e);
-    Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 0x100,
+    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 0x100,
           0x98);
-    Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
+    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
     Call1(FieldEvent_Wait, 0x14);
     Call3(Actor_ArmCallback, 5, 0x4000, 0);
     Call1(FieldEvent_Wait, 0x14);
@@ -91,14 +91,14 @@ void Func_020030cc(void) {
     Call2(Func_02002cd0, 8, 5);
     Call2(Party_LearnAbility, 5, 0x9a);
     Call1(GameFlag_SetBit, 0x9fa);
-    Call3(Actor_TurnToFaceEachOther, gSequenceParentWork.currentOwner, 5, 0);
+    Call3(Actor_TurnToFaceEachOther, gMainRoutineWork.currentOwner, 5, 0);
     Call1(FieldEvent_Wait, 0xa);
     Call2(Actor_SetModeById, 5, 3);
-    Call2(Actor_SetModeById, gSequenceParentWork.currentOwner, 3);
+    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
     Call1(FieldEvent_Wait, 0x14);
     Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
     Call2(Actor_SetModeById, 5, 2);
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)
       Call3(Actor_ResetAndSetPosition, 5, FIELD_AT(object, s16, 10),
             FIELD_AT(object, s16, 18));

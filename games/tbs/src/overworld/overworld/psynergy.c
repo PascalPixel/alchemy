@@ -35,7 +35,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = Ability_Get(abilityId)->fieldPsynergy;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  Actor_Lookup(gSequenceParentWork.leaderActorId);
+  Actor_Lookup(gMainRoutineWork.leaderActorId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearFar(FLAG_ITEM_USE);
@@ -67,7 +67,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (declined != 0)
       return 0;
     {
-      struct SequenceParentWork *state = &gSequenceParentWork;
+      struct MainRoutineWork *state = &gMainRoutineWork;
       s32 sceneId, returnEntrance;
       sceneId = (u16)state->retreatScene;
       state->sceneId = sceneId;
@@ -87,7 +87,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (Unit_GetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       // Retreat was already accepted: take its exit back (the scene and
-      // entrance it chose stay in the sequence parent's work).
+      // entrance it chose stay in the main routine's work).
       if (retreat)
         work->exit = 0;
       return 0;
@@ -107,7 +107,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetFar(FLAG_PLAY_PSYNERGY_CAST);
   GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target = Field_FindNearbyPsynergyTarget(gSequenceParentWork.leaderActorId,
+    target = Field_FindNearbyPsynergyTarget(gMainRoutineWork.leaderActorId,
                                             abilityGroup);
     // The after event plays the Psynergy itself.
     if (after && (after->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
@@ -122,7 +122,7 @@ s32 Field_UsePsynergy(u32 code) {
     Actor_ClearOutOfBounds();
   FieldPsynergy_LoadResources(abilityId, 0);
   work->psynergyActing = 1;
-  FieldPsynergy_SetupActorPair(gSequenceParentWork.leaderActorId, target);
+  FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, target);
   FieldPsynergy_StartCast();
 
   Field_RunPsynergyEvent(before, userId, target);

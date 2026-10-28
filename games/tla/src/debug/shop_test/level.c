@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "owner_state.h"
 #include "input.h"
 
@@ -22,7 +22,7 @@ void Func_02000e78(s32 cue);
 /// closes on B.
 // ☀️'s debug EV11_TALK.
 void Func_02000748(void) {
-  u8 *unit = Unit_Get(gSequenceParentWork.currentOwner);
+  u8 *unit = Unit_Get(gMainRoutineWork.currentOwner);
   void *window = Window_Create(0, 0, 30, 9, 2);
   const u8 *message = MsgRaiseEveryoneS;
   s32 redraw;

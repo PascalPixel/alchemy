@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 extern char SceneId_Ov6B0Room4;
@@ -25,12 +25,12 @@ void Func_020034b8(s32 cue);
 /// actor 9 with cue 198, 4 pixels at once and then 128 more, before the screen
 /// transition finishes.
 void Func_02001518(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object;
 
   Func_02003398();
   Func_02003488(0);
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov6B0Room4) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4) {
     object = Actor_GetById(8);
     Func_02003450(13);
   } else {
@@ -41,9 +41,9 @@ void Func_02001518(void) {
     s32 x = ((leader->x >> 20) << 4) + 8;
     s32 z = ((leader->z >> 20) << 4) + 8;
 
-    Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, x, z);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x, z);
   }
-  Actor_ArmCallback(gSequenceParentWork.currentOwner, 0x4000, 10);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 10);
   FieldEvent_Wait(30);
   object->motionFlags = 0;
   /* FAKEMATCH: through Call4 each -1 is built on its own, as in the native;

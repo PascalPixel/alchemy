@@ -21,7 +21,7 @@ void Func_020006b0(struct Actor *object) {
 }
 
 void Func_02000710(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {

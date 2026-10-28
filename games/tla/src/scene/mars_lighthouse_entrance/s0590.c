@@ -34,9 +34,9 @@ void Func_02000590(void) {
     Func_02004ca8();
     Func_02004da0(0);
     Func_02004dd0();
-    WORD_AT(Actor_GetById(gSequenceParentWork.currentOwner), 108) = 0;
-    Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 0);
-    Func_02004cd8_(gSequenceParentWork.currentOwner, 0x2b00000, 0x1680000);
+    WORD_AT(Actor_GetById(gMainRoutineWork.currentOwner), 108) = 0;
+    Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Func_02004cd8_(gMainRoutineWork.currentOwner, 0x2b00000, 0x1680000);
     Camera_SetBounds(0x2b00000, -1, 0x1680000, 1);
     Func_02004d20();
     Func_02004dc8();
@@ -50,9 +50,9 @@ void Func_02000590(void) {
     Func_020046b4();
     Func_02004dd0();
     {
-      u8 *party = (u8 *)&gSequenceParentWork;
+      u8 *party = (u8 *)&gMainRoutineWork;
 
-      /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+      /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
        * built (one reordered row). */
       do {
       } while (0);
@@ -68,9 +68,9 @@ void Func_02000648(void) {
   Func_020046b4();
   Func_02004dd0();
   {
-    u8 *party = (u8 *)&gSequenceParentWork;
+    u8 *party = (u8 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
      * built (one reordered row). */
     do {
     } while (0);

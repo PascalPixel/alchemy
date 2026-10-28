@@ -7,7 +7,7 @@ void Func_02004da0(void) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   Func_02004d24(2);
 #endif
-  Actor_SetAngleToward(2, gSequenceParentWork.currentOwner, 0);
+  Actor_SetAngleToward(2, gMainRoutineWork.currentOwner, 0);
   Func_020056dc(MsgIUnderstandYour);
   Func_020056f4(2, 0);
 #if (LANGUAGE != LANGUAGE_JAPANESE)

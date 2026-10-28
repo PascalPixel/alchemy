@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct ObjectLayerAnimation {
   u8 unk00[9];
@@ -13,7 +13,7 @@ struct ObjectLayerAnimation {
 
 /// Gives the object the party leader's display layer.
 s32 Func_080d4ab4(struct Actor *object) {
-  struct Actor *leader = ObjectTable_Get(gSequenceParentWork.currentOwner);
+  struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   s32 layer = ((struct ObjectLayerAnimation *)leader->animation)->layer;
 
   if ((object->animationKind & 0xf) == 1) {

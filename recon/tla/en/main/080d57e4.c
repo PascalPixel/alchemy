@@ -14,7 +14,7 @@
 #include "field_sprite.h"
 #include "input.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 void Sound_PlayFar(s32 cue);
@@ -30,7 +30,7 @@ struct EventWorkGrab {
 };
 
 s32 Func_080d57e4(void) {
-  struct Actor *leader = ObjectTable_Get(gSequenceParentWork.currentOwner);
+  struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct FieldSprite *sprite = leader->animation;
   s32 position[3];
   u32 angle;
@@ -63,6 +63,6 @@ s32 Func_080d57e4(void) {
   Actor_SetTargetPosition(leader, position[0], position[1], position[2]);
   Actor_CommitPosition(leader);
   sprite->priority = ((u8 *)leader)[98];
-  gSequenceParentWork.renderMode = 0;
+  gMainRoutineWork.renderMode = 0;
   return 1;
 }

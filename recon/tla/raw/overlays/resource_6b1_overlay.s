@@ -163,7 +163,7 @@ Func_02000588:
 .L_ja_020086de:
 	pop {r5, r6, r7, pc}
 .L_ja_020086e0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_020086e4:
 	.4byte gData_02000eec
 .L_ja_020086e8:
@@ -343,7 +343,7 @@ Func_02000588:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020086fc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008700:
 	.4byte 0xfff00000
 .L_02008704:

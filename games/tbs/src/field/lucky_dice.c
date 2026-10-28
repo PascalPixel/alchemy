@@ -24,8 +24,8 @@
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
 /// song MUS_DJINN_LESSON and plays until the player quits. Returns 0. Reached
-/// through LuckyDice_StartFar from SequenceParent_RunDice
-/// (overworld/overworld/sequence_parent.c), which saves background palettes 14
+/// through LuckyDice_StartFar from MainRoutine_RunDice
+/// (overworld/overworld/main_routine.c), which saves background palettes 14
 /// and 15 around it and passes an entrance this function does not take.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
@@ -113,7 +113,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "ram_buffer.h"
 #include "fixed_math.h"
 #include "ui.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "map_grid_scroll.h"
 #include "battle_effect_work.h"
 #include "transform.h"
@@ -245,7 +245,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// times when it matches one of the two lucky numbers shown at the top),
 /// three of a kind 3 times, two pairs twice and one pair the bet back.
 /// Called by LuckyDice_Start. Takes the bet from and pays the
-/// winnings into gSequenceParentWork.coins, resets the task table, and
+/// winnings into gMainRoutineWork.coins, resets the task table, and
 /// frees the five heap slots it allocates before it returns.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
@@ -434,8 +434,8 @@ void LuckyDice_Run(void) {
   window = Window_CreateFar(DICE_COIN_X, 0, DICE_COIN_W, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins, window, DICE_LABEL_X, 0);
-  Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6, sprites->coinsWindow,
-                             0, 0);
+  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
+                             0);
   window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
   sprites->helpWindow = window;
   // MsgLuckyDiceThrow and MsgLuckyDiceQuit, by their offset from the coins
@@ -563,7 +563,7 @@ void LuckyDice_Run(void) {
       if (payoutTimer == 0) {
         winnings = 0;
         Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 40, 0);
-        Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                    sprites->coinsWindow, 0, 0);
       }
       if (payoutTimer == 15) {
@@ -604,7 +604,7 @@ void LuckyDice_Run(void) {
       if (diceWork->particles[1].y > 0xa00000) {
         diceWork->particles[1].y = 0xa00000;
       }
-      if (gSequenceParentWork.coins <
+      if (gMainRoutineWork.coins <
           (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
         Window_CloseFar(sprites->helpWindow, 1);
         break;
@@ -619,11 +619,11 @@ void LuckyDice_Run(void) {
         Window_CloseFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
-        if ((u32)bet > gSequenceParentWork.coins) {
-          bet = gSequenceParentWork.coins;
+        if ((u32)bet > gMainRoutineWork.coins) {
+          bet = gMainRoutineWork.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                    sprites->coinsWindow, 0, 0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
@@ -898,7 +898,7 @@ void LuckyDice_Run(void) {
           } else {
             winnings = bet * 5;
           }
-          Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      sprites->coinsWindow, 0, 0);
           Sound_PlayFar(MUS_JINGLE_LARGE);
         } else {
@@ -914,13 +914,13 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 1) {
             winnings = bet;
-            Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                        sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
-            Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
@@ -928,7 +928,7 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 3) {
             winnings = bet * 3;
-            Text_DrawNumberInWindowFar(gSequenceParentWork.coins, 6,
+            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;

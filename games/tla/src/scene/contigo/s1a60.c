@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct ContigoTopicState {
   u8 unk000[340];
@@ -20,7 +20,7 @@ s32 Func_02001a60(s32 topic) {
     return 0;
   if (topic == 5)
     topic = (s32)((u32)(Random16Far() * 5) >> 16);
-  state = (struct ContigoTopicState *)&gSequenceParentWork;
+  state = (struct ContigoTopicState *)&gMainRoutineWork;
   cursor = state->cursor[topic];
   variant = (cursor + (s32)((u32)(Random16Far() * 2) >> 16) + 4) % 3;
   state->cursor[topic] = variant;

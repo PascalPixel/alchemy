@@ -1,4 +1,4 @@
-// Draft, differ 38 of 75: the native keeps gSequenceParentWork base in r5 only
+// Draft, differ 38 of 75: the native keeps gMainRoutineWork base in r5 only
 // through the first room and reloads it from the pool for the second entrance
 // test and the second room test, and loads the two blend values from pool words
 // placed before the party base; this form shares r5 differently.
@@ -6,7 +6,7 @@
 
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 #include "frame.h"
 #include "field_sprite.h"
@@ -49,14 +49,14 @@ void Func_02001d4c(s32 cue);
 
 s32 Func_02000324(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov699Room1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room1) {
     Func_020004dc(1);
-    if (!GameFlag_Test(0x109) && gSequenceParentWork.entrance == 4)
-      Func_02001d3c(gSequenceParentWork.currentOwner);
-    if (!GameFlag_Test(0x109) && gSequenceParentWork.entrance == 6)
-      Func_02001d3c(gSequenceParentWork.currentOwner);
+    if (!GameFlag_Test(0x109) && gMainRoutineWork.entrance == 4)
+      Func_02001d3c(gMainRoutineWork.currentOwner);
+    if (!GameFlag_Test(0x109) && gMainRoutineWork.entrance == 6)
+      Func_02001d3c(gMainRoutineWork.currentOwner);
   }
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov699Room2) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov699Room2) {
     *(volatile u16 *)0x04000052 = 0x1008;
     *(volatile u16 *)0x04000050 = 0x3f10;
     Func_02000298();

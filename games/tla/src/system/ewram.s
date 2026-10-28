@@ -5,8 +5,8 @@ gData_02000000:
 	.global gGameFlagBytes
 gGameFlagBytes:
 	.space 0x00000200
-	.global gSequenceParentWork
-gSequenceParentWork:
+	.global gMainRoutineWork
+gMainRoutineWork:
 	.space 0x0000000c
 	.global Data_0200024c
 Data_0200024c:

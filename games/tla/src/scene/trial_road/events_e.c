@@ -15,7 +15,7 @@ void Func_0200078c(s32 id) {
 }
 
 void Func_020007b4(void) {
-  s32 y = Actor_GetById(gSequenceParentWork.currentOwner)->y;
+  s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   /* FAKEMATCH: loads the leader height before it builds the threshold (differ 2
    * without it; an object pointer, a limit temporary, a const height, a height

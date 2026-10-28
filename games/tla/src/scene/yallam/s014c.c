@@ -10,12 +10,12 @@
 s32 Func_0200014c(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *event = Ram_HeapSlots->eventWork;
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *leader;
   s32 force = 0;
 
-  /* FAKEMATCH(barrier): holding gSequenceParentWork's address with r2 clobbered
-   * loads it before the owner offset is built; as Actor_GetById(gSequenceParentWork.
+  /* FAKEMATCH(barrier): holding gMainRoutineWork's address with r2 clobbered
+   * loads it before the owner offset is built; as Actor_GetById(gMainRoutineWork.
    * currentOwner), 4 of 82 instructions differ in tla-en. */
   asm("" : "+l"(party) : : "r2");
   leader = Actor_GetById(party->currentOwner);
@@ -41,7 +41,7 @@ s32 Func_0200014c(struct Actor *object) {
     else
       target = Actor_GetById(9);
     if (Func_02000088(object, target, 24, 0) == 0) {
-      leader = Actor_GetById(gSequenceParentWork.currentOwner);
+      leader = Actor_GetById(gMainRoutineWork.currentOwner);
       if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
         force = 1;
       Func_02000088(object, leader, 24, force);

@@ -21,16 +21,16 @@ extern const u8 gData_020044a4[];
 extern const u8 gData_020045c4[];
 
 const struct Trigger *Func_020008d4(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov691Room2) {
-    if (gSequenceParentWork.entrance <= 3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+    if (gMainRoutineWork.entrance <= 3)
       return (const struct Trigger *)gData_020041a4;
-    if (gSequenceParentWork.entrance <= 8)
+    if (gMainRoutineWork.entrance <= 8)
       return (const struct Trigger *)gData_0200427c;
-    if (gSequenceParentWork.entrance <= 12)
+    if (gMainRoutineWork.entrance <= 12)
       return (const struct Trigger *)gData_020043e4;
     return (const struct Trigger *)gData_020044a4;
   }
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov691Room3)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
     return (const struct Trigger *)gData_020045c4;
   return (const struct Trigger *)gData_0200403c;
 }

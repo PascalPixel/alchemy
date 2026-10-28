@@ -638,7 +638,7 @@ Func_02000ad4:
 .L_02008c2c:
 	.4byte 0xfffe0000
 .L_02008c30:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008c34:
 	.4byte 0x00000076
 	.section .text.x020091bc,"ax",%progbits
@@ -726,7 +726,7 @@ Func_020011bc:
 	mov r10, r6
 	pop {r5, r6, pc}
 .L_0200927c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009280:
 	.4byte 0xfff40000
 	.section .text.x02009c10,"ax",%progbits
@@ -1526,7 +1526,7 @@ Func_020020f0:
 .L_0200a2b0:
 	.4byte gData_02005af0
 .L_0200a2b4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a2b8:
 	.4byte 0x00000074
 .L_0200a2bc:
@@ -1723,7 +1723,7 @@ Func_02002394:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200a528:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a52c:
 	.4byte Effect_AdvanceMotion
 .L_0200a530:
@@ -1923,7 +1923,7 @@ Func_02002a64:
 	b .L_0200ac94
 	.2byte 0x0000
 .L_0200ac1c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200ac20:
 	.4byte MsgGabombaUnderstandsChannel
 .L_0200ac24:
@@ -2266,7 +2266,7 @@ Func_02002a64:
 	bl Func_020057c4
 	pop {r5, r6, pc}
 .L_0200af60:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200af64:
 	.4byte 0x0004cccc
 .L_0200af68:

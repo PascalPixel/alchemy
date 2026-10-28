@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_tables.h"
 #include "iwram_call.h"
 #include "field_sprite.h"
@@ -328,7 +328,7 @@ static __inline__ void Func_020052d0_(s32 id, s32 value) {
   (((s32 (*)(u32, s32))Actor_SetSpritePriority)((id), (variant)))
 
 /* FAKEMATCH: a whole-byte bit-field keeps the struct's alias set, so the store
- * cannot alias gSequenceParentWork's words, as native; as u8 priorityFlags, the
+ * cannot alias gMainRoutineWork's words, as native; as u8 priorityFlags, the
  * next load is scheduled one step early in tla-en. */
 struct ObjectFlags23 {
   u8 unk00[0x23];

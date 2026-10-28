@@ -13,7 +13,7 @@
 // (- the listing, + this draft). Tried: Call, Value and direct forms of each
 // call, empty asms and one-pass blocks between statements.
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -33,7 +33,7 @@ extern u8 gData_0200629c[];
 void Func_020019d4(void) {
   s32 t1, t8, t10, t12, t13, t14, t17, t18, p_r6, v_r5_1, v_r7_1, v_r8_1;
 
-  t1 = Value1((s32 (*)())Actor_GetById, gSequenceParentWork.currentOwner);
+  t1 = Value1((s32 (*)())Actor_GetById, gMainRoutineWork.currentOwner);
   v_r5_1 = t1;
   v_r8_1 = (FIELD_AT(v_r5_1, s32, 8) >> 20);
   v_r7_1 = (FIELD_AT(v_r5_1, s32, 16) >> 20);

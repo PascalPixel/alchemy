@@ -607,7 +607,7 @@ Func_02000988:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_02008cd4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008cd8:
 	.4byte 0x000bffff
 .L_02008cdc:
@@ -741,7 +741,7 @@ Func_02000d48:
 	ldr r3, [r6, #16]
 	b .L_02008e50
 .L_02008e38:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008e3c:
 	.4byte gData_020061ac
 .L_02008e40:
@@ -824,7 +824,7 @@ Func_02000d48:
 .L_02008ed8:
 	.4byte 0x00000000
 .L_02008edc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008ee0:
 	.4byte IwramMulQ16
 .L_02008ee4:
@@ -1154,7 +1154,7 @@ Func_020010b4:
 	ldr r3, [r6, #16]
 	b .L_020091ac
 .L_02009198:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200919c:
 	.4byte gData_020061cc
 .L_020091a0:
@@ -1235,7 +1235,7 @@ Func_020010b4:
 .L_02009234:
 	.4byte 0x00000000
 .L_02009238:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200923c:
 	.4byte IwramMulQ16
 .L_02009240:
@@ -1705,7 +1705,7 @@ Func_02001458:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020095fc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009600:
 	.4byte 0xfff80000
 .L_02009604:
@@ -1891,7 +1891,7 @@ Func_02001690:
 .L_020097dc:
 	.4byte gFrameCount
 .L_020097e0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020097e4:
 	.4byte 0x00000057
 .L_020097e8:
@@ -2363,7 +2363,7 @@ Func_02001828:
 	strb r3, [r0, #9]
 	b .L_02009c6c
 .L_02009bdc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009be0:
 	.4byte 0x0001b333
 .L_02009be4:
@@ -2804,7 +2804,7 @@ Func_02001828:
 .L_02009f70:
 	.4byte gFrameCount
 .L_02009f74:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02009f78:
 	.4byte 0x0000005a
 .L_02009f7c:
@@ -3167,7 +3167,7 @@ Func_02001828:
 .L_0200a280:
 	.4byte 0xffffc000
 .L_0200a284:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a288:
 	.4byte 0x00000058
 .L_0200a28c:
@@ -3542,7 +3542,7 @@ Func_02001828:
 .L_0200a5c4:
 	.4byte 0xffff8000
 .L_0200a5c8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200a6c0,"ax",%progbits
 	.balign 4
 	.global Func_020026c0
@@ -3630,7 +3630,7 @@ Func_020026c0:
 .L_0200a764:
 	.4byte gData_020073e0
 .L_0200a768:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a76c:
 	.4byte 0x00000059
 	.section .text.x0200a790,"ax",%progbits
@@ -3753,7 +3753,7 @@ Func_02002790:
 .L_0200a86c:
 	.4byte gData_020073e0
 .L_0200a870:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a874:
 	.4byte 0x00000055
 .L_0200a878:
@@ -3881,7 +3881,7 @@ Func_02002898:
 .L_0200a960:
 	.4byte gData_020073e0
 .L_0200a964:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200a968:
 	.4byte 0x00000055
 .L_0200a96c:
@@ -5131,7 +5131,7 @@ Func_020048c4:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_0200ca98:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200ca9c:
 	.4byte gData_0200621c
 .L_0200caa0:
@@ -5345,7 +5345,7 @@ Func_02004cc8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_ja_0200ce88:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_0200ce8c:
 	.4byte 0xffe00000
 .L_ja_0200ce90:
@@ -5561,7 +5561,7 @@ Func_02004cc8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200ce9c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200cea0:
 	.4byte 0xffe00000
 .L_0200cea4:
@@ -5929,7 +5929,7 @@ Func_0200505c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200d1e4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200d1e8:
 	.4byte Effect_AdvanceMotion
 .L_0200d1ec:
@@ -6041,7 +6041,7 @@ Func_020051f8:
 .L_ja_0200d2b0:
 	.4byte 0x00003f10
 .L_ja_0200d2b4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_0200d2b8:
 	.4byte 0x00000055
 .L_ja_0200d2bc:
@@ -6174,7 +6174,7 @@ Func_020051f8:
 .L_ja_0200d3f4:
 	.4byte gData_02006050
 .L_ja_0200d3f8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_0200d3fc:
 	ldr r3, .L_ja_0200d43c
 	cmp r2, r3
@@ -6281,7 +6281,7 @@ Func_020051f8:
 .L_ja_0200d4e0:
 	.4byte gData_02006054
 .L_ja_0200d4e4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_0200d4e8:
 	ldr r3, .L_ja_0200d53c
 	cmp r2, r3
@@ -7265,7 +7265,7 @@ Func_020051f8:
 .L_0200d2d8:
 	.4byte 0x00003f10
 .L_0200d2dc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200d2e0:
 	.4byte 0x00000055
 .L_0200d2e4:
@@ -7398,7 +7398,7 @@ Func_020051f8:
 .L_0200d41c:
 	.4byte gData_02006050
 .L_0200d420:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200d424:
 	ldr r3, .L_0200d464
 	cmp r2, r3
@@ -7505,7 +7505,7 @@ Func_020051f8:
 .L_0200d508:
 	.4byte gData_02006054
 .L_0200d50c:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_0200d510:
 	ldr r3, .L_0200d564
 	cmp r2, r3

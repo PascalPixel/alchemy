@@ -1,7 +1,7 @@
 #include "room.h"
 
 void Func_0200006c(void) {
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->entrance == 2) {
     Func_0200046c();
@@ -33,13 +33,13 @@ void Func_0200006c(void) {
 }
 
 void Func_02000158(void) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   s32 id;
   s32 limit;
   s32 z;
 
   if (SCENE_WORK->unk166 != 0) {
-    Actor_SetAngleToward(8, gSequenceParentWork.currentOwner, 0);
+    Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
     Func_02000504_(8, 0x100, 30);
   }
   Func_020004dc((s32)MsgAreWeSetting);
@@ -51,7 +51,7 @@ void Func_02000158(void) {
     Actor_Jump(8, 4, 0);
     Func_020004f4(8, 0);
     FieldEvent_Wait(5);
-    party = &gSequenceParentWork;
+    party = &gMainRoutineWork;
     z = Actor_GetById(party->currentOwner)->z;
     /* FAKEMATCH: ⚓️ loads the leader's z before it builds the limit */
     asm volatile("" : "+l"(z));
@@ -67,9 +67,9 @@ void Func_02000158(void) {
     Func_020004f4(id, 0);
     FieldEvent_Wait(10);
     {
-      struct SequenceParentWork *state = &gSequenceParentWork;
+      struct MainRoutineWork *state = &gMainRoutineWork;
 
-      /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+      /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
        * built (one reordered row). */
       do {
       } while (0);
@@ -90,10 +90,10 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   Func_02000524(0);
   Func_02000544(158);
   Func_02000454(warp->scene, warp->x, warp->z);
-  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  id = gSequenceParentWork.currentOwner;
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterOnColumn_(id, 2, -8);
   else

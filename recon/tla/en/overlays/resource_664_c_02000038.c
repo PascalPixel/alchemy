@@ -89,7 +89,7 @@ void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
 }
 
 void Func_020004d4(struct FieldActor *object) {
-  struct FieldActor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   if (Random16Far() & 255) {
     object->x = ((Random16Far_() & 255) << 16) + 0xb00000;

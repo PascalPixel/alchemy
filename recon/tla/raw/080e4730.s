@@ -347,7 +347,7 @@ Func_080e4730:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080e4a18:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080e4a1c:
 	.4byte Func_080e42d4
 .L_080e4a20:

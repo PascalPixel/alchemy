@@ -17,7 +17,7 @@ extern const u8 gData_02003e44[];
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
     return (const struct SceneRegion *)gData_02003df4;

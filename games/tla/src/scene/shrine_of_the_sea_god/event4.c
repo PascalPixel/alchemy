@@ -26,12 +26,12 @@ void Func_020016c8(void) { Func_0200142c(Actor_GetById(15)); }
 
 void Func_020016d8(void) {
   struct ShrineOfTheSeaGodObject *leader =
-      Actor_GetById(gSequenceParentWork.currentOwner);
+      Actor_GetById(gMainRoutineWork.currentOwner);
   struct ShrineOfTheSeaGodObject *pillar = Actor_GetById(15);
 
   Func_020039d8();
   Func_02003b08(0);
-  ShrineOfTheSeaGod_ObjWalk(gSequenceParentWork.currentOwner, 328, 216);
+  ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 328, 216);
   Func_02001340(leader, pillar);
   ShrineOfTheSeaGod_BlendStart(0, 0, 3, 1, 19, 13);
   ShrineOfTheSeaGod_BlendStart(40, 0, 2, 1, 19, 33);
@@ -46,17 +46,17 @@ void Func_020016d8(void) {
   Actor_SetSpritePriority(11, 1);
   Actor_GetById(11)->priorityFlags &= ~2;
   leader->motionFlags = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      1);
-  ShrineOfTheSeaGod_ObjSpeed(gSequenceParentWork.currentOwner, 0x9999, 0x1999);
-  ShrineOfTheSeaGod_ObjCommit(gSequenceParentWork.currentOwner, 328, 224);
-  ShrineOfTheSeaGod_ObjCommit(gSequenceParentWork.currentOwner, 321, 256);
+  ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
+  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 328, 224);
+  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 256);
   Func_02003a30(21, 0, 0);
   Func_02003a30(22, 0, 0);
-  ShrineOfTheSeaGod_ObjCommit(gSequenceParentWork.currentOwner, 321, 320);
-  ShrineOfTheSeaGod_ObjCommit(gSequenceParentWork.currentOwner, 321, 400);
-  ShrineOfTheSeaGod_ObjCommit(gSequenceParentWork.currentOwner, 321, 480);
-  ShrineOfTheSeaGod_ObjCommit(gSequenceParentWork.currentOwner, 321, 536);
+  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 320);
+  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 400);
+  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 480);
+  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 321, 536);
   Func_02003b48(161);
   Actor_SetSpritePriority(9, 2);
   Actor_GetById(9)->priorityFlags |= 2;

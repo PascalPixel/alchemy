@@ -27,20 +27,20 @@ void Func_02000ecc(void) {
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = CATACOMBS_SCREEN_EFFECT;
   Func_02001254(0);
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov673Room1 &&
-      (entrance = gSequenceParentWork.entrance) == 1) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room1 &&
+      (entrance = gMainRoutineWork.entrance) == 1) {
     if (GameFlag_Test(0xa27)) {
-      gSequenceParentWork.retreatScene = (s32)&SceneId_Ov671Room7;
-      gSequenceParentWork.retreatEntrance = entrance;
+      gMainRoutineWork.retreatScene = (s32)&SceneId_Ov671Room7;
+      gMainRoutineWork.retreatEntrance = entrance;
     } else if (GameFlag_Test(0xa28)) {
-      gSequenceParentWork.retreatScene = (s32)&SceneId_Ov672Room1;
-      gSequenceParentWork.retreatEntrance = 3;
+      gMainRoutineWork.retreatScene = (s32)&SceneId_Ov672Room1;
+      gMainRoutineWork.retreatEntrance = 3;
     }
   }
-  if (!GameFlag_Test(265) && gSequenceParentWork.scene == (s32)&SceneId_Ov673Room2 &&
-      gSequenceParentWork.entrance > 2)
-    Func_0200126c(gSequenceParentWork.currentOwner);
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov673Room3) {
+  if (!GameFlag_Test(265) && gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2 &&
+      gMainRoutineWork.entrance > 2)
+    Func_0200126c(gMainRoutineWork.currentOwner);
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
     if (GameFlag_Test(0x200))
       Call6(Func_02001164, 6, 23, 1, 1, 8, 23);
     if (GameFlag_Test(513))
@@ -56,9 +56,9 @@ void Func_02000ecc(void) {
     if (GameFlag_Test(518))
       Call6(Func_02001164, 0, 4, 1, 1, 6, 15);
   }
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov673Room5 && GameFlag_Test(0x200))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 && GameFlag_Test(0x200))
     Call6(Func_02001164, 15, 18, 1, 1, 17, 18);
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov673Room4 && GameFlag_Test(0x9ce) &&
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 && GameFlag_Test(0x9ce) &&
       !GameFlag_Test(0xf93) && !GameFlag_Test(265)) {
     statue = Actor_GetById(0x40);
     Call3(Func_020011cc, 0x40, 0xa80000, 0x980000);

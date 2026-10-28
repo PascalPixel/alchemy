@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct ContigoEventWork {
   u8 unk000[0x1ac];
@@ -21,10 +21,10 @@ void Func_020040d4(s32 actor, s32 x, s32 z);
 
 void Func_020039d4(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
-  if (gSequenceParentWork.entrance == 4) {
+  if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9d0) == 0)
       Func_02001d50();
-  } else if (gSequenceParentWork.entrance == 21) {
+  } else if (gMainRoutineWork.entrance == 21) {
     GameFlag_ClearBit(0x12f);
   } else {
     Actor_SetModeById(17, 2);

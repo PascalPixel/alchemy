@@ -11,8 +11,8 @@ void Func_020015d8(void) {
   Func_02005a50_(68, 6, 1, 21, 13, 64, 64);
   if (!GameFlag_Test(0x9b9)) {
     Func_02005a60(249, 72, 152);
-    ((struct SequenceParentWork254 *)&gSequenceParentWork)->value = 0x19b9;
-    gSequenceParentWork.battleRule24b = 2;
+    ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;
+    gMainRoutineWork.battleRule24b = 2;
     Func_02005998(106, 4);
   }
 }
@@ -53,7 +53,7 @@ void Func_02001754(s32 sound) {
 }
 
 void Func_020017e0(void) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   s32 count = GameFlag_Test(0x381);
 
   count += GameFlag_Test(0x382);
@@ -63,11 +63,11 @@ void Func_020017e0(void) {
     Func_02002dec();
   else
     Func_0200322c();
-  /* FAKEMATCH: the one-pass block loads gSequenceParentWork's address before it
+  /* FAKEMATCH: the one-pass block loads gMainRoutineWork's address before it
    * builds the field offset, and the empty one after the store keeps the scene
    * id load behind it (differ 6 without both). */
   do {
-    party = &gSequenceParentWork;
+    party = &gMainRoutineWork;
   } while (0);
   party->battleRule24b = 2;
   do {

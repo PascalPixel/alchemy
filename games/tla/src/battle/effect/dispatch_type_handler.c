@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "fx_scene.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 
 /// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
@@ -163,10 +163,10 @@ void BattleEffect_Run(void) {
   else if (animation == FIELD_FX_PAUSE) {
     // Let the object stopped last time go, then stop the nearest one that
     // has an event to run; with none, play the fallback transition.
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
     s32 paused;
 
-    /* FAKEMATCH: ⚓️ loads gSequenceParentWork before it builds the field offset
+    /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the field offset
      * (differ 4 without the barrier). */
     asm volatile("");
     paused = party->pausedObject;
@@ -261,12 +261,12 @@ void BattleEffect_DispatchRequestKind(void) {
   else if (animation == FIELD_FX_WAVE) {
     // A wave still running from the last cast is reset first; a target that
     // is not the paused object stops walking while the wave runs.
-    struct SequenceParentWork *party;
+    struct MainRoutineWork *party;
 
     if (*(s8 *)(event + 0xca4) != 0)
       Func_080dd950();
-    party = &gSequenceParentWork;
-    /* FAKEMATCH: ⚓️ loads gSequenceParentWork before it builds the field offset
+    party = &gMainRoutineWork;
+    /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the field offset
      * (differ 2 without the barrier). */
     asm volatile("");
     if (party->pausedObject != scene->secondObjectId)
@@ -274,9 +274,9 @@ void BattleEffect_DispatchRequestKind(void) {
     Func_080dc978(scene->firstObjectId, targetId);
   } else if (animation == FIELD_FX_PAUSE) {
     // Let the object stopped last time go, then stop the target.
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: ⚓️ loads gSequenceParentWork before it builds the field offset
+    /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the field offset
      * (differ 4 without the barrier). */
     asm volatile("");
     if (party->pausedObject != -1) {

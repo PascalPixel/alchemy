@@ -10,8 +10,8 @@ void Func_0200065c(void) {
 
   Func_02002898();
   Func_02002968(0);
-  Actor_SetAngleToward(gSequenceParentWork.currentOwner, 8, 0);
-  Func_02002908(gSequenceParentWork.currentOwner, 256, 30);
+  Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
+  Func_02002908(gMainRoutineWork.currentOwner, 256, 30);
   Camera_MoveWithinMapBounds(0x1980000, -1, 0x1380000, 1);
   Func_02002928();
   Func_02002910_(8, 257);
@@ -88,14 +88,14 @@ void Func_02000810(s32 id) {
   GameFlag_ClearBit(0x220);
   GameFlag_ClearBit(0x221);
   GameFlag_ClearBit(0x222);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   object = Actor_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Func_02002910_(gSequenceParentWork.currentOwner, 0x102);
-    Actor_CommitPositionAndActivate_(gSequenceParentWork.currentOwner, 0, 16);
+    Func_02002910_(gMainRoutineWork.currentOwner, 0x102);
+    Actor_CommitPositionAndActivate_(gMainRoutineWork.currentOwner, 0, 16);
     FieldEvent_Wait_(2);
-    Actor_ArmCallback_(gSequenceParentWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback_(gMainRoutineWork.currentOwner, 0xc000, 0);
     FieldEvent_Wait_(10);
   }
   Func_02002840_(22, 8, 1, 1, 26, 8);
@@ -143,14 +143,14 @@ void Func_020009c0(s32 id) {
   GameFlag_ClearBit(0x221);
   GameFlag_ClearBit(0x222);
   GameFlag_SetByte(0x230, 0);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   object = Actor_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Func_02002910_(gSequenceParentWork.currentOwner, 0x102);
-    Actor_CommitPositionAndActivate_(gSequenceParentWork.currentOwner, 0, 16);
+    Func_02002910_(gMainRoutineWork.currentOwner, 0x102);
+    Actor_CommitPositionAndActivate_(gMainRoutineWork.currentOwner, 0, 16);
     FieldEvent_Wait_(2);
-    Actor_ArmCallback_(gSequenceParentWork.currentOwner, 0xc000, 0);
+    Actor_ArmCallback_(gMainRoutineWork.currentOwner, 0xc000, 0);
     FieldEvent_Wait_(10);
   }
   Func_02002840_(1, 1, 1, 1, 25, 27);

@@ -3,9 +3,9 @@
 void Func_02002c38(void) {
   struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapWork;
   struct Actor *spawned;
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: the listing loads gSequenceParentWork's address before it builds the
+  /* FAKEMATCH: the listing loads gMainRoutineWork's address before it builds the
    * entrance offset */
   asm volatile("" : "+l"(party));
   if (party->entrance == 2)

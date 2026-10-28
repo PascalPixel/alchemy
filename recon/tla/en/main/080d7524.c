@@ -12,7 +12,7 @@
 // cost an extra zero (differ 33).
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "macros.h"
 
 struct DjinniSprite {
@@ -55,7 +55,7 @@ void Func_080d7524(s32 djinniId) {
   struct Actor *copies[8];
 
   djinni = Actor_GetById(djinniId);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   dir = (leader->angle + 0x2000) & 0xc000;
   Event_Start();
   wait(10);

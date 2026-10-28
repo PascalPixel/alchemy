@@ -184,7 +184,7 @@ Evidence: plain English; the project's own word.
 ### System
 
 The code the field, the battles and the user interface are built on: start-up,
-the sequence parent, waiting and [tasks](#task), interrupts, the
+the main routine, waiting and [tasks](#task), interrupts, the
 [heap](#heap-and-pools), [banks](#bank), [overlays](#overlay), saving and the
 sound driver. It is one of the code's four divisions, with Field, Battle and
 User Interface; [System](system.md) explains it.
@@ -192,18 +192,18 @@ User Interface; [System](system.md) explains it.
 Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 "Field", "User Interface" and "Support" (`gCredits_Lines`).
 
-### Sequence parent
+### Main routine
 
 The loop that runs one [sequence](#sequence) after another for as long as the
-console is on, `SequenceParent_Run`. Each pass reads one id from the
-[sequence parent's work](#sequence-parents-work) and runs one
+console is on, `MainRoutine_Run`. Each pass reads one id from the
+[main routine's work](#main-routines-work) and runs one
 thing: a [scene](#scene), any row of the scene table, the Title and the File
 Screen included, which the
 [field sequence](#field-sequence) runs until the party takes an exit; or the
 battle, dice or slots sequence. In each transition it tears down what the last
 sequence set up (its tasks, its interrupt handlers, the heap) and starts the
 next, so going from one scene to the next is a transition just as going into a
-battle is ([The front page](README.md#the-sequence-parent)).
+battle is ([The front page](README.md#the-main-routine)).
 
 Evidence: Sega: a coinage from its lineage. "Sequence" for one flow of the
 game is Namco's (黒須一雄; 遠藤雅伸's ゲームシーケンス) and Sega's through
@@ -216,7 +216,7 @@ names Camelot's routine.
 One flow of the game, run from its start to its end: the field sequence, the
 battle sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
 Wheels), `SEQUENCE_` in code. One runs at a time
-([The front page](README.md#the-sequence-parent)).
+([The front page](README.md#the-main-routine)).
 
 Evidence: Sega: 平山尚's sequences (2008). Camelot uses プログラム only for the
 whole game's code.
@@ -224,17 +224,17 @@ whole game's code.
 ### Transition and next sequence
 
 The handover from one sequence to the next. A sequence that ends names the
-next sequence in the [sequence parent's work](#sequence-parents-work), and the
-sequence parent starts it
+next sequence in the [main routine's work](#main-routines-work), and the
+main routine starts it
 ([The front page](README.md#how-a-sequence-finds-its-way-back)).
 
 Evidence: Sega: 平山尚's シーケンス遷移 and its 遷移判定 (2008).
 
-### Sequence parent's work
+### Main routine's work
 
 The one struct every sequence shares and that outlives each of them,
-`gSequenceParentWork` (`struct SequenceParentWork`, `sequence_parent_work.h`).
-It holds the sequence parent's own transition data (the scene and entrance it
+`gMainRoutineWork` (`struct MainRoutineWork`, `main_routine_work.h`).
+It holds the main routine's own transition data (the scene and entrance it
 runs next, what the last sequence reported in `sequenceResult`, the return
 point, the after-battle and defeat destinations and the restart point) and
 what every sequence shares: the party, where it stands, the coins, the Djinn,
@@ -301,8 +301,8 @@ Evidence: tradition: タスク and its 実行関数 (田村祐樹, DCAJ 2008).
 
 The working memory a piece of code keeps its state in, held in a
 [heap slot](#heap-slot) and named `g<Slot>Work`: the field's is `gFieldWork`,
-the menus' `gMenuWork`. The sequence parent's is the one kept in a fixed
-struct instead, [`gSequenceParentWork`](#sequence-parents-work).
+the menus' `gMenuWork`. The main routine's is the one kept in a fixed
+struct instead, [`gMainRoutineWork`](#main-routines-work).
 
 Evidence: tradition, extended: ワーク names working memory in general in the
 console's own Work RAM (GBATEK's On-board and On-chip Work RAM), 山口's
@@ -498,7 +498,7 @@ The sequence that runs one [scene](#scene), `FieldSequence_Run`: it allocates
 `gFieldWork`, loads the map, starts the actors and windows and calls the
 overlay's initialize entry, then waits a frame at a time, answering the
 [field requests](#field-request), until one ends the scene. The next scene is
-the sequence parent's to start
+the main routine's to start
 ([The front page](README.md#the-field-sequence)).
 
 Evidence: Camelot: the credits' Programming division "Field", paired with
@@ -708,7 +708,7 @@ Evidence: plain English.
 
 ### Destination
 
-The scene and entrance the sequence parent runs next (`gSequenceParentWork.sceneId`
+The scene and entrance the main routine runs next (`gMainRoutineWork.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Three others are read only at given moments: after a battle the party goes to

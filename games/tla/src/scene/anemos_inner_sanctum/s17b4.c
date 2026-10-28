@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "frame.h"
 
 struct AnemosInnerSanctumEventWork {
@@ -37,13 +37,13 @@ static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {
 /// the cell kind under it is 52 or 51, setting the event work's unk16a to 201
 /// or 200. unk4c and acceleration hold the leader's last x and z.
 void Func_020017b4(struct Actor *self) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 next[2];
   s32 ahead[3];
   struct Actor *dust;
   s32 kind;
 
-  if (Actor_GetById(gSequenceParentWork.currentOwner)->z >> 16 > 248) {
+  if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 16 > 248) {
     self->update = 0;
     GameFlag_ClearBit(0x200);
     self->x = (self->x & 0xfff00000) + 0x80000;

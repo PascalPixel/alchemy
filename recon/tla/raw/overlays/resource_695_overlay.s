@@ -421,7 +421,7 @@ Func_02000430:
 .L_ja_02008830:
 	.4byte 0x00003092
 .L_ja_02008834:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_ja_02008838:
 	.4byte 0x000000f0
 	.endif
@@ -598,7 +598,7 @@ Func_0200087c:
 .L_ja_02008a04:
 	.4byte 0x01750000
 .L_ja_02008a08:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.endif
 	.section .text.x02008a24,"ax",%progbits
 	.ifdef TLA_EDITION_JA

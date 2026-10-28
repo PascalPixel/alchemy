@@ -1,7 +1,7 @@
 #include "worka0.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct WobbleEvent {
   u8 unk000[362];
@@ -29,9 +29,9 @@ void Func_080d9d40(void) {
   s32 i = 0;
 
   if (!GameFlag_Test(260) && event->counter > 12) {
-    struct SequenceParentWork *party = &gSequenceParentWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: loads gSequenceParentWork's address before the render mode's offset
+    /* FAKEMATCH: loads gMainRoutineWork's address before the render mode's offset
      * is built; without it the offset comes first (differ 2). */
     asm volatile("" : "+l"(party));
     if (party->renderMode == 0) {

@@ -12,7 +12,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
@@ -26,7 +26,7 @@ struct Actor *Actor_GetById(s32 id);
 
 struct Actor *Func_020043a8(s32 *direction, s32 *slot, s32 *kind) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor **entry;
   struct Actor *object;
   u32 i, k;

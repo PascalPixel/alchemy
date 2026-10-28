@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 struct DoorStep {
@@ -45,10 +45,10 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02001cfc(0);
   Func_02001d4c(158);
   Func_02001bc4(step->script, step->x, step->z);
-  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  Call3((void (*)())Actor_CenterOnColumn, gSequenceParentWork.currentOwner, 2,
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Call3((void (*)())Actor_CenterOnColumn, gMainRoutineWork.currentOwner, 2,
         -8);
   FieldEvent_Wait(10);
   Func_02001cd4(countdown);

@@ -1,5 +1,5 @@
 #include "garoh.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 void Event_StartScreenTransition(void);
 void Func_02000a68(void);
@@ -31,7 +31,7 @@ void Func_02000be4(void) {
     Func_02005184(76, 32, 89, 22, 1, 1);
     Func_02005184(75, 33, 72, 22, 1, 1);
   }
-  if (gSequenceParentWork.entrance == 12) {
+  if (gMainRoutineWork.entrance == 12) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
     work->screenEffect = 0x209;

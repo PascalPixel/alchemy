@@ -2,9 +2,9 @@
 
 void Func_02000bfc(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: a one-pass block loads gSequenceParentWork before its offset is
+  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
    * built (one reordered row). */
   do {
   } while (0);

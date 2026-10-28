@@ -10,7 +10,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct MadraEventWork {
   u8 unk000[0x154];
@@ -61,9 +61,9 @@ next:
                   ((u16 *)&gData_02003308[index * 2 + 1])[0],
                   ((u16 *)&gData_02003308[index * 2 + 1])[1]);
   }
-  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 0;
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  Actor_CenterOnColumn(gSequenceParentWork.currentOwner, 2, -8);
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(10);
   Func_02002c30(work->value154);
   Event_FinishScreenTransition();

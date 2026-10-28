@@ -1,6 +1,6 @@
 #include "types.h"
 #include "flag_call.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "edition.h"
 
@@ -39,7 +39,7 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
     djinni = recorded - 1;
   }
   if (GameFlag_Test(366)) {
-    owner = gSequenceParentWork.currentOwner;
+    owner = gMainRoutineWork.currentOwner;
     GameFlag_SetBit(element * 20 + djinni + 48);
   } else {
     owner = Djinn_AddToLeastLoadedOwnerFar(element, djinni);

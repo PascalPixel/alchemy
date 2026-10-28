@@ -18,14 +18,14 @@ void Func_02002a48(s32 a);
 void Func_020029f8(s32 id, s32 value);
 
 void Func_0200106c(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 saved = object->gravity;
   s32 i;
-  struct SequenceParentWork *state;
+  struct MainRoutineWork *state;
 
   Func_02002998();
   Func_02002a48(0);
-  Func_020029f8(gSequenceParentWork.currentOwner, 257);
+  Func_020029f8(gMainRoutineWork.currentOwner, 257);
   Func_02002910(object, 40);
   object->motionFlags = 3;
   for (i = 0; i < 180; i++) {
@@ -33,7 +33,7 @@ void Func_0200106c(void) {
     if (object->y <= object->terrainHeight)
       break;
   }
-  state = &gSequenceParentWork;
+  state = &gMainRoutineWork;
   object->gravity = saved;
   /* FAKEMATCH: keeps the gravity store before the owner offset is built (differ
    * 2 without) */

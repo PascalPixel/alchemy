@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 
 struct MapBits {
@@ -47,14 +47,14 @@ static __inline__ void Func_02001068_(s32 id, s32 x, s32 z, s32 speed) {
 
 void Func_02000dc4(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   GameFlag_SetBit(0x9b4);
   if (!GameFlag_Test(0x9ad))
     Func_02001060(65, 0, 0);
   map->mode = 1;
-  party = &gSequenceParentWork;
-  /* FAKEMATCH: the native loads gSequenceParentWork's address before it starts the
+  party = &gMainRoutineWork;
+  /* FAKEMATCH: the native loads gMainRoutineWork's address before it starts the
    * field offset; unforced the offset starts first (differ 2). */
   asm volatile("" : "+l"(party));
   Actor_GetById(party->currentOwner)->priorityFlags |= 32;
@@ -82,7 +82,7 @@ void Func_02000dc4(void) {
 }
 
 void Func_02000ed0(void) {
-  if (gSequenceParentWork.entrance == 3)
+  if (gMainRoutineWork.entrance == 3)
     GameFlag_ClearBit(0x12f);
   if (GameFlag_Test(0x9b2)) {
     Func_02001060(9, 0, 0);

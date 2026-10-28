@@ -12,19 +12,19 @@ void Func_020030e8(s32 a);
 /// The leader turns to angle 0x4000 and takes mode 22, shows emote 0x102, then
 /// turns to 0xc000 and takes mode 5 and action 24.
 void Func_02000b3c(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02003048();
   Func_02003148(0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   leader->angle = 0x4000;
   FieldEvent_Wait(10);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 22);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   FieldEvent_Wait(30);
-  Func_020030c8(gSequenceParentWork.currentOwner, 0x102);
-  Motion_SetVarCbAndRefresh(gSequenceParentWork.currentOwner, 2);
+  Func_020030c8(gMainRoutineWork.currentOwner, 0x102);
+  Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
   FieldEvent_Wait(20);
   {
     s32 mode = 5;
@@ -34,12 +34,12 @@ void Func_02000b3c(void) {
      * before the owner's load; as Actor_SetModeById(owner, 5), 2 of 75
      * instructions differ in tla-en. */
     asm("" : "+r"(mode) : : "memory");
-    Actor_SetModeById(gSequenceParentWork.currentOwner, mode);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, mode);
   }
-  Actor_SetActionById(gSequenceParentWork.currentOwner, 24);
+  Actor_SetActionById(gMainRoutineWork.currentOwner, 24);
   FieldEvent_Wait(40);
   Func_02003030(0x1300000, 0x3900000, 0, -12);
-  Actor_GetById(gSequenceParentWork.currentOwner)->bounce = 0;
+  Actor_GetById(gMainRoutineWork.currentOwner)->bounce = 0;
   Func_020030e8(11);
   Func_02003050();
 }

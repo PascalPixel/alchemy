@@ -7,7 +7,7 @@
 // to 513. Left: the native mixes the call layer (each -1 and the emote's arguments built at the call) with direct calls that share 0, 0xcccc, 0x19999 and 0x5000 in high registers; registers differ from the start (the leader in r7, the guide in r11).
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "edition.h"
 
@@ -56,7 +56,7 @@ void Func_02003f7c(s32 countdown);
 void GameFlag_SetBit(s32 flag);
 
 void Func_0200129c(struct Actor *gift) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *guide = Actor_GetById(9);
   struct ActionScript script = gData_02004004;
 
@@ -86,15 +86,15 @@ void Func_0200129c(struct Actor *gift) {
   PartyInventory_Remove(455);
   Func_02003f2c(9, 0);
   HeapSlot_AllocEwram(88, 664)[661] = 99;
-  Motion_SetModeAndWaitAnimation(gSequenceParentWork.currentOwner, 3);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x19999, 0xcccc);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   leader->update = Func_02000df8;
-  Actor_SetPositionAndReset(gSequenceParentWork.currentOwner, 312, 446);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 312, 446);
   leader->update = 0;
-  Actor_Jump(gSequenceParentWork.currentOwner, 6, 0);
-  Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, 296, 452);
+  Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 296, 452);
   leader->update = Func_02001278;
-  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Actor_SetModeById(9, 3);
   FieldEvent_Wait(20);
   Func_02003f2c(9, 0);

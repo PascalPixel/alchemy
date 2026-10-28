@@ -49,7 +49,7 @@
 /// once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and
 /// shakes, as the rest of the sanctum does.
 
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "version.h"
 #include "module/scene/sol_sanctum_statue.h"
 #include "module/overworld/overworld.h"
@@ -881,7 +881,7 @@ s32 SolSanctumStatue_Initialize(void) {
   Actor_SetSpritePriority(ACTOR_MOVED_CENTER_STATUE, 1);
   // Only entrances 3 and 4 keep Jenna and Garet staged for their
   // conversations.
-  if ((u16)(gSequenceParentWork.entrance - 3) > 1) {
+  if ((u16)(gMainRoutineWork.entrance - 3) > 1) {
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetPosition(ACTOR_GARET, 0, 0);
   }
@@ -941,7 +941,7 @@ s32 SolSanctumStatue_Initialize(void) {
     MapGrid_CopyCellsTo(4, 31, 18, 11, 2, 1);
     MapGrid_CopyCellsTo(4, 58, 36, 43, 4, 1);
   }
-  if (gSequenceParentWork.entrance ==
+  if (gMainRoutineWork.entrance ==
       SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED) != 0) {
       Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -951,7 +951,7 @@ s32 SolSanctumStatue_Initialize(void) {
       GameFlag_Set(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED);
     }
   }
-  if (gSequenceParentWork.entrance ==
+  if (gMainRoutineWork.entrance ==
       SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED) != 0) {
       Actor_SetPosition(ACTOR_GARET, 0, 0);

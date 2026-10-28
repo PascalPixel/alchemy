@@ -957,7 +957,7 @@ Func_081039fc:
 .L_081041c8:
 	.4byte IwramCopyWords
 .L_081041cc:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_081041d0:
 	.4byte 0x000010d2
 .L_081041d4:

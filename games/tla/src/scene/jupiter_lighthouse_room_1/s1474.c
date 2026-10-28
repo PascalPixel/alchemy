@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void wait(s32 frames);
@@ -10,18 +10,18 @@ void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 struct Actor *Func_02001b7c(void);
 
 void Func_02001474(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = object->x;
   s32 z = object->z;
 
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x40000, 0x20000);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
   /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads x and z before
    * it copies the object to r10 (one reordered row), as overlay 69C's twin. */
   do {
   } while (0);
   x >>= 20;
   z >>= 20;
-  Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, (x << 4) + 8,
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,
                                     (z << 4) + 8);
   wait(1);
   Actor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
@@ -49,7 +49,7 @@ struct CellTargetEntry;
 /// row's 64 bit; Func_0200189c calls it the first time the leader steps on
 /// one of the table's cells.
 void Func_020014fc(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;
   s16 sourceZBit;

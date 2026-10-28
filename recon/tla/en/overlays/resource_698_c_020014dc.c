@@ -4,14 +4,14 @@
 // transition. The frame count is the column variable set to 0 just before
 // its loop and counted after the wait, which gives the leader r6 and the count
 // r7 as the native has them (54 with the count set before the stores). Left:
-// gSequenceParentWork's base and its offset take each other's registers when the
+// gMainRoutineWork's base and its offset take each other's registers when the
 // owner's address is first built, and the table is copied out of r8 before
 // the last flag store. Tried: the owner's address in a local (66), the
 // declarations split from their initialisers, permute 6 minutes.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "io_reg.h"
 
 struct CellTargetEntry;
@@ -42,7 +42,7 @@ void Event_WaitTransitionFrames(void);
 #include "iowrite.h"
 
 void Func_020014dc(struct CellTarget *table, struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);
 
@@ -52,12 +52,12 @@ void Func_020014dc(struct CellTarget *table, struct CellTargetEntry *entry) {
   FieldEvent_Wait(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   table->shown = 1;
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 28);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(16);
   x = 0;
   do {
@@ -69,7 +69,7 @@ void Func_020014dc(struct CellTarget *table, struct CellTargetEntry *entry) {
     wait(1);
     x++;
   } while (x <= 39);
-  Actor_GetById(gSequenceParentWork.currentOwner)->animationKind = 0;
+  Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
   table->shown = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();

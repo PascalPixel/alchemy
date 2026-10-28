@@ -8,7 +8,7 @@ extern const u8 gData_020045a4[];
 extern const u8 gData_020045f0[];
 
 void Func_02001a68(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(pin): object 9 in r8, so the barrier below can hold it there;
    * as a plain local with the barrier, 14 of 144 instructions differ in
    * tla-en. */
@@ -19,13 +19,13 @@ void Func_02001a68(void) {
 
   Func_02003e64();
   Call1((void (*)())Func_02003fa4, 0);
-  Call3((void (*)())Actor_SetAngleToward, 9, gSequenceParentWork.currentOwner,
+  Call3((void (*)())Actor_SetAngleToward, 9, gMainRoutineWork.currentOwner,
         0);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call1((void (*)())Func_02003f24, (s32)MsgYouAllSet);
   Call2((void (*)())Func_02003f2c, 9, 0);
   Func_02003fc4();
-  result = Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0);
+  result = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (result == 0) {
     Func_02003fbc();
     Call2((void (*)())Func_02003f2c, 9, 0);
@@ -34,14 +34,14 @@ void Func_02001a68(void) {
       u8 unk295;
     } *)HeapSlot_AllocEwram(88, 0x298))
         ->unk295 = 99;
-    Call3((void (*)())Actor_Jump, gSequenceParentWork.currentOwner, 6, 0);
-    Call3((void (*)())Actor_SetSpeedParameters, gSequenceParentWork.currentOwner,
+    Call3((void (*)())Actor_Jump, gMainRoutineWork.currentOwner, 6, 0);
+    Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
           0x19999, 0xcccc);
     Call3((void (*)())Actor_SetPositionAndCommit,
-          gSequenceParentWork.currentOwner, 152, 0x300);
+          gMainRoutineWork.currentOwner, 152, 0x300);
     leader->update = (void (*)(void))Func_02001278;
     Call2((void (*)())Actor_SetPartAttribute,
-          Actor_GetById(gSequenceParentWork.currentOwner), 15);
+          Actor_GetById(gMainRoutineWork.currentOwner), 15);
     Call2((void (*)())Actor_SetModeById, 9, 3);
     Call1((void (*)())FieldEvent_Wait, 20);
     Func_02003fc4();
@@ -83,7 +83,7 @@ void Func_02001a68(void) {
 void Func_02001bf4(void) {
   Func_02003e64();
   Func_02003fa4(0);
-  Actor_SetAngleToward(9, gSequenceParentWork.currentOwner, 0);
+  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
   Func_02003f24((s32)MsgMyPopS);
   Func_02003f2c(9, 0);
   Call2((void (*)())Func_02003f3c, 9, 0xb000);
@@ -97,7 +97,7 @@ void Func_02001c38(void) {
 }
 
 void Func_02001c4c(void) {
-  s32 y = Actor_GetById(gSequenceParentWork.currentOwner)->y;
+  s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
   asm volatile(
       ""

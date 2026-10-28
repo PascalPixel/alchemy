@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor_view.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 void wait(s32 frames);
 
@@ -24,13 +24,13 @@ void Func_08023510(struct ActorView *object, s32 argument) {
   object->argument = argument;
 }
 
-/// Starts the dispatch script for gSequenceParentWork's render mode, waiting a
+/// Starts the dispatch script for gMainRoutineWork's render mode, waiting a
 /// frame first in mode 9.
 void Func_08023524(struct ActorView *object) {
   const s32 *script;
-  struct SequenceParentWork *party = &gSequenceParentWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: ⚓️ loads gSequenceParentWork's address before it builds the field
+  /* FAKEMATCH: ⚓️ loads gMainRoutineWork's address before it builds the field
    * offset 0x212 in r2; the empty asm holds r2 until the address is loaded.
    * Plainly the offset is started first (differ 2). */
   asm("" : "+l"(party) : : "r2");

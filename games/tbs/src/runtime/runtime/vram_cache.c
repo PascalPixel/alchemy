@@ -187,7 +187,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
 }
 
 /// Frees every block and every cache entry. Called by System_Initialize,
-/// SequenceParent_Run and the debug modes that start over.
+/// MainRoutine_Run and the debug modes that start over.
 void VramCache_Reset(void) {
   u32 limit = VRAM_BLOCK_COUNT - 1;
   u8 *p = gVramCacheBlockOwners;

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "field_event.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 
@@ -26,14 +26,14 @@ static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
 }
 
 s32 *Func_02000044(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Daila2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
     return gData_02001068;
   else
     return gData_02001018;
 }
 
 s32 *Func_02000070(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Daila2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
     return gData_02001238;
   else
     return gData_020010d0;
@@ -44,12 +44,12 @@ void Func_0200009c(void) {
 
   Import_EventStart();
   Import_EventResolvePendingActions(0);
-  Import_ActorSetSpeed(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
-  Import_ActorSetSpritePriority(gSequenceParentWork.currentOwner, 2);
-  Import_ActorGet(gSequenceParentWork.currentOwner)->motionFlags = 0;
+  Import_ActorSetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Import_ActorSetSpritePriority(gMainRoutineWork.currentOwner, 2);
+  Import_ActorGet(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Import_SoundPlay(123);
-  Import_ActorSetAnimation(gSequenceParentWork.currentOwner, 2);
-  CenterAndWalk(gSequenceParentWork.currentOwner, 2, -6);
+  Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 2);
+  CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   Import_EventWait(10);
   Import_EventSetExitRequest(work->exit);
   Import_EventFinishScreenTransition();
@@ -60,7 +60,7 @@ void Func_0200009c(void) {
 void Func_02000118(s32 mode) { ReturnHome(mode, 66, 0x300); }
 
 s32 *Func_02000128(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Daila2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
     return gData_02001664;
   else
     return gData_02001490;

@@ -24,6 +24,6 @@ void Func_02002084(s32 fade) {
   }
   Func_02001ff0_(100, 50);
   Blend_SetAlpha(0xc07);
-  if (gSequenceParentWork.entrance == 6)
+  if (gMainRoutineWork.entrance == 6)
     Task_Add(Func_02001eb8, 0x480);
 }

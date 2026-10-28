@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -9,7 +9,7 @@ void Func_02002bec(void);
 void Func_02002c24(void);
 
 void Func_02000cec(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *first = Actor_GetById(18);
   struct Actor *second = Actor_GetById(19);
   s32 position[3];

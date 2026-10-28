@@ -1,4 +1,4 @@
-// Draft of Scene_GetPlacements, differ 19 of 87: GCSE (PRE) keeps gSequenceParentWork's
+// Draft of Scene_GetPlacements, differ 19 of 87: GCSE (PRE) keeps gMainRoutineWork's
 // address in r5 across the flag tests and reuses it for the second scene read;
 // the native loads it again from the pool after the join. Tried: one local read
 // twice, nested ifs, one-pass blocks around either read, the flag inline layer
@@ -6,7 +6,7 @@
 // dead condition).
 #include "types.h"
 #include "scene_tables.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -23,12 +23,12 @@ extern struct ActorPlacement gData_020054a4[];
 extern struct ActorPlacement gData_0200551c[];
 
 const struct ActorPlacement *Func_0200048c(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6a8Room1 && GameFlag_Test(0x9c5) &&
       !GameFlag_Test(0x9cc))
     return gData_02004b2c;
-  scene = gSequenceParentWork.scene;
+  scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov6a8Room2)
     return gData_02004c4c;
   if (scene == (s32)&SceneId_Ov6a8Room3) {

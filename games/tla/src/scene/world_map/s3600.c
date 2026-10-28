@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 
@@ -19,7 +19,7 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
   struct Actor *owner;
   struct EventWork *work;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gSequenceParentWork's address before it builds the
+  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds the
    * currentOwner offset; as no barrier, 2 of 33 instructions differ in
    * tla-en. */
   asm volatile("");
@@ -28,7 +28,7 @@ void Func_02003600(s32 slot, s32 before, s32 after) {
      * call; as plain before, 4 of 33 instructions differ in tla-en. */
     register s32 thenValue asm("r7") = before;
 
-    owner = Actor_GetById(gSequenceParentWork.currentOwner);
+    owner = Actor_GetById(gMainRoutineWork.currentOwner);
     work = Ram_HeapSlots->eventWork;
     if (owner->x < target->x)
       work->countdown = thenValue;
@@ -47,7 +47,7 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
   struct Actor *owner;
   struct EventWork *work;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gSequenceParentWork's address before it builds the
+  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds the
    * currentOwner offset; as no barrier, 2 of 33 instructions differ in
    * tla-en. */
   asm volatile("");
@@ -56,7 +56,7 @@ void Func_02003654(s32 slot, s32 before, s32 after) {
      * call; as plain before, 4 of 33 instructions differ in tla-en. */
     register s32 thenValue asm("r7") = before;
 
-    owner = Actor_GetById(gSequenceParentWork.currentOwner);
+    owner = Actor_GetById(gMainRoutineWork.currentOwner);
     work = Ram_HeapSlots->eventWork;
     if (owner->z < target->z)
       work->countdown = thenValue;

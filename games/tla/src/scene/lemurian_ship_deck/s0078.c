@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 
 #include "flag_call.h"
@@ -52,9 +52,9 @@ void Func_02000078(void) {
       Func_020020d4(158);
       Func_02001f2c_(51, 38, 70, 22, 1, 2);
     }
-    Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-    Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
-    Actor_CenterOnColumn(gSequenceParentWork.currentOwner, 2, -4);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+    Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
     Func_020020d4(123);
     Func_0200207c(*(s16 *)(work + 0x154));

@@ -28,7 +28,7 @@ void Func_02003f78(void) {
 }
 
 s32 Func_02003ff8(void) {
-  s32 scene = gSequenceParentWork.scene;
+  s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
     Func_02004060();

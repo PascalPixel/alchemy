@@ -309,7 +309,7 @@ Func_080caa4c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080caca8:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080cacac:
 	.4byte gData_080f21d4
 .L_080cacb0:

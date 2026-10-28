@@ -181,7 +181,7 @@ void FieldPsynergy_Frost(void) {
     event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                       FIELD_PSYNERGY_FROST, &eventTarget);
     if (event != NULL) {
-      Field_RunPsynergyEvent(event, gSequenceParentWork.leaderActorId,
+      Field_RunPsynergyEvent(event, gMainRoutineWork.leaderActorId,
                              eventTarget);
     }
     wait(20);

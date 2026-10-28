@@ -7,7 +7,7 @@
 /// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The entrances from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// events here, each leading on into the next; during the attacks the
-/// restart point (gSequenceParentWork.restartScene) is set to
+/// restart point (gMainRoutineWork.restartScene) is set to
 /// SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage
 /// over. While the ship is under way (rowing, or at sea after the first
 /// attack, and neither at the island nor at Tolbi) the setup sways the view.
@@ -47,7 +47,7 @@
 /// warns of monsters and wonders at its treasures.
 
 #include "script_operands.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/tolbi_ship_mast.h"
@@ -359,7 +359,7 @@ s32 TolbiShipMast_Initialize(void) {
     Actor_SetPosition(ACTOR_LOOKOUT, PIXELS(164), PIXELS(328));
   }
   // The ship's scripted entrances resume their matching lookout events.
-  switch (gSequenceParentWork.entrance) {
+  switch (gMainRoutineWork.entrance) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -382,21 +382,18 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
-    gSequenceParentWork.restartScene = (s32)&SceneId_ShipRooms;
-    gSequenceParentWork.restartEntrance =
-        SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunAvastEvent();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
-    gSequenceParentWork.restartScene = (s32)&SceneId_ShipRooms;
-    gSequenceParentWork.restartEntrance =
-        SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_ShowMonsters();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
-    gSequenceParentWork.restartScene = (s32)&SceneId_ShipRooms;
-    gSequenceParentWork.restartEntrance =
-        SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+    gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunMonsterLanding();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO:
@@ -858,9 +855,8 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in: exactly 11 takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
-  gSequenceParentWork.restartScene = (s32)&SceneId_ShipRooms;
-  gSequenceParentWork.restartEntrance =
-      SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
+  gMainRoutineWork.restartScene = (s32)&SceneId_ShipRooms;
+  gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == 11) {
     Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
   } else {

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -83,7 +83,7 @@ void Func_02001ee8(void) {
   struct Actor *object;
 
   if (Flag_Test(0x201) != 0) {
-    object = Actor_GetById(gSequenceParentWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (gData_0200567c != (object->x >> 20) ||
         gData_02005678 != (object->z >> 20))
       Flag_Clear(0x201);
@@ -195,7 +195,7 @@ void Func_020020dc(void) {
   struct Actor *object;
 
   if (Func_02003de0() != 0) {
-    object = Actor_GetById(Func_02003d10(gSequenceParentWork.currentOwner));
+    object = Actor_GetById(Func_02003d10(gMainRoutineWork.currentOwner));
     Func_02000d78(gData_02003fc8);
     Func_02003de8();
     Func_0200200c(object);

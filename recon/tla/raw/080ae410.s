@@ -242,7 +242,7 @@ Func_080ae410:
 .L_080ae5ec:
 	.4byte Data_080b1284
 .L_080ae5f0:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080ae5f4:
 	.4byte IwramCopyWords
 .L_080ae5f8:

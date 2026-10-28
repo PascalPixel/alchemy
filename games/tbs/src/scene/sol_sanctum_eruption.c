@@ -34,7 +34,7 @@
 /// ACTOR_PLATFORM_SHADOW, draws that shadow.
 
 #include "script_operands.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "module/scene/sol_sanctum_eruption.h"
 #include "module/scene/shared/effect_psynergy.h"
 #include "module/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
@@ -631,7 +631,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 /// Elemental Star Room (SceneId_SolSanctumElementalStarRoom). Called by
 /// FieldSequence_Run once the actors exist.
 s32 SolSanctumEruption_Initialize(void) {
-  if (gSequenceParentWork.entrance ==
+  if (gMainRoutineWork.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitializeSparkles();
     SolSanctumEruption_PlayHostageEvent();

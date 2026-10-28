@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
 void wait(s32 frames);
@@ -14,7 +14,7 @@ void Func_020022bc(s32 a);
 /// Once the leader stands at height 32 or more, it rises and spins for 110
 /// frames.
 void Func_02000454(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 i;
   s32 angle;
   s32 y;
@@ -25,9 +25,9 @@ void Func_02000454(void) {
     y = object->y;
   } while (0);
   if (y >= 0x200000) {
-    Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x20000, 0x10000);
-    Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
-    Actor_ResetAndSetPositionInMode2(gSequenceParentWork.currentOwner, 216, 680);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+    Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 216, 680);
     Actor_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {

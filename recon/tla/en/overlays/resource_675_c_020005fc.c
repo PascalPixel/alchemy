@@ -12,7 +12,7 @@
 // 4 minutes found nothing below 16.
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "call.h"
 
@@ -61,10 +61,10 @@ loop:
   index >>= 1;
   Call3((void (*)())Func_0200122c, gData_020019ec[index].value,
         gData_020019ec[index].position[0], gData_020019ec[index].position[1]);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Call3((void (*)())Actor_OffsetPositionAndResetMotion,
-        gSequenceParentWork.currentOwner, 0, -4);
+        gMainRoutineWork.currentOwner, 0, -4);
   FieldEvent_Wait(6);
   Func_020012cc(*(s16 *)(work + 0x154));
   Event_FinishScreenTransition();

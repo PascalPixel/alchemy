@@ -7,7 +7,7 @@
 // center->y before its shift.
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_event.h"
 #include "field_sprite.h"
 

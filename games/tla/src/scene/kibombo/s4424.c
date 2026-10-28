@@ -11,8 +11,8 @@ void Func_02004424(void) {
 
   Func_02005a9c();
   Func_02005c3c(0);
-  Actor_SetPartAttribute(Actor_GetById(gSequenceParentWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Func_020032b0();
   KIBOMBO_TASK_ADD(Func_02002ccc, 1152);

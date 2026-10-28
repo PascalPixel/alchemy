@@ -3,7 +3,7 @@
 #include "types.h"
 #include "lib/call.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -23,10 +23,10 @@ struct Actor *Actor_GetById(s32 id);
 
 s32 Func_0200200c(void) {
   FIELD_AT(Ram_HeapSlots->eventWork, s32, 428) = 0x201;
-  if (gSequenceParentWork.entrance != 7)
+  if (gMainRoutineWork.entrance != 7)
     Call1((void (*)())GameFlag_ClearBit, 0x350);
   if (GameFlag_Test(0x927) && !GameFlag_Test(0x928) &&
-      gSequenceParentWork.entrance == 7) {
+      gMainRoutineWork.entrance == 7) {
     Call1((void (*)())Func_0200231c, 7);
     Call3((void (*)())Func_02002214, 22, 0x900000, 0x2380000);
     Call3((void (*)())Func_02002214, 21, 0, 0);
@@ -36,18 +36,18 @@ s32 Func_0200200c(void) {
     Call3((void (*)())Func_02002214, 19, 0, 0);
   }
   if (GameFlag_Test(0x927) && GameFlag_Test(0x928) &&
-      gSequenceParentWork.entrance == 7 && GameFlag_Test(0x350)) {
+      gMainRoutineWork.entrance == 7 && GameFlag_Test(0x350)) {
     Call1((void (*)())Func_0200231c, 7);
     Call3((void (*)())Func_02002214, 16, 0, 0);
     Call3((void (*)())Func_02002214, 17, 0, 0);
     Call3((void (*)())Func_02002214, 18, 0, 0);
     Call3((void (*)())Func_02002214, 19, 0, 0);
   }
-  if (gSequenceParentWork.entrance == 5 && !GameFlag_Test(0x927)) {
+  if (gMainRoutineWork.entrance == 5 && !GameFlag_Test(0x927)) {
     Call2((void (*)())Actor_SetModeById, 17, 5);
     Call2((void (*)())Func_02002274, 17, 0x101);
   }
-  if (gSequenceParentWork.entrance == 7 && !GameFlag_Test(0x927)) {
+  if (gMainRoutineWork.entrance == 7 && !GameFlag_Test(0x927)) {
     struct Actor *object;
 
     Call2((void (*)())Actor_SetModeById, 9, 5);

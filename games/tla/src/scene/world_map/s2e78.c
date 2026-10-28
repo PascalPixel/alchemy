@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "flag_call.h"
 #include "text/msg_ids.h"
@@ -42,8 +42,8 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
 /// The leader is hidden and released, the screen fades and the camera moves;
 /// once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void) {
-  Actor_GetById(gSequenceParentWork.currentOwner)->scaleX = 0;
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -73,9 +73,9 @@ void Func_02002e78(void) {
   if (seen == 0) {
     Func_02004c20();
     Func_02004db8(0);
-    scale = Actor_GetById(gSequenceParentWork.currentOwner)->scaleX;
-    Actor_GetById(gSequenceParentWork.currentOwner)->scaleX = 0;
-    Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+    scale = Actor_GetById(gMainRoutineWork.currentOwner)->scaleX;
+    Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                        0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -127,16 +127,16 @@ void Func_02002e78(void) {
     Func_02004ce8(5, 0, 10);
     Func_02004ce8(7, 0, 10);
     Func_02004ce8(9, 0, 10);
-    Func_02004c88(gSequenceParentWork.currentOwner, 0, 0);
-    gSequenceParentWork.renderMode = 7;
-    gSequenceParentWork.ownerOverride = 1;
+    Func_02004c88(gMainRoutineWork.currentOwner, 0, 0);
+    gMainRoutineWork.renderMode = 7;
+    gMainRoutineWork.ownerOverride = 1;
     Func_02004db0();
     Flag_Set(0x8de);
     Func_02004c88(7, 0, 0);
     Func_02004c88(6, 0, 0);
     Func_02004c88(9, 0, 0);
     Func_02004c88(5, 0, 0);
-    Actor_GetById(gSequenceParentWork.currentOwner)->scaleX = scale;
+    Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = scale;
     Func_02004c28();
   }
 }

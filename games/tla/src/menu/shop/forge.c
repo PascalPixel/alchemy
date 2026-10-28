@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct ForgeRecipe {
   s16 item;
@@ -89,10 +89,10 @@ s32 Forge_PartyHasMaterial(void) {
   return 0;
 }
 
-void Forge_SetItem(s32 item) { gSequenceParentWork.forgeItem = item & 0x1ff; }
+void Forge_SetItem(s32 item) { gMainRoutineWork.forgeItem = item & 0x1ff; }
 
 s32 Forge_GetItem(void) {
-  u32 item = gSequenceParentWork.forgeItem;
+  u32 item = gMainRoutineWork.forgeItem;
   u32 mask;
 
   /* FAKEMATCH: ⚓️ loads the item before it builds the mask */

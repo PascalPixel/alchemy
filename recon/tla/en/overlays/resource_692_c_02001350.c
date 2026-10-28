@@ -10,7 +10,7 @@
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_effect.h"
 
 extern char SceneId_Ov692Room2;
@@ -59,7 +59,7 @@ void Func_02001350(void) {
   options.script = gData_02005050;
   options.startScaleX = 0x1cccc;
   options.startScaleY = 0x1cccc;
-  scene = gSequenceParentWork.scene;
+  scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov692Room2) {
     baseX = 164 << 17;
     position[1] = 0x200000;
@@ -176,7 +176,7 @@ void Func_02001350(void) {
   Func_02004d18();
   FieldEvent_Wait(30);
   *(s32 *)(layer + 12) = 0;
-  scene = gSequenceParentWork.scene;
+  scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov692Room2)
     Func_020034bc();
   else if (scene == (s32)&SceneId_Ov692Room3)

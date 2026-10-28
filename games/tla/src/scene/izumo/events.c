@@ -11,7 +11,7 @@ void Func_020001cc(void) {
 }
 
 void Func_020001ec(void) {
-  struct FieldActor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Test(3999)) {
@@ -19,18 +19,18 @@ void Func_020001ec(void) {
     if (object->x >> 20 == 28 && object->z >> 20 == 36) {
       Func_02000d00();
       Func_02000dd0(0);
-      Func_02000d90(gSequenceParentWork.currentOwner, 258);
-      Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, -16,
+      Func_02000d90(gMainRoutineWork.currentOwner, 258);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, -16,
                                                 0);
       object->velocityY = 0x60000;
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02000d08();
     }
   }
 }
 
 void Func_0200027c(void) {
-  struct FieldActor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Test(4000)) {
@@ -38,11 +38,11 @@ void Func_0200027c(void) {
     if (object->x >> 20 == 29 && object->z >> 20 == 34) {
       Func_02000d00();
       Func_02000dd0(0);
-      Func_02000d90(gSequenceParentWork.currentOwner, 258);
+      Func_02000d90(gMainRoutineWork.currentOwner, 258);
       Call3((void (*)())Actor_OffsetPositionAndResetMotion,
-            gSequenceParentWork.currentOwner, 0, -16);
+            gMainRoutineWork.currentOwner, 0, -16);
       object->velocityY = 0x60000;
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02000d08();
     }
   }
@@ -61,7 +61,7 @@ void Func_0200034c(void) {
 }
 
 void Func_0200036c(void) {
-  struct FieldActor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Test(4001)) {
@@ -69,11 +69,11 @@ void Func_0200036c(void) {
     if (object->x >> 20 == 10 && object->z >> 20 == 20) {
       Func_02000d00();
       Func_02000dd0(0);
-      Func_02000d90(gSequenceParentWork.currentOwner, 258);
-      Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, 16,
+      Func_02000d90(gMainRoutineWork.currentOwner, 258);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
                                                 0);
       object->velocityY = 0x60000;
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02000d08();
     }
   }
@@ -92,9 +92,9 @@ void Func_02000438(void) {
 
   Func_02000d00();
   Func_02000dd0(0);
-  Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetSpritePriority(gSequenceParentWork.currentOwner, 1);
-  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 0;
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Func_02000e08(123);
   Func_02000db0(*(s16 *)(work + 340));
   Event_FinishScreenTransition();

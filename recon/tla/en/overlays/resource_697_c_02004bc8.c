@@ -3,7 +3,7 @@
 // header says what it is, what still differs and what was tried.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_sprite.h"
 #include "field_effect.h"
 
@@ -21,7 +21,7 @@ s32 Math_Sine(s32 angle);
 void Func_02004a14(union FieldObject *object);
 
 void Func_02004bc8(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame;
   u32 i;

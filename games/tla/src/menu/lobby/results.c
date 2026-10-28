@@ -8,7 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "input.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
 #include "serial_runtime.h"
 #include "text/msg_ids.h"

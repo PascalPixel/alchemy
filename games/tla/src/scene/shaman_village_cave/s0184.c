@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "call.h"
 
@@ -28,7 +28,7 @@ void Actor_ArmCallback();
 /// away from the leader with a hop, and back along z.
 void Func_02000184(void) {
   struct Actor *object = Actor_GetById(17);
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 leaderX = leader->x >> 19;
   s32 leaderZ = leader->z >> 19;
   s32 objectX = object->x >> 19;

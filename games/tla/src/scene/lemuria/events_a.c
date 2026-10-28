@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "iwram_call.h"
 
 struct WarpTarget {
@@ -243,7 +243,7 @@ void Func_02000468(void) { Func_02001d44_(52, 69, 1, 1, 53, 69, 2); }
 void Func_02000488(void) { Func_02001d44_(53, 64, 1, 1, 52, 64, 2); }
 
 void Func_020004a8(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02001d44_(59, 64, 4, 3, 49, 71, 2);
   if (GameFlag_Test(0xfbb) == 0) {
@@ -251,11 +251,11 @@ void Func_020004a8(void) {
     if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
       Func_02001bcc();
       Func_02001d04(0);
-      Func_02001cac(gSequenceParentWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion_(gSequenceParentWork.currentOwner, 16,
+      Func_02001cac(gMainRoutineWork.currentOwner, 0x102);
+      Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 16,
                                                  0);
       leader->velocityY = 0x60000;
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02001bd4();
     }
   }

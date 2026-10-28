@@ -31,7 +31,7 @@ void _call_via_r3(s32, s32);
 /// Called by Field_UsePsynergy when no trigger names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
 /// action, and by FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_UNTARGETED).
-/// Halt also moves gSequenceParentWork.haltedActor to the actor it stops.
+/// Halt also moves gMainRoutineWork.haltedActor to the actor it stops.
 void FieldPsynergy_Run(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
@@ -77,20 +77,20 @@ void FieldPsynergy_Run(void) {
     return;
   case FIELD_PSYNERGY_HALT:
     // Resume the actor stopped before, then stop the nearest one.
-    if (gSequenceParentWork.haltedActor != -1) {
-      FieldPsynergy_ResumeHaltedActor(gSequenceParentWork.haltedActor);
-      gSequenceParentWork.haltedActor = -1;
+    if (gMainRoutineWork.haltedActor != -1) {
+      FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.haltedActor);
+      gMainRoutineWork.haltedActor = -1;
     }
 
     nearestTargetId =
-        Field_FindNearbyPsynergyTarget(gSequenceParentWork.leaderActorId, kind);
+        Field_FindNearbyPsynergyTarget(gMainRoutineWork.leaderActorId, kind);
     nearestTargetId = FieldEffect_FilterActorIdByFlags(nearestTargetId);
     if (Scene_FindActorTalkTrigger(nearestTargetId) != 0) {
-      FieldPsynergy_SetupActorPair(gSequenceParentWork.leaderActorId,
+      FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId,
                                    nearestTargetId);
       FieldPsynergy_HaltOnTarget(nearestTargetId);
       FieldPsynergy_HaltActor(nearestTargetId);
-      gSequenceParentWork.haltedActor = nearestTargetId;
+      gMainRoutineWork.haltedActor = nearestTargetId;
     } else {
       FieldPsynergy_Halt();
     }
@@ -124,7 +124,7 @@ void FieldPsynergy_Run(void) {
 /// FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET). Clears
 /// effectWork->enabled first: that is how the runners FieldPsynergy_Run shares
 /// (Force, Frost, Ply, Whirlwind, Catch) tell that a trigger decides what
-/// happens to the target. Halt also moves gSequenceParentWork.haltedActor to
+/// happens to the target. Halt also moves gMainRoutineWork.haltedActor to
 /// the target.
 void FieldPsynergy_Dispatch(void) {
   struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
@@ -137,7 +137,7 @@ void FieldPsynergy_Dispatch(void) {
   case FIELD_PSYNERGY_MIND_READ:
     if (runtime->revealActive != 0)
       FieldPsynergy_EndReveal();
-    if (gSequenceParentWork.haltedActor != effectWork->secondActorId)
+    if (gMainRoutineWork.haltedActor != effectWork->secondActorId)
       ((struct Actor *)effectWork->child)->paused = 1;
     FieldPsynergy_StartMindReadWave(effectWork->firstActorId, targetId);
     break;
@@ -164,12 +164,12 @@ void FieldPsynergy_Dispatch(void) {
     FieldPsynergy_GrowthOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_HALT:
-    if (gSequenceParentWork.haltedActor != -1) {
-      FieldPsynergy_ResumeHaltedActor(gSequenceParentWork.haltedActor);
-      gSequenceParentWork.haltedActor = -1;
+    if (gMainRoutineWork.haltedActor != -1) {
+      FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.haltedActor);
+      gMainRoutineWork.haltedActor = -1;
     }
     FieldPsynergy_HaltActor(targetId);
-    gSequenceParentWork.haltedActor = targetId;
+    gMainRoutineWork.haltedActor = targetId;
     FieldPsynergy_HaltOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_PLY:
@@ -207,7 +207,7 @@ void FieldPsynergy_FinishMindRead(void) {
 
   if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldPsynergy_FinishWaveAndReleaseHeapBlock();
-    if (gSequenceParentWork.haltedActor != effectWork->secondActorId) {
+    if (gMainRoutineWork.haltedActor != effectWork->secondActorId) {
       ((struct Actor *)effectWork->child)->paused = 0;
     }
   }

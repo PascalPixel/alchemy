@@ -27,7 +27,7 @@ void Func_020037e4(void) {
 void Func_0200384c(void) {
   Func_02005c14(136, 1);
   Task_Add(Func_020037e4, 0x480);
-  Func_02005c1c(gSequenceParentWork.currentOwner, -1);
+  Func_02005c1c(gMainRoutineWork.currentOwner, -1);
   Func_02005c34();
   Field_DispatchTypeHandler(1);
   Func_02005c24();
@@ -36,7 +36,7 @@ void Func_0200384c(void) {
 }
 
 void Func_02003898(void) {
-  s16 scene = gSequenceParentWork.scene;
+  s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Kibombo4)
     Task_RemoveFar(Func_02002c34);
@@ -77,12 +77,12 @@ void Func_02003948(void) {
    */
   do {
   } while (0);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_02005a9c();
   Func_02005c3c(0);
   Kibombo_CamMove(-1, -1, -1, 0);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 2);
-  Kibombo_ObjSpeed(gSequenceParentWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   x = leader->x;
   px = x >> 16;
   Func_02005a54(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);
@@ -90,7 +90,7 @@ void Func_02003948(void) {
   leader->facing = 0xc000;
   if (GameFlag_Test(0x202))
     Func_02003898();
-  Actor_SetMovementTypeById(gSequenceParentWork.currentOwner,
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_02005cd0);
   wait(12);
   Func_02005c9c(123);

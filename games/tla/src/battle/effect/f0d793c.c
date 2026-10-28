@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "system.h"
 
 void GameFlag_SetBit(s32 flag);
@@ -12,10 +12,10 @@ struct MapActor {
 };
 
 /// The Broken Seal's Djinn_ResolvePendingEvent, with this game's actors up to
-/// 79, the plain flag calls, the event at gSequenceParentWork's 0x254 and its
+/// 79, the plain flag calls, the event at gMainRoutineWork's 0x254 and its
 /// 0x1000 kind tested like the first, falling into the common clear.
 void Func_080d793c(s32 capture) {
-  struct SequenceParentWork *st = &gSequenceParentWork;
+  struct MainRoutineWork *st = &gMainRoutineWork;
   s16 *pending = &st->pendingDjinnEvent;
   s32 kind = *pending & 0xf000;
   s32 flag = *pending & 0xfff;
@@ -57,5 +57,5 @@ void Func_080d793c(s32 capture) {
       }
     }
   }
-  gSequenceParentWork.pendingDjinnEvent = 0;
+  gMainRoutineWork.pendingDjinnEvent = 0;
 }

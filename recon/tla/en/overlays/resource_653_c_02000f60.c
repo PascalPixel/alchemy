@@ -111,7 +111,7 @@ void Func_02000f60(void) {
   carry:
     if (GameFlag_Test(0x208) == 0)
       goto count;
-    leader = Actor_GetById(gSequenceParentWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.currentOwner);
     leader->y = statue->y + 0x40000;
     leader->targetY = 0x80000000;
     leader->velocityY = 0;
@@ -130,10 +130,10 @@ void Func_02000f60(void) {
     Actor_GetById(9)->priorityFlags |= 2;
     Actor_SetSpritePriority(9, 3);
     if (GameFlag_Test(0x208)) {
-      leader = Actor_GetById(gSequenceParentWork.currentOwner);
+      leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
       Actor_SetSingleChildFlags(
-          Actor_GetById(gSequenceParentWork.currentOwner), 1);
+          Actor_GetById(gMainRoutineWork.currentOwner), 1);
     }
     goto count;
   }

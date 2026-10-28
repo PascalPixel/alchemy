@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"
 #include "call.h"
@@ -13,7 +13,7 @@ void Func_0200129c(s32 id, s32 x, s32 z);
 void Func_0200115c(void) {
   if (!Flag_IsSet(0x230)) {
     struct Actor *object = Actor_GetById(9);
-    struct Actor *owner = Actor_GetById(gSequenceParentWork.currentOwner);
+    struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
     s32 other;
 
     Flag_Set(0x230);
@@ -28,6 +28,6 @@ void Func_0200115c(void) {
     /* FAKEMATCH: the native loads the second argument before the owner; a
      * direct call and a forwarding inline load the owner first. */
     __asm__ volatile("" : "+r"(other));
-    Actor_TurnToFaceEachOther(gSequenceParentWork.currentOwner, other, 0);
+    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, other, 0);
   }
 }

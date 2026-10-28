@@ -1,7 +1,7 @@
 #include "types.h"
 #include "item.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "render_input.h"
 #include "edition.h"
 
@@ -94,7 +94,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
     chance = 30;
     if ((u16)item->price != 0)
-      chance = __udivsi3(gSequenceParentWork.coins, (u16)item->price);
+      chance = __udivsi3(gMainRoutineWork.coins, (u16)item->price);
 
     if (shop->partyAction == 2) {
       maximum = Item_AdjustCounterFar(itemId, 0);

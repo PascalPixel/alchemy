@@ -27,8 +27,8 @@ void Func_02000fc4(void) {
       Func_0200487c(price, 5);
       Func_0200487c(price, 5);
       FieldMessage_ShowAtActor(12, 0);
-      if (Event_AskYesNoWithActorAnimation(gSequenceParentWork.currentOwner, 0) == 0) {
-        if ((u32)gSequenceParentWork.coins < price) {
+      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+        if ((u32)gMainRoutineWork.coins < price) {
           Actor_SetModeById(13, 6);
           FieldEvent_Wait(20);
           Actor_SetModeById(13, 5);

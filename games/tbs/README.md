@@ -10,7 +10,7 @@ Every sequence, event, menu and battle effect in The Broken Seal is code
 that runs from its start to its end and waits where it stands whenever time
 must pass, while short tasks run once a frame to keep the world moving:
 
-- **One sequence at a time.** The [sequence parent](#the-sequence-parent)
+- **One sequence at a time.** The [main routine](#the-main-routine)
   runs one [sequence](glossary.md#sequence) (a scene, a battle, a minigame)
   from start to finish.
 - **Sequences hand over by themselves.** A scene that meets a random battle
@@ -35,7 +35,7 @@ The game runs in four layers, each inside the one above it.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "fontSize": "14px"}, "flowchart": {"padding": 10}}}%%
 flowchart TB
-  subgraph seqm ["Sequence parent"]
+  subgraph seqm ["Main routine"]
     direction TB
     c1["One sequence at a time, for as long as the console is on"]
     subgraph scene ["Field sequence"]
@@ -66,7 +66,7 @@ flowchart TB
   style frame fill:#FFFFFF,stroke:#9AA3AE,rx:16,ry:16
 ```
 
-- **[Sequence parent](#the-sequence-parent).** Runs one sequence at a
+- **[Main routine](#the-main-routine).** Runs one sequence at a
   time, for as long as the console is on: the field sequence, the battle
   sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
   Wheels).
@@ -87,14 +87,14 @@ throughout, is red.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   power(["Power on"]) --> memory["Clear the fast memory"] --> irq["Install the resident code and the interrupt handlers"]
-  irq --> services["Start the sound and the task table"] --> seq(["Sequence parent"])
-  classDef sequenceParent fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  irq --> services["Start the sound and the task table"] --> seq(["Main routine"])
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class seq sequenceParent
+  class seq mainRoutine
   class power,memory,irq,services step
 ```
 
@@ -105,34 +105,34 @@ parent, which never returns.
 
 **Reference:** `System_Initialize` · [System: Start-up](system.md#start-up)
 
-## The sequence parent
+## The main routine
 
 ![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing around the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  loop(["Sequence parent"]) --> scene(["Field sequence"]) & battle(["Battle sequence"]) & dice["Dice sequence: Lucky Dice"] & wheels["Slots sequence: Lucky Wheels"]
+  loop(["Main routine"]) --> scene(["Field sequence"]) & battle(["Battle sequence"]) & dice["Dice sequence: Lucky Dice"] & wheels["Slots sequence: Lucky Wheels"]
   scene & battle & dice & wheels --> back(["Next sequence"])
   back --> loop
-  classDef sequenceParent fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class loop sequenceParent
+  class loop mainRoutine
   class scene fieldSequence
   class back request
   class battle battle
   class dice,wheels step
 ```
 
-Each pass reads one id from the sequence parent's work and runs one thing to its end: a
+Each pass reads one id from the main routine's work and runs one thing to its end: a
 scene, any row of the scene table, the Title and the File Screen included,
 which `FieldSequence_Run` runs until the party takes an exit; or the battle,
 dice or slots sequence. The sequence then names the next one, and in the
-transition the sequence parent clears everything the last one left behind (its
+transition the main routine clears everything the last one left behind (its
 tasks, its interrupt handlers, the heap) before starting it. Going from one
 scene to the next is such a transition, just as going into a battle is.
 
@@ -153,7 +153,7 @@ flowchart TD
   subgraph s3 ["Field sequence"]
     again(["World Map"])
   end
-  classDef sequenceParent fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
@@ -177,8 +177,8 @@ battle, or else to the last Sanctum.
 ### How a sequence finds its way back
 
 Sequences pass nothing to each other directly. Everything goes through the
-[sequence parent's work](glossary.md#sequence-parents-work),
-`gSequenceParentWork`, the one struct every sequence shares:
+[main routine's work](glossary.md#main-routines-work),
+`gMainRoutineWork`, the one struct every sequence shares:
 
 | When                       | What is written                                                                              |
 | -------------------------- | -------------------------------------------------------------------------------------------- |
@@ -191,10 +191,10 @@ Sequences pass nothing to each other directly. Everything goes through the
 after-battle destination, or else to the return point with everyone where they
 stood; a defeat goes to the defeat destination, or else to the last Sanctum
 with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
-result stays in `gSequenceParentWork.sequenceResult` for the scene that comes back.
+result stays in `gMainRoutineWork.sequenceResult` for the scene that comes back.
 The Title and the File Screen need none of this: they are ordinary scenes.
 
-**Reference:** `SequenceParent_Run` · `Scene_ReturnFromSequence`
+**Reference:** `MainRoutine_Run` · `Scene_ReturnFromSequence`
 
 ## Waiting in place
 
@@ -265,18 +265,18 @@ tempo. This is the game's slowdown. The VBlanks a frame took are counted in
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  parent(["Sequence parent"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
+  parent(["Main routine"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
   arrive --> music["Start the area's music"] --> code["Unpack the scene's code"]
   code --> pick(["Field sequence"]) --> map["Load the map"] --> place["Place the party at its entrance, or where it stood before a battle"]
   place --> actors["Create the actors from the scene's list"] --> own["Run the scene's set-up"]
   own --> fade["Fade in"] --> run(["The field sequence's loop"])
-  classDef sequenceParent fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class parent sequenceParent
+  class parent mainRoutine
   class pick fieldSequence
   class run sceneLoop
   class arrive,music,code,map,place,actors,own,fade step
@@ -285,7 +285,7 @@ flowchart TD
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  subgraph ps ["Sequence parent"]
+  subgraph ps ["Main routine"]
     direction TB
     pick(["Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
     arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay, in place of the World Map's"]
@@ -302,7 +302,7 @@ flowchart TD
   subgraph mgr ["The field sequence's loop"]
     run(["Xian"])
   end
-  classDef sequenceParent fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
@@ -316,7 +316,7 @@ flowchart TD
   style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
 ```
 
-Between scenes the sequence parent clears the
+Between scenes the main routine clears the
 [game flags](glossary.md#game-flag) the last scene kept for itself, and the
 [area](glossary.md#area)'s flags on entering a new area. It starts the area's
 music and unpacks the scene's code, its [overlay](glossary.md#overlay). The
@@ -346,7 +346,7 @@ flowchart TD
   check -->|"yes"| handle["Handle it to the end"]
   handle -->|"next frame"| frame
   handle -->|"an exit or a battle"| next(["Next sequence"])
-  classDef sequenceParent fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
@@ -381,7 +381,7 @@ flowchart TD
     ground --> check{"A request?"}
     check -->|"no: next frame"| queue
   end
-  classDef sequenceParent fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
   classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
@@ -638,7 +638,7 @@ actors.
 Each bank starts at a fixed place, and code in one bank reaches another only
 through a short list of entrances at that bank's start, so a bank can grow
 without moving the others. An entrance is the function's name with `Far`
-added: the sequence parent starts a battle with `Battle_RunFar`, which leads
+added: the main routine starts a battle with `Battle_RunFar`, which leads
 to `Battle_Run` in the battle bank.
 
 **Reference:** [far calls](glossary.md#far-call) ·

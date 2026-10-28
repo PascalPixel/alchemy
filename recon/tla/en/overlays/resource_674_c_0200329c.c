@@ -8,10 +8,10 @@
 // flag 0xaa5 is set and 265 clear, frees actors 9, 11 and 12, schedules
 // Func_02001c4c, sets flag 0x217 and places 9 and 10 again for entrances 4
 // and 5, then runs entrance 3's (Func_02002830) or 4's (Func_020029c4)
-// arrival, or a screen transition and Func_020034d8. Left: four rows where the native schedules an argument constant otherwise (the first palette fade builds 3 last, the gSequenceParentWork load comes before the 241 offset, two position pairs split their shifts).
+// arrival, or a screen transition and Func_020034d8. Left: four rows where the native schedules an argument constant otherwise (the first palette fade builds 3 last, the gMainRoutineWork load comes before the 241 offset, two position pairs split their shifts).
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 struct MapLayerBits {
@@ -50,7 +50,7 @@ void Func_0200329c(void) {
   Func_02003e64();
   Func_02003fa4(0);
   ((struct MapLayerBits *)map)->priority = 1;
-  if (gSequenceParentWork.entrance == 2)
+  if (gMainRoutineWork.entrance == 2)
     GameFlag_ClearBit(303);
   Func_02003410();
   PaletteQueue_Add(3, 12, 5, 4);
@@ -64,7 +64,7 @@ void Func_0200329c(void) {
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   Task_Add(Func_02001c4c, 0x480);
-  if ((u16)(gSequenceParentWork.entrance - 4) <= 1) {
+  if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     GameFlag_SetBit(0x217);
     if (!GameFlag_Test(265)) {
       Func_02003ee4(9, 0x980000, 0x3000000, 0x4000);
@@ -73,7 +73,7 @@ void Func_0200329c(void) {
     }
   }
   if (!GameFlag_Test(265)) {
-    s32 entrance = gSequenceParentWork.entrance;
+    s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 3) {
       Func_02002830();

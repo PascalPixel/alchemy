@@ -66,7 +66,7 @@
 /// finds nothing on the stormy night, and after Kalay it is there only from the
 /// third patch on.
 
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "module/import.h"
 #include "module/scene/vale_kradens_cottage.h"
 #include "module/overworld/overworld.h"
@@ -929,9 +929,9 @@ s32 ValeKradensCottage_Initialize(void) {
   struct Actor *actor;
   s32 debrisRow;
 
-  if (gSequenceParentWork.entrance ==
+  if (gMainRoutineWork.entrance ==
           VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
-      gSequenceParentWork.entrance ==
+      gMainRoutineWork.entrance ==
           VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
@@ -983,7 +983,7 @@ s32 ValeKradensCottage_Initialize(void) {
     Import_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     Event_Start();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gSequenceParentWork.entrance ==
+      if (gMainRoutineWork.entrance ==
           VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH) {
         ValeKradensCottage_KradenSetsOff();
       }

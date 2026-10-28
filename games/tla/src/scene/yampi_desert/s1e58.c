@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 extern s32 gInput;
 
@@ -17,7 +17,7 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz);
 
 void Func_02001e58(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 speed = 0x18000;
   struct MapWork *map;
   struct MapCell *here, *ahead, *under;
@@ -41,11 +41,11 @@ void Func_02001e58(void) {
   Actor_SetAnimationSpeed(leader, 16);
   Map_DisableUpdateCallback();
   if ((u8)(under->collisionCode - 10) <= 4) {
-    if (gSequenceParentWork.renderMode == 5)
+    if (gMainRoutineWork.renderMode == 5)
       speed = 0;
     else
       Actor_SetSingleChildFlags(
-          Actor_GetById(gSequenceParentWork.currentOwner), 1);
+          Actor_GetById(gMainRoutineWork.currentOwner), 1);
   }
   if (ahead->collisionCode == 255)
     speed = 0;

@@ -37,7 +37,7 @@ void Func_02003be8(struct WarpWork *work, struct WarpEntry *entry);
 void Func_02003d80(void);
 
 s32 Func_02003f18(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct WarpWork *work = &gData_020070a8;
@@ -65,7 +65,7 @@ s32 Func_02003f18(void) {
 }
 
 void Func_02003fc8(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
   struct WarpWork *work = &gData_020070a8;
   s32 x = GameFlag_GetByte(work->positionFlag);

@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
@@ -30,7 +30,7 @@ static inline void Yallam_Offset(s32 id, s32 x, s32 z) {
 }
 
 void Func_0200038c(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Yallam_02002598(26, 95, 2, 1, 26, 76, 2);
   if (GameFlag_Test(0xf62) == 0) {
@@ -38,10 +38,10 @@ void Func_0200038c(void) {
     if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
       Func_02002488();
       Func_02002590(0);
-      Func_02002550(gSequenceParentWork.currentOwner, 0x102);
-      Yallam_Offset(gSequenceParentWork.currentOwner, 16, 0);
+      Func_02002550(gMainRoutineWork.currentOwner, 0x102);
+      Yallam_Offset(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02002490();
     }
   }
@@ -50,7 +50,7 @@ void Func_0200038c(void) {
 void Func_0200041c(void) { Yallam_02002598(67, 25, 3, 3, 106, 20, 1); }
 
 void Func_0200043c(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Yallam_02002598(67, 25, 3, 3, 106, 20, 1);
   if (GameFlag_Test(0xf60) == 0) {
@@ -58,10 +58,10 @@ void Func_0200043c(void) {
     if (leader->x >> 20 == 42 && leader->z >> 20 == 21) {
       Func_02002488();
       Func_02002590(0);
-      Func_02002550(gSequenceParentWork.currentOwner, 0x102);
-      Yallam_Offset(gSequenceParentWork.currentOwner, 0, -16);
+      Func_02002550(gMainRoutineWork.currentOwner, 0x102);
+      Yallam_Offset(gMainRoutineWork.currentOwner, 0, -16);
       leader->velocityY = 0x60000;
-      Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02002490();
     }
   }

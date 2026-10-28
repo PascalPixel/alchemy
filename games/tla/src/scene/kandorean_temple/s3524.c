@@ -3,7 +3,7 @@
 void Func_02003524(void) {
   Func_020051c0();
   Func_02005370(0);
-  Actor_GetById(gSequenceParentWork.currentOwner)->motionFlags = 0;
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -20,20 +20,20 @@ void Func_02003574(void) {
 }
 
 void Func_02003584(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   u32 i;
   s32 delta;
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
 
   Func_020051c0();
   Func_02005370(0);
   object->motionFlags = 0;
-  Actor_SetActionVariantValue(gSequenceParentWork.currentOwner, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(gSequenceParentWork.currentOwner),
+  Actor_SetActionVariantValue(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   object->angle = 0;
   {
-    s32 *owner = &gSequenceParentWork.currentOwner;
+    s32 *owner = &gMainRoutineWork.currentOwner;
     /* FAKEMATCH: the mode pinned to r1 and read by an asm is set before the
      * owner is loaded; as a plain constant, the owner's load comes first (one
      * reordered row in tla-en). */
@@ -48,9 +48,9 @@ void Func_02003584(void) {
     wait_(1);
   }
   FieldEvent_Wait_(20);
-  party = &gSequenceParentWork;
+  party = &gMainRoutineWork;
   object->angle = 0x4000;
-  /* FAKEMATCH: the barrier loads gSequenceParentWork's address among the angle's
+  /* FAKEMATCH: the barrier loads gMainRoutineWork's address among the angle's
    * stores and builds the owner's offset after them; as plain C, 4
    * instructions differ in tla-en. */
   asm volatile("" : "+l"(party));

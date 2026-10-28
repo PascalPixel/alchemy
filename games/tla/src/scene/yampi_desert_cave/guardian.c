@@ -9,7 +9,7 @@
        ->v)
 
 extern const u8 MsgIAmThe[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 extern char SceneId_Ov664Room4;
 
 s32 Func_02001870();
@@ -41,7 +41,7 @@ void Func_0200130c(void) {
   Call2(Func_020018f0, 0x10000, 0);
   Call1(Func_02001900, 60);
   Call1(FieldEvent_Wait, 60);
-  leader = Value1(Actor_GetById, FIELD_AT(gSequenceParentWork, s32, 0x214));
+  leader = Value1(Actor_GetById, FIELD_AT(gMainRoutineWork, s32, 0x214));
   if (leader != 0)
     Call3(Actor_ResetAndSetPosition, 9, FIELD_AT(leader, s16, 10),
           FIELD_AT(leader, s16, 18));
@@ -50,9 +50,9 @@ void Func_0200130c(void) {
    * first argument ahead of the scene store's address (alchemy permute);
    * without it the argument follows the store (differ 4). */
   do {
-    FIELD_AT(gSequenceParentWork, u16, 0x254) = 0x19cd;
-    FIELD_AT(gSequenceParentWork, u8, 0x24b) = 2;
+    FIELD_AT(gMainRoutineWork, u16, 0x254) = 0x19cd;
+    FIELD_AT(gMainRoutineWork, u8, 0x24b) = 2;
   } while (0);
-  FIELD_AT(gSequenceParentWork, u16, 0x1f6) = (s32)&SceneId_Ov664Room4;
+  FIELD_AT(gMainRoutineWork, u16, 0x1f6) = (s32)&SceneId_Ov664Room4;
   Func_020018e0(0x67, 1);
 }

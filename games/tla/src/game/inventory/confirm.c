@@ -1,6 +1,6 @@
 #include "types.h"
 #include "uiwindow.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 
 s16 *Scene_FindActorPlacement(s32 action);
@@ -30,7 +30,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   while (Message_AllTypedFar() == 0)
     wait(1);
 
-  wait((2 - gSequenceParentWork.eventMode) * 3);
+  wait((2 - gMainRoutineWork.eventMode) * 3);
 
   if (forceBottom == 0) {
     s32 bottom = (s16)window->y + window->height;
@@ -52,13 +52,13 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
     Actor_SetModeById(actor, 4);
     Window_CloseMatchingIdFar(sprite);
     Message_CloseFinishedWindowsFar();
-    if (gSequenceParentWork.eventMode != 2)
+    if (gMainRoutineWork.eventMode != 2)
       Actor_WaitForAnimationEnd(actor, 4);
   } else {
     Actor_SetModeById(actor, 3);
     Window_CloseMatchingIdFar(sprite);
     Message_CloseFinishedWindowsFar();
-    if (gSequenceParentWork.eventMode != 2)
+    if (gMainRoutineWork.eventMode != 2)
       Actor_WaitForAnimationEnd(actor, 3);
   }
 

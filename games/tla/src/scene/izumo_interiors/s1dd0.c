@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 s32 Event_AskYesNoWithActorAnimation();
@@ -39,12 +39,12 @@ void Func_02001dd0(void) {
   Func_020021c4();
   Call1(Func_020022bc, 0);
   Call1(Func_02002244, (s32)&MsgAhCouldIt);
-  Call3(Actor_SetPositionAndReset, gSequenceParentWork.currentOwner, 144, 0x218);
-  Call3(Actor_ArmCallback, gSequenceParentWork.currentOwner, 0xc000, 0);
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 144, 0x218);
+  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
   Call1(FieldEvent_Wait, 15);
   Value3((s32 (*)())Func_0200226c, 15, 0x100, 60);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 15, 0);
-  t9 = Value2(Event_AskYesNoWithActorAnimation, gSequenceParentWork.currentOwner, 0);
+  t9 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
   if (t9 != 0)
     goto L_02009e3a;
   Call1(Func_02002244, ((s32)&MsgAhCouldIt + 1));
@@ -80,7 +80,7 @@ L_02009e48:
   Call3(Actor_SetAngleToward, 15, 24, 0);
   Call1(FieldEvent_Wait, 30);
   Call2(Func_02002254, 15, 0);
-  Call3(Actor_SetAngleToward, 15, gSequenceParentWork.currentOwner, 0);
+  Call3(Actor_SetAngleToward, 15, gMainRoutineWork.currentOwner, 0);
   Call1(FieldEvent_Wait, 60);
   Call2(Func_02002254, 15, 0);
   Call1(FieldEvent_Wait, 30);
@@ -92,8 +92,8 @@ L_02009e48:
   Call1(FieldEvent_Wait, 60);
   Call3(Actor_Jump, 24, 4, 20);
   Call1(FieldEvent_Wait, 60);
-  Call3(Actor_SetAngleToward, 15, gSequenceParentWork.currentOwner, 0);
-  Call3(Actor_SetAngleToward, 24, gSequenceParentWork.currentOwner, 0);
+  Call3(Actor_SetAngleToward, 15, gMainRoutineWork.currentOwner, 0);
+  Call3(Actor_SetAngleToward, 24, gMainRoutineWork.currentOwner, 0);
   Call1(FieldEvent_Wait, 60);
   Call2(Func_02002254, 15, 0);
   Call3(Actor_Jump, 24, 2, 20);
@@ -101,7 +101,7 @@ L_02009e48:
   Func_020021cc();
   Func_020021c4();
   Call1(Func_020022bc, 0);
-  Call3(Actor_SetAngleToward, gSequenceParentWork.currentOwner, 15, 0);
+  Call3(Actor_SetAngleToward, gMainRoutineWork.currentOwner, 15, 0);
   Call1(FieldEvent_Wait, 60);
   Call2(Actor_StartRepeatedMotion, 15, 2);
   Call1(FieldEvent_Wait, 30);

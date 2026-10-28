@@ -54,7 +54,7 @@ s32 FieldMessage_ShowAtActor();
 s32 wait();
 s32 __divsi3();
 extern u8 MsgGaroh28[];
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_02003878(void) {
   s32 v5;
@@ -1274,7 +1274,7 @@ L_0200cfbc:;
   Call1(FieldEvent_Wait, 20);
   Call3(Actor_SetSpeedParameters, 9, 0x13333, 0x9999);
   Call2(Actor_SetModeById, 9, 2);
-  p1 = (s32)gSequenceParentWork;
+  p1 = (s32)gMainRoutineWork;
   v5 = (p1 + 0x214);
   t27 = Value1(Actor_GetById, *(s32 *)(v5));
   if (t27 == 0)
@@ -1320,7 +1320,7 @@ L_0200d0ea:;
   Call1(Actor_WaitForMoveById, 7);
   Call3(Func_0200520c, 7, 0, 0);
 L_0200d0fa:;
-  p2 = (s32)gSequenceParentWork;
+  p2 = (s32)gMainRoutineWork;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
     /* FAKEMATCH: the native loads the first argument before the others; the

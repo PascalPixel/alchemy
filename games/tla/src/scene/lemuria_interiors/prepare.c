@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "call.h"
@@ -274,7 +274,7 @@ L_020089e4:
   Value1((s32 (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 12, 2);
-  object3 = Actor_GetById(gSequenceParentWork.currentOwner);
+  object3 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object3 == 0)
     goto L_02008a36;
   Value3((s32 (*)())Actor_ResetAndSetPosition, 12,

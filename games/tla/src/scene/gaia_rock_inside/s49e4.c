@@ -2,15 +2,15 @@
 #include "../../../../games/tla/include/ram_buffer.h"
 #include "../../../../games/tla/include/map.h"
 #include "../../../../games/tla/include/actor.h"
-#include "../../../../games/tla/include/sequence_parent_work.h"
+#include "../../../../games/tla/include/main_routine_work.h"
 
 struct Actor *Actor_GetById(u32 id);
 
 void Func_020049e4(void) {
-  if (gSequenceParentWork.renderMode == 2) {
+  if (gMainRoutineWork.renderMode == 2) {
     u8 *event = Ram_HeapSlots->eventWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+    struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
     s32 x = object->x / 0x100000;
     s32 z = (object->z - object->y + 0x7fff) / 0x100000;
     struct MapCell *cells = map->layers[2].cells;

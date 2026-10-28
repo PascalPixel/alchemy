@@ -331,7 +331,7 @@ Func_020005fc:
 .L_02008694:
 	.4byte gData_020019ec
 .L_02008698:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 	.section .text.x0200869c,"ax",%progbits
 	.global Func_0200069c
 	.thumb_func
@@ -470,7 +470,7 @@ Func_0200069c:
 	movs r0, #0
 	pop {r5, pc}
 .L_020087b4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_020087b8:
 	.4byte 0x00000088
 .L_020087bc:
@@ -600,7 +600,7 @@ Func_020009f8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008ae4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_02008ae8:
 	.4byte 0xfff00000
 	.section .bss,"aw",%nobits

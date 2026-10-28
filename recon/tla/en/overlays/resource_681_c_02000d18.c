@@ -3,7 +3,7 @@
 // placed and the flag is set.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 
 struct CellPoint {
   s16 x;
@@ -57,13 +57,13 @@ void Func_02000d18(void) {
   if (count <= 0)
     return;
   guard = Actor_GetById(15);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_02004e5c();
   Func_02004fcc(0);
   if (leader->z >> 19 > 53 && leader->x >> 19 > 83 && leader->x >> 19 <= 91) {
     leader->speedLimit = 0x20000;
-    Func_02004f2c(gSequenceParentWork.currentOwner, 0x100, 0);
-    Actor_SetMovementTypeById(gSequenceParentWork.currentOwner,
+    Func_02004f2c(gMainRoutineWork.currentOwner, 0x100, 0);
+    Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                             gData_020051b8);
   }
   Actor_SetMovementTypeById(15, gData_02005118);

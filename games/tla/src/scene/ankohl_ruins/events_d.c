@@ -1,12 +1,12 @@
 #include "ankohl_ruins.h"
 
 void Func_020011c0(void) {
-  struct Actor *object = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_02002e44();
   Func_02002edc(0);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 0);
-  Func_02002e9c(gSequenceParentWork.currentOwner, 258);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 0);
+  Func_02002e9c(gMainRoutineWork.currentOwner, 258);
   object->motionFlags = 0;
   object->actionFlags = 0;
   {
@@ -16,17 +16,17 @@ void Func_020011c0(void) {
     register s32 zero asm("r1");
 
     zero = 0;
-    Actor_OffsetPositionAndResetMotion(gSequenceParentWork.currentOwner, zero,
+    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, zero,
                                               8);
   }
-  Actor_WaitForMoveById(gSequenceParentWork.currentOwner);
+  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH: called as value-returning, the call sets its constants before
    * the owner as the native does (differ 2 as the void call). */
-  ((s32 (*)(s32, s32, s32))Func_02002e94)(gSequenceParentWork.currentOwner, 256, 0);
+  ((s32 (*)(s32, s32, s32))Func_02002e94)(gMainRoutineWork.currentOwner, 256, 0);
   FieldEvent_Wait(10);
   AnkohlRuins_CamBounds(-1, -1, -1, 0);
   Func_02002eec(204);
-  Func_02000b30(gSequenceParentWork.currentOwner, 188);
+  Func_02000b30(gMainRoutineWork.currentOwner, 188);
   object->actionFlags = 1;
   Func_02002e4c();
 }

@@ -12,7 +12,7 @@
 #include "input.h"
 #include "map.h"
 #include "event_work.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "iwram_call.h"
 
@@ -299,7 +299,7 @@ counted:
   else
     Actor_SelectAnimation(object, 2);
 
-  if (gInput.pressed & gSequenceParentWork.keys230) {
+  if (gInput.pressed & gMainRoutineWork.keys230) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
     collision |= 4;
   }

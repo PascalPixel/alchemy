@@ -159,4 +159,4 @@ Func_080cc54c:
 .L_080cc674:
 	.4byte 0x000fffff
 .L_080cc678:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork

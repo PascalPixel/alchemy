@@ -216,6 +216,6 @@ PartyInventory_GiveItem:
 .L_080d27e0:
 	.4byte 0x00000e21
 .L_080d27e4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_080d27e8:
 	.4byte 0x00000e12

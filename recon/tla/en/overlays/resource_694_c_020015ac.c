@@ -4,7 +4,7 @@
 // (68, 680), linked to it, and flag 2535 is set.
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_effect.h"
 
 struct Actor *Actor_GetById(s32 id);
@@ -61,16 +61,16 @@ void Func_020015ac(void) {
   object->velocityY = 0xc0000;
   Actor_SetPositionAndCommit(17, 40, 680);
   FieldEvent_Wait(10);
-  leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Actor_Jump(gSequenceParentWork.currentOwner, 6, 0);
-    Actor_SetSpeedParameters(gSequenceParentWork.currentOwner, 0x20000,
+    Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000,
                                     0x10000);
-    Actor_SetPositionAndCommit(gSequenceParentWork.currentOwner, 68, 680);
+    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 68, 680);
   }
   Func_0200401c(0, 0, 0);
-  Actor_TurnToFaceEachOther(gSequenceParentWork.currentOwner, 17, 0);
+  Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 17, 0);
   FieldEvent_Wait(10);
   GameFlag_SetBit(2535);
   Func_02004074();

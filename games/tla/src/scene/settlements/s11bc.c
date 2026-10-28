@@ -12,7 +12,7 @@ void Func_020011c8(void) {
 
 void Func_020011d4(void) {
   Func_02002198();
-  Actor_GetById(gSequenceParentWork.currentOwner)->priorityFlags += 254;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags += 254;
   Func_02000f2c();
   Func_02000fd0();
 }

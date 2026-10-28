@@ -7,7 +7,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "event_work.h"
 #include "frame.h"
 #include "lib/call.h"
@@ -43,7 +43,7 @@ static inline void TundariaTower_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 void Func_020011e0(void) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   s32 angle;
   u32 i;
@@ -83,12 +83,12 @@ void Func_020011e0(void) {
     i++;
   } while (i <= 16);
   Func_020031a8(188);
-  Func_020030c8(gSequenceParentWork.currentOwner, 0x101);
-  Actor_SetModeById(gSequenceParentWork.currentOwner, 22);
+  Func_020030c8(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
   Call3((void (*)())Func_02003000, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())Func_02003000, -1, -1, 0xe666);
   Func_02003008();
-  Func_020030c8(gSequenceParentWork.currentOwner, 0x100);
+  Func_020030c8(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;

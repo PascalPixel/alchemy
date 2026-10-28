@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 
 extern u8 MsgIsTheWay[];
@@ -60,7 +60,7 @@ void Func_02000960(void) {
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, 27, 360, 312);
   Motion_SetModeAndWaitAnimation(11, 3);
   Func_0200110c(11, 0);
-  Actor_WatchAndSetScript(11, gSequenceParentWork.currentOwner);
+  Actor_WatchAndSetScript(11, gMainRoutineWork.currentOwner);
   wait(30);
   Func_0200110c(11, 0);
   Motion_SetVarCbAndRefresh(11, 2);

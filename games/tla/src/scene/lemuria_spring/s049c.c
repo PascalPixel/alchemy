@@ -23,7 +23,7 @@ s32 Func_020013b0();
 s32 Func_020013f0();
 s32 PartyInventory_GiveItem();
 s32 Func_02001388();
-extern u8 gSequenceParentWork[];
+extern u8 gMainRoutineWork[];
 
 void Func_0200049c(s32 a0) {
   s32 t52;
@@ -82,15 +82,15 @@ void Func_0200049c(s32 a0) {
   Call1(Func_02001408, 0x7e);
   if (a0 == -1) {
     t52 = Value1(Actor_GetById, 0x1d);
-    Call2(Func_020013b8, 0x1d, FIELD_AT(gSequenceParentWork, s32, 532));
+    Call2(Func_020013b8, 0x1d, FIELD_AT(gMainRoutineWork, s32, 532));
     FIELD_AT((t52 + 0x55), u8, 0) = 0;
     FIELD_AT(t52, s32, 12) = 0x200000;
-    Call2(Actor_SetModeById, FIELD_AT(gSequenceParentWork, s32, 532), 0x1c);
+    Call2(Actor_SetModeById, FIELD_AT(gMainRoutineWork, s32, 532), 0x1c);
     Call1(Func_02001400, 0x1d);
     Call1(Func_02001338, 0x16);
     Call1(Func_02001370, 0x16);
     Call3(Func_020013b0, 0x1d, 0, 0);
-    Call2(Actor_SetModeById, FIELD_AT(gSequenceParentWork, s32, 532), 1);
+    Call2(Actor_SetModeById, FIELD_AT(gMainRoutineWork, s32, 532), 1);
   } else {
     Call2(Func_020013f0, a0, 3);
     Call2(PartyInventory_GiveItem, a0, 0);

@@ -26,7 +26,7 @@
 /// Master Hama or Hama alone, and what Mind Read hears from each of them.
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "module/scene/lacquer_rooms_b.h"
 #include "module/scene/shared/effect_spawn.h"
 #include "module/overworld/overworld.h"
@@ -145,7 +145,7 @@ const u32 *LacquerRoomsB_GetExits(void) { return gLacquerRoomsB_Exits; }
 /// replaces with whether each actor stands inside the view bounds of the
 /// room entered.
 const struct ActorPlacement *LacquerRoomsB_GetActorPlacements(void) {
-  if (gSequenceParentWork.entrance ==
+  if (gMainRoutineWork.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomActorPlacements;
   }
@@ -279,7 +279,7 @@ static void LacquerRoomsB_FeizhiThanksParty(void) {
 
 /// The room behind the school has its own triggers.
 const struct Trigger *LacquerRoomsB_GetTriggers(void) {
-  if (gSequenceParentWork.entrance ==
+  if (gMainRoutineWork.entrance ==
       LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     return gLacquerRoomsB_SchoolRoomTriggers;
   }
@@ -297,7 +297,7 @@ s32 LacquerRoomsB_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gSequenceParentWork.entrance;
+  entrance = gMainRoutineWork.entrance;
   // XXX (no evidence): what these hidden chests are for; the player neither
   // sees nor meets them.
   if (entrance == LACQUER_ROOMS_B_INN_SOUTH ||

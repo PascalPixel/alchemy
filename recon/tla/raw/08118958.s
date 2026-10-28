@@ -188,6 +188,6 @@ Func_08118958:
 .L_08118ad0:
 	.4byte Data_02000436
 .L_08118ad4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork
 .L_08118ad8:
 	.4byte gData_03001110

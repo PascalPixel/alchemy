@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "actor.h"
 #include "scene_ids.h"
 
@@ -30,16 +30,16 @@ static __inline__ void AddTask(void (*func)(void), s32 priority) {
 }
 
 s32 Func_02000be0(void) {
-  struct SequenceParentWork *party;
+  struct MainRoutineWork *party;
   struct MapMode *map = (struct MapMode *)Ram_HeapSlots->mapWork;
   struct MapModeBits bits = map->bits;
 
   bits.mode = 1;
-  /* FAKEMATCH: a one-byte copy with the loop note before its store loads hegSequenceParentWork's address between the or and the store; as map->bits.mode = 1,
+  /* FAKEMATCH: a one-byte copy with the loop note before its store loads gMainRoutineWork's address between the or and the store; as map->bits.mode = 1,
    * 2 instructions differ in tla-en. */
   do {
   } while (0);
-  party = &gSequenceParentWork;
+  party = &gMainRoutineWork;
   map->bits = bits;
   if (party->scene == (s32)&SceneId_Ov657Room1) {
     Func_02000b84();

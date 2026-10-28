@@ -1,13 +1,13 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "field_event.h"
 
 void Field_SetDestination(s16 scene, s16 entrance) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  gSequenceParentWork.scene = scene;
-  gSequenceParentWork.entrance = entrance;
+  gMainRoutineWork.scene = scene;
+  gMainRoutineWork.entrance = entrance;
   event->countdown = 999;
 }
 

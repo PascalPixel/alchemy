@@ -10,7 +10,7 @@ struct SpriteParts {
 s32 Func_02001a44(struct Actor *a, struct Actor *b);
 
 void Func_02001a9c(struct Actor *object) {
-  struct Actor *leader = Actor_GetById(gSequenceParentWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 dx = object->bounce;
   s32 dz;
   struct SpriteParts *parts;

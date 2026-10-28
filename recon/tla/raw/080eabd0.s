@@ -137,4 +137,4 @@ Func_080eabd0:
 .L_080eace0:
 	.4byte gMapShapeGrid
 .L_080eace4:
-	.4byte gSequenceParentWork
+	.4byte gMainRoutineWork

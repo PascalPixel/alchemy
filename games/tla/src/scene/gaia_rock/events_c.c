@@ -1,6 +1,6 @@
 #include "types.h"
 #include "actor.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 #include "call.h"
@@ -122,9 +122,9 @@ void Func_020003fc(void) {
 }
 
 const struct SceneEntrance *Func_02000434(void) {
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov680Room1)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room1)
     return (const struct SceneEntrance *)gData_020013c8;
-  if (gSequenceParentWork.scene == (s32)&SceneId_Ov680Room2)
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov680Room2)
     return (const struct SceneEntrance *)gData_020014b8;
   return (const struct SceneEntrance *)gData_02001554;
 }

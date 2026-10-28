@@ -1,5 +1,5 @@
 #include "types.h"
-#include "sequence_parent_work.h"
+#include "main_routine_work.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -43,7 +43,7 @@ extern u8 MsgWhatSThe[];
 void Func_0200062c(void) {
   s32 t1, t2, t3, t4, t12, t30, t31, v5;
 
-  t1 = Value1(Actor_GetById, gSequenceParentWork.currentOwner);
+  t1 = Value1(Actor_GetById, gMainRoutineWork.currentOwner);
   /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
    * the listing orders it; without it, 2 of 276 instructions differ in
    * tla-en. */

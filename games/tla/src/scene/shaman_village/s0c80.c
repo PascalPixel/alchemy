@@ -9,7 +9,7 @@ extern u32 gData_020061f0[];
 extern u32 gData_020062d4[];
 
 void *Func_02000c80(void) {
-  s32 scene = gSequenceParentWork.scene;
+  s32 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage1)
     return gData_02005aac;

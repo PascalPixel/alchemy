@@ -1,4 +1,4 @@
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"
 	overlay_veneer TretTreeBranch_Initialize
 	overlay_veneer TretTreeBranch_GetEntrances
 	overlay_veneer TretTreeBranch_GetExits

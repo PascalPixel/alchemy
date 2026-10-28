@@ -194,7 +194,7 @@ the top of its part or file, with a comment on what differs.
 - It has room for eight party members and 32 listed entries.
 - A party member carries 15 items (`INVENTORY_SLOTS`).
 - The Title, the File Screen and the Battle Arena are overlays, loaded
-  into the overlay area ([System](../system/README.md)).
+  into the overlay area ([Cartridge and memory](../cartridge/README.md)).
 
 ## Words used here
 

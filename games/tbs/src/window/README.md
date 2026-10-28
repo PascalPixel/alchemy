@@ -268,7 +268,7 @@ it is the same in every edition.
 
 Many of the window functions' names are shared with
 [The Lost Age](../../glossary.md#the-two-games)'s copies of these files and
-with the [far-call](../../glossary.md#far-call) table `system/far_call/WINDOW.S`,
+with the [far-call](../../glossary.md#far-call) table `cartridge/far_call/WINDOW.S`,
 so renaming one changes other folders too.
 
 ## Limits

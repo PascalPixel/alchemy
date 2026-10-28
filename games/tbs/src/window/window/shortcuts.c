@@ -68,7 +68,7 @@ void AreaNameWindow_Hide(void) {
 
 /// Removes itemId from the party's inventory and returns 0. Reached only
 /// through a bare entry of the window far-call table
-/// (system/far_call/WINDOW.S).
+/// (cartridge/far_call/WINDOW.S).
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
   PartyInventory_RemoveFar(itemId);
   return 0;

@@ -234,7 +234,7 @@ STATIC_ASSERT(offsetof(struct Adventure, linkTallies) == 0x2a4);
 STATIC_ASSERT(offsetof(struct Adventure, startStamp) == 0x2b8);
 
 #ifndef OWN_gAdventure
-/// The game's state (system/ewram.s).
+/// The game's state (cartridge/ewram.s).
 extern struct Adventure gAdventure;
 #endif
 

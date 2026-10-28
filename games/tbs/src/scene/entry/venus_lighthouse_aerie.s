@@ -1,4 +1,4 @@
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"
 	overlay_veneer VenusLighthouseAerie_Initialize
 	overlay_veneer VenusLighthouseAerie_GetEntrances
 	overlay_veneer VenusLighthouseAerie_GetExits

@@ -108,7 +108,7 @@ their music on entry, menus click, battle animations play their impacts. The
 blank's code in [Runtime](../runtime/README.md#the-frame-loop) steps the
 music's volume and enters the mixer every VBlank, and the mixer's resident
 code is part of what start-up copies into IWRAM
-([System](../system/README.md#memory-map)). The songs and samples themselves
+([Cartridge and memory](../cartridge/README.md#memory-map)). The songs and samples themselves
 are data in `games/tbs/sound`.
 
 ## Limits

@@ -9,7 +9,7 @@ while it waits. That function and what it needs around it are the runtime:
 start-up, the frame and its hand-over to the screen, the
 [heap](../../glossary.md#heap-and-pools), the task runner, the queue of
 hardware writes, the buttons and sleep, saving and the link cable. The memory
-it works in is laid out in [System](../system/README.md).
+it works in is laid out in [Cartridge and memory](../cartridge/README.md).
 
 ## Start-up
 
@@ -231,7 +231,7 @@ let time pass through `WaitFrames`, keep their per-frame work as tasks, take
 their memory from the heap and reach the screen through the sprite lists, the
 scroll and the write queue. Other banks call the runtime directly, and
 overlays through its far-call table
-([System](../system/README.md#why-the-main-image-is-cut-into-banks)).
+([Cartridge and memory](../cartridge/README.md#why-the-main-image-is-cut-into-banks)).
 
 ## Limits
 

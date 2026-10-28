@@ -1,4 +1,4 @@
-	.include "games/tbs/src/system/save/flashset.s"
+	.include "games/tbs/src/cartridge/save/flashset.s"
 	.section .rodata
 	.align 2
 	.global Flash_MaxTimeAtmel

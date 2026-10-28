@@ -1,4 +1,4 @@
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"
 	overlay_veneer KolimaForestFloodgate_Initialize
 	overlay_veneer KolimaForestFloodgate_GetEntrances
 	overlay_veneer KolimaForestFloodgate_GetExits

@@ -1,4 +1,4 @@
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"
 	overlay_veneer MercuryLighthouse_Initialize
 	overlay_veneer MercuryLighthouse_GetEntrances
 	overlay_veneer MercuryLighthouse_GetExits

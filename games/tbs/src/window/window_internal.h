@@ -209,7 +209,7 @@ enum TextStyle {
 /// Message_DecodeRaw call when the block is empty.
 #define TEXT_WORK_BLOCK 50
 
-/// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
+/// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (cartridge/iwram.s, after
 /// gWindowWork and gPartyStatusWork): the glyph transfer work icons are built
 /// in. Each icon builder allocates the slot for its build and frees it after.
 extern GlyphTransfer *gGlyphWork;

@@ -70,7 +70,7 @@ and its entrances serve only the scenes' code.
 
 An entrance has the function's name with `Far` added: the field plays the
 chest's fanfare with `Sound_PlaySongFar`, which leads to `Sound_PlaySong`.
-[System](src/system/README.md#why-the-main-image-is-cut-into-banks) says more.
+[Cartridge and memory](src/cartridge/README.md#why-the-main-image-is-cut-into-banks) says more.
 
 ## Overlays
 
@@ -91,7 +91,7 @@ the main image the scene calls, so the scene need not know where those functions
 are, only the entrances, which stay put.
 
 The entry table is `struct SceneEntryPoints`, and `Overlay_Load` unpacks an overlay.
-[System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
+[Cartridge and memory](src/cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes both tables.
 
 ## Songs

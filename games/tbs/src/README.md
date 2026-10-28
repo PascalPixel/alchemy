@@ -47,7 +47,7 @@ item, ability, Djinni, enemy, [summon](../glossary.md#summons) and class.
 
 [Runtime](runtime/README.md) starts the console and runs every [frame](../glossary.md#frame)
 through `WaitFrames`, with the keypad, the [heap](../glossary.md#heap-and-pools), screen fades, [sprites](../glossary.md#sprite-and-oam), saving and
-the link cable. [System](system/README.md) holds the memory map, the
+the link cable. [Cartridge and memory](cartridge/README.md) holds the memory map, the
 [far-call](../glossary.md#far-call) tables, the overlay stubs, the flash save library and the resource
 directory, the numbered list through which every picture, table and overlay
 is found. [Graphics](graphics/README.md) holds most of the pictures, the
@@ -74,9 +74,9 @@ Which folder each bank's code comes from is the object list,
 [`objects.tsv`](../objects.tsv), whose `place` column names the bank
 (`rom_main_00`, numbered from 0 in cartridge order) as
 [`main.ld`](../main.ld) does; the bank names are the far-call tables'
-(`system/far_call/CREDITS.S` and the rest).
+(`cartridge/far_call/CREDITS.S` and the rest).
 
-`graphics`, `map`, `sound` and `system` don't follow a bank: each gathers
+`graphics`, `map`, `sound` and `cartridge` don't follow a bank: each gathers
 one kind of thing (pictures, maps, sound, the memory map) from wherever
 the linker places it. `map` and `debug` hold overlays, and `menu` holds
 three overlays beside its bank.
@@ -137,15 +137,15 @@ In the source an overlay is three files in its folder:
 
 - `entry/<scene>.s`, the [entry table](../glossary.md#entry-table-and-import-table): six [veneers](../glossary.md#veneer) the field code
   calls to start the scene and to ask it its questions, such as where its
-  [entrances](../glossary.md#entrance) are ([System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
+  [entrances](../glossary.md#entrance) are ([Cartridge and memory](cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)
   lists them).
 - `<scene>.c`, the scene's code and tables.
 - `import/<scene>.s`, the import table: the veneers the overlay calls the main
-  image through, chosen from the list in `system/overlay.inc`.
+  image through, chosen from the list in `cartridge/overlay.inc`.
 
 Only one overlay is loaded at a time, so code several scenes use is in
 headers under `scene/shared/`, and each scene that includes one compiles its
-own copy. [System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
+own copy. [Cartridge and memory](cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes the tables and how an overlay is packed.
 
 | Folder | Overlays |
@@ -203,15 +203,15 @@ its top that begin `@ Why`; assembly counts as source only with a proof
 ([Matching](MATCHING.md#the-other-markers)). The proofs are instructions
 the compilers never emit: a
 branch on a shift's carry (`runtime/trig.s`,
-`system/resource/decode_byte_lz.s`), a load into `pc` from a table the code
+`cartridge/resource/decode_byte_lz.s`), a load into `pc` from a table the code
 rewrites (`graphics/tile/decode.s`), a switch from Thumb to ARM inside a
 routine (`sound/mixer.s`), a write to the processor's mode
-(`system/entry.s`). This handwritten code is about 16 KB, mostly decoders,
+(`cartridge/entry.s`). This handwritten code is about 16 KB, mostly decoders,
 the sound mixing and the routines copied into [IWRAM](../glossary.md#iwram-and-ewram). The few handwritten
 helpers inside the C are each marked `CAMELOT_ASM` with their proof.
 
 The rest of the assembly, about 50 KB, is stubs: the 8-byte entries of the
-far-call tables in `system/far_call/` (`.S` files, which the C preprocessor
+far-call tables in `cartridge/far_call/` (`.S` files, which the C preprocessor
 reads first) and of every overlay's entry and import tables. The compiler's
 library routines come from libgcc, built from alchemy-gcc's sources; two
 overlays use its double-precision arithmetic.
@@ -223,9 +223,9 @@ a table from its `.tsv`, or a map, under the name the code uses.
 | --- | --- | --- |
 | the game's Thumb C | alchemy-gcc, a GCC of July 2000 | everywhere else |
 | ARM C | GCC 2.95.2 | `window/glyph_arm.c`, `field/update.c`, `field/vertices.c` |
-| the sound driver's C, the flash library | pret's `old_agbcc` | `sound/`, `system/save/` |
+| the sound driver's C, the flash library | pret's `old_agbcc` | `sound/`, `cartridge/save/` |
 | handwritten assembly, about 16 KB | | decoders, sound mixing, IWRAM routines |
-| stubs, about 50 KB | | `system/far_call/`, each overlay's entry and import tables |
+| stubs, about 50 KB | | `cartridge/far_call/`, each overlay's entry and import tables |
 
 ## Where to start reading
 

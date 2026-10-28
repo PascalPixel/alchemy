@@ -326,13 +326,14 @@ s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
 
 void Event_EmptyCallback(void) {}
 
-/// Unused: reached only through a bare veneer in system/far_call/OVERWORLD.S,
-/// which has no symbol, so no code can call it. It would record the speaker,
-/// open the message near it and wait unless fast-forwarding, then advance the
-/// message index. Like Event_ShowMessageAtPosition it moves the position
-/// 32 away from the middle and clamps it to 8..312 and 20..220, ranges larger
-/// than the 240 by 160 screen, before passing it to a window routine that
-/// takes tiles; with no caller, the units it expected can't be told.
+/// Unused: reached only through a bare veneer in
+/// cartridge/far_call/OVERWORLD.S, which has no symbol, so no code can call it.
+/// It would record the speaker, open the message near it and wait unless
+/// fast-forwarding, then advance the message index. Like
+/// Event_ShowMessageAtPosition it moves the position 32 away from the middle
+/// and clamps it to 8..312 and 20..220, ranges larger than the 240 by 160
+/// screen, before passing it to a window routine that takes tiles; with no
+/// caller, the units it expected can't be told.
 void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: the native lookup discards its result and leaves pos unset.
 #ifdef UBFIX

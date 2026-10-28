@@ -146,7 +146,7 @@ the set-up and exit region entries, which take the scene overlays' names.
 The rooms are scenes like any other: the scene table names their overlays,
 `SceneSequence_Run` runs them, and their [events](../../glossary.md#event) call the
 same main-image code the real scenes call, through the same import tables
-([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+([Cartridge and memory](../cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the
 palette editor the same debug mode opens is in
 [Running a scene](../overworld/README.md).
@@ -173,5 +173,5 @@ which is why one overlay serves them all.
 Only start-up (`runtime/runtime/system.c`) and `SpriteViewer_Run`
 (`field/field/sprite_viewer.c`) write `gDebugMode`. The sprite viewer's only
 way in is a [veneer](../../glossary.md#veneer) at the end of the field bank's
-[far-call](../../glossary.md#far-call) table (`system/far_call/FIELD.S`)
+[far-call](../../glossary.md#far-call) table (`cartridge/far_call/FIELD.S`)
 whose address no instruction or pointer in the ROM holds.

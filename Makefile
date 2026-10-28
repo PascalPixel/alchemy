@@ -180,7 +180,8 @@ CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include $(filter-out -Igames/$
 SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/engine.c \
            games/tla/src/sound/sound.c games/tla/src/sound/tables.c \
            $(wildcard games/tla/src/sound/engine.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
-FLASH_C := $(foreach game,$(GAMES),$(addprefix games/$(game)/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c))
+FLASH_C := $(addprefix games/tbs/src/cartridge/save/,flash.c sst.c atmel.c program_flash_sector.c) \
+           $(addprefix games/tla/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \
            games/tla/src/graphics/tile/metatile.c
 
@@ -192,14 +193,16 @@ EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)
 LD_SCRIPT := games/$(GAME)/main.ld
 LDFLAGS := --defsym $(DEFINE)=1 -L $(BUILD)/ld -T $(LD_SCRIPT)
 ifeq ($(GAME),tbs)
-OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/tbs/src/system/overlay/overlay.ld
-OVERLAY_SOURCE = $(wildcard games/tbs/src/system/overlay/ovl_$*.s)
+OVERLAY_SCRIPT = -L $(BUILD)/ld/$* -T games/tbs/src/cartridge/overlay/overlay.ld
+OVERLAY_SOURCE = $(wildcard games/tbs/src/cartridge/overlay/ovl_$*.s)
+OVERLAY_STREAM := games/tbs/src/cartridge/overlay/overlays
 $(BUILD)/objects.mk: games/tbs/objects.tsv games/tbs/overlays.tsv $(OBJLIST)
 	$(OBJLIST) games/tbs/objects.tsv games/tbs/overlays.tsv $(LANG) $(BUILD)
 else
 OVERLAY_SCRIPT = -T recon/tla/raw/overlays/resource_$*.ld
 OVERLAY_SOURCE = recon/tla/raw/overlays/resource_$*_overlay.s
 OVERLAY_ROM := $(BUILD)/baserom.gba
+OVERLAY_STREAM := games/tla/src/system/overlay/overlays
 $(BUILD)/objects.mk: games/tla/objects.tsv $(wildcard recon/tla/raw/overlays/*.ld) $(OBJLIST)
 	$(OBJLIST) games/tla/objects.tsv recon/tla/raw/overlays $(LANG) $(BUILD)
 endif
@@ -213,7 +216,7 @@ SRCS := $(foreach object,$(OBJS:$(BUILD)/obj/%.o=%),$(call source,$(object)))
 
 # The overlays' packed streams go into the main image through one source,
 # so it is assembled once the overlays are linked against the main image.
-STREAM := $(BUILD)/obj/games/$(GAME)/src/system/overlay/overlays.o
+STREAM := $(BUILD)/obj/$(OVERLAY_STREAM).o
 LINKED := $(filter-out $(STREAM),$(MAIN_OBJS))
 
 $(BUILD)/deps.mk: $(BUILD)/objects.mk $(SCANINC) $(SRCS)

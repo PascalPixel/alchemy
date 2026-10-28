@@ -55,4 +55,4 @@
 	.set import.Event_WaitTransitionFrames, 1
 	.set import.FieldYesNo_Ask, 1
 	.set import.Sound_PlaySong, 1
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"

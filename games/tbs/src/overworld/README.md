@@ -265,5 +265,5 @@ that nothing else uses.
 `Event_ShowSpeakerMessage`, `Event_ShowMessageAtPosition` and
 `Event_ForwardShowMessageAtPosition` are unused: each is reached only
 through a bare [veneer](../../glossary.md#veneer) in
-`system/far_call/OVERWORLD.S`, which has no symbol for code to call
+`cartridge/far_call/OVERWORLD.S`, which has no symbol for code to call
 ([`event_commands/messages.c`](event_commands/messages.c)).

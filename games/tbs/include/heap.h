@@ -14,7 +14,7 @@
 #include "static_assert.h"
 
 /// The heap's 64 words in IWRAM (0x03001e50), seen as union HeapState. The
-/// work globals named in system/iwram.s (gBattleWork, gBattleCamera,
+/// work globals named in cartridge/iwram.s (gBattleWork, gBattleCamera,
 /// gFieldWork and others) are single slots of this table.
 extern void *gHeapSlots[64];
 

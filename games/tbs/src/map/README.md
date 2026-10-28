@@ -198,7 +198,7 @@ Each scene's row of `gScenes`
 which picks a row of `gMaps` ([`field/maps.c`](../field/maps.c)):
 the map's header, palette and tiles. `MapGrid_LoadMap` unpacks each
 part, and `Tile_ConvertMapGrid` puts the three planes together into the cell
-words in `gMapGridCellBuffer`. [System](../system/README.md) has the memory's
+words in `gMapGridCellBuffer`. [Cartridge and memory](../cartridge/README.md) has the memory's
 map.
 
 | Plane, in stored order | Size | Values |

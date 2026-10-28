@@ -11,4 +11,4 @@
 	.set import.Event_ShowMessageAndWait, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"

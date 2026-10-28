@@ -4,7 +4,7 @@ This folder holds what ties The Lost Age's image together, and much of what
 ☀️ keeps in its runtime folder: the cartridge header and entry, the RAM
 layout, the resident IWRAM code, the far-call tables, the overlay streams,
 the resource decoders, the task scheduler (`scheduler/`), the link cable
-(`link/`) and saving (`save/`). ☀️'s [System](../../../tbs/src/system/README.md)
+(`link/`) and saving (`save/`). ☀️'s [Cartridge and memory](../../../tbs/src/cartridge/README.md)
 and [Runtime](../../../tbs/src/runtime/README.md) explain why the image is
 linked as it is and how a frame runs; this page says only what differs here.
 

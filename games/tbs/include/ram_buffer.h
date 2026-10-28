@@ -40,7 +40,7 @@
 // up. Only BattleAnim_RunSpiderWeb takes the heap slot table's address as
 // Ram_HeapSlots; other code uses gHeapSlots (MATCHING.md).
 // The 16 bytes are space German alone reserves before gOamDepthLists
-// (system/iwram.s), so the test is on the language: French, Spanish and
+// (cartridge/iwram.s), so the test is on the language: French, Spanish and
 // Italian, which take German's other changes, lay IWRAM out as English does.
 // Nothing in the German build reads or writes them: no literal in its main
 // image or overlays points into them, and no symbol names them. XXX (no

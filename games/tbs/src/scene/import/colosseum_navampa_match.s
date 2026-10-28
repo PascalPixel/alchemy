@@ -111,4 +111,4 @@
 	.set import.PartyMemberChooser_Open, 1
 	.set import.Sound_PlaySong, 1
 	.set import.Sound_GetBgmRestoreDelay, 1
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"

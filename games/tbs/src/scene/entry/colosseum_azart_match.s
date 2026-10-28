@@ -1,4 +1,4 @@
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"
 	overlay_veneer ColosseumAzartMatch_Initialize
 	overlay_veneer ColosseumAzartMatch_GetEntrances
 	overlay_veneer ColosseumAzartMatch_GetExits

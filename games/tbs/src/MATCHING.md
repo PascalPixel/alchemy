@@ -148,7 +148,7 @@ the [scenes](../glossary.md#scene), are proven once, where their entries
 are made: each is a [veneer](../glossary.md#veneer), a tiny piece of code
 that only jumps on: 8 bytes holding an `ldr r4` (load the target's
 address), a `bx r4` (jump to it) and that address, which the
-`overlay_veneer` macro in `system/overlay.s` writes out whole.
+`overlay_veneer` macro in `cartridge/overlay.s` writes out whole.
 
 ## Spellings that match at different sites
 

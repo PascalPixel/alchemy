@@ -1,7 +1,7 @@
 	.section .rodata
 	.global gActor_ShadowTiles
 gActor_ShadowTiles:
-	.incbin "games/tbs/src/system/resource/shadow.8bpp"
+	.incbin "games/tbs/src/cartridge/resource/shadow.8bpp"
 
 @ Enemy sprite resource IDs and enemy IDs
 	.global gSpriteFrameCache_Sources

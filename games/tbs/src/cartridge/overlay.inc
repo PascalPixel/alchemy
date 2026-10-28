@@ -5,10 +5,10 @@
 	.syntax unified
 	.thumb
 	.balign 4
-	.include "games/tbs/src/system/overlay.s"
+	.include "games/tbs/src/cartridge/overlay.s"
 @ The stubs an overlay imports, in the order every overlay keeps them:
 @ Camelot's four divide routines, then the far-call entries in the order of
-@ the main image (games/tbs/src/system/far_call, by bank). The list is here, in
+@ the main image (games/tbs/src/cartridge/far_call, by bank). The list is here, in
 @ the file every stub table includes, and only an import table reads it: an
 @ overlay's import table sets `overlay_imports`, then `import.NAME` for each
 @ stub its overlay calls, and includes this file: those rows, in this order,

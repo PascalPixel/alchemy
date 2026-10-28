@@ -23,7 +23,7 @@ Each build packs every picture into the colours and pixels the game reads,
 usually compressed, and places the result on the cartridge under the name the
 code uses. A picture the game asks for by number is also a row of the
 resource directory
-([System](../system/README.md#the-resource-directory-and-table-order)): the
+([Cartridge and memory](../cartridge/README.md#the-resource-directory-and-table-order)): the
 grassland behind a battle is asked for that way, both by the battle and by
 the credits. Some packed pictures are followed by a few bytes
 [Camelot](../../glossary.md#camelot)'s packing tool left behind, which are

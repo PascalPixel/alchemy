@@ -184,7 +184,7 @@ Keeper lines are found by distance from the weapon shop's version, so one call
 serves every kind of shop.
 
 Scene overlays import these functions by name (`games/tbs/src/scene/import/`),
-and the far-call table `system/far_call/SHOP.S` names them with `Far` added,
+and the far-call table `cartridge/far_call/SHOP.S` names them with `Far` added,
 so renaming one changes those folders too.
 
 ### Editions

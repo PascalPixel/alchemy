@@ -5,7 +5,7 @@
 /// Resource numbers, named where their contents are known.
 ///
 /// Each ResourceId_ is an absolute symbol whose value is the resource's row
-/// in Resource_DirectoryTable (system/resource/directory.s); C takes the
+/// in Resource_DirectoryTable (cartridge/resource/directory.s); C takes the
 /// number as (s32)&ResourceId_Name.
 
 /// Twelve ASCII digits, yymmddhhmmss, and a newline, different in each

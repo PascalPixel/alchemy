@@ -55,4 +55,4 @@
 	.set import.Scene_PlayMusic, 1
 	.set import.Actor_CommitPositionAndActivate, 1
 	.set import.Sound_PlaySong, 1
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"

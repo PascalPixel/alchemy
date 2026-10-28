@@ -1,12 +1,12 @@
-# System
+# Cartridge and memory
 
 Every [scene](../../glossary.md#scene) the [party](../../glossary.md#the-party)
 visits needs its own code, [map](../../glossary.md#map) and pictures,
 and a Game Boy Advance has 288 KB of working memory against a cartridge that
-holds the whole game. The system folder is what makes that fit: it decides
-which part of memory holds what, splits the main image into
+holds the whole game. The tables and assembly here make that fit: they decide
+which part of memory holds what, split the main image into
 [banks](../../glossary.md#bank) that call each other through fixed tables,
-swaps each scene's code in and out of one small area, and finds every picture,
+swap each scene's code in and out of one small area, and find every picture,
 map and piece of code on the cartridge by number. Nearly all of it is
 assembly: tables the linker lays out, and code no C
 [compiler](../../glossary.md#the-compilers) emits, each file naming in its
@@ -165,7 +165,7 @@ can grow inside its gap without moving any address other code holds.
 
 Overlays depend on the main image through the same tables: an import holds a
 bank table entry's address, which moves only when a table changes, at the
-price of two jumps per call. In the other direction, the engine knows an
+price of two jumps per call. In the other direction, the system knows an
 overlay only through the entry table's six questions. The fixed addresses are
 the cost of code that holds numbers rather than symbols; each is defined once,
 so `make modern` builds from the names while the matching build keeps the

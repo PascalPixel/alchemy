@@ -6,4 +6,4 @@
 #include "../../../include/version.h"
 	.syntax unified
 	.thumb
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"

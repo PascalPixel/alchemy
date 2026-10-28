@@ -619,7 +619,7 @@ the sound code, the music and the packed pictures and maps.
 | Folder                                    | Holds                                         |
 | ----------------------------------------- | --------------------------------------------- |
 | `runtime`, `field`, `window`, `game`, `overworld`, `menu`, `shop`, `battle`, `battle_anim` | the nine large banks, in cartridge order; the five small banks' code sits with the folder it belongs to |
-| `graphics`, `map`, `sound`, `system`      | code grouped by topic, linked wherever needed |
+| `graphics`, `map`, `sound`, `cartridge`   | code grouped by topic, linked wherever needed |
 | `scene`, `debug`                          | overlays                                      |
 
 `overworld` runs a scene from arrival to exit, and `field` moves and draws its
@@ -632,7 +632,7 @@ added: the parent sequence starts a battle with `Battle_RunFar`, which leads
 to `Battle_Run` in the battle bank.
 
 **Reference:** [far calls](glossary.md#far-call) ·
-[Why the main image is cut into banks](src/system/README.md#why-the-main-image-is-cut-into-banks) ·
+[Why the main image is cut into banks](src/cartridge/README.md#why-the-main-image-is-cut-into-banks) ·
 [`objects.tsv`](objects.tsv) · [Source](src/README.md)
 
 ## Section pages

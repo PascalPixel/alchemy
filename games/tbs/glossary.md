@@ -165,7 +165,7 @@ time in VBlanks
 
 The console's two work memories: IWRAM, 32 KB inside the processor and the
 fastest it has, and EWRAM, 256 KB beside it and slower
-([System](src/system/README.md#memory-map)).
+([Cartridge and memory](src/cartridge/README.md#memory-map)).
 
 ### Background layer
 
@@ -190,7 +190,7 @@ and the fast routines in IWRAM.
 One of the fourteen stretches the main image is cut into, each at a fixed
 address with room to spare and opening with a [far-call](#far-call) table, so
 one bank can grow without moving anything another depends on
-([System](src/system/README.md#why-the-main-image-is-cut-into-banks)).
+([Cartridge and memory](src/cartridge/README.md#why-the-main-image-is-cut-into-banks)).
 
 ### Far call
 
@@ -216,7 +216,7 @@ The two tables an overlay meets the main image through: the entry table opens
 it with six veneers the field calls to ask the scene its questions
 (`struct SceneEntryPoints`), and the import table ends it with one veneer for each
 main-image function it calls
-([System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+([Cartridge and memory](src/cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 
 ### Heap and pools
 

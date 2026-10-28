@@ -1,4 +1,4 @@
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"
 	overlay_veneer Title_Run
 	overlay_veneer Title_GetEntrances
 	overlay_veneer Title_GetExits

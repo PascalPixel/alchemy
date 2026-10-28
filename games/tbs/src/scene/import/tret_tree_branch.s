@@ -10,4 +10,4 @@
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.ScreenTransition_InitializeBattleEffectState, 1
 	.set import.Sound_PlaySong, 1
-	.include "games/tbs/src/system/overlay.inc"
+	.include "games/tbs/src/cartridge/overlay.inc"

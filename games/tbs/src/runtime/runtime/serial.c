@@ -139,7 +139,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
         Io_Write16(1, &REG_IME);
         // SIOCNT's high byte: clear SIO_INTR_ENABLE, as timer 3 now clocks
         // the transfers
-        *((volatile s8 *)siocnt + 1) &= ~0x40;
+        *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
         REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
         REG_TM3CNT = SERIAL_TIMER_RELOAD;
         gSerialWork.mode = mode;
@@ -192,7 +192,7 @@ s32 Serial_PollStatus(void) {
         Io_Write16(1, &REG_IME);
         // SIOCNT's high byte: clear SIO_INTR_ENABLE, as timer 3 now clocks
         // the transfers
-        *((volatile s8 *)siocnt + 1) &= ~0x40;
+        *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
         REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
         REG_TM3CNT = SERIAL_TIMER_RELOAD;
         gSerialWork.mode = mode;
@@ -460,7 +460,7 @@ u32 Serial_WaitForStatusMask(s32 mask) {
       wait(1);
     } while ((mask & gLinkStatus) != mask);
   }
-  return (REG_SIOCNT << 0x1A) >> 0x1E;
+  return (REG_SIOCNT << 26) >> 30;
 }
 
 /// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
@@ -480,7 +480,7 @@ s32 Serial_StartSend(void *source, s32 size) {
   if (gSerialSendSource != 0)
     return -1;
   IRQ_LOCK(savedInterruptMaster);
-  state->status = 0x80;
+  state->status = SERIAL_STATUS_RUNNING;
   gSerialSendSource = (s32)source;
   gSerialSendSize = size;
   gSerialBlockNumber = 0;
@@ -502,7 +502,7 @@ s32 Serial_StartReceive(void *destination) {
   if (gSerialReceiveDestination != 0)
     return -1;
   IRQ_LOCK(savedInterruptMaster);
-  state->status = 0x81;
+  state->status = SERIAL_STATUS_RUNNING | 1;
   gSerialReceiveDestination = (s32)destination;
   gSerialReceivedSize = 0;
   state->active = 1;
@@ -599,7 +599,7 @@ void Serial_StepBlockTransfer(void) {
       if (own->flags == SERIAL_RECEIVE_ACTIVE &&
           (u8)(peer->peerFlags - SERIAL_SEND_MORE) <=
               SERIAL_SEND_LAST - SERIAL_SEND_MORE) {
-        if (peer->active == (gSerialBlockNumber & 0x7f)) {
+        if (peer->active == (gSerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK)) {
           own->active = 0;
           switch (peer->peerFlags) {
           case SERIAL_SEND_MORE:
@@ -607,7 +607,7 @@ void Serial_StepBlockTransfer(void) {
             Dma_Set(peer->payload, (void *)dest, DMA_COPY_WORDS(5), REG_DMA3);
             *receive += SERIAL_BLOCK_BYTES;
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
-            own->status = (own->status + 1) | 0x80;
+            own->status = (own->status + 1) | SERIAL_STATUS_RUNNING;
             break;
           case SERIAL_SEND_LAST:
             // The last block: store it and report the receive finished
@@ -618,19 +618,20 @@ void Serial_StepBlockTransfer(void) {
             own->active = one.v;
             break;
           }
-          gSerialBlockNumber = (gSerialBlockNumber + 1) & 0x7f;
-        } else if (gSerialBlockNumber & 0x80) {
+          gSerialBlockNumber =
+              (gSerialBlockNumber + 1) & SERIAL_BLOCK_NUMBER_MASK;
+        } else if (gSerialBlockNumber & SERIAL_BLOCK_REWIND) {
           // Out of step and already asked: bit 7 of active is the request to
           // rewind to the block number in its low bits
-          if (own->active & 0x80) {
+          if (own->active & SERIAL_BLOCK_REWIND) {
             own->active = one.v;
           } else if (own->active == 1) {
             own->active = 0;
-            gSerialBlockNumber &= 0x7f;
+            gSerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;
           }
         } else {
-          own->active = gSerialBlockNumber | 0x80;
-          gSerialBlockNumber |= 0x80;
+          own->active = gSerialBlockNumber | SERIAL_BLOCK_REWIND;
+          gSerialBlockNumber |= SERIAL_BLOCK_REWIND;
         }
       } else {
         own->active = 0;
@@ -643,12 +644,12 @@ void Serial_StepBlockTransfer(void) {
     // A peer behind our block number requests a rewind before the next block.
     if (src != 0) {
       if (peer->flags == SERIAL_RECEIVE_ACTIVE) {
-        if (peer->active & 0x80) {
-          gap = (gSerialBlockNumber - peer->active) & 0x7f;
+        if (peer->active & SERIAL_BLOCK_REWIND) {
+          gap = (gSerialBlockNumber - peer->active) & SERIAL_BLOCK_NUMBER_MASK;
           *send = src - gap * SERIAL_BLOCK_BYTES;
           gSerialSendSize += gap * SERIAL_BLOCK_BYTES;
           gSerialBlockNumber -= gap;
-          gSerialBlockNumber &= 0x7f;
+          gSerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;
         }
         // Send the next block, marked as the last when it empties the size
         if (gSerialSendSize != 0) {
@@ -656,14 +657,15 @@ void Serial_StepBlockTransfer(void) {
           gSerialSendSize += -SERIAL_BLOCK_BYTES;
           if (gSerialSendSize != 0) {
             own->peerFlags = SERIAL_SEND_MORE;
-            own->active = gSerialBlockNumber & 0x7f;
+            own->active = gSerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK;
             *send += SERIAL_BLOCK_BYTES;
           } else {
             own->peerFlags = SERIAL_SEND_LAST;
-            own->active = gSerialBlockNumber & 0x7f;
+            own->active = gSerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK;
             *send += SERIAL_BLOCK_BYTES;
           }
-          gSerialBlockNumber = (gSerialBlockNumber + 1) & 0x7f;
+          gSerialBlockNumber =
+              (gSerialBlockNumber + 1) & SERIAL_BLOCK_NUMBER_MASK;
         }
       }
       // The partner has stored the last block: the send is finished
@@ -711,7 +713,7 @@ void SerialTest_Run(void) {
   // at 0x06001000 that the received 640 bytes are copied to
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
-  value = (s16)0xf093;
+  value = (s16)(WINDOW_PALETTE << 12 | 0x93);
   do {
     n--;
     *tile = value;
@@ -723,11 +725,11 @@ void SerialTest_Run(void) {
 restart:
   Serial_StartReceive(gMapGridCellBuffer);
   for (;;) {
-    // 0x280 bytes: 32 blocks, 20 tiles
+    // 640 bytes: 32 blocks, 20 tiles
     if (gKeysHeld & KEY_A)
-      Serial_StartSend((void *)Cart_Start, 0x280);
+      Serial_StartSend((void *)Cart_Start, 640);
     if (gKeysHeld & KEY_B)
-      Serial_StartSend((void *)(Rom_Start + 0x1000), 0x280);
+      Serial_StartSend((void *)(Rom_Start + 0x1000), 640);
     if (gKeysHeld & KEY_START) {
       delay = 9999;
       do {
@@ -736,8 +738,8 @@ restart:
       } while (delay >= 0);
     }
     if (gSerialReceiveDestination == 0) {
-      Dma_Set(gMapGridCellBuffer, (void *)0x06001000, DMA_COPY_WORDS(0xa0),
-              REG_DMA3);
+      Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(0) + 0x80 * TILE_SIZE_4BPP,
+              DMA_COPY_WORDS(160), REG_DMA3);
       goto restart;
     }
     wait(1);

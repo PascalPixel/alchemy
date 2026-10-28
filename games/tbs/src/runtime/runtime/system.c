@@ -29,7 +29,7 @@ void System_Initialize(void) {
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
   // Clear IWRAM up to the heap's end (the stacks above it are in use), then
   // install the resident runtime before any service can use its work blocks
-  Dma_Fill32(0, (void *)0x03000000, 0x7800);
+  Dma_Fill32(0, (void *)IWRAM_START, 0x7800);
   Heap_Initialize();
   System_InstallIwramAndIrqs();
   // UB: the count and its pad are cleared with one word store

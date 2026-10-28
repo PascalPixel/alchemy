@@ -155,12 +155,11 @@ u32 Save_WriteSector(s32 sector) {
   value = (u16)sector;
   // The chip's program routine, from gProgramFlashSector, reports an error in
   // its result's low halfword
-  if ((_call_via_r3(value, (s32)&work->slot, (s32)param, *param) << 0x10) !=
-      0) {
+  if ((_call_via_r3(value, (s32)&work->slot, (s32)param, *param) << 16) != 0) {
     return 1U;
   }
   result = Flash_VerifySector(value, (s32)&work->slot);
-  return (u32)((0 - result) | result) >> 0x1F;
+  return (u32)((0 - result) | result) >> 31;
 }
 
 /// Reads flash sector `index` into the workspace's sector buffer. Called by
@@ -208,7 +207,8 @@ s32 Save_WritePart(s32 partId, void *source) {
     return 1;
 
   // Build the new sector before changing which old sector counts as current.
-  START_DMA(source, work->slot.part.payload, DMA_COPY_WORDS(0x3fc));
+  START_DMA(source, work->slot.part.payload,
+            DMA_COPY_WORDS(sizeof(work->slot.part.payload) / 4));
   WAIT_DMA();
   START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
@@ -259,7 +259,8 @@ u32 Save_ReadPart(s32 partId, void *destination) {
   if (index >= SAVE_SECTOR_COUNT)
     return 1;
   Save_ReadSector(index);
-  START_DMA(work->slot.part.payload, destination, DMA_COPY_WORDS(0x3fc));
+  START_DMA(work->slot.part.payload, destination,
+            DMA_COPY_WORDS(sizeof(work->slot.part.payload) / 4));
   WAIT_DMA();
   return 0;
 }
@@ -276,7 +277,7 @@ u32 Save_DeletePart(s32 partId) {
     return 1U;
   }
   deletionResult = Save_InvalidateSector(index);
-  return (u32)((0 - deletionResult) | deletionResult) >> 0x1F;
+  return (u32)((0 - deletionResult) | deletionResult) >> 31;
 }
 
 /// Sums the first 0xfe8 payload bytes of the workspace's sector buffer; the

@@ -126,7 +126,7 @@ void DebugText_Print(const u8 *src) {
     if (c != 0) {
       // 0xf000 selects WINDOW_PALETTE in each screen entry; the end of the
       // 32x20-entry screen (0x500 bytes) wraps to its start
-      u32 mask = 0xf000;
+      u32 mask = WINDOW_PALETTE << 12;
       addr = (u32)(BG_SCREEN_BLOCK(4) + 0x500);
       do {
         *dst++ = c | mask;
@@ -188,7 +188,7 @@ void Window_LoadGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
   Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
-          DMA_ENABLE << 16 | 0x10, REG_DMA3);
+          DMA_ENABLE << 16 | 16, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
   Io_Write16(RGB(0, 12, 16), &BG_PLTT_COLOR(WINDOW_PALETTE, 4));
   Io_Write16(RGB(0, 11, 14), &BG_PLTT_COLOR(WINDOW_PALETTE, 5));
@@ -197,14 +197,14 @@ void Window_LoadGraphics(void) {
   Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(WINDOW_PALETTE, 8));
   Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(WINDOW_PALETTE, 9));
   Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(WINDOW_PALETTE, 10));
-  // 0xe0 halfwords: 224 colours, sprite palettes 0 to 13
-  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
+  // 224 halfwords: 224 colours, sprite palettes 0 to 13
+  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 224,
           REG_DMA3);
 }
 
 /// Loads the basic sprite palettes (palettes 0 to 13). Called by
 /// Window_LoadGraphics and the actor setup.
 void Palette_LoadBasicSpriteColors(void) {
-  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
+  Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 224,
           REG_DMA3);
 }

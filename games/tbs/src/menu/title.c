@@ -124,7 +124,7 @@ s32 Title_Run(void) {
       Title_ShowNintendoLogo(0);
       Import_TitleShowCamelotLogo(0);
       // With no save file (or no backup memory) there is no title intro.
-      if (Save_ScanRecordFlags() > 0) {
+      if (Save_ScanPartFlags() > 0) {
         Sound_PlaySong(MUS_TITLE);
         // Title_ShowIntro with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.

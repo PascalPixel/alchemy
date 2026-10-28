@@ -96,12 +96,12 @@ FarCall_WindowTable:
 	overlay_veneer WindowSprite_CreateFromTable
 	overlay_veneer Save_WriteCurrentFile
 	export Save_ToChosenFileFar, Save_ToChosenFile
-	export Save_LoadRecordIntoWorkFar, Save_LoadRecordIntoWork
+	export Save_LoadPartIntoWorkFar, Save_LoadPartIntoWork
 	export Save_CopyFileFar, Save_CopyFile
 	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
 	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
 	overlay_veneer Save_WriteFile
-	export Save_ScanRecordFlagsFar, Save_ScanRecordFlags
+	export Save_ScanPartFlagsFar, Save_ScanPartFlags
 	export NameEntry_EditMemberNameFar, NameEntry_EditMemberName
 	overlay_veneer NameEntry_LoadPointingHandTiles
 	overlay_veneer NameEntry_LoadCaretTiles
@@ -130,7 +130,7 @@ FarCall_WindowTable:
 	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry
 	export WindowSprite_GetPointerTilesFar, WindowSprite_GetPointerTiles
 	export Message_OpenDecodedFar, Message_OpenDecoded
-	export Save_CountRecordsExcludingFlaggedFar, Save_CountRecordsExcludingFlagged
+	export Save_CountPartsExcludingFlaggedFar, Save_CountPartsExcludingFlagged
 	export Window_DrawBorderFar, Window_DrawBorder
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
 	export Link_DrawPageArrowsFar, Link_DrawPageArrows

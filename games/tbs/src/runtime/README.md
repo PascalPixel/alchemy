@@ -177,13 +177,14 @@ numbered one higher than the old copy, and only once it is written is the old
 copy marked free. Whenever the power goes, one whole copy remains, and the
 game keeps the higher number.
 
-The flash has 16 sectors, and each of the three save files takes two. A new
-copy goes into a free sector chosen at random, which spreads the wear over the
-chip, and the last free sector is kept back for replacing an existing save,
-so replacing one always has room. Every save, load, copy or delete starts by
-reading all 16 sectors to find the newest copy of each part.
+The flash has 16 sectors, and each of the three save files is two parts, each
+in a sector of its own. A new copy of a part goes into a free sector chosen at
+random, which spreads the wear over the chip, and the last free sector is kept
+back for replacing an existing save, so replacing one always has room. Every
+save, load, copy or delete starts by reading all 16 sectors to find the newest
+copy of each part.
 
-The sectors are written by `Save_WriteRecord` and read by
+The sectors are written by `Save_WritePart` and read by
 `Save_InitializeWork`; the Save command itself is `Save_ToChosenFile`
 ([Windows](../window/README.md)).
 
@@ -263,7 +264,8 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
   owning a run of the 64-byte blocks sprite video memory is split into.
 - **transform**: `gTransform`, the rotation and position the battle and field
   cameras work through.
-- **record**: one save record in one 4 KB flash sector.
+- **part**: one of the two halves of a save file, each copy kept in one 4 KB
+  flash sector.
 - **payload** and **block**: each VBlank two linked consoles trade a 24-byte
   payload, and larger data rides on it in 20-byte blocks.
 
@@ -271,7 +273,7 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 
 The names come from what the code does: `WaitFrames` from its loop, `Task_`
 from the table it keeps, the heap's from its two pointers and its heap slots,
-the save code's from the flash records it writes. Constants such as
+the save code's from the parts it writes to flash. Constants such as
 `TASK_PASS_FRAME` are the values the callers pass.
 
 `gSavedStack` holds 3,152 bytes, though a stack below the frame-wait top and

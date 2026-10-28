@@ -55,7 +55,7 @@ enum BattleType {
 /// position, the active party and the options.
 ///
 /// It is the one gAdventure in EWRAM, right after the 0x200 bytes of game
-/// flags. Saving writes it whole in a file's first record, with the flags
+/// flags. Saving writes it whole in a file's first part, with the flags
 /// before it, and a file's checksum covers the 968 words from gGameFlagBytes
 /// to the end of this struct (Save_BuildFileSummary, Save_WriteCurrentFile). A
 /// new game sets its defaults (Adventure_InitializeDefaults), and the

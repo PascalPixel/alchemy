@@ -151,7 +151,7 @@ enum HeapSlot {
   /// The save workspace (struct SaveWork), from
   /// Save_InitializeWork to Save_ReleaseWork around each
   /// save, load, copy or delete and each scan of the files, as the main
-  /// menu's (Save_ScanRecordFlags).
+  /// menu's (Save_ScanPartFlags).
   HEAP_SLOT_SAVE = 51,
   /// Lives for one frame: WaitFrames builds the OAM list in it, and the field
   /// sprite decoder keeps its code there between its own uses.

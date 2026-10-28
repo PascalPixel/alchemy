@@ -4,15 +4,15 @@
 
 #include "../screens_internal.h"
 
-// The three save files. Each is two 4 KB records of backup memory: record
-// `file` holds the first half of the 8 KB save buffer and record
+// The three save files. Each is two 4 KB parts of backup memory: part
+// `file` holds the first half of the 8 KB save buffer and part
 // `file + SAVE_FILE_COUNT` the second.
 #define SAVE_FILE_COUNT 3
-#define SAVE_RECORD_BYTES 0x1000
+#define SAVE_PART_BYTES 0x1000
 #define SAVE_NO_FREE_FILE 999
 
 // What the save functions return when they fail, after showing the message.
-#define SAVE_ERROR_READ -2 ///< a record could not be read
+#define SAVE_ERROR_READ -2 ///< a part could not be read
 /// Writing failed. "Failed to save." (or "Failed to erase.")
 #define SAVE_ERROR_WRITE -3
 #define SAVE_ERROR_ERASE -4   ///< erasing failed. "Failed to erase."
@@ -78,7 +78,7 @@ u32 Save_FindFreeFile(void) {
 /// its send flag set (the files saved at the end of the game) when
 /// `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY when the backup memory
 /// cannot be read. It opens and releases the save workspace itself.
-s32 Save_CountRecordsExcludingFlagged(s32 excludeSent) {
+s32 Save_CountPartsExcludingFlagged(s32 excludeSent) {
   s32 file;
   s32 count;
   struct SaveFileSummary *summary;
@@ -111,7 +111,7 @@ s32 Save_CountRecordsExcludingFlagged(s32 excludeSent) {
 /// flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when a
 /// file has its send flag set and R and Left are held.
 /// FileList_SelectAction reads all three.
-s32 Save_ScanRecordFlags(void) {
+s32 Save_ScanPartFlags(void) {
   s32 error;
   s32 sentCount;
   s32 fileCount;
@@ -175,9 +175,9 @@ u32 Save_BuildFileSummary(void) {
   // A second copy of the play time, 256 bytes from gSceneLocalState: past its
   // 0x78 bytes, in gInventorySnapshot's last word. gSceneLocalState opens the
   // save buffer's second half, so this lands at offset 0x110 of the file's
-  // second record (after its 16-byte header), which
+  // second part (after its 16-byte header), which
   // Save_LoadFileSummaries reads back into
-  // SaveFileSummary.secondRecordPlayTime: the file list lists a file whose two
+  // SaveFileSummary.secondPartPlayTime: the file list lists a file whose two
   // play times differ as corrupted.
   {
     u32 *copy = (u32 *)gSceneLocalState;
@@ -249,7 +249,7 @@ u32 Save_BuildFileSummary(void) {
 }
 
 /// Saves the game to the current file (gSaveSlot): builds the summary and
-/// writes both halves of the save buffer, as records gSaveSlot and
+/// writes both halves of the save buffer, as parts gSaveSlot and
 /// gSaveSlot + SAVE_FILE_COUNT. Returns 0, gSaveSlot itself (-1) when no
 /// file is chosen, or a SAVE_ERROR_* after showing its message. Unlike
 /// Save_ToChosenFile it asks nothing and does not capture gActors
@@ -272,10 +272,10 @@ s16 Save_WriteCurrentFile(void) {
         void *half = &gSaveBuffer;
         s32 current;
 
-        error = Save_WriteRecord(gSaveSlot, half);
+        error = Save_WritePart(gSaveSlot, half);
         current = gSaveSlot;
-        half = (char *)half + SAVE_RECORD_BYTES;
-        error |= Save_WriteRecord(current + SAVE_FILE_COUNT, half);
+        half = (char *)half + SAVE_PART_BYTES;
+        error |= Save_WritePart(current + SAVE_FILE_COUNT, half);
         if (error != 0) {
           FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
           result = SAVE_ERROR_WRITE;
@@ -301,9 +301,9 @@ s32 Save_WriteFile(s32 file) {
   } else {
     void *half = &gSaveBuffer;
 
-    error = Save_WriteRecord(file, half);
-    half = (char *)half + SAVE_RECORD_BYTES;
-    error |= Save_WriteRecord(file + SAVE_FILE_COUNT, half);
+    error = Save_WritePart(file, half);
+    half = (char *)half + SAVE_PART_BYTES;
+    error |= Save_WritePart(file + SAVE_FILE_COUNT, half);
     if (error != 0) {
       FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_WRITE;
@@ -314,21 +314,21 @@ s32 Save_WriteFile(s32 file) {
 }
 
 /// Writes the 64-byte save stamp (gBattleArenaRecord, which lies in the first
-/// half of the save buffer) into the current file's first record, leaving the
-/// rest of the record as it was saved. Returns 0, -1 when no file is chosen, or
+/// half of the save buffer) into the current file's first part, leaving the
+/// rest of the part as it was saved. Returns 0, -1 when no file is chosen, or
 /// a SAVE_ERROR_* after showing its message. The Battle Arena saves its battle
-/// results this way (BattleArena_SaveBattleResults). The record's 4 KB buffer
+/// results this way (BattleArena_SaveBattleResults). The part's 4 KB buffer
 /// is taken from the EWRAM pool and freed before it returns, except when
 /// no file is chosen.
 s32 Save_ProcessSelectedFile(void) {
-  void *record;
+  void *part;
   s32 result;
   s32 error;
   u8 *stamp;
 
-  record = Heap_AllocEwram(SAVE_RECORD_BYTES);
+  part = Heap_AllocEwram(SAVE_PART_BYTES);
   result = 0;
-  // BUG: returns without freeing the record buffer.
+  // BUG: returns without freeing the part buffer.
   if (gSaveSlot == -1)
     return -1;
   error = Save_InitializeWork();
@@ -336,25 +336,25 @@ s32 Save_ProcessSelectedFile(void) {
     FieldMessage_Show(MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
     result = SAVE_ERROR_NO_MEMORY;
   } else {
-    error = Save_ReadRecord(gSaveSlot, record);
-    // A failed read is reported, but the record is still written below from
+    error = Save_ReadPart(gSaveSlot, part);
+    // A failed read is reported, but the part is still written below from
     // whatever the buffer holds.
     if (error != 0) {
       FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_READ;
     }
-    // The stamp's place in the record is its place in the save buffer.
-    stamp = (u8 *)record + (s32)gBattleArenaRecord;
+    // The stamp's place in the part is its place in the save buffer.
+    stamp = (u8 *)part + (s32)gBattleArenaRecord;
     stamp -= (s32)gSaveBuffer;
     Iwram_CopyWords(stamp, gBattleArenaRecord, 16);
-    error = Save_WriteRecord(gSaveSlot, record);
+    error = Save_WritePart(gSaveSlot, part);
     if (error != 0) {
       FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_WRITE;
     }
   }
   Save_ReleaseWork();
-  Heap_Release(record);
+  Heap_Release(part);
   return result;
 }
 
@@ -387,7 +387,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
 }
 
 /// The file list's Copy (menu/file_screen.c): lets the player choose a file,
-/// reads both of its records into the save buffer, overwriting it, and writes
+/// reads both of its parts into the save buffer, overwriting it, and writes
 /// them to the first empty file. Returns 0, -1 when cancelled, or a
 /// SAVE_ERROR_* after showing its message (the game says "Failed to erase."
 /// both when no file is empty and when the write fails).
@@ -410,9 +410,9 @@ s32 Save_CopyFile(void) {
       void *lower = &gSaveBuffer;
       void *upper;
 
-      error = Save_ReadRecord(file, lower);
-      upper = (u8 *)lower + SAVE_RECORD_BYTES;
-      error |= Save_ReadRecord(file + SAVE_FILE_COUNT, upper);
+      error = Save_ReadPart(file, lower);
+      upper = (u8 *)lower + SAVE_PART_BYTES;
+      error |= Save_ReadPart(file + SAVE_FILE_COUNT, upper);
       if (error != 0) {
         FieldMessage_Show(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_READ;
@@ -422,8 +422,8 @@ s32 Save_CopyFile(void) {
           FieldMessage_Show(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
           result = SAVE_ERROR_NO_FILE;
         } else {
-          error = Save_WriteRecord(file, lower);
-          error |= Save_WriteRecord(file + SAVE_FILE_COUNT, upper);
+          error = Save_WritePart(file, lower);
+          error |= Save_WritePart(file + SAVE_FILE_COUNT, upper);
           if (error != 0) {
             FieldMessage_Show(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
             result = SAVE_ERROR_WRITE;
@@ -440,7 +440,7 @@ s32 Save_CopyFile(void) {
 }
 
 /// The file list's Erase (menu/file_screen.c): lets the player choose a file,
-/// asks whether to erase it and on Yes deletes both of its records. "OK to
+/// asks whether to erase it and on Yes deletes both of its parts. "OK to
 /// erase this?" Returns 0 (also when the player answers No), -1 when cancelled,
 /// or a SAVE_ERROR_* after showing its message.
 s32 Save_EraseSelectedFile(void) {
@@ -466,8 +466,8 @@ s32 Save_EraseSelectedFile(void) {
         Message_CloseFinishedWindows();
       } else {
         Message_CloseFinishedWindows();
-        error = Save_DeleteRecord(file);
-        error |= Save_DeleteRecord(file + SAVE_FILE_COUNT);
+        error = Save_DeletePart(file);
+        error |= Save_DeletePart(file + SAVE_FILE_COUNT);
         if (error != 0) {
           FieldMessage_Show(MsgEraseFailed, FIELD_MESSAGE_ZOOM);
           result = SAVE_ERROR_ERASE;
@@ -968,7 +968,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       // file resumes at Adventure.restartScene, not where it was saved
       // (menu/file_screen.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
-    } else if (summary->playTime != *(u32 *)summary->secondRecordPlayTime) {
+    } else if (summary->playTime != *(u32 *)summary->secondPartPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, y);
     } else if (menuMode == FILE_LIST_CLEARED && (s8)summary->sendFlag == 0) {
       Text_DrawMessage(MsgSaveNotCleared, fileList, 10, y);
@@ -1044,7 +1044,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       // Saved by an older build: see the other editions' list above.
       Text_DrawMessage(MsgSaveContinue, fileList, 10, i * 16);
     } else if (save->summary[i].playTime !=
-               *(u32 *)save->summary[i].secondRecordPlayTime) {
+               *(u32 *)save->summary[i].secondPartPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, i * 16);
     } else if (menuMode == FILE_LIST_CLEARED &&
                (s8)save->summary[i].sendFlag == 0) {
@@ -1237,9 +1237,9 @@ s32 Save_ToChosenFile(void) {
       }
       Save_BuildFileSummary();
       Save_CaptureActorsFar();
-      error = Save_WriteRecord(file, gSaveBuffer);
-      error |= Save_WriteRecord(file + SAVE_FILE_COUNT,
-                                gSaveBuffer + SAVE_RECORD_BYTES);
+      error = Save_WritePart(file, gSaveBuffer);
+      error |=
+          Save_WritePart(file + SAVE_FILE_COUNT, gSaveBuffer + SAVE_PART_BYTES);
       Message_CloseFinishedWindows();
       if (error != 0) {
         FieldMessage_Show(MsgSaveFailed, FIELD_MESSAGE_ZOOM);
@@ -1260,7 +1260,7 @@ done:
 /// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
 /// its message. The title's Continue (mode 1), Battle (4) and Send (5) load
 /// through here (menu/file_screen.c).
-s32 Save_LoadRecordIntoWork(s32 mode) {
+s32 Save_LoadPartIntoWork(s32 mode) {
   s32 result = 0;
   s32 error = Save_InitializeWork();
 
@@ -1277,9 +1277,9 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
     } else {
       void *half = &gSaveBuffer;
 
-      error = Save_ReadRecord(file, half);
-      half = (char *)half + SAVE_RECORD_BYTES;
-      error |= Save_ReadRecord(file + SAVE_FILE_COUNT, half);
+      error = Save_ReadPart(file, half);
+      half = (char *)half + SAVE_PART_BYTES;
+      error |= Save_ReadPart(file + SAVE_FILE_COUNT, half);
       if (error != 0) {
         FieldMessage_Show(MsgLoadFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_READ;

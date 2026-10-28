@@ -220,7 +220,7 @@ use.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `SAVE_FILE_COUNT` | 3 | save files |
-| `SAVE_RECORD_BYTES` | 4 KB | one of a file's two halves |
+| `SAVE_PART_BYTES` | 4 KB | one of a file's two halves |
 
 ### The settings menu
 

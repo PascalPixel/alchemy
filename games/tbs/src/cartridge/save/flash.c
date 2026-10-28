@@ -251,7 +251,7 @@ typedef void (*FlashReadCore)(const u8 *source, u8 *destination, u32 size);
 /// ReadFlashCore from a copy in a 128-byte local. Sectors are addressed with
 /// gFlash_ChipDefault's 4 KB geometry whatever the chip, which is the same:
 /// every entry gFlash can point to has 4 KB sectors. Called by the save code
-/// for a sector's record and a file's summary (runtime/runtime/save.c).
+/// for a sector's part and a file's summary (runtime/runtime/save.c).
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
   u16 code[64];
   u16 *sourceCode;

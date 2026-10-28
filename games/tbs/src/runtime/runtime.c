@@ -20,8 +20,8 @@
 ///   Memory          heap.c: HeapSlot_Alloc, Heap_Alloc
 ///   3D              transform.c: Transform_ApplyRotationTranslation,
 ///                   Transform_ProjectPoint
-///   Saving          save.c: Save_WriteRecord,
-///                   Save_ReadRecord
+///   Saving          save.c: Save_WritePart,
+///                   Save_ReadPart
 ///   Link cable      serial.c: Serial_Initialize,
 ///                   Serial_ExchangePayloads
 

@@ -23,10 +23,11 @@ struct ItemMenuFiguresView {
   u8 beforeFigures[0xd8];
   struct Sprite *animations[4];
   s16 positionsX[4]; ///< screen pixels
-  /// Screen pixels; negative marks a recovering Djinni, which faces 0x8000.
+  /// Screen pixels; negative marks a recovering Djinni, which faces
+  /// FACING_WEST.
   s16 positionsY[4];
   /// The Djinn menu's figure scales, 16.16: negative holds a scale of -phase,
-  /// else it closes a third of its gap to full size (0x10000) each frame.
+  /// else it closes a third of its gap to full size (Q16_ONE) each frame.
   s32 phases[4];
 };
 

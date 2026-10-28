@@ -56,7 +56,7 @@ struct ItemMenuWork {
   struct Sprite *memberSprites[8]; ///< the party members' figures
   s16 memberX[8];                  ///< screen pixels
   s16 memberY[8];                  ///< screen pixels
-  s32 memberScale[8];              ///< 16.16 fixed point, 0x10000 full size
+  s32 memberScale[8];              ///< 16.16 fixed point, Q16_ONE full size
   u16 selectedSlots[2];            ///< each side's inventory slot chosen
   u16 selectedItems[2];            ///< each side's inventory entry chosen
   struct WindowSprite *cursor;

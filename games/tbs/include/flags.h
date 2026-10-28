@@ -103,8 +103,8 @@
 /// wish to try to recover from a Sanctum?".
 #define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
 /// Play the kind's usual cast. Field_UsePsynergy sets it for each use and
-/// clears it when the after trigger has subject bit 0x400 and plays its own;
-/// the before event may clear it too.
+/// clears it when the after trigger has PSYNERGY_EVENT_PLAYS_CAST and plays its
+/// own; the before event may clear it too.
 #define FLAG_PLAY_PSYNERGY_CAST 0x140
 /// Aim the field Psynergy at the actor ahead (FieldPsynergy_Dispatch)
 /// rather than run the kind's untargeted body (FieldPsynergy_Run, where Halt
@@ -124,7 +124,7 @@
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
 /// No random encounters while set (Encounter_CountStepsAndSelectFormation),
-/// unless flag 0x15f is set; debug entrances set it.
+/// unless FLAG_IGNORE_ENCOUNTER_CHECKS is set; debug entrances set it.
 #define FLAG_NO_ENCOUNTERS 0x160
 /// No random battles until the party enters another area: Venus
 /// Lighthouse sets it on its Reveal path, the world map's debug

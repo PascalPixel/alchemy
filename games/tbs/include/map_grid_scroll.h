@@ -14,7 +14,7 @@
 struct MapGridLayerScroll {
   s32 x, y;                  ///< 16.16 fixed-point pixels
   s32 offsetX, offsetY;      ///< 16.16 fixed-point pixels
-  s32 scaleX, scaleY;        ///< 16.16 fixed point, 0x10000 moves with the view
+  s32 scaleX, scaleY;        ///< 16.16 fixed point, Q16_ONE moves with the view
   s32 speedX, speedY;        ///< 16.16 fixed-point pixels per frame
   s32 phaseX, phaseY;        ///< 16.16 fixed-point pixels
   u16 maskX, maskY;          ///< a drifting layer's wrap mask, in 8-pixel tiles

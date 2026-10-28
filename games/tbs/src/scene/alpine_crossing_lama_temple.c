@@ -299,7 +299,7 @@ static void LamaTemple_EnterHamasRoom(void) {
   Event_PlaySound(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
@@ -418,7 +418,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   // The door slides open with SE_THUMP, Hama walks through, and it slides shut.
   Event_PlaySound(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
-  Actor_SetSpeed(ACTOR_TEMPLE_HAMA, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_TEMPLE_HAMA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_TEMPLE_HAMA, 136, 136);
   Actor_SetPosition(ACTOR_TEMPLE_HAMA, 0, 0);
   Event_PlaySound(SE_THUMP);
@@ -479,7 +479,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_IVAN, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_IVAN, 128, 184);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -494,8 +494,8 @@ static void LamaTemple_RunHamasFarewell(void) {
   Event_Wait(20);
 
   // Garet, Ivan and Mia walk to the leader and rejoin the party.
-  Actor_SetSpeed(ACTOR_GARET, 0x8000, 0x4000);
-  Actor_SetSpeed(ACTOR_MIA, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_GARET, 144, 200);
   Actor_WalkTo(ACTOR_IVAN, 144, 200);
   Actor_WalkTo(ACTOR_MIA, 144, 200);
@@ -581,7 +581,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     if ((leader->z.fixed >> 20) == 13) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 440, 200);
     }
-    Actor_SetSpeed(ACTOR_FEIZHI, 0x20000, 0x10000);
+    Actor_SetSpeed(ACTOR_FEIZHI, PIXELS(2), PIXELS(1));
     Actor_SetSpritePriority(ACTOR_FEIZHI, 2);
     Actor_WalkToAndWait(ACTOR_FEIZHI, 408, 216);
     Actor_GetById(ACTOR_FEIZHI)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -601,7 +601,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     GameFlag_Set(FLAG_FEIZHI_SAW_ROCKSLIDE);
     Actor_RefreshSelectorById(ACTOR_FEIZHI);
     FieldCamera_WaitForArrival();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_SetScript(ACTOR_PARTY_LEADER, gAlpineCrossing_LeaderPath);
     Actor_RefreshSelectorById(ACTOR_PARTY_LEADER);
     Event_Wait(10);
@@ -720,8 +720,8 @@ static void AlpineCrossing_LiftBoulder(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   Actor_GetById(ACTOR_HAMA)->steeringFlags &= (u8)~ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_FEIZHI)->steeringFlags &= (u8)~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_HAMA, 0x3333, 0x1999);
-  Actor_SetSpeed(ACTOR_FEIZHI, 0x3333, 0x1999);
+  Actor_SetSpeed(ACTOR_HAMA, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_FEIZHI, PIXELS(1) / 5, PIXELS(1) / 10);
 
   // The first heave: two tugs draw Hsu halfway out.
   Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
@@ -787,7 +787,7 @@ static void AlpineCrossing_LiftBoulder(void) {
 
   // Feizhi steps back; they agree to send for Master Feh.
   Actor_GetById(ACTOR_FEIZHI)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_FEIZHI, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_FEIZHI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 168, 296);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH + FACING_STEP, 20);
   Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_CROUCH);
@@ -994,12 +994,12 @@ s32 Scene_Initialize(void) {
       Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH + FACING_STEP, 0);
       Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTHWEST + FACING_STEP, 0);
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
-      Actor_GetById(ACTOR_HSU)->scaleX = -0x10000;
+      Actor_GetById(ACTOR_HSU)->scaleX = -Q16_ONE;
     }
     if (!Event_GetFlag(FLAG_HSU_RESCUED)) {
       Actor_SetPosition(ACTOR_HSU, PIXELS(164), PIXELS(280));
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
-      Actor_GetById(ACTOR_HSU)->scaleX = -0x10000;
+      Actor_GetById(ACTOR_HSU)->scaleX = -Q16_ONE;
     }
     if (gMainRoutineWork.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST &&

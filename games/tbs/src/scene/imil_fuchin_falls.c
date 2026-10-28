@@ -1394,7 +1394,7 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
 /// (SceneId_FuchinFallsCaveArcticBlade), in both of its halves, at the cells
 /// their flags name.
 static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
-  if (((u32)((u16)gMainRoutineWork.entrance - 1) << 16) <= 0x10000) {
+  if (((u32)((u16)gMainRoutineWork.entrance - 1) << 16) <= 1 << 16) {
     {
       s32 column = 14;
       s32 row = 10;
@@ -1918,10 +1918,10 @@ static void Imil_TurnSkaterTowardHeldDirection(struct Actor *updated) {
   }
   facing = actor->facing;
   direction = (s16)(direction - facing);
-  if (direction > 0x1000)
-    direction = 0x1000;
-  if (direction < -0x1000)
-    direction = -0x1000;
+  if (direction > FACING_STEP)
+    direction = FACING_STEP;
+  if (direction < -FACING_STEP)
+    direction = -FACING_STEP;
   actor->facing = facing + direction;
   Actor_SelectAnimation(actor, 2);
   Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
@@ -2247,7 +2247,7 @@ struct Trigger gImilFuchinFalls_EntranceTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 27, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_WEST },
     { TRIGGER_EXIT, 28, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE_EAST },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 1, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ReadDragonFlameInscription) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xef1, FIND_MIMIC | 1 },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_FUCHIN_FALLS_MIMIC_BEATEN, FIND_MIMIC | 1 },
     { TRIGGERS_END },
 };
 
@@ -2361,7 +2361,8 @@ struct Trigger gImilFuchinFalls_ArcticBladeRoomTriggers[] = {
      FUCHIN_FALLS_CAVE_ARCTIC_BLADE_SOUTH_HALF_TO_NORTH_HALF},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
      FUCHIN_FALLS_CAVE_ARCTIC_BLADE_TO_FUCHIN_FALLS_CAVE_ENTRANCE},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf6b, FIND_ITEM(ITEM_ARCTIC_BLADE)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_FUCHIN_FALLS_ARCTIC_BLADE,
+     FIND_ITEM(ITEM_ARCTIC_BLADE)},
     {TRIGGERS_END},
 };
 

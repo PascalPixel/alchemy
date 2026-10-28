@@ -114,7 +114,7 @@
 // UB: westward log travel passes -64, which cannot be shifted left as signed C.
 // Both callers supply only -64, 0 or 64, so fixed-point multiplication fits.
 #ifdef UBFIX
-#define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) ((value) * 0x10000)
+#define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) ((value) * PIXELS(1))
 #else
 #define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) ((value) << 16)
 #endif
@@ -374,14 +374,14 @@ static void ColosseumSatrageMatch_MoveWallPillar(void) {
   obstacle = Actor_GetById(ACTOR_WALL_PILLAR);
   if ((obstacle->x.fixed >> 20) == 36) {
     GameFlag_Set(FLAG_WALL_PILLAR_MOVED);
-    column = 0x23;
-    row = 0x4D;
-    MapGrid_CopyCellAttributes(0x23, 0x4E, 1, 1, column, row);
+    column = 35;
+    row = 77;
+    MapGrid_CopyCellAttributes(35, 78, 1, 1, column, row);
   } else {
     GameFlag_Clear(FLAG_WALL_PILLAR_MOVED);
-    column = 0x23;
-    row = 0x4D;
-    MapGrid_CopyCellAttributes(0x22, 0x4D, 1, 1, column, row);
+    column = 35;
+    row = 77;
+    MapGrid_CopyCellAttributes(34, 77, 1, 1, column, row);
   }
 }
 
@@ -439,8 +439,8 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   obstacle = Actor_GetById(ACTOR_FALLING_LOG);
   sprite = obstacle->sprite;
   Event_SetFlag(FLAG_OBSTACLE_KNOCKED_DOWN);
-  obstacle->acceleration = 0x1999;
-  obstacle->speedLimit = 0x13333;
+  obstacle->acceleration = PIXELS(1) / 10;
+  obstacle->speedLimit = PIXELS(6) / 5;
   Sound_Play(SE_TOPPLE);
   // Spin through the fall, then settle the obstacle at its final height.
   FieldActor_SetMoveTarget(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
@@ -450,7 +450,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
     rotationStep += 36;
   }
   FieldActor_SetMoveTarget(obstacle, PIXELS(330), -PIXELS(16), PIXELS(264));
-  for (settleRotationStep = 0x168, settleFrames = 21; settleFrames >= 0;
+  for (settleRotationStep = 360, settleFrames = 21; settleFrames >= 0;
        settleFrames--) {
     sprite->rotation -= settleRotationStep;
     wait(1);
@@ -543,14 +543,14 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
     destinationX =
         ((pusher->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
          0xFFF00000) +
-        0x80000;
+        PIXELS(8);
     destinationZ =
         ((pusher->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
          0xFFF00000) +
-        0x80000;
+        PIXELS(8);
 
-    pusher->speedLimit = 0x10000;
-    pusher->acceleration = 0x8000;
+    pusher->speedLimit = PIXELS(1);
+    pusher->acceleration = PIXELS(1) / 2;
     FieldActor_SetMoveTarget(pusher, destinationX, pusher->y.fixed,
                              destinationZ);
   }
@@ -559,14 +559,14 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
     destinationX =
         ((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
          0xFFF00000) +
-        0x80000;
+        PIXELS(8);
     destinationZ =
         ((log->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
          0xFFF00000) +
-        0x80000;
+        PIXELS(8);
 
-    log->speedLimit = 0x10000;
-    log->acceleration = 0x8000;
+    log->speedLimit = PIXELS(1);
+    log->acceleration = PIXELS(1) / 2;
     FieldActor_SetMoveTarget(log, destinationX, log->y.fixed, destinationZ);
   }
   if (offsetX < 0 || offsetZ < 0) {
@@ -636,8 +636,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Event_Start();
   Import_ActorSetAnimation(pusher, 8);
   Event_Wait(6);
-  log->speedLimit = 0x8000;
-  log->acceleration = 0x3333;
+  log->speedLimit = PIXELS(1) / 2;
+  log->acceleration = PIXELS(1) / 5;
   Actor_SelectAnimation(log,
                         gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
   FieldActor_SetMoveTarget(log, halfCellX, 0, halfCellZ);
@@ -752,12 +752,12 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     riderX = rider->x.fixed;
     deltaX = liftX - riderX;
     if (deltaX >= 0) {
-      if (deltaX > 0x9ffff) {
+      if (deltaX >= PIXELS(10)) {
         continue;
       }
     } else {
       riderX -= liftX;
-      if (riderX > 0x9ffff) {
+      if (riderX >= PIXELS(10)) {
         continue;
       }
     }
@@ -765,12 +765,12 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     riderZ = rider->z.fixed;
     deltaZ = liftZ - riderZ;
     if (deltaZ >= 0) {
-      if (deltaZ > 0x9ffff) {
+      if (deltaZ >= PIXELS(10)) {
         continue;
       }
     } else {
       riderZ -= liftZ;
-      if (riderZ > 0x9ffff) {
+      if (riderZ >= PIXELS(10)) {
         continue;
       }
     }
@@ -784,7 +784,8 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     rider->z.fixed = riderZ;
   }
   // The final lift's destination selects the cell behaviors for the row.
-  if (gColosseumSatrageMatch_LiftTimer != 0 && lift->targetX == 0x80000000) {
+  if (gColosseumSatrageMatch_LiftTimer != 0 &&
+      lift->targetX == ACTOR_NO_TARGET) {
     if (gColosseumSatrageMatch_LiftPhase == 0) {
       MapGrid_CopyCellAttributes(58, 28, 7, 1, 58, 13);
     } else {
@@ -923,7 +924,7 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 112, 256);
-  Actor_SetPositionAndReset(ACTOR_OPPONENT, 96, 0x100);
+  Actor_SetPositionAndReset(ACTOR_OPPONENT, 96, 256);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(10);
@@ -1061,7 +1062,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     x = 73;
   }
   actor = Actor_GetById(ACTOR_MINI_MAZE_FIRST_PILLAR);
-  actor->x.fixed = (x << 20) + 0x80000;
+  actor->x.fixed = (x << 20) + PIXELS(8);
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
@@ -1070,7 +1071,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     x = 76;
   }
   actor = Actor_GetById(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
-  actor->x.fixed = (x << 20) + 0x80000;
+  actor->x.fixed = (x << 20) + PIXELS(8);
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
@@ -1079,7 +1080,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     x = 79;
   }
   actor = Actor_GetById(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
-  actor->x.fixed = (x << 20) + 0x80000;
+  actor->x.fixed = (x << 20) + PIXELS(8);
   actor->motionFlags = zero;
   actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
@@ -1106,8 +1107,8 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       actor = Actor_GetById(liftId);
       actor->priorityFlags = 2;
       Actor_SelectAnimation(actor, 4);
-      actor->speedLimit = 0x8000;
-      actor->acceleration = 0x3333;
+      actor->speedLimit = PIXELS(1) / 2;
+      actor->acceleration = PIXELS(1) / 5;
     }
     Task_AddFrame(ColosseumSatrageMatch_UpdateLifts, TASK_PASS_FRAME + 5);
     Task_SetFlags(ColosseumSatrageMatch_UpdateLifts, 1);
@@ -1187,15 +1188,15 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
   Import_ActorSetPosition(ACTOR_PARTY_LEADER, (attendantX << 16),
-                          ((attendantZ << 16) - 0x300000));
-  Import_ActorSetPosition(ACTOR_GARET, (attendantX << 16) - 0x100000,
-                          (attendantZ << 16) - 0x280000);
-  Import_ActorSetPosition(ACTOR_IVAN, (attendantX << 16) + 0x100000,
-                          (attendantZ << 16) - 0x280000);
+                          ((attendantZ << 16) - PIXELS(48)));
+  Import_ActorSetPosition(ACTOR_GARET, (attendantX << 16) - PIXELS(16),
+                          (attendantZ << 16) - PIXELS(40));
+  Import_ActorSetPosition(ACTOR_IVAN, (attendantX << 16) + PIXELS(16),
+                          (attendantZ << 16) - PIXELS(40));
   Import_ActorSetPosition(ACTOR_MIA, (attendantX << 16),
-                          ((attendantZ << 16) - 0x200000));
+                          ((attendantZ << 16) - PIXELS(32)));
   Import_ActorSetPosition(attendantId, (attendantX << 16),
-                          ((attendantZ << 16) - 0x500000));
+                          ((attendantZ << 16) - PIXELS(80)));
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1261,7 +1262,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
     result = Colosso_GreetAtStage(attendant, 1);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoStageDubbedMini);
-      FieldCamera_SetSpeedParameters(0x30000, 0x6000);
+      FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveWithinMapBounds(PIXELS(1224), -1, PIXELS(184), 1);
       FieldCamera_WaitForArrival();
       Event_ShowMessageAndWait(attendant, 0);
@@ -1275,7 +1276,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1192, 248);
       Event_Wait(3);
       actor = Actor_GetById(ACTOR_PARTY_LEADER);
-      actor->velocityY = 0x40000;
+      actor->velocityY = PIXELS(4);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
       FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1308,7 +1309,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoShiftingFloorStage);
       ColosseumSatrageMatch_ResetLifts();
-      FieldCamera_SetSpeed(0x30000, 0x6000);
+      FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(984), -1, PIXELS(232), 1);
       FieldCamera_WaitForArrival();
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
@@ -1354,11 +1355,11 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
     result = Colosso_GreetAtStage(attendant, 3);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoLogRollingStage);
-      FieldCamera_SetSpeed(0x30000, 0x6000);
+      FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(192), 1);
       FieldCamera_WaitForArrival();
       Event_Wait(60);
-      FieldCamera_SetSpeed(0x10000, 0x2000);
+      FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(224), 1);
       FieldCamera_WaitForArrival();
       Event_ShowMessage(attendant, 0);
@@ -1412,11 +1413,11 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
   result = Colosso_GreetAtStage(attendant, 4);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoFansJustCallWall);
-    FieldCamera_SetSpeedParameters(0x30000, 0x6000);
+    FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(240), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(45);
-    FieldCamera_SetSpeed(0x10000, 0x2000);
+    FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(192), 1);
     z = 264;
     FieldCamera_WaitForArrival();
@@ -1426,12 +1427,12 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Field_ClimbUp();
-    FieldCamera_SetSpeed(0x4000, 0x800);
+    FieldCamera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(160), 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
     actor = Actor_GetById(ACTOR_PARTY_LEADER);
-    FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed + 0x400000,
+    FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed + PIXELS(64),
                              actor->z.fixed);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Field_ClimbUp();
@@ -1476,8 +1477,8 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   }
   Import_ActorSetAnimation(pusher, 8);
   Event_Wait(6);
-  obstacle->speedLimit = 0x8000;
-  obstacle->acceleration = 0x3333;
+  obstacle->speedLimit = PIXELS(1) / 2;
+  obstacle->acceleration = PIXELS(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(obstacle, 3);
   FieldActor_SetMoveTarget(obstacle, column, 0, row);
@@ -1511,11 +1512,11 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   result = Colosso_GreetAtStage(attendant, 5);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoPlaceCalledBoard);
-    FieldCamera_SetSpeedParameters(0x20000, 0x4000);
+    FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
     FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(264), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(30);
-    FieldCamera_SetSpeed(0x18000, 0x3000);
+    FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
     FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(176), 1);
     FieldCamera_WaitForArrival();
     Event_ShowMessageAndWait(attendant, 0);
@@ -1611,7 +1612,8 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     *(s16 *)((u8 *)openingScript + 30) = (mode * 60);
   }
   Event_Wait(30);
-  Sound_Play(mode + 0x5a);
+  // Match 1 to 3 play MUS_JINGLE_SMALL, MUS_JINGLE_MEDIUM and MUS_JINGLE_LARGE.
+  Sound_Play(mode + (MUS_JINGLE_SMALL - COLOSSO_PICTURE_MATCH_1));
   Colosso_LoadLettering(mode);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
   Event_Wait(120);
@@ -1950,7 +1952,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   }
 
   destination.x = obstacle->x.fixed;
-  destination.y = obstacle->y.fixed + 0x100000;
+  destination.y = obstacle->y.fixed + PIXELS(16);
   destination.z = obstacle->z.fixed;
 
   blocker = Actor_FindAtPosition(&destination, obstacle);
@@ -1975,13 +1977,13 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   Actor_SelectAnimation(pusher, 8);
   wait(15);
 
-  obstacle->speedLimit = 0x3333;
-  obstacle->acceleration = 0x3333;
+  obstacle->speedLimit = PIXELS(1) / 5;
+  obstacle->acceleration = PIXELS(1) / 5;
   FieldActor_SetMoveTarget(obstacle, destination.x, destination.y,
                            destination.z);
 
-  pusher->speedLimit = 0x3333;
-  pusher->acceleration = 0x3333;
+  pusher->speedLimit = PIXELS(1) / 5;
+  pusher->acceleration = PIXELS(1) / 5;
   FieldActor_SetMoveTarget(pusher, destination.x, destination.y, destination.z);
 
   Sound_Play(SE_PUSH_STEP);
@@ -2015,26 +2017,48 @@ const u8 gColosso_LetteringPaletteOffsets[] = {
 };
 
 const s16 gColosseumSatrageMatch_LetteringDigit[] = {
-    0x1000, 512, 1, 0x2000, 0, 1, 0x1000, 256,
-    6, 0x2000, 16, 6, 0x7fff, 30, 0x2000, 0,
-    30, 0x7fff, 30, -1,
+    COLOSSO_LETTERING_SCALE, 512, 1,
+    COLOSSO_LETTERING_FADE, 0, 1,
+    COLOSSO_LETTERING_SCALE, 256, 6,
+    COLOSSO_LETTERING_FADE, 16, 6,
+    COLOSSO_LETTERING_WAIT, 30,
+    COLOSSO_LETTERING_FADE, 0, 30,
+    COLOSSO_LETTERING_WAIT, 30,
+    COLOSSO_LETTERING_END,
 };
 
 const s16 gColosseumSatrageMatch_LetteringLose[] = {
-    0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
-    6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
-    6, 0x7fff, 6, 0x1000, 240, 6, 0x7fff, 6,
-    0x1000, 368, 6, 0x7fff, 6, 0x1000, 224, 6,
-    0x7fff, 6, 0x2000, 0, 30, 0x1000, 352, 6,
-    0x7fff, 6, 0x1000, 208, 6, 0x7fff, 6, 0x1000,
-    336, 6, 0x7fff, 6, 0x1000, 192, 6, 0x7fff,
-    6, 0x1000, 320, 6, 0x7fff, 6, -1,
+    COLOSSO_LETTERING_SCALE, 128, 1,
+    COLOSSO_LETTERING_FADE, 0, 1,
+    COLOSSO_LETTERING_SCALE, 256, 6,
+    COLOSSO_LETTERING_FADE, 16, 6,
+    COLOSSO_LETTERING_WAIT, 60,
+    COLOSSO_LETTERING_SCALE, 384, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 240, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 368, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 224, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_FADE, 0, 30,
+    COLOSSO_LETTERING_SCALE, 352, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 208, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 336, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 192, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 320, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_END,
 };
 
 char gHexDigits[20] = "0123456789ABCDEF";
 
 s32 gColosseumSatrageMatch_SparkScript[] = {
-    SC_ADD(SW_Y, -0x4000),
+    SC_ADD(SW_Y, -PIXELS(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_RELEASE,
@@ -2044,29 +2068,29 @@ s32 gColosseumSatrageMatch_RaiseScript[] = {
     SC_SET(SW_HOOK, (s32)ColosseumSatrageMatch_SpawnRandomMapEffect),
     SC_LABEL(1),
     SC_WAIT(10),
-    SC_SET(SW_SCALE_X, 0x16000),
-    SC_SET(SW_SCALE_Y, 0x16000),
+    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
+    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x12000),
-    SC_SET(SW_SCALE_Y, 0x12000),
+    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x16000),
-    SC_SET(SW_SCALE_Y, 0x16000),
+    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
+    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x12000),
-    SC_SET(SW_SCALE_Y, 0x12000),
+    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(2),
     SC_WAIT(50),
     SC_LOOP(2, SC_TO(1)),
@@ -2113,7 +2137,7 @@ u32 gColosseumSatrageMatchExits[] = {
 };
 
 struct ActorPlacement gColosseumSatrageMatchActorPlacements[] = {
-    { 0x0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { ACTOR_PARTY_LEADER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1272), 0, PIXELS(168), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
@@ -2141,7 +2165,7 @@ struct ActorPlacement gColosseumSatrageMatchActorPlacements[] = {
         PIXELS(392), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x103, CONDITION_ALWAYS, 7,
+    { 259, CONDITION_ALWAYS, 7,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(520), 0, PIXELS(258), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -2149,23 +2173,23 @@ struct ActorPlacement gColosseumSatrageMatchActorPlacements[] = {
         PIXELS(712), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(808), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(936), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(968), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(1000), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(1032), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(264), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(296), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x122, CONDITION_ALWAYS, 7,
+    { 290, CONDITION_ALWAYS, 7,
         PIXELS(312), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 0x103, CONDITION_ALWAYS, 7,
+    { 259, CONDITION_ALWAYS, 7,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1072), 0, PIXELS(280), FACING_WEST, TALK_FACING_KEEP, 0 },
@@ -2242,32 +2266,71 @@ struct Trigger gColosseumSatrageMatchTriggers[] = {
 s16 gColosso_LetteringSlot = -1;
 
 s16 gColosseumSatrageMatch_LetteringTitle[] = {
-    0x4000, -188, 2048, 0x1000, COLOSSEUM_SATRAGE_MATCH_INTRO_SCALE, 1, 0x2000, 16,
-    1, 0x7fff, 14, 0x3000, 0, 20, 0x7fff, 60,
-    0x3000, 2048, 20, 0x7fff, 60, -1,
+    COLOSSO_LETTERING_PLACE, -188, 2048,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_INTRO_SCALE, 1,
+    COLOSSO_LETTERING_FADE, 16, 1,
+    COLOSSO_LETTERING_WAIT, 14,
+    COLOSSO_LETTERING_ACCELERATE, 0, 20,
+    COLOSSO_LETTERING_WAIT, 60,
+    COLOSSO_LETTERING_ACCELERATE, 2048, 20,
+    COLOSSO_LETTERING_WAIT, 60,
+    COLOSSO_LETTERING_END,
 };
 
 s16 gColosseumSatrageMatch_LetteringGo[] = {
-    0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_FIRST_SCALE, 1, 0x2000, 0, 1, 0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE,
-    6, 0x2000, 16, 6, 0x7fff, 6, 0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE,
-    6, 0x7fff, 6, 0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6, 0x7fff, 6,
-    0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6, 0x7fff, 6, 0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6,
-    0x7fff, 6, 0x2000, 0, 30, 0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6,
-    0x7fff, 6, 0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6, 0x7fff, 6, 0x1000,
-    COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6, 0x7fff, 6, 0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6, 0x7fff,
-    6, 0x1000, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6, 0x7fff, 6, -1,
-
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_FIRST_SCALE, 1,
+    COLOSSO_LETTERING_FADE, 0, 1,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6,
+    COLOSSO_LETTERING_FADE, 16, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_FADE, 0, 30,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_LOW_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, COLOSSEUM_SATRAGE_MATCH_PULSE_HIGH_SCALE, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_END,
 };
 
 s16 gColosseumSatrageMatch_LetteringWon[] = {
-    0x1000, 128, 1, 0x2000, 0, 1, 0x1000, 256,
-    6, 0x2000, 16, 6, 0x7fff, 60, 0x1000, 384,
-    6, 0x7fff, 6, 0x1000, 272, 6, 0x7fff, 6,
-    0x1000, 400, 6, 0x7fff, 6, 0x1000, 288, 6,
-    0x7fff, 6, 0x2000, 0, 30, 0x1000, 416, 6,
-    0x7fff, 6, 0x1000, 304, 6, 0x7fff, 6, 0x1000,
-    432, 6, 0x7fff, 6, 0x1000, 320, 6, 0x7fff,
-    6, 0x1000, 448, 6, 0x7fff, 6, -1,
+    COLOSSO_LETTERING_SCALE, 128, 1,
+    COLOSSO_LETTERING_FADE, 0, 1,
+    COLOSSO_LETTERING_SCALE, 256, 6,
+    COLOSSO_LETTERING_FADE, 16, 6,
+    COLOSSO_LETTERING_WAIT, 60,
+    COLOSSO_LETTERING_SCALE, 384, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 272, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 400, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 288, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_FADE, 0, 30,
+    COLOSSO_LETTERING_SCALE, 416, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 304, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 432, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 320, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_SCALE, 448, 6,
+    COLOSSO_LETTERING_WAIT, 6,
+    COLOSSO_LETTERING_END,
 };
 // clang-format on
 

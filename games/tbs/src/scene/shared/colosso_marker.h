@@ -63,19 +63,19 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   sprite->shadow.objectMode = 1;
   Sound_Play(SE_COLOSSO_WARRIOR_APPEAR);
   for (i = 0; i <= 15; i += 2) {
-    actor->scaleX = (i << 12) + 0x1000;
-    actor->scaleY = 0x1f000 - (i << 12);
+    actor->scaleX = (i << 12) + Q16_ONE / 16;
+    actor->scaleY = 31 * Q16_ONE / 16 - (i << 12);
     // BLEND_ALPHA(i + 1, 15 - i), whose operand order compiles differently.
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1),
                         IO_WRITE_16);
     wait(1);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), IO_WRITE_16);
-  actor->scaleX = 0x11000;
-  actor->scaleY = 0xf000;
+  actor->scaleX = 17 * Q16_ONE / 16;
+  actor->scaleY = 15 * Q16_ONE / 16;
   Event_Wait(1);
-  actor->scaleX = 0x10000;
-  actor->scaleY = 0x10000;
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
   Event_Wait(13);
   sprite->image.objectMode = 0;
   sprite->shadow.objectMode = 0;
@@ -260,7 +260,7 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != 0) {
-    s32 speed = 0x20000;
+    s32 speed = PIXELS(2);
     s32 zero = 0;
 
     actor->speedLimit = speed;
@@ -278,7 +278,7 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != 0) {
-    s32 speed = 0x14000;
+    s32 speed = PIXELS(5) / 4;
     s32 zero = 0;
 
     actor->speedLimit = speed;

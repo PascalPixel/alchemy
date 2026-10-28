@@ -79,21 +79,21 @@
 #include "flags.h"
 #include "sounds.h"
 
-// Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when
-// the party enters another area, and other areas use the numbers
-// for their own.
+// Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
+// FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
+// the numbers for their own.
 /// The stump has been pushed over into the room below.
 /// ★ Named from what the player sees: a tree stump standing on a ledge (its
 /// render)
-#define FLAG_GOMA_CAVE_STUMP_FELL 0x300
+#define FLAG_GOMA_CAVE_STUMP_FELL FLAG_AREA_TEMP_00
 /// The east stone pillar has sunk into its place.
 /// ★ Named from what the player sees: a stone pillar on the room's east side
 /// (its render)
-#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301
+#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE FLAG_AREA_TEMP_01
 /// The west stone pillar stands one step east of its start.
 /// ★ Named from what the player sees: a stone pillar at the head of the room's
 /// west passage (its render)
-#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302
+#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED FLAG_AREA_TEMP_02
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
@@ -253,7 +253,7 @@ static void GomaCavePillar_MoveWestPillar(void) {
   actor = Actor_GetById(ACTOR_WEST_PILLAR);
   x = actor->x.fixed;
   if (x < 0)
-    x += 0xfffff;
+    x += PIXELS(16) - 1;
   x >>= 20;
   Event_Start();
   if (x == 20) {
@@ -743,7 +743,7 @@ struct Trigger gGomaCavePillar_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT(GomaCavePillar_MoveWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_STUMP_FELL, EVENT(GomaCavePillar_PushStumpOver) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT(GomaCavePillar_MoveEastPillar) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, 0xf4f, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_GOMA_CAVE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_RAISED, RAISED_FORGE_JOINED, CONDITION_ALWAYS, EVENT(GomaCavePillar_WitnessCheersForgeCaught) },
     { TRIGGERS_END },
 };

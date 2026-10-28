@@ -22,13 +22,17 @@
 // the opponent who races Isaac by running a recorded path, and the race gauge
 // that shows how near each of them is to the finish.
 
+/// The halfwords of the opponent's path: x and z for 7,200 frames, the last
+/// pair the (0, 0) that ends it, as Colosso_UpdatePathOpponent records it.
+#define COLOSSO_PATH_HALFWORDS (7200 * 2)
+
 /// The race's work in HEAP_SLOT_COLOSSO_RACE, allocated whole when the gauge
 /// starts: the gauge, then the opponent's path.
 struct ColossoRaceWork {
   struct ColossoGaugeWork gauge;
   /// Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
   /// decoded from the map's resource, or recorded (PATH_RECORDER_RECORD).
-  s16 path[0x3840];
+  s16 path[COLOSSO_PATH_HALFWORDS];
 };
 
 STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
@@ -39,8 +43,8 @@ STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 /// three frames. At the path's end the opponent walks to the finish, beside the
 /// first finisher's item actor or the second's, and sets
 /// FLAG_SCENE_TEMP_11 (a racer has finished). PATH_RECORDER_RECORD records the
-/// actor's own path instead, up to 0x383e halfwords, then plays it back
-/// with the opponent.
+/// actor's own path instead, up to COLOSSO_PATH_HALFWORDS - 2 halfwords, then
+/// plays it back with the opponent.
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gSceneLocalState;
@@ -60,20 +64,20 @@ static void Colosso_UpdatePathOpponent(void) {
       rec->mode = PATH_RECORDER_FINISHED;
       Actor_SelectAnimation(actor, 1);
       if (work->gauge.finishX < actor->x.fixed) {
-        x = work->gauge.finishX + 0xc0000;
+        x = work->gauge.finishX + PIXELS(12);
       } else {
-        x = work->gauge.finishX - 0xc0000;
+        x = work->gauge.finishX - PIXELS(12);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_11)) {
-        fz = work->gauge.finishZ + 0x100000;
+        fz = work->gauge.finishZ + PIXELS(16);
         itemActorId = &work->gauge.finishItemActorIdB;
       } else {
-        fz = work->gauge.finishZ - 0x100000;
+        fz = work->gauge.finishZ - PIXELS(16);
         itemActorId = &work->gauge.finishItemActorIdA;
       }
       actor->timer = *itemActorId;
-      actor->acceleration = 0x4000;
-      actor->speedLimit = 0x10000;
+      actor->acceleration = PIXELS(1) / 4;
+      actor->speedLimit = PIXELS(1);
       FieldActor_SetMoveTarget(actor, x, 0, fz);
       GameFlag_Set(FLAG_SCENE_TEMP_11);
       Actor_StartScript(actor, gColosso_OpponentFinishScript);
@@ -89,11 +93,11 @@ static void Colosso_UpdatePathOpponent(void) {
         u16 angle = ArcTan2(z - actor->z.fixed, x - actor->x.fixed);
         d = (s16)(angle - actor->facing);
       }
-      if (d > 0x1000) {
-        d = 0x1000;
+      if (d > FACING_STEP) {
+        d = FACING_STEP;
       }
-      if (d < -0x1000) {
-        d = -0x1000;
+      if (d < -FACING_STEP) {
+        d = -FACING_STEP;
       }
       actor->facing += d;
       actor->x.fixed = x;
@@ -112,7 +116,7 @@ static void Colosso_UpdatePathOpponent(void) {
     z = actor->z.part.pixel;
     work->path[(s16)rec->pathIndex++] = x;
     work->path[(s16)rec->pathIndex++] = z;
-    if ((s16)rec->pathIndex == 0x383e) {
+    if ((s16)rec->pathIndex == COLOSSO_PATH_HALFWORDS - 2) {
       work->path[(s16)rec->pathIndex++] = 0;
       work->path[(s16)rec->pathIndex] = 0;
       rec->actorId = work->gauge.opponentActorId;
@@ -154,7 +158,7 @@ static void Colosso_DrawGauge(void) {
   } else if (gauge->level <= 1) {
     if (++gauge->level == 1) {
       Dma_Set(gColosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0),
-              (DMA_ENABLE << 16) | 0x10, REG_DMA3);
+              (DMA_ENABLE << 16) | 16, REG_DMA3);
       buf = Heap_CallAlternatePool(Heap_AllocEwram, 512);
       FieldDecompress_TaggedLz(gColosso_GaugeGraphics, buf);
       VramCache_Load(gauge->vramBlock, 512, buf);
@@ -216,8 +220,9 @@ static void Colosso_DrawGauge(void) {
     shape = 0x40000000;
     actor = Actor_Lookup(gauge->opponentActorId);
     if (actor != 0) {
-      x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
-      y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;
+      x = ((actor->x.fixed - gauge->finishX) / PIXELS(14)) + 112;
+      y = ((actor->z.fixed - gauge->finishZ) / PIXELS(14)) + gauge->level * 6 -
+          4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;
@@ -228,8 +233,9 @@ static void Colosso_DrawGauge(void) {
     }
     actor = Actor_Lookup(gauge->playerActorId);
     if (actor != 0) {
-      x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
-      y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;
+      x = ((actor->x.fixed - gauge->finishX) / PIXELS(14)) + 112;
+      y = ((actor->z.fixed - gauge->finishZ) / PIXELS(14)) + gauge->level * 6 -
+          4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;

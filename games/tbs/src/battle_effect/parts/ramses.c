@@ -20,7 +20,7 @@
 /// rocks fall and bounce, and the orb's flight ends in a burst of RAMSES_SPARKS
 /// sparks from PARTICLES.
 ///
-/// Abilities: Ramses (SUMMON_ANIM_RAMSES).
+/// Abilities: Ramses (SUMMON_EFFECT_RAMSES).
 ///
 /// The effect plays for up to RAMSES_FRAMES frames, and A or B ends it
 /// early.
@@ -35,7 +35,7 @@
 /// steps matters: later steps draw over earlier ones, and several of them
 /// consume random numbers.
 void BattleEffect_RunRamses(struct BattleEffectParams *args) {
-  // Every sprite of the animation takes this scale.
+  // Every sprite of the effect takes this scale.
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
@@ -70,13 +70,13 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   // three effects.
   BattleEffect_SpawnObjects(9, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct Sprite *animation = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
+    struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
-    work->animations[9 + i] = animation;
-    if (animation != 0) {
-      animation->flags = 0;
-      Sprite_StartAnimationFar(animation, i % 3);
-      work->animations[9 + i]->image.priority = 1;
+    work->sprites[9 + i] = sprite;
+    if (sprite != 0) {
+      sprite->flags = 0;
+      Sprite_StartAnimationFar(sprite, i % 3);
+      work->sprites[9 + i]->image.priority = 1;
     }
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -149,8 +149,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     for (i = 0; i != 7; i++) {
       position.x = (gRamses_ObjectColumns[i] << 16) + base.x - 0x200000;
       position.y = (gRamses_ObjectRows[i] << 16) + base.y - 0x200000;
-      Actor_ApplyProjectedPlacementFar(work->animations[i], &position, &scale,
-                                       0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale, 0);
     }
     // The orb circles until frame 90, 16 pixels around (156, 92), a 128th
     // of a turn a frame.
@@ -196,11 +195,9 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       position.x = orb.x;
       position.height = -0x1000000;
       position.y = orb.y - 0x1000000;
-      Actor_ApplyProjectedPlacementFar(work->animations[7], &position, &scale,
-                                       0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[7], &position, &scale, 0);
       position.x = orb.x + 0x200000;
-      Actor_ApplyProjectedPlacementFar(work->animations[8], &position, &scale,
-                                       0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[8], &position, &scale, 0);
     }
     position.height = 0;
     // The rocks fall after frame 96, gaining 1/4 pixel a frame of speed each
@@ -214,7 +211,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       if (rock->variant != 2) {
         position.x = rock->x;
         position.y = rock->y;
-        Actor_ApplyProjectedPlacementFar(work->animations[9 + i], &position,
+        Actor_ApplyProjectedPlacementFar(work->sprites[9 + i], &position,
                                          &scale, 0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
@@ -317,7 +314,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   EFFECT_FINISH_CANVAS();
 }
 

@@ -28,7 +28,7 @@ struct SparkWork {
   s32 frames; ///< frames drawn; new sparks start only in the first 25
   s32 ready;  ///< 1 when a drawn frame waits for ElementGlow_UploadStarField
   /// Where BG2 shows the 128 by 128 canvas: ElementGlow_Play
-  /// keeps it on the unit, as an animation's tracked canvas would be.
+  /// keeps it on the unit, as a battle effect's tracked canvas would be.
   struct BattleBg2Origin canvasOrigin;
 };
 
@@ -427,7 +427,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     // The streaks for 40 frames, their canvas centred on the unit likewise.
     struct BattleEffectWork *effectWork;
 
-    // The animation uses its image area to stage the tracked canvas origin.
+    // The effect uses its image area to stage the tracked canvas origin.
     BattleEffect_StartElementStreaksFar(element);
     for (frame = 0; frame < 40; frame++) {
       effectWork = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
@@ -443,8 +443,8 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     }
     BattleEffect_EndElementStreaksFar();
   } else if (mode == GLOW_PILLAR) {
-    // The pillar and the burst run an animation with the unit as its user and
-    // only target.
+    // The pillar and the burst run a battle effect with the unit as its user
+    // and only target.
     pillarLaunch.effect.prelude = 0;
     pillarLaunch.effect.kind = element;
     pillarLaunch.effect.variant = variant;
@@ -470,7 +470,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
 /// Copies the background's saved palette back undarkened, as the star field
 /// of ElementGlow_Play leaves it dark.
 /// Called by BattleStaging_HideField and
-/// BattleStaging_RunPsynergyCast once the animation has played.
+/// BattleStaging_RunPsynergyCast once the effect has played.
 void BattleBackground_RestorePalette(void) {
   BattleBackground_SetPaletteLevel(0, 0);
 }

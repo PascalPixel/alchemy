@@ -19,6 +19,6 @@ extern u16 gMusicVolume;
 extern u16 gMusicVolumeTarget;
 extern u16 gMusicVolumeStep;
 extern u8 gMusicRestoreDelay;
-extern u8 gAudio_CommandMask;
+extern u8 gSoundCommandMask;
 
 #endif

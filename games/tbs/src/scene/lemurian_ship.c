@@ -692,7 +692,7 @@ static void LemurianShip_RaiseTheShip(void) {
   }
   Task_AddFrame(ShipGlow_CyclePalette, TASK_PASS_FRAME);
   Event_PlaySound(MUS_PUZZLE_SOLVED);
-  Sound_WaitForFanfare();
+  Sound_WaitForJingle();
   Event_WaitFrames(20);
   Event_End();
   LemurianShip_SetSail();

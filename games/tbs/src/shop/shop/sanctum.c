@@ -458,7 +458,7 @@ void Shop_ResetEffects(void) {
 }
 
 /// The tune each service's burst plays, by enum SanctumService; the burst
-/// waits for the sound driver (Sound_WaitForFanfare) before
+/// waits for the sound driver (Sound_WaitForJingle) before
 /// freeing its sparkles.
 static const s8 sSanctumServiceCues[4] = {
     [SANCTUM_SERVICE_REVIVE] = MUS_REVIVE,
@@ -517,7 +517,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   } while (effectIndex <= 17);
 
   // Let active particles finish, then release remaining slots and restore UI.
-  Sound_WaitForFanfare();
+  Sound_WaitForJingle();
   {
     u8 activeMode = SANCTUM_SPARKLE_LAST_FLIGHT;
     u8 *entry = (u8 *)&shop->effects[0].state;

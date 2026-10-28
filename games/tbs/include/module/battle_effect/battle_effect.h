@@ -14,19 +14,19 @@ struct Particle;
 /// summons. A summon's row of gAbilityBattleEffects has EFFECT_SUMMON plus its
 /// kind.
 enum SummonEffectId {
-  SUMMON_ANIM_NONE,     ///< no row uses it; runs Meteor's effect too
-  SUMMON_ANIM_RAMSES,   ///< BattleEffect_RunRamses (ramses.c)
-  SUMMON_ANIM_NEREID,   ///< BattleEffect_RunNereid (nereid.c)
-  SUMMON_ANIM_KIRIN,    ///< BattleEffect_RunKirin (kirin.c)
-  SUMMON_ANIM_ATALANTA, ///< BattleEffect_RunAtalanta (atalanta.c)
-  SUMMON_ANIM_CYBELE,   ///< BattleEffect_RunCybele (cybele.c)
-  SUMMON_ANIM_NEPTUNE,  ///< BattleEffect_RunNeptune (neptune.c)
-  SUMMON_ANIM_TIAMAT,   ///< BattleEffect_RunTiamat (tiamat.c)
-  SUMMON_ANIM_PROCNE,   ///< BattleEffect_RunProcne (procne.c)
-  SUMMON_ANIM_JUDGMENT, ///< BattleEffect_RunJudgment (judgment.c)
-  SUMMON_ANIM_BOREAS,   ///< BattleEffect_RunBoreas (boreas.c)
-  SUMMON_ANIM_METEOR,   ///< BattleEffect_RunMeteor (particle_streams.c)
-  SUMMON_ANIM_THOR      ///< BattleEffect_RunThor (thor.c)
+  SUMMON_EFFECT_NONE,     ///< no row uses it; runs Meteor's effect too
+  SUMMON_EFFECT_RAMSES,   ///< BattleEffect_RunRamses (ramses.c)
+  SUMMON_EFFECT_NEREID,   ///< BattleEffect_RunNereid (nereid.c)
+  SUMMON_EFFECT_KIRIN,    ///< BattleEffect_RunKirin (kirin.c)
+  SUMMON_EFFECT_ATALANTA, ///< BattleEffect_RunAtalanta (atalanta.c)
+  SUMMON_EFFECT_CYBELE,   ///< BattleEffect_RunCybele (cybele.c)
+  SUMMON_EFFECT_NEPTUNE,  ///< BattleEffect_RunNeptune (neptune.c)
+  SUMMON_EFFECT_TIAMAT,   ///< BattleEffect_RunTiamat (tiamat.c)
+  SUMMON_EFFECT_PROCNE,   ///< BattleEffect_RunProcne (procne.c)
+  SUMMON_EFFECT_JUDGMENT, ///< BattleEffect_RunJudgment (judgment.c)
+  SUMMON_EFFECT_BOREAS,   ///< BattleEffect_RunBoreas (boreas.c)
+  SUMMON_EFFECT_METEOR,   ///< BattleEffect_RunMeteor (particle_streams.c)
+  SUMMON_EFFECT_THOR      ///< BattleEffect_RunThor (thor.c)
 };
 
 /// An effect handler: plays one effect over the battle, frame by frame,

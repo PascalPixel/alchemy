@@ -152,7 +152,7 @@ void Func_081b83c4(void) {
   s32 target;
   s32 multiplier;
   s32 paletteRequest;
-  s32 fanfare;
+  s32 jingle;
   s32 spriteCount;
   s32 stoppedDice;
   struct DiceParticle *die;
@@ -298,7 +298,7 @@ void Func_081b83c4(void) {
   target = 14;
   multiplier = 1;
   paletteRequest = -1;
-  fanfare = -1;
+  jingle = -1;
   die = dice;
   for (index = 0; index != 4; index++) {
     die->y = 0;
@@ -558,31 +558,31 @@ void Func_081b83c4(void) {
       if (timer == 40) {
         if ((u32)resultKind > 1)
           Sound_PlayFar(55);
-        else if (fanfare != -1)
-          Sound_PlayFar(fanfare);
-        fanfare = -1;
+        else if (jingle != -1)
+          Sound_PlayFar(jingle);
+        jingle = -1;
       }
       if (timer == 1) {
         paletteRequest = 3;
         resultKind = 0;
-        fanfare = -1;
+        jingle = -1;
         if (round == 0) {
           resultKind = Func_081b834c(numbers);
           switch (resultKind) {
           case 2:
-            fanfare = 91;
+            jingle = 91;
             multiplier = 1;
             break;
           case 3:
-            fanfare = 92;
+            jingle = 92;
             multiplier = 3;
             break;
           case 4:
-            fanfare = 91;
+            jingle = 91;
             multiplier = 2;
             break;
           case 5:
-            fanfare = 93;
+            jingle = 93;
             multiplier = 8;
             break;
           }
@@ -594,11 +594,11 @@ void Func_081b83c4(void) {
         }
         if (resultKind == 1) {
           if (round <= 3)
-            fanfare = 91;
+            jingle = 91;
           if (round == 4)
-            fanfare = 92;
+            jingle = 92;
           if (round == 5)
-            fanfare = 93;
+            jingle = 93;
         }
       }
       if (resultKind == 0 ? timer == 90 : timer == 68) {

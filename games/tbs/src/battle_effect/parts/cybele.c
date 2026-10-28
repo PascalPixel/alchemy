@@ -26,7 +26,7 @@
 /// targets while sparks flash around them; then the picture dissolves pixel by
 /// pixel, and the targets drop and explode.
 ///
-/// Abilities: Cybele (SUMMON_ANIM_CYBELE).
+/// Abilities: Cybele (SUMMON_EFFECT_CYBELE).
 ///
 /// The effect runs for CYBELE_FRAMES, in these stages:
 ///
@@ -182,11 +182,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       s32 pose = (frame - 48) / 24 % 3;
 
       Sprite_StartAnimationFar(
-          work->animations[3],
-          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_LEFT]);
+          work->sprites[3], gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_LEFT]);
       Sprite_StartAnimationFar(
-          work->animations[4],
-          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_RIGHT]);
+          work->sprites[4], gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_RIGHT]);
     }
 
     // Frames 72 to 127: thorn i flies from frame 72 + i until it reaches
@@ -548,7 +546,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, 128 << 16, height);
   for (i = 0; i != 8; i++)
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }
 

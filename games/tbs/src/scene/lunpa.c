@@ -606,7 +606,7 @@ static void Lunpa_EnterFortress(void) {
 
 static void UNUSED Lunpa_CheckAhead(void) { Field_TryJumpForward(); }
 
-/// Unused: plays the treasure fanfare for Reveal uncovering something, until
+/// Unused: plays the treasure jingle for Reveal uncovering something, until
 /// FLAG_LUNPA_SECRETS_HIDDEN is set; nothing calls it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
   if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {

@@ -56,16 +56,16 @@ s32 BattleSprite_IsSmall(s32 index) {
   return result;
 }
 
-/// Returns the animation a class's plain attack shows, 1 for none or out of
+/// Returns the battle effect a class's plain attack shows, 1 for none or out of
 /// range.
 /// Called by BattleActionRun_Build, which stages it by id range
 /// (EFFECT_BY_ID_RANGE).
-u32 BattleSprite_GetAttackAnim(u32 index) {
+u32 BattleSprite_GetAttackEffect(u32 index) {
   u16 value;
 
   if (index > ENEMY_CLASS_LAST)
     return 1;
-  value = gBattleSprites[index].attackAnim;
+  value = gBattleSprites[index].attackEffect;
   return value ? value : 1;
 }
 
@@ -86,7 +86,7 @@ u32 BattleSprite_GetAttackHop(u32 index) {
 /// SE_IMPACT; 0 out of range. Only the Venus Lighthouse aerie bosses set it in
 /// battle_sprites.c: ENEMY_SATUROS_VENUS_LIGHTHOUSE, ENEMY_MENARDI and
 /// ENEMY_FUSION_DRAGON.
-/// Called by the beam animations (beams.c) through its far stub.
+/// Called by the beam effects (beams.c) through its far stub.
 s32 BattleSprite_HasHeavyImpact(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
@@ -97,7 +97,7 @@ s32 BattleSprite_HasHeavyImpact(s32 index) {
 /// for its size's default; 0 out of range.
 /// Called by BattleUnit_GetEffectHeight, and reached through
 /// FarCall_BattleTable.
-s32 BattleSprite_GetAnimHeight(s32 index) {
+s32 BattleSprite_GetEffectHeight(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
   return gBattleSprites[index].effectHeight;

@@ -23,7 +23,7 @@ void BattleEffect_RunDragonDriver(struct BattleEffectParams *args) {
 /// Embers rise from the ground while a formation of eight sprites sweeps in,
 /// and the formation explodes at the end.
 ///
-/// Abilities: Tiamat (SUMMON_ANIM_TIAMAT).
+/// Abilities: Tiamat (SUMMON_EFFECT_TIAMAT).
 void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
   BattleEffect_RunPaletteParticles(args, PALETTE_PARTICLES_TIAMAT);
 }
@@ -169,10 +169,10 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
       // when the skip comes before frame 128, that frame's sound, shake and
       // shorter trails are skipped with it.
       if (mode == PALETTE_PARTICLES_TIAMAT) {
-        Sprite_StartAnimationFar(work->animations[0], 8);
-        Sprite_StartAnimationFar(work->animations[1], 9);
-        Sprite_StartAnimationFar(work->animations[3], 10);
-        Sprite_StartAnimationFar(work->animations[4], 11);
+        Sprite_StartAnimationFar(work->sprites[0], 8);
+        Sprite_StartAnimationFar(work->sprites[1], 9);
+        Sprite_StartAnimationFar(work->sprites[3], 10);
+        Sprite_StartAnimationFar(work->sprites[4], 11);
       }
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
@@ -380,16 +380,16 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
     }
     if (mode == PALETTE_PARTICLES_TIAMAT) {
       if (frame == 128) {
-        Sprite_StartAnimationFar(work->animations[0], 8);
-        Sprite_StartAnimationFar(work->animations[1], 9);
-        Sprite_StartAnimationFar(work->animations[3], 10);
-        Sprite_StartAnimationFar(work->animations[4], 11);
+        Sprite_StartAnimationFar(work->sprites[0], 8);
+        Sprite_StartAnimationFar(work->sprites[1], 9);
+        Sprite_StartAnimationFar(work->sprites[3], 10);
+        Sprite_StartAnimationFar(work->sprites[4], 11);
       }
       if (frame == 176) {
-        Sprite_StartAnimationFar(work->animations[0], 0);
-        Sprite_StartAnimationFar(work->animations[1], 1);
-        Sprite_StartAnimationFar(work->animations[3], 3);
-        Sprite_StartAnimationFar(work->animations[4], 4);
+        Sprite_StartAnimationFar(work->sprites[0], 0);
+        Sprite_StartAnimationFar(work->sprites[1], 1);
+        Sprite_StartAnimationFar(work->sprites[3], 3);
+        Sprite_StartAnimationFar(work->sprites[4], 4);
       }
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
                                          focus.y);
@@ -447,7 +447,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
   if (mode == PALETTE_PARTICLES_TIAMAT) {
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     for (i = 0; i != 8; i++)
-      Sprite_DestroyFar(work->animations[i]);
+      Sprite_DestroyFar(work->sprites[i]);
   }
   BattleEffect_EndCanvasLayer();
 }

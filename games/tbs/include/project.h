@@ -24,8 +24,8 @@ STATIC_ASSERT(offsetof(struct Projection, centerX) == 0x0c);
 STATIC_ASSERT(offsetof(struct Projection, centerY) == 0x10);
 
 /// The current 3D projection: Projection_SetFieldOfView and Projection_Set
-/// write its focal length and depth range, and the battle and its animations
-/// set its centre directly.
+/// write its focal length and depth range, and the battle and its battle
+/// effects set its centre directly.
 extern struct Projection gProjection;
 
 #endif

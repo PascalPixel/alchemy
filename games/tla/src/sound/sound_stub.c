@@ -10,7 +10,7 @@ extern u8 gData_02005804;
 extern s16 gData_02005820[8];
 
 void m4aSoundInit(void);
-void AudioEngine_SetFixedPcmRate(u32 mode);
+void Sound_SetFixedSampleFreq(u32 mode);
 
 void Func_081c0c18(void) {}
 
@@ -31,7 +31,7 @@ void Sound_Initialize(void) {
   gData_0200583c = 0x100;
   gData_0200580c = 4;
   gData_02005814 = 0;
-  gAudio_CommandMask = 0;
+  gSoundCommandMask = 0;
   gData_02005804 = 0;
   playerVolume = gData_02005820;
   remaining = 7;
@@ -40,5 +40,5 @@ void Sound_Initialize(void) {
     *playerVolume = 0;
     playerVolume += 1;
   } while (remaining >= 0);
-  AudioEngine_SetFixedPcmRate(0x90000);
+  Sound_SetFixedSampleFreq(0x90000);
 }

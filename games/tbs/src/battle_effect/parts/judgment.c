@@ -56,7 +56,7 @@ struct JudgmentWork {
 /// The battle wipes away to a violet sky where a formation flies forward while
 /// motes gather into it, bursts in a flash and sends out a ring of light.
 ///
-/// Abilities: Judgment (SUMMON_ANIM_JUDGMENT).
+/// Abilities: Judgment (SUMMON_EFFECT_JUDGMENT).
 ///
 /// The effect then cuts to an aerial view where the blast spreads in rings,
 /// to a beach, and to a forest swept by an explosion front, before brightening
@@ -318,7 +318,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
       place.x = ((i % 4) << 21) + (152 << 15);
       place.y = ((i / 4) << 21) + depth;
-      Actor_ApplyProjectedPlacementFar(work->animations[i], &place, &pair, 0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
     }
 
     depth += zoom;
@@ -337,12 +337,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     if (frame == 72) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        Sprite_StartAnimationFar(work->animations[i], i + 16);
+        Sprite_StartAnimationFar(work->sprites[i], i + 16);
       }
     }
     if (frame == 76) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        Sprite_StartAnimationFar(work->animations[i], i + 32);
+        Sprite_StartAnimationFar(work->sprites[i], i + 32);
       }
     }
 
@@ -450,16 +450,16 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
 
   for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   }
 
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct Sprite *animation = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
-    work->animations[i] = animation;
-    if (animation != 0) {
-      animation->flags = 0;
-      Sprite_StartAnimationFar(animation, (i % 3));
-      work->animations[i]->image.priority = 0;
+    struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
+    work->sprites[i] = sprite;
+    if (sprite != 0) {
+      sprite->flags = 0;
+      Sprite_StartAnimationFar(sprite, (i % 3));
+      work->sprites[i]->image.priority = 0;
     }
   }
 
@@ -964,7 +964,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           debrisPlace.x = particle->x;
           debrisPlace.height = 0xff0000;
           debrisPlace.y = particle->y + 0xff0000;
-          Actor_ApplyProjectedPlacementFar(work->animations[i], &debrisPlace,
+          Actor_ApplyProjectedPlacementFar(work->sprites[i], &debrisPlace,
                                            &scale, 0);
           particle->y -= particle->velocityY;
           if (particle->y < 0x100000) {
@@ -1027,7 +1027,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
   // The finish: release the debris sprites, then the canvas and its blitter.
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

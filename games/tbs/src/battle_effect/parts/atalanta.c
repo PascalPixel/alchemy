@@ -33,7 +33,7 @@ enum SlashSheetCell {
 /// blades rain down diagonally on the targets and burst into flame, hitting
 /// each target as they land.
 ///
-/// Abilities: Atalanta (SUMMON_ANIM_ATALANTA).
+/// Abilities: Atalanta (SUMMON_EFFECT_ATALANTA).
 ///
 /// A or B skips the rest of the gathering, which lasts up to 220 frames; the
 /// fall lasts 88. work->particles holds the 16 gathering blades and then the
@@ -162,7 +162,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         for (column = 0; column != 3; column++) {
           position.x = (pathX + 80 + column * 32) << 16;
           position.y = (64 - pathY + row * 32) << 16;
-          Actor_ApplyProjectedPlacementFar(work->animations[row * 3 + column],
+          Actor_ApplyProjectedPlacementFar(work->sprites[row * 3 + column],
                                            &position, &gAtalanta_UnitScale, 0);
         }
       }
@@ -280,7 +280,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 9; i++)
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   REG_BG2PA = Q_8_8(0.5);
   REG_DISPCNT = EFFECT_DISPCNT;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,

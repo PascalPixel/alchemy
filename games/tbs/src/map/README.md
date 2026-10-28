@@ -246,7 +246,7 @@ also keeps an unused C version, `TileMap_NumberPlaceholderCellPictures`.
 
 ### Chests and Psynergy Stones
 
-![Isaac opens a chest in Sol Sanctum: the Small Jewel rises over him as the treasure fanfare plays](https://alchemy.pascalpixel.com/guides/front/chest.gif)
+![Isaac opens a chest in Sol Sanctum: the Small Jewel rises over him as the treasure jingle plays](https://alchemy.pascalpixel.com/guides/front/chest.gif)
 
 ![In Sol Sanctum, Isaac searches the Psynergy Stone in front of him: it rises over his head, "Isaac got a Psynergy Stone.", "The party's PP is fully restored!", and "The Psynergy Stone disappeared..."](https://alchemy.pascalpixel.com/guides/layout/psynergy-stone.gif)
 

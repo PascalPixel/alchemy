@@ -345,7 +345,7 @@ void Item_PlayUseAnimation(u32 item) {
 /// healing twice; otherwise Revive's effect plays MUS_REVIVE, Cure Poison's
 /// MUS_CURE, Drain, Psy Drain and the unused HP and PP restores nothing, and
 /// every other effect, ABILITY_EFFECT_NONE of the stat items among them,
-/// MUS_FANFARE_SMALL. Called after a successful use by Item_PlayUseAnimation
+/// MUS_JINGLE_SMALL. Called after a successful use by Item_PlayUseAnimation
 /// (for ItemMenu_Use) and by the Psynergy screen.
 void Ability_PlayUseAnimation(s32 action) {
   s32 animationType;
@@ -375,7 +375,7 @@ void Ability_PlayUseAnimation(s32 action) {
       Sound_PlayReturnOne(MUS_CURE);
       return;
     default:
-      Sound_PlayReturnOne(MUS_FANFARE_SMALL);
+      Sound_PlayReturnOne(MUS_JINGLE_SMALL);
 
     // The HP and PP restores no ability has (abilities.tsv).
     case ABILITY_EFFECT_RESTORE_HP:

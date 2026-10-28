@@ -38,8 +38,8 @@ void Shop_RestoreFieldPaletteFar(void);
 /// when every bag is full. Returns -1 when cancelled.
 s32 ItemPicker_RunFar(s32 *selected_unit, s32 *selectedItem);
 /// Waits a frame at a time until the sound driver has finished its last
-/// command, such as a fanfare.
-void Sound_WaitForFanfareFar(void);
+/// command, such as a jingle.
+void Sound_WaitForJingleFar(void);
 /// Charges room_price, heals every party member still standing and plays the
 /// night at the inn.
 void Inn_PlaySleepFar(s32 room_price);

@@ -101,7 +101,7 @@ struct Unit *Unit_Get(u32 unitId) {
 /// ENEMY_ID_FIRST`; an id past the first 250 gives the first. Enemy ids start
 /// past the eight characters' so that one id names any unit: Unit.id holds
 /// either, and gBattleSprites, indexed by it, keeps the characters' rows (their
-/// attack animation and hop) before the enemies'. Called by the
+/// attack effect and hop) before the enemies'. Called by the
 /// battle code that builds and scores enemies (the formations, the enemy AI,
 /// the spoils) and by the element and weakness reads in this object.
 const u8 *Enemy_GetDefinition(s32 selector) {

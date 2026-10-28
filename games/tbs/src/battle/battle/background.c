@@ -174,7 +174,7 @@ typedef void (*BitDecoder)(const u8 *source, void *destination);
 /// BitDecoder_DecodeImage (HEAP_SLOT_RAM_CODE_TEMP) unpacks. Called with
 /// BATTLE_BACKGROUND_FIXED by
 /// Battle_Run as the battle opens, and by the Atalanta and Boreas
-/// animations for their violet sky. Sets BattleBackgroundWork.mode, and adds
+/// effects for their violet sky. Sets BattleBackgroundWork.mode, and adds
 /// BattleBackground_ShowZoomedPage when it was BATTLE_BACKGROUND_NONE.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   struct BattleBackgroundWork *view =
@@ -425,7 +425,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 /// Points the battle camera, through BattleCamera_SetView,
 /// at the ground between two units' battle objects, with a zoom in percent.
 /// Called by the staging of a paired action (staging.c) and by the beam
-/// animations (beams.c).
+/// effects (beams.c).
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
   struct Actor *firstActor = BattleObject_Get(firstUnitId)->actor;

@@ -39,7 +39,7 @@ outer:
   object = *entry;
   k = 0;
 inner:
-  if (((struct BattleAnimationState *)object->animation)->value28[0] ==
+  if (((struct ObjectAnimationState *)object->animation)->value28[0] ==
       gData_02004ca4[k]) {
     x = (PIXELS(leader->x) + (gData_02004cc8[*direction] >> 16)) >> 4;
     z = (PIXELS(leader->z) + (s16)gData_02004cc8[*direction]) >> 4;

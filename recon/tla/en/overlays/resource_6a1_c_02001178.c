@@ -29,7 +29,7 @@ void Func_02001178(struct ObjectRuntime *object) {
   if (other) {
     i = 0;
     do {
-      if (((*((struct BattleAnimationState *)other->animation)->value28 ==
+      if (((*((struct ObjectAnimationState *)other->animation)->value28 ==
             gData_020022d0[i])))
         return;
       i++;

@@ -12,11 +12,11 @@
 void MPlayStart(struct SoundPlayer *player,
                            const struct SongHeader *header);
 extern const struct PlayerSlot gSound_PlayerSlots[];
-extern const struct SongEntry gSound_SongTable[];
+extern const struct SongEntry gSongTable[];
 
 void Func_081c05c8(u16 id) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSound_SongTable;
+  const struct SongEntry *songs = gSongTable;
   const struct SongEntry *song = &songs[id];
 
   MPlayStart(slots[song->slot].player, song->header);

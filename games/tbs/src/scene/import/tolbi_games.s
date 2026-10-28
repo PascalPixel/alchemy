@@ -44,6 +44,6 @@
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Actor_Snapshot, 1
-	.set import.Sound_WaitForFanfare, 1
+	.set import.Sound_WaitForJingle, 1
 	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

@@ -59,7 +59,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   Sound_PlayFar(86);
-  Sound_WaitForFanfare();
+  Sound_WaitForJingle();
   WaitFrames(10);
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();

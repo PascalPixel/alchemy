@@ -31,9 +31,9 @@ enum SoundControl {
   /// Fades player 3 out over 48 VBlanks; also the number of the song table's
   /// row 289, so that row never plays.
   SOUND_FADE_OUT_ACTION_SE = 0x121,
-  /// Sounds from here to SOUND_SE_FIRST are fanfares; those below are music,
+  /// Sounds from here to SOUND_SE_FIRST are jingles; those below are music,
   /// but for SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM.
-  SOUND_FANFARE_FIRST = 80,
+  SOUND_JINGLE_FIRST = 80,
   /// Sounds from here but SOUND_FADE_OUT_ACTION_SE each play on the player
   /// gSongTable names for them.
   SOUND_SE_FIRST = 100
@@ -42,7 +42,7 @@ enum SoundControl {
 /// The music players by their row in gMPlayTable (sound/music_player_table.s),
 /// as a song table row names them (Song.ms).
 enum MusicPlayerId {
-  MUSIC_PLAYER_FANFARE = 0,   ///< gMPlayInfo_Fanfare
+  MUSIC_PLAYER_JINGLE = 0,    ///< gMPlayInfo_Jingle
   MUSIC_PLAYER_BGM = 1,       ///< gMPlayInfo_BGM
   MUSIC_PLAYER_MENU_SE = 2,   ///< gMPlayInfo_MenuSE: the interface's sounds
   MUSIC_PLAYER_ACTION_SE = 3, ///< gMPlayInfo_ActionSE: field and battle actions
@@ -85,18 +85,18 @@ struct LzPackWork;
 /// A flash library cell the LZ packer borrows as its work pointer (lzpack.h);
 /// IdentifyFlash sets it again before the flash code reads it.
 extern struct LzPackWork *gWaitForFlashWrite;
-/// Plays music; sound 17 fades it and a fanfare silences it until it ends.
+/// Plays music; sound 17 fades it and a jingle silences it until it ends.
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
-/// Plays fanfares; the music returns once it stops.
-extern struct MusicPlayerInfo gMPlayInfo_Fanfare;
+/// Plays jingles; the music returns once it stops.
+extern struct MusicPlayerInfo gMPlayInfo_Jingle;
 extern struct MusicPlayerInfo
     gMPlayInfo_ActionSE; ///< the music player SOUND_FADE_OUT_ACTION_SE fades
 /// The sound from SOUND_SE_FIRST up each player last started, by player, not
 /// a volume: sounds below it are not recorded, and SOUND_FADE_OUT_ACTION_SE
 /// clears entry 3. Nothing in TBS reads it.
 extern u16 gMusicPlayerLastSound[8];
-/// VBlanks after a fanfare starts before the music waits for its end; held
-/// at 1 until the fanfare's player stops, then 0.
+/// VBlanks after a jingle starts before the music waits for its end; held
+/// at 1 until the jingle's player stops, then 0.
 extern u8 gBgmRestoreDelay;
 
 // The music's volume and its combined tempo and pitch, each ramped toward its

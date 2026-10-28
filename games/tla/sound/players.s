@@ -9,7 +9,7 @@
 	.balign 4
 	.global gSound_PlayerSlots
 gSound_PlayerSlots:
-	music_player gMusicPlayerFanfare, Sound_Tracks0, 4
+	music_player gMusicPlayerJingle, Sound_Tracks0, 4
 	music_player gMusicPlayerBgm, Sound_Tracks1, 10
 	music_player Sound_Player2, Sound_Tracks2, 2
 	music_player gSound_Player3, Sound_Tracks3, 2

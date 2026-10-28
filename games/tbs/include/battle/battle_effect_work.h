@@ -91,7 +91,7 @@ struct BattleEffectWork {
   s32 savedBg1X;      ///< BG1 scroll restored when a shake ends
   s32 savedBg1Y;      ///< BG1 scroll restored when a shake ends
   s32 shakeFrames;    ///< shake frames left; BattleCamera_Shake counts down
-  s32 cameraDelta;    ///< camera yaw turned per animation frame
+  s32 cameraDelta;    ///< camera yaw turned per frame of the effect
   /// The effect sets 1 after a frame; BattleCamera_ApplyPhasedDelta then
   /// turns the whole cameraDelta and sets 0, else turns half and toggles 0
   /// and 2.
@@ -119,7 +119,7 @@ struct BattleEffectWork {
   s32 bg2x;
   s32 bg2y;
   ///@}
-  struct Sprite *animations[16]; ///< the animation's sprites
+  struct Sprite *sprites[16]; ///< the effect's sprites
   /// Each target's flash timer in frames, for args->targets[n]: set by
   /// BattleEffect_TintBattler, counted down by
   /// BattleEffect_CountDownBattlerTints.
@@ -148,7 +148,7 @@ STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeFrames) == 0x77b4);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 0x77bc);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 0x77d0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, animations) == 0x77d8);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, sprites) == 0x77d8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x7818);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, vblanksSinceTransfer) ==
               0x7820);

@@ -48,11 +48,11 @@ end stat changes and statuses count down and the Djinn recover. When one side
 has nobody left, the spoils (coins, experience, items and level ups) are
 handed out.
 
-`Battle_Run` ([`battle/encounter.c`](battle/encounter.c)) runs the whole
-battle. The turn's steps are `Battle_GatherActions` and
-`BattleActionOrder_Sort` (`turn.c`), then for each action `BattleActionRun_Build`
-(`action.c`) and `BattleStaging_DispatchAction` (`staging.c`), and last
-`Battle_ProcessTurnEnd` (`turn_end.c`); `spoils.c` closes the battle.
+`Battle_Run` ([`battle/encounter.c`](battle/encounter.c)) runs the whole battle.
+The turn's steps are `Battle_GatherActions` and `BattleActionOrder_Sort`
+(`turn.c`), then for each action `BattleActionRun_Build` (`action.c`) and
+`BattleStaging_DispatchAction` (`staging.c`), and last `Battle_ProcessTurnEnd`
+(`turn_end.c`); `spoils.c` closes the battle.
 
 ### Enemy actions
 
@@ -129,12 +129,12 @@ is, `gAdventure.battleType`, decides the rest:
 
 Just before a unit acts, the player reads its announcement, such as
 `Isaac casts Spire!`. By then the game has built the chosen command into an
-action run: which ability it is, who it reaches, and the rolls the battle effect must
-show. An action that fails at this point (an item already used up, no one
+action run: which ability it is, who it reaches, and the rolls the battle effect
+must show. An action that fails at this point (an item already used up, no one
 left in range) shows its own message instead and the action ends there.
 
-`BattleActionRun_Build` ([`battle/action.c`](battle/action.c)) builds the action's run, a
-`struct BattleActionRun`, and shows the announcement.
+`BattleActionRun_Build` ([`battle/action.c`](battle/action.c)) builds the
+action's run, a `struct BattleActionRun`, and shows the announcement.
 
 ### Commands and ability ids
 
@@ -190,9 +190,9 @@ cursor wraps round. Where the units stand on screen changes none of this.
 
 ![Isaac attacks Ivan twice: the first time `Ivan nimbly dodges the blow!`, the second a critical hit bursts in light and `Ivan takes 110 damage!`.](https://alchemy.pascalpixel.com/guides/battle/rolls.gif)
 
-A dodge and a critical hit look different from a plain blow, so the battle effect
-has to know which it is before it starts. The action therefore rolls them while
-it is built, before anything is drawn.
+A dodge and a critical hit look different from a plain blow, so the battle
+effect has to know which it is before it starts. The action therefore rolls them
+while it is built, before anything is drawn.
 
 A plain Attack never misses a target that cannot act (down, asleep, stunned,
 charmed or held by Ground). Otherwise it misses one time in 32, and a deluded
@@ -200,13 +200,12 @@ attacker also misses 153 times in 256. A critical hit, a quarter more damage,
 lands one time in 32, or else at half the percentage the attacker's equipment
 adds to its unleash chance.
 
-An ability with a double or triple blow makes one roll for all its targets:
-153 in 256 for Gust, Rapid Smash, Slice and Sonic Smash, one time in four for
-Flying Attack, Double Fang, Twin Beaks and Swift Strike; Sonic Smash and Swift
-Strike strike three times. A success raises each target's blows and the
-battle effect's strength, so the extra blows show. Annihilation rolls its instant
-death here too; every other added effect is rolled for each target as it is
-hit.
+An ability with a double or triple blow makes one roll for all its targets: 153
+in 256 for Gust, Rapid Smash, Slice and Sonic Smash, one time in four for Flying
+Attack, Double Fang, Twin Beaks and Swift Strike; Sonic Smash and Swift Strike
+strike three times. A success raises each target's blows and the battle effect's
+strength, so the extra blows show. Annihilation rolls its instant death here
+too; every other added effect is rolled for each target as it is hit.
 
 ### Staging and announcement
 
@@ -248,9 +247,9 @@ The stagings are `enum BattleStaging`:
 
 ![Mia casts Ply on Garet: motes of light swirl in to him and `Garet recovers 150 HP!`.](https://alchemy.pascalpixel.com/abilities/ply.gif)
 
-Once the battle effect shows the blow land, or the healing reach its target, each
-target in turn learns what the ability does to it: how much damage it takes or
-how much it heals, and whether the ability's added effect (Sleep, a lowered
+Once the battle effect shows the blow land, or the healing reach its target,
+each target in turn learns what the ability does to it: how much damage it takes
+or how much it heals, and whether the ability's added effect (Sleep, a lowered
 Defense, poison) takes hold.
 
 For one target, the game first notes how far it stands from the aimed place
@@ -460,13 +459,13 @@ screen plays the list.
 That list, the playback queue, is the one way the rules reach the screen: the
 rules never draw or wait, and a battle effect never works out an outcome.
 [Battle](../../battle.md#rules-and-battle-effects-run-together) shows how
-playback runs alongside the battle effect and starts on the frame the blow lands.
-Playback takes the targets in their order along the battlefield, not the aimed
-one first. Only the flinch (nine [frames](../../glossary.md#frame) of
+playback runs alongside the battle effect and starts on the frame the blow
+lands. Playback takes the targets in their order along the battlefield, not the
+aimed one first. Only the flinch (nine [frames](../../glossary.md#frame) of
 flashing) and the message (until the player presses A) make it wait; the names
-and numbers a message needs play within one frame, just before it. An
-outcome shown with no battle effect, such as a cast that is sealed or short of
-PP, plays the same queue straight through.
+and numbers a message needs play within one frame, just before it. An outcome
+shown with no battle effect, such as a cast that is sealed or short of PP, plays
+the same queue straight through.
 
 The queue is `struct BattlePlaybackQueue`, filled by `BattlePlayback_Push`
 and played by `BattlePlayback_Run` ([`battle/playback.c`](battle/playback.c)),
@@ -475,10 +474,10 @@ or by `BattlePlayback_RunAll` when there is no battle effect.
 ## Design
 
 The rules and the pictures are kept apart on purpose. The rules decide
-everything before or while the battle effect plays, and leave only a list of what
-to show; the battle effect decides only when the damage appears. So the same
-arithmetic serves every battle effect, and a battle effect can be replaced or
-skipped without changing an outcome.
+everything before or while the battle effect plays, and leave only a list of
+what to show; the battle effect decides only when the damage appears. So the
+same arithmetic serves every battle effect, and a battle effect can be replaced
+or skipped without changing an outcome.
 
 Actions are worked out in two stages for the same reason: what the battle effect
 must show (a miss, a critical hit, a double blow) is rolled while the action is
@@ -569,7 +568,7 @@ battle's recordings show.
 
 The chances and counts on this page were checked in a tbs-en build with
 `alchemy-devtools render`, answering `Battle_Random` with chosen numbers.
-Replaying a Gryphon's action with each of the 256 rolls gave its actions in the
+Replaying a Gryphon's choice with each of the 256 rolls gave its actions in the
 spans above. One encounter (the Lizard King, a Harridan and two Stone
 Soldiers) opened both as a first strike, where only the four party members
 acted, and as a surprise, where three of the enemies did. Isaac's attacks on a
@@ -583,12 +582,13 @@ while both Defense changes ran their 7 turns. Aiming Quake along four large
 enemies moved the cursor from the last place round to the first. The party at
 level 20 ran from two Gryphons on its second try, the first forced to fail.
 
-Bits 0 and 1 of the `flags` column of `gAbilityBattleEffects` (`EFFECT_ON_DOWNED`,
-`EFFECT_OTHER_SIDE`) are read, but no row in either game sets them. Building
-the action adds the first itself for the revive effects; nothing adds the second, so the
-side flip it asks for is unused. Only the Mars Lighthouse bosses (Saturos's
-second fight, Menardi and the Fusion Dragon) set the class bit that makes a
-beam blow land with `SE_HEAVY_IMPACT` (`BattleSprite_HasHeavyImpact`).
+Bits 0 and 1 of the `flags` column of `gAbilityBattleEffects`
+(`EFFECT_ON_DOWNED`, `EFFECT_OTHER_SIDE`) are read, but no row in either game
+sets them. Building the action adds the first itself for the revive effects;
+nothing adds the second, so the side flip it asks for is unused. Only the Mars
+Lighthouse bosses (Saturos's second fight, Menardi and the Fusion Dragon) set
+the class bit that makes a beam blow land with `SE_HEAVY_IMPACT`
+(`BattleSprite_HasHeavyImpact`).
 
 The battle camera has a second point it can follow besides `followPosition`:
 `followEye`, which `ActorSystem_ProjectSprites` would use in place of the eye

@@ -2177,7 +2177,7 @@ static void ColosseumNavampaMatch_SpawnRandomFinishEffect(struct Actor *actor) {
   }
 }
 
-/// Presents the prize above the warrior who took it, with the treasure fanfare,
+/// Presents the prize above the warrior who took it, with the treasure jingle,
 /// and clears the link.
 static s32
 ColosseumNavampaMatch_PlaceFinishItemAboveActor(struct Actor *interpreter) {

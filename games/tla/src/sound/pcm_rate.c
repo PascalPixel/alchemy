@@ -14,7 +14,7 @@ static __inline__ s32 Sound_ClearWords(void *destination, s32 size) {
 /// Sets direct sound to a fixed 31536 Hz output with 528 samples a VBlank,
 /// keeping mode's rate nibble, clears the two PCM buffers and points DMA 1
 /// and 2 at them, then restarts timer 0 at line 159.
-void AudioEngine_SetFixedPcmRate(u32 mode) {
+void Sound_SetFixedSampleFreq(u32 mode) {
   struct SoundWork *work = SOUND_WORK;
   u32 samples;
   u8 *buffer;

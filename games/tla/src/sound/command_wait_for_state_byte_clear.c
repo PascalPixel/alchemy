@@ -11,7 +11,7 @@
 #include "scene.h"
 #include "system.h"
 
-void Sound_WaitForFanfare(void) {
+void Sound_WaitForJingle(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {
     WaitFrames(1);
   }

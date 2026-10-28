@@ -71,7 +71,7 @@ The runtime bank is the exception: every bank calls its functions directly,
 and its entrances serve only the scenes' code.
 
 An entrance has the function's name with `Far` added: the field plays the
-chest's fanfare with `Sound_PlayFar`, which leads to `Sound_Play`.
+chest's jingle with `Sound_PlayFar`, which leads to `Sound_Play`.
 [Cartridge and memory](src/cartridge/README.md#why-the-main-image-is-cut-into-banks) says more.
 
 ## Overlays
@@ -100,7 +100,7 @@ describes both tables.
 
 Every sound, music or effect, is asked for with one call and a number, and the
 number's range says what kind of sound it is: below 80 music, from 80 to 99 a
-fanfare, such as the short tune when a chest is opened, which silences the
+jingle, such as the short tune when a chest is opened, which silences the
 music until it ends, and from 100 up the sound effects. The sound driver has
 eight players, and each kind of sound has its own, so a sound effect never
 stops the music. Asking for the music already playing does nothing, so a scene
@@ -109,10 +109,11 @@ orders rather than sounds, such as "fade the music out". The driver is
 Nintendo's MusicPlayer2000, which [pret](glossary.md#pret)'s decompilations
 call m4a.
 
-A sound is played with `Sound_Play`; the ranges are
-`SOUND_FANFARE_FIRST` and `SOUND_SE_FIRST`. [Sound](src/sound/README.md#what-a-sound-number-means)
-covers the players, [the fanfare's return](src/sound/README.md#the-fanfares-return-to-the-music)
-and [the driver's ident](src/sound/README.md#the-drivers-ident).
+A sound is played with `Sound_Play`; the ranges are `SOUND_JINGLE_FIRST` and
+`SOUND_SE_FIRST`. [Sound](src/sound/README.md#what-a-sound-number-means) covers
+the players,
+[the jingle's return](src/sound/README.md#the-jingles-return-to-the-music) and
+[the driver's ident](src/sound/README.md#the-drivers-ident).
 
 ## Limits
 

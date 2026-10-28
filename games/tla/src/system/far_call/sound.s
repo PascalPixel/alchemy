@@ -4,23 +4,23 @@
 	.global m4aSoundVSyncOffFar
 	.thumb_func
 m4aSoundVSyncOffFar:
-	overlay_veneer AudioEngine_SuspendDirectSoundWrapper
+	overlay_veneer Sound_SuspendDirectSound
 	.global Func_081c0088
 	.thumb_func
 Func_081c0088:
 	overlay_veneer Sound_UpdateBgmRamps
-	.global SongFlag_TestFar
+	.global SoundFlag_TestFar
 	.thumb_func
-SongFlag_TestFar:
-	overlay_veneer SongFlag_Test
-	.global SongFlag_SetFar
+SoundFlag_TestFar:
+	overlay_veneer SoundFlag_Test
+	.global SoundFlag_SetFar
 	.thumb_func
-SongFlag_SetFar:
-	overlay_veneer SongFlag_Set
-	.global SongFlag_ClearFar
+SoundFlag_SetFar:
+	overlay_veneer SoundFlag_Set
+	.global SoundFlag_ClearFar
 	.thumb_func
-SongFlag_ClearFar:
-	overlay_veneer SongFlag_Clear
+SoundFlag_ClearFar:
+	overlay_veneer SoundFlag_Clear
 	.global Func_081c00a8
 	.thumb_func
 Func_081c00a8:

@@ -175,7 +175,7 @@ void Func_080ce0ac(s32 item, s32 argument);
 void Menu_RunSelectionFar(void);
 void Func_080cc9fc(void);
 void EventRuntime_ResolveAllPendingActions(void);
-s32 Audio_GetBackgroundCueFar(void);
+s32 Sound_GetCurrentBgmFar(void);
 void Func_08038358(s32 mode);
 void Func_080200b0(void);
 void Func_080cb2b8(s32 terrain, s32 x, s32 y, s32 z);
@@ -555,7 +555,7 @@ s32 SceneSequence_Run(void) {
         } else {
           EventRuntime_ResolveAllPendingActions();
           UiTimedNotice_CloseIfActiveFar();
-          party->returnCue = Audio_GetBackgroundCueFar();
+          party->returnCue = Sound_GetCurrentBgmFar();
           if (!GameFlag_Test(382)) {
             objects = (u8 *)Ram_HeapSlots->objectSystem;
             owner = gResourceBlockOwners;

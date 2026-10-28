@@ -381,10 +381,10 @@ u32 BattleSprite_GetDefeatSound(s32 index);
 s32 BattleSprite_GetSprite(s32 index);
 s32 BattleSprite_GetPalette(s32 index);
 s32 BattleSprite_IsSmall(s32 index);
-u32 BattleSprite_GetAttackAnim(u32 index);
+u32 BattleSprite_GetAttackEffect(u32 index);
 u32 BattleSprite_GetAttackHop(u32 index);
 s32 BattleSprite_HasHeavyImpact(s32 index);
-s32 BattleSprite_GetAnimHeight(s32 index);
+s32 BattleSprite_GetEffectHeight(s32 index);
 
 u32 BattleSpoils_RankItem(u32 inventoryEntry);
 void BattleSpoils_Clear(void);

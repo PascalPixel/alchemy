@@ -7,12 +7,12 @@ party member, every enemy picks one of its own, and the game plays the
 actions one after another, fastest first. When one side has nobody left
 standing, or the party runs away, the field comes back.
 
-Two kinds of code share the work. The rules decide what happens: who acts
-when, who is hit and for how much, which statuses take hold. The
-[battle effects](glossary.md#battle-effect) draw it. [Battles](src/battle/README.md)
-goes through the rules in detail, [Game rules](src/game/README.md) holds the
-tables and arithmetic they use, and [Battle effects](src/battle_effect/README.md)
-draws them.
+Two kinds of code share the work. The rules decide what happens: who acts when,
+who is hit and for how much, which statuses take hold. The
+[battle effects](glossary.md#battle-effect) draw it.
+[Battles](src/battle/README.md) goes through the rules in detail,
+[Game rules](src/game/README.md) holds the tables and arithmetic they use, and
+[Battle effects](src/battle_effect/README.md) draws them.
 
 ## Starting a battle
 
@@ -184,13 +184,13 @@ battle waits. Most draw into a small hidden picture, the canvas, which the
 screen shows stretched and blended over the battle.
 
 There are three ways in: the ordinary battle effects from one table, a range of
-numbered battle effects (the impacts of Djinn and weapon unleashes, the plain attacks'
-beams and critical hits), and the summons' battle effects. Each borrows three blocks
-of memory for the battle effect (its pictures, its working space and the canvas)
-and gives them back afterwards, so a battle effect must stop everything that
-reads them before it returns. Within a frame its steps run in a fixed order,
-and many draw random numbers, so moving one step changes everything drawn
-after it.
+numbered battle effects (the impacts of Djinn and weapon unleashes, the plain
+attacks' beams and critical hits), and the summons' battle effects. Each borrows
+three blocks of memory for the battle effect (its pictures, its working space
+and the canvas) and gives them back afterwards, so a battle effect must stop
+everything that reads them before it returns. Within a frame its steps run in a
+fixed order, and many draw random numbers, so moving one step changes everything
+drawn after it.
 
 The three entry points are `BattleEffect_RunFromTable`,
 `BattleEffect_RunByIdRange` and `BattleEffect_RunSummon`.
@@ -206,9 +206,9 @@ describes how the battle effect is chosen, then
 
 ![Isaac casts Quake: rock pillars rise under Garet, Ivan and Mia, and the damage messages appear while the rock is still on screen.](https://alchemy.pascalpixel.com/abilities/quake.gif)
 
-The damage messages appear while the rock is still rising: the battle effect does
-not have to finish first. The battle effect decides only when the damage appears;
-the rules alone decide how much it is.
+The damage messages appear while the rock is still rising: the battle effect
+does not have to finish first. The battle effect decides only when the damage
+appears; the rules alone decide how much it is.
 
 A battle effect is an ordinary function with its own loop: it waits a frame
 whenever time has to pass and returns only when it is over. The damage comes

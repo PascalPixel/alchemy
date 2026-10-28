@@ -303,7 +303,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
   }
 }
 
-/// Projects the point above unit id where its animations play (its class's
+/// Projects the point above unit id where its battle effects play (its class's
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
 /// height is scaled by the sprite's projected scale. Returns 0. Called by
 /// ElementGlow_Play, and through its far stub by
@@ -347,16 +347,16 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   return 0;
 }
 
-/// Returns the height above unit id where its animations play, 16.16: its
-/// class's own (BattleSprite_GetAnimHeight), else 24 for a small enemy and 48
+/// Returns the height above unit id where its battle effects play, 16.16: its
+/// class's own (BattleSprite_GetEffectHeight), else 24 for a small enemy and 48
 /// for others. Called by BattleMotion_ProjectScaledPosition, and through its
-/// far stub by the animations that play at a unit's body.
+/// far stub by the battle effects that play at a unit's body.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;
 
   classId = Unit_GetFar(unitId)->id;
-  height = (u8)BattleSprite_GetAnimHeight(classId) << 16;
+  height = (u8)BattleSprite_GetEffectHeight(classId) << 16;
   if (height == 0) {
     classId = Unit_GetFar(unitId)->id;
     if (BattleSprite_IsSmall(classId) != 0) {

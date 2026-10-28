@@ -19,7 +19,7 @@
 /// throws up spray; then ice blocks rain down on the targets, and boulders
 /// crumble into bouncing chips.
 ///
-/// Abilities: Boreas (SUMMON_ANIM_BOREAS).
+/// Abilities: Boreas (SUMMON_EFFECT_BOREAS).
 ///
 /// The longest of the effects, in two halves. The first (288 frames, which A
 /// or B cuts short after frame 16) opens a window on a field of 16 rocks over
@@ -199,11 +199,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     scale = unitScale;
     if (frame == 174) {
       for (i = 0; i != 9; i++) {
-        work->animations[i]->image.priority = 0;
+        work->sprites[i]->image.priority = 0;
       }
     }
     if (frame > 208) {
-      Sprite_StartAnimationFar(work->animations[2],
+      Sprite_StartAnimationFar(work->sprites[2],
                                gBoreas_Animations[(frame / 4) & 3]);
     }
 
@@ -215,8 +215,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       for (j = 0; j != 3; j++) {
         position.x = (j * 32 + 144 - shakeX) << 16;
         position.y = (row * 32 + 76 - shakeY) << 16;
-        Actor_ApplyProjectedPlacementFar(work->animations[row * 3 + j],
-                                         &position, &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->sprites[row * 3 + j], &position,
+                                         &scale, 0);
       }
     }
 
@@ -377,7 +377,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   // into bouncing chips.
   //------------------------------------------------------------------
   for (i = 0; i != 9; i++) {
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   }
   // Blend the canvas fully over the battle background, set the ice blocks
   // above the canvas to the right, and stagger the smoke puffs, puff i

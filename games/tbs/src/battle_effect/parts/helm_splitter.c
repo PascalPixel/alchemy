@@ -8,7 +8,7 @@
 //   plays the swirl over it and scatters bouncing sparks. The sparks live in
 //   PARTICLES, whose 1024 slots are cleared first.
 // - The impact burst plays a flash with large and small sparks and three
-//   fragments, while the animation's sprites settle into one of the formations
+//   fragments, while the effect's sprites settle into one of the formations
 //   of BattleEffect_PlaceFormationObjects. Large sparks and the fragments use
 //   work->particles (0 to 63 and 61 to 63, the fragments overwriting the last
 //   large sparks), small sparks PARTICLES.
@@ -205,28 +205,28 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     for (i = 0; i != 9; i++) {
       pos.x = (i % 3 << 21) + x;
       pos.y = (i / 3 << 21) + z;
-      Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != 12; i++) {
       pos.x = (gHelmSplitter_TwelveX[i] << 16) + x - (16 << 16);
       pos.y = (gHelmSplitter_TwelveZ[i] << 16) + z - (32 << 16);
-      Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
       pos.x = (gHelmSplitter_RightEightX[i] << 16) + x + (16 << 16);
       pos.y = (gHelmSplitter_RightEightZ[i] << 16) + z;
-      Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &normal, 0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
       pos.x = (gHelmSplitter_SmallEightX[i] << 16) + x;
       pos.y = (gHelmSplitter_SmallEightZ[i] << 16) + z;
-      Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &big, 0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &big, 0);
     }
     break;
   }
@@ -247,7 +247,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 
 /// Opens an impact flash and scatters sparks and fragments, keeping the
-/// animation's sprites in formation for the first 36 frames.
+/// effect's sprites in formation for the first 36 frames.
 ///
 /// The close of four summons: Thor, Nereid, Cybele and Tiamat's
 /// BattleEffect_RunPaletteParticles call it once their own frames are over,

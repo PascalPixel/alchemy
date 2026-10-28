@@ -201,8 +201,8 @@ s32 Shop_OpenDebugShop(s32 unused) {
 
 /// Waits one frame at a time until the sound driver has finished the last
 /// command. Called by the inn's sleep, the sanctum and two events that wait
-/// for a fanfare.
-void Sound_WaitForFanfare(void) {
+/// for a jingle.
+void Sound_WaitForJingle(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {
     WaitFrames(1);
   }

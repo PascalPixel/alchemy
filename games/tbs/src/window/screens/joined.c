@@ -101,7 +101,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   return row;
 }
 
-/// Shows that a Djinni joined a party member while the join fanfare (sound 81)
+/// Shows that a Djinni joined a party member while the join jingle (sound 81)
 /// plays, until it ends or A, B, L or R is pressed. The message is
 /// `The <element> Djinni <name> joined <member>.`, with the element's Djinni
 /// portrait. `djinn` is the Djinni's number in its element. The field's
@@ -185,7 +185,7 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
   return gCharacter_ChildSpriteTable[index];
 }
 
-/// Shows that a party member joined the party while the join fanfare (sound 81)
+/// Shows that a party member joined the party while the join jingle (sound 81)
 /// plays, until it ends or A, B, L or R is pressed. The message is
 /// `<member> joined your party.`, with the party member's portrait. The field's
 /// party events reach it by far call (overworld/event_commands/script.c).
@@ -226,7 +226,7 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
-/// Shows that two party members joined the party while the join fanfare (sound
+/// Shows that two party members joined the party while the join jingle (sound
 /// 81) plays, until it ends or A, B, L or R is pressed. The message is
 /// `<first> and <second> joined your party.`, with both portraits.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {

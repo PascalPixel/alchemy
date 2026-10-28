@@ -15,6 +15,6 @@ void Sound_WaitForBgmRestore(void) {
 
 void m4aSoundVSyncOff(void);
 
-void AudioEngine_SuspendDirectSoundWrapper(void) {
+void Sound_SuspendDirectSound(void) {
   m4aSoundVSyncOff();
 }

@@ -2,7 +2,7 @@
 #define ALCHEMY_SOUNDS_H
 
 /// @file
-/// Sound ids, indices into gSongTable: MUS_ ids are music and fanfares,
+/// Sound ids, indices into gSongTable: MUS_ ids are music and jingles,
 /// SE_ ids sound effects, as their sequences in sound/songs are named. Only the
 /// ids ☀️ plays are here: the code's own, the field music gScene_MusicRules and
 /// gEncounter_BattleMusic choose by number, and the voices and defeat sounds
@@ -11,7 +11,7 @@
 /// what it sounds like or the moment it marks, from its comment and its uses.
 /// Sound_Play tests the controls SOUND_FADE_OUT_BGM and
 /// SOUND_FADE_OUT_ACTION_SE first, then the ranges: from SOUND_SE_FIRST on the
-/// player its gSongTable row names, from SOUND_FANFARE_FIRST fanfares, below
+/// player its gSongTable row names, from SOUND_JINGLE_FIRST jingles, below
 /// that music, where SOUND_KEEP_BGM is also a control (audio_engine_symbols.h).
 
 /// Field music of Vale, of Vault, and of Altin once
@@ -99,7 +99,7 @@
 /// Lighthouse's aerie once its first battle has begun
 /// (FLAG_AERIE_FIRST_BATTLE_BEGUN in venus_lighthouse_aerie.c).
 #define MUS_BABI 30
-/// Unused: nothing in ☀️ plays it; TRACKS_ALL names it among the music of
+/// Unused: nothing in ☀️ plays it; TRACKS_ALL names it among the songs of
 /// nine or more tracks.
 #define MUS_UNUSED 40
 /// Field music of the Tolbi-bound ship, and of the world map reached from seven
@@ -177,7 +177,7 @@
 /// ★ Named from what the player sees: the Title and its "Press Start"
 /// prompt (its render)
 #define MUS_TITLE 70
-/// A row of the song table that holds the empty sound (dummy_song_header), so
+/// A row of the song table that holds the empty song (dummy_song_header), so
 /// nothing plays; only the debug battle message viewer starts it, to silence
 /// the music.
 #define MUS_EMPTY 71
@@ -197,53 +197,53 @@
 /// ★ Named from what the player sees: the battle that ends a Colosso match
 /// (its render)
 #define MUS_COLOSSO_BATTLE 76
-/// The fanfare as a puzzle is solved: Altmiller Cave's rock turned, the
+/// The jingle as a puzzle is solved: Altmiller Cave's rock turned, the
 /// Lemurian ship raised, the Vault Cave switches, and the West Lunpa Cave gate
 /// frozen open.
 #define MUS_PUZZLE_SOLVED 80
-/// The fanfare as a Djinni or a new party member joins the party, Flint
+/// The jingle as a Djinni or a new party member joins the party, Flint
 /// included.
 #define MUS_JOINED 81
-/// The fanfare of Revive, used from the menu or bought at a Sanctum.
+/// The jingle of Revive, used from the menu or bought at a Sanctum.
 #define MUS_REVIVE 82
-/// The fanfare as an item is found or given, Psynergy learned, a Colosso prize
+/// The jingle as an item is found or given, Psynergy learned, a Colosso prize
 /// taken, the Hermes' Water bottle filled, or an Elemental Star taken.
 #define MUS_TREASURE_FOUND 83
-/// The fanfare of Cure Poison, used from the menu or bought at a Sanctum, and
+/// The jingle of Cure Poison, used from the menu or bought at a Sanctum, and
 /// of Ply's field effect on its target.
 /// ★ Named from what the player sees: Cure Poison and Ply curing their target
 /// (its render)
 #define MUS_CURE 84
-/// The fanfare as a save is written, or a link battle's results are saved.
+/// The jingle as a save is written, or a link battle's results are saved.
 #define MUS_SAVED 85
-/// The fanfare of the inn as the party sleeps (Inn_PlaySleep); also a lost
+/// The jingle of the inn as the party sleeps (Inn_PlaySleep); also a lost
 /// Colosso match, and the Sanctum as the party is asked to take on the quest.
 #define MUS_INN 86
-/// The fanfare of a Sanctum's Remove Curse.
+/// The jingle of a Sanctum's Remove Curse.
 #define MUS_REMOVE_CURSE 87
-/// The fanfare of a Sanctum's Repel Evil.
+/// The jingle of a Sanctum's Repel Evil.
 #define MUS_REPEL_EVIL 88
-/// The fanfare as a party member levels up after a battle, and as a Colosso
+/// The jingle as a party member levels up after a battle, and as a Colosso
 /// round begins.
 #define MUS_LEVEL_UP 89
-/// The smallest prize fanfare: two pairs in Lucky Dice, a Tolbi Spring prize
+/// The smallest prize jingle: two pairs in Lucky Dice, a Tolbi Spring prize
 /// under 5,000 coins, and one level from the debug level editor; also an item
-/// or Psynergy used from the menu whose effect has no fanfare of its own, such
+/// or Psynergy used from the menu whose effect has no jingle of its own, such
 /// as the stat items (Ability_PlayUseAnimation).
 /// ★ Named from what the player sees: the least of the three prizes in Lucky
 /// Dice and Tolbi Spring (its render)
-#define MUS_FANFARE_SMALL 91
-/// The middle prize fanfare: three pairs in Lucky Dice, a Tolbi Spring prize of
+#define MUS_JINGLE_SMALL 91
+/// The middle prize jingle: three pairs in Lucky Dice, a Tolbi Spring prize of
 /// 5,000 coins or more, and a cleared Colosseum trial.
 /// ★ Named from what the player sees: the middle of the three prizes in Lucky
 /// Dice and Tolbi Spring (its render)
-#define MUS_FANFARE_MEDIUM 92
-/// The largest prize fanfare: four of a kind in Lucky Dice, a Lucky Wheels win,
+#define MUS_JINGLE_MEDIUM 92
+/// The largest prize jingle: four of a kind in Lucky Dice, a Lucky Wheels win,
 /// a Tolbi Spring prize over 19,999 coins, and five levels from the debug level
 /// editor.
 /// ★ Named from what the player sees: the greatest of the three prizes in Lucky
 /// Dice and Tolbi Spring, and a Lucky Wheels win (its render)
-#define MUS_FANFARE_LARGE 93
+#define MUS_JINGLE_LARGE 93
 /// The Vault bell rung, and three times as a shop repairs an item.
 #define SE_BELL 100
 /// An item bought in a shop, artifacts included.

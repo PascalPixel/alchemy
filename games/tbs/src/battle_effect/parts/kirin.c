@@ -4,7 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-#define KIRIN_OBJECTS 9 ///< sprites in the row, work->animations[0] to [8]
+#define KIRIN_OBJECTS 9 ///< sprites in the row, work->sprites[0] to [8]
 /// One 48x32 fire blob picture; the fire sheet holds four.
 #define KIRIN_BLOB_BYTES (48 * 32)
 
@@ -12,7 +12,7 @@
 /// then sweeps across the targets, each throwing a burst of motes as the row
 /// passes it.
 ///
-/// Abilities: Kirin (SUMMON_ANIM_KIRIN).
+/// Abilities: Kirin (SUMMON_EFFECT_KIRIN).
 ///
 /// The effect runs in two stages. In the sweep (120 frames; A or B ends it
 /// after frame 16), KIRIN_OBJECTS sprites ride in on a sine wave while the
@@ -27,7 +27,7 @@
 /// holds BG1's scroll from the battle camera; the rise gives BG1's x back and
 /// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which the
 /// rise's BattleCamera_Shake then moves while the screen shakes. The nine
-/// sprites are released before the animation returns.
+/// sprites are released before the effect returns.
 ///
 /// work->particles 0 to 47 are the fire trail (x in pixels, y 16.16, variant
 /// the frames before it starts); PARTICLES 32i to 32i + 31 are target i's
@@ -199,7 +199,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       do {
         place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + (224 << 16);
         place.y = ((gKirin_Rows[i] - wave) << 16) + (144 << 15);
-        Actor_ApplyProjectedPlacementFar(work->animations[i], &place, &pair, 0);
+        Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
         i++;
       } while (i != KIRIN_OBJECTS);
     }
@@ -302,9 +302,9 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
   i = 0;
   do {
-    struct Sprite *animation = work->animations[i];
+    struct Sprite *sprite = work->sprites[i];
 
-    animation->image.priority = 3;
+    sprite->image.priority = 3;
     i++;
   } while (i != KIRIN_OBJECTS);
 
@@ -367,7 +367,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         do {
           risePlace.x = (rowX + gKirin_Columns[i]) << 16;
           risePlace.y = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
-          Actor_ApplyProjectedPlacementFar(work->animations[i], &risePlace,
+          Actor_ApplyProjectedPlacementFar(work->sprites[i], &risePlace,
                                            &riseScaleCopy, 0);
           i++;
         } while (i != KIRIN_OBJECTS);
@@ -479,7 +479,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   i = 0;
   do {
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
     i++;
   } while (i != KIRIN_OBJECTS);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

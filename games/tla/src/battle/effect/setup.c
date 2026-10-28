@@ -27,7 +27,7 @@ struct BattleFxDefinition *BattleEffect_FindDefinition(u32 id) {
 
 struct BattleRenderObject {
   u8 unk00[0x50];
-  struct BattleAnimationState *animation;
+  struct ObjectAnimationState *animation;
   u8 kind;
 };
 

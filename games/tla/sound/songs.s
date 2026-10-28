@@ -5,8 +5,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gSound_SongTable
-gSound_SongTable:
+	.global gSongTable
+gSongTable:
 	song sound_000, 1
 	song sound_001, 1
 	song sound_002, 1

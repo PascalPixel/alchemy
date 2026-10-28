@@ -57,7 +57,7 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 /// A formation rises out of a dissolving starfield and bursts into embers and
 /// flashes, with one spawned sprite rising.
 ///
-/// Abilities: Meteor (SUMMON_ANIM_METEOR).
+/// Abilities: Meteor (SUMMON_EFFECT_METEOR).
 ///
 /// BattleEffect_RunSummon also plays it for a summon effect of 0, which
 /// no row selects.
@@ -174,12 +174,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
    * 1 of 1532 instructions differ in tbs-en. */
   direction = mode;
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
-    struct Actor *animation = GetBattleObjectSlotFar(work->args->user)->actor;
+    struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
 
     // The leap: 10 pixels a frame upwards, against a gravity of 0x91eb, about
     // 0.57 pixels a frame lost each frame.
-    animation->velocityY = 0xa0000;
-    animation->gravity = 0x91eb;
+    actor->velocityY = 0xa0000;
+    actor->gravity = 0x91eb;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlayFar(SE_CRASH);
     direction = work->args->side == EFFECT_SIDE_PARTY ? mode : -1;
@@ -199,13 +199,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // spawned sprite.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
-      struct Sprite *animation = Sprite_CreateFar(483 + i * SPRITE_SECOND_PART);
+      struct Sprite *sprite = Sprite_CreateFar(483 + i * SPRITE_SECOND_PART);
 
-      work->animations[i] = animation;
-      if (animation != 0) {
-        animation->flags = 0;
-        Sprite_StartAnimationFar(animation, 2);
-        work->animations[i]->image.priority = 3;
+      work->sprites[i] = sprite;
+      if (sprite != 0) {
+        sprite->flags = 0;
+        Sprite_StartAnimationFar(sprite, 2);
+        work->sprites[i]->image.priority = 3;
       }
     }
   } else {
@@ -413,9 +413,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         scale.y = size;
         position.x = (x << 16) + 0x500000;
         position.y = (64 - y) << 16;
-        Actor_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
+        Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
-        Actor_ApplyProjectedPlacementFar(work->animations[1], &position, &scale,
+        Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale,
                                          0);
       } else {
         size = angle + 0x10000;
@@ -423,7 +423,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         scale.y = size;
         position.x = (x << 16) + 0x600000;
         position.y = (96 - y) << 16;
-        Actor_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
+        Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
       }
       // A new mote rises from a random point on the lower half of a circle
@@ -575,8 +575,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       Sound_PlayFar(SE_CRASH);
     if (frame == 48) {
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        Sprite_DestroyFar(work->animations[0]);
-        Sprite_DestroyFar(work->animations[1]);
+        Sprite_DestroyFar(work->sprites[0]);
+        Sprite_DestroyFar(work->sprites[1]);
         BattleObject_PutFar();
       }
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -682,17 +682,14 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       scale.y = size;
       position.x = (x << 16) + 0x600000;
       position.y = (96 - y) << 16;
-      Actor_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
-                                       0);
-      Actor_ApplyProjectedPlacementFar(work->animations[1], &position, &scale,
-                                       0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
       position.x = (x << 16) + 0x600000;
       position.y = (96 - y) << 16;
-      Actor_ApplyProjectedPlacementFar(work->animations[0], &position, &scale,
-                                       0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
     }
     work->shakeFrames = 1;
     BattleCamera_Shake(8, 8);
@@ -701,7 +698,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == PARTICLE_STREAMS_METEOR)
-    Sprite_DestroyFar(work->animations[0]);
+    Sprite_DestroyFar(work->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }
 

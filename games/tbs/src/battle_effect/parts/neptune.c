@@ -28,7 +28,7 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// gathers a ring of flares into a burst of light, then five blue flame columns
 /// drop onto the targets, throwing sparks.
 ///
-/// Abilities: Neptune (SUMMON_ANIM_NEPTUNE).
+/// Abilities: Neptune (SUMMON_EFFECT_NEPTUNE).
 ///
 /// The effect runs in two stages. The first (244 frames; A or B ends it
 /// after frame 16) places NEPTUNE_OBJECTS sprites at one and a half times their
@@ -46,7 +46,7 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// back, removes the scale task and interrupt, and
 /// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which its
 /// BattleCamera_Shake then moves while the screen shakes. The formation's
-/// sprites are released before the animation returns.
+/// sprites are released before the effect returns.
 ///
 /// In the first stage work->particles 0 to 31 are the converging flares, then
 /// from frame 222 0 to 63 the burst points; PARTICLES holds the spray
@@ -251,7 +251,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
             (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - 0x200000;
         pos.y =
             (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - 0x180000;
-        Actor_ApplyProjectedPlacementFar(work->animations[i], &pos, &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &scale, 0);
       }
     }
 
@@ -594,7 +594,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
   // The finish: release the formation's sprites, then the canvas.
   for (i = 0; i != NEPTUNE_OBJECTS; i++) {
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   }
   EFFECT_FINISH_CANVAS();
 }

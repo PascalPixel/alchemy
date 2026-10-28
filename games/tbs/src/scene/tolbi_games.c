@@ -10,7 +10,7 @@
 ///   level: the coin total is saved in the adventure and the party goes
 ///   to the Lucky Dice game, which returns to
 ///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE, where the setup has the attendant
-///   announce the coins won or lost, with a fanfare by the size of the win. The
+///   announce the coins won or lost, with a jingle by the size of the win. The
 ///   Lucky Wheels attendant takes Game Tickets and warns when the bag has six
 ///   free slots or fewer; the game returns to
 ///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS with the prize categories won, and
@@ -418,17 +418,17 @@ s32 TolbiSpring_Initialize(void) {
       coinChange = gAdventure.coins - *(s32 *)gSceneLocalState;
       if (coinChange > 0) {
         if (coinChange > 19999) {
-          Sound_Play(MUS_FANFARE_LARGE);
+          Sound_Play(MUS_JINGLE_LARGE);
         } else if (coinChange > 4999) {
-          Sound_Play(MUS_FANFARE_MEDIUM);
+          Sound_Play(MUS_JINGLE_MEDIUM);
         } else {
-          Sound_Play(MUS_FANFARE_SMALL);
+          Sound_Play(MUS_JINGLE_SMALL);
         }
         Event_WaitFrames(20);
         Event_SetMessageId(MsgTolbiYaWonNumber);
         MessageArgument_Push(coinChange, 5);
         Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
-        Sound_WaitForFanfare();
+        Sound_WaitForJingle();
       } else if (coinChange < 0) {
         Event_SetMessageId(MsgTolbiYaLostNumber);
         MessageArgument_Push(-coinChange, 5);
@@ -831,7 +831,7 @@ prompt:
         Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                               ->coins[result]);
 #endif
-        Event_PlaySound(MUS_FANFARE_SMALL);
+        Event_PlaySound(MUS_JINGLE_SMALL);
 #ifdef UBFIX
         MessageArgument_Push(gTolbiSpring_CoinPrizes[result], 5);
 #else

@@ -3,7 +3,7 @@
 This folder holds The Lost Age's sound layer and its MusicPlayer2000 sound
 driver, with the driver's handwritten routines under `driver/`. ☀️'s
 [Sound](../../../tbs/src/sound/README.md) explains what a sound number means,
-the fanfare's return to the music and the driver's lock; this page says only
+the jingle's return to the music and the driver's lock; this page says only
 what differs here.
 
 ## What differs from ☀️
@@ -32,7 +32,8 @@ the counts.
 Functions take their ☀️ twins' names, which ☀️'s guides explain: the
 driver's routines pret's MusicPlayer2000 names (`m4aSongNumStart`, `MPlayMain`,
 `ply_note`), the sound layer `Sound_`. A few copies The Lost Age keeps beside
-the driver still carry older prefixes (`MusicTrack_`, `AudioEngine_`, `Audio_`,
-`Pcm_`) with their own suffixes, and `LzPack_` and `Runtime_` remain. Only
-`SongFlag_`, setting, clearing and testing a sound's flags, is The Lost Age's
-own so far.
+the driver still carry older prefixes (`MusicTrack_`, `Audio_`, `Pcm_`) with
+their own suffixes, and `LzPack_` and `Runtime_` remain. Only `SoundFlag_`,
+setting, clearing and testing a sound's flags, and
+`Sound_SetFixedSampleFreq`, a fixed-rate variant of `SampleFreqSet`, are
+The Lost Age's own so far.

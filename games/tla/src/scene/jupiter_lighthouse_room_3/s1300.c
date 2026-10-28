@@ -31,7 +31,7 @@ void Func_02001300(struct ObjectRuntime *object) {
      * pass as the native does; without it, 28 of 61 instructions differ in
      * tla-en. */
     asm volatile("" ::: "memory");
-    if (*((struct BattleAnimationState *)other->animation)->value28 ==
+    if (*((struct ObjectAnimationState *)other->animation)->value28 ==
         gData_02002478[i])
       return;
     i++;

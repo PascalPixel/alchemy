@@ -382,8 +382,8 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
 }
 
 /// Auto battle: an attack or an item. Turns the camera to the acting unit's
-/// side, poses the unit and plays the animation (kind action->parameter) on the
-/// first living unit of the target's side, then sends both back. Returns -1
+/// side, poses the unit and plays the battle effect (kind action->parameter) on
+/// the first living unit of the target's side, then sends both back. Returns -1
 /// for an invalid unit. Called by AutoBattle_RunAction for
 /// COMMAND_ATTACK, COMMAND_ITEM and any other command but fleeing, defending
 /// and Psynergy.

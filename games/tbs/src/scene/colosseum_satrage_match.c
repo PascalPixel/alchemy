@@ -1611,7 +1611,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
   Event_WaitFrames(120);
 
-  // Finish the opening fanfare before the final lettering pulses and start
+  // Finish the opening jingle before the final lettering pulses and start
   // signal.
   while (Sound_GetBgmRestoreDelay() != 0) {
     WaitFrames(1);

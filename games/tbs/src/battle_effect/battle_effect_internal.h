@@ -352,14 +352,14 @@ enum CameraPhase {
 };
 
 /// Where each range of BattleEffect_RunByIdRange's effect kinds starts:
-/// the casting impacts (the kind less ANIM_RANGE_CASTING_IMPACT is an enum
+/// the casting impacts (the kind less EFFECT_RANGE_CASTING_IMPACT is an enum
 /// CastingImpact), the beams, which also take every kind below the
 /// casting impacts, and the ring and spark effect, which plays critical
 /// hits.
 enum BattleEffectIdRange {
-  ANIM_RANGE_CASTING_IMPACT = 100,
-  ANIM_RANGE_BEAM = 136,
-  ANIM_RANGE_RING_AND_SPARK = EFFECT_ID_CRITICAL_OFFSET
+  EFFECT_RANGE_CASTING_IMPACT = 100,
+  EFFECT_RANGE_BEAM = 136,
+  EFFECT_RANGE_RING_AND_SPARK = EFFECT_ID_CRITICAL_OFFSET
 };
 
 #endif // ALCHEMY_BATTLE_EFFECT_INTERNAL_H

@@ -26,7 +26,7 @@ void Func_02004774(struct ObjectRuntime *object) {
      * hit->animation, its value and the table are loaded again on every pass;
      * without it, 26 of 61 instructions differ in tla-en. */
     __asm__("" : : : "memory");
-    if (*((struct BattleAnimationState *)hit->animation)->value28 ==
+    if (*((struct ObjectAnimationState *)hit->animation)->value28 ==
         gData_02004ca4[i])
       return;
     i++;

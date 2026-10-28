@@ -12,7 +12,7 @@
 /// A whirlwind lifts the targets, then comets from a block of sprites in a
 /// violet sky strike them.
 ///
-/// Abilities: Procne (SUMMON_ANIM_PROCNE).
+/// Abilities: Procne (SUMMON_EFFECT_PROCNE).
 ///
 /// The effect runs for 400 frames:
 ///   0 to 159   : a whirlwind rises over the field and lifts the targets,
@@ -377,8 +377,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         place.x = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
         place.height = 0xff0000 + index * 0x400000;
         place.y = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
-        Actor_ApplyProjectedPlacementFar(work->animations[index], &place,
-                                         &scale, 0);
+        Actor_ApplyProjectedPlacementFar(work->sprites[index], &place, &scale,
+                                         0);
         index++;
       } while (index != 9);
 
@@ -598,7 +598,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   index = 0;
   do {
-    Sprite_DestroyFar(work->animations[index]);
+    Sprite_DestroyFar(work->sprites[index]);
     index++;
   } while (index != 9);
 

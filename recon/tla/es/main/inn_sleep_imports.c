@@ -24,7 +24,7 @@ void Unit_UpdateRatiosFar(s32);
 void Event_FinishScreenTransitionFar(void);
 void Event_WaitTransitionFramesFar(void);
 void Sound_PlayFar(s32);
-void Sound_WaitForFanfare(void);
+void Sound_WaitForJingle(void);
 void Event_StartScreenTransitionFar(void);
 
 void Inn_PlaySleep(s32 roomPrice) {
@@ -53,7 +53,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   Sound_PlayFar(86);
-  Sound_WaitForFanfare();
+  Sound_WaitForJingle();
   WaitFrames(10);
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();

@@ -1312,7 +1312,7 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
   }
 }
 
-/// The result: `Won` or `Lose` in large lettering with its fanfare, then the
+/// The result: `Won` or `Lose` in large lettering with its jingle, then the
 /// screen closes.
 static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
 

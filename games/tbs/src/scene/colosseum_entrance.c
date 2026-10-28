@@ -1355,7 +1355,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   MapGrid_WaitForShakeToSettle();
   Actor_SetSpeed(ACTOR_CLEARING_WARRIOR, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 208, 928);
-  Event_PlaySound(MUS_FANFARE_MEDIUM);
+  Event_PlaySound(MUS_JINGLE_MEDIUM);
   Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
                       20);
   Import_ActorSetAnimation(ACTOR_CLEARING_WARRIOR, 9);

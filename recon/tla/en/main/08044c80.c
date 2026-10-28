@@ -3,7 +3,7 @@
 // Draft of Party_ShowPairJoinedMessage: differ 8 of 135 (tla-en, 2026-10-18).
 // Its ☀️ twin is games/tbs/src/window/battle_command.c's function of the
 // same name. It opens a message window with the two joining characters'
-// portraits, plays the join fanfare and waits for it, or for A, B or a
+// portraits, plays the join jingle and waits for it, or for A, B or a
 // shoulder button.
 //
 // Left: instruction order only (a constant build and two argument copies sit

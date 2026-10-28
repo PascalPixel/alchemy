@@ -3,7 +3,9 @@
 
 #include "types.h"
 
-struct BattleAnimationState {
+/// A field object's sprite animation, which ObjectRuntime.animation points to
+/// when animationKind is 1.
+struct ObjectAnimationState {
   u8 unk00[0x28];
   s16 *value28;
 };

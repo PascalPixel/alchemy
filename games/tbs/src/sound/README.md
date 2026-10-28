@@ -1,22 +1,22 @@
 # Sound
 
-A town's music plays while the cursor clicks through a menu, a door creaks
-open and, after a night at the inn, a short fanfare plays and the music comes
-back by itself. The game asks for every sound the same way, with one call and
-a number, the sound number; the sound layer (`sound.c`) decides what each number
-means and keeps the music, the fanfares and the sound effects out of each
-other's way. Under it is the driver that plays them on the hardware:
-Nintendo's MusicPlayer2000, the sound library many Game Boy Advance games
-ship, which [pret](../../glossary.md#pret)'s decompilations call m4a, and its
-code here keeps pret's names. To the driver every sound, a sound effect
-included, is a song in the driver's terms: a header and tracks of notes and commands, played on one
-of eight music players.
+A town's music plays while the cursor clicks through a menu, a door creaks open
+and, after a night at the inn, a short jingle plays and the music comes back by
+itself. The game asks for every sound the same way, with one call and a number,
+the sound number; the sound layer (`sound.c`) decides what each number means and
+keeps the music, the jingles and the sound effects out of each other's way.
+Under it is the driver that plays them on the hardware: Nintendo's
+MusicPlayer2000, the sound library many Game Boy Advance games ship, which
+[pret](../../glossary.md#pret)'s decompilations call m4a, and its code here
+keeps pret's names. To the driver every sound, a sound effect included, is a
+song in the driver's terms: a header and tracks of notes and commands, played on
+one of eight music players.
 
 ## What a sound number means
 
 Code anywhere plays a sound with one call and a number, as the field does
 when a chest holds a Psynergy Stone. The number's range picks what happens:
-below 80 it is music, from 80 to 99 a fanfare, and from 100 up a sound
+below 80 it is music, from 80 to 99 a jingle, and from 100 up a sound
 effect. Each kind has music players of its own, so a sound effect never stops
 the music. A few numbers are orders rather than sounds: one fades the music
 out over about two seconds, one keeps whatever is playing, one fades out the
@@ -25,35 +25,35 @@ chosen does nothing, which lets a [scene](../../glossary.md#scene) name its musi
 on every arrival without restarting it, but also means a piece that doesn't
 loop plays again only after other music or a fade.
 
-The music has a player with ten tracks and the fanfares one with four. Of the
+The music has a player with ten tracks and the jingles one with four. Of the
 six players left, two belong to particular kinds of sound effect, the menus'
 clicks and the actions' impacts and doors, so nothing cuts those off. The
 other four are shared: a sound effect takes the first of them that is idle,
 so four can play at once, and a fifth cuts off one of them.
 
 The call is `Sound_Play`, or `Sound_PlayFar` from outside the sound
-[bank](../../glossary.md#bank); its ranges are `SOUND_FANFARE_FIRST` and
+[bank](../../glossary.md#bank); its ranges are `SOUND_JINGLE_FIRST` and
 `SOUND_SE_FIRST`, the players `gMPlayTable`, and the sound effects' rows
 `gSongTable`. The sounds are named in `sounds.h`.
 
-## The fanfare's return to the music
+## The jingle's return to the music
 
-![At Vale's inn the innkeeper welcomes the party and Isaac agrees to stay; the screen closes to black in a shrinking circle, stays dark while the inn's fanfare plays, opens again, and the innkeeper says "I hope you slept well. Have a nice trip!"](https://alchemy.pascalpixel.com/guides/sound/inn-fanfare.gif)
+![At Vale's inn the innkeeper welcomes the party and Isaac agrees to stay; the screen closes to black in a shrinking circle, stays dark while the inn's jingle plays, opens again, and the innkeeper says "I hope you slept well. Have a nice trip!"](https://alchemy.pascalpixel.com/guides/sound/inn-fanfare.gif)
 
 During a night at the inn the town's music falls silent, the inn's short tune
 plays over the black screen, and the music fades back in once it has ended,
 from where it had got to. The music never stopped: only its volume went to
-zero. Once a VBlank the sound layer checks whether the fanfare has finished
+zero. Once a VBlank the sound layer checks whether the jingle has finished
 and, when it has, turns the music back up over about a second, so the code
-that played the fanfare does nothing more. The inn waits for it before
+that played the jingle does nothing more. The inn waits for it before
 opening the screen again.
 
 The silence reaches only the music's first eight tracks. Nine pieces of music
 use more, among them the world map's and Kalay's, and their extra tracks keep
-playing under a fanfare.
+playing under a jingle.
 
 The volume is stepped by `Sound_UpdateBgmRamps`, which the blank runs every
-VBlank; the inn waits with `Sound_WaitForFanfare`.
+VBlank; the inn waits with `Sound_WaitForJingle`.
 
 ## The driver's ident
 
@@ -91,8 +91,8 @@ it keeps pret's names for its structures, tables and routines (`SoundInfo`,
 to `ply_xswee`), and a reader who knows pret's games knows these. This copy
 is older than pret's: it has no cries, and its extended commands stop at
 `ply_xswee`. What Camelot added takes a plain name in the project's style: the
-blank's way into the game's own mixer (`Mixer_Enter`), the fanfare's and the
-sound effects' music players (`gMPlayInfo_Fanfare` and the rest), and the
+blank's way into the game's own mixer (`Mixer_Enter`), the jingle's and the
+sound effects' music players (`gMPlayInfo_Jingle` and the rest), and the
 sound layer in `sound.c`.
 
 `engine.c`, `audio.c` and `tables.c` are compiled with pret's
@@ -103,24 +103,24 @@ runs from [IWRAM](../../glossary.md#iwram-and-ewram).
 
 ## How it fits with the rest of the game
 
-Every part of the game plays sound through `Sound_PlayFar`: scenes name
-their music on entry, menus click, battle effects play their impacts. The
-blank's code in [Runtime](../runtime/README.md#the-frame-loop) steps the
-music's volume and enters the mixer every VBlank, and the mixer's resident
-code is part of what start-up copies into IWRAM
-([Cartridge and memory](../cartridge/README.md#memory-map)). The sounds and samples themselves
-are data in `games/tbs/sound`.
+Every part of the game plays sound through `Sound_PlayFar`: scenes name their
+music on entry, menus click, battle effects play their impacts. The blank's code
+in [Runtime](../runtime/README.md#the-frame-loop) steps the music's volume and
+enters the mixer every VBlank, and the mixer's resident code is part of what
+start-up copies into IWRAM
+([Cartridge and memory](../cartridge/README.md#memory-map)). The sounds and
+samples themselves are data in `games/tbs/sound`.
 
 ## Limits
 
-- Eight music players; the music's player has 10 tracks, of which a fanfare
+- Eight music players; the music's player has 10 tracks, of which a jingle
   silences 8.
 - Four shared sound effects play at once.
 - Sound numbers run from 0 to 4,095.
 
 ## Words used here
 
-- **sound number**: the number `Sound_Play` takes: music, a fanfare, a sound
+- **sound number**: the number `Sound_Play` takes: music, a jingle, a sound
   effect from the song table, or an order. The Lost Age's sound test sorts the
   same sounds as Music, Jingle and SE.
 - **song**: the driver's word for one sound's data, a header and its tracks

@@ -5,7 +5,7 @@
 #include "../battle_effect_internal.h"
 
 /// The beam's pictures, by effect kind: the kinds below
-/// ANIM_RANGE_CASTING_IMPACT that BattleEffect_RunByIdRange sends here. No
+/// EFFECT_RANGE_CASTING_IMPACT that BattleEffect_RunByIdRange sends here. No
 /// ability's row selects one; the unused BattleStaging_RunPlainAttack plays an
 /// attack's kind, 0 for Attack.
 enum BeamKind {
@@ -23,8 +23,8 @@ enum BeamKind {
 /// args->kind picks the picture.
 ///
 /// Reached through BattleEffect_RunByIdRange for kinds from
-/// ANIM_RANGE_BEAM to below ANIM_RANGE_RING_AND_SPARK and,
-/// through its unsigned test, every kind below ANIM_RANGE_CASTING_IMPACT;
+/// EFFECT_RANGE_BEAM to below EFFECT_RANGE_RING_AND_SPARK and,
+/// through its unsigned test, every kind below EFFECT_RANGE_CASTING_IMPACT;
 /// BattleStaging_RunPlainAttack (battle/staging.c) sends every plain
 /// attack there. Only the kinds of enum BeamKind have pictures. Shows the
 /// canvas on BG1 (BattleEffect_SetupCanvasTileMap), loads palette colours 0 to
@@ -271,13 +271,13 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
 }
 
 /// Plays the selected ring-and-spark strike, restoring the user motion after
-/// it. Kinds from ANIM_RANGE_RING_AND_SPARK first gather 64 motes of light
+/// it. Kinds from EFFECT_RANGE_RING_AND_SPARK first gather 64 motes of light
 /// into the user for 32 frames while it stands still; then star burst and
 /// crescent rings flash over the canvas and sparks fly from the first target
 /// for 32 frames, and the background palette fades back in.
 ///
 /// Reached through BattleEffect_RunByIdRange for kinds from
-/// ANIM_RANGE_RING_AND_SPARK, which BattleStaging_RunAttack
+/// EFFECT_RANGE_RING_AND_SPARK, which BattleStaging_RunAttack
 /// (battle/staging.c) makes by adding EFFECT_ID_CRITICAL_OFFSET to the kind of
 /// a critical hit; so the gathering always plays. Shows the canvas on BG1,
 /// keeps the battle's transition centred between the user and the first target
@@ -322,10 +322,10 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   // DEAD: the test is never true, as only kinds from
-  // ANIM_RANGE_RING_AND_SPARK reach this runner
+  // EFFECT_RANGE_RING_AND_SPARK reach this runner
   // (BattleEffect_RunByIdRange), so big stays 1; the ROM keeps it.
   big = 1;
-  if (args->kind < ANIM_RANGE_RING_AND_SPARK)
+  if (args->kind < EFFECT_RANGE_RING_AND_SPARK)
     big = 0;
   work->args = args;
   // Load the blitters and pictures a step a frame, keeping the transition

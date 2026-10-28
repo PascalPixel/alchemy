@@ -56,7 +56,7 @@ extern struct SoundWork gSound_Work;
 extern struct CgbNote gSound_CgbNotes[4];
 extern u8 gSound_WorkBytes[];
 extern const struct PlayerSlot gSound_PlayerSlots[];
-extern const struct SongEntry gSound_SongTable[];
+extern const struct SongEntry gSongTable[];
 
 void ply_memacc(struct SoundPlayer *player, struct SoundTrack *track);
 void ply_lfos(struct SoundPlayer *player, struct SoundTrack *track);
@@ -125,7 +125,7 @@ void m4aSoundMain(void) { SoundMain(); }
 /// Starts the song on the player selected by its song-table entry.
 void m4aSongNumStart(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSound_SongTable;
+  const struct SongEntry *songs = gSongTable;
   const struct SongEntry *song = &songs[songId];
 
   MPlayStart(slots[song->slot].player, song->header);
@@ -134,7 +134,7 @@ void m4aSongNumStart(u16 songId) {
 /// Starts the song unless its selected player is already playing it.
 void m4aSongNumStartOrChange(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSound_SongTable;
+  const struct SongEntry *songs = gSongTable;
   const struct SongEntry *song = &songs[songId];
   struct SoundPlayer *player = slots[song->slot].player;
 
@@ -148,7 +148,7 @@ void m4aSongNumStartOrChange(u16 songId) {
 /// Starts a different or finished song, or resumes the same paused song.
 void m4aSongNumStartOrContinue(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSound_SongTable;
+  const struct SongEntry *songs = gSongTable;
   const struct SongEntry *song = &songs[songId];
   struct SoundPlayer *player = slots[song->slot].player;
 
@@ -163,7 +163,7 @@ void m4aSongNumStartOrContinue(u16 songId) {
 /// Stops the selected player only when it holds this song.
 void m4aSongNumStop(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSound_SongTable;
+  const struct SongEntry *songs = gSongTable;
   const struct SongEntry *song = &songs[songId];
   struct SoundPlayer *player = slots[song->slot].player;
 
@@ -174,7 +174,7 @@ void m4aSongNumStop(u16 songId) {
 /// Resumes the selected player only when it holds this song.
 void m4aSongNumContinue(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSound_SongTable;
+  const struct SongEntry *songs = gSongTable;
   const struct SongEntry *song = &songs[songId];
   struct SoundPlayer *player = slots[song->slot].player;
 

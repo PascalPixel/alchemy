@@ -2,7 +2,7 @@
 
 This folder holds The Lost Age's battle code and, in `effect/`, its battle
 effects: ☀️'s [Battles](../../../tbs/src/battle/README.md) and
-[Battle effects](../../../tbs/src/effect/README.md) in one folder. Those
+[Battle effects](../../../tbs/src/battle_effect/README.md) in one folder. Those
 guides explain how a battle runs, how an ability resolves and how an effect
 draws; this page says only what differs here.
 

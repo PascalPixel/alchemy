@@ -9,7 +9,7 @@ struct SoundVBlankState {
   u8 unk03;
 };
 
-extern const struct SongEntry gSound_SongTable[];
+extern const struct SongEntry gSongTable[];
 extern const struct PlayerSlot gSound_PlayerSlots[];
 extern volatile struct SoundVBlankState gData_03001138;
 extern u8 gData_02005814;
@@ -20,9 +20,9 @@ extern struct SoundPlayer gSound_Player5;
 extern u16 gData_02005834;
 extern u16 gData_0200583c;
 extern u16 gData_0200580c;
-extern struct SoundPlayer gMusicPlayerFanfare;
+extern struct SoundPlayer gMusicPlayerJingle;
 
-void SongFlag_Set(s32 cue);
+void SoundFlag_Set(s32 cue);
 void m4aMPlayFadeOut(struct SoundPlayer *player, u16 speed);
 void MPlayStart(struct SoundPlayer *player,
                            const struct SongHeader *header);
@@ -44,7 +44,7 @@ void Sound_Play(s32 id) {
   s32 flags;
   s32 player;
 
-  SongFlag_Set(id);
+  SoundFlag_Set(id);
   flags = id & 0xf000;
   if (gData_03001138.unk03 != 0)
     return;
@@ -67,7 +67,7 @@ void Sound_Play(s32 id) {
   } else if (id >= 700) {
     goto background;
   } else if (id > 99) {
-    player = gSound_SongTable[id].slot;
+    player = gSongTable[id].slot;
     if (player == 7) {
     next:
       if (((u8 *)&gSound_PlayerSlots[player].player->status)[0] != 0) {
@@ -78,7 +78,7 @@ void Sound_Play(s32 id) {
       }
     }
     MPlayStart(gSound_PlayerSlots[player].player,
-                          gSound_SongTable[id].header);
+                          gSongTable[id].header);
     gData_02005820[player] = id;
   } else if (id > 79) {
     m4aMPlayVolumeControl(&gMusicPlayerBgm, 255, 0);
@@ -113,7 +113,7 @@ void Sound_UpdateBgmRamps(void) {
 
   if (gMusicRestoreDelay != 0) {
     if (gMusicRestoreDelay == 1) {
-      if ((u8)gMusicPlayerFanfare.status == 0) {
+      if ((u8)gMusicPlayerJingle.status == 0) {
         gMusicRestoreDelay = 0;
         gMusicVolumeTarget = 0x100;
       }

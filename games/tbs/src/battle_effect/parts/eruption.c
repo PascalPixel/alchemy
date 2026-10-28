@@ -220,11 +220,11 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Creates the animation's sprites in gBattleEffectWork's animations.
+/// Creates the effect's sprites in gBattleEffectWork's sprites.
 ///
 /// Called by the summon effects (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.
-/// Fills work->animations[0] to [entryCount - 1]: sprite n plays animation n,
+/// Fills work->sprites[0] to [entryCount - 1]: sprite n plays animation n,
 /// with its flags cleared and its sprite priority set. A slot whose sprite
 /// could not be created is left NULL.
 ///
@@ -239,13 +239,13 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
     return;
   }
   do {
-    struct Sprite *animation = Sprite_CreateFar(source);
+    struct Sprite *sprite = Sprite_CreateFar(source);
 
-    work->animations[entryIndex] = animation;
-    if (animation != 0) {
-      animation->flags = 0;
-      Sprite_StartAnimationFar(animation, entryIndex);
-      work->animations[entryIndex]->image.priority = priority;
+    work->sprites[entryIndex] = sprite;
+    if (sprite != 0) {
+      sprite->flags = 0;
+      Sprite_StartAnimationFar(sprite, entryIndex);
+      work->sprites[entryIndex]->image.priority = priority;
     }
     entryIndex++;
   } while (entryIndex != entryCount);

@@ -126,7 +126,7 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
   EFFECT_RELEASE_BLITTERS();
 }
 
-/// The casting impacts, by effect kind less ANIM_RANGE_CASTING_IMPACT: each
+/// The casting impacts, by effect kind less EFFECT_RANGE_CASTING_IMPACT: each
 /// is named for the first ability whose gAbilityBattleEffects entry selects it;
 /// the four no ability selects are named UNUSED_ and for the effect they
 /// hand off to.
@@ -237,8 +237,8 @@ enum CastingImpact {
 /// waving impacts; it releases all of them before it returns, or hands them on.
 ///
 /// mode: the impact, an enum CastingImpact (the effect kind less
-///       ANIM_RANGE_CASTING_IMPACT). The tests against
-///       ANIM_RANGE_CASTING_IMPACT itself never hold, as the dispatcher
+///       EFFECT_RANGE_CASTING_IMPACT). The tests against
+///       EFFECT_RANGE_CASTING_IMPACT itself never hold, as the dispatcher
 ///       passes only CastingImpact values.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   void **slots;
@@ -419,7 +419,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // DEAD: never reached, as the dispatcher passes only the 36 impacts
   // (BattleEffect_RunByIdRange) and each already has its element's case
   // above.
-  case ANIM_RANGE_CASTING_IMPACT:
+  case EFFECT_RANGE_CASTING_IMPACT:
     Resource_LoadAndDecompress(
         (s32)&ResourceId_MercuryDjinnSmallSheet,
         Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_OFFSETS, 1, 1);
@@ -712,7 +712,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       mode == CASTING_IMPACT_IMPACT_STUN_VOLTAGE ||
       mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
       mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST ||
-      mode == ANIM_RANGE_CASTING_IMPACT) {
+      mode == EFFECT_RANGE_CASTING_IMPACT) {
     duration = 32;
   } else if ((mode >= CASTING_IMPACT_IMPACT_BANE &&
               mode <= CASTING_IMPACT_IMPACT_FEVER) ||
@@ -1364,7 +1364,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           step->variant++;
         }
       }
-    } else if (mode != ANIM_RANGE_CASTING_IMPACT) {
+    } else if (mode != EFFECT_RANGE_CASTING_IMPACT) {
       // The smoke impacts: six 24x48 pictures a puff, four frames each.
       struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
       for (i = 0; i != 16; i++, step++) {
@@ -1419,7 +1419,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           mode == CASTING_IMPACT_IMPACT_PSY_LEECH ||
           mode == CASTING_IMPACT_IMPACT_BARRAGE ||
           mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST ||
-          mode == ANIM_RANGE_CASTING_IMPACT) {
+          mode == EFFECT_RANGE_CASTING_IMPACT) {
         BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
         work->shakeFrames = 8;
       } else if (mode == CASTING_IMPACT_IMPACT_BROIL ||

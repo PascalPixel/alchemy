@@ -356,7 +356,7 @@
 	import Shop_SaveAndTintFieldPalette, Shop_SaveAndTintFieldPaletteFar
 	import Shop_RestoreFieldPalette, Shop_RestoreFieldPaletteFar
 	import ItemPicker_Run, ItemPicker_RunFar
-	import Sound_WaitForFanfare, Sound_WaitForFanfareFar
+	import Sound_WaitForJingle, Sound_WaitForJingleFar
 	import Inn_PlaySleep, Inn_PlaySleepFar
 @ Battle bank (far_call/BATTLE.S)
 	import DjinnRecovery_CountDownTwenty, DjinnRecovery_CountDownTwentyFar

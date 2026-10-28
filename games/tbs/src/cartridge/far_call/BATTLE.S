@@ -12,7 +12,7 @@ FarCall_BattleTable:
 	export BattleBackground_SetModeFar, BattleBackground_SetMode
 	export BattleBackground_LoadFar, BattleBackground_Load
 	export BattleBackground_SetPaletteLevelFar, BattleBackground_SetPaletteLevel
-	overlay_veneer BattleSprite_GetAnimHeight
+	overlay_veneer BattleSprite_GetEffectHeight
 	export BattleSprite_HasHeavyImpactFar, BattleSprite_HasHeavyImpact
 	overlay_veneer BattleSprite_GetAttackHop
 	overlay_veneer BattleSprite_IsSmall

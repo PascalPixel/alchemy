@@ -229,7 +229,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 // Every VBlank turns the camera at least half the delta, so it keeps turning
 // on VBlanks that end no frame of the effect.
 // XXX (no evidence): whether that is meant to keep the turn smooth when an
-// animation frame runs long; the code shows the effect, not the reason.
+// effect's frame runs long; the code shows the effect, not the reason.
 /// Turns the battle camera's yaw by work->cameraDelta, or by half of it on a
 /// VBlank the effect has not marked.
 ///

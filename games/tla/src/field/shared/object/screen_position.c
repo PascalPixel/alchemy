@@ -30,7 +30,7 @@ s32 Func_080d5bec(s32 objectId, s32 *position) {
   if ((object->animationKind & 15) == 1)
     *position -=
         (s8)Resource_GetMetadataRecordFarFar(
-            *((struct BattleAnimationState *)object->animation)->value28)
+            *((struct ObjectAnimationState *)object->animation)->value28)
             ->boxX;
   return 0;
 }

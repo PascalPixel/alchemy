@@ -269,4 +269,4 @@ Func_02001ad4:
 	.global Func_02001adc
 	.thumb_func
 Func_02001adc:
-	overlay_veneer SongFlag_TestFar
+	overlay_veneer SoundFlag_TestFar

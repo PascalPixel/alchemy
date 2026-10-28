@@ -149,8 +149,8 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
 }
 
 /// Runs a battle effect from the second range of kinds, split by enum
-/// BattleEffectIdRange: the casting impacts (kind - ANIM_RANGE_CASTING_IMPACT),
-/// the beams and the ring and spark effects.
+/// BattleEffectIdRange: the casting impacts (kind -
+/// EFFECT_RANGE_CASTING_IMPACT), the beams and the ring and spark effects.
 ///
 /// Reached from the battle's presentation through its far-call stub: from
 /// the attack, item, Psynergy cast and unit transition runners
@@ -174,12 +174,12 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   value = args->kind;
   kind = value;
-  value = kind - ANIM_RANGE_CASTING_IMPACT;
-  // Unsigned, so kinds below ANIM_RANGE_CASTING_IMPACT fall through to the
+  value = kind - EFFECT_RANGE_CASTING_IMPACT;
+  // Unsigned, so kinds below EFFECT_RANGE_CASTING_IMPACT fall through to the
   // beams too.
-  if ((u32)value < ANIM_RANGE_BEAM - ANIM_RANGE_CASTING_IMPACT) {
+  if ((u32)value < EFFECT_RANGE_BEAM - EFFECT_RANGE_CASTING_IMPACT) {
     BattleEffect_RunCastingImpact(args, value);
-  } else if (kind >= ANIM_RANGE_RING_AND_SPARK) {
+  } else if (kind >= EFFECT_RANGE_RING_AND_SPARK) {
     BattleEffect_RunRingAndSpark(args);
   } else {
     BattleEffect_RunBeam(args);

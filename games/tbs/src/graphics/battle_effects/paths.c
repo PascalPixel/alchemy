@@ -1,5 +1,5 @@
 /// @file
-/// The paths two summon animations move along, each step a change of x and y
+/// The paths two summon effects move along, each step a change of x and y
 /// in pixels: Atalanta's staged particles and Dragon Cloud's streams. Both are
 /// resources (ResourceId_StagedParticlePath, ResourceId_DualStreamPath).
 

@@ -362,7 +362,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
   case COMMAND_ITEM: {
     struct ItemDefinition *item;
 
-    // A slot of -1: an earlier command this round used the item up
+    // A slot of -1: an earlier command this turn used the item up
     // (BattleStaging_RunItem).
     if (request->parameter < 0) {
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -615,7 +615,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     // none. Each is played by id range (EFFECT_BY_ID_RANGE).
     if (actor->classId == CLASS_NONE) {
       plan->battleEffect =
-          BattleSprite_GetAttackAnim(actor->id) | EFFECT_BY_ID_RANGE;
+          BattleSprite_GetAttackEffect(actor->id) | EFFECT_BY_ID_RANGE;
     } else {
       plan->battleEffect = 0;
       switch (actor->id) {

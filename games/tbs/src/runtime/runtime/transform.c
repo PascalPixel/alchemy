@@ -348,7 +348,7 @@ void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
 }
 
 /// Sets gProjection's focal length and depth range directly. Called by the
-/// battle cameras and animations.
+/// battle cameras and battle effects.
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   struct Projection *projection = &gProjection;
 

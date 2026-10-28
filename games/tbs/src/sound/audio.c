@@ -147,7 +147,7 @@ void m4aSoundInit(void) {
 void m4aSoundMain(void) { SoundMain(); }
 
 /// Starts the song on the music player its song-table entry names. Called by
-/// Sound_Play for music and fanfares; it starts sound effects (songs
+/// Sound_Play for music and jingles; it starts sound effects (songs
 /// from 100) itself, so that those naming player 7 can take a free player
 /// from 7 down to 4.
 void m4aSongNumStart(u16 songId) {

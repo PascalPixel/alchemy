@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Audio_GetBackgroundCueFar
+	.global Sound_GetCurrentBgmFar
 	.thumb_func
-Audio_GetBackgroundCueFar:
-	overlay_veneer Audio_GetBackgroundCue
+Sound_GetCurrentBgmFar:
+	overlay_veneer Sound_GetCurrentBgm
 	.global Sound_WaitForBgmRestoreFar
 	.thumb_func
 Sound_WaitForBgmRestoreFar:

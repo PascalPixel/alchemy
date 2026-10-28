@@ -58,7 +58,7 @@
 /// sends down a beam of light; then a pillar of lightning strikes a formation,
 /// violet bolts follow, and the formation is pushed back in smoke.
 ///
-/// Abilities: Thor (SUMMON_ANIM_THOR).
+/// Abilities: Thor (SUMMON_EFFECT_THOR).
 ///
 /// The effect plays in two parts on the effect canvas. In the dusk part
 /// (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
@@ -650,7 +650,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
-    Sprite_DestroyFar(work->animations[i]);
+    Sprite_DestroyFar(work->sprites[i]);
   }
   BattleEffect_EndCanvasLayer();
 }

@@ -31,7 +31,7 @@ void Func_020000c4(void);
 void ObjectMotion_SetVariantCallback(s32 id, s32 variant);
 void Func_020048d4(s32 id, s32 emote);
 void Func_020048e4(s32 a, s32 b);
-void Sound_WaitForFanfare(void);
+void Sound_WaitForJingle(void);
 void Func_02004774(s32 x, s32 z, s32 a, s32 b);
 
 static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
@@ -114,7 +114,7 @@ void Func_020003b8(s32 unused, s32 id) {
     FieldEvent_WaitFrames(10);
     object->update = 0;
     Func_020049c4(80);
-    Sound_WaitForFanfare();
+    Sound_WaitForJingle();
     FieldEvent_WaitFrames(10);
     Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
     Func_020048f4();

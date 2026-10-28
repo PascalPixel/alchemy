@@ -37,32 +37,33 @@ and its strength, the variant: basic, stronger or strongest. The effect
 chooses only the picture; how much damage the targets take is the ability's
 own business ([Battles](../battle/README.md#the-ability-kind)).
 
-An ordinary effect is looked up in a table of handlers. Each handler is
-named for the first ability whose row selects it, under the English release's
-name, so searching the code for a move's name finds its effect; a name
-already taken passes to the next ability (`BattleEffect_RunNova` plays Nova
-because the first Blast took `BattleEffect_RunBlast`). A family drawn by one
-routine, a runner, has small handlers that only tell the runner which effect of the family
-to draw: `BattleEffect_RunCure` calls
+An ordinary effect is looked up in a table of handlers. Each handler is named
+for the first ability whose row selects it, under the English release's name, so
+searching the code for a move's name finds its effect; a name already taken
+passes to the next ability (`BattleEffect_RunNova` plays Nova because the first
+Blast took `BattleEffect_RunBlast`). A family drawn by one routine, a runner,
+has small handlers that only tell the runner which effect of the family to draw:
+`BattleEffect_RunCure` calls
 `BattleEffect_RunHealingMotes(args, HEALING_MODE_CURE)`.
 
-The rows are `gAbilityBattleEffects` ([`../battle/ability_staging.c`](../battle/ability_staging.c)),
-the handler table `gBattleEffect_Handlers` (`battle_effect_table.c`), and the
-handler is passed a `struct BattleEffectParams`.
+The rows are `gAbilityBattleEffects`
+([`../battle/ability_staging.c`](../battle/ability_staging.c)), the handler
+table `gBattleEffect_Handlers` (`battle_effect_table.c`), and the handler is
+passed a `struct BattleEffectParams`.
 
 ### The effect word
 
 An ability's row is one number holding the effect, its variant and a few
 switches: whether it is one of the numbered effects or a summon's, whether it
-also shows on downed targets, and whether the camera takes the other side's
-view or turns right round (Venus, Mercury, Mars and Jupiter do the first;
-twenty rows, among them the blessings, the second). Building the action adjusts
-it: a double or triple blow raises the variant, a revival adds the switch for
-downed targets, and Annihilation's instant death landing on its first target
-sets the variant to 1. A critical hit adds `EFFECT_ID_CRITICAL_OFFSET` to a plain attack's
-effect, which turns it into the ring and spark effect.
+also shows on downed targets, and whether the camera takes the other side's view
+or turns right round (Venus, Mercury, Mars and Jupiter do the first; twenty
+rows, among them the blessings, the second). Building the action adjusts it: a
+double or triple blow raises the variant, a revival adds the switch for downed
+targets, and Annihilation's instant death landing on its first target sets the
+variant to 1. A critical hit adds `EFFECT_ID_CRITICAL_OFFSET` to a plain
+attack's effect, which turns it into the ring and spark effect.
 
-The bits are named by the `ANIM_` macros in `../battle/battle_internal.h`,
+The bits are named by the `EFFECT_` macros in `include/battle_command.h`,
 and the map is written out on `BattleActionRun.battleEffect`
 (`include/battle_type.h`).
 
@@ -194,12 +195,13 @@ them, and clears the canvas after every frame rather than leaving trails.
 Since a pixel is only a level, one picture can be drawn in another ramp of
 colours, as the rushing strikes do.
 
-The pictures are PNGs in [`graphics/battle_effects`](../graphics/battle_effects),
-asked for by their resource ids (`ResourceId_RockWallSheet`) and unpacked into
-the work block's sheet; each effect reads its pictures at its own offsets
-there. The rest of the work block holds a sideways offset for each of the 160
-screen lines, which some effects hand to the hardware to make the canvas
-sway or ripple (`BattleEffect_ArmBg2AffineHBlankDma`).
+The pictures are PNGs in
+[`graphics/battle_effects`](../graphics/battle_effects), asked for by their
+resource ids (`ResourceId_RockWallSheet`) and unpacked into the work block's
+sheet; each effect reads its pictures at its own offsets there. The rest of the
+work block holds a sideways offset for each of the 160 screen lines, which some
+effects hand to the hardware to make the canvas sway or ripple
+(`BattleEffect_ArmBg2AffineHBlankDma`).
 
 ## Effect families
 
@@ -212,8 +214,8 @@ Mother Gaia, Grand Gaia, Rockfall, Rockslide and Avalanche all play one
 effect, which stretches the canvas 1.25, 1.5 or 2 times across by
 strength and draws larger rocks at the higher ones ([`gaia.c`](parts/gaia.c)).
 
-Larger families have a runner that draws every effect of the family from a row of settings,
-chosen by its handler:
+Larger families have a runner that draws every effect of the family from a row
+of settings, chosen by its handler:
 
 | Runner | What it draws |
 | --- | --- |
@@ -245,8 +247,9 @@ that plays an effect; the effects of five families honour it. The
 opening leaves the canvas open and clear, and the attack draws on the same
 canvas.
 
-The opening is `BattleEffect_RunDjinniEntrance` ([`projectiles.c`](parts/projectiles.c)),
-asked for by `BattleEffectParams.prelude`.
+The opening is `BattleEffect_RunDjinniEntrance`
+([`projectiles.c`](parts/projectiles.c)), asked for by
+`BattleEffectParams.prelude`.
 
 ### Casting impacts
 
@@ -339,9 +342,9 @@ passes its target hits once, starting a flash, throwing sparks, shaking the
 camera and making the target reel. Heat Wave, Sleet and a Gryphon's Wing
 Flutter are volleys.
 
-The runner is `BattleEffect_RunProjectileVolley` ([`projectiles.c`](parts/projectiles.c)),
-its modes `enum ProjectileVolleyMode` and their rows
-`gProjectileVolley_Modes`.
+The runner is `BattleEffect_RunProjectileVolley`
+([`projectiles.c`](parts/projectiles.c)), its modes `enum ProjectileVolleyMode`
+and their rows `gProjectileVolley_Modes`.
 
 ### Rushing strikes
 
@@ -374,7 +377,8 @@ spirals motes while ice columns spring up ([`frost.c`](parts/frost.c)), and
 Blast and Smoke Bomb burst a fountain of motes and smoke
 ([`eruption.c`](parts/eruption.c)).
 
-The reductions are `BattleEffect_RunStatReduction` ([`stat_change.c`](parts/stat_change.c)).
+The reductions are `BattleEffect_RunStatReduction`
+([`stat_change.c`](parts/stat_change.c)).
 
 ### Healing motes
 
@@ -492,9 +496,9 @@ blitter builder also serves the battle's star field and the Lucky Wheels.
 ## Words used here
 
 - **effect kind**: the number that picks which effect plays.
-  `enum BattleEffectId` names the handler table's kinds, `enum SummonEffectId` the
-  summons' effects and `enum CastingImpact` the casting impacts. It is not the
-  ability kind.
+  `enum BattleEffectId` names the handler table's kinds, `enum SummonEffectId`
+  the summons' effects and `enum CastingImpact` the casting impacts. It is not
+  the ability kind.
 - **runner** and **mode**: a runner draws a family of effects, and the
   mode it is passed picks the effect.
 - **variant**: the ability's strength, basic, stronger or strongest. A
@@ -508,8 +512,8 @@ blitter builder also serves the battle's star field and the Lucky Wheels.
 - **prelude**: the Djinni's entrance that some effects play first.
 
 The same locals have the same names in every handler: `args` for the
-`struct BattleEffectParams` it is passed, `slots` and `cursor` for the walk to the
-three blocks (`EFFECT_GET_SLOTS`), `work`, `canvas`, `sheet`, `draw` for its
+`struct BattleEffectParams` it is passed, `slots` and `cursor` for the walk to
+the three blocks (`EFFECT_GET_SLOTS`), `work`, `canvas`, `sheet`, `draw` for its
 blitters, `frame` for the frame counter and `cell` for a picture's offset.
 
 ## Evidence
@@ -525,23 +529,23 @@ the battle test menu.
 Three handlers are unused, and are named from what they draw:
 `BattleEffect_RunUnusedOrbitingSpirals` (`planet_diver.c`),
 `BattleEffect_RunUnusedTriangleStrike` (`bind.c`) and
-`BattleEffect_RunUnusedSevereBlowLeap` (`thrash.c`). The handler table is reached
-only with a kind from a `gAbilityBattleEffects` row, through the action's
-effect: building the action changes only the variant and the staging bits,
-the auto battle passes kind 0, and a critical hit's offset applies only to
+`BattleEffect_RunUnusedSevereBlowLeap` (`thrash.c`). The handler table is
+reached only with a kind from a `gAbilityBattleEffects` row, through the
+action's effect: building the action changes only the variant and the staging
+bits, the auto battle passes kind 0, and a critical hit's offset applies only to
 plain attacks, which are dispatched by id range. No row names any of the three
 kinds. [The Lost Age](../../glossary.md#the-two-games) keeps the same three
 handlers at the same kinds, and its row for Severe Blow names
 `BATTLE_EFFECT_UNUSED_SEVERE_BLOW_LEAP`: there Severe Blow is the leap, where
-here it plays a casting impact. The three effects in `orbiting.c` are
-unused too: no code calls them and nothing in the ROM holds their addresses.
+here it plays a casting impact. The three effects in `orbiting.c` are unused
+too: no code calls them and nothing in the ROM holds their addresses.
 
-A plain attack's kind is 1 or 4 for the party (`BattleActionRun_Build`) and 1 to 5
-for an enemy (`battle_sprites.c`), all by id range, so the beams play
-them. No ability uses the critical-hit effects
-(`ABILITY_EFFECT_CRITICAL_1_IN_64` to `ABILITY_EFFECT_CRITICAL_1_IN_4`), so
-only plain attacks score critical hits, and `EFFECT_ID_CRITICAL_OFFSET` reaches
-kinds 201 to 205: the ring and spark effect, which plays the same for each.
+A plain attack's kind is 1 or 4 for the party (`BattleActionRun_Build`) and 1 to
+5 for an enemy (`battle_sprites.c`), all by id range, so the beams play them. No
+ability uses the critical-hit effects (`ABILITY_EFFECT_CRITICAL_1_IN_64` to
+`ABILITY_EFFECT_CRITICAL_1_IN_4`), so only plain attacks score critical hits,
+and `EFFECT_ID_CRITICAL_OFFSET` reaches kinds 201 to 205: the ring and spark
+effect, which plays the same for each.
 
 The work block holds no unknown fields. `unused7788` and `padding` (before the
 word-aligned `bg2x`) are never read or written in either game; `imageTail` is

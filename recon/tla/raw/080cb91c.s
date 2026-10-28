@@ -1341,7 +1341,7 @@ SceneSequence_Run:
 .L_080cc3f0:
 	bl EventRuntime_ResolveAllPendingActions
 	bl UiTimedNotice_CloseIfActiveFar
-	bl Audio_GetBackgroundCueFar
+	bl Sound_GetCurrentBgmFar
 	movs r2, #128
 	ldr r1, [sp, #8]
 	lsls r2, r2, #2

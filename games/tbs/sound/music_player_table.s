@@ -9,7 +9,7 @@
 	.balign 4
 	.global gMPlayTable
 gMPlayTable:
-	music_player gMPlayInfo_Fanfare, gMPlayTrack_Fanfare, 4
+	music_player gMPlayInfo_Jingle, gMPlayTrack_Jingle, 4
 	music_player gMPlayInfo_BGM, gMPlayTrack_BGM, 10
 	music_player gMPlayInfo_MenuSE, gMPlayTrack_MenuSE, 2
 	music_player gMPlayInfo_ActionSE, gMPlayTrack_ActionSE, 2

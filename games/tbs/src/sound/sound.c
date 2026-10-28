@@ -28,10 +28,10 @@ enum {
   /// MUS_KALAY, MUS_ELEMENTAL_STARS, MUS_DUNGEON, MUS_CONFRONTATION,
   /// MUS_UNUSED, MUS_TOLBI_BOUND_SHIP, MUS_WORLD_MAP, MUS_VENUS_LIGHTHOUSE and
   /// MUS_FILE_SCREEN use 9 or more: their tracks 8 and 9 keep their volume and
-  /// pitch through the ramps and under a fanfare.
+  /// pitch through the ramps and under a jingle.
   TRACKS_ALL = 0xff,
   MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerLastSound' entries, one a player.
-  /// VBlanks after a fanfare starts before the music waits for it to end.
+  /// VBlanks after a jingle starts before the music waits for it to end.
   BGM_RESTORE_DELAY_VBLANKS = 10,
   /// Sound_WaitForBgmRestore gives up after this many frames, about
   /// five seconds.
@@ -39,7 +39,7 @@ enum {
 };
 
 /// Plays a sound number, the game's one way of playing a sound: a fade control,
-/// a sound effect, a fanfare or music, as the README's "What a sound number
+/// a sound effect, a jingle or music, as the README's "What a sound number
 /// means" describes. The low 12 bits are the sound, SOUND_FLAG_FADE_IN the only
 /// flag read. Reached through the sound far-call table as Sound_PlayFar
 /// from the whole game; it keeps the music's ramps and sound state
@@ -85,10 +85,10 @@ void Sound_Play(s32 id) {
     }
     MPlayStart(gMPlayTable[player].info, gSongTable[id].header);
     gMusicPlayerLastSound[player] = id;
-  } else if (id >= SOUND_FANFARE_FIRST) {
-    // A fanfare, on its own player (MUSIC_PLAYER_FANFARE): the music's tracks 0
+  } else if (id >= SOUND_JINGLE_FIRST) {
+    // A jingle, on its own player (MUSIC_PLAYER_JINGLE): the music's tracks 0
     // to 7 go silent at once but keep playing, and fade back in once the
-    // fanfare has ended (Sound_UpdateBgmRamps).
+    // jingle has ended (Sound_UpdateBgmRamps).
     m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, 0);
     gBgmVolumeTarget = 0;
     gBgmVolume = 0;
@@ -120,21 +120,21 @@ void Sound_Play(s32 id) {
   }
 }
 
-/// Restores BGM after a fanfare and steps its volume and combined tempo/pitch
+/// Restores BGM after a jingle and steps its volume and combined tempo/pitch
 /// ramps once per VBlank, clamping each ramp when it crosses its target. After
-/// a fanfare starts it counts gBgmRestoreDelay down, waits until the fanfare's
+/// a jingle starts it counts gBgmRestoreDelay down, waits until the jingle's
 /// player has no track playing, and sets the music's target volume back to
-/// BGM_UNITY_SCALE, so the code that played the fanfare does nothing more.
+/// BGM_UNITY_SCALE, so the code that played the jingle does nothing more.
 /// Called by System_VBlankHandler through the sound far-call table; it also
 /// runs the PCM buffer's DMA restart count (m4aSoundVSync).
 void Sound_UpdateBgmRamps(void) {
   s32 delta;
 
-  // After a fanfare starts, count down to 1, then hold there until the
-  // fanfare's player has no track left and let the music fade back in.
+  // After a jingle starts, count down to 1, then hold there until the
+  // jingle's player has no track left and let the music fade back in.
   if (gBgmRestoreDelay != 0) {
     if (gBgmRestoreDelay == 1) {
-      if ((u8)gMPlayInfo_Fanfare.status == 0) {
+      if ((u8)gMPlayInfo_Jingle.status == 0) {
         gBgmRestoreDelay = 0;
         gBgmVolumeTarget = BGM_UNITY_SCALE;
       }
@@ -186,7 +186,7 @@ void Sound_UpdateBgmRamps(void) {
 /// fades MUSIC_PLAYER_ACTION_SE. Never returns. Reached only through the sound
 /// far-call table's veneer; nothing in ☀️ names it.
 void SoundTest_Run(void) {
-  // One row each for music, fanfares (from SOUND_FANFARE_FIRST) and sound
+  // One row each for music, jingles (from SOUND_JINGLE_FIRST) and sound
   // effects (from SOUND_SE_FIRST).
   s32 cues[3] = {0, 80, 100};
   s32 reverbCode;
@@ -319,11 +319,11 @@ void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
   gBgmVolumeStep = step;
 }
 
-/// Returns nonzero while a fanfare holds the music: from its start until its
+/// Returns nonzero while a jingle holds the music: from its start until its
 /// player falls silent and the music begins to fade back in. Polled by the
 /// Colosso scenes, the Djinni-joined messages (window/screens/joined.c),
 /// the message windows' pause skip (window/window/messages.c) and
-/// Sound_WaitForFanfare (shop/shop/run.c), which the inn, the
+/// Sound_WaitForJingle (shop/shop/run.c), which the inn, the
 /// sanctum, the Lemurian ship and Tolbi's spring use.
 s32 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
@@ -355,8 +355,8 @@ void Sound_UpdateCommandMask(u32 command) {
 /// overworld/overworld/parent_sequence.c).
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
-/// Waits a frame at a time for fanfare restoration, giving up after 300
-/// frames. Called only by Vale's sanctum, after the fanfare (MUS_INN) for
+/// Waits a frame at a time for jingle restoration, giving up after 300
+/// frames. Called only by Vale's sanctum, after the jingle (MUS_INN) for
 /// accepting the Great Healer's quest.
 void Sound_WaitForBgmRestore(void) {
   s32 framesWaited = 0;

@@ -479,7 +479,7 @@ void m4aMPlayLFOSpeedSet(struct SoundPlayer *player, u32 mask, u32 value);
 void ClearModM(struct SoundTrack *track);
 
 extern const struct PlayerSlot gSound_PlayerSlots[];
-extern const struct SongEntry gSound_SongTable[];
+extern const struct SongEntry gSongTable[];
 extern SoundCommand gSound_CommandTable[36];
 extern const SoundCommand gSound_ExtendedCommandTable[];
 

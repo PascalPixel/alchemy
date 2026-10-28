@@ -560,7 +560,7 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->timer == 60) {
         work->state = LUCKY_WHEELS_SHOWING_WIN;
-        Sound_PlayFar(MUS_FANFARE_LARGE);
+        Sound_PlayFar(MUS_JINGLE_LARGE);
         work->timer = 0;
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 16);

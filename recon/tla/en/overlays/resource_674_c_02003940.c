@@ -22,7 +22,7 @@ struct ObjectRuntime *Func_02003940(s32 *direction, s32 *number, s32 *kind) {
   for (n = 8; n <= 63; n++, slot++) {
     object = *slot;
     for (k = 0; k <= 5; k++) {
-      if (*((struct BattleAnimationState *)object->animation)->value28 !=
+      if (*((struct ObjectAnimationState *)object->animation)->value28 !=
           gData_02004070[k])
         continue;
       aheadX = (((s16 *)&leader->x)[1] + (gData_02004094[*direction] >> 16)) >>

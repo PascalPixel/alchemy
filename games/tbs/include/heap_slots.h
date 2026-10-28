@@ -29,7 +29,7 @@ extern void *gFieldEffectWork;
 // EWRAM buffers
 /// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is
 /// loaded they run on through gActorSpriteSlots and gDecodeBuffer. Battle
-/// animations reuse the memory as a particle array.
+/// effects reuse the memory as a particle array.
 extern struct Particle gMapGridCellBuffer[];
 /// 16 KB of EWRAM at 0x0201c000. The map's cells fill it while a map is
 /// loaded, and the world map's still picture keeps a copy of 8 KB of char block

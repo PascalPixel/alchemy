@@ -374,10 +374,10 @@ Func_02002a28:
 	.thumb_func
 Func_02002a30:
 	overlay_veneer Func_080c8848
-	.global Sound_WaitForFanfare
+	.global Sound_WaitForJingle
 	.thumb_func
-Sound_WaitForFanfare:
-	overlay_veneer Sound_WaitForFanfareFar
+Sound_WaitForJingle:
+	overlay_veneer Sound_WaitForJingleFar
 	.global Func_02002a40
 	.thumb_func
 Func_02002a40:

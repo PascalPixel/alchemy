@@ -297,8 +297,8 @@ order of their priority
 
 ### Sound
 
-Every sound the game plays, music, a fanfare or a sound effect, is asked for
-by a sound number: below 80 music, from 80 the fanfares, and from 100 the
+Every sound the game plays, music, a jingle or a sound effect, is asked for
+by a sound number: below 80 music, from 80 the jingles, and from 100 the
 sound effects ([Sound](src/sound/README.md#what-a-sound-number-means)). The
 sound driver calls each one's data a song.
 

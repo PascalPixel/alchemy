@@ -4464,7 +4464,7 @@ main	rom_main_15	games/tla/src/system/sound_driver_mode
 main	rom_main_15	games/tla/src/sound/noop_stub	.text
 main	rom_main_15	games/tla/src/sound/audio_test	.text
 main	rom_main_15	games/tla/src/sound/update_toggle_mask	.text
-main	rom_main_15	games/tla/src/sound/song_flag	.text
+main	rom_main_15	games/tla/src/sound/sound_flag	.text
 main	rom_main_15	games/tla/src/sound/pcm_rate	.text
 main	rom_main_15	games/tla/src/sound/driver/umul_high
 main	rom_main_15	games/tla/src/sound/driver/mixer_entry

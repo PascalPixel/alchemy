@@ -519,7 +519,7 @@ s32 Title_ShowIntro(s32 prompt) {
 /// Unused: palette entry retained in the far-call table.
 UNUSED void Title_NoOpPalette(void) {}
 
-/// Shows the Nintendo logo with its fanfare. With `mode` 0 it fades in and
+/// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
 /// holds two seconds; otherwise it waits a second, fades in, holds three
 /// seconds and fades out, faster once skipped. Called by Title_Run. Returns -1
 /// when A or Start skipped it.

@@ -18,7 +18,7 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 w, s32 h, s32 value);
 s32 Func_02000038(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct ObjectRuntime *object = Object_GetById(id);
-  s16 sprite = ((struct BattleAnimationState *)object->animation)->value28[0];
+  s16 sprite = ((struct ObjectAnimationState *)object->animation)->value28[0];
   s16 i;
   u16 kind;
   s32 w, h, x, z;

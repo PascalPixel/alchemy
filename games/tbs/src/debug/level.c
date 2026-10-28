@@ -157,7 +157,7 @@ static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
 /// B closes the window and recalculates the original four heroes. Talking to
 /// ACTOR_LEVEL_EDITOR: under `Raise everyone's level.` it shows the leader's
 /// name and level; Start or Select raises the whole party five levels with
-/// fanfare MUS_FANFARE_LARGE, A one level with MUS_FANFARE_SMALL.
+/// jingle MUS_JINGLE_LARGE, A one level with MUS_JINGLE_SMALL.
 static void IncreaseItemAndLevel_RunLevelEditor(void) {
   struct Unit *unit;
   struct Window *window;
@@ -186,13 +186,13 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
     // Start/Select add five levels; A adds one. Tests remain independent.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
-      Sound_Play(MUS_FANFARE_LARGE);
+      Sound_Play(MUS_JINGLE_LARGE);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(1);
-      Sound_Play(MUS_FANFARE_SMALL);
+      Sound_Play(MUS_JINGLE_SMALL);
       redraw = 1;
     }
 

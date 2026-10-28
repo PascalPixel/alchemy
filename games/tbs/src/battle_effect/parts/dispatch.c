@@ -25,7 +25,7 @@ void BattleEffect_CallDoNothing(s32 count) {
 // BattleEffect_RunFromTable; README.md describes all three and the heap
 // blocks they lend an effect. Both size the sheet slot for one set of the
 // ten mote cells (MOTE_SET_BYTES), where most effects decode
-// ParticleSpritesA; an animation's own pictures go in work->sheet. The shared
+// ParticleSpritesA; an effect's own pictures go in work->sheet. The shared
 // helpers after them manage the scanline window and the targets' sprites.
 
 /// Runs one of the large battle effects, the ones whose effect word
@@ -39,7 +39,7 @@ void BattleEffect_CallDoNothing(s32 count) {
 ///
 /// Each effect is named for the summon whose gAbilityBattleEffects entry
 /// selects its kind, as the handlers of gBattleEffect_Handlers are;
-/// SUMMON_ANIM_NONE, which no ability selects, runs Meteor's effect too.
+/// SUMMON_EFFECT_NONE, which no ability selects, runs Meteor's effect too.
 /// Takes heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_EFFECT and
 /// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the effect must
 /// have removed every task that reads them. Unlike
@@ -50,44 +50,44 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-  if (args->kind == SUMMON_ANIM_NONE) {
+  if (args->kind == SUMMON_EFFECT_NONE) {
     BattleEffect_RunMeteor(args);
   } else {
     switch (args->kind) {
-    case SUMMON_ANIM_RAMSES:
+    case SUMMON_EFFECT_RAMSES:
       BattleEffect_RunRamses(args);
       break;
-    case SUMMON_ANIM_NEREID:
+    case SUMMON_EFFECT_NEREID:
       BattleEffect_RunNereid(args);
       break;
-    case SUMMON_ANIM_KIRIN:
+    case SUMMON_EFFECT_KIRIN:
       BattleEffect_RunKirin(args);
       break;
-    case SUMMON_ANIM_ATALANTA:
+    case SUMMON_EFFECT_ATALANTA:
       BattleEffect_RunAtalanta(args);
       break;
-    case SUMMON_ANIM_CYBELE:
+    case SUMMON_EFFECT_CYBELE:
       BattleEffect_RunCybele(args);
       break;
-    case SUMMON_ANIM_NEPTUNE:
+    case SUMMON_EFFECT_NEPTUNE:
       BattleEffect_RunNeptune(args);
       break;
-    case SUMMON_ANIM_TIAMAT:
+    case SUMMON_EFFECT_TIAMAT:
       BattleEffect_RunTiamat(args);
       break;
-    case SUMMON_ANIM_PROCNE:
+    case SUMMON_EFFECT_PROCNE:
       BattleEffect_RunProcne(args);
       break;
-    case SUMMON_ANIM_JUDGMENT:
+    case SUMMON_EFFECT_JUDGMENT:
       BattleEffect_RunJudgment(args);
       break;
-    case SUMMON_ANIM_BOREAS:
+    case SUMMON_EFFECT_BOREAS:
       BattleEffect_RunBoreas(args);
       break;
-    case SUMMON_ANIM_METEOR:
+    case SUMMON_EFFECT_METEOR:
       BattleEffect_RunMeteor(args);
       break;
-    case SUMMON_ANIM_THOR:
+    case SUMMON_EFFECT_THOR:
       BattleEffect_RunThor(args);
       break;
     }

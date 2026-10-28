@@ -71,8 +71,8 @@ gSceneState:
 	.global gData_020023c4
 gData_020023c4:
 	.space 0x00000b5c
-	.global gSongFlags
-gSongFlags:
+	.global gSoundFlags
+gSoundFlags:
 	.space 0x000000e0
 	.global gSleepActive
 gSleepActive:
@@ -185,8 +185,8 @@ gMusicVolumeTarget:
 	.global gData_0200583c
 gData_0200583c:
 	.space 0x00000004
-	.global gAudio_CommandMask
-gAudio_CommandMask:
+	.global gSoundCommandMask
+gSoundCommandMask:
 	.space 0x00000010
 	.global gSound_Work
 gSound_Work:
@@ -212,8 +212,8 @@ gSound_Player5:
 	.global Sound_Player6
 Sound_Player6:
 	.space 0x00000040
-	.global gMusicPlayerFanfare
-gMusicPlayerFanfare:
+	.global gMusicPlayerJingle
+gMusicPlayerJingle:
 	.space 0x00000040
 	.global Sound_Player7
 Sound_Player7:

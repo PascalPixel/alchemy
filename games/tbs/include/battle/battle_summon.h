@@ -10,16 +10,16 @@
 #include "edition.h"
 #include "farcall.h"
 
-/// An enemy's battle sprite: its animation, size, attack animation,
+/// An enemy's battle sprite: its sprite id, size, attack effect,
 /// palette and defeat-sound kind.
 struct BattleSpriteDefinition {
   u16 animation; ///< the enemy's battle sprite
   /// The byte at 2.
-  /// bits: 7..5 attackHop | 4..1 attackAnim | 0 isSmall
+  /// bits: 7..5 attackHop | 4..1 attackEffect | 0 isSmall
   ///@{
-  u8 isSmall : 1;    ///< 1 for a small enemy, which takes one sprite slot
-  u8 attackAnim : 4; ///< the attack animation's kind; 0 reads as 1
-  u8 attackHop : 3;  ///< the attack-hop height
+  u8 isSmall : 1;      ///< 1 for a small enemy, which takes one sprite slot
+  u8 attackEffect : 4; ///< the attack effect's kind; 0 reads as 1
+  u8 attackHop : 3;    ///< the attack-hop height
   ///@}
   /// The byte at 3.
   /// bits: 7..5 defeatSound | 4..1 palette | 0 heavyImpact
@@ -28,8 +28,8 @@ struct BattleSpriteDefinition {
   u8 palette : 4;     ///< the sprite's palette
   u8 defeatSound : 3; ///< the defeat-sound kind; above 4 reads as none
   ///@}
-  /// The height an animation is drawn at over the enemy, in pixels; 0 for its
-  /// size's default.
+  /// The height a battle effect is drawn at over the enemy, in pixels; 0 for
+  /// its size's default.
   u8 effectHeight;
   u8 reserved[3]; ///< 0 in every row
 };

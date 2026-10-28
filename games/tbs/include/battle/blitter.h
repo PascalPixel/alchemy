@@ -2,7 +2,7 @@
 #define ALCHEMY_BLITTER_H
 
 /// @file
-/// The battle effect argument and the rectangle-drawing routines animations
+/// The battle effect argument and the rectangle-drawing routines battle effects
 /// call.
 
 #include "edition.h"

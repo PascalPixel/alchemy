@@ -132,8 +132,8 @@ gMPlayInfo_SE5:
 	.global gMPlayInfo_SE6
 gMPlayInfo_SE6:
 	.space 0x00000040
-	.global gMPlayInfo_Fanfare
-gMPlayInfo_Fanfare:
+	.global gMPlayInfo_Jingle
+gMPlayInfo_Jingle:
 	.space 0x00000040
 	.global gMPlayInfo_SE7
 gMPlayInfo_SE7:
@@ -153,8 +153,8 @@ gMPlayMemAccArea:
 	.global gMPlayInfo_ActionSE
 gMPlayInfo_ActionSE:
 	.space 0x00000040
-	.global gMPlayTrack_Fanfare
-gMPlayTrack_Fanfare:
+	.global gMPlayTrack_Jingle
+gMPlayTrack_Jingle:
 	.space 0x00000140
 	.global gMPlayTrack_BGM
 gMPlayTrack_BGM:

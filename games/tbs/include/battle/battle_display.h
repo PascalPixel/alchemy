@@ -48,7 +48,7 @@ struct BattleBackgroundWork {
   s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
   s32 mode;      ///< enum BattleBackgroundMode
   /// BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode;
-  /// the animations' canvas layers set it.
+  /// the battle effects' canvas layers set it.
   s32 secondMode;
   s32 busy; ///< while set, BattleCamera_SetRange leaves BG1's scroll
   /// 0 lets the camera update set the background's range each frame; 1 for
@@ -57,15 +57,15 @@ struct BattleBackgroundWork {
   s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
 };
 
-/// A presentation step's stack work: the animation command it builds and runs,
-/// and the targets' sprite colour modes saved beside it. The
+/// A presentation step's stack work: the battle effect command it builds and
+/// runs, and the targets' sprite colour modes saved beside it. The
 /// BattleStaging_Run and AutoBattle_Run functions of staging.c and
 /// auto_battle.c, BattleTransition_Run and ElementGlow_Play keep one as a
 /// local.
 struct BattleStagingWork {
   struct BattleEffectParams effect;
   /// Each target's sprite animations' SpriteColorMode
-  /// (SpriteAnimation.colorMode), all but its last, saved before the animation;
+  /// (SpriteAnimation.colorMode), all but its last, saved before the effect;
   /// no code reads them back by name.
   u8 savedAnimationParameters[8][4];
 };
@@ -82,7 +82,7 @@ enum BattleBackgroundMode {
   /// Not loaded yet: the next load adds BattleBackground_ShowZoomedPage.
   BATTLE_BACKGROUND_NONE,
   /// The picture at a fixed size on BG1 (BATTLE_BG1CNT), its scroll following
-  /// the camera, BG2 left to an animation.
+  /// the camera, BG2 left to a battle effect.
   BATTLE_BACKGROUND_FIXED,
   /// The picture zoomed and panned on BG2, an affine layer; HBlank DMA sets
   /// each line's BG2CNT to the half of the picture it reads. The depth is drawn

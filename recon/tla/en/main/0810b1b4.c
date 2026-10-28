@@ -48,7 +48,7 @@ void Func_0808a520(struct Effect_080b2f4c *effect,
                    void (*callback)(struct Effect_080b2f4c *));
 void Func_0808a518(struct Effect_080b2f4c *effect, s32 value);
 void Func_08009248(s32 object, u32 frame_offset);
-void Sound_WaitForFanfare(void);
+void Sound_WaitForJingle(void);
 void Func_0808a530(struct Effect_080b2f4c *effect);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void Func_08009280(s32 object, s32 arg);
@@ -133,7 +133,7 @@ void Func_0810b1b4(s32 member) {
     effect++;
   } while (effectIndex <= 17);
 
-  Sound_WaitForFanfare();
+  Sound_WaitForJingle();
   {
     u8 activeMode = 2;
     u8 *entry = (u8 *)&shop->effects[0].state;

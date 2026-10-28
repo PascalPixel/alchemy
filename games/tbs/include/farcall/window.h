@@ -268,7 +268,7 @@ s32 DebugBrowser_IconsFar(void);
 /// Debug: steps through the character and sprite portrait maps, showing each
 /// entry's portrait and label. Returns 0.
 s32 DebugBrowser_PortraitsFar(void);
-/// Shows `The <element> Djinni <name> joined <member>.` while the join fanfare
+/// Shows `The <element> Djinni <name> joined <member>.` while the join jingle
 /// plays, until it ends or a button is pressed; djinn is the Djinni's number in
 /// its element.
 void Djinn_ShowJoinedMessageFar(s32 pc, s32 element, s32 djinn);
@@ -337,8 +337,8 @@ void Window_EraseBorderRectFar(s32 x, s32 y, u32 width, u32 height);
 /// outward and back over eight frames.
 void Link_DrawPageArrowsFar(s32 offset);
 /// Shows `<member> joined your party.` with the party member's portrait while
-/// the join fanfare plays, until it ends or a button is pressed.
+/// the join jingle plays, until it ends or a button is pressed.
 void Party_ShowJoinedMessageFar();
 /// Shows `<first> and <second> joined your party.` with both portraits while
-/// the join fanfare plays.
+/// the join jingle plays.
 void Party_ShowPairJoinedMessageFar(s32 first, s32 second);

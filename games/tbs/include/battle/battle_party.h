@@ -42,7 +42,8 @@ enum BattleSideMask {
 #define DJINN_RECOVERY_AFTER_BATTLE -1
 
 /// DjinnRecoveryEntry.turns of a standby Djinni a summon has just used, until
-/// the turn's end gives it its turn to recover (BattleUnit_ProcessActionEnd).
+/// the summoner's action ends and sets its count of turns to recover
+/// (BattleUnit_ProcessActionEnd).
 #define DJINN_RECOVERY_SUMMONED -2
 
 /// A Djinni on standby or recovering: its element and index, the unit it

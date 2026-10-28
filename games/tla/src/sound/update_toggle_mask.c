@@ -5,7 +5,7 @@ void Sound_UpdateCommandMask(u32 command) {
 
   command &= AUDIO_COMMAND_MASK;
   if (toggle != 0)
-    gAudio_CommandMask ^= command;
+    gSoundCommandMask ^= command;
   else
-    gAudio_CommandMask = command;
+    gSoundCommandMask = command;
 }

@@ -18,7 +18,7 @@ extern struct SoundWork gSound_Work;
 extern struct CgbNote gSound_CgbNotes[4];
 extern u8 gSound_WorkBytes[];
 extern const struct PlayerSlot gSound_PlayerSlots[];
-extern const struct SongEntry gSound_SongTable[];
+extern const struct SongEntry gSongTable[];
 extern u8 Sound_PlayerCount;
 
 void ply_memacc(struct SoundPlayer *player,
@@ -44,7 +44,7 @@ extern u8 Sound_MaxLines;
 
 void m4aSongNumStart(u16 id) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSound_SongTable;
+  const struct SongEntry *songs = gSongTable;
   const struct SongEntry *song = &songs[id];
 
   MPlayStart(slots[song->slot].player, song->header);

@@ -899,7 +899,7 @@ void LuckyDice_Run(void) {
           }
           Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
                                      0, 0);
-          Sound_PlayFar(MUS_FANFARE_LARGE);
+          Sound_PlayFar(MUS_JINGLE_LARGE);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -923,7 +923,7 @@ void LuckyDice_Run(void) {
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            Sound_PlayFar(MUS_FANFARE_SMALL);
+            Sound_PlayFar(MUS_JINGLE_SMALL);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -931,7 +931,7 @@ void LuckyDice_Run(void) {
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            Sound_PlayFar(MUS_FANFARE_MEDIUM);
+            Sound_PlayFar(MUS_JINGLE_MEDIUM);
           }
         }
       }

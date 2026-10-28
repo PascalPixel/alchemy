@@ -217,9 +217,9 @@ main	rom_tail_00	games/tbs/sound/songs/mus_inn	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_remove_curse	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_repel_evil	.rodata
 main	rom_tail_00	games/tbs/sound/songs/mus_level_up	.rodata
-main	rom_tail_00	games/tbs/sound/songs/mus_fanfare_small	.rodata
-main	rom_tail_00	games/tbs/sound/songs/mus_fanfare_medium	.rodata
-main	rom_tail_00	games/tbs/sound/songs/mus_fanfare_large	.rodata
+main	rom_tail_00	games/tbs/sound/songs/mus_jingle_small	.rodata
+main	rom_tail_00	games/tbs/sound/songs/mus_jingle_medium	.rodata
+main	rom_tail_00	games/tbs/sound/songs/mus_jingle_large	.rodata
 main	rom_tail_00	games/tbs/sound/songs/bgm_095	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_bell	.rodata
 main	rom_tail_00	games/tbs/sound/songs/se_shop_purchase	.rodata

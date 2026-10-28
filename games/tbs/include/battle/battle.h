@@ -61,7 +61,7 @@ struct BattleSource;
 struct TransitionActorList;
 struct MindReadWork;
 
-/// One of the star field's three rings, moving outward on the animation canvas.
+/// One of the star field's three rings, moving outward on the effect canvas.
 struct Ring {
   s32 x;         ///< 1/1024 canvas pixels
   s32 y;         ///< 1/1024 canvas pixels
@@ -132,7 +132,7 @@ extern s8 gBattleHighlight_BlendRamp[];
 /// rows.
 extern u16 gEncounterZones[];
 #ifndef OWN_gMindReadWork
-/// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its animation
+/// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its effect
 /// runs.
 extern struct MindReadWork *gMindReadWork;
 #endif

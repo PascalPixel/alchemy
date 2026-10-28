@@ -23,7 +23,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 s32 Func_020040ec(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct ObjectRuntime *object = Object_GetById(id);
-  u16 kind = *((struct BattleAnimationState *)object->animation)->value28;
+  u16 kind = *((struct ObjectAnimationState *)object->animation)->value28;
   u16 i = 0;
   s8 *box;
   s32 width, height, x, z;

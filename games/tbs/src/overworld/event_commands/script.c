@@ -468,7 +468,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
 /// Field_UseItem, Field_UsePsynergy and the cleared game's menu.
 s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
-/// Teaches unit the Psynergy ability and says so with its fanfare, waiting for
+/// Teaches unit the Psynergy ability and says so with its jingle, waiting for
 /// the player to read it. The message is `<unit> learned <ability>.` Fuchin
 /// Temple's event calls it.
 void Party_LearnAbility(s32 unit, s32 ability) {

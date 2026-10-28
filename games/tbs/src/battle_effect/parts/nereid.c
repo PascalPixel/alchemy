@@ -21,7 +21,7 @@
 /// A formation of twelve sprites sweeps in among embers and columns of fire,
 /// and explodes.
 ///
-/// Abilities: Nereid (SUMMON_ANIM_NEREID).
+/// Abilities: Nereid (SUMMON_EFFECT_NEREID).
 ///
 /// Pressing A or B during frames 33 to 97 skips to frame 98. A formation of
 /// twelve sprites sweeps in from the right; embers burst up on frame 28 and
@@ -270,7 +270,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
-      Sprite_DestroyFar(work->animations[k]);
+      Sprite_DestroyFar(work->sprites[k]);
   }
   BattleEffect_EndCanvasLayer();
 }

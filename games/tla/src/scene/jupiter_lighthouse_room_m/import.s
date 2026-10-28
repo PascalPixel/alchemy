@@ -448,10 +448,10 @@ Func_020049ac:
 	.thumb_func
 Func_020049b4:
 	overlay_veneer Func_080c8848
-	.global Sound_WaitForFanfare
+	.global Sound_WaitForJingle
 	.thumb_func
-Sound_WaitForFanfare:
-	overlay_veneer Sound_WaitForFanfareFar
+Sound_WaitForJingle:
+	overlay_veneer Sound_WaitForJingleFar
 	.global Func_020049c4
 	.thumb_func
 Func_020049c4:

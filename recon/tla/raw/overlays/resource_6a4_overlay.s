@@ -148,7 +148,7 @@ Func_02000054:
 	bl Func_02002b68
 	movs r0, #10
 	bl FieldEvent_WaitFrames
-	bl Sound_WaitForFanfare
+	bl Sound_WaitForJingle
 	mov r3, r10
 	movs r2, #4
 	adds r3, #85

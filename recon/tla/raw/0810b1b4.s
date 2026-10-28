@@ -122,7 +122,7 @@ Func_0810b1b4:
 	adds r5, #72
 	cmp r7, #17
 	ble .L_0810b25e
-	bl Sound_WaitForFanfare
+	bl Sound_WaitForJingle
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #76

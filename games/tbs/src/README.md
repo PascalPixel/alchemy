@@ -29,8 +29,8 @@ holds the [maps](../glossary.md#map) as data.
 
 [Battles](battle/README.md) runs a fight: action order, the enemies' choices,
 what each ability does to its targets and the spoils.
-[Battle effects](battle_effect/README.md) draws what each ability shows on screen,
-one function for each battle effect.
+[Battle effects](battle_effect/README.md) draws what each ability shows on
+screen, one function for each battle effect.
 
 [Windows](window/README.md) draws the bordered boxes text appears in, decodes
 the compressed messages and types them out, and holds the screens built from
@@ -160,7 +160,7 @@ The shared headers hold what the whole game uses, and `include/module` mirrors
 this folder with one header for each module, each compiled C file.
 
 [`games/tbs/include`](../include) holds what the whole game shares: types and
-structures, the flags in `flags.h`, the music, fanfares and sound effects
+structures, the flags in `flags.h`, the music, jingles and sound effects
 in `sounds.h`, and the calls events are written in, in `event.h`. The
 `Makefile` puts `include` and its folders `battle`, `field`, `game`,
 `graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
@@ -176,7 +176,7 @@ keeps its private header beside it.
 | Header | What it holds |
 | --- | --- |
 | `include/flags.h` | the [game flags](../glossary.md#game-flag) |
-| `include/sounds.h` | the music, fanfares and sound effects |
+| `include/sounds.h` | the music, jingles and sound effects |
 | `include/event.h` | the calls events are written in |
 | `include/module/<path>.h` | what the C file at `<path>.c` defines |
 | `include/farcall/` | each bank's `Far` names |
@@ -233,11 +233,11 @@ a table from its `.tsv`, or a map, under the name the code uses.
 is the first C to run; it ends by calling `ParentSequence_Run`, which is short
 enough to read whole. [Runtime](runtime/README.md) follows the same path.
 
-To find the code behind something in the game, search for its English name.
-Each battle effect's comment names the abilities that play it, so searching
-`battle_effect/` for Quake finds [battle_effect/parts/quake.c](battle_effect/parts/quake.c). Each
-place's code is the scene named for it. The game's text is in
-[`games/tbs/text`](../text), a PO catalog for each language, where each message
-carries its linker name: "(No saved data)" is `MsgSaveNoData`, which leads to
-the save file list in
+To find the code behind something in the game, search for its English name. Each
+battle effect's comment names the abilities that play it, so searching
+`battle_effect/` for Quake finds
+[battle_effect/parts/quake.c](battle_effect/parts/quake.c). Each place's code is
+the scene named for it. The game's text is in [`games/tbs/text`](../text), a PO
+catalog for each language, where each message carries its linker name: "(No
+saved data)" is `MsgSaveNoData`, which leads to the save file list in
 [window/screens/save.c](window/screens/save.c).

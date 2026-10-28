@@ -63,10 +63,10 @@ Func_08108068:
 	.thumb_func
 Func_08108070:
 	overlay_veneer Func_0810b79c
-	.global Sound_WaitForFanfareFar
+	.global Sound_WaitForJingleFar
 	.thumb_func
-Sound_WaitForFanfareFar:
-	overlay_veneer Sound_WaitForFanfare
+Sound_WaitForJingleFar:
+	overlay_veneer Sound_WaitForJingle
 	.global Inn_PlaySleepFar
 	.thumb_func
 Inn_PlaySleepFar:

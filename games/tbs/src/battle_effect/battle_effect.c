@@ -29,9 +29,9 @@
 /// their rows' order, groups follow their effects' values, `none` groups
 /// come last, and the line reads as its lines joined by single spaces. The
 /// effect is an enumerator whose prefix says how it is reached:
-/// BATTLE_EFFECT_ a row of the handler table, SUMMON_ANIM_ a row with
+/// BATTLE_EFFECT_ a row of the handler table, SUMMON_EFFECT_ a row with
 /// EFFECT_SUMMON, CASTING_IMPACT_ a row with EFFECT_BY_ID_RANGE and a kind from
-/// ANIM_RANGE_CASTING_IMPACT on (the enumerator being the kind less that),
+/// EFFECT_RANGE_CASTING_IMPACT on (the enumerator being the kind less that),
 /// FIELD_PSYNERGY_ the fieldPsynergy field in abilities.c. Anything else that
 /// reaches a handler (an item, another effect handing over) is a sentence
 /// after it; a function no row reaches, such as a runner, has no reach line and

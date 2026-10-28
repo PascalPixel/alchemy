@@ -89,9 +89,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
   // Set up the shared command UI before the optional link handshake: VRAM
   // for the chosen command's 32x32 icon (1 KB) and the party member's portrait,
-  // the lists' page numbers (tile 0x300), page arrows (LIST_PAGE_ARROW_VRAM)
-  // and range icons (RANGE_ICON_FIRST_TILE), and no Djinni chosen yet
-  // (NO_DJINNI_CHOSEN).
+  // the lists' page numbers (LIST_PAGE_DIGITS_TILE), page arrows
+  // (LIST_PAGE_ARROW_VRAM) and range icons (RANGE_ICON_FIRST_TILE), and no
+  // Djinni chosen yet (BATTLE_MENU_NO_DJINNI).
   target = 256;
   commandKind = 0;
   parameter = 0;
@@ -100,12 +100,12 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
-      (u16 *)(BG_CHAR_BLOCK(0) + 0x300 * TILE_SIZE_4BPP));
+      (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
   battle = gBattleWork;
   for (k = 0; k < 8; k++) {
-    state->chosenDjinn[k] = NO_DJINNI_CHOSEN;
+    state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
   }
   for (k = 0; k < 3; k++) {
     state->iconShown[k] = 0;
@@ -259,13 +259,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       iconSprite->oam.f.tile = Portrait_Load(unit->id, smallIconSlot);
       iconSprite->oam.f.x = BATTLE_CLASS_ICON_X;
       iconSprite->oam.f.y = 128;
-      iconSprite->oam.f.palette = 14;
+      iconSprite->oam.f.palette = PORTRAIT_PALETTE;
       state->iconShown[2] = 1;
 
     mark_visible:
       Window_MarkVisibleTextTiles();
       gBattleMenuWork->iconShown[0] = 0;
-      gBattleMenuWork->chosenDjinn[commandIndex] = NO_DJINNI_CHOSEN;
+      gBattleMenuWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
       /* FAKEMATCH(dead): twelve dead stores restore the native stack frame's
        * spill slots at sp+24 to sp+32; without them, 26 of 1727 instructions
        * differ in tbs-en. */
@@ -568,7 +568,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       summon_menu:
         state->icons[0].oam.f.x = 144;
-        gBattleMenuWork->chosenDjinn[commandIndex] = NO_DJINNI_CHOSEN;
+        gBattleMenuWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
         mode = BattleDjinnMenu_Run(unitId, 1);
         command->range = 0;
         if (mode == -1) {

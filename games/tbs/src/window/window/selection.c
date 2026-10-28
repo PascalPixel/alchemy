@@ -1126,7 +1126,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     break;
   case ICON_KIND_EQUIPMENT_ITEM:
     Icon_CopyResourceToSlot(
-        value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_ARTIFACT, result);
+        value, ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_ARTIFACT, result);
     break;
   case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, option, &result, &output, 1);

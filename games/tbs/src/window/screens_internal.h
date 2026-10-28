@@ -294,17 +294,22 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
+/// The first of the 20 digit tiles Graphics_ExpandVramTilesByColorTable
+/// builds for the battle lists' page numbers: the UI digits '0' to '9' with
+/// colour 1 drawn as 10, then the same digits in their own colours.
+#define LIST_PAGE_DIGITS_TILE 0x300
+
 /// Tiles the battle lists draw over their window's top edge: the page numbers
 /// and arrows, and the summon list's element icon. The digit and arrow tiles
 /// are built when the party's commands open (Battle_CollectPartyCommands).
 enum {
   /// Element icon: + enum Element, in BASIC_COLORS_PALETTE.
   LIST_TILE_SUMMON_ELEMENT = (BASIC_COLORS_PALETTE << 12) | 0x001,
-  /// Page n's number: + n gives digit n + 1, tile 0x301 on, the UI digits
-  /// with colour 1 drawn as 10 (Graphics_ExpandVramTilesByColorTable).
-  LIST_TILE_PAGE_NUMBER = WINDOW_TILE(0x301),
+  /// Page n's number: + n gives digit n + 1, from LIST_PAGE_DIGITS_TILE + 1,
+  /// the UI digits with colour 1 drawn as 10.
+  LIST_TILE_PAGE_NUMBER = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 1),
   /// The current page's number, the same digits in their own colours.
-  LIST_TILE_PAGE_NUMBER_LIT = WINDOW_TILE(0x30b),
+  LIST_TILE_PAGE_NUMBER_LIT = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 10 + 1),
   /// Left arrow, tile 0x334, which Link_DrawPageArrows slides.
   LIST_TILE_PAGES_LEFT = WINDOW_TILE(0x334),
   LIST_TILE_PAGES_RIGHT = WINDOW_TILE(0x335) ///< Right arrow, tile 0x335
@@ -345,12 +350,9 @@ enum BattleTargetHint {
 
 #define BATTLE_OK 0x80 ///< AbilityDefinition.flags: usable in battle
 
-/// What Save_ScanFileSummaries adds to its count of files when every file has
-/// its send flag set.
-#define SAVE_SCAN_ALL_SENT 100
-
-/// BattleMenuWork.chosenDjinn of a command that has chosen no Djinni.
-#define NO_DJINNI_CHOSEN 0x80000000
+/// What Save_ScanFileSummaries adds to its count of files when every file is
+/// cleared (its sendFlag set by saving at the game's end).
+#define SAVE_SCAN_ALL_CLEARED 100
 
 /// One icon of the command row (struct BattleCommandRowWork): its sprite, where
 /// it stands and the command it stands for. pictures.c loads it, command_row.c
@@ -396,9 +398,8 @@ struct BattleCommandRowWork {
 // cursor is of that element, on standby and ready to summon (windata.s).
 /// The arrow tile BattleDjinnMenu_Run copies to the two BG tiles from
 /// DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
-/// blank), the second stays. The
-/// Djinn preview draws one of them, flipped, between the old and new class:
-/// the blinking one when the class changes.
+/// blank), the second stays. The Djinn preview draws one of them, flipped,
+/// between the old and new class: the blinking one when the class changes.
 extern const u8 gDjinnMenu_BlinkTile[32];
 /// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
 /// the one after it stays.

@@ -569,9 +569,9 @@ s32 FileList_SelectAction(void) {
   }
   if (fileState == 3) {
     group = 1;
-  } else if (fileState == SAVE_SCAN_ALL_SENT + 3) {
+  } else if (fileState == SAVE_SCAN_ALL_CLEARED + 3) {
     group = 2;
-  } else if (fileState > SAVE_SCAN_ALL_SENT) {
+  } else if (fileState > SAVE_SCAN_ALL_CLEARED) {
     group = 3;
   } else {
     initial = 1;

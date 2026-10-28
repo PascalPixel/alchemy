@@ -326,20 +326,17 @@ enum IconKind {
 // The layers ItemIcon_Compose draws over an item's icon. Callers combine them:
 // the count above one, equipped and broken in Resource_LoadByMode and
 // ItemIcon_LoadIntoSlot; those and the artifact mark for
-// Resource_LoadByModeIntoSlot's ICON_KIND_ITEM, and all but the broken mark for
-// its ICON_KIND_EQUIPMENT_ITEM.
+// Resource_LoadByModeIntoSlot's ICON_KIND_ITEM, and all but the equipped mark
+// for its ICON_KIND_EQUIPMENT_ITEM.
 #define ICON_BASE 1            ///< the base under the icon
 #define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
 #define ICON_COUNT 4           ///< the count, always
-// XXX: likely ICON_EQUIPPED and ICON_BROKEN are swapped, because the first
-// draws mark 1 for INVENTORY_BROKEN and the second mark 0 for
-// INVENTORY_EQUIPPED, the bits the shops equip and repair by, and the
-// equipment view (ICON_KIND_EQUIPMENT_ITEM) leaves out the second; a render of
-// an equipped item's icon would settle it.
-#define ICON_EQUIPPED 8 ///< mark 1, on an item with INVENTORY_BROKEN
-#define ICON_BROKEN 16  ///< mark 0, on an item with INVENTORY_EQUIPPED
-/// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
-/// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
+/// Mark 1, the cross, on an item with INVENTORY_BROKEN.
+#define ICON_BROKEN 8
+/// Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED.
+#define ICON_EQUIPPED 16
+/// Mark 2, Icon_MarkPhi, on a cursed item that cannot be unequipped
+/// (ITEM_CURSED and ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
 #define ICON_ARTIFACT 32
 
 /// The kinds of message argument (MessageArgument_Push), which the message

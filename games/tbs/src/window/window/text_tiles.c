@@ -739,8 +739,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
 /// pixel (offsetX, offsetY) of its interior: the HP label (WINDOW_TILE_HP_LABEL
 /// and WINDOW_TILE_HP_LABEL_END) for variant 0, the party status window's HP;
 /// the PP label (WINDOW_TILE_PP_LABEL and WINDOW_TILE_PP_LABEL_END) for
-/// variant 1, its PP. The number is padded
-/// to four places with spaces.
+/// variant 1, its PP. The number is padded to four places with spaces.
 void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
                                      s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[TEXT_NUMBER_BUFFER_SIZE];

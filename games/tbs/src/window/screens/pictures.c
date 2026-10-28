@@ -38,8 +38,7 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
   if (slot >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
-  // OUTPUT_SIZE_32X16 is the wide shape with size 2, 8
-  // tiles. Neither sprite is checked for NULL.
+  // The picture is 8 tiles. Neither sprite is checked for NULL.
   MenuTitle_Load(picture, slot);
   first = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x, y);
   first->sentinel = 253;
@@ -289,12 +288,12 @@ void Link_DrawPageArrows(s32 offset) {
       (u32 *)(gPageArrowTiles + 32), (u32 *)(offset + 32), phase);
 }
 
-/// Copies the UI's ten digit tiles ('0' to '9', tiles 0x30 to 0x39)
-/// twice into `dst`, each pixel mapped through
-/// gGraphics_ExpandNibbleTable: first with colour 1 drawn as colour 10, then
-/// unchanged. The battle menus build their page numbers this way at tile
-/// 0x300 (LIST_TILE_PAGE_NUMBER), as do the password pages of the title's
-/// Send (menu/file_screen.c) and the field Djinn menu (menu/menu/djinn.c).
+/// Copies the UI's ten digit tiles ('0' to '9', tiles 0x30 to 0x39) twice into
+/// `dst`, each pixel mapped through gGraphics_ExpandNibbleTable: first with
+/// colour 1 drawn as colour 10, then unchanged. The battle menus build their
+/// page numbers this way at LIST_PAGE_DIGITS_TILE (LIST_TILE_PAGE_NUMBER), as
+/// do the password pages of the title's Send (menu/file_screen.c) and the
+/// field Djinn menu (menu/menu/djinn.c).
 void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   s32 bank = 0;
   s32 paletteOffset = 0;

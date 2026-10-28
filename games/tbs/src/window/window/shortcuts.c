@@ -100,17 +100,18 @@ UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
 }
 
 /// A Psynergy the debug shortcut picker lists: its party member and the
-/// Psynergy. The picker's list is a Heap_Alloc block of 448 of them.
+/// Psynergy. The picker's list is a Heap_Alloc block of SHORTCUT_LIST_ENTRIES
+/// of them.
 struct AbilityListEntry {
   u16 member;  ///< the party member's unit id
-  u16 ability; ///< the action id (10 bits in a shortcut)
+  u16 ability; ///< the action id (SHORTCUT_ABILITY_MASK in a shortcut)
 };
 
 /// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
 /// showing each one's cost and description, and stores them in
-/// gMainRoutineWork.firstShortcut and secondShortcut (member << 10 |
-/// Psynergy). This debug path seeds extra Psynergy before enumerating the
-/// party's shortcuts.
+/// gMainRoutineWork.firstShortcut and secondShortcut
+/// (member << SHORTCUT_MEMBER_SHIFT | Psynergy). This debug path seeds extra
+/// Psynergy before enumerating the party's shortcuts.
 void Debug_SelectAbilityPair(void) {
   struct AbilityListEntry *list;
   struct Window *win;
@@ -342,6 +343,8 @@ struct SelectionWorkspace {
   struct Window *window;                ///< closed, and waited for, on release
   u8 unusedAfterWindow[12];             ///< no code names it
 };
+
+STATIC_ASSERT(sizeof(struct SelectionWorkspace) == 0x1004);
 
 /// Allocates the work block of HEAP_SLOT_SELECTION_WORKSPACE and clears its two
 /// flags. Nothing calls it.

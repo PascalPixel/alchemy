@@ -105,11 +105,11 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
    (u32)&((struct SaveFileSummary *)0)->from)
 
 /// Loads the save file summaries for the File Screen and returns how many files
-/// there are: plus SAVE_SCAN_ALL_SENT when every file has its send flag set, or
-/// SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. Sets
-/// gTitleBattleOptionEnabled, which offers Battle, when a file has any of game
-/// flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when a
-/// file has its send flag set and R and Left are held.
+/// there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send
+/// flag set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be read.
+/// Sets gTitleBattleOptionEnabled, which offers Battle, when a file has any of
+/// game flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when
+/// a file has its send flag set and R and Left are held.
 /// FileList_SelectAction reads all three.
 s32 Save_ScanFileSummaries(void) {
   s32 error;
@@ -147,7 +147,7 @@ s32 Save_ScanFileSummaries(void) {
   }
   Save_ReleaseWork();
   if (fileCount != 0 && sentCount == fileCount) {
-    return fileCount + SAVE_SCAN_ALL_SENT;
+    return fileCount + SAVE_SCAN_ALL_CLEARED;
   }
   return fileCount;
 }

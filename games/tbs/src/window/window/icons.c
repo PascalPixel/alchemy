@@ -117,13 +117,13 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   work->width = 2;
   work->height = 2;
   Icon_Decode(work, overlay);
-  if ((layers & ICON_EQUIPPED) && (code & INVENTORY_BROKEN)) {
+  if ((layers & ICON_BROKEN) && (code & INVENTORY_BROKEN)) {
     work->encoded = gIcon_MarkPointers[1];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 1);
   }
-  if ((layers & ICON_BROKEN) && (code & INVENTORY_EQUIPPED)) {
+  if ((layers & ICON_EQUIPPED) && (code & INVENTORY_EQUIPPED)) {
     work->encoded = gIcon_MarkPointers[0];
     work->width = 2;
     work->height = 2;

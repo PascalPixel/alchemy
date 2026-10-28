@@ -295,11 +295,15 @@ which the VBlank handler runs once a VBlank; up to 20 at a time run, in the
 order of their priority
 ([Runtime](src/runtime/README.md#the-task-runner)).
 
-### Song
+### Sound
 
-Every sound the game plays is asked for by a song number: below 80 music,
-from 80 the fanfares, and from 100 the sound effects
-([Sound](src/sound/README.md#what-a-song-number-means)).
+Every sound the game plays, music, a fanfare or a sound effect, is asked for
+by a sound number: below 80 music, from 80 the fanfares, and from 100 the
+sound effects ([Sound](src/sound/README.md#what-a-sound-number-means)). The
+sound driver calls each one's data a song.
+
+Evidence: the game's own words, from its credits ("Music", "Sound Effects")
+and The Lost Age's sound test ("Music", "Jingle", "SE").
 
 ## Scenes and maps
 

@@ -340,9 +340,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   // the fragments tumble until frame 63.
   for (frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
     if (frame == 4)
-      Sound_PlaySongFar(SE_CAST);
+      Sound_PlayFar(SE_CAST);
     if (frame == 32)
-      Sound_PlaySongFar(SE_POWER_UP);
+      Sound_PlayFar(SE_POWER_UP);
 
     // The flash: its first picture until frame 12, then the next every five
     // frames, eight in all.

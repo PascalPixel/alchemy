@@ -247,7 +247,7 @@ s32 ActorScript_Nop(struct Actor *interpreter) {
 
 /// SC_SE(n): sends sound command n.
 s32 ActorScript_PlaySound(struct Actor *interpreter) {
-  Sound_PlaySongFar(interpreter->script[interpreter->scriptCursor + 1]);
+  Sound_PlayFar(interpreter->script[interpreter->scriptCursor + 1]);
   interpreter->scriptCursor += 2;
   return 1;
 }

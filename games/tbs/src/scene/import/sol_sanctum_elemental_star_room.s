@@ -87,5 +87,5 @@
 	.set import.ItemDisplay_ShowPicture, 1
 	.set import.ItemDisplay_ShowItem, 1
 	.set import.ItemPicker_Run, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

@@ -662,10 +662,10 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
 
     if (mode != SELECTION_FIXED) {
       if (gKeysRepeat & KEY_RIGHT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         SelectionMenu_StepRight(screen);
       } else if (gKeysRepeat & KEY_LEFT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         SelectionMenu_StepLeft(screen);
       }
 
@@ -675,18 +675,18 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
         result = screen->top + screen->cursorIndex;
         if (screen->head->kind == NODE_KIND_YES_NO) {
           if (result == 0)
-            Sound_PlaySongFar(SE_MENU_CONFIRM);
+            Sound_PlayFar(SE_MENU_CONFIRM);
           else
-            Sound_PlaySongFar(SE_MENU_CANCEL);
+            Sound_PlayFar(SE_MENU_CANCEL);
         } else {
-          Sound_PlaySongFar(SE_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
         }
         return result;
       }
     }
 
     if (mode != 0 && (gKeysPressed & KEY_B)) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
   }

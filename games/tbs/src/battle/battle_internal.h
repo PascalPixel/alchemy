@@ -82,7 +82,7 @@
 #include "io_write_queue.h"
 #include "item.h"
 #include "irq.h"
-#include "songs.h"
+#include "sounds.h"
 #include "ramcode.h"
 #include "map_grid_scroll.h"
 #include "iowrite.h"

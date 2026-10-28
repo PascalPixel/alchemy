@@ -114,7 +114,7 @@
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "actor.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 #include "fixed_math.h"
 
@@ -461,9 +461,9 @@ static void Bilibin_OpenDoorAndLeave(void) {
   }
   exitIndex = (((u16)work->stepTrigger - BILIBIN_TO_INN) << 16) >> 16;
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Event_PlaySong(SE_THUMP);
+    Event_PlaySound(SE_THUMP);
   } else {
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
   }
   // Each door has its cell and the steps that draw it opening.
   originOffset = exitIndex << 2;
@@ -920,7 +920,7 @@ static void Bilibin_PushStatueOrCrates(void) {
       // The leader leans on it, then both move together.
       Actor_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
-      Sound_PlaySong(SE_PUSH);
+      Sound_Play(SE_PUSH);
       pushed->speedLimit = PIXELS(1) / 5;
       pushed->acceleration = PIXELS(1) / 5;
       FieldActor_SetMoveTarget(pushed, destination.x, destination.y,

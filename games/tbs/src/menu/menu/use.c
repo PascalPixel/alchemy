@@ -357,25 +357,25 @@ void Ability_PlayUseAnimation(s32 action) {
   switch (animationType) {
   case ABILITY_FORMULA_HEAL_HP:
     // With no break the recovery sound is started twice, both times on music
-    // player 2 (gSongTable's row for it), which Sound_PlaySong never swaps for
+    // player 2 (gSongTable's row for it), which Sound_Play never swaps for
     // another: the second start restarts the first before the sound driver
     // mixes a frame, so it is heard once.
-    Audio_PlayCueReturnOne(SE_RECOVERY);
+    Sound_PlayReturnOne(SE_RECOVERY);
     // Fall through.
   case ABILITY_FORMULA_HEAL_PP:
-    Audio_PlayCueReturnOne(SE_RECOVERY);
+    Sound_PlayReturnOne(SE_RECOVERY);
     return;
   default:
     targetType = actionDefinition->effect;
     switch (targetType) {
     case ABILITY_EFFECT_REVIVE:
-      Audio_PlayCueReturnOne(MUS_REVIVE);
+      Sound_PlayReturnOne(MUS_REVIVE);
       return;
     case ABILITY_EFFECT_CURE_POISON:
-      Audio_PlayCueReturnOne(MUS_CURE);
+      Sound_PlayReturnOne(MUS_CURE);
       return;
     default:
-      Audio_PlayCueReturnOne(MUS_FANFARE_SMALL);
+      Sound_PlayReturnOne(MUS_FANFARE_SMALL);
 
     // The HP and PP restores no ability has (abilities.tsv).
     case ABILITY_EFFECT_RESTORE_HP:

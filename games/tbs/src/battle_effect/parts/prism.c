@@ -157,7 +157,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
               shard->variant = 0;
             }
             work->shakeFrames = 8;
-            Sound_PlaySongFar(SE_CLATTER);
+            Sound_PlayFar(SE_CLATTER);
             EFFECT_FOR_EACH_TARGET(j, work->args)
               BattleEffect_TintBattler(work->args->targets[j],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 4);

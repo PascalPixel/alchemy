@@ -53,5 +53,5 @@
 	.set import.Actor_LaunchFromLeader, 1
 	.set import.Actor_OffsetPositionAndReset, 1
 	.set import.Actor_CommitPositionAndActivate, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

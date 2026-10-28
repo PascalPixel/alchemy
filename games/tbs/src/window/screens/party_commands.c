@@ -216,7 +216,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     if (mode != 14) {
       break;
     }
-    Sound_PlaySongFar(SE_CAST);
+    Sound_PlayFar(SE_CAST);
     commandIndex = 0;
     if (commandIndex >= commandCount) {
       break;
@@ -338,7 +338,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_DrawMessageAsTiles(MsgCommandName, commandWindow,
                                 BATTLE_COMMAND_NAME_X, 0);
         state->icons[0].oam.f.x = 64;
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(unitId, 1, 1, TARGET_HINT_NONE);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
@@ -366,7 +366,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // window, TEXT_COLOR_RED when the PP fall short and TEXT_COLOR_PINK
         // while sealed, and its target; COMMAND_PSYNERGY with the ability as
         // parameter.
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
       psynergy_menu:
@@ -437,7 +437,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                  15, 0, 0);
         }
         command->range = cost;
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
             unitId, ability->targetMode, cost,
             Battle_ClassifyEntryKind(
@@ -467,7 +467,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // standby Djinn, the summon's window with its cost (its name in
         // TEXT_COLOR_RED and the error sound when it cannot be paid for), and
         // its target; COMMAND_SUMMON with the summon as parameter.
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
         state->icons[0].oam.f.x = BATTLE_SUMMON_ICON_X;
@@ -521,9 +521,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           }
         }
         if (ok != 0) {
-          Sound_PlaySongFar(SE_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
         } else {
-          Sound_PlaySongFar(SE_MENU_ERROR);
+          Sound_PlayFar(SE_MENU_ERROR);
         }
         mode = BattleTarget_RunSelection(
             unitId, ability->targetMode, ability->range,
@@ -561,7 +561,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // A set Djinni is unleashed: its ability's target, then in the tutorial
         // a hint. A standby one is set on the party member itself
         // ("Set Djinni", target mode 4, kind 7), its name in TEXT_COLOR_RED.
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       summon_menu:
         state->icons[0].oam.f.x = 144;
@@ -587,7 +587,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                   commandWindow, 16, 0);
           command->range = cost;
           WaitFrames(1);
-          Sound_PlaySongFar(SE_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           mode = BattleTarget_RunSelection(
               unitId, ability->targetMode, cost,
               Battle_ClassifyEntryKind(
@@ -618,7 +618,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_SetColor(TEXT_COLOR_WHITE);
         command->range = 1;
         WaitFrames(1);
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(unitId, 4, 0, TARGET_HINT_SET_DJINNI);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
@@ -644,7 +644,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // and the rest after (pick keeps each one's place); then the item's
         // window and its action's target; COMMAND_ITEM with the place as
         // parameter.
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
       item_menu:
@@ -713,7 +713,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                     MsgItemName,
                                 commandWindow, 24, 0);
         command->range = cost;
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
             unitId, ability->targetMode, cost,
             Battle_ClassifyEntryKind(
@@ -735,7 +735,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      Sound_PlaySongFar(SE_CHIME);
+      Sound_PlayFar(SE_CHIME);
       command->unitId = (u16)unitId;
       // Draw the priority random value once, only for a nonzero agility.
       priority = unit->agi;

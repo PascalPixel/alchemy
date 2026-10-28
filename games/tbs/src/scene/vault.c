@@ -78,7 +78,7 @@
 #include "flags.h"
 #include "djinn_ids.h"
 #include "character_ids.h"
-#include "songs.h"
+#include "sounds.h"
 
 enum { VAULT_DRIFT_RATE = PIXELS(1) / 10 };
 
@@ -695,7 +695,7 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
 /// It's VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST, into the house where a man
 /// keeps a sparkling rock the volcano threw.
 static void Vault_EnterGemOwnersHouse(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST);
 }
@@ -704,7 +704,7 @@ static void Vault_EnterGemOwnersHouse(void) {
 /// It's VAULT_TO_LOG_ROOMS_A_SOUTHEAST, into the house east of the town's
 /// centre.
 static void Vault_EnterChildsHouse(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_TO_LOG_ROOMS_A_SOUTHEAST);
 }
@@ -713,7 +713,7 @@ static void Vault_EnterChildsHouse(void) {
 /// It's VAULT_TO_LOG_ROOMS_A_SOUTHWEST, into the inn where the three
 /// suspects stay.
 static void Vault_EnterInn(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_TO_LOG_ROOMS_A_SOUTHWEST);
 }
@@ -725,7 +725,7 @@ static void Vault_EnterItemShop(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_ItemShopDoorCells, 54, 13);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -739,7 +739,7 @@ static void Vault_EnterWeaponAndArmorShop(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_WeaponAndArmorShopDoorCells, 49, 10);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -750,7 +750,7 @@ static void Vault_EnterWeaponAndArmorShop(void) {
 /// In Vault, the door VAULT_TO_LOG_ROOMS_A_NORTHWEST opens into the
 /// mayor's house, where Ivan waits.
 static void Vault_EnterMayorsHouse(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_MayorsHouseDoorCells, 38, 6);
   Vault_WalkThroughExit(120, 144, VAULT_TO_LOG_ROOMS_A_NORTHWEST);
 }
@@ -763,7 +763,7 @@ static void Vault_EnterJail(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_JailDoorCells, 35, 9);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -774,7 +774,7 @@ static void Vault_EnterJail(void) {
 /// In Vault, the party walks through a doorless entrance into the room with
 /// the crate (VAULT_TO_LOG_ROOMS_A_WEST).
 static void Vault_EnterPassage(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Vault_WalkThroughExit(152, 264, VAULT_TO_LOG_ROOMS_A_WEST);
 }
 
@@ -806,7 +806,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
 /// it; it joins in the town's later scene (vault_revisit.c).
 static void Vault_RingBell(void) {
   Event_Start();
-  Event_PlaySong(SE_BELL);
+  Event_PlaySound(SE_BELL);
   Event_WaitFrames(40);
   if (Event_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,

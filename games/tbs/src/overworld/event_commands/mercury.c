@@ -41,18 +41,18 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   WaitFrames(30);
   // Unpause the Djinni, so its script and motion run.
   djinni->paused = 0;
-  Sound_PlaySongFar(SE_NOTE_LOW);
+  Sound_PlayFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
-  Sound_PlaySongFar(SE_NOTE_HIGH);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
   WaitFrames(20);
 
   // Three hops, at 3, 5 and 7 pixels a frame.
-  Sound_PlaySongFar(SE_JUMP);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 3, 14);
-  Sound_PlaySongFar(SE_JUMP);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 5, 16);
-  Sound_PlaySongFar(SE_JUMP);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 7, 18);
   WaitFrames(20);
 
@@ -88,7 +88,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   // afterimages, and free their shared VRAM cache entry (96,
   // VRAM_CACHE_ENTRY_COUNT, is none).
   resourceId = resource->slot;
-  Sound_PlaySongFar(SE_HIGH_JUMP);
+  Sound_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
     djinni->y.fixed += 8 << 16;

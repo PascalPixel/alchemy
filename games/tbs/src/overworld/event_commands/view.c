@@ -153,7 +153,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 wait) {
   struct Actor *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
-    Sound_PlaySongFar(SE_CHIME);
+    Sound_PlayFar(SE_CHIME);
   }
 
   target = Actor_Lookup(actorId);

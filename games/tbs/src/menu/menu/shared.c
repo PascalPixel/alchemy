@@ -1008,7 +1008,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     pageForward = gKeysRepeat & KEY_RIGHT;
   }
   if (horizontal) {
-    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     if (--*page < 0)
       *page = pages - 1;
     // Past the end of a shorter last page: onto its last entry.
@@ -1022,7 +1022,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     return result;
   }
   if (pageForward) {
-    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     if (++*page > pages - 1)
       *page = 0;
     if (*cursor + *page * pageSize > count - 1) {
@@ -1035,7 +1035,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     return result;
   }
   if (previous) {
-    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     // Back past the first row wraps to the page's last entry: its last row,
     // or the list's last entry on a shorter last page. The first store is
     // overwritten at once.
@@ -1053,7 +1053,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   // Forward past the list's last entry or the page's last row wraps to the
   // first row.
   {
-    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     result = 0;
     if (++*cursor == count - *page * pageSize)
       *cursor = result;
@@ -1264,10 +1264,10 @@ void Window_ReleaseTilemapUpload(void) {
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
 }
 
-/// Plays cue (a sound or a song) and returns 1. Called by
+/// Plays a sound and returns 1. Called by
 /// Ability_PlayUseAnimation, which ignores the value.
-s32 Audio_PlayCueReturnOne(s32 cue) {
-  Sound_PlaySongFar(cue);
+s32 Sound_PlayReturnOne(s32 sound) {
+  Sound_PlayFar(sound);
   return 1;
 }
 
@@ -1275,7 +1275,7 @@ s32 Audio_PlayCueReturnOne(s32 cue) {
 /// sets FLAG_MENU_START_PRESSED and removes itself.
 void Menu_UpdateCancelSound(void) {
   if (gKeysPressed & KEY_START) {
-    Sound_PlaySongFar(SE_MENU_CANCEL);
+    Sound_PlayFar(SE_MENU_CANCEL);
     // XXX (no evidence): why this is a game flag rather than a variable;
     // nothing outside the menu's own code sets or tests it.
     GameFlag_SetFar(FLAG_MENU_START_PRESSED);

@@ -437,9 +437,9 @@ void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
     *objectFlags = updatedFlags;
     actor->velocityY = verticalVelocity;
     if (speed > 5) {
-      Sound_PlaySongFar(SE_HIGH_JUMP);
+      Sound_PlayFar(SE_HIGH_JUMP);
     } else {
-      Sound_PlaySongFar(SE_JUMP);
+      Sound_PlayFar(SE_JUMP);
     }
     Event_WaitFrames(frames);
   }
@@ -566,7 +566,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   actor = Actor_GetById(actorId);
   startZ = actor->z.fixed;
   if (actor != 0) {
-    Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
+    Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
     Actor_SelectAnimationFar(actor, pose);
     WaitFrames(10);
 
@@ -585,7 +585,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 
     // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
     // flight: no motion flags, so it neither falls nor follows the ground.
-    Sound_PlaySongFar(SE_FLOOR_SWITCH);
+    Sound_PlayFar(SE_FLOOR_SWITCH);
     // From here pose counts frames.
     pose = 0;
     Actor_ArmCallback(actorId, FACING_SOUTH + FACING_STEP, 0);

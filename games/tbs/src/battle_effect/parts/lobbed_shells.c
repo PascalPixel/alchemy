@@ -209,7 +209,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     total = work->args->targetCount * 8 + 72;
   else
     total = work->args->targetCount * 8 + 56;
-  Sound_PlaySongFar(SE_CURSE);
+  Sound_PlayFar(SE_CURSE);
 
   for (frame = 0; frame != total; frame++) {
     struct Particle *burst;

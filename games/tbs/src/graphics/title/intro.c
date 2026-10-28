@@ -29,7 +29,7 @@
 #include "frame.h"
 #include "oambuf.h"
 #include "macros.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// A sprite of the "Press Start" prompt, linked into a render slot each frame:
 /// OAM attributes 0 to 2 with the position split out.
@@ -533,7 +533,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   s32 blankTile;
   s32 resourceId;
 
-  Sound_PlaySongFar(SE_CHIME);
+  Sound_PlayFar(SE_CHIME);
   gOamCopyEnabled = 1;
   resourceId = (s32)&ResourceId_NintendoLogo;
   blankTile = 0x1ff;

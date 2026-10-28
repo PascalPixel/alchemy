@@ -4,7 +4,7 @@
 #include "types.h"
 #include "actor.h"
 #include "event.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// Stepping into a passage: the leader moves north with the trail of sparks,
 /// vanishes, and after half a second the screen fades and the party takes that
@@ -12,7 +12,7 @@
 static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   struct Actor *v = Actor_GetById(ACTOR_PARTY_LEADER);
   Event_Start();
-  Sound_PlaySong(SE_SPARKLING_PASSAGE);
+  Sound_Play(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
   v->update = MercuryLighthouse_TrailSparks;
 #else
@@ -42,7 +42,7 @@ static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct Actor *record;
 
   Event_Start();
-  Sound_PlaySong(SE_SPARKLING_PASSAGE);
+  Sound_Play(SE_SPARKLING_PASSAGE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -8);

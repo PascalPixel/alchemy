@@ -73,12 +73,12 @@ next_page:
     }
     if ((gKeysPressed & KEY_A) != 0) {
       selected = selectionIndex;
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       selectionResult = 0;
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
@@ -87,7 +87,7 @@ next_page:
       selectionIndex--;
       selectionIndex = (selectionIndex + stockCount) % stockCount;
       if (previousIndex != selectionIndex) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
     }
@@ -96,7 +96,7 @@ next_page:
       selectionIndex++;
       selectionIndex = (selectionIndex + stockCount) % stockCount;
       if (previousIndex != selectionIndex) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
     }
@@ -162,7 +162,7 @@ next_page:
       // coins are checked; a full bag and a full stack get different lines
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
@@ -173,7 +173,7 @@ next_page:
       }
       Inventory_RemoveFar(unitId, capacitySlot);
       if ((u32)selectedDefinition->price > gAdventure.coins) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         Shop_ShowKeeperMessageHidingCursor(MsgBuyNotEnoughMoney);
         selectionResult = -1;
         break;
@@ -186,7 +186,7 @@ next_page:
           continue;
         }
       }
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       WaitFrames(1);
       quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
@@ -198,17 +198,17 @@ next_page:
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionIndex++;
       redraw = 1;
     }
@@ -640,22 +640,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       quantitySprite->oam.index += 4;
       for (;;) {
         if (gKeysPressed & KEY_A) {
-          Sound_PlaySongFar(SE_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           selectedQuantity = quantityIndex + 1;
           break;
         }
         if (gKeysPressed & KEY_B) {
-          Sound_PlaySongFar(SE_MENU_CANCEL);
+          Sound_PlayFar(SE_MENU_CANCEL);
           selectedQuantity = -1;
           break;
         }
         if (gKeysRepeat & KEY_LEFT) {
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
           quantityIndex--;
         }
         if (gKeysRepeat & KEY_RIGHT) {
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
           quantityIndex++;
         }
@@ -715,7 +715,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   // Keep each inventory addition, coin debit and shop-credit increment in
   // order.
-  Sound_PlaySongFar(SE_SHOP_PURCHASE);
+  Sound_PlayFar(SE_SHOP_PURCHASE);
   if (lastAddedSlot < remainingQuantity) {
     do {
       lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
@@ -769,7 +769,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     Shop_DrawMemberItems(itemWindow, unitId);
 
   if (item->flags & ITEM_CURSED) {
-    Sound_PlaySongFar(SE_CURSE);
+    Sound_PlayFar(SE_CURSE);
     Message_CloseFinishedWindowsFar();
     Message_OpenWindowFar(MsgBecameCursed, 8, 4, 2);
     while (Message_AllTypedFar() == 0) {

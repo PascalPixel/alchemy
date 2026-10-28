@@ -69,5 +69,5 @@
 	.set import.Scene_PlayMusic, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.Sanctum_Run, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

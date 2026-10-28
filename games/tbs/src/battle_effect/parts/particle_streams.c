@@ -181,7 +181,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     animation->velocityY = 0xa0000;
     animation->gravity = 0x91eb;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
-    Sound_PlaySongFar(SE_CRASH);
+    Sound_PlayFar(SE_CRASH);
     direction = work->args->side == EFFECT_SIDE_PARTY ? mode : -1;
   } else {
     direction = -1;
@@ -360,7 +360,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
          * without it, 175 of 1532 instructions differ in tbs-en. */
         __asm__("" : : : "r6");
         if (frame == 0)
-          Sound_PlaySongFar(SE_RUMBLE);
+          Sound_PlayFar(SE_RUMBLE);
         /* FAKEMATCH(barrier): hold's use in an empty asm, which keeps it live
          * across the call; without it, 168 of 1532 instructions differ in
          * tbs-en. */
@@ -570,9 +570,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     if (elapsed > 19)
       Palette_BrightenBgEntries(2, 2, 2);
     if (frame == 0)
-      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == 40)
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     if (frame == 48) {
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         Sprite_DestroyFar(work->animations[0]);

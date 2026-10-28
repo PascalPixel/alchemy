@@ -94,7 +94,7 @@
 #include "scene_tables.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 
 /// Kalay Docks' people, numbering the rows of
@@ -578,7 +578,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
         Event_WaitFrames(10);
         gFieldWork->message++;
-        Event_PlaySong(SE_MENU_CANCEL);
+        Event_PlaySound(SE_MENU_CANCEL);
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
       } else {
         Window_Close(coinsWindow, 2);
@@ -665,7 +665,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 /// KALAY_DOCKS_TO_COTTAGE_ROOMS_E by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Event_Start();
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   if (gAdventure.sceneId == (s32)&SceneId_KalayDocks) {
@@ -960,7 +960,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
-  Event_PlaySong(SE_HIGH_JUMP);
+  Event_PlaySound(SE_HIGH_JUMP);
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x26666, 0x13333);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, 16, 0);
   Event_WaitFrames(10);
@@ -969,16 +969,16 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_SetAttachedEffect(ACTOR_TOUR_GUIDE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
-  Event_PlaySong(SE_SWITCH);
+  Event_PlaySound(SE_SWITCH);
   Event_WaitFrames(10);
-  Event_PlaySong(SE_SWITCH);
+  Event_PlaySound(SE_SWITCH);
   Event_WaitFrames(10);
-  Event_PlaySong(SE_SWITCH);
+  Event_PlaySound(SE_SWITCH);
   Event_WaitFrames(10);
   Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x6666, 0x3333);
   Actor_Jump(ACTOR_TOUR_GUIDE, 6, 0);
-  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_PlaySound(SE_DOOR_CLOSE);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, -8, 0);
   Event_WaitFrames(20);
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
@@ -1058,7 +1058,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
   Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
-  Event_PlaySong(SE_IMPACT);
+  Event_PlaySound(SE_IMPACT);
   Actor_Jump(ACTOR_BODYGUARD, 6, 0);
   // The passenger bounces off the spinning bodyguard and lands on his back.
   Actor_SetScript(ACTOR_BODYGUARD, gKalayTolbiDocks_BodyguardSpinScript);
@@ -1074,7 +1074,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_PlaySound(SE_DOOR_CLOSE);
   Event_WaitFrames(20);
   Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetSpeed(ACTOR_STRANDED_WOMAN, 0x18000, 0xc000);

@@ -60,7 +60,7 @@
 #include "vram_cache.h"
 #include "select.h"
 #include "text/msg_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "static_assert.h"
 #include "event.h"
 #include "battle_type.h"

@@ -106,7 +106,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "character_ids.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// The village's actors (Imil), numbering
 /// gImil_TownActorPlacements' rows, and
@@ -619,9 +619,9 @@ static void Imil_OpenDoorAndExit(void) {
   }
   exit = (s16)(work->stepTrigger - 50);
   if (exit == IMIL_TO_ICE_ROOMS_NORTHEAST) {
-    Sound_PlaySong(SE_THUMP);
+    Sound_Play(SE_THUMP);
   } else {
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
   }
   {
     s32 x = gImil_DoorCellPoints[exit - 1][0];
@@ -1051,13 +1051,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_WaitFrames(10);
   Event_ShowMessage(ACTOR_MIA, 0);
-  Event_PlaySong(SE_PSYNERGY_SPARKLE);
+  Event_PlaySound(SE_PSYNERGY_SPARKLE);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(10);
   WaitFrames(1);
-  Event_PlaySong(SE_SHIMMER);
+  Event_PlaySound(SE_SHIMMER);
   WaitFrames(40);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);
@@ -1094,7 +1094,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4), PIXELS(2));
-  Event_PlaySong(SE_JUMP);
+  Event_PlaySound(SE_JUMP);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_GetById(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1361,7 +1361,7 @@ static void Imil_LeaveNorth(void) {
   Event_Start();
   work = Actor_GetById(ACTOR_PARTY_LEADER);
   work->facing = FACING_NORTH;
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(IMIL_TO_IMIL_FALLS_CAVE);

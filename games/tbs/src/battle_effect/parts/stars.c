@@ -189,7 +189,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           if (i == 2) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
-            Sound_PlaySongFar(SE_HEAVY_IMPACT);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 8);
           }
@@ -330,7 +330,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
           step->velocityX /= 2;
           step->velocityZ /= 2;
           work->shakeFrames = 4;
-          Sound_PlaySongFar(SE_HEAVY_IMPACT);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
           EFFECT_FOR_EACH_TARGET(j, work->args)
             BattleEffect_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, j, 8);

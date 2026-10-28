@@ -3,7 +3,7 @@
 /// SceneId_SolSanctumMaze and SceneId_SolSanctumCorridor.
 #include "types.h"
 #include "actor.h"
-#include "songs.h"
+#include "sounds.h"
 #include "flags.h"
 
 /// The scene opens in the window transition over 16 frames. Once Mt. Aleph has

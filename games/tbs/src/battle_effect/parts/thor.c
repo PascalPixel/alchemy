@@ -190,13 +190,13 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
-      Sound_PlaySongFar(SE_SPIN);
+      Sound_PlayFar(SE_SPIN);
     }
     if (frame == 132) {
-      Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
+      Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     }
     if (frame == 151) {
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     }
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       break;
@@ -416,7 +416,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       work->particles[i].variant = -(Random16() & 15);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-    Sound_PlaySongFar(SE_CRASH);
+    Sound_PlayFar(SE_CRASH);
     // The pillar is 48 pixels wide at canvas x 36 and reaches from the top
     // down to line 112; its sparks start at its foot, x 60.
     pillarX = 60;
@@ -432,7 +432,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // the bolts.
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
-        Sound_PlaySongFar(SE_HEAVY_IMPACT);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 140) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

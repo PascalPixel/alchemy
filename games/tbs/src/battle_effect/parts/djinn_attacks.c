@@ -111,7 +111,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  Sound_PlaySongFar(SE_WAVE);
+  Sound_PlayFar(SE_WAVE);
   frame = 0;
   do {
     if (frame == 56)
@@ -127,7 +127,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
-          Sound_PlaySongFar(SE_IMPACT);
+          Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Each mote flies off in a random direction at 1 to 3 pixels a
           // frame, the vertical part doubled, so the burst is twice as tall
@@ -254,7 +254,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     ball->y = (Random16() & 63) - 80;
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  Sound_PlaySongFar(SE_THUNDER);
+  Sound_PlayFar(SE_THUNDER);
   frame = 0;
   angle = 0x8000; // 180 degrees
   do {
@@ -295,7 +295,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
             mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
             mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
           }
-          Sound_PlaySongFar(SE_IMPACT);
+          Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->args) {
             EFFECT_STRIKE_TARGET(work->args, j, 6, KNOCKBACK_BOUNCE);
@@ -400,7 +400,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     column->y = 104;
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  Sound_PlaySongFar(SE_RUMBLE);
+  Sound_PlayFar(SE_RUMBLE);
   frame = 0;
   angle = 0x8000;
   do {
@@ -439,7 +439,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
             mote->variant = (Random16() & 15) + 32;
           }
           if (i & 1)
-            Sound_PlaySongFar(SE_IMPACT);
+            Sound_PlayFar(SE_IMPACT);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->args) {
             EFFECT_STRIKE_TARGET(work->args, j, 6, KNOCKBACK_BOUNCE);
@@ -553,7 +553,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     index++;
   } while (index != MARS_FLAMES);
 
-  Sound_PlaySongFar(SE_WHOOSH);
+  Sound_PlayFar(SE_WHOOSH);
   frame = 0;
   diveY = -172;
   do {
@@ -583,7 +583,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     // Djinni is no longer drawn, so the ember streaks take its place in the
     // sheet, with their palette.
     if (frame == MARS_STRIKE_FRAME) {
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 8;
       Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
                                  1, 1);

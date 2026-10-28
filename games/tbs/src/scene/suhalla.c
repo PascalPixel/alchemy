@@ -42,7 +42,7 @@
 #include "ability_ids.h"
 #include "scene_tables.h"
 #include "item_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "flags.h"
 
 /// Growth has grown the sprout; a return that keeps the party's position draws
@@ -181,7 +181,7 @@ static void Suhalla_EnterDoor(void) {
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
   // Walk through the opening while the exit transition counts down.
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
@@ -196,7 +196,7 @@ static void Suhalla_EnterWideDoor(void) {
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
   u16 cellZ = gSuhallaDoorCells[exitTrigger][1];
 
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
   gFieldWork->transitionFrames = 16;

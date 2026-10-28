@@ -93,7 +93,7 @@
 
 #include "script_operands.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 #include "audio_engine_symbols.h"
 #include "macros.h"
@@ -1762,7 +1762,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
 
   // Gather the captain's quarters's attention around the argument about
   // launching.
-  Event_PlaySong(MUS_DUNGEON);
+  Event_PlaySound(MUS_DUNGEON);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   ShipRooms_MoveCameraAndWait(PIXELS(456), -1, PIXELS(648),
                               SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
@@ -1915,7 +1915,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_WEST, 20);
-  Event_PlaySong(MUS_SILENCE);
+  Event_PlaySound(MUS_SILENCE);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 2);
   captainSpeech = SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_WINDOW_BELOW);
   Actor_ShowEmote(ACTOR_QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1957,7 +1957,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_Jump(ACTOR_QUARTERS_CAPTAIN, 4, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP, 20);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
-  Event_PlaySong(MUS_DUNGEON);
+  Event_PlaySound(MUS_DUNGEON);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 3);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_ShowEmote(ACTOR_QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -2013,7 +2013,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_SEAN, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_NORTHWEST + FACING_STEP,
                       0);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_QUARTERS_CREWMAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CREWMAN, 488, 686);
   Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP,
@@ -2806,7 +2806,7 @@ static void ShipRooms_CastOff(void) {
   Actor_Jump(ACTOR_QUARTERS_CAPTAIN, 4, 20);
   anchorCharm = ShipRooms_PlaceAnchorCharm();
   Event_WaitFrames(20);
-  Event_PlaySong(SE_RISING_CHIMES);
+  Event_PlaySound(SE_RISING_CHIMES);
   Actor_StartScript(anchorCharm, gShipRooms_AnchorCharmPulse);
   Event_WaitFrames(40);
   Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
@@ -2891,7 +2891,7 @@ static void ShipRooms_ShowRowing(void) {
   Event_WaitFrames(20);
   Import_ActorSetAnimation(ACTOR_ROWING_DRUMMER, 7);
   Event_WaitFrames(30);
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Event_WaitFrames(30);
   ShipRooms_InstallRowingDeckActors(16);
   Event_WaitFrames(0x50);
@@ -2899,13 +2899,13 @@ static void ShipRooms_ShowRowing(void) {
   Event_WaitFrames(0x3c);
   Import_ActorSetAnimation(ACTOR_ROWING_DRUMMER, 7);
   Event_WaitFrames(30);
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Event_WaitFrames(30);
   ShipRooms_InstallRowingDeckActors(16);
   Event_WaitFrames(0x50);
   ShipRooms_InstallRowingDeckActors(0);
   Event_WaitFrames(0x5a);
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Event_WaitFrames(30);
 
   gFieldWork->transition =
@@ -3890,17 +3890,17 @@ static void ShipRooms_NoticeShipRocking(void) {
   ShipRooms_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174),
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
-  Event_PlaySong(MUS_SILENCE);
-  Event_PlaySong(SE_BOOM);
+  Event_PlaySound(MUS_SILENCE);
+  Event_PlaySound(SE_BOOM);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Event_WaitFrames(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Event_WaitFrames(80);
-  Event_PlaySong(SE_BOOM);
+  Event_PlaySound(SE_BOOM);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Event_WaitFrames(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Event_PlaySong(MUS_ERUPTION);
+  Event_PlaySound(MUS_ERUPTION);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -4010,7 +4010,7 @@ static void ShipRooms_ShakeWhileKrakenAboard(void) {
   } else {
     value = Import_RandomNext();
     if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
-      Sound_PlaySong(SE_BOOM);
+      Sound_Play(SE_BOOM);
       MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
       *timer = 80;
     }

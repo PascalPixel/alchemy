@@ -115,7 +115,7 @@ s32 BattleMessage_WaitForAdvance(void) {
       break;
     WaitFrames(1);
   }
-  Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+  Sound_PlayFar(SE_MENU_CURSOR_MOVE);
   VramCache_FreeEntry(tileSlot);
   WaitFrames(1);
 }
@@ -276,8 +276,8 @@ u32 BattlePlayback_RunAll(void) {
         MessageArgument_ClearAllFar();
         break;
       case PLAYBACK_HIT:
-        if (runtime->pendingSong > 0)
-          Sound_PlaySongFar(runtime->pendingSong);
+        if (runtime->pendingSound > 0)
+          Sound_PlayFar(runtime->pendingSound);
         BattleMotion_FlashHit(queue->operands[eventIndex], 0, 0);
         break;
       case PLAYBACK_DEFEAT:

@@ -89,7 +89,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
     for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
-        Sound_PlaySongFar(SE_HEAVY_IMPACT);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
       }
       // From its landing on, the rock is gone and its shards fly.

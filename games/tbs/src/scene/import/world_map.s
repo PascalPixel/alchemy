@@ -101,5 +101,5 @@
 	.set import.FieldEffect_ScheduleRatioTransition, 1
 	.set import.Event_WaitForZoomTransition, 1
 	.set import.DjinnMenu_Run, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

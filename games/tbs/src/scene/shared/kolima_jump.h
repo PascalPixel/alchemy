@@ -6,7 +6,7 @@
 #include "actor.h"
 #include "scene.h"
 #include "adventure.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// Hops the leader to the pixel of the 16.16 position request, unless something
 /// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)
@@ -23,7 +23,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     Event_Start();
     Actor_SelectAnimation(actor, 6);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, 7);
     actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);

@@ -5,7 +5,7 @@
 #include "actor.h"
 #include "event.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// Unless the party returns to where it was, the leader appears 16 pixels north
 /// of the entrance, hidden, as the screen opens, then comes south with the
@@ -29,7 +29,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     Actor_SetSpriteFlags(record, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Sound_PlaySong(SE_SPARKLING_PASSAGE);
+    Sound_Play(SE_SPARKLING_PASSAGE);
 #ifdef UBFIX
     actor->update = MercuryLighthouse_TrailSparks;
 #else

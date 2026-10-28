@@ -171,7 +171,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     Window_Close((struct Window *)navigation->timerWindow, 1);
     navigation->timerWindow = 0;
   }
-  Sound_PlaySongFar(SE_MENU_CONFIRM);
+  Sound_PlayFar(SE_MENU_CONFIRM);
 
   for (i = 4; i >= 0; i--) {
     cursor.groupPositions[i] = 0;
@@ -254,7 +254,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         groupPosition = cursor.groupPositions[cursor.group];
         if ((keys & KEY_DOWN) != 0) {
           keys = 0;
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
             groupPosition = 0;
@@ -265,7 +265,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           }
         } else if ((keys & KEY_UP) != 0) {
           keys = 0;
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           groupPosition--;
           if (groupPosition < 0) {
             groupPosition = cursor.groupSize - 1;
@@ -276,7 +276,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           }
         } else if ((keys & (KEY_A | KEY_RIGHT | KEY_LEFT)) != 0) {
           keys = 0;
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           // A, Right or Left toggles between the general group and the
           // statuses. From STATUS_CURSOR_COMBAT_STATS this makes a group
           // no branch below reads; the next frame's switch restores it.
@@ -305,7 +305,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             cursor.group = STATUS_CURSOR_GENERAL;
             groupPosition = cursor.groupPositions[0];
           }
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         } else if ((keys & KEY_LEFT) != 0) {
           keys = 0;
           groupPosition--;
@@ -313,13 +313,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             cursor.group = STATUS_CURSOR_GENERAL;
             groupPosition = cursor.groupPositions[0];
           }
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         } else if ((keys & (KEY_A | KEY_UP | KEY_DOWN)) != 0) {
           // A, Up or Down go back to the general group.
           keys = 0;
           cursor.group = STATUS_CURSOR_GENERAL;
           groupPosition = cursor.groupPositions[0];
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         cursor.groupPositions[cursor.group] = (s8)groupPosition;
       }
@@ -788,7 +788,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
         member = list[memberIndex];
         redraw = OWNER_STATUS_REDRAW_ALL;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       } else if ((keys & KEY_L) != 0) {
         memberIndex--;
         if (memberIndex < 0) {
@@ -796,7 +796,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
         member = list[memberIndex];
         redraw = OWNER_STATUS_REDRAW_ALL;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
     WaitFrames(1);

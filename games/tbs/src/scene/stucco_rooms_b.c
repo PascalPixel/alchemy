@@ -60,7 +60,7 @@
 #include "scene_tables.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "songs.h"
+#include "sounds.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -177,7 +177,7 @@ static void StuccoRoomsB_EnterDoor(void) {
   }
   trigger = &work->stepTrigger;
   doorIndex = *trigger - CELL_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR;
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gStuccoRoomsBDoors[doorIndex].steps,
                        gStuccoRoomsBDoors[doorIndex].x,
                        gStuccoRoomsBDoors[doorIndex].y);

@@ -39,9 +39,9 @@ s32 Shop_ChooseMember(void) {
     if ((gKeysPressed & KEY_A) != 0) {
       WaitFrames(1);
       if (Inventory_CountFar(unitId) == 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
       } else {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         if (shop->action == SHOP_ACTION_SELL)
           Shop_SelectSell(unitId);
         else
@@ -54,7 +54,7 @@ s32 Shop_ChooseMember(void) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       Menu_ReleaseEntryActorsFar();
       Window_CloseFar(listWindow, 2);
       Window_CloseFar(shop->itemWindow, 2);
@@ -64,12 +64,12 @@ s32 Shop_ChooseMember(void) {
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }
@@ -128,23 +128,23 @@ s32 Shop_SelectSell(s32 unitId) {
       }
 
       if ((gKeysPressed & KEY_A) != 0) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if ((gKeysPressed & KEY_B) != 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         slot -= 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         slot += 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
@@ -158,7 +158,7 @@ s32 Shop_SelectSell(s32 unitId) {
           slot += INVENTORY_SLOTS;
         while (slot >= inventoryCount)
           slot -= SHOP_INVENTORY_COLUMNS;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -167,7 +167,7 @@ s32 Shop_SelectSell(s32 unitId) {
           slot -= INVENTORY_SLOTS;
         while (slot < 0)
           slot += SHOP_INVENTORY_COLUMNS;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       WaitFrames(1);
@@ -325,7 +325,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     return;
   }
   // Discard each item before crediting coins and rebuilding the inventory grid.
-  Sound_PlaySongFar(SE_SHOP_SELL);
+  Sound_PlayFar(SE_SHOP_SELL);
   for (soldCount = 0; soldCount < count; soldCount++)
     Inventory_DiscardFar(unitId, slot);
   Party_AdjustCoinsFar(total);

@@ -306,16 +306,16 @@ s32 BattleCommandRow_Run(s32 mode) {
       break;
     }
     if (mode != COMMAND_ROW_PARTY && (keys & KEY_B)) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       command = -1;
       break;
     }
     if (repeat & (KEY_DOWN | KEY_RIGHT)) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + 1) % selectionUi->iconCount;
     } else if (repeat & (KEY_UP | KEY_LEFT)) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;

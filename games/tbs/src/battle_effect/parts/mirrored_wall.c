@@ -134,10 +134,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   // which does nothing while shakeFrames is 0.
   if (mode == MIRRORED_WALL_RECOVERY) {
     work->shakeFrames = 0;
-    Sound_PlaySongFar(SE_POWER_UP);
+    Sound_PlayFar(SE_POWER_UP);
   } else if (mode == MIRRORED_WALL_BERSERK) {
     work->shakeFrames = 8;
-    Sound_PlaySongFar(SE_POWER_UP);
+    Sound_PlayFar(SE_POWER_UP);
   } else {
     work->shakeFrames = 32;
   }
@@ -156,7 +156,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(0);
     if (frame == 8 && mode == MIRRORED_WALL_SPASM)
-      Sound_PlaySongFar(SE_RECOVERY);
+      Sound_PlayFar(SE_RECOVERY);
 
     // Images 0, 1 and 2, four frames each, then 2, 1, 2 and 1, up to frame
     // 27, standing 8 pixels below the target's feet; the trail fades after

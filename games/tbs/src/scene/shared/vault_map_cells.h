@@ -14,7 +14,7 @@
 #include "system.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "songs.h"
+#include "sounds.h"
 
 enum {
   VAULT_DOOR_OPENING_COLUMN = 42,
@@ -37,7 +37,7 @@ static void Vault_OpenDoorwayAndEnter(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Vault_DrawDoorway(VAULT_DOOR_OPENING_COLUMN);
   Event_WaitFrames(4);
   Vault_DrawDoorway(VAULT_DOOR_OPEN_COLUMN);

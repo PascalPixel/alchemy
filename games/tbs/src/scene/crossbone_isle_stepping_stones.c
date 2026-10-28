@@ -82,7 +82,7 @@
 #include "actor_effect.h"
 #include "fixed_math.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "macros.h"
 
@@ -599,7 +599,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       Event_Start();
       Actor_SelectAnimation(leader, 6);
       WaitFrames(6);
-      Sound_PlaySong(SE_JUMP);
+      Sound_Play(SE_JUMP);
       Actor_SelectAnimation(leader, 7);
       leader->speedLimit = PIXELS(3);
       leader->acceleration = PIXELS(2);
@@ -806,13 +806,13 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
                 TASK_PASS_FRAME);
   WaitFrames(1);
   Irq_SetHandler(1, 0, CrossboneIsleSteppingStones_JitterBackgroundScroll);
-  Sound_PlaySong(SE_WATER_LEVEL);
+  Sound_Play(SE_WATER_LEVEL);
   sShakeChance = 0;
   do {
     WaitFrames(1);
   } while (++sShakeChance <= 100);
   // Commit the water tiles, then remove the scroll task and HBlank handler.
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) == 0) {
     MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
     MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);
@@ -844,10 +844,10 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   waterRaised = Event_GetFlag(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   // Raise or drain the water before redrawing the logs' footprints.
   if (waterRaised == 0) {
-    Event_PlaySong(SE_CRUNCH);
+    Event_PlaySound(SE_CRUNCH);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchCloseSteps, 84, 24);
     Event_WaitFrames(30);
-    Event_PlaySong(SE_LOG_FALL);
+    Event_PlaySound(SE_LOG_FALL);
     Actor_SetSpritePriority(ACTOR_WATER, 1);
     Actor_GetById(ACTOR_WATER)->motionFlags = waterRaised;
     water = Actor_Get(ACTOR_WATER);
@@ -864,10 +864,10 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     GameFlag_Set(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   } else {
-    Event_PlaySong(SE_CRUNCH);
+    Event_PlaySound(SE_CRUNCH);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_SwitchOpenSteps, 84, 24);
     Event_WaitFrames(30);
-    Event_PlaySong(SE_WATER_DRAIN);
+    Event_PlaySound(SE_WATER_DRAIN);
     Actor_GetById(ACTOR_WATER)->motionFlags = 0;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
@@ -1104,7 +1104,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     // Falling pillars either reach a ledge, shrink away, or settle on ground.
     if (*flags & 1) {
       if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) == 50) {
-        Sound_PlaySong(SE_STONE_GRIND);
+        Sound_Play(SE_STONE_GRIND);
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated (100 of
         // 265 instructions differ in tbs-en).
@@ -1114,7 +1114,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       } else if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) ==
                  51) {
         CrossboneIsleSteppingStones_StopAtGroundOrHeight(actor, 0);
-        Sound_PlaySong(SE_STONE_GRIND);
+        Sound_Play(SE_STONE_GRIND);
         actor->y.fixed = 0;
         actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_ShrinkPillar(id);
@@ -1334,7 +1334,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   if ((gFrameCount & 2) != 0)
     return;
   if ((gFrameCount & 7) == 0)
-    Sound_PlaySong(SE_WHOOSH);
+    Sound_Play(SE_WHOOSH);
 
   settings = &options;
   settings->palette = 10;
@@ -1490,7 +1490,7 @@ static void CrossboneIsleSteppingStones_MoveSinkingPillar(void) {
         Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     if (alreadyLowered == 0) {
       Event_WaitFrames(10);
-      Sound_PlaySong(SE_DOOR_CLOSE);
+      Sound_Play(SE_DOOR_CLOSE);
       pillar->motionFlags = alreadyLowered;
       pillar->groundHeight = -PIXELS(2);
       pillar->y.fixed = -PIXELS(2);

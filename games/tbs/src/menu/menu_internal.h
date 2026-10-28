@@ -46,7 +46,7 @@
 #include "paged_list.h"
 #include "tbs_edition.h"
 #include "adventure.h"
-#include "songs.h"
+#include "sounds.h"
 #include "iwram_call.h"
 #include "heap.h"
 #include "menu_list.h"

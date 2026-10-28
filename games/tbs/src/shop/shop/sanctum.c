@@ -262,7 +262,7 @@ s32 Sanctum_RunPartyService(void) {
       WaitFrames(1);
       donation = Sanctum_ServicePrice(unitId, serviceKind);
       if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -275,7 +275,7 @@ s32 Sanctum_RunPartyService(void) {
         continue;
       }
       if (donation > (u32)gAdventure.coins) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
         chooseAgain = 1;
         continue;
@@ -297,16 +297,16 @@ s32 Sanctum_RunPartyService(void) {
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
       memberIndex -= 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
       memberIndex += 1;
     }
@@ -487,7 +487,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   savedCursorMode = shop->cursor.anchor->motion;
   shop->burstMember = -1;
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-  Sound_PlaySongFar(sSanctumServiceCues[shop->action]);
+  Sound_PlayFar(sSanctumServiceCues[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
@@ -530,7 +530,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   WaitFrames(20);
-  Sound_PlaySongFar(SE_RECOVERY);
+  Sound_PlayFar(SE_RECOVERY);
   shop->burstMember = -1;
   Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);

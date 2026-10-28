@@ -18,7 +18,7 @@ what differs here.
   `music_track_*.c` files, and the handwritten ARM and Thumb routines are one
   file each under `driver/`.
 - **Songs.** ⚓️ has its own song table (`games/tla/sound/songs.s`), so its
-  cue numbers are not ☀️'s, and it has no `songs.h` of names yet.
+  cue numbers are not ☀️'s, and it has no `sounds.h` of names yet.
 - **Names.** Routines that do what their ☀️ twins do take their names.
 
 ## Status

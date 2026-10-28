@@ -150,7 +150,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
           ember->variant = 0;
           ember->x = screen.x;
           ember->y = screen.y;
-          Sound_PlaySongFar(SE_WHOOSH);
+          Sound_PlayFar(SE_WHOOSH);
           BattleEffect_TintBattler(
               work->args->targets[i % work->args->targetCount],
               SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % work->args->targetCount,

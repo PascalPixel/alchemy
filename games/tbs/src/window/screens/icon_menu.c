@@ -290,24 +290,24 @@ redraw:
   for (;;) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       return work->selection;
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
     if (gKeysPressed & KEY_START) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       return -1;
     }
     if ((gKeysRepeat & KEY_LEFT) || (gKeysRepeat & KEY_UP)) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       work->selection--;
       if (work->selection < 0)
         work->selection = work->count - 1;
     } else if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN)) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       work->selection++;
       if (work->selection >= work->count)
         work->selection = 0;
@@ -370,13 +370,13 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
       break;
 
     state->selection += step;
-    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     delay = 0;
     position += step;
   }
 
   WaitFrames(48);
-  Sound_PlaySongFar(SE_MENU_CONFIRM);
+  Sound_PlayFar(SE_MENU_CONFIRM);
   return goal;
 }
 

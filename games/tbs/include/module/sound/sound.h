@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-void Sound_PlaySong(s32 id);
+void Sound_Play(s32 id);
 void Sound_UpdateBgmRamps(void);
 void SoundTest_Run(void);
 void Sound_Initialize(void);
@@ -17,7 +17,7 @@ void Sound_StopAllMusicPlayers(void);
 void Sound_ResumeAllMusicPlayers(void);
 void Sound_UpdateCommandMask(u32 command);
 s32 Sound_GetCurrentBgm(void);
-void Sound_WaitForSong(void);
+void Sound_WaitForBgmRestore(void);
 s32 Sound_GetReverbCode(s32 command);
 
 #endif

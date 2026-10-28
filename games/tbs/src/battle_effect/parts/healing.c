@@ -332,7 +332,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       SET_VECTOR(point, actor->x.fixed, 40 << 16, actor->z.fixed);
       Transform_ApplyPosition(point);
       if (frame == start + HEALING_SOUND_DELAY)
-        Sound_PlaySongFar(SE_RECOVERY);
+        Sound_PlayFar(SE_RECOVERY);
       if (frame == start + HEALING_TINT_DELAY)
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, -1, member,

@@ -118,7 +118,7 @@
 #include "actor.h"
 #include "field_effect.h"
 #include "fixed_math.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
@@ -487,7 +487,7 @@ const struct ActorPlacement *ValePlaza_GetActorPlacements(void) {
 static void ValePlaza_UsePsynergyStone(void) {
   Event_Start();
   FieldMessage_Show(MsgValeCheckedThePsynergyStone, 1);
-  Sound_PlaySong(SE_RECOVERY);
+  Sound_Play(SE_RECOVERY);
   Party_AddPp(999, 0);
   Event_WaitFrames(10);
   FieldMessage_Show(MsgValePartyPpRestored, 1);
@@ -605,7 +605,7 @@ static void ValePlaza_DemonstratePsynergy(void) {
       WaitFrames(1);
     }
     Task_AddFrame(ValePlaza_UpdateShowingStrongmanPsynergy, TASK_PASS_FRAME);
-    Sound_PlaySong(SE_TREMOR);
+    Sound_Play(SE_TREMOR);
     for (i = 0; i != 180; i++) {
       if (Math_RemainderUnsigned(i, 10) == 0) {
         if ((1 & shakes) != 0) {
@@ -618,7 +618,7 @@ static void ValePlaza_DemonstratePsynergy(void) {
       Event_WaitFrames(1);
     }
     // End the display and restore the strongman's ordinary appearance.
-    Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+    Sound_Play(SOUND_FADE_OUT_ACTION_SE);
     Task_Remove(ValePlaza_UpdateShowingStrongmanPsynergy);
     WaitFrames(1);
     Scene_EndEventPsynergy();
@@ -732,7 +732,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   Task_Remove(ValePlaza_UpdateRockLiftingBoyPsynergy);
   Task_Remove(ValePlaza_UpdateSmallRockPalette);
   WaitFrames(1);
-  Event_PlaySong(SE_RATTLE);
+  Event_PlaySound(SE_RATTLE);
   Actor_SetSpriteColorById(ACTOR_STORM_ROCK_LIFTING_BOY, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_STORM_SMALL_ROCK, SPRITE_COLOR_NORMAL);
   Event_WaitFrames(40);
@@ -818,7 +818,7 @@ static void ValePlaza_PsynergyStoneIsGone(void) {
 /// Opens a door's map grid cells and sends the leader through its threshold.
 static inline void ValePlaza_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
                                                     s32 z) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePlaza_DoorOpens, cellX, cellZ);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
@@ -841,7 +841,7 @@ static void ValePlaza_OpenNorthwestDoor(void) {
 /// Reached by walking north into cell behavior 2 after Kalay; the other
 /// tables have no such door.
 static void ValePlaza_OpenNortheastDoor(void) {
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(0, 63, 51, 8, 2, 2);
   WaitFrames(10);
   MapGrid_CopyCellsTo(2, 63, 51, 8, 2, 2);
@@ -891,7 +891,7 @@ static void ValePlaza_OpenSoutheastDoor(void) {
 /// storm's scene: stepping on cell behavior 9 takes VALE_PLAZA_TO_VALE, to
 /// the storm's VALE_STORMY_NIGHT_FROM_VALE_PLAZA.
 static void ValePlaza_LeaveThroughWestPassage(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_VALE);
 }
 
@@ -904,7 +904,7 @@ static void ValePlaza_LeaveThroughWestPassage(void) {
 /// leaves by the same exit.
 static void ValePlaza_LeaveThroughTownGate(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-    Sound_PlaySong(SE_MAP_EXIT);
+    Sound_Play(SE_MAP_EXIT);
     Vale_RequestBackdropExit(VALE_PLAZA_TO_WORLD_MAP);
   }
 }
@@ -1263,7 +1263,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   WaitFrames(1);
   Event_PrepareActorAndApplyValue(1, 0);
   Event_StartScreenTransition();
-  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Weather_ResumeLightning();
   Import_ActorSetPosition(ACTOR_FIRST_TRAVELER, PIXELS(105), PIXELS(267));
   WaitFrames(1);
@@ -1273,7 +1273,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Event_ShowMessageAndWait(ACTOR_FIRST_TRAVELER, 0);
   // The travelers' theme starts; the camera rises to them and the second
   // traveler walks in.
-  Sound_PlaySong(MUS_SATUROS_AND_MENARDI);
+  Sound_Play(MUS_SATUROS_AND_MENARDI);
   camera->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveWithinMapBounds(PIXELS(109), PIXELS(176), PIXELS(281), 1);
@@ -1447,7 +1447,7 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
 
   // The screen opens on Isaac and Garet lying beaten in the storm, the
   // travelers standing over them.
-  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   WaitFrames(1);
@@ -1989,7 +1989,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
-  Sound_PlaySong(SE_PSYNERGY_SPARKLE);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   for (i = 0; i < 2; ++i) {
     child = FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
                               parent->y.fixed, parent->z.fixed);

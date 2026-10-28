@@ -91,7 +91,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
   // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  Sound_PlaySongFar(SE_SCATTER);
+  Sound_PlayFar(SE_SCATTER);
 
   for (frame = 0; frame != gVortices_Counts[work->args->variant][FROTH_FRAMES];
        frame++) {
@@ -148,7 +148,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
               work->args->targets[i % work->args->targetCount],
               KNOCKBACK_NUDGE);
           work->shakeFrames = 4;
-          Sound_PlaySongFar(SE_WATER);
+          Sound_PlayFar(SE_WATER);
         }
       }
       // The burst where a mote struck: two mirrored halves cycling three
@@ -234,7 +234,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   WaitFrames(1);
-  Sound_PlaySongFar(SE_RUMBLE);
+  Sound_PlayFar(SE_RUMBLE);
 
   for (frame = 0; frame != 80; frame++) {
     wave = (Trig_Sin(frame << 10) * 16);

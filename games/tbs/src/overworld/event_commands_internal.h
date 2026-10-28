@@ -53,7 +53,7 @@
 #include "keystate.h"
 #include "unit.h"
 #include "adventure.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "fixed_math.h"
 #include "item_gift.h"
@@ -209,7 +209,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     }                                                                          \
                                                                                \
     Actor_WaitForMoveFar(pair[0]);                                             \
-    Sound_PlaySongFar(SE_HEAVY_IMPACT);                                        \
+    Sound_PlayFar(SE_HEAVY_IMPACT);                                            \
     for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
       pos.x = effectWork->x;                                                   \
       pos.y = effectWork->y + 0x100000;                                        \

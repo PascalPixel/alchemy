@@ -202,10 +202,10 @@ void Import_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
                                         s32 other_extra, s32 flags);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
-/// Declared for the scenes that define FIELD_STAGED_ACTOR_IMPORTS in place
-/// of Event_PlaySong. Nothing calls it and no import resolves it: those scenes
-/// call Sound_PlaySong.
-void Audio_PlayCue(s32 cue);
+/// Declared again for the scenes that define FIELD_STAGED_ACTOR_IMPORTS in
+/// place of Event_PlaySound; nothing there calls it, as those scenes call
+/// Sound_Play.
+void Sound_PlayFar(s32 id);
 #endif
 
 /// Moves the event's message number count messages on, past lines the event
@@ -351,7 +351,7 @@ static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 /// Plays a sound effect or music from an event: the SE command of script.h.
-static inline void Event_PlaySong(s32 cue) { Sound_PlaySong(cue); }
+static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }
 #endif
 
 /// A random number from 0 to 0xffff for an event.

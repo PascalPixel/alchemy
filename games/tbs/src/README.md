@@ -52,7 +52,7 @@ the link cable. [Cartridge and memory](cartridge/README.md) holds the memory map
 directory, the numbered list through which every picture, table and overlay
 is found. [Graphics](graphics/README.md) holds most of the pictures, the
 title intro, the credits and the handwritten decoders. [Sound](sound/README.md)
-holds the song layer and Nintendo's MusicPlayer2000 driver; the songs and
+holds the sound layer and Nintendo's MusicPlayer2000 driver; the sounds and
 samples are in [`games/tbs/sound`](../sound). [Debug rooms](debug/README.md)
 holds the three test scenes the ROM keeps.
 
@@ -160,8 +160,8 @@ The shared headers hold what the whole game uses, and `include/module` mirrors
 this folder with one header for each module, each compiled C file.
 
 [`games/tbs/include`](../include) holds what the whole game shares: types and
-structures, the flags in `flags.h`, the songs and sound effects in
-`songs.h`, and the calls events are written in, in `event.h`. The
+structures, the flags in `flags.h`, the music, fanfares and sound effects
+in `sounds.h`, and the calls events are written in, in `event.h`. The
 `Makefile` puts `include` and its folders `battle`, `field`, `game`,
 `graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
 includes those headers by name alone.
@@ -176,7 +176,7 @@ keeps its private header beside it.
 | Header | What it holds |
 | --- | --- |
 | `include/flags.h` | the [game flags](../glossary.md#game-flag) |
-| `include/songs.h` | the songs and sound effects |
+| `include/sounds.h` | the music, fanfares and sound effects |
 | `include/event.h` | the calls events are written in |
 | `include/module/<path>.h` | what the C file at `<path>.c` defines |
 | `include/farcall/` | each bank's `Far` names |

@@ -472,7 +472,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   casterActor->gravity = 0;
   Projection_ScaledUnit(work->args->user, casterScreen);
   casterScreen->x = casterScreen->x / 2;
-  Sound_PlaySongFar(SE_POWER_UP);
+  Sound_PlayFar(SE_POWER_UP);
 
   // Phase 1, the gathering (CASTING_IMPACT_GATHER_FRAMES): four more sparks
   // each frame, their radii shrinking by 4 towards the caster; a spark goes
@@ -1295,7 +1295,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                         projected.x - 4, projected.y - 4, 8, 8);
             step->x -= 6;
             if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
-              Sound_PlaySongFar(SE_IMPACT);
+              Sound_PlayFar(SE_IMPACT);
               BattleEffect_TintBattler(work->args->targets[0],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
             }
@@ -1408,7 +1408,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       EFFECT_SHOW_DAMAGE(-1);
     }
     if (frame == 4) {
-      Sound_PlaySongFar(SE_HEAVY_IMPACT);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 6) {
       if (mode == CASTING_IMPACT_IMPACT_FLINT ||

@@ -67,7 +67,7 @@
 #include "scene_tables.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "songs.h"
+#include "sounds.h"
 #include "fixed_math.h"
 #include "map_grid.h"
 
@@ -415,7 +415,7 @@ static void Tolbi_EnterDoor(void) {
     }
   }
   door = work->stepTrigger - 1;
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gTolbiDoors[door].steps, gTolbiDoors[door].x,
                        gTolbiDoors[door].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);

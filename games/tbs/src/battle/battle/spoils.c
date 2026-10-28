@@ -230,7 +230,7 @@ void Battle_AwardSpoils(void) {
     unit->experience += spoils->experience;
     while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct Unit)),
            Unit_TryLevelUpFar(unitId, &gains) != 0) {
-      Sound_PlaySongFar(MUS_LEVEL_UP);
+      Sound_PlayFar(MUS_LEVEL_UP);
       MessageArgument_ClearAllFar();
       MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
       MessageArgument_PushFar(unitIds[unitIndex], MESSAGE_ARGUMENT_ACTOR);
@@ -253,7 +253,7 @@ void Battle_AwardSpoils(void) {
             MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
             MessageArgument_PushFar(encodedAbility & PSYNERGY_ABILITY_MASK,
                                     MESSAGE_ARGUMENT_ABILITY);
-            Sound_PlaySongFar(SE_CAST);
+            Sound_PlayFar(SE_CAST);
             BattleMessage_ShowAndWaitFar(MsgAbilityMastered);
             BattleMessage_WaitForAdvance();
           }

@@ -83,5 +83,5 @@
 	.set import.FieldPsynergy_End, 1
 	.set import.FieldPsynergy_StartCast, 1
 	.set import.Inn_CheckIn, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

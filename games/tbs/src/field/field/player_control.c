@@ -184,7 +184,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
         freeBlocks++;
     }
     if (freeBlocks - 136 < 0)
-      Sound_PlaySongFar(SE_CLICK);
+      Sound_PlayFar(SE_CLICK);
   }
   /* FAKEMATCH(volatile): the volatile read puts gDebugMode's address in r5 here
    * and at the test before it, as native; as gDebugMode != 0, 9 of 808

@@ -137,7 +137,7 @@ void FieldPsynergy_Douse(void) {
   if (lightOrb == 0)
     return;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlaySongFar(SE_ITEM_BREAK);
+  Sound_PlayFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
   if (work->targetActor == 0) {
     work->x = caster->x.fixed;
@@ -209,7 +209,7 @@ void FieldPsynergy_Douse(void) {
         particle->callback = FieldEffect_SpawnRandomAngleTriplet;
         particle->flag = 2;
       }
-      Sound_PlaySongFar(SE_WATER);
+      Sound_PlayFar(SE_WATER);
       WaitFrames(6);
     }
     WaitFrames(10);

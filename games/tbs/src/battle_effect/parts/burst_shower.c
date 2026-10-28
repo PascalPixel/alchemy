@@ -242,7 +242,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     // The bursts aim at the targets in turn, one a frame.
     target = frame % work->args->targetCount;
     if (frame == 4) {
-      Sound_PlaySongFar(SE_WHOOSH);
+      Sound_PlayFar(SE_WHOOSH);
     }
     if (mode != BURST_SHOWER_MODE_GREY) {
       if (frame == 24) {

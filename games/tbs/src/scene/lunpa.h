@@ -9,7 +9,7 @@
 #include "scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "songs.h"
+#include "sounds.h"
 
 // Lunpa's and the gates' entrances and exits are in scene_links.h.
 

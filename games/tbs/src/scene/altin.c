@@ -71,7 +71,7 @@
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "actor_script.h"
 
 #if !TBS_PATCH_3
@@ -627,7 +627,7 @@ static void Altin_EnterDoor(void) {
   row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
   if (doorIndex == DOOR_SANCTUM) {
     // The Sanctum's door slides open with SE_THUMP, as Bilibin's does.
-    Event_PlaySong(SE_THUMP);
+    Event_PlaySound(SE_THUMP);
     MapGrid_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
     MapGrid_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
@@ -636,7 +636,7 @@ static void Altin_EnterDoor(void) {
     MapGrid_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
     Event_WaitFrames(4);
   } else {
-    Event_PlaySong(SE_DOOR_OPEN);
+    Event_PlaySound(SE_DOOR_OPEN);
     // The north door's row in gAltin_Doors plays its opening at
     // (39, 17), outside the village's camera box; its house stands at
     // (8, 17), above where the party comes back out
@@ -679,7 +679,7 @@ static void Altin_WalkThroughDoorway(void) {
   work = gFieldWork;
   Event_Start();
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Event_PlaySong(SE_MAP_EXIT);
+  Event_PlaySound(SE_MAP_EXIT);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
@@ -707,7 +707,7 @@ static void Altin_BeastHop(struct Actor *actor) {
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
-        Event_PlaySong(SE_SPLASH);
+        Event_PlaySound(SE_SPLASH);
         ((struct FieldEffect *)actor)->countdown = 0;
         beast->userValue = 4;
         MapGrid_SetShake(0, 0x10000, 0x10000);
@@ -719,7 +719,7 @@ static void Altin_BeastHop(struct Actor *actor) {
     beast->paused = 0;
   }
   if (beast->timer == 0) {
-    Event_PlaySong(SE_JUMP);
+    Event_PlaySound(SE_JUMP);
     ((struct FieldEffect *)actor)->countdown = 1;
     Actor_SelectAnimation(beast, 2);
     beast->velocityY = 0x30000;
@@ -740,7 +740,7 @@ static void Altin_BeastHopAway(void) {
   Actor_SetSpeed(ACTOR_WATER_BEAST, 0x13333, 0x9999);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
-  Event_PlaySong(SE_SPLASH);
+  Event_PlaySound(SE_SPLASH);
   Actor_ReleaseById(ACTOR_WATER_BEAST);
   MapGrid_SetShake(0, 0x10000, 0x10000);
   Event_WaitFrames(4);
@@ -973,7 +973,7 @@ static void Altin_ScareOffBeast(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_EAST, 20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTH + FACING_STEP, 40);
-  Event_PlaySong(SE_BEAST_CRY);
+  Event_PlaySound(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_WATER_BEAST, 2);
   Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTHWEST + FACING_STEP, 40);

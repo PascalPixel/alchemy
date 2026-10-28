@@ -112,7 +112,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
         BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HOP);
       } else {
-        Sound_PlaySongFar(SE_HEAVY_IMPACT);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 4);
       }
@@ -188,7 +188,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
                              1);
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  Sound_PlaySongFar(SE_CRACK);
+  Sound_PlayFar(SE_CRACK);
   // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
   // frame's canvas for transfer.
   frame = 0;

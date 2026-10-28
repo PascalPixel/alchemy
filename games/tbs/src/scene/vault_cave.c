@@ -94,7 +94,7 @@
 #include "actor.h"
 #include "ability_ids.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "actor_script.h"
 #include "map_grid_scroll.h"
 #include "scene.h"
@@ -382,7 +382,7 @@ static void VaultCave_PushPillarAhead(void) {
   }
   Actor_SelectAnimation(leader, ANIM_PUSH);
   WaitFrames(15);
-  Sound_PlaySong(SE_PUSH_STEP);
+  Sound_Play(SE_PUSH_STEP);
   pillar->speedLimit = 0x3333;
   pillar->acceleration = 0x3333;
   FieldActor_SetMoveTarget(pillar, destination.x, destination.y, destination.z);
@@ -390,7 +390,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->acceleration = 0x3333;
   FieldActor_SetMoveTarget(leader, destination.x, destination.y, destination.z);
   Actor_WaitForMove(pillar);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
+  Sound_Play(SE_STOP_ACTION_SE);
   pillar->x.fixed = destination.x;
   pillar->z.fixed = destination.z;
   pillar->velocityX = 0;
@@ -460,7 +460,7 @@ static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
 static inline void VaultCave_CompleteSouthernSwitch(void) {
   if (VaultCave_IsSouthernPillarOnSwitch() != 0) {
     GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH);
-    Event_PlaySong(MUS_PUZZLE_SOLVED);
+    Event_PlaySound(MUS_PUZZLE_SOLVED);
     VaultCave_ApplySouthernSwitchCells();
   }
 }
@@ -526,7 +526,7 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
   if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernPillarOnSwitch() != 0) {
       if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
-        Event_PlaySong(MUS_PUZZLE_SOLVED);
+        Event_PlaySound(MUS_PUZZLE_SOLVED);
         VaultCave_ApplyNorthernSwitchCells();
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH);
       }
@@ -707,7 +707,7 @@ static void VaultCave_RunRumble(void) {
   }
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Event_PlaySong(SE_RUSH);
+  Event_PlaySound(SE_RUSH);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 479; frame >= 0; frame--) {
     u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
@@ -732,7 +732,7 @@ static void VaultCave_RunRumble(void) {
   } while (frame <= 69);
   // Replace the mechanism's map cells after the fade completes.
   MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
-  Event_PlaySong(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_STOP_ACTION_SE);
   MapGrid_CenterOnFollowedPoint();
   MapGrid_WaitForShakeToSettle();
   Event_End();
@@ -753,13 +753,13 @@ static void VaultCave_FlipSwitch(void) {
     // Animate the switch face before the adjacent mechanism starts.
     destinationRow = 27;
     destinationColumn = 92;
-    Event_PlaySong(SE_SWITCH);
+    Event_PlaySound(SE_SWITCH);
     MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
     Event_WaitFrames(39);
     MapGrid_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
     Event_WaitFrames(50);
     destinationColumn = 25;
-    Event_PlaySong(SE_SWITCH_MECHANISM);
+    Event_PlaySound(SE_SWITCH_MECHANISM);
     MapGrid_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
     Event_WaitFrames(40);
     MapGrid_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
@@ -829,7 +829,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
           fallingActor->gravity = 0;
           fallingActor->velocityY = 0;
           fallingActor->paused = 0;
-          Event_PlaySong(SE_DRIP);
+          Event_PlaySound(SE_DRIP);
         }
       }
     }
@@ -838,14 +838,14 @@ static void VaultCave_UpdateTimedFallingActors(void) {
       Import_ActorSetAnimation(ACTOR_NORTHERN_PILLAR, 1);
       if (Event_GetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
-        Event_PlaySong(SE_DUST_PUFF);
+        Event_PlaySound(SE_DUST_PUFF);
       } else {
-        Event_PlaySong(SE_DRIP);
+        Event_PlaySound(SE_DRIP);
       }
     }
     if (VaultCave_ResetFallingActorAtActorCell(
             ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
-      Event_PlaySong(SE_DRIP);
+      Event_PlaySound(SE_DRIP);
     }
   }
 }
@@ -884,7 +884,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
         fallingActor->y.fixed = PIXELS(255);
         fallingActor->gravity = 0;
         fallingActor->velocityY = 0;
-        Sound_PlaySong(SE_DRIP);
+        Sound_Play(SE_DRIP);
       } else {
         if (fallingActor->velocityY <= 0) {
           if (fallingActor->y.fixed > 0xffff) {
@@ -894,7 +894,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
         fallingActor->gravity = stateValue;
         fallingActor->velocityY = stateValue;
         fallingActor->y.fixed = PIXELS(255);
-        Sound_PlaySong(SE_DRIP);
+        Sound_Play(SE_DRIP);
       }
     }
   }

@@ -161,7 +161,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
         0) {
       Actor_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
     hit = ActorScript_FindOverlappingEntryFar(target, (s32 *)candidate);
@@ -169,7 +169,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       if (hit != user) {
         Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          Sound_PlaySongFar(SE_MENU_ERROR);
+          Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
 
@@ -182,7 +182,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
           cellZ == (candidate->z & MOVE_CELL_MASK)) {
         Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          Sound_PlaySongFar(SE_MENU_ERROR);
+          Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
@@ -192,7 +192,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
                                                  beyond.z) != TERRAIN_FLAT) {
           Actor_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
-            Sound_PlaySongFar(SE_MENU_ERROR);
+            Sound_PlayFar(SE_MENU_ERROR);
           continue;
         }
         moved = 1;
@@ -203,7 +203,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     // push (in quarter turns): 2 pushing away from its side, 3 drawing toward
     // it, 1 sideways. Target and hand then move 16 pixels at 0.2 pixels a
     // frame, and a caster in the way is carried along with them.
-    Sound_PlaySongFar(SE_NOTE_HIGH);
+    Sound_PlayFar(SE_NOTE_HIGH);
     x = position.x;
     z = position.z;
     Actor_SelectAnimationFar(
@@ -374,7 +374,7 @@ void *FieldEffect_StartItemBreak(void *object) {
           child, radius, ((jitter - Random16()) >> 3) + source->facing);
     }
   }
-  Sound_PlaySongFar(SE_ITEM_BREAK);
+  Sound_PlayFar(SE_ITEM_BREAK);
   return parent;
 }
 
@@ -411,7 +411,7 @@ void UpdateRisingParticleBurst(void *object) {
   s32 dist;
   u32 spread;
 
-  Sound_PlaySongFar(SE_CAST);
+  Sound_PlayFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
     src->y.fixed += 1 << 16;
     src->facing += 0x2000; // 1/8 turn
@@ -442,7 +442,7 @@ void UpdateRisingParticleBurst(void *object) {
       Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }
-  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_ReleaseFar(src);
 }
 

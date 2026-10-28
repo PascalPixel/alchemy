@@ -186,7 +186,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   Projection_ScaledUnit(work->args->targets[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  Sound_PlaySongFar(SE_SWIRL);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
     // Frame loop: 20 frames a target and 72 more, though only the first
@@ -356,7 +356,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Projection_ScaledUnit(work->args->targets[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  Sound_PlaySongFar(SE_SWIRL);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
     // Frame loop, as in BattleEffect_RunBind.

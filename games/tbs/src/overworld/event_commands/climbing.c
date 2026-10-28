@@ -60,7 +60,7 @@ again:
     Event_Start();
     Actor_SelectAnimationFar(leader, 6);
     WaitFrames(6);
-    Sound_PlaySongFar(SE_JUMP);
+    Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;

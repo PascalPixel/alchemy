@@ -358,7 +358,7 @@ s32 Battle_ProcessTurnEnd(void) {
             BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
             PUSH_MESSAGE(MsgDjinnSet);
             BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
-            Sound_PlaySongFar(SE_POWER_UP);
+            Sound_PlayFar(SE_POWER_UP);
             Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor,
                                      POSE_CAST);
             Actor_SetAnimationSpeedFar(BattleObject_Get(unitId)->actor, 32);
@@ -422,7 +422,7 @@ s32 Battle_ProcessTurnEnd(void) {
             } else {
               BattleMessage_ShowAndWaitFar(MsgHpRecover);
             }
-            Sound_PlaySongFar(SE_NOTE_HIGH);
+            Sound_PlayFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->ppMax) {
@@ -438,7 +438,7 @@ s32 Battle_ProcessTurnEnd(void) {
             } else {
               BattleMessage_ShowAndWaitFar(MsgPpRecover);
             }
-            Sound_PlaySongFar(SE_NOTE_HIGH);
+            Sound_PlayFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
         }
@@ -645,7 +645,7 @@ s32 BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
         // MsgEarthPowerUp and the next three, in enum Element order.
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
-        Sound_PlaySongFar(SE_POWER_UP);
+        Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor, POSE_CAST);
         Actor_SetAnimationSpeedFar(BattleObject_Get(unitId)->actor, 32);
         // The pillar of each element whose power rose, its strength the most
@@ -695,9 +695,9 @@ s32 BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
       // DEAD: *poison is nonzero here, so the hit's sound is always
       // SE_HEAVY_IMPACT; the compare and both stores are in the ROM.
       if (*poison != 0) {
-        state->playback.pendingSong = SE_HEAVY_IMPACT;
+        state->playback.pendingSound = SE_HEAVY_IMPACT;
       } else {
-        state->playback.pendingSong = SE_IMPACT;
+        state->playback.pendingSound = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         s32 text;

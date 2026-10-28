@@ -105,7 +105,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   // flag bit 2) with no shadow and its colours cycling.
   target->update = Actor_CycleSpriteColors;
   Task_Add(FieldEffect_SpawnFallingParticles, TASK_PASS_FRAME);
-  Sound_PlaySongFar(SE_PSYNERGY_START);
+  Sound_PlayFar(SE_PSYNERGY_START);
   target->motionFlags = 4;
   Actor_SetSpriteFlagsFar(target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
@@ -172,7 +172,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(hands[0], 4);
       Actor_SelectAnimationFar(hands[1], 4);
       if ((gFrameCount & 15) == 0)
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
     // The way is free: move the target there.
@@ -181,7 +181,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       s32 x;
       s32 z;
 
-      Sound_PlaySongFar(SE_NOTE_HIGH);
+      Sound_PlayFar(SE_NOTE_HIGH);
       x = p->x;
       z = p->z;
       Actor_SelectAnimationFar(hands[0], 4);
@@ -217,9 +217,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SelectAnimationFar(hands[0], 4);
   Actor_SelectAnimationFar(hands[1], 4);
   Task_Remove(FieldEffect_SpawnFallingParticles);
-  Sound_PlaySongFar(SE_CLICK);
+  Sound_PlayFar(SE_CLICK);
   WaitFrames(15);
-  Sound_PlaySongFar(SE_CLICK);
+  Sound_PlayFar(SE_CLICK);
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
@@ -240,7 +240,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       }
     }
   }
-  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_ReleaseFar(hands[0]);
   Actor_ReleaseFar(hands[1]);
 
@@ -287,7 +287,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;
 
-  Sound_PlaySongFar(SE_ITEM_BREAK);
+  Sound_PlayFar(SE_ITEM_BREAK);
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;

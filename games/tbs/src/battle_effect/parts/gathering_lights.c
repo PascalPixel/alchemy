@@ -101,7 +101,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  Sound_PlaySongFar(SE_ENEMY_CRY);
+  Sound_PlayFar(SE_ENEMY_CRY);
 
   for (frame = 0;
        frame != gGatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
@@ -133,9 +133,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
       if (frame == k * 20 + 71) {
         if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
-          Sound_PlaySongFar(SE_HEAVY_IMPACT);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         else
-          Sound_PlaySongFar(SE_IMPACT);
+          Sound_PlayFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
         BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,

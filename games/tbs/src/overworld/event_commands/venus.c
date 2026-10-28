@@ -35,16 +35,16 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   WaitFrames(30);
   // Unpause the Djinni (its paused flag).
   djinni->paused = 0;
-  Sound_PlaySongFar(SE_JUMP);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 15);
-  Sound_PlaySongFar(SE_JUMP);
+  Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 15);
   // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   WaitFrames(30);
   djinni->update = FieldEffect_AdvanceSpinAngle;
-  Sound_PlaySongFar(SE_HIGH_JUMP);
+  Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 8, 22);
-  Sound_PlaySongFar(SE_SPIN);
+  Sound_PlayFar(SE_SPIN);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
   djinni->update = FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar(djinni, 3);
@@ -122,9 +122,9 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   }
 
   WaitFrames(100);
-  Sound_PlaySongFar(SE_STOP_ACTION_SE);
+  Sound_PlayFar(SE_STOP_ACTION_SE);
   WaitFrames(1);
-  Sound_PlaySongFar(SE_LIGHT_APPEAR);
+  Sound_PlayFar(SE_LIGHT_APPEAR);
   position.x = leader->x.fixed;
   position.y = leader->y.fixed + 0x120000;
   position.z = leader->z.fixed;
@@ -202,7 +202,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->speedMax = Random16() + 0x23333;
       effect->scaleX = 0x8000;
       effect->scaleY = 0x8000;
-      Sound_PlaySongFar(SE_CRACK);
+      Sound_PlayFar(SE_CRACK);
 
       if (*statePointer == MERCURY_DROPLET_FALLING)
         (*statePointer)--;

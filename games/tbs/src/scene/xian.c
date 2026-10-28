@@ -73,7 +73,7 @@
 #include "item_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 #include "shared/effect_create.h"
 #include "shared/effect_spawn.h"
@@ -420,7 +420,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Import_ActorSetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIM_STAND);
   Actor_RunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Event_WaitFrames(10);
-  Event_PlaySong(SE_SPARKLING_PASSAGE);
+  Event_PlaySound(SE_SPARKLING_PASSAGE);
   // Copy the wet terrain cell and grow the puddle into view.
   puddle->scaleX = 0x4ccc;
   puddle->scaleY = 0x4ccc;
@@ -557,7 +557,7 @@ static void Xian_TalkToKungFuStudent(void) {
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    Sound_PlaySong(SE_WATER);
+    Sound_Play(SE_WATER);
     particleFunc = Xian_SpawnTrainingParticles;
     Task_AddFrame(particleFunc, TASK_PASS_FRAME);
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->velocityY = 0x60000;
@@ -566,7 +566,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_SetSpeed(ACTOR_KUNG_FU_STUDENT, 0x30000, 0x18000);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 168, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
-    Sound_PlaySong(SE_HEAVY_IMPACT);
+    Sound_Play(SE_HEAVY_IMPACT);
     Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
     Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
     effectParams.type = 0x11b;
@@ -588,7 +588,7 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Actor_RefreshSelectorById(ACTOR_TRAINING_TREE);
-    Sound_PlaySong(SE_CHEST_OPEN);
+    Sound_Play(SE_CHEST_OPEN);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
@@ -643,7 +643,7 @@ static void Xian_JumpOverSpilledWater(void) {
       Event_Start();
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       WaitFrames(6);
-      Sound_PlaySong(SE_JUMP);
+      Sound_Play(SE_JUMP);
       Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
       leader->speedLimit = PIXELS(3);
       leader->acceleration = PIXELS(2);
@@ -686,31 +686,31 @@ static void Xian_OpenDoorAndLeave(void) {
 
   switch (work->stepTrigger) {
   case XIAN_TO_HOUSE:
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gXian_HouseDoorOpens, 81, 18);
     break;
   case XIAN_TO_HOUSE_NORTH:
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gXian_NorthHouseDoorOpens, 83, 11);
     break;
   case XIAN_TO_LACQUER_ROOMS_B_EAST:
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gXian_NorthHouseDoorOpens, 86, 11);
     break;
   case XIAN_TO_INN:
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gXian_InnDoorOpens, 84, 24);
     break;
   case XIAN_TO_WEAPON_AND_ARMOR_SHOP:
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gXian_InnDoorOpens, 72, 7);
     break;
   case XIAN_TO_SANCTUM:
-    Sound_PlaySong(SE_THUMP);
+    Sound_Play(SE_THUMP);
     MapGrid_PlayMapEdit(gXian_SanctumDoorOpens, 69, 11);
     break;
   case XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL:
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gXian_SchoolDoorOpens, 83, 7);
     break;
   default:
@@ -732,7 +732,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   rotationFunc = Xian_RotateTrainingTree;
   Task_AddFrame(rotationFunc, TASK_PASS_FRAME);
   Actor_RefreshSelectorById(ACTOR_TRAINING_TREE);
-  Sound_PlaySong(SE_CHEST_OPEN);
+  Sound_Play(SE_CHEST_OPEN);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,

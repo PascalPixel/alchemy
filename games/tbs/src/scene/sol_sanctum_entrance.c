@@ -71,7 +71,7 @@
 #include "actor.h"
 #include "fixed_math.h"
 #include "macros.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
@@ -281,7 +281,7 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   // The door opens over three frames.
   width = 3;
   height = 2;
-  Event_PlaySong(SE_BOOM);
+  Event_PlaySound(SE_BOOM);
   MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
   WaitFrames(10);
   MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
@@ -358,7 +358,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
       oneCell = 1;
-      Event_PlaySong(SE_GEM_SET);
+      Event_PlaySound(SE_GEM_SET);
       MapGrid_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
       MapGrid_CenterOnFollowedPoint();
       Event_WaitFrames(40);
@@ -366,7 +366,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       FieldMessage_Show(message, 1);
       Event_WaitFrames(20);
       reliefWidth = 3;
-      Event_PlaySong(SE_STONE_RUMBLE);
+      Event_PlaySound(SE_STONE_RUMBLE);
       MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
       MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
       MapGrid_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
@@ -419,14 +419,14 @@ static void SolSanctumEntrance_SetSecondSmallJewel(void) {
     Event_Start();
     Field_EndBusyAndReveal();
     // The eye sparkles, then the doorway opens.
-    Sound_PlaySong(SE_GEM_SET);
+    Sound_Play(SE_GEM_SET);
     MapGrid_CopyCellsTo(0, 71, 100, 71, 1, 1);
     MapGrid_CenterOnFollowedPoint();
     Event_WaitFrames(40);
     message = MsgSolSanctumSetSmallGem;
     FieldMessage_Show(message, 1);
     Event_WaitFrames(20);
-    Sound_PlaySong(SE_STONE_RUMBLE);
+    Sound_Play(SE_STONE_RUMBLE);
     MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
     MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);
     MapGrid_CenterOnFollowedPoint();
@@ -617,7 +617,7 @@ static void SolSanctumEntrance_PushStatue(void) {
     if (FieldActor_CheckMovementCollision(statue, destination) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       WaitFrames(15);
-      Sound_PlaySong(SE_PUSH);
+      Sound_Play(SE_PUSH);
       statue->speedLimit = PIXELS(1) / 5;
       statue->acceleration = PIXELS(1) / 5;
       FieldActor_SetMoveTarget(statue, destination->x, destination->y,
@@ -1294,7 +1294,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   } else {
     randomValue = Import_RandomNext();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
-      Event_PlaySong(SE_ITEM_BREAK);
+      Event_PlaySound(SE_ITEM_BREAK);
       MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
       *timer = 80;
     }

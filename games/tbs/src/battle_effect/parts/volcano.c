@@ -113,7 +113,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
         screen.x /= 2;
         screen.y -= 8;
         if (frame == gVolcano_StartFrames[pillar])
-          Sound_PlaySongFar(SE_CRASH);
+          Sound_PlayFar(SE_CRASH);
         // From 4 frames after it starts: the column, scrolling up 16
         // pixels a frame, and a flickering flame at its foot.
         if (frame >= gVolcano_StartFrames[pillar] + 4) {

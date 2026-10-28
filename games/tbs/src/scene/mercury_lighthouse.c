@@ -139,7 +139,7 @@
 #include "iowrite.h"
 #include "battle_unit.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "macros.h"
 
@@ -528,12 +528,12 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN);
     Event_WaitFrames(30);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-    Sound_PlaySong(SE_RUMBLE);
+    Sound_Play(SE_RUMBLE);
     Event_WaitFrames(60);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+    Sound_Play(SOUND_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_WaitForShakeToSettle();
     Import_EventSetExitRequest(
@@ -622,7 +622,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Sound_PlaySong(SE_SPARKLING_PASSAGE);
+  Sound_Play(SE_SPARKLING_PASSAGE);
   // Each touched entry has its own landing point; the patched path waits first.
   if (work->stepTrigger == 2) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 232, 616);
@@ -669,7 +669,7 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
     statue = Actor_GetById(ACTOR_GATE_STATUE);
     statue->targetY = Actor_GetById(ACTOR_GATE_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
-    Sound_PlaySong(SE_FLOOR_SWITCH);
+    Sound_Play(SE_FLOOR_SWITCH);
     MapGrid_PlayMapEdit(gMercuryLighthouse_GateCells, 9, 7);
     {
       s32 gateColumn = 9;
@@ -700,7 +700,7 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
       leader = Actor_GetById(ACTOR_PARTY_LEADER);
       leader->targetY = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
       MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
-      Sound_PlaySong(SE_FLOOR_SWITCH);
+      Sound_Play(SE_FLOOR_SWITCH);
       MapGrid_PlayMapEdit(gMercuryLighthouse_GateCells, 9, 7);
       Event_End();
     }
@@ -720,7 +720,7 @@ static void MercuryLighthouse_CloseFloorSwitch(void) {
     leader->targetY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
     Event_WaitFrames(5);
     MapGrid_CopyCellsTo(7, 2, 5, 11, 1, 1);
-    Sound_PlaySong(SE_FLOOR_SWITCH);
+    Sound_Play(SE_FLOOR_SWITCH);
     MapGrid_AnimateCells(gMercuryLighthouse_GateCloseCells, 9, 7);
     Event_End();
   }
@@ -733,7 +733,7 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
   s32 sourceColumn;
 
   if (delayFrames != 0) {
-    Sound_PlaySong(SE_GUSH);
+    Sound_Play(SE_GUSH);
   }
   step = firstStep;
   if (step < endStep) {
@@ -764,7 +764,7 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   s32 copyHeight;
   s32 column;
   s32 stripHeight;
-  Sound_PlaySong(SE_GUSH);
+  Sound_Play(SE_GUSH);
   copyHeight = 6;
   step = 0;
   destinationColumn = 41;
@@ -790,7 +790,7 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     destinationColumn += 2;
     sourceColumn += 2;
   } while (step <= 2);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
+  Sound_Play(SE_STOP_ACTION_SE);
   MapGrid_CopyCellAttributes(106, 33, 4, 5, 42, 33);
   MapGrid_WaitForShakeToSettle();
 }
@@ -860,7 +860,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   } while ((u32)nextRow <= 1);
   Event_WaitFrames(delayFrames);
   MercuryLighthouse_AnimateFountainTiles(0, nextRow, (nextRow + 1));
-  Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_MECHANISM);
+  Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
   // Keep the opened fountain spraying after the tile animation completes.
   Task_AddFrame(MercuryLighthouse_SprayAtFountain, TASK_PASS_FRAME);
   MapGrid_WaitForShakeToSettle();
@@ -924,7 +924,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
       if ((column >> 20) == 11) {
         Actor_MoveAndRedraw(probe);
         Event_WaitFrames(30);
-        Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_MECHANISM);
+        Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
         MercuryLighthouse_RaiseStairsWithSparkles();
         MapGrid_CopyCellsTo(76, 60, 74, 38, 3, 1);
         MapGrid_CopyCellsTo(77, 60, 76, 38, 2, 1);
@@ -995,7 +995,7 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
     statue = Actor_GetById(ACTOR_FALLEN_STATUE);
     statue->targetY = Actor_GetById(ACTOR_FALLEN_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
-    Sound_PlaySong(SE_FLOOR_SWITCH);
+    Sound_Play(SE_FLOOR_SWITCH);
     MapGrid_PlayMapEdit(gMercuryLighthouse_FloorSwitchCells, 10, 18);
     MapGrid_CopyCellAttributes(10, 16, 1, 1, column, 19);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN);
@@ -1026,7 +1026,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
   Actor_GetById(ACTOR_PARTY_LEADER)->targetY =
       Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
-  Sound_PlaySong(SE_FLOOR_SWITCH);
+  Sound_Play(SE_FLOOR_SWITCH);
   MapGrid_PlayMapEdit(gMercuryLighthouse_FloorSwitchCells, 10, 18);
   Event_End();
 }
@@ -1044,7 +1044,7 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
     leader->targetY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
     Event_WaitFrames(5);
     MapGrid_CopyCellsTo(8, 29, 10, 23, 1, 1);
-    Sound_PlaySong(SE_FLOOR_SWITCH);
+    Sound_Play(SE_FLOOR_SWITCH);
     MapGrid_AnimateCells(gMercuryLighthouse_FloorSwitchCloseCells, 10, 18);
     Event_End();
   }
@@ -1072,7 +1072,7 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
   struct EffectOptions *options;
   u32 row;
 
-  Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_MECHANISM);
+  Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
   if (side == STONE_DOOR_WEST) {
     MapGrid_CopyCellsTo(111, 57, 113, 42, 1, 1);
     MapGrid_CopyCellsTo(111, 59, 113, 43, 1, 1);
@@ -1136,7 +1136,7 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   MapGrid_CopyCellsTo(0x70, 0x39, 0x71, 0x2a, 1, 1);
   MapGrid_CopyCellsTo(0x75, 0x3a, 0x70, 0x2e, 1, 1);
   MapGrid_CopyCellsTo(0x75, 0x39, 0x74, 0x2c, 1, 1);
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   options.palette = 5;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
@@ -1295,7 +1295,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           Actor_Prepare(x, 0, PIXELS(818), SPRITE_CRATE);
           Actor_ResetAndSetPosition(ACTOR_SLIDING_STATUE, 840, 744);
           Event_WaitFrames(5);
-          Sound_PlaySong(SE_STONE_GRIND);
+          Sound_Play(SE_STONE_GRIND);
           Actor_WaitForMoveById(ACTOR_SLIDING_STATUE);
           Event_WaitFrames(40);
           GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
@@ -1652,18 +1652,18 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     // opens.
     MercuryLighthouse_MiaCastsPlyOnEntrance();
     Event_WaitFrames(50);
-    Sound_PlaySong(SE_PSYNERGY_SPARKLE);
+    Sound_Play(SE_PSYNERGY_SPARKLE);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31),
                             PALETTES_ALL);
     PaletteFade_StartInterpolation(10);
     WaitFrames(1);
-    Sound_PlaySong(SE_SHIMMER);
+    Sound_Play(SE_SHIMMER);
     WaitFrames(40);
     PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     WaitFrames(60);
-    Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
+    Sound_Play(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
     MercuryLighthouse_FadePaletteToWhite();
     MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
     MapGrid_PlayMapEdit(gMercuryLighthouse_ColumnCells, 116, 35);
@@ -1769,7 +1769,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   actor->motionFlags = 0;
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
-  Sound_PlaySong(SE_RISE_WITH_SPARKS);
+  Sound_Play(SE_RISE_WITH_SPARKS);
   options = &optionsStorage;
   options->priority = 1;
   options->palette = 5;
@@ -1780,7 +1780,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
       MercuryLighthouse_SparkleNear(actor->x.fixed, actor->y.fixed,
                                     actor->z.fixed);
     if (frame & 1) {
-      Sound_PlaySong(SE_GLITTER);
+      Sound_Play(SE_GLITTER);
       particleX = actor->x.fixed +
                   ((((u32)Import_RandomNext() * 24) >> 16) << 16) + -PIXELS(12);
       particleY = actor->y.fixed +
@@ -1835,7 +1835,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     u32 particleX, z;
 
     if ((1 & wave) != 0) {
-      Sound_PlaySong(SE_GLITTER);
+      Sound_Play(SE_GLITTER);
     }
     random = Import_RandomNext();
     particleX = random * 48;
@@ -1863,7 +1863,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     s32 particleSpeed;
 
     if ((1 & wave) != 0) {
-      Sound_PlaySong(SE_GLITTER);
+      Sound_Play(SE_GLITTER);
     }
     random = Import_RandomNext();
     particleX = random * 48;
@@ -1886,7 +1886,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     wave = (wave + 1);
   } while ((u32)wave <= 15);
   Event_WaitFrames(60);
-  Sound_PlaySong(SE_RUMBLE);
+  Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Event_WaitFrames(60);
   options->palette = 7;
@@ -1922,7 +1922,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     } while ((u32)particleIndex <= 31);
     wave = (wave + 1);
   } while ((u32)wave <= 3);
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Scene_PlayQueuedMusic();
@@ -2081,7 +2081,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
 /// Hermes' Water, once a visit.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Event_Start();
-  Sound_PlaySong(MUS_TREASURE_FOUND);
+  Sound_Play(MUS_TREASURE_FOUND);
   ItemDisplay_ShowItem(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
   MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER), 1);
@@ -2271,7 +2271,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
   s32 velocity[3];
   u32 particleIndex;
 
-  Sound_PlaySong(SE_BURST);
+  Sound_Play(SE_BURST);
   particleIndex = 0;
   do {
     if ((particleIndex & 1) != 0) {
@@ -2390,7 +2390,7 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(Actor_GetById(ACTOR_STAIR_PIPE_END), 1);
       if (GameFlag_Get(FLAG_STAIRS_RAISED)) {
         WaitFrames(1);
-        Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_MECHANISM);
+        Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
         Actor_SetPosition(ACTOR_STAIR_PIPE, PIXELS(184), PIXELS(528));
         MapGrid_CopyCellAttributes(11, 31, 1, 4, 9, 31);
         MapGrid_CopyCellAttributes(7, 30, 1, 4, 11, 31);
@@ -2544,7 +2544,7 @@ s32 MercuryLighthouse_Initialize(void) {
       // Fall through.
     case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE:
       if (gAdventure.entrance == MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
-        Sound_PlaySong(SE_MERCURY_LIGHTHOUSE_MECHANISM);
+        Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
       SetEffectRecordMode(Actor_GetById(ACTOR_SLIDING_STATUE), 1);
       Actor_SetSpritePriority(ACTOR_DOOR_ROOM_PIPE, 2);
       Actor_GetById(ACTOR_DOOR_ROOM_PIPE)->layer = 2;
@@ -2587,9 +2587,9 @@ s32 MercuryLighthouse_Initialize(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Actor_GetById(ACTOR_FALLEN_STATUE)->motionFlags = 3;
-      Sound_PlaySong(SE_STONE_GRIND);
+      Sound_Play(SE_STONE_GRIND);
       Event_WaitFrames(32);
-      Sound_PlaySong(SE_THUMP);
+      Sound_Play(SE_THUMP);
       SetEffectRecordMode(Actor_GetById(ACTOR_FALLEN_STATUE), 2);
       MapGrid_SetShake(192 << 10, 192 << 10, 128 << 9);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -2832,7 +2832,7 @@ static void MercuryLighthouse_RideLift(void) {
   Event_WaitTransitionFrames();
   Event_WaitFrames(60);
   BlendScript_Suspend();
-  Sound_PlaySong(SE_LIFT);
+  Sound_Play(SE_LIFT);
   // The lift layer scrolls down with both riders, 137 pixels, slowing as it
   // nears the landing.
   for (;;) {
@@ -2865,7 +2865,7 @@ static void MercuryLighthouse_RideLift(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
   Actor_Get(ACTOR_PARTY_LEADER)->speedLimit = PIXELS(3);
   Actor_Get(ACTOR_PARTY_LEADER)->acceleration = PIXELS(2);
-  Sound_PlaySong(SE_JUMP);
+  Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(4);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 736, 584);
@@ -2875,7 +2875,7 @@ static void MercuryLighthouse_RideLift(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Event_WaitFrames(6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
-  Sound_PlaySong(SE_LIFT);
+  Sound_Play(SE_LIFT);
   // The lift and its statue go back up without the leader.
   for (;;) {
     liftLayer->offsetY += liftSpeed;

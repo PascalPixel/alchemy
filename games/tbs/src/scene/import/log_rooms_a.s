@@ -93,5 +93,5 @@
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1
 	.set import.DjinnRecovery_CountDownTwenty, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

@@ -31,7 +31,7 @@
 #include "heap_slots.h"
 #include "dma.h"
 #include "resource_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "blitter.h"
 #include "fixed_math.h"

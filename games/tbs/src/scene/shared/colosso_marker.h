@@ -19,7 +19,7 @@
 #include "actor.h"
 #include "task.h"
 #include "vram_cache.h"
-#include "songs.h"
+#include "sounds.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 // what a stage's guide uses to describe the stage. Isaac appears on the stage
@@ -61,7 +61,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
                       IO_WRITE_16);
   sprite->image.objectMode = 1;
   sprite->shadow.objectMode = 1;
-  Sound_PlaySong(SE_COLOSSO_WARRIOR_APPEAR);
+  Sound_Play(SE_COLOSSO_WARRIOR_APPEAR);
   for (i = 0; i <= 15; i += 2) {
     actor->scaleX = (i << 12) + 0x1000;
     actor->scaleY = 0x1f000 - (i << 12);

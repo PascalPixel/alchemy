@@ -81,7 +81,7 @@
 #include "heap_slots.h"
 #include "display_transition.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 /// The palace's actors are placed by one of three tables, as the story
@@ -1404,7 +1404,7 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// Learning that the party is bound for Venus Lighthouse, he sends Iodem
 /// with it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
-  Event_PlaySong(MUS_BABI);
+  Event_PlaySound(MUS_BABI);
   Event_Start();
   Event_SetMessageId(MsgTolbiWaitingCompanions);
   Event_StartScreenTransition();
@@ -2295,7 +2295,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_WaitFrames(30);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -2317,7 +2317,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
 
   work = gFieldWork;
   Event_Start();
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (work->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
@@ -2346,7 +2346,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gBabiPalace_DoorCells, 36, 10);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
   Event_WaitFrames(16);

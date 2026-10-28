@@ -4,7 +4,7 @@
 #include "types.h"
 #include "actor.h"
 #include "event.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// Brings every Djinni back from recovery (twenty rounds of it), then, if Ivan
 /// holds the first Venus Djinni, gives it back to Isaac and recalculates both.
@@ -20,7 +20,7 @@ static s32 Vault_ReturnIsaacsDjinni(void) {
   DjinnRecovery_CountDownTwenty();
   if ((Unit_Get(IVAN)->djinnHeld[ELEMENT_VENUS] & 1) != 0) {
     Djinn_Transfer(IVAN, ELEMENT_VENUS, 0, ISAAC);
-    Sound_PlaySong(SE_RECOVERY);
+    Sound_Play(SE_RECOVERY);
     Unit_Calculate(ISAAC);
     Unit_Calculate(IVAN);
   }

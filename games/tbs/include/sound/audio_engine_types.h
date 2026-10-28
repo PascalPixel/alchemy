@@ -513,7 +513,7 @@ struct MusicPlayer {
 /// plays it.
 struct Song {
   const struct SongHeader *header;
-  /// The row of gMPlayTable that plays it (enum MusicPlayerId); Sound_PlaySong
+  /// The row of gMPlayTable that plays it (enum MusicPlayerId); Sound_Play
   /// gives a song on MUSIC_PLAYER_SE_LAST the first music player from 7 down
   /// to 4 with no active track, else 7.
   u16 ms;

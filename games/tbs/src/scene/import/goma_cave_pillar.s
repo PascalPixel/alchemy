@@ -46,5 +46,5 @@
 	.set import.Event_StartScreenTransition, 1
 	.set import.Event_WaitTransitionFrames, 1
 	.set import.Scene_PlayQueuedMusic, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

@@ -103,7 +103,7 @@
 #include "palbuf.h"
 #include "colosso_gauge.h"
 #include "macros.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
@@ -755,7 +755,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Actor_StartCamera(work->camera, (s32)log);
   Actor_SetSpeed(actorId, PIXELS(1) / 2, acceleration);
-  Event_PlaySong(SE_HEAVY_MOVE);
+  Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SelectAnimation(rider, 2);
   FieldActor_SetMoveTarget(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
                            0, rider->z.fixed);
@@ -774,12 +774,12 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
     column = 84;
     MapGrid_CopyCellAttributes(86, 10, 1, 2, column, 10);
     MapGrid_CopyCellAttributes(86, 9, 1, 1, column, 12);
-    Event_PlaySong(SE_STOP_ACTION_SE);
-    Event_PlaySong(SE_LOG_FALL);
+    Event_PlaySound(SE_STOP_ACTION_SE);
+    Event_PlaySound(SE_LOG_FALL);
   } else {
     Actor_SelectAnimation(log, 1);
-    Event_PlaySong(SE_STOP_ACTION_SE);
-    Event_PlaySong(SE_HEAVY_STOP);
+    Event_PlaySound(SE_STOP_ACTION_SE);
+    Event_PlaySound(SE_HEAVY_STOP);
     column = x >> 20;
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 9);
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 61);
@@ -797,8 +797,8 @@ static s32
 ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Actor *interpreter) {
   TilesetAnim_Pause(1);
   TilesetAnim_Resume(2);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
-  Sound_PlaySong(SE_FLOOR_SWITCH);
+  Sound_Play(SE_STOP_ACTION_SE);
+  Sound_Play(SE_FLOOR_SWITCH);
   return 0;
 }
 
@@ -1186,7 +1186,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Actor_ReleaseById(ACTOR_MOVING_SIDEWALK_ATTENDANT);
     Actor_ReleaseById(ACTOR_LOG_ROLLING_ATTENDANT);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Sound_PlaySong(SONG_FADE_OUT_BGM);
+      Sound_Play(SOUND_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
@@ -1312,7 +1312,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_ReleaseById(ACTOR_PRIZE_A);
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
-  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Start();
   Actor_SetPosition(ACTOR_OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
@@ -2015,7 +2015,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_WaitFrames(30);
-    Sound_PlaySong(MUS_LEVEL_UP);
+    Sound_Play(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
     Event_WaitFrames(120);
@@ -2023,7 +2023,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     return;
   }
 
-  Sound_PlaySong(SE_COLOSSO_LETTERING);
+  Sound_Play(SE_COLOSSO_LETTERING);
   Event_Start();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2032,7 +2032,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     *(s16 *)((u8 *)base + 30) = (mode * 60);
   }
   Event_WaitFrames(30);
-  Sound_PlaySong(mode + 0x5a);
+  Sound_Play(mode + 0x5a);
   Colosso_LoadLettering(mode);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
   Event_WaitFrames(120);
@@ -2041,21 +2041,21 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
     WaitFrames(1);
   }
 
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+  Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_WaitFrames(60);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
-  Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+  Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+  Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
-  Sound_PlaySong(SE_COLOSSO_GO);
+  Sound_Play(SE_COLOSSO_GO);
   Scene_PlayMusic();
   Event_End();
   GameFlag_Set(FLAG_IN_TOWN);
@@ -2066,7 +2066,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
 UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
   s32 actorId;
 
-  Sound_PlaySong(SE_COLOSSO_LETTERING);
+  Sound_Play(SE_COLOSSO_LETTERING);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   gColossoLetteringScriptWon[13] = countdown * 60;
@@ -2074,7 +2074,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
       (countdown < 0 ? -countdown : countdown) * 60;
   if (countdown < 0) {
     Event_WaitFrames(30);
-    Sound_PlaySong(MUS_INN);
+    Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
@@ -2084,7 +2084,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
     actorId = ACTOR_PARTY_LEADER;
   } else {
     Event_WaitFrames(30);
-    Sound_PlaySong(countdown + 90);
+    Sound_Play(countdown + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
@@ -2096,9 +2096,9 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
   while (Sound_GetBgmRestoreDelay() != 0) {
     WaitFrames(1);
   }
-  Sound_PlaySong(MUS_SILENCE);
+  Sound_Play(MUS_SILENCE);
   Event_WaitFrames(30);
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -2189,7 +2189,7 @@ ColosseumNavampaMatch_PlaceFinishItemAboveActor(struct Actor *interpreter) {
                            source->y.fixed + PIXELS(36), source->z.fixed);
   effect->motionFlags = 0;
   Actor_StartScript(effect, gColosseumNavampaMatch_PrizeScript);
-  Sound_PlaySong(MUS_TREASURE_FOUND);
+  Sound_Play(MUS_TREASURE_FOUND);
   source->timer = 0;
   return 0;
 }
@@ -2324,9 +2324,9 @@ static void ColosseumNavampaMatch_PushActorAhead(void) {
   subject->acceleration = PIXELS(1) / 5;
   FieldActor_SetMoveTarget(subject, position.x, position.y, position.z);
 
-  Sound_PlaySong(SE_PUSH_STEP);
+  Sound_Play(SE_PUSH_STEP);
   Actor_WaitForMove(target);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
+  Sound_Play(SE_STOP_ACTION_SE);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

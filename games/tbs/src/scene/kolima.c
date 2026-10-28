@@ -85,7 +85,7 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "scene.h"
-#include "songs.h"
+#include "sounds.h"
 #include "io_reg.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
@@ -368,7 +368,7 @@ static void Kolima_EnterDoor(void) {
   s32 y = 0;
 
   Event_Start();
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   switch (work->stepTrigger) {
   case KOLIMA_TO_INN:
     x = 71;
@@ -438,11 +438,11 @@ static void Kolima_LowerBridge(void) {
   Actor_SetSpeed(ACTOR_BRIDGE_VILLAGER, PIXELS(2), PIXELS(1));
   Actor_Jump(ACTOR_BRIDGE_VILLAGER, 2, 0);
   Actor_SetPositionAndCommit(ACTOR_BRIDGE_VILLAGER, 224, 197);
-  Sound_PlaySong(SE_KOLIMA_BRIDGE_HOP);
+  Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   Event_WaitFrames(10);
   Actor_SetPositionAndCommit(ACTOR_BRIDGE_VILLAGER, 234, 200);
   Event_WaitFrames(10);
-  Sound_PlaySong(SE_KOLIMA_BRIDGE_POST);
+  Sound_Play(SE_KOLIMA_BRIDGE_POST);
   Event_WaitFrames(30);
   // The drawbridge comes down in ever shorter steps.
   MapGrid_CopyCellsTo(91, 0, 72, 9, 5, 4);
@@ -454,7 +454,7 @@ static void Kolima_LowerBridge(void) {
   Event_WaitFrames(6);
   MapGrid_CopyCellsTo(91, 13, 72, 9, 5, 6);
   Event_WaitFrames(3);
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   // Ten puffs of dust where it lands, thrown alternately left and right.
   for (debrisIndex = 0; debrisIndex < 10; debrisIndex++) {
     struct Actor *debris = FieldActor_Create(
@@ -825,8 +825,8 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 20);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 10);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
-  Event_PlaySong(SE_CURSE_FALL);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Event_PlaySound(SE_CURSE_FALL);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   WaitFrames(1);
@@ -912,7 +912,7 @@ static void Kolima_WitnessForestCurse(void) {
   *firstCurtainState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_WaitFrames(180);
-  Event_PlaySong(MUS_FOREST);
+  Event_PlaySound(MUS_FOREST);
   Kolima_ShowMessageAndWait(ACTOR_GARET, 80);
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -963,7 +963,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_MIA, 3);
   gKolima_PendingPose = stagingValue;
   Task_AddFrame(Kolima_AlternateProtectiveFieldHeights, TASK_PASS_FRAME);
-  Event_PlaySong(SE_SHIMMER);
+  Event_PlaySound(SE_SHIMMER);
   Actor_GetById(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_LEADER_PSYNERGY_FIELD, 2);
@@ -995,7 +995,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_WaitFrames(300);
   Task_Remove(Kolima_UpdateCurseDust);
   Event_WaitFrames(120);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
@@ -1207,7 +1207,7 @@ static void Kolima_WitnessForestCurse(void) {
     gFieldWork->message++;
   }
   Event_ShowMessage(ACTOR_GARET, 0);
-  Event_PlaySong(MUS_FOREST);
+  Event_PlaySound(MUS_FOREST);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   WaitFrames(60);
@@ -1240,7 +1240,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_IVAN, 3);
   Actor_SetSpritePriority(ACTOR_MIA, 3);
   *secondCurtainState = KOLIMA_DUST_CLOSING_WIDE;
-  Event_PlaySong(SE_SHIMMER);
+  Event_PlaySound(SE_SHIMMER);
   Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, PIXELS(120), PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldActions);
@@ -1513,7 +1513,7 @@ static void Kolima_WitnessForestCurse(void) {
     }
   }
   // Reunite the party and remember that the first visit has played.
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1578,7 +1578,7 @@ static void Kolima_SpawnCurseSparkle(void) {
     return;
   }
   if (gKolima_EffectActive != 0) {
-    Sound_PlaySong(SE_SPARKLE_FALL);
+    Sound_Play(SE_SPARKLE_FALL);
   }
   sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, 0, spawnZ);
   if (sparkle == 0) {
@@ -1609,7 +1609,7 @@ static s32 Kolima_TriggerRegionScript(struct Actor *interpreter) {
          actor->z.fixed > PIXELS(211) && actor->z.fixed < PIXELS(257)) ||
         (actor->x.fixed > PIXELS(69) && actor->x.fixed < PIXELS(122) &&
          actor->z.fixed > PIXELS(194) && actor->z.fixed < PIXELS(277))) {
-      Sound_PlaySong(SE_DRIP);
+      Sound_Play(SE_DRIP);
       Actor_StartScript(actor, gKolima_RegionScript);
       gKolima_PendingPose = 1;
     }
@@ -1620,7 +1620,7 @@ static s32 Kolima_TriggerRegionScript(struct Actor *interpreter) {
          actor->z.fixed > PIXELS(216) && actor->z.fixed < PIXELS(250)) ||
         (actor->x.fixed > PIXELS(78) && actor->x.fixed < PIXELS(122) &&
          actor->z.fixed > PIXELS(241) && actor->z.fixed < PIXELS(277))) {
-      Sound_PlaySong(SE_DRIP);
+      Sound_Play(SE_DRIP);
       Actor_StartScript(actor, gKolima_RegionScript);
       gKolima_PendingPose = 1;
     }

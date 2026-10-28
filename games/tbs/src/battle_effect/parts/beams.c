@@ -409,7 +409,7 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
     work->fadeFrames = 24;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
-    Sound_PlaySongFar(SE_POWER_UP);
+    Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != 32; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                             work->args->firstTarget, 130);

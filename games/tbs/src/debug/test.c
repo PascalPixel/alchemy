@@ -33,7 +33,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "scene_tables.h"
-#include "songs.h"
+#include "sounds.h"
 #include "module/sound/sound.h"
 
 /// The debug item browser covers IDs 0 through 269.
@@ -650,7 +650,7 @@ static void MenuTest_SelectItem(void) {
   s32 itemCount;
 
   itemCount = DEBUG_ITEM_COUNT;
-  Sound_PlaySong(SE_MENU_CONFIRM);
+  Sound_Play(SE_MENU_CONFIRM);
   window = Window_Create(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
   details = Window_Create(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
   selectedItemId = 1;
@@ -687,44 +687,44 @@ static void MenuTest_SelectItem(void) {
     // These are independent tests: a single frame can add and move the cursor.
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
-        Sound_PlaySong(SE_MENU_CANCEL);
+        Sound_Play(SE_MENU_CANCEL);
         break;
       }
-      Sound_PlaySong(SE_NOTE_HIGH);
+      Sound_Play(SE_NOTE_HIGH);
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySong(SE_MENU_CANCEL);
+      Sound_Play(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       selectedItemId--;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       selectedItemId++;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       selectedItemId += DEBUG_ITEM_ROW_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       selectedItemId -= DEBUG_ITEM_ROW_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       selectedItemId += DEBUG_ITEM_PAGE_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       selectedItemId -= DEBUG_ITEM_PAGE_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     WaitFrames(1);
   }

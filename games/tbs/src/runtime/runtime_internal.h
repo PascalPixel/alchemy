@@ -54,7 +54,7 @@
 #include "module/runtime/math_table.h"
 #include "module/runtime/numtext.h"
 #include "savedata.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// The compiler library's call through r3, which render.c and save.c use to
 /// run code copied to RAM with four arguments.

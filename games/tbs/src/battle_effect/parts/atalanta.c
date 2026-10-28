@@ -187,7 +187,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         s32 y = Q_16_16_TO_INT(slash->y);
 
         if (frame == i * 8 + 84)
-          Sound_PlaySongFar(SE_POWER_UP);
+          Sound_PlayFar(SE_POWER_UP);
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
@@ -367,7 +367,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
             slash->variant = 0;
             work->shakeFrames = 2;
-            Sound_PlaySongFar(SE_HEAVY_IMPACT);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
             member = i % 6;
             if (member < work->args->targetCount) {
               BattleEffect_TintBattler(work->args->targets[member],

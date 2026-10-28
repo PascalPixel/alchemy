@@ -127,7 +127,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   else
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_COPY);
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
-  Sound_PlaySongFar(SE_POWER_UP);
+  Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != 21; frame++) {
     if (frame <= 3)
       draw[0](canvas, work->imageStorage, 0, 0, 120, 120);

@@ -27,7 +27,7 @@
 
 #include "event.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "fixed_math.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the

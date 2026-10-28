@@ -69,7 +69,7 @@
 #include "module/field/curve_data.h"
 #include "module/field/griddata.h"
 #include "actor_script.h"
-#include "songs.h"
+#include "sounds.h"
 #include "macros.h"
 
 /// Animation script commands. A script is pairs of bytes, a command and its

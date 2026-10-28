@@ -234,7 +234,7 @@ starts the leader walking in and asks for the exit into the house.
 
 ```c
 static void Vale_EnterJennasGrandparentsHouse(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);

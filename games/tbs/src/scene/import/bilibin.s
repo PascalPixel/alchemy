@@ -51,5 +51,5 @@
 	.set import.FieldPsynergy_StartMindReadWave, 1
 	.set import.FieldPsynergy_FinishWaveAndReleaseHeapBlock, 1
 	.set import.Djinn_JoinParty, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

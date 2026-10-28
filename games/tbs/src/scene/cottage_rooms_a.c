@@ -75,7 +75,7 @@
 #include "fixed_math.h"
 #include "ram_buffer.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// The placed actors, numbered in the order of the actor placement
 /// tables, which all place them alike;
@@ -335,7 +335,7 @@ static void CottageRoomsA_WorryAboutTravelersHealth(void) {
 static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     Weather_StopLightning();
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gFieldWork->transitionFrames = 16;

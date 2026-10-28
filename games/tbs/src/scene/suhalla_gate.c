@@ -63,7 +63,7 @@
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 #include "fixed_math.h"
 
@@ -254,7 +254,7 @@ static void SuhallaGate_EnterHouse(void) {
   exitTrigger = gFieldWork->stepTrigger;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   cellSize = 2;
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
   WaitFrames(4);
   MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
@@ -270,7 +270,7 @@ static void SuhallaGate_EnterHouse(void) {
 static void SuhallaGate_LeaveForWorldMap(void) {
   s16 exitTrigger = gFieldWork->stepTrigger;
 
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
   GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   Import_EventSetExitRequest(exitTrigger);

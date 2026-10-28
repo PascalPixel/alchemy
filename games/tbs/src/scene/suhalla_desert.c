@@ -91,7 +91,7 @@
 #include "item_ids.h"
 #include "actor_script.h"
 #include "iowrite.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 #include "map_grid.h"
 #include "fixed_math.h"
@@ -329,7 +329,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     }
     Actor_WaitForMoveById(leaderActorId);
     // Start the capture countdown once the approach finishes.
-    Event_PlaySong(SE_SANDSTORM);
+    Event_PlaySound(SE_SANDSTORM);
     Task_AddFrame(SuhallaDesert_UpdateCaptureTimer, TASK_PASS_FRAME);
     selectedActor->motionFlags = captureActive;
     FieldActor_SetMoveTarget(selectedActor, selectedActor->x.fixed,
@@ -405,7 +405,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   leaderX = selectedActor->x.part.pixel;
   leaderZ = selectedActor->z.part.pixel;
   Event_Start();
-  Sound_PlaySong(SE_SANDSTORM);
+  Sound_Play(SE_SANDSTORM);
   // Grow over 16 frames and, the first time, fade the haze in with it.
   frame = 0;
   do {
@@ -708,7 +708,7 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   storm = Actor_GetById(stormId);
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Sound_PlaySong(SE_GUSH);
+  Sound_Play(SE_GUSH);
   // BUG: the native passes an actor id where the sprite helper needs a pointer.
 #ifdef BUGFIX
   Actor_SetSpriteFlags(selectedActor, 0);
@@ -847,7 +847,7 @@ s32 Scene_Initialize(void) {
   } else if (gAdventure.sceneId == (s32)&SceneId_SuhallaDesertSouth) {
     SuhallaDesert_SetUpSecondMapStorms();
   } else {
-    Sound_PlaySong(SE_STOP_ACTION_SE);
+    Sound_Play(SE_STOP_ACTION_SE);
   }
   if (gAdventure.entrance == ENTRANCE_DEFAULT) {
     gridState->flags &= ~DISPCNT_BG1_ON;

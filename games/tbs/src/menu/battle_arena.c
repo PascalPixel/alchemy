@@ -43,7 +43,7 @@
 #include "frame.h"
 #include "flags.h"
 #include "heap_slots.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 
 /// The attendant has asked the player to take part; every 300th call of
@@ -1475,7 +1475,7 @@ static s32 BattleArena_SaveBattleResults(void) {
   // 0x70 in the native build, so retain the two copies.
   struct Window *window;
 
-  Sound_PlaySong(MUS_SAVED);
+  Sound_Play(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingBattleResults, 5, 4, 1);
   while (Message_AllTyped() == 0)
     WaitFrames(1);
@@ -1497,7 +1497,7 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
   // See BattleArena_SaveBattleResults for the measured shared-helper trial.
   struct Window *window;
 
-  Sound_PlaySong(MUS_SAVED);
+  Sound_Play(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
   while (Message_AllTyped() == 0)
     WaitFrames(1);

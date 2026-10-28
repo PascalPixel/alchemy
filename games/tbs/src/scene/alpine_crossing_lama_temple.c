@@ -78,7 +78,7 @@
 #include "item_ids.h"
 #include "actor_script.h"
 #include "field_effect.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// The temple's Psynergy Stone, an area temp flag: it refills once the
 /// party has been to another area.
@@ -295,7 +295,7 @@ static void LamaTemple_TalkToChiMonk(void) {
 /// it in Lama Temple slides it open and walks the leader through, into the room
 /// (LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM).
 static void LamaTemple_EnterHamasRoom(void) {
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
@@ -415,12 +415,12 @@ static void LamaTemple_RunHamasFarewell(void) {
   Event_WaitFrames(20);
   Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_NORTH, 30);
   // The door slides open with SE_THUMP, Hama walks through, and it slides shut.
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   Actor_SetSpeed(ACTOR_TEMPLE_HAMA, 0xcccc, 0x6666);
   Actor_WalkToAndWait(ACTOR_TEMPLE_HAMA, 136, 136);
   Actor_SetPosition(ACTOR_TEMPLE_HAMA, 0, 0);
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   MapGrid_AnimateCells(gLamaTemple_DoorCloseCells, DOOR_X, DOOR_Y);
   Event_WaitFrames(60);
   Scene_PlayQueuedMusic();
@@ -726,7 +726,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
   Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Event_WaitFrames(20);
-  Event_PlaySong(SE_CHEST_CLOSE);
+  Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetDestinationOffset(ACTOR_HAMA, 2, 0);
   Actor_SetDestinationOffset(ACTOR_HSU, 2, 0);
   Actor_SetDestinationOffset(ACTOR_FEIZHI, 2, 0);
@@ -735,7 +735,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
   Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Event_WaitFrames(20);
-  Event_PlaySong(SE_CHEST_CLOSE);
+  Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetDestinationOffset(ACTOR_HAMA, 4, 0);
   Actor_SetDestinationOffset(ACTOR_HSU, 4, 0);
   Actor_SetDestinationOffset(ACTOR_FEIZHI, 4, 0);
@@ -758,7 +758,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
   Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Event_WaitFrames(20);
-  Event_PlaySong(SE_CHEST_CLOSE);
+  Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetDestinationOffset(ACTOR_HAMA, 2, 0);
   Actor_SetDestinationOffset(ACTOR_HSU, 2, 0);
   Actor_SetDestinationOffset(ACTOR_FEIZHI, 2, 0);
@@ -767,7 +767,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Import_ActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
   Import_ActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
   Event_WaitFrames(20);
-  Event_PlaySong(SE_CHEST_CLOSE);
+  Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetDestinationOffset(ACTOR_HAMA, 4, 0);
   Actor_SetDestinationOffset(ACTOR_HSU, 4, 0);
   Actor_SetDestinationOffset(ACTOR_FEIZHI, 4, 0);

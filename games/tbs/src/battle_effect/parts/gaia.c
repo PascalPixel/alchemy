@@ -189,11 +189,11 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   work->shakeFrames = 250;
   for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
-      Sound_PlaySongFar(SE_POWER_UP);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 40)
-      Sound_PlaySongFar(SE_RUMBLE);
+      Sound_PlayFar(SE_RUMBLE);
     if (frame == 96)
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     if (frame == 120)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 

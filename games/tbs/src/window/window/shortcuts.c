@@ -191,7 +191,7 @@ void Debug_SelectAbilityPair(void) {
       }
       WaitFrames(1);
       if (gKeysRepeat & KEY_LEFT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         if (row != 0)
           second--;
         else
@@ -199,7 +199,7 @@ void Debug_SelectAbilityPair(void) {
         redraw = 1;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         if (row != 0)
           second++;
         else
@@ -207,21 +207,21 @@ void Debug_SelectAbilityPair(void) {
         redraw = 1;
       }
       if (gKeysRepeat & KEY_UP) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         row--;
         redraw = 1;
       }
       if (gKeysRepeat & KEY_DOWN) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         row++;
         redraw = 1;
       }
       if (gKeysPressed & KEY_A)
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
       else if (gKeysPressed & KEY_B)
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
       else if (gKeysPressed & KEY_START)
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
       else
         continue;
       /* FAKEMATCH(dead): an unread flag, which forces fresh zeros for both

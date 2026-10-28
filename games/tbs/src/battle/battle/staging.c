@@ -325,7 +325,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
     }
   }
   // The sound of a cast, as the caster raises its hand.
-  Sound_PlaySongFar(SE_CAST);
+  Sound_PlayFar(SE_CAST);
   ElementGlow_Play(work.effect.user, plan->element, GLOW_STAR_FIELD, 0);
   if (mode & STAGING_HIDE_ACTOR)
     BattleHighlight_SetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
@@ -929,7 +929,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   object = BattleObject_Get(work.effect.user)->actor;
   Actor_SelectAnimationFar(object, POSE_CAST);
   Actor_SetAnimationSpeedFar(object, 16);
-  Sound_PlaySongFar(SE_CAST);
+  Sound_PlayFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.effect.user, plan->element, GLOW_STREAKS, 0);
   else if (!isDjinni)

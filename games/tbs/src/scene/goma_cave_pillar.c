@@ -77,7 +77,7 @@
 #include "fixed_math.h"
 
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 // Map-section temp flags: Scene_Arrive clears 0x300 to 0x3ff when
 // the party enters another area, and other areas use the numbers
@@ -373,7 +373,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     // Dust falls while the stump rocks on the edge.
     fragmentFunc = GomaCavePillar_SpawnStumpDust;
     Task_AddFrame(fragmentFunc, TASK_PASS_FRAME);
-    Sound_PlaySong(SE_RUMBLE);
+    Sound_Play(SE_RUMBLE);
     Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 1, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
     Event_WaitFrames(10);
@@ -386,13 +386,13 @@ static void GomaCavePillar_PushStumpOver(void) {
     Event_WaitFrames(3);
     // It tips over the edge.
     Actor_SetSpeedParameters(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
-    Sound_PlaySong(SE_STOP_ACTION_SE);
+    Sound_Play(SE_STOP_ACTION_SE);
     Actor_ResetAndSetPosition(ACTOR_STUMP, 416, 200);
     movedActor = Actor_GetById(ACTOR_STUMP);
     Actor_SetSpriteFlags(movedActor, 0);
     Task_Remove(fragmentFunc);
     Event_WaitFrames(12);
-    Sound_PlaySong(SE_STONE_GRIND);
+    Sound_Play(SE_STONE_GRIND);
     xSource = Actor_GetById(ACTOR_STUMP);
     randomX = Import_RandomNext();
     fixedX = xSource->x.fixed;
@@ -415,7 +415,7 @@ static void GomaCavePillar_PushStumpOver(void) {
                                  fallingSpeed, style, zero);
     Event_WaitFrames(20);
     // It lands below; the shake dies down before the map grid cells change.
-    Sound_PlaySong(SE_CAST);
+    Sound_Play(SE_CAST);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     MapGrid_WaitForShakeToSettle();
@@ -439,7 +439,7 @@ static void GomaCavePillar_SettleEastPillar(void) {
     Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed = -PIXELS(2);
     Actor_GetById(ACTOR_EAST_PILLAR)->targetY =
         Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed;
-    Sound_PlaySong(SE_THUMP);
+    Sound_Play(SE_THUMP);
     GomaCavePillar_SpawnFragment(Actor_GetById(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_GetById(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_GetById(ACTOR_EAST_PILLAR)->z.fixed,
@@ -508,7 +508,7 @@ static void GomaCavePillar_JumpGapWest(void) {
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);

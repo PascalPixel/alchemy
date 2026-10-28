@@ -49,11 +49,11 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
     WaitFrames(1);
     if ((gKeysPressed & KEY_A) != 0) {
       if (Inventory_CountFar(unitId) == 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         continue;
       }
 
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       itemSlot = Shop_SelectUse(unitId);
       if (itemSlot == -1) {
         shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
@@ -68,7 +68,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       *selectedUnit = -1;
       *selectedSlot = -1;
       result = -1;
@@ -76,12 +76,12 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }
@@ -179,7 +179,7 @@ s32 Shop_SelectUse(s32 unitId) {
     if ((gKeysPressed & KEY_A) != 0) {
       discardStatus = Inventory_CheckDiscardFar(unitId, slot);
       if (discardStatus == 0) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         selectionResult = slot;
         break;
       }
@@ -190,7 +190,7 @@ s32 Shop_SelectUse(s32 unitId) {
                  -3) {
         Message_OpenWindowFar(MsgCannotRemoveIt, 8, 1, 2);
       }
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       while (Message_AllTypedFar() == 0)
         WaitFrames(1);
       Message_CloseFinishedWindowsFar();
@@ -198,19 +198,19 @@ s32 Shop_SelectUse(s32 unitId) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       slot -= 1;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       slot += 1;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
@@ -221,7 +221,7 @@ s32 Shop_SelectUse(s32 unitId) {
         slot += INVENTORY_SLOTS;
       while (slot >= inventoryCount)
         slot -= SHOP_INVENTORY_COLUMNS;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -230,7 +230,7 @@ s32 Shop_SelectUse(s32 unitId) {
         slot -= INVENTORY_SLOTS;
       while (slot < 0)
         slot += SHOP_INVENTORY_COLUMNS;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
   }

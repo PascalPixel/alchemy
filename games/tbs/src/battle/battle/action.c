@@ -516,7 +516,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
         BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
         BattlePlayback_Push(PLAYBACK_MESSAGE, MsgDjinnSet);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
-        Sound_PlaySongFar(SE_POWER_UP);
+        Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->actor,
                                  POSE_CAST);
         Actor_SetAnimationSpeedFar(BattleObject_Get(request->unitId)->actor,
@@ -529,7 +529,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
       // Recovering.
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      Sound_PlaySongFar(SE_MENU_ERROR);
+      Sound_PlayFar(SE_MENU_ERROR);
       BattleMessage_ShowAndWaitFar(MsgDjinnInRecovery);
       WaitFrames(60);
       return ACTION_REPORTED;

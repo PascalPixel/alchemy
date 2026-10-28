@@ -125,7 +125,7 @@ void UpdateLinkSessionCountdown(void) {
     // Round remaining frames upward so zero appears only after time expires.
     seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-      Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
+      Sound_PlayFar(SE_TRIPLE_TONE_LOW);
 
     if (state->timerWindow != 0)
       Text_DrawNumberInWindow(seconds, 2, (struct Window *)state->timerWindow,

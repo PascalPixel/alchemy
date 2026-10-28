@@ -113,7 +113,7 @@
 #include "fixed_math.h"
 #include "macros.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
@@ -597,7 +597,7 @@ static void Vale_StepOffBridge(void) {
 /// The door of Vale Sanctum (cell behavior 1): it opens, the leader walks
 /// in, and VALE_TO_SANCTUM leads into the Sanctum.
 static void Vale_EnterSanctum(void) {
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   MapGrid_AnimateCells(gVale_SanctumDoorOpens, 45, 11);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 257, 420);
   Import_EventSetExitRequest(VALE_TO_SANCTUM);
@@ -611,7 +611,7 @@ static void Vale_ApproachMtAleph(void) {
   if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_HaveJennaStopTheAlephDetour();
   } else {
-    Sound_PlaySong(SE_MAP_EXIT);
+    Sound_Play(SE_MAP_EXIT);
     Import_EventSetExitRequest(VALE_TO_SOL_ENTRANCE);
   }
 }
@@ -619,27 +619,27 @@ static void Vale_ApproachMtAleph(void) {
 /// Cell behavior 3 in Vale takes the northern way out to
 /// SceneId_ValeKradensCottage.
 static void Vale_ExitToValeKradensCottageNorth(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
 /// Cell behavior 4 in Vale takes the southern way out to
 /// SceneId_ValeKradensCottage.
 static void Vale_ExitToValeKradensCottageSouth(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
 /// Cell behavior 5 in Vale takes the way out to SceneId_ValePlaza.
 static void Vale_ExitToValePlaza(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_PLAZA);
 }
 
 /// The door of the house of Garet's family in Vale (cell behavior 6): it
 /// opens and VALE_TO_COTTAGE_ROOMS_A_EAST leads in.
 static void Vale_EnterGaretsHouse(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 54, 32);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 406, 727);
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_EAST);
@@ -649,7 +649,7 @@ static void Vale_EnterGaretsHouse(void) {
 /// VALE_TO_COTTAGE_ROOMS_A_SOUTH leads in, to the room CottageRoomsA
 /// enters from COTTAGE_ROOMS_A_FROM_VALE_SOUTH.
 static void Vale_EnterCottageRoomsA(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 45, 39);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_SOUTH);
@@ -676,7 +676,7 @@ static void Vale_EnterIsaacsHouse(void) {
     }
     Event_End();
   } else {
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gVale_IsaacsDoorOpens, 50, 44);
     Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 340, 888);
     Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_B);
@@ -686,7 +686,7 @@ static void Vale_EnterIsaacsHouse(void) {
 /// The door of the house of Jenna's grandparents in Vale (cell behavior 9):
 /// it opens and VALE_TO_COTTAGE_ROOMS_A_NORTH leads in.
 static void Vale_EnterJennasGrandparentsHouse(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
@@ -696,7 +696,7 @@ static void Vale_EnterJennasGrandparentsHouse(void) {
 /// VALE_TO_COTTAGE_ROOMS_A_WEST leads in, to the room CottageRoomsA
 /// enters from COTTAGE_ROOMS_A_FROM_VALE_WEST.
 static void Vale_EnterCottageRoomsAWest(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_WestHouseDoorOpens, 52, 76);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 1238);
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_WEST);
@@ -709,7 +709,7 @@ static void Vale_EnterCottageRoomsAWest(void) {
 /// the spot before it and taken VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR into
 /// the house of Jenna's grandparents, whose way out returns by the other door.
 static void Vale_UnusedEnterJennasGrandparentsHouseBySecondDoor(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR);
@@ -2147,7 +2147,7 @@ static void Vale_MendingTheRoof(void) {
   Scene_StartEventPsynergy();
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_CAST_PSYNERGY);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARET, 0, 20);
-  Event_PlaySong(SE_PSYNERGY_SPARKLE);
+  Event_PlaySound(SE_PSYNERGY_SPARKLE);
   for (i = 0; i < 60; i++) {
     Vale_FlashActorAndSpawnEffects(Actor_GetById(ACTOR_GARET));
     WaitFrames(1);
@@ -2736,7 +2736,7 @@ static void Vale_RoofMended(void) {
   Event_WaitFrames(5);
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_DORA, 14, 2, 24, 2, ACTOR_GARET, 10,
                                     14, 4, 14, none);
-  Event_PlaySong(SE_RATTLE);
+  Event_PlaySound(SE_RATTLE);
   actor = Actor_Get(ACTOR_DORA);
   actor->sprite->flags = none;
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -2762,7 +2762,7 @@ static void Vale_RoofMended(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
   Actor_Jump(ACTOR_GARET, 2, 5);
-  Event_PlaySong(SE_CRACK);
+  Event_PlaySound(SE_CRACK);
   MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
@@ -2831,7 +2831,7 @@ static void Vale_RoofMended(void) {
   Actor_Jump(ACTOR_GARET, 2, 5);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
-  Event_PlaySong(SE_CRACK);
+  Event_PlaySound(SE_CRACK);
   MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -3110,7 +3110,7 @@ static void Vale_TrailSparkles(struct Actor *updated) {
       ((u8 *)&record->image)[9] = priorityFlags;
     }
   }
-  Sound_PlaySong(SE_ITEM_BREAK);
+  Sound_Play(SE_ITEM_BREAK);
 }
 
 /// The Move hand rises, spins and shrinks for 31 frames, bursts into eight
@@ -3118,7 +3118,7 @@ static void Vale_TrailSparkles(struct Actor *updated) {
 static void Vale_VanishMoveHand(struct Actor *emitter) {
   s32 frameCountdown;
 
-  Sound_PlaySong(SE_CAST);
+  Sound_Play(SE_CAST);
 
   for (frameCountdown = 30; frameCountdown >= 0; frameCountdown--) {
     emitter->y.fixed += PIXELS(1);
@@ -3152,7 +3152,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
     }
   }
 
-  Sound_PlaySong(SE_PSYNERGY_SPARKLE);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
 
   emitter->x.fixed = 0;
   emitter->y.fixed = 0;
@@ -3225,7 +3225,7 @@ static void Vale_MovePillarBelowCliff(void) {
 /// Psynergy lifts a board at the roof's end.
 static void Vale_PlayStepSound(void) {
   if ((*(u32 *)&gFrameCount & 15) == 0)
-    Sound_PlaySong(SE_PSYNERGY_SPARKLE);
+    Sound_Play(SE_PSYNERGY_SPARKLE);
 }
 
 /// Searching a locked door in Vale (cell behavior 24).

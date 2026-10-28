@@ -57,7 +57,7 @@
 #include "display_transition.h"
 #include "map_grid_scroll.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed actor; its
 /// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE))
@@ -175,7 +175,7 @@ static void TretTreeBranch_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedExit;
 
-  Event_PlaySong(SE_MAP_EXIT);
+  Event_PlaySound(SE_MAP_EXIT);
   touchedExit = &state->stepTrigger;
   Import_EventSetExitRequest(*touchedExit);
 }

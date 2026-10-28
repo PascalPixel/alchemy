@@ -94,11 +94,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     Transform_ApplyPosition(point);
     // A chime every 4 frames while the columns spring up.
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
-      Sound_PlaySongFar(SE_ICE);
+      Sound_PlayFar(SE_ICE);
     // Frame 85 is Frost's burst; Tundra and Glacier play this sound 12 and 24
     // frames before theirs.
     if (frame == 85)
-      Sound_PlaySongFar(SE_WHOOSH);
+      Sound_PlayFar(SE_WHOOSH);
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 4 + 40)
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLUE_TINT,

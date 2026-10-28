@@ -99,8 +99,8 @@ gBgmVolumeStep:
 	.global gBgmFadeRequested
 gBgmFadeRequested:
 	.space 0x0000000c
-	.global gMusicPlayerLastSong
-gMusicPlayerLastSong:
+	.global gMusicPlayerLastSound
+gMusicPlayerLastSound:
 	.space 0x00000010
 	.global gBgmTempoPitchTarget
 gBgmTempoPitchTarget:

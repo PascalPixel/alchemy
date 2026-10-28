@@ -86,7 +86,7 @@
 #include "actor_script.h"
 #include "actor.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "map_grid_scroll.h"
 
 /// In Bilibin Cave's ice room, a movable torch has melted the third puddle's
@@ -325,7 +325,7 @@ static inline void BilibinCave_MeltFrostBack(s32 actorId) {
   Event_Start();
   Actor_ConfigureSpriteColor(actorId, SPRITE_COLOR_NORMAL);
   Event_WaitFrames(40);
-  Sound_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
+  Sound_Play(SE_HIDDEN_PASSAGE_OPEN);
   Actor_SetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
   Event_End();
 }
@@ -379,7 +379,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (Event_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
       Event_Start();
       Event_WaitFrames(40);
-      Event_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
+      Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
       Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_MELT);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, destinationCellX, 22);
@@ -391,7 +391,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (Event_GetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
       Event_Start();
       Event_WaitFrames(40);
-      Event_PlaySong(SE_SHIMMER);
+      Event_PlaySound(SE_SHIMMER);
       destinationCellX = 36;
       Actor_SetAnimationAndWait(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_FREEZE);
       MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
@@ -608,7 +608,7 @@ static void BilibinCave_PushTorch(void) {
 
   Actor_SelectAnimation(leader, 8);
   WaitFrames(15);
-  Sound_PlaySong(SE_PUSH);
+  Sound_Play(SE_PUSH);
 
   target->speedLimit = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;

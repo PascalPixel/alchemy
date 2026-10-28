@@ -68,7 +68,7 @@ struct BattlePlaybackWork {
   struct AdvanceArrowSprite arrow; ///< the advance arrow
   s32 arrowResource; ///< the arrow's resource entry; -1 until it is shown
   s32 unitId;        ///< the unit of the hit or defeat being played
-  s32 pendingSong;   ///< hit sound (an SE_ id), played on the next hit
+  s32 pendingSound;  ///< hit sound (an SE_ id), played on the next hit
   /// bits: 0 Djinn bonus (PLAYBACK_FLAG_DJINN_BONUS), for the enemies that fall
   /// during the action
   s32 flags;

@@ -126,13 +126,13 @@ void FieldPsynergy_Halt(void) {
   // its second animation.
   WaitFrames(5);
   Actor_SelectAnimationFar(orb, 1);
-  Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
+  Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  Sound_PlaySongFar(SE_TRIPLE_TONE_HIGH);
+  Sound_PlayFar(SE_TRIPLE_TONE_HIGH);
 
   // Particles 4 pixels round it fly out, then come back to the Psynergy's
   // position.

@@ -258,7 +258,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
           // flashes again 16 frames later.
           if (STREAKS_VALUE(mode, STREAKS_HIT)) {
             if (frame == k * STREAKS_TARGET_DELAY + 24) {
-              Sound_PlaySongFar(SE_IMPACT);
+              Sound_PlayFar(SE_IMPACT);
               if (k == 0) // the first hit lets the battle show the damage
                 EFFECT_SHOW_DAMAGE(-1);
               BattleEffect_TintBattler(work->args->targets[k],
@@ -438,7 +438,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     } else {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         if (frame == i * 8 + 48) {
-          Sound_PlaySongFar(SE_RECOVERY);
+          Sound_PlayFar(SE_RECOVERY);
           EFFECT_SHOW_DAMAGE(-1);
           BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                    -1, i, 8);

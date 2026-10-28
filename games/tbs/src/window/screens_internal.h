@@ -58,7 +58,7 @@
 #include "select.h"
 #include "node_chain.h"
 #include "text/msg_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "flags.h"
 #include "static_assert.h"
 #include "event.h"

@@ -155,17 +155,17 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     if (frame == 16)
-      Sound_PlaySongFar(SE_RUMBLE);
+      Sound_PlayFar(SE_RUMBLE);
     if (frame == 256)
-      Sound_PlaySongFar(SE_SPIN);
+      Sound_PlayFar(SE_SPIN);
     if (frame == 334)
-      Sound_PlaySongFar(SE_POWER_UP);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 347)
-      Sound_PlaySongFar(SE_POWER_UP);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 359)
-      Sound_PlaySongFar(SE_POWER_UP);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 372)
-      Sound_PlaySongFar(SE_POWER_UP);
+      Sound_PlayFar(SE_POWER_UP);
 
     // The targets, from 16i frames: spin faster round the middle and close
     // in, rising quickly once near it, until frame 160; they keep turning

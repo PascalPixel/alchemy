@@ -66,7 +66,7 @@
 #include "heap_slots.h"
 #include "item_ids.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "types.h"
 #include "event.h"
 #include "event_inline.h"
@@ -493,7 +493,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   gTolbiShipMast_CameraCenter[1] = zero;
   Actor_SetScript(ACTOR_SPARKLE, gTolbiShipMast_FollowCameraActions);
   Event_WaitFrames(20);
-  Sound_PlaySong(MUS_CONFRONTATION);
+  Sound_Play(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Actor_Stop(ACTOR_LOOKOUT);
   WaitFrames(1);
@@ -665,7 +665,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   // The lookout jumps, the monsters' theme plays, and Sean cries out.
   Actor_Jump(ACTOR_LOOKOUT, 4, 20);
   Actor_Jump(ACTOR_LOOKOUT, 6, 40);
-  Event_PlaySong(MUS_CONFRONTATION);
+  Event_PlaySound(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Event_SetMessageId(MsgTolbiShipMonsters2);
   FieldEvent_ShowMessageThenWait(ACTOR_SEAN, 0, 20);
@@ -725,7 +725,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_WaitFrames(300);
-  Event_PlaySong(SE_BEAST_CRY);
+  Event_PlaySound(SE_BEAST_CRY);
   Event_WaitFrames(100);
   // The birds fly off before the monster lands.
   TolbiShipMast_PrepareGroupDeparture();
@@ -757,7 +757,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   WaitFrames(1);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_PlaySong(MUS_CONFRONTATION);
+  Event_PlaySound(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   // ACTOR_LANDING_MONSTER_SHADOW grows for 32 frames before
   // ACTOR_LANDING_MONSTER is placed above it.
@@ -782,7 +782,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   actor->gravity = PIXELS(3);
   Event_WaitFrames(20);
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);
-  Event_PlaySong(SE_BEAST_CRY);
+  Event_PlaySound(SE_BEAST_CRY);
   Event_WaitFrames(20);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_WaveActions);
   Event_WaitFrames(80);
@@ -792,7 +792,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, PIXELS(1), PIXELS(1) / 2);
   actor->bounce = Q16_ONE / 10;
   actor->gravity = 7 * PIXELS(1) / 10;
-  Event_PlaySong(SE_HIGH_JUMP);
+  Event_PlaySound(SE_HIGH_JUMP);
   actor->velocityY = PIXELS(8);
   Actor_SetDestination(ACTOR_LANDING_MONSTER, 132, 360);
   Actor_SetDestination(ACTOR_LANDING_MONSTER_SHADOW, 132, 360);

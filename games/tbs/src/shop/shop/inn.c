@@ -134,7 +134,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   WaitFrames(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();
-  Sound_PlaySongFar(MUS_INN);
+  Sound_PlayFar(MUS_INN);
   Sound_WaitForFanfare();
   WaitFrames(10);
   Event_StartScreenTransitionFar();

@@ -154,14 +154,14 @@ s32 Battle_Run(s32 enemyGroup) {
   // battle songs.
   cue = gAdventure.battleMusic;
   if (cue != 0) {
-    Sound_PlaySongFar(cue);
+    Sound_PlayFar(cue);
     if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
-      Sound_PlaySongFar(MUS_BOULDER_CHASE);
+      Sound_PlayFar(MUS_BOULDER_CHASE);
       Sound_LoadReverbCode(SOUND_REVERB_NONE);
     }
   } else {
-    Sound_PlaySongFar(MUS_SATUROS_BATTLE);
-    Sound_PlaySongFar(MUS_COLOSSO_BATTLE);
+    Sound_PlayFar(MUS_SATUROS_BATTLE);
+    Sound_PlayFar(MUS_COLOSSO_BATTLE);
   }
 
   // The units, the windows and the background.
@@ -314,9 +314,9 @@ won:
   Battle_ClearSerialTransferPayload();
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->isLink != 0)
-      Sound_PlaySongFar(MUS_VICTORY);
+      Sound_PlayFar(MUS_VICTORY);
     if (battle->spoils.defeated != 0) {
-      Sound_PlaySongFar(MUS_VICTORY);
+      Sound_PlayFar(MUS_VICTORY);
       if (battle->defeatState <= DEFEAT_SEVERAL) {
         BattleUnit_SetFar(FIRST_ENEMY_UNIT,
                           battle->enemyKinds[battle->firstDefeated], 26);
@@ -328,7 +328,7 @@ won:
     }
     Battle_AwardSpoils();
   }
-  Sound_PlaySongFar(SONG_FADE_OUT_BGM);
+  Sound_PlayFar(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   result = battle->spoils.defeated;
@@ -349,7 +349,7 @@ party_lost:
   // "X goes down in defeat..." for a lone party member, else "X's party has
   // been defeated!".
   Battle_ClearSerialTransferPayload();
-  Sound_PlaySongFar(MUS_DEFEAT);
+  Sound_PlayFar(MUS_DEFEAT);
   MessageArgument_ClearAllFar();
   MessageArgument_PushFar(gAdventure.party[0], MESSAGE_ARGUMENT_ACTOR);
   if (BattleParty_PrepareMembers(0) == 1)
@@ -357,14 +357,14 @@ party_lost:
   else
     BattleMessage_ShowAndWaitFar(MsgPartyDefeated);
   BattleMessage_WaitForAdvance();
-  Sound_PlaySongFar(SONG_FADE_OUT_BGM);
+  Sound_PlayFar(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   result = BATTLE_OUTCOME_LOST;
   ScreenFade_Wait();
   goto finished;
 
 fled:
-  Sound_PlaySongFar(SONG_FADE_OUT_BGM);
+  Sound_PlayFar(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   result = BATTLE_OUTCOME_FLED;

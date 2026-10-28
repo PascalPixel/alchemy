@@ -94,7 +94,7 @@
 #include "actor.h"
 #include "fixed_math.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 
 /// A chest searched while facing the given way.
@@ -515,7 +515,7 @@ static void CrossboneIsle_MovePillar(void) {
 
   Event_WaitFrames(8);
   CrossboneIsle_SpawnPillarMovedBurst(ACTOR_SINKING_PILLAR);
-  Sound_PlaySong(SE_WHOOSH);
+  Sound_Play(SE_WHOOSH);
   Event_WaitFrames(40);
 
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SINKING_PILLAR), 0);
@@ -548,7 +548,7 @@ static void CrossboneIsle_PushPillar(void) {
 /// (step trigger 4): it opens, and the party goes through to the side room.
 static void CrossboneIsle_OpenWestDoor(void) {
   MapGrid_PlayMapEdit(gCrossboneIsle_EntranceCells, 37, 7);
-  Sound_PlaySong(SE_STONE_RUMBLE);
+  Sound_Play(SE_STONE_RUMBLE);
   Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
 
@@ -606,7 +606,7 @@ static void CrossboneIsle_OpenEastDoor(void) {
     Event_End();
   } else {
     MapGrid_PlayMapEdit(gCrossboneIsle_EntranceCells, 44, 7);
-    Sound_PlaySong(SE_STONE_RUMBLE);
+    Sound_Play(SE_STONE_RUMBLE);
     Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_EAST);
   }
 }
@@ -807,9 +807,9 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   } else {
     Actor_SelectAnimation(logActor, 3);
   }
-  Sound_PlaySong(SE_LOG_PUSH);
+  Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(selectedActor);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
+  Sound_Play(SE_STOP_ACTION_SE);
   Event_End();
 }
 
@@ -973,7 +973,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     Event_Start();
     Actor_SelectAnimation(actor, 6);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, 7);
     actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);

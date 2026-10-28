@@ -600,7 +600,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_ShowMessage(MsgEquippedIt, 15, 14);
           item = Item_GetDirectFar(menu->selectedItems[0]);
           if ((item->flags & ITEM_CURSED) != 0) {
-            Sound_PlaySongFar(SE_CURSE);
+            Sound_PlayFar(SE_CURSE);
             WindowSprite_ClearListFar(menu->descriptionWindow);
             ItemMenu_ShowMessage(MsgEquippedIt + 7, // "You were cursed!"
                                  ITEM_MODAL_SHORT_X, 14);
@@ -739,7 +739,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
             ItemMenu_ShowMessage(MsgEquippedIt, 15, 14);
             item = Item_GetDirectFar(menu->selectedItems[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
-              Sound_PlaySongFar(SE_CURSE);
+              Sound_PlayFar(SE_CURSE);
               WindowSprite_ClearListFar(menu->descriptionWindow);
               ItemMenu_ShowMessage(MsgEquippedIt + 7, // "You were cursed!"
                                    ITEM_MODAL_SHORT_X, 14);
@@ -785,7 +785,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_ShowMessage(MsgEquippedIt, 15, 8);
       item = Item_GetDirectFar(menu->selectedItems[0]);
       if ((item->flags & ITEM_CURSED) != 0) {
-        Sound_PlaySongFar(SE_CURSE);
+        Sound_PlayFar(SE_CURSE);
         WindowSprite_ClearListFar(menu->descriptionWindow);
         ItemMenu_ShowMessage(MsgEquippedIt + 7, // "You were cursed!"
                              ITEM_MODAL_SHORT_X, 8);
@@ -864,7 +864,7 @@ s32 ItemMenu_Use(void) {
                     menu->sideMember[1]);
 
   if (result == -1) {
-    Sound_PlaySongFar(SE_MENU_ERROR);
+    Sound_PlayFar(SE_MENU_ERROR);
     WindowSprite_ClearListFar(menu->descriptionWindow);
     ItemMenu_ShowMessage(menu->messageOffset + MsgItemUseResult, result,
                          result);
@@ -1118,17 +1118,17 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
         ItemMenu_Sort(unit->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshMember(memberIds[selection], 0);
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
       } else if (ItemMenu_CountItems(memberIds[selection])) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = memberIds[selection];
         break;
       } else {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
       }
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -1141,12 +1141,12 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
       redraw = 1;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selection--;
       redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selection++;
       redraw = 1;
     }
@@ -1273,26 +1273,26 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       if (mode == ITEM_TARGET_GIVE && memberIndex == menu->sideIndex[0]) {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = menu->memberIds[memberIndex];
       break;
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       // The u8 255 is returned through (s8) as -1.
       result = 255;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
       memberIndex++;
     }
@@ -1796,25 +1796,25 @@ s32 ItemMenu_ChooseCommand(void) {
 
     if ((gKeysPressed & KEY_A) != 0) {
       if (commandStates[commandIndex] == ITEM_COMMAND_STATE_DISABLED) {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
       } else {
         switch (commandIndex) {
         case ITEM_COMMAND_USE:
-          Sound_PlaySongFar(SE_NOTE_MID); // Use
+          Sound_PlayFar(SE_NOTE_MID); // Use
           break;
         case ITEM_COMMAND_EQUIP:
-          Sound_PlaySongFar(SE_NOTE_HIGH); // Equip
+          Sound_PlayFar(SE_NOTE_HIGH); // Equip
           break;
         case ITEM_COMMAND_INSPECT:
         case ITEM_COMMAND_GIVE:
         case ITEM_COMMAND_DROP:
-          Sound_PlaySongFar(SE_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         case ITEM_COMMAND_REMOVE:
-          Sound_PlaySongFar(SE_ITEM_REMOVE); // Remove
+          Sound_PlayFar(SE_ITEM_REMOVE); // Remove
           break;
         default:
-          Sound_PlaySongFar(SE_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         }
         menu->listMode = commandIndex;
@@ -1822,7 +1822,7 @@ s32 ItemMenu_ChooseCommand(void) {
       }
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       commandIndex = -1;
       menu->listMode = commandIndex;
       break;
@@ -1831,19 +1831,19 @@ s32 ItemMenu_ChooseCommand(void) {
     if ((gKeysRepeat & KEY_UP) != 0) {
       row -= 1;
       redraw = 1;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_DOWN) != 0) {
       row += 1;
       redraw = 1;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
       column += 1;
       redraw = 1;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_LEFT) != 0) {
       column -= 1;
       redraw = 1;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   }
 
@@ -2026,7 +2026,7 @@ void ItemMenu_TryBreak(void) {
            ->useType == ITEM_USE_MAY_BREAK) &&
       (Random16() < 0x2000U)) {
     Inventory_BreakFar(menu->sideMember[0], menu->selectedSlots[0]);
-    Sound_PlaySongFar(SE_ITEM_BREAK);
+    Sound_PlayFar(SE_ITEM_BREAK);
     ItemMenu_ShowMessage(MsgItemBroke, 0, -1);
 #if !TBS_PATCH_1
     WindowSprite_RedrawSavedRectFar(menu->descriptionWindow);
@@ -2509,24 +2509,24 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
       }
       // A confirms, B backs out, Left and Right change the number.
       if (gKeysPressed & KEY_A) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
       if (gKeysPressed & KEY_B) {
         quantity = -1;
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         break;
       }
       MenuCursor_Position(ITEM_GIVE_CURSOR_X, 40);
       if (gKeysRepeat & KEY_LEFT) {
         quantity--;
         changed = 1;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       if (gKeysRepeat & KEY_RIGHT) {
         quantity++;
         changed = 1;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       WaitFrames(1);
     }
@@ -2590,11 +2590,11 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
       selection = (selection + rows) % rows;
     }
     if (gKeysPressed & KEY_A) {
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       selection = 1;
       break;
     }
@@ -2602,12 +2602,12 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
     if (gKeysRepeat & KEY_UP) {
       selection--;
       changed = 1;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       selection++;
       changed = 1;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
     WaitFrames(1);
   }
@@ -2665,11 +2665,11 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = (selection + rows) % rows;
       }
       if (gKeysPressed & KEY_A) {
-        Sound_PlaySongFar(SE_NOTE_HIGH); // the Equip sound
+        Sound_PlayFar(SE_NOTE_HIGH); // the Equip sound
         break;
       }
       if (gKeysPressed & KEY_B) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         selection = 1;
         break;
       }
@@ -2682,7 +2682,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 #endif
         selection--;
         changed = 1;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
 #if LANGUAGE != LANGUAGE_JAPANESE
       if (gKeysRepeat & KEY_RIGHT) {
@@ -2691,7 +2691,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 #endif
         selection++;
         changed = 1;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
       WaitFrames(1);
     }
@@ -2950,13 +2950,13 @@ s32 ItemMenu_RunList(s32 sideIndex) {
 
       if ((gKeysPressed & KEY_A) != 0 &&
           menu->items[state.selectedIndex] != 0) {
-        Sound_PlaySongFar(SE_NOTE_LOW); // the item choice sound
+        Sound_PlayFar(SE_NOTE_LOW); // the item choice sound
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
       }
       if ((gKeysPressed & KEY_B) != 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
@@ -2964,10 +2964,10 @@ s32 ItemMenu_RunList(s32 sideIndex) {
       // L and R: the previous or next party member who has items (side 0 only).
       if ((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) {
         if (sideIndex == 1) {
-          Sound_PlaySongFar(SE_MENU_ERROR);
+          Sound_PlayFar(SE_MENU_ERROR);
           WaitFrames(1);
         } else {
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           menu->selectedIndexByMember[menu->sideMember[sideIndex]] =
               state.selectedIndex;
           member = menu->sideIndex[sideIndex];

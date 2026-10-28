@@ -217,10 +217,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     slots = (DrawRectangle *)gHeapSlots;
     if (frame == 143) {
       Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     }
     if (frame == 80) {
-      Sound_PlaySongFar(SE_SWIRL);
+      Sound_PlayFar(SE_SWIRL);
     }
 
     // DEAD: frame starts at 0 and only grows, so the sparks are never drawn;
@@ -521,17 +521,17 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   // shows the damage.
   for (frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
     if (frame == 66) {
-      Sound_PlaySongFar(SE_CRASH);
-      Sound_PlaySongFar(SE_RUMBLE);
+      Sound_PlayFar(SE_CRASH);
+      Sound_PlayFar(SE_RUMBLE);
     }
     if (frame == 155) {
-      Sound_PlaySongFar(SE_WAVE);
+      Sound_PlayFar(SE_WAVE);
     }
     if (frame == 217) {
-      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     }
     if (frame == 280) {
-      Sound_PlaySongFar(SE_GATE_MOVE);
+      Sound_PlayFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
       EFFECT_SHOW_DAMAGE(SE_CRASH);

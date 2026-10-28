@@ -55,7 +55,7 @@
 #include "keystate.h"
 #include "unit.h"
 #include "adventure.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "fixed_math.h"
 #include "item_gift.h"

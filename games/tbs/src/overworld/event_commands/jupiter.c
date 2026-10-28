@@ -26,19 +26,19 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   effectWork = gFieldEffectWork;
   // Tint the screen yellow: PALETTE_TINT_CUSTOM | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
-  Sound_PlaySongFar(SE_NOTE_LOW);
+  Sound_PlayFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
-  Sound_PlaySongFar(SE_NOTE_MID);
+  Sound_PlayFar(SE_NOTE_MID);
   Actor_RunRepeatedMotion(djinniId, 1);
-  Sound_PlaySongFar(SE_NOTE_HIGH);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
   WaitFrames(20);
 
   // Spin, then leap high.
-  Sound_PlaySongFar(SE_SPIN);
+  Sound_PlayFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceSpinAngle;
   WaitFrames(40);
-  Sound_PlaySongFar(SE_HIGH_JUMP);
+  Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 12, 22);
 
   // 24 light particles from where the Djinni is on screen.
@@ -47,7 +47,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
   Actor_ReleaseFar(djinni);
-  Sound_PlaySongFar(SE_SCATTER);
+  Sound_PlayFar(SE_SCATTER);
   effect = effectWork->particles;
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
@@ -70,7 +70,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Actor_SelectAnimationFar(Actor_GetById(gAdventure.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   WaitFrames(40);
-  Sound_PlaySongFar(SE_SCATTER);
+  Sound_PlayFar(SE_SCATTER);
   WaitFrames(100);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
@@ -146,7 +146,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     effect->flags = 0;
     effect->age = 0;
     if ((gVBlankCount & 1) != 0)
-      Sound_PlaySongFar(SE_HEAVY_IMPACT);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
   } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
       ((struct Sprite *)effect->actor)->image.priority = 0;
@@ -177,7 +177,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     effect->targetZ = position.z;
     effect->state++;
     if ((gVBlankCount & 1) != 0)
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
   } else if (state == MARS_SPARK_SWARMING) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;

@@ -50,7 +50,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "actor_script.h"
-#include "songs.h"
+#include "sounds.h"
 #include "flags.h"
 #include "heap.h"
 
@@ -238,7 +238,7 @@ static void Lalivero_EnterDoor(void) {
   s32 y = gLaliveroDoorCells[door][1];
 
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FALLS;
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   if (door == CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE) {
     MapGrid_AnimateCells(gLaliveroGateOpenSteps, (u16)x, (u16)y);
     Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -16);
@@ -528,7 +528,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_GetById(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_IODEM, 2);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   Event_WaitFrames(20);
   Actor_SetPosition(ACTOR_IODEM, PIXELS(72), PIXELS(312));
 #if TBS_PATCH_2
@@ -543,7 +543,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
 #endif
   // The door shuts.
   MapGrid_CopyCellIndexRect(32, 0, 1, 2, 4, 18);
-  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_PlaySound(SE_DOOR_CLOSE);
   Event_WaitFrames(20);
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_WaitFrames(10);
@@ -701,14 +701,14 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
   Event_WaitFrames(20);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   Event_WaitFrames(10);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
   Event_WaitFrames(10);
   // The door shuts.
   MapGrid_CopyCellIndexRect(32, 0, 1, 2, 4, 18);
-  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_PlaySound(SE_DOOR_CLOSE);
   Event_WaitFrames(50);
   // The others are eager to sail, then walk back into the leader.
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);

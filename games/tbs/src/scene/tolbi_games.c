@@ -75,7 +75,7 @@
 #include "item_ids.h"
 #include "map_grid.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "shared/colosso_story_flags.h"
 
 /// The spring has risen and faded into view this visit.
@@ -418,11 +418,11 @@ s32 TolbiSpring_Initialize(void) {
       coinChange = gAdventure.coins - *(s32 *)gSceneLocalState;
       if (coinChange > 0) {
         if (coinChange > 19999) {
-          Sound_PlaySong(MUS_FANFARE_LARGE);
+          Sound_Play(MUS_FANFARE_LARGE);
         } else if (coinChange > 4999) {
-          Sound_PlaySong(MUS_FANFARE_MEDIUM);
+          Sound_Play(MUS_FANFARE_MEDIUM);
         } else {
-          Sound_PlaySong(MUS_FANFARE_SMALL);
+          Sound_Play(MUS_FANFARE_SMALL);
         }
         Event_WaitFrames(20);
         Event_SetMessageId(MsgTolbiYaWonNumber);
@@ -480,7 +480,7 @@ s32 TolbiSpring_Initialize(void) {
 static inline void TolbiSpring_ShowPrizePicture(s32 sourceColumn,
                                                 s32 sourceRow) {
   MapGrid_CopyCellsTo(sourceColumn, sourceRow, 70, 0, 3, 8);
-  Sound_PlaySong(SE_CAST);
+  Sound_Play(SE_CAST);
   Event_WaitFrames(8);
 }
 
@@ -488,7 +488,7 @@ static inline void TolbiSpring_ShowPrizePicture(s32 sourceColumn,
 static void TolbiSpring_RevealPrize(s32 item) {
   Event_Start();
   Event_WaitFrames(30);
-  Sound_PlaySong(SE_BOSS_ROAR);
+  Sound_Play(SE_BOSS_ROAR);
   Event_WaitFrames(100);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_WaitFrames(40);
@@ -510,10 +510,10 @@ static void TolbiSpring_RevealPrize(s32 item) {
   TolbiSpring_ShowPrizePicture(94, 29);
   TolbiSpring_ShowPrizePicture(97, 29);
   MapGrid_CopyCellsTo(100, 29, 70, 0, 3, 8);
-  Sound_PlaySong(SE_CAST);
+  Sound_Play(SE_CAST);
 
   Event_WaitFrames(70);
-  Sound_PlaySong(SE_RECOVERY);
+  Sound_Play(SE_RECOVERY);
   ItemDisplay_ShowItem(item, 3);
   PartyInventory_GiveItem(item, 0);
   Event_WaitFrames(20);
@@ -541,7 +541,7 @@ static void TolbiSpring_RiseAndFadeIn(void) {
   const u16 *alphaSteps;
   s32 stepIndex;
 
-  Sound_PlaySong(SE_BURST);
+  Sound_Play(SE_BURST);
   // This value belongs to layer 1; its individual field remains unnamed.
   springLayer += offsetof(struct MapGridScrollAnimView, layers[1]) + 4;
   for (stepIndex = 0; stepIndex < 16; stepIndex++) {
@@ -722,15 +722,15 @@ prompt:
     Text_DrawMessageAsTiles(text + 1, window, 0, 8);
   }
   WaitFrames(5);
-  Event_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
+  Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
     if (gKeysPressed & KEY_A) {
-      Event_PlaySong(SE_MENU_CONFIRM);
+      Event_PlaySound(SE_MENU_CONFIRM);
       result = 0;
       break;
     }
     if (gKeysPressed & KEY_B) {
-      Event_PlaySong(SE_MENU_CANCEL);
+      Event_PlaySound(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -795,15 +795,15 @@ prompt:
     Text_DrawMessageAsTiles(result, window, 0, 0);
     Text_DrawMessageAsTiles(result + 1, window, 0, 8);
     WaitFrames(5);
-    Event_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
+    Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
       if (gKeysPressed & KEY_A) {
-        Event_PlaySong(SE_MENU_CONFIRM);
+        Event_PlaySound(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if (gKeysPressed & KEY_B) {
-        Event_PlaySong(SE_MENU_CANCEL);
+        Event_PlaySound(SE_MENU_CANCEL);
         result = -1;
         break;
       }
@@ -831,7 +831,7 @@ prompt:
         Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                               ->coins[result]);
 #endif
-        Event_PlaySong(MUS_FANFARE_SMALL);
+        Event_PlaySound(MUS_FANFARE_SMALL);
 #ifdef UBFIX
         MessageArgument_Push(gTolbiSpring_CoinPrizes[result], 5);
 #else
@@ -844,7 +844,7 @@ prompt:
         Event_SetMessageId(MsgTolbiWonNumberCoin);
         Event_ShowMessage(-1, 0);
       } else {
-        Event_PlaySong(SE_MENU_CANCEL);
+        Event_PlaySound(SE_MENU_CANCEL);
         Event_WaitFrames(10);
       }
     } else {
@@ -1321,7 +1321,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           toss->velocity.z = -deltaZ * speed / distance;
           toss->attractionFrames = toss->attractionFrames - 100;
         }
-        Sound_PlaySong(SE_TOLBI_SPRING_OBSTACLE_HIT);
+        Sound_Play(SE_TOLBI_SPRING_OBSTACLE_HIT);
         nextMode = (obstacle->speedMode + 1) % 3;
         obstacle->reactionFrames = 36;
         obstacle->speedMode = nextMode;
@@ -1480,7 +1480,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
   toss->launchFrame = -1;
   for (sTossFrame = 0;; sTossFrame++) {
     if (sTossFrame == 50) {
-      Sound_PlaySong(SE_TOLBI_SPRING_TOSS);
+      Sound_Play(SE_TOLBI_SPRING_TOSS);
     }
     // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {

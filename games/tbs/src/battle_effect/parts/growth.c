@@ -244,7 +244,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
               do {
                 if (frame == reactFrame) {
                   if (!(i & 1)) {
-                    Sound_PlaySongFar(SE_IMPACT);
+                    Sound_PlayFar(SE_IMPACT);
                   }
                   BattleEffect_TintBattler(work->args->targets[n],
                                            SPRITE_COLOR_WHITE, POSE_DAMAGE, n,
@@ -387,7 +387,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   do {
     // No EFFECT_SHOW_DAMAGE here: the targets only flash, on frame 32.
     if (frame == 32) {
-      Sound_PlaySongFar(SE_CRACK);
+      Sound_PlayFar(SE_CRACK);
       EFFECT_FOR_EACH_TARGET(i, work->args)
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
@@ -568,7 +568,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
       }
       EFFECT_FOR_EACH_TARGET(j, work->args) {
         if (frame == start + 4) {
-          Sound_PlaySongFar(SE_WATER);
+          Sound_PlayFar(SE_WATER);
           BattleEffect_TintBattler(work->args->targets[j], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, j, 3);
         }

@@ -284,17 +284,17 @@ struct MapMusicRule {
   s16 entrance : 15; ///< -1 for any entrance
   u16 idIsMap : 1;   ///< 1 when id is a scene, 0 when it is an area
   s16 flag;          ///< -1, or a flag that must be set
-  s16 music;         ///< the song (songs.h's MUS_ numbers)
+  s16 music;         ///< the song (sounds.h's MUS_ numbers)
 };
 
 extern const struct MapMusicRule gScene_MusicRules[];
 
 /// Chooses the current scene's field music (gAdventure.cue) from the
-/// first rule matching the scene or its area and the entrance; SONG_KEEP_BGM
+/// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
 /// when none does. Called by ParentSequence_Run on entering each scene, before
 /// Scene_PlayMusic plays it.
 void Scene_ChooseMusic(void) {
-  s16 music = SONG_KEEP_BGM;
+  s16 music = SOUND_KEEP_BGM;
   s16 sceneId = gAdventure.sceneId;
   s16 entrance = gAdventure.entrance;
   s16 group = gAdventure.area;
@@ -456,7 +456,7 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
 /// Chooses the battle music for slot of zone (gAdventure.battleMusic).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
-/// last before it. Link battles always use SONG_KEEP_BGM. Called by
+/// last before it. Link battles always use SOUND_KEEP_BGM. Called by
 /// Encounter_CountStepsAndSelectFormation for a random battle, by the battle
 /// requests (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle
 /// with zone 0) and by the trigger runner (triggers.c).
@@ -469,7 +469,7 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   u16 value;
 
   if (GameFlag_GetFar(FLAG_LINK_BATTLE)) {
-    music = SONG_KEEP_BGM;
+    music = SOUND_KEEP_BGM;
   } else {
     for (;;) {
       value = *table++;

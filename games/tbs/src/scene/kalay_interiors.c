@@ -49,7 +49,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// Each table numbers its own rows from ACTOR_FIRST_PLACED: the houses'
 /// (gKalayInteriors_HouseActorPlacements), the inn's, whose rooms are
@@ -361,7 +361,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
     return;
   }
 
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
 
   {
     u32 x = gKalayInteriors_DoorCells[doorIndex].x;

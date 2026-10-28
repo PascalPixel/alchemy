@@ -115,7 +115,7 @@ void FieldPsynergy_Avoid(void) {
     actor->arcPhase = zero;
     actor->arcFrames = zero;
   }
-  Sound_PlaySongFar(SE_SPIN);
+  Sound_PlayFar(SE_SPIN);
   WaitFrames(15);
   actor->arcPhase = 1;
   WaitFrames(10);
@@ -133,7 +133,7 @@ void FieldPsynergy_Avoid(void) {
   actor->facing = angle;
   Task_Add(FieldEffect_BlinkAvoidCaster, TASK_PASS_FRAME);
   WaitFrames(15);
-  Sound_PlaySongFar(SE_NOTE_MID);
+  Sound_PlayFar(SE_NOTE_MID);
   WaitFrames(55);
   Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its

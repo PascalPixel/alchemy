@@ -93,7 +93,7 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 /// The placed actors, numbered in the order of
@@ -484,7 +484,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     // Kraden opens his door and goes in to prepare; the screen closes and the
     // party follows him through
     // VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG.
-    Event_PlaySong(SE_DOOR_OPEN);
+    Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KRADEN, 232, 218);
@@ -585,7 +585,7 @@ static void ValeKradensCottage_KradenSetsOff(void) {
 /// takes VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH into the cottage.
 static void ValeKradensCottage_EnterCottage(void) {
   if (GameFlag_Get(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gValeKradensCottage_DoorOpens, 43, 8);
   }
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 229, 217);
@@ -610,7 +610,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   }
 
   Event_Start();
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
   // Saturos is overheard: the villagers know little of Sol Sanctum.
@@ -648,7 +648,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   FieldCamera_WaitForArrival();
   Event_WaitFrames(20);
-  Event_PlaySong(MUS_SATUROS_AND_MENARDI);
+  Event_PlaySound(MUS_SATUROS_AND_MENARDI);
 
   // Saturos and Menardi talk of the elders and of using Kraden, stubborn
   // and cunning as he is.
@@ -800,7 +800,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
 
   ValeKradensCottage_WalkTowardLeader(ACTOR_GARET);
   Actor_WaitForMoveById(ACTOR_GARET);

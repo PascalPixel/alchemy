@@ -75,9 +75,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
     if (frame == 8)
-      Sound_PlaySongFar(SE_POWER_UP);
+      Sound_PlayFar(SE_POWER_UP);
     if (frame == 80)
-      Sound_PlaySongFar(SE_SWIRL);
+      Sound_PlayFar(SE_SWIRL);
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
@@ -179,7 +179,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       // turns 1/128 of a circle a frame, and each sparkle steps 2 pixels
       // towards the centre (distance counts 2-pixel steps) until within 2.
       if (frame == start + 30)
-        Sound_PlaySongFar(SE_RECOVERY);
+        Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, -1, -1, 0);

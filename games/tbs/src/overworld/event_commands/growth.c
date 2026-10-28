@@ -65,7 +65,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     Actor_SetSpriteFlagsFar(target, 0);
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     WaitFrames(10);
-    Sound_PlaySongFar(SE_RECOVERY);
+    Sound_PlayFar(SE_RECOVERY);
     WaitFrames(40);
     FieldPsynergy_FadeFromCastColor();
   }
@@ -86,7 +86,7 @@ void FieldPsynergy_Growth(void) {
   s32 remainingActors;
 
   FieldEffect_SpawnBurstParticleField();
-  Sound_PlaySongFar(SE_HEAVY_IMPACT);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   p = &pos;
   remainingActors = GROWTH_FALL_LAST;
   do {
@@ -177,7 +177,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       Vector_AddPolarOffset(radius, Random16(), pos);
       Actor_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
     }
-    Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
+    Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     WaitFrames(2);
   }
   WaitFrames(8);

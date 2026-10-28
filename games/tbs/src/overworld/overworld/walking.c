@@ -173,7 +173,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
         fixedX >= REGION_FIXED(minX) && fixedX < REGION_FIXED(maxX) &&
         fixedZ >= REGION_FIXED(minZ) && fixedZ < REGION_FIXED(maxZ)) {
       work->exit = exitValue;
-      Sound_PlaySongFar(SE_MAP_EXIT);
+      Sound_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
@@ -296,7 +296,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       work->walkingDistance = accumulatedDistance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
-        Sound_PlaySongFar(SE_DJINNI_SET);
+        Sound_PlayFar(SE_DJINNI_SET);
       Event_ClearInvalidPackedValues();
       partyHurt = Party_ApplyPoisonDamage();
     }
@@ -411,11 +411,11 @@ void Party_AddHp(s32 amount, s32 percent) {
     PaletteFade_SetSource(RGB(31, 15, 0), 0);
     PaletteFade_StartInterpolation(4);
     if (amount < -10)
-      Sound_PlaySongFar(SE_HEAVY_IMPACT);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     else
-      Sound_PlaySongFar(SE_IMPACT);
+      Sound_PlayFar(SE_IMPACT);
   } else {
-    Sound_PlaySongFar(SE_RECOVERY);
+    Sound_PlayFar(SE_RECOVERY);
   }
 
   partyCount = Party_CountMembersFar();
@@ -477,7 +477,7 @@ s32 Party_ApplyPoisonDamage(void) {
   if (worstPoison != 0) {
     PaletteFade_SetSource(RGB(31, 15, 0), 0);
     PaletteFade_StartInterpolation(4);
-    Sound_PlaySongFar(SE_IMPACT);
+    Sound_PlayFar(SE_IMPACT);
   }
 
   return worstPoison;

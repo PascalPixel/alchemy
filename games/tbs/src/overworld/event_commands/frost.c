@@ -118,7 +118,7 @@ void FieldPsynergy_Frost(void) {
   effectWork = gFieldEffectWork;
   target = effectWork->child;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlaySongFar(SE_ICE);
+  Sound_PlayFar(SE_ICE);
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
   // centred 2 to 6 pixels from the Psynergy's position.
@@ -156,11 +156,11 @@ void FieldPsynergy_Frost(void) {
   } while (remainingCycles >= 0);
 
   WaitFrames(10);
-  Sound_PlaySongFar(SE_ICE);
+  Sound_PlayFar(SE_ICE);
   WaitFrames(50);
 
   if (target != NULL && effectWork->enabled == 0) {
-    Sound_PlaySongFar(SE_POWER_UP);
+    Sound_PlayFar(SE_POWER_UP);
 
     // Flash for 1 frame in every 5.
     remainingCycles = 15;
@@ -173,7 +173,7 @@ void FieldPsynergy_Frost(void) {
     } while (remainingCycles >= 0);
 
     if (effectWork->childOption == 0) {
-      Sound_PlaySongFar(SE_SHIMMER);
+      Sound_PlayFar(SE_SHIMMER);
       Actor_SelectAnimationFar(target, 2);
     }
 

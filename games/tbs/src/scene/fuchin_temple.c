@@ -78,7 +78,7 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "heap_slots.h"
@@ -369,7 +369,7 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   // The monk leaps aside and lands in a puff of dust.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 392);
   Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Sound_PlaySong(SE_WATER);
+  Sound_Play(SE_WATER);
   movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
   movingMonk->velocityY = 0x140000;
   movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
@@ -380,7 +380,7 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
   movingMonk->gravity = 0x10000;
   Actor_ArmCallback(ACTOR_FALLS_MONK, FACING_EAST, 0);
-  Sound_PlaySong(SE_WATER);
+  Sound_Play(SE_WATER);
   // Three white puffs, with only the colour option set.
   options.palette = SPRITE_COLOR_WHITE;
   FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
@@ -443,7 +443,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Event_WaitFrames(5);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Actor_GetById(ACTOR_NYUNPA)->paused = 0;
-    Event_PlaySong(SE_JUMP);
+    Event_PlaySound(SE_JUMP);
     nyunpa = Actor_Get(ACTOR_NYUNPA);
     nyunpa->velocityY = 0x80000;
     Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
@@ -459,7 +459,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 504);
     Event_WaitFrames(5);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    Event_PlaySong(SE_JUMP);
+    Event_PlaySound(SE_JUMP);
     Actor_GetById(ACTOR_NYUNPA)->paused = alreadyDeclinedTrial;
     nyunpa = Actor_Get(ACTOR_NYUNPA);
     nyunpa->velocityY = 0x80000;
@@ -646,7 +646,7 @@ static void FuchinTemple_ToppleTreeWest(void) {
   tree->y.fixed = 0x120000;
   tree->targetY = 0x120000;
 
-  Sound_PlaySong(SE_TOPPLE);
+  Sound_Play(SE_TOPPLE);
 
   FieldEffect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed,
                     tree->z.fixed + 0x80000, 0xffffcccd, 0x6666, 0, 0, 0);
@@ -674,7 +674,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
   tree->y.fixed = 0x120000;
   tree->targetY = 0x120000;
   tree->scaleX = 0xffff3334;
-  Sound_PlaySong(SE_TOPPLE);
+  Sound_Play(SE_TOPPLE);
   FieldEffect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed,
                     tree->z.fixed + 0x80000, 0x10000, 0x3333, 0, 0, 0);
   FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
@@ -698,7 +698,7 @@ static void FuchinTemple_ToppleTreeNorth(void) {
   } while (stepIndex < 4);
   rotation = 0;
   tree->sprite->rotation = rotation;
-  Sound_PlaySong(SE_TOPPLE);
+  Sound_Play(SE_TOPPLE);
   FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
                     0xffff3334, 0, 0xffffcccd, 0, 0);
   FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
@@ -732,7 +732,7 @@ static void FuchinTemple_ToppleTreeSouth(void) {
   tree->sprite->rotation = 0;
   tree->z.fixed += 0x180000;
   tree->targetZ = ACTOR_NO_TARGET;
-  Sound_PlaySong(SE_TOPPLE);
+  Sound_Play(SE_TOPPLE);
 
   FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000,
                     -0xcccc, 0, 0x3333, 0, 0);
@@ -816,7 +816,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   Actor_GetById(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
   Actor_GetById(ACTOR_TRAINING_TREE)->scaleX = 0xcccc;
   Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
-  Sound_PlaySong(SE_CHEST_OPEN);
+  Sound_Play(SE_CHEST_OPEN);
   Event_WaitFrames(40);
   Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 216, 152);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 30);
@@ -871,7 +871,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
 
     sprite->rotation = rotation;
   }
-  Sound_PlaySong(SE_CHEST_OPEN);
+  Sound_Play(SE_CHEST_OPEN);
   Event_WaitFrames(40);
   Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 216, 152);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
@@ -1009,7 +1009,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 308, 248);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MESSENGER_STUDENT, FACING_NORTH, 20);
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gFuchinTemple_FehsDoorOpens, 78, 13);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Event_WaitFrames(20);
@@ -1049,7 +1049,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WaitForMoveById(ACTOR_FEH);
   Actor_FaceDirection(ACTOR_FEH, FACING_SOUTH + FACING_STEP, 0);
   Actor_WaitForMoveById(ACTOR_FEIZHI);
-  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_PlaySound(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gFuchinTemple_FehsDoorCloses, 78, 13);
   FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEIZHI, 0);
@@ -1181,7 +1181,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
 
     sprite->rotation = rotation;
   }
-  Event_PlaySong(SE_CHEST_OPEN);
+  Event_PlaySound(SE_CHEST_OPEN);
   FieldEvent_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_WalkToAndWait(ACTOR_MESSENGER_STUDENT, 256, 240);
@@ -1463,7 +1463,7 @@ static void FuchinTemple_FehSeesChi(void) {
 
     sprite->rotation = rotation;
   }
-  Event_PlaySong(SE_CHEST_OPEN);
+  Event_PlaySound(SE_CHEST_OPEN);
   Event_WaitFrames(40);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
@@ -1492,7 +1492,7 @@ static void FuchinTemple_OpenLockedDoor(void) {
     FieldMessage_Show(MsgXianItIsLocked, 1);
     Event_End();
   } else {
-    Event_PlaySong(SE_DOOR_OPEN);
+    Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gFuchinTemple_FehsDoorOpens, 78, 13);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 306, 248);
@@ -1621,7 +1621,7 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
   Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   gFieldWork->transitionFrames = 60;
   Event_FinishScreenTransition();
-  Sound_PlaySong(SE_CAST);
+  Sound_Play(SE_CAST);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1640,7 +1640,7 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
 /// LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS, out to
 /// FuchinTempleGrounds.
 static void FuchinTemple_LeaveTemple(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS);
 }
 
@@ -1648,7 +1648,7 @@ static void FuchinTemple_LeaveTemple(void) {
 /// step trigger 2): it opens, and Isaac walks inside, where Nyunpa meditates.
 static void FuchinTemple_EnterTemple(void) {
   Event_Start();
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   MapGrid_AnimateCells(gFuchinTemple_TempleDoorOpens, 77, 8);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
@@ -1681,7 +1681,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_WaitFrames(60);
   Actor_GetById(ACTOR_NYUNPA)->paused = 0;
-  Event_PlaySong(SE_JUMP);
+  Event_PlaySound(SE_JUMP);
   nyunpa = Actor_Get(ACTOR_NYUNPA);
   nyunpa->velocityY = 0x80000;
   Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
@@ -2475,7 +2475,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   for (shotIndex = 0; shotIndex < 8; shotIndex++) {
     Event_WaitFrames(10);
     if (shotIndex & 1) {
-      Sound_PlaySong(SE_PSYNERGY_START);
+      Sound_Play(SE_PSYNERGY_START);
     }
     FieldEffect_Spawn(nyunpa->x.fixed, nyunpa->y.fixed,
                       nyunpa->z.fixed + 0xffe80000, 0, 0x9999, 0,
@@ -2507,14 +2507,14 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   s32 particleY;
   s32 riseSpeed;
 
-  Sound_PlaySong(SE_PSYNERGY_SPARKLE);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   Actor_GetById(ACTOR_HAMA)->update = FuchinTemple_AlternateLessonChildEffect;
   Event_WaitFrames(40);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(20, 2, 23), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_WaitFrames(40);
-  Sound_PlaySong(SE_PSYNERGY_SPARKLE);
+  Sound_Play(SE_PSYNERGY_SPARKLE);
   Actor_GetById(ACTOR_IVAN)->update = FuchinTemple_AlternateLessonChildEffect;
   Event_WaitFrames(120);
   hama = Actor_GetById(ACTOR_HAMA);
@@ -2524,7 +2524,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   options.type = SPRITE_SPARKLE;
   for (particleIndex = 0; particleIndex < 64; particleIndex++) {
     if ((particleIndex & 3) == 0) {
-      Sound_PlaySong(SE_GLITTER);
+      Sound_Play(SE_GLITTER);
     }
     particleX = hama->x.fixed +
                 ((((u32)(Import_RandomNext() * 3) << 4) >> 16) << 16) +
@@ -2537,7 +2537,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
     WaitFrames(2);
   }
-  Sound_PlaySong(SE_SHIMMER);
+  Sound_Play(SE_SHIMMER);
   Event_WaitFrames(30);
   // Fade back and remove both update routines before the conversation resumes.
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);

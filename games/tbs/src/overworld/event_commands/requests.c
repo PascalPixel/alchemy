@@ -93,18 +93,18 @@ void Event_LeaveFor(u16 sceneId, u16 entrance) {
   work->exit = EXIT_KEEP_DESTINATION;
 }
 
-/// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SONG_FADE_OUT_ACTION_SE for -1),
-/// and remembers soundId for Scene_PlayQueuedMusic in the field work's
-/// queuedSound; -1 is remembered as none, so it plays SONG_FADE_OUT_ACTION_SE
+/// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SOUND_FADE_OUT_ACTION_SE for
+/// -1), and remembers soundId for Scene_PlayQueuedMusic in the field work's
+/// queuedSound; -1 is remembered as none, so it plays SOUND_FADE_OUT_ACTION_SE
 /// now and nothing later. About 30 scenes reach it through the far alias, and
 /// the ground particles (weather.c) queue SE_AMBIENT_WATER with it.
 void Scene_QueueMusic(s32 soundId) {
   gFieldWork->queuedSound = soundId;
   if ((s16)soundId == -1) {
-    soundId = SONG_FADE_OUT_ACTION_SE;
+    soundId = SOUND_FADE_OUT_ACTION_SE;
   }
-  Sound_PlaySongFar(SE_STOP_MUSIC_PLAYER_5);
-  Sound_PlaySongFar(soundId);
+  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
+  Sound_PlayFar(soundId);
 }
 
 /// Plays the sound Scene_QueueMusic remembered, if any. Called
@@ -114,5 +114,5 @@ void Scene_PlayQueuedMusic(void) {
   s16 soundId = gFieldWork->queuedSound;
 
   if (soundId != -1)
-    Sound_PlaySongFar(soundId);
+    Sound_PlayFar(soundId);
 }

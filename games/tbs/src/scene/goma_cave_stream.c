@@ -52,7 +52,7 @@
 #include "fixed_math.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 #include "ability_ids.h"
 #include "vector3.h"
@@ -183,9 +183,9 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->layer = 0;
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, 0);
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Sound_PlaySong(SE_RUMBLE);
+  Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   for (i = 0; i < 17; i++) {
     dir.x = Trig_Cos(i << 12);
@@ -217,7 +217,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_SCALE_TO_TARGET,
                     &options);
-  Sound_PlaySong(SE_CAST);
+  Sound_Play(SE_CAST);
   Import_ActorSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }

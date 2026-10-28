@@ -138,7 +138,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   }
 
   if (work->counter == 0)
-    Sound_PlaySongFar(SE_PSYNERGY_START);
+    Sound_PlayFar(SE_PSYNERGY_START);
   if (++work->counter > 60)
     work->counter = 0;
 }

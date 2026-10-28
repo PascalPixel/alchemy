@@ -52,5 +52,5 @@
 	.set import.Event_WaitTransitionFrames, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Scene_QueueMusic, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

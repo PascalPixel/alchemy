@@ -159,15 +159,15 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // flinch.
     if (frame == 31) {
       work->shakeFrames = 8;
-      Sound_PlaySongFar(SE_GATE_MOVE);
+      Sound_PlayFar(SE_GATE_MOVE);
       EFFECT_FOR_EACH_TARGET(i, work->args)
         BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                        KNOCKBACK_BOUNCE);
     }
     if (frame == 72)
-      Sound_PlaySongFar(SE_WHOOSH);
+      Sound_PlayFar(SE_WHOOSH);
     if (frame == 140)
-      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
 
     // Drop the formation sprites to a height of 64 pixels, and from frame
     // 48 to 96 take the two halves of Cybele's face through three poses:
@@ -443,7 +443,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       if (frame == i * 5 + 302) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
                                  i, 8);
-        Sound_PlaySongFar(SE_HEAVY_IMPACT);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }
     }

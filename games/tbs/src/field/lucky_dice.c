@@ -19,7 +19,7 @@
 #include "call.h"
 #include "frame.h"
 #include "oambuf.h"
-#include "songs.h"
+#include "sounds.h"
 #include "macros.h"
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
@@ -29,7 +29,7 @@
 /// and 15 around it and passes an entrance this function does not take.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  Sound_PlaySongFar(MUS_DJINN_LESSON);
+  Sound_PlayFar(MUS_DJINN_LESSON);
   LuckyDice_Run();
   return 0;
 }
@@ -119,7 +119,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "transform.h"
 #include "resource_ids.h"
 #include "text/msg_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
@@ -482,7 +482,7 @@ void LuckyDice_Run(void) {
     if (state == LUCKY_DICE_RESULT || state == LUCKY_DICE_PAYOUT) {
       for (index = 0; index != DICE_RESULT_COUNT; index++) {
         if (resultTimer == index * 5) {
-          Sound_PlaySongFar(SE_LUCKY_DICE_NUMBER);
+          Sound_PlayFar(SE_LUCKY_DICE_NUMBER);
         }
         if (resultTimer >= index * 5) {
           sprites->oam[spriteCount].attr01 =
@@ -539,7 +539,7 @@ void LuckyDice_Run(void) {
         payoutTimer--;
       }
       if (resultTimer > 19 && (gKeysRepeat & KEY_A)) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = LUCKY_DICE_PAYOUT;
           payoutTimer = 0;
@@ -609,12 +609,12 @@ void LuckyDice_Run(void) {
         break;
       }
       if (gKeysRepeat & KEY_B) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
       if (gKeysRepeat & KEY_A) {
-        Sound_PlaySongFar(SE_LUCKY_DICE_THROW);
+        Sound_PlayFar(SE_LUCKY_DICE_THROW);
         Window_CloseFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
@@ -899,7 +899,7 @@ void LuckyDice_Run(void) {
           }
           Text_DrawNumberInWindowFar(gAdventure.coins, 6, sprites->coinsWindow,
                                      0, 0);
-          Sound_PlaySongFar(MUS_FANFARE_LARGE);
+          Sound_PlayFar(MUS_FANFARE_LARGE);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -923,7 +923,7 @@ void LuckyDice_Run(void) {
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            Sound_PlaySongFar(MUS_FANFARE_SMALL);
+            Sound_PlayFar(MUS_FANFARE_SMALL);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -931,7 +931,7 @@ void LuckyDice_Run(void) {
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            Sound_PlaySongFar(MUS_FANFARE_MEDIUM);
+            Sound_PlayFar(MUS_FANFARE_MEDIUM);
           }
         }
       }

@@ -98,7 +98,7 @@
 #include "actor_script.h"
 #include "fixed_math.h"
 #include "macros.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 #include "audio_engine_symbols.h"
 
@@ -339,7 +339,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     Event_Start();
     Actor_SelectAnimation(leader, 6);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
     leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
@@ -1016,7 +1016,7 @@ static void LogRoomsA_MeetIvan(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Isaac steps up in front of Ivan and Garet comes out beside him.
-  Event_PlaySong(MUS_SILENCE);
+  Event_PlaySound(MUS_SILENCE);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 408);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_SetPosition(ACTOR_GARET, PIXELS(384), PIXELS(408));
@@ -1030,7 +1030,7 @@ static void LogRoomsA_MeetIvan(void) {
     Event_WaitFrames(40);
     LogRoomsA_EndMindRead();
     Event_SetMessageId(MsgVaultDoPossessStrangePowers);
-    Event_PlaySong(MUS_IVAN);
+    Event_PlaySound(MUS_IVAN);
     Event_WaitFrames(30);
     LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 30);
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
@@ -1077,7 +1077,7 @@ static void LogRoomsA_MeetIvan(void) {
     Event_OpenMessage(ACTOR_IVAN, 0);
   } else {
     // Asked again: "Would you really? Would you help me find the rod?"
-    Event_PlaySong(MUS_IVAN);
+    Event_PlaySound(MUS_IVAN);
     Event_SetMessageId(MsgVaultWouldReallyWouldHelpMe);
     Event_OpenMessage(ACTOR_IVAN, 0);
   }
@@ -1367,7 +1367,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   // The thieves' leader appears at the ladder to MUS_SATUROS_AND_MENARDI:
   // "Looks like we've been found out!" Everyone turns.
   Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(744), PIXELS(408));
-  Sound_PlaySong(MUS_SATUROS_AND_MENARDI);
+  Sound_Play(MUS_SATUROS_AND_MENARDI);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -1517,7 +1517,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
 /// the thieves are jailed (after, the same cell is a plain exit); takes
 /// LOG_ROOMS_A_INN_UPSTAIRS_TO_INN.
 static void LogRoomsA_LeaveGuestsRoom(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LOG_ROOMS_A_INN_UPSTAIRS_TO_INN);
 }
 
@@ -1530,7 +1530,7 @@ static void LogRoomsA_ClimbToLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
   gFieldWork->transitionFrames = 16;
-  Event_PlaySong(SE_MAP_EXIT);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT);
 }
 
@@ -1550,7 +1550,7 @@ static void LogRoomsA_LeaveLoft(void) {
     Event_End();
   }
   gFieldWork->transitionFrames = 16;
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM);
 }
 
@@ -2202,7 +2202,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellsTo(54, 2, 44, 81, 2, 8);
     Event_Start();
     // The loft: emptied chests after the thieves are jailed; else the tied-up
-    // villager lies tied, groaning to SONG_FADE_OUT_BGM, or the thieves wait
+    // villager lies tied, groaning to SOUND_FADE_OUT_BGM, or the thieves wait
     // for a rematch.
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Import_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIM_WALK);
@@ -2219,7 +2219,7 @@ s32 Scene_Initialize(void) {
     }
     Import_ActorSetAnimation(ACTOR_TIED_UP_VILLAGER, 7);
     LogRoomsA_OpenWindowTransition();
-    Sound_PlaySong(SONG_FADE_OUT_BGM);
+    Sound_Play(SOUND_FADE_OUT_BGM);
     Event_SetMessageId(MsgVaultUhnnUhnn);
     LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 10);
     Event_End();
@@ -2786,7 +2786,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Event_WaitFrames(20);
   // The mayor opens the first chest and his urn rises out of it.
   Actor_RunRepeatedMotion(ACTOR_LOFT_MAYOR, 2);
-  Event_PlaySong(SE_CHEST_OPEN);
+  Event_PlaySound(SE_CHEST_OPEN);
   Import_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIM_SHAKE_HEAD);
   Actor_SetPosition(ACTOR_FOUND_URN, PIXELS(872), PIXELS(424));
   Actor_SetSpritePriority(ACTOR_FOUND_URN, 1);
@@ -2814,7 +2814,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   // The villager opening the chests opens the second: the gold statue stolen
   // from the Sanctum.
   Actor_RunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 2);
-  Event_PlaySong(SE_CHEST_OPEN);
+  Event_PlaySound(SE_CHEST_OPEN);
   Import_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIM_SHAKE_HEAD);
   Actor_GetById(ACTOR_FOUND_STATUE)->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_FOUND_STATUE, 1);
@@ -3462,7 +3462,7 @@ static void LogRoomsA_StartActorStops(void) {
   // nothing.
   Event_ClearFlag(0x1ff);
   Event_End();
-  Sound_PlaySong(MUS_DJINN_LESSON);
+  Sound_Play(MUS_DJINN_LESSON);
 }
 
 // clang-format off

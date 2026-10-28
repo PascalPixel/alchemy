@@ -43,7 +43,7 @@ void FieldPsynergy_Force(void) {
   effectWork = gFieldEffectWork;
   target = effectWork->child;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlaySongFar(SE_PSYNERGY_START);
+  Sound_PlayFar(SE_PSYNERGY_START);
   effect = effectWork->particles;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.

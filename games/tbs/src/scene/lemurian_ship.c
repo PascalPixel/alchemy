@@ -63,7 +63,7 @@
 #include "scene_tables.h"
 #include "actor_script.h"
 #include "item_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 #include "audio_engine_symbols.h"
 #include "flags.h"
@@ -494,7 +494,7 @@ static void LemurianShip_SetSail(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_WaitFrames(20);
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
-  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_WaitFrames(10);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -544,7 +544,7 @@ static void LemurianShip_SetSail(void) {
   // The ship sails east and the curtains close: the sea's layer scrolls
   // faster while the gangway's north piece moves off with the ship, and the
   // camera follows.
-  Sound_PlaySong(MUS_ENDING);
+  Sound_Play(MUS_ENDING);
   Sound_SetBgmTempo(240);
   Curtain_Start();
   Event_WaitFrames(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
@@ -621,7 +621,7 @@ static void LemurianShip_RaiseTheShip(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 232);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_WaitFrames(40);
-  Event_PlaySong(SE_SPIN);
+  Event_PlaySound(SE_SPIN);
   for (i = 0; i <= 15; i++) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Event_WaitFrames(10);
@@ -635,7 +635,7 @@ static void LemurianShip_RaiseTheShip(void) {
     u16 bright = BLEND_ALPHA(16, 16);
 
     for (flash = 0; flash < 3; flash++) {
-      Event_PlaySong(SE_POWER_UP);
+      Event_PlaySound(SE_POWER_UP);
       REG_BLDALPHA = bright;
       Event_WaitFrames(3);
       Io_Write16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
@@ -649,7 +649,7 @@ static void LemurianShip_RaiseTheShip(void) {
   Task_AddFrame(Ship_UpdateSwell, TASK_PASS_FRAME);
   gSprayActive = 1;
   Event_WaitFrames(20);
-  Event_PlaySong(SE_RUSH);
+  Event_PlaySound(SE_RUSH);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   Event_WaitFrames(60);
   gSprayActive = 1;
@@ -672,10 +672,10 @@ static void LemurianShip_RaiseTheShip(void) {
   REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
-  Event_PlaySong(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_STOP_ACTION_SE);
   WaitFrames(1);
   // A flash of white; the swell starts as it clears.
-  Event_PlaySong(SE_CRASH);
+  Event_PlaySound(SE_CRASH);
   Io_Write16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
   for (white = 0; white <= 16; white++) {
     REG_BLDY = white;
@@ -691,7 +691,7 @@ static void LemurianShip_RaiseTheShip(void) {
     Event_WaitFrames(8);
   }
   Task_AddFrame(ShipGlow_CyclePalette, TASK_PASS_FRAME);
-  Event_PlaySong(MUS_PUZZLE_SOLVED);
+  Event_PlaySound(MUS_PUZZLE_SOLVED);
   Sound_WaitForFanfare();
   Event_WaitFrames(20);
   Event_End();

@@ -123,7 +123,7 @@
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 
 /// This floor's actors, numbering its actor placement rows from
@@ -167,7 +167,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 /// The sound of the Lizard Man's sidestep, played by all three step scripts
 /// as he lands.
 static s32 MercuryLighthouseEntrance_PlayStepSound(struct Actor *interpreter) {
-  Sound_PlaySong(SE_FOOTSTEP);
+  Sound_Play(SE_FOOTSTEP);
   return 0;
 }
 
@@ -325,7 +325,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
         effectData->type = effectType;
       }
       effectData->script = gMercuryLighthouseEntrance_SparkBurstScript;
-      Sound_PlaySong(SE_GLITTER);
+      Sound_Play(SE_GLITTER);
       sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
       speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
@@ -338,7 +338,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       Event_WaitFrames(4);
       sparkIndex++;
     } while ((u32)sparkIndex <= 14);
-    Sound_PlaySong(SE_SHIMMER);
+    Sound_Play(SE_SHIMMER);
     Event_WaitFrames(60);
     // Persist the activated state and replace the pool's map cells.
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED);
@@ -502,7 +502,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Event_WaitTransitionFrames();
     Event_WaitFrames(30);
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
-    Sound_PlaySong(SE_DUST_PUFF);
+    Sound_Play(SE_DUST_PUFF);
     Event_WaitFrames(24);
     // Scatter seventeen effects around the leader before the landing.
     actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -516,7 +516,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
                         velocity[0], velocity[1], velocity[2],
                         EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM, &options);
     }
-    Sound_PlaySong(SE_THUMP);
+    Sound_Play(SE_THUMP);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);

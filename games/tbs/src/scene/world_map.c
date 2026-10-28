@@ -129,7 +129,7 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
@@ -522,7 +522,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *updated) {
   y = actor->y.fixed;
   z = actor->z.fixed;
   spark = FieldActor_Create(SPRITE_SPARKLE, x, y, z);
-  Sound_PlaySong(SE_GLITTER);
+  Sound_Play(SE_GLITTER);
   if (spark == 0)
     return;
   spark->motionFlags = 0;
@@ -706,7 +706,7 @@ static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   } else {
     work->exit = exitAfter;
   }
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
 }
 
 /// Chooses a passage exit from the leader's north-south approach.
@@ -723,7 +723,7 @@ static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   } else {
     work->exit = exitAfter;
   }
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
 }
 
 /// Touching the Bilibin Barricade's actor: the side the party comes from
@@ -845,7 +845,7 @@ static void WorldMap_EnterVault(void) {
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     Import_EventSetExitRequest(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
   } else {
-    Sound_PlaySong(SE_MAP_EXIT);
+    Sound_Play(SE_MAP_EXIT);
     Import_EventSetExitRequest(WORLD_MAP_TO_VAULT_SOUTH);
   }
 }
@@ -1107,7 +1107,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetSpeed(ACTOR_CARAVAN_FIRST_WAGON + 1, PIXELS(8) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_CARAVAN_FIRST_WAGON + 2, PIXELS(8) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_CARAVAN_FIRST_WAGON + 3, PIXELS(8) / 5, PIXELS(2) / 5);
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON, gCaravanFirstWagonArrives);
   Event_WaitFrames(20);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON + 1, gCaravanSecondWagonArrives);
@@ -1116,7 +1116,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_WaitFrames(20);
   Actor_RunScriptAndWait(ACTOR_CARAVAN_FIRST_WAGON + 3,
                          gCaravanFourthWagonArrives);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   spriteActor = Actor_GetById(ACTOR_PARTY_LEADER);
   if (spriteActor != 0) {
     Actor_SetPosition(ACTOR_GARET, spriteActor->x.fixed, spriteActor->z.fixed);
@@ -1137,7 +1137,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 10);
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON, gCaravanFirstWagonDeparts);
   Event_WaitFrames(20);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON + 1, gCaravanSecondWagonDeparts);
@@ -1148,7 +1148,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
   Actor_RunScriptAndWait(ACTOR_CARAVAN_FIRST_WAGON + 3,
                          gCaravanFourthWagonDeparts);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_WaitFrames(20);
   WorldMap_Unfreeze();
   Import_ActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON, ANIM_STAND);
@@ -1212,11 +1212,11 @@ static void WorldMap_ShowHammetsCaravan(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_CARAVAN_MAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_CARAVAN_HAMMET, ANIM_NOD);
   WorldMap_Unfreeze();
-  Event_PlaySong(SE_TREMOR);
+  Event_PlaySound(SE_TREMOR);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
   // The ground shakes, and a rock falls beside Hammet and his man.
   WorldMap_ShakeCameraOverCaravan();
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Actor_ShowEmote(ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 0);
@@ -1257,7 +1257,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   spriteActor->velocityY = PIXELS(6);
   spriteActor = Actor_GetById(ACTOR_CARAVAN_HAMMET);
   spriteActor->velocityY = PIXELS(6);
-  Event_PlaySong(SE_CRASH);
+  Event_PlaySound(SE_CRASH);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
   WorldMap_ShakeCameraWhereRockFalls();
   WorldMap_ShakeCameraWhereRockFalls();
@@ -1303,7 +1303,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5640, 1736);
   Actor_WalkToAndWait(ACTOR_CARAVAN_MAN, 5640, 1752);
   Actor_SetPosition(ACTOR_CARAVAN_MAN, 0, 0);
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON, gCaravanFirstWagonReturns);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON + 1, gCaravanSecondWagonReturns);
   Event_WaitFrames(40);
@@ -1333,7 +1333,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_RefreshSelectorById(ACTOR_CARAVAN_FIRST_WAGON + 3);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
   FieldCamera_WaitForArrival();
@@ -1413,7 +1413,7 @@ static void WorldMap_UpdateFallingRock(void) {
   if (actor->y.fixed < PIXELS(10)) {
     actor->y.fixed = PIXELS(10);
     if (Event_GetFlag(FLAG_WORLD_MAP_FALLING_ROCK_LANDED) == 0) {
-      Event_PlaySong(SE_CRASH);
+      Event_PlaySound(SE_CRASH);
       Actor_SelectAnimation(actor, FALLING_ROCK_ANIMATION_SHATTER);
       GameFlag_Set(FLAG_WORLD_MAP_FALLING_ROCK_LANDED);
       actor->timer = 1;
@@ -1586,7 +1586,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Event_SetMessageId(MsgWorldMapAfterBringingDjinniIntoYour);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_WaitFrames(30);
-  Event_PlaySong(SE_MENU_CURSOR_MOVE);
+  Event_PlaySound(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   Event_ClearFlag(FLAG_DJINN_LESSON_PART_A);
   Event_ClearFlag(FLAG_DJINN_LESSON_PART_B);
@@ -1661,7 +1661,7 @@ static void WorldMap_MeetFlint(void) {
     Actor_SetColorMode(djinni, SPRITE_COLOR_NORMAL);
     djinni->gravity = PIXELS(1);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Event_PlaySong(SE_PSYNERGY_SPARKLE);
+    Event_PlaySound(SE_PSYNERGY_SPARKLE);
     FieldPsynergy_LoadResources(140, 0);
     for (i = 59; i >= 0; i--) {
       if (gFrameCount & 2)
@@ -1739,13 +1739,13 @@ static void WorldMap_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   listened:
     MessageArgument_Push(300, 4);
-    Event_PlaySong(MUS_JOINED);
+    Event_PlaySound(MUS_JOINED);
     count = MsgWorldMapAbilityVenusDjinni;
     Message_ShowCentered(count++, 3);
     Event_SetMessageId(count);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Event_PlaySong(MUS_DJINN_LESSON);
+    Event_PlaySound(MUS_DJINN_LESSON);
     WorldMap_ShowDjinnTutorial();
     WorldMap_Unfreeze();
     return;
@@ -1768,7 +1768,7 @@ static void WorldMap_MeetFlint(void) {
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  Event_PlaySong(SE_MENU_CURSOR_MOVE);
+  Event_PlaySound(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   GameFlag_Set(FLAG_DJINN_LESSON_PART_A);
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
@@ -1808,7 +1808,7 @@ static void WorldMap_MeetFlint(void) {
   WorldMap_Unfreeze();
   Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS,
                   DJINNI_INDEX(DJINNI_FLINT));
-  Event_PlaySong(MUS_WORLD_MAP);
+  Event_PlaySound(MUS_WORLD_MAP);
   Event_End();
   GameFlag_Clear(FLAG_DJINN_LESSON);
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
@@ -1837,7 +1837,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Event_WaitFrames(20);
   Actor_SetPosition(ACTOR_KALAY_WAGON, PIXELS(5480), PIXELS(2104));
   WaitFrames(1);
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   Actor_SetSpeed(ACTOR_KALAY_WAGON, PIXELS(8) / 5, PIXELS(2) / 5);
   Import_ActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5485, 2136);
@@ -1847,7 +1847,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5544, 2158);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5608, 2168);
   Import_ActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_STAND);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_WaitFrames(20);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(5592), PIXELS(2168));
   WaitFrames(1);
@@ -1855,7 +1855,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5576, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   Import_ActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5624, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -1867,7 +1867,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5490, 2136);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5480, 2104);
   Actor_SetPosition(ACTOR_KALAY_WAGON, 0, 0);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_WaitFrames(40);
   FieldCamera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2336,7 +2336,7 @@ static void WorldMap_ShowEndingEvent(void) {
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 60);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
@@ -2351,7 +2351,7 @@ static void WorldMap_ShowEndingEvent(void) {
 /// FLAG_KEEP_MUSIC_ONCE.
 static void WorldMap_ShakeVenusLighthouse(void) {
   Event_Start();
-  Sound_PlaySong(SE_RUMBLE);
+  Sound_Play(SE_RUMBLE);
   PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
@@ -2628,7 +2628,7 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
       Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
     }
     Actor_WaitForMoveById(id);
-    Event_PlaySong(SE_SANDSTORM);
+    Event_PlaySound(SE_SANDSTORM);
     Task_AddFrame(WorldMap_UpdateStormTimer, TASK_PASS_FRAME);
     actor->motionFlags = alreadyTraveling;
     FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed + PIXELS(32),
@@ -2690,7 +2690,7 @@ static void WorldMap_StormDropsParty(void) {
 
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Event_PlaySong(SE_GUSH);
+  Event_PlaySound(SE_GUSH);
   Actor_SetSpriteFlags(actor, 0);
   other->motionFlags = 0;
   actor->motionFlags = 0;
@@ -2795,7 +2795,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_PlaySong(SE_GLITTER);
+  Sound_Play(SE_GLITTER);
 
   // Fade through the inward pictures, hold, then reverse the animation.
   gWorldMapBlend = BLEND_ALPHA(0, 14);
@@ -2826,7 +2826,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
   WorldMap_LoadAreaGraphics();
   Task_AddFrame(WorldMap_JitterTransitionCamera, TASK_PASS_FRAME);
-  Sound_PlaySong(SE_RUMBLE);
+  Sound_Play(SE_RUMBLE);
   gWorldMapBlend = BLEND_ALPHA(0, 13);
   Event_WaitFrames(4);
   gWorldMapBlend = BLEND_ALPHA(0, 14);

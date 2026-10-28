@@ -83,7 +83,7 @@
 #include "fixed_math.h"
 #include "macros.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "io_reg.h"
 #include "audio_engine_symbols.h"
 
@@ -1098,7 +1098,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
 
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Event_PlaySong(SE_COLOSSO_LETTERING);
+  Event_PlaySound(SE_COLOSSO_LETTERING);
   Import_ActorSetAnimation(ACTOR_GROUNDS_FIRST_TORCH, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 1, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 2, ANIM_WALK);
@@ -1250,7 +1250,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Event_PlaySong(SE_COLOSSO_LETTERING);
+  Event_PlaySound(SE_COLOSSO_LETTERING);
   Import_ActorSetAnimation(ACTOR_GROUNDS_FIRST_TORCH, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 1, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 2, ANIM_WALK);
@@ -1347,15 +1347,15 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   trialEffect->scaleX = Q16_ONE;
   trialEffect->scaleY = Q16_ONE;
   Event_WaitFrames(10);
-  Event_PlaySong(SE_TREMOR);
+  Event_PlaySound(SE_TREMOR);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_WaitFrames(10);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Actor_SetSpeed(ACTOR_CLEARING_WARRIOR, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 208, 928);
-  Event_PlaySong(MUS_FANFARE_MEDIUM);
+  Event_PlaySound(MUS_FANFARE_MEDIUM);
   Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
                       20);
   Import_ActorSetAnimation(ACTOR_CLEARING_WARRIOR, 9);

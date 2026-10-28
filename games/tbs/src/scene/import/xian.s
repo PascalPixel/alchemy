@@ -48,5 +48,5 @@
 	.set import.Djinn_JoinParty, 1
 	.set import.Scene_QueueMusic, 1
 	.set import.Scene_PlayQueuedMusic, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

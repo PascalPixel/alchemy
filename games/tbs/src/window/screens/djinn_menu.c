@@ -352,7 +352,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     }
     navigation = gBattleMenuWork;
     if (navigation->timer == 0 || (pressed & KEY_B)) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
       break;
     }
@@ -382,7 +382,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                BATTLE_MENU_MESSAGE_CAPACITY);
           Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
       } else {
         encodedDjinn = -1;
         break;
@@ -391,7 +391,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 
     if (djinnCount != 0) {
       if (repeated & KEY_DOWN) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == BATTLE_LIST_ROWS ||
             firstEntry + selectedRow == djinnCount) {
@@ -399,7 +399,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         }
         preferredRow = selectedRow;
       } else if (repeated & KEY_UP) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry ==
@@ -442,14 +442,14 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
           }
           if (previewPage != 0) {
             if (repeated & KEY_RIGHT) {
-              Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+              Sound_PlayFar(SE_MENU_CURSOR_MOVE);
               previewPage++;
               if (previewPage > previewPages) {
                 previewPage = 1;
               }
               redraw = 1;
             } else if (repeated & KEY_LEFT) {
-              Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+              Sound_PlayFar(SE_MENU_CURSOR_MOVE);
               previewPage--;
               if (previewPage <= 0) {
                 previewPage = previewPages;
@@ -466,7 +466,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         previewPage = 0;
         redraw = 1;
       } else if (repeated & KEY_RIGHT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + BATTLE_LIST_ROWS >= djinnCount) {
           if (firstEntry != 0) {
@@ -485,7 +485,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
           }
         }
       } else if (repeated & KEY_LEFT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= BATTLE_LIST_ROWS;

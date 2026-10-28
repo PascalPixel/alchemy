@@ -347,7 +347,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
-  Sound_PlaySongFar(SE_MENU_CONFIRM);
+  Sound_PlayFar(SE_MENU_CONFIRM);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Text_DrawMessageAsTilesFar(MsgReturnHelp, menu->helpWindow, 0, 16);
   menu->cursor->motion = ICON_HIDDEN;
@@ -402,7 +402,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   }
   menu->cursor->motion = ICON_SHOWN;
   menu->secondCursor->motion = ICON_SHOWN;
-  Sound_PlaySongFar(SE_MENU_CANCEL);
+  Sound_PlayFar(SE_MENU_CANCEL);
   // Returns no value: the bytes have the s32 epilogue (pop {r1}; bx r1) after
   // this void call.
 #ifdef UBFIX
@@ -483,36 +483,36 @@ s32 PartyMemberChooser_RunRearrange(void) {
     MenuCursor_Position(memberIndex * 24 - 10, 16);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     // L and R move the party member along the party order.
     if (gKeysRepeat & KEY_R) {
       if (PartyMemberChooser_MoveEntry(memberIndex, 1)) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         memberIndex++;
         Menu_ReleaseEntryActors();
         PsynergyMenu_InitializeEntryActors(menu->memberWindow, 2, 2, 8, 0);
         StatusScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
       }
       WaitFrames(1);
     } else if (gKeysRepeat & KEY_L) {
       if (PartyMemberChooser_MoveEntry(memberIndex, 0)) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         memberIndex--;
         Menu_ReleaseEntryActors();
         PsynergyMenu_InitializeEntryActors(menu->memberWindow, 2, 2, 8, 0);
         StatusScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
       }
       WaitFrames(1);
     } else if ((gKeysPressed & KEY_SELECT) &&
@@ -521,14 +521,14 @@ s32 PartyMemberChooser_RunRearrange(void) {
       redraw = 1;
     } else {
       if (gKeysRepeat & KEY_LEFT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         if (memberCount > 1) {
           memberIndex--;
           redraw = 1;
         }
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         if (memberCount > 1) {
           redraw = 1;
           memberIndex++;
@@ -581,25 +581,25 @@ s32 PsynergyMenu_ChooseMember(void) {
     MenuCursor_Position(memberIndex * 24 - 10, 16);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     {
       if (gKeysRepeat & KEY_LEFT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         if (memberCount > 1) {
           memberIndex--;
           redraw = 1;
         }
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         if (memberCount > 1) {
           memberIndex++;
           redraw = 1;
@@ -830,40 +830,40 @@ s32 StatusScreen_SelectCommand(void) {
       if (gKeysRepeat & KEYS_DPAD)
         StatusScreen_DrawSelectionCursor(side, selected, entries, 1);
       if (gKeysPressed & KEY_A) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         done = 1;
         result = 1;
         break;
       }
       if (gKeysPressed & KEY_B) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         done = 1;
         result = -1;
         break;
       }
       if (gKeysRepeat & KEY_UP) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         selected--;
       }
       if (gKeysRepeat & KEY_DOWN) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         selected++;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         side++;
       }
       if (gKeysRepeat & KEY_LEFT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
         side--;
       }
       // L and R: the previous or next party member.
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         member = menu->memberIndex[0];
         if (gKeysRepeat & KEY_R)
           member++;
@@ -1587,20 +1587,20 @@ s32 PsynergyMenu_SelectAction(void) {
       if (navigationResult == -1)
         redraw = 0;
       if (gKeysPressed & KEY_A) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = 1;
         done = 1;
         break;
       }
       if (gKeysPressed & KEY_B) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         Task_Add(Menu_UpdateEntryActorTransforms, TASK_PASS_FRAME);
         break;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         memberIndex = menu->tabIndex[0];
         menu->selectedIndexByMember[menu->memberTable[memberIndex]] =
             state.selectedIndex;
@@ -1878,19 +1878,19 @@ s32 ItemMenu_SelectItem(void) {
         redraw = 0;
 
       if (gKeysPressed & KEY_A) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = 1;
         done = 1;
         break;
       }
       if (gKeysPressed & KEY_B) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         memberIndex = menu->sideIndex[0];
         menu->selectedIndexByMember[menu->memberIds[memberIndex]] =
             state.selectedIndex;

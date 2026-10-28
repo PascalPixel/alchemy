@@ -95,7 +95,7 @@
 #include "vector3.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 
 /// Actors of the first area (SceneId_MogallForestSign), numbered in the
@@ -325,7 +325,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
@@ -369,7 +369,7 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
   actor = Actor_GetById(actorId);
   Actor_SetSpritePriority(actorId, 1);
   Actor_SetSpeed(actorId, PIXELS(3), PIXELS(3) / 2);
-  Sound_PlaySong(SE_JUMP);
+  Sound_Play(SE_JUMP);
   actor->velocityY = verticalSpeed;
   actor->gravity = PIXELS(1) / 2;
   actor->bounce = 0;
@@ -392,7 +392,7 @@ static void MogallForest_SpawnPuffRing(s32 id) {
   s32 z;
 
   actor = Actor_GetById(id);
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   options = &optionsStorage;
   options->priority = 1;
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
@@ -490,7 +490,7 @@ static void MogallForest_FirstArea_PushLog(void) {
       Event_WaitFrames(45);
       Import_ActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
                                MOGALL_FOREST_LOG_FALLING_IN);
-      Sound_PlaySong(SE_LOG_FALL);
+      Sound_Play(SE_LOG_FALL);
       Actor_SetSpritePriority(ACTOR_FIRST_AREA_RIVER_LOG, 1);
       Actor_GetById(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
           ACTOR_PRIORITY_UNDERFOOT;
@@ -626,7 +626,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
   Actor_StartRepeatedMotion(ACTOR_FIRST_AREA_ATTACKING_APE, 2);
   FieldEffect_SpawnAttached(ACTOR_FIRST_AREA_ATTACKING_APE,
                             EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Sound_PlaySong(SE_BEAST_CRY);
+  Sound_Play(SE_BEAST_CRY);
   Event_WaitFrames(60);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE,
@@ -725,7 +725,7 @@ static void MogallForest_SecondArea_PushLog(void) {
       Event_WaitFrames(30);
       Import_ActorSetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
                                MOGALL_FOREST_LOG_FALLING_IN);
-      Sound_PlaySong(SE_LOG_FALL);
+      Sound_Play(SE_LOG_FALL);
 
       Actor_GetById(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
           ACTOR_PRIORITY_UNDERFOOT;
@@ -957,7 +957,7 @@ static void MogallForest_ThirdArea_PushLog(void) {
       Actor_OffsetPositionAndResetMotion(probe.actorSlot, 18, 6);
       Event_WaitFrames(30);
       Import_ActorSetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_FALLING_IN);
-      Sound_PlaySong(SE_LOG_FALL);
+      Sound_Play(SE_LOG_FALL);
       Actor_Get(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     } else {
       if (probe.actorSlot == ACTOR_THIRD_AREA_LOG)
@@ -1089,7 +1089,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   Actor_StartRepeatedMotion(ACTOR_THIRD_AREA_ATTACKING_APE, 2);
   FieldEffect_SpawnAttached(ACTOR_THIRD_AREA_ATTACKING_APE,
                             EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Sound_PlaySong(SE_BEAST_CRY);
+  Sound_Play(SE_BEAST_CRY);
   Event_WaitFrames(60);
   leaderForX = Actor_GetById(ACTOR_PARTY_LEADER);
   leaderX = leaderForX->x.part.pixel;
@@ -1340,7 +1340,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Event_WaitFrames(30);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
-  Sound_PlaySong(SE_BOSS_ROAR);
+  Sound_Play(SE_BOSS_ROAR);
   Actor_RunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);
   Event_WaitFrames(20);
   // Jump toward the leader, then enter the final creature encounter.

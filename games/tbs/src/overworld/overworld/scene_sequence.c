@@ -193,7 +193,7 @@ s32 SceneSequence_Run(s32 entrance) {
               } else {
                 Actor_SelectAnimationFar(actor, ANIM_COLLAPSE);
               }
-              Sound_PlaySongFar(MUS_DEFEAT);
+              Sound_PlayFar(MUS_DEFEAT);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
                                    FIELD_MESSAGE_ZOOM);
               vitals = Unit_GetFar(gAdventure.leaderActorId);
@@ -271,7 +271,7 @@ s32 SceneSequence_Run(s32 entrance) {
           // The File Screen (B + Select in debug mode opens the debug menu).
           AreaNameWindow_HideFar();
           Leader_StopMoving();
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           WorldMap_Freeze();
           GameFlag_SetFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
@@ -312,7 +312,7 @@ s32 SceneSequence_Run(s32 entrance) {
         } else if (work->pauseMenu != 0) {
           // The Pause menu (in debug mode, B opens the debug menu and L the
           // palette editor).
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
           WorldMap_Freeze();
           GameFlag_SetFar(FLAG_MENU_OPEN);

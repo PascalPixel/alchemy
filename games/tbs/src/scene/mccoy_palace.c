@@ -60,7 +60,7 @@
 #include "item_ids.h"
 #include "actor_script.h"
 #include "fixed_math.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// The palace's people and the treasure room's chests, numbering
 /// gMcCoyPalaceActorPlacements' rows from ACTOR_FIRST_PLACED. Each note
@@ -372,11 +372,11 @@ static void McCoyPalace_WalkThroughDoor(void) {
   hideDoorLayers = 0;
   if (work->stepTrigger == 9) {
     if (GameFlag_Get(FLAG_MCCOYS_DOOR_OPEN) == 0) {
-      Sound_PlaySong(SE_THUMP);
+      Sound_Play(SE_THUMP);
       hideDoorLayers = 1;
     }
   } else {
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     hideDoorLayers = 1;
   }
   if (hideDoorLayers != 0) {
@@ -482,7 +482,7 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
     GameFlag_Clear(FLAG_REWARD_OFFERED);
     GameFlag_Clear(FLAG_CHOOSING_REWARD);
   } else {
-    Sound_PlaySong(SE_CHEST_CLOSE);
+    Sound_Play(SE_CHEST_CLOSE);
     Import_ActorSetAnimation(chestActorId, CHEST_ANIMATION_PEEK_AND_SHUT);
   }
 
@@ -1130,7 +1130,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Event_WaitFrames(20);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   GameFlag_Set(FLAG_MCCOYS_DOOR_OPEN);
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   TilesetAnim_Resume(1);
   TilesetAnim_Resume(2);
   Import_ActorSetPosition(ACTOR_CAPTAIN, PIXELS(256), PIXELS(632));

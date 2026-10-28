@@ -63,7 +63,7 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "songs.h"
+#include "sounds.h"
 #include "flags.h"
 static void LaliveroInteriors_TellFaranAboutJenna(void);
 
@@ -412,7 +412,7 @@ static void LaliveroInteriors_LeaveBuilding(void) {
   s16 *trigger = (s16 *)&work->stepTrigger;
 
   Import_EventSetExitRequest(*trigger);
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
 }
 
 /// What the party can talk to, touch and search in each scene, before and

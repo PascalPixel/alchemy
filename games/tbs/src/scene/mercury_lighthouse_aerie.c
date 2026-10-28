@@ -89,7 +89,7 @@
 #include "scene.h"
 #include "macros.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "io_reg.h"
 #include "ability_ids.h"
@@ -303,9 +303,9 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   WaitFrames(1);
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
@@ -409,7 +409,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
     MercuryLighthouseAerie_SettlePlatforms();
     Actor_SelectAnimation(actor, 6);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, 7);
     actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
@@ -597,7 +597,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Import_ActorSetAnimation(ACTOR_MIA, 0x10);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 60);
   // Jenna calls out: "Isaac! Garet!"
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_SetPosition(ACTOR_JENNA, PIXELS(216), PIXELS(200));
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_SetPosition(ACTOR_JENNA, PIXELS(120), PIXELS(160));
@@ -623,7 +623,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_WaitFrames(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   Event_WaitFrames(20);
-  Event_PlaySong(MUS_SATUROS_AND_MENARDI);
+  Event_PlaySound(MUS_SATUROS_AND_MENARDI);
   FieldEvent_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_WaitFrames(20);
@@ -806,7 +806,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_WaitFrames(40);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(3), PIXELS(2));
   Actor_Get(ACTOR_MENARDI)->velocityY = PIXELS(4);
-  Event_PlaySong(SE_JUMP);
+  Event_PlaySound(SE_JUMP);
   Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_MENARDI), 0);
   Actor_GetById(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
@@ -965,11 +965,11 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_WaitFrames(20);
   FieldEvent_ShowMessageThenWait(ACTOR_SATUROS, 0, 30);
   Actor_SetPosition(ACTOR_ALEX, PIXELS(312), PIXELS(112));
-  Event_PlaySong(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_STOP_ACTION_SE);
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 30);
-  Event_PlaySong(MUS_CONFRONTATION);
+  Event_PlaySound(MUS_CONFRONTATION);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
@@ -1326,7 +1326,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   MercuryLighthouseAerie_LowerLift();
   Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
@@ -1527,7 +1527,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
 
   left = Actor_GetById(ACTOR_SATUROS);
   right = Actor_GetById(ACTOR_ALEX);
-  Sound_PlaySong(SE_WARP);
+  Sound_Play(SE_WARP);
   Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
   Actor_ConfigureSpriteColor(ACTOR_ALEX, SPRITE_COLOR_BLINK);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SATUROS), 0);
@@ -1584,7 +1584,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
 
   left = Actor_GetById(ACTOR_SATUROS);
   right = Actor_GetById(ACTOR_ALEX);
-  Sound_PlaySong(SE_WARP);
+  Sound_Play(SE_WARP);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SATUROS), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ALEX), 0);
   options = &optionsStorage;
@@ -1678,7 +1678,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     Actor_GetById(ids[i])->motionFlags = 0;
     n++;
   }
-  Sound_PlaySong(SE_LIFT);
+  Sound_Play(SE_LIFT);
   for (i = 0; i <= 227; i++) {
     lift->offsetY -= speed;
     for (j = 0; j < n; j++) {
@@ -1718,7 +1718,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
     Actor_GetById(ids[i])->motionFlags = 0;
     n++;
   }
-  Sound_PlaySong(SE_LIFT);
+  Sound_Play(SE_LIFT);
   for (i = 0; i <= 85; i++) {
     lift->offsetY += speed;
     for (j = 0; j < n; j++) {

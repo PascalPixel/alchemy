@@ -269,7 +269,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
             BattleMotion_ApplyKnockbackFar(work->args->targets[0],
                                            KNOCKBACK_JOLT);
           work->shakeFrames = 4;
-          Sound_PlaySongFar(SE_HEAVY_IMPACT);
+          Sound_PlayFar(SE_HEAVY_IMPACT);
         }
         for (j = 0; j != gFlurry_Styles[mode][FLURRY_MOTES]; j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;

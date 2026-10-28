@@ -377,7 +377,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
     Message_CloseFinishedWindows();
   } else {
     Message_CloseFinishedWindows();
-    Sound_PlaySongFar(MUS_SAVED);
+    Sound_PlayFar(MUS_SAVED);
     result = Save_ProcessSelectedFile();
     if (result >= 0) {
       FieldMessage_Show(MsgGameSaved, FIELD_MESSAGE_ZOOM);
@@ -1135,7 +1135,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     // Up and down move to the previous or next file the mode allows; saving
     // allows every file, an empty one too.
     if (gKeysRepeat & KEY_UP) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT;
@@ -1149,7 +1149,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysRepeat & KEY_DOWN) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
         selectedFile = (selectedFile + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT;
@@ -1163,11 +1163,11 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
     } else if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     } else if (gKeysPressed & KEY_A) {
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = selectedFile;
       break;
     }
@@ -1228,7 +1228,7 @@ s32 Save_ToChosenFile(void) {
         Message_CloseFinishedWindows();
       }
       gSaveSlot = file;
-      Sound_PlaySongFar(MUS_SAVED);
+      Sound_PlayFar(MUS_SAVED);
       FieldMessage_Show(MsgSaving, FIELD_MESSAGE_ZOOM |
                                        FIELD_MESSAGE_KEEP_OPEN |
                                        FIELD_MESSAGE_LOWER);

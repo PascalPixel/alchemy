@@ -71,7 +71,7 @@ The runtime bank is the exception: every bank calls its functions directly,
 and its entrances serve only the scenes' code.
 
 An entrance has the function's name with `Far` added: the field plays the
-chest's fanfare with `Sound_PlaySongFar`, which leads to `Sound_PlaySong`.
+chest's fanfare with `Sound_PlayFar`, which leads to `Sound_Play`.
 [Cartridge and memory](src/cartridge/README.md#why-the-main-image-is-cut-into-banks) says more.
 
 ## Overlays
@@ -96,7 +96,7 @@ The entry table is `struct SceneEntryPoints`, and `Overlay_Load` unpacks an over
 [Cartridge and memory](src/cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes both tables.
 
-## Songs
+## Sound
 
 Every sound, music or effect, is asked for with one call and a number, and the
 number's range says what kind of sound it is: below 80 music, from 80 to 99 a
@@ -109,8 +109,8 @@ orders rather than sounds, such as "fade the music out". The driver is
 Nintendo's MusicPlayer2000, which [pret](glossary.md#pret)'s decompilations
 call m4a.
 
-A sound is played with `Sound_PlaySong`; the ranges are
-`SONG_FANFARE_FIRST` and `SONG_SE_FIRST`. [Sound](src/sound/README.md#what-a-song-number-means)
+A sound is played with `Sound_Play`; the ranges are
+`SOUND_FANFARE_FIRST` and `SOUND_SE_FIRST`. [Sound](src/sound/README.md#what-a-sound-number-means)
 covers the players, [the fanfare's return](src/sound/README.md#the-fanfares-return-to-the-music)
 and [the driver's ident](src/sound/README.md#the-drivers-ident).
 
@@ -121,4 +121,4 @@ and [the driver's ident](src/sound/README.md#the-drivers-ident).
 - 20 tasks at a time.
 - A scene's code has the 32 KB of the overlay area, and a bank the space up to
   the next bank's fixed start.
-- Eight music players; song numbers run from 0 to 4,095.
+- Eight music players; sound numbers run from 0 to 4,095.

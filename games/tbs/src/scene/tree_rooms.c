@@ -91,7 +91,7 @@
 #include "flags.h"
 #include "character_ids.h"
 #include "map_grid_scroll.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 /// Tret's face (SPRITE_TRET), the first actor placed after the party,
@@ -319,7 +319,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   *sLastCocoon = -1;
   MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                     destinationRow);
-  Event_PlaySong(SE_CURSE_FALL);
+  Event_PlaySound(SE_CURSE_FALL);
   Event_Start();
   Event_SetDestination((s32)&SceneId_TreeRooms, entrance);
   Import_ActorSetAnimation(leaderActorId, ANIM_LEADER_SPIN_AWAY);
@@ -331,7 +331,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   actor->motionFlags = ACTOR_FALLS;
   actor->groundHeight = -PIXELS(160);
   actor->gravity = PIXELS(1) / 2;
-  Event_PlaySong(SE_DUST_PUFF);
+  Event_PlaySound(SE_DUST_PUFF);
   Event_WaitFrames(3);
   actor->layer = 2;
   Actor_SetSpritePriority(leaderActorId, 3);
@@ -479,10 +479,10 @@ static void TreeRooms_FightTret(void) {
 
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Event_Start();
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_SetMessageId(MsgTretHmHrooom);
   Event_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  Event_PlaySong(MUS_CONFRONTATION);
+  Event_PlaySound(MUS_CONFRONTATION);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -578,7 +578,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_GetById(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   PartyInventory_FindMember(ITEM_HERMES_WATER);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
   Actor_SetSpeed(ACTOR_GARET, 0xcccc, 0x6666);
@@ -611,7 +611,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_WaitFrames(10);
   // Open the passage in Tret's room before continuing the conversation.
   openingColumn = 10;
-  Event_PlaySong(SE_MAP_EXIT);
+  Event_PlaySound(SE_MAP_EXIT);
   MapGrid_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
   MapGrid_CopyCells(26, 38, 1, 1, openingColumn, 43);
   WaitFrames(4);
@@ -634,7 +634,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_WaitFrames(40);
   TreeRooms_PlayGesture(TRET_GESTURE_OPEN_EYES);
   Event_WaitFrames(60);
-  Event_PlaySong(MUS_FOREST);
+  Event_PlaySound(MUS_FOREST);
   TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -871,7 +871,7 @@ s32 TreeRooms_EnterRoom(void) {
     actor->y.fixed = PIXELS(100);
     actor->groundHeight = -PIXELS(160);
     actor->gravity = PIXELS(1) / 2;
-    Event_PlaySong(SE_DUST_PUFF);
+    Event_PlaySound(SE_DUST_PUFF);
     Event_SetDestination((s32)&SceneId_TreeRooms, entrance - 10);
     Event_WaitFrames(20);
     actor->layer = 2;
@@ -1087,7 +1087,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
   case 20:
   case 30:
   case 40:
-    Event_PlaySong(SE_SHIMMER);
+    Event_PlaySound(SE_SHIMMER);
     // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
     // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
@@ -1112,7 +1112,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
     // Each wave also plays the closing sound.
     // fall through
   case 44:
-    Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     break;
   }
   if (++sSparkFrame > 120) {
@@ -1167,7 +1167,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Event_PlaySong(SE_DUST_PUFF);
+  Event_PlaySound(SE_DUST_PUFF);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_WaitFrames(24);
@@ -1193,7 +1193,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
                           EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       particleOptions);
   }
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);

@@ -264,9 +264,9 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
       }
     }
     if (frame == 48)
-      Sound_PlaySongFar(SE_RUMBLE);
+      Sound_PlayFar(SE_RUMBLE);
     if (frame == 128)
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     // Flashes: one a frame, thrown to the left (mirrored by dir), 65 to 110
     // degrees round from straight down, at 2 to 6 pixels a frame.
     if (frame >= 129 && frame <= 175) {
@@ -429,7 +429,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
           streak->x -= dir * 6;
           streak->y += 6;
           if (frame <= 47 && streak->y > 55)
-            Sound_PlaySongFar(SE_WHOOSH);
+            Sound_PlayFar(SE_WHOOSH);
           draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                   streak->x - size / 2, streak->y + 30, size, size * 2);
         } else {

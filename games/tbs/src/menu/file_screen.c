@@ -41,7 +41,7 @@
 #include "item.h"
 #include "adventure.h"
 #include "text/msg_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "frame.h"
 #include "map_grid_scroll.h"
@@ -267,7 +267,7 @@ static void FileScreen_CheckButtonCodes(void) {
         if (FILE_SCREEN_BUTTON_CODE_KEYS(
                 gFileScreen_ButtonCode)[gFileScreen_CodeProgress] == 0) {
           gFileScreen_CodeUnlocked = 1;
-          Sound_PlaySong(SE_CHIME);
+          Sound_Play(SE_CHIME);
         }
       } else {
         gFileScreen_CodeProgress = 0;
@@ -288,7 +288,7 @@ static void FileScreen_CheckButtonCodes(void) {
                 gFileScreen_ExtraButtonCode)[gFileScreen_ExtraCodeProgress] ==
             0) {
           gFileScreen_ExtraCodeUnlocked = 1;
-          Sound_PlaySong(SE_CHIME);
+          Sound_Play(SE_CHIME);
         }
       } else {
         gFileScreen_ExtraCodeProgress = 0;
@@ -468,7 +468,7 @@ s32 FileScreen_Run(void) {
     }
     Event_WaitFrames(60);
     Event_FinishScreenTransition();
-    Sound_PlaySong(SONG_FADE_OUT_BGM);
+    Sound_Play(SOUND_FADE_OUT_BGM);
     Event_WaitFrames(0x12c);
     Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_FILE_SCREEN);
     return 0;
@@ -682,7 +682,7 @@ menu_top:;
       }
       for (;;) {
         if ((gKeysPressed & KEY_B) != 0) {
-          Sound_PlaySong(SE_MENU_CANCEL);
+          Sound_Play(SE_MENU_CANCEL);
           break;
         }
         if ((v5 & gLinkStatus) == v5) {
@@ -812,7 +812,7 @@ menu_top:;
       for (;;) {
         Link_DrawPageArrows(PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
-          Sound_PlaySong(SE_MENU_CANCEL);
+          Sound_Play(SE_MENU_CANCEL);
           WindowSprite_PrepareForRedraw(pageWindow);
           Window_Close(pageWindow, 2);
           Window_Close(helpWindow, 2);
@@ -823,7 +823,7 @@ menu_top:;
           pageIndex = (pageIndex + 1);
           v7 = 1;
           if (pageIndex == pageCount) {
-            Sound_PlaySong(SE_MENU_CONFIRM);
+            Sound_Play(SE_MENU_CONFIRM);
             WindowSprite_PrepareForRedraw(pageWindow);
             Window_Close(pageWindow, 2);
             Window_Close(helpWindow, 2);
@@ -831,17 +831,17 @@ menu_top:;
             WaitFrames(1);
             goto menu_top;
           }
-          Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+          Sound_Play(SE_MENU_CURSOR_MOVE);
         } else {
           // Left and Right share the wrap: with a copy in each arm, the
           // copies are not folded back and 210 of 920 instructions differ in
           // tbs-en.
           if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
-            Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+            Sound_Play(SE_MENU_CURSOR_MOVE);
             wrappedPage = pageIndex + pageCount;
             wrappedPage--;
           } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
-            Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+            Sound_Play(SE_MENU_CURSOR_MOVE);
             wrappedPage = pageIndex + pageCount;
             wrappedPage++;
           } else {
@@ -935,7 +935,7 @@ menu_top:;
 leave:;
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
   Event_WaitFrames(30);
-  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_WaitFrames(60);

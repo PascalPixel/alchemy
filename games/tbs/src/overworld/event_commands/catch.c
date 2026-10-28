@@ -55,7 +55,7 @@ void FieldPsynergy_Catch(void) {
   if (object == 0)
     return;
   FieldPsynergy_FadeToCastColor();
-  Sound_PlaySongFar(SE_ITEM_BREAK);
+  Sound_PlayFar(SE_ITEM_BREAK);
   object->facing = actor->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
@@ -87,7 +87,7 @@ void FieldPsynergy_Catch(void) {
     WaitFrames(1);
   }
   Actor_SelectAnimationFar(object, 5);
-  Sound_PlaySongFar(SE_WATER);
+  Sound_PlayFar(SE_WATER);
   // As the hand presses down, the caught actor vanishes: (-9, -9) pixels is
   // just off the map's corner, where no view reaches. The scene's after event
   // then puts it away for good, as Vale_CatchNut moves the Nut
@@ -103,7 +103,7 @@ void FieldPsynergy_Catch(void) {
     WaitFrames(1);
   }
   WaitFrames(10);
-  Sound_PlaySongFar(SE_MENU_ERROR);
+  Sound_PlayFar(SE_MENU_ERROR);
 
   // Shrink back to the caster.
   step = 0;

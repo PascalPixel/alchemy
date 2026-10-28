@@ -102,7 +102,7 @@
 #include "scene.h"
 #include "colosso_gauge.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "macros.h"
 
@@ -441,7 +441,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   Event_SetFlag(FLAG_OBSTACLE_KNOCKED_DOWN);
   obstacle->acceleration = 0x1999;
   obstacle->speedLimit = 0x13333;
-  Sound_PlaySong(SE_TOPPLE);
+  Sound_Play(SE_TOPPLE);
   // Spin through the fall, then settle the obstacle at its final height.
   FieldActor_SetMoveTarget(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
   for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
@@ -458,7 +458,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   }
   Actor_WaitForMove(obstacle);
   Event_WaitFrames(2);
-  Sound_PlaySong(SE_LOG_FALL);
+  Sound_Play(SE_LOG_FALL);
   {
     s32 rotation = 0;
 
@@ -574,9 +574,9 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   } else {
     Actor_SelectAnimation(log, 3);
   }
-  Sound_PlaySong(SE_LOG_PUSH);
+  Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(pusher);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
+  Sound_Play(SE_STOP_ACTION_SE);
   Actor_SelectAnimation(log, 2);
   Event_End();
 }
@@ -652,12 +652,12 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Actor_SelectAnimation(pusherActor, 2);
   FieldActor_SetMoveTarget(pusherActor, pusherActor->x.fixed + offsetX, 0,
                            pusherActor->z.fixed + offsetZ);
-  Sound_PlaySong(SE_HEAVY_MOVE);
+  Sound_Play(SE_HEAVY_MOVE);
   Actor_WaitForMove(pusherActor);
   Actor_SelectAnimation(pusherActor, 1);
   Actor_WaitForMove(log);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
-  Sound_PlaySong(SE_HEAVY_STOP);
+  Sound_Play(SE_STOP_ACTION_SE);
+  Sound_Play(SE_HEAVY_STOP);
   Actor_SelectAnimation(log, 1);
   Event_WaitFrames(15);
   Event_End();
@@ -1131,7 +1131,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Actor_ReleaseById(ACTOR_WALL_ATTENDANT);
     Actor_ReleaseById(ACTOR_BOARD_WALK_ATTENDANT);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Sound_PlaySong(SONG_FADE_OUT_BGM);
+      Sound_Play(SOUND_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumSatrageMatch_ShowRoundStartLettering(2);
@@ -1474,7 +1474,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Event_WaitFrames(6);
   obstacle->speedLimit = 0x8000;
   obstacle->acceleration = 0x3333;
-  Sound_PlaySong(SE_HEAVY_MOVE);
+  Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(obstacle, 3);
   FieldActor_SetMoveTarget(obstacle, column, 0, row);
   Event_WaitFrames(6);
@@ -1487,8 +1487,8 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Actor_SelectAnimation(pusherActor, 1);
   Actor_WaitForMove(obstacle);
   Actor_SelectAnimation(obstacle, 1);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
-  Sound_PlaySong(SE_HEAVY_STOP);
+  Sound_Play(SE_STOP_ACTION_SE);
+  Sound_Play(SE_HEAVY_STOP);
   Event_WaitFrames(15);
 }
 
@@ -1589,7 +1589,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_WaitFrames(30);
-    Sound_PlaySong(MUS_LEVEL_UP);
+    Sound_Play(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
     Event_WaitFrames(120);
@@ -1597,7 +1597,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     return;
   }
 
-  Sound_PlaySong(SE_COLOSSO_LETTERING);
+  Sound_Play(SE_COLOSSO_LETTERING);
   Event_Start();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1606,7 +1606,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     *(s16 *)((u8 *)openingScript + 30) = (mode * 60);
   }
   Event_WaitFrames(30);
-  Sound_PlaySong(mode + 0x5a);
+  Sound_Play(mode + 0x5a);
   Colosso_LoadLettering(mode);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
   Event_WaitFrames(120);
@@ -1617,21 +1617,21 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
     WaitFrames(1);
   }
 
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+  Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_WaitFrames(60);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
-  Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+  Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+  Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_WaitFrames(60);
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
-  Sound_PlaySong(SE_COLOSSO_GO);
+  Sound_Play(SE_COLOSSO_GO);
   Scene_PlayMusic();
   Event_End();
   GameFlag_Set(FLAG_IN_TOWN);
@@ -1642,7 +1642,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
 
   s32 reactingActorId;
 
-  Sound_PlaySong(SE_COLOSSO_LETTERING);
+  Sound_Play(SE_COLOSSO_LETTERING);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   gColosseumSatrageMatch_LetteringWon[13] = result * 60;
@@ -1650,7 +1650,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
     Event_WaitFrames(30);
-    Sound_PlaySong(MUS_INN);
+    Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
@@ -1660,7 +1660,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
     reactingActorId = 0;
   } else {
     Event_WaitFrames(30);
-    Sound_PlaySong(result + 90);
+    Sound_Play(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
@@ -1673,9 +1673,9 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   while (Sound_GetBgmRestoreDelay() != 0) {
     WaitFrames(1);
   }
-  Sound_PlaySong(MUS_SILENCE);
+  Sound_Play(MUS_SILENCE);
   Event_WaitFrames(30);
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -1761,7 +1761,7 @@ ColosseumSatrageMatch_RaiseLinkedMapEffect(struct Actor *interpreter) {
                            source->y.fixed + PIXELS(36), source->z.fixed);
   effect->motionFlags = 0;
   Actor_StartScript(effect, gColosseumSatrageMatch_RaiseScript);
-  Sound_PlaySong(MUS_TREASURE_FOUND);
+  Sound_Play(MUS_TREASURE_FOUND);
   source->timer = 0;
   return 0;
 }
@@ -1979,9 +1979,9 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   pusher->acceleration = 0x3333;
   FieldActor_SetMoveTarget(pusher, destination.x, destination.y, destination.z);
 
-  Sound_PlaySong(SE_PUSH_STEP);
+  Sound_Play(SE_PUSH_STEP);
   Actor_WaitForMove(obstacle);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
+  Sound_Play(SE_STOP_ACTION_SE);
 
   obstacle->x.fixed = destination.x;
   obstacle->z.fixed = destination.z;

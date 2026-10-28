@@ -500,7 +500,7 @@ void BattleEffect_EndCanvasLayer(void) {
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 i;
 
-  Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
   // The battle's projection centre, which BattleCamera_Shake moves.

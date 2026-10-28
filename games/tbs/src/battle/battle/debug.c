@@ -159,7 +159,7 @@ void DebugBattle_ViewMessages(void) {
   }
   unit->name[UNIT_NAME_LENGTH] = 0;
   WindowSystem_InitFieldFar();
-  Sound_PlaySongFar(MUS_EMPTY);
+  Sound_PlayFar(MUS_EMPTY);
   for (;;) {
     index = 0;
     {

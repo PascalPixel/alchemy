@@ -85,7 +85,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  Sound_PlaySongFar(SE_ITEM_BREAK);
+  Sound_PlayFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)

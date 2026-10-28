@@ -93,7 +93,7 @@
 #include "flags.h"
 
 #include "fixed_math.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 /// The way in's actor placements (gValeCave_MouthActorPlacements),
@@ -392,7 +392,7 @@ static void ValeCave_MoveWestCratesIntoHole(void) {
     particleOptions->startScaleX = 3 * Q16_ONE / 5;
     particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
-    Sound_PlaySong(SE_BURST);
+    Sound_Play(SE_BURST);
     ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, PIXELS(368), PIXELS(624),
                                     particleOptions);
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
@@ -438,7 +438,7 @@ static void ValeCave_MoveEastCratesIntoHole(void) {
     particleOptions->startScaleX = 3 * Q16_ONE / 5;
     particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
-    Sound_PlaySong(SE_BURST);
+    Sound_Play(SE_BURST);
     ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, PIXELS(432), PIXELS(656),
                                     particleOptions);
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
@@ -495,7 +495,7 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     Event_Start();
     Actor_SelectAnimation(leader, 6);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
     leader->speedLimit = PIXELS(3);
     leader->acceleration = PIXELS(2);
@@ -537,7 +537,7 @@ static void ValeCave_KiteRunsOff(void) {
     Event_WaitFrames(20);
     Actor_SetSpeed(ACTOR_KITE, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     djinni = Actor_Get(ACTOR_KITE);
     djinni->velocityY = PIXELS(8);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 280);
@@ -677,7 +677,7 @@ static void ValeCave_PushLogOverEdge(void) {
       PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
                                              stationaryMotion);
       GameFlag_Set(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE);
-      Sound_PlaySong(SE_LOG_FALL);
+      Sound_Play(SE_LOG_FALL);
     }
   }
   Event_End();
@@ -700,8 +700,8 @@ static void ValeCave_PushLogOffLedge(void) {
   Event_WaitFrames(15);
   Actor_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 8, 0);
   Event_WaitFrames(4);
-  Event_PlaySong(SE_STOP_ACTION_SE);
-  Event_PlaySong(SE_HEAVY_MOVE);
+  Event_PlaySound(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeed(ACTOR_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
   Import_ActorSetAnimation(ACTOR_WEST_LOG, 2);
   stationaryMotion = 0;
@@ -712,8 +712,8 @@ static void ValeCave_PushLogOffLedge(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_WEST_LOG);
-  Event_PlaySong(SE_STOP_ACTION_SE);
-  Event_PlaySong(SE_HEAVY_STOP);
+  Event_PlaySound(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_HEAVY_STOP);
   Import_ActorSetAnimation(ACTOR_WEST_LOG, 3);
   Actor_GetById(ACTOR_WEST_LOG)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -725,7 +725,7 @@ static void ValeCave_PushLogOffLedge(void) {
   PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
   PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
   GameFlag_Set(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE);
-  Event_PlaySong(SE_LOG_FALL);
+  Event_PlaySound(SE_LOG_FALL);
   Event_End();
 }
 
@@ -746,7 +746,7 @@ static void ValeCave_PushLogNorth(void) {
     Actor_SetSpeed(ACTOR_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
     Actor_OffsetPositionAndResetMotion(ACTOR_SOUTH_LOG, 0, -16);
     Event_WaitFrames(45);
-    Sound_PlaySong(SE_LOG_FALL);
+    Sound_Play(SE_LOG_FALL);
     Import_ActorSetAnimation(ACTOR_SOUTH_LOG, 8);
     {
       struct Actor *slidingLog = Actor_GetById(ACTOR_SOUTH_LOG);
@@ -819,7 +819,7 @@ s32 ValeCave_Initialize(void) {
 static void ValeCave_LeaveRoom(void) {
   s32 exitNumber = gFieldWork->stepTrigger;
 
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(exitNumber);
 }
 
@@ -845,13 +845,13 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void ValeCave_RideLogEast(void) {
 
-  Sound_PlaySong(SE_WATER_MOVE);
+  Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 112, 0);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 80, 0);
   GameFlag_Set(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   WaitFrames(2);
   ValeCave_UpdateRidingLogPassage();
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
 }
 
 /// In Vale Cave's second room, walking west onto the riding log: it carries
@@ -861,13 +861,13 @@ static void ValeCave_RideLogEast(void) {
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void ValeCave_RideLogWest(void) {
 
-  Sound_PlaySong(SE_WATER_MOVE);
+  Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -112, 0);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -80, 0);
   GameFlag_Clear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   WaitFrames(2);
   ValeCave_UpdateRidingLogPassage();
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
 }
 
 /// Centers an actor on a map cell and gives it underfoot priority.

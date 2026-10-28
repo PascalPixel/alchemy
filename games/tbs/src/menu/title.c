@@ -40,7 +40,7 @@
 #include "ram_buffer.h"
 #include "scene_tables.h"
 #include "map_grid_scroll.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 static void Title_RevealScreen(s32 unused);
@@ -85,7 +85,7 @@ s32 Title_Run(void) {
   // press.
   if (gAdventure.entrance == TITLE_FROM_WORLD_MAP) {
     Actor_GetById(gAdventure.leaderActorId)->motionFlags = 0;
-    Sound_PlaySong(MUS_ENDING_LOGO);
+    Sound_Play(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     WaitFrames(120);
     waitFrames = 0;
@@ -100,15 +100,15 @@ s32 Title_Run(void) {
     return 0;
   }
   if (gAdventure.entrance == TITLE_FROM_LEMURIAN_SHIP) {
-    Sound_PlaySong(MUS_ENDING);
+    Sound_Play(MUS_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
     Import_CreditsRun(0);
-    Sound_PlaySong(SONG_FADE_OUT_BGM);
+    Sound_Play(SOUND_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
     Event_WaitFrames(240);
-    Sound_PlaySong(MUS_SILENCE);
+    Sound_Play(MUS_SILENCE);
     Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_TITLE);
     return 0;
   }
@@ -119,17 +119,17 @@ s32 Title_Run(void) {
   Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
   if (gAdventure.entrance == TITLE_AFTER_RUN) {
     for (;;) {
-      Sound_PlaySong(MUS_SILENCE);
+      Sound_Play(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).
       Title_ShowNintendoLogo(0);
       Import_TitleShowCamelotLogo(0);
       // With no save file (or no backup memory) there is no title intro.
       if (Save_ScanFileSummaries() > 0) {
-        Sound_PlaySong(MUS_TITLE);
+        Sound_Play(MUS_TITLE);
         // Title_ShowIntro with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.
         if (Title_ShowIntro(1) == 0) {
-          Sound_PlaySong(SONG_FADE_OUT_BGM);
+          Sound_Play(SOUND_FADE_OUT_BGM);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
           waitFrames = 0;
@@ -148,17 +148,17 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_FileScreen, FILE_SCREEN_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
-    Sound_PlaySong(MUS_TITLE_AFTER_PROLOGUE);
+    Sound_Play(MUS_TITLE_AFTER_PROLOGUE);
     Title_ShowIntro(0);
     Party_EndChildhood();
     Event_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
-    Sound_PlaySong(SONG_FADE_OUT_BGM);
+    Sound_Play(SOUND_FADE_OUT_BGM);
   }
-  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   Event_WaitFrames(60);
-  Sound_PlaySong(MUS_SILENCE);
+  Sound_Play(MUS_SILENCE);
   return 0;
 }
 

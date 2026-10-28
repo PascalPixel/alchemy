@@ -142,7 +142,7 @@ void FieldPsynergy_Ply(void) {
   // with all 64 actors taken for eight frames, and a scene places at most 60:
   // the World Map's 51 actor placements, the party's 8 and the camera.
   resourceSlot = last->slot;
-  Sound_PlaySongFar(SE_PSYNERGY_START);
+  Sound_PlayFar(SE_PSYNERGY_START);
   // The last particle spawned 7 frames ago with 120 frames to live: wait
   // until the spiral is nearly closed.
   WaitFrames(110);
@@ -160,7 +160,7 @@ void FieldPsynergy_Ply(void) {
     Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
   }
 
-  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   WaitFrames(12);
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
@@ -179,7 +179,7 @@ void FieldPsynergy_Ply(void) {
 
   // Sparks.
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
-  Sound_PlaySongFar(MUS_CURE);
+  Sound_PlayFar(MUS_CURE);
   if (actor != 0) {
     target->update = FieldEffect_RunSparkEmitter;
     target->timer = 0;

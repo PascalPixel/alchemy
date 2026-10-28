@@ -179,16 +179,16 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     // converge (152 to 239), the beam of lines reaches the burst (from 176)
     // and the burst breaks into light (from 222).
     if (frame == 24) {
-      Sound_PlaySongFar(SE_WAVE);
+      Sound_PlayFar(SE_WAVE);
     }
     if (frame == 76) {
-      Sound_PlaySongFar(SE_SCATTER);
+      Sound_PlayFar(SE_SCATTER);
     }
     if (frame == 154) {
-      Sound_PlaySongFar(SE_SWIRL);
+      Sound_PlayFar(SE_SWIRL);
     }
     if (frame == 222) {
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     }
     // Over the first 16 frames the window's right edge sweeps open by a
     // growing step, ragged by 128 random offsets: frame 1 starts the
@@ -498,7 +498,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
-  Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -513,7 +513,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     for (i = 0; i != 5; i++) {
       flameColumn = &work->particles[i];
       if (frame == i * 16 + 7) {
-        Sound_PlaySongFar(SE_CAST);
+        Sound_PlayFar(SE_CAST);
       }
       // A column, a scrolling shaft over a head, falls 16 pixels a frame.
       // Once on the ground it counts its frames there, shakes the screen for

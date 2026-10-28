@@ -24,7 +24,7 @@ extern u8 gScaleTable[];
 /// SoundInit.
 extern struct SoundInfo gSoundInfo;
 /// The 16 work bytes every music player shares (MusicPlayerInfo.workBytes), so
-/// one song can test what another has set (ply_memacc).
+/// one sound can test what another has set (ply_memacc).
 extern u8 gMPlayMemAccArea[];
 void m4aMPlayAllContinue(void);
 void MPlayContinue(struct MusicPlayerInfo *player);
@@ -59,8 +59,8 @@ void SoundMainRAM_Rom(void);
 /// The build stamp System_CopyBuildStamp copies to IWRAM at power-on: twelve
 /// digits and a zero word, at the bottom of the frame-wait stack.
 extern s32 gBuildStamp[];
-/// Nonzero once SONG_FADE_OUT_BGM has started the music's fade; further fade
-/// songs are ignored until the next music clears it.
+/// Nonzero once SOUND_FADE_OUT_BGM has started the music's fade; further fade
+/// requests are ignored until the next music clears it.
 extern u8 gBgmFadeRequested;
 /// Set by the resident mixer whenever it clips a sample: when a sum overflows,
 /// IwramSoundNormalizeChannels saturates the samples and stores the clip mask

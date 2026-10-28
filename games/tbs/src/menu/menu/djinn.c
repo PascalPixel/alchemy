@@ -322,7 +322,7 @@ s32 DjinnMenu_RunScreen(void) {
       // Confirmed: apply it at once.
       // Fall through.
     case DJINN_STEP_APPLY_GIVE:
-      Sound_PlaySongFar(SE_RECOVERY);
+      Sound_PlayFar(SE_RECOVERY);
       result = Djinn_TransferFar(menu->shownMember[0], menu->pairElement[0],
                                  menu->pairIndex[0], menu->shownMember[1]);
       Unit_CalculateFar(menu->shownMember[0]);
@@ -344,7 +344,7 @@ s32 DjinnMenu_RunScreen(void) {
       // Confirmed: apply it at once.
       // Fall through.
     case DJINN_STEP_APPLY_STANDBY:
-      Sound_PlaySongFar(SE_NOTE_HIGH);
+      Sound_PlayFar(SE_NOTE_HIGH);
       Djinn_PutOnStandbyFar(menu->shownMember[0], menu->pairElement[0],
                             menu->pairIndex[0]);
       result = (s32)DjinnRecovery_AddStandbyFar(
@@ -365,7 +365,7 @@ s32 DjinnMenu_RunScreen(void) {
       // Confirmed: apply it at once.
       // Fall through.
     case DJINN_STEP_APPLY_TRADE:
-      Sound_PlaySongFar(SE_RECOVERY);
+      Sound_PlayFar(SE_RECOVERY);
       Djinn_TransferFar(menu->shownMember[0], menu->pairElement[0],
                         menu->pairIndex[0], menu->shownMember[1]);
       result = Djinn_TransferFar(menu->shownMember[1], menu->pairElement[1],
@@ -396,7 +396,7 @@ s32 DjinnMenu_RunScreen(void) {
       // Confirmed: apply it at once.
       // Fall through.
     case DJINN_STEP_APPLY_SET:
-      Sound_PlaySongFar(SE_DJINNI_SET);
+      Sound_PlayFar(SE_DJINNI_SET);
       Djinn_SetFar(menu->shownMember[0], menu->pairElement[0],
                    menu->pairIndex[0]);
       result = DjinnRecovery_RemoveFar(
@@ -812,30 +812,30 @@ s32 DjinnMenu_ShowHelp(void) {
       if (gKeysRepeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
         selection = Menu_WrapIndex(selection, 7);
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
       }
       if (gKeysRepeat & (KEY_LEFT | KEY_UP)) {
         selection--;
         selection = Menu_WrapIndex(selection, 7);
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
       } else if (gKeysPressed & KEY_START) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = DJINN_RESULT_START;
         break;
       } else if (gKeysPressed & (KEY_B | KEY_SELECT)) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = DJINN_RESULT_BACK;
         break;
       } else if (gKeysPressed & KEY_A) {
         if (Message_AllTypedFar()) {
           selection++;
           selection = Menu_WrapIndex(selection, 7);
-          Sound_PlaySongFar(SE_MENU_CONFIRM);
+          Sound_PlayFar(SE_MENU_CONFIRM);
           break;
         }
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
     // Before the next topic: free the page arrow's VRAM slot the text took
@@ -1340,7 +1340,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     // unless it is recovering.
     if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_R)) {
       if (selectedRow == -1) {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
       i = 0;
@@ -1352,7 +1352,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       groupMode = 1;
       gKeysPressedLatch = 0;
       if (i == 0) {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
         WindowSprite_ClearListFar(menu->listWindow);
         Window_ClearInteriorTilesFar(menu->listWindow, 0, 80, 216, 104);
         Text_DrawMessageFar(MsgDjinnNowRecovering, menu->listWindow, 0, 96);
@@ -1360,13 +1360,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         continue;
       }
       if (djinn & DJINN_ENTRY_IS_SET) {
-        Sound_PlaySongFar(SE_NOTE_HIGH);
+        Sound_PlayFar(SE_NOTE_HIGH);
         Djinn_PutOnStandbyFar(DJINN_MEMBER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn));
         DjinnRecovery_AddStandbyFar(DJINN_MEMBER(djinn), DJINN_ELEMENT(djinn),
                                     DJINN_NUMBER(djinn));
       } else {
-        Sound_PlaySongFar(SE_DJINNI_SET);
+        Sound_PlayFar(SE_DJINNI_SET);
         Djinn_SetFar(DJINN_MEMBER(djinn), DJINN_ELEMENT(djinn),
                      DJINN_NUMBER(djinn));
         DjinnRecovery_RemoveFar(DJINN_MEMBER(djinn), DJINN_ELEMENT(djinn),
@@ -1378,7 +1378,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     }
     if (mode == DJINN_SELECT_DJINNI && (pressed & KEY_L)) {
       result = DJINN_RESULT_STATUS;
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if ((pressed & KEY_A) ||
@@ -1386,7 +1386,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       i = 1;
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)) {
         if (selectedRow == -1) {
-          Sound_PlaySongFar(SE_MENU_ERROR);
+          Sound_PlayFar(SE_MENU_ERROR);
           continue;
         }
         i = 0;
@@ -1397,7 +1397,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           i = 1;
       }
       if (i == 0) {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
         WindowSprite_ClearListFar(menu->listWindow);
         Window_ClearInteriorTilesFar(menu->listWindow, 0, 80, 216, 104);
         Text_DrawMessageFar(MsgDjinnNowRecovering, menu->listWindow, 0, 96);
@@ -1419,16 +1419,16 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       } else {
         result = DJINN_RESULT_CHOSEN;
       }
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (pressed & KEY_START) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_START;
       break;
     }
     if (pressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_BACK;
       break;
     }
@@ -1438,9 +1438,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (groupMode) {
         setAll ^= 1;
         if (setAll)
-          Sound_PlaySongFar(SE_DJINNI_SET);
+          Sound_PlayFar(SE_DJINNI_SET);
         else
-          Sound_PlaySongFar(SE_NOTE_HIGH);
+          Sound_PlayFar(SE_NOTE_HIGH);
         for (i = 0; i < menu->memberCount; i++) {
           for (j = 0; j < backdrop->list.counts[i]; j++) {
             u32 entry = backdrop->list.ids[i][j];
@@ -1479,12 +1479,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
                                          WINDOW_PALETTE);
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
     }
     if (repeat & KEY_UP) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
         continue;
       Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
@@ -1511,7 +1511,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & KEY_DOWN) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       if (columnFlags[memberColumn] & DJINN_COLUMN_EMPTY)
         continue;
       Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
@@ -1535,7 +1535,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & KEY_LEFT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_EMPTY))
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
@@ -1559,7 +1559,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       continue;
     }
     if (repeat & KEY_RIGHT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_EMPTY))
         Window_SetInteriorPaletteBitRect(menu->listWindow, memberColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,

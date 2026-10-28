@@ -53,7 +53,7 @@
 #include "scene_tables.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 
 // UB: this calls a void function through an s32 function type, the call the
@@ -451,7 +451,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
 
 /// The gate of McCoy's Palace swings open.
 static void McCoyPalaceGrounds_OpenGate(void) {
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   MapGrid_PlayMapEdit(gPalaceGateOpenSteps, 52, 11);
   GameFlag_Set(FLAG_GATE_OPEN);
 }

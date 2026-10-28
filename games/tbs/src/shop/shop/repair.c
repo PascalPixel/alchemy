@@ -73,23 +73,23 @@ s32 Shop_SelectRepair(s32 unitId) {
         Shop_DrawMessage(descriptionWindow, itemId + MsgItemPlainName);
       }
       if ((gKeysPressed & KEY_A) != 0) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if ((gKeysPressed & KEY_B) != 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         slot -= 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         slot += 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
@@ -100,7 +100,7 @@ s32 Shop_SelectRepair(s32 unitId) {
           slot += INVENTORY_SLOTS;
         while (slot >= inventoryCount)
           slot -= SHOP_INVENTORY_COLUMNS;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -109,7 +109,7 @@ s32 Shop_SelectRepair(s32 unitId) {
           slot -= INVENTORY_SLOTS;
         while (slot < 0)
           slot += SHOP_INVENTORY_COLUMNS;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       WaitFrames(1);
@@ -185,13 +185,13 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   // The hammer blows are 110 frames apart; the item stays hidden throughout,
   // 360 frames (six seconds) from the first wait to the last.
   WaitFrames(10);
-  Sound_PlaySongFar(SE_BELL);
+  Sound_PlayFar(SE_BELL);
   WaitFrames(110);
-  Sound_PlaySongFar(SE_BELL);
+  Sound_PlayFar(SE_BELL);
   WaitFrames(110);
-  Sound_PlaySongFar(SE_BELL);
+  Sound_PlayFar(SE_BELL);
   WaitFrames(110);
-  Sound_PlaySongFar(SE_MENU_CONFIRM);
+  Sound_PlayFar(SE_MENU_CONFIRM);
   WaitFrames(20);
   // Restore the entry, repair it, charge the fee and offer equipment changes.
   unit->inventory[slot] = savedEntry;

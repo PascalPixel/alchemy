@@ -73,7 +73,7 @@ void Shop_BuySpecialItem(struct Window *window, struct Window *itemWindow) {
       // only after that line finishes.
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
@@ -83,7 +83,7 @@ void Shop_BuySpecialItem(struct Window *window, struct Window *itemWindow) {
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
-      Sound_PlaySongFar(SE_SHOP_PURCHASE);
+      Sound_PlayFar(SE_SHOP_PURCHASE);
       Shop_ShowKeeperMessageHidingCursor(MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
       Party_AdjustShopCreditFar(-creditCost);
@@ -92,16 +92,16 @@ void Shop_BuySpecialItem(struct Window *window, struct Window *itemWindow) {
     }
     if ((gKeysPressed & KEY_B) != 0) {
       Shop_ShowKeeperMessageHidingCursor(MsgDontWantIt);
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }

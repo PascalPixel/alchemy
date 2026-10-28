@@ -130,13 +130,13 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     // its drop starting on 91), the second and third 2 and 4 frames after
     // theirs land (134 and 174).
     if (frame == 94)
-      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == 136)
-      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == 178)
-      Sound_PlaySongFar(SE_SWITCH_MECHANISM);
+      Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == RAMSES_STRIKE_FRAME)
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     scale = unitScale;
     // One frame of shake at a time, renewed each frame over frames 96 to 251
     // and 260 to 263.

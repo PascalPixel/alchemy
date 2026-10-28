@@ -244,7 +244,7 @@ void ParentSequence_Run(s32 mode) {
     if (GameFlag_GetFar(FLAG_SKIP_SCENE_CHANGE_SOUND))
       GameFlag_ClearFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
     else
-      Sound_PlaySongFar(SE_STOP_ACTION_SE);
+      Sound_PlayFar(SE_STOP_ACTION_SE);
     record = &table[gAdventure.sceneId];
     entrance = gAdventure.entrance;
 
@@ -300,7 +300,7 @@ void ParentSequence_Run(s32 mode) {
       // Back where the party was: resume the music saved when the Pause menu
       // last opened (scene_sequence.c). A random battle and every normal entry
       // set returnMusic to -1, so the scene's own music plays instead.
-      Sound_PlaySongFar(gAdventure.returnMusic);
+      Sound_PlayFar(gAdventure.returnMusic);
     } else {
       Scene_PlayMusic();
     }
@@ -376,7 +376,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
 /// Starts the current scene's field music, chosen by
 /// Scene_ChooseMusic. Called by ParentSequence_Run, and by
 /// 34 scene overlays through Scene_PlayMusicFar.
-void Scene_PlayMusic(void) { Sound_PlaySongFar(gAdventure.sceneMusic); }
+void Scene_PlayMusic(void) { Sound_PlayFar(gAdventure.sceneMusic); }
 
 #undef EXIT_SCENE_MASK
 #undef ENTRANCE

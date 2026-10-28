@@ -69,7 +69,7 @@
 #include "palbuf.h"
 #include "macros.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 #include "io_reg.h"
 #include "audio_engine_symbols.h"
@@ -180,7 +180,7 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 static void SolSanctumEruption_PlayHostageEvent(void) {
   void Actor_ShowEmote();
   void PaletteFade_ApplyTarget();
-  void Event_PlaySong();
+  void Event_PlaySound();
 
   struct Actor *actor;
   struct WeatherWork *sparkles;
@@ -198,7 +198,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Event_Start();
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(232), PIXELS(156));
   Actor_SetPosition(ACTOR_GARET, PIXELS(218), PIXELS(172));
@@ -231,14 +231,14 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   Event_WaitFrames(16);
-  Event_PlaySong(SE_CLATTER);
+  Event_PlaySound(SE_CLATTER);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   Event_WaitFrames(4);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(4);
   Event_WaitFrames(4);
-  Event_PlaySong(SE_CLATTER);
+  Event_PlaySound(SE_CLATTER);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(48);
   Event_WaitFrames(48);
@@ -277,7 +277,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   actor = Actor_GetById(ACTOR_WISE_ONE);
   actor->motionFlags = 5;
   sparkles->stopped = 1;
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Event_WaitFrames(150);
@@ -293,7 +293,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(299), 1);
   FieldCamera_WaitForArrival();
-  Event_PlaySong(SE_MAP_TRANSITION);
+  Event_PlaySound(SE_MAP_TRANSITION);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(20, 20, 20),
                           PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(20);
@@ -315,11 +315,11 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   sparkles->stopped = 0;
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_WaitFrames(80);
   sparkles->stopped = 1;
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   SolSanctumEruption_SetMaterializationTint(0, 20, 60);
@@ -598,7 +598,7 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Actor_SetSpriteFlags(target, 0);
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
   actor->motionFlags = 0;
-  Event_PlaySong(SE_ASCEND);
+  Event_PlaySound(SE_ASCEND);
   // Rise at full size, then shrink the actor and its shadow together.
   frame = 0;
   do {
@@ -606,7 +606,7 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
     Event_WaitFrames(1);
     frame++;
   } while (frame != 60);
-  Event_PlaySong(SE_WARP);
+  Event_PlaySound(SE_WARP);
   frame = 0;
   do {
     actor->y.fixed += PIXELS(1) / 10;
@@ -673,7 +673,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     actor->y.fixed = PIXELS(20);
     actor->z.fixed = PIXELS(132);
   }
-  Sound_PlaySong(SE_CRASH);
+  Sound_Play(SE_CRASH);
   for (crystalIndex = 0; crystalIndex <= 15; crystalIndex++) {
     spun = Actor_GetById(crystalIndex + 16);
     sprite = spun->sprite;
@@ -777,7 +777,7 @@ static void SolSanctumEruption_StepEmbers(void) {
     ember = Actor_GetById(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
-        Sound_PlaySong(SE_GLITTER);
+        Sound_Play(SE_GLITTER);
       gEmberState[emberIndex] = 1;
       ember->motionFlags = 0;
       ember->speedLimit = PIXELS(8);
@@ -881,7 +881,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Task_Remove(SolSanctumEruption_UpdateEmberFrequency);
   gEmberMask = 3;
   Event_WaitFrames(80);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   Event_WaitFrames(40);
@@ -1062,7 +1062,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_WaitFrames(10);
 
   // A violent tremor throws them aside.
-  Event_PlaySong(MUS_DANGER);
+  Event_PlaySound(MUS_DANGER);
   SolSanctumEruption_SetMaterializationTint(1, 4, 0);
   sparkles->stopped = 0;
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -1158,7 +1158,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_WaitFrames(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   sparkles->stopped = 1;
@@ -1208,7 +1208,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   // The floor by the Wise One starts to break up; the Wise One glows and
   // holds it together with Psynergy.
-  Event_PlaySong(SE_TREMOR);
+  Event_PlaySound(SE_TREMOR);
   Task_AddFrame(SolSanctumEruption_FlickerFirstCollapseTiles, TASK_PASS_FRAME);
   Event_WaitFrames(10);
   Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1234,7 +1234,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_WaitFrames(30);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Task_Remove(SolSanctumEruption_FlickerFirstCollapseTiles);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   flickerDelay = 16;
@@ -1384,7 +1384,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_WaitFrames(20);
   // The floor breaks up again in two places; the Wise One floats to each and
   // holds it together.
-  Event_PlaySong(SE_TREMOR);
+  Event_PlaySound(SE_TREMOR);
   Task_AddFrame(SolSanctumEruption_FlickerSecondCollapseTiles, TASK_PASS_FRAME);
   Event_WaitFrames(20);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -1412,7 +1412,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_WaitFrames(30);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Task_Remove(SolSanctumEruption_FlickerSecondCollapseTiles);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   flickerDelay = 8;
@@ -1431,7 +1431,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   Event_WaitFrames(20);
-  Event_PlaySong(SE_TREMOR);
+  Event_PlaySound(SE_TREMOR);
   Task_AddFrame(SolSanctumEruption_FlickerFirstCollapseTiles, TASK_PASS_FRAME);
   Event_WaitFrames(40);
   Actor_SetPositionAndCommit(ACTOR_WISE_ONE, 127, 110);
@@ -1445,7 +1445,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_WaitFrames(30);
   Task_Remove(SolSanctumEruption_FlickerFirstCollapseTiles);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -1458,13 +1458,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   SolSanctumEruption_DrawFirstCollapseTiles(0);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Event_PlaySong(SE_TREMOR);
-  Event_PlaySong(MUS_ERUPTION);
+  Event_PlaySound(SE_TREMOR);
+  Event_PlaySound(MUS_ERUPTION);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   Event_WaitFrames(20);
-  Event_PlaySong(SE_TREMOR);
+  Event_PlaySound(SE_TREMOR);
   Task_AddFrame(SolSanctumEruption_FlickerSecondCollapseTiles, TASK_PASS_FRAME);
   SolSanctumEruption_FinishMaterialization();
   Event_WaitFrames(60);
@@ -1472,7 +1472,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   Event_WaitFrames(10);
   SolSanctumEruption_FinishMaterialization();
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   Event_WaitFrames(100);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1483,7 +1483,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_WaitFrames(20);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTHEAST + FACING_STEP, 0);
   Event_WaitFrames(20);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1590,7 +1590,7 @@ static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
 static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   void Actor_ShowEmote(s32, s32, s32);
   void PaletteFade_ApplyTarget(s32, s32);
-  void Event_PlaySong(s32);
+  void Event_PlaySound(s32);
 
   u32 arcIndex, clear;
   s32 x, y, z;
@@ -1615,7 +1615,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     break;
   }
   PaletteFade_StartInterpolation(60);
-  Event_PlaySong(SE_RISING_CHIMES);
+  Event_PlaySound(SE_RISING_CHIMES);
   arcIndex = 0;
   clear = arcIndex;
   for (origin = &gEruption_ArcOrigins[0]; arcIndex <= 9;
@@ -1657,7 +1657,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   }
   WaitFrames(20);
   Task_AddFrame(SolSanctumEruption_UpdateElementalArcs, TASK_PASS_FRAME);
-  Event_PlaySong(SE_GLITTER);
+  Event_PlaySound(SE_GLITTER);
   gArcEffectTimers[0] = 1;
   WaitFrames(6);
   gArcEffectTimers[1] = 1;
@@ -1767,10 +1767,10 @@ static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
 static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
                                                       s32 waitFrames) {
   if (enabled == 1) {
-    Sound_PlaySong(SE_MATERIALIZE);
+    Sound_Play(SE_MATERIALIZE);
     PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(18, 18, 14), PALETTES_BG);
   } else {
-    Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+    Sound_Play(SOUND_FADE_OUT_ACTION_SE);
     PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   }
   PaletteFade_StartInterpolation(frames);
@@ -1811,7 +1811,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 effectIndex;
 
-  Sound_PlaySong(SE_ERUPTION_COLUMNS);
+  Sound_Play(SE_ERUPTION_COLUMNS);
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
     child = FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
                               parent->y.fixed, parent->z.fixed);

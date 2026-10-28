@@ -46,7 +46,7 @@
 #include "scene_tables.h"
 #include "item_ids.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "scene.h"
 
 /// The actors, numbering the rows of
@@ -230,7 +230,7 @@ static void TimberRoomsA_LeaveByExit(void) {
   s16 *touchedTrigger = (s16 *)&state->stepTrigger;
 
   Import_EventSetExitRequest(*touchedTrigger);
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
 }
 
 /// In Suhalla after Babi's audience, stepping into the house where the two
@@ -246,7 +246,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
   struct Actor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
   if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
-    Event_PlaySong(MUS_BABI);
+    Event_PlaySound(MUS_BABI);
     Event_Start();
     // Frame the speakers and bring the leader over before the dialogue.
     FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
@@ -492,7 +492,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_WaitFrames(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_WaitFrames(30);
-    Event_PlaySong(MUS_BABI);
+    Event_PlaySound(MUS_BABI);
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.

@@ -130,7 +130,7 @@
 
 #include "flags.h"
 #include "djinn_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 /// Kalay's actors (Kalay), numbering the rows of
@@ -602,7 +602,7 @@ static void Kalay_OpenDoorAndExit(void) {
   }
   trigger = &work->stepTrigger;
   door = *trigger - 1;
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   {
     s32 x = gKalay_DoorCells[door].x;
     s32 y = gKalay_DoorCells[door].y;
@@ -622,7 +622,7 @@ static void Kalay_OpenDoorAndExit(void) {
 
 /// The palace door opens in two frames.
 static __inline__ void Kalay_AnimatePalaceDoor(void) {
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(36, 23, 43, 12, 2, 2);
   WaitFrames(5);
   MapGrid_CopyCellsTo(39, 23, 43, 12, 2, 2);
@@ -681,10 +681,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetPosition(ACTOR_FIRST_TOURIST + 6, PIXELS(332), PIXELS(264));
     Actor_SetPosition(ACTOR_OURANOS, PIXELS(332), PIXELS(280));
     Actor_SetPosition(ACTOR_SECOND_GUIDE, PIXELS(364), PIXELS(272));
-    Event_PlaySong(SONG_FADE_OUT_BGM);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     Message_SetVoiceFromActor(ACTOR_HEAD_GUIDE);
     FieldMessage_ShowCentered(MsgKalayOkListeningLets, 1, 0);
-    Event_PlaySong(MUS_DJINN_LESSON);
+    Event_PlaySound(MUS_DJINN_LESSON);
     Event_WaitFrames(10);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     if (work->stepTrigger == 9) {
@@ -1109,7 +1109,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 5);
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 6);
     Actor_ReleaseById(ACTOR_OURANOS);
-    Event_PlaySong(SONG_FADE_OUT_BGM);
+    Event_PlaySound(SOUND_FADE_OUT_BGM);
     if (work->stepTrigger == 9) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1122,7 +1122,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Scene_PlayMusic();
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
   } else {
-    Event_PlaySong(SE_MAP_EXIT);
+    Event_PlaySound(SE_MAP_EXIT);
     Import_EventSetExitRequest(work->stepTrigger);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -1799,7 +1799,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_StartScreenTransition();
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(400), 1);
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   Actor_SetSpeed(ACTOR_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 400);
   FieldCamera_SetSpeed(PIXELS(3) / 4, PIXELS(3) / 32);
@@ -1807,7 +1807,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetSpeed(ACTOR_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 300);
   Import_ActorSetAnimation(ACTOR_WAGON, 0);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_WaitFrames(40);
   Actor_SetSpeed(ACTOR_BUNZA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetPosition(ACTOR_BUNZA, PIXELS(439), PIXELS(306));
@@ -1997,7 +1997,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_NORTH, 10);
   Actor_RunRepeatedMotion(ACTOR_TUNNEL_GUARD, 2);
   // The guard opens the passage and Hammet goes in.
-  Event_PlaySong(SE_CHEST_CLOSE);
+  Event_PlaySound(SE_CHEST_CLOSE);
   MapGrid_CopyCellsTo(71, 60, 76, 11, 2, 1);
   MapGrid_CopyCellAttributes(71, 60, 2, 1, 16, 11);
   Event_WaitFrames(20);
@@ -2048,7 +2048,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 312);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 306);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Event_PlaySong(SE_RUMBLE);
+  Event_PlaySound(SE_RUMBLE);
   Actor_SetSpeed(ACTOR_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(420), 1);
@@ -2058,7 +2058,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetSpeed(ACTOR_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 500);
   Actor_WalkTo(ACTOR_WAGON, 440, 600);
-  Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   work = gFieldWork;
   work->transitionFrames = 24;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2102,7 +2102,7 @@ static void Kalay_PushTunnelStatue(void) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       pushSpeed = PIXELS(1) / 5;
       WaitFrames(15);
-      Sound_PlaySong(SE_PUSH);
+      Sound_Play(SE_PUSH);
       statue->speedLimit = pushSpeed;
       statue->acceleration = pushSpeed;
       FieldActor_SetMoveTarget(statue, target->x, target->y, target->z);
@@ -2304,7 +2304,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
              firstEmitter->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
-      Event_PlaySong(SE_WATER_DRAIN);
+      Event_PlaySound(SE_WATER_DRAIN);
       GameFlag_Set(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
     }
     Kalay_SpawnTunnelParticle(firstEmitter->x.fixed, firstEmitter->y.fixed,
@@ -2314,7 +2314,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
       secondEmitter->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
-      Event_PlaySong(SE_WATER_DRAIN);
+      Event_PlaySound(SE_WATER_DRAIN);
       GameFlag_Set(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
     }
     Kalay_SpawnTunnelParticle(secondEmitter->x.fixed, secondEmitter->y.fixed,

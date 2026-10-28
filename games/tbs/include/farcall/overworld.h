@@ -409,7 +409,7 @@ s32 Area_GetNameIndexFar(s32 sceneId, s32 entrance);
 /// Starts an actor's movement type: an enum MovementType, or the actor script
 /// itself.
 void Actor_SetMovementTypeFar(struct Actor *actor, s32 kind);
-/// Plays SE_STOP_MUSIC_PLAYER_5 and then sound_id (SONG_FADE_OUT_ACTION_SE for
+/// Plays SE_STOP_MUSIC_PLAYER_5 and then sound_id (SOUND_FADE_OUT_ACTION_SE for
 /// -1), and remembers sound_id to play again later.
 void Scene_QueueMusicFar(s32 sound_id);
 /// Plays the sound Scene_QueueMusic remembered, if any.

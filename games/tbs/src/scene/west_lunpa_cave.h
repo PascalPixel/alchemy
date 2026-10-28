@@ -6,7 +6,7 @@
 #include "event.h"
 #include "scene_tables.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// The cell behaviors the cave's triggers answer.
 enum WestLunpaCaveCellBehavior {

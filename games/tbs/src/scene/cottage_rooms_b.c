@@ -132,7 +132,7 @@
 #include "field_effect.h"
 #include "heap.h"
 #include "ability_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "iowrite.h"
@@ -453,14 +453,14 @@ static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
 /// Reached by cell behavior 1; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST).
 static void CottageRoomsB_ExitToValePlazaNorthwest(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST);
 }
 
 /// Reached by cell behavior 2; leads to Kraden's cottage
 /// (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH).
 static void CottageRoomsB_ExitToValeKradensCottageNorth(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
@@ -468,21 +468,21 @@ static void CottageRoomsB_ExitToValeKradensCottageNorth(void) {
 /// Reached by cell behavior 3; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH).
 static void CottageRoomsB_ExitToValePlazaNortheast(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST);
 }
 
 /// Reached by cell behavior 4; leads to ValePlaza
 /// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH).
 static void CottageRoomsB_ExitToValePlazaWest(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST);
 }
 
 /// Reached by cell behavior 5, the inn's stairs; climbs to its guest room
 /// at COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR.
 static void CottageRoomsB_ExitToInnUpstairs(void) {
-  Sound_PlaySong(SE_STAIRS_UP);
+  Sound_Play(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS);
 }
 
@@ -490,28 +490,28 @@ static void CottageRoomsB_ExitToInnUpstairs(void) {
 /// (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
 static void CottageRoomsB_ExitToVale(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE);
 }
 
 /// Reached by cell behavior 7, the stairs of Isaac's house; climbs to its
 /// upper floor.
 static void CottageRoomsB_ExitToIsaacsHouseUpstairs(void) {
-  Sound_PlaySong(SE_STAIRS_UP);
+  Sound_Play(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
 /// Reached by cell behavior 8, the stairs of the inn's guest room; goes
 /// back down.
 static void CottageRoomsB_ExitToInnDownstairs(void) {
-  Sound_PlaySong(SE_STAIRS_DOWN);
+  Sound_Play(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR);
 }
 
 /// Reached by cell behavior 9, the stairs on the upper floor of Isaac's
 /// house; goes back down.
 static void CottageRoomsB_ExitToIsaacsHouseDownstairs(void) {
-  Sound_PlaySong(SE_STAIRS_DOWN);
+  Sound_Play(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
@@ -519,14 +519,14 @@ static void CottageRoomsB_ExitToIsaacsHouseDownstairs(void) {
 /// Reached by cell behavior 10; leads to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_WEST).
 static void CottageRoomsB_ExitToValeStormyNightWest(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_WEST);
 }
 
 /// Reached by cell behavior 11; leads to ValeStormyNight
 /// (VALE_STORMY_NIGHT_FROM_COTTAGE_ROOMS_B_EAST).
 static void CottageRoomsB_ExitToValeStormyNightEast(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_STORMY_NIGHT_EAST);
 }
 
@@ -736,7 +736,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Actor_RegisterSpriteMetadata(Actor_GetById(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
-  Sound_PlaySong(SE_RECOVERY);
+  Sound_Play(SE_RECOVERY);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
   Event_WaitFrames(10);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
@@ -844,7 +844,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsAheadScript);
   Event_StartScreenTransition();
   Actor_RefreshSelectorById(ACTOR_DORA);
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
@@ -870,7 +870,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Event_WaitFrames(10);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsBackScript);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsBackScript);
-  Sound_PlaySong(SE_RUN_BACK);
+  Sound_Play(SE_RUN_BACK);
   Event_WaitFrames(20);
   // ACTOR_FLAME_AND_SMOKE flares up, turns to smoke and rises away
   // (gCottageRoomsB_FlameRisesScript) as SE_FLAME_FLARE plays.
@@ -884,7 +884,7 @@ ramp:
   WaitFrames(1);
   if (++i <= 3)
     goto ramp;
-  Sound_PlaySong(SE_FLAME_FLARE);
+  Sound_Play(SE_FLAME_FLARE);
   WaitFrames(10);
   for (i = 0; i <= 15; i++) {
     SetBlendAlpha(BLEND_ALPHA(15, 16) - i);

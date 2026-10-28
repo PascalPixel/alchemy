@@ -19,5 +19,5 @@
 	.set import.Actor_SetAnimationAndWait, 1
 	.set import.Actor_ConfigureSpriteColor, 1
 	.set import.Actor_SetSpritePriority, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

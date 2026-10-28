@@ -112,7 +112,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       start = i * PLASMA_SPACING;
       // The flash fills the canvas with level 16.
       if (frame == start) {
-        Sound_PlaySongFar(SE_HEAVY_IMPACT);
+        Sound_PlayFar(SE_HEAVY_IMPACT);
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
       }
       if (frame >= start && frame < start + 9) {
@@ -371,7 +371,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_CRASH);
     } else {
       if (frame == 2)
-        Sound_PlaySongFar(SE_CRASH);
+        Sound_PlayFar(SE_CRASH);
       if (frame == 24)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }

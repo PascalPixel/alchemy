@@ -59,7 +59,7 @@
 #include "item_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "palbuf.h"
 
 /// The party has heard in Lunpa that Hammet is held there, or has freed him, so
@@ -223,9 +223,9 @@ static void HammetPalace_LeaveThroughDoor(void) {
   Event_Start();
   Event_WaitFrames(10);
   if (work->stepTrigger == 4) {
-    Event_PlaySong(SE_THUMP);
+    Event_PlaySound(SE_THUMP);
   } else {
-    Event_PlaySong(SE_DOOR_OPEN);
+    Event_PlaySound(SE_DOOR_OPEN);
   }
   TilesetAnim_Resume(1);
   TilesetAnim_Resume(2);

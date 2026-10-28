@@ -48,5 +48,5 @@
 	.set import.TreasureSpot_SetActorPosition, 1
 	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.Scene_QueueMusic, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

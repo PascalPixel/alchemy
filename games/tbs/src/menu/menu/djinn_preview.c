@@ -499,36 +499,36 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         result = DJINN_RESULT_CONFIRMED;
         break;
       }
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_BACK;
       break;
     }
     if ((pressedKeys & KEY_START) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_START;
       break;
     } else if ((pressedKeys & KEY_B) != 0) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_BACK;
       break;
     } else if ((pressedKeys & KEY_R) != 0) {
       if (mode <= DJINN_COMPARE_GIVE) {
         page = ((page + 1) % 3);
         redraw = 2;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     } else if ((repeatedKeys & KEY_LEFT) != 0) {
       if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
         selectedPages[page]--;
         selectedPages[page] =
             Menu_WrapIndex(selectedPages[page], pageCounts[page]);
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         redraw = 1;
       }
     } else if ((repeatedKeys & KEY_RIGHT) != 0) {
       if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         selectedPages[page]++;
         redraw = 1;
@@ -679,24 +679,24 @@ s32 DjinnMenu_ShowMemberStatus(void) {
         Iwram_FillWords((void *)0x060052c0, 32, TEXT_CANVAS_BACKGROUND_WORD);
     }
     if (pressedKeys & KEY_START) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_START;
       break;
     }
     if (pressedKeys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_BACK;
       break;
     }
     if (repeatedKeys & KEY_LEFT) {
       selectedPages[side]--;
       selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & KEY_RIGHT) {
       selectedPages[side]++;
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
       selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);

@@ -374,14 +374,14 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
       exitId = exit->flags & EXIT_STYLE_MASK;
       switch (exitId) {
       case EXIT_STYLE_NORMAL:
-        Sound_PlaySongFar(SE_MAP_EXIT);
+        Sound_PlayFar(SE_MAP_EXIT);
         break;
       case EXIT_STYLE_STAIRS_UP:
-        Sound_PlaySongFar(SE_STAIRS_UP);
+        Sound_PlayFar(SE_STAIRS_UP);
         Exit_StartStairsUp();
         break;
       case EXIT_STYLE_STAIRS_DOWN:
-        Sound_PlaySongFar(SE_STAIRS_DOWN);
+        Sound_PlayFar(SE_STAIRS_DOWN);
         Exit_StartStairsDown();
         break;
       }
@@ -524,7 +524,7 @@ s32 Field_ExamineCell(s32 tile) {
                 TreasureSpot_ShowOpened(tile);
               object = TreasureSpot_GetActor(tile);
               ItemDisplay_RaiseAboveLeader(object);
-              Sound_PlaySongFar(MUS_TREASURE_FOUND);
+              Sound_PlayFar(MUS_TREASURE_FOUND);
               MessageArgument_PushFar((u16)trigger->value,
                                       MESSAGE_ARGUMENT_NUMBER);
               FieldMessage_ShowFar(MsgGotPsynergyStone,
@@ -532,11 +532,11 @@ s32 Field_ExamineCell(s32 tile) {
                                        FIELD_MESSAGE_WAITING_FOR_SOUND);
               Party_AddPp(999, 0);
               PartyStatus_CreateWindowFar(PARTY_STATUS_SHOW_PP);
-              Sound_PlaySongFar(SE_RECOVERY);
+              Sound_PlayFar(SE_RECOVERY);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 1, FIELD_MESSAGE_ZOOM);
               PartyStatus_CloseFar();
               Actor_SelectAnimationFar(object, 2);
-              Sound_PlaySongFar(SE_GLITTER);
+              Sound_PlayFar(SE_GLITTER);
               Event_WaitFrames(30);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 2, FIELD_MESSAGE_ZOOM);
               TreasureSpot_Hide(tile);
@@ -563,7 +563,7 @@ s32 Field_ExamineCell(s32 tile) {
               Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)trigger->value);
-              Sound_PlaySongFar(gAdventure.battleMusic);
+              Sound_PlayFar(gAdventure.battleMusic);
               FieldMessage_ShowFar(MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
@@ -575,7 +575,7 @@ s32 Field_ExamineCell(s32 tile) {
               if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                 TreasureSpot_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
-              Sound_PlaySongFar(MUS_TREASURE_FOUND);
+              Sound_PlayFar(MUS_TREASURE_FOUND);
               MessageArgument_PushFar((u16)trigger->value,
                                       MESSAGE_ARGUMENT_NUMBER);
               FieldMessage_ShowFar(MsgGotCoins,
@@ -608,7 +608,7 @@ s32 Field_ExamineCell(s32 tile) {
                 if ((trigger->kind & 0x1ff) == EXAMINE_TRIGGER(EXAMINE_CHEST))
                   TreasureSpot_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
-                Sound_PlaySongFar(MUS_TREASURE_FOUND);
+                Sound_PlayFar(MUS_TREASURE_FOUND);
                 MessageArgument_PushFar(trigger->value & messageOffset,
                                         MESSAGE_ARGUMENT_ITEM);
                 if (recipient == gAdventure.leaderActorId) {

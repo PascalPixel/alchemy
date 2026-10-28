@@ -43,7 +43,7 @@
 #include "scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "songs.h"
+#include "sounds.h"
 #include "text/msg_ids.h"
 
 /// The cell behaviors the jail's triggers answer.
@@ -227,7 +227,7 @@ static void StoneRooms_ReadRightThiefMind(void) {
 /// STONE_ROOMS_TO_VAULT to VAULT_FROM_STONE_ROOMS. The prisoner's table leaves
 /// by a plain exit instead, STONE_ROOMS_TO_VAULT_REVISIT.
 static void StoneRooms_LeaveForVault(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(STONE_ROOMS_TO_VAULT);
 }
 

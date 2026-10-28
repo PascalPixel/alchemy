@@ -11,7 +11,7 @@
 #include "types.h"
 #include "event.h"
 #include "map_grid_scroll.h"
-#include "songs.h"
+#include "sounds.h"
 
 // Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
 // the sparkling dust that falls over the party when Tret's curse strikes
@@ -57,7 +57,7 @@ void Kolima_UpdateCurseDust(void) {
       (actor = FieldActor_Create(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
     origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     if ((gFrameCount & 63) == 0)
-      Sound_PlaySong(SE_GLITTER);
+      Sound_Play(SE_GLITTER);
     if (gFallingEffectState != KOLIMA_DUST_CENTRED)
       x = origin[0] +
           (((u32)Import_RandomNext() * gFallingEffectWidth >> 16) << 8) +

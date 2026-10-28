@@ -209,7 +209,7 @@ void FieldPsynergy_Whirlwind(void) {
   } while (step < steps);
   ball->scaleX = 0x1b333; // 1.7 wide
   ball->scaleY = 0x14ccc; // 1.3 high
-  Sound_PlaySongFar(SE_RUSH);
+  Sound_PlayFar(SE_RUSH);
   WaitFrames(20);
   // Cleared by FieldPsynergy_Dispatch: cast on a target a trigger
   // names, the target is blown away.
@@ -244,7 +244,7 @@ void FieldPsynergy_Whirlwind(void) {
   }
   Actor_SelectAnimationFar(ball, 1);
   WaitFrames(30);
-  Sound_PlaySongFar(SE_WHOOSH);
+  Sound_PlayFar(SE_WHOOSH);
   WaitFrames(20);
   // Every particle has left its orbit by now. Its wandering update routine no
   // longer reads the anchor, so the orb can be released independently.

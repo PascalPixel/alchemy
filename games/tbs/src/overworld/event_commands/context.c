@@ -67,9 +67,9 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 i;
   s32 level;
 
-  Sound_PlaySongFar(gAdventure.battleMusic);
-  Sound_PlaySongFar(SE_STOP_ACTION_SE);
-  Sound_PlaySongFar(SE_BEAST_CRY);
+  Sound_PlayFar(gAdventure.battleMusic);
+  Sound_PlayFar(SE_STOP_ACTION_SE);
+  Sound_PlayFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // On the World Map the flash colours BG palette colour 243 instead, and
     // the screen closes on the flickering centre line (style 4, variant 1);
@@ -226,7 +226,7 @@ s32 Entrance_PlayArrival(void) {
         while (leader->y.fixed + leader->velocityY > leader->groundHeight) {
           WaitFrames(1);
         }
-        Sound_PlaySongFar(SE_DOOR_CLOSE);
+        Sound_PlayFar(SE_DOOR_CLOSE);
         leader->y.fixed = leader->groundHeight;
         Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
         Event_WaitFrames(15);

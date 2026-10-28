@@ -61,7 +61,7 @@
 #include "ability_ids.h"
 #include "macros.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 #include "vector3.h"
 #include "fx_work.h"
@@ -184,7 +184,7 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Event_WaitFrames(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
-  Event_PlaySong(SE_PUSH);
+  Event_PlaySound(SE_PUSH);
   // 16 pixels east from step trigger 5, west from step trigger 6.
   offsetX = (11 - (work->stepTrigger << 1)) << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
@@ -558,9 +558,9 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   stump->layer = 0;
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, PIXELS(32));
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Sound_PlaySong(SE_RUMBLE);
+  Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   for (i = 0; i <= 16; i++) {
     v = &dir;
@@ -591,7 +591,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   FieldEffect_Spawn(
       stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, p);
-  Sound_PlaySong(SE_CAST);
+  Sound_Play(SE_CAST);
   Import_ActorSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
 }

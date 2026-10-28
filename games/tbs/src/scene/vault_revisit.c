@@ -64,7 +64,7 @@
 #include "edition.h"
 #include "call.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// The townspeople, the dog and Sap, numbering
 /// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.
@@ -425,7 +425,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
 /// (408, 120), and sets FLAG_VAULT_SAP_CALLED_BY_BELL.
 static void VaultRevisit_RingBell(void) {
   Event_Start();
-  Event_PlaySong(SE_BELL);
+  Event_PlaySound(SE_BELL);
   Event_WaitFrames(40);
   if (Event_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_SAP,
@@ -458,7 +458,7 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
 /// It's VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST, into the house of
 /// the man whose precious stone a cat ate.
 static void VaultRevisit_EnterGemOwnersHouse(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST);
 }
@@ -467,7 +467,7 @@ static void VaultRevisit_EnterGemOwnersHouse(void) {
 /// It's VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH, into the house of the
 /// child who doubts the thieves were from Lunpa.
 static void VaultRevisit_EnterChildsHouse(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH);
 }
@@ -475,7 +475,7 @@ static void VaultRevisit_EnterChildsHouse(void) {
 /// The door of VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST opens into
 /// the inn.
 static void VaultRevisit_EnterInn(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST);
 }
@@ -490,7 +490,7 @@ static void VaultRevisit_EnterItemShop(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_ItemShopDoorCells, 54, 13);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -505,7 +505,7 @@ static void VaultRevisit_EnterWeaponAndArmorShop(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_WeaponAndArmorShopDoorCells, 49, 10);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -516,7 +516,7 @@ static void VaultRevisit_EnterWeaponAndArmorShop(void) {
 /// The door of VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST opens into
 /// the mayor's house.
 static void VaultRevisit_EnterMayorsHouse(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_MayorsHouseDoorCells, 38, 6);
   Vault_WalkThroughExit(120, 144, VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST);
 }
@@ -534,7 +534,7 @@ static void VaultRevisit_EnterJail(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
 
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_JailDoorCells, 35, 9);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;

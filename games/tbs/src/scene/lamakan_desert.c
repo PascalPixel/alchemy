@@ -87,7 +87,7 @@
 #include "io_reg.h"
 #include "ability_ids.h"
 #include "actor_script.h"
-#include "songs.h"
+#include "sounds.h"
 #include "flags.h"
 #include "djinn_ids.h"
 #include "item_ids.h"
@@ -204,7 +204,7 @@ static s32 LamakanDesert_LeaderSpraySand(struct Actor *updated) {
   s32 phase;
 
   if ((gFrameCount & 7) == 0) {
-    Sound_PlaySong(SE_FOOTSTEP);
+    Sound_Play(SE_FOOTSTEP);
   }
   phase = gFrameCount & 15;
   if (phase != 0) {
@@ -289,7 +289,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
       GameFlag_Set(FLAG_HSU_RESCUED);
     }
   }
-  Event_PlaySong(SE_MAP_EXIT);
+  Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
   Event_End();
 }
@@ -624,10 +624,10 @@ static void LamakanDesert_BatheInOasis(void) {
     FieldActor_SetMoveTarget(actor, spot->x, 0, spot->z);
   }
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
-  Event_PlaySong(SE_JUMP);
+  Event_PlaySound(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
-  Event_PlaySong(SE_WATER_MOVE);
+  Event_PlaySound(SE_WATER_MOVE);
   {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -676,8 +676,8 @@ static void LamakanDesert_BatheInOasis(void) {
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
         &puff);
   }
-  Event_PlaySong(SE_STOP_ACTION_SE);
-  Event_PlaySong(SE_JUMP);
+  Event_PlaySound(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_WaitFrames(10);
@@ -950,7 +950,7 @@ static void LamakanDesert_MeetManticore(void) {
       Event_WaitFrames(2);
       Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
       Event_WaitFrames(30);
-      Event_PlaySong(SE_BOSS_ROAR);
+      Event_PlaySound(SE_BOSS_ROAR);
       Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
       Event_WaitFrames(20);
       Actor_SetSpeed(ACTOR_MANTICORE, 0x28000, 0x14000);

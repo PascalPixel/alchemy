@@ -88,7 +88,7 @@
 #include "vram_cache.h"
 #include "fixed_math.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "io_reg.h"
 #include "fx_work.h"
@@ -368,7 +368,7 @@ static void ValeStormyNight_StepOffBridge(void) {
 /// as well). No trigger names it, and nothing
 /// else takes that exit.
 UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValeStormyNight_SanctumDoorOpens, 45, 11);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 257, 420);
   Event_WaitFrames(3);
@@ -381,7 +381,7 @@ UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
 /// exit table leaves out; Scene_TakeExit therefore falls back to the first
 /// exit's scene, Vale's SceneId_ValePlaza, at ENTRANCE_DEFAULT.
 static void ValeStormyNight_LeaveNorthwestToValePlaza(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
 }
 
@@ -390,7 +390,7 @@ static void ValeStormyNight_LeaveNorthwestToValePlaza(void) {
 /// Reached by stepping on cell behavior 3; arrives at
 /// VALE_KRADENS_COTTAGE_FROM_VALE_NORTH.
 static void ValeStormyNight_LeaveToValeKradensCottageNorth(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
@@ -399,7 +399,7 @@ static void ValeStormyNight_LeaveToValeKradensCottageNorth(void) {
 /// Reached by stepping on cell behavior 4; arrives at
 /// VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH.
 static void ValeStormyNight_LeaveToValeKradensCottageSouth(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_STORMY_NIGHT_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
@@ -409,7 +409,7 @@ static void ValeStormyNight_LeaveToValeKradensCottageSouth(void) {
 /// After the Boulder swept them away, Garet first resolves to go after Isaac
 /// (ValeStormyNight_GaretFollowsIsaac).
 static void ValeStormyNight_LeaveToValePlaza(void) {
-  Sound_PlaySong(SE_MAP_EXIT);
+  Sound_Play(SE_MAP_EXIT);
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0 &&
       GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT) == 0) {
     ValeStormyNight_GaretFollowsIsaac();
@@ -421,7 +421,7 @@ static void ValeStormyNight_LeaveToValePlaza(void) {
 /// Reached by walking north into cell behavior 6; arrives at
 /// COTTAGE_ROOMS_A_FROM_VALE_EAST, the house where Garet's family lives.
 static void ValeStormyNight_LeaveToCottageRoomsAEast(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValeStormyNight_IsaacsDoorOpens, 54, 32);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 406, 727);
   Event_WaitFrames(3);
@@ -438,7 +438,7 @@ static void ValeStormyNight_LeaveToCottageRoomsAEast(void) {
 /// (SceneId_CottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_SOUTH).
 static void ValeStormyNight_LeaveToCottageRoomsA(void) {
   if (Event_GetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
-    Event_PlaySong(SE_DOOR_OPEN);
+    Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 45, 39);
   }
   if (GameFlag_Get(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
@@ -460,7 +460,7 @@ static void ValeStormyNight_LeaveToCottageRoomsA(void) {
 /// VALE_TO_COTTAGE_ROOMS_B leads by day.
 static void ValeStormyNight_LeaveToIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_PlayMapEdit(gValeStormyNight_IsaacsDoorOpens, 50, 44);
   }
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 340, 888);
@@ -472,7 +472,7 @@ static void ValeStormyNight_LeaveToIsaacsHouse(void) {
 /// Reached by walking north into cell behavior 9; arrives in a house of
 /// Vale at COTTAGE_ROOMS_A_FROM_VALE_NORTH.
 static void ValeStormyNight_LeaveToCottageRoomsANorth(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValeStormyNight_GrandparentsDoorOpens, 49, 69);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 326, 1126);
   Event_WaitFrames(3);
@@ -485,7 +485,7 @@ static void ValeStormyNight_LeaveToCottageRoomsANorth(void) {
 /// COTTAGE_ROOMS_A_FROM_VALE_WEST in SceneId_CottageRoomsA, where
 /// Vale's VALE_TO_COTTAGE_ROOMS_A_WEST leads by day.
 static void ValeStormyNight_LeaveToCottageRoomsAWest(void) {
-  Sound_PlaySong(SE_DOOR_OPEN);
+  Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValeStormyNight_WestHouseDoorOpens, 52, 76);
   Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 374, 1238);
   Event_WaitFrames(3);
@@ -500,7 +500,7 @@ static void ValeStormyNight_LeaveToCottageRoomsAWest(void) {
 /// ValeStormyNight_LeaveToCottageRoomsAWest leads to
 /// (COTTAGE_ROOMS_A_FROM_VALE_WEST).
 static void ValeStormyNight_UnusedLeaveToCottageRoomsAWestBySecondDoor(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Event_WaitFrames(3);
@@ -512,7 +512,7 @@ static void ValeStormyNight_UnusedLeaveToCottageRoomsAWestBySecondDoor(void) {
 /// Reached by walking north into cell behavior 12; arrives in the house
 /// with two beds before a hearth, COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_WEST.
 static void ValeStormyNight_LeaveToCottageRoomsBWest(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Event_WaitFrames(3);
@@ -523,7 +523,7 @@ static void ValeStormyNight_LeaveToCottageRoomsBWest(void) {
 /// Reached by walking north into cell behavior 13; arrives in the house
 /// with two beds before a hearth, COTTAGE_ROOMS_B_FROM_VALE_STORMY_NIGHT_EAST.
 static void ValeStormyNight_LeaveToCottageRoomsBEast(void) {
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 38, 72);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 1182);
   Event_WaitFrames(3);
@@ -779,7 +779,7 @@ static void ValeStormyNight_DoraSendsIsaacToThePlaza(void) {
   Event_WaitTransitionFrames();
   Weather_ResumeLightning();
   // Dora and Isaac come out of the door.
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 50, 44);
   Actor_SetAttachedEffect(ACTOR_GARET_CHILD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -888,9 +888,9 @@ static void ValeStormyNight_FirstRockFalls(void) {
       // A rumble (SE_RUMBLE, then SE_CRASH), and the rock bounces down from the
       // east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Sound_PlaySong(SE_RUMBLE);
+      Sound_Play(SE_RUMBLE);
       WaitFrames(40);
-      Sound_PlaySong(SE_CRASH);
+      Sound_Play(SE_CRASH);
       rock->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       rockSprite->image.priority = 1;
       Actor_SetPosition(ACTOR_FIRST_ROCK, PIXELS(473), PIXELS(932));
@@ -905,7 +905,7 @@ static void ValeStormyNight_FirstRockFalls(void) {
       rock->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       Event_WaitFrames(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+      Sound_Play(SOUND_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       Scene_PlayQueuedMusic();
@@ -963,9 +963,9 @@ static void ValeStormyNight_SecondRockFalls(void) {
       rock = Actor_GetById(ACTOR_FIRST_ROCK + 1);
       // A rumble, then the rock rolls down the slope from the north-east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Sound_PlaySong(SE_RUMBLE);
+      Sound_Play(SE_RUMBLE);
       WaitFrames(40);
-      Sound_PlaySong(SE_CRASH);
+      Sound_Play(SE_CRASH);
       Actor_SetPosition(ACTOR_FIRST_ROCK + 1, PIXELS(381), PIXELS(808));
       rock->speedLimit = PIXELS(3) / 2;
       rock->acceleration = PIXELS(3) / 2;
@@ -980,7 +980,7 @@ static void ValeStormyNight_SecondRockFalls(void) {
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 1, 224, 872);
       Event_WaitFrames(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+      Sound_Play(SOUND_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       Scene_PlayQueuedMusic();
@@ -1040,9 +1040,9 @@ static void ValeStormyNight_ThirdRockFalls(void) {
       // A rumble, then the rock drops in from the west while Isaac is drawn
       // behind it.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Event_PlaySong(SE_RUMBLE);
+      Event_PlaySound(SE_RUMBLE);
       WaitFrames(40);
-      Event_PlaySong(SE_CRASH);
+      Event_PlaySound(SE_CRASH);
       Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_SetPosition(ACTOR_FIRST_ROCK + 2, 0, PIXELS(703));
@@ -1054,7 +1054,7 @@ static void ValeStormyNight_ThirdRockFalls(void) {
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 2, 64, 703);
       Event_WaitFrames(40);
       // It lands: the rumble fades, and Isaac is drawn as before.
-      Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+      Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       Scene_PlayQueuedMusic();
@@ -1112,9 +1112,9 @@ static void ValeStormyNight_FourthRockFalls(void) {
       rock = Actor_GetById(ACTOR_FIRST_ROCK + 3);
       // A rumble, then the rock rolls in from the east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Sound_PlaySong(SE_RUMBLE);
+      Sound_Play(SE_RUMBLE);
       WaitFrames(40);
-      Sound_PlaySong(SE_CRASH);
+      Sound_Play(SE_CRASH);
       Actor_SetPosition(ACTOR_FIRST_ROCK + 3, PIXELS(474), PIXELS(1147));
       rock->speedLimit = PIXELS(1);
       rock->acceleration = PIXELS(1);
@@ -1125,7 +1125,7 @@ static void ValeStormyNight_FourthRockFalls(void) {
       Actor_SetPositionAndReset(ACTOR_FIRST_ROCK + 3, 432, 1147);
       Event_WaitFrames(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+      Sound_Play(SOUND_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       Scene_PlayQueuedMusic();
@@ -1466,11 +1466,11 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     Event_CallWithLastActiveActorId(gValeStormyNight_BoulderWatchers);
     Scene_StartEventPsynergy();
     WaitFrames(1);
-    Event_PlaySong(SE_RUMBLE);
+    Event_PlaySound(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Event_WaitFrames(30);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     Event_WaitFrames(30);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
@@ -1485,10 +1485,10 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET_CHILD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     Event_WaitFrames(40);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     Event_WaitFrames(20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1538,35 +1538,35 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     movingActor->y.fixed = boulderHeight;
     movingActor->targetY = boulderHeight;
     Actor_SetSpeed(ACTOR_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Import_ActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     *shakeShift = 0;
     Actor_SetSpeed(ACTOR_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 300);
     Import_ActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     *shakeShift = 2;
     Actor_SetSpeed(ACTOR_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Import_ActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     *shakeShift = 0;
     Actor_SetSpeed(ACTOR_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 300);
     Import_ActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     *shakeShift = 2;
     Actor_SetSpeed(ACTOR_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Import_ActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Event_PlaySong(SE_CRASH);
+    Event_PlaySound(SE_CRASH);
     *shakeShift = 1;
     Event_WaitFrames(20);
     Actor_SetAttachedEffect(ACTOR_ELDER_EAST,
@@ -1598,7 +1598,7 @@ static void ValeStormyNight_WatchBoulderFall(void) {
     Import_ActorSetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_YOUNG_ELDER_CALL_OUT);
     Event_WaitFrames(10);
     FieldEvent_ShowMessageThenWait(ACTOR_ELDER_FAR_WEST, 0, 20);
-    Event_PlaySong(SONG_FADE_OUT_ACTION_SE);
+    Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
     FieldCamera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
@@ -1769,7 +1769,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   FieldCamera_WaitForArrival();
   Event_WaitFrames(20);
-  Sound_PlaySong(SE_HEAVY_IMPACT);
+  Sound_Play(SE_HEAVY_IMPACT);
   Actor_Jump(ACTOR_FELIX_CHILD, 4, 0);
   Import_ActorSetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_UNDER_WATER);
   Event_WaitFrames(10);
@@ -1822,7 +1822,7 @@ static void ValeStormyNight_WatchAttemptToSaveFelix(void) {
   FieldCamera_WaitForArrival();
   Import_ActorSetPosition(ACTOR_FELIX_CHILD, PIXELS(243), PIXELS(1277));
   WaitFrames(1);
-  Sound_PlaySong(SE_DRIP);
+  Sound_Play(SE_DRIP);
   {
     struct Actor *actor;
     actor = Actor_GetById(ACTOR_FELIX_CHILD);
@@ -1961,7 +1961,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
                   gValeStormyNight_JennaRunsIntoRiversideHouse);
   Actor_RunScriptAndWait(ACTOR_DORA,
                          gValeStormyNight_DoraRunsIntoRiversideHouse);
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorOpens, 38, 72);
   Event_WaitFrames(10);
   Actor_WalkToAndWait(ACTOR_DORA, 149, 1175);
@@ -1989,12 +1989,12 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   Actor_SetScript(ACTOR_JENNAS_MOTHER, script);
   Actor_RefreshSelectorById(ACTOR_JENNA_CHILD);
   Event_WaitFrames(10);
-  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_PlaySound(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValeStormyNight_GrandparentsDoorCloses, 38, 72);
   Event_WaitFrames(30);
   Scene_PlayQueuedMusic();
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorOpens, 35, 73);
   Event_WaitFrames(20);
   Scene_PlayQueuedMusic();
@@ -2003,7 +2003,7 @@ static void ValeStormyNight_DoraGoesForHelp(void) {
   Actor_SetScript(ACTOR_JENNA_CHILD,
                   gValeStormyNight_JennaComesOutOfRiversideHouse);
   Event_WaitFrames(40);
-  Event_PlaySong(SE_DOOR_CLOSE);
+  Event_PlaySound(SE_DOOR_CLOSE);
   MapGrid_AnimateCells(gValeStormyNight_IsaacsDoorCloses, 35, 73);
   Actor_RefreshSelectorById(ACTOR_JENNA_CHILD);
   Scene_PlayQueuedMusic();
@@ -2258,7 +2258,7 @@ static __inline__ void ValeStormyNight_PlaceActor(struct Actor *actor,
 static __inline__ void ValeStormyNight_PlayImpactBeat(s32 shakeAmplitude,
                                                       s32 frames) {
   MapGrid_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
-  Event_PlaySong(SE_CRASH);
+  Event_PlaySound(SE_CRASH);
   Event_WaitFrames(frames);
 }
 
@@ -2359,7 +2359,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Actor_SetScript(ACTOR_GARET_CHILD, lookAroundActions);
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, lookAroundActions);
   Event_WaitFrames(10);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   ValeStormyNight_PlayImpactBeat(PIXELS(3), 30);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_WaitFrames(120);
@@ -2950,7 +2950,7 @@ static void ValeStormyNight_SpawnEffectPair(struct Actor *parent) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
-  Sound_PlaySong(SE_JUMP);
+  Sound_Play(SE_JUMP);
   for (i = 0; i < 2; ++i) {
     child = FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
                               parent->y.fixed, parent->z.fixed);

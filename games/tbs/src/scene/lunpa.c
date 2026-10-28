@@ -551,7 +551,7 @@ static void Lunpa_EnterDoor(void) {
       placedActor->motionFlags = 0;
     }
   }
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   doorIndex = work->stepTrigger - CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR;
   MapGrid_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                        gLunpaDoors[doorIndex].y);
@@ -592,7 +592,7 @@ static void Lunpa_EnterFortress(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
-  Event_PlaySong(SE_DOOR_OPEN);
+  Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCells(53, 4, 2, 2, 41, 4);
   Event_WaitFrames(10);
   MapGrid_CopyCells(53, 6, 2, 2, 41, 4);
@@ -610,7 +610,7 @@ static void UNUSED Lunpa_CheckAhead(void) { Field_TryJumpForward(); }
 /// FLAG_LUNPA_SECRETS_HIDDEN is set; nothing calls it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
   if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
-    Sound_PlaySong(MUS_TREASURE_FOUND);
+    Sound_Play(MUS_TREASURE_FOUND);
   }
 }
 
@@ -625,7 +625,7 @@ static void Lunpa_PressHiddenSwitch(void) {
   }
   // Open the passage over five map pictures, then remember its final state.
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
-  Event_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
+  Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
   WaitFrames(1);
   Lunpa_DrawHiddenPassagePicture(32, 45);
   WaitFrames(10);
@@ -833,16 +833,16 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
   Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
   Event_WaitFrames(1);
-  Event_PlaySong(SE_SCUFFLE);
+  Event_PlaySound(SE_SCUFFLE);
   Event_WaitFrames(20);
   Actor_SetSpritePriority(ACTOR_LEFT_GUARD, 3);
   Actor_SetSpritePriority(ACTOR_RIGHT_GUARD, 3);
-  Event_PlaySong(SE_SCUFFLE);
+  Event_PlaySound(SE_SCUFFLE);
   Event_WaitFrames(30);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  Event_PlaySong(SE_SCUFFLE);
+  Event_PlaySound(SE_SCUFFLE);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
   Import_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
@@ -857,7 +857,7 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
-  Event_PlaySong(SE_LANDING_THUD);
+  Event_PlaySound(SE_LANDING_THUD);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);

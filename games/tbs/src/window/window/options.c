@@ -584,7 +584,7 @@ s32 SettingsMenu_Run(void) {
 
     // SELECT steps through the six colour presets (window/scales.c).
     if (gKeysPressed & KEY_SELECT) {
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
       if (work->preset > 5)
@@ -595,30 +595,30 @@ s32 SettingsMenu_Run(void) {
     }
     if (gKeysPressed & (KEY_A | KEY_START)) {
       result = 0;
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
     if (gKeysPressed & KEY_B) {
       result = -1;
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption--;
       redraw = 1;
     } else if (gKeysRepeat & KEY_DOWN) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedOption++;
       redraw = 1;
     } else {
       if (gKeysRepeat & KEY_LEFT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]--;
         redraw = 1;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]++;
         redraw = 1;
       }
@@ -842,17 +842,17 @@ s32 PauseMenu_Choose(void) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       result = selectedEntry;
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
     } else if (gKeysPressed & (KEY_B | KEY_START)) {
       result = -1;
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
     } else {
       if (gKeysRepeat & KEY_UP) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedEntry -= 1;
         redraw = 1;
       } else if (gKeysRepeat & KEY_DOWN) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         selectedEntry += 1;
         redraw = 1;
       }

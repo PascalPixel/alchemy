@@ -20,7 +20,7 @@
 #include "heap.h"
 #include "keystate.h"
 #include "fixed_math.h"
-#include "songs.h"
+#include "sounds.h"
 
 // Mercury Lighthouse and its entrance, once the pool is woken: standing at the
 // pool's heart (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader
@@ -180,7 +180,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
       sprite->flags = 0;
     }
   }
-  Sound_PlaySong(SE_PSYNERGY_START);
+  Sound_Play(SE_PSYNERGY_START);
 }
 
 /// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, the pool's heart: the column of
@@ -359,7 +359,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   }
   Actor_SelectAnimation(actor, 6);
   WaitFrames(3);
-  Sound_PlaySong(SE_JUMP);
+  Sound_Play(SE_JUMP);
   Actor_SelectAnimation(actor, 7);
   actor->speedLimit = 0x30000;
   actor->acceleration = 0x20000;
@@ -373,12 +373,12 @@ void MercuryLighthouse_HopAcrossPool(void) {
   if (to->behavior != state->poolBehavior)
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   else
-    Sound_PlaySong(SE_SPLASH_SMALL);
+    Sound_Play(SE_SPLASH_SMALL);
   WaitFrames(1);
   *flags = saved;
   if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {
     Actor_SelectAnimation(actor, 18);
-    Sound_PlaySong(SE_WATER_MOVE);
+    Sound_Play(SE_WATER_MOVE);
     for (i = 0;; i++) {
       if ((i & 15) == 0)
         MercuryLighthouse_SpawnRipple(actor);
@@ -386,7 +386,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
         break;
       WaitFrames(1);
     }
-    Sound_PlaySong(SE_STOP_ACTION_SE);
+    Sound_Play(SE_STOP_ACTION_SE);
     WaitFrames(1);
     actor->x.fixed = state->targetX;
     actor->z.fixed = state->targetZ;

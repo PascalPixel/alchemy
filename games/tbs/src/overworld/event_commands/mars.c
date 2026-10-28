@@ -36,15 +36,15 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // note on each.
   Actor_ArmCallback(djinniId, FACING_SOUTH, 0);
   WaitFrames(20);
-  Sound_PlaySongFar(SE_NOTE_LOW);
+  Sound_PlayFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
-  Sound_PlaySongFar(SE_NOTE_MID);
+  Sound_PlayFar(SE_NOTE_MID);
   Actor_RunRepeatedMotion(djinniId, 1);
-  Sound_PlaySongFar(SE_NOTE_HIGH);
+  Sound_PlayFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
   // Spin up for 80 frames, then spin and shrink away.
   WaitFrames(20);
-  Sound_PlaySongFar(SE_SPIN);
+  Sound_PlayFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   WaitFrames(80);
@@ -206,7 +206,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     effect->state++;
 
     if ((gVBlankCount & 1) != 0)
-      Sound_PlaySongFar(SE_CLATTER);
+      Sound_PlayFar(SE_CLATTER);
   } else if (state == VENUS_PARTICLE_RISING) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;

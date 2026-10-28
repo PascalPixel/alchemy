@@ -139,7 +139,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
       Actor_SelectAnimationFar(actor, POSE_LEAP);
       // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
-      Sound_PlaySongFar(SE_WHOOSH);
+      Sound_PlayFar(SE_WHOOSH);
     }
     // Frame 16: switch to the fireball images and line the user up with
     // the target's depth.
@@ -299,7 +299,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
     PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
   }
-  Sound_PlaySongFar(SE_SWIRL);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 32 + 96; frame++) {
     s32 *row;

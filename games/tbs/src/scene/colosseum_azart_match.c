@@ -110,7 +110,7 @@
 #include "colosso_gauge.h"
 #include "macros.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
@@ -431,10 +431,10 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   } else {
     Actor_SelectAnimation(actor, 3);
   }
-  Sound_PlaySong(SE_LOG_PUSH);
+  Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(leader);
   Actor_SelectAnimation(actor, 2);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
+  Sound_Play(SE_STOP_ACTION_SE);
   Event_End();
 }
 
@@ -534,7 +534,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   Event_WaitFrames(6);
   actor->speedLimit = PIXELS(1) / 2;
   actor->acceleration = PIXELS(1) / 5;
-  Event_PlaySong(SE_HEAVY_MOVE);
+  Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SelectAnimation(actor, 2);
   FieldActor_SetMoveTarget(actor, actor->x.fixed - PIXELS(48), 0,
                            actor->z.fixed);
@@ -551,8 +551,8 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   Import_ActorSetAnimation(leaderId, ANIM_STAND);
   Actor_WaitForMove(actor);
   Actor_SelectAnimation(actor, 1);
-  Event_PlaySong(SE_STOP_ACTION_SE);
-  Event_PlaySong(SE_HEAVY_STOP);
+  Event_PlaySound(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_HEAVY_STOP);
   Event_WaitFrames(15);
   Event_End();
   MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
@@ -796,7 +796,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Actor_ReleaseById(ACTOR_BRIDGE_ATTENDANT);
     Actor_ReleaseById(ACTOR_LUMBER_ATTENDANT);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Sound_PlaySong(SONG_FADE_OUT_BGM);
+      Sound_Play(SOUND_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumAzartMatch_MarkFinishTerrain(ACTOR_GARET);
@@ -1272,40 +1272,40 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_WaitFrames(30);
-    Sound_PlaySong(MUS_LEVEL_UP);
+    Sound_Play(MUS_LEVEL_UP);
     Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
     Event_WaitFrames(120);
     Event_End();
   } else {
-    Sound_PlaySong(SE_COLOSSO_LETTERING);
+    Sound_Play(SE_COLOSSO_LETTERING);
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     gColosseumAzartMatch_LetteringTitle[15] = round * 60;
     Event_WaitFrames(30);
-    Sound_PlaySong(round + 90);
+    Sound_Play(round + 90);
     Colosso_LoadLettering(round);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
     Event_WaitFrames(120);
     while (Sound_GetBgmRestoreDelay() != 0) {
       WaitFrames(1);
     }
-    Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+    Sound_Play(SOUND_FADE_OUT_ACTION_SE);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
-    Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+    Sound_Play(SE_COLOSSO_COUNTDOWN);
     Event_WaitFrames(60);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 1);
-    Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+    Sound_Play(SE_COLOSSO_COUNTDOWN);
     Event_WaitFrames(60);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
-    Sound_PlaySong(SE_COLOSSO_COUNTDOWN);
+    Sound_Play(SE_COLOSSO_COUNTDOWN);
     Event_WaitFrames(60);
     Colosso_LoadLettering(COLOSSO_PICTURE_GO);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_GO, 0);
-    Sound_PlaySong(SE_COLOSSO_GO);
+    Sound_Play(SE_COLOSSO_GO);
     Scene_PlayMusic();
     Event_End();
     GameFlag_Set(FLAG_IN_TOWN);
@@ -1318,7 +1318,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
 
   s32 loser;
 
-  Sound_PlaySong(SE_COLOSSO_LETTERING);
+  Sound_Play(SE_COLOSSO_LETTERING);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   gColosseumAzartMatch_LetteringWon[13] = result * 60;
@@ -1326,7 +1326,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
     Event_WaitFrames(30);
-    Sound_PlaySong(MUS_INN);
+    Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
     /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
@@ -1336,7 +1336,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
     loser = ACTOR_PARTY_LEADER;
   } else {
     Event_WaitFrames(30);
-    Sound_PlaySong(result + 90);
+    Sound_Play(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
@@ -1348,9 +1348,9 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
   while (Sound_GetBgmRestoreDelay() != 0) {
     WaitFrames(1);
   }
-  Sound_PlaySong(MUS_SILENCE);
+  Sound_Play(MUS_SILENCE);
   Event_WaitFrames(30);
-  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -1439,7 +1439,7 @@ ColosseumAzartMatch_PlaceFinishItemAboveActor(struct Actor *interpreter) {
                            collector->y.fixed + PIXELS(36), collector->z.fixed);
   itemActor->motionFlags = 0;
   Actor_StartScript(itemActor, gColosseumAzartMatch_ScriptB);
-  Sound_PlaySong(MUS_TREASURE_FOUND);
+  Sound_Play(MUS_TREASURE_FOUND);
   collector->timer = 0;
   return 0;
 }
@@ -1584,9 +1584,9 @@ static void ColosseumAzartMatch_PushActorAhead(void) {
   subject->acceleration = PIXELS(1) / 5;
   FieldActor_SetMoveTarget(subject, position.x, position.y, position.z);
 
-  Sound_PlaySong(SE_PUSH_STEP);
+  Sound_Play(SE_PUSH_STEP);
   Actor_WaitForMove(target);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
+  Sound_Play(SE_STOP_ACTION_SE);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

@@ -194,7 +194,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
     actor = marker->actor;
     if (actor != NULL)
       Actor_SelectAnimationFar(actor, animation);
-    Sound_PlaySongFar(sound);
+    Sound_PlayFar(sound);
     WaitFrames(12);
   }
 }
@@ -221,7 +221,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
     WaitFrames(18);
     if (actor != NULL)
       Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_MIMIC);
-    Sound_PlaySongFar(SE_ENEMY_CRY);
+    Sound_PlayFar(SE_ENEMY_CRY);
     if (actor != NULL) {
       actor->velocityY = 8 << 16;
       Actor_SetSpriteFlagsFar(actor, 1);

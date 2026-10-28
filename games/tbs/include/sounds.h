@@ -1,19 +1,18 @@
-#ifndef ALCHEMY_SONGS_H
-#define ALCHEMY_SONGS_H
+#ifndef ALCHEMY_SOUNDS_H
+#define ALCHEMY_SOUNDS_H
 
 /// @file
-/// Song and sound effect ids, indices into gSongTable. MUS_ ids are
-/// music and SE_ ids sound effects, as their sequences in sound/songs are
-/// named. Only the ids ☀️ plays are here: the code's own, the field music
-/// gScene_MusicRules and gEncounter_BattleMusic choose by number, and
-/// the voices and defeat sounds reached by adding to a first id. They are named
-/// as pret names its sounds: music by the place or moment the player knows it
-/// from, a sound effect by what it sounds like or the moment it marks, from its
-/// comment and its uses. Sound_PlaySong
-/// tests the controls SONG_FADE_OUT_BGM and SONG_FADE_OUT_ACTION_SE first, then
-/// the ranges: from SONG_SE_FIRST on a song table player, from
-/// SONG_FANFARE_FIRST fanfares, below that music, where SONG_KEEP_BGM is
-/// also a control (audio_engine_symbols.h).
+/// Sound ids, indices into gSongTable: MUS_ ids are music and fanfares,
+/// SE_ ids sound effects, as their sequences in sound/songs are named. Only the
+/// ids ☀️ plays are here: the code's own, the field music gScene_MusicRules and
+/// gEncounter_BattleMusic choose by number, and the voices and defeat sounds
+/// reached by adding to a first id. They are named as pret names its sounds:
+/// music by the place or moment the player knows it from, a sound effect by
+/// what it sounds like or the moment it marks, from its comment and its uses.
+/// Sound_Play tests the controls SOUND_FADE_OUT_BGM and
+/// SOUND_FADE_OUT_ACTION_SE first, then the ranges: from SOUND_SE_FIRST on the
+/// player its gSongTable row names, from SOUND_FANFARE_FIRST fanfares, below
+/// that music, where SOUND_KEEP_BGM is also a control (audio_engine_symbols.h).
 
 /// Field music of Vale, of Vault, and of Altin once
 /// FLAG_HYDROS_STATUES_DEFEATED is set.
@@ -54,7 +53,7 @@
 /// Field music of Tolbi before the Colosso; afterwards Tolbi plays MUS_TOWN.
 /// ★ Named from its area name: Tolbi
 #define MUS_TOLBI 10
-/// a song with no tracks: silence
+/// a sound with no tracks: silence
 #define MUS_SILENCE 19
 /// Field music of Sol Sanctum until the eruption (FLAG_SOL_SANCTUM_ERUPTED).
 /// ★ Named from its area name: Sol Sanctum
@@ -100,7 +99,7 @@
 /// Lighthouse's aerie once its first battle has begun
 /// (FLAG_AERIE_FIRST_BATTLE_BEGUN in venus_lighthouse_aerie.c).
 #define MUS_BABI 30
-/// Unused: nothing in ☀️ plays it; TRACKS_ALL names it among the songs of
+/// Unused: nothing in ☀️ plays it; TRACKS_ALL names it among the music of
 /// nine or more tracks.
 #define MUS_UNUSED 40
 /// Field music of the Tolbi-bound ship, and of the world map reached from seven
@@ -113,7 +112,7 @@
 /// Field music of Venus Lighthouse, but for its entry and its aerie.
 /// ★ Named from its area name: Venus Lighthouse
 #define MUS_VENUS_LIGHTHOUSE 43
-/// The music of every battle gEncounter_BattleMusic lists no other song for.
+/// The music of every battle gEncounter_BattleMusic lists no other music for.
 #define MUS_BATTLE 50
 /// Battle music gEncounter_BattleMusic gives the Mystery Man and Mystery Woman
 /// who catch Isaac in Vale's plaza (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, slot 4)
@@ -178,7 +177,7 @@
 /// ★ Named from what the player sees: the Title and its "Press Start"
 /// prompt (its render)
 #define MUS_TITLE 70
-/// A row of the song table that holds the empty song (dummy_song_header), so
+/// A row of the song table that holds the empty sound (dummy_song_header), so
 /// nothing plays; only the debug battle message viewer starts it, to silence
 /// the music.
 #define MUS_EMPTY 71
@@ -665,7 +664,7 @@
 /// A log pushed over: Kolima Forest, Mogall Forest, Vale Cave, the Colosso,
 /// Crossbone Isle, and monsters attacking the Tolbi-bound ship.
 #define SE_LOG_FALL 240
-/// Something moving in water, on player 3 until SONG_FADE_OUT_ACTION_SE fades
+/// Something moving in water, on player 3 until SOUND_FADE_OUT_ACTION_SE fades
 /// it: the logs floated across Fuchin Falls Cave, the riding log in Vale Cave,
 /// the leader sinking in Mercury Lighthouse's pool and bathing in a Lamakan
 /// Desert oasis.
@@ -736,14 +735,14 @@
 #define SE_VOICE_MAN_2 285
 #define SE_VOICE_MAN_3 286
 #define SE_VOICE_MAN_4 287
-/// A song with no tracks on player 3, which stops the loop playing there: every
-/// scene change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or cart
-/// stopping, a battle starting on the field.
+/// A sound with no tracks on player 3, which stops the loop playing there:
+/// every scene change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or
+/// cart stopping, a battle starting on the field.
 #define SE_STOP_ACTION_SE 288
 /// The pair of upright effects spawned in the eruption at Sol Sanctum
 /// (SolSanctumEruption_SpawnEffectPair).
 #define SE_ERUPTION_COLUMNS 292
-/// A song with no tracks on player 5, which stops what plays there; played
+/// A sound with no tracks on player 5, which stops what plays there; played
 /// before each queued scene sound (Scene_QueueMusic).
 #define SE_STOP_MUSIC_PLAYER_5 298
 /// Tolbi Spring: a coin or medal on its way, 50 frames into the toss

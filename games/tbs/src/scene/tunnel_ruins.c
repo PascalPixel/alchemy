@@ -93,7 +93,7 @@
 #include "fixed_math.h"
 #include "scene.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
@@ -272,7 +272,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Event_Start();
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
 
     actor->speedLimit = PIXELS(3);
@@ -473,7 +473,7 @@ static void TunnelRuins_HopDownStep(void) {
   Actor_SelectAnimation(leader, 1);
   Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= ACTOR_FALLS;
-  Sound_PlaySong(SE_JUMP);
+  Sound_Play(SE_JUMP);
   leader->velocityY = PIXELS(4);
   FieldActor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
                            leader->z.fixed + PIXELS(12));
@@ -481,7 +481,7 @@ static void TunnelRuins_HopDownStep(void) {
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
-  Sound_PlaySong(SE_LANDING_THUD);
+  Sound_Play(SE_LANDING_THUD);
   for (i = 0; i < 8; i++) {
     leader->y.fixed -= PIXELS(2);
     leader->targetY = leader->y.fixed;
@@ -720,7 +720,7 @@ static void TunnelRuins_HopNorthBySmallPillars(void) {
 /// shake.
 static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
                                                          s32 column, s32 row) {
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   MapGrid_CopyCellsTo(sourceColumn, 8, column, row, 1, 3);
   MapGrid_SetShake(0, PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -752,7 +752,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     options->startScaleY = 3 * Q16_ONE / 5;
     options->palette = 7;
     Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->motionFlags = 0;
-    Sound_PlaySong(SE_PUSH);
+    Sound_Play(SE_PUSH);
     for (i = 0; i < 16; i++) {
       WaitFrames(3);
       Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
@@ -836,7 +836,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       options->startScaleY = 3 * Q16_ONE / 5;
       options->palette = 7;
       Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->motionFlags = 0;
-      Sound_PlaySong(SE_PUSH);
+      Sound_Play(SE_PUSH);
       for (i = 0; i < 16; i++) {
         WaitFrames(3);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
@@ -1027,7 +1027,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
   Actor_SetSpeed(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
   if (wait != 0) {
-    Sound_PlaySong(SE_SETTLE);
+    Sound_Play(SE_SETTLE);
   }
   FieldActor_SetMoveTarget(
       Actor_GetById(ACTOR_BALANCE_WEST),
@@ -1046,7 +1046,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
   Actor_GetById(ACTOR_BALANCE_EAST)->y.fixed =
       gTunnelRuins_BalanceHeights[Actor_GetById(ACTOR_BALANCE_EAST)->timer];
   if (wait != 0) {
-    Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
+    Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   }
   for (i = 0; i < 5; i++) {
     if (Actor_GetById(i + ACTOR_BALANCE_WEST)->y.fixed / Q16_ONE < 0 &&
@@ -1096,7 +1096,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
   }
 
   Actor_WaitForMoveById(actorId);
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   FieldEffect_SpawnNineRadialEffects(actorId);
   Event_WaitFrames(30);
 }
@@ -1352,7 +1352,7 @@ static void TunnelRuins_MoveLadyStatue(void) {
     FieldCamera_WaitForArrival();
     Event_WaitFrames(30);
     GameFlag_Set(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
-    Sound_PlaySong(SE_DOOR_OPEN);
+    Sound_Play(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gTunnelRuins_DoorOpenSteps, 32, 46);
     MapGrid_CopyCellAttributes(24, 60, 1, 1, 32, 47);
     Event_WaitFrames(40);
@@ -1364,7 +1364,7 @@ static void TunnelRuins_MoveLadyStatue(void) {
       FieldCamera_WaitForArrival();
       Event_WaitFrames(30);
       GameFlag_Clear(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
-      Sound_PlaySong(SE_DOOR_CLOSE);
+      Sound_Play(SE_DOOR_CLOSE);
       MapGrid_AnimateCells(gTunnelRuins_DoorCloseSteps, 32, 46);
       MapGrid_CopyCellAttributes(31, 47, 1, 1, 32, 47);
       Event_WaitFrames(40);

@@ -75,7 +75,7 @@
 #include "actor.h"
 #include "fixed_math.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// Gondowan Passage's placed actors, numbered in the order of
 /// gGondowanPassageActorPlacements and
@@ -412,7 +412,7 @@ static void GondowanCave_MovePillar(void) {
                                destinationCellZ);
     Event_WaitFrames(8);
     GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SPLASH);
-    Event_PlaySong(SE_CAST);
+    Event_PlaySound(SE_CAST);
     GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
   }
   Event_End();
@@ -458,7 +458,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   }
   actor->update = GondowanCave_RotateLeapingActor;
   // Continue spinning through the first jump.
-  Sound_PlaySong(SE_WHOOSH);
+  Sound_Play(SE_WHOOSH);
   Actor_SetSpeed(actorId, PIXELS(2), PIXELS(1));
   Actor_SetDestination(actorId, 472, 288);
   actor->gravity = 4 * PIXELS(1) / 5;
@@ -486,7 +486,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   GondowanCave_WaitForDescent(actor, PIXELS(32));
   actor->update = 0;
   actor->sprite->rotation = 0x1000;
-  Sound_PlaySong(SE_CAST);
+  Sound_Play(SE_CAST);
   Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
   Event_WaitFrames(10);

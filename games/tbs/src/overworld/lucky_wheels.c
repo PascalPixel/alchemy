@@ -20,7 +20,7 @@
 #include "iwram_call.h"
 #include "resource.h"
 #include "io_reg.h"
-#include "songs.h"
+#include "sounds.h"
 #include "mem.h"
 #include "fixed_math.h"
 #include "particle.h"
@@ -58,7 +58,7 @@
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomSeed = gAdventure.playTime;
-  Sound_PlaySongFar(MUS_DJINN_LESSON);
+  Sound_PlayFar(MUS_DJINN_LESSON);
   LuckyWheels_Run();
   return 0;
 }
@@ -425,17 +425,17 @@ void LuckyWheels_Update(void) {
         if (work->pressed & KEY_UP) {
           if (work->bet <= 3 && tickets > work->bet) {
             work->bet++;
-            Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+            Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
-            Sound_PlaySongFar(SE_MENU_CANCEL);
+            Sound_PlayFar(SE_MENU_CANCEL);
           }
         }
         if (work->pressed & KEY_DOWN) {
           if (work->bet > 1) {
             work->bet--;
-            Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+            Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
-            Sound_PlaySongFar(SE_MENU_CANCEL);
+            Sound_PlayFar(SE_MENU_CANCEL);
           }
         }
         REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_ALL;
@@ -447,7 +447,7 @@ void LuckyWheels_Update(void) {
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(ITEM_GAME_TICKET);
           Window_CloseFar(work->subWindow, 1);
-          Sound_PlaySongFar(SE_LUCKY_WHEELS_SPIN);
+          Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
         }
       }
     } else if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
@@ -469,26 +469,26 @@ void LuckyWheels_Update(void) {
             work->reels[i].stop = -1;
           }
         } else if (work->cursor <= 4) {
-          Sound_PlaySongFar(SE_LUCKY_WHEELS_HOLD);
+          Sound_PlayFar(SE_LUCKY_WHEELS_HOLD);
           work->reels[work->cursor].held ^= 1;
         } else if (allHeld == 0) {
-          Sound_PlaySongFar(SE_LUCKY_WHEELS_SPIN);
+          Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
           work->state = LUCKY_WHEELS_SPINNING;
           work->cursor = 0;
           for (i = 0; i != 5; i++)
             work->reels[i].stop = -1;
           work->spins++;
         } else {
-          Sound_PlaySongFar(SE_MENU_CANCEL);
+          Sound_PlayFar(SE_MENU_CANCEL);
         }
       } else {
         if (work->direction & KEY_RIGHT) {
           work->cursor = (work->cursor + 1) % 6;
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         if (work->direction & KEY_LEFT) {
           work->cursor = (work->cursor + 5) % 6;
-          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
       }
 
@@ -560,7 +560,7 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->timer == 60) {
         work->state = LUCKY_WHEELS_SHOWING_WIN;
-        Sound_PlaySongFar(MUS_FANFARE_LARGE);
+        Sound_PlayFar(MUS_FANFARE_LARGE);
         work->timer = 0;
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -572,7 +572,7 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->pressed & KEY_A) {
         work->state = LUCKY_WHEELS_DONE;
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
       }
     } else if (work->state == LUCKY_WHEELS_NO_WIN) {
 #if TBS_PATCH_1
@@ -586,7 +586,7 @@ void LuckyWheels_Update(void) {
 #if TBS_PATCH_1
         work->phase = 0;
 #endif
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         Window_CloseFar(work->window, 1);
       }
     } else if (work->state == LUCKY_WHEELS_OUT_OF_SPINS) {
@@ -600,14 +600,14 @@ void LuckyWheels_Update(void) {
         Text_DrawMessageAsTilesFar(MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
-        Sound_PlaySongFar(SE_LUCKY_WHEELS_STOP_PROMPT);
+        Sound_PlayFar(SE_LUCKY_WHEELS_STOP_PROMPT);
       if (work->timer > 56) {
         if (fx->frame > 31 || (work->pressed & KEY_R)) {
           fx->frame = 0;
           for (i = 0; i != 5; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
               work->reels[i].stop = (Random16() & 3) + 4;
-              Sound_PlaySongFar(SE_LUCKY_WHEELS_STOP);
+              Sound_PlayFar(SE_LUCKY_WHEELS_STOP);
               break;
             }
           }
@@ -674,7 +674,7 @@ void LuckyWheels_Update(void) {
         if (hits != 0) {
           save->wonPrizes[hits] = -1;
           work->state = LUCKY_WHEELS_WON;
-          Sound_PlaySongFar(SE_THUNDER);
+          Sound_PlayFar(SE_THUNDER);
           fx->transferMode = CANVAS_COPY_AND_CLEAR;
           fx->transferValue = 0;
           REG_BLDCNT = 0;

@@ -95,7 +95,7 @@
 #include "actor_script.h"
 #include "frame.h"
 #include "fixed_math.h"
-#include "songs.h"
+#include "sounds.h"
 #include "heap.h"
 #include "item_ids.h"
 #include "audio_engine_symbols.h"
@@ -381,8 +381,8 @@ static void Sanctum_ReconsiderQuest(void) {
         PaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
         PaletteFade_StartInterpolation(120);
         Event_WaitFrames(120);
-        Sound_PlaySong(MUS_INN);
-        Sound_WaitForSong();
+        Sound_Play(MUS_INN);
+        Sound_WaitForBgmRestore();
         GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
         Import_EventSetExitRequest(SANCTUM_TO_VALE_PLAZA);
       }
@@ -823,7 +823,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Import_ActorSetAnimation(ACTOR_HEALER, 0);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
-    Event_PlaySong(SE_WISE_ONE_QUEST);
+    Event_PlaySound(SE_WISE_ONE_QUEST);
     Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     Event_WaitFrames(32);
     Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
@@ -896,7 +896,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Import_ActorSetAnimation(ACTOR_HEALER, 0);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
-    Event_PlaySong(SE_WISE_ONE_QUEST);
+    Event_PlaySound(SE_WISE_ONE_QUEST);
     Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
     Event_WaitFrames(32);
     Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
@@ -1130,8 +1130,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     Event_WaitFrames(120);
-    Event_PlaySong(MUS_INN);
-    Sound_WaitForSong();
+    Event_PlaySound(MUS_INN);
+    Sound_WaitForBgmRestore();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
     Import_EventSetExitRequest(SANCTUM_TO_VALE_PLAZA);
   } else {
@@ -1224,20 +1224,20 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_WaitFrames(30);
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_WaitFrames(80);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   PaletteFade_SetTarget(PALETTE_TINT_PALE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_WaitFrames(40);
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(104), 1);
   Event_WaitFrames(120);
-  Event_PlaySong(MUS_FOREST);
-  Event_PlaySong(SE_MATERIALIZE);
+  Event_PlaySound(MUS_FOREST);
+  Event_PlaySound(SE_MATERIALIZE);
   // The Wise One enters while the healer's afterimages appear.
   Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(200), PIXELS(8));
   Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_MoveToAndWait(ACTOR_WISE_ONE, 200, 72);
-  Event_PlaySong(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_STOP_ACTION_SE);
   Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_HEALER, 2);
   Import_ActorSetAnimation(ACTOR_HEALER, 0);
@@ -1261,8 +1261,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Event_WaitFrames(60);
   Actor_ConfigureSpriteColor(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
-  Event_PlaySong(SE_MATERIALIZE);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
+  Event_PlaySound(SE_MATERIALIZE);
   // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
@@ -1272,7 +1272,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne = Actor_GetById(ACTOR_WISE_ONE);
     wiseOne->scaleY += -Q16_ONE / 100;
   }
-  Event_PlaySong(SE_STOP_ACTION_SE);
+  Event_PlaySound(SE_STOP_ACTION_SE);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
   Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
   Event_WaitFrames(40);
@@ -1283,7 +1283,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_WaitFrames(120);
   Sanctum_HideHealerAfterimage();
   Import_ActorSetAnimation(ACTOR_HEALER, 1);
-  Event_PlaySong(MUS_TOWN_IN_TROUBLE);
+  Event_PlaySound(MUS_TOWN_IN_TROUBLE);
   Event_WaitFrames(60);
   Actor_RunRepeatedMotion(ACTOR_HEALER, 2);
   Event_WaitFrames(20);

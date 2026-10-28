@@ -85,7 +85,7 @@ wrong. The runtime bank is the exception to the rule: other banks call its
 functions directly, and its table serves only the scenes' code.
 
 A caller uses the jump's name, the function's with `Far` added:
-`Sound_PlaySongFar` reaches `Sound_PlaySong`. Each jump is the
+`Sound_PlayFar` reaches `Sound_Play`. Each jump is the
 `overlay_veneer` macro in `overlay.s`; each bank's table is a file in
 `far_call/`, and [Source](../README.md#banks-and-folders) lists the banks.
 

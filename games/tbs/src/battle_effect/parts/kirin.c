@@ -126,19 +126,19 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   for (frame = 0; frame != 120; frame++) {
     wave = 0;
     if (frame == 0) {
-      Sound_PlaySongFar(SE_WHOOSH);
+      Sound_PlayFar(SE_WHOOSH);
     }
     if (frame == 26) {
-      Sound_PlaySongFar(SE_RUMBLE);
+      Sound_PlayFar(SE_RUMBLE);
     }
     if (frame == 40) {
-      Sound_PlaySongFar(SE_CAST);
+      Sound_PlayFar(SE_CAST);
     }
     if (frame == 72) {
-      Sound_PlaySongFar(SE_CAST);
+      Sound_PlayFar(SE_CAST);
     }
     if (frame == 104) {
-      Sound_PlaySongFar(SE_CAST);
+      Sound_PlayFar(SE_CAST);
     }
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 16) {
       break;
@@ -376,13 +376,13 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       // Frame 8: BattleCamera_Shake shakes the screen for 8 frames.
       if (frame == 8) {
         work->shakeFrames = frame;
-        Sound_PlaySongFar(SE_CRASH);
+        Sound_PlayFar(SE_CRASH);
       }
       if (frame == 11) {
-        Sound_PlaySongFar(SE_CRASH);
+        Sound_PlayFar(SE_CRASH);
       }
       if (frame == 46) {
-        Sound_PlaySongFar(SE_KIRIN);
+        Sound_PlayFar(SE_KIRIN);
       }
 
       EFFECT_FOR_EACH_TARGET(i, work->args) {
@@ -414,7 +414,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
             } while (k != 32);
             BattleMotion_ApplyKnockbackFar(work->args->targets[i],
                                            KNOCKBACK_HOP);
-            Sound_PlaySongFar(SE_HEAVY_IMPACT);
+            Sound_PlayFar(SE_HEAVY_IMPACT);
           }
         }
       }
@@ -437,7 +437,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       } while (i != 192);
 
       if (frame == 48) {
-        Sound_PlaySongFar(SE_WHOOSH);
+        Sound_PlayFar(SE_WHOOSH);
       }
       // From frame 41 the fire sheet, 16 jittered rows, slides off to the
       // left 12 pixels a frame over a canvas that keeps everything; from

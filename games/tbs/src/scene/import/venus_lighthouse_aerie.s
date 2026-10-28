@@ -91,5 +91,5 @@
 	.set import.FieldPsynergy_End, 1
 	.set import.Actor_Snapshot, 1
 	.set import.Actor_Restore, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

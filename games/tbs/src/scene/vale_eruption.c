@@ -45,7 +45,7 @@
 #include "text/msg_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "fixed_math.h"
 
 /// The placed actors, numbered in the order of
@@ -170,14 +170,14 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_WaitFrames(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Weather_LastLightning();
-  Event_PlaySong(SE_CRASH);
+  Event_PlaySound(SE_CRASH);
   Event_WaitFrames(30);
   Weather_LastLightning();
-  Event_PlaySong(SE_CRASH);
+  Event_PlaySound(SE_CRASH);
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Event_PlaySong(SE_CRASH);
+  Event_PlaySound(SE_CRASH);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Event_WaitFrames(60);
@@ -222,7 +222,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_WaitFrames(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Event_PlaySong(SE_CRASH);
+  Event_PlaySound(SE_CRASH);
   Event_WaitFrames(60);
   Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Actor_TurnToFaceEachOther(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
@@ -444,7 +444,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_WalkToAndWait(ACTOR_GREAT_HEALER, 255, 445);
   Event_WaitFrames(40);
   MapGrid_AnimateCells(gValeEruption_SanctumDoorOpens, 45, 11);
-  Event_PlaySong(SE_THUMP);
+  Event_PlaySound(SE_THUMP);
   Event_WaitFrames(30);
   Actor_WalkTo(ACTOR_GREAT_HEALER, 255, 390);
   Event_WaitFrames(20);
@@ -470,7 +470,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_WaitFrames(40);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   Weather_LastLightning();
-  Event_PlaySong(SE_CRASH);
+  Event_PlaySound(SE_CRASH);
   Event_WaitFrames(30);
   work = gFieldWork;
   work->transition = 0;

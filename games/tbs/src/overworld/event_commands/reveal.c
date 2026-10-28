@@ -107,7 +107,7 @@ void FieldPsynergy_Reveal(void) {
                                     FIELD_PSYNERGY_REVEAL, &eventTarget);
   if (event != NULL)
     Field_RunPsynergyEvent(event, gAdventure.leaderActorId, eventTarget);
-  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
 
   // Record the centre (in pixels) and the time in the field work, and put
   // markers nearby.
@@ -150,7 +150,7 @@ void FieldPsynergy_EndReveal(void) {
   void *event;
 
   if (state->revealActive != 0) {
-    Sound_PlaySongFar(SE_MAP_TRANSITION);
+    Sound_PlayFar(SE_MAP_TRANSITION);
     Task_Remove(FieldPsynergy_WatchLeaderDistance);
 
     zero = 0;

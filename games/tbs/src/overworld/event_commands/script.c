@@ -343,7 +343,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       for (discardIndex = 0; discardIndex < discardQuantity; discardIndex++)
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
-      Sound_PlaySongFar(MUS_TREASURE_FOUND);
+      Sound_PlayFar(MUS_TREASURE_FOUND);
       if (owner == gAdventure.leaderActorId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
@@ -359,7 +359,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   } else {
     // There was room: "Isaac got <item>.", and "Isaac gave <item> to
     // <member>." when someone other than the leader carries it.
-    Sound_PlaySongFar(MUS_TREASURE_FOUND);
+    Sound_PlayFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
     if (owner != gAdventure.leaderActorId) {
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -474,7 +474,7 @@ s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
-  Sound_PlaySongFar(MUS_TREASURE_FOUND);
+  Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(unit, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
   FieldMessage_ShowFar(MsgAbilityLearned,

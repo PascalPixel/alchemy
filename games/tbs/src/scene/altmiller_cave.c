@@ -96,7 +96,7 @@
 #include "scene.h"
 #include "fx_work.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and
@@ -609,7 +609,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     Event_Start();
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     WaitFrames(6);
-    Sound_PlaySong(SE_JUMP);
+    Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
     actor->speedLimit = PIXELS(3);
     actor->acceleration = PIXELS(2);
@@ -721,7 +721,7 @@ static void AltmillerCave_SpinLights(void) {
     gAltmillerCave_LightWheel->travel += gAltmillerCave_LightWheel->speed;
     if (gAltmillerCave_LightWheel->travel > 0x3000) {
       gAltmillerCave_LightWheel->travel = 0;
-      Sound_PlaySong(SE_CLICK);
+      Sound_Play(SE_CLICK);
     }
   }
   gAltmillerCave_LightWheel->frames++;
@@ -769,23 +769,23 @@ static void AltmillerCave_TurnRock(s32 rock) {
   if (state == PUZZLE_START) {
     if (rock == ACTOR_BLUE_ROCK) {
       state = PUZZLE_LEFT_ROCK_TURNED;
-      Event_PlaySong(SE_CHIME);
+      Event_PlaySound(SE_CHIME);
     } else {
-      Event_PlaySong(SE_MENU_ERROR);
+      Event_PlaySound(SE_MENU_ERROR);
     }
     gSceneLocalState[0] = 0;
   } else if (state == PUZZLE_LEFT_ROCK_TURNED) {
     if (rock == ACTOR_BLUE_ROCK) {
-      Event_PlaySong(SE_CHIME);
+      Event_PlaySound(SE_CHIME);
     } else if (rock == ACTOR_RED_ROCK) {
       // The lights grow in one by one, each with SE_LIGHT_APPEAR.
       state = PUZZLE_LIGHTS_SHOWN;
-      Event_PlaySong(SE_CHIME);
+      Event_PlaySound(SE_CHIME);
       WaitFrames(30);
       angle = gAltmillerCave_LightWheel->angle;
       for (i = 0; i < LIGHT_COUNT; i++) {
         AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, PIXELS(24), angle);
-        Event_PlaySong(SE_LIGHT_APPEAR);
+        Event_PlaySound(SE_LIGHT_APPEAR);
         actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
         actor->scaleX = 0;
         scale = 2 * Q16_ONE / 5;
@@ -800,18 +800,18 @@ static void AltmillerCave_TurnRock(s32 rock) {
       WaitFrames(30);
       correctRock = 1;
     } else {
-      Event_PlaySong(SE_MENU_ERROR);
+      Event_PlaySound(SE_MENU_ERROR);
       state = PUZZLE_START;
     }
   } else if (state == PUZZLE_LIGHTS_SHOWN) {
     if (rock != ACTOR_FIRST_ROCK + chosenLight) {
       // The wrong rock: the lights shrink away.
       state = PUZZLE_START;
-      Event_PlaySong(SE_MENU_ERROR);
+      Event_PlaySound(SE_MENU_ERROR);
       WaitFrames(30);
       for (i = 0; i < LIGHT_COUNT; i++) {
         actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
-        Event_PlaySong(SE_LIGHT_APPEAR);
+        Event_PlaySound(SE_LIGHT_APPEAR);
         for (scale = actor->scaleX; actor->scaleX > 2 * Q16_ONE / 5;
              scale -= 3 * Q16_ONE / 64) {
           actor->scaleY = scale;
@@ -821,7 +821,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         Actor_SetPosition(ACTOR_FIRST_LIGHT + i, 0, 0);
       }
     } else {
-      Event_PlaySong(SE_CHIME);
+      Event_PlaySound(SE_CHIME);
       correctRock = 1;
       WaitFrames(30);
     }
@@ -844,7 +844,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         WaitFrames(1);
       }
       WaitFrames(10);
-      Event_PlaySong(SE_CHIME);
+      Event_PlaySound(SE_CHIME);
     } else {
       // The third light matched: the ground shakes, the ring spirals in to
       // nothing, and the wall bursts.
@@ -858,7 +858,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       Event_WaitFrames(20);
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
       gAltmillerCave_LightWheel->phase = WHEEL_STOPPED;
-      Event_PlaySong(SE_WARP);
+      Event_PlaySound(SE_WARP);
       radius = PIXELS(24);
       angle = gAltmillerCave_LightWheel->angle;
       do {
@@ -877,7 +877,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
         Actor_SetPosition(ACTOR_FIRST_LIGHT + i, 0, 0);
       }
       AltmillerCave_ReleaseWallBurst();
-      Event_PlaySong(MUS_PUZZLE_SOLVED);
+      Event_PlaySound(MUS_PUZZLE_SOLVED);
     }
     Task_Remove(AltmillerCave_SpinLights);
   }
@@ -947,7 +947,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_WaitFrames(30);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_WaitFrames(60);
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   actor->sprite->rotation = 0;
   Actor_Jump(ACTOR_INVISIBLE_BABI, 10, 70);
   // Flicker between sprite priorities before replacing invisible Babi.
@@ -968,7 +968,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Actor_SetPosition(ACTOR_BABI, PIXELS(x), PIXELS(z));
   }
   actor->sprite->flags = 0;
-  Event_PlaySong(MUS_BABI);
+  Event_PlaySound(MUS_BABI);
   Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkByAndWait(ACTOR_BABI, 32, 32);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -1649,7 +1649,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Event_WaitFrames(30);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   }
-  Event_PlaySong(SONG_FADE_OUT_BGM);
+  Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1690,7 +1690,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
 
   // Gather the party around the invisible voice.
   GameFlag_Set(FLAG_MET_INVISIBLE_BABI);
-  Sound_PlaySong(MUS_CAVE);
+  Sound_Play(MUS_CAVE);
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgAltmillerSee);
@@ -1927,7 +1927,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_WaitFrames(30);
-  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -2222,7 +2222,7 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
     fragment->turnStepLimited = currentPhase;
     (*phase)++;
     if ((gVBlankCount & 3) == 0)
-      Sound_PlaySong(SE_HEAVY_IMPACT);
+      Sound_Play(SE_HEAVY_IMPACT);
   } else if (currentPhase == 1) {
     if (FieldParticle_HasPendingTarget(fragment) == 0) {
       s32 nextPhase = *phase;

@@ -57,7 +57,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   Actor_WaitForMoveFar(pair[0]);
   target->update = Actor_CycleSpriteColors;
-  Sound_PlaySongFar(SE_PSYNERGY_START);
+  Sound_PlayFar(SE_PSYNERGY_START);
   target->motionFlags = ACTOR_FLOATS;
 
   // Lift 32 pixels, a quarter pixel at a time.
@@ -95,7 +95,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;
 
-  Sound_PlaySongFar(SE_ITEM_BREAK);
+  Sound_PlayFar(SE_ITEM_BREAK);
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
@@ -190,7 +190,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
   struct Actor *fragment;
   s32 fragmentIndex;
 
-  Sound_PlaySongFar(SE_HEAVY_IMPACT);
+  Sound_PlayFar(SE_HEAVY_IMPACT);
   pos.x = source->x.fixed;
   pos.y = source->y.fixed;
   pos.z = source->z.fixed;

@@ -94,6 +94,6 @@
 	.set import.Event_ClearInvalidPackedValues, 1
 	.set import.Actor_WatchAndSetScript, 1
 	.set import.PartyMemberChooser_Open, 1
-	.set import.Sound_PlaySong, 1
+	.set import.Sound_Play, 1
 	.set import.Sound_GetBgmRestoreDelay, 1
 	.include "games/tbs/src/cartridge/overlay.inc"

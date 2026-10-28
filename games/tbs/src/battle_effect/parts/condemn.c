@@ -100,7 +100,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     screenX = (swing[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
     screenY = (swing[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
     if (frame == CONDEMN_BREAK_FRAME) {
-      Sound_PlaySongFar(SE_HEAVY_IMPACT);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     // Frame 32: the second pass, lower and further across; the panel skips
     // a frame while it moves, and comes back opaque on frame 33.

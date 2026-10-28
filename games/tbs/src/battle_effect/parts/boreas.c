@@ -121,7 +121,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     rockPoints[i][1] = BOREAS_POINT_Y(i);
   }
 
-  Sound_PlaySongFar(SE_RUMBLE);
+  Sound_PlayFar(SE_RUMBLE);
 
   //------------------------------------------------------------------
   // First half: the rocks, the big ice block and the spray (A or B skips
@@ -238,19 +238,19 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
 
     if (frame == 32) {
-      Sound_PlaySongFar(SE_HEAVY_IMPACT);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 64) {
-      Sound_PlaySongFar(SE_HEAVY_IMPACT);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 104) {
-      Sound_PlaySongFar(SE_HEAVY_IMPACT);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 176) {
-      Sound_PlaySongFar(SE_HEAVY_IMPACT);
+      Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 226) {
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     }
     Transform_Reset();
 
@@ -384,7 +384,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   // waiting i / 2 frames (its negative variant) before it shows.
   BattleEffect_SetupBlendedDisplay();
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
+  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;
@@ -417,10 +417,10 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
     if (frame >= 9 && frame < 72 && (frame & 3) == 0) {
-      Sound_PlaySongFar(SE_WATER);
+      Sound_PlayFar(SE_WATER);
     }
     if (frame == 72) {
-      Sound_PlaySongFar(SE_CRASH);
+      Sound_PlayFar(SE_CRASH);
     }
     // From frame 65 a 40x80 block falls diagonally from the top right, 7
     // pixels left and 14 down a frame.

@@ -36,7 +36,7 @@
 #include "keystate.h"
 #include "node_chain.h"
 #include "adventure.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item.h"
 #include "item_ids.h"
 #include "vram_cache.h"

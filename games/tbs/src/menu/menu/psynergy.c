@@ -279,7 +279,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         WindowSprite_ClearListFar((void *)menu->infoWindow);
         ItemMenu_ShowMessage(menu->useResult + MsgItemUseResult, 0, -1);
       } else {
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
         WindowSprite_ClearListFar((void *)menu->infoWindow);
         ItemMenu_ShowMessage(menu->useResult + MsgItemUseResult, useResult,
                              useResult);
@@ -439,11 +439,11 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       if (menu->psynergyCount) {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         result = memberIds[selection];
         break;
       }
-      Sound_PlaySongFar(SE_MENU_ERROR);
+      Sound_PlayFar(SE_MENU_ERROR);
     }
     // L or R: set that shortcut, if the party member has field Psynergy for it.
     if ((gKeysPressed & KEY_L) || (gKeysPressed & KEY_R)) {
@@ -459,24 +459,24 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
       shortcutCount = fieldCount;
       if (shortcutCount == 0) {
         menu->mode = shortcutCount;
-        Sound_PlaySongFar(SE_MENU_ERROR);
+        Sound_PlayFar(SE_MENU_ERROR);
       } else {
-        Sound_PlaySongFar(SE_MENU_CONFIRM);
+        Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selection--;
       redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selection++;
       redraw = 1;
     }
@@ -566,22 +566,22 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
     MenuCursor_Position(selection * 24 - 10, 16);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       result = menu->memberTable[selection];
       break;
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selection--;
       redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selection++;
       redraw = 1;
     }
@@ -1166,9 +1166,9 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                 PSYNERGY_ABILITY_MASK);
           if (ability->fieldPsynergy == 0) {
-            Sound_PlaySongFar(SE_MENU_ERROR);
+            Sound_PlayFar(SE_MENU_ERROR);
           } else {
-            Sound_PlaySongFar(SE_NOTE_MID); // the Use sound
+            Sound_PlayFar(SE_NOTE_MID); // the Use sound
             shortcutHelp = 1;
             menu->flags |= PSYNERGY_MENU_SHORTCUT_HELP;
             Window_ClearInteriorTilesFar((void *)window, 0, 88, 120, 96);
@@ -1188,7 +1188,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
       // and affordable.
       if ((gKeysPressed & KEY_A) != 0) {
         if (menu->mode != PSYNERGY_MODE_USE) {
-          Sound_PlaySongFar(SE_PSYNERGY_START); // the shortcut sound
+          Sound_PlayFar(SE_PSYNERGY_START); // the shortcut sound
           result = menu->psynergies[state.selectedIndex];
           done = 1;
           break;
@@ -1196,15 +1196,15 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         if (menu->psynergies[state.selectedIndex] != 0) {
           if (PsynergyMenu_IsActionRestricted(
                   menu->psynergies[state.selectedIndex]) != 0) {
-            Sound_PlaySongFar(SE_MENU_ERROR);
+            Sound_PlayFar(SE_MENU_ERROR);
             continue;
           }
           ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                 PSYNERGY_ABILITY_MASK);
           if (ability->ppCost > memberUnit->pp) {
-            Sound_PlaySongFar(SE_MENU_ERROR);
+            Sound_PlayFar(SE_MENU_ERROR);
           } else {
-            Sound_PlaySongFar(SE_NOTE_LOW); // the choice sound
+            Sound_PlayFar(SE_NOTE_LOW); // the choice sound
             result = menu->psynergies[state.selectedIndex];
             done = 1;
             break;
@@ -1213,7 +1213,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
       }
 
       if ((gKeysPressed & KEY_B) != 0) {
-        Sound_PlaySongFar(SE_MENU_CANCEL);
+        Sound_PlayFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
@@ -1224,7 +1224,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           (gKeysHeld & KEY_SELECT) == 0) {
         listMode = menu->mode != PSYNERGY_MODE_USE ? PSYNERGY_LIST_SHORTCUTS
                                                    : PSYNERGY_LIST_FIELD;
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         menu->selectedIndexByMember[menu->memberIds[sideIndex]] =
             state.selectedIndex;
         member = menu->tabIndex[sideIndex];
@@ -1256,9 +1256,9 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               PSYNERGY_ABILITY_MASK);
         if (ability->fieldPsynergy == 0) {
-          Sound_PlaySongFar(SE_MENU_ERROR);
+          Sound_PlayFar(SE_MENU_ERROR);
         } else {
-          Sound_PlaySongFar(SE_PSYNERGY_START); // the shortcut sound
+          Sound_PlayFar(SE_PSYNERGY_START); // the shortcut sound
           if (PsynergyMenu_SetShortcut(menu->memberIds[sideIndex],
                                        menu->psynergies[state.selectedIndex],
                                        0) != 0) {
@@ -1274,12 +1274,12 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                               PSYNERGY_ABILITY_MASK);
         if (ability->fieldPsynergy == 0) {
-          Sound_PlaySongFar(SE_MENU_ERROR);
+          Sound_PlayFar(SE_MENU_ERROR);
         } else {
           if (PsynergyMenu_SetShortcut(menu->memberIds[sideIndex],
                                        menu->psynergies[state.selectedIndex],
                                        1) != 0) {
-            Sound_PlaySongFar(SE_PSYNERGY_START); // the shortcut sound
+            Sound_PlayFar(SE_PSYNERGY_START); // the shortcut sound
             result = menu->psynergies[state.selectedIndex];
             menu->mode = PSYNERGY_MODE_SET_R;
             done = 1;

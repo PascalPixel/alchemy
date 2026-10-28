@@ -221,7 +221,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
     drawFlags = EFFECT_CLIP_BOUNDS;
-  Sound_PlaySongFar(SE_SWIRL);
+  Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 8 + 108; frame++) {
     struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
@@ -261,7 +261,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           BattleUnit_GetEffectHeightFar(work->args->targets[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
-        Sound_PlaySongFar(SE_POWER_UP);
+        Sound_PlayFar(SE_POWER_UP);
       EFFECT_VIEW_FROM_CAMERA(camera);
       // Centre on two thirds of the target's height.
       SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
@@ -575,7 +575,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
                     x - 20, y - 20, 40, 40);
         }
         if (targetFrame == 24)
-          Sound_PlaySongFar(SE_CRACK);
+          Sound_PlayFar(SE_CRACK);
         // From frame 24 the picture breaks; the shards darken one copy
         // every 4 frames after frame 28.
         if (targetFrame >= 24 && targetFrame <= 60) {

@@ -40,7 +40,7 @@
 #include "adventure.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "songs.h"
+#include "sounds.h"
 
 /// The scene's actors, numbering the rows of
 /// gKolimaForestCliffActorPlacements.
@@ -90,7 +90,7 @@ static void KolimaForestCliff_PushLog(void) {
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_OffsetPositionAndResetMotion(ACTOR_RIVER_LOG, -18, 6);
       Event_WaitFrames(30);
-      Sound_PlaySong(SE_LOG_FALL);
+      Sound_Play(SE_LOG_FALL);
       Import_ActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
       Actor_GetById(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);

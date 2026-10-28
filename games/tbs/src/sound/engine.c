@@ -296,7 +296,7 @@ void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
 
 /// Starts a song when its priority permits, resetting its tracks and tempo.
 /// The song takes the first of the music player's tracks, as many as both
-/// have; the other tracks are stopped. Called by Sound_PlaySong and the
+/// have; the other tracks are stopped. Called by Sound_Play and the
 /// m4aSongNumStart family; does nothing while the music player's ident is
 /// raised.
 void MPlayStart(struct MusicPlayerInfo *player,

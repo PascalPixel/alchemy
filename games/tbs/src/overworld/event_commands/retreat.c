@@ -83,7 +83,7 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
     effect->state++;
 
     if ((gFrameCount & 2) != 0)
-      Sound_PlaySongFar(SE_GLITTER);
+      Sound_PlayFar(SE_GLITTER);
   } else if (state == RETREAT_PARTICLE_FLYING) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
@@ -120,12 +120,12 @@ void FieldPsynergy_Retreat(void) {
   Actor_ArmCallback(effectWork->firstActorId, FACING_SOUTH, 0);
   WaitFrames(30);
   actor->update = Actor_CycleSpriteColors;
-  Sound_PlaySongFar(SE_PSYNERGY_SPARKLE);
+  Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_SelectAnimationFar(actor, ANIM_LEADER_ARMS_RAISED);
   WaitFrames(40);
 
   // Start spinning.
-  Sound_PlaySongFar(SE_SHIMMER);
+  Sound_PlayFar(SE_SHIMMER);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   Actor_SelectAnimationFar(actor, 3);
   actor->update = FieldEffect_UpdateSpinAngle;

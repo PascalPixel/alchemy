@@ -31,7 +31,7 @@
 #include "ability_ids.h"
 #include "scene_tables.h"
 #include "fx_work.h"
-#include "songs.h"
+#include "sounds.h"
 
 // Edition-specific text and window layout values: outside Japanese the item
 // browser's details window is 28 tiles wide rather than 13, and its
@@ -186,18 +186,18 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
     // Start/Select add five levels; A adds one. Tests remain independent.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
-      Sound_PlaySong(MUS_FANFARE_LARGE);
+      Sound_Play(MUS_FANFARE_LARGE);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(1);
-      Sound_PlaySong(MUS_FANFARE_SMALL);
+      Sound_Play(MUS_FANFARE_SMALL);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      Sound_PlaySong(SE_MENU_CANCEL);
+      Sound_Play(SE_MENU_CANCEL);
       WindowSprite_RedrawSavedRect(window);
       WaitFrames(1);
       Window_Close(window, 1);
@@ -233,7 +233,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   entryCount = ITEM_COUNT;
   seekDirection = 0;
   selectedItemId = 1;
-  Sound_PlaySong(SE_MENU_CONFIRM);
+  Sound_Play(SE_MENU_CONFIRM);
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
   details =
@@ -274,50 +274,50 @@ static void IncreaseItemAndLevel_SelectItem(void) {
     }
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
-        Sound_PlaySong(SE_MENU_CANCEL);
+        Sound_Play(SE_MENU_CANCEL);
         break;
       }
-      Sound_PlaySong(SE_NOTE_HIGH);
+      Sound_Play(SE_NOTE_HIGH);
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySong(SE_MENU_CANCEL);
+      Sound_Play(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       seekDirection = -1;
       selectedItemId--;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       seekDirection = 1;
       selectedItemId++;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       seekDirection = 1;
       selectedItemId += BROWSER_ROW_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       seekDirection = -1;
       selectedItemId -= BROWSER_ROW_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       seekDirection = 1;
       selectedItemId += BROWSER_PAGE_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       seekDirection = -1;
       selectedItemId -= BROWSER_PAGE_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     // Skip definitions with no icon/availability byte in the chosen direction:
     // for an item, its definition's icon.
@@ -370,7 +370,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   entryCount = ABILITY_COUNT;
   seekDirection = 0;
   selectedAbilityId = 1;
-  Sound_PlaySong(SE_MENU_CONFIRM);
+  Sound_Play(SE_MENU_CONFIRM);
   redraw = 1;
   window = Window_Create(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
   // Copy the existing sprite palette into the debug window palettes.
@@ -397,44 +397,44 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
       Text_DrawMessage(messageOrDefinitionId, window, 0, 48);
     }
     if (gKeysPressed & KEY_B) {
-      Sound_PlaySong(SE_MENU_CANCEL);
+      Sound_Play(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
       seekDirection = -1;
       selectedAbilityId--;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       seekDirection = 1;
       selectedAbilityId++;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
       seekDirection = 1;
       selectedAbilityId += BROWSER_ROW_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       seekDirection = -1;
       selectedAbilityId -= BROWSER_ROW_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       seekDirection = 1;
       selectedAbilityId += BROWSER_PAGE_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       seekDirection = -1;
       selectedAbilityId -= BROWSER_PAGE_STEP;
       redraw = 1;
-      Sound_PlaySong(SE_MENU_CURSOR_MOVE);
+      Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     // Skip definitions with no icon/availability byte in the chosen direction:
     // byte 4 of an ability is the icon the menus draw (AbilityDefinition).

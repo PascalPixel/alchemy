@@ -368,8 +368,8 @@
 	import Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
 	import Import_TitleShowCamelotLogo, Title_ShowCamelotLogoFar
 @ Sound bank (far_call/SOUND.S)
-	import Sound_PlaySong, Sound_PlaySongFar
+	import Sound_Play, Sound_PlayFar
 	import Sound_SetBgmTempo, Sound_SetBgmTempoFar
 	import Sound_GetBgmRestoreDelay, Sound_GetBgmRestoreDelayFar
-	import Sound_WaitForSong, Sound_WaitForSongFar
+	import Sound_WaitForBgmRestore, Sound_WaitForBgmRestoreFar
 	.endif

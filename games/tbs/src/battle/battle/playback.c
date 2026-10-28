@@ -24,7 +24,7 @@ void Dma_StopAllThenRunHook(void) {
 /// Reached as EFFECT_SHOW_DAMAGE(hitSound), through
 /// BattlePlayback_StartFar, from the battle effects (see the folder README).
 /// Only while playback is idle: sets the phase to
-/// BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET, and a nonzero cue to pendingSong; a
+/// BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET, and a nonzero cue to pendingSound; a
 /// later call before the reset does nothing.
 /// @param cue the hit's sound (an SE_ id); zero keeps the one set
 void BattlePlayback_Start(s32 cue) {
@@ -34,7 +34,7 @@ void BattlePlayback_Start(s32 cue) {
   if (events->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
     events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     if (cue != 0) {
-      events->pendingSong = cue;
+      events->pendingSound = cue;
     }
   }
 }
@@ -136,7 +136,7 @@ void BattlePlayback_Run(void) {
           }
           switch (events->queue.opcodes[eventIndex]) {
           case PLAYBACK_SOUND:
-            Sound_PlaySongFar(events->queue.operands[eventIndex]);
+            Sound_PlayFar(events->queue.operands[eventIndex]);
             break;
           case PLAYBACK_DJINN_BONUS:
             BattlePlayback_GrantDjinnBonus(events,
@@ -186,8 +186,8 @@ void BattlePlayback_Run(void) {
             break;
           // The hit's sound, then the damage pose and PLAY_HIT's flashes.
           case PLAYBACK_HIT:
-            if (events->pendingSong > 0)
-              Sound_PlaySongFar(events->pendingSong);
+            if (events->pendingSound > 0)
+              Sound_PlayFar(events->pendingSound);
             events->unitId = events->queue.operands[eventIndex];
             Actor_SelectAnimationFar(BattleObject_Get(events->unitId)->actor,
                                      POSE_DAMAGE);
@@ -288,7 +288,7 @@ void BattlePlayback_Run(void) {
       if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE) ||
           ((u32)(gVBlankCount - events->timer) > 10 &&
            (BATTLE_OPTIONS & KEY_ADVANCE))) {
-        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
@@ -339,7 +339,7 @@ void BattlePlayback_Run(void) {
             kind--;
             if (kind < 0)
               kind = 0;
-            Sound_PlaySongFar(SE_ENEMY_CRY + kind);
+            Sound_PlayFar(SE_ENEMY_CRY + kind);
           }
           events->timer = FELLED_FLASH;
         }
@@ -350,7 +350,7 @@ void BattlePlayback_Run(void) {
               BattleSprite_GetDefeatSound(Unit_GetFar(events->unitId)->id);
 
           if (kind >= 0)
-            Sound_PlaySongFar(SE_ENEMY_CRY + kind);
+            Sound_PlayFar(SE_ENEMY_CRY + kind);
         }
         if (events->timer >= FELLED_FLASH)
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
@@ -445,7 +445,7 @@ void BattlePlayback_Reset(void) {
   events->eventIndex = 0;
   events->timer = 0;
   events->queue.targetIndex = 0;
-  events->pendingSong = SE_HEAVY_IMPACT;
+  events->pendingSound = SE_HEAVY_IMPACT;
   events->flags = 0;
 }
 

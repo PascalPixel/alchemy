@@ -395,7 +395,7 @@ s32 Message_Type(struct Message *message) {
         if (work->voiceSound != 0) {
           if (work->voiceCountdown == 0) {
             if (code != TEXT_SPACE) {
-              Sound_PlaySongFar(work->voiceSound + (code & 3));
+              Sound_PlayFar(work->voiceSound + (code & 3));
               work->voiceCountdown = voiceGap;
             }
           } else {

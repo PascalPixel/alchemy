@@ -83,7 +83,7 @@
 #include "actor_script.h"
 #include "actor.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "item_ids.h"
 
 /// BabiLighthouseStoneDoor, before the stone door: the door's two halves,
@@ -246,7 +246,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_WaitFrames(30);
-  Sound_PlaySong(SE_DUST_PUFF);
+  Sound_Play(SE_DUST_PUFF);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_WaitFrames(24);
@@ -265,7 +265,7 @@ static void BabiLighthouse_LandWithParticles(void) {
                           EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
-  Sound_PlaySong(SE_THUMP);
+  Sound_Play(SE_THUMP);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -300,7 +300,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_WaitFrames(10);
-  Sound_PlaySong(SE_DUST_PUFF);
+  Sound_Play(SE_DUST_PUFF);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1059,7 +1059,7 @@ static void BabiLighthouse_HideTruthDoorSwitch(void) {
 static void BabiLighthouse_OpenTruthDoor(void) {
   if (Event_GetFlag(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
-    Sound_PlaySong(SE_GATE_MOVE);
+    Sound_Play(SE_GATE_MOVE);
     Event_Start();
     Actor_SetDestination(ACTOR_LEFT_DOOR, 280, 240);
     Actor_SetDestination(ACTOR_RIGHT_DOOR, 328, 240);
@@ -1078,7 +1078,7 @@ static void BabiLighthouse_OpenTruthDoor(void) {
 static void BabiLighthouse_CloseTruthDoor(void) {
   if (Event_GetFlag(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
     GameFlag_Clear(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
-    Sound_PlaySong(SE_GATE_MOVE);
+    Sound_Play(SE_GATE_MOVE);
     Event_Start();
     Actor_SetDestination(ACTOR_LEFT_DOOR, 296, 240);
     Actor_SetDestination(ACTOR_RIGHT_DOOR, 312, 240);
@@ -1105,7 +1105,7 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
     if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
-      Sound_PlaySong(SE_SWITCH);
+      Sound_Play(SE_SWITCH);
       MapGrid_CopyCellsLayered(35, 78, 1, 2, 17, 78);
       Event_WaitFrames(10);
       MapGrid_CopyCellsLayered(34, 78, 1, 2, 17, 78);

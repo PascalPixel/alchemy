@@ -20,7 +20,7 @@
 #include "map_grid_scroll.h"
 #include "event.h"
 #include "types.h"
-#include "songs.h"
+#include "sounds.h"
 
 // Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
@@ -125,7 +125,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   Actor_SelectAnimation(lead, 8);
   rate = 0x3333;
   WaitFrames(15);
-  Sound_PlaySong(SE_PUSH);
+  Sound_Play(SE_PUSH);
   next->speedLimit = rate;
   next->acceleration = rate;
   FieldActor_SetMoveTarget(next, dst.x, dst.y, dst.z);
@@ -488,7 +488,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   else
     Actor_SelectAnimation(actor, 2);
 
-  Sound_PlaySong(SE_HEAVY_MOVE);
+  Sound_Play(SE_HEAVY_MOVE);
   FieldActor_SetMoveTarget(actor, probe.position.x, probe.position.y,
                            probe.position.z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -507,8 +507,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_GetById(ACTOR_PARTY_LEADER)->update = NULL;
   Actor_WaitForMove(actor);
-  Sound_PlaySong(SE_STOP_ACTION_SE);
-  Sound_PlaySong(SE_HEAVY_STOP);
+  Sound_Play(SE_STOP_ACTION_SE);
+  Sound_Play(SE_HEAVY_STOP);
 
   actor->x.fixed = probe.position.x;
   actor->z.fixed = probe.position.z;

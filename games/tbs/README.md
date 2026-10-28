@@ -644,7 +644,7 @@ section pages follow them.
 
 | Page                                                 | Covers                                                                   |
 | ---------------------------------------------------- | ------------------------------------------------------------------------ |
-| [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, songs         |
+| [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, sound         |
 | [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its battle effects   |
 | [Field](field.md)                                    | actors and movement, the maps, the requests, field Psynergy, debug rooms |
 | [User Interface](user_interface.md)                  | the field menu and its screens, shops and inns, windows                  |

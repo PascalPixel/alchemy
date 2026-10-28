@@ -308,7 +308,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
-            Sound_PlaySongFar(SE_IMPACT);
+            Sound_PlayFar(SE_IMPACT);
             EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
           // A heavy hit lights every spark at once; otherwise the hit
@@ -402,7 +402,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                         TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES))
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
         else
-          Sound_PlaySongFar(SE_IMPACT);
+          Sound_PlayFar(SE_IMPACT);
         for (i = 0; i != 64; i++) {
           struct Particle *step =
               &TARGET_STRIKE_SPARKS[frame /

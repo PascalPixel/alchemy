@@ -56,7 +56,7 @@
 
 #include "script_operands.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "version.h"
 #include "adventure.h"
 #include "module/scene/tolbi_ship_deck.h"
@@ -384,7 +384,7 @@ static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *interpreter) {
           actor->targetY == actor->targetX &&
           actor->targetZ == actor->targetY) {
         actor->riseCounter++;
-        Event_PlaySong(SE_ENEMY_CRY);
+        Event_PlaySound(SE_ENEMY_CRY);
         if (actor->riseEnabled != 0)
           Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH + FACING_STEP, 0);
         else
@@ -476,7 +476,7 @@ static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Actor *interpreter) {
           actor->targetY == actor->targetX &&
           actor->targetZ == actor->targetY) {
         actor->riseCounter++;
-        Event_PlaySong(SE_ENEMY_CRY);
+        Event_PlaySound(SE_ENEMY_CRY);
         if (actor->riseEnabled != 0)
           Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH + FACING_STEP, 0);
         else
@@ -640,7 +640,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *interpreter) {
     if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
         actor->targetZ == actor->targetY) {
       actor->timer++;
-      Sound_PlaySong(SE_JUMP);
+      Sound_Play(SE_JUMP);
       if (actor->riseEnabled != 0) {
         Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTHWEST + FACING_STEP,
                             0);
@@ -712,7 +712,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct Actor *interpreter) {
     if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
         actor->targetZ == actor->targetY) {
       actor->timer++;
-      Sound_PlaySong(SE_JUMP);
+      Sound_Play(SE_JUMP);
       if (actor->riseEnabled != 0) {
         Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH + FACING_STEP, 0);
       } else {
@@ -930,7 +930,7 @@ static void TolbiShipDeck_AskHeadedForColosso(void) {
 /// Opens the first door to below deck, once a visit.
 static void TolbiShipDeck_OpenFirstDoor(void) {
   if (Event_GetFlag(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN) == 0) {
-    Event_PlaySong(SE_DOOR_OPEN);
+    Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 94, 13, 94, 1, 3);
     GameFlag_Set(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN);
   }
@@ -939,7 +939,7 @@ static void TolbiShipDeck_OpenFirstDoor(void) {
 /// Opens the second door to below deck, once a visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
   if (Event_GetFlag(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN) == 0) {
-    Event_PlaySong(SE_DOOR_OPEN);
+    Event_PlaySound(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 108, 13, 108, 1, 2);
     GameFlag_Set(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN);
   }
@@ -972,7 +972,7 @@ static void TolbiShipDeck_GoBelow(void) {
     FieldActor_CenterAndWalk(ACTOR_PARTY_LEADER, 1, -10);
     Event_WaitFrames(10);
   } else {
-    Sound_PlaySong(SE_MAP_EXIT);
+    Sound_Play(SE_MAP_EXIT);
   }
   Import_EventSetExitRequest(work->stepTrigger);
 }
@@ -1676,7 +1676,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
                             SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(12) / 5, PIXELS(6) / 5);
   FieldActor_SetDestination(ACTOR_PARTY_LEADER, 154, 609);
-  Sound_PlaySong(SE_ENEMY_CRY);
+  Sound_Play(SE_ENEMY_CRY);
   zero = 0;
   Actor_GetById(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer = zero;
   Actor_GetById(ACTOR_SEA_FIRST_ATTACK_MONSTER + 1)->timer = zero;
@@ -1781,11 +1781,11 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
   Actor_SetDestination(ACTOR_PARTY_LEADER, 174, 0x26c);
   Actor_SetPositionAndCommit(ACTOR_SEA_SECOND_ATTACK_MONSTER, 180, 0x244);
-  Sound_PlaySong(SE_ENEMY_CRY);
+  Sound_Play(SE_ENEMY_CRY);
   Actor_SetScript(ACTOR_SEA_SECOND_ATTACK_MONSTER, gTolbiShipDeck_BobActions);
   Actor_SetScript(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1,
                   gTolbiShipDeck_BobActions);
-  Sound_PlaySong(SE_LOG_FALL);
+  Sound_Play(SE_LOG_FALL);
   Actor_SetPosition(ACTOR_SEA_SPLASH, PIXELS(134), PIXELS(594));
   Actor_SetScript(ACTOR_SEA_SPLASH, gTolbiShipDeck_SwellActions);
   Event_WaitFrames(10);
@@ -1810,7 +1810,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_RunScriptAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER + 1,
                          gTolbiShipDeck_MonsterGoesBelowActions);
   Event_WaitFrames(20);
-  Sound_PlaySong(SE_BEAST_CRY);
+  Sound_Play(SE_BEAST_CRY);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Actor_Stop(ACTOR_SEA_FIRST_HOVERING_MONSTER);
@@ -1890,7 +1890,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_WaitFrames(80);
-  Sound_PlaySong(SE_BEAST_CRY);
+  Sound_Play(SE_BEAST_CRY);
   // The shadow grows where the monster will land, then it drops from 80
   // pixels up.
   monster = Actor_GetById(ACTOR_SEA_FALLING_MONSTER_SHADOW);
@@ -1913,7 +1913,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   monster->bounce = 2 * Q16_ONE / 5;
   monster->gravity = PIXELS(2);
   Event_WaitFrames(80);
-  Sound_PlaySong(SE_BEAST_CRY);
+  Sound_Play(SE_BEAST_CRY);
   Import_ActorSetPosition(ACTOR_SEA_FALLING_MONSTER_SHADOW, 0, 0);
   record = Actor_GetById(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2);
   Actor_SetSpriteFlags(record, 1);
@@ -1989,7 +1989,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 194, 624);
-  Sound_PlaySong(SE_BOOM);
+  Sound_Play(SE_BOOM);
   MapGrid_SetShake(0x40000, 0x40000, 0x10000);
   Event_WaitFrames(20);
   MapGrid_SetShake(-1, -1, 0xe666);
@@ -1998,7 +1998,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_GetById(ACTOR_INVISIBLE_SEA_CAMERA_TARGET)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_INVISIBLE_SEA_CAMERA_TARGET, PIXELS(2), PIXELS(1));
   Actor_ResetAndSetPosition(ACTOR_INVISIBLE_SEA_CAMERA_TARGET, 216, 612);
-  Sound_PlaySong(SE_MONSTER_ROAR);
+  Sound_Play(SE_MONSTER_ROAR);
   Actor_SetSpritePriority(ACTOR_SEA_SEAN, 2);
   Import_ActorSetAnimation(ACTOR_SEA_SEAN, 5);
   actor = Actor_GetById(ACTOR_SEA_SEAN);
@@ -2043,7 +2043,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_ArmCallback(ACTOR_MIA, FACING_NORTH, 20);
-  Sound_PlaySong(SE_MONSTER_ROAR);
+  Sound_Play(SE_MONSTER_ROAR);
   Event_WaitFrames(40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

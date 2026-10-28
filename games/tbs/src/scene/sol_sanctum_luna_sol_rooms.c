@@ -77,7 +77,7 @@
 #include "palbuf.h"
 #include "heap.h"
 #include "flags.h"
-#include "songs.h"
+#include "sounds.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
@@ -339,20 +339,20 @@ static void SolSanctumLunaSolRooms_DrawAlternateSavedStatueLights(void) {
 
 /// Flashes both tile rows of the lit quarters' lights at this pace.
 static inline void SolSanctumLunaSolRooms_FlashCurrentStatueLights(s32 frames) {
-  Event_PlaySong(SE_GLITTER);
+  Event_PlaySound(SE_GLITTER);
   SolSanctumLunaSolRooms_DrawCurrentStatueLights();
   Event_WaitFrames(frames);
-  Event_PlaySong(SE_GLITTER);
+  Event_PlaySound(SE_GLITTER);
   SolSanctumLunaSolRooms_DrawAlternateCurrentStatueLights();
   Event_WaitFrames(frames);
 }
 
 /// Flashes both tile rows of the lights last shown at this pace.
 static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
-  Event_PlaySong(SE_GLITTER);
+  Event_PlaySound(SE_GLITTER);
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
   Event_WaitFrames(frames);
-  Event_PlaySong(SE_GLITTER);
+  Event_PlaySound(SE_GLITTER);
   SolSanctumLunaSolRooms_DrawAlternateSavedStatueLights();
   Event_WaitFrames(frames);
 }
@@ -374,12 +374,12 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Event_Start();
     // The leader walks in as the music changes.
     Event_SetMessageId(MsgSolSanctumFound);
-    Sound_PlaySong(SONG_FADE_OUT_BGM);
+    Sound_Play(SOUND_FADE_OUT_BGM);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 232);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
     Event_WaitFrames(20);
-    Sound_PlaySong(MUS_FOREST);
+    Sound_Play(MUS_FOREST);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     // Kraden hurries out of the leader to the symbol on the floor.
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -699,7 +699,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
   if ((Random_Next() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light1Timer) {
     case 0:
-      Event_PlaySong(SE_FALLING_LIGHT);
+      Event_PlaySound(SE_FALLING_LIGHT);
       MapGrid_CopyCellsTo(46, 59, 30, 33, 1, 5);
       break;
     case 1:
@@ -745,7 +745,7 @@ static void SolSanctumLunaSolRooms_UpdateSecondFallingLight(void) {
   if ((Import_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light2Timer) {
     case 0:
-      Sound_PlaySong(SE_FALLING_LIGHT);
+      Sound_Play(SE_FALLING_LIGHT);
       MapGrid_CopyCellsTo(47, 59, 42, 33, 1, 5);
       break;
     case 1:
@@ -783,7 +783,7 @@ static void SolSanctumLunaSolRooms_UpdateThirdFallingLight(void) {
   if ((Import_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light3Timer) {
     case 0:
-      Sound_PlaySong(SE_FALLING_LIGHT);
+      Sound_Play(SE_FALLING_LIGHT);
       MapGrid_CopyCellsTo(48, 59, 31, 36, 1, 5);
       break;
     case 1:
@@ -821,7 +821,7 @@ static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
   if ((Import_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light4Timer) {
     case 0:
-      Sound_PlaySong(SE_FALLING_LIGHT);
+      Sound_Play(SE_FALLING_LIGHT);
       MapGrid_CopyCellsTo(46, 59, 41, 36, 1, 5);
       break;
     case 1:
@@ -879,7 +879,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_WaitFrames(40);
-  Event_PlaySong(SE_THUNDER);
+  Event_PlaySound(SE_THUNDER);
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
   PaletteFade_StartInterpolation(8);
   Event_WaitFrames(32);
@@ -1106,7 +1106,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   for (twoFrameFlashes = 0; twoFrameFlashes != 12; twoFrameFlashes++) {
     SolSanctumLunaSolRooms_FlashSavedStatueLights(2);
   }
-  Event_PlaySong(SE_GLITTER);
+  Event_PlaySound(SE_GLITTER);
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
   Event_WaitFrames(6);
   // Kraden, once: "You found it, Isaac." and "Keep doing that until the light
@@ -1199,7 +1199,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
 /// quarters are lit, until FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN is set, which it
 /// sets. Leaves Kraden off the map.
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
-  Sound_PlaySong(MUS_FOREST);
+  Sound_Play(MUS_FOREST);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 184);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(376), PIXELS(184));
@@ -1251,7 +1251,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
     Actor_ArmCallback(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 20);
     if (Event_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
-      Sound_PlaySong(SE_SHIMMER);
+      Sound_Play(SE_SHIMMER);
     }
     Event_WaitFrames(40);
     // Reveal the passage only once; later visits reuse its open state.
@@ -1310,7 +1310,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
      * r7; as motionFlags = 0, 2 of 442 instructions differ in tbs-en. */
     sprite = 0;
     actor->motionFlags = (u32)sprite;
-    Sound_PlaySong(SE_ASCEND);
+    Sound_Play(SE_ASCEND);
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
     sprite = actor->sprite;
     frame = 0;
@@ -1320,7 +1320,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
       WaitFrames(1);
       frame++;
     } while (frame != 120);
-    Sound_PlaySong(SE_WARP);
+    Sound_Play(SE_WARP);
     frame = 0;
     do {
       actor->y.fixed += PIXELS(1) / 10;
@@ -1350,7 +1350,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
       actor->steeringFlags = steeringFlags;
       actor->motionFlags = frame;
     }
-    Sound_PlaySong(SE_ASCEND);
+    Sound_Play(SE_ASCEND);
     Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);
     sprite = actor->sprite;
     sprite->flags = 0;
@@ -1359,7 +1359,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
       WaitFrames(1);
       frame++;
     } while (frame != 120);
-    Sound_PlaySong(SE_WARP);
+    Sound_Play(SE_WARP);
     frame = 0;
     do {
       actor->y.fixed += PIXELS(1) / 10;
@@ -1636,7 +1636,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Event_AskYesNoWithActorAnimation(0, 0);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_WaitFrames(40);
-  Sound_PlaySong(SE_TREMOR);
+  Sound_Play(SE_TREMOR);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   Event_WaitFrames(40);
   FieldEffect_InitializeSparkles();

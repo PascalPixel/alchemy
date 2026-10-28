@@ -88,7 +88,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     work->transferValue = CANVAS_FADE_HALF;
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  Sound_PlaySongFar(SE_WHOOSH);
+  Sound_PlayFar(SE_WHOOSH);
   frame = 0;
   do {
     // Frame 24 lets the battle show the damage, with SE_IMPACT as the hit

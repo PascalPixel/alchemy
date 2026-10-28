@@ -72,26 +72,26 @@ s32 ColossoMenu_Choose(s32 unused) {
     }
     MenuCursor_AdvanceFar(&cursor);
     if (gKeysRepeat & KEY_UP) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       row--;
       moved = 1;
       if (row == -1)
         row = 2;
     }
     if (gKeysRepeat & KEY_DOWN) {
-      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       row++;
       moved = 1;
       if (row == 3)
         row = 0;
     }
     if (gKeysRepeat & KEY_B) {
-      Sound_PlaySongFar(SE_MENU_CANCEL);
+      Sound_PlayFar(SE_MENU_CANCEL);
       row = -1;
       break;
     }
     if (gKeysRepeat & KEY_A) {
-      Sound_PlaySongFar(SE_MENU_CONFIRM);
+      Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
   }
@@ -158,7 +158,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     JOINED_QUEUE_TEXT(window, text, 36, 2, zero);
 
-    Sound_PlaySongFar(MUS_JOINED);
+    Sound_PlayFar(MUS_JOINED);
 
     do {
       Oam_AddSpriteAtDepth(entry, 250);
@@ -214,7 +214,7 @@ void Party_ShowJoinedMessage(s32 member) {
     work->voiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
     JOINED_QUEUE_TEXT(window, Message_DecodeMode1(MsgJoinedParty), 36, 2, 0);
-    Sound_PlaySongFar(MUS_JOINED);
+    Sound_PlayFar(MUS_JOINED);
     do {
       Oam_AddSpriteAtDepth(entry, 250);
       WaitFrames(1);
@@ -286,7 +286,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     JOINED_QUEUE_TEXT(window, Message_DecodeMode1(MsgPairJoinedParty), 68, 2,
                       zero);
 
-    Sound_PlaySongFar(MUS_JOINED);
+    Sound_PlayFar(MUS_JOINED);
 
     do {
       Oam_AddSpriteAtDepth(firstEntry, 250);

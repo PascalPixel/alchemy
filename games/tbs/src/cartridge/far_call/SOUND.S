@@ -4,7 +4,7 @@
 FarCall_SoundTable:
 	export m4aSoundMainFar, m4aSoundMain
 	export Sound_InitializeFar, Sound_Initialize
-	export Sound_PlaySongFar, Sound_PlaySong
+	export Sound_PlayFar, Sound_Play
 	export Sound_UpdateBgmRampsFar, Sound_UpdateBgmRamps
 	export Sound_SetBgmTempoFar, Sound_SetBgmTempo
 	overlay_veneer Sound_SetBgmPitch
@@ -17,4 +17,4 @@ FarCall_SoundTable:
 	overlay_veneer Sound_ResumeAllMusicPlayers
 	overlay_veneer Sound_UpdateCommandMask
 	export Sound_GetCurrentBgmFar, Sound_GetCurrentBgm
-	export Sound_WaitForSongFar, Sound_WaitForSong
+	export Sound_WaitForBgmRestoreFar, Sound_WaitForBgmRestore

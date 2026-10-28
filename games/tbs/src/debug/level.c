@@ -244,7 +244,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   // ItemMenu_DrawItemDetails draws the details window's element icons in
   // HIGHLIGHT_PALETTE.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_ENABLE << 16 | 0x10, REG_DMA3);
+          DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
@@ -260,7 +260,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
-        messageOrDefinitionId = selectedItemId & 0x1ff;
+        messageOrDefinitionId = selectedItemId & INVENTORY_ITEM_ID_MASK;
         Item_GetDirect(messageOrDefinitionId);
         Text_DrawMessageAsTiles(messageOrDefinitionId + MsgItemName, window,
                                 120, 0);
@@ -327,7 +327,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
     back:
       selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
     check_back:
-      if (Item_GetDirect(selectedItemId & 0x1ff)->icon == 0)
+      if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
         goto back;
     }
     if (seekDirection == 1) {
@@ -336,7 +336,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
     ahead:
       selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
     check_ahead:
-      if (Item_GetDirect(selectedItemId & 0x1ff)->icon == 0)
+      if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
         goto ahead;
     }
     seekDirection = 0;
@@ -375,7 +375,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   window = Window_Create(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
   // Copy the existing sprite palette into the debug window palettes.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_ENABLE << 16 | 0x10, REG_DMA3);
+          DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
@@ -389,7 +389,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
       Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(selectedAbilityId, 0, window, 80, 0);
       Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyHelp, window, 0, 72);
-      messageOrDefinitionId = selectedAbilityId & 0x3fff;
+      messageOrDefinitionId = selectedAbilityId & ACTION_ID_MASK;
       Text_DrawMessageAsTiles(messageOrDefinitionId + MsgAbilityName, window,
                               120, 0);
       messageOrDefinitionId += MsgAbilityDescription;
@@ -444,7 +444,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
     back:
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT - 1) % entryCount;
     check_back:
-      if (Ability_GetDirect(selectedAbilityId & 0x3fff)->icon == 0)
+      if (Ability_GetDirect(selectedAbilityId & ACTION_ID_MASK)->icon == 0)
         goto back;
     }
     if (seekDirection == 1) {
@@ -453,7 +453,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
     ahead:
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT + 1) % entryCount;
     check_ahead:
-      if (Ability_GetDirect(selectedAbilityId & 0x3fff)->icon == 0)
+      if (Ability_GetDirect(selectedAbilityId & ACTION_ID_MASK)->icon == 0)
         goto ahead;
     }
     seekDirection = 0;
@@ -598,32 +598,32 @@ u32 gIncreaseItemAndLevel_Exits[] = {
 /// emote testers.
 // clang-format off
 struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[] = {
-    {0x1f4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,
+    {500, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,
         TALK_FACING_PARTY, 0},
-    {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(480), FACING_SOUTHEAST,
+    {32, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(480), FACING_SOUTHEAST,
         TALK_FACING_PARTY, 0},
-    {0x21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(504), FACING_SOUTHEAST,
+    {33, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(504), FACING_SOUTHEAST,
         TALK_FACING_PARTY, 0},
 #if !TBS_PATCH_1
-    {0x88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_SOUTHEAST,
+    {136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_SOUTHEAST,
         TALK_FACING_PARTY, 0},
 #elif TBS_PATCH_1 && !TBS_PATCH_3
-    {0x88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACING_PARTY,
+    {136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACING_PARTY,
         0},
-    {0x8f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
+    {143, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
         TALK_FACING_PARTY_AND_BACK, 0},
-    {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+    {21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
-    {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+    {21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
 #else
-    {0x88, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACING_PARTY,
+    {136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST, TALK_FACING_PARTY,
         0},
-    {0x8f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
+    {143, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(864), FACING_SOUTH + FACING_STEP,
         TALK_FACING_PARTY_AND_BACK, 0},
-    {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+    {21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
-    {0x15, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+    {21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
 #endif
     {SCENE_TABLE_END},

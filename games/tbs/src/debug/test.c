@@ -138,7 +138,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
     // Garet, the Virtuous Armlet and 123456.
     MessageArgument_Push(GARET, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(ITEM_VIRTUOUS_ARMLET, MESSAGE_ARGUMENT_ITEM);
-    MessageArgument_Push(0x1e240, MESSAGE_ARGUMENT_NUMBER);
+    MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
     MenuTest_ShowMessageAndWait(messageId);
     for (;;) {
       if ((gKeysHeld & KEY_B) != 0) {
@@ -587,12 +587,12 @@ static void MenuTest_DamageAndAfflictParty(void) {
   Unit_AddPp(IVAN, -35);
   Unit_AddPp(MIA, -20);
   record = (u8 *)Unit_Get(ISAAC);
-  record[0x131] = POISON_NORMAL;
-  record += 0x140;
+  record[offsetof(struct Unit, poison)] = POISON_NORMAL;
+  record += offsetof(struct Unit, haunt);
   *record = 1;
   record = (u8 *)Unit_Get(GARET);
-  record[0x130] = 1;
-  record[0x131] = POISON_VENOM;
+  record[offsetof(struct Unit, curse)] = 1;
+  record[offsetof(struct Unit, poison)] = POISON_VENOM;
   MenuTest_RecalculateParty();
 }
 
@@ -660,7 +660,7 @@ static void MenuTest_SelectItem(void) {
   // HIGHLIGHT_PALETTE, and WINDOW_BACKGROUND_COLOR over its
   // TEXT_BACKGROUND_COLOR, as the Increase item and level scene's browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_ENABLE << 16 | 0x10, REG_DMA3);
+          DMA_ENABLE << 16 | 16, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_ENABLE << 16 | 1, REG_DMA3);
@@ -675,7 +675,7 @@ static void MenuTest_SelectItem(void) {
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
-        definitionId = selectedItemId & 0x1ff;
+        definitionId = selectedItemId & INVENTORY_ITEM_ID_MASK;
         Item_GetDirect(definitionId);
         Text_DrawMessageAsTiles(definitionId + MsgItemName, window, 120, 0);
         Text_DrawMessage(definitionId + MsgItemPlainName, window, 0, 16);
@@ -895,25 +895,25 @@ struct ActorPlacement gMenuTest_ActorPlacements[] = {
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(40), 0, PIXELS(144),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x1e, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(48),
+    {30, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(48),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x1f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(80),
+    {31, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(80),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(112),
+    {32, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(112),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(144),
+    {33, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(144),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x7d, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(48),
+    {125, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(48),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x1f, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(80),
+    {31, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(80),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(112),
+    {32, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(112),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0xf8, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(144),
+    {248, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(120), 0, PIXELS(144),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(160), 0, PIXELS(48),
+    {35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(160), 0, PIXELS(48),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
-    {0x23, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(160), 0, PIXELS(80),
+    {35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(160), 0, PIXELS(80),
      FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {SCENE_TABLE_END},
 };

@@ -33,7 +33,7 @@ struct StatWork {
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_RestartQuest(void) {
   Common_InitializeDefaults();
-  Monitor_RunFar(0);
+  ParentSequence_RunFar(0);
 }
 
 /// Returns the party's Djinn recovery bank (the standby Djinn and their turns
@@ -453,7 +453,7 @@ void Unit_Calculate(s32 unitId) {
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
-/// entering a scene (Scene_Arrive, FieldLoop_Run) and at the end of
+/// entering a scene (Scene_Arrive, SceneSequence_Run) and at the end of
 /// an event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
@@ -554,7 +554,7 @@ struct MapLocalStateSnapshotView {
 /// save stamp; sets a new game's defaults: Isaac alone in the party, the
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the File Screen's new game, by
-/// Game_RestartQuest and Monitor_Run, and by the debug battle menu.
+/// Game_RestartQuest and ParentSequence_Run, and by the debug battle menu.
 void Common_InitializeDefaults(void) {
   volatile s32 zero;
 

@@ -14,7 +14,7 @@
 /// 1 to 15 of a palette with their red, green and blue values in hex. Left and
 /// right choose the colour, up and down the channel, L and R the palette (0 to
 /// 13); A raises the channel and B lowers it, Start makes the colour blink
-/// while held, and Select leaves. Called by FieldLoop_Run for the pause
+/// while held, and Select leaves. Called by SceneSequence_Run for the pause
 /// request when L is held in debug mode. Writes the edited colours straight to
 /// BG palette RAM and draws over screen block 4; on leaving it reloads the
 /// window graphics and clears the debug text.

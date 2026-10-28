@@ -42,9 +42,9 @@ typedef struct WorldMapEncounterRule {
 /// ground has encounters. Also resets the random bias and the battle threshold
 /// (the count itself, gCommon.encounterSteps, is reset only when a
 /// random battle starts or a new area is entered) and chooses the battle
-/// background. Called by FieldLoop_Run on scene load, with useRules 0 on the
-/// World Map and 1 in a scene; writes work->encounterZones, encounterBias and
-/// encounterThreshold, and gCommon.special.
+/// background. Called by SceneSequence_Run on scene load, with useRules 0 on
+/// the World Map and 1 in a scene; writes work->encounterZones, encounterBias
+/// and encounterThreshold, and gCommon.special.
 void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work;
   s32 sceneId;
@@ -197,7 +197,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     }
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles. The counter is
-    // not cleared here: FieldLoop_Run clears it when it starts the battle.
+    // not cleared here: SceneSequence_Run clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gCommon.encounterSteps += Iwram_MulQ16(step, steps);
@@ -290,7 +290,7 @@ extern const struct MapMusicRule gScene_MusicRules[];
 
 /// Chooses the current scene's field music (gCommon.cue) from the
 /// first rule matching the scene or its area and the entrance; SONG_KEEP_BGM
-/// when none does. Called by Monitor_Run on entering each scene, before
+/// when none does. Called by ParentSequence_Run on entering each scene, before
 /// Scene_PlayMusic plays it.
 void Scene_ChooseMusic(void) {
   s16 music = SONG_KEEP_BGM;
@@ -373,8 +373,8 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 /// (gCommon.restartScene and restartEntrance), from the first rule of
 /// gScene_RestartRules that matches the current scene and entrance: {scene,
 /// entrance (-1 for any), return scene, return entrance}, ended by scene -1.
-/// Without a match the restart point stays as it was. Called by FieldLoop_Run
-/// on scene load.
+/// Without a match the restart point stays as it was. Called by
+/// SceneSequence_Run on scene load.
 void Scene_SetRestartPoint(void) {
   s16 sceneId = gCommon.sceneId;
   s16 entrance = gCommon.entrance;

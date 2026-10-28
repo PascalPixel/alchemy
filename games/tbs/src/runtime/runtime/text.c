@@ -172,7 +172,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 }
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
-/// Called by System_Initialize, Monitor_Run and the debug modes.
+/// Called by System_Initialize, ParentSequence_Run and the debug modes.
 void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);

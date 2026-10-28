@@ -181,7 +181,7 @@ rebuilt every frame ([Runtime](src/runtime/README.md#the-frame-loop)).
 
 ### Main image
 
-The program the processor runs straight from the cartridge, about 1 MB of code
+The code the processor runs straight from the cartridge, about 1 MB of code
 in [banks](#bank); the rest runs from RAM, a scene's [overlay](#overlay) in EWRAM
 and the fast routines in IWRAM.
 
@@ -190,7 +190,7 @@ and the fast routines in IWRAM.
 One of the fourteen stretches the main image is cut into, each at a fixed
 address with room to spare and opening with a [far-call](#far-call) table, so
 one bank can grow without moving anything another depends on
-([System](src/system/README.md#why-the-program-is-cut-into-banks)).
+([System](src/system/README.md#why-the-main-image-is-cut-into-banks)).
 
 ### Far call
 
@@ -252,24 +252,35 @@ menus, its debug names), else a word of the game's time, else a plain
 description of the thing. A reader coming from pret's decompilations, such as
 pokeemerald, finds each entry saying what pret calls the nearest thing.
 
-### Program
+### Sequence
 
-What the monitor runs: the scene program, the battle program, the dice program
-(Lucky Dice) or the slots program (Lucky Wheels). One runs at a time, until it
-ends and names the next program in [common](#common). The monitor
-(`Monitor_Run`) is the loop around them, which tears down what the last
-program set up and runs the next; operating systems of the 1960s called such a
-loop a resident monitor. pret's DS decompilations call the nearest thing an
-application ([The front page](README.md#the-monitor)).
+One flow of the game, run from its start to its end: the scene sequence, the
+battle sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
+Wheels), `SEQUENCE_` in code. One runs at a time, until it ends and names the
+next sequence in [common](#common); that handover is the transition. pret's DS
+decompilations call the nearest thing an application
+([The front page](README.md#the-parent-sequence)).
+
+Evidence: Sega's word for one flow of a game, and the handover's (遷移); Camelot
+uses プログラム only for the whole game's code.
+
+### Parent sequence
+
+The loop that runs one [sequence](#sequence) after another for as long as the
+console is on, `ParentSequence_Run`: in each transition it tears down what the
+last sequence set up (its tasks, its interrupt handlers, its heap blocks) and
+starts the next ([The front page](README.md#the-parent-sequence)).
+
+Evidence: Sega's word for what runs its child sequences in turn.
 
 ### Common
 
-The one struct every program shares and that outlives each of them,
-`gCommon`: the party, the flags, where the party stands, the next program and
+The one struct every sequence shares and that outlives each of them,
+`gCommon`: the party, the flags, where the party stands, the next sequence and
 what the last one reported. Save Game writes it to the cartridge. The name is
 FORTRAN's: a `COMMON` block was the memory shared by a program's parts, and what
 survived when one program chained to the next
-([The front page](README.md#how-a-program-finds-its-way-back)).
+([The front page](README.md#how-a-sequence-finds-its-way-back)).
 
 ### Scene
 
@@ -376,10 +387,10 @@ pret calls it a warp destination.
 
 ### Field request
 
-What the field loop answers once the leader stops walking: one of twelve
+What the scene sequence answers once the leader stops walking: one of twelve
 `FieldWork` members asks for an exit, an encounter, a talk, an examine, an
-item, a field Psynergy, a menu or a raised trigger, and the field loop
-serves them most urgent first ([World](world.md#the-field-loop-and-its-requests)).
+item, a field Psynergy, a menu or a raised trigger, and the scene sequence
+serves them most urgent first ([World](world.md#the-scene-sequence-and-its-requests)).
 
 ### Event
 
@@ -398,7 +409,7 @@ them through one inline each in `event_inline.h`
 
 ### Destination
 
-The scene and entrance the monitor runs next (`gCommon.sceneId`
+The scene and entrance the parent sequence runs next (`gCommon.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
 Three others are read only at given moments: after a battle the party goes to

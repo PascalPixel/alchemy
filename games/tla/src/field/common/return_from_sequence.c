@@ -6,14 +6,14 @@ void *Unit_Get(s32 owner);
 void GameFlag_SetBit(s32 flag);
 void Func_080ca3f4(s32 scene, s32 entrance);
 
-/// The Broken Seal's Scene_ReturnFromBattle, without the childhood healing,
+/// The Broken Seal's Scene_ReturnFromSequence, without the childhood healing,
 /// ending a defeat with Func_080ca3f4.
-void Func_080c977c(s32 result) {
+void Scene_ReturnFromSequence(s32 result) {
   struct BattleUnit *unit;
   s16 scene;
   s16 entrance;
 
-  gPartyState.unk256 = result;
+  gPartyState.sequenceResult = result;
   if (result == -1) {
     unit = Unit_Get(gPartyState.currentOwner);
     if (unit->hp == 0) {

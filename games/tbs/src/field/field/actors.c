@@ -159,13 +159,13 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// Actor_UpdateAllMotion, which runs no scripts; ACTOR_SYSTEM_WORLD_MAP and
 /// ACTOR_SYSTEM_BATTLE use the fixed camera. Both blocks are heap slots, so a
 /// later call gets the same ones back. No code releases HEAP_SLOT_ACTORS or
-/// HEAP_SLOT_ACTOR_SYSTEM by name, but FieldLoop_Run takes HEAP_SLOT_FIELD
+/// HEAP_SLOT_ACTOR_SYSTEM by name, but SceneSequence_Run takes HEAP_SLOT_FIELD
 /// from EWRAM before them, so its release of that slot as it returns frees
 /// their memory too; InitHeap clears the slots at the next
 /// scene change.
 ///
-/// Called through ActorSystem_InitializeFar by the field loop
-/// (overworld/overworld/field_loop.c) and the battle's encounter, and
+/// Called through ActorSystem_InitializeFar by the scene sequence
+/// (overworld/overworld/scene_sequence.c) and the battle's encounter, and
 /// directly by the sprite viewer, each with its enum ActorSystemMode. Allocates
 /// HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and HEAP_SLOT_ACTORS
 /// for the actors, and sets the sprite outline colours.
@@ -460,27 +460,27 @@ void Actor_StartApproachLink(struct Actor *actor, s32 linkedActorHandle) {
 }
 
 /// Starts an actor on the script that runs SC_KEY_COUNT every frame.
-/// The field loop (overworld/overworld/field_loop.c) gives it to the
+/// The scene sequence (overworld/overworld/scene_sequence.c) gives it to the
 /// leader when gCommon.movementMode is 2.
 void Actor_StartKeyCheck(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeyCheckScript);
 }
 
 /// Starts an actor on the script that moves it by the keys (SC_KEYS).
-/// The field loop gives it to the leader when gCommon.movementMode
+/// The scene sequence gives it to the leader when gCommon.movementMode
 /// is 1.
 void Actor_StartMoveByKeys(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeysScript);
 }
 
 /// Starts an actor on the player control script (SC_PLAYER).
-/// The field loop's usual choice for the leader on a layered map.
+/// The scene sequence's usual choice for the leader on a layered map.
 void Actor_StartPlayerControl(struct Actor *actor) {
   Actor_StartScript(actor, gActor_PlayerScript);
 }
 
 /// Starts an actor on the world map control script (SC_WORLD).
-/// The field loop gives it to the leader on the world map.
+/// The scene sequence gives it to the leader on the world map.
 void Actor_StartWorldMapControl(struct Actor *actor) {
   Actor_StartScript(actor, gActor_WorldMapScript);
 }

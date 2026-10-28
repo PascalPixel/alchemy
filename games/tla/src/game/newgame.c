@@ -1,9 +1,9 @@
 #include "types.h"
 
 void Func_080addf0(void);
-void Game_RunFar(s32 mode);
+void ParentSequence_RunFar(s32 mode);
 
 void Func_080ad338(void) {
   Func_080addf0();
-  Game_RunFar(0);
+  ParentSequence_RunFar(0);
 }

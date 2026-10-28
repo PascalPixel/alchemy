@@ -248,7 +248,7 @@ void WorldPicture_UpdateMarkers(void) {
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
-  // FieldLoop_Run creates the selected actor before raised trigger -888
+  // SceneSequence_Run creates the selected actor before raised trigger -888
   // opens this screen. No actor task removes it while the marker task runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current area.
@@ -437,8 +437,8 @@ void WorldPicture_UpdateMarkers(void) {
 }
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
-/// FieldLoop_Run reaches this for raised trigger -888 in World Map mode. The
-/// marker task stops before map graphics are restored, so neither uses the
+/// SceneSequence_Run reaches this for raised trigger -888 in World Map mode.
+/// The marker task stops before map graphics are restored, so neither uses the
 /// other's scratch storage. The picture argument is unused; the resource is
 /// fixed.
 void WorldPicture_Show(s32 picture) {
@@ -554,8 +554,8 @@ void Field_UpdateActorVisibilityBounds(void) {
 
 /// On the World Map, zooms the view out (0x9d89) while L is held, then back.
 /// Each zoom takes 6 frames; 0x9d89 is about 0.62, which sets the view 1.6
-/// times as far (FieldEffect_ScheduleRatioTransition). FieldLoop_Run runs it
-/// for event -889; the overlay tasks are suspended meanwhile.
+/// times as far (FieldEffect_ScheduleRatioTransition). SceneSequence_Run runs
+/// it for event -889; the overlay tasks are suspended meanwhile.
 void FieldEffect_RunVisibilityTransition(void) {
   struct FieldWork *work =
       AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));

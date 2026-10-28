@@ -19,7 +19,7 @@ struct UnitHpPoisonView {
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
 ///
-/// Called by FieldLoop_Run while it sets a scene up.
+/// Called by SceneSequence_Run while it sets a scene up.
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
@@ -42,7 +42,7 @@ void Field_ClearRequests(void) {
 /// Returns the sum of the field's twelve pending requests (counting the talk
 /// request twice): non-zero while any request is pending.
 ///
-/// FieldLoop_Run tests it to stop walking and to leave its request loop.
+/// SceneSequence_Run tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -132,7 +132,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
 /// Takes the exit of the first of the scene's exit regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
-/// region's exit value for FieldLoop_Run, plays the exit sound and starts
+/// region's exit value for SceneSequence_Run, plays the exit sound and starts
 /// leaving the scene. A region's bounds are whole pixels, its maxima
 /// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
@@ -192,7 +192,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// the party, the leader flinches and characters who fall are listed in the
 /// field work.
 ///
-/// Called by FieldLoop_Run each frame while the party walks (in debug mode,
+/// Called by SceneSequence_Run each frame while the party walks (in debug mode,
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
 /// per frame. Sets work->stepTrigger, pushCell, encounter, psynergy and
 /// raisedTrigger
@@ -326,7 +326,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   }
 
   // With HAZARD_COUNT_FRAMES, which no ☀️ code sets, the count rises by one each
-  // call, that is each frame the field loop runs. Half way,
+  // call, that is each frame the scene sequence runs. Half way,
   // SPRITE_ATTACHED_EFFECT is attached to the leader until removed (0x101, at
   // sprite priority 1); at the limit it is removed (0x100) and the party takes
   // the hazard's damage.
@@ -350,7 +350,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
   // one-off SPRITE_ATTACHED_EFFECT; each character whose HP reached 0 on this
   // frame is listed, loses its poison and raises
-  // FIELD_RAISED_TRIGGER_PARTY_FELL, which FieldLoop_Run handles.
+  // FIELD_RAISED_TRIGGER_PARTY_FELL, which SceneSequence_Run handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
@@ -485,7 +485,7 @@ s32 Party_ApplyPoisonDamage(void) {
 /// in progress, pauses camera movement and freezes the perspective view as a
 /// still picture. Elsewhere it does nothing.
 ///
-/// Called by FieldLoop_Run around the handling of most requests, by the
+/// Called by SceneSequence_Run around the handling of most requests, by the
 /// joining of a Djinni and by the World Map's overlay; each call is paired with
 /// WorldMap_Unfreeze. Changes the screen transition state in
 /// HEAP_SLOT_SCREEN_TRANSITION only when it is running. Both allocations return

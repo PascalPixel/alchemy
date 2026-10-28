@@ -480,7 +480,7 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
 
 /// Starts the window transition and edition-specific actor
 /// scale/animation setup. Returns zero through the exported scene entry. The
-/// room's initialize entry, which FieldLoop_Run runs on entry and whose
+/// room's initialize entry, which SceneSequence_Run runs on entry and whose
 /// result it ignores: ACTOR_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.

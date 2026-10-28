@@ -232,7 +232,7 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 /// (MB_CLIMB) is raised by the ground height of the cell north of it less 32
 /// pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
-/// Called by FieldLoop_Run on entering a scene, and by
+/// Called by SceneSequence_Run on entering a scene, and by
 /// Event_RunActorUpdateAndWait.
 /// Empties every actor slot and table first, without releasing the
 /// actors in them; sets work->camera, the map's origin and
@@ -267,7 +267,7 @@ void Actor_ResetForLeader(struct ActorTemplate *table) {
   Event_SpawnActorTemplates(table, ACTOR_FIRST_PLACED);
 
   object = work->actors[leader];
-  // gCommon.layer keeps the leader's map grid layer (FieldLoop_Run
+  // gCommon.layer keeps the leader's map grid layer (SceneSequence_Run
   // saves its layer there). Its cell: 16 pixels square, 128 to a row, so above
   // is the cell north of it.
   object->layer = gCommon.layer;
@@ -519,7 +519,7 @@ void *Actor_Lookup(u32 actorIndex) {
 /// gActorSnapshot, with each one's slot, animation, sprite flags and
 /// priority, so that Actor_Restore can put them back.
 ///
-/// Called by FieldLoop_Run before a random battle, by saving the game
+/// Called by SceneSequence_Run before a random battle, by saving the game
 /// through Save_CaptureActorsFar, and by two scenes (Tolbi's spring and the
 /// Venus Lighthouse aerie).
 void Actor_Snapshot(void) {
@@ -576,7 +576,7 @@ void Actor_Snapshot(void) {
 /// Puts back the actors Actor_Snapshot saved, and moves the camera
 /// to the party leader's height.
 ///
-/// Called by FieldLoop_Run when the party keeps its position
+/// Called by SceneSequence_Run when the party keeps its position
 /// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie scene through
 /// Actor_RestoreFar. Only actors whose slots are filled again are
 /// restored; the leader is set idle.

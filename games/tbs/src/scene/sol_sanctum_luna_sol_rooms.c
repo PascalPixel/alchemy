@@ -1381,7 +1381,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
 }
 
 /// Sets up Sol Sanctum's rooms of Sol and Luna and plays the event this
-/// entrance calls for. Called by FieldLoop_Run once the actors
+/// entrance calls for. Called by SceneSequence_Run once the actors
 /// exist. Blocks Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the
 /// way up opens, before the eruption; sets
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED at an ordinary entrance;

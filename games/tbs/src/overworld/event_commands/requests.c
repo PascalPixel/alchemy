@@ -7,9 +7,9 @@
 /// Sets up a battle with the formation in slot of encounter table zone. On
 /// the World Map the encounter region and battle environment under the leader
 /// pick the battle background. Sets the field work's battle request, which
-/// the field loop then handles, and the battle music; ENCOUNTER_ZONE_SCRIPTED's
-/// first slot also sets gCommon.special to the Aerie's storm battle
-/// background. About 35 scenes reach it through
+/// the scene sequence then handles, and the battle music;
+/// ENCOUNTER_ZONE_SCRIPTED's first slot also sets gCommon.special to the
+/// Aerie's storm battle background. About 35 scenes reach it through
 /// Field_RequestBattleFromEncounterTableFar, and the Battle Arena calls it
 /// directly. The battle starts only once the event that asked for it has
 /// returned.
@@ -84,8 +84,8 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
 
 /// Makes the event leave for entrance entrance of scene sceneId: sets
 /// gCommon.sceneId and entrance and raises the exit request
-/// EXIT_KEEP_DESTINATION (999), so the field loop leaves on its next pass. Only
-/// Tolbi's spring reaches it, through Event_LeaveForFar.
+/// EXIT_KEEP_DESTINATION (999), so the scene sequence leaves on its next pass.
+/// Only Tolbi's spring reaches it, through Event_LeaveForFar.
 void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
   gCommon.sceneId = sceneId;

@@ -46,7 +46,7 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// The title overlay's scene tables, which FieldLoop_Run reads through
+/// The title overlay's scene tables, which SceneSequence_Run reads through
 /// entry/title.s: one entrance row, the exit, and no actor
 /// templates or triggers.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
@@ -70,7 +70,7 @@ u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
 /// - Entrance 9, after the ship sails (lemurian_ship.c's SetSail): the
 ///   credits, then the File Screen's entrance 2, which offers to
 ///   save the cleared game.
-/// - Entrance 2, at power-on (Monitor_Run) and after the logo:
+/// - Entrance 2, at power-on (ParentSequence_Run) and after the logo:
 /// the
 ///   Nintendo and Camelot logos and, when a save file exists, the title intro
 ///   with its "Press Start" prompt; then the File Screen's

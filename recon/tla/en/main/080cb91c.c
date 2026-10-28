@@ -1,12 +1,12 @@
-// Draft, differ 940 of 1300: Field_RunScene, this game's form of ☀️'s Map_Run
-// (games/tbs/src/overworld/overworld/run_map.c): runs the current scene
-// until the party leaves it and returns how (the warp, or 999 after the
-// party falls). It sets the scene up in the event work (heap slot 108,
-// 0xd50 bytes, cleared), the world map (scene map 1, event mode 3) or a
-// layout (mode 2), places objects and the camera, fades in (with the ship's
-// arrival wait when the party state's 0x2c2 is 1) and gives what was left
-// pending, then runs the field loop: the leader walks (Func_080cb2b8 each
-// frame) until a request is made, and the requests are handled until none
+// Draft, differ 940 of 1300: SceneSequence_Run, this game's form of ☀️'s
+// SceneSequence_Run (games/tbs/src/overworld/overworld/scene_sequence.c):
+// runs the current scene until the party leaves it and returns how (the
+// warp, or 999 after the party falls). It sets the scene up in the event
+// work (heap slot 108, 0xd50 bytes, cleared), the world map (scene map 1,
+// event mode 3) or a layout (mode 2), places objects and the camera, fades
+// in (with the ship's arrival wait when the party state's 0x2c2 is 1) and
+// gives what was left pending, then loops: the leader walks (Func_080cb2b8
+// each frame) until a request is made, and the requests are handled until none
 // is left: a raised event (the party fell, the world map, its zoom, the
 // four ship commands), a touch or exit, a push, a battle, examining, the
 // menu, talking, searching, Psynergy, an item or the pause menu.
@@ -182,7 +182,7 @@ void Func_080cb2b8(s32 terrain, s32 x, s32 y, s32 z);
 
 #define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea.words[index])()
 
-s32 Field_RunScene(void) {
+s32 SceneSequence_Run(void) {
   struct FieldWork *work;
   struct PartyState *party;
   struct ObjectRuntime *leader;

@@ -349,10 +349,10 @@ void Sound_UpdateCommandMask(u32 command) {
 }
 
 /// Returns the music Sound_PlaySong last chose: 0xff before any,
-/// MUS_SILENCE after a fade, else the last music. FieldLoop_Run saves it
+/// MUS_SILENCE after a fade, else the last music. SceneSequence_Run saves it
 /// as gCommon.returnMusic before the Pause menu, so the music can be
-/// started again when the party is put back where it was (Monitor_Run,
-/// overworld/overworld/monitor.c).
+/// started again when the party is put back where it was (ParentSequence_Run,
+/// overworld/overworld/parent_sequence.c).
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
 /// Waits a frame at a time for fanfare restoration, giving up after 300

@@ -31,7 +31,7 @@ interrupt: pressing all four marks a reset as wanted, and the next frame
 carries it out.
 
 The cartridge header jumps to `System_Entry`, which sets up the stacks and
-calls `System_Initialize`; that ends by calling `Monitor_RunFar`. The reset is
+calls `System_Initialize`; that ends by calling `ParentSequence_RunFar`. The reset is
 `Input_HandleKeyInterrupt`.
 
 ## The frame loop
@@ -231,7 +231,7 @@ let time pass through `WaitFrames`, keep their per-frame work as tasks, take
 their memory from the heap and reach the screen through the sprite lists, the
 scroll and the write queue. Other banks call the runtime directly, and
 overlays through its far-call table
-([System](../system/README.md#why-the-program-is-cut-into-banks)).
+([System](../system/README.md#why-the-main-image-is-cut-into-banks)).
 
 ## Limits
 

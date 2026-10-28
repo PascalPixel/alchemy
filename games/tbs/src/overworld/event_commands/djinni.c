@@ -179,7 +179,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor placed
 /// for that Djinni (condition = its flag) goes back to its template's position,
 /// or 32 pixels north of the leader when the event has DJINN_NO_HOP (0x800)
-/// set, and stands (animation 1). FieldLoop_Run calls it as it rebuilds the
+/// set, and stands (animation 1). SceneSequence_Run calls it as it rebuilds the
 /// scene, only while an event is still pending after Djinn_ResolvePending's
 /// first call, that is after a won battle; the second call then makes this
 /// actor join the party.
@@ -194,7 +194,7 @@ void Actor_PlaceMapActors(void) {
     event &= 0x7ff;
     // event is unsigned: events below DJINNI_BATTLE_EVENT_FIRST fail the range
     // test too.
-    if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 && gCommon.programResult > 0) {
+    if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 && gCommon.sequenceResult > 0) {
       for (id = 8; id <= 65; id++) {
         struct ActorTemplate *desc = Scene_FindActorTemplate(id);
         struct Actor *object;
@@ -226,8 +226,8 @@ void Actor_PlaceMapActors(void) {
 }
 
 /// Settles a pending Djinni battle as a scene loads, from the battle's result
-/// in programResult (the enemies defeated, 999 when the party fled, -1
-/// when it lost). FieldLoop_Run calls it with shown 0 while it builds the
+/// in sequenceResult (the enemies defeated, 999 when the party fled, -1
+/// when it lost). SceneSequence_Run calls it with shown 0 while it builds the
 /// scene and, while the event is still pending, with shown nonzero once the
 /// scene is on screen.
 ///
@@ -251,13 +251,13 @@ void Djinn_ResolvePending(s32 shown) {
           flag > DJINNI_BATTLE_EVENT_FIRST + 80)
         return;
       // Won: the event waits for the call once the scene is shown.
-      if (st->programResult > 0 && st->programResult != 999)
+      if (st->sequenceResult > 0 && st->sequenceResult != 999)
         return;
       // DJINNI_BATTLE_EVENT_FIRST + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
       GameFlag_SetFar(flag - 172);
       *pending = kind;
     } else if (kind == 0x1000) {
-      if (st->programResult == 1)
+      if (st->sequenceResult == 1)
         GameFlag_SetFar(flag);
       *pending = shown;
     }
@@ -268,7 +268,7 @@ void Djinn_ResolvePending(s32 shown) {
     if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
         flag <= DJINNI_BATTLE_EVENT_FIRST + 80) {
       flag &= 0x7ff;
-      if (st->programResult > 0) {
+      if (st->sequenceResult > 0) {
         s32 djinni = flag - DJINNI_BATTLE_EVENT_FIRST;
         s32 element = djinni / 20;
         s32 index = djinni % 20;

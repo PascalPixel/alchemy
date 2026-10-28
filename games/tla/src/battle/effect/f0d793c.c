@@ -25,13 +25,13 @@ void Func_080d793c(s32 capture) {
       flag &= 0x7ff;
       if (flag < 300 || flag > 380)
         return;
-      if (st->unk256 > 0 && st->unk256 != 999)
+      if (st->sequenceResult > 0 && st->sequenceResult != 999)
         return;
       GameFlag_SetBit(flag - 172);
       *pending = kind;
       return;
     } else if (kind == 0x1000) {
-      if (st->unk256 > 0 && st->unk256 != 999)
+      if (st->sequenceResult > 0 && st->sequenceResult != 999)
         GameFlag_SetBit(flag);
     } else
       return;
@@ -39,7 +39,7 @@ void Func_080d793c(s32 capture) {
     flag &= 0x7ff;
     if (flag >= 300 && flag <= 380) {
       flag &= 0x7ff;
-      if (st->unk256 > 0) {
+      if (st->sequenceResult > 0) {
         s32 djinn = flag - 300;
         s32 element = djinn / 20;
         s32 index = djinn % 20;

@@ -128,7 +128,7 @@ void FieldPsynergy_EndCloak(void) {
   gCommon.cloaked = 0;
 }
 
-/// Starts the Cloak cell check if the leader is hidden. FieldLoop_Run calls
+/// Starts the Cloak cell check if the leader is hidden. SceneSequence_Run calls
 /// it as a scene loads, since gCommon.cloaked outlives the scene.
 void FieldPsynergy_ResumeCloakCheck(void) {
   if (gCommon.cloaked != 0) {

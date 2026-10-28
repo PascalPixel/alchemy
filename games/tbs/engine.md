@@ -4,7 +4,7 @@ Everything the player sees moves to one beat: the screen is redrawn about
 sixty times a second, and the game prepares one picture for each. The engine
 is the code that keeps that beat and that the field, the battles and the menus
 are built on. It starts the console, lets code wait without the screen
-freezing, splits the program into [banks](glossary.md#bank), swaps each
+freezing, splits the main image into [banks](glossary.md#bank), swaps each
 [scene](glossary.md#scene)'s code in and out of memory and plays the music.
 
 The console draws each picture one line at a time, 160 lines from top to
@@ -21,7 +21,7 @@ Between switching on and the Title, the game puts memory in order and starts
 the services everything else relies on: the code that hands each frame to the
 screen, the sound and the list of [tasks](glossary.md#task). It copies the
 routines that must run fastest into the console's fast memory, waits ten
-frames, and starts the loop of scenes on the [front page](README.md#the-monitor),
+frames, and starts the [parent sequence](README.md#the-parent-sequence),
 which runs for as long as the console is on. A soft reset starts the game
 again from its very first instruction, so start-up runs again in full.
 
@@ -70,7 +70,7 @@ and its entrances serve only the scenes' code.
 
 An entrance has the function's name with `Far` added: the field plays the
 chest's fanfare with `Sound_PlaySongFar`, which leads to `Sound_PlaySong`.
-[System](src/system/README.md#why-the-program-is-cut-into-banks) says more.
+[System](src/system/README.md#why-the-main-image-is-cut-into-banks) says more.
 
 ## Overlays
 

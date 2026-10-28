@@ -260,9 +260,9 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *actor);
 void Djinn_RunBattleStartHop(s32 djinniId);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void Actor_PlaceMapActors(void);
-// Declared without a prototype, as FieldLoop_Run (overworld.c) calls it with
-// one argument and with two. overworld.c comes before this unit in ROM order,
-// so in one file the calls would still come before the definition.
+// Declared without a prototype, as SceneSequence_Run (overworld.c) calls it
+// with one argument and with two. overworld.c comes before this unit in ROM
+// order, so in one file the calls would still come before the definition.
 void Djinn_ResolvePending();
 void FieldEffect_UpdateAllSlots(void);
 void FieldEffect_InitializeSlots(void);

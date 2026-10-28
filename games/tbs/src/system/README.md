@@ -4,7 +4,7 @@ Every [scene](../../glossary.md#scene) the [party](../../glossary.md#the-party)
 visits needs its own code, [map](../../glossary.md#map) and pictures,
 and a Game Boy Advance has 288 KB of working memory against a cartridge that
 holds the whole game. The system folder is what makes that fit: it decides
-which part of memory holds what, splits the program into
+which part of memory holds what, splits the main image into
 [banks](../../glossary.md#bank) that call each other through fixed tables,
 swaps each scene's code in and out of one small area, and finds every picture,
 map and piece of code on the cartridge by number. Nearly all of it is
@@ -24,7 +24,7 @@ code, the map's grid and pictures being unpacked, and the larger
 what must run or be read quickly: routines copied from the cartridge at
 power-on, the busiest variables, a second heap and the stacks. Video memory
 holds the tiles and tile maps the screen is drawn from, and the processor runs the
-program straight from the cartridge.
+main image straight from the cartridge.
 
 Each area has a fixed place, the same in every
 [edition](../../glossary.md#editions) except for three IWRAM variables German
@@ -70,9 +70,9 @@ The window tiles are placed by `Window_LoadGraphics`, the map's by
 `MapGrid_LoadMap` ([Maps](../map/README.md)), and the sprite tiles
 by the cache in `runtime/vram_cache.c`.
 
-## Why the program is cut into banks
+## Why the main image is cut into banks
 
-The main image, the program the processor runs from the cartridge, is linked
+The main image, the code the processor runs from the cartridge, is linked
 in banks: the field, the windows, the battles, the sound and the rest. Each
 starts at a fixed address with room to spare and opens with a table of short
 jumps, one for each function other banks call. A call from another bank goes
@@ -145,7 +145,7 @@ The directory is `Resource_DirectoryTable` in `resource/directory.s`, read by
 
 Some code says "the overlay area is at this address" rather than "wherever
 the linker put the overlay area". [The original](../../glossary.md#the-original)
-program holds 27 such fixed addresses, so the matching build compiles the same
+holds 27 such fixed addresses, so the matching build compiles the same
 numbers, and the memory map cannot move what they point at: the cartridge's
 first instruction, the routines copied into IWRAM, the overlay area, the scene
 and decode buffers after it, the ends of the two heaps, the sound mixer, the

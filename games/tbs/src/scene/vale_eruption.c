@@ -120,7 +120,7 @@ const struct Trigger *ValeEruption_GetTriggers(void) {
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
-/// FieldLoop_Run once the actors are placed;
+/// SceneSequence_Run once the actors are placed;
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {

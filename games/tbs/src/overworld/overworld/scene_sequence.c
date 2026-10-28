@@ -1,5 +1,6 @@
 /// @file
-/// Running a scene until the party leaves it, and its entrance.
+/// The scene sequence: running a scene until the party leaves it, and its
+/// entrance.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -15,22 +16,22 @@ struct ActorSystemSuspendView {
   u16 wait;
 };
 
-/// Runs the current scene, which the party entered by entrance, until it
-/// leaves; returns the exit kind it left by, for Scene_TakeExit, or
-/// EXIT_KEEP_DESTINATION when the next scene is already in gCommon: a
-/// random battle, a party that fell outside battle, Retreat or an event's
-/// destination. Sets the scene up (map, actors, encounters, return points),
-/// runs its initialization, fades it in, then runs the field loop: the party
-/// walks (Field_UpdateWalking each frame) until a request is made, and then the
+/// The scene sequence: runs the current scene, which the party entered by
+/// entrance, until it leaves; returns the exit kind it left by, for
+/// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
+/// gCommon: a random battle, a party that fell outside battle, Retreat or an
+/// event's destination. Sets the scene up (map, actors, encounters, return
+/// points), runs its initialization, fades it in, then loops: the party walks
+/// (Field_UpdateWalking each frame) until a request is made, and then the
 /// requests are handled until none is left.
 ///
-/// Called by Monitor_Run for every scene, which
+/// Called by ParentSequence_Run for every scene, which
 /// passes the result to Scene_TakeExit. Allocates the field work in
 /// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
 /// block the scene took after it from the same pool; sets gCommon's
 /// return point, after-battle and defeat destinations, and clears
 /// FLAG_IN_BATTLE and, once the scene has started, FLAG_KEEP_PARTY_POSITION.
-s32 FieldLoop_Run(s32 entrance) {
+s32 SceneSequence_Run(s32 entrance) {
   struct FieldWork *work;
   struct Actor *actor;
   s32 mode;
@@ -225,7 +226,7 @@ s32 FieldLoop_Run(s32 entrance) {
           Leader_StopMoving();
           Actor_Snapshot();
           gCommon.returnMusic = -1;
-          gCommon.sceneId = PROGRAM_BATTLE;
+          gCommon.sceneId = SEQUENCE_BATTLE;
           gCommon.entrance = work->encounter;
           work->exit = EXIT_KEEP_DESTINATION;
           Field_StartEncounterTransition(work->encounter);
@@ -404,7 +405,7 @@ done:
 /// to 64 pixels above it, or a behavior the scene has an examine trigger for.
 /// Returns 0 otherwise.
 ///
-/// Called by FieldLoop_Run for the A button (a non-zero result becomes
+/// Called by SceneSequence_Run for the A button (a non-zero result becomes
 /// work->tile, for Field_ExamineCell), and by FieldMenu_Run's search
 /// entry through Actor_GetTriggerCellAheadOfCurrentFar. Changes nothing.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
@@ -461,7 +462,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 /// entry, or the scene's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
-/// Called by FieldLoop_Run once the scene's events are set. Writes
+/// Called by SceneSequence_Run once the scene's events are set. Writes
 /// gCommon's position, heading and turn, and the scene's minX to maxY.
 void Scene_ApplyEntrance(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];

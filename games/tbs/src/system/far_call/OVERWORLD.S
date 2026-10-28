@@ -2,8 +2,8 @@
 #include "stub.inc"
 	.global FarCall_OverworldTable
 FarCall_OverworldTable:
-	export FieldLoop_RunFar, FieldLoop_Run
-	export Monitor_RunFar, Monitor_Run
+	export SceneSequence_RunFar, SceneSequence_Run
+	export ParentSequence_RunFar, ParentSequence_Run
 	export Event_WaitFramesFar, Event_WaitFrames
 	export Event_StartFar, Event_Start
 	export Event_EndFar, Event_End

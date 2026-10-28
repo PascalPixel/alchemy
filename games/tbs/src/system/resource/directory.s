@@ -60,7 +60,7 @@
 	.balign 4
 	.global Resource_DirectoryTable
 Resource_DirectoryTable:
-@ XXX (no evidence): why the first 19 rows point at pieces of the program;
+@ XXX (no evidence): why the first 19 rows point at pieces of the main image;
 @ only the build stamp's is read, the far-call rows go only to stubs that do
 @ nothing (Stub_NoOpHook, Stub_ReturnZero), and nothing in either game loads a
 @ bank through its row.

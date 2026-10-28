@@ -20,13 +20,13 @@ struct Actor;
 /// The exit request whose destination is already in gCommon.sceneId
 /// and .entrance, so that Scene_TakeExit leaves them as they are. Random
 /// battles, Retreat and the event commands that set a destination
-/// (Event_SetDestination) raise it, and FieldLoop_Run returns it when
+/// (Event_SetDestination) raise it, and SceneSequence_Run returns it when
 /// the whole party falls; Scene_TakeExit also uses it for "no exit found"
-/// (monitor.c, field_loop.c).
+/// (parent_sequence.c, scene_sequence.c).
 #define EXIT_KEEP_DESTINATION 999
 
-/// gCommon.movementMode: how the field loop hands the party leader
-/// back to the player (FieldLoop_Run).
+/// gCommon.movementMode: how the scene sequence hands the party leader
+/// back to the player (SceneSequence_Run).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the World Map or a layered map.
   LEADER_MOVEMENT_WALK = 0,
@@ -36,7 +36,7 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_AIRBORNE = 2
 };
 
-/// Monitor_Run's mode: where the game starts.
+/// ParentSequence_Run's mode: where the game starts.
 enum GameStart {
   GAME_START_TITLE = 0,            ///< the Title, with a fresh common
   GAME_START_DEBUG_VALE = 1,       ///< in debug mode, SceneId_ValePlaza
@@ -103,9 +103,9 @@ enum EncounterZoneId {
 };
 
 void Scene_TakeExit(s32 exitId);
-void Scene_ReturnFromProgram(s32 result);
+void Scene_ReturnFromSequence(s32 result);
 s32 Scene_GetArea(s32 sceneId);
-void Monitor_Run(s32 mode);
+void ParentSequence_Run(s32 mode);
 void Scene_LoadOverlay(s32 unused);
 void Scene_Arrive(s32 unused, s32 keep);
 void Scene_PlayMusic(void);
@@ -178,7 +178,7 @@ void Party_AddHp(s32 amount, s32 percent);
 s32 Party_ApplyPoisonDamage(void);
 void WorldMap_Freeze(void);
 void WorldMap_Unfreeze(void);
-s32 FieldLoop_Run(s32 entrance);
+s32 SceneSequence_Run(s32 entrance);
 s32 Actor_GetTriggerCellAheadOfCurrent(void);
 void Scene_ApplyEntrance(void);
 void PaletteEditor_Run(void);

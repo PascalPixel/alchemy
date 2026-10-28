@@ -629,7 +629,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 /// Plays the collapse after the cut from the Elemental Star Room. It plays at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from the
 /// Elemental Star Room (SceneId_SolSanctumElementalStarRoom). Called by
-/// FieldLoop_Run once the actors exist.
+/// SceneSequence_Run once the actors exist.
 s32 SolSanctumEruption_Initialize(void) {
   if (gCommon.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {

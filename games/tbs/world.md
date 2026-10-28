@@ -11,7 +11,7 @@ The two engine folders take the names of the [banks](glossary.md#bank) they
 fill, not of what they do. How scenes and overlays fit into the whole game is on
 [the front page](README.md).
 
-## The field loop and its requests
+## The scene sequence and its requests
 
 ![Isaac walks north into the door of Jenna's grandparents' house in Vale; the door opens, he steps inside, the screen fades and the room inside appears with him at its door](https://alchemy.pascalpixel.com/guides/world/door.gif)
 
@@ -28,9 +28,9 @@ A random battle is a way out of the scene too: the game remembers where
 everyone stood, loads the battle as if it were the next scene, and afterwards
 loads the scene again with everyone put back where they were.
 
-`FieldLoop_Run` runs one scene and `struct FieldWork` holds the
+`SceneSequence_Run` runs one scene and `struct FieldWork` holds the
 requests. [Running a
-scene](src/overworld/README.md#the-field-loop-serves-requests) lists
+scene](src/overworld/README.md#the-scene-sequence-serves-requests) lists
 all twelve requests in the order they are handled.
 
 ## Scene entries

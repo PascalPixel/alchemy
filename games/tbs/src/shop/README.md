@@ -200,7 +200,7 @@ one `#if` block in `shop_internal.h`.
 
 Scenes open the counters through their
 [import tables](../../glossary.md#entry-table-and-import-table), and the rest
-of the program through the shop [bank](../../glossary.md#bank)'s
+of the main image through the shop [bank](../../glossary.md#bank)'s
 [far-call](../../glossary.md#far-call) table. Some of the shop's pieces serve
 other screens: its hand cursor also moves in the settings menu, the
 name entry screen and the file list; the Item screen draws its quantity bar with the

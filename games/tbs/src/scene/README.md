@@ -10,7 +10,7 @@ area of RAM when the party arrives, and replaced when it leaves.
 [Running a scene](../overworld/README.md) runs the scene and asks the overlay what
 to do; the overlay drives the engine back through its
 [import table](../../glossary.md#entry-table-and-import-table), the list of
-main-program functions it may call. Each overlay has a generated page of its
+main-image functions it may call. Each overlay has a generated page of its
 own, listed in [Places](../field/scenes.s) in
 [story order](../../glossary.md#the-places-in-story-order), with its
 [map](../../glossary.md#map), its [triggers](../../glossary.md#trigger)
@@ -282,7 +282,7 @@ page](../../README.md#game-flags) explains the ranges), and the flags are in
 ## Code shared between overlays
 
 Two scenes that need the same piece of code each carry their own copy of it,
-because a scene's code can call only the main program, never another scene's.
+because a scene's code can call only the main image, never another scene's.
 
 Only one overlay is loaded at a time, so the code several scenes need is written
 once in `common/` and compiled into each of them: the three Colosso finals
@@ -335,8 +335,8 @@ of an actor, update routines returning `s32`) are in
 
 ## How it fits with the rest of the game
 
-`Monitor_Run` unpacks the overlay into `gOverlayArea` (`Scene_LoadOverlay`) and
-`FieldLoop_Run` calls its entries; [Engine](../../engine.md#overlays)
+`ParentSequence_Run` unpacks the overlay into `gOverlayArea` (`Scene_LoadOverlay`) and
+`SceneSequence_Run` calls its entries; [Engine](../../engine.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The scene
 table and how scenes depend on the story are on [the front
 page](../../README.md#the-scene-table-and-areas). The maps the scenes are

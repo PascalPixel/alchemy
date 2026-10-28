@@ -152,7 +152,7 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// saved ones when the screen is cancelled. The file list
 /// (FileList_SelectFile) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The File Screen
-/// (menu/file_screen.c), the monitor's start (Monitor_Run),
+/// (menu/file_screen.c), the parent sequence's start (ParentSequence_Run),
 /// the end of the Mind Read wave (FieldPsynergy_RestoreMindReadPalette) and
 /// Vale and the world map call it with the saved settings.
 void WindowColor_Apply(s32 phase, s32 brightness) {

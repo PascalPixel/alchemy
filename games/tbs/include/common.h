@@ -23,7 +23,7 @@ enum SceneType {
 enum HazardMode {
   /// The distance the leader walks on MB_DESERT_SAND ground.
   HAZARD_COUNT_ON_CELLS = 0,
-  /// One each frame the field loop runs; no ☀️ code sets it.
+  /// One each frame the scene sequence runs; no ☀️ code sets it.
   HAZARD_COUNT_FRAMES = 1
 };
 
@@ -84,12 +84,12 @@ struct Common {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The destination: the program the monitor runs next, a
-  /// SceneId_ row of gScenes or a PROGRAM_ value above the table's rows.
+  /// The destination: the sequence the parent sequence runs next, a
+  /// SceneId_ row of gScenes or a SEQUENCE_ value above the table's rows.
   /// During a scene it is the scene running. An exit-table lookup overwrites
   /// it, and EXIT_KEEP_DESTINATION keeps it.
   s16 sceneId;
-  /// The destination's entrance; in PROGRAM_BATTLE, the formation to fight.
+  /// The destination's entrance; in SEQUENCE_BATTLE, the formation to fight.
   /// Not a union with a formation member: alchemy-gcc pads a union to a word,
   /// which would move every member after it.
   s16 entrance;
@@ -98,18 +98,18 @@ struct Common {
   s16 restartScene;
   s16 restartEntrance; ///< the restart point's entrance
   /// The return point: the scene that was running when a battle or minigame
-  /// started, where Scene_ReturnFromProgram returns unless an after-battle
+  /// started, where Scene_ReturnFromSequence returns unless an after-battle
   /// destination is set.
   s16 returnScene;
   s16 returnEntrance; ///< the return point's entrance
   s16 area;           ///< the current scene's area; a new one resets its flags
   /// The after-battle destination, -1 for none: read by
-  /// Scene_ReturnFromProgram when the party was not defeated, before the
+  /// Scene_ReturnFromSequence when the party was not defeated, before the
   /// return point (a minigame's return reads it too), and cleared as each
   /// scene starts.
   s16 afterBattleScene;
   s16 afterBattleEntrance; ///< its entrance; -1 for none
-  /// The defeat destination, -1 for none: read by Scene_ReturnFromProgram
+  /// The defeat destination, -1 for none: read by Scene_ReturnFromSequence
   /// after a defeat, before the restart point.
   s16 defeatScene;
   s16 defeatEntrance;       ///< its entrance; -1 for none
@@ -167,7 +167,7 @@ struct Common {
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a scene, not a return from battle, resets them to 1 HP
   /// every 16 pixels walked on it; the desert sets 25 percent every 600
-  /// (FieldLoop_Run, LamakanDesert_Initialize).
+  /// (SceneSequence_Run, LamakanDesert_Initialize).
   ///@{
   s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
   s16 hazardMode;  ///< an enum HazardMode
@@ -178,7 +178,7 @@ struct Common {
   /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number,
   /// flags in bits 15 to 11), resolved on returning to the field.
   s16 pendingDjinni;
-  s16 programResult;  ///< the last battle's result; -1 for a defeat
+  s16 sequenceResult; ///< the last battle's result; -1 for a defeat
   s32 encounterSteps; ///< the encounter count, reset with a new area
   u16 pendingItem;    ///< given on returning to the field if the party has room
   s16 sceneType;      ///< the current scene's variant from its row in gScenes

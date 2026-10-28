@@ -534,7 +534,7 @@ static void CottageRoomsB_ExitToValeStormyNightEast(void) {
 /// plays the events of COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST,
 /// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG. Called by
-/// FieldLoop_Run once the actors are placed.
+/// SceneSequence_Run once the actors are placed.
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST sets FLAG_VALE_STORM before
 /// CottageRoomsB_DoraWakesIsaac; back from Kalay, Dora is put back in her
 /// sickbed unless FLAG_VALE_DORA_OUT_OF_BED says she got up.

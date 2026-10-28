@@ -3,7 +3,7 @@
 [The Broken Seal](../glossary.md#the-two-games) is the first Golden Sun game, and this folder is its
 source: C and assembly that compile back into the cartridge's exact bytes
 (a [matching decompilation](../glossary.md#matching-decompilation)). A Game Boy Advance cartridge holds the
-program as one long run of bytes, and Golden Sun's program is laid out in
+game as one long run of bytes, and Golden Sun's code is laid out in
 parts: [banks](../glossary.md#bank) of code the CPU runs straight from the cartridge, and the
 code of each [scene](../glossary.md#scene), which is copied into memory only while the [party](../glossary.md#the-party) is
 there. The source follows that layout, so a folder tells you where its code
@@ -21,7 +21,7 @@ loading, scrolling and drawing the map grid. [Running a scene](overworld/README.
 the `overworld` folder, runs
 one scene on that engine, from its set-up to the [exit](../glossary.md#exit) the party leaves
 by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands events
-use; `Monitor_Run`, the loop that runs one scene after another, is there too.
+use; `ParentSequence_Run`, the loop that runs one scene after another, is there too.
 [Scenes](scene/README.md) holds the scenes, one [overlay](../glossary.md#overlay) each: [actor](../glossary.md#actor)
 templates, [triggers](../glossary.md#trigger) and [events](../glossary.md#event). [Maps](map/README.md)
 holds the [maps](../glossary.md#map) as data.
@@ -87,7 +87,7 @@ long to read as one file is written as parts that only its `.c` compiles.
 Object here means the linker's object file; it has nothing to do with the
 actors in a scene.
 
-[The original](../glossary.md#the-original) program was built from pieces, objects, laid one after another in
+[The original](../glossary.md#the-original) was built from pieces, objects, laid one after another in
 a fixed order, and within an object the code lies in the order it was
 written. Some objects are huge: the battle code runs to some 13,000 lines. Rather
 than one enormous file, such an object is written as parts, each holding one
@@ -128,8 +128,8 @@ packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The scene table,
 `gScenes` in [field/scenes.s](field/scenes.s), has 201 scenes, and the
 rooms of one dungeon often share one overlay. `Scene_LoadOverlay`
-([overworld/overworld/monitor.c](overworld/overworld/monitor.c)) unpacks the overlay a scene's row
-names before `FieldLoop_Run` runs it; a battle or a minigame is main-image
+([overworld/overworld/parent_sequence.c](overworld/overworld/parent_sequence.c)) unpacks the overlay a scene's row
+names before `SceneSequence_Run` runs it; a battle or a minigame is main-image
 code and loads none.
 
 In the source an overlay is three files in its folder:
@@ -229,7 +229,7 @@ a table from its `.tsv`, or a map, under the name the code uses.
 ## Where to start reading
 
 `System_Initialize`, in [runtime/runtime/system.c](runtime/runtime/system.c),
-is the first C to run; it ends by calling `Monitor_Run`, which is short enough
+is the first C to run; it ends by calling `ParentSequence_Run`, which is short enough
 to read whole. [Runtime](runtime/README.md) follows the same path.
 
 To find the code behind something in the game, search for its English name.

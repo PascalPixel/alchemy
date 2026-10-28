@@ -98,24 +98,24 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 /// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 0x1ff
 
-/// Program ids above the scene table's rows: the programs other than the
-/// scene program, which Monitor_Run runs in its place. They have no row in
-/// gScenes.
+/// Sequence ids above the scene table's rows: the sequences other than the
+/// scene sequence, which ParentSequence_Run runs in its place. They have no row
+/// in gScenes.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
-  PROGRAM_NONE = 0x1fb,
-  PROGRAM_SLOTS = 0x1fc, ///< Lucky Wheels in Tolbi's game room,
-                         ///< SceneId_StuccoRoomsC (lucky_wheels.c)
-  PROGRAM_DICE = 0x1fd,  ///< Lucky Dice in Tolbi's game room,
-                         ///< SceneId_StuccoRoomsC (lucky_dice.c)
+  SEQUENCE_NONE = 0x1fb,
+  SEQUENCE_SLOTS = 0x1fc, ///< Lucky Wheels in Tolbi's game room,
+                          ///< SceneId_StuccoRoomsC (lucky_wheels.c)
+  SEQUENCE_DICE = 0x1fd,  ///< Lucky Dice in Tolbi's game room,
+                          ///< SceneId_StuccoRoomsC (lucky_dice.c)
   /// A battle; the entrance is the formation, and the result -1 a
   /// defeat.
-  PROGRAM_BATTLE = 0x1fe
+  SEQUENCE_BATTLE = 0x1fe
 };
 
 /// An exit into a battle: exit kind `exit` fights formation `group`.
 #define EXIT_TO_BATTLE(exit, group)                                            \
-  (((u32)(exit) << 20) + ((u32)(group) << 12) + PROGRAM_BATTLE)
+  (((u32)(exit) << 20) + ((u32)(group) << 12) + SEQUENCE_BATTLE)
 
 /// An actor a scene places: its sprite, the condition for placing it,
 /// how it behaves, where it stands and which way it faces, and how it turns to

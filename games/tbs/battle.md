@@ -18,10 +18,10 @@ draws them.
 
 ![A battle in Goma Cave ends: Ivan's Magic Rod puts a Skeleton to sleep, Isaac and Garet strike it down, the spoils are announced, and the screen fades back to the cave with Isaac standing where the battle found him.](https://alchemy.pascalpixel.com/guides/battle/won.gif)
 
-To the rest of the game a battle is one more [sequence](glossary.md#program). The
-field leaves for it as it would leave through a doorway, and when the battle
-is won it comes back to the same spot. After a defeat it goes to the place the
-game sends a beaten party instead.
+To the rest of the game a battle is one more
+[sequence](glossary.md#sequence). The field leaves for it as it would leave
+through a doorway, and when the battle is won it comes back to the same spot.
+After a defeat it goes to the place the game sends a beaten party instead.
 
 A random encounter raises a field [exit](glossary.md#exit) like any other,
 whose destination is the battle and whose entrance names the enemies'
@@ -34,8 +34,8 @@ by a [far call](glossary.md#far-call). When it returns, the field scene is
 loaded again, or after a defeat the scene the defeat rules name. The debug
 battle menu is the only other way in.
 
-`Monitor_Run` (`src/overworld/overworld/monitor.c`) sees the next sequence
-`PROGRAM_BATTLE` and calls `Battle_RunFar`, which leads to `Battle_Run`
+`ParentSequence_Run` (`src/overworld/overworld/parent_sequence.c`) sees the
+next sequence `SEQUENCE_BATTLE` and calls `Battle_RunFar`, which leads to `Battle_Run`
 (`src/battle/battle/encounter.c`). The formations are the rows of
 `src/battle/formations.c`, chosen by the encounter zones in
 `src/overworld/encounter_zones.c`.

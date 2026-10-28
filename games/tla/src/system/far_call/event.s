@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global Game_RunFar
+	.global ParentSequence_RunFar
 	.thumb_func
-Game_RunFar:
-	overlay_veneer Game_Run
+ParentSequence_RunFar:
+	overlay_veneer ParentSequence_Run
 	.global FieldEvent_WaitFramesFar
 	.thumb_func
 FieldEvent_WaitFramesFar:

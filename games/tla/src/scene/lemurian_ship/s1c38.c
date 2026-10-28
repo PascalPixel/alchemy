@@ -13,7 +13,7 @@ next:
      * without it). */
     do {
     } while (0);
-    if (party->unk256 == 1) {
+    if (party->sequenceResult == 1) {
       GameFlag_SetBit(i + 0x930);
       GameFlag_SetBit(i + 0x220);
     }

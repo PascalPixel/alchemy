@@ -297,7 +297,7 @@ static s32 sBattleArenaWaitFrames;
 #define LOBBY_NO_RESULT
 #endif
 
-/// The Battle Arena's entrances, which FieldLoop_Run reads through
+/// The Battle Arena's entrances, which SceneSequence_Run reads through
 /// entry/battle_arena.s.
 u8 *BattleArena_GetEntrances(void) { return (u8 *)gBattleArenaEntrances; }
 

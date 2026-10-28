@@ -6,21 +6,22 @@ use the Japanese subtitle, or TBS, to keep it apart from
 
 ## How the game is built
 
-Every program, event, menu and battle animation in The Broken Seal is code
+Every sequence, event, menu and battle animation in The Broken Seal is code
 that runs from its start to its end and waits where it stands whenever time
 must pass, while short tasks run once a frame to keep the world moving:
 
-- **One program at a time.** A [monitor](#the-monitor)
-  runs one program (a scene, a battle, a minigame) from start to finish.
-- **Programs hand over by themselves.** A scene that meets a random battle
-  writes the battle down as the next program and ends; the battle ends by
+- **One sequence at a time.** The [parent sequence](#the-parent-sequence)
+  runs one [sequence](glossary.md#sequence) (a scene, a battle, a minigame)
+  from start to finish.
+- **Sequences hand over by themselves.** A scene that meets a random battle
+  writes the battle down as the next sequence and ends; the battle ends by
   reporting a result, and the game works out where to go back to.
 - **Code waits in place.** An event or a menu is an ordinary function that
   runs top to bottom and pauses when time must pass. While it pauses, a short
   list of [tasks](glossary.md#task) keeps the world moving
   ([Waiting in place](#waiting-in-place)).
-- **The scene's loop only listens.** The field loop goes round once a frame
-  while the player walks, and acts on what the tasks noted down.
+- **The scene's loop only listens.** The scene sequence goes round once a
+  frame while the player walks, and acts on what the tasks noted down.
 - **A battle's rules and animations run together.** Damage appears while the
   attack is still on screen ([Battles](#battles)).
 - **A frame that runs long slows the game instead of skipping work.** The
@@ -34,13 +35,13 @@ The game runs in four layers, each inside the one above it.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "fontSize": "14px"}, "flowchart": {"padding": 10}}}%%
 flowchart TB
-  subgraph seqm ["Monitor"]
+  subgraph seqm ["Parent sequence"]
     direction TB
-    c1["One program at a time, for as long as the console is on"]
-    subgraph scene ["Scene program"]
+    c1["One sequence at a time, for as long as the console is on"]
+    subgraph scene ["Scene sequence"]
       direction TB
       c2["Loads one scene: its code, its map, its people"]
-      subgraph mgr ["Field loop"]
+      subgraph mgr ["Its loop"]
         direction TB
         c3["Runs the scene a frame at a time until the party leaves"]
         subgraph frame ["Frame"]
@@ -49,7 +50,7 @@ flowchart TB
         end
       end
     end
-    others["Battle · Lucky Dice · Lucky Wheels"]
+    others["Battle · Dice · Slots sequences"]
   end
   c1 ~~~ scene
   c2 ~~~ mgr
@@ -65,16 +66,17 @@ flowchart TB
   style frame fill:#FFFFFF,stroke:#9AA3AE,rx:16,ry:16
 ```
 
-- **[Monitor](#the-monitor).** Runs one [program](glossary.md#program) at a
-  time, for as long as the console is on: a scene, a battle, Lucky Dice or
-  Lucky Wheels.
-- **[Scene program](#the-scene-program).** Loads one
+- **[Parent sequence](#the-parent-sequence).** Runs one
+  [sequence](glossary.md#sequence) at a time, for as long as the console is
+  on: the scene sequence, the battle sequence, the dice sequence (Lucky Dice)
+  or the slots sequence (Lucky Wheels).
+- **[Scene sequence](#the-scene-sequence).** Loads one
   [scene](glossary.md#scene): a place such as Xian, or a screen such as the
   Title.
-- **[Field loop](#the-field-loop).** Runs that scene, one
+- **[Its loop](#the-scene-sequences-loop).** Runs that scene, one
   [frame](glossary.md#frame) at a time, until the party leaves.
-- **Frame.** Every queued [task](glossary.md#task) runs once, then the field
-  loop handles what the player or the scene asked for.
+- **Frame.** Every queued [task](glossary.md#task) runs once, then the scene
+  sequence handles what the player or the scene asked for.
 
 A box keeps its name and colour in every chart below. Xian, the example
 throughout, is red.
@@ -85,72 +87,73 @@ throughout, is red.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   power(["Power on"]) --> memory["Clear the fast memory"] --> irq["Install the resident code and the interrupt handlers"]
-  irq --> services["Start the sound and the task queue"] --> seq(["Monitor"])
-  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  irq --> services["Start the sound and the task queue"] --> seq(["Parent sequence"])
+  classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class seq monitor
+  class seq parentSequence
   class power,memory,irq,services step
 ```
 
 Power-on runs once. It clears the fast memory, installs the code that stays
 resident and the interrupt handlers, loads the window graphics, starts the
-sound and empties the task queue. Then it hands control to the monitor, which
-never returns.
+sound and empties the task queue. Then it hands control to the parent
+sequence, which never returns.
 
 **Reference:** `System_Initialize` · [Engine: Start-up](engine.md#start-up)
 
-## The monitor
+## The parent sequence
 
 ![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing round the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  loop(["Monitor"]) --> scene(["Scene program"]) & battle(["Battle"]) & dice["Lucky Dice"] & wheels["Lucky Wheels"]
-  scene & battle & dice & wheels --> back(["Next program"])
+  loop(["Parent sequence"]) --> scene(["Scene sequence"]) & battle(["Battle sequence"]) & dice["Dice sequence: Lucky Dice"] & wheels["Slots sequence: Lucky Wheels"]
+  scene & battle & dice & wheels --> back(["Next sequence"])
   back --> loop
-  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class loop monitor
-  class scene sceneProgram
+  class loop parentSequence
+  class scene sceneSequence
   class back request
   class battle battle
   class dice,wheels step
 ```
 
-Each turn runs one program to its end. The program then names the next one,
-and the monitor clears everything the last one left behind (its
-tasks, its screen effects, the memory it borrowed) before starting it.
+Each pass runs one sequence to its end. The sequence then names the next one,
+and in the transition the parent sequence clears everything the last one left
+behind (its tasks, its screen effects, the memory it borrowed) before starting
+it.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  subgraph s1 ["Scene program"]
+  subgraph s1 ["Scene sequence"]
     xian(["Xian"])
   end
-  s1 --> ask1(["Next program: the World Map"])
+  s1 --> ask1(["Next sequence: the World Map"])
   ask1 --> s2
-  subgraph s2 ["Scene program"]
+  subgraph s2 ["Scene sequence"]
     world(["World Map"])
   end
-  s2 --> ask2(["Next program: a random battle"])
-  ask2 --> battle(["Battle"]) --> ask3(["Next program: back to the World Map, where the party stood"])
+  s2 --> ask2(["Next sequence: a random battle"])
+  ask2 --> battle(["Battle"]) --> ask3(["Next sequence: back to the World Map, where the party stood"])
   ask3 --> s3
-  subgraph s3 ["Scene program"]
+  subgraph s3 ["Scene sequence"]
     again(["World Map"])
   end
-  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
@@ -168,10 +171,10 @@ nothing to unpack, and afterwards the party stands where it stood. After a
 defeat the game goes where an [event](glossary.md#event) chose for losing that
 battle, or else to the last Sanctum.
 
-### How a program finds its way back
+### How a sequence finds its way back
 
-Programs pass nothing to each other directly. Everything goes through common,
-`gCommon`, the one struct every program shares:
+Sequences pass nothing to each other directly. Everything goes through common,
+`gCommon`, the one struct every sequence shares:
 
 | When                       | What is written                                                                              |
 | -------------------------- | -------------------------------------------------------------------------------------------- |
@@ -180,22 +183,22 @@ Programs pass nothing to each other directly. Everything goes through common,
 | a random battle starts     | the battle as the next scene, its enemy group as the entrance, every actor's position        |
 | the battle ends            | its result: won, fled or lost                                                                |
 
-`Scene_ReturnFromProgram` reads them back. A win or a flight goes to the
+`Scene_ReturnFromSequence` reads them back. A win or a flight goes to the
 after-battle destination, or else to the return point with everyone where they
 stood; a defeat goes to the defeat destination, or else to the last Sanctum
 with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
-result stays in `gCommon.programResult` for the scene that comes back.
+result stays in `gCommon.sequenceResult` for the scene that comes back.
 The Title and the File Screen need none of this: they are ordinary scenes.
 
-**Reference:** `Monitor_Run` · `Scene_ReturnFromProgram`
+**Reference:** `ParentSequence_Run` · `Scene_ReturnFromSequence`
 
 ## Waiting in place
 
 The screen refreshes about 60 times a second, at each
 [VBlank](glossary.md#vblank). The game moves in
 [frames](glossary.md#frame), and every frame happens inside one function,
-`WaitFrames`. Whatever code is in charge (the field loop, an event, a menu, a
-battle animation) calls it when time must pass:
+`WaitFrames`. Whatever code is in charge (the scene sequence, an event, a
+menu, a battle animation) calls it when time must pass:
 
 ```c
 void WaitFrames(s32 frames) {         /* simplified */
@@ -226,11 +229,11 @@ window once the player presses A.
 
 | Frame | Code in charge         | Tasks during its wait                         | After the wait                                |
 | ----- | ---------------------- | --------------------------------------------- | --------------------------------------------- |
-| 1     | field loop             | the carrier steps, the water moves            | nothing asked for: next frame                 |
-| 2     | field loop             | player control sees A and notes a request     | a talk request: run her event                 |
+| 1     | scene sequence         | the carrier steps, the water moves            | nothing asked for: next frame                 |
+| 2     | scene sequence         | player control sees A and notes a request     | a talk request: run her event                 |
 | 3     | her event              | the window types her line, the water moves    | window still open: wait again                 |
 | …     | her event              | A pressed: the window task closes the window  | window closed: return                         |
-| next  | field loop             | the carrier walks on                          | nothing asked for: next frame                 |
+| next  | scene sequence         | the carrier walks on                          | nothing asked for: next frame                 |
 
 The conversation is the function itself, paused inside `WaitFrames` and
 resumed on the next line, so nothing has to note how far it has got: the place
@@ -253,31 +256,31 @@ tempo. This is the game's slowdown. The VBlanks a frame took are counted in
 [Runtime: The frame loop](src/runtime/README.md#the-frame-loop) ·
 `Event_WaitFrames`
 
-## The scene program
+## The scene sequence
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  pick(["Scene program"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
+  pick(["Scene sequence"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
   arrive --> music["Start the area's music"] --> code["Unpack the scene's code"]
   code --> map["Load the map"] --> place["Place the party at its entrance, or where it stood before a battle"]
   place --> actors["Create the actors from the scene's list"] --> own["Run the scene's set-up"]
-  own --> fade["Fade in"] --> run(["Field loop"])
-  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  own --> fade["Fade in"] --> run(["The scene sequence's loop"])
+  classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class pick sceneProgram
-  class run sceneManager
+  class pick sceneSequence
+  class run sceneLoop
   class arrive,music,code,map,place,actors,own,fade step
 ```
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  subgraph seq ["Scene program"]
+  subgraph seq ["Scene sequence"]
     direction TB
     pick(["Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
     arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay, in place of the World Map's"]
@@ -287,13 +290,13 @@ flowchart TD
     own --> fade["Fade in, Xian's name at the top"]
   end
   fade --> mgr
-  subgraph mgr ["Field loop"]
+  subgraph mgr ["The scene sequence's loop"]
     run(["Xian"])
   end
-  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
@@ -303,24 +306,24 @@ flowchart TD
   style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
 ```
 
-The monitor clears the [game flags](glossary.md#game-flag) the last
-scene kept for itself, and the [area](glossary.md#area)'s flags on entering a
-new area. It starts the area's music and unpacks the scene's code, its
-[overlay](glossary.md#overlay). The field loop then loads the
+Between scenes the parent sequence clears the
+[game flags](glossary.md#game-flag) the last scene kept for itself, and the
+[area](glossary.md#area)'s flags on entering a new area. It starts the area's music and unpacks the scene's code, its
+[overlay](glossary.md#overlay). The scene sequence then loads the
 [map](glossary.md#map), places the party at its
 [entrance](glossary.md#entrance) and creates every
 [actor](glossary.md#actor) on the scene's list. Last, the scene's own set-up
 arranges the place as the story has left it, and the screen fades in.
 
 **Reference:** `Scene_Arrive` · `Scene_ChooseMusic` · `Scene_LoadOverlay` ·
-`FieldLoop_Run` · `Xian_Initialize` in [xian.c](src/scene/xian.c)
+`SceneSequence_Run` · `Xian_Initialize` in [xian.c](src/scene/xian.c)
 
-## The field loop
+## The scene sequence's loop
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  frame(["Field loop"]) --> queue
+  frame(["The scene sequence's loop"]) --> queue
   subgraph queue ["Queued tasks, highest priority first"]
     direction TB
     t1["15 · Palette fade · moves the colours toward their target"] ~~~ t2["10 · Actors · each actor runs a step of its script; player control notes a pressed button as a request"]
@@ -332,22 +335,22 @@ flowchart TD
   check -->|"no: next frame"| frame
   check -->|"yes"| handle["Handle it to the end"]
   handle -->|"next frame"| frame
-  handle -->|"an exit or a battle"| next(["Next program"])
-  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  handle -->|"an exit or a battle"| next(["Next sequence"])
+  classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class frame sceneManager
+  class frame sceneLoop
   class next request
   class t1,t2,t3,t4,t5,t6,ground,handle,check step
   style queue fill:#FFFFFF,stroke:#9AA3AE
 ```
 
 Every frame, each queued task runs once, highest priority first. The camera
-ranks below the actors so that it follows where they are now. The field
-loop then checks the ground under the leader and handles any
+ranks below the actors so that it follows where they are now. The scene
+sequence then checks the ground under the leader and handles any
 [field request](glossary.md#field-request) to the end before the next frame.
 
 ### A frame in Xian
@@ -355,7 +358,7 @@ loop then checks the ground under the leader and handles any
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  subgraph mgr ["Field loop"]
+  subgraph mgr ["The scene sequence's loop"]
     direction TB
     xian(["Xian"]) --> queue
     subgraph queue ["Queued tasks, this frame"]
@@ -368,10 +371,10 @@ flowchart TD
     ground --> check{"A request?"}
     check -->|"no: next frame"| queue
   end
-  classDef monitor fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef sceneProgram fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef parentSequence fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sceneSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneManager fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
   classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
@@ -391,7 +394,7 @@ water carrier walks her round and the water flows.
 sequenceDiagram
   participant P as Player
   participant C as Player control
-  participant M as Field loop
+  participant M as Scene sequence
   participant E as Her event
   participant T as Other tasks
   P->>C: presses A
@@ -425,21 +428,21 @@ ordinary function, and the tasks keep the village moving around the window.
 | Pause menu     | Start                                                                              |
 
 Requests are handled in this order. An exit ends the scene. A random battle
-names the battle as the next program and ends the scene too, which is why the
+names the battle as the next sequence and ends the scene too, which is why the
 party returns from a battle to the same spot.
 
-**Reference:** `FieldLoop_Run` in
-[field_loop.c](src/overworld/overworld/field_loop.c) ·
+**Reference:** `SceneSequence_Run` in
+[scene_sequence.c](src/overworld/overworld/scene_sequence.c) ·
 `PaletteFade_Update` · `Actor_UpdateAllThumb` · `MapGrid_UpdateLayerScroll` ·
 `ActorSystem_PlaceSprites` · `TilesetAnim_Update` · `WindowSystem_Update` ·
 `Field_CheckConfiguredKeys` · `Field_UpdateWalking` ·
-[Running a scene](src/overworld/README.md#the-field-loop-serves-requests)
+[Running a scene](src/overworld/README.md#the-scene-sequence-serves-requests)
 
 ## Battles
 
 ![Isaac and Garet against two Gryphons: both attack, then the first Gryphon casts Impact and its partner's Attack rises, and the second casts Tornado on the pair; the next round's menu opens.](https://alchemy.pascalpixel.com/guides/battle/round.gif)
 
-A battle is a program of its own with an ordinary loop, in `Battle_Run`:
+A battle is a sequence of its own with an ordinary loop, in `Battle_Run`:
 
 ```c
 for (;;) {                                  /* one round */
@@ -624,11 +627,11 @@ actors.
 Each bank starts at a fixed place, and code in one bank reaches another only
 through a short list of entrances at that bank's start, so a bank can grow
 without moving the others. An entrance is the function's name with `Far`
-added: the monitor starts a battle with `Battle_RunFar`, which leads
+added: the parent sequence starts a battle with `Battle_RunFar`, which leads
 to `Battle_Run` in the battle bank.
 
 **Reference:** [far calls](glossary.md#far-call) ·
-[Why the program is cut into banks](src/system/README.md#why-the-program-is-cut-into-banks) ·
+[Why the main image is cut into banks](src/system/README.md#why-the-main-image-is-cut-into-banks) ·
 [`objects.tsv`](objects.tsv) · [Source](src/README.md)
 
 ## Section pages

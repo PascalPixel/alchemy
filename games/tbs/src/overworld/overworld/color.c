@@ -368,7 +368,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
 
 /// Sets up the palette fade (gPaletteFadeWork) from the BG and OBJ palettes
 /// and starts updating the palettes from it each frame. Called by
-/// FieldLoop_Run on scene load.
+/// SceneSequence_Run on scene load.
 void PaletteFade_Initialize(void) {
   struct PaletteFade *work;
 

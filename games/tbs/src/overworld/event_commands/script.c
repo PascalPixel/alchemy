@@ -65,7 +65,7 @@ void Event_WaitFrames(s32 frames) {
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
-/// Event_Start, by FieldLoop_Run before it handles several requests,
+/// Event_Start, by SceneSequence_Run before it handles several requests,
 /// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
 /// the World Map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
@@ -243,7 +243,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 /// Checks whether the party can carry one more of item: each party member
 /// carries at most 30 of one item. When they are all full, says `Isaac's party
 /// cannot carry any more <item>s...` and `Isaac threw the <item> as far away as
-/// possible.` and returns -1; otherwise returns 0. FieldLoop_Run calls it
+/// possible.` and returns -1; otherwise returns 0. SceneSequence_Run calls it
 /// before it gives gCommon.pendingItem with PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
@@ -269,7 +269,7 @@ s32 Party_CheckItemLimit(s32 item) {
 /// to drop to make room, or drops the new item instead (not allowed for an
 /// indispensable one). Returns the party member who received the item, or -1
 /// when it was left behind. Events reach it (about 24 of them);
-/// FieldLoop_Run gives the pending item and the debug test menu gives items
+/// SceneSequence_Run gives the pending item and the debug test menu gives items
 /// through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;

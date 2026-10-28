@@ -23,19 +23,24 @@ s32 Battle_RunEncounterFar(s32 entrance);
 s32 Runtime_BlankDisplayAndRunFar(s32 entrance);
 s32 Resource_FarCall00E(s32 entrance);
 s32 Resource_FarCall00F(s32 entrance);
-void Func_080c977c(s32 result);
+void Scene_ReturnFromSequence(s32 result);
 void Func_080c9c38(s32 unused, s32 keep);
 void Scene_ResolveInteractionResult(void);
 void Party_PlaySavedMusic(void);
 void BattleEffect_LoadResourceGroup(s32 unused);
-s32 Field_RunScene(s32 entrance);
+s32 SceneSequence_Run(s32 entrance);
 void Scene_TakeExit(s32 exitKind);
 
+/// Sequence ids above the scene table's rows, as The Broken Seal's
+/// SEQUENCE_ values: the sequences other than the scene sequence.
 enum {
-  SCENE_MINIGAME_1FB = 0x1fb,
-  SCENE_MINIGAME_1FC = 0x1fc,
-  SCENE_MINIGAME_1FD = 0x1fd,
-  SCENE_BATTLE = 0x1fe
+  // XXX: what sequence Resource_FarCall00F runs here, where The Broken
+  // Seal's SEQUENCE_NONE runs nothing; Func_081b83c4's listing
+  // (recon/tla/raw/081b83c4) and a scene that leaves for it would settle it.
+  SEQUENCE_UNK_1FB = 0x1fb,
+  SEQUENCE_SLOTS = 0x1fc, ///< the slots sequence (ReelGame_Run)
+  SEQUENCE_DICE = 0x1fd,  ///< the dice sequence (LuckyDice_Run)
+  SEQUENCE_BATTLE = 0x1fe ///< a battle; the entrance is the formation
 };
 
 enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
@@ -55,10 +60,10 @@ enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
     MemFree(saved);                                                            \
   }
 
-/// The Broken Seal's Game_Run, with this game's four debug starts,
-/// gRenderOamEnabled set after stopping DMA 0, and three minigame scenes
-/// that keep BG palettes 14 and 15.
-void Game_Run(s32 mode) {
+/// The parent sequence, as The Broken Seal's ParentSequence_Run, with this
+/// game's four debug starts, gRenderOamEnabled set after stopping DMA 0, and
+/// three sequences that keep BG palettes 14 and 15.
+void ParentSequence_Run(s32 mode) {
   const struct SceneRecord *table;
   const struct SceneRecord *record;
   s32 entrance;
@@ -106,22 +111,22 @@ void Game_Run(s32 mode) {
     Runtime_InitializeHeap();
     Func_08014b70();
     VramCache_Reset();
-    if (gPartyState.scene >= SCENE_MINIGAME_1FB) {
+    if (gPartyState.scene >= SEQUENCE_UNK_1FB) {
       switch (gPartyState.scene) {
-      case SCENE_BATTLE:
+      case SEQUENCE_BATTLE:
         entrance = Battle_RunEncounterFar(entrance);
         break;
-      case SCENE_MINIGAME_1FD:
+      case SEQUENCE_DICE:
         RUN_SAVING_PALETTES(Runtime_BlankDisplayAndRunFar);
         break;
-      case SCENE_MINIGAME_1FC:
+      case SEQUENCE_SLOTS:
         RUN_SAVING_PALETTES(Resource_FarCall00E);
         break;
-      case SCENE_MINIGAME_1FB:
+      case SEQUENCE_UNK_1FB:
         RUN_SAVING_PALETTES(Resource_FarCall00F);
         break;
       }
-      Func_080c977c(entrance);
+      Scene_ReturnFromSequence(entrance);
       continue;
     }
 
@@ -139,7 +144,7 @@ void Game_Run(s32 mode) {
     }
     gPartyState.map = record->mapIndex;
     BattleEffect_LoadResourceGroup(0);
-    entrance = Field_RunScene(entrance);
+    entrance = SceneSequence_Run(entrance);
     Scene_TakeExit(entrance);
   }
 }

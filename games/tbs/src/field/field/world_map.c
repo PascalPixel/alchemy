@@ -102,7 +102,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   return 1;
 }
 
-// UB: no value is returned, and field_loop.c ignores it; as void, the
+// UB: no value is returned, and scene_sequence.c ignores it; as void, the
 // epilogue changes.
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
@@ -110,7 +110,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 /// HBlank updates.
 ///
 /// Called through WorldMap_InitializePerspectiveFar when the world map
-/// starts (field_loop.c). Allocates and clears the perspective work in
+/// starts (scene_sequence.c). Allocates and clears the perspective work in
 /// HEAP_SLOT_MAP_GRID, the camera in HEAP_SLOT_CAMERA and the affine pages in
 /// HEAP_SLOT_WORLD_MAP_FRAME; loads the default cells, metatile attributes and
 /// tileset animations; writes the blend, BG and affine registers and
@@ -319,7 +319,7 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
 /// 26-28.
 ///
 /// Called through WorldMap_LoadGraphicsFar when the world map starts,
-/// with the party's position (field_loop.c). Sets perspective->resources,
+/// with the party's position (scene_sequence.c). Sets perspective->resources,
 /// which WorldMap_LoadAreaGraphics reloads from; writes BG palette colours 1 to
 /// 223 (keeping the backdrop), char blocks 2 and 3, gMapGridAnimTiles and
 /// screen blocks 5 and 6.
@@ -586,7 +586,7 @@ void WorldMap_UpdateView(void) {
   // Rebuild the projection and look at the followed position from the
   // current pitch and yaw, the eye one pixel beyond the zoomed distance.
   // followedPosition is read here without the NULL test above, which never
-  // fails on the world map: FieldLoop_Run's Actor_ResetForLeader
+  // fails on the world map: SceneSequence_Run's Actor_ResetForLeader
   // points it at the camera actor before any frame passes, and nothing clears
   // it.
   gProjection.centerX = 120;

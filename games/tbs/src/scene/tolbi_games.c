@@ -610,7 +610,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   }
   Event_SetMessageId(MsgTolbiStepRightEnjoy);
   Event_ShowMessageAndWait(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-  Event_LeaveFor(PROGRAM_SLOTS, 0);
+  Event_LeaveFor(SEQUENCE_SLOTS, 0);
   Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
                                   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
 }
@@ -641,7 +641,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     Actor_SetPositionAndReset(ACTOR_PARTY_LEADER, 120, 152);
     Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Event_WaitFrames(20);
-    Event_LeaveFor(PROGRAM_DICE, 0);
+    Event_LeaveFor(SEQUENCE_DICE, 0);
     Event_SetAfterBattleDestination((s32)&SceneId_StuccoRoomsC,
                                     STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE);
   } else {

@@ -82,7 +82,7 @@ struct PartyState {
   /// The Djinni battle pending (300 plus its number, flags above), cleared
   /// once resolved.
   s16 pendingDjinnEvent;
-  s16 unk256; ///< the last battle's result, as ☀️'s sceneChangeReason
+  s16 sequenceResult; ///< the last battle's result, as ☀️'s; -1 for a defeat
   s32 encounterSteps; ///< reset on entering a new scene group
   /// Cleared with the battle's spoils, as ☀️'s pendingItem; not read by name
   /// in ⚓️.

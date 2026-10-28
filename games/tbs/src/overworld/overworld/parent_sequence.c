@@ -1,5 +1,5 @@
 /// @file
-/// Scene changes: exits, returns from battle, the monitor, entering.
+/// Scene changes: exits, returns from battle, the parent sequence, entering.
 // Part of overworld.c.
 
 #include "../overworld_internal.h"
@@ -17,11 +17,11 @@
 #define EXIT_ID_ANY 0xff
 
 /// Chooses the scene and entrance to go to when the party leaves the
-/// current scene. exitId is the kind of exit FieldLoop_Run ended on; the
+/// current scene. exitId is the kind of exit SceneSequence_Run ended on; the
 /// scene's exit table gives the first exit of that kind (or of any kind) whose
 /// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
 /// exits falls back to the scene of its first exit, at entrance 0.
-/// Called by Monitor_Run with FieldLoop_Run's result; sets
+/// Called by ParentSequence_Run with SceneSequence_Run's result; sets
 /// gCommon.sceneId and .entrance, and leaves them alone for
 /// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
 /// no header in the table.
@@ -87,8 +87,8 @@ void Scene_TakeExit(s32 exitId) {
   }
 }
 
-/// Chooses where the game continues after a battle or anything else that is
-/// not a scene (see Monitor_Run). result is its result:
+/// Chooses where the game continues after a sequence other than the scene
+/// sequence (see ParentSequence_Run). result is its result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
 /// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
 /// returns to the story battle's defeat point
@@ -97,16 +97,15 @@ void Scene_TakeExit(s32 exitId) {
 /// result goes to the after-battle destination an event set, or to the return
 /// point (the scene the battle or minigame was started from) with the party
 /// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Monitor_Run after each scene from PROGRAM_NONE on; stores result in
-/// gCommon.programResult and sets gCommon.sceneId and
-/// .entrance.
-void Scene_ReturnFromProgram(s32 result) {
+/// ParentSequence_Run after each sequence from SEQUENCE_NONE on; stores result
+/// in gCommon.sequenceResult and sets gCommon.sceneId and .entrance.
+void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;
   s32 sceneId;
   s32 entrance;
 
-  gCommon.programResult = result;
+  gCommon.sequenceResult = result;
   if (result == -1) {
     // Revive the leader before choosing the restart point.
     unit = Unit_GetFar(gCommon.leaderActorId);
@@ -171,10 +170,10 @@ enum {
   MINIGAME_PALETTE_BYTES = 64  ///< palettes 14 and 15: 2 x 16 colours x 2 bytes
 };
 
-/// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15 in a 64-byte
-/// Alloc copy freed afterwards. Returns the minigame's result, 0, for
-/// Scene_ReturnFromProgram.
-static __inline__ s32 Monitor_RunDice(s32 entrance) {
+/// Runs the dice sequence (Lucky Dice), preserving BG palettes 14 and 15 in a
+/// 64-byte Alloc copy freed afterwards. Returns the minigame's result, 0, for
+/// Scene_ReturnFromSequence.
+static __inline__ s32 ParentSequence_RunDice(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -190,9 +189,9 @@ static __inline__ s32 Monitor_RunDice(s32 entrance) {
   return result;
 }
 
-/// Runs Lucky Wheels, preserving BG palettes 14 and 15 as
-/// Monitor_RunDice does. Returns LuckyWheels_Start's result, 0.
-static __inline__ s32 Monitor_RunSlots(s32 entrance) {
+/// Runs the slots sequence (Lucky Wheels), preserving BG palettes 14 and 15 as
+/// ParentSequence_RunDice does. Returns LuckyWheels_Start's result, 0.
+static __inline__ s32 ParentSequence_RunSlots(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = Alloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -208,14 +207,14 @@ static __inline__ s32 Monitor_RunSlots(s32 entrance) {
   return result;
 }
 
-/// The game's monitor, which never returns. mode, an enum GameStart,
-/// chooses the first scene. Each pass resets the
-/// runtime, then either runs a battle or minigame and picks the scene to return
-/// to, or loads a scene's code, starts its music and runs it until the
-/// party takes an exit. Called with GAME_START_TITLE through
-/// Monitor_RunFar by System_Initialize at power-on and by
-/// Game_RestartQuest.
-void Monitor_Run(s32 mode) {
+/// The parent sequence: runs one sequence after another and never returns.
+/// mode, an enum GameStart, chooses the first scene. Each pass resets the
+/// runtime, then either runs the battle, dice or slots sequence and picks the
+/// scene to return to, or runs the scene sequence: loads the scene's code,
+/// starts its music and runs it until the party takes an exit. Called with
+/// GAME_START_TITLE through ParentSequence_RunFar by System_Initialize at
+/// power-on and by Game_RestartQuest.
+void ParentSequence_Run(s32 mode) {
   const struct Scene *table;
   const struct Scene *record;
   s32 entrance;
@@ -264,24 +263,24 @@ void Monitor_Run(s32 mode) {
     InitHeap();
     DebugText_Clear();
     VramCache_Reset();
-    // A battle or minigame returns a result, not an exit: the return scene is
-    // chosen from common, and no overlay is loaded.
-    if (gCommon.sceneId >= PROGRAM_NONE) {
+    // The battle, dice and slots sequences return a result, not an exit: the
+    // return scene is chosen from common, and no overlay is loaded.
+    if (gCommon.sceneId >= SEQUENCE_NONE) {
       switch (gCommon.sceneId) {
-      case PROGRAM_BATTLE:
+      case SEQUENCE_BATTLE:
         entrance = Battle_RunFar(entrance);
         break;
-      case PROGRAM_DICE:
-        entrance = Monitor_RunDice(entrance);
+      case SEQUENCE_DICE:
+        entrance = ParentSequence_RunDice(entrance);
         break;
-      case PROGRAM_SLOTS:
-        entrance = Monitor_RunSlots(entrance);
+      case SEQUENCE_SLOTS:
+        entrance = ParentSequence_RunSlots(entrance);
         break;
-      case PROGRAM_NONE:
+      case SEQUENCE_NONE:
         entrance = 0;
         break;
       }
-      Scene_ReturnFromProgram(entrance);
+      Scene_ReturnFromSequence(entrance);
       continue;
     }
 
@@ -298,7 +297,7 @@ void Monitor_Run(s32 mode) {
         Scene_PlayMusic();
     } else if (gCommon.returnMusic != -1) {
       // Back where the party was: resume the music saved when the Pause menu
-      // last opened (field_loop.c). A random battle and every normal entry
+      // last opened (scene_sequence.c). A random battle and every normal entry
       // set returnMusic to -1, so the scene's own music plays instead.
       Sound_PlaySongFar(gCommon.returnMusic);
     } else {
@@ -306,12 +305,12 @@ void Monitor_Run(s32 mode) {
     }
     gCommon.mapId = record->mapIndex;
     Scene_LoadOverlay(0);
-    Scene_TakeExit(FieldLoop_Run(entrance));
+    Scene_TakeExit(SceneSequence_Run(entrance));
   }
 }
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
-/// Called by Monitor_Run before FieldLoop_Run.
+/// Called by ParentSequence_Run before SceneSequence_Run.
 void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
@@ -327,7 +326,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// entering a new area so are the area's flags and step
 /// counters, the area name is shown and the entrance becomes the
 /// point Retreat returns to. Then the area's visited flag
-/// (FLAG_AREA_VISITED) is set. Called by Monitor_Run before each
+/// (FLAG_AREA_VISITED) is set. Called by ParentSequence_Run before each
 /// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets gCommon.area
 /// and .sceneType.
 void Scene_Arrive(s32 unused, s32 keep) {
@@ -374,7 +373,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
 }
 
 /// Starts the current scene's field music, chosen by
-/// Scene_ChooseMusic. Called by Monitor_Run, and by
+/// Scene_ChooseMusic. Called by ParentSequence_Run, and by
 /// 34 scene overlays through Scene_PlayMusicFar.
 void Scene_PlayMusic(void) { Sound_PlaySongFar(gCommon.sceneMusic); }
 

@@ -34,7 +34,7 @@ void Func_080d784c(void) {
   if (GameFlag_Test(0x109) != 0 && flags == 0) {
     flags = scene & 0x800;
     scene &= 0x7ff;
-    if (scene - 300 <= 80 && party->unk256 > 0) {
+    if (scene - 300 <= 80 && party->sequenceResult > 0) {
       for (id = 8; id <= 79; id++) {
         struct ActorDescriptor *desc = Scene_FindActorPlacement(id);
         struct ObjectRuntime *obj;

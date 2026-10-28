@@ -58,7 +58,7 @@ struct BattleFxScene {
   s32 savedShakeY;
   s32 savedShakeDecay;
   ///@}
-  struct EffectSlot slots[24];
+  struct FieldParticle slots[24];
   u8 unk718[2];
   s16 arcTileSlot;
   s8 messageMode;

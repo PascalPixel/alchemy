@@ -131,8 +131,8 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
 void Func_080cb05c(void);
 void WaitFrames(s32 frames);
 s32 BattleEffect_SumCounters(void);
-void DisplayTransition_Start(s32 mode, s32 frames);
-void DisplayTransition_Finish(s32 mode, s32 frames);
+void ScreenTransition_Start(s32 mode, s32 frames);
+void ScreenTransition_Finish(s32 mode, s32 frames);
 s32 ObjectEffect_RunPendingFlagEvent(void);
 void Func_080e7804(void);
 s32 Func_080c9e1c(s32 scene);
@@ -300,7 +300,7 @@ s32 SceneSequence_Run(void) {
         WaitFrames(20);
         Runtime_ReleaseHeapBlock(92);
       }
-      DisplayTransition_Start(work->transition, work->transitionFrames);
+      ScreenTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
       if (*arrival == 1) {
         Runtime_AllocateHeapBlock(92, 0x1938);
@@ -595,7 +595,7 @@ s32 SceneSequence_Run(void) {
 
 done:
   if (work->transitionActive != 0) {
-    DisplayTransition_Finish(work->transition, work->transitionFrames);
+    ScreenTransition_Finish(work->transition, work->transitionFrames);
     work->transitionActive = 0;
     WaitFrames(work->transitionFrames);
   }

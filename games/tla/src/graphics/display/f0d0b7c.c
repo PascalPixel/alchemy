@@ -10,8 +10,8 @@
 /// The Broken Seal's ScreenTransition_FillTilemapAndSolidTile: blanks the
 /// screen block at 0x06002000 and, unless color is -1, fills the first tile
 /// with that colour.
-void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
-  struct DisplayTransitionState *work = Ram_HeapSlots->displayTransition;
+void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
+  struct ScreenTransitionState *work = Ram_HeapSlots->screenTransition;
   Dma_Fill32(0xf000f000, (void *)0x06002000, 0x500);
   if (color != -1) {
     u32 pattern = 0;

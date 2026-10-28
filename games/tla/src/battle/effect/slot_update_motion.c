@@ -3,7 +3,7 @@
 #include "iwram_call.h"
 #include "fixed_math.h"
 
-void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
+void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   s32 dx;
   s32 dz;
   s32 distance;
@@ -26,7 +26,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
     if (distance < 0x800000)
       distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
     if (distance <= 0x80000) {
-      EffectSlot_SetPosition(effect, effect->targetX, effect->targetZ);
+      FieldParticle_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
   }

@@ -9,7 +9,7 @@
 #include "ram_buffer.h"
 
 s32 Func_080d072c(void) {
-  s32 other = (s32)gIrqHandlers[1] ^ (s32)DisplayTransition_UpdateScanline;
+  s32 other = (s32)gIrqHandlers[1] ^ (s32)ScreenTransition_UpdateScanline;
 
   return 1 - ((u32)(-other | other) >> 31);
 }
@@ -54,8 +54,8 @@ void Map_ClearLayerFlags(s32 layer0, s32 layer1, s32 layer2) {
 
 /// Steps the transition's value toward its end and opens the window from the
 /// top and bottom edges by that many lines.
-void DisplayTransition_Update(void) {
-  struct DisplayTransitionState *state;
+void ScreenTransition_Update(void) {
+  struct ScreenTransitionState *state;
   struct MapViewWork *window;
   s8 *duration;
   u32 value;
@@ -63,7 +63,7 @@ void DisplayTransition_Update(void) {
   /* FAKEMATCH: the one-pass block loads the transition state before the
    * duration's offset is built (one reordered row, differ 2 without it). */
   do {
-    state = Ram_HeapSlots->displayTransition;
+    state = Ram_HeapSlots->screenTransition;
   } while (0);
   duration = &state->duration;
   window = (struct MapViewWork *)Ram_HeapSlots->mapWork;
@@ -72,7 +72,7 @@ void DisplayTransition_Update(void) {
 
     if (*step >= *duration) {
       *duration = 0;
-      Task_Remove(DisplayTransition_Update);
+      Task_Remove(ScreenTransition_Update);
       Runtime_SetIrqHandler(1, 0, 0);
       window->extraTiles = 3;
       return;
@@ -101,10 +101,10 @@ void DisplayTransition_Update(void) {
   }
 }
 
-/// As DisplayTransition_Update, but the window opens from the centre, on
+/// As ScreenTransition_Update, but the window opens from the centre, on
 /// alternate frames only.
-void DisplayTransition_UpdateFromCentre(void) {
-  struct DisplayTransitionState *state;
+void ScreenTransition_UpdateFromCentre(void) {
+  struct ScreenTransitionState *state;
   struct MapViewWork *window;
   s8 *duration;
   u16 value;
@@ -112,7 +112,7 @@ void DisplayTransition_UpdateFromCentre(void) {
   /* FAKEMATCH: the one-pass block loads the transition state before the
    * duration's offset is built (one reordered row, differ 2 without it). */
   do {
-    state = Ram_HeapSlots->displayTransition;
+    state = Ram_HeapSlots->screenTransition;
   } while (0);
   duration = &state->duration;
   window = (struct MapViewWork *)Ram_HeapSlots->mapWork;
@@ -121,7 +121,7 @@ void DisplayTransition_UpdateFromCentre(void) {
 
     if (*step >= *duration) {
       *duration = 0;
-      Task_Remove(DisplayTransition_UpdateFromCentre);
+      Task_Remove(ScreenTransition_UpdateFromCentre);
       Runtime_SetIrqHandler(1, 0, 0);
       return;
     } else {
@@ -162,7 +162,7 @@ void DisplayTransition_UpdateFromCentre(void) {
 
 /// The VCount interrupt: switches the display to mode 2 at the window's first
 /// line and back to mode 0 at its second.
-void DisplayTransition_UpdateScanline(void) {
+void ScreenTransition_UpdateScanline(void) {
   u32 line;
   struct MapViewWork *state;
   u16 dispcnt;

@@ -12,9 +12,9 @@ struct EffectVector {
 
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *pos);
 void Camera_WorldToScreen(struct EffectVector *pos);
-void BattleEffect_ClearOwnedSlot(struct EffectSlot *slot);
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
-void Func_080e0020(struct EffectSlot *effect) {
+void Func_080e0020(struct FieldParticle *effect) {
   struct BattleFxScene *scene;
   struct EffectVector pos;
   s8 *st;
@@ -39,7 +39,7 @@ top:
     return;
   }
   if (state == 1) {
-    if (EffectSlot_HasPendingTarget(effect) != 0)
+    if (FieldParticle_HasPendingTarget(effect) != 0)
       return;
     *st = *st + 1;
     goto top;
@@ -57,6 +57,6 @@ top:
     *st = *st + 1;
     return;
   }
-  if (state == 3 && EffectSlot_HasPendingTarget(effect) == 0)
+  if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
     BattleEffect_ClearOwnedSlot(effect);
 }

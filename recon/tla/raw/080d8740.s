@@ -205,13 +205,13 @@ Func_080d8740:
 	ldr r3, [r5, #8]
 	adds r0, r6, #0
 	adds r1, #255
-	bl EffectSlot_Initialize
+	bl FieldParticle_Initialize
 	adds r0, r6, #0
 	ldr r1, .L_080d8978
-	bl EffectSlot_SetCallback
+	bl FieldParticle_SetCallback
 	adds r0, r6, #0
 	movs r1, #7
-	bl EffectSlot_SetObjectMode
+	bl FieldParticle_SetActorMode
 	ldr r0, [r6]
 	movs r1, #9
 	bl Animation_ApplyChildValuesToRecordFar

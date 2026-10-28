@@ -7,15 +7,15 @@
 #include "iwram_call.h"
 #include "io_reg.h"
 
-void DisplayTransition_InitializeState(s32 value) {
-  struct DisplayTransitionState *state;
+void ScreenTransition_InitializeState(s32 value) {
+  struct ScreenTransitionState *state;
 
   state = Runtime_AllocateBlock(0x7c, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
-  DisplayTransition_FillTilemapAndSolidTile(0);
+  ScreenTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
   state->value = 0;
-  Task_Add((s32)(DisplayTransition_UpdateDissolve), TASK_PASS_VBLANK);
+  Task_Add((s32)(ScreenTransition_UpdateDissolve), TASK_PASS_VBLANK);
   WaitFrames(0x78);
 }
 

@@ -13,7 +13,7 @@ struct BattleEffectArgument;
 struct BattlePlan;
 struct BattleUnit;
 struct DispatchObject;
-struct EffectSlot;
+struct FieldParticle;
 struct ObjectRuntime;
 struct SceneAreaNameRule;
 
@@ -33,7 +33,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
 #endif
 void BattleEffect_InitializeSharedScene(void);
 void BattleEvent_Playback(void);
-void BattleEffect_DrawScaledObject(struct EffectSlot *object);
+void BattleEffect_DrawScaledObject(struct FieldParticle *object);
 #ifndef OWN_BattleEffect_GetResourceGroup
 s8 BattleEffect_GetResourceGroup(s32 effect_index);
 #endif
@@ -61,7 +61,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
                                            s32 count);
 void BattleUnit_ResetGuardLevels(void);
 void Camera_InitializeDefaultTransform(void);
-void EffectSlot_UpdateMotion(struct EffectSlot *effect);
+void FieldParticle_UpdateMotion(struct FieldParticle *effect);
 void FieldEffect_RunDouse(void);
 s32 BattleClass_IsSmall(s32 index);
 void BattlePres_SetActorModesFar(u16 *, s32);

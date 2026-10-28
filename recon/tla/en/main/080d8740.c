@@ -63,9 +63,9 @@ Object_ReplaceResourceEntry(struct CaptureSprite *sprite,
 void Func_080090d0(struct CaptureObject *object);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void Camera_WorldToScreen(s32 *position);
-void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
-void EffectSlot_SetCallback(void *slot, void *callback);
-void EffectSlot_SetObjectMode(void *slot, s32 mode);
+void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 y);
+void FieldParticle_SetCallback(void *slot, void *callback);
+void FieldParticle_SetActorMode(void *slot, s32 mode);
 void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
@@ -162,9 +162,9 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    EffectSlot_Initialize(slot, 301, position.x, position.z);
-    EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdateRandomTargetParticle);
-    EffectSlot_SetObjectMode(slot, 7);
+    FieldParticle_Initialize(slot, 301, position.x, position.z);
+    FieldParticle_SetCallback(slot, (void *)BattleEffect_UpdateRandomTargetParticle);
+    FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 9);
     remaining--;
     WaitFrames(1);

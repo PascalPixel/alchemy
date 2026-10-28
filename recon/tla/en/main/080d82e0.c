@@ -44,7 +44,7 @@ struct EffectOwner {
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
-void BattleEffect_ClearOwnedSlot(struct EffectSlot *effect);
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
 void Sound_PlayFar(s32 cue);
@@ -53,7 +53,7 @@ void Camera_WorldToScreen();
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32);
 void Shop_InitializeEffectFar(void);
-void EffectSlot_Initialize();
+void FieldParticle_Initialize();
 void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
@@ -131,13 +131,13 @@ void BattleEffect_SpinUpAngle(void *obj);
 
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
 
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
+void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect);
 
 void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 
 void BattleEffect_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
 
-void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect);
+void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
 void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   struct CaptureObject *leader;
@@ -186,12 +186,12 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    EffectSlot_Initialize(slot, 672, position[0], position[2]);
-    EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdateRadialSpread);
-    EffectSlot_SetObjectMode(slot, 7);
+    FieldParticle_Initialize(slot, 672, position[0], position[2]);
+    FieldParticle_SetCallback(slot, (void *)BattleEffect_UpdateRadialSpread);
+    FieldParticle_SetActorMode(slot, 7);
     ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
-    ((struct EffectSlot *)slot)->scaleX = 0x8000;
-    ((struct EffectSlot *)slot)->scaleY = Random16() + 0x18000;
+    ((struct FieldParticle *)slot)->scaleX = 0x8000;
+    ((struct FieldParticle *)slot)->scaleY = Random16() + 0x18000;
     remaining--;
     WaitFrames(1);
     slot += 72;
@@ -266,4 +266,4 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   BattleEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-void BattleEffect_UpdateRandomTargetParticle(struct EffectSlot *effect);
+void BattleEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);

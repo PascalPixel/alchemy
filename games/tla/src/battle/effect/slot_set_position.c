@@ -5,7 +5,7 @@
 #include "dma.h"
 #include "fixed_math.h"
 
-void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z) {
+void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
   effect->targetX = EFFECT_NO_TARGET;
   effect->targetZ = EFFECT_NO_TARGET;
   effect->x = x;
@@ -15,11 +15,11 @@ void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z) {
 
 void Animation_ApplyChildArgumentFar(void *, s32);
 
-void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode) {
+void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
   Animation_ApplyChildArgumentFar(effect->object, mode);
 }
 
-void EffectSlot_SetCallback(struct EffectSlot *effect,
+void FieldParticle_SetCallback(struct FieldParticle *effect,
                             EffectCallback callback) {
   effect->callback = callback;
   effect->callbackDelay = 0;
@@ -35,7 +35,7 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
 /// it, creates its sprite in front, and sets it moving at up to 2 pixels a
 /// frame toward its target at full size, turning a limited step at a time and
 /// stopping on arrival, with a random value and z lifting the sprite.
-void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
+void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z) {
   s32 unit;
   struct FieldSprite *object;
   volatile u32 zero;
@@ -45,7 +45,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   effect->object = object;
   if (object != NULL)
     object->priority = 0;
-  EffectSlot_SetPosition(effect, x, z);
+  FieldParticle_SetPosition(effect, x, z);
   unit = 0x10000;
   effect->maxSpeed = 0x20000;
   effect->acceleration = effect->scaleY = effect->scaleX = unit;
@@ -61,5 +61,5 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   effect->active = 1;
   effect->randomValue = Random16();
   effect->flags = 4;
-  EffectSlot_SetObjectMode(effect, 1);
+  FieldParticle_SetActorMode(effect, 1);
 }

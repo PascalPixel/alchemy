@@ -2,7 +2,7 @@
 // instruction order and register choice. No empty asm before any one statement
 // lowers it.
 // Draft, differ 42 of 352 (2026-10-18), rewritten from ☀️'s
-// DisplayTransition_Start in place of a draft whose headers no longer exist:
+// ScreenTransition_Start in place of a draft whose headers no longer exist:
 // this game's map work (dispcnt at 0x14, the centre lines at 0x104), its
 // callbacks and priorities, and the IO_WRITE_QUEUE_PUSH of REG_DISPCNT after
 // each mode. Left: in each of the five queue pushes the native starts
@@ -34,11 +34,11 @@ void Fade_ToBlack(s32 vblanks);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void BattleEffect_SetPrimaryBufferValue(s32 value);
-struct DisplayTransitionState *Func_080d019c(void);
+struct ScreenTransitionState *Func_080d019c(void);
 void Func_080cf78c(void);
 
-// Fades the screen in over frames frames, as ☀️'s DisplayTransition_Start.
-void DisplayTransition_Start(s32 mode, s32 frames) {
+// Fades the screen in over frames frames, as ☀️'s ScreenTransition_Start.
+void ScreenTransition_Start(s32 mode, s32 frames) {
   struct TransitionMapWork *display;
   s32 variant;
   s32 transitionKind;
@@ -61,7 +61,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     BattleEffect_SetPrimaryBufferValue(0);
     return;
   case 2: {
-    struct DisplayTransitionState *state = Func_080d019c();
+    struct ScreenTransitionState *state = Func_080d019c();
     state->mode = variant;
     state->value = 0;
     state->mask = 63;
@@ -78,12 +78,12 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     return;
   }
   case 3: {
-    struct DisplayTransitionState *state = Func_080d019c();
+    struct ScreenTransitionState *state = Func_080d019c();
     state->mode = variant;
     state->value = 32;
-    DisplayTransition_FillTilemapAndSolidTile(15);
+    ScreenTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
-    Task_Add(DisplayTransition_UpdateDissolve, TASK_PASS_VBLANK);
+    Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_VBLANK);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
     state->start = 0;
@@ -93,7 +93,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     return;
   }
   case 4: {
-    struct DisplayTransitionState *state;
+    struct ScreenTransitionState *state;
 
     display = (struct TransitionMapWork *)Ram_HeapSlots->mapWork;
     state = Func_080d019c();
@@ -101,15 +101,15 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     display->secondLine = 80;
     WaitFrames(1);
     if (variant == 0) {
-      Task_Add(DisplayTransition_Update, TASK_PASS_VBLANK);
-      Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
+      Task_Add(ScreenTransition_Update, TASK_PASS_VBLANK);
+      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(DisplayTransition_UpdateFromCentre, TASK_PASS_VBLANK);
-      Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
+      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_VBLANK);
+      Runtime_SetIrqHandler(1, 0, ScreenTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;

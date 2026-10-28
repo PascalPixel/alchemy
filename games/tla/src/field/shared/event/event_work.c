@@ -18,14 +18,14 @@
 void EventRuntime_StartScreen(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  DisplayTransition_Start(event->screenEffect, event->delay);
+  ScreenTransition_Start(event->screenEffect, event->delay);
   event->screenStatus = 1;
 }
 
 void EventRuntime_FinishScreen(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
 
-  DisplayTransition_Finish(event->screenEffect, event->delay);
+  ScreenTransition_Finish(event->screenEffect, event->delay);
   event->screenStatus = 0;
 }
 

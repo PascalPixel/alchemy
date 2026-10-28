@@ -43,14 +43,14 @@ void Camera_WorldToScreen(struct EffectVector *position) {
 
 struct BattleFxScene {
   u8 unk00[0x50];
-  struct EffectSlot slots[24];
+  struct FieldParticle slots[24];
   u8 unk710[0xe4];
 };
 
 /// A task: updates the scene's 24 effect slots.
 void BattleEffect_UpdateAllEffectSlots(void) {
   struct BattleFxScene *scene;
-  struct EffectSlot *slot;
+  struct FieldParticle *slot;
   s32 remainingSlots;
 
   scene = Ram_HeapSlots->effectWork;
@@ -58,7 +58,7 @@ void BattleEffect_UpdateAllEffectSlots(void) {
   slot = scene->slots;
   do {
     remainingSlots -= 1;
-    EffectSlot_Update(slot);
+    FieldParticle_Update(slot);
     slot++;
   } while (remainingSlots >= 0);
 }

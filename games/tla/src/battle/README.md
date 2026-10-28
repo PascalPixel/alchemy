@@ -38,8 +38,8 @@ Functions take their ☀️ twins' prefixes, which ☀️'s guides explain:
 `BattleMotion_`, `BattleObject_`, `BattleParty_`, `BattlePlacement_`,
 `BattlePresentation_`, `BattleQueue_`, `BattleStatusIcon_`, `BattleUnit_`,
 `Ability_`, `Camera_`, `ColorBuffer_`, `Display_`, `Djinn_`, `DjinnRecovery_`,
-`EffectSlot_`, `Encounter_`, `Enemy_`, `Event_`, `FadeOverlay_`,
-`FieldEffect_`, `FieldEvent_`, `Field_`, `Graphics_`, `Marker_`, `Motion_`,
+`Encounter_`, `Enemy_`, `Event_`, `FadeOverlay_`,
+`FieldEffect_`, `FieldEvent_`, `FieldParticle_`, `Field_`, `Graphics_`, `Marker_`, `Motion_`,
 `Object_`, `ObjectGroup_`, `ObjectMotion_`, `Palette_`, `Party_`, `RamCode_`,
 `Render_`, `Resource_`, `Scene_`, `Summon_`, `SummonSlot_`, `Tile_` and `Ui_`.
 Those only The Lost Age's code has so far:

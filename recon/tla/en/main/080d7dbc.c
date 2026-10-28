@@ -39,7 +39,7 @@ struct EffectOwner {
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
-void BattleEffect_ClearOwnedSlot(struct EffectSlot *effect);
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
 void Sound_PlayFar(s32 cue);
@@ -48,7 +48,7 @@ void Camera_WorldToScreen();
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32);
 void Shop_InitializeEffectFar(void);
-void EffectSlot_Initialize();
+void FieldParticle_Initialize();
 void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
@@ -126,7 +126,7 @@ void BattleEffect_SpinUpAngle(void *obj);
 
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
 
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
+void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
   struct EffectOwner *owner;
   struct EffectVector position;
   s32 state;
@@ -161,10 +161,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
       ((struct AnimationObject *)effect->object)->image.priority = 0;
       effect->flags = 4;
     }
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == 2) {
-    if (EffectSlot_HasPendingTarget(effect) == 0) {
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
       ((struct AnimationObject *)effect->object)->image.priority = 0;
@@ -188,10 +188,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     if ((gVBlankCount & 1) != 0)
       Sound_PlayFar(145);
   } else if (state == 4) {
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
   } else if (state == 5) {
-    if (EffectSlot_HasPendingTarget(effect) == 0)
+    if (FieldParticle_HasPendingTarget(effect) == 0)
       BattleEffect_ClearOwnedSlot(effect);
   }
 }
@@ -200,8 +200,8 @@ void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 
 void BattleEffect_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
 
-void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect);
+void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
 void BattleEffect_RunVenusDjinnCapture(s32 arg);
 
-void BattleEffect_UpdateRandomTargetParticle(struct EffectSlot *effect);
+void BattleEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);

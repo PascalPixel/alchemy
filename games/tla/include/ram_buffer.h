@@ -41,7 +41,7 @@ struct BattleWork;
 struct BattlePresentationTransition;
 struct MapWork;
 struct ObjectSystemWork;
-struct DisplayTransitionState;
+struct ScreenTransitionState;
 
 struct HeapSlots {
   void *nextEwram;
@@ -65,7 +65,7 @@ struct HeapSlots {
   void *unk64[2];
   void *eventWork;
   void *unk70[3];
-  struct DisplayTransitionState *displayTransition;
+  struct ScreenTransitionState *screenTransition;
   void *block32;
   void *unk84[11];
   struct BattlePresentationTransition *transitionWork;

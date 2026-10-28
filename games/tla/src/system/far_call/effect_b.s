@@ -1,30 +1,30 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.global EffectSlot_UpdateFar
+	.global FieldParticle_UpdateFar
 	.thumb_func
-EffectSlot_UpdateFar:
-	overlay_veneer EffectSlot_Update
-	.global EffectSlot_HasPendingTargetFar
+FieldParticle_UpdateFar:
+	overlay_veneer FieldParticle_Update
+	.global FieldParticle_HasPendingTargetFar
 	.thumb_func
-EffectSlot_HasPendingTargetFar:
-	overlay_veneer EffectSlot_HasPendingTarget
-	.global EffectSlot_SetPositionFar
+FieldParticle_HasPendingTargetFar:
+	overlay_veneer FieldParticle_HasPendingTarget
+	.global FieldParticle_SetPositionFar
 	.thumb_func
-EffectSlot_SetPositionFar:
-	overlay_veneer EffectSlot_SetPosition
-	.global EffectSlot_SetObjectModeFar
+FieldParticle_SetPositionFar:
+	overlay_veneer FieldParticle_SetPosition
+	.global FieldParticle_SetActorModeFar
 	.thumb_func
-EffectSlot_SetObjectModeFar:
-	overlay_veneer EffectSlot_SetObjectMode
-	.global EffectSlot_SetCallbackFar
+FieldParticle_SetActorModeFar:
+	overlay_veneer FieldParticle_SetActorMode
+	.global FieldParticle_SetCallbackFar
 	.thumb_func
-EffectSlot_SetCallbackFar:
-	overlay_veneer EffectSlot_SetCallback
-	.global EffectSlot_InitializeFar
+FieldParticle_SetCallbackFar:
+	overlay_veneer FieldParticle_SetCallback
+	.global FieldParticle_InitializeFar
 	.thumb_func
-EffectSlot_InitializeFar:
-	overlay_veneer EffectSlot_Initialize
+FieldParticle_InitializeFar:
+	overlay_veneer FieldParticle_Initialize
 	.global BattleEffect_ClearOwnedSlotFar
 	.thumb_func
 BattleEffect_ClearOwnedSlotFar:

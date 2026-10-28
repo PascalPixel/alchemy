@@ -50,7 +50,7 @@ void Func_080dd950(void) {
     flag = (s8 *)(state + offset);
   }
   {
-    register u8 *loaded asm("r1") = (u8 *)Ram_HeapSlots->displayTransition;
+    register u8 *loaded asm("r1") = (u8 *)Ram_HeapSlots->screenTransition;
     asm("" : "+r"(loaded));
     scene = loaded;
   }

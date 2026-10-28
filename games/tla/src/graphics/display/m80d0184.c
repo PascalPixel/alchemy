@@ -7,8 +7,8 @@
 
 void Func_080cf78c(void);
 
-void DisplayTransition_InitializeBattleEffectState(s32 mode) {
-  struct DisplayTransitionState *state =
+void ScreenTransition_InitializeBattleEffectState(s32 mode) {
+  struct ScreenTransitionState *state =
       Runtime_AllocateBlock(124, sizeof(*state));
   volatile u32 zero;
 

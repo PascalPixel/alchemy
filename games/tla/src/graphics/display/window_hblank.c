@@ -9,7 +9,7 @@
 /// copy the rest into WIN0H and WIN1H one word each HBlank.
 // As ☀️'s FieldEffect_StartWindowHBlankDma does.
 void BattleEffect_StartWindowHBlankDma(void) {
-  struct DisplayTransitionState *work;
+  struct ScreenTransitionState *work;
   u16 *src;
   volatile u16 *channel;
   s32 in;
@@ -22,7 +22,7 @@ void BattleEffect_StartWindowHBlankDma(void) {
    * is started; as a plain assignment, 2 of 68 instructions differ in
    * tla-en. */
   do {
-    work = Ram_HeapSlots->displayTransition;
+    work = Ram_HeapSlots->screenTransition;
   } while (0);
   src = work->pages[work->page];
   channel = REG_DMA0;

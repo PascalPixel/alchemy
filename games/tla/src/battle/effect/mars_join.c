@@ -33,7 +33,7 @@ void WaitFrames(s32 frames);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
 void Object_SetMode(void *object, s32 mode);
 void Camera_WorldToScreen(void *position);
-void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 z);
+void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(s32 object, s32 value);
 u32 Random16(void);
 void Shop_InitializeEffectFar(void);
@@ -42,7 +42,7 @@ void Object_Destroy(void *object);
 void BattleEffect_SetObjectAlternatingWords(u8 *object);
 void BattleEffect_SpinUpAngle(void *obj);
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
+void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect);
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
@@ -105,18 +105,18 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   slot = (u8 *)effectSlots + 80;
   do {
-    EffectSlot_Initialize(slot, 672, position.x, position.z);
-    EffectSlot_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
-    EffectSlot_SetObjectMode(slot, 7);
+    FieldParticle_Initialize(slot, 672, position.x, position.z);
+    FieldParticle_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
+    FieldParticle_SetActorMode(slot, 7);
     objectPointer = slot;
     value = *(s32 *)objectPointer;
     Animation_ApplyChildValuesToRecordFar(value, 10);
     value = Random16() / 3 + 0x10000; // 1.0 to 1.33
-    ((struct EffectSlot *)slot)->scaleY = value;
-    ((struct EffectSlot *)slot)->scaleX = value;
+    ((struct FieldParticle *)slot)->scaleY = value;
+    ((struct FieldParticle *)slot)->scaleX = value;
     remaining--;
     WaitFrames(1);
-    slot = (u8 *)slot + sizeof(struct EffectSlot);
+    slot = (u8 *)slot + sizeof(struct FieldParticle);
   } while (remaining >= 0);
 
   WaitFrames(60);
@@ -138,7 +138,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct EffectSlot);
+      slotState += sizeof(struct FieldParticle);
     } while (remaining >= 0);
   }
 
@@ -158,7 +158,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
       if (slotState[5] != 0)
         slotState[0] = nextState;
       remaining--;
-      slotState += sizeof(struct EffectSlot);
+      slotState += sizeof(struct FieldParticle);
     } while (remaining >= 0);
   }
 

@@ -787,10 +787,10 @@ Func_080ce31c:
 Func_080cf78c:
 	.incbin "baserom.gba", 0x000d878c, 0x0000096c
 	.section .rom.000d91cc, "ax"
-	.global DisplayTransition_Start
-	.type DisplayTransition_Start, %function
+	.global ScreenTransition_Start
+	.type ScreenTransition_Start, %function
 	.thumb_func
-DisplayTransition_Start:
+ScreenTransition_Start:
 	.incbin "baserom.gba", 0x000d91cc, 0x00000354
 	.section .rom.000d9ca0, "ax"
 	.global BattlePalette_UpdateBlend

@@ -35,7 +35,7 @@ struct EffectOwner {
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
-void BattleEffect_ClearOwnedSlot(struct EffectSlot *effect);
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
 void Sound_PlayFar(s32 cue);
@@ -44,7 +44,7 @@ void Camera_WorldToScreen();
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32);
 void Shop_InitializeEffectFar(void);
-void EffectSlot_Initialize();
+void FieldParticle_Initialize();
 void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
@@ -122,7 +122,7 @@ void BattleEffect_SpinUpAngle(void *obj);
 
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
 
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
+void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect);
 
 void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 
@@ -149,8 +149,8 @@ void Func_080d8174(struct DescendingOrbitObject *arg) {
     ObjectDispatch_ReleaseFar(arg);
 }
 
-void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect);
+void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
 void BattleEffect_RunVenusDjinnCapture(s32 arg);
 
-void BattleEffect_UpdateRandomTargetParticle(struct EffectSlot *effect);
+void BattleEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);

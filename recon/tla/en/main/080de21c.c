@@ -38,7 +38,7 @@ struct Effect04Scene {
   s8 childOption;
   s8 childMode;
   u8 unk36[0x1a];
-  struct EffectSlot slots[24];
+  struct FieldParticle slots[24];
 };
 
 struct Effect04Vector {
@@ -50,7 +50,7 @@ struct Effect04Vector {
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Camera_WorldToScreen(struct Effect04Vector *position);
-void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
+void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(void *record, u32 value);
 void Animation_ApplyChildValuesFar(void *object, u32 value);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
@@ -68,7 +68,7 @@ struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
 s32 EventRuntime_RunPendingEvent(struct PendingEvent *event, s32 mode,
                                  s32 target);
 s32 Resource_ResetEntry(u32 entry);
-void Func_080de060(struct EffectSlot *slot);
+void Func_080de060(struct FieldParticle *slot);
 
 extern const u8 gData_080f0ef8[];
 extern const u8 gData_080f0e58[];
@@ -84,7 +84,7 @@ void Func_080de21c(void) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *object;
   struct ObjectRuntime *copy;
-  struct EffectSlot *slot;
+  struct FieldParticle *slot;
   struct ResourceEntry *resource;
   struct PendingEvent *event;
   s32 scale;
@@ -103,9 +103,9 @@ void Func_080de21c(void) {
     pos.y = source->y + 0x100000;
     pos.z = source->z;
     Camera_WorldToScreen(&pos);
-    EffectSlot_Initialize(slot, 0x2a0, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, Func_080de060);
-    EffectSlot_SetObjectMode(slot, 7);
+    FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
+    FieldParticle_SetCallback(slot, Func_080de060);
+    FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, 9);
     slot->scaleY = 0xb333;
     slot->scaleX = 0xb333;

@@ -80,19 +80,19 @@ Func_080c8338:
 	.global Func_080c8340
 	.thumb_func
 Func_080c8340:
-	overlay_veneer DisplayTransition_InitializeBattleEffectState
-	.global DisplayTransition_InitializeStateFar
+	overlay_veneer ScreenTransition_InitializeBattleEffectState
+	.global ScreenTransition_InitializeStateFar
 	.thumb_func
-DisplayTransition_InitializeStateFar:
-	overlay_veneer DisplayTransition_InitializeState
-	.global DisplayTransition_StartFar
+ScreenTransition_InitializeStateFar:
+	overlay_veneer ScreenTransition_InitializeState
+	.global ScreenTransition_StartFar
 	.thumb_func
-DisplayTransition_StartFar:
-	overlay_veneer DisplayTransition_Start
-	.global DisplayTransition_FinishFar
+ScreenTransition_StartFar:
+	overlay_veneer ScreenTransition_Start
+	.global ScreenTransition_FinishFar
 	.thumb_func
-DisplayTransition_FinishFar:
-	overlay_veneer DisplayTransition_Finish
+ScreenTransition_FinishFar:
+	overlay_veneer ScreenTransition_Finish
 	.global Func_080c8360
 	.thumb_func
 Func_080c8360:

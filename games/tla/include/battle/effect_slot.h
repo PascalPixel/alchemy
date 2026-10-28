@@ -7,12 +7,12 @@
 
 #define EFFECT_NO_TARGET ((s32)0x80000000)
 
-struct EffectSlot;
-typedef void (*EffectCallback)(struct EffectSlot *);
+struct FieldParticle;
+typedef void (*EffectCallback)(struct FieldParticle *);
 
 /// A particle a Psynergy effect moves and draws: its sprite, its position and
 /// target, its speed, scale and heading, and its per-frame callback.
-struct EffectSlot {
+struct FieldParticle {
   void *object;     ///< the slot's sprite
   s32 x;            ///< 16.16 fixed-point pixels
   s32 z;            ///< 16.16 fixed-point pixels
@@ -36,7 +36,7 @@ struct EffectSlot {
   s8 stopAtTarget;         ///< nonzero: lands on the target within 8 pixels
   s8 limitTurnStep; ///< Clamp steering to maxTurnStep; zero faces the target
                     ///< directly.
-  s8 updateMotion;  ///< nonzero: EffectSlot_UpdateMotion moves it each frame
+  s8 updateMotion;  ///< nonzero: FieldParticle_UpdateMotion moves it each frame
   s8 render;        ///< nonzero: drawn each frame
   s8 active;        ///< nonzero while the slot is in use
   u8 randomValue;   ///< not read by name in TLA
@@ -44,14 +44,14 @@ struct EffectSlot {
   u8 flags;
 };
 
-STATIC_ASSERT(sizeof(struct EffectSlot) == 0x48);
-STATIC_ASSERT(offsetof(struct EffectSlot, orbitRadius) == 0x3c);
-STATIC_ASSERT(offsetof(struct EffectSlot, state) == 0x40);
+STATIC_ASSERT(sizeof(struct FieldParticle) == 0x48);
+STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 0x3c);
+STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
 
-u32 EffectSlot_HasPendingTarget(struct EffectSlot *);
-void EffectSlot_SetPosition(struct EffectSlot *, s32, s32);
-void EffectSlot_SetObjectMode(struct EffectSlot *, s32);
-void EffectSlot_SetCallback(struct EffectSlot *, EffectCallback);
-void EffectSlot_Update(struct EffectSlot *);
+u32 FieldParticle_HasPendingTarget(struct FieldParticle *);
+void FieldParticle_SetPosition(struct FieldParticle *, s32, s32);
+void FieldParticle_SetActorMode(struct FieldParticle *, s32);
+void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback);
+void FieldParticle_Update(struct FieldParticle *);
 
 #endif

@@ -64,12 +64,12 @@ s32 Func_080fe274(void) {
   void *tiles = Runtime_BumpAllocateAlternatePool(0x2800);
   s32 result = -1;
   struct HeapSlots *heap;
-  struct DisplayTransitionState *transition;
+  struct ScreenTransitionState *transition;
   u32 saved;
   u16 *page;
 
   heap = Ram_HeapSlots;
-  transition = heap->displayTransition;
+  transition = heap->screenTransition;
   heap->objectSystem->suspended = 1;
   UiWindow_DrawBorderFar(0, 0, 30, 20);
   WaitFrames(1);

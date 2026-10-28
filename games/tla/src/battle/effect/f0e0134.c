@@ -14,7 +14,7 @@ struct EffectVector {
 // ⚓️'s effect work holds its slots 8 bytes earlier than ☀️'s.
 struct FallbackScene {
   u8 unk00[0x50];
-  struct EffectSlot slots[16];
+  struct FieldParticle slots[16];
 };
 
 void BattleEffect_InitializeSharedScene(void);
@@ -23,15 +23,15 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Object_Destroy(struct ObjectRuntime *object);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *pos);
 void Camera_WorldToScreen(struct EffectVector *pos);
-void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z);
+void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(void *object, s32 value);
-void Func_080e0020(struct EffectSlot *effect);
+void Func_080e0020(struct FieldParticle *effect);
 
 void Func_080e0134(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *user = scene->mainObject;
   struct ObjectRuntime *obj;
-  struct EffectSlot *slot;
+  struct FieldParticle *slot;
   struct EffectVector pos;
   struct EffectVector from;
   struct EffectVector to;
@@ -85,8 +85,8 @@ void Func_080e0134(void) {
     pos.z = obj->z;
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
-    EffectSlot_Initialize(slot, 673, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, Func_080e0020);
+    FieldParticle_Initialize(slot, 673, pos.x, pos.z);
+    FieldParticle_SetCallback(slot, Func_080e0020);
     Animation_ApplyChildValuesToRecordFar(slot->object, 7);
     slot++;
   }

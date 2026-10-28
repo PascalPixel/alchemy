@@ -19,7 +19,7 @@ s32 ObjectMotion_MoveTowardTarget();
 s32 SceneActor_UpdateFacingTowardTarget();
 s32 Func_080d4ab4();
 
-/// DisplayTransition_ShapesTail
+/// ScreenTransition_ShapesTail
 // clang-format off
 const u8 gData_080f321c[12] = {
     0, 2, 4, 2,

@@ -385,7 +385,7 @@ Func_020043f4:
 	.global Func_020043fc
 	.thumb_func
 Func_020043fc:
-	overlay_veneer DisplayTransition_StartFar
+	overlay_veneer ScreenTransition_StartFar
 	.global Func_02004404
 	.thumb_func
 Func_02004404:

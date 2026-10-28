@@ -90,13 +90,13 @@ Func_0810b1b4:
 	ldr r2, [r6]
 	adds r0, r5, #0
 	lsls r1, r1, #2
-	bl EffectSlot_InitializeFar
+	bl FieldParticle_InitializeFar
 	adds r0, r5, #0
 	ldr r1, .L_0810b374
-	bl EffectSlot_SetCallbackFar
+	bl FieldParticle_SetCallbackFar
 	movs r1, #7
 	adds r0, r5, #0
-	bl EffectSlot_SetObjectModeFar
+	bl FieldParticle_SetActorModeFar
 	bl Random16
 	lsls r1, r0, #3
 	subs r1, r1, r0

@@ -12,7 +12,7 @@
 #include "iwram_call.h"
 #include "macros.h"
 
-void EffectSlot_Update(struct EffectSlot *effect) {
+void FieldParticle_Update(struct FieldParticle *effect) {
   if (effect->active != 0) {
     effect->age++;
     if (effect->callbackDelay != 0)
@@ -21,7 +21,7 @@ void EffectSlot_Update(struct EffectSlot *effect) {
       effect->callback(effect);
     if (effect->active != 0) {
       if (effect->updateMotion != 0)
-        EffectSlot_UpdateMotion(effect);
+        FieldParticle_UpdateMotion(effect);
       if (effect->render != 0)
         BattleEffect_DrawScaledObject(effect);
     }
@@ -33,7 +33,7 @@ struct ScaledSprite {
   s32 scale;
 };
 
-void BattleEffect_DrawScaledObject(struct EffectSlot *object) {
+void BattleEffect_DrawScaledObject(struct FieldParticle *object) {
   struct ScaledSprite *sprite;
   s32 offset;
   s32 scale[2];

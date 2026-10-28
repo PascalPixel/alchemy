@@ -1,6 +1,6 @@
 // The command icon menu's frame task (The Broken Seal's IconMenu_DrawIcons):
 // pulses the selected icon with one affine matrix, draws the others plain,
-// and while the display transition runs widens window 1 over the icon row.
+// and while the screen transition runs widens window 1 over the icon row.
 #include "types.h"
 #include "ram_buffer.h"
 #include "resource_menu.h"
@@ -47,14 +47,14 @@ void Func_0804cda8(void) {
   u32 end;
   u32 i;
   u16 *line;
-  struct DisplayTransitionState *buffers;
+  struct ScreenTransitionState *buffers;
   struct WindowBuffer *window;
   s32 span;
 
   work = Ram_HeapSlots->menuSelectWork;
   sprite = work->entries;
   scale = gUi_BounceScales[(gFrameCount * 2) & 31];
-  buffers = Ram_HeapSlots->displayTransition;
+  buffers = Ram_HeapSlots->screenTransition;
   scale = (scale - 256) / 4 + 304;
   effect.scaleX = scale;
   effect.scaleY = scale;

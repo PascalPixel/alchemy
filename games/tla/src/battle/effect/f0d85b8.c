@@ -35,7 +35,7 @@ struct EffectOwner {
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
-void BattleEffect_ClearOwnedSlot(struct EffectSlot *effect);
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *effect);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct EffectVector *position);
 void Sound_PlayFar(s32 cue);
@@ -44,7 +44,7 @@ void Camera_WorldToScreen();
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32);
 void Shop_InitializeEffectFar(void);
-void EffectSlot_Initialize();
+void FieldParticle_Initialize();
 void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
@@ -122,17 +122,17 @@ void BattleEffect_SpinUpAngle(void *obj);
 
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
 
-void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
+void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect);
 
 void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 
 void BattleEffect_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
 
-void BattleEffect_UpdateRadialSpread(struct EffectSlot *effect);
+void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
 void BattleEffect_RunVenusDjinnCapture(s32 arg);
 
-void Func_080d85b8(struct EffectSlot *effect) {
+void Func_080d85b8(struct FieldParticle *effect) {
   struct ObjectRuntime *source;
   struct EffectVector position;
   s8 *statePointer;
@@ -169,7 +169,7 @@ void Func_080d85b8(struct EffectSlot *effect) {
     effect->stopAtTarget = 1;
     (*statePointer)++;
   } else if ((u8)(effect->state - 1) <= 1) {
-    if (EffectSlot_HasPendingTarget(effect) == 0) {
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
       Vector_AddPolarOffset(0xc0000, Random16(), &position);

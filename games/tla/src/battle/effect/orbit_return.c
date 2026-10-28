@@ -2,7 +2,7 @@
 #include "system.h"
 #include "effect_slot.h"
 
-void BattleEffect_ClearOwnedSlot(struct EffectSlot *);
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *);
 
 struct Output_08097f80 {
   s32 x;
@@ -12,7 +12,7 @@ struct Output_08097f80 {
 
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 
-void BattleEffect_UpdateOrbitAndReturn(struct EffectSlot *effect) {
+void BattleEffect_UpdateOrbitAndReturn(struct FieldParticle *effect) {
   struct Output_08097f80 position;
   s8 *statePointer = &effect->state;
   s32 state;
@@ -36,7 +36,7 @@ next_state:
   }
 
   if (state == 1) {
-    if (EffectSlot_HasPendingTarget(effect) == 0) {
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
       (*statePointer)++;
       goto next_state;
     }
@@ -56,6 +56,6 @@ next_state:
     return;
   }
 
-  if (state == 3 && EffectSlot_HasPendingTarget(effect) == 0)
+  if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
     BattleEffect_ClearOwnedSlot(effect);
 }

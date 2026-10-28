@@ -8,7 +8,7 @@
 
 struct BattleFxScene {
   u8 unk00[0x50];
-  struct EffectSlot slots[24];
+  struct FieldParticle slots[24];
   u8 unk710[0xe4];
 };
 
@@ -31,8 +31,8 @@ void BattleEffect_AdvanceSpinAngle();
 void ObjectMotion_Launch(s32 id, s32 speed, s32 frames);
 void Camera_WorldToScreen(struct EffectVector *position);
 void Object_Destroy(void *object);
-void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
-void Func_080d7b04(struct EffectSlot *slot);
+void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z);
+void Func_080d7b04(struct FieldParticle *slot);
 void Animation_ApplyChildValuesToRecordFar(void *object, u32 value);
 u32 Random16(void);
 void ObjectMotion_ArmCallback(s32 id, s32 angle, s32 frames);
@@ -46,7 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   struct EffectVector position;
   struct MotionObject *object;
   struct BattleFxScene *scene;
-  struct EffectSlot *slot;
+  struct FieldParticle *slot;
   s32 scale;
   s32 count;
 
@@ -81,9 +81,9 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   slot = scene->slots;
   count = 23;
   do {
-    EffectSlot_Initialize(slot, 672, position.x, position.z);
-    EffectSlot_SetCallback(slot, Func_080d7b04);
-    EffectSlot_SetObjectMode(slot, 7);
+    FieldParticle_Initialize(slot, 672, position.x, position.z);
+    FieldParticle_SetCallback(slot, Func_080d7b04);
+    FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
     scale = Random16() / 3 + 0x10000;
     slot->scaleY = scale;

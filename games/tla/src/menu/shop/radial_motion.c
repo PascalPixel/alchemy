@@ -2,8 +2,8 @@
 #include "types.h"
 #include "scene.h"
 #include "system.h"
-void EffectSlot_SetPositionFar(struct Effect_080b2f4c *, s32, s32);
-s32 EffectSlot_HasPendingTargetFar(struct Effect_080b2f4c *);
+void FieldParticle_SetPositionFar(struct Effect_080b2f4c *, s32, s32);
+s32 FieldParticle_HasPendingTargetFar(struct Effect_080b2f4c *);
 void BattleEffect_ClearOwnedSlotFar(struct Effect_080b2f4c *);
 
 struct Position {
@@ -41,7 +41,7 @@ void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
     position.x = effect->sourceX;
     position.z = effect->sourceZ;
     Vector_AddPolarOffset(0x280000, Random16(), &position);
-    EffectSlot_SetPositionFar(effect, position.x, position.z);
+    FieldParticle_SetPositionFar(effect, position.x, position.z);
     position.x = effect->sourceX;
     position.z = effect->sourceZ;
     Vector_AddPolarOffset(0x40000, Random16(), &position);
@@ -52,11 +52,11 @@ void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
     effect->flag = state;
     *statePointer = (u8)*statePointer + 1;
   } else if (state == 1) {
-    result = EffectSlot_HasPendingTargetFar(effect);
+    result = FieldParticle_HasPendingTargetFar(effect);
     if (result == 0)
       *statePointer = result;
   } else if (state == 2) {
-    if (EffectSlot_HasPendingTargetFar(effect) == 0)
+    if (FieldParticle_HasPendingTargetFar(effect) == 0)
       BattleEffect_ClearOwnedSlotFar(effect);
   }
 }

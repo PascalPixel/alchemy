@@ -51,7 +51,7 @@ u32 Random16(void);
 
 void Func_080cf78c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct DisplayTransitionState *state = Ram_HeapSlots->displayTransition;
+  struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
   struct ObjectRuntime *object;

@@ -27,7 +27,7 @@ struct SpinScene {
   u8 unk14[4];
   s16 firstObjectId;
   u8 unk1a[0x36];
-  struct EffectSlot slots[SLOT_MAX];
+  struct FieldParticle slots[SLOT_MAX];
 };
 
 struct SpinVector {
@@ -46,21 +46,21 @@ void Object_SetMode(struct SpinObject *object, s32 mode);
 void Animation_ApplyChildValuesFar(void *object, s32 value);
 void ObjectDispatch_SetSingleChildFlagsFar(void *object, s32 flags);
 void Camera_WorldToScreen(struct SpinVector *position);
-void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
+void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z);
 void Animation_ApplyChildValuesToRecordFar(void *record, u32 value);
 u32 Random16(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 void ObjectGroup_ApplyRandomChildValues(struct SpinObject *owner);
 void BattleEffect_AdvanceAngleWithRamp(struct SpinObject *object);
 void BattleEffect_UpdateDescendingObject(struct SpinObject *obj);
-void Func_080e0cec(struct EffectSlot *slot);
+void Func_080e0cec(struct FieldParticle *slot);
 
 void FieldEffect_RunRetreat(void) {
   struct SpinScene *scene = Ram_HeapSlots->effectWork;
   struct SpinObject *obj = scene->mainObject;
   struct SpinVector pos;
-  struct EffectSlot *slot;
-  struct EffectSlot *slots;
+  struct FieldParticle *slot;
+  struct FieldParticle *slots;
   u8 last;
   u32 i;
 
@@ -96,9 +96,9 @@ void FieldEffect_RunRetreat(void) {
   do {
     s32 scale;
 
-    EffectSlot_Initialize(slot, 0x2a0, pos.x, pos.z);
-    EffectSlot_SetCallback(slot, Func_080e0cec);
-    EffectSlot_SetObjectMode(slot, 7);
+    FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
+    FieldParticle_SetCallback(slot, Func_080e0cec);
+    FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333;
     slot->scaleY = scale;

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global DisplayTransition_Start
+	.global ScreenTransition_Start
 	.thumb_func
-DisplayTransition_Start:
+ScreenTransition_Start:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -219,7 +219,7 @@ DisplayTransition_Start:
 	adds r3, r5, r2
 	strh r1, [r3]
 	movs r0, #15
-	bl DisplayTransition_FillTilemapAndSolidTile
+	bl ScreenTransition_FillTilemapAndSolidTile
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #144
@@ -274,7 +274,7 @@ DisplayTransition_Start:
 	strb r2, [r3]
 	b .L_080d0506
 .L_080d03fc:
-	.4byte DisplayTransition_UpdateDissolve
+	.4byte ScreenTransition_UpdateDissolve
 .L_080d0400:
 	.4byte gIoWriteQueue
 .L_080d0404:
@@ -314,9 +314,9 @@ DisplayTransition_Start:
 .L_080d044c:
 	.4byte 0x00000050
 .L_080d0450:
-	.4byte DisplayTransition_Update
+	.4byte ScreenTransition_Update
 .L_080d0454:
-	.4byte DisplayTransition_UpdateScanline
+	.4byte ScreenTransition_UpdateScanline
 .L_080d0458:
 	bl Runtime_SetIrqHandler
 	movs r2, #160
@@ -412,9 +412,9 @@ DisplayTransition_Start:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_080d0510:
-	.4byte DisplayTransition_UpdateFromCentre
+	.4byte ScreenTransition_UpdateFromCentre
 .L_080d0514:
-	.4byte DisplayTransition_UpdateScanline
+	.4byte ScreenTransition_UpdateScanline
 .L_080d0518:
 	.4byte gIoWriteQueue
 .L_080d051c:

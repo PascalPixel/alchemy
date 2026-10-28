@@ -297,7 +297,7 @@ Func_02005608:
 	.global Func_02005610
 	.thumb_func
 Func_02005610:
-	overlay_veneer DisplayTransition_StartFar
+	overlay_veneer ScreenTransition_StartFar
 	.global Event_StartScreenTransition
 	.thumb_func
 Event_StartScreenTransition:

@@ -2,7 +2,7 @@
 #include "ram_buffer.h"
 
 u32 Random16(void);
-void EffectSlot_UpdateFar(void *slot);
+void FieldParticle_UpdateFar(void *slot);
 void Animation_ApplyChildValuesToRecordFar(void *child, u32 value);
 
 struct ShopFxWork {
@@ -21,7 +21,7 @@ void Func_0810b168(void) {
   /* FAKEMATCH: ⚓️ loads the work before it builds the slot offset */
   asm volatile("" : : : "memory");
   for (i = 0; i < 24; i++)
-    EffectSlot_UpdateFar(work->slots[i]);
+    FieldParticle_UpdateFar(work->slots[i]);
   selected = work->selected;
   if (selected != -1)
     Animation_ApplyChildValuesToRecordFar(work->children[selected],

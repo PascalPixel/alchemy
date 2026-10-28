@@ -369,7 +369,7 @@ SceneSequence_Run:
 	mov r2, r9
 	ldr r0, [r1]
 	ldr r1, [r2]
-	bl DisplayTransition_Start
+	bl ScreenTransition_Start
 	movs r3, #1
 	mov r4, r10
 	strh r3, [r4]
@@ -1482,7 +1482,7 @@ SceneSequence_Run:
 	add r5, r8
 	ldr r0, [r3]
 	ldr r1, [r5]
-	bl DisplayTransition_Finish
+	bl ScreenTransition_Finish
 	movs r3, #0
 	strh r3, [r7]
 	ldr r0, [r5]

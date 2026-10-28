@@ -315,7 +315,7 @@ void Shop_DrawMoney(void) {
   if (window != 0) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
     Text_DrawMessageAsTilesFar(MsgYourCoins, window, 0, 0);
-    Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, window, 0x20, 8);
+    Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, window, 32, 8);
 #else
     s32 msg = MsgYourCoins;
 
@@ -585,7 +585,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
       quantityLimit = SHOP_STACK_LIMIT;
 
     shop->mode = 12;
-    MenuCursor_Place(0, SHOP_QUANTITY_CURSOR_X, 0x30);
+    MenuCursor_Place(0, SHOP_QUANTITY_CURSOR_X, 48);
     selectedQuantity =
         Shop_SelectQuantity(carriedQuantity, quantityLimit, item->price);
   }
@@ -633,7 +633,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
     if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
       // The bar is one 8-tile entry shown as two 32x8 sprites (shape and size
       // bits 0x40004000); the second starts at the entry's tile 4
-      VramCache_Load(resourceSlot, 0x100, 0);
+      VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, 0);
       WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 0, 0);
       quantitySprite =
           WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 32, 0);
@@ -663,14 +663,15 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           redraw = 0;
           quantityIndex = (quantityIndex + maximum) % maximum;
           Dma_Set(gShop_QuantityTiles, tileBuffer,
-                  (DMA_ENABLE | DMA_32BIT) << 16 | 0x40, REG_DMA3);
+                  (DMA_ENABLE | DMA_32BIT) << 16 | 8 * TILE_SIZE_4BPP / 4,
+                  REG_DMA3);
           // Paint capacity, available stock, selection and carried items in
           // that order; each shorter prefix overwrites the previous colour.
           QuantityBar_Fill(SHOP_STACK_LIMIT, 14, tileBuffer);
           QuantityBar_Fill(minimum + maximum, 0, tileBuffer);
           QuantityBar_Fill(minimum + quantityIndex + 1, 10, tileBuffer);
           QuantityBar_Fill(minimum, 2, tileBuffer);
-          VramCache_Load(resourceSlot, 0x100, tileBuffer);
+          VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
           selectedQuantity = quantityIndex + 1;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
           Text_DrawNumberInWindowFar(selectedQuantity, 2, window,

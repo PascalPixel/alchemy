@@ -94,8 +94,8 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   tileBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   priceSprite = 0;
   // 0x40 words: the blank price's eight tiles, 0x100 bytes of the block
-  Dma_Set(gShop_PriceTiles, tileBuffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x40,
-          REG_DMA3);
+  Dma_Set(gShop_PriceTiles, tileBuffer,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 8 * TILE_SIZE_4BPP / 4, REG_DMA3);
   Shop_CopyGlyphs(value % 10, tileBuffer, 0);
   value = value / 10;
   if (value != 0) {
@@ -116,7 +116,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   }
   resourceSlot = VramCache_FindFreeEntry();
   if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(resourceSlot, 0x100, tileBuffer);
+    VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
     priceSprite =
         WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_16X32, window, x, y);
   }
@@ -142,9 +142,9 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
   u16 *savedPalette = paletteBuffers->target;
 
   Dma_Set(savedPalette, eventBytes + 0x236,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 336, REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 672, REG_DMA3);
   PaletteFade_SetTargetFar(layer, 1);
   PaletteFade_StartInterpolationFar(16);
 }
@@ -154,7 +154,7 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 /// ends.
 void Shop_RestoreFieldPalette(void) {
   PaletteFade_SetTargetFar((s32)gFieldWork + 0x236, 1);
-  PaletteFade_StartInterpolationFar(0x10);
+  PaletteFade_StartInterpolationFar(16);
 }
 
 /// Moves the cursor from its saved position toward its target, in a straight

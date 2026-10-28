@@ -195,7 +195,7 @@ s32 Shop_OpenDebugShop(s32 unused) {
   Unit_GetFar(MIA)->poison = 1;
   Unit_GetFar(JENNA)->poison = 1;
   Unit_GetFar(IVAN)->haunt = 1;
-  Shop_Run(SHOP_DEBUG_STOCK_ROW, 0x1e);
+  Shop_Run(SHOP_DEBUG_STOCK_ROW, 30);
   return 0;
 }
 
@@ -272,8 +272,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   }
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(resolvedMessage, 5, 0,
-                        (portraitResource << 0x10) | 0x22);
+  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0) {
     wait(1);
   }

@@ -136,14 +136,14 @@ enum {
 // sell and repair lists share (Shop_DrawItemPrice, buy.c), in pixels: French
 // moves both 8 left, Spanish the word 8 right.
 #if (LANGUAGE == LANGUAGE_FRENCH)
-#define SHOP_PRICE_NUMBER_X 0x18
-#define SHOP_PRICE_LABEL_X 0x40
+#define SHOP_PRICE_NUMBER_X 24
+#define SHOP_PRICE_LABEL_X 64
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-#define SHOP_PRICE_NUMBER_X 0x20
-#define SHOP_PRICE_LABEL_X 0x50
+#define SHOP_PRICE_NUMBER_X 32
+#define SHOP_PRICE_LABEL_X 80
 #else
-#define SHOP_PRICE_NUMBER_X 0x20
-#define SHOP_PRICE_LABEL_X 0x48
+#define SHOP_PRICE_NUMBER_X 32
+#define SHOP_PRICE_LABEL_X 72
 #endif
 
 // Where the item grid (Shop_DrawMemberItems, sell.c), shared by the sell,

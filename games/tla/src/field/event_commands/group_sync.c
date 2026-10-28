@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
-#include "fx_scene.h"
+#include "field_psynergy_work.h"
 #include "actor.h"
 
 struct FxGroup {

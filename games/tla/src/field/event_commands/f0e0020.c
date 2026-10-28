@@ -1,7 +1,7 @@
 #include "types.h"
 #include "system.h"
 #include "field_particle.h"
-#include "fx_scene.h"
+#include "field_psynergy_work.h"
 #include "ram_buffer.h"
 
 struct EffectVector {

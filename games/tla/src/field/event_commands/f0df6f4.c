@@ -3,7 +3,7 @@
 #include "objdisp.h"
 #include "actor_view.h"
 #include "actor.h"
-#include "fx_scene.h"
+#include "field_psynergy_work.h"
 #include "ram_buffer.h"
 
 struct ScatterPosition {

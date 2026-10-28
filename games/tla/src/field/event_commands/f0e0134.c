@@ -2,7 +2,7 @@
 #include "system.h"
 #include "field_particle.h"
 #include "actor.h"
-#include "fx_scene.h"
+#include "field_psynergy_work.h"
 #include "ram_buffer.h"
 #include "fixed_math.h"
 

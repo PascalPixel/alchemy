@@ -13,7 +13,7 @@
 // in r7).
 #include "types.h"
 #include "ram_buffer.h"
-#include "battle/fx_scene.h"
+#include "field/field_psynergy_work.h"
 #include "frame.h"
 #include "input.h"
 #include "actor.h"

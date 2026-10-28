@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
-#include "fx_scene.h"
+#include "field_psynergy_work.h"
 
 s32 GameFlag_Test(s32 flag);
 void Field_StartColorTransition(s32 frames, s32 color);

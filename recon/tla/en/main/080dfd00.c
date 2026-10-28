@@ -13,7 +13,7 @@
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
-#include "fx_scene.h"
+#include "field_psynergy_work.h"
 #include "actor.h"
 #include "sprite.h"
 

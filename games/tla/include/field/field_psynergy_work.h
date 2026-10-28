@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FX_SCENE_H
-#define ALCHEMY_FX_SCENE_H
+#ifndef ALCHEMY_FIELD_PSYNERGY_WORK_H
+#define ALCHEMY_FIELD_PSYNERGY_WORK_H
 
 #include "types.h"
 #include "static_assert.h"

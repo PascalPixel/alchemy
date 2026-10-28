@@ -8,7 +8,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "fx_scene.h"
+#include "field_psynergy_work.h"
 #include "effect_sprite.h"
 
 struct ScatterParticle {

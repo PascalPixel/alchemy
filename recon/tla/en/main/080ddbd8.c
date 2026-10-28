@@ -15,7 +15,7 @@
 #include "objdisp.h"
 #include "object_effect_scripts.h"
 #include "field_event.h"
-#include "fx_scene.h"
+#include "field_psynergy_work.h"
 #include "ram_buffer.h"
 
 struct BurstParticleVisual {

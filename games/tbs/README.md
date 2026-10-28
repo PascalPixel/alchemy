@@ -1,664 +1,204 @@
 # The Broken Seal
 
-Golden Sun was released in Japan as Golden Sun: The Broken Seal. These pages
-use the Japanese subtitle, or TBS, to keep it apart from
+In Japan, Golden Sun carries the subtitle 開かれし封印, The Broken Seal. These
+pages call the game by that subtitle, to keep it apart from
 [The Lost Age](glossary.md#the-two-games).
-
-## How the game is built
-
-Every sequence, event, menu and battle effect in The Broken Seal is code
-that runs from its start to its end and waits where it stands whenever time
-must pass, while short tasks run once a frame to keep the world moving:
-
-- **One sequence at a time.** The [main routine](#the-main-routine)
-  runs one [sequence](glossary.md#sequence) (a scene, a battle, a minigame)
-  from start to finish.
-- **Sequences hand over by themselves.** A scene that meets a random battle
-  writes the battle down as the next sequence and ends; the battle ends by
-  reporting a result, and the game works out where to go back to.
-- **Code waits in place.** An event or a menu is an ordinary function that
-  runs top to bottom and pauses when time must pass. While it pauses, a short
-  list of [tasks](glossary.md#task) keeps the world moving
-  ([Waiting in place](#waiting-in-place)).
-- **The scene's loop only listens.** The field sequence goes round once a
-  frame while the player walks, and acts on what the tasks noted down.
-- **A battle's rules and battle effects run together.** Damage appears while the
-  attack is still on screen ([Battles](#battles)).
-- **A frame that runs long slows the game instead of skipping ahead.** The
-  picture and every movement slow down; the music doesn't
-  ([When a frame runs long](#when-a-frame-runs-long)).
-
-## Architecture
-
-The game runs in four layers, each inside the one above it.
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "fontSize": "14px"}, "flowchart": {"padding": 10}}}%%
-flowchart TB
-  subgraph seqm ["Main routine"]
-    direction TB
-    c1["One sequence at a time, for as long as the console is on"]
-    subgraph scene ["Field sequence"]
-      direction TB
-      c2["Loads one scene's map and its people"]
-      subgraph mgr ["The field sequence's loop"]
-        direction TB
-        c3["Runs the scene a frame at a time until the party leaves"]
-        subgraph frame ["Frame"]
-          direction LR
-          c4["The queued tasks run, then requests are handled"]
-        end
-      end
-    end
-    others["Battle · Dice · Slots sequences"]
-  end
-  c1 ~~~ scene
-  c2 ~~~ mgr
-  c3 ~~~ frame
-  scene ~~~ others
-  classDef caption fill:transparent,stroke:transparent,color:#6B7280
-  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class c1,c2,c3,c4 caption
-  class others step
-  style seqm fill:#EEF1F6,stroke:#8FA0B8,color:#2E3C50,rx:16,ry:16
-  style scene fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
-  style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
-  style frame fill:#FFFFFF,stroke:#9AA3AE,rx:16,ry:16
-```
-
-- **[Main routine](#the-main-routine).** Runs one sequence at a
-  time, for as long as the console is on: the field sequence, the battle
-  sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
-  Wheels).
-- **[Field sequence](#the-field-sequence).** Loads one
-  [scene](glossary.md#scene): a place such as Xian, or a screen such as the
-  Title.
-- **[The field sequence's loop](#the-field-sequences-loop).** Runs that scene,
-  one [frame](glossary.md#frame) at a time, until the party leaves.
-- **Frame.** Every queued [task](glossary.md#task) runs once, then the field
-  sequence handles what the player or the scene asked for.
-
-A box keeps its name and colour in every chart below. Xian, the example
-throughout, is red.
-
-## Start-up
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  power(["Power on"]) --> memory["Clear the fast memory"] --> irq["Install the resident code and the interrupt handlers"]
-  irq --> services["Start the sound and the task table"] --> seq(["Main routine"])
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
-  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class seq mainRoutine
-  class power,memory,irq,services step
-```
-
-Power-on runs once. It clears the fast memory, installs the code that stays
-resident and the interrupt handlers, loads the window graphics, starts the
-sound and empties the task table. Then it hands control to the main routine,
-which never returns.
-
-**Reference:** `System_Initialize` · [System: Start-up](system.md#start-up)
 
 ## The main routine
 
-![Isaac walks up into the Sanctum's doorway in Vale; the village fades to black and the Sanctum's hall fades in around him, its people standing around the altar](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
+At power-on `System_Initialize` sets up the hardware, the interrupt handlers,
+the sound and the task table, and then calls `MainRoutine_RunFar`. The
+[main routine](glossary.md#main-routine), `MainRoutine_Run`, never returns:
+everything the game does outside its interrupts runs under it.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  loop(["Main routine"]) --> scene(["Field sequence"]) & battle(["Battle sequence"]) & dice["Dice sequence: Lucky Dice"] & wheels["Slots sequence: Lucky Wheels"]
+  loop(["Main routine"]) --> scene(["Field sequence: a scene"]) & battle(["Battle sequence"]) & dice(["Dice sequence: Lucky Dice"]) & wheels(["Slots sequence: Lucky Wheels"])
   scene & battle & dice & wheels --> back(["Next sequence"])
   back --> loop
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
   class loop mainRoutine
-  class scene fieldSequence
+  class scene,battle,dice,wheels sequence
   class back request
-  class battle battle
-  class dice,wheels step
 ```
 
-Each pass reads one id from the main routine's work and runs one thing to its end: a
-scene, any row of the scene table, the Title and the File Screen included,
-which `FieldSequence_Run` runs until the party takes an exit; or the battle,
-dice or slots sequence. The sequence then names the next one, and in the
-transition the main routine clears everything the last one left behind (its
-tasks, its interrupt handlers, the heap) before starting it. Going from one
-scene to the next is such a transition, just as going into a battle is.
+The main routine is a loop, and each pass runs one
+[sequence](glossary.md#sequence) from its start to its end. A pass begins by
+tearing down whatever the last sequence left behind: its
+[tasks](glossary.md#task) (`Task_ResetAll`), its HBlank and VCount interrupt
+handlers (`Irq_SetHandler`) and every block it took from the
+[heap](glossary.md#heap-and-pools) (`Heap_Initialize`). Then it reads one id,
+`gMainRoutineWork.sceneId`, from the [main routine's
+work](glossary.md#main-routines-work), which every sequence reads and writes.
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  subgraph s1 ["Field sequence"]
-    xian(["Xian"])
-  end
-  s1 --> ask1(["Next sequence: the World Map"])
-  ask1 --> s2
-  subgraph s2 ["Field sequence"]
-    world(["World Map"])
-  end
-  s2 --> ask2(["Next sequence: a random battle"])
-  ask2 --> battle(["Battle"]) --> ask3(["Next sequence: back to the World Map, where the party stood"])
-  ask3 --> s3
-  subgraph s3 ["Field sequence"]
-    again(["World Map"])
-  end
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
-  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
-  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class xian place
-  class world,again step
-  class ask1,ask2,ask3 request
-  class battle battle
-  style s1 fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
-  style s2 fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
-  style s3 fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
-```
+Most ids are [scenes](glossary.md#scene). A scene is a row of the scene table: a
+place, such as a room of Vault's inn, or a screen, such as the Title or the File
+Screen. Camelot labels each row with a scene code (`PLOGV00` is Vale on the
+stormy night of the prologue) and gives each scene an area name. For a scene, the main
+routine clears the [flags](glossary.md#game-flag) the last scene kept for itself
+(`Scene_Arrive`), starts the music, unpacks the scene's code, its
+[overlay](glossary.md#overlay), into memory (`Scene_LoadOverlay`) and runs the
+[field sequence](glossary.md#field-sequence), `FieldSequence_Run`. When the
+party leaves, the field sequence returns the [exit](glossary.md#exit) it took,
+and `Scene_TakeExit` turns that into the next scene and entrance.
 
-A battle stands in for the scene for a while. Its code is always loaded, so there is
-nothing to unpack, and afterwards the party stands where it stood. After a
-defeat the game goes where an [event](glossary.md#event) chose for losing that
-battle, or else to the last Sanctum.
+The other ids are the other sequences: `SEQUENCE_BATTLE` runs a battle
+(`Battle_RunFar`), `SEQUENCE_DICE` Lucky Dice and `SEQUENCE_SLOTS` Lucky
+Wheels. Each returns a result, and `Scene_ReturnFromSequence` turns the result
+into the scene to go back to.
 
-### How a sequence finds its way back
+Going from one scene to the next is a
+[transition](glossary.md#transition-and-next-sequence) through the main
+routine, just as going into a battle is: the last sequence writes the next id
+and returns, and the next pass tears down and starts it
+([System](system.md#the-main-routine)).
 
-Sequences pass nothing to each other directly. Everything goes through the
-[main routine's work](glossary.md#main-routines-work),
-`gMainRoutineWork`, the one struct every sequence shares:
+## Frames, waiting and tasks
 
-| When                       | What is written                                                                              |
-| -------------------------- | -------------------------------------------------------------------------------------------- |
-| a scene starts             | the return point (this scene and entrance), and empty after-battle and defeat destinations   |
-| an event prepares a battle | the after-battle or defeat destination, where the story should continue                      |
-| a random battle starts     | the battle as the next sequence, its formation as the entrance, every actor's position       |
-| the battle ends            | its result: won, fled or lost                                                                |
-
-`Scene_ReturnFromSequence` reads them back. A win or a flight goes to the
-after-battle destination, or else to the return point with everyone where they
-stood; a defeat goes to the defeat destination, or else to the last Sanctum
-with the leader at 1 HP. Lucky Dice and Lucky Wheels return the same way. The
-result stays in `gMainRoutineWork.sequenceResult` for the scene that comes back.
-The Title and the File Screen need none of this: they are ordinary scenes.
-
-**Reference:** `MainRoutine_Run` · `Scene_ReturnFromSequence`
-
-## Waiting in place
-
-The screen refreshes about 60 times a second, at each
-[VBlank](glossary.md#vblank). The game moves in
-[frames](glossary.md#frame), and every frame happens inside one function,
-`wait()`. Whatever code is in charge (the field sequence, an event, a
-menu, a battle effect) calls it when time must pass:
+Waiting and the task table belong to the System and work the same under every
+sequence. Every sequence is straight-line code: it does one thing, then the
+next, and where time must pass it calls [`wait(n)`](glossary.md#wait), which
+returns to the next line once n [frames](glossary.md#frame) have run.
+Simplified, from [frame.c](src/runtime/runtime/frame.c):
 
 ```c
-void wait(s32 frames) {         /* simplified */
+void wait(s32 frames) {
   while (frames--) {
-    Task_RunPass(TASK_PASS_FRAME);    /* every queued task, once */
-    Oam_BuildBuffer(...);             /* this frame's picture */
-    VBlankIntrWait();                 /* halt until the next VBlank */
+    Task_RunPass(TASK_PASS_FRAME);  /* every frame-pass task, once */
+    Oam_BuildBuffer(...);           /* this frame's sprites */
+    VBlankIntrWait();               /* halt until the next VBlank */
   }
 }
 ```
 
-The tasks are the world's moving parts: the actors, the camera, the animated
-water, the open windows. They run whoever is waiting, so the world keeps
-moving through a conversation, a menu or a cutscene without any of that code
-knowing about it.
+A task is a function in the task table, `gTasks`, which the frame pass calls
+once a frame until it is removed. The tasks are what keeps moving while the code
+in charge waits: the [actors](glossary.md#actor), the map's scrolling, the
+animated tiles, the open windows. Each [VBlank](glossary.md#vblank), about 60
+times a second, the VBlank interrupt mixes the next slice of sound, reads the
+buttons and runs the tasks of the table's other pass, `TASK_PASS_VBLANK`,
+whatever the game is doing at that moment.
 
-An event therefore reads in the order things happen. Showing the water
-carrier's line, `Event_ShowMessageAndWait` simplified:
+When a frame's work overruns one VBlank, everything counted in frames runs
+slow, while the music, mixed at every VBlank, keeps its tempo: that is
+[slowdown](glossary.md#slowdown) ([System](system.md#slowdown)).
 
-```c
-window = FieldMessage_ShowAtActor(actorId, flags);  /* open her window */
-while (!Window_IsClosedFar(window))
-  wait(1);                                    /* the water keeps moving */
-```
+Each sequence adds its own tasks when it starts, and the transition removes
+them. The field's come through its actors, its map and its windows
+(`Actor_UpdateAllThumb`, `MapGrid_UpdateLayerScroll`, `TilesetAnim_Update`,
+`WindowSystem_Update`); `Battle_Run` adds `BattleCamera_Update` and
+`BattleObject_UpdateSpritePriorities`; Lucky Wheels adds two to the VBlank
+pass. What differs is what each sequence's own loop does between its waits:
+the field answers what the player asks for, the battle runs turns.
 
-The window itself is drawn by a task, which types the line out and closes the
-window once the player presses A.
+## From a conversation to a battle and back
 
-| Frame | Code in charge         | Tasks during its wait                         | After the wait                                |
-| ----- | ---------------------- | --------------------------------------------- | --------------------------------------------- |
-| 1     | field sequence         | the carrier steps, the water moves            | nothing asked for: next frame                 |
-| 2     | field sequence         | player control sees A and notes a request     | a talk request: run her event                 |
-| 3     | her event              | the window types her line, the water moves    | window still open: wait again                 |
-| …     | her event              | A pressed: the window task closes the window  | window closed: return                         |
-| next  | field sequence         | the carrier walks on                          | nothing asked for: next frame                 |
+![In the loft of Vault's inn, Isaac frees a villager tied up on the floor; three thieves appear, talk with the party and attack](https://alchemy.pascalpixel.com/places/vault-interiors/events/Event_FreeRooferAndConfrontThieves.gif)
 
-The conversation is the function itself, paused inside `wait()` and
-resumed on the next line, so nothing has to note how far it has got: the place
-it has reached in its own code says so. To allow a wait from deep inside any
-function, `wait()` copies the caller's stack aside while the frame runs
-([Runtime](src/runtime/README.md#the-stack-switch-in-wait)).
+In Vault, the party pushes a crate aside with Move and climbs to the inn's
+loft, where a villager lies tied up. All of it happens in one scene,
+`SceneId_LogRoomsA`: a single map holding every room inside Vault's buildings,
+all of them walled in logs, each room reached by its own entrance
+([log_rooms_a.c](src/scene/log_rooms_a.c)).
 
-### When a frame runs long
+### Talking to the villager
 
-Each VBlank interrupts the game, whatever it is doing. The interrupt always
-mixes the next slice of sound and reads the buttons, and it puts up a new
-picture only if `wait()` has finished one. A frame whose tasks take longer
-than one refresh still runs to the end, while the screen shows the old picture
-until the next VBlank. Every wait, walk and animation is counted in frames, so
-they all slow down together, while the music, counted in VBlanks, keeps its
-tempo. This is the game's slowdown. The VBlanks a frame took are counted in
-`gFrameVBlanks`.
-
-**Reference:** [System: Waiting and tasks](system.md#waiting-and-tasks) ·
-[Runtime: The frame loop](src/runtime/README.md#the-frame-loop) ·
-`Event_Wait`
-
-## The field sequence
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  parent(["Main routine"]) --> arrive["Clear the last scene's flags, and the area's on entering a new area"]
-  arrive --> music["Start the area's music"] --> code["Unpack the scene's code"]
-  code --> pick(["Field sequence"]) --> map["Load the map"] --> place["Place the party at its entrance, or where it stood before a battle"]
-  place --> actors["Create the actors from the scene's list"] --> own["Run the scene's set-up"]
-  own --> fade["Fade in"] --> run(["The field sequence's loop"])
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
-  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class parent mainRoutine
-  class pick fieldSequence
-  class run sceneLoop
-  class arrive,music,code,map,place,actors,own,fade step
-```
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  subgraph ps ["Main routine"]
-    direction TB
-    pick(["Xian"]) --> arrive["From the World Map: a new area, so its flags are cleared and its name will show"]
-    arrive --> music["MUS_FUCHIN_TEMPLE, Xian's field music"] --> code["xian.c's overlay, in place of the World Map's"]
-  end
-  subgraph seq ["Field sequence"]
-    direction TB
-    map["map_074, with its animated water"] --> place["Isaac at the entrance from the World Map"]
-    place --> actors["The villagers, the water carrier, Feizhi, the kung fu student, Mist"]
-    actors --> own["Xian_Initialize: Feizhi gone and the student moved once Xian has heard of Hsu"]
-    own --> fade["Fade in, Xian's name at the top"]
-  end
-  code --> map
-  fade --> mgr
-  subgraph mgr ["The field sequence's loop"]
-    run(["Xian"])
-  end
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
-  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
-  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class pick,run place
-  class arrive,music,code,map,place,actors,own,fade step
-  style ps fill:#EBEFF5,stroke:#8FA0B8,color:#2E3C50,rx:16,ry:16
-  style seq fill:#E6F6F9,stroke:#7FC3D0,color:#1E5966,rx:16,ry:16
-  style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
-```
-
-Between scenes the main routine clears the
-[game flags](glossary.md#game-flag) the last scene kept for itself, and the
-[area](glossary.md#area)'s flags on entering a new area. It starts the area's
-music and unpacks the scene's code, its [overlay](glossary.md#overlay). The
-field sequence then loads the [map](glossary.md#map), places the party at its
-[entrance](glossary.md#entrance) and creates every
-[actor](glossary.md#actor) on the scene's list. Last, the scene's own set-up
-arranges the place as the story has left it, and the screen fades in.
-
-**Reference:** `Scene_Arrive` · `Scene_ChooseMusic` · `Scene_LoadOverlay` ·
-`FieldSequence_Run` · `Xian_Initialize` in [xian.c](src/scene/xian.c)
-
-## The field sequence's loop
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  frame(["The field sequence's loop"]) --> queue
-  subgraph queue ["Queued tasks, highest priority first"]
-    direction TB
-    t1["15 · Palette fade · moves the colours toward their target"] ~~~ t2["10 · Actors · each actor runs a step of its script; player control notes a pressed button as a request"]
-    t2 ~~~ t3["5 · Camera · scrolls the map after the leader"] ~~~ t4["0 · Sprites · places each actor on the screen"]
-    t4 ~~~ t5["0 · Tile animation · steps the map's animated tiles"] ~~~ t6["0 · Windows · draws each open window"]
-  end
-  queue --> ground["Check the ground under the leader"]
-  ground --> check{"A request?"}
-  check -->|"no: next frame"| frame
-  check -->|"yes"| handle["Handle it to the end"]
-  handle -->|"next frame"| frame
-  handle -->|"an exit or a battle"| next(["Next sequence"])
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
-  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class frame sceneLoop
-  class next request
-  class t1,t2,t3,t4,t5,t6,ground,handle,check step
-  style queue fill:#FFFFFF,stroke:#9AA3AE
-```
-
-Every frame, each queued task runs once, highest priority first. The camera
-ranks below the actors so that it follows where they are now. The field
-sequence then checks the ground under the leader and handles any
-[field request](glossary.md#field-request) to the end before the next frame.
-
-### A frame in Xian
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart TD
-  subgraph mgr ["The field sequence's loop"]
-    direction TB
-    xian(["Xian"]) --> queue
-    subgraph queue ["Queued tasks, this frame"]
-      direction TB
-      t1["15 · Palette fade · the colours held, the fade-in over"] ~~~ t2["10 · Actors · the water carrier steps; Isaac's player control: a button pressed? no, so no request"]
-      t2 ~~~ t3["5 · Camera · stays on Isaac"] ~~~ t4["0 · Sprites · the villagers placed"]
-      t4 ~~~ t5["0 · Tile animation · the water moves"] ~~~ t6["0 · Windows · none open"]
-    end
-    queue --> ground["Check the ground under Isaac, at the foot of the stairs: nothing there"]
-    ground --> check{"A request?"}
-    check -->|"no: next frame"| queue
-  end
-  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
-  classDef fieldSequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  classDef battle fill:#F6D5D2,stroke:#D9928B,color:#8A2A22
-  classDef sceneLoop fill:#D3EBD9,stroke:#8DC49E,color:#25603A
-  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
-  classDef place fill:#D93A2B,stroke:#B02A1D,color:#FFFFFF
-  classDef step fill:#F4F4F2,stroke:#CFCFCB,color:#3A3A38
-  class xian place
-  class t1,t2,t3,t4,t5,t6,ground,check step
-  style mgr fill:#E4F3E8,stroke:#8DC49E,color:#25603A,rx:16,ry:16
-  style queue fill:#FFFFFF,stroke:#9AA3AE
-```
-
-Isaac stands still and the player presses nothing, yet the village moves: the
-water carrier walks her path and the water flows.
-
-### Talking to the water carrier
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"actorBkg": "#F4F4F2", "actorBorder": "#CFCFCB", "actorTextColor": "#3A3A38", "signalColor": "#9AA3AE", "signalTextColor": "#3A3A38", "noteBkgColor": "#FBE7C6", "noteBorderColor": "#E0B46A", "noteTextColor": "#7A5212", "loopTextColor": "#3A3A38", "labelBoxBkgColor": "#E4F3E8", "labelBoxBorderColor": "#8DC49E", "labelTextColor": "#25603A"}}}%%
-sequenceDiagram
-  participant P as Player
-  participant C as Player control
-  participant M as Field sequence
-  participant E as Her event
-  participant T as Other tasks
-  P->>C: presses A
-  C->>M: notes an A request
-  M->>M: finds the water carrier ahead and her talk trigger
-  M->>E: runs her event, and she stops and turns to Isaac
-  E->>E: opens a window with her line
-  loop each frame while the window waits for A
-    T->>T: the water moves, the text types out
-  end
-  P->>E: presses A
-  E->>M: closes the window and returns
-  M->>C: hands Isaac back to the player
-```
-
-A request can take as long as it needs. Her event waits for A inside an
-ordinary function, and the tasks keep the village moving around the window.
-
-### Requests
-
-| Request        | Raised by                                                                          |
-| -------------- | ---------------------------------------------------------------------------------- |
-| exit           | stepping onto a way out, or an event that sends the party on                       |
-| raised trigger | the scene's own code, the world map's L and R, or a party member falling to poison |
-| random battle  | walking where battles happen, once enough steps have passed                        |
-| step trigger   | stepping onto a cell the scene watches                                             |
-| push           | walking into a stone pillar or anything else Move or a shove can shift             |
-| A              | the A button: talk to whoever is ahead, else search, else open the field menu      |
-| field menu     | Select                                                                             |
-| Psynergy, item | the L and R shortcuts                                                              |
-| Pause menu     | Start                                                                              |
-
-Requests are handled in this order. An exit ends the scene. A random battle
-names the battle as the next sequence and ends the scene too, which is why the
-party returns from a battle to the same spot.
-
-**Reference:** `FieldSequence_Run` in
-[field_sequence.c](src/overworld/overworld/field_sequence.c) ·
-`PaletteFade_Update` · `Actor_UpdateAllThumb` · `MapGrid_UpdateLayerScroll` ·
-`ActorSystem_PlaceSprites` · `TilesetAnim_Update` · `WindowSystem_Update` ·
-`Field_CheckConfiguredKeys` · `Field_UpdateWalking` ·
-[Running a scene](src/overworld/README.md#the-field-sequence-serves-requests)
-
-## Battles
-
-![Isaac and Garet against two Gryphons: both attack, then the first Gryphon casts Impact and its partner's Attack rises, and the second casts Tornado on the pair; the next turn's menu opens.](https://alchemy.pascalpixel.com/guides/battle/round.gif)
-
-A battle is a sequence of its own with an ordinary loop, in `Battle_Run`:
+The main routine is running the field sequence for that scene. The field
+sequence's loop calls `wait(1)` once a frame while the player walks. Pressing
+A does not interrupt anything: the leader's control routine, which a task runs
+during the wait, only sets a [request](glossary.md#field-request) in the field
+work (`Field_CheckConfiguredKeys` sets `aButton`). When `wait(1)` returns,
+the loop sees the request, finds the villager ahead
+(`Field_FindNearbyTalkTarget`) and looks him up in the scene's
+[trigger](glossary.md#trigger) table, which holds this row:
 
 ```c
-for (;;) {                                  /* one turn */
-  actionCount = Battle_GatherActions(...);  /* menus and enemy habits */
-  for (i = 0; i < actionCount; i++) {       /* in Agility order */
-    BattleStaging_DispatchAction(...);      /* announce, animate, apply */
-    /* stop here if a side has fled or been beaten */
-  }
-  Battle_ProcessTurnEnd();                  /* statuses count down */
-}
+{ TRIGGER_TALK, ACTOR_TIED_UP_VILLAGER, CONDITION_ALWAYS, EVENT(LogRoomsA_FreeRooferAndConfrontThieves) },
 ```
 
-An attack's battle effect is an ordinary function that waits frame by frame.
-Its damage comes from a task, playback, which stays idle until the battle
-effect signals that the blow has landed and then applies it target by target.
-So Quake's damage messages appear while the rock is still rising, rather than
-after it: the rules decide how much, the battle effect only when. The battle's
-code also stays loaded between battles, so starting one unpacks nothing.
+The row names an [event](glossary.md#event), and the loop calls it.
 
-**Reference:** [Battle](battle.md) ·
-[Rules and battle effects run together](battle.md#rules-and-battle-effects-run-together)
+### The event
 
-## Scenes and overlays
+`LogRoomsA_FreeRooferAndConfrontThieves` runs straight through, from
+`Event_Start` to `Event_End`. Isaac cuts the villager free, the three thieves
+come up the ladder to `MUS_OMINOUS`, they speak, and they attack. Every pause
+between those steps is an `Event_Wait`, which calls `wait()` unless the
+debug fast-forward is on, and the tasks keep the actors moving during each
+one. The event does not start the battle itself. At its end it sets a story
+flag, writes into the main routine's work where the story goes after a win and
+after a loss and that the battle is scripted, and asks the field for the battle
+(one line, which picks the bars that close the screen, is left out):
 
-Only one scene's code is in memory at a time. Its people, their lines and its
-events matter nowhere else, so each scene's code is packed on the cartridge as
-an overlay and unpacked into the same 32 KB. Overlays never call each other;
-code that several scenes need is copied into each.
+```c
+GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
+base = (s32)&SceneId_LogRoomsA;
+Event_SetAfterBattleDestination(base, LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED);
+Event_SetDefeatDestination(base, LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES);
+Battle_SetType(BATTLE_TYPE_SCRIPTED);
+Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
+```
 
-The rest of the game reaches a scene through six functions,
-`struct SceneEntryPoints` at the start of every overlay:
+A scene id is defined in the scene table itself: `scenes.s` defines
+`SceneId_<name>` as the row's number, so no separate list of numbers can
+drift from the table, and C reaches a number the assembler defines only as a
+symbol's address. The last line only asks for the battle: it records the
+thieves' [formation](glossary.md#formation) as the field's encounter request
+and picks the battle music. The battle is answered like the A press, as a
+request the loop sees once the event has returned.
 
-1. Set up the scene.
-2. Where can the party arrive?
-3. Where do the exits lead?
-4. Who stands here?
-5. What happens when the player talks, searches or steps somewhere?
-6. Which parts lead out?
+### The battle
 
-Each answer is a function rather than a fixed table, so a scene can answer
-differently as the story moves on.
+Back in the field sequence's loop, the encounter request is answered by
+writing `SEQUENCE_BATTLE` as the next id and the formation as the entrance,
+and the field sequence returns. The main routine's next pass tears down the
+scene, its tasks and its heap, and calls `Battle_RunFar` with the formation.
+The battle never reads the scene: no scene id and no overlay. Besides the
+formation it is given, it reads the party, the battle type, the background
+chosen for the scene (`gMainRoutineWork.special`) and the battle music from
+the main routine's work. When it ends, `Scene_ReturnFromSequence` reads its result: a win
+goes to the after-battle [destination](glossary.md#destination) the event
+wrote, a loss to the defeat destination.
 
-**Reference:** [System: Overlays](system.md#overlays) ·
-[Scenes](src/scene/README.md) · [trigger](glossary.md#trigger)
+### Back in the loft
 
-## The scene table and areas
+The next pass runs the field sequence for `SceneId_LogRoomsA` again, at the
+[entrance](glossary.md#entrance) the event chose. The scene's
+`Scene_Initialize` switches on that entrance. At
+`LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED`, `LogRoomsA_DefeatThieves` stages
+the beaten thieves, and `LogRoomsA_ReturnStolenGoods` sets
+`FLAG_VAULT_THIEVES_JAILED` and hands back the stolen goods. At
+`LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES` it plays `LogRoomsA_LoseToThieves`
+and sends the party to the Vault Sanctum. Nothing on the map decides this:
+the entrance tells the scene which event to play.
 
-![Isaac steps from the world map onto Vale's marker; the village's gate fades in with the name Vale in a small window at the top of the screen, and he walks up through the gate](https://alchemy.pascalpixel.com/guides/front/area-name.gif)
+## Why every scene and battle starts cold
 
-Every scene is a row of `gScenes`, named in code by its row's symbol,
-`SceneId_<Place>`. A row picks four things independently:
+Since every sequence starts from the main routine's work and the game flags
+alone, any scene or battle can follow any other, and Camelot's
+[debug menus](glossary.md#debug-menus) can start any of them directly: the
+debug scene selector writes a scene and entrance as the destination and lets
+the scene exit ([System](system.md#design)).
 
-| Part | What it decides                                         |
-| ---- | ------------------------------------------------------- |
-| code | what happens there                                      |
-| area | the music, the area name, the flags kept while inside   |
-| map  | the picture and the ground                              |
-| type | whether it is a town                                    |
+## The four divisions
 
-The Bilibin Barricade runs on Bilibin's code but is an area of its own, and
-several scenes can share a map. Walking between Vale's houses shows no name,
-since the party stays in Vale's area; arriving from the world map shows "Vale"
-for 90 frames, a second and a half.
+Camelot's credits divide the game's programming into System, Battle, Field,
+User Interface and Support. The first four each have a page:
 
-In a town the party regains no [PP](glossary.md#psynergy-and-pp) and recovers
-no [Djinn](glossary.md#djinn) as it walks, poison does no damage, Retreat
-doesn't work and Avoid doesn't wear off.
+- [System](system.md): start-up, the main routine, waiting and tasks, memory,
+  banks, overlays, saving and sound.
+- [Battle](battle.md): a battle from the first menu to the spoils, and the
+  game's rules.
+- [Field](field.md): scenes and their requests, actors, maps, the World Map
+  and field Psynergy.
+- [User Interface](user_interface.md): windows and messages, the menus,
+  shops and inns.
 
-| What     | Count | Note                               |
-| -------- | ----- | ---------------------------------- |
-| scenes   | 201   |                                    |
-| overlays | 96    | some shared by several scenes      |
-| areas    | 71    |                                    |
-
-## Exits and entrances
-
-![Isaac walks down the path from Sol Sanctum's entrance and arrives at the foot of the steps in Vale; then the same walk again, and this time the exit leads to Vale erupting, the villagers crowded beside the bridge while the river and the cliffs glow red](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
-
-An [exit](glossary.md#exit) only names where it goes. The scene's exit table
-turns that name into a scene and an entrance: the spot where the party appears
-and the way it faces. A row can last only until a flag is set, and the first
-row that holds wins. The path in the recording has three rows:
-
-| Until                    | The path leads to |
-| ------------------------ | ----------------- |
-| the Sanctum erupts       | Vale              |
-| the party leaves Vale    | Vale erupting     |
-| from then on             | Vale              |
-
-A scene's set-up often reads the entrance too, to play the part of an event
-the last scene sent the party to.
-
-Every way between scenes is named in [scene_exits.h](include/scene_exits.h):
-entrances for where the party comes from (`VALE_PLAZA_FROM_SANCTUM`), exits for
-where they lead (`VALE_PLAZA_TO_WORLD_MAP`), so a door has the same name from
-both sides.
-
-**Reference:** `gSolSanctumEntrance_Exits` in
-[sol_sanctum_entrance.c](src/scene/sol_sanctum_entrance.c)
-
-## Game flags
-
-![In a small room of Sol Sanctum, Isaac searches the chest in front of him: a green Small Jewel rises out of it, he holds it over his head and a window reads "Isaac got a Small Jewel."](https://alchemy.pascalpixel.com/guides/front/chest.gif)
-
-A scene keeps nothing between visits. Whatever the game must remember, a chest
-or the end of a chapter, is a game flag saved with the game. The chest's
-trigger row counts only while `FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND` is
-clear; opening it sets the flag, and from then on the chest is drawn open and
-empty.
-
-[flags.h](include/flags.h) holds 4,096 flags in a fixed order: the party and
-the Djinn, those the field, battles and menus keep about their own working,
-the story's, then the chests and other finds, each area's together. Two
-ranges are scratch space:
-
-| Range           | Size | Cleared                          | Example                                   |
-| --------------- | ---- | -------------------------------- | ----------------------------------------- |
-| a scene's flags | 256  | each time the party arrives      | a stone pillar pushed out of place is back |
-| an area's flags | 256  | on entering another area         |                                           |
-
-Neither is cleared on returning from a battle, which comes back to the same
-moment. Eight flags in a row can be read as a small number, which is how
-counters live among them.
-
-Because trigger rows and flags depend on each other, some of the game's code
-can never run. Its comment opens with [`Unused:`](glossary.md#unused), and
-[Unused](https://alchemy.pascalpixel.com/tbs/unused) collects every case.
-
-**Reference:** [Game rules: The game flags](src/game/README.md#the-game-flags)
-
-## How scenes depend on the story
-
-![Vale's gate three times: on the stormy night, rain falling and the villagers gathered at the top of the screen; after the party has left, a guard standing by the path; and later in the journey, more villagers about](https://alchemy.pascalpixel.com/guides/front/vale-plaza-story.gif)
-
-The story is the order the flags are set in. Each time the party arrives, a
-scene asks the flags which version of itself to be and returns that version's
-tables. Vale's gate is `ValePlaza_GetTriggers` in
-[vale_plaza.c](src/scene/vale_plaza.c).
-
-The other forms it takes, in
-[story order](glossary.md#the-places-in-story-order):
-
-| Form                               | Example                                                                                                                       |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| a scene per point in the story     | the stormy night in Vale ([vale_prologue.c](src/scene/vale_prologue.c))                                               |
-| a scene with no triggers           | Vale erupting plays its event and leaves by its one exit ([vale_eruption.c](src/scene/vale_eruption.c))                       |
-| a row that lasts until its flag    | each pedestal of the Elemental Stars offers its star once ([sol_sanctum_elemental_star_room.c](src/scene/sol_sanctum_elemental_star_room.c)) |
-| a flag set by arriving             | reaching the World Map from Vale marks that the party has left                                                                |
-| one event cut into parts           | the top of Venus Lighthouse, broken by two battles and two trips to the World Map ([venus_lighthouse_aerie.c](src/scene/venus_lighthouse_aerie.c)) |
-| the last scene                     | the Lemurian ship at Lalivero sends the party to the Title ([lemurian_ship.c](src/scene/lemurian_ship.c))                     |
-
-**Reference:** [Places](src/field/scenes.s), every scene in story order
-
-## The world map
-
-![The whole world map of The Broken Seal laid out flat: the land of mountains, rivers and forest that the story crosses, two small islands in the sea, and plain blocks where the map's data leaves squares blank](https://alchemy.pascalpixel.com/story/world.png)
-
-The World Map is a scene like the others, drawn in perspective on the two
-background layers the hardware can scale and rotate. Its world is stored in
-squares 512 pixels on a side, and only the four around the party are unpacked
-at a time. Each town or dungeon is a figure that takes its exit when touched.
-The map also holds three Djinn and a storm, and plays the story's moments
-between places, chosen by where the last scene sent the party.
-
-**Reference:** [world_map.c](src/scene/world_map.c) ·
-[Field: The world map](field.md#the-world-map)
-
-## How the code is organised
-
-The main image runs straight from the cartridge in fourteen
-[banks](glossary.md#bank), about 1 MB of the English cartridge, followed by
-the sound code, the music and the packed pictures and maps.
-
-| Folder                                    | Holds                                         |
-| ----------------------------------------- | --------------------------------------------- |
-| `runtime`, `field`, `window`, `game`, `overworld`, `menu`, `shop`, `battle`, `battle_effect` | the nine large banks, in cartridge order; the five small banks' code sits with the folder it belongs to |
-| `graphics`, `map`, `sound`, `cartridge`   | code grouped by topic, linked wherever needed |
-| `scene`, `debug`                          | overlays                                      |
-
-`overworld` runs a scene from arrival to exit, and `field` moves and draws its
-actors.
-
-Each bank starts at a fixed place, and code in one bank reaches another only
-through a short list of entrances at that bank's start, so a bank can grow
-without moving the others. An entrance is the function's name with `Far`
-added: the main routine starts a battle with `Battle_RunFar`, which leads
-to `Battle_Run` in the battle bank.
-
-**Reference:** [far calls](glossary.md#far-call) ·
-[Why the main image is cut into banks](src/cartridge/README.md#why-the-main-image-is-cut-into-banks) ·
-[`objects.tsv`](objects.tsv) · [Source](src/README.md)
-
-## Section pages
-
-Camelot's credits list the programmers under System, Battle, Field, User
-Interface and Support. The code falls into the first four, and the first four
-section pages follow them.
-
-| Page                                                 | Covers                                                                   |
-| ---------------------------------------------------- | ------------------------------------------------------------------------ |
-| [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, saving, sound |
-| [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its battle effects   |
-| [Field](field.md)                                    | actors and movement, maps, the requests, field Psynergy, debug scenes    |
-| [User Interface](user_interface.md)                  | windows and messages, the field menu, the Pause menu, shops and inns     |
-| [Places](src/field/scenes.s)                         | every scene in story order, with its actor placements and triggers       |
-| [Game rules](src/game/README.md)                     | stats, items, Djinn, classes, levels and the flags                       |
-| [Unused](https://alchemy.pascalpixel.com/tbs/unused) | what the game keeps but never plays, and why                             |
-| [Source](src/README.md)                              | every file of the code, with its comments                                |
-| [Glossary](glossary.md)                              | the words every page uses                                                |
+Beside them, [Places](https://alchemy.pascalpixel.com/tbs/places) has every scene in story order,
+[Source](src/README.md) every file of the code, the [Glossary](glossary.md)
+the words these pages share, and
+[Unused](https://alchemy.pascalpixel.com/tbs/unused) what the game keeps but
+never plays.

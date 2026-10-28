@@ -1,14 +1,11 @@
 # Glossary
 
-Every page links here the first time it uses one of these words. They come in
+Every page links here the first time it uses one of these words, which come in
 the order a newcomer meets them: the game's own words, then the project's,
-then the words of the code's four divisions, the system, the field, the battle
-and the user interface. Each entry ends with where its word comes from: from
-Camelot (the game's credits, its text and its debug labels) where Camelot has
-a word for the thing, else from Sega, whose programmers Camelot grew out of
-(Sega's SGL library and 平山尚's book from Sega's training), else from the
-tradition of the time (the game programmers who wrote the Digital Content
-Association of Japan's reports, DCAJ), else plain English.
+then those of the code's four divisions, the system, the field, the battle and
+the user interface. Each entry ends with where its word comes from: Camelot
+where Camelot has a word for the thing, else the tradition of the time, else
+plain English.
 
 ## Golden Sun
 
@@ -41,8 +38,9 @@ Evidence: Camelot: the game's text says party throughout.
 The story starts in Vale, under Mt. Aleph, and follows the thieves of the
 Elemental Stars through Vault, Bilibin, Kolima, Imil, Mercury Lighthouse,
 Xian, Altin, Kalay and Tolbi to Lalivero and Venus Lighthouse, where the game
-ends. The story is the order the [game flags](#game-flag) are set in, so pages
-list places in that order; [Places](src/field/scenes.s) lists every scene.
+ends. The [game flags](#game-flag) are set in story order, so pages list
+places in that order; [Places](https://alchemy.pascalpixel.com/tbs/places)
+shows every scene.
 
 Evidence: Camelot: the area names in the game's text.
 
@@ -51,8 +49,7 @@ Evidence: Camelot: the area names in the game's text.
 ![Isaac casts Growth in battle: light gathers around him, then a spiked vine bursts out of the ground under Ivan](https://alchemy.pascalpixel.com/abilities/growth.gif)
 
 Psynergy is the game's magic, cast in battle (Quake, Cure, Growth) and on the
-field (Move, Reveal), where it pushes, grows or uncovers things; it is
-uncountable, so a character uses Psynergy, never "a Psynergy". Each use costs
+field (Move, Reveal), where it pushes, grows or uncovers things. Each use costs
 PP (Psynergy Points), which come back as the party walks outside towns and at
 inns ([Field](field.md#field-psynergy)).
 
@@ -69,9 +66,9 @@ Evidence: Camelot: the game's text.
 
 ### Power and Resist
 
-Each fighter has a Power and a Resist in each element: Power raises the damage
-and healing of what it casts in that element, and Resist lowers the damage it
-takes from it ([Battles](src/battle/README.md#the-element-multiplier)).
+For each element, every fighter has a Power and a Resist: Power raises the
+damage and healing of what it casts in that element, and Resist lowers the
+damage it takes from it ([Battles](src/battle/README.md#the-element-multiplier)).
 
 Evidence: Camelot: the Status screen's labels.
 
@@ -132,8 +129,8 @@ Evidence: plain English; the project's own word.
 The group behind other decompilations of Game Boy Advance games, whose
 standard Alchemy measures itself by: what counts as matched, how the build is
 laid out, the shape of names (`PascalCase` functions, `gName` globals) and the
-`BUG` and `BUGFIX` markers. Its words are not a source for Alchemy's: the
-names of things are Camelot's where Camelot has one.
+`BUG` and `BUGFIX` markers. The names of things here are Camelot's wherever
+Camelot has one.
 
 Evidence: the group's own name.
 
@@ -156,9 +153,9 @@ Evidence: plain English; the project's own word.
 
 ### BUG, BUGFIX and UBFIX
 
-`// BUG:` marks a bug of the original game, kept as it is, with a fix behind
-`BUGFIX`; `// UB:` marks undefined behaviour kept in the form that matches,
-with the defined form behind `UBFIX`
+`// BUG:` keeps one of the original game's bugs, with a fix behind `BUGFIX`;
+`// UB:` keeps undefined behaviour as it matches, with the defined form behind
+`UBFIX`
 ([Matching](src/MATCHING.md#the-other-markers)).
 
 Evidence: plain English, in pret's markers.
@@ -195,96 +192,75 @@ Evidence: Camelot: the credits, "Programming", then "System", "Battle",
 ### Main routine
 
 The routine that runs everything outside the interrupts, `MainRoutine_Run`:
-called once at power-on (and again by `Game_RestartQuest`), it never
-returns, and each pass of its loop runs one
-[sequence](#sequence). Each pass reads one id from the
-[main routine's work](#main-routines-work) and runs one
-thing: a [scene](#scene), any row of the scene table, the Title and the File
-Screen included, which the
-[field sequence](#field-sequence) runs until the party takes an exit; or the
-battle, dice or slots sequence. In each transition it tears down what the last
-sequence set up (its tasks, its interrupt handlers, the heap) and starts the
-next, so going from one scene to the next is a transition just as going into a
-battle is ([The front page](README.md#the-main-routine)).
+called at power-on by `System_Initialize`, and again by `Game_RestartQuest`,
+it never returns. Each pass of its loop tears down what the last
+[sequence](#sequence) set up (its tasks, its HBlank and VCount handlers, the
+heap),
+reads one id from the [main routine's work](#main-routines-work) and runs one
+sequence: the [field sequence](#field-sequence) for a [scene](#scene), any row
+of the scene table, the Title and the File Screen included; or the battle,
+dice or slots sequence. A change of scene is a transition too, as going into a
+battle is ([System](system.md#the-main-routine)).
 
 Evidence: tradition: メインルーチン, the period's word for the code that runs
-outside the interrupts (黒須一雄 of Namco, DCAJ 2008, p.312; 遠藤雅伸 of Namco,
-2001). No source names Camelot's routine. Not main loop, monitor, sequence
-parent, sequence manager or job controller.
+outside the interrupts.
 
 ### Sequence
 
 One flow of the game, run from its start to its end: the field sequence, the
 battle sequence, the dice sequence (Lucky Dice) or the slots sequence (Lucky
 Wheels), `SEQUENCE_` in code. One runs at a time
-([The front page](README.md#the-main-routine)).
+([System](system.md#the-main-routine)).
 
-Evidence: tradition: Namco's ゲームシーケンス (遠藤雅伸, 2001; 黒須一雄, DCAJ
-2008) and Sega's through 平山尚 (ゲームプログラマになる前に覚えておきたい技術,
-2008, from Sega's course for new programmers). Camelot uses プログラム only
-for the whole game's code.
+Evidence: tradition: ゲームシーケンス.
+
+### Field sequence
+
+The sequence that runs one [scene](#scene), `FieldSequence_Run`: it allocates
+`gFieldWork`, loads the map, starts the actors and windows and calls the
+overlay's initialize entry, then waits a frame at a time, answering the
+[field requests](#field-request), until one ends the scene. The next scene is
+the main routine's to start
+([Field](field.md#the-field-sequence-and-its-requests)).
+
+Evidence: Camelot: the credits' "Field" (`gCredits_Lines`); tradition: sequence.
 
 ### Transition and next sequence
 
-The handover from one sequence to the next. A sequence that ends names the
-next sequence in the [main routine's work](#main-routines-work), and the
-main routine starts it
-([The front page](README.md#how-a-sequence-finds-its-way-back)).
+The handover from one sequence to the next. The field sequence names the next
+one, a scene or a battle, in the [main routine's work](#main-routines-work); a
+battle, dice or slots sequence returns its result, and the main routine picks
+the scene to go back to (`Scene_ReturnFromSequence`)
+([System](system.md#the-main-routine)).
 
-Evidence: Sega: 平山尚's シーケンス遷移 and its 遷移判定 (2008).
+Evidence: tradition: シーケンス遷移.
 
 ### Main routine's work
 
 The main routine's [work](#work), the one struct every sequence shares and
 that outlives each of them, `gMainRoutineWork` (`struct MainRoutineWork`,
-`main_routine_work.h`).
-It holds the main routine's own transition data (the scene and entrance it
-runs next, what the last sequence reported in `sequenceResult`, the return
-point, the after-battle and defeat destinations and the restart point) and
-what every sequence shares: the party, where it stands, the coins, the Djinn,
-the play time and the options. It is a fixed struct in EWRAM, never freed and
-in no [heap slot](#heap-slot). Save Game writes it to the cartridge with the
-game flags ([The front page](README.md#how-a-sequence-finds-its-way-back)).
+`main_routine_work.h`): a fixed struct in EWRAM, never freed and in no
+[heap slot](#heap-slot); Save Game writes it with the game flags
+([System](system.md#the-main-routine)).
 
-Evidence: tradition: work, working memory, as the [work](#work) entry says;
-it is named for its owner, the main routine.
+Evidence: tradition: work, named for its owner, the main routine.
 
 ### Frame
 
-One step of the game: every [task](#task) in the frame pass runs once and one
-picture is prepared, then the game halts until the next [VBlank](#vblank)
-shows it. Code lets time pass with `wait(n)`, and every wait, walk and
-animation is counted in frames
-([The front page](README.md#waiting-in-place)).
+One pass of the game's work: every [task](#task) in the frame pass runs once
+and the screen is prepared, then the game halts until the next
+[VBlank](#vblank) shows it. Waits, walking and animation are all counted in
+frames ([System](system.md#waiting-and-tasks)).
 
-Evidence: tradition: フレーム for one pass of a game's processing (黒須, 田村祐樹 and
-小久保, DCAJ 2008).
-
-### VBlank
-
-One refresh of the screen. The console draws about 59.73 pictures a second,
-and after each it pauses in the vertical blank (VBlank), whose interrupt, the
-VBlank interrupt, mixes the sound and reads the buttons whatever the game is
-doing. The music keeps time in VBlanks ([System](system.md)).
-
-Evidence: tradition: V ブランク and its interrupt (山口, DCAJ 2009), the
-hardware's own name.
-
-### Slowdown
-
-A frame that overruns one VBlank and lasts two or more: every wait,
-walk and animation slows down together, while the music keeps its tempo
-([The front page](README.md#when-a-frame-runs-long)).
-
-Evidence: tradition: 処理落ち (山口, DCAJ 2009).
+Evidence: tradition: フレーム, one pass of a game's processing.
 
 ### Wait
 
-Letting frames pass where the code stands: `wait(n)` returns to the
-next line once n frames have run
-([System](system.md#waiting-and-tasks)).
+Letting frames pass in the middle of a routine: `wait(n)` runs n frames and
+then returns to the next line, so a sequence or an event is written as
+straight-line code ([System](system.md#waiting-and-tasks)).
 
-Evidence: tradition: 黒須's WAIT and 田村祐樹's `wait()` (DCAJ 2008).
+Evidence: tradition: WAIT, the period's word for it.
 
 ### Task
 
@@ -294,10 +270,30 @@ scrolling, the lightning over Vale on the stormy night. The task table,
 `gTasks`, holds up to 20, each with its function (`func`) and a priority that
 picks its pass, the frame pass (`TASK_PASS_FRAME`, which `wait()` runs) or
 the VBlank pass (`TASK_PASS_VBLANK`, which the VBlank interrupt runs), and its
-order within it. A task carries no memory of its own: what it works on is a
-[work](#work) ([Runtime](src/runtime/README.md#the-task-runner)).
+order within it. A task has no state of its own: it keeps what it works on in
+a [work](#work), a block in a heap slot
+([Runtime](src/runtime/README.md#the-task-runner)).
 
-Evidence: tradition: タスク and its 実行関数 (田村祐樹, DCAJ 2008).
+Evidence: tradition: タスク and its 実行関数.
+
+### VBlank
+
+One refresh of the screen. The console refreshes the screen about 59.73 times
+a second, and after each it pauses in the vertical blank (VBlank), whose
+interrupt, the
+VBlank interrupt, mixes the sound and reads the buttons whatever the game is
+doing. The music keeps time in VBlanks
+([System](system.md#waiting-and-tasks)).
+
+Evidence: tradition: V ブランク, the hardware's own name.
+
+### Slowdown
+
+A frame that overruns one VBlank and lasts two or more: every wait,
+walk and animation slows down together, while the music keeps its tempo
+([System](system.md#slowdown)).
+
+Evidence: tradition: 処理落ち.
 
 ### Work
 
@@ -306,26 +302,14 @@ The working memory a piece of code keeps its state in, held in a
 the menus' `gMenuWork`. The main routine's is the one kept in a fixed
 struct instead, [`gMainRoutineWork`](#main-routines-work).
 
-Evidence: tradition, extended: ワーク names working memory in general in the
-console's own Work RAM (GBATEK's On-board and On-chip Work RAM), 山口's
-ワークエリア for the RAM a program can use (DCAJ 2009) and the システムワーク領域
-of BASIC or a monitor program, a system's own work area (DCAJ 2009); 田村祐樹
-uses it for one task's memory, its 汎用ワーク (DCAJ 2008). A block kept by a
-whole system, as `gFieldWork` is, extends that word; no source uses it so.
-
-### IWRAM and EWRAM
-
-The console's two areas of RAM: IWRAM, 32 KB inside the processor and the
-fastest it has, and EWRAM, 256 KB beside it and slower
-([Cartridge and memory](src/cartridge/README.md#memory-map)).
-
-Evidence: tradition: the hardware's own names.
+Evidence: tradition: ワーク, working memory, as in the hardware's Work RAM,
+used here for a system's block.
 
 ### Heap and pools
 
 The heap lends blocks of memory from two pools, one in IWRAM and one in EWRAM;
-blocks go back in the reverse of the order they were taken, and the whole heap
-is emptied before each sequence ([Runtime](src/runtime/README.md#the-heap)).
+the last block taken is the first given back, and the whole heap is emptied
+before each sequence ([Runtime](src/runtime/README.md#the-heap)).
 
 Evidence: plain English.
 
@@ -335,6 +319,14 @@ One of 62 numbered places that each hold a heap block other code has to find
 again, such as the running scene's [work](#work) (`gHeapSlots`).
 
 Evidence: plain English; the project's own word.
+
+### IWRAM and EWRAM
+
+The console's two areas of RAM: IWRAM, 32 KB inside the processor and the
+fastest it has, and EWRAM, 256 KB beside it and slower
+([Cartridge and memory](src/cartridge/README.md#memory-map)).
+
+Evidence: tradition: the hardware's own names.
 
 ### Main image
 
@@ -346,8 +338,9 @@ Evidence: plain English; the project's own word.
 
 ### Bank
 
-One of the fourteen stretches the main image is cut into, each at a fixed
-address with room to spare and opening with a [far-call](#far-call) table, so
+One of the fourteen stretches the main image is cut into, each starting at a
+fixed address, with space after its code, and opening with a
+[far-call](#far-call) table, so
 one bank can grow without moving anything another depends on
 ([Cartridge and memory](src/cartridge/README.md#why-the-main-image-is-cut-into-banks)).
 Every bank is always in place; none is switched in or out.
@@ -356,9 +349,10 @@ Evidence: plain English; the project's own word.
 
 ### Far call
 
-A call from one bank into another, through an 8-byte jump in the callee's
-jump table named after the function with `Far` added: `Battle_RunFar` leads to
-`Battle_Run` ([System](system.md#banks-and-far-calls)).
+A call from one bank into another through the callee bank's far-call table,
+an 8-byte jump named after the function with `Far` added (`Battle_RunFar`
+leads to `Battle_Run`); only the runtime bank is called directly
+([System](system.md#banks-and-far-calls)).
 
 Evidence: tradition: ジャンプテーブル for the table; "far call" is plain English.
 
@@ -383,16 +377,16 @@ Evidence: tradition: the GNU linker's word.
 
 The two tables an overlay meets the main image through: the entry table opens
 it with six veneers the field calls to ask the scene its questions
-(`struct SceneEntryPoints`), and the import table ends it with one veneer for each
-main-image function it calls
+(`struct SceneEntryPoints`), and the import table ends it with one veneer for
+each main-image function it calls
 ([Cartridge and memory](src/cartridge/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 
 Evidence: plain English.
 
 ### Resource directory
 
-The one table of every packed thing on the cartridge, an overlay, a map or a
-picture, found by its row
+The one table of every packed thing on the cartridge, an overlay, a map or an
+image, found by its row
 ([Cartridge and memory](src/cartridge/README.md#the-resource-directory-and-table-order)).
 
 Evidence: plain English.
@@ -403,20 +397,19 @@ A file is one of the three saves on the cartridge. Each is kept as two parts,
 and each copy of a part sits in one 4 KB sector of the flash chip
 ([Runtime](src/runtime/README.md#saving)).
 
-Evidence: Camelot: "Please choose a file." (きろくばしょを えらんでください); "part"
-is plain English, and "sector" the flash chip's.
+Evidence: Camelot: "Please choose a file." (きろくばしょを えらんでください).
 
 ### Background layer
 
-One of the console's four tiled pictures, `BG0` to `BG3`, each scrolling as a
-whole; a town is drawn on three of them, the world map on the two the hardware
+One of the console's four tiled layers, `BG0` to `BG3`, each scrolling as a
+whole; a town is drawn on three of them, the World Map on the two the hardware
 can scale and rotate ([Field](field.md#map-layers)).
 
 Evidence: tradition: the hardware's BG.
 
 ### Sprite and OAM
 
-A sprite is a small picture the hardware draws over or between the background
+A sprite is a small image the hardware draws over or between the background
 layers; OAM, the object attribute memory, is the hardware's list of them,
 rebuilt every frame ([Runtime](src/runtime/README.md#the-frame-loop)).
 
@@ -424,34 +417,35 @@ Evidence: tradition: スプライト and the hardware's OAM.
 
 ### Sprite animation
 
-One of the up to four pictures laid over each other in a sprite, each playing
-its own run of pictures (`struct SpriteAnimation`): Isaac's body, his weapon
+One of the up to four layers of a sprite, each playing its own run of
+[pictures](#picture) (`struct SpriteAnimation`): Isaac's body, his weapon
 and his shadow are three sprite animations of one sprite
 ([Field](src/field/README.md#sprites-and-their-animation)).
 
-Evidence: plain English. No word of the time names one layer of a sprite.
+Evidence: plain English; no word of the time names one layer of a sprite.
 
 ### Picture
 
 One drawing in a sprite animation or a tile animation, shown for a number of
 frames before the next ([Field](src/field/README.md#sprites-and-their-animation)).
 
-Evidence: plain English. The time's パターン and コマ each mean other things too.
+Evidence: plain English; the time's パターン and コマ each mean other things too.
 
 ### Palette number
 
 Which of the sixteen 16-colour palettes a tile or a sprite is drawn in, the
 4-bit number the hardware reads beside each tile
-([Graphics](src/graphics/README.md#the-palette-fade)).
+([Graphics](src/graphics/README.md#how-an-image-is-built-and-placed)).
 
 Evidence: plain English for the hardware's own field.
 
 ### Palette fade
 
-The change of every colour on screen, backgrounds and sprites alike, an equal
-step each frame towards a target, so that they all arrive together; it brings
-scenes in from black and takes them out again
-([Graphics](src/graphics/README.md#the-palette-fade)).
+The change of the backgrounds' and sprites' colours, by an equal amount each
+frame, towards a target, so that they all arrive together; the field fades
+each scene in from its backdrop colour with it, and the weather and Mind Read
+tint the screen with it (`PaletteFade_Update`, in
+[color.c](src/overworld/overworld/color.c)).
 
 Evidence: plain English.
 
@@ -460,16 +454,17 @@ Evidence: plain English.
 A table that gives each of the screen's 160 lines its own background scroll,
 written into the scroll registers line by line by HBlank DMA; Mind Read's wave,
 the Lamakan Desert and the Lemurian Ship's ripple bend a layer with it
-(`struct LineScrollWork`, `LineScroll_`) ([Field](field.md#field-psynergy)).
+(`struct LineScrollWork`, `LineScroll_`, in
+[wave_scroll.c](src/overworld/event_commands/wave_scroll.c)).
 
-Evidence: Sega: SGL's ラインスクロール.
+Evidence: tradition: ラインスクロール.
 
 ### Sound
 
 Every sound the game plays, music, a jingle or a sound effect (SE), is asked
 for by a sound number: below 80 music, from 80 the jingles, and from 100 the
 sound effects ([Sound](src/sound/README.md#what-a-sound-number-means)). The
-sound driver plays them, and calls each one's data a song.
+sound driver plays them.
 
 Evidence: Camelot: the credits' "Music" and "Sound Effects", and The Lost
 Age's sound test's "Music", "Jingle" and "SE".
@@ -487,27 +482,13 @@ Evidence: Camelot: the credits' "Field", and せんとう&フィールド
 ### Scene
 
 One row of the scene table (`struct Scene` in `gScenes`): a room, a town, a
-dungeon floor, the World Map, or a screen such as the Title or the File
-Screen, 201 in all, each running an overlay's code and drawn on a map
-([The front page](README.md#scenes-and-overlays)).
+dungeon floor, the World Map, or a screen (the Title, the File Screen), 201
+in all, each running an overlay's code and drawn on a map. Each
+row carries Camelot's scene code (PLOGV00 for Vale on the stormy night of the
+prologue, TITLE, WORLD; `MsgDebugSceneCode`) and its area name (`MsgDebugAreaName`), which the debug scene selector shows
+([Field](field.md#scenes-and-areas)).
 
-Evidence: Camelot: The Lost Age's developer test message 05746 heads a
-location name シーン, beside クラス, アイテム and まほう. Each row also carries
-Camelot's scene code (PLOGV00, TITLE, WORLD, `MsgDebugSceneCode`) and its
-area name (`MsgDebugAreaName`), which the debug scene selector shows.
-
-### Field sequence
-
-The sequence that runs one [scene](#scene), `FieldSequence_Run`: it allocates
-`gFieldWork`, loads the map, starts the actors and windows and calls the
-overlay's initialize entry, then waits a frame at a time, answering the
-[field requests](#field-request), until one ends the scene. The next scene is
-the main routine's to start
-([The front page](README.md#the-field-sequence)).
-
-Evidence: Camelot: the credits' Programming division "Field", paired with
-"Battle" (`gCredits_Lines`); sequence: Namco's ゲームシーケンス (遠藤雅伸) and
-Sega's through 平山尚, as the [sequence](#sequence) entry says.
+Evidence: Camelot: The Lost Age's developer test message 05746 heads a location name シーン.
 
 ### Room
 
@@ -520,8 +501,8 @@ FUCHINRM).
 
 A group of scenes, 71 in all, sharing their music, their area name and one
 range of [scratch flags](#game-flag)
-([The front page](README.md#the-scene-table-and-areas)). The game names each
-by its area name, the one the debug menu lists and the area name window shows.
+([Field](field.md#scenes-and-areas)). The game names each by its area name,
+the one the debug menu lists and the area name window shows.
 
 Evidence: Camelot: the area names.
 
@@ -541,8 +522,8 @@ Evidence: Camelot: the credits' "Map Characters".
 
 ### Still picture
 
-The World Map's tilted view drawn once into an ordinary background picture,
-so that a menu's or an event's windows can use the layer the tilt was using
+The World Map's tilted view drawn once into an ordinary background layer,
+freeing the tilt's layer for a menu's or an event's windows
 (`WorldMap_StartStillPicture`) ([Field](field.md#the-world-map)). The map R
 shows of the whole world is the world picture, a screen of its own
 ([Running a scene](src/overworld/README.md#the-world-picture)).
@@ -560,7 +541,7 @@ Evidence: plain English; the project's own word.
 
 ### Cell
 
-One 16 by 16 pixel square of a map: which cell picture is drawn there, the
+A 16-pixel square of a map: which cell picture is drawn there, the
 shape and height of the ground, and its cell behavior
 ([Maps](src/map/README.md#cells)).
 
@@ -568,10 +549,9 @@ Evidence: plain English.
 
 ### Cell picture
 
-The picture of one cell: 2 by 2 of the console's 8-pixel tiles.
+The picture of one cell: four of the console's 8-pixel tiles, two by two.
 
-Evidence: plain English. No word of the time names the 16-pixel unit, and
-Sega's "cell" is the 8-pixel tile.
+Evidence: plain English.
 
 ### Cell behavior
 
@@ -580,7 +560,7 @@ it does: a wall, a ledge, a jar. One range of behaviors means whatever the
 scene's own trigger table says
 ([Field](field.md#cells-and-cell-behaviors)).
 
-Evidence: plain English. Camelot's 属性 (attribute) means an element.
+Evidence: plain English; Camelot's 属性 (attribute) means an element.
 
 ### Actor
 
@@ -596,9 +576,9 @@ Evidence: tradition: the Western word for a thing on a game's stage.
 ### Actor id
 
 An actor's number in its scene, the index of `FieldWork.actors`
-(`ACTOR_ID_COUNT` of them): 0 to 7 the party, the leader at 0, and from 8
-(`ACTOR_FIRST_PLACED`) the actor placements' rows in order; each scene names
-its own in an enum.
+(`ACTOR_ID_COUNT` of them): 0 to 7 the characters, each by its character
+number (`ACTOR_GARET` is 1), and from 8 (`ACTOR_FIRST_PLACED`) the actor
+placements' rows in order; each scene names its own in an enum.
 
 Evidence: plain English.
 
@@ -618,8 +598,7 @@ built-in script, a routine built into the field that steers it every frame,
 such as player control (`SC_PLAYER`) or the camera's
 ([Field](field.md#actors-and-their-actor-scripts)).
 
-Evidence: tradition: スクリプト for a character's commands (小久保, DCAJ 2008);
-"built-in script" is plain English.
+Evidence: tradition: スクリプト for a character's commands.
 
 ### Watched actor
 
@@ -648,7 +627,7 @@ scene's code raises. When the player talks, searches, steps on a marked cell or
 uses Psynergy, the first row that fits runs
 ([Scenes](src/scene/README.md#what-a-trigger-row-says)).
 
-Evidence: tradition: the Western word (QuakeC, Unreal).
+Evidence: tradition: the Western word for a spot on a map that starts something.
 
 ### Step trigger
 
@@ -669,8 +648,7 @@ Evidence: plain English.
 
 A way out of a scene, named for where it leads (`VALE_PLAZA_TO_WORLD_MAP`); the
 first row for it in the scene's exit table whose condition holds gives the next
-scene and entrance
-([The front page](README.md#exits-and-entrances)).
+scene and entrance ([Field](field.md#exits-and-entrances)).
 
 Evidence: Camelot: the game's text, 出口.
 
@@ -678,16 +656,16 @@ Evidence: Camelot: the game's text, 出口.
 
 Where the party arrives in a scene, named for where it comes from
 (`VALE_PLAZA_FROM_SANCTUM`): a position, a facing and the camera's limits
-([The front page](README.md#exits-and-entrances)).
+([Field](field.md#exits-and-entrances)).
 
 Evidence: Camelot: the game's text, 入口.
 
 ### Field request
 
-What the field sequence answers once the leader stops walking: one of twelve
-`FieldWork` members asks for an exit, an encounter, a talk, an examine, an
-item, a field Psynergy, a menu or a raised trigger, and the field sequence
-serves them most urgent first ([Field](field.md#the-field-sequence-and-its-requests)).
+What the field sequence answers: as soon as one of twelve `FieldWork` members
+is set (an exit, an encounter, a talk, an examine, a step trigger, a push, the
+A button, an item, a field Psynergy, a menu or a raised trigger), it stops the
+leader and serves them most urgent first ([Field](field.md#the-field-sequence-and-its-requests)).
 
 Evidence: plain English; the project's own word.
 
@@ -695,8 +673,8 @@ Evidence: plain English; the project's own word.
 
 The C routine a trigger runs, named for its scene (`Vale_EnterIsaacsHouse`):
 a cutscene, or a conversation that does more than show one message. It runs
-between `Event_Start` and `Event_End`, one step to a line, each step that
-takes time running its frames before the next starts. A trigger row that
+between `Event_Start` and `Event_End`, one event command to a line, each
+command that takes time running its frames before the next starts. A trigger row that
 only shows a message runs no event ([Scenes](src/scene/README.md#events)).
 
 Evidence: Camelot: the Shining Force III credits' "Events", by two of Golden
@@ -716,11 +694,10 @@ Evidence: plain English.
 The scene and entrance the main routine runs next (`gMainRoutineWork.sceneId`
 and `entrance`): an exit sets it, and an event can set it itself
 (`Event_SetDestination`) or set it and leave at once (`Event_LeaveFor`).
-Three others are read only at given moments: after a battle the party goes to
-the after-battle destination when it won and one is set, else back to the
-return point, the scene it left; after a defeat it goes to the defeat
-destination when one is set, else to the restart point, usually the last
-Sanctum ([The front page](README.md#exits-and-entrances)).
+Four others are read only at given moments: after a battle or minigame the
+after-battle destination when one is set, else the return point, the scene
+the party left; after a defeat the defeat destination when one is set, else
+the restart point, usually the last Sanctum ([Field](field.md#exits-and-entrances)).
 
 Evidence: plain English.
 
@@ -728,7 +705,7 @@ Evidence: plain English.
 
 One of the 4,096 yes-or-no facts saved with the game, such as a chest being
 open; two ranges are scratch space, cleared as the party enters scenes and
-areas ([The front page](README.md#game-flags)).
+areas ([Game rules](src/game/README.md#the-game-flags)).
 
 Evidence: Camelot: 田口泰宏, the System programmer, speaks of flags (Shining
 Force III, 1998).
@@ -743,10 +720,8 @@ and Restart quest; the parameter sets the Battle Arena's debug helper loads
 (`gDebug_ParameterSets`); and the sound test (`SoundTest_Run`)
 ([Debug scenes](src/debug/README.md#how-the-debug-scenes-are-reached)).
 
-Evidence: Camelot: the menus' own labels, "Rough menu"
-(`MsgWorkspaceRoughMenu`) and "Recovery test"; the scene codes TEST0 to TEST7
-and the area names Test 0 to Test 7; パラメータセット
-(`MsgLobbyChooseParameters`); The Lost Age's サウンドテスト.
+Evidence: Camelot: the menus' labels ("Rough menu", "Recovery test",
+パラメータセット), the scene codes TEST0 to TEST7 and The Lost Age's サウンドテスト.
 
 ## The battle
 
@@ -762,7 +737,7 @@ Evidence: Camelot: the credits' "Battle".
 Either side's fighter in a battle (`struct Unit`); a party member is a unit
 in the party ([Battle](battle.md#units-and-abilities)).
 
-Evidence: plain English. The game's キャラ means only a party member.
+Evidence: plain English; the game's キャラ means only a party member.
 
 ### Formation
 
@@ -778,28 +753,28 @@ A turn is every unit in a battle acting once; an action is one unit's go
 within it, chosen as a `struct BattleAction` and carried out as a
 `struct BattleActionRun` ([Battles](src/battle/README.md#turns)).
 
-Evidence: Camelot: "HP recovery / turn" (かいふくHP/ターン), and 行動 for one
-unit's go ("つぎに2かい行動する").
+Evidence: Camelot: "HP recovery / turn" (かいふくHP/ターン) and 行動 for one
+unit's go.
 
 ### Staging
 
-How an action is shown, apart from what it does: who steps forward, what is
+How an action is shown, apart from what it does: who comes forward, what is
 announced and which battle effect plays (`gAbilityStaging`)
 ([Battles](src/battle/README.md#staging-and-announcement)).
 
-Evidence: tradition: 演出 (DCAJ 2008).
+Evidence: tradition: 演出.
 
 ### Playback queue
 
 The list of what each target's rules left to show, the flinch, the message,
 the falling HP, which a task plays once the battle effect says the blow has
-landed ([Battles](src/battle/README.md#rules-and-pictures-meet-at-the-playback-queue)).
+landed ([Battles](src/battle/README.md#how-outcomes-reach-the-screen)).
 
 Evidence: plain English.
 
 ### Battle effect
 
-The picture an ability plays over a battle, drawn by code: Quake's shaking
+What an ability plays over a battle, drawn by code: Quake's shaking
 ground, a summon's arrival. It decides when a hit shows, never what it does
 ([Battle effects](src/battle_effect/README.md)).
 
@@ -820,7 +795,7 @@ Evidence: Camelot: the credits' "User Interface".
 A bordered box the game opens for text or choices, growing out of its centre
 (`struct Window`) ([Windows](src/window/README.md#windows)).
 
-Evidence: Camelot: ウインドウ, as in ウインドウカラー, "Window color" (`MsgWindowColorLabel`).
+Evidence: Camelot: ウインドウ, as in "Window color" (`MsgWindowColorLabel`).
 
 ### Border
 
@@ -831,12 +806,13 @@ Evidence: plain English.
 
 ### Message
 
-The text the game types into a window a few letters each frame, with the
+The text the game types into a window a few letters at a time, to the
 speaker's voice blip, waiting for a button at each page break. Up to three are
 typed at once (`struct Message`, `Message_Type`)
 ([Windows](src/window/README.md#typing)).
 
-Evidence: Camelot: メッセージスピード (`MsgMessageSpeedLabel`), "Message speed" in the English settings menu.
+Evidence: Camelot: the settings label メッセージスピード ("Message" in English,
+`MsgMessageSpeedLabel`).
 
 ### The screens
 

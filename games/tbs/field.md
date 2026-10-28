@@ -1,248 +1,227 @@
 # Field
 
-Everywhere the [party](glossary.md#the-party) walks, a town, a
-[room](glossary.md#room), a dungeon or the World Map, is run by the same four
-parts. The loop in `src/overworld` lets the
-party walk and deals with whatever interrupts it. The code in `src/field`
-moves everything that moves and draws the [map](glossary.md#map), and the
-map's own data, in `src/map`, says what the ground is like. And each
-[scene](glossary.md#scene)'s own code, its [overlay](glossary.md#overlay) in `src/scene`, says
-who is there and what happens; only that part knows anything about one scene.
-The first two folders take the names of the [banks](glossary.md#bank) they
-fill, not of what they do. The debug scenes are scenes too, reached only
-in debug mode. How scenes and overlays fit into the whole game is on
-[the front page](README.md).
+The field is everywhere the [party](glossary.md#the-party) walks: a town, a
+[room](glossary.md#room), a dungeon or the World Map. Four folders run it, and
+the first two are named for the [banks](glossary.md#bank) of the main image
+they fill: [`overworld`](src/overworld/README.md) runs the field sequence and
+the main routine, and [`field`](src/field/README.md) moves the actors and
+draws the [map](glossary.md#map). [Maps](src/map/README.md) says what the
+ground is like, and [Scenes](src/scene/README.md) holds each
+[scene](glossary.md#scene)'s own code: its people, triggers, events and exits.
+The [main image](glossary.md#main-image) keeps only a few rule tables keyed by
+scene (music, area names, random battles).
 
 ## The field sequence and its requests
 
-![Isaac walks north into the door of Jenna's grandparents' house in Vale; the door opens, he steps inside, the screen fades and the room inside appears with him at its door](https://alchemy.pascalpixel.com/guides/world/door.gif)
+The [field sequence](glossary.md#field-sequence) runs one scene while the
+player has control.
 
-While the party walks, the game asks once a [frame](glossary.md#frame)
-whether something should happen. Stepping into a doorway, pressing A beside
-someone or a random battle starting does not act at once: it only raises a
-flag of its own, a request. The walk then stops, the game deals with the
-requests one at a time in a fixed order, and the walk starts again. Each kind
-of request has one flag, so at most one of each can wait. Leaving the scene
-comes first, so an event that ends by taking an [exit](glossary.md#exit),
-like this door, simply ends the scene.
+![In Imil the leader walks north into a door; everyone stops, the door opens and the leader walks in](https://alchemy.pascalpixel.com/places/imil/events/Imil_OpenDoorAndExit.gif)
 
-A random battle is a way out of the scene too: the game remembers where
-everyone stood, runs the battle as the next sequence, and afterwards
-loads the scene again with everyone put back where they were.
+Every scene starts cold ([System](system.md#design)). The
+[main routine](glossary.md#main-routine) loads the scene's code; the field sequence loads the map, places the party at its
+[entrance](glossary.md#entrance) and the scene's people, runs the scene's own
+setup (which can move the party straight on) and fades in, naming the
+[area](glossary.md#area) when the party enters a new one.
 
-`FieldSequence_Run` runs one scene and `struct FieldWork` holds the
-requests. [Running a
-scene](src/overworld/README.md#the-field-sequence-serves-requests) lists
-all twelve requests in the order they are handled.
+Each [frame](glossary.md#frame) the loop calls `wait(1)` and checks the ground
+under the leader (`Field_UpdateWalking`). Stepping into a doorway, pressing A
+beside someone or a random battle starting only fills in a
+[request](glossary.md#field-request), a field of the field sequence's work.
+The walk then stops, the game deals with the requests one at a time in a fixed
+order, and the walk starts again. Leaving comes first, so an
+[event](glossary.md#event) that ends by taking an [exit](glossary.md#exit),
+like this door, simply ends the scene. A random battle is a way out too: the
+battle runs as the next [sequence](glossary.md#sequence), and then the scene
+loads again with its actors put back.
 
-## Scene entries
+`Scene_Arrive` clears the last scene's flags, `FieldSequence_Run` runs the
+scene and `struct FieldWork` holds the requests, which [Running a
+scene](src/overworld/README.md#the-field-sequence-serves-requests) lists in
+order.
 
-![Isaac walks up to a young man in Vault, who says "Welcome to Vault, the town at the heart of Angara.", then walks on](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
+## Scenes and areas
 
-The main image knows nothing about any one scene. It asks the scene's code six
-questions: what can happen here, where the party arrives, who stands where,
-whether anything needs setting up, whether the leader stands in an exit area,
-and where an exit leads. Each answer comes from a function, so a scene can answer
-differently as the story moves on without the field knowing any story: Vault
-gives one list of what can happen before its thieves are jailed and another
-after.
+Every scene is a row of `gScenes`, named in code `SceneId_<Place>`. A row picks
+four things independently: the [overlay](glossary.md#overlay) that holds the
+scene's code, its area, its map and whether it is a town. The Bilibin
+Barricade runs on Bilibin's code but is an area of its own, and several scenes
+can share a map. An area shares its name and music, which a scene's own rule
+can override, and its area flags are kept while the party stays inside it.
+Walking between Vale and its houses shows no name; arriving from the World Map
+shows "Vale" for 90 frames. In a town the party regains no
+[PP](glossary.md#psynergy-and-pp) and recovers no [Djinn](glossary.md#djinn)
+as it walks, and poison does no damage. [Places](src/field/scenes.s) has a
+page for each scene, in [story order](glossary.md#the-places-in-story-order).
 
-What can happen is a table of [triggers](glossary.md#trigger). Each row
-says what starts it (talking to someone, stepping on a spot, searching,
-using Psynergy), whom or where it answers, when it holds, and what it runs.
-This is the row for the young man above:
+## Scene entries and triggers
+
+The main image does not know a scene's people or events; it asks the scene's
+code a fixed set of questions
+([Scenes](src/scene/README.md#the-entry-table)), each answered by a function,
+so a scene can answer differently as the story moves on: Vault gives one list
+of what can happen before its thieves are jailed and another after.
+
+![In Altmiller Cave the party talks to the invisible Babi for the first time: he can be heard but not seen, and asks for his draught from deep in the cave](https://alchemy.pascalpixel.com/places/altmiller-cave-babi/events/AltmillerCave_MeetInvisibleBabi.gif)
+
+What can happen is a table of [triggers](glossary.md#trigger). Each row says
+what starts it (talking, stepping on a spot, searching, an item or Psynergy),
+who or where it is for, the condition under which it applies (most often
+until a flag is set), and what it runs. The game runs the first row that fits,
+so Babi's three rows play in story order:
 
 ```c
-{ TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
+{TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT(AltmillerCave_MeetInvisibleBabi)},
+{TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT(AltmillerCave_RepeatRockOrder)},
+{TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT(AltmillerCave_RestoreBabiAndInviteParty)},
 ```
 
-The game runs the first row that fits, so a scene lists its rows from the
-latest point in the story down to the default.
+Each of Babi's first two rows retires itself: meeting him sets
+`FLAG_MET_INVISIBLE_BABI`, and opening the chest that holds the Mystic
+Draught sets the second row's flag, so the next talk falls through to the next
+row.
 
-The six questions are `struct SceneEntryPoints` at the start of every
-overlay, and the rows are `struct Trigger`. [Scenes](src/scene/README.md#the-entry-table)
-describes the [entry table](glossary.md#entry-table-and-import-table) and its
-tables, and [System](system.md#overlays) how an overlay is loaded. The front
-page describes [how scenes depend on the story](README.md#how-scenes-depend-on-the-story),
-and [Places](src/field/scenes.s) lists every scene in
-[story order](glossary.md#the-places-in-story-order).
+A row runs a message or an event: plain C that plays from top to bottom while
+the party waits, most often between `Event_Start`, which
+stops the leader, and `Event_End`. The rows are `struct Trigger`, found by
+`Scene_FindTrigger`, and [Scenes](src/scene/README.md#how-a-trigger-is-chosen)
+covers the choice.
+
+## Exits and entrances
+
+An exit is a doorway or map edge the leader walks into; it only names where it
+leads. The scene's exit table turns that name into a scene and an entrance, the
+spot where the party appears and the way it faces; a row can hold until a flag
+is set, and the first row that holds wins. The way down from Sol Sanctum's
+entrance has three rows: to Vale until the Sanctum erupts, then to Vale
+erupting until the party leaves Vale, then to Vale again.
+
+In `scene_exits.h` exits are named for where they lead
+(`SOL_ENTRANCE_TO_VALE`), entrances for where the party comes from
+(`VALE_FROM_SOL_ENTRANCE`), so each side of a door names the other. The three
+rows are in `gSolSanctumEntrance_Exits`, each a `SCENE_EXIT_UNLESS` row that
+holds until its flag is set, and `Scene_TakeExit` reads them;
+[Scenes](src/scene/README.md#the-tables) covers the tables.
 
 ## Scene and area flags
 
-A scene never undoes what it changed. The game keeps two ranges of
-[game flags](glossary.md#game-flag) for scenes to use and clears them as the
-party moves on: scene flags whenever the party enters a scene, and
-[area](glossary.md#area) flags when it enters another
-area. Neither is cleared on a return from battle. A pushed stone pillar
-kept in a scene flag is back in place the next time the party comes in; logs
-floated in one room of a cave, kept in area flags, stay floated while
-the party moves between the cave's rooms. [The front
-page](README.md#game-flags) gives the ranges, and
-[Scenes](src/scene/README.md#state-that-cleans-itself-up) says how a scene uses
-them.
+Two ranges of [game flags](glossary.md#game-flag) hold a scene's passing state:
+scene flags are cleared each time the party enters a scene, area flags when it
+enters another area, and neither on a return from battle.
+[Scenes](src/scene/README.md#state-that-cleans-itself-up) gives the ranges and
+how scenes name them.
 
 ## Actors and their actor scripts
 
+Every moving thing, down to a footprint in the snow, is one of 64
+[actors](glossary.md#actor), each stepping through a short
+[actor script](glossary.md#actor-script) of `SC_` commands every frame.
+
 ![Isaac walks through Imil's snow, and each footprint he leaves fades after a moment](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
-Everything on the field that moves or changes by itself, the party, the
-townspeople, the camera, even each footprint in the snow, is an
-[actor](glossary.md#actor) running a small [actor script](glossary.md#actor-script). Every frame each actor
-runs the commands of its script until one says to wait. A footprint's whole
-script is "wait 120 frames, disappear". The player's control is itself a command
-of the leader's script, run once a frame: "move by the pad, wait a frame,
-repeat".
-
-The actors are the 64 places of `gActors`, and the commands are
-the `SC_` macros of `actor_script.h`, run by `Actor_UpdateAllThumb`.
-[The field bank](src/field/README.md#everything-that-moves-runs-an-actor-script) covers the
-commands, the sprites and [the views of one
-actor](src/field/README.md#one-actor-a-few-views).
+A footprint's actor script waits 120 frames and releases its actor;
+[`field`](src/field/README.md#everything-that-moves-runs-an-actor-script)
+covers the commands and the [sprites](glossary.md#sprite-and-oam).
 
 ## Movement
 
-![Isaac holds up and right below the Sanctum in Vale: he slides right along its front wall, then up along the cliff beside it, instead of stopping](https://alchemy.pascalpixel.com/guides/world/wall-slide.gif)
-
-The leader walks at one pixel a frame and runs at one and a half with B held.
-Each frame of walking, the game tests the ground just ahead. When the way is
-blocked it tries headings a little to either side and takes the first that is
-open, so the leader slides along a wall instead of stopping dead. Ground more
-than 8 pixels higher, or more than 12 lower, blocks the way as surely as a
-wall.
-
-`Actor_UpdatePlayerControl` steers the leader and
+Walking moves the leader one pixel a frame, and holding B, the dash key, one
+and a half. Each frame the game tests the ground just ahead; when the way
+is blocked it tries headings a little to either side and takes the first that
+is open, so the leader slides along a wall instead of stopping dead. Ground
+more than 8 pixels higher, or more than 12 lower, stops the leader like a
+wall. `Actor_UpdatePlayerControl` steers the leader and
 `MapGrid_CheckCollision` judges each point it tests.
+
+Speeds are 16.16 fixed point: `0x10000` is one pixel.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame |
-| `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with B held |
-| `COLLISION_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
-| `COLLISION_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
-| `COLLISION_IMPASSABLE` | 2 | the cell is a wall |
+| `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with the dash key held |
 
-[The field bank](src/field/README.md#walking-and-running) has the speeds on each kind
-of ground and [how high a step can go](src/field/README.md#how-high-a-step-can-go).
+[`field`](src/field/README.md#how-high-a-step-can-go) gives the speeds
+on each kind of ground and how high a step can go.
 
 ## Cells and cell behaviors
 
-![Isaac faces the stack of wooden boxes by a house in Vale and presses A: "Isaac checked the wooden box..." and "but didn't find anything."](https://alchemy.pascalpixel.com/guides/world/wooden-box.gif)
-
-A map is a grid of 16-pixel squares, [cells](glossary.md#cell), and each
-cell says three things: what is drawn there, how high its ground is, and what
-standing there does. That last part, its [cell
-behavior](glossary.md#cell-behavior), is a number that walls and
-triggers are keyed on. Most numbers belong to the scene, whose trigger table says
-what each one does, so the same number is a door in one town and a chest in
-another. A few mean the same in every scene: the jars, barrels and wooden boxes
-anyone can search, as in the recording, ledges, the desert's sand and walls.
-
-A loaded cell is `struct MapGridCell`, and the behaviors are
-`enum CellBehavior`. [Maps](src/map/README.md#cells) gives every
-behavior and [how the build makes each
-map](src/map/README.md#how-the-build-makes-a-map).
+A map is a grid of 16-pixel squares, [cells](glossary.md#cell), and each cell
+says what is drawn there, how high its ground is, and what standing there does.
+What standing there does is the cell's
+[cell behavior](glossary.md#cell-behavior), a number the walls and triggers
+look up. Most numbers belong to the scene, whose trigger table gives each its
+meaning there, so a number that is a door in one town can be a chest in the
+next; a few, such as walls, ledges and the jars anyone can search, mean the same
+everywhere. A loaded cell is `struct MapGridCell` and the behaviors are
+`enum CellBehavior`, which [Maps](src/map/README.md#cells) lists.
 
 ## Map layers
 
-![Isaac walks east along the path above a house in Vale; as he passes behind it the roof is drawn over him, and he comes out the other side and walks back](https://alchemy.pascalpixel.com/guides/world/behind-roof.gif)
-
-A town or dungeon is drawn as flat sheets stacked on top of each other: the
-ground at the back, then walls and edges, then the characters, then roofs and
-treetops in front. That is how Isaac can walk behind a roof. No code works out
-who is hidden: the console draws its
+A town or dungeon is drawn as flat sheets stacked one on another: the ground
+on `BG3`, walls and edges on `BG2`, roofs and treetops on `BG1`, and messages
+and menus on `BG0`. On most maps the ground is at the back and the roofs in
+front, with the characters between the walls and the roofs, which lets Isaac
+pass behind a roof. No code works out who is hidden: the console draws its
 [background layers](glossary.md#background-layer) and sprites in the order of
-their priorities, and the characters are simply drawn between two of the
-map's layers. Where a character stands can move it between the sheets: the
-cells behind a house put whoever stands there behind its walls as well as its
-roof.
-
-The three map layers are `BG3`, `BG2` and `BG1` (`BG0` holds
-messages and menus), and `ActorSystem_PlaceSprites` gives each sprite the
-priority of the cell under it.
-
-| Name | Value | Background | What it holds |
-| --- | --- | --- | --- |
-| `MAPGRID_LAYER_GROUND` | 0 | `BG3` | the ground, at the back |
-| `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, most often under the characters |
-| `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the characters |
-
-[The field bank](src/field/README.md#towns-and-dungeons-on-screen) shows how the layers
-are put on screen, and [Maps](src/map/README.md#one-grid-three-layers)
-how they share one grid.
+their priorities. Each map gives its layers their priorities, and an actor
+marked to follow the ground (`ACTOR_PRIORITY_AUTOMATIC`) takes its sprite's
+priority from the cell under it, where that cell gives one
+(`ActorSystem_PlaceSprites`): 2 on open ground and 3 where the cells put it
+behind a building. [Maps](src/map/README.md#one-grid-three-layers) shows how the three
+layers share one grid.
 
 ## The World Map
 
+The World Map is a flat map tilted into perspective.
+
 ![Isaac walks and runs on the World Map near Vale, the land tilting away towards the top of the screen](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
 
-The World Map is a flat map tilted into perspective, so the land near the
-party looks close and the land towards the top of the screen far away. The
-console can scale two of its background layers, and the game gives every line
-of the screen its own scale: each line shows one straight strip of the flat
-map, and lines higher up show strips that are farther away and wider. When a
-menu or an event opens, the game draws the current view into an ordinary
-still picture, so that the windows can use the layer the tilt was using.
-
-`WorldMap_BuildScanlineTable` works out each line's scale and
-`WorldMap_StartStillPicture` makes the still picture.
-[The field bank](src/field/README.md#the-world-map-in-perspective) works through the
-lines, [Maps](src/map/README.md#the-world-maps-data) the World Map's
-data, and [Running a scene](src/overworld/README.md#the-world-picture) the
-picture of the whole world R brings up. The World Map's own places and events
-are on [the front page](README.md#the-world-map).
+The game gives every line of the screen its own scale: a line is drawn from
+one straight strip of the flat map, a wider and more distant strip the higher
+the line (`WorldMap_BuildScanlineTable`). When a menu or an event opens, the
+game draws the view into an ordinary
+[still picture](glossary.md#still-picture) (`WorldMap_StartStillPicture`), so
+that the windows can use the layer the tilt was using.
+[`field`](src/field/README.md#the-world-map-in-perspective) works through the
+lines.
 
 ## Random encounters
 
-![Isaac walks back and forth on the World Map south of Vale until the screen flashes and a battle against Wild Mushrooms opens](https://alchemy.pascalpixel.com/guides/world/world-map-battle.gif)
-
-As the party walks, a counter fills, faster when running and faster on some
-ground than on other, and a battle starts when it is full. Each kind of ground
-belongs to a zone, which decides how far apart its battles are and which
-enemies can appear. A party that has outgrown a zone meets its battles less
-often there, and with Avoid none at all.
-
-`Encounter_CountStepsAndSelectFormation` fills the counter and
-picks the enemies, and each zone is a row of `gEncounterZones`. [Running a
-scene](src/overworld/README.md#random-battles) has the roll step by step, and
-[Battle](battle.md#starting-a-battle) what happens once it starts.
+How far the party walks, not how long, decides when a random battle starts,
+and where it walks decides how often and against whom: in a scene each kind of
+ground has a zone, and on the World Map the zone comes from the region
+underfoot. A party stronger than a zone meets fewer of its battles.
+`Encounter_CountStepsAndSelectFormation` counts and picks the enemies from a
+row of `gEncounterZones`; [Running a
+scene](src/overworld/README.md#random-battles) has the roll step by step.
 
 ## Field Psynergy
 
+Using Move on a stone pillar slides it; using it where nothing answers shows
+the same hand and moves nothing.
+
 ![Isaac casts Move in Vale: the screen tints, a hand appears over the stone pillar and pushes it, and the colours come back](https://alchemy.pascalpixel.com/abilities/move.gif)
 
-Using Move on a stone pillar slides it; using it where nothing answers shows
-the same hand and moves nothing. What [Psynergy](glossary.md#psynergy-and-pp)
-does to a scene is decided by the scene's own events, and the cast only draws
-it. A scene can answer a Psynergy just before its cast plays and just after:
-in Vale, the event after Move notes where the pillar now stands and makes the
-ground under it solid.
-
-`Field_UsePsynergy` runs a cast and `FieldPsynergy_Run` plays
-it. [Running a scene](src/overworld/README.md#how-field-psynergy-reaches-its-target)
-covers every moment a scene can answer and each Psynergy's cast.
+The cast only draws the Psynergy; the scene's own events decide what it does
+there. A scene's Psynergy triggers answer three moments: before the cast,
+where an event can still stop it or turn it away from its target; after the
+cast, where the event does what the Psynergy does there; and while Force,
+Frost or Reveal acts on its target, which those three run themselves. In
+Vale, the event after Move notes where the pillar now stands and makes the
+ground under it solid. `Field_UsePsynergy` runs a cast and `FieldPsynergy_Run`
+plays it; [Running a
+scene](src/overworld/README.md#how-field-psynergy-reaches-its-target) covers
+each moment and each cast.
 
 ## Debug scenes
 
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and on to Menu test, and An exits there, and the scene's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
-
-The cartridge keeps ten debug scenes no player can walk into: eight test scenes
-that hand out [Djinn](glossary.md#djinn), one for raising levels and browsing
-items, and one of shop and message tests. Only the debug scene selector reaches
-them, and only in debug mode, which the released game never turns on. The
-selector exits to any scene by number; the field opens it when Start is pressed
-with B held. They come from three ordinary scene overlays, so they are the
-smallest complete examples of a scene.
-[Debug scenes](src/debug/README.md#how-the-debug-scenes-are-reached) goes
-through them.
+The scene table ends with ten scenes no player can walk into, the developers'
+test rooms for Djinn, levels, items, shops and messages. Only the debug scene
+selector reaches them, in [debug mode](glossary.md#debug-menus), which the
+released game never turns on; [Debug
+scenes](src/debug/README.md#the-test-scenes) goes through them.
 
 ## Limits
 
-- 64 actors, and 64 sprites sharing 64 sprite animations, up to four each.
-- 66 actor places in the field work, the party's 8 and then 58 for
-  the scene's actor placements, though only 64 actors exist to fill them.
-- One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
-- 256 scene flags and 256 area flags, each range reused by every scene or
-  area.
-- 104 encounter zones of eight formations each.
-- 47 script commands, of which the last 11 act as `SC_END`; a jump finds only
-  a label within the first 1,024 words of its script.
-- A battle snapshot keeps up to 32 actors.
+- 201 scenes, from 96 overlays, in 71 areas.
+- One overlay loaded at a time.

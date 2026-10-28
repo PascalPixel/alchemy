@@ -70,6 +70,8 @@ A unit is a `struct Unit`, read by `Unit_Get` (`src/game/game/units.c`); the
 ability tables are `src/game/ability_table.c` (`struct AbilityDefinition`, read by
 `Ability_Get`), then `gAbilityBattleEffects` and `gAbilityStaging` in
 `src/battle/ability_staging.c`.
+[Game rules](src/game/README.md) holds the units and every table of items,
+abilities, Djinn, enemies, summons and classes.
 
 ## Turns and actions
 

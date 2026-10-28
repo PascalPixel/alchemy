@@ -400,7 +400,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
       beast = Actor_GetById(ACTOR_WATER_BEAST);
 
       FieldCamera_GetActor()->motionFlags = 0;
-      FieldCamera_SetSpeed(0x10000, 0x2000);
+      FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
       FieldCamera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
       // BUG: FACING_SOUTH's value is passed as an actor id. No actor has
       // it, so the leader does not turn south toward the beast.
@@ -650,7 +650,7 @@ static void Altin_EnterDoor(void) {
   }
 
   // Walk the leader through.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -700,7 +700,7 @@ static void Altin_BeastHop(struct Actor *actor) {
   // the countdown test.
   if (*shakeFrames != 0) {
     if (--*shakeFrames == 1)
-      MapGrid_SetShake(-1, -1, 0xe666);
+      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   }
   if (beast->velocityY == 0) {
     Actor_SelectAnimation(beast, 1);
@@ -710,7 +710,7 @@ static void Altin_BeastHop(struct Actor *actor) {
         Event_PlaySound(SE_SPLASH);
         ((struct FieldEffect *)actor)->countdown = 0;
         beast->userValue = 4;
-        MapGrid_SetShake(0, 0x10000, 0x10000);
+        MapGrid_SetShake(0, PIXELS(1), Q16_ONE);
       }
       beast->y.fixed = beast->groundHeight;
     }
@@ -722,7 +722,7 @@ static void Altin_BeastHop(struct Actor *actor) {
     Event_PlaySound(SE_JUMP);
     ((struct FieldEffect *)actor)->countdown = 1;
     Actor_SelectAnimation(beast, 2);
-    beast->velocityY = 0x30000;
+    beast->velocityY = PIXELS(3);
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
     beast->timer = 0;
@@ -735,16 +735,16 @@ static void Altin_BeastHopAway(void) {
   beast = Actor_GetById(ACTOR_WATER_BEAST);
   beast->timer = 0;
   beast->userValue = 0;
-  beast->gravity = 0x6666;
+  beast->gravity = PIXELS(2) / 5;
   beast->update = Altin_BeastHop;
-  Actor_SetSpeed(ACTOR_WATER_BEAST, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
   Event_PlaySound(SE_SPLASH);
   Actor_ReleaseById(ACTOR_WATER_BEAST);
-  MapGrid_SetShake(0, 0x10000, 0x10000);
+  MapGrid_SetShake(0, PIXELS(1), Q16_ONE);
   Event_Wait(4);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Event_Wait(40);
   Import_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
@@ -918,13 +918,13 @@ static void Altin_SprayDrift(struct Actor *actor) {
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed += -(((u32)Import_RandomNext() * 0x8000) >> 16) - 0x10000;
-    spray->scaleX += 0x2666;
-    spray->scaleY += -0xa3d;
+    spray->z.fixed += -(((u32)Import_RandomNext() * 0x8000) >> 16) - PIXELS(1);
+    spray->scaleX += 3 * Q16_ONE / 20;
+    spray->scaleY += -4 * Q16_ONE / 100;
   } else {
-    spray->z.fixed += 0x20000;
-    spray->scaleX += 0x7ae;
-    spray->scaleY += 0x7ae;
+    spray->z.fixed += PIXELS(2);
+    spray->scaleX += 3 * Q16_ONE / 100;
+    spray->scaleY += 3 * Q16_ONE / 100;
   }
   if (((u32)Import_RandomNext() * spray->timer) >> 16 == 0)
     Actor_SetSpriteColor(spray, SPRITE_COLOR_WHITE);
@@ -960,7 +960,7 @@ static void Altin_BeastSpawnSpray(void) {
 /// stops spitting, turns to the party, cries out and hops away into the flood.
 static void Altin_ScareOffBeast(void) {
   Event_Start();
-  FieldCamera_SetSpeed(0x6666, 0xccc);
+  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);

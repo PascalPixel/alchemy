@@ -672,7 +672,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gGomaCaveEntranceTallIvyScript[] = {
-    SC_SET(SW_SCALE_Y, 0x19999),
+    SC_SET(SW_SCALE_Y, 8 * Q16_ONE / 5),
     SC_END,
 };
 

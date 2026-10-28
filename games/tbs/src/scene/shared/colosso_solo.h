@@ -48,9 +48,9 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
         FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(GARET));
 
     x <<= 20;
-    x += 0x80000;
+    x += PIXELS(8);
     y <<= 20;
-    y += 0x80000;
+    y += PIXELS(8);
     Import_ActorSetPosition(ACTOR_GARET, x, y);
   }
   {
@@ -59,9 +59,9 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(IVAN));
 
     x <<= 20;
-    x += 0x80000;
+    x += PIXELS(8);
     y <<= 20;
-    y += 0x80000;
+    y += PIXELS(8);
     Import_ActorSetPosition(ACTOR_IVAN, x, y);
   }
   {
@@ -70,9 +70,9 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(MIA));
 
     x <<= 20;
-    x += 0x80000;
+    x += PIXELS(8);
     y <<= 20;
-    y += 0x80000;
+    y += PIXELS(8);
     Import_ActorSetPosition(ACTOR_MIA, x, y);
   }
 }
@@ -146,7 +146,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 static void Colosso_TakePlaceForMatch(void) {
   struct FieldWork *work = gFieldWork;
   s32 speakerId = 8;
-  s32 nearestDistance = 0x100000;
+  s32 nearestDistance = PIXELS(16);
   s32 supporterId = gMainRoutineWork.leaderActorId;
   struct Actor *supporter = Actor_GetById(supporterId);
   s32 actorId;

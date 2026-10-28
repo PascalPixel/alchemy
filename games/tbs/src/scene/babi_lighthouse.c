@@ -240,7 +240,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
-  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
+  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
   Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Event_StartScreenTransition();
@@ -254,8 +254,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = 4 * Q16_ONE / 5;
+  options.startScaleY = 4 * Q16_ONE / 5;
   for (particle = 0; particle < 17; particle++) {
     SET_VECTOR(velocity, Trig_Cos(particle << 12), 0, Trig_Sin(particle << 12));
     velocity[0] += velocity[0] / 2;
@@ -269,13 +269,13 @@ static void BabiLighthouse_LandWithParticles(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
-  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
-  Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
+  Actor_GetById(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
+  Actor_GetById(ACTOR_PARTY_LEADER)->bounce = PIXELS(1) / 4;
   Event_End();
 }
 
@@ -292,7 +292,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->y.fixed = PIXELS(130);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->gravity = 0x4000;
+  leader->gravity = PIXELS(1) / 4;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->bounce = 0;
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -304,7 +304,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->velocityY = -0x50000;
+  leader->velocityY = -PIXELS(5);
   Actor_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_EventSetExitRequest(exit);
@@ -366,7 +366,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
     leader->targetX = ACTOR_NO_TARGET;
     leader->targetZ = ACTOR_NO_TARGET;
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     {
       u16 facing = leader->facing;
@@ -504,7 +504,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgBabiYoureSureTheyWentThrough);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 352);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_Wait(10);
@@ -516,7 +516,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
-  FieldCamera_SetSpeed(0x30000, 0x6000);
+  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
@@ -621,7 +621,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   }
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetSpeed(ACTOR_FARAN, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_FARAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_FARAN, 0, 16);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
@@ -666,12 +666,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 0x14ccc, 0xa666);
+  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, PIXELS(13) / 10, PIXELS(13) / 20);
   Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 0, 16);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 0x14ccc, 0xa666);
+  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, PIXELS(13) / 10, PIXELS(13) / 20);
   Actor_WalkByAndWait(ACTOR_DOUBTING_THE_DOOR, 0, 16);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
@@ -721,8 +721,8 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Import_ActorSetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 0x10000, 0x8000);
-  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkBy(ACTOR_DOUBTING_THE_DOOR, 32, 0);
   Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 32, 0);
   Actor_WalkBy(ACTOR_DOUBTING_THE_DOOR, 0, 16);
@@ -737,18 +737,18 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(20);
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_FARAN, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_FARAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_FARAN, 328, 312);
   Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_WITNESS, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_WITNESS, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_WITNESS, 328, 328);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
   Event_Wait(20);
   // The companions walk back into the leader.
-  Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   BabiLighthouse_WalkBackToLeader(ACTOR_GARET);
   BabiLighthouse_WalkBackToLeader(ACTOR_IVAN);
   BabiLighthouse_WalkBackToLeader(ACTOR_MIA);
@@ -766,7 +766,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgBabiTheDoor);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Event_Wait(10);
@@ -775,7 +775,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_LaunchFromLeader(ACTOR_MIA, -16, 24, FACING_EAST);
   Actor_WaitForMoveById(ACTOR_MIA);
   Event_Wait(20);
-  FieldCamera_SetSpeed(0x30000, 0x6000);
+  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
@@ -839,7 +839,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_IODEM, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
@@ -1019,9 +1019,9 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
   // The companions walk back into the leader.
-  Actor_SetSpeed(ACTOR_GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
-  Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
+  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   BabiLighthouse_WalkBackToLeader(ACTOR_GARET);
   BabiLighthouse_WalkBackToLeader(ACTOR_IVAN);
   BabiLighthouse_WalkBackToLeader(ACTOR_MIA);
@@ -1441,8 +1441,8 @@ s32 BabiLighthouse_SetupMap(void) {
     // discussion.
     Actor_GetById(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_GetById(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_SetSpeed(ACTOR_LEFT_DOOR, 0x10000, 0x8000);
-    Actor_SetSpeed(ACTOR_RIGHT_DOOR, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_LEFT_DOOR, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_RIGHT_DOOR, PIXELS(1), PIXELS(1) / 2);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (state->entrance ==
           BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE) {
@@ -1535,31 +1535,31 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gBabiLighthouse_TrembleScript[] = {
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(120),
     SC_WAIT(1),

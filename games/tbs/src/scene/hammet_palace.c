@@ -855,7 +855,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   gFieldWork->transition = v5 = 0x100;
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
-  FieldCamera_SetSpeed(0x6666, 0xccc);
+  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(472), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);

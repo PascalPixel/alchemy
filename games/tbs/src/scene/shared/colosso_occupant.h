@@ -18,17 +18,17 @@ void *Colosso_FindActorAhead(void) {
 
   facing = (record->facing + 0x2000) & 0xc000;
 
-  position.x = (record->x.fixed & 0xfff00000) + 0x80000;
+  position.x = (record->x.fixed & 0xfff00000) + PIXELS(8);
   position.y = record->y.fixed;
-  position.z = (record->z.fixed & 0xfff00000) + 0x80000;
-  Vector_AddPolarOffset(0x100000, facing, &position);
+  position.z = (record->z.fixed & 0xfff00000) + PIXELS(8);
+  Vector_AddPolarOffset(PIXELS(16), facing, &position);
 
   occupant = Actor_FindAtPosition(&position, record);
   if (occupant == 0) {
-    position.x = (record->x.fixed & 0xfff00000) + 0x80000;
+    position.x = (record->x.fixed & 0xfff00000) + PIXELS(8);
     position.y = record->y.fixed;
-    position.z = (record->z.fixed & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x200000, facing, &position);
+    position.z = (record->z.fixed & 0xfff00000) + PIXELS(8);
+    Vector_AddPolarOffset(PIXELS(32), facing, &position);
 
     occupant = Actor_FindAtPosition(&position, record);
   }

@@ -1157,8 +1157,8 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   struct Actor *spark;
   s32 radius;
 
-  actor->x.fixed =
-      gImil_ArcOrigin[0] + Iwram_MulQ16(0x60000, Trig_Sin(actor->timer << 10));
+  actor->x.fixed = gImil_ArcOrigin[0] +
+                   Iwram_MulQ16(PIXELS(6), Trig_Sin(actor->timer << 10));
   actor->timer++;
   actor->timer = (actor->timer + 64) % 64;
   if (gFrameCount % 3 == 0) {
@@ -1625,7 +1625,7 @@ static void Imil_RunIceSlide(void) {
       }
       if (MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) -
               subject->y.fixed >
-          0x80000) {
+          PIXELS(8)) {
         break;
       }
       x = probe.x;

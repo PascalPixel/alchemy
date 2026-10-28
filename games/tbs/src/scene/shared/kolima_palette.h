@@ -31,7 +31,7 @@ void KolimaPalette_Curse(s32 strength) {
   KolimaPalette_SaveHealthy();
   for (i = 0; i < 224; i++) {
     if ((i < 17 || i > 23) && (i < 193 || i > 200)) {
-      u16 *pal = (u16 *)(0x5000000 + i * 2);
+      u16 *pal = (u16 *)&BG_PLTT[i];
       *pal = KolimaPalette_AdjustColorChannels(*pal, strength);
     }
   }
@@ -64,14 +64,14 @@ static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj) {
 /// gKolimaPalette_Healthy.
 static void KolimaPalette_SaveHealthy(void) {
   Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_Healthy,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 224, REG_DMA3);
 }
 
 /// Keeps the cursed colours: the palette fade's colours into
 /// gKolimaPalette_Cursed.
 static void KolimaPalette_SaveCursed(void) {
   Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_Cursed,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | 224, REG_DMA3);
 }
 
 /// Copies the palettes on the screen, background and sprites, into the palette
@@ -79,10 +79,10 @@ static void KolimaPalette_SaveCursed(void) {
 static void KolimaPalette_Capture(void) {
   u16 *buf = gPaletteFadeWork->palette;
 
-  Dma_Set((const void *)BG_PLTT, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
+  Dma_Set((const void *)BG_PLTT, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 112,
           REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, buf + 0xe0,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, buf + 224,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
 }
 
@@ -93,10 +93,10 @@ void KolimaPalette_Restore(s32 second) {
   u16 *buf = gPaletteFadeWork->palette;
 
   if (second)
-    Dma_Set(gKolimaPalette_Cursed, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0,
+    Dma_Set(gKolimaPalette_Cursed, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 224,
             REG_DMA3);
   else
-    Dma_Set(gKolimaPalette_Healthy, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0,
+    Dma_Set(gKolimaPalette_Healthy, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 224,
             REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   KolimaPalette_Capture();

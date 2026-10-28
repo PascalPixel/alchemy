@@ -292,9 +292,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     gFuchinTempleActorPlacements[ACTOR_TREE_STUDENT - ACTOR_FIRST_PLACED]
         .condition = FLAG_XIAN_HEARD_HSU_TRAPPED;
     gFuchinTempleActorPlacements[ACTOR_MESSENGER_STUDENT - ACTOR_FIRST_PLACED]
-        .x = 0x1200000;
+        .x = PIXELS(288);
     gFuchinTempleActorPlacements[ACTOR_MESSENGER_STUDENT - ACTOR_FIRST_PLACED]
-        .z = 0xf80000;
+        .z = PIXELS(248);
     gFuchinTempleActorPlacements[ACTOR_TRAINING_TREE - ACTOR_FIRST_PLACED]
         .condition = FLAG_XIAN_HEARD_HSU_TRAPPED;
     gFuchinTempleActorPlacements[ACTOR_TRAINING_TREE_TARGET -
@@ -372,23 +372,23 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   Actor_ArmCallback(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Sound_Play(SE_WATER);
   movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
-  movingMonk->velocityY = 0x140000;
+  movingMonk->velocityY = PIXELS(20);
   movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
-  movingMonk->gravity = 0x40000;
+  movingMonk->gravity = PIXELS(4);
   Actor_SetSpeed(ACTOR_FALLS_MONK, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(ACTOR_FALLS_MONK, 152, 392);
   Actor_WaitForMoveById(ACTOR_FALLS_MONK);
   movingMonk = Actor_GetById(ACTOR_FALLS_MONK);
-  movingMonk->gravity = 0x10000;
+  movingMonk->gravity = PIXELS(1);
   Actor_ArmCallback(ACTOR_FALLS_MONK, FACING_EAST, 0);
   Sound_Play(SE_WATER);
   // Three white puffs, with only the colour option set.
   options.palette = SPRITE_COLOR_WHITE;
-  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + PIXELS(4)),
                     0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
-  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000), 0,
-                    0, 0, EFFECT_USE_PALETTE, &options);
-  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + 0x40000),
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + PIXELS(4)),
+                    0, 0, 0, EFFECT_USE_PALETTE, &options);
+  FieldEffect_Spawn(monk->x.fixed, monk->y.fixed, (monk->z.fixed + PIXELS(4)),
                     -0x8000, 0, 0, EFFECT_USE_PALETTE, &options);
   Event_Wait(30);
   Scene_PlayQueuedMusic();
@@ -446,7 +446,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Actor_GetById(ACTOR_NYUNPA)->paused = 0;
     Event_PlaySound(SE_JUMP);
     nyunpa = Actor_Get(ACTOR_NYUNPA);
-    nyunpa->velocityY = 0x80000;
+    nyunpa->velocityY = PIXELS(8);
     Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
     Event_Wait(30);
     Event_SetMessageId(MsgXianMustSurviveTestGrottoBefore);
@@ -463,7 +463,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Event_PlaySound(SE_JUMP);
     Actor_GetById(ACTOR_NYUNPA)->paused = alreadyDeclinedTrial;
     nyunpa = Actor_Get(ACTOR_NYUNPA);
-    nyunpa->velocityY = 0x80000;
+    nyunpa->velocityY = PIXELS(8);
     Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
     Event_Wait(30);
     Event_OpenMessage(ACTOR_NYUNPA, 0);
@@ -535,7 +535,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
     Event_Wait(20);
-    FieldCamera_SetSpeed(0x8000, 0x1000);
+    FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
     Actor_PlaceCurrentWithinCameraBounds(ACTOR_NYUNPA, 1);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
@@ -644,17 +644,19 @@ static void FuchinTemple_ToppleTreeWest(void) {
     tree->z.fixed += Trig_Sin(angle) * 6;
   }
 
-  tree->y.fixed = 0x120000;
-  tree->targetY = 0x120000;
+  tree->y.fixed = PIXELS(18);
+  tree->targetY = PIXELS(18);
 
   Sound_Play(SE_TOPPLE);
 
-  FieldEffect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed,
-                    tree->z.fixed + 0x80000, 0xffffcccd, 0x6666, 0, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
-                    0xffff3334, 0x4ccc, 0, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed,
-                    tree->z.fixed + 0x80000, 0xffff0000, 0x3333, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - PIXELS(12), tree->y.fixed,
+                    tree->z.fixed + PIXELS(8), -PIXELS(1) / 5, PIXELS(2) / 5, 0,
+                    0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + PIXELS(8),
+                    -PIXELS(4) / 5, PIXELS(3) / 10, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + PIXELS(10), tree->y.fixed,
+                    tree->z.fixed + PIXELS(8), -PIXELS(1), PIXELS(1) / 5, 0, 0,
+                    0);
 }
 
 /// Rotates the training tree through the opposite arc and reverses its
@@ -672,16 +674,18 @@ static void FuchinTemple_ToppleTreeEast(void) {
     tree->x.fixed -= Trig_Cos(angle) * 6;
     tree->z.fixed -= Trig_Sin(angle) * 6;
   }
-  tree->y.fixed = 0x120000;
-  tree->targetY = 0x120000;
-  tree->scaleX = 0xffff3334;
+  tree->y.fixed = PIXELS(18);
+  tree->targetY = PIXELS(18);
+  tree->scaleX = -4 * Q16_ONE / 5;
   Sound_Play(SE_TOPPLE);
-  FieldEffect_Spawn(tree->x.fixed - 0xc0000, tree->y.fixed,
-                    tree->z.fixed + 0x80000, 0x10000, 0x3333, 0, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0x80000,
-                    0xcccc, 0x4ccc, 0, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed + 0xa0000, tree->y.fixed,
-                    tree->z.fixed + 0x80000, 0x3333, 0x6666, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - PIXELS(12), tree->y.fixed,
+                    tree->z.fixed + PIXELS(8), PIXELS(1), PIXELS(1) / 5, 0, 0,
+                    0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + PIXELS(8),
+                    PIXELS(4) / 5, PIXELS(3) / 10, 0, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed + PIXELS(10), tree->y.fixed,
+                    tree->z.fixed + PIXELS(8), PIXELS(1) / 5, PIXELS(2) / 5, 0,
+                    0, 0);
 }
 
 /// Slides the training tree north in four steps, then scatters particles.
@@ -692,7 +696,7 @@ static void FuchinTemple_ToppleTreeNorth(void) {
   u8 rotation;
   do {
     wait(delay);
-    tree->z.fixed += 0xffff0000;
+    tree->z.fixed -= PIXELS(1);
     tree->targetZ = ACTOR_NO_TARGET;
     stepIndex++;
     delay -= 2;
@@ -700,16 +704,16 @@ static void FuchinTemple_ToppleTreeNorth(void) {
   rotation = 0;
   tree->sprite->rotation = rotation;
   Sound_Play(SE_TOPPLE);
-  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
-                    0xffff3334, 0, 0xffffcccd, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xfff80000,
-                    0x0000cccc, 0, 0xffffcccd, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed + 0xfffa0000, tree->y.fixed,
-                    tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0,
-                    0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed - PIXELS(8),
+                    -PIXELS(4) / 5, 0, -PIXELS(1) / 5, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed - PIXELS(8),
+                    PIXELS(4) / 5, 0, -PIXELS(1) / 5, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - PIXELS(6), tree->y.fixed,
+                    tree->z.fixed + (160 << 12), PIXELS(1) / 5, 0, -PIXELS(1),
+                    0, 0);
   FieldEffect_Spawn(tree->x.fixed + (192 << 11), tree->y.fixed,
-                    tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0,
-                    0);
+                    tree->z.fixed + (160 << 12), PIXELS(1) / 5, 0, -PIXELS(1),
+                    0, 0);
 }
 
 /// Slides the training tree south in four steps before the final displacement.
@@ -724,26 +728,28 @@ static void FuchinTemple_ToppleTreeSouth(void) {
   delay = 8;
   do {
     wait(delay);
-    tree->z.fixed += 0x10000;
+    tree->z.fixed += PIXELS(1);
     tree->targetZ = ACTOR_NO_TARGET;
     stepIndex++;
     delay -= 2;
   } while (stepIndex < 4);
 
   tree->sprite->rotation = 0;
-  tree->z.fixed += 0x180000;
+  tree->z.fixed += PIXELS(24);
   tree->targetZ = ACTOR_NO_TARGET;
   Sound_Play(SE_TOPPLE);
 
-  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000,
-                    -0xcccc, 0, 0x3333, 0, 0);
-  particleSpeed = 0x3333;
-  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + 0xc0000,
-                    0xcccc, 0, particleSpeed, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed - 0x60000, tree->y.fixed,
-                    tree->z.fixed - 0x80000, particleSpeed, 0, 0x10000, 0, 0);
-  FieldEffect_Spawn(tree->x.fixed + 0x60000, tree->y.fixed,
-                    tree->z.fixed - 0x80000, particleSpeed, 0, 0x10000, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + PIXELS(12),
+                    -PIXELS(4) / 5, 0, PIXELS(1) / 5, 0, 0);
+  particleSpeed = PIXELS(1) / 5;
+  FieldEffect_Spawn(tree->x.fixed, tree->y.fixed, tree->z.fixed + PIXELS(12),
+                    PIXELS(4) / 5, 0, particleSpeed, 0, 0);
+  FieldEffect_Spawn(tree->x.fixed - PIXELS(6), tree->y.fixed,
+                    tree->z.fixed - PIXELS(8), particleSpeed, 0, PIXELS(1), 0,
+                    0);
+  FieldEffect_Spawn(tree->x.fixed + PIXELS(6), tree->y.fixed,
+                    tree->z.fixed - PIXELS(8), particleSpeed, 0, PIXELS(1), 0,
+                    0);
 }
 
 /// Routes the student around the tree according to the leader's facing.
@@ -813,9 +819,9 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
   Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
   Import_ActorSetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
-  Actor_GetById(ACTOR_TRAINING_TREE)->y.fixed = 0xc0000;
+  Actor_GetById(ACTOR_TRAINING_TREE)->y.fixed = PIXELS(12);
   Actor_GetById(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
-  Actor_GetById(ACTOR_TRAINING_TREE)->scaleX = 0xcccc;
+  Actor_GetById(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
   Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Sound_Play(SE_CHEST_OPEN);
   Event_Wait(40);
@@ -860,11 +866,11 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
   Import_ActorSetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
   tree = Actor_GetById(ACTOR_TRAINING_TREE);
-  tree->y.fixed = 0xc0000;
+  tree->y.fixed = PIXELS(12);
   tree = Actor_GetById(ACTOR_TRAINING_TREE);
   tree->targetY = ACTOR_NO_TARGET;
   tree = Actor_GetById(ACTOR_TRAINING_TREE);
-  tree->scaleX = 0xcccc;
+  tree->scaleX = 4 * Q16_ONE / 5;
   tree = Actor_GetById(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = tree->sprite;
@@ -948,7 +954,7 @@ static void FuchinTemple_ForceTree(void) {
     FuchinTemple_ToppleTreeEast();
   }
 
-  FieldCamera_SetSpeedParameters(0x10000, 0x2000);
+  FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
   Actor_PlaceCurrentWithinCameraBounds(ACTOR_TRAINING_TREE_TARGET, 1);
   FieldCamera_WaitForArrival();
 
@@ -1170,11 +1176,11 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
   // Restore the tree before leaving the group ready for another demonstration.
   actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->y.fixed = 0xc0000;
+  actor->y.fixed = PIXELS(12);
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->targetY = ACTOR_NO_TARGET;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->scaleX = 0xcccc;
+  actor->scaleX = 4 * Q16_ONE / 5;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = actor->sprite;
@@ -1279,7 +1285,7 @@ static void FuchinTemple_FehSeesChi(void) {
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
   actor->update = 0;
   Import_ActorSetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STAND);
-  FieldCamera_SetSpeed(0x8000, 0x1000);
+  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(200), 1);
   FieldCamera_WaitForArrival();
   // Continue the Chi discussion with the students gathered around the tree.
@@ -1454,7 +1460,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
   Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
   actor = Actor_Get(ACTOR_TRAINING_TREE);
-  actor->y.fixed = 0xc0000;
+  actor->y.fixed = PIXELS(12);
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->targetY = ACTOR_NO_TARGET;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
@@ -1565,8 +1571,8 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   if ((paletteDraw & 7) == 0)
     options.palette = SPRITE_COLOR_BRG;
 
-  options.startScaleX = 0xb333;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = 7 * Q16_ONE / 10;
+  options.startScaleY = 4 * Q16_ONE / 5;
 
   fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * 13107;
 
@@ -1685,7 +1691,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Actor_GetById(ACTOR_NYUNPA)->paused = 0;
   Event_PlaySound(SE_JUMP);
   nyunpa = Actor_Get(ACTOR_NYUNPA);
-  nyunpa->velocityY = 0x80000;
+  nyunpa->velocityY = PIXELS(8);
   Import_ActorSetAnimation(ACTOR_NYUNPA, ANIM_STAND);
   // Praise the completed test before answering the follow-up questions.
   Event_SetMessageId(MsgXianExcellentIsaac);
@@ -2374,10 +2380,10 @@ s32 Scene_Initialize(void) {
       if (heardHsuTrapped == 0) {
         trainingTree = Actor_GetById(ACTOR_TRAINING_TREE);
         trainingTree->motionFlags = heardHsuTrapped;
-        trainingTree->y.fixed = 0xc0000;
-        trainingTree->targetY = 0xc0000;
-        trainingTree->scaleX = 0xcccc;
-        trainingTree->scaleY = 0x8000;
+        trainingTree->y.fixed = PIXELS(12);
+        trainingTree->targetY = PIXELS(12);
+        trainingTree->scaleX = 4 * Q16_ONE / 5;
+        trainingTree->scaleY = Q16_ONE / 2;
         trainingTree->sprite->rotation = 0x8000;
         if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
           Import_ActorSetPosition(ACTOR_FEH, PIXELS(248), PIXELS(208));
@@ -2397,10 +2403,10 @@ s32 Scene_Initialize(void) {
       } else {
         trainingTree = Actor_GetById(ACTOR_TRAINING_TREE);
         trainingTree->motionFlags = 0;
-        trainingTree->y.fixed = 0xc0000;
-        trainingTree->targetY = 0xc0000;
-        trainingTree->scaleX = 0xcccc;
-        trainingTree->scaleY = 0x8000;
+        trainingTree->y.fixed = PIXELS(12);
+        trainingTree->targetY = PIXELS(12);
+        trainingTree->scaleX = 4 * Q16_ONE / 5;
+        trainingTree->scaleY = Q16_ONE / 2;
         trainingTree->collisionFlags |= ACTOR_NOT_TARGETED;
         trainingTree->sprite->rotation = 0x8000;
         MapGrid_CopyCellAttributes(14, 11, 1, 1, 14, 10);
@@ -2577,13 +2583,13 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 s32 gFuchinTemple_JumpingStudentScript[] = {
     SC_ANIMATION(0),
-    SC_SET(SW_GRAVITY, 0x9999),
+    SC_SET(SW_GRAVITY, PIXELS(3) / 5),
     SC_LABEL(1),
-    SC_SET(SW_VELOCITY_Y, 0x30000),
+    SC_SET(SW_VELOCITY_Y, PIXELS(3)),
     SC_WAIT(30),
-    SC_SET(SW_VELOCITY_Y, 0x40000),
+    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
     SC_WAIT(30),
-    SC_SET(SW_VELOCITY_Y, 0x50000),
+    SC_SET(SW_VELOCITY_Y, PIXELS(5)),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(2),
     SC_SET(SW_FACING, FACING_SOUTH + FACING_STEP),

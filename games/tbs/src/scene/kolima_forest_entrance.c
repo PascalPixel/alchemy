@@ -449,7 +449,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = 0x800000;
+  gFallingEffectOffset = PIXELS(128);
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
@@ -749,7 +749,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = 0x800000;
+  gFallingEffectOffset = PIXELS(128);
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(80);
@@ -1152,21 +1152,22 @@ KolimaForestEntrance_BurstOnPsynergyField(struct Actor *interpreter) {
   s32 x;
 
   if (!(gKolimaForestEntrance_MiaInParty != 0
-            ? (x = sparkle->x.fixed,
-               (x > 0xc00000 && x < 0x1120000 && sparkle->z.fixed > 0x2360000 &&
-                sparkle->z.fixed < 0x2640000) ||
-                   (x > 0xca0000 && x < 0xff0000 &&
-                    sparkle->z.fixed > 0x2250000 &&
-                    sparkle->z.fixed < 0x2780000))
+            ? (x = sparkle->x.fixed, (x > PIXELS(192) && x < PIXELS(274) &&
+                                      sparkle->z.fixed > PIXELS(566) &&
+                                      sparkle->z.fixed < PIXELS(612)) ||
+                                         (x > PIXELS(202) && x < PIXELS(255) &&
+                                          sparkle->z.fixed > PIXELS(549) &&
+                                          sparkle->z.fixed < PIXELS(632)))
             : (x = sparkle->x.fixed,
-               (x > 0xc00000 && x < 0xf40000 && sparkle->z.fixed > 0x2250000 &&
-                sparkle->z.fixed <= 0x248ffff) ||
-                   (x > 0xf40000 && x < 0x1120000 &&
-                    sparkle->z.fixed > 0x23b0000 &&
-                    sparkle->z.fixed <= 0x25cffff) ||
-                   (x > 0xd30000 && x < 0xff0000 &&
-                    sparkle->z.fixed > 0x2540000 &&
-                    sparkle->z.fixed < 0x2780000)))) {
+               (x > PIXELS(192) && x < PIXELS(244) &&
+                sparkle->z.fixed > PIXELS(549) &&
+                sparkle->z.fixed <= PIXELS(585) - 1) ||
+                   (x > PIXELS(244) && x < PIXELS(274) &&
+                    sparkle->z.fixed > PIXELS(571) &&
+                    sparkle->z.fixed <= PIXELS(605) - 1) ||
+                   (x > PIXELS(211) && x < PIXELS(255) &&
+                    sparkle->z.fixed > PIXELS(596) &&
+                    sparkle->z.fixed < PIXELS(632))))) {
     return 0;
   }
   Sound_Play(SE_DRIP);
@@ -1281,24 +1282,32 @@ s32 gKolimaForestEntrance_MiaAction[] = {
 /// The glamour presses the party down: each squashes and wobbles until
 /// released.
 s32 gKolimaForestEntrance_SquashAction[] = {
-    SC_ADD(SW_SCALE_X, -0x4000), SC_ADD(SW_SCALE_Y, 0x2000),  SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),  SC_ADD(SW_SCALE_Y, -0x1000), SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),  SC_ADD(SW_SCALE_Y, -2048),   SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),  SC_ADD(SW_SCALE_Y, -2048),   SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -2048),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -2048),
+    SC_WAIT(2),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s32 gKolimaForestEntrance_RestoreScaleAction[] = {
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(1),
     SC_END,
 };
 
 /// A field grows from a tenth of its size over 70 frames.
 s32 gKolimaForestEntrance_PsynergyFieldGrowAction[] = {
-    SC_SET(SW_SCALE_X, 0x1999),
-    SC_SET(SW_SCALE_Y, 0x1999),
+    SC_SET(SW_SCALE_X, Q16_ONE / 10),
+    SC_SET(SW_SCALE_Y, Q16_ONE / 10),
     SC_WAIT(1),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 1310),
@@ -1323,8 +1332,8 @@ s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[] = {
 };
 
 s32 gKolimaForestEntrance_GroundSparkleAction[] = {
-    SC_SET(SW_SCALE_X, 0xc000),
-    SC_SET(SW_SCALE_Y, 0xc000),
+    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
+    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
     SC_SET(SW_COLLISION, 0),
     SC_SET(0x23, 0),
     SC_LABEL(1),
@@ -1415,8 +1424,8 @@ s32 gKolimaForestEntrance_SparkleScript[] = {
 
 /// A sparkle bursts on a field: it doubles in size and is gone.
 s32 gKolimaForestEntrance_SparkleBurstScript[] = {
-    SC_SET(SW_SCALE_X, 0x20000),
-    SC_SET(SW_SCALE_Y, 0x20000),
+    SC_SET(SW_SCALE_X, 2 * Q16_ONE),
+    SC_SET(SW_SCALE_Y, 2 * Q16_ONE),
     SC_WAIT(10),
     SC_RELEASE,
 };

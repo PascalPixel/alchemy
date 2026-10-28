@@ -508,8 +508,8 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Event_SetMessageId(MsgTolbiCantFightBecauseLittleIndigestion);
   Event_ShowMessage(actorId, 0);
   Actor_Stop(actorId);
-  actor->scaleY = 0x10000;
-  actor->scaleX = 0x10000;
+  actor->scaleY = Q16_ONE;
+  actor->scaleX = Q16_ONE;
   Event_Wait(30);
   Actor_RunRepeatedMotion(actorId, 2);
   Event_Wait(30);
@@ -528,8 +528,8 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTHEAST, 0);
   Event_Wait(10);
-  actor->scaleY = 0x10000;
-  actor->scaleX = 0x10000;
+  actor->scaleY = Q16_ONE;
+  actor->scaleX = Q16_ONE;
   Actor_SetScript(actorId, indigestionScript);
   Event_End();
 }
@@ -642,9 +642,9 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->z.fixed += -0x30000;
+  leader->z.fixed += -PIXELS(3);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->targetZ += -0x30000;
+  leader->targetZ += -PIXELS(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -1215,9 +1215,9 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(10);
   Event_ShowMessage(ACTOR_MIA, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->z.fixed -= 0x30000;
+  actor->z.fixed -= PIXELS(3);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->targetZ -= 0x30000;
+  actor->targetZ -= PIXELS(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -2555,18 +2555,18 @@ u16 gBabiPalace_DoorCells[] = {
 };
 
 s32 gBabiPalace_IndigestionScript[] = {
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),

@@ -253,7 +253,7 @@ static void GomaCavePillar_MoveWestPillar(void) {
   actor = Actor_GetById(ACTOR_WEST_PILLAR);
   x = actor->x.fixed;
   if (x < 0)
-    x += 0xfffff;
+    x += PIXELS(16) - 1;
   x >>= 20;
   Event_Start();
   if (x == 20) {

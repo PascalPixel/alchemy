@@ -456,17 +456,17 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
 }
 
 /// Chooses the battle music for slot of zone (gMainRoutineWork.battleMusic).
-/// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
-/// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
-/// last before it. Link battles always use SOUND_KEEP_BGM. Called by
+/// A battle takes the song marked last before its key in
+/// gEncounter_BattleMusic, or the last song there when its key is not listed.
+/// Link battles always use SOUND_KEEP_BGM. Called by
 /// Encounter_CountStepsAndSelectFormation for a random battle, by the battle
 /// requests (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle
 /// with zone 0) and by the trigger runner (triggers.c).
 void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
-  u16 key = (zone << 4) + slot;
+  u16 key = ENCOUNTER_KEY(zone, slot);
   const u16 *table = gEncounter_BattleMusic;
-  // Encounter keys have bit 15 clear. battle_cue.c starts with a nonzero
-  // song marker, so the loop assigns music before either stopping test holds.
+  // gEncounter_BattleMusic opens with a song marker, so the loop assigns music
+  // before either stopping test holds.
   u16 music;
   u16 value;
 
@@ -479,9 +479,8 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
         break;
       if (value == key)
         break;
-      // A song marker: bit 15 set, the song in the low 12 bits.
-      if (value & 0x8000)
-        music = value & 0xfff;
+      if (value & ENCOUNTER_BATTLE_MUSIC_MARKER)
+        music = value & ENCOUNTER_BATTLE_MUSIC_SONG_MASK;
     }
   }
   gMainRoutineWork.battleMusic = music;

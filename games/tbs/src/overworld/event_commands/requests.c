@@ -60,8 +60,8 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
   }
-  // Key 0 is no listed encounter, so every Djinni battle takes the music
-  // list's last song (battle_cue.c).
+  // Key 0 is no listed encounter, so every Djinni battle takes MUS_BATTLE, the
+  // last song in gEncounter_BattleMusic.
   Encounter_SelectBattleMusic(0, 0);
 }
 

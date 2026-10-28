@@ -64,12 +64,57 @@ gData_080ef984:
 	.4byte 0x80000000 + 83, 43, 0x80000000 + 82, 40
 	.4byte 41, 99, 0x80000000 + 43, 312
 	.4byte 0x80000000 + 73, 0
+@ Battle music (BattleEffect_SelectBattleCue): each song marker sets the music
+@ for the encounter keys after it, each a slot of a zone. The search stops at
+@ the battle's key or at the end (0), so a battle not listed takes the last
+@ marker's song, 0, for which the function chooses music of its own.
+	.macro battle_music song:req
+	.2byte 0x8000 + \song
+	.endm
+	.macro encounter_key zone:req, slot:req
+	.2byte (\zone << 4) + \slot
+	.endm
 	.global Data_080efd1c
 Data_080efd1c:
-	.2byte 0x8000 + 754, 1651, 0x8000 + 753, 1650, 0x8000 + 752, 1649
-	.2byte 0x8000 + 751, 1648, 0x8000 + 750, 1635, 0x8000 + 76, 1634
-	.2byte 0x8000 + 54, 1633, 0x8000 + 53, 1632, 0x8000 + 57, 213
-	.2byte 214, 215, 0x8000 + 34, 1636, 0x8000 + 52, 148
-	.2byte 160, 177, 192, 193, 194, 195
-	.2byte 196, 197, 198, 0x8000 + 51, 161, 208
-	.2byte 209, 210, 211, 212, 0x8000 + 0, 0
+	battle_music 754
+	encounter_key 103, 3
+	battle_music 753
+	encounter_key 103, 2
+	battle_music 752
+	encounter_key 103, 1
+	battle_music 751
+	encounter_key 103, 0
+	battle_music 750
+	encounter_key 102, 3
+	battle_music 76
+	encounter_key 102, 2
+	battle_music 54
+	encounter_key 102, 1
+	battle_music 53
+	encounter_key 102, 0
+	battle_music 57
+	encounter_key 13, 5
+	encounter_key 13, 6
+	encounter_key 13, 7
+	battle_music 34
+	encounter_key 102, 4
+	battle_music 52
+	encounter_key 9, 4
+	encounter_key 10, 0
+	encounter_key 11, 1
+	encounter_key 12, 0
+	encounter_key 12, 1
+	encounter_key 12, 2
+	encounter_key 12, 3
+	encounter_key 12, 4
+	encounter_key 12, 5
+	encounter_key 12, 6
+	battle_music 51
+	encounter_key 10, 1
+	encounter_key 13, 0
+	encounter_key 13, 1
+	encounter_key 13, 2
+	encounter_key 13, 3
+	encounter_key 13, 4
+	battle_music 0
+	.2byte 0

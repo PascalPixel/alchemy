@@ -326,6 +326,9 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor);
 void FieldEffect_SetCallbackWhenTargetUnset(struct Actor *actor);
 void FieldPsynergy_GreyMindReadPalette(void);
 void FieldPsynergy_RestoreMindReadPalette(void);
+/// What Input_GetDpadAngle returns when no direction, or a diagonal, is held:
+/// the blank entries of gFieldEffect_CyclePatternWords.
+#define DPAD_ANGLE_NONE 0xffff
 s32 Input_GetDpadAngle(u32 unused);
 void FieldEffect_UpdateItemBreakFragment(struct Actor *actor);
 void FieldPsynergy_SteerPushedTarget(s32 targetId);

@@ -173,7 +173,7 @@ void FieldPsynergy_Force(void) {
   wait(10);
   FieldPsynergy_FadeFromCastColor();
   wait(20);
-  // 96 (0x60), the VRAM cache's entry count, means no entry to free.
-  if (resourceSlot != 96)
+  // VRAM_CACHE_ENTRY_COUNT means no entry to free.
+  if (resourceSlot != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceSlot);
 }

@@ -63,10 +63,10 @@ void FadeOverlay_DrawMarks(void) {
   // The left cell, 8 pixels left of the actor. The ground is read one
   // and two cells (16 and 32 pixels) south, the further one counting 16 pixels
   // lower, and the higher of the two is used.
-  x -= 0x80000;
-  height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
+  x -= PIXELS(8);
+  height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + PIXELS(16)) >> 16;
   secondHeight =
-      (MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
+      (MapGrid_GetTerrainHeightFar(terrainLayer, x, z + PIXELS(32)) >> 16) - 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
@@ -86,11 +86,11 @@ void FadeOverlay_DrawMarks(void) {
     Oam_AddSpriteAtDepth(mark, 0);
   }
   // The right cell, 8 pixels right of the actor, read the same way.
-  x += 0x100000;
-  height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
+  x += PIXELS(16);
+  height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + PIXELS(16)) >> 16;
   mark = &work->marks[1];
   secondHeight =
-      (MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
+      (MapGrid_GetTerrainHeightFar(terrainLayer, x, z + PIXELS(32)) >> 16) - 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {

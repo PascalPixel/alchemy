@@ -329,12 +329,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
     s32 ax;
 
 #ifdef UBFIX
-    ax = grid->viewX & 0xffff0000;
-    cameraY = grid->viewY & 0xffff0000;
+    ax = grid->viewX & FIELD_PIXEL_MASK;
+    cameraY = grid->viewY & FIELD_PIXEL_MASK;
 #else
     viewInverse = &grid->viewX;
-    ax = viewInverse[0] & 0xffff0000;
-    cameraY = viewInverse[1] & 0xffff0000;
+    ax = viewInverse[0] & FIELD_PIXEL_MASK;
+    cameraY = viewInverse[1] & FIELD_PIXEL_MASK;
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
@@ -386,12 +386,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
   }
   case WINDOW_TRANSITION_RIPPLE:
 #ifdef UBFIX
-    cameraX = grid->viewX & 0xffff0000;
-    cameraY8 = grid->viewY & 0xffff0000;
+    cameraX = grid->viewX & FIELD_PIXEL_MASK;
+    cameraY8 = grid->viewY & FIELD_PIXEL_MASK;
 #else
     viewRipple = &grid->viewX;
-    cameraX = viewRipple[0] & 0xffff0000;
-    cameraY8 = viewRipple[1] & 0xffff0000;
+    cameraX = viewRipple[0] & FIELD_PIXEL_MASK;
+    cameraY8 = viewRipple[1] & FIELD_PIXEL_MASK;
 #endif
     // Centred on state->centreX and centreY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
@@ -447,12 +447,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
     s32 ax;
 
 #ifdef UBFIX
-    ax = grid->viewX & 0xffff0000;
-    cameraY = grid->viewY & 0xffff0000;
+    ax = grid->viewX & FIELD_PIXEL_MASK;
+    cameraY = grid->viewY & FIELD_PIXEL_MASK;
 #else
     viewLeader = &grid->viewX;
-    ax = viewLeader[0] & 0xffff0000;
-    cameraY = viewLeader[1] & 0xffff0000;
+    ax = viewLeader[0] & FIELD_PIXEL_MASK;
+    cameraY = viewLeader[1] & FIELD_PIXEL_MASK;
 #endif
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
@@ -497,12 +497,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
     s32 ax;
 
 #ifdef UBFIX
-    ax = grid->viewX & 0xffff0000;
-    cameraY = grid->viewY & 0xffff0000;
+    ax = grid->viewX & FIELD_PIXEL_MASK;
+    cameraY = grid->viewY & FIELD_PIXEL_MASK;
 #else
     viewLeaderLow = &grid->viewX;
-    ax = viewLeaderLow[0] & 0xffff0000;
-    cameraY = viewLeaderLow[1] & 0xffff0000;
+    ax = viewLeaderLow[0] & FIELD_PIXEL_MASK;
+    cameraY = viewLeaderLow[1] & FIELD_PIXEL_MASK;
 #endif
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
@@ -559,7 +559,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
 /// ScreenTransition_InitializeBattleEffectStateFar, by three scenes (Altmiller
 /// Cave, Tret Tree's branch and Babi's palace). Allocates and clears the
 /// transition state in HEAP_SLOT_SCREEN_TRANSITION and adds both window
-/// tasks; mask 0x3f3f shows every layer in both windows.
+/// tasks; its mask (WININ_WIN0_ALL | WININ_WIN1_ALL) shows every layer in both
+/// windows.
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
@@ -567,7 +568,7 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   Dma_Fill32(0, state, sizeof(*state));
   state->mode = mode;
   state->value = 0;
-  state->mask = 0x3f3f;
+  state->mask = WININ_WIN0_ALL | WININ_WIN1_ALL;
   state->active = 1;
   Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
   Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
@@ -772,7 +773,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 }
 
 /// Clears the map's display-control bits for backgrounds 3, 2 and 1
-/// (0x0800, 0x0400 and 0x0200) for each argument that is set.
+/// (DISPCNT_BG3_ON, DISPCNT_BG2_ON and DISPCNT_BG1_ON) for each argument that
+/// is set.
 ///
 /// Reached only through its unnamed far-call veneer. ScreenTransition_Start
 /// ORs these bits into DISPCNT.
@@ -783,13 +785,13 @@ void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
   state = gMapGridWork[0];
   if (state != NULL) {
     if (clearBg1 != 0) {
-      state->dispcnt &= 0xFDFF;
+      state->dispcnt &= ~DISPCNT_BG1_ON;
     }
     if (clearBg2 != 0) {
-      state->dispcnt &= 0xFBFF;
+      state->dispcnt &= ~DISPCNT_BG2_ON;
     }
     if (clearBg3 != 0) {
-      state->dispcnt &= 0xF7FF;
+      state->dispcnt &= ~DISPCNT_BG3_ON;
     }
   }
 }
@@ -995,7 +997,7 @@ void ScreenTransition_UpdateDissolve(void) {
   }
 
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0), (u32)state->paletteNibbles,
-                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x8);
+                      (DMA_ENABLE | DMA_32BIT) << 16 | TILE_SIZE_4BPP / 4);
 }
 
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
@@ -1017,7 +1019,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     for (remainingWords = 7; remainingWords >= 0; --remainingWords)
       *tile++ = pattern;
     Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x8, REG_DMA3);
+            (DMA_ENABLE | DMA_32BIT) << 16 | TILE_SIZE_4BPP / 4, REG_DMA3);
   }
 }
 
@@ -1034,5 +1036,5 @@ void ScreenTransition_InitializeState(s32 value) {
   state->mode = value;
   state->value = 0;
   Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
-  wait(0x78);
+  wait(120);
 }

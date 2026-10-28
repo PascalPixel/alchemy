@@ -28,15 +28,15 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
 #ifdef UBFIX
   grid = gMapGridWork[0];
-  cameraX = grid->viewX & 0xffff0000;
-  cameraZ = grid->viewY & 0xffff0000;
+  cameraX = grid->viewX & FIELD_PIXEL_MASK;
+  cameraZ = grid->viewY & FIELD_PIXEL_MASK;
 #else
   /* FAKEMATCH(temporary): the view position read as two adjacent words
    * through one pointer, so both loads share one base; as viewX and viewY
    * through gMapGridWork[0], 28 of 59 instructions differ in tbs-en. */
   camera = &((struct MapGridScrollWork *)gMapGridWork[0])->viewX;
-  cameraX = camera[0] & 0xffff0000;
-  cameraZ = camera[1] & 0xffff0000;
+  cameraX = camera[0] & FIELD_PIXEL_MASK;
+  cameraZ = camera[1] & FIELD_PIXEL_MASK;
 #endif
   x = actor->x.fixed - cameraX;
   z = actor->z.fixed - cameraZ - actor->y.fixed;
@@ -123,8 +123,8 @@ void Exit_PrepareAnimation(s32 animation) {
   // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
   // put the leader at its middle in x (8 pixels) and its south edge in z.
   // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&actor->x = (*(s32 *)&actor->x & 0xFFF00000) + 0x80000;
-  *(s32 *)&actor->z = (*(s32 *)&actor->z & 0xFFF00000) + 0x100000;
+  *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + PIXELS(8);
+  *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + PIXELS(16);
   actor->velocityX = zero;
   actor->velocityZ = zero;
   actor->targetX = ACTOR_NO_TARGET;
@@ -165,11 +165,11 @@ void Entrance_EndArrivalAnimation(s32 animation) {
       (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation, 27);
 
   zero = 0;
-  mask = 0xfff00000;
+  mask = FIELD_CELL_MASK;
   spriteAnimation->flags = zero;
   eff->colorMode = SPRITE_COLOR_HIDDEN;
   // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + 0x80000;
+  *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + PIXELS(8);
   *(s32 *)&leader->z &= mask;
   Actor_SelectAnimationFar(leader, animation);
   wait(30);
@@ -182,7 +182,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   leader->acceleration = Q16_ONE;
   leader->speedLimit = Q16_ONE;
   Actor_SetMoveTargetFar(leader, leader->x.fixed, leader->y.fixed,
-                         leader->z.fixed + 0x80000);
+                         leader->z.fixed + PIXELS(8));
   Actor_WaitForMoveFar(leader);
 }
 
@@ -220,7 +220,7 @@ s32 Entrance_PlayArrival(void) {
         // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
-        leader->y.fixed += 0x00a00000;
+        leader->y.fixed += PIXELS(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         // Until the next frame's fall would reach the ground.
         while (leader->y.fixed + leader->velocityY > leader->groundHeight) {

@@ -7,8 +7,8 @@
 // The map's cells (128 to a row), and the same cells seen one row south and
 // one row north: TILE_CELLS_SOUTH[i] is the cell below TILE_CELLS[i].
 #define TILE_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
-#define TILE_CELLS_SOUTH ((struct MapGridCell *)(Ram_MapGridCellBuffer + 0x200))
-#define TILE_CELLS_NORTH ((struct MapGridCell *)(Ram_MapGridCellBuffer - 0x200))
+#define TILE_CELLS_SOUTH (TILE_CELLS + 128)
+#define TILE_CELLS_NORTH (TILE_CELLS - 128)
 
 /// Makes the leader jump two cells forward, over the cell in front, when the
 /// map allows it (MapGrid_CheckCollision). On a log (SPRITE_LOG_WEST_EAST
@@ -21,9 +21,10 @@
 /// reached.
 ///
 /// Called by Field_RunPushCell when the leader has pushed against a jump
-/// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
-/// Cave's pillar and Kolima Forest's bend, which import it. Moves the leader,
-/// and takes the field over between Event_Start and Event_End.
+/// spot (CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED or CELL_BEHAVIOR_JUMP_FORWARD)
+/// for more than 12 frames, and by the gap jumps of Goma Cave's pillar and
+/// Kolima Forest's bend, which import it. Moves the leader, and takes the field
+/// over between Event_Start and Event_End.
 s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
@@ -43,14 +44,16 @@ again:
   // The middle of the cell in front, then of the cell beyond. The cell
   // jumped over may be a wall or a drop, but not ground too high; the landing
   // must be open.
-  SET_POSITION(position, (leader->x.fixed & 0xfff00000) + 0x80000,
-               leader->y.fixed, (leader->z.fixed & 0xfff00000) + 0x80000);
-  Vector_AddPolarOffset(0x100000, angle, position);
+  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + PIXELS(8),
+               leader->y.fixed,
+               (leader->z.fixed & FIELD_CELL_MASK) + PIXELS(8));
+  Vector_AddPolarOffset(PIXELS(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_TOO_HIGH)
     return -1;
-  SET_POSITION(position, (leader->x.fixed & 0xfff00000) + 0x80000,
-               leader->y.fixed, (leader->z.fixed & 0xfff00000) + 0x80000);
-  Vector_AddPolarOffset(0x200000, angle, position);
+  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + PIXELS(8),
+               leader->y.fixed,
+               (leader->z.fixed & FIELD_CELL_MASK) + PIXELS(8));
+  Vector_AddPolarOffset(PIXELS(32), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_NONE) {
     // Suspend ground following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
@@ -62,9 +65,9 @@ again:
     wait(6);
     Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, 7);
-    leader->speedLimit = 0x30000;
-    leader->acceleration = 0x20000;
-    leader->velocityY = 0x40000;
+    leader->speedLimit = PIXELS(3);
+    leader->acceleration = PIXELS(2);
+    leader->velocityY = PIXELS(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_SetPositionAndCommit(
@@ -98,7 +101,7 @@ again:
     Event_End();
     if (work != NULL)
       work->walkingDistance +=
-          Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
+          Iwram_MulQ16(work->walkingDistanceScale, PIXELS(32));
     // Landed on another jump spot: stand, then jump again.
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position->x, position->z) ==
         CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
@@ -117,9 +120,9 @@ again:
 /// While climbing, the leader lets go and drops to the ground. Returns 0, or -1
 /// when there is nothing to climb or the way is blocked by a wall cell.
 ///
-/// Called by Field_RunPushCell for a climbing spot (0xfd) with Down held,
-/// and imported by the scenes with ladders and climbable walls (Babi's
-/// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
+/// Called by Field_RunPushCell for a climbing spot (CELL_BEHAVIOR_CLIMB) with
+/// Down held, and imported by the scenes with ladders and climbable walls
+/// (Babi's Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
 /// gMainRoutineWork.movementMode: 1 while the leader is on the wall, 0 off
 /// it.
 s32 Field_ClimbDown(void) {
@@ -145,7 +148,7 @@ s32 Field_ClimbDown(void) {
 
       // The ground under the point 16 pixels lower may not be a wall cell
       // of the overhead layer: the check returns nonzero for a wall.
-      SET_POSITION(position, actor->x.fixed, actor->y.fixed - 0x100000,
+      SET_POSITION(position, actor->x.fixed, actor->y.fixed - PIXELS(16),
                    actor->z.fixed);
       result = MapGrid_IsWallAtFar((struct WorldPosition *)position);
       if (result != 0)
@@ -161,8 +164,8 @@ s32 Field_ClimbDown(void) {
       actor->motionFlags = 0;
       Actor_SetSpriteFlagsFar(actor, 0);
       Actor_SelectAnimationFar(actor, 13);
-      Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed - 0x100000,
-                             (gridZ << 16) + 0x100000);
+      Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed - PIXELS(16),
+                             (gridZ << 16) + PIXELS(16));
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
@@ -174,7 +177,7 @@ s32 Field_ClimbDown(void) {
     // where the leader is until the ground is read, and the shadow back.
     Actor_SelectAnimationFar(actor, ANIM_LEADER_CLIMB);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    actor->velocityY = 0x40000;
+    actor->velocityY = PIXELS(4);
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
     Event_Wait(6);
@@ -197,8 +200,8 @@ failure:
 /// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
 /// to climb or the way is blocked by a wall cell.
 ///
-/// Called by Field_RunPushCell for a climbing spot (0xfd) with Up held,
-/// and imported by the scenes with ladders and climbable walls (Babi's
+/// Called by Field_RunPushCell for a climbing spot (CELL_BEHAVIOR_CLIMB) with
+/// Up held, and imported by the scenes with ladders and climbable walls (Babi's
 /// Lighthouse, Colosso, Crossbone Isle and others). Sets
 /// gMainRoutineWork.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
@@ -238,7 +241,7 @@ s32 Field_ClimbUp(void) {
       Actor_SelectAnimationFar(actor, 6);
       wait(4);
       Actor_SelectAnimationFar(actor, 7);
-      actor->velocityY = 0x40000;
+      actor->velocityY = PIXELS(4);
       wait(4);
       actor->motionFlags = 0;
       spriteFlags &= 0xfe;
@@ -257,8 +260,8 @@ s32 Field_ClimbUp(void) {
     // Climb over the top: up 8 pixels and a cell north.
     actor->motionFlags = 0;
     Actor_SelectAnimationFar(actor, 11);
-    Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed + 0x80000,
-                           (gridZ << 16) - 0x100000);
+    Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed + PIXELS(8),
+                           (gridZ << 16) - PIXELS(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;

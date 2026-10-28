@@ -137,7 +137,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 
     // No direction held: the hands go back to the target's sides.
     angle = (u16)Input_GetDpadAngle(gKeysHeld);
-    if (angle == 0xffff) {
+    if (angle == DPAD_ANGLE_NONE) {
       pos.x = target->x.fixed;
       pos.y = target->y.fixed + (16 << 16);
       pos.z = target->z.fixed;
@@ -292,8 +292,8 @@ struct Actor *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;
     fragment->scaleX = 0x4000;
-    fragment->speedLimit = 0x30000;
-    fragment->acceleration = 0x30000;
+    fragment->speedLimit = PIXELS(3);
+    fragment->acceleration = PIXELS(3);
     fragment->steeringFlags = 0;
     Actor_SelectAnimationFar(fragment, 1);
     scale = fragment->scaleX;

@@ -12,7 +12,7 @@ enum {
 
 /// Returns the sprite of character, which is the character itself except that
 /// FLAG_CHILDHOOD gives Isaac and Garet ISAAC_CHILD and GARET_CHILD, and
-/// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
+/// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite ISAAC_TUNIC.
 ///
 /// Called by Event_SpawnActorPlacements for every actor
 /// placement, and by PsynergyMenu_InitializeEntryActors (through
@@ -31,7 +31,7 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
       }
     } else if ((GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) != 0) &&
                (sprite == ISAAC)) {
-      sprite = 0x11;
+      sprite = ISAAC_TUNIC;
     }
   }
   return sprite;
@@ -42,7 +42,7 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 ///
 /// Called by FileList_ShowPartySprites through
 /// Party_RemapCharacterIdIfEnabledFar. Save summaries omit the tunic flag,
-/// so this never gives sprite 0x11.
+/// so this never gives sprite ISAAC_TUNIC.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
@@ -179,7 +179,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
         // World Map actor placements use single sprites and do not follow
         // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
-        object->motionFlags &= 0xfe;
+        object->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
         if (!GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC)) {
           // UB: sprite creation can fail while the actor slot stays
           // live. The native local is then indeterminate or from an earlier
@@ -216,8 +216,9 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 
       // Get also accepts words past the actor array, within the field
       // work.
-      memcpy((u8 *)work + 0x14 + (u32)actorIndex * sizeof(empty), &empty,
-             sizeof(empty));
+      memcpy((u8 *)work + offsetof(struct FieldWork, actors) +
+                 (u32)actorIndex * sizeof(empty),
+             &empty, sizeof(empty));
     }
 #else
     work->actors[actorIndex] = NULL;
@@ -252,8 +253,9 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   leader = gMainRoutineWork.leaderActorId;
   // Build the leader's temporary actor placement before the scene's placed
   // actors. The two-row table, the leader's row and an end row, lives in
-  // the field work at 0x200 (FieldWork's leaderPlacements) and lasts with it.
-  entry = (struct ActorPlacement *)((u8 *)work + 0x200);
+  // the field work's leaderPlacements and lasts with it.
+  entry = (struct ActorPlacement *)((u8 *)work + offsetof(struct FieldWork,
+                                                          leaderPlacements));
   entry[0] = gField_DefaultActorPlacements[0];
   entry[1] = gField_DefaultActorPlacements[1];
   for (pos = 0; pos < 4; pos++)
@@ -271,15 +273,15 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   // (FieldSequence_Run saves its layer there). Its cell: 16 pixels square, 128
   // to a row, so above is the cell north of it.
   object->layer = gMainRoutineWork.layer;
-  pos = (object->x.fixed / 0x100000) + (object->z.fixed / 0x100000) * 128;
+  pos = (object->x.fixed / PIXELS(16)) + (object->z.fixed / PIXELS(16)) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];
   if (gMainRoutineWork.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
       above->behavior == CELL_BEHAVIOR_CLIMB) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
-                                         object->z.fixed - 0x100000) -
-             0x200000;
+                                         object->z.fixed - PIXELS(16)) -
+             PIXELS(32);
     object->y.fixed += height;
     object->groundHeight = object->y.fixed;
     object->motionFlags = 0;
@@ -334,7 +336,8 @@ s32 Actor_FindLastActiveId(void) {
 
 /// Unused: returns the address of actor slot index in the field work.
 UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
-  return (u8 *)gFieldWork + 0x14 + actorIndex * sizeof(void *);
+  return (u8 *)gFieldWork + offsetof(struct FieldWork, actors) +
+         actorIndex * sizeof(void *);
 }
 
 // Actors and the view: actor placement conditions from the map's
@@ -400,11 +403,11 @@ void Actor_ClearOutOfBounds(void) {
 
   camera = work->camera;
   centerX = camera->x.fixed;
-  left = centerX - 0xa00000;
-  right = centerX + 0xa00000;
+  left = centerX - PIXELS(160);
+  right = centerX + PIXELS(160);
   centerZ = camera->z.fixed;
-  top = centerZ - 0xc80000;
-  bottom = centerZ + 0x640000;
+  top = centerZ - PIXELS(200);
+  bottom = centerZ + PIXELS(100);
   actorSlot = &work->actors[ACTOR_FIRST_PLACED];
   releaseCacheMask = ~1;
 
@@ -502,9 +505,9 @@ void *Actor_Lookup(u32 actorIndex) {
 #ifdef UBFIX
   void *object;
 #endif
-  if (actorIndex > 0xbf)
+  if (actorIndex > 191)
     return 0;
-  slotOffset = (actorIndex * 4) + 0x14;
+  slotOffset = (actorIndex * 4) + offsetof(struct FieldWork, actors);
 #ifdef UBFIX
   // The legacy range includes non-pointer fields. Copy their representation
   // without reading them through an incompatible pointer lvalue.

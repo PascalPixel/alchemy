@@ -123,7 +123,7 @@ void FieldPsynergy_Ply(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    actor = Actor_Spawn(233, target->x.fixed, target->y.fixed + 0x200000,
+    actor = Actor_Spawn(233, target->x.fixed, target->y.fixed + PIXELS(32),
                         target->z.fixed);
     if (actor != 0) {
       actor->scaleY = 0xb333; // 0.7
@@ -154,7 +154,7 @@ void FieldPsynergy_Ply(void) {
     target->scaleY = 0xb333;
     target->scaleX = 0xb333;
     target->x.fixed = effectWork->x;
-    target->y.fixed = effectWork->y + 0x100000;
+    target->y.fixed = effectWork->y + PIXELS(16);
     target->z.fixed = effectWork->z;
     target->motionFlags = ACTOR_FLOATS;
     Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
@@ -196,16 +196,15 @@ void FieldPsynergy_Ply(void) {
   // in place.
   if (target != 0) {
     target->timer = -1;
-    target->speedLimit = 0x50000;
+    target->speedLimit = PIXELS(5);
     target->acceleration = 0x6666;
     target->steeringFlags = 0;
-    Actor_SetTargetPositionFromMagnitudeAngle(target, 0xc00000, 0xe800);
+    Actor_SetTargetPositionFromMagnitudeAngle(target, PIXELS(192), 0xe800);
     Actor_WaitForMoveFar(target);
     Actor_ReleaseFar(target);
   }
-  // 0x60 is the VRAM cache's entry count, the value VramCache_FindFreeEntry
-  // returns for no entry.
-  if (resourceSlot != 0x60)
+  // VramCache_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT for no entry.
+  if (resourceSlot != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceSlot);
   if (effectWork->finishCallback != 0)
     effectWork->finishCallback();

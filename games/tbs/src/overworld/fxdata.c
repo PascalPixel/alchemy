@@ -7,6 +7,7 @@
 #include "module/overworld/event_commands.h"
 #include "actor_script.h"
 #include "types.h"
+#include "scene_tables.h"
 
 // Their readers declare them in battle.h, field.h, graphics.h, scroll.h and
 // field_effect_scripts.h, and overworld.c declares the colour curves. Some
@@ -493,14 +494,14 @@ const s32 gFieldEffect_FragmentScript[] = {
 };
 
 /// An angle for each value of the right, left, up and down bits of the
-/// +Control Pad; 0xffff for none (Input_GetDpadAngle, move.c). Opposite
+/// +Control Pad; DPAD_ANGLE_NONE for none (Input_GetDpadAngle, move.c). Opposite
 /// directions cancel, and a diagonal gives none, so Move pushes only along
 /// the four directions.
 const u16 gFieldEffect_CyclePatternWords[16] = {
-    0xffff, 0x0000, 0x8000, 0xffff,
-    0xc000, 0xffff, 0xffff, 0xc000,
-    0x4000, 0xffff, 0xffff, 0x4000,
-    0xffff, 0x0000, 0x8000, 0xffff,
+    DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
+    FACING_NORTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_NORTH,
+    FACING_SOUTH,    DPAD_ANGLE_NONE, DPAD_ANGLE_NONE, FACING_SOUTH,
+    DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,
 };
 
 /// Move's hand animation by the quarter turns from its side of the target to

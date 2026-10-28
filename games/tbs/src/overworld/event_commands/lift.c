@@ -38,21 +38,21 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   x = effectWork->x;
   pos[0] = x;
-  y = effectWork->y + 0x100000; // 16 pixels up
+  y = effectWork->y + PIXELS(16); // 16 pixels up
   pos[1] = y;
   z = effectWork->z;
   pos[2] = z;
-  pair[0] = FieldEffect_SpawnItemBreakMode3(x + 0x200000, y, z, FACING_WEST);
-  pair[1] =
-      FieldEffect_SpawnItemBreakMode3(pos[0] - 0x200000, pos[1], pos[2], 0);
+  pair[0] = FieldEffect_SpawnItemBreakMode3(x + PIXELS(32), y, z, FACING_WEST);
+  pair[1] = FieldEffect_SpawnItemBreakMode3(pos[0] - PIXELS(32), pos[1], pos[2],
+                                            FACING_EAST);
 
-  // Each hand faces the target (angle 0x8000 on the right, 0 on the left) and
-  // moves 14 pixels that way.
+  // Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
+  // left) and moves 14 pixels that way.
   wait(15);
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct Actor *hand = pair[handIndex];
     if (hand != NULL)
-      Actor_SetTargetPositionFromMagnitudeAngle(hand, 0xe0000, hand->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(hand, PIXELS(14), hand->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
@@ -62,13 +62,13 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   // Lift 32 pixels, a quarter pixel at a time.
   startY = target->y.fixed;
-  if (pair[0] != NULL && pair[1] != NULL && startY <= startY + 0x200000) {
+  if (pair[0] != NULL && pair[1] != NULL && startY <= startY + PIXELS(32)) {
     do {
       ((struct Actor *)pair[0])->y.fixed += 0x4000;
       ((struct Actor *)pair[1])->y.fixed += 0x4000;
       target->y.fixed += 0x4000;
       wait(1);
-    } while (target->y.fixed <= startY + 0x200000);
+    } while (target->y.fixed <= startY + PIXELS(32));
   }
 
   // The hands burst into particles; the target stays up.
@@ -99,7 +99,8 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
-    fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
+    fragment->acceleration = fragment->speedLimit =
+        PIXELS(3); // 3 pixels a frame
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
     Actor_SelectAnimationFar(fragment, 3);
     scale = fragment->scaleX;
@@ -178,7 +179,7 @@ again:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// A heavy impact: places an actor of sprite 0x11b 32 pixels below the source
+/// A heavy impact: places an actor of sprite 283 32 pixels below the source
 /// for 20 frames and scatters 12 shards from it. Reached through SC_CALL in
 /// gFieldEffect_HeavyImpactScript (fxdata.c), where the interpreter is the
 /// actor running the script, which Force's thrown actor runs (force.c).
@@ -194,7 +195,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
   pos.x = source->x.fixed;
   pos.y = source->y.fixed;
   pos.z = source->z.fixed;
-  impact = Actor_Spawn(0x11b, pos.x, pos.y - (32 << 16), pos.z);
+  impact = Actor_Spawn(283, pos.x, pos.y - (32 << 16), pos.z);
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;

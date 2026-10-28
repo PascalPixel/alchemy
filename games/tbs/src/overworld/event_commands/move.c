@@ -4,9 +4,10 @@
 
 #include "../event_commands_internal.h"
 
-/// Returns the direction of the d-pad (0x10000 a full turn): right 0, down
-/// 0x4000, left 0x8000, up 0xc000; 0xffff when none or a diagonal is held.
-/// Opposite directions cancel, so a third held direction still counts.
+/// Returns the direction of the d-pad (0x10000 a full turn): right
+/// FACING_EAST, down FACING_SOUTH, left FACING_WEST, up FACING_NORTH;
+/// DPAD_ANGLE_NONE when none or a diagonal is held. Opposite directions cancel,
+/// so a third held direction still counts.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
   return gFieldEffect_CyclePatternWords[(gKeysHeld >> 4) & 15];
@@ -30,10 +31,10 @@ void FieldEffect_UpdateItemBreakFragment(struct Actor *actor) {
 
     if (dx != 0 || dz != 0) {
       turn = (s16)(ArcTan2(dz, dx) - source->facing);
-      if (turn > 0x1000)
-        turn = 0x1000;
-      if (turn < -0x1000)
-        turn = -0x1000;
+      if (turn > FACING_STEP)
+        turn = FACING_STEP;
+      if (turn < -FACING_STEP)
+        turn = -FACING_STEP;
       source->facing += turn;
     }
     // ACTOR_FACES_MOTION off: its motion must not undo the turn.
@@ -43,7 +44,7 @@ void FieldEffect_UpdateItemBreakFragment(struct Actor *actor) {
   // The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
   // random direction.
   position.x = source->x.fixed;
-  position.y = source->y.fixed - (Random16() << 4) - 0x80000;
+  position.y = source->y.fixed - (Random16() << 4) - PIXELS(8);
   position.z = source->z.fixed;
   radius = Random16() * 3;
   radius <<= 4;
@@ -127,7 +128,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
 
     // With the d-pad released, the hand goes back to its place.
     direction = (u16)Input_GetDpadAngle(gKeysHeld);
-    if (direction == 0xffff) {
+    if (direction == DPAD_ANGLE_NONE) {
       position.x = target->x.fixed;
       position.y = target->y.fixed + (16 << 16);
       position.z = target->z.fixed;
@@ -220,7 +221,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     Actor_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
                            position.z);
     if (moved == 1) {
-      Actor_GetById(effectWork->firstActorId)->steeringFlags &= 0xfe;
+      Actor_GetById(effectWork->firstActorId)->steeringFlags &=
+          ~ACTOR_FACES_MOTION;
       user->speedLimit = 0x3333;
       user->acceleration = 0x3333;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);

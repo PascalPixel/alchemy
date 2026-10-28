@@ -16,7 +16,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
 #ifdef BUGFIX
   if (entryIndex >= 519U) {
 #else
-  if (entryIndex >= 0x208U) {
+  if (entryIndex >= 520U) {
 #endif
     entryIndex = 0;
   }
@@ -289,14 +289,14 @@ void Party_InitializeCharacters(void) {
 
         for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
              i++) {
-          slot =
-              Inventory_AddItem(*startingUnitId, character->items[i] & 0x1ff);
+          slot = Inventory_AddItem(*startingUnitId, character->items[i] &
+                                                        INVENTORY_ITEM_ID_MASK);
           Inventory_Equip(*startingUnitId, slot);
         }
 
         Unit_UpdateClass(*startingUnitId);
-        unit->ppGauge = 0x4000;
-        unit->hpGauge = 0x4000;
+        unit->ppGauge = UNIT_GAUGE_FULL;
+        unit->hpGauge = UNIT_GAUGE_FULL;
         Unit_LevelUpTo(*startingUnitId, character->startingLevel);
         Unit_Calculate(*startingUnitId);
       }

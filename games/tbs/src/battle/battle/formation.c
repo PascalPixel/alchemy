@@ -268,13 +268,14 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 /// its kind, and returns the letter's number for BattleUnit_SetFar.
 /// The letters are digits from 1 abroad and the alphabet in Japanese. The
 /// class's first enemy gets ENEMY_NAME_SUFFIX_COUNT, which BattleUnit_SetFar
-/// takes as no letter. Its second gets letter 1 with bit 15 (0x8001), telling
-/// the caller to give the first letter 0 (BattleEnemy_LetterFirstOfKind);
-/// later ones take the next free letter, wrapping. Returns -1 when five classes
-/// are already listed. Called by BattleFormation_BuildEnemyList for each enemy
-/// and by BattleAbility_ApplyToTarget for an enemy called into the battle.
-/// Changes BattleWork's enemyKinds, the up to five classes listed, and their
-/// letters: lastNameLetter each class's last letter given (-1 for none yet),
+/// takes as no letter. Its second gets letter 1 with ENEMY_LETTER_FIRST_TOO,
+/// telling the caller to give the first letter 0
+/// (BattleEnemy_LetterFirstOfKind); later ones take the next free letter,
+/// wrapping. Returns -1 when five classes are already listed. Called by
+/// BattleFormation_BuildEnemyList for each enemy and by
+/// BattleAbility_ApplyToTarget for an enemy called into the battle. Changes
+/// BattleWork's enemyKinds, the up to five classes listed, and their letters:
+/// lastNameLetter each class's last letter given (-1 for none yet),
 /// nameLetterMasks its letters in use (bit n for letter n), and enemyKindCount
 /// how many classes are listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
@@ -296,7 +297,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
     if (battle->lastNameLetter[classIndex] < 0) {
       battle->lastNameLetter[classIndex] = 1;
       battle->nameLetterMasks[classIndex] = 3;
-      return 0x8001;
+      return ENEMY_LETTER_FIRST_TOO | 1;
     }
     // The next letter after the last given that is free; after 32 tries the
     // last one tried is reused.
@@ -367,7 +368,8 @@ s32 BattleEnemy_ReleaseNameLetter(s32 unitId) {
 /// Gives the first enemy of the class on the field the first letter (0),
 /// appended to its name, once a second of its class arrives.
 /// Called by BattleFormation_BuildEnemyList and BattleAbility_ApplyToTarget
-/// when BattleEnemy_ClaimNameLetter returns bit 15. Writes Unit.name.
+/// when BattleEnemy_ClaimNameLetter's result has ENEMY_LETTER_FIRST_TOO set.
+/// Writes Unit.name.
 #ifdef UBFIX
 void BattleEnemy_LetterFirstOfKind(s32 classId) {
 #else
@@ -630,10 +632,11 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       s32 suffixCode =
           BattleEnemy_ClaimNameLetter(enemyKinds[memberOrEnemyIndex], 1);
 
-      if (suffixCode & 0x8000)
+      if (suffixCode & ENEMY_LETTER_FIRST_TOO)
         BattleEnemy_LetterFirstOfKind(enemyKinds[memberOrEnemyIndex]);
       BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                        enemyKinds[memberOrEnemyIndex], suffixCode & 0x7fff);
+                        enemyKinds[memberOrEnemyIndex],
+                        suffixCode & ENEMY_LETTER_MASK);
       Unit_GetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
       if (levelAdjustment != 0)
         BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,

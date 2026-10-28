@@ -283,9 +283,9 @@ s32 BattleAbility_ApplyToTarget(struct BattleActionRun *plan, s32 slot) {
       // The newcomer's name letter; on the first duplicate the enemy
       // already there takes a letter too.
       suffix = BattleEnemy_ClaimNameLetter(classId, 1);
-      if (suffix & 0x8000)
+      if (suffix & ENEMY_LETTER_FIRST_TOO)
         BattleEnemy_LetterFirstOfKind(classId);
-      BattleUnit_SetFar(newUnitId, classId, suffix & 0x7fff);
+      BattleUnit_SetFar(newUnitId, classId, suffix & ENEMY_LETTER_MASK);
       // Fill a removed enemy's place in the list, or append the newcomer.
       {
         s32 i;

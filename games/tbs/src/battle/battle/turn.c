@@ -84,7 +84,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   camera->yaw = 128 << 7;
   camera->pitch = 244 << 8;
   camera->followPosition = 0;
-  camera->distance = 0x02ee0000;
+  camera->distance = 750 << 16;
   camera->followEye = 0;
 
   Transform_Reset();
@@ -97,15 +97,15 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   eyeOffset.z = camera->distance;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 
-  result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
-  Projection_Set(0, result, 0x07920000);
+  result = Iwram_RatioMulQ14(969 << 16, 192 << 8);
+  Projection_Set(0, result, 1938 << 16);
 
   // While active (the view's busy) is set, BattleCamera_SetRange leaves
   // BG1's scroll alone. The range: centre (120, 118 less verticalOffset),
-  // offset 8 pixels in y (0x800 in 8.8), scale 2.0.
+  // offset 8 pixels in y, in 8.8 (128 << 4), scale 2.0.
   gProjection.centerY = verticalOffset + 120;
   view->busy = 1;
-  BattleCamera_SetRange(240 << 15, (0x76 - verticalOffset) << 16, 0, 128 << 4,
+  BattleCamera_SetRange(240 << 15, (118 - verticalOffset) << 16, 0, 128 << 4,
                         128 << 10);
   view->flag = 1;
   view->busy = 0;
@@ -167,7 +167,7 @@ s32 BattleFlee_CheckSuccess(void) {
     }
     chance -= levelTotal * 500 / livingCount;
     // A roll from 0 to 9999 against the chance.
-    if ((chance > 0) && (((10000 * Random16()) >> 0x10) < chance)) {
+    if ((chance > 0) && (((10000 * Random16()) >> 16) < chance)) {
       escaped = 1;
     }
     *failedAttempts += 1;
@@ -605,9 +605,9 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       adjustedColor = blue << 10;
       adjustedColor |= green << 5;
       adjustedColor |= red;
-      // Into the palette before the source, 14 and 4: 0x04ffffe0 is BG
-      // palette RAM (0x05000000) less one palette's 32 bytes.
-      ((s16 *)0x04ffffe0)[paletteIndex] = adjustedColor;
+      // Into the palette before the source, 14 and 4: paletteIndex counts
+      // from one palette's 16 colours before BG_PLTT.
+      ((s16 *)BG_PLTT - 16)[paletteIndex] = adjustedColor;
     }
     bankIndex++;
     sourceBank = 5;
@@ -724,9 +724,8 @@ s32 Battle_GetTaggedSlotValue(s32 taggedPlace) {
 }
 
 /// Returns the list place of unit id, or -1 if it is in neither list: the
-/// party's as 0x100 | place, the enemies' as 0x180 | place (PLACE_PARTY,
-/// PLACE_ENEMY). Called by the enemies' command choice (enemy_ai.c) to aim
-/// at a unit.
+/// party's as PLACE_PARTY | place, the enemies' as PLACE_ENEMY | place. Called
+/// by the enemies' command choice (enemy_ai.c) to aim at a unit.
 /// @param unitId 0 to 7 the party, any other an enemy
 s32 Battle_FindTaggedSlotByValue(u32 unitId) {
   struct BattleWork *battle = gBattleWork;
@@ -739,7 +738,7 @@ s32 Battle_FindTaggedSlotByValue(u32 unitId) {
       if (listedUnit == BATTLE_UNIT_LIST_END)
         return -1;
       if (listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
-        return placeIndex | 0x100;
+        return placeIndex | PLACE_PARTY;
     }
   }
   for (placeIndex = 0;; placeIndex++) {
@@ -747,7 +746,7 @@ s32 Battle_FindTaggedSlotByValue(u32 unitId) {
     if (listedUnit == BATTLE_UNIT_LIST_END)
       return -1;
     if (listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
-      return placeIndex | 0x180;
+      return placeIndex | PLACE_ENEMY;
   }
 }
 

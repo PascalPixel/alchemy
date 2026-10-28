@@ -12,11 +12,6 @@ struct BattleWorkUnitListView {
 };
 #endif
 
-/// The list place codes the target pickers return: the party's places
-/// 0x100 | place, the enemies' 0x180 | place (Battle_FindTaggedSlotByValue).
-#define PLACE_PARTY 0x100
-#define PLACE_ENEMY 0x180
-
 /// Picks a random place: with requireLivingUnit, a party member still
 /// standing; otherwise any enemy place in use. Returns its place code, or 0
 /// when there is none.

@@ -26,8 +26,8 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
   stopped = 0;
-  actor->acceleration = 0x20000;
-  actor->speedLimit = 0x80000;
+  actor->acceleration = 2 << 16;
+  actor->speedLimit = 8 << 16;
   actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->velocityY = stopped;
   actor->bounce = stopped;
@@ -52,9 +52,9 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
 
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
-  actor->acceleration = 0x20000;
-  actor->speedLimit = 0x80000;
-  actor->velocityY = 0x50000;
+  actor->acceleration = 2 << 16;
+  actor->speedLimit = 8 << 16;
+  actor->velocityY = 5 << 16;
   actor->gravity = 0x7851;
   actor->bounce = 0;
   actor->steeringFlags = 0;
@@ -85,9 +85,9 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   startZ = start->z.fixed;
   zStep = progress * (endZ - startZ) / 100;
   REG_BLDCNT = 0;
-  start->acceleration = 0x20000;
-  start->speedLimit = 0x80000;
-  start->velocityY = 0x40000;
+  start->acceleration = 2 << 16;
+  start->speedLimit = 8 << 16;
+  start->velocityY = 4 << 16;
   start->gravity = BATTLE_UNIT_GRAVITY;
   start->bounce = 0;
   start->steeringFlags = 1;
@@ -99,8 +99,8 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
 void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
   struct Actor *actor = battleObject->actor;
 
-  actor->acceleration = 0x20000;
-  actor->speedLimit = 0x80000;
+  actor->acceleration = 2 << 16;
+  actor->speedLimit = 8 << 16;
   actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->bounce = 0;
   actor->steeringFlags = 0;
@@ -119,15 +119,15 @@ void BattleMotion_HopBack(s32 unitId) {
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
   actor->acceleration = Q16_ONE;
-  actor->speedLimit = 0x40000;
-  actor->velocityY = 0x30000;
+  actor->speedLimit = 4 << 16;
+  actor->velocityY = 3 << 16;
   actor->gravity = 0x9999;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
   // anchorX * 3 / 2, rounded toward zero.
   scaledX = battleObject->anchorX * 3;
-  Actor_SetMoveTargetFar(actor, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
+  Actor_SetMoveTargetFar(actor, (s32)(scaledX + (scaledX >> 31)) >> 1, 0,
                          battleObject->anchorZ);
 }
 
@@ -281,7 +281,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
 /// The hit flash's sprite layer, sprite 283: a star burst that grows and
 /// breaks apart over ten frames (graphics/sprite/spr_283.png).
-#define HIT_FLASH_ANIMATION 0x11b
+#define HIT_FLASH_ANIMATION 283
 
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
 /// single-sprite actor takes it. Nothing in the source calls it.
@@ -299,7 +299,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
       SpriteAnimation_StartFar(effect, 1);
       effect->priority = 3;
     }
-    wait(0xA);
+    wait(10);
   }
 }
 
@@ -360,9 +360,9 @@ s32 BattleUnit_GetEffectHeight(s32 unitId) {
   if (height == 0) {
     classId = Unit_GetFar(unitId)->id;
     if (BattleSprite_IsSmall(classId) != 0) {
-      height = 0x180000;
+      height = 24 << 16;
     } else {
-      height = 0x300000;
+      height = 48 << 16;
     }
   }
   return height;

@@ -4,6 +4,7 @@
 
 #include "battle_formation.h"
 #include "battle.h"
+#include "enemy_ids.h"
 
 // clang-format off
 const struct Formation gFormations[] = {
@@ -1531,7 +1532,25 @@ const struct Formation gFormations[] = {
 /// The 20 enemies whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
 const u16 gBattleFormation_LevelMatchedEnemies[] = {
-    0x75, 0x7a, 0x7d, 0x85, 0x87, 0x89, 0x9e, 0x9f, 0xa0, 0xa1,
-    0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab,
+    117,
+    ENEMY_MYSTERY_MAN,
+    ENEMY_MYSTERY_WOMAN,
+    ENEMY_AZART_PADDED_GLOVES,
+    ENEMY_SATRAGE_COTTON_SHIRT,
+    ENEMY_NAVAMPA_HUNTERS_SWORD,
+    ENEMY_VENUS_DJINNI_QUARTZ,
+    ENEMY_VENUS_DJINNI_VINE,
+    ENEMY_VENUS_DJINNI_UNUSED_BANE,
+    ENEMY_MERCURY_DJINNI_SLEET,
+    ENEMY_MERCURY_DJINNI_SPRITZ,
+    ENEMY_MERCURY_DJINNI_HAIL,
+    ENEMY_MERCURY_DJINNI_DEW,
+    ENEMY_MARS_DJINNI_FORGE,
+    ENEMY_MARS_DJINNI_CORONA,
+    ENEMY_MARS_DJINNI_FLASH,
+    ENEMY_JUPITER_DJINNI_BREEZE,
+    ENEMY_JUPITER_DJINNI_ZEPHYR,
+    ENEMY_JUPITER_DJINNI_SQUALL,
+    ENEMY_JUPITER_DJINNI_LUFF,
 };
 // clang-format on

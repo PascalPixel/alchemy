@@ -134,6 +134,12 @@ STATIC_ASSERT(sizeof(struct EquipEffect) == 0x04);
 STATIC_ASSERT(offsetof(struct EquipEffect, kind) == 0x00);
 STATIC_ASSERT(offsetof(struct EquipEffect, amount) == 0x01);
 
+/// The equipMask bit of character `no` (ISAAC to PIERS):
+/// Item_CanUnitEquipDirect reads bit unit->id of the mask.
+#define EQUIP_CHARACTER(no) (1 << (no))
+/// Every one of the eight characters' bits.
+#define EQUIP_ALL_CHARACTERS 0xff
+
 /// An item's definition: its price, type, who can equip it, its bonuses and
 /// unleash, its effects and the action it is used for.
 struct ItemDefinition {

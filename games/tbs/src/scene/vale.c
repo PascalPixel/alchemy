@@ -2339,12 +2339,12 @@ static void Vale_RoofMended(void) {
   struct Actor *turned;
   s32 none;
   s32 flag;
-  TaskFunc callbackA;
-  TaskFunc callbackB;
-  TaskFunc callbackC;
-  TaskFunc callbackD;
-  TaskFunc callbackE;
-  TaskFunc callbackF;
+  TaskFunc funcA;
+  TaskFunc funcB;
+  TaskFunc funcC;
+  TaskFunc funcD;
+  TaskFunc funcE;
+  TaskFunc funcF;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
@@ -2421,10 +2421,10 @@ static void Vale_RoofMended(void) {
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
 
-  callbackA = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(callbackA, TASK_PASS_FRAME);
-  callbackB = Vale_CycleFirstBoardPalette;
-  Task_AddFrame(callbackB, TASK_PASS_FRAME);
+  funcA = Vale_UpdateLeaderPaletteAndEffects;
+  Task_AddFrame(funcA, TASK_PASS_FRAME);
+  funcB = Vale_CycleFirstBoardPalette;
+  Task_AddFrame(funcB, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_FIRST_BOARD, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_MoveToAndWait(ACTOR_FIRST_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2437,8 +2437,8 @@ static void Vale_RoofMended(void) {
   }
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(callbackA);
-  Task_Remove(callbackB);
+  Task_Remove(funcA);
+  Task_Remove(funcB);
   WaitFrames(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
@@ -2464,10 +2464,10 @@ static void Vale_RoofMended(void) {
     WaitFrames(1);
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  callbackC = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(callbackC, TASK_PASS_FRAME);
-  callbackD = Vale_CycleSecondBoardPalette;
-  Task_AddFrame(callbackD, TASK_PASS_FRAME);
+  funcC = Vale_UpdateLeaderPaletteAndEffects;
+  Task_AddFrame(funcC, TASK_PASS_FRAME);
+  funcD = Vale_CycleSecondBoardPalette;
+  Task_AddFrame(funcD, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_SECOND_BOARD, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_MoveToAndWait(ACTOR_SECOND_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2480,8 +2480,8 @@ static void Vale_RoofMended(void) {
   }
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(callbackC);
-  Task_Remove(callbackD);
+  Task_Remove(funcC);
+  Task_Remove(funcD);
   WaitFrames(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_SECOND_BOARD, SPRITE_COLOR_NORMAL);
@@ -2508,10 +2508,10 @@ static void Vale_RoofMended(void) {
     WaitFrames(1);
   }
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  callbackE = Vale_UpdateLeaderPaletteAndEffects;
-  Task_AddFrame(callbackE, TASK_PASS_FRAME);
-  callbackF = Vale_CycleThirdBoardPalette;
-  Task_AddFrame(callbackF, TASK_PASS_FRAME);
+  funcE = Vale_UpdateLeaderPaletteAndEffects;
+  Task_AddFrame(funcE, TASK_PASS_FRAME);
+  funcF = Vale_CycleThirdBoardPalette;
+  Task_AddFrame(funcF, TASK_PASS_FRAME);
   Actor_SetSpeed(ACTOR_THIRD_BOARD, PIXELS(1) / 5, PIXELS(1) / 10);
   Actor_MoveToAndWait(ACTOR_THIRD_BOARD, 390, 832);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2524,8 +2524,8 @@ static void Vale_RoofMended(void) {
   }
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Task_Remove(Vale_PlayStepSound);
-  Task_Remove(callbackE);
-  Task_Remove(callbackF);
+  Task_Remove(funcE);
+  Task_Remove(funcF);
   WaitFrames(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_THIRD_BOARD, SPRITE_COLOR_NORMAL);

@@ -1015,7 +1015,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 /// Title_ShowIntro.
 void TitlePaletteFade_Initialize(void) {
   struct TitlePaletteFade *buffer;
-  s32 callbackPriority;
+  s32 priority;
 
   buffer = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
@@ -1024,8 +1024,8 @@ void TitlePaletteFade_Initialize(void) {
           REG_DMA3);
   TitlePaletteFade_BuildColors(PALETTE_TINT_NONE, buffer->palette,
                                buffer->target, PALETTES_ALL);
-  callbackPriority = TASK_PASS_FRAME;
-  Task_Add(TitlePaletteFade_Update, callbackPriority);
+  priority = TASK_PASS_FRAME;
+  Task_Add(TitlePaletteFade_Update, priority);
 }
 
 /// Unused: removes the palette fade's task and frees its buffers. Nothing in ☀️

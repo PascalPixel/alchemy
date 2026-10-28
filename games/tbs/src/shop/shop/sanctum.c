@@ -480,7 +480,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   s8 savedCursorMode;
   struct FixedPointPosition position;
   struct FieldParticle *effect;
-  s32 callbackPriority;
+  s32 priority;
   s32 effectIndex;
 
   shop = gMenuWork;
@@ -491,8 +491,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Shop_SaveAndTintFieldPalette(0x00202108);
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
-  callbackPriority = TASK_PASS_FRAME;
-  Task_Add(Shop_ResetEffects, callbackPriority);
+  priority = TASK_PASS_FRAME;
+  Task_Add(Shop_ResetEffects, priority);
 
   // The burst's centre, in 16.16 pixels: 12 above the party member's icon
   position.x = shop->partyMemberX[member] << 16;

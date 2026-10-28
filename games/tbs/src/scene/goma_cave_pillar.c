@@ -341,7 +341,7 @@ s32 gGomaCavePillar_WitnessFrames;
 static void GomaCavePillar_PushStumpOver(void) {
   s32 column;
   s32 zero;
-  void (*fragmentCallback)(void);
+  void (*fragmentFunc)(void);
   s32 fixedX;
   s32 fixedZ;
   struct Actor *heightSource;
@@ -371,8 +371,8 @@ static void GomaCavePillar_PushStumpOver(void) {
     Import_ActorSetPosition(ACTOR_MASK_FOR_STUMP, PIXELS(414), PIXELS(240));
     Event_WaitFrames(10);
     // Dust falls while the stump rocks on the edge.
-    fragmentCallback = GomaCavePillar_SpawnStumpDust;
-    Task_AddFrame(fragmentCallback, TASK_PASS_FRAME);
+    fragmentFunc = GomaCavePillar_SpawnStumpDust;
+    Task_AddFrame(fragmentFunc, TASK_PASS_FRAME);
     Sound_PlaySong(SE_RUMBLE);
     Actor_OffsetPositionAndResetMotion(ACTOR_STUMP, 1, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
@@ -390,7 +390,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     Actor_ResetAndSetPosition(ACTOR_STUMP, 416, 200);
     movedActor = Actor_GetById(ACTOR_STUMP);
     Actor_SetSpriteFlags(movedActor, 0);
-    Task_Remove(fragmentCallback);
+    Task_Remove(fragmentFunc);
     Event_WaitFrames(12);
     Sound_PlaySong(SE_STONE_GRIND);
     xSource = Actor_GetById(ACTOR_STUMP);

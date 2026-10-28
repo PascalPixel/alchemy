@@ -480,7 +480,7 @@ s32 FileScreen_Run(void) {
   // continue, 101 of 920 instructions differ in tbs-en, and with this menu as
   // for (;;), 462.
 menu_top:;
-  v6 = Save_ScanPartFlags();
+  v6 = Save_ScanFileSummaries();
   // No backup memory: in debug mode, say so and turn idle sleep on.
   if (v6 < 0) {
     if (gDebugMode != 0) {
@@ -547,7 +547,7 @@ menu_top:;
   if (v6 == 1) {
     struct Adventure *state;
 
-    v6 = Save_LoadPartIntoWork(1);
+    v6 = Save_ChooseAndLoadFile(1);
     if (v6 == -1) {
       goto menu_top;
     }
@@ -608,7 +608,7 @@ menu_top:;
   // held the party's equipment gets it back, and its party is reset to Isaac,
   // Garet, Ivan and Mia, in order.
   if (v6 == 4) {
-    v6 = Save_LoadPartIntoWork(4);
+    v6 = Save_ChooseAndLoadFile(4);
     if (v6 == -1) {
       goto menu_top;
     }
@@ -638,7 +638,7 @@ menu_top:;
     }
     // Send: choose a cleared file, then Password (0) or Cable (1).
   link_load:;
-    v6 = Save_LoadPartIntoWork(5);
+    v6 = Save_ChooseAndLoadFile(5);
     if (v6 == -1) {
       goto menu_top;
     }

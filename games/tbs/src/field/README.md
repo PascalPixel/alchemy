@@ -165,7 +165,7 @@ While a menu is open over the field (the item, Psynergy, Status,
 [Djinn](../../glossary.md#djinn) or debug menu), the sprites that are not held
 are hidden.
 
-The two steps are two [tasks](../../glossary.md#task), jobs the game runs once
+The two steps are two [tasks](../../glossary.md#task), routines the game runs once
 a frame, and the camera is one of two kinds: on a town or dungeon map it
 scrolls with the map, and on the world map and in a battle it projects each
 actor's place in 3D onto the screen.

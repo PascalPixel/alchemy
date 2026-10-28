@@ -3,7 +3,7 @@
 When an event pauses for half a second, the code that runs it simply waits,
 yet the screen keeps moving: windows still type, the [scene](../../glossary.md#scene)
 still scrolls with the camera. Everything in the game waits the same way,
-through one function, `WaitFrames`, which runs a short list of jobs, the
+through one function, `WaitFrames`, which runs a short list of routines, the
 [tasks](../../glossary.md#task), once every [frame](../../glossary.md#frame)
 while it waits. That function and what it needs around it are the runtime:
 start-up, the frame and its hand-over to the screen, the
@@ -123,8 +123,9 @@ their slots, pointing at memory the next request hands out again. That is why
 a battle animation stops the task that copies its pictures before it gives
 its blocks back.
 
-A block is taken with `Heap_Alloc` or, for a heap slot, `HeapSlot_Alloc`, and given
-back with `Heap_Release` or `HeapSlot_Release`; the slots are `gHeapSlots`.
+A block is taken with `Heap_Alloc` or, for a heap slot, `HeapSlot_Alloc`, and
+given back with `Heap_Release` or `HeapSlot_Release`; the slots are
+`gHeapSlots`.
 
 ## The task runner
 

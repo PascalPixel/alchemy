@@ -1306,7 +1306,7 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   struct Actor *actor;
   const s32 *leaderScaleScript;
-  TaskFunc particleCallback;
+  TaskFunc particleFunc;
 
   // Place the opponent and companions around the resting leader.
   Actor_ReleaseById(ACTOR_PRIZE_A);
@@ -1429,29 +1429,29 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
   Event_WaitFrames(60);
-  particleCallback = ColosseumNavampaMatch_SpawnPeriodicParticle;
+  particleFunc = ColosseumNavampaMatch_SpawnPeriodicParticle;
   // Time the small reunion effects to the companions' reactions.
   gColossoParticleCount = 9;
-  Task_AddFrame(particleCallback, TASK_PASS_FRAME);
+  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
   Event_WaitFrames(5);
-  Task_Remove(particleCallback);
+  Task_Remove(particleFunc);
   Event_WaitFrames(55);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Task_AddFrame(particleCallback, TASK_PASS_FRAME);
+  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
   Event_WaitFrames(20);
-  Task_Remove(particleCallback);
+  Task_Remove(particleFunc);
   Event_WaitFrames(40);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   gColossoParticleCount = 9;
-  Task_AddFrame(particleCallback, TASK_PASS_FRAME);
+  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
   Event_WaitFrames(35);
-  Task_Remove(particleCallback);
+  Task_Remove(particleFunc);
   Event_WaitFrames(25);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   gColossoParticleCount = 9;
-  Task_AddFrame(particleCallback, TASK_PASS_FRAME);
+  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
   Event_WaitFrames(35);
-  Task_Remove(particleCallback);
+  Task_Remove(particleFunc);
   Event_WaitFrames(25);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_IVAN);
@@ -1460,9 +1460,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   gColossoParticleCount = 9;
-  Task_AddFrame(particleCallback, TASK_PASS_FRAME);
+  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
   Event_WaitFrames(35);
-  Task_Remove(particleCallback);
+  Task_Remove(particleFunc);
   Event_WaitFrames(25);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
@@ -1471,7 +1471,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_IVAN);
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_IVAN);
   gColossoParticleCount = 9;
-  Task_AddFrame(particleCallback, TASK_PASS_FRAME);
+  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
   Import_ActorSetAnimation(ACTOR_GARET, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
   Import_ActorSetAnimation(ACTOR_MIA, ANIM_NOD);

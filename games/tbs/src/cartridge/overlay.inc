@@ -148,11 +148,11 @@
 	import WindowSprite_ClearList, WindowSprite_ClearListFar
 	import Window_SetTilemapEntry, Window_SetTilemapEntryFar
 	import Save_ToChosenFile, Save_ToChosenFileFar
-	import Save_LoadPartIntoWork, Save_LoadPartIntoWorkFar
+	import Save_ChooseAndLoadFile, Save_ChooseAndLoadFileFar
 	import Save_CopyFile, Save_CopyFileFar
 	import Save_EraseSelectedFile, Save_EraseSelectedFileFar
 	import Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
-	import Save_ScanPartFlags, Save_ScanPartFlagsFar
+	import Save_ScanFileSummaries, Save_ScanFileSummariesFar
 	import NameEntry_EditMemberName, NameEntry_EditMemberNameFar
 	import DebugBrowser_Icons, DebugBrowser_IconsFar
 	import DebugBrowser_Portraits, DebugBrowser_PortraitsFar
@@ -163,7 +163,7 @@
 	import Resource_LoadFixedBlockBIntoFreeSlot, Resource_LoadFixedBlockBIntoFreeSlotFar
 	import Graphics_ExpandVramTilesByColorTable, Graphics_ExpandVramTilesByColorTableFar
 	import Menu_AnimateSelectionToEntry, Menu_AnimateSelectionToEntryFar
-	import Save_CountPartsExcludingFlagged, Save_CountPartsExcludingFlaggedFar
+	import Save_CountFilesExcludingSent, Save_CountFilesExcludingSentFar
 	import Link_DrawPageArrows, Link_DrawPageArrowsFar
 @ Game bank (far_call/GAME.S)
 	import Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar

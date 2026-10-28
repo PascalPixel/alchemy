@@ -41,7 +41,7 @@ and waits, yet the arrow keeps bobbing and the river keeps rippling. A
 talk, an event, a menu screen or a battle animation is not called once a frame
 to do its share: it is an ordinary piece of code that runs from start to
 finish, and when time has to pass it asks to wait a number of frames. What
-must keep moving meanwhile is a task, a short job run once every frame
+must keep moving meanwhile is a task, a short routine run once every frame
 whatever the waiting code is doing. In the recording the window's typing and
 its arrow are one task and the river's moving water another.
 

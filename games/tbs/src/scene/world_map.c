@@ -2365,8 +2365,8 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   FieldCamera_SetSpeedParameters(PIXELS(4), PIXELS(1) / 2);
   {
     s32 priority = TASK_PASS_FRAME;
-    TaskFunc callback = WorldMap_UpdateLighthouseQuake;
-    Task_AddFrame(callback, priority);
+    TaskFunc func = WorldMap_UpdateLighthouseQuake;
+    Task_AddFrame(func, priority);
   }
   PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_MUTED, PALETTES_BG);

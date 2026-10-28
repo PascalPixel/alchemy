@@ -281,7 +281,7 @@ again, such as the running scene's state (`gHeapSlots`).
 
 ### Task
 
-A short job run once every [frame](#frame), or once every [VBlank](#vblank),
+A short routine run once every [frame](#frame), or once every [VBlank](#vblank),
 until it is removed: the windows' typing, the map's scrolling, the lightning
 over Vale on the stormy night. Each runs in one of two passes,
 `TASK_PASS_FRAME`, which `WaitFrames` runs once a frame, or `TASK_PASS_VBLANK`,

@@ -519,7 +519,7 @@ static void Xian_FreezeSpilledWater(void) {
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
   struct Actor *leader;
-  TaskFunc particleCallback;
+  TaskFunc particleFunc;
   s32 reboundVelocity;
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
@@ -558,8 +558,8 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Sound_PlaySong(SE_WATER);
-    particleCallback = Xian_SpawnTrainingParticles;
-    Task_AddFrame(particleCallback, TASK_PASS_FRAME);
+    particleFunc = Xian_SpawnTrainingParticles;
+    Task_AddFrame(particleFunc, TASK_PASS_FRAME);
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->velocityY = 0x60000;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = 0x10000;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
@@ -579,7 +579,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
-    Task_Remove((void (*)(void))particleCallback);
+    Task_Remove((void (*)(void))particleFunc);
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0,
@@ -725,12 +725,12 @@ static void Xian_OpenDoorAndLeave(void) {
 /// "Wha-Wha-What happened? The tree jumped on its own!", the next time
 /// "...It jumped again... I am too tired...".
 static void Xian_StrikeTrainingTreeWithForce(void) {
-  TaskFunc rotationCallback;
+  TaskFunc rotationFunc;
 
   Event_Start();
   Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
-  rotationCallback = Xian_RotateTrainingTree;
-  Task_AddFrame(rotationCallback, TASK_PASS_FRAME);
+  rotationFunc = Xian_RotateTrainingTree;
+  Task_AddFrame(rotationFunc, TASK_PASS_FRAME);
   Actor_RefreshSelectorById(ACTOR_TRAINING_TREE);
   Sound_PlaySong(SE_CHEST_OPEN);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
@@ -739,7 +739,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  Task_Remove(rotationCallback);
+  Task_Remove(rotationFunc);
   Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
   Import_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
   Event_WaitFrames(20);

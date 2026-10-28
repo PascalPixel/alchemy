@@ -547,7 +547,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 /// Builds the File Screen's menu from the save summaries and optional send
 /// flags. Translates the chosen visible position back to its action (enum
 /// FileAction), or -1 when cancelled or the backup memory cannot be read. With
-/// no files it returns 0 at once. The icons, by Save_ScanPartFlags' count:
+/// no files it returns 0 at once. The icons, by Save_ScanFileSummaries' count:
 /// New Game, Continue, Copy and Erase for one or two files (starting on
 /// Continue); no New Game or Copy with three; with every file cleared no
 /// Continue, and only Erase with three such files. Battle and Send follow when
@@ -560,7 +560,7 @@ s32 FileList_SelectAction(void) {
 
   group = 0;
   initial = 0;
-  fileState = Save_ScanPartFlags();
+  fileState = Save_ScanFileSummaries();
   if (fileState < 0) {
     return -1;
   }

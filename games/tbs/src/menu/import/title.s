@@ -11,7 +11,7 @@
 	.set import.Stub_NoOpHook, 1
 	.set import.ScreenFade_ToBlack, 1
 	.set import.ScreenFade_Wait, 1
-	.set import.Save_ScanPartFlags, 1
+	.set import.Save_ScanFileSummaries, 1
 	.set import.Party_EndChildhood, 1
 	.set import.Event_WaitFrames, 1
 	.set import.Actor_GetById, 1

@@ -27,10 +27,10 @@
 	.set import.FieldMessage_ShowCentered, 1
 	.set import.Window_SetTilemapEntry, 1
 	.set import.Save_ToChosenFile, 1
-	.set import.Save_LoadPartIntoWork, 1
+	.set import.Save_ChooseAndLoadFile, 1
 	.set import.Save_CopyFile, 1
 	.set import.Save_EraseSelectedFile, 1
-	.set import.Save_ScanPartFlags, 1
+	.set import.Save_ScanFileSummaries, 1
 	.set import.NameEntry_EditMemberName, 1
 	.set import.WindowColor_Apply, 1
 	.set import.YesNoMenu_Run, 1

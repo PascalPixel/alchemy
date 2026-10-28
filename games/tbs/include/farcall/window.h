@@ -245,7 +245,7 @@ s32 Save_ToChosenFileFar(void);
 /// Lets the player pick a file in file list mode arg and loads it as the
 /// current file, as the title's Continue does; it returns as the Save command
 /// does.
-s32 Save_LoadPartIntoWorkFar(s32 arg);
+s32 Save_ChooseAndLoadFileFar(s32 arg);
 /// Runs the file list's Copy, writing a chosen file to the first empty one. Its
 /// errors are shown before it returns them.
 s32 Save_CopyFileFar(void);
@@ -259,7 +259,7 @@ s32 Save_ProcessSelectedFileFar(void);
 /// Reads the save summaries for the File Screen and returns how many files
 /// there are, plus 100 when every file has its send flag; it also decides
 /// whether Battle and Send are offered.
-s32 Save_ScanPartFlagsFar(void);
+s32 Save_ScanFileSummariesFar(void);
 /// Runs the name entry screen for party member entry. Returns 0, or -1 when
 /// cancelled; the name changes only when the player ends on End.
 s32 NameEntry_EditMemberNameFar(s32 entry);
@@ -326,7 +326,7 @@ s32 WindowSprite_GetPointerTilesFar(s32 no);
 s32 Message_OpenDecodedFar(struct Window *window, s32 argument);
 /// Returns how many save files there are, leaving out the files saved at the
 /// end of the game when flag is nonzero, or SAVE_ERROR_NO_MEMORY.
-s32 Save_CountPartsExcludingFlaggedFar(s32 flag);
+s32 Save_CountFilesExcludingSentFar(s32 excludeSent);
 /// Draws an empty window frame at tile (x, y), width by height tiles, and frees
 /// the text tiles it covers.
 void Window_DrawBorderFar(s32 x, s32 y, u32 width, u32 height);

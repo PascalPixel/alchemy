@@ -5,7 +5,7 @@
 /// counts a sector as a save only when its first seven bytes match it.
 const u8 gSave_Signature[] = "CAMELOT";
 /// The sector header's first eight bytes, with no terminator. The writers
-/// copy it over a new header: the seven signature bytes, and a recordId byte
+/// copy it over a new header: the seven signature bytes, and a partId byte
 /// ('T') they then replace.
 const u8 gSave_HeaderTemplate[8] = {'C', 'A', 'M', 'E', 'L', 'O', 'T', 'T'};
 

@@ -63,7 +63,7 @@ struct SaveFileSummary {
 ///
 /// It lives in heap slot HEAP_SLOT_SAVE (gSaveWork) only around each
 /// save, load, copy or delete and each scan of the files, as the File Screen's
-/// (Save_ScanPartFlags): Save_InitializeWork takes it and
+/// (Save_ScanFileSummaries): Save_InitializeWork takes it and
 /// scans the sectors into it, and Save_ReleaseWork frees it.
 struct SaveWork {
   u8 occupied[16]; ///< 1 for a sector holding the current copy of a part
@@ -114,7 +114,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// Waits until a START_DMA transfer is done.
 #define WAIT_DMA() WaitDma(DMA3)
 
-/// Nonzero offers Send on the File Screen: Save_ScanPartFlags sets it
+/// Nonzero offers Send on the File Screen: Save_ScanFileSummaries sets it
 /// when a file has its send flag set and R and Left are held.
 extern s16 gTitleSendOptionEnabled;
 

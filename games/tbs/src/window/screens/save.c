@@ -78,7 +78,7 @@ u32 Save_FindFreeFile(void) {
 /// its send flag set (the files saved at the end of the game) when
 /// `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY when the backup memory
 /// cannot be read. It opens and releases the save workspace itself.
-s32 Save_CountPartsExcludingFlagged(s32 excludeSent) {
+s32 Save_CountFilesExcludingSent(s32 excludeSent) {
   s32 file;
   s32 count;
   struct SaveFileSummary *summary;
@@ -111,7 +111,7 @@ s32 Save_CountPartsExcludingFlagged(s32 excludeSent) {
 /// flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when a
 /// file has its send flag set and R and Left are held.
 /// FileList_SelectAction reads all three.
-s32 Save_ScanPartFlags(void) {
+s32 Save_ScanFileSummaries(void) {
   s32 error;
   s32 sentCount;
   s32 fileCount;
@@ -1260,7 +1260,7 @@ done:
 /// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
 /// its message. The title's Continue (mode 1), Battle (4) and Send (5) load
 /// through here (menu/file_screen.c).
-s32 Save_LoadPartIntoWork(s32 mode) {
+s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
   s32 error = Save_InitializeWork();
 

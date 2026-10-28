@@ -187,11 +187,11 @@ u32 ElementGlow_UploadStarField(void) {
 // The two tasks as the task runner takes them: cast to TaskFunc
 // where the native types return a value.
 #ifdef UBFIX
-#define STAR_FIELD_UPDATE_CALLBACK ElementGlow_UpdateStarField
-#define STAR_FIELD_UPLOAD_CALLBACK ElementGlow_UploadStarField
+#define STAR_FIELD_UPDATE_FUNC ElementGlow_UpdateStarField
+#define STAR_FIELD_UPLOAD_FUNC ElementGlow_UploadStarField
 #else
-#define STAR_FIELD_UPDATE_CALLBACK ((TaskFunc)ElementGlow_UpdateStarField)
-#define STAR_FIELD_UPLOAD_CALLBACK ((TaskFunc)ElementGlow_UploadStarField)
+#define STAR_FIELD_UPDATE_FUNC ((TaskFunc)ElementGlow_UpdateStarField)
+#define STAR_FIELD_UPLOAD_FUNC ((TaskFunc)ElementGlow_UploadStarField)
 #endif
 
 /// Starts a star field of the element mode (0 to 3, enum Element order):
@@ -290,8 +290,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   Io_Write16(Q_8_8(1), &REG_BG2PD);
   BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleAnim_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 7, 7, 3, 2);
-  Task_Add(STAR_FIELD_UPDATE_CALLBACK, TASK_PASS_FRAME);
-  return Task_Add(STAR_FIELD_UPLOAD_CALLBACK, TASK_PASS_FRAME);
+  Task_Add(STAR_FIELD_UPDATE_FUNC, TASK_PASS_FRAME);
+  return Task_Add(STAR_FIELD_UPLOAD_FUNC, TASK_PASS_FRAME);
 }
 
 /// Ends a star field: clears BG2's tiles in character block 1, frees its
@@ -307,8 +307,8 @@ s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_ANIM);
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
-  Task_Remove(STAR_FIELD_UPLOAD_CALLBACK);
-  return Task_Remove(STAR_FIELD_UPDATE_CALLBACK);
+  Task_Remove(STAR_FIELD_UPLOAD_FUNC);
+  return Task_Remove(STAR_FIELD_UPDATE_FUNC);
 }
 
 /// Copies count colours from source to destination, each channel scaled by

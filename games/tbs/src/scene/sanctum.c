@@ -1691,7 +1691,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
   window = Window_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
   text = MsgSanctumGreatHealer;
   Text_DrawMessage(text, window, 16, 0);
-  if (Save_CountPartsExcludingFlagged(1) == 0) {
+  if (Save_CountFilesExcludingSent(1) == 0) {
     Text_DrawMessage(text + 2, window, 16, 16);
   } else {
     Text_DrawMessage(text + 1, window, 16, 16);

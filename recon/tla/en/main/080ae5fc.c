@@ -1,5 +1,5 @@
-// Draft, differ 10 of 96 (16 before, 2026-10-26): restores from a save block
-// the adventure bytes at 0x225, 0x226, 0x22c, 0x22a and 0x24a (the block
+// Draft, differ 10 of 96 (16 before, 2026-10-26): restores from received save
+// data the adventure bytes at 0x225, 0x226, 0x22c, 0x22a and 0x24a (the data
 // holds an Adventure at 0x240), calls Func_08038348 with the first two, then
 // for the eight units (saved from 0x520 in the BattleUnit layout, 332 bytes
 // each) restores base HP and PP, then the gauges from them, base Attack,

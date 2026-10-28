@@ -183,7 +183,7 @@ SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/sr
 FLASH_C := $(addprefix games/tbs/src/cartridge/save/,flash.c sst.c atmel.c program_flash_sector.c) \
            $(addprefix games/tla/src/system/save/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/update.c games/tbs/src/field/vertices.c \
-           games/tla/src/graphics/tile/metatile.c
+           games/tla/src/graphics/tile/cell_picture.c
 
 ASFLAGS := -mcpu=arm7tdmi -mthumb-interwork
 EDITION_ASFLAGS := --defsym $(DEFINE)=1 -I$(BUILD) $(ASFLAGS)

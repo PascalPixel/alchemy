@@ -423,7 +423,7 @@ void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
   }
 }
 
-/// Unused: returns the top two bits of the metatile halfword of the cell at
+/// Unused: returns the top two bits of the cell picture halfword of the cell at
 /// pixel (x, y). Nothing calls it.
 UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
@@ -431,8 +431,8 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   struct MapGridCell *cell =
       (struct MapGridCell *)gMapGridCellBuffer + (cellX + cellY * 128);
 
-  // The high byte of the metatile halfword; its top two bits are flags.
-  return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
+  // The high byte of the cell picture halfword; its top two bits are flags.
+  return ((u8 *)&cell->cellPictureAndFlags)[1] >> 6;
 }
 
 /// Returns whether an actor can step to position, an enum Collision:
@@ -597,28 +597,28 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
   s32 x = position->x;
   s32 y;
   s32 behaviorBank = 0;
-  u32 metatileX;
+  u32 cellPictureX;
   u32 index;
-  u32 *metatileWord;
+  u32 *cellPictureWord;
 
   // Blocks are 32 pixels, 32 to a row; the bias rounds a negative coordinate
   // towards zero, as division would.
   if (x < 0)
     x += 0x1fffff;
-  metatileX = (x >> 21) & 31;
+  cellPictureX = (x >> 21) & 31;
   y = position->y;
   if (y < 0)
     y += 0x1fffff;
 
-  index = metatileX + (((y >> 21) & 31) << 5);
-  metatileWord = gMetatiles + index;
+  index = cellPictureX + (((y >> 21) & 31) << 5);
+  cellPictureWord = gCellPictures + index;
   // Bit 31 of the block word selects the second bank of 16; the snowfield
   // the third, whatever bit 31 says.
-  if (((u8 *)metatileWord)[3] & 0x80)
+  if (((u8 *)cellPictureWord)[3] & 0x80)
     behaviorBank = 0x10;
 
   // The encounter region is bits 24 to 30 of the block word.
-  *terrainKind = (*metatileWord << 1) >> 25;
+  *terrainKind = (*cellPictureWord << 1) >> 25;
   if (*terrainKind == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
     behaviorBank = 0x20;
 

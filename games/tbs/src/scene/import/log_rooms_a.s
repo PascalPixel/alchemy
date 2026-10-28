@@ -12,8 +12,8 @@
 	.set import.Actor_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Actor_SetMoveTarget, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
-	.set import.MapGrid_CopyMetatileCellsRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.ifdef TBS_EDITION_JA
 	.set import.MapGrid_CheckCollision, 1

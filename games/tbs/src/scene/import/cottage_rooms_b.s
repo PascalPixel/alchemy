@@ -13,7 +13,7 @@
 	.set import.Actor_Release, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Actor_WaitForScriptEnd, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.TilesetAnim_Resume, 1
 	.set import.TilesetAnim_Pause, 1
 	.set import.BlendScript_Suspend, 1

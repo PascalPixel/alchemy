@@ -1,5 +1,5 @@
 	.section .rodata
-@ World map B attributes; Field_DefaultMetatileAttributes format.
+@ World map B attributes; Field_DefaultCellPictureAttributes format.
 	.global Resource_Data1A5
 Resource_Data1A5:
 	.incbin "games/tla/src/graphics/world_map/attr_b.table.lz"

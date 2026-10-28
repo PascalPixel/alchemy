@@ -11,8 +11,8 @@
 
 /// Draws the width by height cells at cell (x, y) of the layout into screen
 /// block 5 from cell (destinationX, destinationY), wrapped to 16 by 16 cells,
-/// in band plane (16 cell rows each): each cell is its metatile's tiles from
-/// Ram_Metatiles.
+/// in band plane (16 cell rows each): each cell is its cell picture's tiles
+/// from Ram_CellPictures.
 static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
                                   s32 plane, s32 destinationX,
                                   s32 destinationY) {
@@ -32,9 +32,9 @@ static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
         u32 *dst;
 
         dst = (u32 *)BG_SCREEN_BLOCK(5) + index;
-        src = (u32 *)(Ram_Metatiles + offset);
+        src = (u32 *)(Ram_CellPictures + offset);
         *dst = *src;
-        src = (u32 *)(Ram_Metatiles + 4 + offset);
+        src = (u32 *)(Ram_CellPictures + 4 + offset);
         dst = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
         *dst = *src;
 

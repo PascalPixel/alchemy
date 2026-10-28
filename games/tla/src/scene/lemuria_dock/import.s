@@ -21,7 +21,7 @@ Func_02000454:
 	.global Func_0200045c
 	.thumb_func
 Func_0200045c:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global FieldEvent_WaitFrames
 	.thumb_func
 FieldEvent_WaitFrames:

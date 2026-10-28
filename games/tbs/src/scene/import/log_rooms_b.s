@@ -4,7 +4,7 @@
 	.set import.FreeHeapSlot, 1
 	.set import.VramCache_Load, 1
 	.set import.Actor_Create, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.Icon_DrawItem, 1
 	.set import.GameFlag_Get, 1
 	.set import.GameFlag_Set, 1

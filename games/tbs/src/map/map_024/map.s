@@ -7,14 +7,14 @@ Field_Map024:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map024, .LField_Map024_METATILES
+	map_offset Field_Map024, .LField_Map024_CELL_PICTURES
 	map_offset Field_Map024, .LField_Map024_SHAPES
 	map_offset Field_Map024, .LField_Map024_GRID
 	map_offset Field_Map024, .LField_Map024_ANIMATION
 	map_offset Field_Map024, .LField_Map024_BLEND
 	map_offset Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
-	.incbin "games/tbs/src/map/map_024/metatiles.delta2.lz"
+.LField_Map024_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_024/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map024_SHAPES:
 	.incbin "games/tbs/src/map/map_024/shapes.table.lz"
@@ -36,14 +36,14 @@ Field_Map024:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map024, .LField_Map024_METATILES
+	map_offset Field_Map024, .LField_Map024_CELL_PICTURES
 	map_offset Field_Map024, .LField_Map024_SHAPES
 	map_offset Field_Map024, .LField_Map024_GRID
 	map_offset Field_Map024, .LField_Map024_ANIMATION
 	map_offset Field_Map024, .LField_Map024_BLEND
 	map_offset Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
-	.incbin "games/tbs/src/map/map_024/metatiles.delta2.lz"
+.LField_Map024_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_024/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map024_SHAPES:
 	.incbin "games/tbs/src/map/map_024/shapes.table.lz"
@@ -65,14 +65,14 @@ Field_Map024:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map024, .LField_Map024_METATILES
+	map_offset Field_Map024, .LField_Map024_CELL_PICTURES
 	map_offset Field_Map024, .LField_Map024_SHAPES
 	map_offset Field_Map024, .LField_Map024_GRID
 	map_offset Field_Map024, .LField_Map024_ANIMATION
 	map_offset Field_Map024, .LField_Map024_BLEND
 	map_offset Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
-	.incbin "games/tbs/src/map/map_024/metatiles.delta2.lz"
+.LField_Map024_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_024/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map024_SHAPES:
 	.incbin "games/tbs/src/map/map_024/shapes.table.lz"
@@ -94,14 +94,14 @@ Field_Map024:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map024, .LField_Map024_METATILES
+	map_offset Field_Map024, .LField_Map024_CELL_PICTURES
 	map_offset Field_Map024, .LField_Map024_SHAPES
 	map_offset Field_Map024, .LField_Map024_GRID
 	map_offset Field_Map024, .LField_Map024_ANIMATION
 	map_offset Field_Map024, .LField_Map024_BLEND
 	map_offset Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
-	.incbin "games/tbs/src/map/map_024/metatiles.delta2.lz"
+.LField_Map024_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_024/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map024_SHAPES:
 	.incbin "games/tbs/src/map/map_024/shapes.table.lz"
@@ -122,14 +122,14 @@ Field_Map024:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map024, .LField_Map024_METATILES
+	map_offset Field_Map024, .LField_Map024_CELL_PICTURES
 	map_offset Field_Map024, .LField_Map024_SHAPES
 	map_offset Field_Map024, .LField_Map024_GRID
 	map_offset Field_Map024, .LField_Map024_ANIMATION
 	map_offset Field_Map024, .LField_Map024_BLEND
 	map_offset Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
-	.incbin "games/tbs/src/map/map_024/metatiles.delta2.lz"
+.LField_Map024_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_024/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map024_SHAPES:
 	.incbin "games/tbs/src/map/map_024/shapes.table.lz"

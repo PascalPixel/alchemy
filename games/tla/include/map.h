@@ -19,7 +19,7 @@ struct MapAnimation {
 };
 
 struct MapCell {
-  u16 metatileAndFlags;
+  u16 cellPictureAndFlags;
   u8 collisionCode;
   u8 attributeB;
 };

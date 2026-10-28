@@ -2,7 +2,7 @@
 // Data_0202c001 + 0x1cf, then for objects 8 to 63 with one sprite whose
 // sprite's picture list (its word 0x28) begins with picture 357 to 362 marks
 // the cells under it in both map layers (the map work's layers at 0x13c
-// and 0x174, metatiles 116 to 127) and ORs its shapes into both shape
+// and 0x174, cell pictures 116 to 127) and ORs its shapes into both shape
 // grids (0x138 and 0x170): a 3 by 3 platform for 357, one cell for 358, a
 // row of five for 359, a column of five for 360 and 361 (361 ending in
 // 126 instead of 127), none for 362. Each such object is then made
@@ -23,8 +23,8 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_02001b98(void);
 
-#define MARK(at, metatile, shape)                                              \
-  (layerA[at] = (metatile), layerB[at] = (metatile), shapesA[at] |= (shape),   \
+#define MARK(at, cellPicture, shape)                                              \
+  (layerA[at] = (cellPicture), layerB[at] = (cellPicture), shapesA[at] |= (shape),   \
    shapesB[at] |= (shape))
 
 void Func_02001c10(void) {

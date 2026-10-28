@@ -23,7 +23,8 @@ extern const struct SceneEncounterRule gScene_EncounterRules[];
 /// (gWorldMap_EncounterRules, zonedata.c), ended by region -1. Read by
 /// Encounter_ResolveWorldMapZoneAndBackdrop, first match first.
 typedef struct WorldMapEncounterRule {
-  s16 kind; ///< the World Map metatile's encounter region; -1 ends the table
+  s16 kind; ///< the World Map cell picture's encounter region; -1 ends the
+            ///< table
   /// The battle environment, which also picks the battle background (1 to 7,
   /// BattleBackground_SelectForEnvironment), or -1 for any.
   s16 behavior;

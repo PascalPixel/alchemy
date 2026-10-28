@@ -428,13 +428,13 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     probePosition.vector.y = leader->y.fixed;
     probePosition.vector.z = leader->z.fixed;
     Vector_AddPolarOffset(0x100000, leader->facing, probePosition.coordinates);
-    // World Map metatiles are 32 pixels square, 32 to a row; map cells 16
+    // World Map cell pictures are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
     if (((struct FieldWork *)workBytes)->mode == ACTOR_SYSTEM_WORLD_MAP) {
-      cell =
-          Ram_Metatiles + ((((probePosition.vector.x / 0x200000) & 31) +
-                            (((probePosition.vector.z / 0x200000) & 31) << 5))
-                           << 2);
+      cell = Ram_CellPictures +
+             ((((probePosition.vector.x / 0x200000) & 31) +
+               (((probePosition.vector.z / 0x200000) & 31) << 5))
+              << 2);
     } else {
       // MAPGRID_LAYER_GROUND's cells, MapGridScrollAnimView's layers[0].cells
       // at 0x130.

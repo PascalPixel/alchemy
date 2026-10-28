@@ -53,7 +53,7 @@ Func_02001448:
 	.global Func_02001450
 	.thumb_func
 Func_02001450:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:

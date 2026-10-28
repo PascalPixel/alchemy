@@ -2,7 +2,7 @@
 	.global WorldMap_PaletteA
 WorldMap_PaletteA:
 	.incbin "games/tbs/src/graphics/world_map/palette_a.gbapal.plz"
-	.byte 0x11, 0x82, 0x87	@ PACKER: left in the buffer by Field_DefaultMetatileAttributes+0x1f5
+	.byte 0x11, 0x82, 0x87	@ PACKER: left in the buffer by Field_DefaultCellPictureAttributes+0x1f5
 	.global WorldMap_TilesA
 WorldMap_TilesA:
 	.incbin "games/tbs/src/graphics/world_map/tiles_a.8bpp.lz"

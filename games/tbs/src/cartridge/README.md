@@ -34,7 +34,7 @@ moves:
 | --- | --- | --- |
 | 0 KB | 32 KB | the game's variables: the adventure, the [game flags](../../glossary.md#game-flag), the sound driver's work |
 | 32 KB | 32 KB | the current scene's code, `gOverlayArea` |
-| 64 KB | 96 KB | the map grid's [cells](../../glossary.md#cell), the battle figures' pictures, unpacking space, the map's [metatiles](../../glossary.md#metatile) and its animated tiles |
+| 64 KB | 96 KB | the map grid's [cells](../../glossary.md#cell), the battle figures' pictures, unpacking space, the map's [cell pictures](../../glossary.md#cell-picture) and its animated tiles |
 | 176 KB | 16 KB | the shapes of the ground |
 | 192 KB | 32 KB | the EWRAM heap |
 | 224 KB | 32 KB | background tiles being prepared, used only by the world map |

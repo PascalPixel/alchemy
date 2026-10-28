@@ -17,7 +17,7 @@ GameFlag_SetBit:
 	.global Func_02000970
 	.thumb_func
 Func_02000970:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Func_02000978
 	.thumb_func
 Func_02000978:

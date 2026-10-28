@@ -141,7 +141,7 @@ Func_0200483c:
 	.global Func_02004844
 	.thumb_func
 Func_02004844:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Func_0200484c
 	.thumb_func
 Func_0200484c:

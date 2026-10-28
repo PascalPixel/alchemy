@@ -10,7 +10,7 @@
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.MapGrid_CheckCollision, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.Actor_SetBlendMode, 1

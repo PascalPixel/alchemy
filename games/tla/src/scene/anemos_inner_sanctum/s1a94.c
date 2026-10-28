@@ -24,7 +24,7 @@ static __inline__ void Func_02003328_(s32 srcX, s32 srcY, s32 dstX, s32 dstY,
 }
 
 /// By the entrance taken, sets that entrance's flag, moves its actor to the
-/// middle of its cell and copies a metatile column twice beside it.
+/// middle of its cell and copies a cell picture column twice beside it.
 void Func_02001a94(void) {
   struct ObjectRuntime *object;
   s32 column;

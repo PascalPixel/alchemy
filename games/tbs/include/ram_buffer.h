@@ -14,7 +14,7 @@
 #define Ram_MapGridCellBuffer                                                  \
   FIXED_ADDRESS((u8 *), 0x02010000, gMapGridCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
-#define Ram_Metatiles FIXED_ADDRESS((u8 *), 0x02020000, gMetatiles)
+#define Ram_CellPictures FIXED_ADDRESS((u8 *), 0x02020000, gCellPictures)
 #define Ram_MapGridShapes FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
 

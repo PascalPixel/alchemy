@@ -105,7 +105,7 @@ Func_02003cec:
 	.global Func_02003cf4
 	.thumb_func
 Func_02003cf4:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Func_02003cfc
 	.thumb_func
 Func_02003cfc:

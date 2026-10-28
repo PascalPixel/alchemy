@@ -6,14 +6,14 @@ Field_GondowanPassage:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_GondowanPassage, .LField_GondowanPassage_METATILES
+	map_offset Field_GondowanPassage, .LField_GondowanPassage_CELL_PICTURES
 	map_offset Field_GondowanPassage, .LField_GondowanPassage_SHAPES
 	map_offset Field_GondowanPassage, .LField_GondowanPassage_GRID
 	map_offset Field_GondowanPassage, .LField_GondowanPassage_ANIMATION
 	map_offset Field_GondowanPassage, .LField_GondowanPassage_BLEND
 	map_offset Field_GondowanPassage, .LField_GondowanPassage_MARKERS
-.LField_GondowanPassage_METATILES:
-	.incbin "games/tbs/src/map/gondowan_passage/metatiles.delta1.lz"
+.LField_GondowanPassage_CELL_PICTURES:
+	.incbin "games/tbs/src/map/gondowan_passage/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_GondowanPassage_SHAPES:
 	.incbin "games/tbs/src/map/gondowan_passage/shapes.table.lz"

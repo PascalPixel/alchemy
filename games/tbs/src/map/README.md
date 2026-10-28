@@ -22,7 +22,7 @@ what is drawn there, what standing on it does, and how its ground is shaped.
 The ledge in the recording is all three: a picture of a ledge, cells that say
 "jump down when pushed", and ground 32 pixels higher than the ground below.
 
-**What is drawn.** A [metatile](../../glossary.md#metatile) is the picture of
+**What is drawn.** A [cell picture](../../glossary.md#cell-picture) is the picture of
 one cell, 2 by 2 of the console's 8-pixel tiles. A cell names its picture by
 number, a row of the map's table of pictures.
 
@@ -54,7 +54,7 @@ layer, which a scene's code can change, so the three layers can have different
 walls and heights ([The field bank](../field/README.md#how-high-a-step-can-go)).
 
 A loaded cell is `struct MapGridCell`, one 32-bit word: 12 bits
-pick the metatile, four flag bits nothing reads ([below](#evidence)), a byte
+pick the cell picture, four flag bits nothing reads ([below](#evidence)), a byte
 the behavior and a byte the shape. The behaviors are
 `enum CellBehavior`:
 
@@ -80,7 +80,7 @@ map's own folder. Each table holds one part of the map, and the map's
 | File | What it is |
 | --- | --- |
 | `map.s` | the header, then the parts; in 129 maps a tileset's palette and tiles follow (from `games/tbs/src/graphics/tileset`) |
-| `metatiles.tsv` | the pictures of the cells; a picture's number is its row, from 0 |
+| `cell_pictures.tsv` | the pictures of the cells; a picture's number is its row, from 0 |
 | `shapes.tsv` | the shapes of the ground |
 | `map.txt` | the grid: each cell's picture, behavior and shape |
 | `tileset_anims.tsv` | the tileset animation script |
@@ -90,7 +90,7 @@ map's own folder. Each table holds one part of the map, and the map's
 | `*_patch.tsv` | bytes [Camelot](../../glossary.md#camelot) changed after packing |
 
 `map.txt` holds one line of the grid per row, each cell written
-`metatile:behavior:shape` in hexadecimal, a part left off the end being 0
+`picture:behavior:shape` in hexadecimal, a part left off the end being 0
 (`4fff:ff`, `20`). Its first line, `grid:128x128	at:2,3	fill:1:0:0`, gives
 the grid's size, the cell its first written row starts at (column, then row),
 and the cell every square the rows leave out holds.
@@ -175,7 +175,7 @@ Spanish. A map whose whole data differs by edition has a block of its
 map's file.
 
 The forms are named in the `Makefile`'s asset rules, and
-`enum MetatilePacking` names the ways the pictures are stored, which
+`enum CellPicturePacking` names the ways the pictures are stored, which
 `TileMap_DecodeStagedBuffer` undoes.
 
 ## Loading a map
@@ -205,7 +205,7 @@ map.
 | --- | --- | --- |
 | cell behaviors | 16 KB | a byte a cell |
 | shapes | 16 KB | a byte a cell |
-| metatiles | 32 KB | a halfword a cell |
+| cell pictures | 32 KB | a halfword a cell |
 | the cell words they make | 64 KB | a word a cell |
 
 ### One grid, three layers
@@ -228,7 +228,7 @@ layer on `BG1`; [The field bank](../field/README.md#towns-and-dungeons-on-screen
 explains how their priorities put
 [actors](../../glossary.md#actor) between them.
 
-### Placeholder metatiles
+### Placeholder cell pictures
 
 A map's grid doesn't store the number of every cell's picture from the
 start. The first time a picture appears in the grid, the cell holds a
@@ -240,9 +240,9 @@ Lighthouse's entrance, whose grid names 170 cells' pictures before their
 placeholders; those cells still get the right pictures, since the numbering
 depends only on the placeholders.
 
-A placeholder is metatile 4,095, the highest 12 bits can hold,
+A placeholder is cell picture 4,095, the highest 12 bits can hold,
 and `Tile_ConvertMapGrid` numbers them as it puts the cells together; the ROM
-also keeps an unused C version, `TileMap_NumberPlaceholderMetatiles`.
+also keeps an unused C version, `TileMap_NumberPlaceholderCellPictures`.
 
 ### Chests and Psynergy Stones
 
@@ -379,7 +379,7 @@ and that row names the map's resources.
 ## Limits
 
 - 128 by 128 cells, for all three layers together.
-- 4,095 metatiles a map: a cell's metatile number has 12 bits, and 4,095
+- 4,095 cell pictures a map: a cell's picture number has 12 bits, and 4,095
   is the placeholder.
 - 256 shapes a map, since a cell names its shape in one byte.
 - 16 tileset animation channels (`struct MapGridScrollAnimView`).
@@ -397,8 +397,8 @@ and that row names the map's resources.
 ## Evidence
 
 The game keeps no names for any of this, so each part is named for what the
-code does with it: the 16-pixel pictures become BG map entries, so they are
-`metatiles`; the shapes feed the height functions; and the treasure spots are where
+code does with it: the 16-pixel pictures are what each cell shows, so they
+are cell pictures; the shapes feed the height functions; and the treasure spots are where
 `Field_PlaceTreasureSpots` puts chests and Psynergy Stones. The sixth offset is
 called the treasure spot list because that function is the only code that reads the
 pointer the loader stores to it (`MapGridScrollWork.markers`).
@@ -414,13 +414,13 @@ The header's last two bytes (`pad0` and `pad1` in `map.inc`, `reserved` in
 `struct MapHeader`) are 0 in every map of both games, and nothing
 reads them: the loader is the only code that reads the header.
 
-The four bits above a cell's metatile number are set all over the game's
+The four bits above a cell's picture number are set all over the game's
 grids: of the cells the maps write out, bit 15 is set in about 59,000 and
 bit 14 in about 33,000, in more than 150 maps, and bits 12 and 13 in about
 1,200 and 500, in some 25. Nothing gives them a meaning. `Tile_ConvertMapGrid`
-carries them through when it numbers the placeholder metatiles, and every
-other reader, from the scroll code that draws the metatiles to the height and
-behavior lookups, takes the metatile number's 12 bits or the cell's other
+carries them through when it numbers the placeholder cell pictures, and every
+other reader, from the scroll code that draws the cell pictures to the height and
+behavior lookups, takes the cell picture number's 12 bits or the cell's other
 bytes alone, so a map drawn with the bits cleared looks the same. Only
 the unused `MapGrid_GetCellHighFlags` and Crossbone Isle's stepping stones,
 which copy them along with the rest of a cell, name them.

@@ -1,7 +1,7 @@
 #include "edition.h"
 #include "types.h"
 
-void Tile_BuildMetatiles(u16 *dst, u16 *src) {
+void Tile_BuildCellPictures(u16 *dst, u16 *src) {
   u32 row;
   u32 col;
   s32 a;

@@ -5,7 +5,7 @@
 #include "../event_commands_internal.h"
 
 /// The cell behavior of the cells Cloak can stay hidden on: byte 2 of a
-/// cell (MapGridCell.behavior), or of a 4-byte gMetatiles entry on the
+/// cell (MapGridCell.behavior), or of a 4-byte gCellPictures entry on the
 /// World Map.
 #define CLOAK_TILE 0xfb
 /// The Psynergy request that ends Cloak: ACT_PACKED (0x2000, no PP) |
@@ -14,7 +14,7 @@
 
 /// Task of Cloak: when the cell under the leader is not
 /// CLOAK_TILE, requests CLOAK_END. On the World Map it reads
-/// the 32-pixel gMetatiles, elsewhere the 16-pixel cells. Runs once a
+/// the 32-pixel gCellPictures, elsewhere the 16-pixel cells. Runs once a
 /// frame from FieldPsynergy_StartCloak, and again from
 /// FieldPsynergy_ResumeCloakCheck when a scene loads with the leader still
 /// cloaked.
@@ -41,7 +41,7 @@ void FieldPsynergy_CheckCloakTile(void) {
   tile = (u8 *)*(struct MapGridScrollAnimView **)(slot - 76); // gMapGridWork[0]
 #endif
 
-  // Whole metatiles or cells, rounded toward zero as a division would be.
+  // Whole cell pictures or cells, rounded toward zero as a division would be.
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     u32 tx;
     u32 ty;
@@ -56,7 +56,7 @@ void FieldPsynergy_CheckCloakTile(void) {
       y += 0x1fffff;
     ty = (y >> 21) & 31;
 
-    tile = (u8 *)gMetatiles + ((tx + (ty << 5)) << 2);
+    tile = (u8 *)gCellPictures + ((tx + (ty << 5)) << 2);
   } else {
     if (leader->layer <= 2) {
       tile = (u8 *)((struct MapGridScrollAnimView *)tile)

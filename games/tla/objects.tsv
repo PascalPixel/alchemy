@@ -562,8 +562,8 @@ main	rom_main_02	recon/tla/de/rom	.rom.000385e0	de
 main	rom_main_02	recon/tla/raw/080385e0	.text	en
 main	rom_main_02	recon/tla/raw/080385e2	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.000385e0	ja
-main	rom_main_02	games/tla/src/graphics/tile/metatile_entries	.text
-main	rom_main_02	games/tla/src/graphics/tile/metatile	.text
+main	rom_main_02	games/tla/src/graphics/tile/cell_picture_entries	.text
+main	rom_main_02	games/tla/src/graphics/tile/cell_picture	.text
 main	rom_main_02	games/tla/src/graphics/tile/decompress_4bpp
 main	rom_main_02	games/tla/src/graphics/tile/decompress_4bpp_nibbles
 main	rom_main_02	games/tla/src/graphics/tile/decompress_4bpp_loop

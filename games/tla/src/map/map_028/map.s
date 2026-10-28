@@ -6,15 +6,15 @@ Field_Map028:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 100, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map028, .LField_Map028_METATILES
+	map_block Field_Map028, .LField_Map028_CELL_PICTURES
 	map_block Field_Map028, .LField_Map028_SHAPES
 	map_block Field_Map028, .LField_Map028_GRID
 	map_block Field_Map028, .LField_Map028_SHAPE_GRID
 	map_block Field_Map028, .LField_Map028_ANIMATION
 	map_block Field_Map028, .LField_Map028_BLEND
 	map_block Field_Map028, .LField_Map028_SCENE
-.LField_Map028_METATILES:
-	.incbin "games/tla/src/map/map_028/metatiles.delta2.lz"
+.LField_Map028_CELL_PICTURES:
+	.incbin "games/tla/src/map/map_028/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map028_SHAPES:
 	.incbin "games/tla/src/map/map_028/shapes.table.lz"

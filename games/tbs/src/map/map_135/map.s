@@ -8,14 +8,14 @@ Field_Map135:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map135, .LField_Map135_METATILES
+	map_offset Field_Map135, .LField_Map135_CELL_PICTURES
 	map_offset Field_Map135, .LField_Map135_SHAPES
 	map_offset Field_Map135, .LField_Map135_GRID
 	map_offset Field_Map135, .LField_Map135_ANIMATION
 	map_offset Field_Map135, .LField_Map135_BLEND
 	map_offset Field_Map135, .LField_Map135_MARKERS
-.LField_Map135_METATILES:
-	.incbin "games/tbs/src/map/map_135/metatiles_ja.delta2.lz"
+.LField_Map135_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_135/cell_pictures_ja.delta2.lz"
 	.balign 4, 0
 .LField_Map135_SHAPES:
 	.incbin "games/tbs/src/map/map_135/shapes.table.lz"
@@ -38,14 +38,14 @@ Field_Map135:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map135, .LField_Map135_METATILES
+	map_offset Field_Map135, .LField_Map135_CELL_PICTURES
 	map_offset Field_Map135, .LField_Map135_SHAPES
 	map_offset Field_Map135, .LField_Map135_GRID
 	map_offset Field_Map135, .LField_Map135_ANIMATION
 	map_offset Field_Map135, .LField_Map135_BLEND
 	map_offset Field_Map135, .LField_Map135_MARKERS
-.LField_Map135_METATILES:
-	.incbin "games/tbs/src/map/map_135/metatiles.delta2.lz"
+.LField_Map135_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_135/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map135_SHAPES:
 	.incbin "games/tbs/src/map/map_135/shapes.table.lz"
@@ -68,14 +68,14 @@ Field_Map135:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map135, .LField_Map135_METATILES
+	map_offset Field_Map135, .LField_Map135_CELL_PICTURES
 	map_offset Field_Map135, .LField_Map135_SHAPES
 	map_offset Field_Map135, .LField_Map135_GRID
 	map_offset Field_Map135, .LField_Map135_ANIMATION
 	map_offset Field_Map135, .LField_Map135_BLEND
 	map_offset Field_Map135, .LField_Map135_MARKERS
-.LField_Map135_METATILES:
-	.incbin "games/tbs/src/map/map_135/metatiles.delta2.lz"
+.LField_Map135_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_135/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map135_SHAPES:
 	.incbin "games/tbs/src/map/map_135/shapes.table.lz"
@@ -98,14 +98,14 @@ Field_Map135:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map135, .LField_Map135_METATILES
+	map_offset Field_Map135, .LField_Map135_CELL_PICTURES
 	map_offset Field_Map135, .LField_Map135_SHAPES
 	map_offset Field_Map135, .LField_Map135_GRID
 	map_offset Field_Map135, .LField_Map135_ANIMATION
 	map_offset Field_Map135, .LField_Map135_BLEND
 	map_offset Field_Map135, .LField_Map135_MARKERS
-.LField_Map135_METATILES:
-	.incbin "games/tbs/src/map/map_135/metatiles.delta2.lz"
+.LField_Map135_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_135/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map135_SHAPES:
 	.incbin "games/tbs/src/map/map_135/shapes.table.lz"
@@ -128,14 +128,14 @@ Field_Map135:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map135, .LField_Map135_METATILES
+	map_offset Field_Map135, .LField_Map135_CELL_PICTURES
 	map_offset Field_Map135, .LField_Map135_SHAPES
 	map_offset Field_Map135, .LField_Map135_GRID
 	map_offset Field_Map135, .LField_Map135_ANIMATION
 	map_offset Field_Map135, .LField_Map135_BLEND
 	map_offset Field_Map135, .LField_Map135_MARKERS
-.LField_Map135_METATILES:
-	.incbin "games/tbs/src/map/map_135/metatiles.delta2.lz"
+.LField_Map135_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_135/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map135_SHAPES:
 	.incbin "games/tbs/src/map/map_135/shapes.table.lz"
@@ -157,14 +157,14 @@ Field_Map135:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map135, .LField_Map135_METATILES
+	map_offset Field_Map135, .LField_Map135_CELL_PICTURES
 	map_offset Field_Map135, .LField_Map135_SHAPES
 	map_offset Field_Map135, .LField_Map135_GRID
 	map_offset Field_Map135, .LField_Map135_ANIMATION
 	map_offset Field_Map135, .LField_Map135_BLEND
 	map_offset Field_Map135, .LField_Map135_MARKERS
-.LField_Map135_METATILES:
-	.incbin "games/tbs/src/map/map_135/metatiles.delta2.lz"
+.LField_Map135_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_135/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map135_SHAPES:
 	.incbin "games/tbs/src/map/map_135/shapes.table.lz"

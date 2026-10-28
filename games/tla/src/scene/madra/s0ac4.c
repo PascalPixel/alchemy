@@ -576,13 +576,13 @@ void Func_020014fc(void) {
 
 /// A map edit and where it applies (Func_02002ae8 forwards
 /// to Map_PlayMapEdit).
-struct MetatileCopyEntry {
+struct CellPictureCopyEntry {
   const s16 *steps;
   u16 unk04;
   u16 unk06;
 };
 
-extern const struct MetatileCopyEntry gData_02003308[];
+extern const struct CellPictureCopyEntry gData_02003308[];
 
 /* FAKEMATCH: a one-pass block around each mode change starts its own
  * scheduling region; as plain calls, 88 of 1565 instructions differ in

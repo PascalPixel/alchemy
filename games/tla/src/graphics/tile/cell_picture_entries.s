@@ -1,7 +1,7 @@
 .syntax unified
 	.thumb
-	.global Tile_BuildMetatilesCode
-Tile_BuildMetatilesCode:
+	.global Tile_BuildCellPicturesCode
+Tile_BuildCellPicturesCode:
 	bx	pc
 AlchemyUncredited_080388fe:
 	.2byte	0x0200

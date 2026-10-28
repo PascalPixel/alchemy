@@ -1,6 +1,6 @@
 	.set overlay_imports, 1
 	.set import.WaitFrames, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.GameFlag_Get, 1

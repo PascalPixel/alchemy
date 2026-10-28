@@ -91,14 +91,14 @@
 	import Actor_WaitForMove, Actor_WaitForMoveFar
 	import WorldMap_LoadDefaultCellsAndUpdateBlock, WorldMap_LoadDefaultCellsAndUpdateBlockFar
 	import MapGrid_PlayMapEdit, MapGrid_PlayMapEditFar
-	import MapGrid_CopyMetatileIndicesRect, MapGrid_CopyMetatileIndicesRectFar
+	import MapGrid_CopyCellPictureIndicesRect, MapGrid_CopyCellPictureIndicesRectFar
 	import TilesetAnim_Resume, TilesetAnim_ResumeFar
 	import TilesetAnim_Pause, TilesetAnim_PauseFar
 	import BlendScript_Resume, BlendScript_ResumeFar
 	import BlendScript_Suspend, BlendScript_SuspendFar
 	import MapGrid_GetTerrainHeight, MapGrid_GetTerrainHeightFar
 	import MapGrid_GetCellBehaviorAt, MapGrid_GetCellBehaviorAtFar
-	import MapGrid_CopyMetatileCellsRect, MapGrid_CopyMetatileCellsRectFar
+	import MapGrid_CopyCellPictureCellsRect, MapGrid_CopyCellPictureCellsRectFar
 	import MapGrid_CopyCellAttributeRect, MapGrid_CopyCellAttributeRectFar
 	import MapGrid_CopyCellIndexRect, MapGrid_CopyCellIndexRectFar
 	import WorldMap_SetWindowCellTile, WorldMap_SetWindowCellTileFar

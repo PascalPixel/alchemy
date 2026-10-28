@@ -7,14 +7,14 @@ Field_Map115:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map115, .LField_Map115_METATILES
+	map_offset Field_Map115, .LField_Map115_CELL_PICTURES
 	map_offset Field_Map115, .LField_Map115_SHAPES
 	map_offset Field_Map115, .LField_Map115_GRID
 	map_offset Field_Map115, .LField_Map115_ANIMATION
 	map_offset Field_Map115, .LField_Map115_BLEND
 	map_offset Field_Map115, .LField_Map115_MARKERS
-.LField_Map115_METATILES:
-	.incbin "games/tbs/src/map/map_115/metatiles.delta2.lz"
+.LField_Map115_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_115/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map115_SHAPES:
 	.incbin "games/tbs/src/map/map_115/shapes.table.lz"
@@ -40,14 +40,14 @@ Field_Map115:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map115, .LField_Map115_METATILES
+	map_offset Field_Map115, .LField_Map115_CELL_PICTURES
 	map_offset Field_Map115, .LField_Map115_SHAPES
 	map_offset Field_Map115, .LField_Map115_GRID
 	map_offset Field_Map115, .LField_Map115_ANIMATION
 	map_offset Field_Map115, .LField_Map115_BLEND
 	map_offset Field_Map115, .LField_Map115_MARKERS
-.LField_Map115_METATILES:
-	.incbin "games/tbs/src/map/map_115/metatiles.delta2.lz"
+.LField_Map115_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_115/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map115_SHAPES:
 	.incbin "games/tbs/src/map/map_115/shapes.table.lz"
@@ -73,14 +73,14 @@ Field_Map115:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map115, .LField_Map115_METATILES
+	map_offset Field_Map115, .LField_Map115_CELL_PICTURES
 	map_offset Field_Map115, .LField_Map115_SHAPES
 	map_offset Field_Map115, .LField_Map115_GRID
 	map_offset Field_Map115, .LField_Map115_ANIMATION
 	map_offset Field_Map115, .LField_Map115_BLEND
 	map_offset Field_Map115, .LField_Map115_MARKERS
-.LField_Map115_METATILES:
-	.incbin "games/tbs/src/map/map_115/metatiles.delta2.lz"
+.LField_Map115_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_115/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map115_SHAPES:
 	.incbin "games/tbs/src/map/map_115/shapes.table.lz"
@@ -105,14 +105,14 @@ Field_Map115:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map115, .LField_Map115_METATILES
+	map_offset Field_Map115, .LField_Map115_CELL_PICTURES
 	map_offset Field_Map115, .LField_Map115_SHAPES
 	map_offset Field_Map115, .LField_Map115_GRID
 	map_offset Field_Map115, .LField_Map115_ANIMATION
 	map_offset Field_Map115, .LField_Map115_BLEND
 	map_offset Field_Map115, .LField_Map115_MARKERS
-.LField_Map115_METATILES:
-	.incbin "games/tbs/src/map/map_115/metatiles.delta2.lz"
+.LField_Map115_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_115/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map115_SHAPES:
 	.incbin "games/tbs/src/map/map_115/shapes.table.lz"

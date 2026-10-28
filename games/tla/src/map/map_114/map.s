@@ -6,15 +6,15 @@ Field_Map114:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map114, .LField_Map114_METATILES
+	map_block Field_Map114, .LField_Map114_CELL_PICTURES
 	map_block Field_Map114, .LField_Map114_SHAPES
 	map_block Field_Map114, .LField_Map114_GRID
 	map_block Field_Map114, .LField_Map114_SHAPE_GRID
 	map_block Field_Map114, .LField_Map114_ANIMATION
 	map_block Field_Map114, .LField_Map114_BLEND
 	map_block Field_Map114, .LField_Map114_SCENE
-.LField_Map114_METATILES:
-	.incbin "games/tla/src/map/map_114/metatiles.delta1.lz"
+.LField_Map114_CELL_PICTURES:
+	.incbin "games/tla/src/map/map_114/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_Map114_SHAPES:
 	.incbin "games/tla/src/map/map_114/shapes.table.lz"

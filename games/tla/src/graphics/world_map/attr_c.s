@@ -1,5 +1,5 @@
 	.section .rodata
-@ World map C metatile attributes.
+@ World map C cell picture attributes.
 	.global Resource_Data1AE
 Resource_Data1AE:
 	.incbin "games/tla/src/graphics/world_map/attr_c.table.lz"

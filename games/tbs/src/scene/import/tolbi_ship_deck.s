@@ -7,7 +7,7 @@
 	.set import.Trig_Cos, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
 	.set import.Actor_SetMoveTarget, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1

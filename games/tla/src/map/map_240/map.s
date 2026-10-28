@@ -6,15 +6,15 @@ Field_Map240:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map240, .LField_Map240_METATILES
+	map_block Field_Map240, .LField_Map240_CELL_PICTURES
 	map_block Field_Map240, .LField_Map240_SHAPES
 	map_block Field_Map240, .LField_Map240_GRID
 	map_block Field_Map240, .LField_Map240_SHAPE_GRID
 	map_block Field_Map240, .LField_Map240_ANIMATION
 	map_block Field_Map240
 	map_block Field_Map240, .LField_Map240_SCENE
-.LField_Map240_METATILES:
-	.incbin "games/tla/src/map/map_240/metatiles.delta0.lz"
+.LField_Map240_CELL_PICTURES:
+	.incbin "games/tla/src/map/map_240/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Map240_SHAPES:
 	.incbin "games/tla/src/map/map_240/shapes.table.lz"

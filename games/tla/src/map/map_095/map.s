@@ -8,15 +8,15 @@ Field_Map095:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 60, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map095, .LField_Map095_METATILES
+	map_block Field_Map095, .LField_Map095_CELL_PICTURES
 	map_block Field_Map095, .LField_Map095_SHAPES
 	map_block Field_Map095, .LField_Map095_GRID
 	map_block Field_Map095, .LField_Map095_SHAPE_GRID
 	map_block Field_Map095, .LField_Map095_ANIMATION
 	map_block Field_Map095, .LField_Map095_BLEND
 	map_block Field_Map095, .LField_Map095_SCENE
-.LField_Map095_METATILES:
-	.incbin "games/tla/src/map/map_095/metatiles_ja.delta0.lz"
+.LField_Map095_CELL_PICTURES:
+	.incbin "games/tla/src/map/map_095/cell_pictures_ja.delta0.lz"
 	.balign 4, 0
 .LField_Map095_SHAPES:
 	.incbin "games/tla/src/map/map_095/shapes.table.lz"
@@ -40,15 +40,15 @@ Field_Map095:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 60, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map095, .LField_Map095_METATILES
+	map_block Field_Map095, .LField_Map095_CELL_PICTURES
 	map_block Field_Map095, .LField_Map095_SHAPES
 	map_block Field_Map095, .LField_Map095_GRID
 	map_block Field_Map095, .LField_Map095_SHAPE_GRID
 	map_block Field_Map095, .LField_Map095_ANIMATION
 	map_block Field_Map095, .LField_Map095_BLEND
 	map_block Field_Map095, .LField_Map095_SCENE
-.LField_Map095_METATILES:
-	.incbin "games/tla/src/map/map_095/metatiles.delta0.lz"
+.LField_Map095_CELL_PICTURES:
+	.incbin "games/tla/src/map/map_095/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Map095_SHAPES:
 	.incbin "games/tla/src/map/map_095/shapes.table.lz"

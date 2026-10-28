@@ -372,19 +372,19 @@ s32 Actor_MoveByKeys(struct Actor *interpreter);
 
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount);
 void TileMap_DecodeStagedBuffer(s32 size);
-void TileMap_NumberPlaceholderMetatiles(void);
+void TileMap_NumberPlaceholderCellPictures(void);
 void TileMap_ConvertBuffer(void);
 s32 MapGrid_LoadMap(s32 index);
 void MapGrid_CenterOnFollowedPoint(void);
-void MapGrid_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY);
-void MapGrid_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY);
+void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY);
+void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY);
 void MapGrid_UpdateLayerScroll(void);
 void MapGrid_SetCameraCenter(s32 x, s32 y);
-void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
-                                     u32 dstY, u32 width, u32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
+                                        u32 dstY, u32 width, u32 height);
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY);
-void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
-                                   s32 height, s32 dstX, s32 dstY);
+void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
+                                      s32 height, s32 dstX, s32 dstY);
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY);
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,

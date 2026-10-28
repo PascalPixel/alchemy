@@ -310,7 +310,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 /// one pixel on that side, so the window follows the border's rounded corners.
 /// Each frame of a window transition calls it, through
 /// ScanlineWindow_FillSpans (screens/outputs.c).
-void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *tilemap) {
+void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;
   s32 left;

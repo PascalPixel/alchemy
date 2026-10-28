@@ -2,7 +2,7 @@
  * graphics.c
  *
  * Palette conversion and tile traversal shared by encoding and redrawing.
- * PNG pixels are row-major bytes. Tile streams visit each metatile, its 8x8
+ * PNG pixels are row-major bytes. Tile streams visit each picture, its 8x8
  * tiles, then each tile's pixel rows. Keep that ordering in one place.
  */
 #include "graphics.h"
@@ -57,18 +57,18 @@ tileForm(const char *form, unsigned *depth, size_t *width, size_t *height)
 	return false;
 }
 
-/* Each stream row is eight pixels: metatile, tile, then row within the tile. */
+/* Each stream row is eight pixels: picture, tile, then row within the tile. */
 size_t
 tileRowOffset(const Image *image, size_t width, size_t height, size_t row)
 {
-	size_t rowsPerMetatile = width * height / 8;
-	size_t metatile = row / rowsPerMetatile;
-	size_t tileRow = row % rowsPerMetatile;
+	size_t rowsPerPicture = width * height / 8;
+	size_t picture = row / rowsPerPicture;
+	size_t tileRow = row % rowsPerPicture;
 	size_t tile = tileRow / 8;
-	size_t metatilesAcross = image->width / width;
+	size_t picturesAcross = image->width / width;
 	size_t tilesAcross = width / 8;
-	size_t left = (metatile % metatilesAcross) * width;
-	size_t top = (metatile / metatilesAcross) * height;
+	size_t left = (picture % picturesAcross) * width;
+	size_t top = (picture / picturesAcross) * height;
 	size_t x = left + (tile % tilesAcross) * 8;
 	size_t y = top + (tile / tilesAcross) * 8 + tileRow % 8;
 
@@ -80,7 +80,7 @@ tiles(const Image *image, unsigned depth, size_t width, size_t height)
 {
 	if (!width || !height || width % 8 || height % 8 || image->width % width ||
 		image->height % height)
-		fail("image does not contain whole metatiles");
+		fail("image does not contain whole pictures");
 	Buffer out = {0};
 
 	for (size_t row = 0; row < image->width * image->height / 8; row++)

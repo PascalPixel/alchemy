@@ -422,7 +422,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data199
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource DefaultMapAnimation, Field_DefaultMapAnimation
-	resource DefaultMetatileAttributes, Field_DefaultMetatileAttributes
+	resource DefaultCellPictureAttributes, Field_DefaultCellPictureAttributes
 	resource WorldMapTilesA1, WorldMap_TilesA1
 	resource WorldMapTilesA2, WorldMap_TilesA2
 	resource WorldMapTilesA3, WorldMap_TilesA3

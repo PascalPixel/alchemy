@@ -81,7 +81,7 @@ void SpriteDissolve_RunFar(u8 *obj);
 /// Dissolves `cnt` sprites together over 32 frames; the battle's staging uses
 /// it once a unit is off its lists.
 void SpriteDissolve_RunManyFar(u8 **table, s32 cnt);
-/// Loads layout `index` (metatiles, cell behaviors, cells, tileset
+/// Loads layout `index` (cell pictures, cell behaviors, cells, tileset
 /// animations, blend script, treasure spots and graphics) and starts its layers
 /// scrolling. Returns 2.
 s32 MapGrid_LoadMapFar(s32 index);
@@ -115,14 +115,14 @@ void Actor_WaitForMoveFar(void *actor);
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlockFar(void);
 /// Plays a map edit, as doors and other changing scenery are drawn:
-/// each entry's metatile numbers go to the destination, then it waits that
+/// each entry's cell picture numbers go to the destination, then it waits that
 /// entry's delay. Returns only when the edit ends.
 void MapGrid_PlayMapEditFar(u16 *command, s32 destination_x, u32 destination_y);
-/// Copies the metatile numbers of a rectangle of cells, keeping the
+/// Copies the cell picture numbers of a rectangle of cells, keeping the
 /// destination's attributes, and redraws what's on screen; the destination
 /// comes before the size.
-void MapGrid_CopyMetatileIndicesRectFar(s32 sourceX, s32 sourceY, u32 dst_x,
-                                        u32 dst_y, u32 width, u32 height);
+void MapGrid_CopyCellPictureIndicesRectFar(s32 sourceX, s32 sourceY, u32 dst_x,
+                                           u32 dst_y, u32 width, u32 height);
 /// Restarts tileset animation `no` by clearing its paused byte.
 void TilesetAnim_ResumeFar(u32 no);
 /// Pauses tileset animation `no` by setting its paused byte.
@@ -138,16 +138,16 @@ s32 MapGrid_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
 /// Returns the cell behavior of the cell of `layer` under (x, y), given in
 /// 16.16 pixels.
 s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 y);
-/// Copies a rectangle of cells whole, metatile numbers and attributes, and
+/// Copies a rectangle of cells whole, cell picture numbers and attributes, and
 /// draws the copied cells that are in view.
-void MapGrid_CopyMetatileCellsRectFar(s32 sourceX, s32 sourceY, s32 width,
-                                      s32 height, s32 dst_x, s32 dst_y);
+void MapGrid_CopyCellPictureCellsRectFar(s32 sourceX, s32 sourceY, s32 width,
+                                         s32 height, s32 dst_x, s32 dst_y);
 /// Copies only the attributes (flags, cell behavior and shape) of a
 /// rectangle of cells. Nothing is redrawn, since attributes don't show.
 void MapGrid_CopyCellAttributeRectFar(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dst_x, s32 dst_y);
-/// Copies only the metatile numbers of a rectangle of cells, the size before
-/// the destination, and redraws the cells in view.
+/// Copies only the cell picture numbers of a rectangle of cells, the size
+/// before the destination, and redraws the cells in view.
 void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,
                                   s32 height, s32 dst_x, s32 dst_y);
 /// Puts world map tile (x / 16, y / 16) into the tile grid at

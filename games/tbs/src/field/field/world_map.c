@@ -22,8 +22,9 @@ typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
 /// One 32-pixel cell of the world map: its tile, its kind
 /// (WorldMapEncounterRegion) and a flag.
 struct WorldMapCell {
-  u32 tile : 24; ///< low halfword: the metatile WorldMap_CopyCellTiles draws
-  u32 kind : 7;  ///< the encounter region; encounters read it too
+  u32 tile
+      : 24;     ///< low halfword: the cell picture WorldMap_CopyCellTiles draws
+  u32 kind : 7; ///< the encounter region; encounters read it too
   /// Selects the second row of gWorldMap_BattleEnvironments
   /// (WorldMap_GetBattleEnvironment); a WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD
   /// cell takes the third row whatever this bit says.
@@ -32,12 +33,12 @@ struct WorldMapCell {
 
 #define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
 
-#define WORLD_MAP_CELLS ((struct WorldMapCell *)Ram_Metatiles)
+#define WORLD_MAP_CELLS ((struct WorldMapCell *)Ram_CellPictures)
 
 /// Loads world map tile `tile` into quarter (x & 1, y & 1) of a layer's
-/// metatile buffer, decompressing it from the area's graphics, and with update
-/// set also draws it into the layer's BG map. Returns 0 when that quarter
-/// already shows the tile (and update is 0), else 1.
+/// cell picture buffer, decompressing it from the area's graphics, and with
+/// update set also draws it into the layer's BG map. Returns 0 when that
+/// quarter already shows the tile (and update is 0), else 1.
 ///
 /// Called by WorldMap_UpdateCurrentTileBlock and WorldMap_SetWindowCellTile
 /// (update 1) and by WorldMap_PreloadCurrentTileBlock (update 0). Sets the
@@ -53,7 +54,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   u16 *screenTiles;
   u32 rowIndex;
   u32 columnIndex;
-  u32 metatileId;
+  u32 cellPictureId;
 
   x &= 1;
   y &= 1;
@@ -64,11 +65,11 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   decodedTile = AllocHeapSlot(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Decompress_ByteLz((u8 *)tileOffsets + tileOffsets[tile], decodedTile);
 
-  // A tile is 16 by 16 cells of 4 bytes. Each layer's metatile buffer holds
+  // A tile is 16 by 16 cells of 4 bytes. Each layer's cell picture buffer holds
   // 2 by 2 tiles, 32 cells (128 bytes) to a row, so each of the tile's rows
   // goes 64 bytes (16 words) at a time.
   sourceTiles = decodedTile;
-  quarterCells = Ram_Metatiles + (((layer * 2 + y) * 32 + x) << 6);
+  quarterCells = Ram_CellPictures + (((layer * 2 + y) * 32 + x) << 6);
   for (rowIndex = 0; rowIndex < 16; rowIndex++) {
     Dma_Set(sourceTiles, quarterCells, (DMA_ENABLE | DMA_32BIT) << 16 | 0x10,
             REG_DMA3);
@@ -77,8 +78,8 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   }
 
   // The affine BG map has one byte a tile, 64 to a row: each cell's first
-  // halfword picks a metatile from Ram_MapGridCellBuffer, whose two halfwords
-  // are its top two tiles and its bottom two, a row (64 bytes) below.
+  // halfword picks a cell picture from Ram_MapGridCellBuffer, whose two
+  // halfwords are its top two tiles and its bottom two, a row (64 bytes) below.
   if (update != 0) {
     screenTiles =
         (u16 *)(BG_SCREEN_BLOCK(8) + ((((layer * 2 + y) << 6) + x) << 5));
@@ -87,10 +88,10 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
       for (columnIndex = 0; columnIndex < 16; columnIndex++) {
         u16 *bottomTiles;
 
-        metatileId = *sourceTiles;
-        screenTiles[0] = *(u16 *)(Ram_MapGridCellBuffer + metatileId * 4);
+        cellPictureId = *sourceTiles;
+        screenTiles[0] = *(u16 *)(Ram_MapGridCellBuffer + cellPictureId * 4);
         bottomTiles = (u16 *)(Ram_MapGridCellBuffer + 2);
-        bottomTiles = (u16 *)((u8 *)bottomTiles + metatileId * 4);
+        bottomTiles = (u16 *)((u8 *)bottomTiles + cellPictureId * 4);
         screenTiles[32] = *bottomTiles;
         screenTiles++;
         sourceTiles += 2;
@@ -112,8 +113,8 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 /// Called through WorldMap_InitializePerspectiveFar when the world map
 /// starts (scene_sequence.c). Allocates and clears the perspective work in
 /// HEAP_SLOT_MAP_GRID, the camera in HEAP_SLOT_CAMERA and the affine pages in
-/// HEAP_SLOT_WORLD_MAP_AFFINE; loads the default cells, metatile attributes and
-/// tileset animations; writes the blend, BG and affine registers and
+/// HEAP_SLOT_WORLD_MAP_AFFINE; loads the default cells, cell picture attributes
+/// and tileset animations; writes the blend, BG and affine registers and
 /// REG_DISPCNT (DISPCNT_MODE_2); and adds WorldMap_UpdateView and
 /// WorldMap_ApplyAffinePage as tasks.
 #ifdef UBFIX
@@ -166,7 +167,7 @@ s32 WorldMap_InitializePerspective(void) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultGridCells),
                       Ram_MapGridCellBuffer);
   Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes),
+      Resource_GetTableEntry((s32)&ResourceId_DefaultCellPictureAttributes),
       Ram_MapGridShapes);
   // The ground is BG3 and BG2, two 512-pixel affine layers that wrap (char
   // blocks 2 and 3, screen blocks 8 and 10); BG1 is a plain layer on screen
@@ -460,12 +461,12 @@ void WorldMap_ApplyAffinePage(void) {
 
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
-  u32 metatileIndex = *(u16 *)cellBytes;
-  u16 *metatileTiles = (u16 *)Ram_MapGridCellBuffer;
+  u32 cellPictureIndex = *(u16 *)cellBytes;
+  u16 *cellPictureTiles = (u16 *)Ram_MapGridCellBuffer;
 
-  metatileTiles += metatileIndex * 2;
-  *(u16 *)screenTile = *metatileTiles++;
-  *(u16 *)(screenTile + 64) = *metatileTiles;
+  cellPictureTiles += cellPictureIndex * 2;
+  *(u16 *)screenTile = *cellPictureTiles++;
+  *(u16 *)(screenTile + 64) = *cellPictureTiles;
 }
 
 /// Draws world map tileRow into the BG map: 32 cells, then 32
@@ -476,7 +477,7 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   u8 *screenTile;
   u32 cellsCopied;
 
-  sourceCell = Ram_Metatiles + ((((s32)tileRow / 2) & 31) << 7);
+  sourceCell = Ram_CellPictures + ((((s32)tileRow / 2) & 31) << 7);
   screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + ((tileRow & 62) << 6));
   cellsCopied = 0;
   do {
@@ -504,7 +505,7 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *screenTile;
   u32 cellsCopied;
 
-  sourceCell = Ram_Metatiles + ((((s32)tileColumn / 2) & 31) << 2);
+  sourceCell = Ram_CellPictures + ((((s32)tileColumn / 2) & 31) << 2);
   screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + (tileColumn & 62));
   cellsCopied = 0;
   do {

@@ -16,11 +16,11 @@ struct MapLayerWindow {
   u8 *terrainIds;
 };
 
-/// Draws a row of 16 metatiles (32 tiles) of a layer's cells into its BG map
+/// Draws a row of 16 cell pictures (32 tiles) of a layer's cells into its BG map
 /// (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
 /// wraps every 32 tiles and the cells wrap at the layer's window. The Broken
-/// Seal's MapGrid_RenderMetatileRow, with the window. Called by
-/// Func_0802ad84 when a layer scrolls onto a new row of metatiles.
+/// Seal's MapGrid_RenderCellPictureRow, with the window. Called by
+/// Func_0802ad84 when a layer scrolls onto a new row of cell pictures.
 void Func_0802abbc(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -34,7 +34,7 @@ void Func_0802abbc(u32 layer, s32 tileX, s32 tileY) {
   u32 screenColumnOffset;
   u32 maskX;
   u32 originX;
-  u32 metatileIndex;
+  u32 cellPictureIndex;
 
   // A window narrower than the 128 by 128 cells starts at its origin.
   if (maskY != 0x3f80) {
@@ -50,22 +50,22 @@ void Func_0802abbc(u32 layer, s32 tileX, s32 tileY) {
     sourceColumn = (sourceColumn - originX) & maskX;
     cells += originX;
   }
-  for (metatileIndex = 0; metatileIndex <= 15; metatileIndex++) {
+  for (cellPictureIndex = 0; cellPictureIndex <= 15; cellPictureIndex++) {
     u32 *sourceCell;
-    u32 *metatileRows;
+    u32 *cellPictureRows;
     u8 *screenTile;
-    u32 metatileWordOffset;
+    u32 cellPictureWordOffset;
 
     sourceCell = cells + sourceRow + sourceColumn;
-    metatileWordOffset = (*sourceCell << 21) >> 20;
-    metatileRows = (u32 *)Ram_MapBlocks;
-    metatileRows += metatileWordOffset;
+    cellPictureWordOffset = (*sourceCell << 21) >> 20;
+    cellPictureRows = (u32 *)Ram_MapBlocks;
+    cellPictureRows += cellPictureWordOffset;
     screenTile = screenMap + (screenRowOffset + screenColumnOffset) * 2;
-    *(u32 *)screenTile = *metatileRows;
-    metatileRows = (u32 *)(Ram_MapBlocks + 4);
-    metatileRows += metatileWordOffset;
+    *(u32 *)screenTile = *cellPictureRows;
+    cellPictureRows = (u32 *)(Ram_MapBlocks + 4);
+    cellPictureRows += cellPictureWordOffset;
     sourceColumn++;
-    *(u32 *)(screenTile + 64) = *metatileRows;
+    *(u32 *)(screenTile + 64) = *cellPictureRows;
     sourceColumn &= maskX;
     screenColumnOffset = (screenColumnOffset + 2) & 30;
   }

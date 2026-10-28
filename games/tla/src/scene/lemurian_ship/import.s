@@ -69,7 +69,7 @@ Func_02002c28:
 	.global Func_02002c30
 	.thumb_func
 Func_02002c30:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Func_02002c38
 	.thumb_func
 Func_02002c38:

@@ -314,8 +314,8 @@ static inline void FieldCamera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,
 static inline void MapGrid_CopyCells(s32 sourceX, s32 sourceY, s32 width,
                                      s32 height, s32 destinationX,
                                      s32 destinationY) {
-  MapGrid_CopyMetatileCellsRect(sourceX, sourceY, width, height, destinationX,
-                                destinationY);
+  MapGrid_CopyCellPictureCellsRect(sourceX, sourceY, width, height,
+                                   destinationX, destinationY);
 }
 
 /// Changes where the party can walk in part of the room, copying only the
@@ -429,8 +429,8 @@ static inline void Actor_SetSpriteColorById(s32 actorId, s32 value) {
 static inline void MapGrid_CopyCellsTo(s32 sourceX, s32 sourceY,
                                        s32 destinationX, s32 destinationY,
                                        s32 width, s32 height) {
-  MapGrid_CopyMetatileIndicesRect(sourceX, sourceY, destinationX, destinationY,
-                                  width, height);
+  MapGrid_CopyCellPictureIndicesRect(sourceX, sourceY, destinationX,
+                                     destinationY, width, height);
 }
 
 /// Changes the pictures of part of the room as MapGrid_CopyCellsTo does,

@@ -7,14 +7,14 @@ Field_VenusEntrance:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 68, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_VenusEntrance, .LField_VenusEntrance_METATILES
+	map_offset Field_VenusEntrance, .LField_VenusEntrance_CELL_PICTURES
 	map_offset Field_VenusEntrance, .LField_VenusEntrance_SHAPES
 	map_offset Field_VenusEntrance, .LField_VenusEntrance_GRID
 	map_offset Field_VenusEntrance
 	map_offset Field_VenusEntrance
 	map_offset Field_VenusEntrance, .LField_VenusEntrance_MARKERS
-.LField_VenusEntrance_METATILES:
-	.incbin "games/tbs/src/map/venus_entrance/metatiles.delta1.lz"
+.LField_VenusEntrance_CELL_PICTURES:
+	.incbin "games/tbs/src/map/venus_entrance/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_VenusEntrance_SHAPES:
 	.incbin "games/tbs/src/map/venus_entrance/shapes.table.lz"

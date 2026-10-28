@@ -3,7 +3,7 @@
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_SetMoveTarget, 1
 	.set import.Actor_WaitForMove, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
 	.set import.Actor_SetSpriteFlags, 1

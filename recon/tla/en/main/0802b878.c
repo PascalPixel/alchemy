@@ -38,7 +38,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   u16 *screenTiles;
   u32 rowIndex;
   u32 columnIndex;
-  u32 metatileId;
+  u32 cellPictureId;
 
   x &= 1;
   y &= 1;
@@ -68,10 +68,10 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
       for (columnIndex = 0; columnIndex < 16; columnIndex++) {
         u16 *bottomTiles;
 
-        metatileId = *sourceTiles;
-        screenTiles[0] = *(u16 *)(Ram_MapCellBuffer + metatileId * 4);
+        cellPictureId = *sourceTiles;
+        screenTiles[0] = *(u16 *)(Ram_MapCellBuffer + cellPictureId * 4);
         bottomTiles = (u16 *)(Ram_MapCellBuffer + 2);
-        bottomTiles = (u16 *)((u8 *)bottomTiles + metatileId * 4);
+        bottomTiles = (u16 *)((u8 *)bottomTiles + cellPictureId * 4);
         screenTiles[32] = *bottomTiles;
         screenTiles++;
         sourceTiles += 2;

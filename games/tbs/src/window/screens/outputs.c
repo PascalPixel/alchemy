@@ -248,7 +248,7 @@ typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// and WINOUT, with the window frames' horizontal extent on each of the 160
 /// scan lines: (left << 8) | right in the second halfword (WIN1H) of each
 /// line's pair, read from the UI tilemap by the ARM routine
-/// Tile_BuildMetatiles, copied into RAM for the call. Each frame of a window
+/// Tile_BuildCellPictures, copied into RAM for the call. Each frame of a window
 /// transition calls it (ScreenTransition_UpdateScanlineTable). With no UI work
 /// it writes 0xe0e0, an empty extent, over the first 80 lines only.
 void ScanlineWindow_FillSpans(void *spans) {
@@ -266,7 +266,8 @@ void ScanlineWindow_FillSpans(void *spans) {
   } else {
     WindowSpanRoutine routine;
 
-    RamCode_Load(routine, Tile_BuildMetatiles, Tile_BuildMetatilesCodeSize);
+    RamCode_Load(routine, Tile_BuildCellPictures,
+                 Tile_BuildCellPicturesCodeSize);
     routine(spans, tilemap);
     Free(routine);
   }

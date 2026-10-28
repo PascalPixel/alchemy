@@ -17,7 +17,7 @@
 	.set import.Actor_Create, 1
 	.set import.Actor_SetMoveTarget, 1
 	.set import.Actor_WaitForMove, 1
-	.set import.MapGrid_CopyMetatileCellsRect, 1
+	.set import.MapGrid_CopyCellPictureCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CopyCellIndexRect, 1
 	.set import.MapGrid_CheckCollision, 1

@@ -68,7 +68,7 @@ next:
     if (entry & 0x1000)
       Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
     else
-      Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
+      Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   } else {
     cursor += 6;
   }
@@ -122,7 +122,7 @@ next:
     if (attributes != 0)
       Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
     else
-      Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
+      Map_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
   } else {
     cursor += 6;
   }

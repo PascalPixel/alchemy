@@ -6,14 +6,14 @@ Field_Map008:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 30, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 50, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map008, .LField_Map008_METATILES
+	map_offset Field_Map008, .LField_Map008_CELL_PICTURES
 	map_offset Field_Map008, .LField_Map008_SHAPES
 	map_offset Field_Map008, .LField_Map008_GRID
 	map_offset Field_Map008
 	map_offset Field_Map008
 	map_offset Field_Map008, .LField_Map008_MARKERS
-.LField_Map008_METATILES:
-	.incbin "games/tbs/src/map/map_008/metatiles.delta1.lz"
+.LField_Map008_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_008/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_Map008_SHAPES:
 	.incbin "games/tbs/src/map/map_008/shapes.table.lz"

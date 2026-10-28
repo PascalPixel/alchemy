@@ -1,6 +1,6 @@
 #include "types.h"
 
-void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y,
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dst_x, u32 dst_y,
                                  u32 width, u32 height);
 void WaitFrames(s32 frames);
 
@@ -34,7 +34,7 @@ void Map_PlayMapEdit(u16 *command, s32 destination_x,
       s32 delay = args[3];
       args += 5;
 
-      Map_CopyMetatileIndicesRect(source, (u16)source_y, destination_x,
+      Map_CopyCellPictureIndicesRect(source, (u16)source_y, destination_x,
                                   destination_y, (u16)width, (u16)height);
       record++;
       WaitFrames((u16)delay);

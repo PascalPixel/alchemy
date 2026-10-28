@@ -71,7 +71,7 @@ void TilesetAnim_Update(void) {
                   (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 8, REG_DMA3);
       } else {
         if (sourceTileOrOpcode >= 0x200)
-          Dma_Set(Ram_Metatiles + sourceTileOrOpcode * 64,
+          Dma_Set(Ram_CellPictures + sourceTileOrOpcode * 64,
                   BG_CHAR_BLOCK(2) + destinationTile * 64,
                   (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
         else

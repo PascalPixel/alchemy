@@ -6,7 +6,7 @@
 
 /// A map cell's word, as the camera reads it.
 struct ActorCameraTile {
-  u32 block : 12;   ///< the metatile number
+  u32 block : 12;   ///< the cell picture number
   u32 layer : 2;    ///< if not 0, the layer of an actor standing on it, + 1
   u32 priority : 2; ///< if not 0, the priority of an actor standing on it
   /// MapGridCell's cell behavior and shape; not read here.

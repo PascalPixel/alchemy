@@ -10,7 +10,7 @@
 	.set import.VramCache_Load, 1
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Window_Create, 1
 	.set import.Window_Close, 1

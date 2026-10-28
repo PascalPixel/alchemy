@@ -779,8 +779,8 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     /* FAKEMATCH(temporary): the strip's width and height in locals, so loop.c
      * hoists the 2 into r9; as the literals 2 and 4, 11 of 90 instructions
      * differ in tbs-en. */
-    MapGrid_CopyMetatileIndicesRect(105, 51, column, 32, copyWidth,
-                                    stripHeight);
+    MapGrid_CopyCellPictureIndicesRect(105, 51, column, 32, copyWidth,
+                                       stripHeight);
     if (delayFrames != 0) {
       MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);

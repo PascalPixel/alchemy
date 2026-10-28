@@ -6,15 +6,15 @@ Field_Map197:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map197, .LField_Map197_METATILES
+	map_block Field_Map197, .LField_Map197_CELL_PICTURES
 	map_block Field_Map197, .LField_Map197_SHAPES
 	map_block Field_Map197, .LField_Map197_GRID
 	map_block Field_Map197, .LField_Map197_SHAPE_GRID
 	map_block Field_Map197, .LField_Map197_ANIMATION
 	map_block Field_Map197, .LField_Map197_BLEND
 	map_block Field_Map197, .LField_Map197_SCENE
-.LField_Map197_METATILES:
-	.incbin "games/tla/src/map/map_197/metatiles.delta1.lz"
+.LField_Map197_CELL_PICTURES:
+	.incbin "games/tla/src/map/map_197/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_Map197_SHAPES:
 	.incbin "games/tla/src/map/map_197/shapes.table.lz"

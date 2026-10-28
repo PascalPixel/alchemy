@@ -11,7 +11,7 @@
 
 /*
  * Lowercase resource names match the asset tree, relative to the recipe's own
- * folder (`../MAP_000/GRID_METATILE` reaches a neighbouring map's file).
+ * folder (`../MAP_000/GRID_CELL_PICTURE` reaches a neighbouring map's file).
  */
 char *
 sibling(const char *input, const char *name)

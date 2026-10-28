@@ -1,7 +1,7 @@
 	.set overlay_imports, 1
 	.set import.WaitFrames, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.MapGrid_CopyMetatileCellsRect, 1
+	.set import.MapGrid_CopyCellPictureCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.FieldMessage_Show, 1

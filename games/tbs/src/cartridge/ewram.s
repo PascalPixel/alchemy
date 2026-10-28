@@ -240,10 +240,10 @@ gActorSpriteSlots:
 	.size gDecodeBuffer, 0x4000
 gDecodeBuffer:
 	.space 0x00004000
-	.global gMetatiles
-	.type gMetatiles, %object
-	.size gMetatiles, 0x8000
-gMetatiles:
+	.global gCellPictures
+	.type gCellPictures, %object
+	.size gCellPictures, 0x8000
+gCellPictures:
 	.space 0x00008000
 	.global gMapGridAnimTiles
 	.type gMapGridAnimTiles, %object

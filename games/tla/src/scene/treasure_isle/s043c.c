@@ -42,7 +42,7 @@ static __inline__ void SetCells(s32 a, s32 b, s32 c, s32 d, s32 x, s32 z) {
 
 /// Called by Func_020005ac for each listed cell whose flag is still clear:
 /// points the camera at the cell, bursts three effects there, changes its
-/// metatiles twice and hands over to Func_020003fc, which sets its flag.
+/// cell pictures twice and hands over to Func_020003fc, which sets its flag.
 void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   struct TreasureIsleCell *cell;
   struct EffectOptions options;

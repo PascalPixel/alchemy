@@ -324,13 +324,16 @@ Cottage rooms or Stucco rooms ([Scenes](src/scene/README.md#design)).
 
 ### Cell
 
-One 16 by 16 pixel square of a map: which metatile is drawn there, the
+One 16 by 16 pixel square of a map: which cell picture is drawn there, the
 shape and height of the ground, and its cell behavior
 ([Maps](src/map/README.md#cells)).
 
-### Metatile
+### Cell picture
 
 The picture of one cell: 2 by 2 of the console's 8-pixel tiles.
+
+Evidence: plain English. No word of the time names the 16-pixel unit (Sega's
+"cell" is the 8-pixel tile), so it is called the picture of a cell.
 
 ### Cell behavior
 
@@ -338,6 +341,9 @@ The byte of a cell that says what standing on it, walking into it or searching
 it does: a wall, a ledge, a jar. One range of behaviors means whatever the
 scene's own trigger table says
 ([Field](field.md#cells-and-cell-behaviors)).
+
+Evidence: plain English. Camelot's word 属性 (attribute) means an element, so
+the byte takes the name of the cell it belongs to.
 
 ### Actor
 

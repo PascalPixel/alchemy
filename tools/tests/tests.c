@@ -271,7 +271,7 @@ graphics(void)
 	Buffer grid = readFile("grid.grid");
 	uint8_t gridBytes[] = {2, 6, 2, 0, 3, 7, 3, 0, 1, 0, 5, 0, 1, 0, 8, 0};
 	Buffer gridReference = {gridBytes, sizeof(gridBytes), 0};
-	equal(&grid, &gridReference, "a grid writes behaviors, shapes, metatiles");
+	equal(&grid, &gridReference, "a grid writes behaviors, shapes, cell pictures");
 	free(grid.data);
 	textFile("screen.txt", "palette:14\n80 3ffh\n\n1v 2hv\n");
 	RUN("graphics", true, "screen.txt", "screen.tilemap");
@@ -373,7 +373,7 @@ tileLayouts(void)
 									byte(&expected, pixel);
 								}
 			equal(&encoded, &expected,
-				  "sprite shape preserves metatile, tile, and pixel order");
+				  "sprite shape preserves picture, tile, and pixel order");
 			RUN("graphics", true, "shape.png", "shape-redrawn.png", "--from",
 				form, "--to", form, "--wide", "2");
 			Image redrawn = readImageFile("shape-redrawn.png");

@@ -88,15 +88,15 @@ void Func_0802af9c(s32 x, s32 y) {
         if (maskX != 0x7f)
           sourceColumn = (sourceColumn - originX) & maskX;
         for (column = 0; column <= 15; column++) {
-          u32 metatileOffset = (cells[sourceRow + sourceColumn] << 21) >> 18;
+          u32 cellPictureOffset = (cells[sourceRow + sourceColumn] << 21) >> 18;
           u8 *screenTile =
               screenMap + (screenRowOffset + screenColumnOffset) * 2;
 
-          *(u32 *)screenTile = *(u32 *)((u8 *)0x02020000 + metatileOffset);
+          *(u32 *)screenTile = *(u32 *)((u8 *)0x02020000 + cellPictureOffset);
           sourceColumn++;
           sourceColumn &= maskX;
           *(u32 *)(screenTile + 64) =
-              *(u32 *)((u8 *)0x02020004 + metatileOffset);
+              *(u32 *)((u8 *)0x02020004 + cellPictureOffset);
           screenColumnOffset += 2;
           screenColumnOffset &= 30;
         }

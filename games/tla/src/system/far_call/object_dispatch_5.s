@@ -45,7 +45,7 @@ Map_LoadDefaultCellsAndUpdateBlockFar:
 	.thumb_func
 Map_PlayMapEditFar:
 	overlay_veneer Map_PlayMapEdit
-	.global Map_CopyMetatileIndicesRectFar
+	.global Map_CopyCellPictureIndicesRectFar
 	.thumb_func
-Map_CopyMetatileIndicesRectFar:
-	overlay_veneer Map_CopyMetatileIndicesRect
+Map_CopyCellPictureIndicesRectFar:
+	overlay_veneer Map_CopyCellPictureIndicesRect

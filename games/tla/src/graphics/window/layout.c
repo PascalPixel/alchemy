@@ -13,11 +13,11 @@
 #include "dma.h"
 #include "ramcode.h"
 
-extern u8 Tile_BuildMetatilesCode[];
-extern u8 Tile_BuildMetatilesCodeSize[];
+extern u8 Tile_BuildCellPicturesCode[];
+extern u8 Tile_BuildCellPicturesCodeSize[];
 
 /// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
-/// window tiles' map through the metatile routine copied to RAM.
+/// window tiles' map through the cell picture routine copied to RAM.
 void UiWindow_FillFromScene(void *dst) {
   u8 *scene = Ram_HeapSlots->windowTiles;
 
@@ -31,7 +31,7 @@ void UiWindow_FillFromScene(void *dst) {
   } else {
     void (*code)(void *, void *);
 
-    RamCode_Load(code, Tile_BuildMetatilesCode, Tile_BuildMetatilesCodeSize);
+    RamCode_Load(code, Tile_BuildCellPicturesCode, Tile_BuildCellPicturesCodeSize);
     code(dst, scene + 8);
     /* FAKEMATCH: the barrier keeps the second argument's add ahead of the
        first argument's copy; without it they trade places (differ 2). */

@@ -8,7 +8,7 @@
 	.set import.VramCache_FindFreeEntry, 1
 	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.MapGrid_SetScreenShake, 1

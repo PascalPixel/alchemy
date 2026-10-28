@@ -284,11 +284,11 @@ blocks(const Buffer *input)
 }
 
 /*
- * A layout's grid: one text cell per map square, `metatile[:behavior[:shape]]`
+ * A layout's grid: one text cell per map square, `picture[:behavior[:shape]]`
  * in hex, a left-out part 0. The header gives the grid's size, where the
  * written rows start and the cell that fills every square they leave out, in
  * the same order. The game reads three planes, behaviors (u8), shapes (u8) and
- * metatiles (u16), one after another.
+ * cell pictures (u16), one after another.
  */
 Buffer
 grid(const Buffer *input)
@@ -304,7 +304,7 @@ grid(const Buffer *input)
 	pair(headerField(&header, "at"), ',', &left, &top);
 	Strings fill = split(headerField(&header, "fill"), ':');
 	if (fill.len != 3)
-		fail("grid fill needs metatile:behavior:shape");
+		fail("grid fill needs picture:behavior:shape");
 	uint32_t fills[3] = {number(fill.items[0], 16, 0xffff),
 						 number(fill.items[1], 16, 0xff),
 						 number(fill.items[2], 16, 0xff)};

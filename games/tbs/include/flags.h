@@ -547,7 +547,7 @@
 #define FLAG_ALTMILLER_CAVE_MIMIC_BEATEN 0xef5
 
 // Babi Lighthouse
-/// Arrival through room 2's entrance 10 changes its metatiles and
+/// Arrival through room 2's entrance 10 changes its cell pictures and
 /// behaviors; entrances 10 and 11 restore those changes on later
 /// visits. ★ Named from the game: "they opened the stone door"
 /// (MsgBabiYoureSureTheyWentThrough)

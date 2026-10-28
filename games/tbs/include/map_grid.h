@@ -41,14 +41,14 @@ enum CellBehavior {
   CELL_BEHAVIOR_WALL = 255          ///< blocks whatever the heights
 };
 
-/// One cell of a map layer: its metatile and flags, its cell behavior and
+/// One cell of a map layer: its cell picture and flags, its cell behavior and
 /// its shape, an index into the shape table.
 struct MapGridCell {
   // XXX (no evidence): what the four flag bits mark; the grids set them, but
   // no code reads them, so only Camelot's map tools could say.
   /// bits: 15..12 flags (15..14 read by MapGrid_GetCellHighFlags) | 11..0
-  /// metatile
-  u16 metatileAndFlags;
+  /// cell picture
+  u16 cellPictureAndFlags;
   u8 behavior; ///< an enum CellBehavior
   /// Indexes the 4-byte shape table (gMapGridShapes): the shape's kind in
   /// the first byte's low four bits, then its height samples.
@@ -145,9 +145,9 @@ struct WorldPosition {
   s32 y;      ///< 16.16 fixed-point pixels
 };
 
-/// The layout's metatiles, 32 KB of EWRAM at 0x02020000: each metatile 8 bytes,
-/// its four tile entries. MapGrid_LoadMap decodes them in.
-extern u32 gMetatiles[];
+/// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture
+/// 8 bytes, its four tile entries. MapGrid_LoadMap decodes them in.
+extern u32 gCellPictures[];
 
 /// The tileset animations' tiles, 16 KB of EWRAM at 0x02028000. A tileset
 /// animation's source tiles numbered 0x600 and up (0x200 and up for 64-byte

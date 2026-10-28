@@ -2049,8 +2049,8 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   sprite->image.priority = actor->sprite->image.priority;
 }
 
-/// Copies two blocks of map grid cells for the quest's visits, the metatiles of
-/// one and the cell behaviors of the other.
+/// Copies two blocks of map grid cells for the quest's visits, the cell
+/// pictures of one and the cell behaviors of the other.
 static void Sanctum_RestoreQuestFloor(void) {
   {
     MapGrid_CopyCellsTo(0, 64, 11, 68, 3, 2);

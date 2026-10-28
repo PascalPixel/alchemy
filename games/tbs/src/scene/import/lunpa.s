@@ -13,7 +13,7 @@
 	.set import.Actor_StartScript, 1
 	.set import.Actor_Create, 1
 	.set import.MapGrid_PlayMapEdit, 1
-	.set import.MapGrid_CopyMetatileCellsRect, 1
+	.set import.MapGrid_CopyCellPictureCellsRect, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.Actor_SetSpriteFlags, 1
 	.set import.Actor_SetBlendMode, 1

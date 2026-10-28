@@ -8,7 +8,7 @@
 	.set import.Trig_Cos, 1
 	.set import.Actor_SelectAnimation, 1
 	.set import.Actor_SetAnimationSpeed, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.Window_Create, 1
 	.set import.Window_Close, 1
 	.set import.Text_DrawMessageAsTiles, 1

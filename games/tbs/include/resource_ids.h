@@ -261,8 +261,8 @@ extern char ResourceId_DefaultGridCells;
 extern char ResourceId_OpponentPathA;
 /// The world map's tileset animations (TilesetAnim_StartAll).
 extern char ResourceId_DefaultTileAnimation;
-/// The world map's metatile attributes, loaded with its default cells.
-extern char ResourceId_DefaultMetatileAttributes;
+/// The world map's cell picture attributes, loaded with its default cells.
+extern char ResourceId_DefaultCellPictureAttributes;
 
 // The world map's two graphics sets (gWorldMap_GraphicsResources), each a
 // palette and five tilesets: WorldMap_LoadGraphics decodes the first four

@@ -93,7 +93,7 @@ Func_02002010:
 	.global Func_02002018
 	.thumb_func
 Func_02002018:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:

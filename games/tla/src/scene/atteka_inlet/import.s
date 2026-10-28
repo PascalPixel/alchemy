@@ -25,7 +25,7 @@ GameFlag_ClearBit:
 	.global Func_02000ff0
 	.thumb_func
 Func_02000ff0:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global Func_02000ff8
 	.thumb_func
 Func_02000ff8:

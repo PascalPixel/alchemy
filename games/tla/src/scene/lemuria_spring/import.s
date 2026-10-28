@@ -49,7 +49,7 @@ ObjectDispatch_SetAnimationSpeed:
 	.global Func_020012f8
 	.thumb_func
 Func_020012f8:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:

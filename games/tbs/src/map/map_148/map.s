@@ -8,14 +8,14 @@ Field_Map148:
 	map_layer 0, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 192, 0, 20, 20, 135, 35, 0x1f, 0x1f
-	map_offset Field_Map148, .LField_Map148_METATILES
+	map_offset Field_Map148, .LField_Map148_CELL_PICTURES
 	map_offset Field_Map148, .LField_Map148_SHAPES
 	map_offset Field_Map148, .LField_Map148_GRID
 	map_offset Field_Map148
 	map_offset Field_Map148
 	map_offset Field_Map148, .LField_Map148_MARKERS
-.LField_Map148_METATILES:
-	.incbin "games/tbs/src/map/map_148/metatiles.delta0.lz"
+.LField_Map148_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_148/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Map148_SHAPES:
 	.incbin "games/tbs/src/map/map_148/shapes.table.lz"
@@ -34,14 +34,14 @@ Field_Map148:
 	map_layer 0, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 192, 0, 20, 20, 135, 35, 0x1f, 0x1f
-	map_offset Field_Map148, .LField_Map148_METATILES
+	map_offset Field_Map148, .LField_Map148_CELL_PICTURES
 	map_offset Field_Map148, .LField_Map148_SHAPES
 	map_offset Field_Map148, .LField_Map148_GRID
 	map_offset Field_Map148
 	map_offset Field_Map148
 	map_offset Field_Map148, .LField_Map148_MARKERS
-.LField_Map148_METATILES:
-	.incbin "games/tbs/src/map/map_148/metatiles.delta0.lz"
+.LField_Map148_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_148/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Map148_SHAPES:
 	.incbin "games/tbs/src/map/map_148/shapes.table.lz"
@@ -59,14 +59,14 @@ Field_Map148:
 	map_layer 0, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 192, 0, 20, 20, -121, 35, 0x1f, 0x1f
-	map_offset Field_Map148, .LField_Map148_METATILES
+	map_offset Field_Map148, .LField_Map148_CELL_PICTURES
 	map_offset Field_Map148, .LField_Map148_SHAPES
 	map_offset Field_Map148, .LField_Map148_GRID
 	map_offset Field_Map148
 	map_offset Field_Map148
 	map_offset Field_Map148, .LField_Map148_MARKERS
-.LField_Map148_METATILES:
-	.incbin "games/tbs/src/map/map_148/metatiles.delta0.lz"
+.LField_Map148_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_148/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Map148_SHAPES:
 	.incbin "games/tbs/src/map/map_148/shapes.table.lz"

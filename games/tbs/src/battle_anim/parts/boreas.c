@@ -224,16 +224,16 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *args) {
     dropFrame = frame - 160;
     if (dropFrame >= 0 && dropFrame < 158) {
       s32 sinkFrame = frame - 208;
-      s32 metatileX = 80;
+      s32 cellPictureX = 80;
       s32 blockY = 8;
       if (frame <= 175) {
-        metatileX = 96 - dropFrame;
+        cellPictureX = 96 - dropFrame;
         blockY = dropFrame * 4 - 56;
       } else if (frame > 208) {
         blockY = sinkFrame / 4 + 8;
       }
-      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK_OFFSETS, metatileX, blockY,
-              24, 48);
+      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK_OFFSETS, cellPictureX,
+              blockY, 24, 48);
     }
 
     if (frame == 32) {

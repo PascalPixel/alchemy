@@ -14,7 +14,7 @@ struct TilePos {
   s32 x, y;
 };
 
-void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
   /* FAKEMATCH: needed to match: temporary sharing preserves register allocation
    * and scheduling without changing the frame or instructions. */

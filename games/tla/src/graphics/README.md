@@ -16,7 +16,7 @@ page says only what differs here.
   from its PNG.
 - **Compilers.** Thumb files take K2's options on top of ☀️'s (`CFLAGS_tla`
   in the `Makefile`): `-mthumb-split-constants`, `-mthumb-call-via-lr` and
-  `-mtune=arm9tdmi`, without `-mthumb-interwork`. `tile/metatile.c` is ARM
+  `-mtune=arm9tdmi`, without `-mthumb-interwork`. `tile/cell_picture.c` is ARM
   code, compiled with GCC 2.95.2 like ☀️'s ARM files (`ARM_C`).
 - **Assets.** ⚓️'s copies of pictures ☀️ also has are its own files under its
   own resource numbers, so a ☀️ resource id does not name a ⚓️ picture.

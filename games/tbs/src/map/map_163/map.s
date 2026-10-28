@@ -8,14 +8,14 @@ Field_Map163:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map163, .LField_Map163_METATILES
+	map_offset Field_Map163, .LField_Map163_CELL_PICTURES
 	map_offset Field_Map163, .LField_Map163_SHAPES
 	map_offset Field_Map163, .LField_Map163_GRID
 	map_offset Field_Map163, .LField_Map163_ANIMATION
 	map_offset Field_Map163, .LField_Map163_BLEND
 	map_offset Field_Map163, .LField_Map163_MARKERS
-.LField_Map163_METATILES:
-	.incbin "games/tbs/src/map/map_163/metatiles.delta1.lz"
+.LField_Map163_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_163/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_Map163_SHAPES:
 	.incbin "games/tbs/src/map/map_163/shapes.table.lz"
@@ -38,14 +38,14 @@ Field_Map163:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map163, .LField_Map163_METATILES
+	map_offset Field_Map163, .LField_Map163_CELL_PICTURES
 	map_offset Field_Map163, .LField_Map163_SHAPES
 	map_offset Field_Map163, .LField_Map163_GRID
 	map_offset Field_Map163, .LField_Map163_ANIMATION
 	map_offset Field_Map163, .LField_Map163_BLEND
 	map_offset Field_Map163, .LField_Map163_MARKERS
-.LField_Map163_METATILES:
-	.incbin "games/tbs/src/map/map_163/metatiles.delta1.lz"
+.LField_Map163_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_163/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_Map163_SHAPES:
 	.incbin "games/tbs/src/map/map_163/shapes.table.lz"

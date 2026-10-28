@@ -66,7 +66,7 @@ s32 Field_CountRequests(void) {
 }
 
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
-/// leader (a World Map metatile on the World Map), or 0 without a leader.
+/// leader (a World Map cell picture on the World Map), or 0 without a leader.
 ///
 /// Called by Field_FindItemTrigger and Scene_FindPsynergyTrigger (items.c),
 /// which match an item or Psynergy trigger to the cell the leader faces.
@@ -93,7 +93,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   Vector_AddPolarOffset(0x100000, leader->facing, position.coordinates);
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    // World Map metatiles are 32 pixels square, 32 to a row.
+    // World Map cell pictures are 32 pixels square, 32 to a row.
     u32 tileX;
     u32 tileY;
 
@@ -108,7 +108,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
       fixedZ += 0x1fffff;
     tileY = (fixedZ >> 21) & 31;
 
-    tile = (u8 *)gMetatiles + ((tileX + (tileY << 5)) << 2);
+    tile = (u8 *)gCellPictures + ((tileX + (tileY << 5)) << 2);
   } else {
     // Map cells are 16 pixels square, 128 to a row.
     tile = (u8 *)gridState->layers[MAPGRID_LAYER_GROUND].cells;
@@ -237,7 +237,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     previousHp[i] = Unit_GetFar(gAdventure.party[i])->hp;
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    tile = &((struct MapGridCell *)Ram_Metatiles)[((x / 0x200000) & 31) +
+    tile =
+        &((struct MapGridCell *)Ram_CellPictures)[((x / 0x200000) & 31) +
                                                   (((z / 0x200000) & 31) << 5)];
   } else {
     if ((u32)layer <= MAPGRID_LAYER_OVERHEAD)

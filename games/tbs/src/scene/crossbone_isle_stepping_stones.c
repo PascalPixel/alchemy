@@ -167,8 +167,8 @@ enum CrossboneIsleSteppingStonesActorId {
 union CrossboneIslePillarCell {
   struct MapGridCell cell;
   struct CrossboneIslePillarCellBits {
-    u32 metatile : 12;
-    u32 lowFlags : 2; ///< bits 13..12 of MapGridCell.metatileAndFlags
+    u32 cellPicture : 12;
+    u32 lowFlags : 2; ///< bits 13..12 of MapGridCell.cellPictureAndFlags
     u8 highFlags : 2; ///< bits 15..14, read by MapGrid_GetCellHighFlags
     u8 behavior;
     u8 shape;
@@ -341,7 +341,7 @@ static inline void CrossboneIsleSteppingStones_DrawFloatingLogs(void) {
   CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 7);
 }
 
-/// Restores the ground metatiles and cell behaviors under the
+/// Restores the ground cell pictures and cell behaviors under the
 /// actor's footprint.
 static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
@@ -393,7 +393,7 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
 }
 
 /// Copies the cell's flags and cell behavior without replacing its
-/// metatile.
+/// cell picture.
 static void CrossboneIsleSteppingStones_SetCellAttributes(
     s32 layer, s32 x, s32 y, const union CrossboneIslePillarCell *source) {
   struct MapGridScrollWork *grid = gMapGridWork[0];

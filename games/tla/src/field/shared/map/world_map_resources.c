@@ -2,7 +2,7 @@
 
 extern char ResourceId_WorldMapPaletteA;
 extern char ResourceId_DefaultMapAnimation;
-extern char ResourceId_DefaultMetatileAttributes;
+extern char ResourceId_DefaultCellPictureAttributes;
 extern char ResourceId_WorldMapTilesA1;
 extern char ResourceId_WorldMapTilesA2;
 extern char ResourceId_WorldMapTilesA3;
@@ -46,7 +46,7 @@ const u32 gData_0802ed34[4][9] = {
     {
         (u32)&ResourceId_WorldMapPaletteA,
         (u32)&ResourceId_DefaultMapAnimation,
-        (u32)&ResourceId_DefaultMetatileAttributes,
+        (u32)&ResourceId_DefaultCellPictureAttributes,
         (u32)&ResourceId_WorldMapTilesA1,
         (u32)&ResourceId_WorldMapTilesA2,
         (u32)&ResourceId_WorldMapTilesA3,

@@ -2,7 +2,7 @@
 // of map cells (keeping each destination's attribute bits above 11, taking
 // the source's low 11) and redraws the block in each layer whose 16 by 12
 // view shows the destination cell, like The Broken Seal's
-// Map_CopyMetatileIndicesRect. Left: the native's stack frame is 36 bytes (row end,
+// Map_CopyCellPictureIndicesRect. Left: the native's stack frame is 36 bytes (row end,
 // the two cell cursors, the three views) with width in r11; this spills
 // width too (44 bytes) and allocates the view loop differently.
 #include "types.h"

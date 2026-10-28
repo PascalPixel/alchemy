@@ -1,7 +1,7 @@
 // Near miss, differ 2 of 114 (94 before, 2026-10-26): The Broken Seal's
-// Map_RenderMetatileColumn with the layer window of Func_0802abbc (adopted in
+// Map_RenderCellPictureColumn with the layer window of Func_0802abbc (adopted in
 // field/shared/map/layer_render.c, whose forms this follows) and its
-// CopyMetatileHalfColumn helper. Left: the native loads the second metatile
+// CopyCellPictureHalfColumn helper. Left: the native loads the second cell picture
 // row's literal (Data_02020004) one slot later, just before the first store;
 // an empty asm at each line of the function measured 2 or worse.
 #include "types.h"
@@ -20,22 +20,22 @@ struct MapLayerWindow {
   u8 *terrainIds;
 };
 
-static __inline__ void CopyMetatileHalfColumn(u32 *cell, u8 *screenMap,
+static __inline__ void CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap,
                                               u32 screenRowOffset,
                                               u32 screenColumnOffset,
                                               u32 tileHalf) {
-  u16 *metatileEntry;
+  u16 *cellPictureEntry;
   u8 *screenTile;
   u32 index = ((*cell << 21) >> 19) + tileHalf;
 
-  metatileEntry = (u16 *)Ram_MapBlocks;
-  metatileEntry += index;
+  cellPictureEntry = (u16 *)Ram_MapBlocks;
+  cellPictureEntry += index;
   screenTile =
       screenMap + (screenRowOffset + screenColumnOffset + tileHalf) * 2;
-  *(u16 *)screenTile = *metatileEntry;
-  metatileEntry = (u16 *)(Ram_MapBlocks + 4);
-  metatileEntry += index;
-  *(u16 *)(screenTile + 64) = *metatileEntry;
+  *(u16 *)screenTile = *cellPictureEntry;
+  cellPictureEntry = (u16 *)(Ram_MapBlocks + 4);
+  cellPictureEntry += index;
+  *(u16 *)(screenTile + 64) = *cellPictureEntry;
 }
 
 void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
@@ -52,7 +52,7 @@ void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
   u32 maskX;
   u32 originX;
   u32 tileHalf;
-  u32 metatileIndex;
+  u32 cellPictureIndex;
 
   if (maskY != 0x3f80) {
     sourceRow = (sourceRow - originY) & maskY;
@@ -68,8 +68,8 @@ void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
     cells += originX;
   }
   tileHalf = tileX & 1;
-  for (metatileIndex = 0; metatileIndex <= 10; metatileIndex++) {
-    CopyMetatileHalfColumn(cells + sourceRow + sourceColumn, screenMap,
+  for (cellPictureIndex = 0; cellPictureIndex <= 10; cellPictureIndex++) {
+    CopyCellPictureHalfColumn(cells + sourceRow + sourceColumn, screenMap,
                            screenRowOffset, screenColumnOffset, tileHalf);
     sourceRow = (sourceRow + 128) & maskY;
     screenRowOffset = (screenRowOffset + 64) & 0x3c0;

@@ -24,10 +24,10 @@ void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
   }
 }
 
-/// Unpacks the staged metatile data into gMetatiles. Byte 1 of the staged
-/// buffer (Ram_MapGridCellBuffer) is the method, and the 16-bit data follows
-/// from byte 2. size counts the method byte too (an even size means no data).
-/// The methods are enum MetatilePacking.
+/// Unpacks the staged cell picture data into gCellPictures. Byte 1 of the
+/// staged buffer (Ram_MapGridCellBuffer) is the method, and the 16-bit data
+/// follows from byte 2. size counts the method byte too (an even size means no
+/// data). The methods are enum CellPicturePacking.
 ///
 /// Called by MapGrid_LoadMap with the size Decompress_TaggedLz
 /// returns; the packed stream is decoded to Ram_MapGridCellBuffer + 1 so that
@@ -39,15 +39,15 @@ void TileMap_DecodeStagedBuffer(s32 size) {
   s32 i;
 
   sourceWords = (u16 *)(Ram_MapGridCellBuffer + 2);
-  destinationWords = (u16 *)gMetatiles;
+  destinationWords = (u16 *)gCellPictures;
   wordCount = (size - 1) / 2;
   if (size & 1) {
     switch (((u8 *)gMapGridCellBuffer)[1]) {
-    case METATILE_PACKING_RAW:
+    case CELL_PICTURE_PACKING_RAW:
       for (i = 0; i < wordCount; i++)
         *destinationWords++ = *sourceWords++;
       break;
-    case METATILE_PACKING_SPLIT_DELTA: {
+    case CELL_PICTURE_PACKING_SPLIT_DELTA: {
       u32 previousWord = 0;
       u8 *highBytes = Ram_MapGridCellBuffer + 2;
       u8 *lowBytes = highBytes + wordCount;
@@ -59,7 +59,7 @@ void TileMap_DecodeStagedBuffer(s32 size) {
       }
       break;
     }
-    case METATILE_PACKING_DELTA: {
+    case CELL_PICTURE_PACKING_DELTA: {
       s32 previousWord = 0;
 
       for (i = 0; i < wordCount; i++) {
@@ -75,23 +75,23 @@ void TileMap_DecodeStagedBuffer(s32 size) {
 
 typedef void (*TilemapConvertFn)(void *dst, const void *src, const void *saved);
 
-/// Unused: gives each map cell whose metatile number is 0xfff (a placeholder) a
-/// number of its own, counting up from 0 in map order.
-UNUSED void TileMap_NumberPlaceholderMetatiles(void) {
+/// Unused: gives each map cell whose cell picture number is 0xfff (a
+/// placeholder) a number of its own, counting up from 0 in map order.
+UNUSED void TileMap_NumberPlaceholderCellPictures(void) {
   u32 *cell = (u32 *)gMapGridCellBuffer;
   u32 remaining = 128 << 7;
   u32 mask = 0xfff;
-  s32 nextPlaceholderMetatile = -1;
+  s32 nextPlaceholderCellPicture = -1;
 
   do {
     u32 value = *cell++;
-    u32 metatileId = value & mask;
+    u32 cellPictureId = value & mask;
 
-    if (metatileId == mask) {
-      if (nextPlaceholderMetatile != metatileId) {
-        nextPlaceholderMetatile++;
+    if (cellPictureId == mask) {
+      if (nextPlaceholderCellPicture != cellPictureId) {
+        nextPlaceholderCellPicture++;
       }
-      value = value + nextPlaceholderMetatile - metatileId;
+      value = value + nextPlaceholderCellPicture - cellPictureId;
       cell[-1] = value;
     }
     remaining--;
@@ -100,15 +100,14 @@ UNUSED void TileMap_NumberPlaceholderMetatiles(void) {
 
 /// Converts the map's cells in place with Tile_ConvertMapGrid, run from RAM.
 /// The grid is decoded as three planes: cell behaviors and shapes
-/// (16 KB each), then 32 KB of metatile halfwords (the metatile number with the
-/// layer and priority bits an actor standing there takes). The routine makes
-/// each metatile halfword the low half of a cell word, numbering placeholder
-/// metatiles (0xfff)
-/// from 0 up, and interleaves the other two planes into the high halves. The
-/// 128 by 128 cell words overwrite the first two planes, so those 32 KB are
-/// first copied to a buffer from the EWRAM pool; the buffer and the
-/// routine's RAM copy are freed when done. Called by MapGrid_LoadMap once
-/// the cell planes are decoded.
+/// (16 KB each), then 32 KB of cell picture halfwords (the cell picture number
+/// with the layer and priority bits an actor standing there takes). The routine
+/// makes each cell picture halfword the low half of a cell word, numbering
+/// placeholder cell pictures (0xfff) from 0 up, and interleaves the other two
+/// planes into the high halves. The 128 by 128 cell words overwrite the first
+/// two planes, so those 32 KB are first copied to a buffer from the EWRAM pool;
+/// the buffer and the routine's RAM copy are freed when done. Called by
+/// MapGrid_LoadMap once the cell planes are decoded.
 void TileMap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertGrid;
@@ -124,44 +123,43 @@ void TileMap_ConvertBuffer(void) {
   Free(savedCells);
 }
 
-/// Copies one tile column of a metatile into a BG map: its top and
+/// Copies one tile column of a cell picture into a BG map: its top and
 /// bottom tile entries, choosing the left or right half with tileHalf.
-static __inline__ void MapGrid_CopyMetatileHalfColumn(u32 *cell, u8 *screenMap,
-                                                      u32 screenRowOffset,
-                                                      u32 screenColumnOffset,
-                                                      u32 tileHalf) {
-  u16 *metatileEntry;
+static __inline__ void
+MapGrid_CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap, u32 screenRowOffset,
+                                  u32 screenColumnOffset, u32 tileHalf) {
+  u16 *cellPictureEntry;
   u8 *screenTile;
-  // A metatile is 8 bytes of gMetatiles: its top two tile entries, then its
-  // bottom two. The cell's low 12 bits times 4 index its first halfword.
+  // A cell picture is 8 bytes of gCellPictures: its top two tile entries, then
+  // its bottom two. The cell's low 12 bits times 4 index its first halfword.
   u32 index = ((*cell << 20) >> 18) + tileHalf;
 
-  metatileEntry = (u16 *)Ram_Metatiles;
-  metatileEntry += index;
+  cellPictureEntry = (u16 *)Ram_CellPictures;
+  cellPictureEntry += index;
   screenTile =
       screenMap + (screenRowOffset + screenColumnOffset + tileHalf) * 2;
-  *(u16 *)screenTile = *metatileEntry;
-  metatileEntry = (u16 *)(Ram_Metatiles + 4);
-  metatileEntry += index;
-  *(u16 *)(screenTile + 64) = *metatileEntry;
+  *(u16 *)screenTile = *cellPictureEntry;
+  cellPictureEntry = (u16 *)(Ram_CellPictures + 4);
+  cellPictureEntry += index;
+  *(u16 *)(screenTile + 64) = *cellPictureEntry;
 }
 
-/// Copies a whole metatile into a BG map: its top two tile entries
+/// Copies a whole cell picture into a BG map: its top two tile entries
 /// and its bottom two, a map row (64 bytes) below.
-static __inline__ void MapGrid_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
-                                                    u32 screenRowOffset,
-                                                    u32 screenColumnOffset) {
-  u32 *metatileRows;
+static __inline__ void MapGrid_CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
+                                                       u32 screenRowOffset,
+                                                       u32 screenColumnOffset) {
+  u32 *cellPictureRows;
   u8 *screenTile;
   u32 index = (*cell << 20) >> 19;
 
-  metatileRows = (u32 *)Ram_Metatiles;
-  metatileRows += index;
+  cellPictureRows = (u32 *)Ram_CellPictures;
+  cellPictureRows += index;
   screenTile = screenMap + screenRowOffset * 2 + screenColumnOffset * 2;
-  *(u32 *)screenTile = *metatileRows;
-  metatileRows = (u32 *)(Ram_Metatiles + 4);
-  metatileRows += index;
-  *(u32 *)(screenTile + 64) = *metatileRows;
+  *(u32 *)screenTile = *cellPictureRows;
+  cellPictureRows = (u32 *)(Ram_CellPictures + 4);
+  cellPictureRows += index;
+  *(u32 *)(screenTile + 64) = *cellPictureRows;
 }
 
 extern const struct MapResources gMaps[];
@@ -195,15 +193,16 @@ struct MapHeader {
   // XXX (no evidence): why the cells are packed as planes and the treasure
   // spots left unpacked; only Camelot's tools would show what the packing was
   // chosen for.
-  s32 metatiles; ///< the metatiles, staged and unpacked into gMetatiles
-  s32 shapes;    ///< the shapes, into Ram_MapGridShapes
-  s32 cells;     ///< the cells, into Ram_MapGridCellBuffer
-  s32 animation; ///< the tileset animation script, or 0 for none
-  s32 blend;     ///< the blend script, or 0 for none
-  s32 markers;   ///< the chests and Psynergy stones (Field_PlaceTreasureSpots)
+  s32 cellPictures; ///< the cell pictures, staged and unpacked into
+                    ///< gCellPictures
+  s32 shapes;       ///< the shapes, into Ram_MapGridShapes
+  s32 cells;        ///< the cells, into Ram_MapGridCellBuffer
+  s32 animation;    ///< the tileset animation script, or 0 for none
+  s32 blend;        ///< the blend script, or 0 for none
+  s32 markers; ///< the chests and Psynergy stones (Field_PlaceTreasureSpots)
 };
 
-/// Loads layout index from gMaps: its metatiles, shapes,
+/// Loads layout index from gMaps: its cell pictures, shapes,
 /// cells, tileset animations, blend script and treasure spots; sets up the
 /// three background layers' origins, parallax and wrap from the layout header;
 /// loads the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says
@@ -239,9 +238,9 @@ s32 MapGrid_LoadMap(s32 index) {
   Iwram_ClearWords(grid, sizeof(struct MapGridScrollWork));
   mapHeader = (struct MapHeader *)Resource_GetTableEntry(
       mapResources->resources[0] + (u32)&ResourceId_Map001);
-  // The header's offsets count from the header itself. The metatiles are
+  // The header's offsets count from the header itself. The cell pictures are
   // staged in the cell buffer, which the cell planes then overwrite.
-  encodedData = (u8 *)mapHeader + mapHeader->metatiles;
+  encodedData = (u8 *)mapHeader + mapHeader->cellPictures;
   TileMap_DecodeStagedBuffer(
       Decompress_TaggedLz(encodedData, Ram_MapGridCellBuffer + 1));
   encodedData = (u8 *)mapHeader + mapHeader->shapes;
@@ -417,62 +416,62 @@ void MapGrid_CenterOnFollowedPoint(void) {
   MapGrid_UpdateLayerScroll();
 }
 
-/// Draws a row of 16 metatiles (32 tiles) of a layer's cells into its BG map
-/// (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
+/// Draws a row of 16 cell pictures (32 tiles) of a layer's cells into its BG
+/// map (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
 /// wraps every 32 tiles. Called by MapGrid_UpdateLayerScroll when a layer
-/// scrolls onto a new row of metatiles.
-void MapGrid_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY) {
+/// scrolls onto a new row of cell pictures.
+void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 sourceRow = ((tileY / 2) & 0x7F) << 7;
   u32 screenRowOffset = (tileY & 30) << 5;
   u32 sourceColumn = (tileX / 2) & 0x7F;
   u32 screenColumnOffset = tileX & 30;
-  u32 metatileIndex;
+  u32 cellPictureIndex;
 
-  // A metatile is 2x2 tiles, so the BG map's tile row and column are kept
-  // even (& 30) and wrap at 32; the grid wraps at 128 cells. Sixteen metatiles
-  // are the BG map's whole width.
-  for (metatileIndex = 0; metatileIndex <= 15; metatileIndex++) {
+  // A cell picture is 2x2 tiles, so the BG map's tile row and column are kept
+  // even (& 30) and wrap at 32; the grid wraps at 128 cells. Sixteen cell
+  // pictures are the BG map's whole width.
+  for (cellPictureIndex = 0; cellPictureIndex <= 15; cellPictureIndex++) {
     u32 *sourceCell = (u32 *)Ram_MapGridCellBuffer;
-    u32 *metatileRows;
+    u32 *cellPictureRows;
     u8 *screenTile;
-    u32 metatileWordOffset;
+    u32 cellPictureWordOffset;
 
     sourceCell += sourceRow + sourceColumn;
-    metatileWordOffset = (*sourceCell << 20) >> 19;
-    metatileRows = (u32 *)Ram_Metatiles;
-    metatileRows += metatileWordOffset;
+    cellPictureWordOffset = (*sourceCell << 20) >> 19;
+    cellPictureRows = (u32 *)Ram_CellPictures;
+    cellPictureRows += cellPictureWordOffset;
     screenTile = screenMap + (screenRowOffset + screenColumnOffset) * 2;
-    *(u32 *)screenTile = *metatileRows;
-    metatileRows = (u32 *)(Ram_Metatiles + 4);
-    metatileRows += metatileWordOffset;
-    *(u32 *)(screenTile + 64) = *metatileRows;
+    *(u32 *)screenTile = *cellPictureRows;
+    cellPictureRows = (u32 *)(Ram_CellPictures + 4);
+    cellPictureRows += cellPictureWordOffset;
+    *(u32 *)(screenTile + 64) = *cellPictureRows;
     sourceColumn = (sourceColumn + 1) & 0x7F;
     screenColumnOffset = (screenColumnOffset + 2) & 30;
   }
 }
 
-/// Draws a column of 11 metatiles of a layer's cells, one tile wide, into its
-/// BG map, starting at tile (tileX, tileY). Called by MapGrid_UpdateLayerScroll
-/// when a layer scrolls onto a new column of tiles; tileX's low bit picks the
-/// metatile's left or right half.
-void MapGrid_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
+/// Draws a column of 11 cell pictures of a layer's cells, one tile wide, into
+/// its BG map, starting at tile (tileX, tileY). Called by
+/// MapGrid_UpdateLayerScroll when a layer scrolls onto a new column of tiles;
+/// tileX's low bit picks the cell picture's left or right half.
+void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 sourceRow = ((tileY / 2) & 0x7F) << 7;
   u32 screenRowOffset = (tileY & 30) << 5;
   u32 sourceColumn = (tileX / 2) & 0x7F;
   u32 screenColumnOffset = tileX & 30;
   u32 tileHalf = tileX & 1;
-  u32 metatileIndex;
+  u32 cellPictureIndex;
 
-  // Eleven metatiles are 22 tiles: the screen's 20 and the rows partly
+  // Eleven cell pictures are 22 tiles: the screen's 20 and the rows partly
   // scrolled in. Both the cells and the BG map wrap.
-  for (metatileIndex = 0; metatileIndex <= 10; metatileIndex++) {
+  for (cellPictureIndex = 0; cellPictureIndex <= 10; cellPictureIndex++) {
     u32 *sourceCell = (u32 *)Ram_MapGridCellBuffer;
 
     sourceCell += sourceRow + sourceColumn;
-    MapGrid_CopyMetatileHalfColumn(sourceCell, screenMap, screenRowOffset,
-                                   screenColumnOffset, tileHalf);
+    MapGrid_CopyCellPictureHalfColumn(sourceCell, screenMap, screenRowOffset,
+                                      screenColumnOffset, tileHalf);
 
     sourceRow = (sourceRow + 128) & 0x3F80;
     screenRowOffset = (screenRowOffset + 64) & 0x3C0;
@@ -482,8 +481,8 @@ void MapGrid_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
 /// Each frame on a layered map: centres the view on the point the map follows
 /// (origin), clamped to the map's bounds and shaken by any decaying screen
 /// shake; then scrolls each of the three layers by its parallax scale and
-/// automatic scroll (wrapping at its period), draws the metatile column or row
-/// that scrolls into view, and sets its BG scroll.
+/// automatic scroll (wrapping at its period), draws the cell picture column or
+/// row that scrolls into view, and sets its BG scroll.
 ///
 /// Added as a task by MapGrid_LoadMap (priority TASK_PASS_FRAME +
 /// 5), and called by MapGrid_CenterOnFollowedPoint. Sets map->viewX and viewY,
@@ -558,22 +557,22 @@ void MapGrid_UpdateLayerScroll(void) {
     }
     baseX += layer->offsetX;
     baseY += layer->offsetY;
-    // x and y are in 8-pixel tiles. A new tile column (bit 19) or metatile row
-    // (bit 20, 16 pixels) has come into view: draw it at the leading edge,
+    // x and y are in 8-pixel tiles. A new tile column (bit 19) or cell picture
+    // row (bit 20, 16 pixels) has come into view: draw it at the leading edge,
     // 30 tiles to the right or 20 below when scrolling that way.
     x = baseX / 0x80000;
     y = baseY / 0x80000;
     if ((layer->x ^ baseX) & 0x80000) {
       if (layer->x < baseX)
-        MapGrid_RenderMetatileColumn(layerIndex, x + 30, y);
+        MapGrid_RenderCellPictureColumn(layerIndex, x + 30, y);
       else
-        MapGrid_RenderMetatileColumn(layerIndex, x, y);
+        MapGrid_RenderCellPictureColumn(layerIndex, x, y);
     }
     if ((layer->y ^ baseY) & 0x100000) {
       if (layer->y < baseY)
-        MapGrid_RenderMetatileRow(layerIndex, x, y + 20);
+        MapGrid_RenderCellPictureRow(layerIndex, x, y + 20);
       else
-        MapGrid_RenderMetatileRow(layerIndex, x, y);
+        MapGrid_RenderCellPictureRow(layerIndex, x, y);
     }
     // MAPGRID_LAYER_GROUND scrolls BG3, MAPGRID_LAYER_OVERHEAD BG1.
     gBgScroll[3 - layerIndex].x = baseX >> 16;
@@ -604,7 +603,7 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
     if (grid->enabled[layerIndex]) {
       u32 rows = 22;
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
-          metatileRow, metatileColumn;
+          cellPictureRow, cellPictureColumn;
 
       x = Iwram_MulQ16(grid->viewX, layer->scaleX);
       y = Iwram_MulQ16(grid->viewY, layer->scaleY);
@@ -616,7 +615,7 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
         layer->phaseY += layer->speedY;
         y = (y + layer->phaseY) & ((layer->maskY << 19) | 0x7ffff);
         // A layer drifting vertically gets its whole 32-row BG map, others
-        // the 22 rows (11 metatiles) a 160-pixel screen can show.
+        // the 22 rows (11 cell pictures) a 160-pixel screen can show.
         // XXX (no evidence): why only vertical drift fills the whole map; the
         // only layers that drift vertically are the ground of the Tolbi
         // ship's deck and the haze over Suhalla Desert, and
@@ -627,22 +626,23 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       x += layer->offsetX;
       y += layer->offsetY;
       layer++;
-      // 0x80000 is 8 pixels in 16.16, so x and y become tiles. A metatile is
-      // 2 by 2 tiles: the grid, 128 metatiles a row, is read at half of them,
-      // and the screen map's offsets step 2 tiles and wrap at 32.
+      // 0x80000 is 8 pixels in 16.16, so x and y become tiles. A cell picture
+      // is 2 by 2 tiles: the grid, 128 cell pictures a row, is read at half of
+      // them, and the screen map's offsets step 2 tiles and wrap at 32.
       x /= 0x80000;
       y /= 0x80000;
       screenMap = BG_SCREEN_BLOCK(5) + (layerIndex << 11);
       sourceRow = ((y / 2) & 127) << 7;
       screenRowOffset = (y & 30) << 5;
-      for (metatileRow = 0; metatileRow < rows / 2; metatileRow++) {
+      for (cellPictureRow = 0; cellPictureRow < rows / 2; cellPictureRow++) {
         sourceColumn = (x / 2) & 127;
         screenColumnOffset = x & 30;
-        for (metatileColumn = 0; metatileColumn <= 15; metatileColumn++) {
+        for (cellPictureColumn = 0; cellPictureColumn <= 15;
+             cellPictureColumn++) {
           u32 *cells = (u32 *)Ram_MapGridCellBuffer;
           cells += sourceRow + sourceColumn;
-          MapGrid_CopyMetatileToScreen(cells, screenMap, screenRowOffset,
-                                       screenColumnOffset);
+          MapGrid_CopyCellPictureToScreen(cells, screenMap, screenRowOffset,
+                                          screenColumnOffset);
           sourceColumn = (sourceColumn + 1) & 127;
           screenColumnOffset = (screenColumnOffset + 2) & 30;
         }
@@ -658,15 +658,15 @@ struct MapGridTilePosition {
   s32 x, y;
 };
 
-/// Copies the metatile numbers of a rectangle of cells from (sourceX, sourceY)
-/// to (dstX, dstY), width by height cells, keeping each destination's
+/// Copies the cell picture numbers of a rectangle of cells from (sourceX,
+/// sourceY) to (dstX, dstY), width by height cells, keeping each destination's
 /// attributes, and redraws the copied cells that are on screen. It does what
 /// MapGrid_CopyCellIndexRect does, with the destination before the size.
 ///
 /// Called by MapGrid_PlayMapEdit, and by about 40 events
-/// through MapGrid_CopyMetatileIndicesRectFar.
-void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
-                                     u32 dstY, u32 width, u32 height) {
+/// through MapGrid_CopyCellPictureIndicesRectFar.
+void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
+                                        u32 dstY, u32 width, u32 height) {
   /* FAKEMATCH(temporary): the chains of temporaries set the registers and the
    * schedule of the cell loop; as a plain body (the offset computed once, two
    * word stores), 96 of 141 instructions differ in tbs-en. */
@@ -690,7 +690,7 @@ void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
   for (y = dstY; y < dstY + height; y++) {
     for (x = dstX; x < dstX + width; x++) {
       u32 sourceCell = *sourceCells++;
-      u32 metatileId = sourceCell & 0xfff;
+      u32 cellPictureId = sourceCell & 0xfff;
       u32 offset;
       u32 tmp3;
       u32 n;
@@ -703,7 +703,7 @@ void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
       tmp9 = *destinationCells;
       tmp3 = tmp9 & -0x1000;
       tmp12 = x & 15;
-      destinationCells[0] = metatileId | tmp3;
+      destinationCells[0] = cellPictureId | tmp3;
       tmp6 = tmp12;
       destinationCells++;
       i = 0;
@@ -719,32 +719,32 @@ void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
       tmp6 = tmp11;
       offset = tmp6;
       // The first layer whose visible area (16x12 cells) holds the cell has
-      // the metatile written to its BG map too, and only that one (a map lays
-      // its layers out in different parts of the grid); offset is
-      // the cell's place in a 32x32 BG map (128 bytes a cell row, 4 a cell),
-      // 0x800 bytes per layer from screen block 5.
+      // the cell picture written to its BG map too, and only that one (a map
+      // lays its layers out in different parts of the grid); offset is the
+      // cell's place in a 32x32 BG map (128 bytes a cell row, 4 a cell), 0x800
+      // bytes per layer from screen block 5.
       for (; i < 3; i++) {
         if (visibleLayer->x <= (s32)x && 16 + visibleLayer->x > (s32)x &&
             visibleLayer->y <= (s32)y && visibleLayer->y + 12 > (s32)y) {
-          u32 screenAddress, metatileAddress;
-          u8 *screenTile, *metatileRows;
+          u32 screenAddress, cellPictureAddress;
+          u8 *screenTile, *cellPictureRows;
 
           screenAddress = 0x06002800;
           screenTile = (u8 *)screenAddress;
           screenTile += offset;
-          tmp11 = metatileId * 8;
-          metatileAddress = (u32)Ram_Metatiles;
-          metatileRows = (u8 *)metatileAddress;
-          metatileRows += tmp11;
-          *(u32 *)screenTile = *(u32 *)metatileRows;
+          tmp11 = cellPictureId * 8;
+          cellPictureAddress = (u32)Ram_CellPictures;
+          cellPictureRows = (u8 *)cellPictureAddress;
+          cellPictureRows += tmp11;
+          *(u32 *)screenTile = *(u32 *)cellPictureRows;
 
-          metatileAddress = (u32)Ram_Metatiles + 4;
-          metatileRows = (u8 *)metatileAddress;
-          metatileRows += tmp11;
+          cellPictureAddress = (u32)Ram_CellPictures + 4;
+          cellPictureRows = (u8 *)cellPictureAddress;
+          cellPictureRows += tmp11;
           screenAddress = 0x06002840;
           screenTile = (u8 *)screenAddress;
           screenTile += offset;
-          *(u32 *)screenTile = *(u32 *)metatileRows;
+          *(u32 *)screenTile = *(u32 *)cellPictureRows;
           break;
         }
         offset += 0x800;
@@ -768,8 +768,8 @@ typedef char MapGridCopyCommandSize
     [(sizeof(struct MapGridCellAnimationStep) == 10) ? 1 : -1];
 
 /// Plays a map edit (struct MapGridCellAnimationStep entries, ended by
-/// a source of 0xffff): copies each entry's rectangle of metatile numbers to
-/// (destinationX, destinationY) and waits its delay in frames. Doors and
+/// a source of 0xffff): copies each entry's rectangle of cell picture numbers
+/// to (destinationX, destinationY) and waits its delay in frames. Doors and
 /// other changing scenery are drawn this way.
 ///
 /// Called by about 30 events through MapGrid_PlayMapEditFar;
@@ -800,8 +800,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       s32 delay = rectangleArgs[3];
       rectangleArgs += 5;
 
-      MapGrid_CopyMetatileIndicesRect(sourceX, (u16)sourceY, destinationX,
-                                      destinationY, (u16)width, (u16)height);
+      MapGrid_CopyCellPictureIndicesRect(sourceX, (u16)sourceY, destinationX,
+                                         destinationY, (u16)width, (u16)height);
       copyCommand++;
       WaitFrames((u16)delay);
       sourceX = copyCommand->source;
@@ -822,16 +822,16 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 // Map: copying rectangles of cells.
 
 #define MAPGRID_CELLS ((u32 *)gMapGridCellBuffer)
-#define MAPGRID_METATILE_ID_MASK 0x00000fff ///< the metatile number
-#define MAPGRID_ATTRIBUTE_MASK 0xfffff000   ///< the cell's attributes
+#define MAPGRID_CELL_PICTURE_ID_MASK 0x00000fff ///< the cell picture number
+#define MAPGRID_ATTRIBUTE_MASK 0xfffff000       ///< the cell's attributes
 
 /// Copies a rectangle of cells (16x16 pixels each) as they are, from
 /// (sourceX, sourceY) to (dstX, dstY), width by height cells. Where a copied
-/// cell lies in a layer's visible area (16x12 cells), its metatile's 2x2 tiles
-/// go to that layer's BG map in VRAM too. Called by about 15 events
-/// through MapGrid_CopyMetatileCellsRectFar.
-void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
-                                   s32 height, s32 dstX, s32 dstY) {
+/// cell lies in a layer's visible area (16x12 cells), its cell picture's 2x2
+/// tiles go to that layer's BG map in VRAM too. Called by about 15 events
+/// through MapGrid_CopyCellPictureCellsRectFar.
+void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
+                                      s32 height, s32 dstX, s32 dstY) {
   /* FAKEMATCH(temporary): the chains of temporaries, tmp2 to tmp17, set the
    * registers, the schedule and the slots of the 36-byte stack frame; as a
    * plain body (the offset computed once, two word stores), 85 of 137
@@ -863,18 +863,18 @@ void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
     do {
       for (x = dstX; x < dstX + width; x++) {
         u32 sourceCell = *sourceCells++;
-        u32 metatileId;
+        u32 cellPictureId;
         u32 offset;
         u32 tmp3;
         u32 *screenTile;
         u32 n;
-        u32 *metatileRows;
+        u32 *cellPictureRows;
         u32 tmp6;
         u32 tmp12;
         u32 tmp13;
 
         destinationCells[0] = sourceCell;
-        metatileId = sourceCell & 0xfff;
+        cellPictureId = sourceCell & 0xfff;
         tmp12 = x & 15;
         tmp6 = tmp12;
         destinationCells += 1;
@@ -893,8 +893,8 @@ void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
         for (; i < 3; i += 1) {
           if (visibleLayer->x <= x && 16 + (*visibleLayer).x > x &&
               visibleLayer->y <= y && visibleLayer->y + 12 > y) {
-            // The metatile's (8 bytes) top two tiles, and its bottom two 0x40
-            // bytes further on.
+            // The cell picture's (8 bytes) top two tiles, and its bottom two
+            // 0x40 bytes further on.
             u32 *tmp;
             u32 tmp2;
             u32 tmp4;
@@ -902,29 +902,29 @@ void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
             u32 tmp10;
             u32 tmp14;
             u32 tmp16;
-            u32 bytes = metatileId * 8;
+            u32 bytes = cellPictureId * 8;
             u32 tmp8;
             u32 tmp17;
 
-            metatileId = bytes / 8;
-            tmp = (u32 *)Ram_Metatiles;
+            cellPictureId = bytes / 8;
+            tmp = (u32 *)Ram_CellPictures;
             tmp8 = 0x06002800 + offset;
-            metatileRows = tmp;
+            cellPictureRows = tmp;
             tmp2 = tmp8;
             tmp = (u32 *)tmp2;
             screenTile = tmp;
-            metatileRows = (u32 *)((u8 *)metatileRows + bytes);
-            tmp16 = *metatileRows;
+            cellPictureRows = (u32 *)((u8 *)cellPictureRows + bytes);
+            tmp16 = *cellPictureRows;
             tmp14 = tmp16;
             tmp17 = 0x06002840 + offset;
             tmp10 = tmp14;
             *screenTile = tmp10;
-            tmp7 = (u32 *)(Ram_Metatiles + 4);
-            metatileRows = tmp7;
-            metatileRows = (u32 *)((u8 *)metatileRows + bytes);
+            tmp7 = (u32 *)(Ram_CellPictures + 4);
+            cellPictureRows = tmp7;
+            cellPictureRows = (u32 *)((u8 *)cellPictureRows + bytes);
             tmp8 = tmp17;
             tmp14 = tmp8;
-            tmp17 = metatileRows[0];
+            tmp17 = cellPictureRows[0];
             tmp16 = tmp17;
             tmp10 = tmp16;
             tmp4 = tmp10;
@@ -949,7 +949,7 @@ void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
 
 /// Copies only the attributes of a rectangle of cells, from (sourceX, sourceY)
 /// to (dstX, dstY), width by height cells, keeping each destination cell's
-/// metatile number. Nothing is redrawn: the attributes (flags, cell
+/// cell picture number. Nothing is redrawn: the attributes (flags, cell
 /// behavior and shape) do not show. Called by about 65 events through
 /// MapGrid_CopyCellAttributeRectFar.
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
@@ -967,14 +967,14 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
     u32 *sourceCell = sourceCells + (rowIndex << 7);
 
     for (columnIndex = 0; columnIndex < width; columnIndex++) {
-      *destinationCell = (*destinationCell & MAPGRID_METATILE_ID_MASK) |
+      *destinationCell = (*destinationCell & MAPGRID_CELL_PICTURE_ID_MASK) |
                          (*sourceCell++ & MAPGRID_ATTRIBUTE_MASK);
       destinationCell++;
     }
   }
 }
 
-/// Copies only the metatile numbers of a rectangle of cells, from (sourceX,
+/// Copies only the cell picture numbers of a rectangle of cells, from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination
 /// cell's attributes; cells in a visible area update the BG maps too. Called by
 /// seven events through MapGrid_CopyCellIndexRectFar.
@@ -1011,7 +1011,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
     do {
       for (x = dstX; x < dstX + width; x++) {
         u32 sourceCell = *sourceCells++;
-        u32 metatileId;
+        u32 cellPictureId;
         u32 offset;
         u32 tmp3;
         u32 n;
@@ -1019,9 +1019,9 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
         u32 tmp12;
         u32 tmp13;
 
-        metatileId = sourceCell & MAPGRID_METATILE_ID_MASK;
+        cellPictureId = sourceCell & MAPGRID_CELL_PICTURE_ID_MASK;
         destinationCells[0] =
-            (destinationCells[0] & MAPGRID_ATTRIBUTE_MASK) | metatileId;
+            (destinationCells[0] & MAPGRID_ATTRIBUTE_MASK) | cellPictureId;
         tmp12 = x & 15;
         tmp6 = tmp12;
         destinationCells += 1;
@@ -1040,27 +1040,27 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
         for (; i < 3; i += 1) {
           if (visibleLayer->x <= x && 16 + (*visibleLayer).x > x &&
               visibleLayer->y <= y && visibleLayer->y + 12 > y) {
-            // The metatile's (8 bytes) top two tiles, and its bottom two 0x40
-            // bytes further on.
-            u32 screenAddress, metatileAddress;
-            u8 *screenTile, *metatileRows;
+            // The cell picture's (8 bytes) top two tiles, and its bottom two
+            // 0x40 bytes further on.
+            u32 screenAddress, cellPictureAddress;
+            u8 *screenTile, *cellPictureRows;
 
             screenAddress = 0x06002800;
             screenTile = (u8 *)screenAddress;
             screenTile += offset;
-            tmp13 = metatileId * 8;
-            metatileAddress = (u32)Ram_Metatiles;
-            metatileRows = (u8 *)metatileAddress;
-            metatileRows += tmp13;
-            *(u32 *)screenTile = *(u32 *)metatileRows;
+            tmp13 = cellPictureId * 8;
+            cellPictureAddress = (u32)Ram_CellPictures;
+            cellPictureRows = (u8 *)cellPictureAddress;
+            cellPictureRows += tmp13;
+            *(u32 *)screenTile = *(u32 *)cellPictureRows;
 
-            metatileAddress = (u32)Ram_Metatiles + 4;
-            metatileRows = (u8 *)metatileAddress;
-            metatileRows += tmp13;
+            cellPictureAddress = (u32)Ram_CellPictures + 4;
+            cellPictureRows = (u8 *)cellPictureAddress;
+            cellPictureRows += tmp13;
             screenAddress = 0x06002840;
             screenTile = (u8 *)screenAddress;
             screenTile += offset;
-            *(u32 *)screenTile = *(u32 *)metatileRows;
+            *(u32 *)screenTile = *(u32 *)cellPictureRows;
             break;
           }
           n = 0x800; // the next layer's BG map
@@ -1091,5 +1091,5 @@ void MapGrid_SetShownLayers(u32 layerFlags) {
 }
 
 #undef MAPGRID_CELLS
-#undef MAPGRID_METATILE_ID_MASK
+#undef MAPGRID_CELL_PICTURE_ID_MASK
 #undef MAPGRID_ATTRIBUTE_MASK

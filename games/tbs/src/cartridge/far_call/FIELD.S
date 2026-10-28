@@ -50,14 +50,14 @@ FarCall_FieldTable:
 	overlay_veneer WorldMap_UpdateView
 	export WorldMap_LoadDefaultCellsAndUpdateBlockFar, WorldMap_LoadDefaultCellsAndUpdateBlock
 	export MapGrid_PlayMapEditFar, MapGrid_PlayMapEdit
-	export MapGrid_CopyMetatileIndicesRectFar, MapGrid_CopyMetatileIndicesRect
+	export MapGrid_CopyCellPictureIndicesRectFar, MapGrid_CopyCellPictureIndicesRect
 	export TilesetAnim_ResumeFar, TilesetAnim_Resume
 	export TilesetAnim_PauseFar, TilesetAnim_Pause
 	export BlendScript_ResumeFar, BlendScript_Resume
 	export BlendScript_SuspendFar, BlendScript_Suspend
 	export MapGrid_GetTerrainHeightFar, MapGrid_GetTerrainHeight
 	export MapGrid_GetCellBehaviorAtFar, MapGrid_GetCellBehaviorAt
-	export MapGrid_CopyMetatileCellsRectFar, MapGrid_CopyMetatileCellsRect
+	export MapGrid_CopyCellPictureCellsRectFar, MapGrid_CopyCellPictureCellsRect
 	export MapGrid_CopyCellAttributeRectFar, MapGrid_CopyCellAttributeRect
 	export MapGrid_CopyCellIndexRectFar, MapGrid_CopyCellIndexRect
 	export WorldMap_SetWindowCellTileFar, WorldMap_SetWindowCellTile

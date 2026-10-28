@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Map_CopyMetatileIndicesRect
+	.global Map_CopyCellPictureIndicesRect
 	.thumb_func
-Map_CopyMetatileIndicesRect:
+Map_CopyCellPictureIndicesRect:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

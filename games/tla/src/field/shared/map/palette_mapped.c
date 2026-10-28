@@ -5,12 +5,12 @@ extern u8 gMapBlocks[];
 
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void CopyWorldMapTileColumn(u8 *cellBytes, u8 *screenTile) {
-  u32 metatileIndex = *(u16 *)cellBytes;
-  u16 *metatileTiles = (u16 *)Ram_MapCellBuffer;
+  u32 cellPictureIndex = *(u16 *)cellBytes;
+  u16 *cellPictureTiles = (u16 *)Ram_MapCellBuffer;
 
-  metatileTiles += metatileIndex * 2;
-  *(u16 *)screenTile = *metatileTiles++;
-  *(u16 *)(screenTile + 64) = *metatileTiles;
+  cellPictureTiles += cellPictureIndex * 2;
+  *(u16 *)screenTile = *cellPictureTiles++;
+  *(u16 *)(screenTile + 64) = *cellPictureTiles;
 }
 
 /// Draws world map tile row tileRow (two screen rows) into the BG map at

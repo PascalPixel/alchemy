@@ -4,7 +4,7 @@
 	.set import.Task_Remove, 1
 	.set import.Import_RandomNext, 1
 	.set import.MapGrid_CenterOnFollowedPoint, 1
-	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellPictureIndicesRect, 1
 	.set import.TilesetAnim_Resume, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_SetScreenShake, 1

@@ -326,7 +326,7 @@ enum VenusLighthouseGroundFloorActorId {
   /// The pillar Move pushes to the wall and Carry sets down beyond it
   /// (VenusLighthouse_MovePillarTowardWall).
   /// ★ Named from what the player sees: a grey pillar carved with spirals, two
-  /// metatiles tall, short of the wall (its render)
+  /// cell pictures tall, short of the wall (its render)
   ACTOR_WALL_PILLAR = ACTOR_FIRST_PLACED + 4,
   /// The lady statue Move pushes onto the floor switch (SPRITE_LADY_STATUE)
   /// (VenusLighthouse_MovePillarOntoSwitch).

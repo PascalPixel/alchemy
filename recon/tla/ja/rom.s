@@ -216,10 +216,10 @@ Func_0802aa74:
 Func_0802af9c:
 	.incbin "baserom.gba", 0x0002af18, 0x00000204
 	.section .rom.0002b11c, "ax"
-	.global Map_CopyMetatileIndicesRect
-	.type Map_CopyMetatileIndicesRect, %function
+	.global Map_CopyCellPictureIndicesRect
+	.type Map_CopyCellPictureIndicesRect, %function
 	.thumb_func
-Map_CopyMetatileIndicesRect:
+Map_CopyCellPictureIndicesRect:
 	.incbin "baserom.gba", 0x0002b11c, 0x00000134
 	.section .rom.0002b3cc, "ax"
 	.global Func_0802b450

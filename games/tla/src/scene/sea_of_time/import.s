@@ -65,7 +65,7 @@ Func_02001f6c:
 	.global Func_02001f74
 	.thumb_func
 Func_02001f74:
-	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellPictureIndicesRectFar
 	.global ObjectDispatch_SetSingleChildFlags
 	.thumb_func
 ObjectDispatch_SetSingleChildFlags:

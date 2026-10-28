@@ -8,14 +8,14 @@ Field_Map118:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map118, .LField_Map118_METATILES
+	map_offset Field_Map118, .LField_Map118_CELL_PICTURES
 	map_offset Field_Map118, .LField_Map118_SHAPES
 	map_offset Field_Map118, .LField_Map118_GRID
 	map_offset Field_Map118, .LField_Map118_ANIMATION
 	map_offset Field_Map118, .LField_Map118_BLEND
 	map_offset Field_Map118, .LField_Map118_MARKERS
-.LField_Map118_METATILES:
-	.incbin "games/tbs/src/map/map_118/metatiles_ja.delta1.lz"
+.LField_Map118_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_118/cell_pictures_ja.delta1.lz"
 	.balign 4, 0
 .LField_Map118_SHAPES:
 	.incbin "games/tbs/src/map/map_118/shapes.table.lz"
@@ -38,14 +38,14 @@ Field_Map118:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Map118, .LField_Map118_METATILES
+	map_offset Field_Map118, .LField_Map118_CELL_PICTURES
 	map_offset Field_Map118, .LField_Map118_SHAPES
 	map_offset Field_Map118, .LField_Map118_GRID
 	map_offset Field_Map118, .LField_Map118_ANIMATION
 	map_offset Field_Map118, .LField_Map118_BLEND
 	map_offset Field_Map118, .LField_Map118_MARKERS
-.LField_Map118_METATILES:
-	.incbin "games/tbs/src/map/map_118/metatiles.delta2.lz"
+.LField_Map118_CELL_PICTURES:
+	.incbin "games/tbs/src/map/map_118/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Map118_SHAPES:
 	.incbin "games/tbs/src/map/map_118/shapes.table.lz"

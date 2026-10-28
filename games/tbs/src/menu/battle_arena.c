@@ -1522,7 +1522,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
   if (value > 999)
     value = 999;
   for (digit = 0; digit <= 2; digit++) {
-    MapGrid_CopyMetatileIndicesRect(27, value % 10, 16 - digit, 8, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(27, value % 10, 16 - digit, 8, 1, 1);
     value = value / 10;
   }
   MapGrid_CenterOnFollowedPoint();

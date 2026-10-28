@@ -371,8 +371,9 @@ enum KeyMask {
 #define REG_IE (*(volatile u16 *)0x04000200) ///< the interrupts enabled
 #define REG_IF (*(volatile u16 *)0x04000202) ///< pending; a 1 written clears
 #define REG_WAITCNT (*(volatile u16 *)0x04000204) ///< cartridge wait states
-/// WAITCNT's SRAM wait (bits 1 and 0) of 8 cycles, as pret names it: the
-/// flash chip's wait outside its own routines.
+/// WAITCNT's SRAM wait (bits 1 and 0) of 8 cycles, as pret names it: the wait
+/// the flash routines read the chip with; programming and erasing use the
+/// chip's wait[0], then restore it.
 #define WAITCNT_SRAM_8 0x0003
 #define REG_IME (*(volatile u16 *)0x04000208) ///< all interrupts' master switch
 

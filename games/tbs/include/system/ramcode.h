@@ -19,8 +19,7 @@
     size_ = (u32)(bytes);                                                      \
                                                                                \
     (to) = Heap_Alloc(size_);                                                  \
-    Dma_Set((const void *)(code), (to),                                        \
-            (DMA_ENABLE | DMA_32BIT) << 16 | (size_ >> 2), REG_DMA3);          \
+    Dma_Set((const void *)(code), (to), DMA_COPY_WORDS(size_ >> 2), REG_DMA3); \
   } while (0)
 
 /// Allocates a heap-slot copy; release it with HeapSlot_Release.
@@ -31,7 +30,7 @@
     size_ = (u32)(bytes);                                                      \
                                                                                \
     Dma_Set((const void *)(code), HeapSlot_Alloc((slot), size_),               \
-            (DMA_ENABLE | DMA_32BIT) << 16 | (size_ >> 2), REG_DMA3);          \
+            DMA_COPY_WORDS(size_ >> 2), REG_DMA3);                             \
   } while (0)
 
 #endif

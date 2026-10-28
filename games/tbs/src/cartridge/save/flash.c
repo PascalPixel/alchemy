@@ -73,7 +73,7 @@ s32 IdentifyFlash(void) {
   u16 id;
   const struct FlashSetupInfo *const *chip;
 
-  REG_WAITCNT = (REG_WAITCNT & ~3) | 3;
+  REG_WAITCNT = (REG_WAITCNT & ~3) | WAITCNT_SRAM_8;
   id = ReadFlashId();
   chip = gFlash_Chips;
   missing = 1;

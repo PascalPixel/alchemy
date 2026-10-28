@@ -199,7 +199,7 @@ void Title_LoadIntroBackgrounds(void) {
   OBJ_PLTT[0] = 0;
   resourceData += 0x200;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
-  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_ENABLE << 16 | 0xf00,
+  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_HALFWORDS(3840),
           REG_DMA3);
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
@@ -366,7 +366,7 @@ s32 Title_ShowIntro(s32 prompt) {
         if ((y & 7) == 0) {
           Dma_Set(Ram_MapGridCellBuffer + 0x2580 - work->backRows * 960,
                   (u8 *)0x06004b00 - work->backRows * 960,
-                  DMA_ENABLE << 16 | 0x1e0, REG_DMA3);
+                  DMA_COPY_HALFWORDS(480), REG_DMA3);
           work->backRows++;
           frameCount = work->frameCount;
         }
@@ -549,7 +549,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   resourceData = Resource_GetTableEntry(resourceId);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   Decompress_TaggedLz(resourceData + 448, Ram_MapGridCellBuffer);
-  Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x2580),
+  Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
           REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
   tileIndex = 256;
@@ -640,8 +640,8 @@ s32 Title_ShowCamelotLogo(void) {
   // The decoded resource: 224 colours, the map, the still tiles, then four
   // animation pictures of 0x400 bytes each.
   resourceData = (u8 *)workIndex;
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x1c0 / 4), REG_DMA3);
-  resourceData += 0x1c0;
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
+  resourceData += 448;
   Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(0x800 / 4),
           REG_DMA3);
   resourceData += 0x800;
@@ -717,7 +717,8 @@ void TitlePaletteFade_Update(void) {
     return;
   if ((s8)++work->step < work->duration) {
     currentComponents = work->current;
-    for (remaining = 0; remaining <= 512 * 3 - 1; remaining++)
+    for (remaining = 0; remaining <= TITLE_PALETTE_FADE_CHANNELS - 1;
+         remaining++)
       *currentComponents++ += *componentSteps++;
   } else {
     Dma_Set(work->target, work->current,

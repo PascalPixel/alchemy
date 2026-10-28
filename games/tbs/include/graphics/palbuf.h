@@ -9,6 +9,14 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512
+/// colours.
+#define TITLE_PALETTE_FADE_CHANNELS (512 * 3)
+
+/// The colour channels a PaletteFade moves: B, G and R for each of its 448
+/// colours.
+#define PALETTE_FADE_CHANNELS (448 * 3)
+
 /// A palette fade for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
 /// The title intro's form of HEAP_SLOT_PALETTE_FADE, allocated by
@@ -18,9 +26,11 @@ struct TitlePaletteFade {
   u16 palette[512];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
-  u16 current[512 * 3];
-  u16 target[512 * 3]; ///< the colours current moves toward, as current
-  u16 delta[512 * 3];  ///< added to each current channel each frame
+  u16 current[TITLE_PALETTE_FADE_CHANNELS];
+  u16 target[TITLE_PALETTE_FADE_CHANNELS]; ///< the colours current moves
+                                           ///< toward, as current
+  u16 delta[TITLE_PALETTE_FADE_CHANNELS];  ///< added to each current channel
+                                           ///< each frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
   u16 packed[2][512];
   u8 page;        ///< the packed page queued this frame
@@ -47,9 +57,11 @@ struct PaletteFade {
   u16 palette[448];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
-  u16 current[448 * 3];
-  u16 target[448 * 3]; ///< the colours current moves toward, as current
-  u16 delta[448 * 3];  ///< added to each current channel each frame
+  u16 current[PALETTE_FADE_CHANNELS];
+  u16 target[PALETTE_FADE_CHANNELS]; ///< the colours current moves toward, as
+                                     ///< current
+  u16 delta[PALETTE_FADE_CHANNELS];  ///< added to each current channel each
+                                     ///< frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
   u16 packed[2][448];
   u8 page;        ///< the packed page queued this frame

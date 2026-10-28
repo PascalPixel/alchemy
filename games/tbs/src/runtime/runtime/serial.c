@@ -709,11 +709,11 @@ void SerialTest_Run(void) {
 
   Sound_PlayFar(MUS_PALACE);
   Serial_Initialize();
-  // Row 16, columns 0 to 19: tiles 0x80 to 0x93 in WINDOW_PALETTE, the 20 tiles
-  // at 0x06001000 that the received 640 bytes are copied to
+  // Row 16, columns 0 to 19: tiles 0x80 to 0x80 + 19 of BG_CHAR_BLOCK(0) in
+  // WINDOW_PALETTE, where the received 640 bytes are copied
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
-  value = (s16)(WINDOW_PALETTE << 12 | 0x93);
+  value = (s16)(WINDOW_PALETTE << 12 | (0x80 + 19));
   do {
     n--;
     *tile = value;

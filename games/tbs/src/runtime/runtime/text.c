@@ -124,8 +124,7 @@ void DebugText_Print(const u8 *src) {
     src++;
 
     if (c != 0) {
-      // 0xf000 selects WINDOW_PALETTE in each screen entry; the end of the
-      // 32x20-entry screen (0x500 bytes) wraps to its start
+      // the end of the 32x20-entry screen (0x500 bytes) wraps to its start
       u32 mask = WINDOW_PALETTE << 12;
       addr = (u32)(BG_SCREEN_BLOCK(4) + 0x500);
       do {

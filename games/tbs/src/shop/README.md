@@ -169,8 +169,8 @@ the fixed form behind `BUGFIX` (`SHOP_CANNOT_REMOVE_STATUS`).
 A counter borrows the [menu work](../menu/README.md#the-menu-work), the
 field menu's block of memory, which is free because the field menu is never
 open while a counter is. The shops, sanctums and the item picker read it as
-`struct ShopWork` ([`include/shop.h`](../../include/shop.h)), and the inn as
-`struct InnWork` ([`include/inn.h`](../../include/inn.h)).
+`struct ShopWork` ([`include/shop/shop.h`](../../include/shop/shop.h)), and the inn as
+`struct InnWork` ([`include/shop/inn.h`](../../include/shop/inn.h)).
 
 ## Design
 

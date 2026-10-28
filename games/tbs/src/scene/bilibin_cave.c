@@ -73,7 +73,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
@@ -560,7 +562,7 @@ static void BilibinCave_RestoreIceRoom(void) {
 }
 
 // The shared cell lookup retains its position before the push handler.
-#include "shared/actor_findcell.h"
+#include "shared/actor_find_at_cell.h"
 
 /// Pushing one of the two movable torches in Bilibin Cave
 /// (SceneId_BilibinCaveIce): it moves only when its next cell and movement

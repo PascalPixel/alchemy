@@ -50,7 +50,7 @@
 #include "vram_cache.h"
 #include "module/import.h"
 #include "module/scene/lamakan_desert.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -67,7 +67,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "text/msg_ids.h"
@@ -77,8 +78,8 @@
 #include "field_effect.h"
 #include "main_routine_work.h"
 #include "task.h"
-#include "resource.h"
-#include "mem.h"
+#include "battle_sprite_id.h"
+#include "heap_release.h"
 #include "dma.h"
 #include "io_write_queue.h"
 #include "menu_list.h"
@@ -179,8 +180,8 @@ enum {
 
 #define NULL ((void *)0)
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
@@ -188,7 +189,7 @@ static void LamakanDesert_TalkToSmog(void) {
   Djinn_JoinParty(ACTOR_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
 
-#include "shared/actor_waitdown.h"
+#include "shared/actor_wait_below_height.h"
 
 // The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
 // frames and a spray of sand every 16.

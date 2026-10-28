@@ -18,7 +18,7 @@
 @ overlays call the main image's routines by their own names. The exceptions
 @ are the divide routines, which overlays call under the compiler's names and
 @ the Math_ names, and the few routines whose calls in the maps differ from
-@ their prototypes (games/tbs/include/event.h says how).
+@ their prototypes (games/tbs/include/field/event.h says how).
 	.macro import name, target
 	.ifdef import.\name
 	export \name, \target

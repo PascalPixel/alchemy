@@ -44,7 +44,7 @@
 #include "main_routine_work.h"
 #include "module/scene/log_rooms_b.h"
 #include "log_rooms_a.h"
-#include "module/scene/shared/vault_itemobj.h"
+#include "module/scene/shared/vault_item_icon.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
@@ -54,7 +54,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "types.h"
@@ -149,7 +151,7 @@ enum {
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
 // Shared scene routines stay in their linked order.
-#include "shared/vault_spotflag.h"
+#include "shared/vault_bone_proximity_flag.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLogRoomsB_Entrances;
@@ -438,7 +440,7 @@ s32 Scene_Initialize(void) {
 }
 
 // Shared item-object routines follow the scene initializer.
-#include "shared/vault_itemobj.h"
+#include "shared/vault_item_icon.h"
 
 struct SceneEntrance gLogRoomsB_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,

@@ -6,7 +6,7 @@
 ///
 /// Many of the routines declared here are handwritten ARM code that the game
 /// never runs where it lies: each loader copies it to RAM first, with
-/// RamCode_Load or RamCode_LoadSlot (system/ramcode.h) or a DMA into a stack
+/// RamCode_Load or RamCode_LoadSlot (system/ram_code.h) or a DMA into a stack
 /// array, and calls the copy. Such a routine is declared as an array of
 /// bytes. A symbol ending in CodeSize is the length in bytes of the code the
 /// loader copies: it is not an object, but an address the linker sets equal
@@ -16,7 +16,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "farcall.h"
+#include "far_call.h"
 
 struct Window;
 

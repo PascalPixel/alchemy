@@ -96,8 +96,8 @@ union ActorOrEffect {
 };
 
 /// The flags of a scene's effect spawner (EFFECT_SPAWN in
-/// scene/shared/effect_spawn.h): a script number in the low bits and which of
-/// struct EffectOptions' fields to use.
+/// scene/shared/field_effect_spawn.h): a script number in the low bits and
+/// which of struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
   /// An EffectDuration, picking one of gFieldEffect_DurationScripts; the
   /// actor's mode is

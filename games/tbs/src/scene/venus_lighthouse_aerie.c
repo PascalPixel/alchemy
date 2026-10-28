@@ -59,9 +59,9 @@
 #include "vram_cache.h"
 #include "module/import.h"
 #include "module/scene/venus_lighthouse_aerie.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/scene/shared/actor_nearest.h"
-#include "module/scene/shared/effect_psynergy.h"
+#include "module/scene/shared/event_psynergy.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -74,7 +74,7 @@
 #define NULL ((void *)0)
 #include "actor.h"
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "venus_lighthouse_aerie.h"
 #include "field_effect.h"
 #include "event.h"
@@ -88,10 +88,11 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "resource.h"
+#include "battle_sprite_id.h"
 #include "iwram_call.h"
 #include "task.h"
 #include "call.h"
@@ -107,8 +108,8 @@
 #include "heap.h"
 #include "actor_script.h"
 #include "fixed_math.h"
-#include "fx_work.h"
-#include "palbuf.h"
+#include "field_psynergy_work.h"
+#include "palette_buffers.h"
 #include "flags.h"
 #include "item_ids.h"
 
@@ -215,8 +216,8 @@ enum {
 // the party and flashed white. FLAG_VENUS_AERIE_ON_PLATFORM: the leader stands
 // on a platform.
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// Pulses the actor scale around the countdown, then chooses its next
 /// pause.
@@ -1271,7 +1272,7 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
   }
 }
 
-#include "shared/effect_vertical.h"
+#include "shared/field_effect_vertical.h"
 
 /// Spawns two vertical effects using the parent position and shared cached
 /// tiles.
@@ -1326,7 +1327,7 @@ VenusLighthouseAerie_SpawnAttachedPairEffects(struct Actor *parent) {
   }
 }
 
-#include "shared/effect_psynergy.h"
+#include "shared/event_psynergy.h"
 
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
   VenusLighthouseAerie_CycleActorPalette(Actor_GetById(ACTOR_SHEBA));

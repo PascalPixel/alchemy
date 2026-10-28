@@ -15,8 +15,8 @@
   Window_PutGlyph(window, glyph, x, y)
 #endif
 
-// The party status window (enum PartyStatusFlag, ui.h) sits at the top right
-// of the screen.
+// The party status window (enum PartyStatusFlag, battle_status.h) sits at the
+// top right of the screen.
 #define PARTY_STATUS_COLUMN_WIDTH 6
 #define PARTY_STATUS_DJINN_WIDTH 5
 

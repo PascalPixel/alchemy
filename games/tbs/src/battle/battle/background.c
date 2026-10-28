@@ -38,7 +38,7 @@
 /// Called by BattleBackground_RestorePalette with 0, and by battle effects
 /// that dim the background (beams.c, canvas.c). Sets BattleWork.brightness when
 /// it darkens. Interrupts are off while it writes: REG_IME is given its own
-/// address, whose bit 0 is clear, as irqlock.h's IME_DISABLE does, and is
+/// address, whose bit 0 is clear, as irq_lock.h's IME_DISABLE does, and is
 /// restored after.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;

@@ -79,19 +79,19 @@
 #include "main_routine_work.h"
 #include "module/import.h"
 #include "module/scene/venus_lighthouse.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/system/system.h"
-#include "iowrite.h"
-#include "actor_effect.h"
+#include "io_write.h"
+#include "ground_mask.h"
 #include "macros.h"
 
 #define NULL ((void *)0)
 #include "heap_slots.h"
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "field_effect.h"
@@ -102,7 +102,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "edition.h"
@@ -530,7 +531,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_spawn.h"
 #include "ability_ids.h"
 #include "actor_script.h"
 
@@ -544,7 +545,7 @@ enum {
 };
 
 #include "shared/actor_distance.h"
-#include "shared/actor_findslot.h"
+#include "shared/actor_find_at_position.h"
 
 /// Pushing a pillar: the pillar ahead of the leader moves one cell on with him,
 /// leaning into it (ANIM_PUSH), when the cell beyond is free, nothing
@@ -875,8 +876,8 @@ static void VenusLighthouse_LeaveDepthPillarRows(void) {
 }
 
 #include "shared/actor_depth.h"
-#include "shared/actor_waitidle.h"
-#include "shared/effect_advance.h"
+#include "shared/actor_wait_until_idle.h"
+#include "shared/field_effect_advance.h"
 
 /// Drops the leader onto the floor and emits the radial landing dust.
 static void VenusLighthouse_LandWithRadialDust(void) {
@@ -931,7 +932,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Event_End();
 }
 
-#include "shared/effect_radial.h"
+#include "shared/field_effect_radial.h"
 
 /// In VenusLighthouseGroundFloor, the leader stands on the floor switch and
 /// holds it down.

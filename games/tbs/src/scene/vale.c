@@ -77,7 +77,7 @@
 #include "module/import.h"
 #include "module/scene/vale.h"
 #include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/effect_psynergy.h"
+#include "module/scene/shared/event_psynergy.h"
 #include "module/scene/shared/world_map_attached_effects.h"
 #include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
@@ -92,10 +92,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "heap_slots.h"
 #include "edition.h"
 #include "vale.h"
@@ -2964,7 +2966,7 @@ static void Vale_RoofMended(void) {
   Event_End();
 }
 
-#include "shared/effect_psynergy.h"
+#include "shared/event_psynergy.h"
 
 /// Cycles palettes on Garet and periodically spawns attached effects.
 static void Vale_UpdateGaretPaletteAndEffects(void) {
@@ -3303,7 +3305,7 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
 }
 
-#include "shared/effect_vertical.h"
+#include "shared/field_effect_vertical.h"
 #include "shared/world_map_attached_effects.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.

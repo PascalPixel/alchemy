@@ -57,7 +57,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "types.h"
@@ -580,7 +582,7 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-#include "shared/actor_findcell.h"
+#include "shared/actor_find_at_cell.h"
 
 /// The party has entered the second relief room, which turns off Move on the
 /// first relief room's statues.

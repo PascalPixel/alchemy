@@ -2,10 +2,10 @@
 #define ALCHEMY_DEBUG_MENU_TEST_H
 
 #include "types.h"
-#include "keystate.h"
+#include "input.h"
 #include "unit.h"
 #include "main_routine_work.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 #include "actor.h"
 #include "text/msg_ids.h"
 

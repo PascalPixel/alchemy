@@ -1,5 +1,5 @@
 #include "module/system/sprite_metadata.h"
-#include "metadata_lookup.h"
+#include "sprite_metadata.h"
 
 extern struct AnimationMetadata gSprite_AnimationMetadata[];
 

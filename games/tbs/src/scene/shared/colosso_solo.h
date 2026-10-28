@@ -7,13 +7,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"
 #include "actor.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "text/msg_ids.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):

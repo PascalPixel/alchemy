@@ -1,8 +1,8 @@
 #include "module/field/world_map_lines.h"
 #include "types.h"
 #include "frame.h"
-#include "mulq16.h"
-#include "project.h"
+#include "mul_q16.h"
+#include "projection.h"
 #include "static_assert.h"
 #include "vector3.h"
 

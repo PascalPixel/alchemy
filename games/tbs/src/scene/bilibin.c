@@ -101,7 +101,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "bilibin.h"
@@ -893,7 +895,7 @@ static void Bilibin_SetUpTreasury(void) {
   }
 }
 
-#include "shared/actor_findcell.h"
+#include "shared/actor_find_at_cell.h"
 
 /// Pushing a statue in Bilibin or the Bilibin Treasury, or the crates at the
 /// Bilibin Barricade: it slides one cell ahead with the leader behind it, if

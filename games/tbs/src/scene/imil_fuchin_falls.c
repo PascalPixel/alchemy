@@ -79,7 +79,7 @@
 
 #include "script_operands.h"
 #include "main_routine_work.h"
-#include "keystate.h"
+#include "input.h"
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/imil_fuchin_falls.h"
@@ -95,7 +95,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "imil_fuchin_falls.h"
@@ -106,17 +108,17 @@
 #include "djinn_ids.h"
 #include "character_ids.h"
 #include "call.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "field_effect.h"
 #include "scene.h"
 #include "display_transition.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "fixed_math.h"
-#include "actor_effect.h"
-#include "palbuf.h"
+#include "ground_mask.h"
+#include "palette_buffers.h"
 #include "io_reg.h"
 #include "flags.h"
 #include "sounds.h"
@@ -265,7 +267,7 @@ const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
   return gImilFuchinFalls_NoActorPlacements;
 }
 
-#include "shared/actor_pairmove.h"
+#include "shared/actor_pair_move.h"
 
 /// The first room's first log lies at the east end of its track.
 /// ★ Named from what the player sees: golden logs floating on the cave's pool,

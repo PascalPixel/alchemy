@@ -1,4 +1,4 @@
-	.include "games/tbs/include/game/ed_asm.h"
+	.include "games/tbs/include/ed_asm.h"
 	.section .rodata
 	.balign 4
 @ The sprite of each element's Djinni (Venus, Mercury, Mars, Jupiter)

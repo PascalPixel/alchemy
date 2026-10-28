@@ -10,7 +10,7 @@
 #include "scene.h"
 #include "scene_tables.h"
 #include "menu_list.h"
-#include "farcall.h"
+#include "far_call.h"
 
 struct Actor;
 struct ScreenPoint;
@@ -278,5 +278,11 @@ extern s16 gFieldEffect_GroundParticleFrames[];
 /// The ground particles' 16 by 16 tiles, packed (Decompress_ByteLz).
 extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const s32 gFieldEffect_RisingPulseScript[];
+
+/// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
+extern const u8 gSpriteColorTables[][256];
+/// The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
+/// 93.
+extern const u8 gActor_ShadowTiles[];
 
 #endif

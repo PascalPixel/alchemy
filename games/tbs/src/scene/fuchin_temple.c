@@ -55,7 +55,7 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "module/scene/fuchin_temple.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/system/system.h"
@@ -71,7 +71,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "call.h"
@@ -82,8 +83,8 @@
 #include "item_ids.h"
 #include "actor_script.h"
 #include "heap_slots.h"
-#include "fx_work.h"
-#include "palbuf.h"
+#include "field_psynergy_work.h"
+#include "palette_buffers.h"
 #include "io_reg.h"
 
 // Fuchin Temple's area temp flags, which last until the party enters
@@ -225,8 +226,8 @@ static void FuchinTemple_SpawnNyunpasParticles(void);
 static void FuchinTemple_AnimateRevealLesson(void);
 
 // Shared source, included in link order.
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// The Psynergy Stone outside the temple has been taken; it refills once the
 /// party enters another area.

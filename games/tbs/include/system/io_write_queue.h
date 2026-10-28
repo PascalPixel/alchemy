@@ -5,7 +5,7 @@
 /// The register write queue that VBlank carries out after each finished frame.
 
 #include "edition.h"
-#include "irqlock.h"
+#include "irq_lock.h"
 #include "types.h"
 
 /// The register writes VBlank carries out once the frame loop has finished a

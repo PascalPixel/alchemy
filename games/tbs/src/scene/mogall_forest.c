@@ -62,7 +62,7 @@
 #include "module/import.h"
 #include "module/scene/mogall_forest.h"
 #include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 
@@ -81,7 +81,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "edition.h"
@@ -301,8 +302,8 @@ enum {
 
 #include "shared/staged_actor.h"
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// Mogall Forest, the second area: talking to Quartz, a Venus Djinni, starts
 /// the Djinni battle.

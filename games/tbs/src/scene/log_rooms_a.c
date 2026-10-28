@@ -62,13 +62,13 @@
 
 #include "main_routine_work.h"
 #include "flags.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "version.h"
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/log_rooms_a.h"
 #include "log_rooms_a.h"
-#include "module/scene/shared/vault_itemobj.h"
+#include "module/scene/shared/vault_item_icon.h"
 #include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
@@ -81,10 +81,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "edition.h"
 #include "types.h"
 #include "task.h"
@@ -92,7 +94,7 @@
 #include "event.h"
 #include "scene_tables.h"
 #include "tbs_edition.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "ability_ids.h"
@@ -212,8 +214,8 @@ enum {
 };
 
 // The scene flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE
-// (shared/vault_spotflag.h) once the thieves are jailed means something else in
-// the guests' room:
+// (shared/vault_bone_proximity_flag.h) once the thieves are jailed means
+// something else in the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
 /// ★ Named from the game: "Uh-oh! I'm surrounded!" (MsgVaultImSurrounded)
@@ -2096,7 +2098,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
   }
 }
 
-#include "shared/vault_spotflag.h"
+#include "shared/vault_bone_proximity_flag.h"
 
 /// Arriving in any room of Vault's houses, shops and inn: restores the room
 /// for the story so far, and plays the loft's events: the tied-up villager, the
@@ -3178,7 +3180,7 @@ static void LogRoomsA_EndMindRead(void) {
   FieldPsynergy_End();
 }
 
-#include "shared/vault_itemobj.h"
+#include "shared/vault_item_icon.h"
 
 /// Finds the route node containing the actor's position on the
 /// eight-pixel grid.

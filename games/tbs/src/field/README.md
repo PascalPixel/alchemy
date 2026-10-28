@@ -88,7 +88,7 @@ function of its own, an update routine, that runs every frame before its script,
 while the actor is paused.
 
 The commands are the `SC_` macros of
-[`actor_script.h`](../../include/actor_script.h), each a row of
+[`actor_script.h`](../../include/field/actor_script.h), each a row of
 `gActorScript_CommandTable`.
 
 | Name | Meaning |
@@ -349,7 +349,7 @@ differences from this one.
   entries of OAM (the hardware's sprite list), and up to four **sprite animations**
   (`struct SpriteAnimation`), animations composed into one picture.
 - An **actor script** is a list of 32-bit words: `SC_` commands of
-  [`actor_script.h`](../../include/actor_script.h) and their operands. An **animation
+  [`actor_script.h`](../../include/field/actor_script.h) and their operands. An **animation
   script** is a list of byte pairs that a sprite animation plays.
 - A map **layer** is one of a town's three backgrounds
   ([Maps](../map/README.md#one-grid-three-layers)).

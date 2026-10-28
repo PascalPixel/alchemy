@@ -58,7 +58,7 @@
 #include "scene_ids.h"
 #include "module/scene/lunpa.h"
 #include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "types.h"
@@ -78,8 +78,8 @@ static void Lunpa_WatchForUncloakedParty(void);
 
 enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// Frost has frozen the hidden puddle into an ice pillar to stand on.
 /// ★ Named from what the player sees: a small blue puddle that only Reveal
@@ -113,7 +113,7 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 /// so how did you get here?" (MsgLunpaGuardsCatchParty)
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_SCENE_TEMP_44
 
-/// How long an effect of shared/effect_spawn.h lasts: 22, 44 or 126
+/// How long an effect of shared/field_effect_spawn.h lasts: 22, 44 or 126
 /// frames, then it moves away and is released.
 s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, 0), SC_WAIT(1),

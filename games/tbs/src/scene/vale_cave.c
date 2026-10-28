@@ -63,7 +63,7 @@
 #include "heap_slots.h"
 #include "module/import.h"
 #include "module/scene/vale_cave.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/system/system.h"
@@ -81,7 +81,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "edition.h"
@@ -205,8 +206,8 @@ enum ValeCaveCellBehavior { CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 #include "shared/staged_actor.h"
 
 /// In the third room, the western log has been pushed off the ledge.
@@ -836,7 +837,7 @@ static void ValeCave_UpdateRidingLogPassage(void) {
   }
 }
 
-#include "shared/actor_pairmove.h"
+#include "shared/actor_pair_move.h"
 
 /// In Vale Cave's second room, walking east onto the riding log: it carries
 /// the leader to the eastern end of the passage.

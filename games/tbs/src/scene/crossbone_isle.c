@@ -65,7 +65,7 @@
 #include "module/import.h"
 #include "module/scene/crossbone_isle.h"
 #include "module/scene/shared/actor_orbit.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -82,7 +82,8 @@
 #include "debug.h"
 #include "game.h"
 #include "graphics.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "edition.h"
 #include "event_inline.h"
@@ -230,8 +231,8 @@ static void CrossboneIsle_DrawLogPuzzleFootprints(void);
 
 #include "shared/staged_actor.h"
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
@@ -276,7 +277,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gCrossboneIsle_NoActorPlacements;
 }
 
-#include "shared/effect_advance.h"
+#include "shared/field_effect_advance.h"
 
 /// Emits a ring of dust around a corridor room's pillar as it sinks.
 static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {

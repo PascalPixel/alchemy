@@ -1,4 +1,4 @@
-#include "sound_driver.h"
+#include "../../include/sound/sound_driver.h"
 #include "types.h"
 #include "../../include/system/io_reg.h"
 

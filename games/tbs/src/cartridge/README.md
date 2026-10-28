@@ -56,7 +56,7 @@ heap's end at 30 KB, so each heap can run into the buffer above it, and in
 play both do: the EWRAM heap reaches into the world map's tile buffer in
 battle, and in battle the IWRAM heap runs over the sound mixer's copy at
 28 KB, which never runs during a battle (the measurements are in the comments
-on `gEwramHeap` and `gIwramHeap`, `include/system/mem.h`).
+on `gEwramHeap` and `gIwramHeap`, `include/system/heap_release.h`).
 `main.ld` declares the areas, and the English link map,
 `out/tbs-en/tbs-en.map`, has every address.
 
@@ -164,8 +164,8 @@ heap, the stack [`wait()`](../../glossary.md#wait) runs its
 address differs. Each is defined once, with why it cannot move, and the check
 build with a current GCC (`make modern`) reaches each by its name instead.
 
-They are the `FIXED_ADDRESS` lines of `include/ram_buffer.h`,
-`include/iwram_call.h` and `include/cartboot.h`.
+They are the `FIXED_ADDRESS` lines of `include/system/ram_buffer.h`,
+`include/system/iwram_call.h` and `include/gamepak/rom_header.h`.
 
 ## Design
 

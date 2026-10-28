@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"
-#include "farcall.h"
+#include "far_call.h"
 
 /// A 16-byte rectangle. In TBS it only reserves stack space in
 /// tbs-ja's glyph renderer; no TBS code reads its fields.

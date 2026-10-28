@@ -182,7 +182,7 @@ beside it.
 | --- | --- |
 | `include/flags.h` | the [game flags](../glossary.md#game-flag) |
 | `include/sounds.h` | the music, jingles and sound effects |
-| `include/event.h` | the calls events are written in |
+| `include/field/event.h` | the calls events are written in |
 | `include/module/<path>.h` | what the C file at `<path>.c` defines |
 | `include/farcall/` | each far-call table's `Far` names |
 

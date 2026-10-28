@@ -106,7 +106,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "types.h"
@@ -123,8 +125,8 @@
 #include "macros.h"
 
 #include "actor.h"
-#include "actor_effect.h"
-#include "orbit.h"
+#include "ground_mask.h"
+#include "shared/orbit.h"
 #include "fixed_math.h"
 #include "scene.h"
 #include "heap.h"
@@ -2071,7 +2073,7 @@ static void Kalay_HammetReturnsToPalace(void) {
 }
 
 // Shared source, included in link order.
-#include "shared/actor_findcell.h"
+#include "shared/actor_find_at_cell.h"
 
 /// In the Kalay Tunnel (KalayTunnelTreasureRoom), walking into a statue pushes
 /// it one cell when there is room.

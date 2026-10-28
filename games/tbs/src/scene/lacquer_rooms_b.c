@@ -28,7 +28,7 @@
 
 #include "main_routine_work.h"
 #include "module/scene/lacquer_rooms_b.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "types.h"
@@ -40,7 +40,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "field_effect.h"
@@ -126,8 +127,8 @@ enum {
 /// room behind the school (spr_041.png's frame 36; the room's render).
 enum { ANIM_HSU_IN_BED = 6 };
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"

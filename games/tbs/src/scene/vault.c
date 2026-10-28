@@ -40,12 +40,12 @@
 /// beneath it between the deck and the path (shared/vault_toggle.h).
 
 #include "main_routine_work.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "window.h"
 #include "module/scene/vault.h"
 #include "vault.h"
 #include "module/scene/shared/vault_range.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/battle/battle.h"
@@ -61,11 +61,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "tbs_edition.h"
-#include "battle_party.h"
+#include "battle_side.h"
 #include "text/msg_ids.h"
 #include "call.h"
 #include "fixed_point_position.h"
@@ -152,8 +153,8 @@ static void Vault_ShowStandingActorMessage(s32 actorId);
 static void Vault_ShowMessageAndWait(s32 actorId, s32 delay);
 static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 #include "shared/vault_nearby.h"
 

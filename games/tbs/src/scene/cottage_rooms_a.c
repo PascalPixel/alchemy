@@ -63,7 +63,7 @@
 #include "event.h"
 #include "scene_tables.h"
 #include "call.h"
-#include "fxblend.h"
+#include "field_blend.h"
 #include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"

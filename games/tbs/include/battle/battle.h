@@ -8,7 +8,7 @@
 #include "edition.h"
 #include "vector3.h"
 #include "speaker.h"
-#include "farcall.h"
+#include "far_call.h"
 
 struct BattleAction;
 struct BattleEffectParams;

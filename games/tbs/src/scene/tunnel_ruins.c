@@ -62,11 +62,11 @@
 #include "heap_slots.h"
 #include "module/import.h"
 #include "module/scene/tunnel_ruins.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/system/system.h"
-#include "actor_effect.h"
+#include "ground_mask.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
 #include "actor.h"
@@ -85,7 +85,7 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "ability_ids.h"
@@ -231,8 +231,8 @@ static void TunnelRuins_MarkPushPillarCells(void);
 
 #include "shared/staged_actor.h"
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// Turns off the shadow of the Venus Lighthouse model once
 /// gTunnelRuins_ShrinkScript has shrunk it
@@ -456,7 +456,7 @@ static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
   actor->targetY = ACTOR_NO_TARGET;
 }
 
-#include "shared/effect_advance.h"
+#include "shared/field_effect_advance.h"
 
 /// Walking south off a step: the leader hops 12 pixels forward and slides 16
 /// pixels down, kicking up dust behind.
@@ -518,7 +518,7 @@ static void TunnelRuins_HopDownStep(void) {
   ((void (*)(struct Actor *))TunnelRuins_RideStoneBelow)
 #endif
 
-#include "shared/effect_radial.h"
+#include "shared/field_effect_radial.h"
 
 /// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its puddle
 /// follows it.

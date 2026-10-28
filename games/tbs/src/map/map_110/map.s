@@ -1,4 +1,4 @@
-	.include "games/tbs/include/game/ed_asm.h"
+	.include "games/tbs/include/ed_asm.h"
 	.include "games/tbs/src/map/map.inc"
 	.section .rodata
 	.global Field_Map110

@@ -1,4 +1,4 @@
-	.include "games/tbs/include/game/ed_asm.h"
+	.include "games/tbs/include/ed_asm.h"
 	.section .rodata
 	.balign 4
 @ 64x16 text headings, each made of two 32x16 sprites

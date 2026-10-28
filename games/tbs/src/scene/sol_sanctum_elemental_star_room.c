@@ -40,7 +40,7 @@
 #include "main_routine_work.h"
 #include "module/import.h"
 #include "module/scene/sol_sanctum_elemental_star_room.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
@@ -61,7 +61,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "battle_unit.h"
@@ -72,7 +73,7 @@
 #include "ability_ids.h"
 #include "actor_script.h"
 #include "fixed_math.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 #include "io_reg.h"
 #include "flags.h"
 #include "sounds.h"
@@ -150,8 +151,8 @@ enum SolSanctumElementalStarRoomCellBehavior {
 
 struct Actor;
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// Advances through the current dialogue's consecutive messages.
 static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {

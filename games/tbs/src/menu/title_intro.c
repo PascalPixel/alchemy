@@ -2,16 +2,18 @@
 #include "module/menu/title_intro.h"
 #include "module/system/system.h"
 #include "battle.h"
-#include "keystate.h"
+#include "input.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
 #include "task.h"
 #include "dma.h"
@@ -20,14 +22,14 @@
 #include "io_write_queue.h"
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"
-#include "resource.h"
+#include "battle_sprite_id.h"
 #include "resource_ids.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 #include "iwram_call.h"
 #include "heap.h"
 #include "heap_slots.h"
 #include "frame.h"
-#include "oambuf.h"
+#include "oam_words.h"
 #include "macros.h"
 #include "sounds.h"
 
@@ -119,7 +121,7 @@ const u8 gTitle_PromptBlendLevels[60] = {
 /// list to OAM.
 void Title_UpdateIntroSprites(void) {
   /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
-   * words are volatile (oambuf.h); as plain u32 words, 157 of 496
+   * words are volatile (oam_words.h); as plain u32 words, 157 of 496
    * instructions differ in tbs-en. */
   struct IntroWork *work;
   u32 spriteCount;
@@ -1103,7 +1105,8 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
 }
 
 // The response curves of TitlePaletteFade_BuildColors's filters. Like the
-// declarations in palbuf.h they are not const: as const the code differs.
+// declarations in palette_buffers.h they are not const: as const the code
+// differs.
 
 /// Maps a channel (0..31) to a component (0..31 << 10). The same curves as
 /// gColorBuffer_ChannelCurve and its Light and Contrast curves, which sit in

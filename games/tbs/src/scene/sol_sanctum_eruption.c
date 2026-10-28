@@ -36,7 +36,7 @@
 #include "script_operands.h"
 #include "main_routine_work.h"
 #include "module/scene/sol_sanctum_eruption.h"
-#include "module/scene/shared/effect_psynergy.h"
+#include "module/scene/shared/event_psynergy.h"
 #include "module/scene/shared/sol_sanctum_elemental_star_ring_setup.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
@@ -48,13 +48,15 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "resource.h"
+#include "battle_sprite_id.h"
 #include "sol_sanctum_eruption.h"
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "event.h"
 #include "event_inline.h"
 #include "iwram_call.h"
@@ -66,7 +68,7 @@
 #include "heap_slots.h"
 #include "vram_cache.h"
 #include "fixed_math.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 #include "macros.h"
 #include "flags.h"
 #include "sounds.h"
@@ -74,7 +76,7 @@
 #include "io_reg.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 
 /// Saturos's group has started to leave, and the embers fall without their
 /// sound.
@@ -1802,7 +1804,7 @@ static void SolSanctumEruption_CycleActorPalette(struct Actor *actor) {
   }
 }
 
-#include "shared/effect_vertical.h"
+#include "shared/field_effect_vertical.h"
 
 /// Creates two vertical effects sharing the parent position and cached tiles.
 static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
@@ -1851,7 +1853,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/effect_psynergy.h"
+#include "shared/event_psynergy.h"
 
 /// Cycles the Wise One's palette while it glows. Run each frame as a task
 /// that SolSanctumEruption_PlayWiseOneRescue adds and

@@ -53,7 +53,7 @@
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/gondowan_cave.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -63,7 +63,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "types.h"
@@ -146,10 +148,10 @@ static void GondowanCave_MovePillar(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 
 // Shared effect routines retain their position before the scene's events.
-#include "shared/effect_create.h"
+#include "shared/field_effect_create.h"
 
 // Particle and movable-actor routines precede this scene's entry points.
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_spawn.h"
 #include "shared/staged_actor.h"
 #include "ability_ids.h"
 #include "item_ids.h"

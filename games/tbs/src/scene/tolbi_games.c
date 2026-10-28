@@ -36,7 +36,7 @@
 ///   opens to show the prize as it is given. In the editions before TBS_PATCH_1
 ///   the coin and medal counts show an `=` after each number.
 
-#include "keystate.h"
+#include "input.h"
 #include "module/scene/tolbi_games.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
@@ -51,7 +51,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "types.h"
@@ -69,7 +71,7 @@
 #include "menu_list.h"
 #include "iwram_call.h"
 #include "ability_ids.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "frame.h"
 #include "fixed_math.h"
 #include "item_ids.h"

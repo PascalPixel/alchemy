@@ -59,7 +59,7 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "module/scene/tree_rooms.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
@@ -76,10 +76,11 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "resource.h"
+#include "battle_sprite_id.h"
 #include "heap_slots.h"
 #include "iwram_call.h"
 #include "dma.h"
@@ -150,9 +151,9 @@ static struct FieldPosition sSparkOrigin;
 static s32 sSparkFrame;
 static s16 *sLastCocoon;
 
-#include "shared/effect_create.h"
+#include "shared/field_effect_create.h"
 
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
@@ -1142,7 +1143,7 @@ static void TreeRooms_CastReveal(void) {
   Task_Remove(TretPalette_UpdateMapTint);
 }
 
-#include "shared/effect_advance.h"
+#include "shared/field_effect_advance.h"
 
 /// Entrance 10, at the end of the fall from cocoon 50: the leader drops
 /// in from 130 pixels up in front of Tret, lands in a ring of dust and the map

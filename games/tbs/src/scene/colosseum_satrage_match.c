@@ -72,18 +72,20 @@
 #include "module/system/system.h"
 #include "module/scene/shared/colosso_item_icon.h"
 #include "battle.h"
-#include "keystate.h"
+#include "input.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "fx_work.h"
-#include "mem.h"
-#include "resource.h"
+#include "field_psynergy_work.h"
+#include "heap_release.h"
+#include "battle_sprite_id.h"
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"
@@ -101,7 +103,7 @@
 #include "heap_slots.h"
 #include "heap.h"
 #include "scene.h"
-#include "colosso_gauge.h"
+#include "shared/colosso_gauge.h"
 #include "flags.h"
 #include "sounds.h"
 #include "sound_driver_symbols.h"
@@ -1908,7 +1910,7 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
 }
 
 #include "shared/colosso_map_state.h"
-#include "shared/actor_findslot.h"
+#include "shared/actor_find_at_position.h"
 
 /// Pushes the adjacent obstacle only when the destination and space above are
 /// clear.

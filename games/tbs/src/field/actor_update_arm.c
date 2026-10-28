@@ -3,7 +3,7 @@
 #include "types.h"
 #include "irq.h"
 #include "iwram_call.h"
-#include "mulq16.h"
+#include "mul_q16.h"
 #include "actor_arm_view.h"
 #include "macros.h"
 

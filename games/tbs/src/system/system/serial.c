@@ -571,7 +571,7 @@ struct SerialHalfword {
 /// gSerialReceiveDestination.
 void Serial_StepBlockTransfer(void) {
   /* FAKEMATCH(volatile): gSerialSendSize and gSerialBlockNumber are volatile
-   * (serial_runtime.h), so each access is its own load or store; as plain
+   * (serial.h), so each access is its own load or store; as plain
    * globals, 99 of 257 instructions differ in tbs-en. */
   struct SerialTransferState *peer;
   u32 id;

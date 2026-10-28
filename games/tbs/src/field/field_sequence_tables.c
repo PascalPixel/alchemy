@@ -9,9 +9,9 @@
 #include "types.h"
 #include "scene_tables.h"
 
-// Their readers declare them in battle.h, field.h, graphics.h, scroll.h and
-// field_effect_scripts.h, and field_sequence.c declares the colour curves. Some
-// readers declare their table without const: battle.h's
+// Their readers declare them in battle.h, field.h, graphics.h, line_scroll.h
+// and field_effect_scripts.h, and field_sequence.c declares the colour curves.
+// Some readers declare their table without const: battle.h's
 // gFieldEffect_TargetRangeByMode, gMindRead_CasterPaletteCycle,
 // gSpeakerDefinitions, gFieldEffect_GroundParticleFrames,
 // gFieldEffect_PulseScales, gFieldEffect_CyclePatternWords and

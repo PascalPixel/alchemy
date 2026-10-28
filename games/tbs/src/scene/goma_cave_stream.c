@@ -29,7 +29,7 @@
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 #include "main_routine_work.h"
 #include "module/scene/goma_cave_stream.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -42,7 +42,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "map_grid_copy.h"
@@ -73,8 +74,8 @@ enum { ENTRANCE_BESIDE_STUMP = 99 };
 
 static void GomaCaveStream_LeapStump(s32 stumpId);
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.sceneId == (s32)&SceneId_GomaCaveBridge) {
@@ -156,7 +157,7 @@ static void GomaCaveStream_SpinStump(struct Actor *actor) {
   sprite->rotation -= 0x800;
 }
 
-#include "shared/actor_waitdown.h"
+#include "shared/actor_wait_below_height.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then hops on into the water with a splash and sinks

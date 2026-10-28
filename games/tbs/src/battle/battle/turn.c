@@ -453,7 +453,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   // transfer that grows past its expected size, or ends short of it, fails.
   s32 LinkBattle_ReceiveActions(void) {
     // gSerialReceivedSize changes under the serial interrupt and is volatile
-    // (serial_runtime.h), so every read here loads it again.
+    // (serial.h), so every read here loads it again.
     s32 timeout;
     s32 disconnected;
     s32 status = Serial_StartReceive(state);

@@ -17,12 +17,13 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "types.h"
 
-#include "resource_37c_runtime.h"
 #include "scene_tables.h"
 
 #include "event.h"

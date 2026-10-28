@@ -1,7 +1,7 @@
 @ Why assembly: the cartridge header: the BIOS starts the game at its first word, a branch
 @ to System_Entry inside a block of header data, a linkage no procedure-call
 @ standard produces.
-	.include "games/tbs/include/game/ed_asm.h"
+	.include "games/tbs/include/ed_asm.h"
 	.section .rodata
 	.arm
 	.global Rom_Start

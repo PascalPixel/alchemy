@@ -5,7 +5,7 @@
 /// The patch levels: our groups of the measured changes from the Japanese
 /// release.
 
-#include "game/edition.h"
+#include "edition.h"
 
 #if (defined(TBS_EDITION_JA) + defined(TBS_EDITION_EN) +                       \
      defined(TBS_EDITION_DE) + defined(TBS_EDITION_ES) +                       \

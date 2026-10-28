@@ -162,7 +162,7 @@ ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
 INCLUDES := -Igames/$(GAME)/include \
-            $(addprefix -Igames/$(GAME)/include/,battle field game graphics lib menu sound system)
+            $(addprefix -Igames/$(GAME)/include/,battle field game gamepak graphics lib menu shop sound system window)
 
 # Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game.
 CFLAGS_tbs := -O2 -mthumb -mthumb-interwork -nostdinc -fcall-used-r4

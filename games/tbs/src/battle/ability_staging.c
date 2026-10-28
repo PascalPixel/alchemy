@@ -3,7 +3,7 @@
 /// BattleActionRun_Build gives it and the effect it plays, by ability id.
 /// The ability names in the comments are the English release's.
 
-#include "battle_command.h"
+#include "ability_staging.h"
 #include "module/battle_effect/battle_effect.h"
 
 // clang-format off

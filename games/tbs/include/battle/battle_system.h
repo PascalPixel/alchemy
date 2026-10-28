@@ -5,9 +5,9 @@
 /// BattleUnit_Recalculate, which recalculates a unit's stats.
 
 #include "playback_queue.h"
-#include "battle_type.h"
+#include "battle_action_run.h"
 #include "edition.h"
-#include "farcall.h"
+#include "far_call.h"
 
 void BattleUnit_Recalculate(s32 unitId);
 

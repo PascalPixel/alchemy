@@ -43,7 +43,7 @@
 #include "djinn_ids.h"
 #include "module/import.h"
 #include "module/scene/xian.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -63,7 +63,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "call.h"
@@ -75,8 +76,8 @@
 #include "flags.h"
 #include "sounds.h"
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 // Xian's temporary flags: FLAG_XIAN_WATER_SPILLED the water carrier has spilled
 // her water FLAG_XIAN_SPILLED_WATER_FROZEN the spilled water is frozen

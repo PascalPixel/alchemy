@@ -31,7 +31,7 @@
 /// to the World Map.
 #include "module/scene/goma_cave_entrance.h"
 #include "version.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
@@ -47,7 +47,8 @@
 #include "debug.h"
 #include "game.h"
 #include "graphics.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "edition.h"
 #include "call.h"
@@ -64,7 +65,7 @@
 #include "sounds.h"
 #include "item_ids.h"
 #include "vector3.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 #include "fixed_math.h"
 
 /// The room's actors. Garet's and Ivan's rows go to their party slots,
@@ -110,8 +111,8 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
 
 // Shared effects stay at their native positions in the overlay.
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
@@ -528,7 +529,7 @@ static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
 }
 
 // Shared height-wait code stays at its native position in the overlay.
-#include "shared/actor_waitdown.h"
+#include "shared/actor_wait_below_height.h"
 
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then hops on into the pool under the waterfall with a splash and sinks

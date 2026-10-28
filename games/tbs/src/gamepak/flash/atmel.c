@@ -1,5 +1,5 @@
-#include "../../../include/system/flash.h"
-#include "../../../include/system/flash_data.h"
+#include "../../../include/gamepak/flash.h"
+#include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
 extern FlashWaitProc gWaitForFlashWrite;

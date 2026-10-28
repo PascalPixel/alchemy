@@ -14,9 +14,11 @@
 -Igames/tbs/include/battle
 -Igames/tbs/include/field
 -Igames/tbs/include/game
+-Igames/tbs/include/gamepak
 -Igames/tbs/include/graphics
--Igames/tbs/include/lib
 -Igames/tbs/include/menu
+-Igames/tbs/include/shop
 -Igames/tbs/include/sound
 -Igames/tbs/include/system
+-Igames/tbs/include/window
 -Iout/tbs-en

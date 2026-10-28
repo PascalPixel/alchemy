@@ -86,7 +86,7 @@
 #include "scene_ids.h"
 #include "vram_cache.h"
 #include "module/scene/vale_plaza.h"
-#include "module/scene/shared/effect_psynergy.h"
+#include "module/scene/shared/event_psynergy.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -100,10 +100,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "resource.h"
+#include "battle_sprite_id.h"
 #include "heap_slots.h"
 #include "vale_plaza.h"
 #include "map_grid_scroll.h"
@@ -111,7 +113,7 @@
 #include "event.h"
 #include "event_inline.h"
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "ability_ids.h"
 #include "scene_tables.h"
 #include "actor_script.h"
@@ -1978,10 +1980,10 @@ static void ValePlaza_CyclePsynergyPalette(struct Actor *actor) {
   }
 }
 
-#include "shared/effect_vertical.h"
+#include "shared/field_effect_vertical.h"
 
 /// Spawns a pair of Psynergy sparks, one rising and one falling
-/// (shared/effect_vertical.h).
+/// (shared/field_effect_vertical.h).
 static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -2032,7 +2034,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/effect_psynergy.h"
+#include "shared/event_psynergy.h"
 
 /// Updates the rock-lifting boy's Psynergy display.
 ///

@@ -52,7 +52,7 @@
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/babi_lighthouse.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -72,10 +72,11 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 #include "call.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
@@ -213,8 +214,8 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
 
 #include "shared/staged_actor.h"
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// Talking to the Djinni in BabiLighthouseLuff starts the battle with
 /// Luff, a Jupiter Djinni.
@@ -222,8 +223,8 @@ static void BabiLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_LUFF, DJINNI_LUFF);
 }
 
-#include "shared/actor_waitidle.h"
-#include "shared/effect_advance.h"
+#include "shared/actor_wait_until_idle.h"
+#include "shared/field_effect_advance.h"
 
 /// Arriving by falling from the floor above: the leader drops in, lands with
 /// a thud that shakes the screen and throws up a ring of dust, and is startled.

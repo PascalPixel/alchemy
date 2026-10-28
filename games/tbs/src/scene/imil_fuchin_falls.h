@@ -2,7 +2,7 @@
 #define IMIL_FUCHIN_FALLS_H
 
 #include "types.h"
-#include "keystate.h"
+#include "input.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "item_ids.h"

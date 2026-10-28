@@ -1,5 +1,5 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef ALCHEMY_DEBUG_H
+#define ALCHEMY_DEBUG_H
 
 /// @file
 /// The main-image calls the debug menus import, and their palette swatch tiles.
@@ -10,7 +10,7 @@
 #include "module/window/window.h"
 #include "types.h"
 #include "edition.h"
-#include "farcall.h"
+#include "far_call.h"
 
 struct ItemDefinition;
 struct Window;

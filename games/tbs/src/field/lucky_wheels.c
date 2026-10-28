@@ -2,13 +2,13 @@
 #include "module/field/lucky_wheels.h"
 #include "module/system/system.h"
 #include "battle.h"
-#include "keystate.h"
+#include "input.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "lucky_wheels_title.h"
 #include "sound.h"
 #include "system.h"
 #include "battle_effect_work.h"
@@ -18,10 +18,10 @@
 #include "macros.h"
 #include "dma.h"
 #include "iwram_call.h"
-#include "resource.h"
+#include "battle_sprite_id.h"
 #include "io_reg.h"
 #include "sounds.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "fixed_math.h"
 #include "particle.h"
 #include "blitter.h"
@@ -31,9 +31,9 @@
 #include "resource_ids.h"
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
-#include "lzpack.h"
+#include "lucky_wheels_lzpack.h"
 #include "frame.h"
-#include "oambuf.h"
+#include "oam_words.h"
 #include "item_ids.h"
 
 //--------------------------------------------------------------------------
@@ -353,7 +353,7 @@ struct LuckyWheelsWonPrizesView {
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
 /// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_Update(void) {
-  /* FAKEMATCH(volatile): struct OamWords's volatile words (oambuf.h) keep
+  /* FAKEMATCH(volatile): struct OamWords's volatile words (oam_words.h) keep
    * each list loop's offset givs; as plain u32 words, 1242 of 1729
    * instructions differ in tbs-en. */
   struct LuckyWheelsWork *work;

@@ -76,14 +76,14 @@
 /// (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
 
 #include "script_operands.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "main_routine_work.h"
 #include "heap_slots.h"
 #include "heap.h"
-#include "keystate.h"
+#include "input.h"
 #include "module/import.h"
 #include "module/scene/mercury_lighthouse_entrance.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/scene/shared/mercury_lighthouse_lights.h"
 #include "module/scene/shared/mercury_lighthouse_pillar.h"
 #include "module/field/field_sequence.h"
@@ -92,14 +92,14 @@
 #include "module/window/window.h"
 #include "module/window/screens.h"
 #include "module/system/system.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "macros.h"
 
 #define NULL ((void *)0)
 #include "actor.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "types.h"
-#include "mercury.h"
+#include "shared/mercury_lighthouse.h"
 #include "scene_tables.h"
 #include "pushed_actor.h"
 #include "battle.h"
@@ -108,7 +108,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "map_grid_copy.h"
@@ -159,8 +160,8 @@ enum {
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 #include "shared/staged_actor.h"
 #include "shared/mercury_lighthouse_sparks.h"
 

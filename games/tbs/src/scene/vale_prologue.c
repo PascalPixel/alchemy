@@ -57,7 +57,7 @@
 #include "main_routine_work.h"
 #include "module/import.h"
 #include "module/scene/vale_prologue.h"
-#include "module/scene/shared/effect_psynergy.h"
+#include "module/scene/shared/event_psynergy.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -68,7 +68,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "types.h"
@@ -78,9 +80,9 @@
 #include "call.h"
 #include "event_inline.h"
 #include "actor.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "text/msg_ids.h"
-#include "resource.h"
+#include "battle_sprite_id.h"
 #include "field_effect.h"
 #include "tbs_edition.h"
 #include "actor_script.h"
@@ -91,7 +93,7 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "io_reg.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 
 static void ValePrologue_DoraSendsIsaacToThePlaza(void);
 static void ValePrologue_ApplyFirstRockCollision(void);
@@ -2934,10 +2936,10 @@ static void ValePrologue_CycleActorPalettes(struct Actor *actor) {
   }
 }
 
-#include "shared/effect_vertical.h"
+#include "shared/field_effect_vertical.h"
 
 /// Spawns a pair of Psynergy sparks on an elder, one rising and one falling
-/// (shared/effect_vertical.h), with SE_JUMP.
+/// (shared/field_effect_vertical.h), with SE_JUMP.
 static void ValePrologue_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -2988,7 +2990,7 @@ static void ValePrologue_SpawnEffectPair(struct Actor *parent) {
   }
 }
 
-#include "shared/effect_psynergy.h"
+#include "shared/event_psynergy.h"
 
 /// Cycles the four elders' palettes and effects while they hold the Boulder;
 /// the westernmost elder's stop once that elder lets go (sShakeDone).

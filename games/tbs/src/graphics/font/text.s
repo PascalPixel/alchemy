@@ -1,4 +1,4 @@
-	.include "games/tbs/include/game/ed_asm.h"
+	.include "games/tbs/include/ed_asm.h"
 	.section .rodata
 	.global gFont_Glyphs
 gFont_Glyphs:

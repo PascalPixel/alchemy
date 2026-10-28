@@ -98,12 +98,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
 #include "types.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "djinn_ids.h"
@@ -116,8 +118,8 @@
 #include "edition.h"
 #include "tbs_edition.h"
 #include "inventory.h"
-#include "resource.h"
-#include "mem.h"
+#include "battle_sprite_id.h"
+#include "heap_release.h"
 #include "field_effect.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -125,9 +127,9 @@
 #include "actor_script.h"
 #include "actor.h"
 #include "frame.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 #include "fixed_math.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 #include "flags.h"
 #include "sounds.h"
 #include "sound_driver_symbols.h"
@@ -2876,7 +2878,7 @@ UNUSED static void WorldMap_CycleActorPalettes(struct Actor *actor) {
   }
 }
 
-#include "shared/effect_vertical.h"
+#include "shared/field_effect_vertical.h"
 #include "shared/world_map_attached_effects.h"
 
 s32 gCaravanFirstWagonArrives[] = {

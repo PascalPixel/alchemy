@@ -6,19 +6,21 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "io_reg.h"
-#include "battle_display.h"
-#include "project.h"
+#include "battle_camera.h"
+#include "projection.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "edition.h"
 #include "task.h"
 #include "call.h"
 #include "frame.h"
-#include "oambuf.h"
+#include "oam_words.h"
 #include "sounds.h"
 #include "macros.h"
 
@@ -107,12 +109,12 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 /// Unused: the reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
-#include "resource.h"
-#include "mem.h"
+#include "battle_sprite_id.h"
+#include "heap_release.h"
 #include "dma.h"
 #include "ram_buffer.h"
 #include "fixed_math.h"
-#include "ui.h"
+#include "battle_status.h"
 #include "main_routine_work.h"
 #include "map_grid_scroll.h"
 #include "battle_effect_work.h"
@@ -184,7 +186,7 @@ struct LuckyDiceSprites {
   struct Window *helpWindow;     ///< the Throw and Quit buttons
 };
 
-#include "keystate.h"
+#include "input.h"
 #include "../graphics/lucky_dice/tables.h"
 
 #define DICE_COUNT 2
@@ -288,7 +290,7 @@ void LuckyDice_Run(void) {
   u16 *spritePalette;
   struct BattleEffectWork *diceWork;
   /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
-   * words are volatile (oambuf.h); as plain u32 words, 1550 of 2046
+   * words are volatile (oam_words.h); as plain u32 words, 1550 of 2046
    * instructions differ in tbs-en. */
   struct LuckyDiceSprites *sprites;
   struct BattleCamera *camera;

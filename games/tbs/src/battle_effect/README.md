@@ -64,9 +64,9 @@ instant death landing on its first target sets the variant to the stronger one
 (`EFFECT_VARIANT_STRONGER`). A critical hit adds `EFFECT_ID_CRITICAL_OFFSET` to a plain
 attack's effect, which turns it into the ring and spark effect.
 
-The bits are named by the `EFFECT_` macros in `include/battle_command.h`,
+The bits are named by the `EFFECT_` macros in `include/battle/ability_staging.h`,
 and the map is written out on `BattleActionRun.battleEffect`
-(`include/battle_type.h`).
+(`include/battle/battle_action_run.h`).
 
 ## Entry points and their blocks
 

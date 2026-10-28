@@ -6,9 +6,9 @@
 /// numbers and sleep.
 
 #include "types.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "edition.h"
-#include "farcall.h"
+#include "far_call.h"
 
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
@@ -21,34 +21,6 @@ extern u16 gSleepActive;
 #include "types.h"
 #include "edition.h"
 
-struct FlashType;
-struct FlashSetupInfo;
-// The flash library's state, after pret's agb_flash: IdentifyFlash installs
-// the chip's routines and type. The credits borrow four of these cells while
-// no flash operation runs (menu/credits.c).
-extern struct FlashSetupInfo gFlash_ChipAtmel;
-extern const struct FlashSetupInfo gFlash_ChipDefault;
-/// The chip's erase-all routine (FlashSetupInfo.handlers[1]).
-extern u32 gEraseFlashChip;
-/// The chip's erase-sector routine (handlers[2]).
-extern u32 gEraseFlashSector;
-#ifndef OWN_gFlashMaxTime
-/// The chip's wait-time table (FlashSetupInfo.maxTime).
-extern u16 *gFlashMaxTime;
-#endif
-#ifndef OWN_gFlash
-extern const struct FlashType *gFlash;
-#endif
-#ifndef OWN_gFlashSavedIme
-/// REG_IME as StartFlashTimer found it, for StopFlashTimer to restore.
-extern u16 gFlashSavedIme;
-#endif
-#ifndef OWN_gFlashTimeoutFlag
-/// Set by FlashTimerIntr when the running operation's time is up.
-extern u8 gFlashTimeoutFlag;
-#endif
-/// The timer, 0 to 3, the flash library times its operations with.
-extern u8 gFlashTimerNum;
 /// gNumberBuffer + 10, the decimal form's units digit (the form ends at
 /// + 11); DebugText_PrintDecimal starts n characters before it, so it prints
 /// n + 1.
@@ -62,18 +34,9 @@ extern u8 gLink_TimeLabelString[];
 extern void *Resource_DirectoryTable[];
 /// The size of Resource_PatchThumbBranch (decompress_tagged_lz.s).
 extern u8 Resource_PatchThumbBranchCodeSize[];
-/// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
-extern const u8 gSpriteColorTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15
 /// (Window_LoadGraphics).
 extern const u16 gWindow_Palette[];
-#ifndef OWN_CountRemainingErasedFlashBytes
-s32 CountRemainingErasedFlashBytes(u8 *ptr);
-#endif
-s32 RunFlashEraseVerifier(u8 *, u8 *);
-#ifndef OWN_StartFlashTimer
-void StartFlashTimer(u8 index);
-#endif
 
 struct SpriteAnimation;
 struct Sprite;
@@ -83,11 +46,6 @@ struct SelectionNode;
 /// 0x03007000) that Sound_LoadReverbCode overwrites with a reverb code
 /// from IwramSoundReverbCodes.
 extern u8 IwramSoundReverbCode[];
-#ifndef OWN_gProgramFlashSector
-/// The chip's program routine (FlashSetupInfo.handlers[0]), which
-/// Save_WriteSector calls.
-extern u32 gProgramFlashSector;
-#endif
 /// HEAP_SLOT_SPRITE_ANIMATIONS: the sprite animations (struct
 /// SpriteAnimation) that SpriteAnimation_Alloc takes from.
 extern struct SpriteAnimation *gSpriteAnimations[];
@@ -96,10 +54,6 @@ extern u16 *gDebugTextCursor;
 /// Nonzero lets DebugText_Print write; the power-on set-up and the credits
 /// clear it.
 extern u8 gDebugTextEnabled;
-#ifndef OWN_gFlashNumRemainingBytes
-/// Bytes left of the sector being programmed.
-extern u16 gFlashNumRemainingBytes;
-#endif
 /// The buffer a save file is built in and written from, in two halves; its
 /// summary's 16-byte header lies just before it.
 extern u8 gSaveBuffer[];
@@ -111,9 +65,6 @@ extern u8 IwramSoundReverbCodes[];
 extern u8 LoadedRuntime_Size[];
 /// No code in the tree defines or reads it.
 extern const u16 gMath_ArcTanTable[];
-/// The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
-/// 93.
-extern const u8 gActor_ShadowTiles[];
 /// The ARM OAM list builder, run from a heap copy by Oam_BuildBuffer.
 extern const u8 Oam_BuildBufferKernel[];
 /// The ARM register-write executor, run from a stack copy by
@@ -125,43 +76,6 @@ extern const u8 Resource_PatchThumbBranch[];
 /// The game code's last letter in the cartridge header: `J` in Japanese, `E`,
 /// `D`, `F`, `S` or `I` (System_GetLanguage).
 extern const u8 gRom_LanguageCode;
-// The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
-// blitter_fragments.s: Forward reads the picture left to right and
-// Reverse right to left. None of them runs where it is.
-/// Max, four pixels (one canvas word), right to left; a full cell's row takes
-/// it twice.
-extern const u32 BattleEffect_Max4Reverse[];
-/// Max, four pixels (one canvas word), left to right; a full cell's row takes
-/// it twice.
-extern const u32 BattleEffect_Max4Forward[];
-/// Max, one pixel, right to left.
-extern const u32 BattleEffect_MaxReverse[];
-/// Max, one pixel, left to right.
-extern const u32 BattleEffect_MaxForward[];
-/// Additive, four pixels added a word at a time, right to left; a full cell's
-/// row takes it twice.
-extern const u32 BattleEffect_ColorReverse[];
-/// Additive, four pixels added a word at a time, left to right; a full cell's
-/// row takes it twice.
-extern const u32 BattleEffect_ColorForward[];
-/// Additive, one pixel, right to left.
-extern const u32 BattleEffect_AdditiveReverse[];
-/// Additive, one pixel, left to right.
-extern const u32 BattleEffect_AdditiveForward[];
-/// Sets 0x40 in every byte of sl, which caps an additive word's pixels at 63.
-extern const u32 BattleEffect_Mask[];
-/// Transparent, a full cell's eight pixels, right to left.
-extern const u32 BattleEffect_Transparent8Reverse[];
-/// Transparent, a full cell's eight pixels, left to right.
-extern const u32 BattleEffect_Transparent8Forward[];
-/// Transparent, one pixel, right to left.
-extern const u32 BattleEffect_TransparentReverse[];
-/// Transparent, one pixel, left to right.
-extern const u32 BattleEffect_TransparentForward[];
-/// Copy, one pixel, right to left.
-extern const u32 BattleEffect_CopyReverse[];
-/// Copy, one pixel, left to right.
-extern const u32 BattleEffect_CopyForward[];
 /// The basic sprite palettes 0 to 13, 224 colours
 /// (Palette_LoadBasicSpriteColors).
 extern const u8 gBasicSpritePalettes[];

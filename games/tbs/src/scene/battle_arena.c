@@ -13,13 +13,15 @@
 #include "module/window/screens.h"
 #include "module/system/system.h"
 #include "battle.h"
-#include "keystate.h"
+#include "input.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "edition.h"
@@ -27,17 +29,17 @@
 #include "event.h"
 #include "event_inline.h"
 #include "io_reg.h"
-#include "serial_runtime.h"
+#include "serial.h"
 #include "iwram_call.h"
 #include "character.h"
-#include "mem.h"
+#include "heap_release.h"
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 #include "task.h"
 #include "scene_ids.h"
 #include "main_routine_work.h"
-#include "battle_party.h"
-#include "irqlock.h"
+#include "battle_side.h"
+#include "irq_lock.h"
 #include "sound_driver_symbols.h"
 #include "scene_tables.h"
 #include "frame.h"
@@ -539,7 +541,7 @@ static s32 BattleArena_ReportDisconnection(void) {
 /// it allocates and frees is never written: the records are received in
 /// place.
 static s32 BattleArena_ReceivePartyRecords(void) {
-  /* FAKEMATCH(volatile): gSerialReceivedSize is volatile (serial_runtime.h),
+  /* FAKEMATCH(volatile): gSerialReceivedSize is volatile (serial.h),
    * so every read here is a load of its own; without the qualifier, 24 of 190
    * instructions differ in tbs-en. */
   u16 namePrefix[24];

@@ -317,7 +317,7 @@ before each battle as well as between scenes.
   `enum FieldPsynergy`
   (`module/field/event_commands.h`). Whirlwind and Gale share
   `FIELD_PSYNERGY_WHIRLWIND`.
-- **field effect**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
+- **field effect**: `struct FieldEffectWork` (`field/field_psynergy_work.h`), the work of
   the field Psynergy playing: the ability, its field kind (`fieldPsynergy`), its
   caster and target, and 24 field effect sprites. It is
   `HEAP_SLOT_FIELD_EFFECT`, reached as `gFieldEffectWork`; the Djinn joining

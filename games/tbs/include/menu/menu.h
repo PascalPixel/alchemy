@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "edition.h"
-#include "farcall.h"
+#include "far_call.h"
 
 /// The Status screen highlight's width in tiles on each status row: Down,
 /// Poison, Venom, Curse and Haunt.

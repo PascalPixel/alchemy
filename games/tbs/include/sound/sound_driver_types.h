@@ -6,7 +6,7 @@
 /// pret calls m4a, under the names pret gives it (include/gba/m4a_internal.h).
 
 #include "types.h"
-#include "../lib/static_assert.h"
+#include "../static_assert.h"
 
 /// SoundInfo.ident and MusicPlayerInfo.ident when free; its bytes spell `Smsh`
 /// in memory order. A call raises the word while it changes the driver or a

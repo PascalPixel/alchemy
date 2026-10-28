@@ -61,7 +61,7 @@
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/mercury_lighthouse_aerie.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/scene/shared/actor_nearest.h"
 #include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
@@ -80,7 +80,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "iwram_call.h"
@@ -171,9 +172,9 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 
 #define NULL ((void *)0)
 
-#include "shared/effect_create.h"
+#include "shared/field_effect_create.h"
 
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_spawn.h"
 #include "actor_script.h"
 
 const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {

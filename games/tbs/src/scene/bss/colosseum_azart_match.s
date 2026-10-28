@@ -1,4 +1,4 @@
-	.include "games/tbs/include/game/ed_asm.h"
+	.include "games/tbs/include/ed_asm.h"
 	.section .bss,"aw",%nobits
 	.global gColosso_MarkerStep
 gColosso_MarkerStep:

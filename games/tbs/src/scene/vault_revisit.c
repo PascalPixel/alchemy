@@ -39,7 +39,7 @@
 #include "module/scene/vault_revisit.h"
 #include "vault.h"
 #include "module/scene/shared/vault_range.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
@@ -54,7 +54,8 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "iwram_call.h"
@@ -148,8 +149,8 @@ enum {
 };
 
 // Shared effect and proximity routines precede the scene's entry points.
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 #include "shared/actor_distance.h"
 #include "shared/vault_range.h"
 #include "shared/vault_nearby.h"

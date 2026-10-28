@@ -101,7 +101,7 @@
 #include "main_routine_work.h"
 #include "vram_cache.h"
 #include "module/scene/cottage_rooms_b.h"
-#include "module/scene/shared/effect_psynergy.h"
+#include "module/scene/shared/event_psynergy.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -115,18 +115,19 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "fxblend.h"
+#include "field_blend.h"
 #include "map_grid_scroll.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
-#include "resource.h"
+#include "battle_sprite_id.h"
 #include "glyph.h"
-#include "animspr.h"
+#include "sprite.h"
 #include "io_reg.h"
 #include "call.h"
 #include "field_effect.h"
@@ -135,11 +136,11 @@
 #include "sounds.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "actor.h"
 #include "flags.h"
 #include "fixed_math.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 
 // The arrival events are defined after the scripts.
 static void CottageRoomsB_DoraWakesIsaac(void);
@@ -1242,7 +1243,7 @@ static void CottageRoomsB_CyclePaletteOnOddFrames(struct Actor *actor) {
 }
 
 // Shared vertical-effect update routines precede their paired-effect creator.
-#include "shared/effect_vertical.h"
+#include "shared/field_effect_vertical.h"
 
 /// Copies the parent's ground height into two oppositely moving vertical
 /// effects.
@@ -1299,7 +1300,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
 }
 
 // Shared Psynergy setup precedes the scene's Psynergy wrappers.
-#include "shared/effect_psynergy.h"
+#include "shared/event_psynergy.h"
 
 /// Unused: cycles Dora's palette with particles; nothing calls it.
 UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {

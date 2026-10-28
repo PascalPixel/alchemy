@@ -1,9 +1,9 @@
-#include "mem.h"
+#include "heap_release.h"
 #include "system_call.h"
 #include "dma.h"
 #include "system.h"
 #include "task.h"
-#include "scroll.h"
+#include "line_scroll.h"
 #include "io_reg.h"
 
 // The Lemurian ship: the ripple of the water, a wave in each axis of the

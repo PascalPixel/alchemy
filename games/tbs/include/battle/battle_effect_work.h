@@ -156,4 +156,42 @@ STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x7824);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 0x7828);
 STATIC_ASSERT(sizeof(struct BattleEffectWork) == 0x782c);
 
+// The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
+// blitter_fragments.s: Forward reads the picture left to right and
+// Reverse right to left. None of them runs where it is.
+/// Max, four pixels (one canvas word), right to left; a full cell's row takes
+/// it twice.
+extern const u32 BattleEffect_Max4Reverse[];
+/// Max, four pixels (one canvas word), left to right; a full cell's row takes
+/// it twice.
+extern const u32 BattleEffect_Max4Forward[];
+/// Max, one pixel, right to left.
+extern const u32 BattleEffect_MaxReverse[];
+/// Max, one pixel, left to right.
+extern const u32 BattleEffect_MaxForward[];
+/// Additive, four pixels added a word at a time, right to left; a full cell's
+/// row takes it twice.
+extern const u32 BattleEffect_ColorReverse[];
+/// Additive, four pixels added a word at a time, left to right; a full cell's
+/// row takes it twice.
+extern const u32 BattleEffect_ColorForward[];
+/// Additive, one pixel, right to left.
+extern const u32 BattleEffect_AdditiveReverse[];
+/// Additive, one pixel, left to right.
+extern const u32 BattleEffect_AdditiveForward[];
+/// Sets 0x40 in every byte of sl, which caps an additive word's pixels at 63.
+extern const u32 BattleEffect_Mask[];
+/// Transparent, a full cell's eight pixels, right to left.
+extern const u32 BattleEffect_Transparent8Reverse[];
+/// Transparent, a full cell's eight pixels, left to right.
+extern const u32 BattleEffect_Transparent8Forward[];
+/// Transparent, one pixel, right to left.
+extern const u32 BattleEffect_TransparentReverse[];
+/// Transparent, one pixel, left to right.
+extern const u32 BattleEffect_TransparentForward[];
+/// Copy, one pixel, right to left.
+extern const u32 BattleEffect_CopyReverse[];
+/// Copy, one pixel, left to right.
+extern const u32 BattleEffect_CopyForward[];
+
 #endif

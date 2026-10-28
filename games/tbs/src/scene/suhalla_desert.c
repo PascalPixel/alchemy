@@ -60,7 +60,7 @@
 #include "main_routine_work.h"
 #include "system_call.h"
 #include "module/scene/suhalla_desert.h"
-#include "module/scene/shared/effect_spawn.h"
+#include "module/scene/shared/field_effect_spawn.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
@@ -75,10 +75,11 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "fx_work.h"
+#include "field_psynergy_work.h"
 #include "heap_slots.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
@@ -90,7 +91,7 @@
 #include "edition.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "iowrite.h"
+#include "io_write.h"
 #include "sounds.h"
 #include "heap.h"
 #include "map_grid.h"
@@ -167,8 +168,8 @@ static u16 sSuhallaDesertSavedColor;
 
 #define SUHALLA_REVEAL_PALETTE_COLOR (*(volatile u16 *)0x0500019e)
 
-#include "shared/effect_create.h"
-#include "shared/effect_spawn.h"
+#include "shared/field_effect_create.h"
+#include "shared/field_effect_spawn.h"
 
 /// The first sandstorm (ACTOR_FIRST_SANDSTORM) has risen on this visit; the
 /// four flags after it are the next four sandstorms'.

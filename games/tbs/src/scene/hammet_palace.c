@@ -48,7 +48,9 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "minigame.h"
+#include "types.h"
+#include "edition.h"
+#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "types.h"
@@ -60,7 +62,7 @@
 #include "actor_script.h"
 #include "flags.h"
 #include "sounds.h"
-#include "palbuf.h"
+#include "palette_buffers.h"
 
 /// The party has heard in Lunpa that Hammet is held there, or has freed him, so
 /// Layana waits elsewhere in her room.

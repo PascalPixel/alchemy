@@ -1,7 +1,7 @@
 /// @file
 /// The enemies' battle sprites, by enemy id 0 to 171.
 
-#include "battle_summon.h"
+#include "battle_sprites.h"
 
 // clang-format off
 const struct BattleSpriteDefinition gBattleSprites[] = {

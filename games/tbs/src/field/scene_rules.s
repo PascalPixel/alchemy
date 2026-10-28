@@ -1,4 +1,4 @@
-	.include "games/tbs/include/game/ed_asm.h"
+	.include "games/tbs/include/ed_asm.h"
 
 @ Field music: the music of the first rule matching the scene or its area and
 @ the entrance (-1 for any) whose flag (-1 for always) is set.

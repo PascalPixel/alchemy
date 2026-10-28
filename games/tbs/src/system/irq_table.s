@@ -1,6 +1,6 @@
 @ Why assembly: the ARM loop uses svc 0x00030000, a software
 @ interrupt, then branches back to the same svc instruction.
-	.include "games/tbs/include/game/ed_asm.h"
+	.include "games/tbs/include/ed_asm.h"
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm

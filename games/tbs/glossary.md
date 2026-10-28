@@ -2,7 +2,7 @@
 
 Every page links here the first time it uses one of these words. They come in
 the order a newcomer meets them: the game's own words, then the project's,
-the engine's and the scenes'.
+the system's and the scenes'.
 
 ## Golden Sun
 
@@ -40,7 +40,7 @@ Psynergy is the game's magic, cast in battle (Quake, Cure, Growth) and on the
 field (Move, Reveal), where it pushes, grows or uncovers things; it is
 uncountable, so a character uses Psynergy, never "a Psynergy". Each use costs
 PP (Psynergy Points), which come back as the party walks outside towns and at
-inns ([World](world.md#field-psynergy)).
+inns ([Field](field.md#field-psynergy)).
 
 ### The four elements
 
@@ -142,7 +142,18 @@ something the game can never reach, with the reason; what only the debug menus
 reach is not unused. [Unused](https://alchemy.pascalpixel.com/tbs/unused)
 collects them.
 
-## The engine
+## The system
+
+### System
+
+The code the field, the battles and the user interface are built on: start-up,
+waiting and [tasks](#task), interrupts, the [heap](#heap-and-pools),
+[banks](#bank), [overlays](#overlay), saving and the sound driver.
+It is one of the four divisions of the code, with Battle, Field and User
+Interface, each with its section page ([System](system.md)).
+
+Evidence: Camelot's credits, "Programming", then "System" (Yasuhiro Taguchi),
+"Battle", "Field" and "User Interface" (`gCredits_Lines`).
 
 ### Frame
 
@@ -159,7 +170,7 @@ One refresh of the screen. The console draws about 59.73 pictures a second,
 and after each it pauses in the vertical blank (VBlank), whose interrupt mixes
 the sound and reads the buttons whatever the game is doing. The music keeps
 time in VBlanks
-([Engine](engine.md)).
+([System](system.md)).
 
 ### IWRAM and EWRAM
 
@@ -171,7 +182,7 @@ fastest it has, and EWRAM, 256 KB beside it and slower
 
 One of the console's four tiled pictures, `BG0` to `BG3`, each scrolling as a
 whole; a town is drawn on three of them, the world map on the two the hardware
-can scale and rotate ([World](world.md#map-layers)).
+can scale and rotate ([Field](field.md#map-layers)).
 
 ### Sprite and OAM
 
@@ -196,7 +207,7 @@ one bank can grow without moving anything another depends on
 
 A call from one bank into another, through an 8-byte jump in the callee's
 table named after the function with `Far` added: `Battle_RunFar` leads to
-`Battle_Run` ([Engine](engine.md#banks-and-far-calls)).
+`Battle_Run` ([System](system.md#banks-and-far-calls)).
 
 ### Veneer
 
@@ -208,7 +219,7 @@ table entry and every stub of an overlay's tables is one.
 
 A packed piece of code unpacked into one 32 KB area of EWRAM, `gOverlayArea`,
 when it is needed: each holds the code of one scene or of a few neighbouring
-scenes, 96 in all for 201 scenes, and only one is loaded at a time ([Engine](engine.md#overlays)).
+scenes, 96 in all for 201 scenes, and only one is loaded at a time ([System](system.md#overlays)).
 
 ### Entry table and import table
 
@@ -326,13 +337,13 @@ The picture of one cell: 2 by 2 of the console's 8-pixel tiles.
 The byte of a cell that says what standing on it, walking into it or searching
 it does: a wall, a ledge, a jar. One range of behaviors means whatever the
 scene's own trigger table says
-([World](world.md#cells-and-metatile-behaviors)).
+([Field](field.md#cells-and-metatile-behaviors)).
 
 ### Actor
 
 One of the 64 slots of `gActors` (`struct Actor`): anything on the field that
 moves or is drawn on its own, from the party and the townspeople to the
-camera and the footprints in snow ([World](world.md#actors-and-their-actor-scripts)).
+camera and the footprints in snow ([Field](field.md#actors-and-their-actor-scripts)).
 A scene knows the party and the actors its actor templates place by their
 actor ids; the camera and the footprints have none
 ([Scenes](src/scene/README.md#who-stands-where)). pret calls the nearest
@@ -349,9 +360,9 @@ its own in an enum. pret calls it a local id.
 
 The list of `SC_` commands an actor runs each frame: waits, moves, jumps,
 loops and tests of game flags. One command can hand the actor to a
-controller, a routine built into the engine that steers it every frame, such
+controller, a routine built into the field that steers it every frame, such
 as player control (`SC_PLAYER`) or the camera's
-([World](world.md#actors-and-their-actor-scripts)).
+([Field](field.md#actors-and-their-actor-scripts)).
 
 ### Trigger
 
@@ -392,7 +403,7 @@ pret calls it a warp destination.
 What the scene sequence answers once the leader stops walking: one of twelve
 `FieldWork` members asks for an exit, an encounter, a talk, an examine, an
 item, a field Psynergy, a menu or a raised trigger, and the scene sequence
-serves them most urgent first ([World](world.md#the-scene-sequence-and-its-requests)).
+serves them most urgent first ([Field](field.md#the-scene-sequence-and-its-requests)).
 
 ### Event
 

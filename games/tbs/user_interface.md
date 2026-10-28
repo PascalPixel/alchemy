@@ -1,8 +1,8 @@
-# Menus, windows and shops
+# User Interface
 
 Everything the player reads or chooses outside the [scene](glossary.md#scene)
 itself comes in a framed box: what people say, the field menu and its screens,
-the Pause menu, the shop and inn counters. This layer draws those boxes
+the Pause menu, the shop and inn counters. The user interface draws those boxes
 (windows), types the game's text into them, runs the field menu's four screens
 ([Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn), Item and
 Status), and runs the counters where the [party](glossary.md#the-party) spends

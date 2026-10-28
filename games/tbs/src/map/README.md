@@ -9,7 +9,7 @@ The `src/map` folder holds this data as editable tables, and no code: 182
 maps for the towns, dungeons and interiors, and two more sets of data kept
 beside them because they are packed and placed the same way: the world map's
 ground and the opponents' recorded runs in the Colosso finals. A
-[scene](../../glossary.md#scene) names its map, [Field](../field/README.md)
+[scene](../../glossary.md#scene) names its map, [The field bank](../field/README.md)
 draws and scrolls it, and the sections below say how each part is stored,
 built and loaded.
 
@@ -51,7 +51,7 @@ cliff, some of it cut along a cell's diagonal.
 Behavior and height belong to a layer. Each layer is a window onto the grid
 ([below](#one-grid-three-layers)), and an actor follows the ground of one
 layer, which a scene's code can change, so the three layers can have different
-walls and heights ([Field](../field/README.md#how-high-a-step-can-go)).
+walls and heights ([The field bank](../field/README.md#how-high-a-step-can-go)).
 
 A loaded cell is `struct MapGridCell`, one 32-bit word: 12 bits
 pick the metatile, four flag bits nothing reads ([below](#evidence)), a byte
@@ -224,7 +224,7 @@ out side by side or one above another: `map_000`'s start at tiles 0, 60 and
 so a layer shows the cells from its start out as far as the camera can go.
 
 The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
-layer on `BG1`; [Field](../field/README.md#towns-and-dungeons-on-screen)
+layer on `BG1`; [The field bank](../field/README.md#towns-and-dungeons-on-screen)
 explains how their priorities put
 [actors](../../glossary.md#actor) between them.
 
@@ -321,7 +321,7 @@ cell of the world map, 512 across and 320 down, which the build cuts into the
 around the party and `WorldMap_PreloadCurrentTileBlock` brings in at most one
 new square a frame. The tables in `default/` are the world map's too: its
 default cells, which come back after its still picture
-([Field](../field/README.md#the-world-map-in-perspective)).
+([The field bank](../field/README.md#the-world-map-in-perspective)).
 
 | Part | Size |
 | --- | --- |

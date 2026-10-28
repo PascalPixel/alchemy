@@ -15,7 +15,7 @@ name here is ours, chosen for what the folder holds.
 The folders divide the game by what it does, in the order the cartridge lays
 their banks out.
 
-The field is split four ways. [Field](field/README.md) is the code under
+The field is split four ways. [The field bank](field/README.md) is the code under
 every town, dungeon and the world map: the [actors](../glossary.md#actor), movement, and
 loading, scrolling and drawing the map grid. [Running a scene](overworld/README.md),
 the `overworld` folder, runs one scene on that code, from its set-up to the
@@ -68,7 +68,7 @@ through its table entry, by its name with `Far` added
 (`Battle_RunFar`); inside a bank, functions call each other
 directly. Every bank calls the runtime bank's functions directly instead,
 and its table serves only the overlays
-([Engine](../engine.md#banks-and-far-calls)).
+([System](../system.md#banks-and-far-calls)).
 
 Which folder each bank's code comes from is the object list,
 [`objects.tsv`](../objects.tsv), whose `place` column names the bank
@@ -126,7 +126,7 @@ into the overlay area when a scene loads.
 Each scene's people and events are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,
 packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
-party arrives ([Engine](../engine.md#overlays)). The scene table,
+party arrives ([System](../system.md#overlays)). The scene table,
 `gScenes` in [field/scenes.s](field/scenes.s), has 201 scenes, and the
 rooms of one dungeon often share one overlay. `Scene_LoadOverlay`
 ([overworld/overworld/parent_sequence.c](overworld/overworld/parent_sequence.c))

@@ -416,7 +416,7 @@ its styles `enum TargetStrikeStyle` and their rows `gTargetStrike_Styles`.
 ## Design
 
 An animation is an ordinary function with its own frame loop, as the rest of
-the game is ([Engine](../../engine.md#waiting-and-tasks)). Its setup opens the
+the game is ([System](../../system.md#waiting-and-tasks)). Its setup opens the
 canvas, builds the blitters, loads the pictures and places the particles; it
 runs a fixed number of frames; and it releases what the setup took. Within a
 frame the steps run in a fixed order, each over its own range of frames, and

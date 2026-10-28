@@ -12,7 +12,7 @@ given an item with every bag full.
 
 Each counter is opened by its town's [scene](../../glossary.md#scene)
 [event](../../glossary.md#event) when the player talks to the keeper.
-[Menus, windows and shops](../../menus.md#shops) gives the counters in brief;
+[User Interface](../../user_interface.md#shops) gives the counters in brief;
 the windows and messages they draw with are in [Windows](../window/README.md),
 and the items and their rare item counters in [Game rules](../game/README.md).
 

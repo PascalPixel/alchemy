@@ -6,7 +6,7 @@ reciprocals, the 16.16 dot product, and the curves and steps that ease a
 value towards a target. ☀️ has no folder of this name: its twin of this code
 is part of [Runtime](../../../tbs/src/runtime/README.md) (`trig.s`,
 `q16_dot_product.s`, the math part) and of the field's curves
-([Field](../../../tbs/src/field/README.md), `Curve_`). Those guides explain
+([The field bank](../../../tbs/src/field/README.md), `Curve_`). Those guides explain
 the units; this page says only what differs here.
 
 ## What differs from ☀️

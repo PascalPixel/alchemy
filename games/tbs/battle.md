@@ -213,7 +213,7 @@ the rules alone decide how much it is.
 An animation is an ordinary function with its own loop: it waits a frame
 whenever time has to pass and returns only when it is over. The damage comes
 from a [task](glossary.md#task), which the waiting runs once a frame
-([Engine](engine.md#waiting-and-tasks)). That task, playback, stays idle until
+([System](system.md#waiting-and-tasks)). That task, playback, stays idle until
 the animation signals that the blow has landed. From then on it applies the
 ability to one target at a time and plays what that target's rules left
 behind: the flinch, the message, the falling HP. An animation that never

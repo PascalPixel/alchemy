@@ -4,7 +4,7 @@ This folder holds The Lost Age's scene table and, in `shared/`, the field
 code its scenes use: the object script interpreter (`shared/script/`),
 the map's cells and animation (`shared/map/`), field objects
 (`shared/object/`), events, effects and the camera. In ☀️ the same code is
-spread over [Field](../../../tbs/src/field/README.md) and
+spread over [The field bank](../../../tbs/src/field/README.md) and
 [Running a scene](../../../tbs/src/overworld/README.md), which explain how it
 works; this page says only what differs here.
 

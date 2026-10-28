@@ -12,7 +12,7 @@ The menu code runs those four screens, the party member chooser the
 [scenes](../../glossary.md#scene) of Colosso, Tolbi's tournament, open, and three
 [overlays](../../glossary.md#overlay) that are mostly menus: the Title,
 the File Screen and the Battle Arena.
-[Menus, windows and shops](../../menus.md#the-field-menu) gives the layer in
+[User Interface](../../user_interface.md#the-field-menu) gives the layer in
 brief. The boxes the screens are drawn in, and the row of icons itself, belong
 to [Windows](../window/README.md); the shop counters, which borrow the same
 memory, are in [Shops](../shop/README.md).
@@ -63,7 +63,7 @@ The Psynergy screen asks whose Psynergy, which one, and on whom. Psynergy that
 heals works here and now: the target's HP goes up, the caster pays the PP and
 the list comes back for another choice. Psynergy for the field, such as Move,
 closes the menu so the field can cast it at whatever the leader faces
-([Psynergy and items used on the field](../../menus.md#psynergy-and-items-used-on-the-field)).
+([Psynergy and items used on the field](../../user_interface.md#psynergy-and-items-used-on-the-field)).
 The same list, opened another way, sets the Psynergy the L and R buttons cast
 on the field.
 
@@ -171,7 +171,7 @@ colour change in progress; closing undoes it. The earliest
 Status screens, and the later ones added the Item and then the Psynergy screen
 (`Menu_SuspendFieldTasks`).
 
-[Start](../../menus.md#start) closes a screen from any depth through one
+[Start](../../user_interface.md#start) closes a screen from any depth through one
 [game flag](../../glossary.md#game-flag) every loop checks, so no loop needs to
 know how deep the player is.
 

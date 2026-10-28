@@ -33,7 +33,7 @@ anything needs setting up. At every step it asks whether the leader is
 standing in an [exit](../../glossary.md#exit) area, and as the party leaves,
 where the exit leads. Each answer comes from a function rather than a fixed
 table, so a scene can answer differently as the story goes on
-([World](../../world.md#scene-entries) gives Vault's example), and an overlay
+([Field](../../field.md#scene-entries) gives Vault's example), and an overlay
 that serves several scenes can answer for each.
 
 The setup restores what the flags say has happened, starts the scene's own
@@ -252,7 +252,7 @@ this exit, waits until the event has finished.
 
 An event is plain C written in the calls of `event_layer.h`,
 `event_inline.h` and `system_call.h`. A step that takes time runs the
-game's frames itself through `WaitFrames` before it returns ([Engine](../../engine.md#waiting-and-tasks)
+game's frames itself through `WaitFrames` before it returns ([System](../../system.md#waiting-and-tasks)
 explains it). A task is added with `Task_AddFrame`.
 
 ## State that cleans itself up
@@ -336,7 +336,7 @@ of an actor, update routines returning `s32`) are in
 ## How it fits with the rest of the game
 
 `ParentSequence_Run` unpacks the overlay into `gOverlayArea`
-(`Scene_LoadOverlay`) and `SceneSequence_Run` calls its entries; [Engine](../../engine.md#overlays)
+(`Scene_LoadOverlay`) and `SceneSequence_Run` calls its entries; [System](../../system.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The scene
 table and how scenes depend on the story are on [the front
 page](../../README.md#the-scene-table-and-areas). The maps the scenes are

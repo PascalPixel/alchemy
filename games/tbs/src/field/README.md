@@ -1,4 +1,4 @@
-# Field
+# The field bank
 
 The field runs everything outside a battle that moves or is drawn: it
 keeps track of the [party](../../glossary.md#the-party), the townspeople, the
@@ -14,7 +14,7 @@ is named after the [bank](../../glossary.md#bank) it fills. Each scene's own
 code, its [events](../../glossary.md#event) included, is an
 [overlay](../../glossary.md#overlay): [Scenes](../scene/README.md). What a town or
 dungeon shows and stands on is its map:
-[Maps](../map/README.md). [World](../../world.md) gives the whole layer
+[Maps](../map/README.md). [Field](../../field.md) gives the whole layer
 in brief.
 
 ## The walk and what interrupts it

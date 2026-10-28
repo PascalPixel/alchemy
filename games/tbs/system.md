@@ -1,11 +1,13 @@
-# Engine
+# System
 
 Everything the player sees moves to one beat: the screen is redrawn about
-sixty times a second, and the game prepares one picture for each. The engine
-is the code that keeps that beat and that the field, the battles and the menus
-are built on. It starts the console, lets code wait without the screen
-freezing, splits the main image into [banks](glossary.md#bank), swaps each
-[scene](glossary.md#scene)'s code in and out of memory and plays the music.
+sixty times a second, and the game prepares one picture for each. The system
+is the code that keeps that beat and that the field, the battles and the user
+interface are built on; Camelot's credits name it System, one of the four
+parts of the programming, and credit it to Yasuhiro Taguchi. It starts the
+console, lets code wait without the screen freezing, splits the main image
+into [banks](glossary.md#bank), swaps each [scene](glossary.md#scene)'s code
+in and out of memory and plays the music.
 
 The console draws each picture one line at a time, 160 lines from top to
 bottom, then pauses for about as long as 68 more lines, the vertical blank
@@ -47,7 +49,7 @@ Each task has a priority, which says whether it runs during the frame or in
 the blank, and in what order. Order matters: a battle's camera runs after the
 battle's figures have moved, so that it follows where they are rather than
 where they were. A wait can be asked for from deep inside other code, so the
-engine sets the waiting code's memory aside while the frames pass; the tasks
+system sets the waiting code's memory aside while the frames pass; the tasks
 always start with the same room to work in. The one rule that follows is that
 a task must never wait itself, and none does.
 
@@ -111,20 +113,6 @@ A sound is played with `Sound_PlaySong`; the ranges are
 `SONG_FANFARE_FIRST` and `SONG_SE_FIRST`. [Sound](src/sound/README.md#what-a-song-number-means)
 covers the players, [the fanfare's return](src/sound/README.md#the-fanfares-return-to-the-music)
 and [the driver's ident](src/sound/README.md#the-drivers-ident).
-
-## Debug rooms
-
-![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and round to the menu test room, and An exits there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
-
-The cartridge keeps three test rooms no player can walk into: one that hands
-out [Djinn](glossary.md#djinn), one for raising levels and browsing items,
-and one of shop and message tests. Only the debug scene selector reaches them,
-and only in debug mode, which the released game never turns on. The selector
-exits to any scene by number; the field opens it when Start is pressed with B
-held. Each room is an ordinary scene overlay, so the rooms are the smallest
-complete examples of a scene.
-[Debug rooms](src/debug/README.md#how-the-rooms-are-reached) goes through
-them.
 
 ## Limits
 

@@ -103,7 +103,7 @@ resident and the interrupt handlers, loads the window graphics, starts the
 sound and empties the task queue. Then it hands control to the parent
 sequence, which never returns.
 
-**Reference:** `System_Initialize` · [Engine: Start-up](engine.md#start-up)
+**Reference:** `System_Initialize` · [System: Start-up](system.md#start-up)
 
 ## The parent sequence
 
@@ -253,7 +253,7 @@ they all slow down together, while the music, counted in VBlanks, keeps its
 tempo. This is the game's slowdown. The VBlanks a frame took are counted in
 `gFrameVBlanks`.
 
-**Reference:** [Engine: Waiting and tasks](engine.md#waiting-and-tasks) ·
+**Reference:** [System: Waiting and tasks](system.md#waiting-and-tasks) ·
 [Runtime: The frame loop](src/runtime/README.md#the-frame-loop) ·
 `Event_WaitFrames`
 
@@ -486,7 +486,7 @@ The rest of the game reaches a scene through six functions,
 Each answer is a function rather than a fixed table, so a scene can answer
 differently as the story moves on.
 
-**Reference:** [Engine: Overlays](engine.md#overlays) ·
+**Reference:** [System: Overlays](system.md#overlays) ·
 [Scenes](src/scene/README.md) · [trigger](glossary.md#trigger)
 
 ## The scene table and areas
@@ -555,8 +555,9 @@ clear; opening it sets the flag, and from then on the chest is drawn open and
 empty.
 
 [flags.h](include/flags.h) holds 4,096 flags in a fixed order: the party and
-the Djinn, the engine's, the story's, then the chests and other finds, each
-area's together. Two ranges are scratch space:
+the Djinn, those the field, battles and menus keep about their own working,
+the story's, then the chests and other finds, each area's together. Two
+ranges are scratch space:
 
 | Range           | Size | Cleared                          | Example                                   |
 | --------------- | ---- | -------------------------------- | ----------------------------------------- |
@@ -608,7 +609,7 @@ The map also holds three Djinn and a storm, and plays the story's moments
 between places, chosen by where the last scene sent the party.
 
 **Reference:** [world_map.c](src/scene/world_map.c) ·
-[World: The world map](world.md#the-world-map)
+[Field: The world map](field.md#the-world-map)
 
 ## How the code is organised
 
@@ -637,12 +638,15 @@ to `Battle_Run` in the battle bank.
 
 ## Section pages
 
+Camelot's credits divide the programming four ways, and the first four
+section pages follow them.
+
 | Page                                                 | Covers                                                               |
 | ---------------------------------------------------- | -------------------------------------------------------------------- |
-| [World](world.md)                                    | the field engine, the maps, the request loop and field Psynergy      |
+| [System](system.md)                                  | start-up, frames and tasks, banks and far calls, overlays, songs     |
 | [Battle](battle.md)                                  | a battle from the first menu to the spoils, damage, its animations   |
-| [Menus](menus.md)                                    | the field menu and its screens, shops and inns, windows              |
-| [Engine](engine.md)                                  | start-up, frames and tasks, banks and far calls, overlays, songs       |
+| [Field](field.md)                                    | actors and movement, the maps, the requests, field Psynergy, debug rooms |
+| [User Interface](user_interface.md)                  | the field menu and its screens, shops and inns, windows              |
 | [Places](src/field/scenes.s)                         | every scene in story order, with its actor templates and triggers    |
 | [Game rules](src/game/README.md)                     | stats, items, Djinn, classes, levels and the flags                   |
 | [Unused](https://alchemy.pascalpixel.com/tbs/unused) | what the game keeps but never plays, and why                         |

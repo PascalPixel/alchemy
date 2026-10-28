@@ -12,7 +12,7 @@ It also builds the screens made directly from windows: the field menu's row of
 icons, the Pause menu and its settings menu, the file list that saves the game,
 the name entry screen, the [party](../../glossary.md#the-party) status window, the
 battle menus and the debug menus.
-[Menus, windows and shops](../../menus.md#windows) gives the whole layer in
+[User Interface](../../user_interface.md#windows) gives the whole layer in
 brief; the field menu's four screens are in [Menus](../menu/README.md), and
 the shop counters in [Shops](../shop/README.md).
 
@@ -256,7 +256,7 @@ menu (`menu/file_screen.c`) calls it for each name.
 
 ## Design
 
-[Menus, windows and shops](../../menus.md) explains why messages are unpacked
+[User Interface](../../user_interface.md) explains why messages are unpacked
 ahead of typing and why every window shares one background layer. The two
 routines that work pixel by pixel or bit by bit, the canvas painter and the
 Huffman decoder, are copied into the console's fast internal memory and run

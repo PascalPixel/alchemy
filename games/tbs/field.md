@@ -1,14 +1,15 @@
-# World
+# Field
 
 Everywhere the [party](glossary.md#the-party) walks, a town, a dungeon or the
 World Map, is run by the same four parts. The loop in `src/overworld` lets the
-party walk and deals with whatever interrupts it. The engine in `src/field`
+party walk and deals with whatever interrupts it. The code in `src/field`
 moves everything that moves and draws the [map](glossary.md#map), and the
 map's own data, in `src/map`, says what the ground is like. And each
 [scene](glossary.md#scene)'s own code, its [overlay](glossary.md#overlay) in `src/scene`, says
 who is there and what happens; only that part knows anything about one scene.
-The two engine folders take the names of the [banks](glossary.md#bank) they
-fill, not of what they do. How scenes and overlays fit into the whole game is on
+The first two folders take the names of the [banks](glossary.md#bank) they
+fill, not of what they do. The debug rooms are scenes too, reached only in
+debug mode. How scenes and overlays fit into the whole game is on
 [the front page](README.md).
 
 ## The scene sequence and its requests
@@ -37,11 +38,11 @@ all twelve requests in the order they are handled.
 
 ![Isaac walks up to a young man in Vault, who says "Welcome to Vault, the town at the heart of Angara.", then walks on](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
 
-The engine knows nothing about any one scene. It asks the scene's code six
+The field knows nothing about any one scene. It asks the scene's code six
 questions: what can happen here, where the party arrives, who stands where,
 whether anything needs setting up, whether the leader stands in an exit area,
 and where an exit leads. Each answer comes from a function, so a scene can answer
-differently as the story moves on without the engine knowing any story: Vault
+differently as the story moves on without the field knowing any story: Vault
 gives one list of what can happen before its thieves are jailed and another
 after.
 
@@ -60,7 +61,7 @@ latest point in the story down to the default.
 The six questions are `struct SceneEntryPoints` at the start of every
 overlay, and the rows are `struct Trigger`. [Scenes](src/scene/README.md#the-entry-table)
 describes the [entry table](glossary.md#entry-table-and-import-table) and its
-tables, and [Engine](engine.md#overlays) how an overlay is loaded. The front
+tables, and [System](system.md#overlays) how an overlay is loaded. The front
 page describes [how scenes depend on the story](README.md#how-scenes-depend-on-the-story),
 and [Places](src/field/scenes.s) lists every scene in
 [story order](glossary.md#the-places-in-story-order).
@@ -93,7 +94,7 @@ repeat".
 
 The actors are the 64 places of `gActors`, and the commands are
 the `SC_` macros of `actor_script.h`, run by `Actor_UpdateAllThumb`.
-[Field](src/field/README.md#everything-that-moves-runs-an-actor-script) covers the
+[The field bank](src/field/README.md#everything-that-moves-runs-an-actor-script) covers the
 commands, the sprites and [the views of one
 actor](src/field/README.md#one-actor-a-few-views).
 
@@ -119,7 +120,7 @@ wall.
 | `COLLISION_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
 | `COLLISION_IMPASSABLE` | 2 | the cell is a wall |
 
-[Field](src/field/README.md#walking-and-running) has the speeds on each kind
+[The field bank](src/field/README.md#walking-and-running) has the speeds on each kind
 of ground and [how high a step can go](src/field/README.md#how-high-a-step-can-go).
 
 ## Cells and metatile behaviors
@@ -164,7 +165,7 @@ priority of the cell under it.
 | `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, most often under the characters |
 | `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the characters |
 
-[Field](src/field/README.md#towns-and-dungeons-on-screen) shows how the layers
+[The field bank](src/field/README.md#towns-and-dungeons-on-screen) shows how the layers
 are put on screen, and [Maps](src/map/README.md#one-grid-three-layers)
 how they share one grid.
 
@@ -182,7 +183,7 @@ still picture, so that the windows can use the layer the tilt was using.
 
 `WorldMap_BuildScanlineTable` works out each line's scale and
 `WorldMap_StartStillView` makes the still picture.
-[Field](src/field/README.md#the-world-map-in-perspective) works through the
+[The field bank](src/field/README.md#the-world-map-in-perspective) works through the
 lines, [Maps](src/map/README.md#the-world-maps-data) the World Map's
 data, and [Running a scene](src/overworld/README.md#the-world-picture) the
 picture of the whole world R brings up. The World Map's own places and events
@@ -217,6 +218,20 @@ ground under it solid.
 `Field_UsePsynergy` runs a cast and `FieldPsynergy_Run` plays
 it. [Running a scene](src/overworld/README.md#how-field-psynergy-reaches-its-target)
 covers every moment a scene can answer and each Psynergy's cast.
+
+## Debug rooms
+
+![With debug mode switched on, Start pressed with B held in Vale opens a one-line window naming a scene; Left steps the number down past the World Map and the Title and round to the menu test room, and An exits there, and the test room's people stand on a black floor](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
+
+The cartridge keeps three test rooms no player can walk into: one that hands
+out [Djinn](glossary.md#djinn), one for raising levels and browsing items,
+and one of shop and message tests. Only the debug scene selector reaches them,
+and only in debug mode, which the released game never turns on. The selector
+exits to any scene by number; the field opens it when Start is pressed with B
+held. Each room is an ordinary scene overlay, so the rooms are the smallest
+complete examples of a scene.
+[Debug rooms](src/debug/README.md#how-the-rooms-are-reached) goes through
+them.
 
 ## Limits
 

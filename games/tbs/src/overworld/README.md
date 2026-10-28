@@ -12,12 +12,12 @@ world R brings up on the World Map. Lucky Wheels, played in Tolbi's game room, i
 too, in another [bank](../../glossary.md#bank).
 
 The code underneath, which moves everything and draws the maps, is
-[Field](../field/README.md), where the [actors](../../glossary.md#actor) and
+[The field bank](../field/README.md), where the [actors](../../glossary.md#actor) and
 the [actor scripts](../../glossary.md#actor-script) they run are described under
 [everything that moves runs a
 script](../field/README.md#everything-that-moves-runs-an-actor-script). What happens
 in each scene comes from its own code in [Scenes](../scene/README.md).
-[World](../../world.md) gives the whole layer in brief. The folder takes pret's
+[Field](../../field.md) gives the whole layer in brief. The folder takes pret's
 name for the same loop, overworld.
 
 ## The scene sequence serves requests

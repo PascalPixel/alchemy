@@ -10,13 +10,13 @@ what the game does to make it happen, and where in the code it does it.
 the whole game. Its front page explains how the game is put together, one scene
 at a time, and four section pages go deeper:
 
-- [World](tbs/world.md): walking around, scenes and their maps, and what
-  happens in them.
+- [System](tbs/system.md): start-up, frame timing, memory, overlays and sound.
 - [Battle](tbs/battle.md): how a battle runs, how damage and healing are worked
   out, and how the animations are drawn.
-- [Menus, windows and shops](tbs/menus.md): the field menu and its screens,
+- [Field](tbs/field.md): walking around, scenes and their maps, and what
+  happens in them.
+- [User Interface](tbs/user_interface.md): the field menu and its screens,
   shops and inns, and the windows text is drawn in.
-- [Engine](tbs/engine.md): start-up, frame timing, memory, overlays and sound.
 
 [Places](tbs/src/field/scene_headers.s) has a page for every place the party can
 walk around in, in story order, with a recording of every event that happens

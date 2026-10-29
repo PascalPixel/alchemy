@@ -1,8 +1,8 @@
 # Game rules
 
-![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats, moves to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
+![Isaac opens the field menu in Vale and picks Status: the summary shows his level, experience, HP and PP, Attack 121, Defense, Agility and Luck, his class Knight, and the two Venus Djinn set with each element's level, Power and Resist; his Psynergy list, his equipment and Garet's Status page follow.](https://alchemy.pascalpixel.com/guides/menu/summary-screen.gif)
 
-The Status screen says what Isaac's Attack is, a shop says the Long Sword
+The Status screen says Isaac's Attack is 121, a shop says the Long Sword
 costs 200 coins and that Ivan `Can't equip` it, a Djinni joins and the save
 file counts one more, and a chest the party has opened stays open. Every one
 of those facts is asked of one bank of code, the game rules: the
@@ -35,7 +35,7 @@ rest say what it does with that.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   work(["The main routine's work: the eight units, the party, the coins"]) --> unit(["A unit: base stats, Psynergy list, 15 inventory slots, Djinn held and set"])
-  flags(["🚩 The game flags: 4,096 bits"])
+  work -- "saved beside it" --> flags(["🚩 The game flags: 4,096 bits"])
   tables(["The tables in ROM: items, abilities, Djinn, enemies, classes, summons, characters"])
   unit -- "read through" --> tables
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
@@ -76,12 +76,15 @@ are rewritten whenever that changes
 sit the Psynergy list (`psynergy`, 32 entries), the
 inventory (`inventory`, 15 slots), the Djinn held and set
 (`djinnHeld`, `djinnSet`, one bit per Djinni in each element) and the
-statuses a battle leaves: poison, sleep, the stat stages.
+statuses a battle leaves: poison, sleep, the stat stages a battle raises or
+lowers.
 
 An enemy's unit is filled from its row of the enemy table when the battle
 starts (`BattleUnit_Set`): its stats, its name with a number after it when
-the formation holds more of its kind (`Gryphon1`), the items it carries and
-its element preset. An enemy has no class: its `classId` is `CLASS_NONE`, and
+the [formation](../../glossary.md#formation) holds more of its kind
+(`Gryphon1`), the items it carries and its element preset, a row of fixed
+element levels, Power and Resist (`gEnemy_ElementPresetTable`). An enemy
+has no class: its `classId` is `CLASS_NONE`, and
 that one field is how the code throughout tells an enemy from a character.
 
 | Name               | Value | Meaning                                                |
@@ -184,7 +187,8 @@ Beside the plain bonuses, a row holds up to four effects the item has while
 worn, each a kind and an amount: add to HP, scale Agility in tenths, add to
 the weapon's unleash chance. They are the `EQUIP_EFFECT_` kinds, and the
 stats mechanism below applies them. A weapon also names the ability it
-unleashes and the chance of it, in steps of five percent.
+unleashes, the weapon's own attack that sometimes replaces a plain blow, and
+the chance of it, in steps of five percent.
 
 | Name                   | Value | Meaning                                             |
 | ---------------------- | ----- | --------------------------------------------------- |
@@ -197,8 +201,9 @@ unleashes and the chance of it, in steps of five percent.
 | `ITEM_INDISPENSABLE`   | flag  | never dropped and worth nothing to a shop           |
 | `unleashChance`        | steps of 5 | a weapon's unleash chance in percent           |
 
-When an item is used in battle, the battle builds an action from the ability
-the row names ([Battles](../battle/README.md#how-an-ability-resolves)).
+When an item is used in battle, the battle builds an
+[action](../../glossary.md#turns-and-actions) from the ability the row
+names ([Battles](../battle/README.md#how-an-ability-resolves)).
 
 ## What an inventory slot holds
 
@@ -210,14 +215,14 @@ how many there are of a stackable item such as Herbs. All of that fits in
 one 16-bit number per slot, so an item, its state and its count move
 together.
 
-The number has four parts: the item, an equipped mark, a broken mark and the
-count:
+The number has four fields: the item, an equipped mark, a broken mark and
+the count:
 
 ```
 bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item id
 ```
 
-The count is kept as one less, so a single item's count part is 0, and a
+The count is kept as one less, so a single item's count field is 0, and a
 stack grows to 30. Because the marks and the count share the number, the
 same item equipped, broken or stacked is a different number, and code that
 asks which item a slot holds masks the rest away first
@@ -265,15 +270,15 @@ as they do:
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   base(["The base stats"]) --> adds(["+ what each equipped item adds, + each set Djinni's bonus"])
-  adds --> class(["× the class's multipliers, in tenths"])
-  class --> scales(["× what each equipped item scales, in tenths"])
+  adds --> classMul(["× the class's multipliers, in tenths"])
+  classMul --> scales(["× what each equipped item scales, in tenths"])
   scales --> stages(["× the battle's stat stages"])
   stages --> clamp(["Clamped to their caps and written to the unit"])
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   class base mainRoutine
-  class adds,class,scales sequence
+  class adds,classMul,scales sequence
   class stages,clamp frame
 ```
 
@@ -307,7 +312,8 @@ do, updates the gauges afterwards (`Unit_RecalculateGauges`).
 Two more things ride on the same pass. A cursed item sets the unit's curse
 bits, and an item with `EQUIP_EFFECT_CURSE_REMOVABLE` lifts them again. Once
 the lighthouse of a character's own element is lit (`FLAG_VENUS_LIGHTHOUSE_LIT`
-for Isaac), the pass gives it 4 more PP a turn.
+for Isaac), the pass gives it 4 more PP a
+[turn](../../glossary.md#turns-and-actions).
 
 | Name                   | Value   | Meaning                                                |
 | ---------------------- | ------- | ------------------------------------------------------ |
@@ -334,8 +340,8 @@ holds at most ten of one element. The Djinn themselves are 80 rows, 20 to an
 element in element order, each naming the ability it unleashes and the stat
 bonus it gives while set: Flint adds 8 HP, 4 PP and 3 Attack.
 
-Setting a Djinni is one call that sets off a chain, and each link needs the
-one before:
+Setting a Djinni is one call that sets off a chain, each link needing the
+one before, and the caller then works the stats out again:
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -344,7 +350,7 @@ flowchart TD
   cls --> det(["Class_Determine: the element levels pick the series, and the series's last class reached"])
   det --> psy(["Unit_RefreshPsynergy: the class's Psynergy by level, and the equipment's"])
   psy --> elem(["Unit_CalculateBaseElements: Power and Resist from the element levels"])
-  elem --> calc(["Unit_Calculate: the stats, with the Djinni's bonus and the class's multipliers"])
+  elem --> calc(["The caller runs Unit_Calculate: the Djinn menu, the battle's turn end"])
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -363,7 +369,7 @@ from its row of the character table. Isaac's bonus is 54 in Venus and 3, 1
 and 2 in the others, so with no Djinn set he is a Venus Adept of level 5,
 and each Venus Djinni set raises that by one. `Unit_GetElementLevels`
 counts the levels in tenths, so one Venus Djinni on Isaac gives 64; the
-Status screen and `Unit_GetElementLevel` show the whole part, 6. An enemy's
+Status screen and `Unit_GetElementLevel` show the whole number, 6. An enemy's
 levels come from its element preset instead, a row of
 `gEnemy_ElementPresetTable`.
 
@@ -371,7 +377,8 @@ The levels also give the character's base [Power and
 Resist](../../glossary.md#power-and-resist) in each element
 (`Unit_CalculateBaseElements`): a table holds the pair for each whole level
 from 0 to 15 (`gElement_PowerResistByLevel`), 75 Power and 85 Resist at
-level 0 rising by 5 a level, and the level's tenths are added on top.
+level 0 rising by 5 a level, except that Resist rises by 10 at level 14,
+and the level's tenths are added on top.
 
 ### Which class a character has
 
@@ -399,11 +406,11 @@ The class decides most of what the character can cast. Its row lists up to
 rebuilds the character's list from three sources whenever the class, level or
 equipment changes: the class's abilities the character's level has reached,
 then the Psynergy of each equipped Psynergy item, and after them the
-Psynergy an event taught for good (Isaac's Move and Retreat after the
-prologue, `Unit_LearnPsynergy`). Each entry carries a mark saying which
-source it came from, so the rebuild can drop the class's and the items'
-entries and keep the taught ones. The list is kept closed up, so the
-Psynergy screen shows it as it is.
+Psynergy an [event](../../glossary.md#event) taught for good (Isaac's Move
+and Retreat after the prologue, `Unit_LearnPsynergy`). Each entry carries a
+mark saying which source it came from, so the rebuild can drop the class's
+and the items' entries and keep the taught ones. The list is kept closed
+up, so the Psynergy screen shows it as it is.
 
 | Name                     | Value          | Meaning                                                |
 | ------------------------ | -------------- | ------------------------------------------------------ |
@@ -434,11 +441,12 @@ it can reach (`Unit_TryLevelUp`, which compares the experience with
 A level up (`Unit_LevelUp`) raises the level and adds to each base stat.
 The character's row holds a growth curve for each stat: six points, the
 stat's value at levels 0, 20, 40, 60, 80 and 100. A level inside a band of
-twenty adds a twentieth of the band's rise, with a random part so that the
+twenty adds a twentieth of the band's rise, with a random share so that the
 rounding comes out right on average: the gain is `(difference + a random 0
 to 19) / 20`, so a band whose HP rises by 152 gives 7 or 8 a level and the
-whole 152 over the band. Level 1 adds the curve's first point as well, which
-is how a new game gives Isaac his 30 HP. The gains come back in a
+whole 152 over the band. Level 1 adds the curve's first point as well,
+Isaac's 30 HP, so a new game starts him at 37 or 38 base HP, 40 or 41 once
+the Squire's multiplier is applied. The gains come back in a
 `struct LevelUpResult` for the spoils to report, and the level up then
 rebuilds the Psynergy list and the stats, so a class ability learned at the
 new level appears at once.
@@ -489,8 +497,8 @@ enemies and Lucky Dice's prizes read (`Party_GetAverageLevel`).
 The game remembers what has happened (a chest opened, a Djinni found, an
 event already played) as 4,096 yes-or-no flags, one bit each. When Tonic
 joins, its found flag is set: a Djinni found once cannot join again, and
-each save file's summary counts the Djinn found. The File Screen offers its
-Battle command only once some save file has found a Djinni.
+each save file's summary counts the Djinn found. The Title offers its Battle
+option only once some save file's summary counts a Djinni found.
 
 A flag is a number, and the number says where its bit is: the low three
 bits pick the bit within a byte, and the next nine pick the byte of
@@ -515,8 +523,9 @@ flowchart TD
 Eight flags in a row, read together as a byte, also hold small counters,
 such as the Battle Arena's win count (`GameFlag_GetByte`,
 `GameFlag_SetByte`); four in a row hold a nibble. Two ranges are scratch
-space for the scene code: a scene's own flags, cleared each time the party
-walks into a scene (and left alone on coming back from a battle), and an
+space for the scene code: a [scene](../../glossary.md#scene)'s own flags,
+cleared each time the party walks into a scene (and left alone on coming
+back from a battle), and an
 [area](../../glossary.md#area)'s, cleared when it enters another
 ([Scenes](../scene/README.md#state-that-cleans-itself-up) shows how a scene
 uses them).
@@ -556,7 +565,7 @@ ordinary item; `Item_AdjustCounter` changes an item's counter.
 | Name                      | Value    | Meaning                                       |
 | ------------------------- | -------- | --------------------------------------------- |
 | `gRareItemStock`          | 128      | counters, each 0 to 99                        |
-| `gItem_ArtifactSlotTable` | 324      | each item's counter number plus one, or 0     |
+| `gItem_ArtifactSlotTable` | 512      | each item id's counter number plus one, or 0  |
 
 ## Battle arithmetic
 
@@ -604,19 +613,19 @@ An ability's added effect (poison, sleep, a stat drop) lands by a roll
 against a chance (`Battle_RollEffectSuccess`). It fails at once when there
 is nothing for it to do: a revive on a standing unit, a cure of a poison
 the target has not got. Otherwise the chance starts from the effect's base
-rate (`Battle_GetEffectBaseSuccessRate`: Sleep 45 percent, Paralyze 40,
+rate (`Battle_GetEffectBaseSuccessRate`: Sleep 45 percent, Stun 40,
 Condemn's instant death 20), adds three for each level the caster leads
 the target by in the element less half the target's Luck, adds 25 against a
 weakness the target's enemy row or class row lists, and is scaled by the
-ability's own factor. A negative base rate is a fixed chance that nothing
-changes. Luff gets three tries.
+ability's own factor. A negative base rate is a fixed chance, which the
+levels, Luck and weakness leave alone. Luff gets three tries.
 
 | Name                    | Value      | Meaning                                            |
 | ----------------------- | ---------- | -------------------------------------------------- |
 | the multiplier          | 256        | one times; 1.28 a point of Power over Resist       |
 | the difference          | -200 to 200 | Power less Resist, held to this range             |
 | `unleashChance`         | ×5 percent | a weapon's unleash chance                          |
-| a base rate             | percent    | Sleep 45, Paralyze 40, Condemn 20                  |
+| a base rate             | percent    | Sleep 45, Stun 40, Condemn 20                      |
 | a level of lead         | +3 percent | the caster's element level over the target's      |
 | the target's Luck       | -1.5 a point | half the Luck, times three                       |
 | a weakness              | +25 percent | listed in the enemy's or class's row              |
@@ -634,7 +643,8 @@ Isaac's unit is `Unit_Get(ISAAC)`, the first of the eight in the main
 routine's work. His Djinn are the two low bits of `djinnHeld[ELEMENT_VENUS]`
 and of `djinnSet[ELEMENT_VENUS]`, and `djinnSetCounts[ELEMENT_VENUS]` is 2.
 
-Standby is `Djinn_PutOnStandby(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(Flint))`:
+Standby is
+`Djinn_PutOnStandby(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT))`:
 Flint's set bit is cleared, the count falls to 1, and `Unit_UpdateClass`
 runs the chain. `Unit_GetElementLevels` now counts Isaac's Venus at 54 plus
 10, 64 in tenths; the other elements stay at 3, 1 and 2. His strongest
@@ -645,7 +655,8 @@ whose row needs Venus 5; the Knight's needs 7, and he stands at 6.
 `Unit_RefreshPsynergy` drops the Knight's Psynergy from his list and adds
 the Squire's, which at his level are the same, so the panel says `No
 change`, and `Unit_CalculateBaseElements` writes his Venus Power and Resist
-for level 6 plus four tenths. Then `Unit_Calculate` rebuilds the stats:
+for level 6 plus four tenths. Then the menu calls `Unit_Calculate`, which
+rebuilds the stats:
 Flint's 8 HP, 4 PP and 3 Attack leave the sum, and the Squire's
 multipliers, 11 tenths of HP and Attack where the Knight's were 13 and 12,
 are applied to what is left. The panel shows HP 178 falling to 141, PP 61
@@ -675,16 +686,13 @@ menus and the shops agree: a shop's preview of a sword is the same
 `Unit_Calculate` the battle will run, and a menu's check of who can wear it
 is the same `Item_CanUnitEquipDirect` the equip command uses.
 
-Working the stats out from scratch, rather than adjusting them, is what
-makes that safe. Any code may change a base stat, equip an item or set a
-Djinni and then call one function, and every stat, the curse, the Psynergy
-list and the element levels come out consistent. The cost is that a change
-to one stat recomputes all of them, which the game pays only at the moments
-the player makes a change.
+Working the stats out from scratch is what makes that safe. Any code may
+change a base stat, equip an item or set a Djinni and then call one
+function, and every stat, the curse, the Psynergy list and the element
+levels come out consistent. The cost is that a change to one stat
+recomputes all of them, which the game pays only at the moments the player
+makes a change.
 
-The tables are parallel to the game's text by position, and their rows are
-read through structs with designated initializers, so that a row's fields
-are named in the source and a reader can check a row against its name.
 Enemies share the character's unit struct, with `CLASS_NONE` telling them
 apart, so a battle's code reads one shape for both sides.
 
@@ -769,7 +777,7 @@ is the enemies' fourth (`EnemyDefinition.weakEffects`).
 Rows 269 to 323 of `item_table.c` are 55 copies of one row: a weapon only
 Isaac can equip, priced 100 coins, with Attack 11, no icon and no name
 message. Nothing gives one: the shops' stock table (`shop/shop/stock.c`) and
-the [events](../../glossary.md#event) name no item past `ITEM_CLERICS_RING`
+the events name no item past `ITEM_CLERICS_RING`
 (268), no enemy in `enemy_table.c` carries or drops one, and the debug item
 browser covers 0 to 269 and skips items without an icon. They are filler to
 324 rows.

@@ -8,26 +8,31 @@ doorstep or a press of A makes something happen. All of that is the Field,
 the division of the code that runs wherever the [party](glossary.md#the-party)
 walks: a town, a [room](glossary.md#room), a dungeon or the World Map. Three
 folders share it. [Field code](src/field/README.md) runs the
-[field sequence](glossary.md#field-sequence), moves the actors and draws the
-[map](glossary.md#map); [Maps](src/map/README.md) holds what the ground is
-like; and [Scenes](src/scene/README.md) holds each
-[scene](glossary.md#scene)'s own code, its people, its triggers, its events
-and its exits. The [main routine](glossary.md#main-routine) that starts each
-scene belongs to the System ([System](system.md#the-main-routine)).
+[field sequence](glossary.md#field-sequence), moves the
+[actors](glossary.md#actor) and draws the [map](glossary.md#map);
+[Maps](src/map/README.md) holds what the ground is like; and
+[Scenes](src/scene/README.md) holds each [scene](glossary.md#scene)'s own
+code, its people, its [triggers](glossary.md#trigger), its events and its
+exits. The [main routine](glossary.md#main-routine) that starts each scene
+belongs to the System ([System](system.md#the-main-routine)).
 
 This page takes the division in the order one visit to a town runs through
 it:
 
 1. The main routine picks the scene from the scene table and loads its code.
 2. The field sequence sets the scene up, then walks the party a
-   [frame](glossary.md#frame) at a time, answering each
+   [frame](glossary.md#frame) at a time, each frame one call of `wait(1)`,
+   the call that runs one frame of the whole game
+   ([The Broken Seal](README.md#code-that-waits)), answering each
    [field request](glossary.md#field-request) the walk raises.
 3. The scene's code answers the field's questions: where the party arrives,
    who stands where, and what a talk, a step or a search does there.
-4. An exit ends the scene and names the entrance of the next one.
-5. Underneath, the actors and their actor scripts, the leader's movement, the
-   cells of the map and its layers, the World Map, random encounters and
-   field Psynergy do the work the requests and events ask for.
+4. An [exit](glossary.md#exit) ends the scene and names the
+   [entrance](glossary.md#entrance) of the next one.
+5. Underneath, the actors and their actor scripts, the leader's movement,
+   the [cells](glossary.md#cell) of the map and its layers, the World Map,
+   random encounters and field Psynergy do what the requests and events ask
+   for.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -85,7 +90,7 @@ only when the party enters another area, so a fact can follow the party from
 a town's street into its houses and back. A return from a battle clears
 neither: the party comes back to the scene as it left it.
 
-`Scene_Arrive` clears the flags and shows the area's name,
+`Scene_Arrive` clears the flags and marks the area's name to be shown,
 `Scene_ChooseMusic` picks its music and `Scene_LoadOverlay` unpacks its
 code, all before the field sequence starts. The rows are `struct Scene` in
 [scenes.s](src/field/scenes.s), the music and the names come from
@@ -116,8 +121,8 @@ The map is loaded, or the World Map's tilted view is built. The random
 battles of the scene are chosen. The actors' two
 [tasks](glossary.md#task) are added, one to move the actors and one to draw
 them. The scene's code is asked for its triggers. The party is placed at its
-[entrance](glossary.md#entrance), the scene's people are placed, and a
-camera actor is placed on the leader. Coming back from a battle, everyone is
+entrance, the scene's people are placed, and a camera actor is placed on
+the leader. Coming back from a battle, everyone is
 put back where they stood. The chests and Psynergy Stones the map marks are
 placed. The scene's own set-up runs, and it may send the party straight on.
 Then the screen fades in from the backdrop colour over 16 frames, the area's
@@ -136,8 +141,8 @@ pressing A beside someone, stepping onto a doorstep or a random battle
 coming due each sets a request, and the loop finds it once `wait(1)` has
 returned. Then the walk stops, the loop answers the requests one at a time
 in a fixed order, and the walk starts again. Leaving comes first, so an
-[event](glossary.md#event) that ends by taking an [exit](glossary.md#exit)
-simply ends the scene. A random battle is a way out too: the battle runs as
+[event](glossary.md#event) that ends by taking an exit simply ends the
+scene. A random battle is a way out too: the battle runs as
 the next [sequence](glossary.md#sequence), and afterwards the scene is set
 up again with the party where it stood.
 
@@ -147,7 +152,7 @@ up again with the party where it stood.
 | 2     | a raised trigger | a trigger the scene's own code raised, or the party falling to poison          |
 | 3     | an encounter     | everyone's place is remembered and the battle becomes the next sequence        |
 | 4     | a step trigger   | the scene's trigger for the cell stepped onto, or the exit it marks            |
-| 5     | a push cell      | a ledge, a climbing spot or a gap, once the leader has pushed for 12 frames    |
+| 5     | a push cell      | a ledge, a climbing spot or a gap, once the leader has pushed for more than 12 frames |
 | 6     | the A button     | a talk if someone is ahead, else a search if something is, else the field menu |
 | 7     | the field menu   | the row of icons: Psynergy, Djinn, Item, Status                                |
 | 8     | a talk           | the actor's talk trigger: a message or an event                                |
@@ -173,7 +178,7 @@ regions. Because an answer is a function, a scene can answer differently as
 the story moves on: Vault gives one list of what can happen before its
 thieves are jailed and another after.
 
-What can happen is the scene's table of [triggers](glossary.md#trigger).
+What can happen is the scene's table of triggers.
 Each row says what starts it (a talk, a step onto a cell, a search, an item
 or Psynergy), who or where it is for, the condition under which it applies
 (most often until a flag is set), and what it runs. The loop runs the first
@@ -193,9 +198,9 @@ next row.
 
 A row can ask more of the leader than its kind says. A step trigger can
 need the leader to have pushed against the cell for more than 12 frames,
-and a step or talk trigger can need the leader to face within an eighth of
-a turn of a given heading, so one person or one wall answers differently
-from each side.
+and a step or talk trigger can need the leader to face within 45 degrees
+of a given heading, so one person or one wall answers differently from
+each side.
 
 A talk needs someone to talk to. When A is pressed, the loop looks for the
 nearest actor within 32 pixels and no more than 48 pixels higher or lower;
@@ -232,7 +237,7 @@ for one exit:
 ```c
 SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE, FLAG_SOL_SANCTUM_ERUPTED),
 SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, ValeEruption, VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
-SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
+SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE, EXIT_FLAG_NONE),
 ```
 
 Until the Sanctum erupts the path leads to Vale; once it has, and until the
@@ -291,8 +296,8 @@ tables.
 
 ![Isaac walks through Imil's snow, and each footprint he leaves fades after a moment](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
-Everything on the field that moves or changes by itself is an
-[actor](glossary.md#actor): the party, the townspeople, the camera that
+Everything on the field that moves or changes by itself is an actor: the
+party, the townspeople, the camera that
 follows the leader, a chest, and each footprint in the snow. There are 64
 slots for them, and each actor runs a short
 [actor script](glossary.md#actor-script), a list of `SC_` commands, a
@@ -370,7 +375,7 @@ heights.
 
 ![Isaac pushes against a ledge and, with Down held, hops down it to the ground below](https://alchemy.pascalpixel.com/guides/layout/ledge.gif)
 
-A map is a grid of 16-pixel squares, the [cells](glossary.md#cell), and each
+A map is a grid of 16-pixel squares, the cells, and each
 cell says what is drawn there, how high its ground is, and what standing
 there does. What standing there does is the cell's
 [cell behavior](glossary.md#cell-behavior), one byte. The walking update
@@ -383,7 +388,9 @@ chest in the next. A few values mean the same everywhere. Two mark ground
 with random battles of its own, six mark the jars, barrels, boxes, graves,
 books and wells anyone can search, one marks the Lamakan Desert's burning
 sand, three mark the places the leader can jump down, climb or jump across
-by pushing against them, and one is a wall whatever the heights.
+by pushing against them (a fourth, `CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED`,
+the walking update never passes on), and one is a wall whatever the
+heights.
 
 A loaded cell is `struct MapGridCell` and the behaviors are
 `enum CellBehavior`; `Field_UpdateWalking` reads the cell under the leader
@@ -503,10 +510,13 @@ Using Move on a stone pillar slides it, and using it where nothing answers
 shows the same hand and moves nothing. The cast only draws the Psynergy;
 what it does to a scene is decided by the scene's own triggers. A Psynergy
 trigger names the ability, the thing it is for (an actor, a cell, or
-anywhere) and one of three moments: before the cast plays, where its event
-can still stop the cast or turn it away from its target; after the cast,
-where the event does what the Psynergy does there; and while Force, Frost
-or Reveal acts on its target, which those three run themselves.
+anywhere) and the moment it runs at. Three moments belong to the cast:
+before it plays, where its event can still stop the cast or turn it away
+from its target; after it, where the event does what the Psynergy does
+there; and while Force, Frost or Reveal acts on its target, which those
+three run themselves. The other three surround the ending of Cloak and
+Reveal, which run out by themselves
+([Field code](src/field/README.md#how-field-psynergy-reaches-its-target)).
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -541,16 +551,17 @@ covers each moment and each cast.
 The scene table ends with ten scenes no player can walk into, the
 developers' test rooms for Djinn, levels, items, shops and messages. Only
 the debug scene selector reaches them, in
-[debug mode](glossary.md#debug-menus), which the released game never turns
-on; [Debug scenes](src/debug/README.md#the-test-scenes) goes through them.
+[debug mode](glossary.md#debug-menus), a build switch of the developers'
+own; [Debug scenes](src/debug/README.md#the-test-scenes) goes through them.
 
 ## From a doorstep in Imil to the room inside
 
 ![In Imil the leader walks north into a door; everyone stops, the door opens and the leader walks in](https://alchemy.pascalpixel.com/places/imil/events/Imil_OpenDoorAndExit.gif)
 
-Isaac walks up to the door of a house in Imil and leans on it. The door
-opens, he walks in, and the room inside fades up. Each step is one of this
-page's mechanisms.
+Isaac walks up to one of the six house doors in Imil and leans on it. The
+door opens, he walks in, and the room inside fades up. Each step is one of
+this page's mechanisms; the rows below are the southwest house's, and the
+other five doors have rows of the same shape.
 
 ### Pushing against the door
 
@@ -578,8 +589,10 @@ the event.
 
 ### The event
 
-`Imil_OpenDoorAndExit` is code that waits. It stops every placed actor,
-plays the door's sound, redraws the door's cells open, starts the leader
+`Imil_OpenDoorAndExit` is code that waits. It clears every placed actor's
+motion flags, so none follows the ground or falls while the door is
+redrawn, plays the door's sound, redraws the door's cells open, starts the
+leader
 walking north at half speed, and waits 16 frames while the actors' task
 walks him in. Its last command asks for the exit, named by the door's
 number:
@@ -598,9 +611,10 @@ to the main routine, whose `Scene_TakeExit` finds it in Imil's exit table:
 SCENE_EXIT(IMIL_TO_HOUSE_SOUTHWEST, IceRooms, ICE_ROOMS_HOUSE_SOUTHWEST),
 ```
 
-The next scene is `SceneId_IceRooms`, the sheet of rooms that holds Imil's
-house interiors, at the entrance named for this door. Imil and its rooms are
-one area, so the area flags survive and no name shows. The field sequence
+The next scene is `SceneId_IceRooms`, the sheet of rooms that holds the
+rooms of Imil's houses, at the entrance named for this door. Imil and its
+rooms are one area, so the area flags survive and no name shows. The field
+sequence
 starts again on that scene: `Scene_ApplyEntrance` reads the entrance row,
 which places Isaac just inside the door facing north and bounds the camera
 to that one room of the sheet, `Actor_ResetForLeader` places him and the
@@ -616,7 +630,8 @@ room's people, and the screen fades in.
 | The door opens and Isaac walks in | the event, code that waits, with the actors' task          |
 | The exit is taken               | the field sequence: the exit request ends the loop           |
 | The next scene is chosen        | exits and entrances: the exit table                          |
-| Isaac stands inside the door    | scenes and areas, then the entrance row                      |
+| No area name shows              | scenes and areas: Imil and its rooms share an area           |
+| Isaac stands inside the door    | exits and entrances: the entrance row, read as the field sequence sets up |
 
 ## Design
 
@@ -635,7 +650,8 @@ entrance row. An exit says only where it leads; the next scene's entrance
 row says where that is. A door is therefore two names, one on each side,
 and the exit table is the one place the two are joined.
 
-A battle leaves the scene entirely. The heap is emptied between one
+A battle leaves the scene entirely. The [heap](glossary.md#heap-and-pools),
+the memory a sequence borrows its work from, is emptied between one
 sequence and the next, so the field remembers where everyone stood in a
 snapshot outside the heap, and the main routine remembers the scene and
 entrance to come back to. The scene is then set up again from the start,

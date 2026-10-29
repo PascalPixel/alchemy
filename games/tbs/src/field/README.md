@@ -11,7 +11,8 @@ scripts they run, the leader's walk, the search for someone to talk to, the
 to Vault from the moment its code is loaded until the
 [party](../../glossary.md#the-party) leaves. The folder is the
 [Field](../../glossary.md#field)'s code, in four
-[banks](../../glossary.md#bank) of the main image:
+[banks](../../glossary.md#bank) of the
+[main image](../../glossary.md#main-image):
 
 - Bank 01 is `field.c`, one object written as parts under `field/`: the
   actors and their scripts, sprites, walking, the map grid, the cameras and
@@ -40,7 +41,9 @@ This page follows the code in the order control passes through it during
 one visit to a scene:
 
 1. The field sequence sets the scene up and then walks the party a
-   [frame](../../glossary.md#frame) at a time, answering each
+   [frame](../../glossary.md#frame) at a time, each frame one call of
+   `wait(1)`, the call that runs one frame of the whole game
+   ([The Broken Seal](../../README.md#code-that-waits)), answering each
    [field request](../../glossary.md#field-request) the walk raises.
 2. Inside each frame, one [task](../../glossary.md#task) steps every actor's
    [actor script](../../glossary.md#actor-script) and moves the actor, the
@@ -101,7 +104,8 @@ back to. Then, in order:
    (`Actor_ResetForLeader`). Coming back from a battle, everyone is put back
    where they stood (`Actor_Restore`).
 6. The chests and Psynergy Stones the map marks are placed
-   (`Field_PlaceTreasureSpots`), and the palette fade is set up.
+   (`Field_PlaceTreasureSpots`), and the
+   [palette fade](../../glossary.md#palette-fade) is set up.
 7. The restart point a defeat returns to is looked up, and the scene's own
    set-up runs (`gOverlayArea.initialize()`), which may take an exit at
    once and end the scene before it is shown.
@@ -123,26 +127,19 @@ do {
 } while (Field_CountRequests() == 0);
 ```
 
-`wait(1)` runs one frame of the whole game: every task once, the leader's
-walk among them, and then a picture
-([The Broken Seal](../../README.md#code-that-waits) explains `wait()`).
-When it returns, `Field_UpdateWalking` reads the
+When `wait(1)` returns, `Field_UpdateWalking` reads the
 [cell](../../glossary.md#cell) under the leader and raises whatever that
 cell calls for: a step trigger, a push, an exit, a random battle. Then
-`Field_CountRequests` asks whether any request is set.
-
-A request is a member of the field work that something sets to say the
-walk should stop. A task runs inside `wait(1)`, in the middle of a frame,
-so it can only leave such a note: when the player presses A, the leader's
-script sets the A button's request, and the loop finds it once the frame is
-over. The walk then stops, the loop answers the requests one at a time, most
-urgent first, and when none is left it hands the leader back to the player
-and the walk goes on.
+`Field_CountRequests` asks whether any request, any of the twelve members
+of the field's work that something sets to stop the walk, is set. The loop
+checks the exit first, answers the first request it finds, and starts
+again from the top after each answer; when none is left it hands the
+leader back to the player and the walk goes on.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  frame(["Inside wait(1): the leader's script sees A pressed"]) -- "sets aButton" --> work(["The field work"])
+  frame(["Inside wait(1): the leader's script sees A pressed"]) -- "sets aButton" --> work(["The field's work"])
   work -- "wait(1) returns" --> loop(["🏡 The loop: the first request set, in order"])
   loop --> talk(["Someone ahead: the talk request"])
   loop --> search(["Something ahead: the search request"])
@@ -186,7 +183,8 @@ trigger stands within reach it becomes a talk request; else if the cell
 ahead has something to search it becomes a search request; else the field
 menu opens. The World Map's view is drawn as a
 [still picture](../../glossary.md#still-picture) around most answers
-(`WorldMap_Freeze`), so that a window can use the layer the tilt was using.
+(`WorldMap_Freeze`), so that a window can use a background layer the
+moving view needs ([below](#the-world-map-in-perspective)).
 
 ### Raised triggers the field answers itself
 
@@ -230,20 +228,16 @@ reached as `gFieldWork`.
 | `EXIT_KEEP_DESTINATION`    | 999     | the next scene is already in the main routine's work         |
 | `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next scene starts where the party was, everyone put back |
 | `ACTOR_SNAPSHOT_CAPACITY`  | 32      | actors a snapshot keeps                                      |
-| `ACTOR_ID_COUNT`           | 66      | actor ids the field work maps to actors                      |
+| `ACTOR_ID_COUNT`           | 66      | actor ids the field's work maps to actors                    |
 | `TREASURE_SPOT_MAX`        | 10      | chests and Psynergy Stones the work places                   |
 
 ## Everything that moves runs an actor script
 
 ![Isaac walks through Imil's snow, and each footprint he leaves fades after a moment](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
-Everything on the field that moves or changes by itself is an actor, and
-every actor runs an actor script. The party, the people and things a scene
-places, the camera, a chest and each footprint in the snow share 64 slots,
-and one task, `Actor_UpdateAllThumb`, gives each of them its share of
-every frame. The leader's script is "move by the pad, wait a frame,
-repeat", the camera's is "follow the leader, wait a frame, repeat", and a
-footprint's is "wait 120 frames, disappear".
+The party, the people and things a scene places, the camera, a chest and
+each footprint in the snow share the 64 actor slots, and one task,
+`Actor_UpdateAllThumb`, gives each actor its share of every frame.
 
 An actor's share of the frame has two halves. First its script runs: an
 actor counting down a wait counts one frame off, and any other runs the
@@ -347,7 +341,7 @@ placed actor given a height above the ground floats instead.
 A solid actor refuses to walk into another solid actor, and the frames it
 has been refused are counted, so a script waiting for it to arrive gives
 up after 60 of them. An actor that faces its motion turns toward the way
-it moves by at most a sixteenth of a turn a frame.
+it moves by at most 22.5 degrees a frame.
 
 `Actor_UpdateAllThumb` in [actor_motion.c](field/actor_motion.c) runs every
 actor's frame; `Actor_SetMoveTarget` sets a target and picks the axis to
@@ -365,7 +359,7 @@ watch, `Actor_Create` gives a new actor its defaults, and
 | `ACTOR_PUSHABLE`               | collision bit 1 | the leader pushes it                                       |
 | `SCRIPT_BLOCKED_MOVE_FRAMES`   | 60 frames       | after this long blocked, `SC_SYNC` stops waiting            |
 | `SCRIPT_LABEL_SEARCH_WORDS`    | 1,024 words     | how far into a script a jump looks for its label           |
-| `FACING_STEP`                  | a sixteenth of a turn | the most an actor turns in one frame                 |
+| `FACING_STEP`                  | 22.5 degrees    | the most an actor turns in one frame                       |
 
 ### Who runs which script
 
@@ -405,15 +399,15 @@ held. The player control is `SC_PLAYER`, run once a frame as the leader's
 script, and each frame it does the same four things: it chooses the speed
 from B, picks a step from the D-pad, tests the ground, and moves or turns.
 
-The step is 8 pixels the way the pad points. Before taking it the control
-tests the ground at the end of the step, and at the ends of four more steps
-of the same length, 22.5 and 45 degrees to either side, so that the
-leader's whole width clears the way. When any of those tests fails, the
-control tries headings further and further round, 22.5, 45 and 67.5
-degrees off the pad's way, each with the same five tests, and takes the
-first that passes: that is the slide along a wall. When every heading fails
-the leader stays put, turns toward the pad by at most a sixteenth of a turn
-a frame, and the field counts the frame as a push. A doorstep or a ledge
+Each frame the control picks a heading from the D-pad and tests the ground
+8 pixels along it, and at the ends of four more 8-pixel probes 22.5 and 45
+degrees to either side, so that the leader's whole width clears the way;
+the leader then moves its speed along that heading. When any of those
+tests fails, the control tries headings further and further round, 22.5,
+45 and 67.5 degrees off the pad's way, each with the same five probes, and
+takes the first that passes: that is the slide along a wall. When every
+heading fails the leader stays put, turns toward the pad by at most 22.5
+degrees a frame, and the field counts the frame as a push. A doorstep or a ledge
 answers only once the count passes 12.
 
 A solid actor just ahead blocks the step too, unless it is pushable, such
@@ -469,8 +463,9 @@ a fraction: `0x10000` is one pixel.
 Every point of a map has a height, and the leader can step up onto ground
 at most 8 pixels higher, or down onto ground at most 12 pixels lower.
 Anything steeper blocks the way as surely as a wall, and most of the game's
-walls are made from heights: a cliff is ground 32 pixels higher. The room
-of Goma Cave drawn on `map_024` marks no cell as a wall at all.
+walls are made from heights: a cliff is ground too high to step onto. The
+room of Goma Cave with the pillar and the stump (`SceneId_GomaCavePillar`,
+drawn on `map_024`) marks no cell as a wall at all.
 
 The height anywhere inside a cell is worked out from the cell's shape, one
 of 16 kinds, and up to three height samples in 8-pixel units: flat, a slope
@@ -582,16 +577,11 @@ make a sprite and start an animation. The colourings are
 
 ![Vale in front of the Sanctum taken apart into the ground, the middle layer, the sprites and the overhead layer, spread one behind another, then put back together into the picture the player sees](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
 
-A town or dungeon is drawn as three flat layers stacked on top of each
-other: the ground at the back, a middle layer of walls and edges, and an
-overhead layer of roofs and treetops in front. On most maps the people are
-drawn between the middle and overhead layers, which is how Isaac can walk
-behind a roof. Which layer is in front is the console's decision, made from
-priorities: each layer's priority comes from the map, most maps giving
-them 3, 2 and 1 from back to front, and a sprite takes 2 on open ground, so
-it lies over the middle layer and under the overhead one, or 3 where the
-cell under it says so, which puts it behind a building. A sprite wins a
-tie with a layer of the same priority.
+A town or dungeon is drawn as three flat layers, the ground, a middle
+layer and an overhead layer, with the people between the middle and the
+overhead one ([Field](../../field.md#map-layers) explains the stack and
+the priorities that order it). A sprite wins a tie with a layer of the
+same priority.
 
 Each layer is a window onto the one grid of cells, and each frame the map
 centres its view on the camera actor, within the bounds the entrance set,
@@ -606,8 +596,8 @@ maps only ever hold what is near.
 Two timed changes run on their own. A tileset animation swaps the pictures
 of a few tiles on a timer, a waterfall or a flickering torch, by copying
 tiles into video memory; a map can run 16 at once. A blend script changes
-how the layers mix over time, for a haze or a glow. Code for palette cycles
-is there too, which nothing in the game starts.
+how the layers mix over time, for a haze or a glow. The palette cycle,
+`PaletteCycle_Step`, is unused code.
 
 `MapGrid_LoadMap` in [map_grid.c](field/map_grid.c) loads a map from its
 row of `gMaps` and `MapGrid_UpdateLayerScroll` scrolls it each frame;
@@ -679,7 +669,7 @@ first row that fits. A row says what starts it, who or where it is for,
 the condition under which it still applies, and what it runs: a message,
 or an event, which is plain C that plays from top to bottom while the
 party waits. A row can also ask for a push of more than 12 frames, or for
-the leader to face within an eighth of a turn of a given heading.
+the leader to face within 45 degrees of a given heading.
 
 ### Talking
 
@@ -698,9 +688,10 @@ instead.
 ### Stepping and pushing
 
 Each frame the walking update reads the behavior of the cell under the
-leader. A value from the scene's own range raises a step trigger request,
-and also makes the field test the scene's exit regions, boxes of pixels
-that take the party out when the leader is inside one. When the loop answers
+leader. Any marked cell makes the field test the scene's exit regions,
+boxes of pixels that take the party out when the leader is inside one; a
+value from the scene's own range also raises a step trigger request. When
+the loop answers
 the step, it looks for a step trigger row with that value; finding none,
 it looks for an exit row, which plays the exit's sound and, for a stair,
 the leader's climbing animation, and sets the exit request.
@@ -729,7 +720,8 @@ A chest is a row in the scene's trigger table and a mark on the map. When
 the scene loads, the field walks the map's list of marked cells and, for
 each mark the scene has an examine row for, places an actor: a chest, shown
 open if its flag says it has been opened, or a Psynergy Stone, until it is
-taken. The map can mark up to ten. Searching an unopened chest opens it with
+taken. The field places up to ten of them; a mark the scene has no row for
+takes no slot. Searching an unopened chest opens it with
 its sound, lifts what it held above the leader to the treasure jingle, and
 sets the row's flag; an opened chest answers `but the chest was empty.`;
 an item nobody can carry stays, and the chest closes again. A mimic's chest
@@ -752,7 +744,7 @@ describes every kind.
 | `TRIGGER_STEP`                  | 2          | stepping onto or pushing against a cell                        |
 | `TRIGGER_EXAMINE`               | 3          | the A button on what is ahead, when it is no actor             |
 | `STEP_TRIGGER_FLAG_WALKING`     | `0x200`    | the leader must have pushed for more than 12 frames            |
-| `TRIGGER_FLAG_FACING`           | `0x400`    | the leader must face within an eighth of a turn of the row's heading |
+| `TRIGGER_FLAG_FACING`           | `0x400`    | the leader must face within 45 degrees of the row's heading    |
 | `CELL_BEHAVIOR_JAR` to `_WELL`  | 242 to 247 | search spots with their own lines in every scene               |
 | `CELL_BEHAVIOR_LEDGE`, `_CLIMB`, `_JUMP_FORWARD` | 252 to 254 | pushed against: a jump down, a climb, a jump across |
 
@@ -767,8 +759,9 @@ the leader's speed and the zone of the ground underfoot, so it measures
 the distance walked. A zone says how far apart its battles
 are, what level it is made for, and up to eight groups of enemies with the
 chance of each. With no other influence, a zone of rate r brings a battle
-after about 16 × r pixels walked: Goma Cave's first room has rate 30, so a
-battle comes every 480 pixels, thirty cells.
+after about 16 × r pixels walked: the room of Goma Cave past its entrance,
+the one with the pond (`SceneId_GomaCavePond`), has rate 30, so a battle
+comes every 480 pixels, thirty cells.
 
 Two things stretch that distance. A random bias, drawn again after each
 battle, makes the gaps vary around the rate. And when the party's average
@@ -783,8 +776,9 @@ zone; the first kind of marked cell takes it and the second kind the next
 zone, while ordinary ground has no battles, unless the rule moves the first
 zone onto ordinary ground instead, as Goma Cave's rules do. The World Map
 takes its zone from the region and the kind of ground under the party, and
-the same lookup picks the battle's background. Some zones are never rolled
-on at all: event battles, mimic chests and Djinn fights name them directly.
+the same lookup picks the battle's background. Event battles, mimic chests
+and Djinn fights name their zones directly, so those zones are drawn from
+without a roll.
 
 One more rule holds only in Sol Sanctum: Jenna is in the party only from
 Vale to the Sanctum's eruption, joining at level 1, and random battles stop
@@ -861,9 +855,10 @@ the scene's own rows; the cast only draws it. A Psynergy row names the
 ability, what it is for, an actor, a cell or anywhere, and the moment it
 runs at, and the field runs the right row at each moment.
 
-A cast runs in this order. First the field refuses where Psynergy has no
-effect: all of it in the Battle Arena, Reveal on the World Map, and
-Retreat where a flag forbids it, which every town sets. Retreat asks first,
+A cast runs in this order. First the field refuses the casts a place
+forbids: every cast in the Battle Arena, Reveal on the World Map, and
+Retreat in every town, which sets `FLAG_RETREAT_BLOCKED` as it loads.
+Retreat asks first,
 and when accepted sets the scene and entrance the party came into the area
 by as the destination and raises the exit. Then the PP is paid. Then the
 field looks for the scene's rows for this Psynergy at three moments, and
@@ -907,7 +902,7 @@ each ability in [ability_table.c](../game/ability_table.c).
 
 When Reveal is cast the backgrounds turn grey in one frame, and most field
 Psynergy tints the screen over 8 frames as it starts and fades back after
-it. Both are the [palette fade](../../glossary.md#palette-fade): a copy of
+it. Both are the palette fade: a copy of
 the colours on screen that moves toward a set of target colours by an
 equal amount each frame, so that every colour arrives together, and on the
 last frame takes the target itself, so that rounding never leaves a colour
@@ -986,7 +981,8 @@ and `Scene_ReturnFromSequence` brings the party back.
 
 ![Isaac walks through Goma Cave until a random battle starts: the screen goes black, the battle opens on a Ghost and a Skeleton, the party beats them and takes its experience and coins, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/guides/overworld/battle-return.gif)
 
-Isaac walks through the first room of Goma Cave. A battle starts, the party
+Isaac walks through the room of Goma Cave past its entrance, the one with
+the pond. A battle starts, the party
 wins, and the cave comes back with everyone where they stood. Each step is
 one of this page's mechanisms.
 
@@ -1004,10 +1000,11 @@ floor.
 ### Counting the distance
 
 When `wait(1)` returns, `Field_UpdateWalking` reads the cell under him.
-Goma Cave's rule has moved its first zone onto ordinary ground, so the
+The room's rule has moved its first zone onto ordinary ground, so the
 encounter roll runs on every cell of the floor, and the counter in the main
 routine's work grows each frame by the leader's speed divided by the
-zone's rate of 30, so it reaches its mark of 16 after 480 pixels. At the
+zone's rate of 30, nudged by the random bias drawn on his first step, so
+it reaches its mark of 16 after about 480 pixels. At the
 same time the distance toward the next PP grows, and every 160 pixels each
 party member regains one.
 
@@ -1039,7 +1036,8 @@ the room away.
 | Step                           | Mechanism                                                     |
 | ------------------------------ | ------------------------------------------------------------- |
 | Isaac walks the floor          | the player control, an actor script, and the actor's motion   |
-| He follows the ground          | how high a step can go                                        |
+| He follows the ground          | how an actor moves: the ground carries him up and down       |
+| The bank holds him off         | how high a step can go                                        |
 | The cave scrolls under him     | actors move first, then the camera draws them                 |
 | The counter grows              | random battles, in the walking update                         |
 | The battle is asked for        | the field sequence: the encounter request                     |
@@ -1073,34 +1071,32 @@ cartridge's bus is 16 bits wide, so ARM runs slowly from it, and the rest
 of the game is Thumb, the 16-bit instructions. There is also an ARM copy of
 the actor update, `Actor_UpdateAll`, for the first eight actors, which
 only the unused `Actor_RunUpdateAllFromHeap` would copy and run: it lacks
-the field's extras (free flight in 3D, following the ground, floating,
-solid actors), so it could not stand in for the usual update.
+the field's extras (flight through the air in 3D, following the ground,
+floating, solid actors), so it could not stand in for the usual update.
 
 ### A battle starts from a snapshot
 
-The heap is emptied between a scene and a battle, so the actors' places
-live in `gActorSnapshot`, a fixed EWRAM buffer, and the return point in the
-main routine's work. The scene is then set up from the start a second time,
-which keeps one path through the set-up for every arrival.
+Setting the scene up a second time after a battle, from the snapshot
+([above](#leaving-for-a-battle-and-coming-back)), keeps one path through
+the set-up for every arrival.
 
 ### Spellings kept for matching
 
-Several structures are reached by more than one spelling (the field work,
+Several structures are reached by more than one spelling (the field's work,
 the field effect, the map's view, the palette fade), each site keeping the
 one it matches with; [Matching](../MATCHING.md#heap-slots) explains why.
 
 ## How it fits with the rest of the game
 
-The main routine runs the field sequence (`FieldSequence_Run`) for every
-scene: it sets up the actors (`ActorSystem_Initialize`), loads the map and
-the overlay, places the actors and handles field requests, with the actors,
-actor scripts and ground checks of bank 01. Each scene's overlay supplies
-its tables and setup, and calls back into this folder through its
+The main routine runs the field sequence for every scene. Each scene's
+overlay supplies its tables and setup, and calls back into this folder
+through its
 [import table](../../glossary.md#entry-table-and-import-table) for the
 event commands its events are written in: nine overlays ask for the
 ground's height, and six rewrite a cell's
-[cell behavior](../../glossary.md#cell-behavior). Battles and the minigames
-return through the main routine's work, and the screen transitions close
+[cell behavior](../../glossary.md#cell-behavior). Battles, Lucky Dice and
+Lucky Wheels return through the main routine's work, and the screen
+transitions close
 the field before each battle as well as between scenes. The battle uses the
 actors in its own mode for its sprites. The Lost Age's field code is
 described by [its own guide](../../../tla/src/field/README.md), as
@@ -1109,7 +1105,7 @@ differences from this one.
 ## Limits
 
 - 64 actors; 64 sprites, sharing 64 sprite animations, up to four each.
-- 66 actor ids in the field work, each pointing at one of the 64 actors.
+- 66 actor ids in the field's work, each pointing at one of the 64 actors.
 - 8 sprite picture caches and 16 tileset animations.
 - `gActorScript_CommandTable` has 47 entries: 36 commands, then 11 that act
   as `SC_END`. A label must lie within the first 1,024 words of its script.
@@ -1124,24 +1120,21 @@ differences from this one.
 
 ## Words used here
 
-- An **actor** is one of the 64 slots of `gActors`, 112 bytes each, as the
-  [glossary](../../glossary.md#actor) defines it; a scene knows its own
-  among them by [actor id](../../glossary.md#actor-id). A slot with no
-  script has been released.
-- A **sprite** is one of the 64 `struct Sprite`s: an image and a shadow, two
-  entries of OAM (the hardware's sprite list), and up to four
-  **sprite animations** (`struct SpriteAnimation`), animations composed
-  into one picture.
-- An **actor script** is a list of 32-bit words: `SC_` commands of
-  [actor_script.h](../../include/field/actor_script.h) and their operands.
-  An **animation script** is a list of byte pairs that a sprite animation
-  plays.
+- An **actor** is one of the 64 slots of `gActors`, `struct Actor`
+  ([above](#everything-that-moves-runs-an-actor-script)); a scene knows its
+  own among them by [actor id](../../glossary.md#actor-id).
+- A **sprite** is one of the 64 `struct Sprite`s, with up to four
+  **sprite animations** ([above](#sprites-and-their-animation)).
+- An **actor script** is a list of 32-bit words, the `SC_` commands and
+  their operands ([above](#how-an-actor-script-runs)). A **sprite
+  animation's picture list** is a list of byte pairs (which picture, for
+  how many frames) that the animation plays.
 - A **built-in script** is a routine the field hands an actor to with one
   command: the player control, the camera, the World Map's walk.
-- **field work**: `struct FieldWork`, the running scene's state
+- **the field's work**: `struct FieldWork`, the running scene's state
   ([above](#the-field-sequence-serves-requests)). Local name `work`.
-- **request**: a member of the field work that something sets to stop the
-  walk (above).
+- **request**: a member of the field's work that something sets to stop
+  the walk (above).
 - **field kind**: what an ability does on the field, the `fieldPsynergy`
   field of each ability in [ability_table.c](../game/ability_table.c),
   named by `enum FieldPsynergy` (`module/field/event_commands.h`).
@@ -1155,7 +1148,7 @@ differences from this one.
 - **field effect sprite**: `struct FieldParticle`, one particle a field
   Psynergy moves and draws.
 - **treasure spot**: a chest or Psynergy Stone the map places at one of
-  its cells; the field work holds up to ten, apart from the actors.
+  its cells; the field's work holds up to ten, apart from the actors.
 - **mode**: `work->mode` is `ACTOR_SYSTEM_MAP` on a town or dungeon scene
   and `ACTOR_SYSTEM_WORLD_MAP` on the World Map.
 - A map **layer** is one of a town's three backgrounds

@@ -140,10 +140,10 @@ void DjinnFigures_UpdateBottomRow(void) {
           ((u32)(s32)menu->positionsY[objectIndex] << 16) + projectedY;
       placement.groundHeight = 0;
       rowY = menu->positionsY[objectIndex];
-      /* FAKEMATCH(barrier): an empty asm that clobbers r3 while rowY is live,
-       * so rowY takes r2 and limit keeps r3; as no asm, 81 of 119
+      /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live,
+       * so rowY takes r2 and limit keeps r3; as no statement, 81 of 119
        * instructions differ in tbs-en. */
-      __asm__("" : : : "r3");
+      scale.x = scale.x;
       limit = 0x8000;
       if (rowY >= 0)
         limit = 0x4000;

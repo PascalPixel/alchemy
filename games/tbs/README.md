@@ -55,7 +55,7 @@ of dice ends, the main routine goes back to a scene the field sequence runs
 
 ## Frames, waiting and tasks
 
-A sequence's code reads like a script. An event walks the leader to a door,
+A sequence's code runs from top to bottom. An event walks the leader to a door,
 waits 30 frames, shows a message and waits for A; a battle shows its menu,
 waits for a choice and plays the attack. Each line runs once the one before it
 has finished, and nothing in the code goes back to a loop in between.
@@ -63,7 +63,7 @@ has finished, and nothing in the code goes back to a loop in between.
 Most game engines are built the other way round: the engine owns the game
 loop, calls every object's update function once a frame, and the game's own
 code has to return quickly each time. Here the loop is inside a function the
-script calls. [`wait(n)`](glossary.md#wait) runs n
+sequence's code calls. [`wait(n)`](glossary.md#wait) runs n
 [frames](glossary.md#frame) of the game and then returns to the next line. In
 each frame it calls every [task](glossary.md#task)'s function in turn, builds
 the sprites, and halts until the screen shows the picture at the next
@@ -72,12 +72,12 @@ the sprites, and halts until the screen shows the picture at the next
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  call(["The script reaches wait(n)"]) --> tasks(["Call every task's function: the actors move, windows type, water ripples"])
+  call(["The code reaches wait(n)"]) --> tasks(["Call every task's function: the actors move, windows type, water ripples"])
   tasks --> sprites(["Build the frame's sprites"])
   sprites --> halt(["Halt until the next VBlank"])
   halt --> vblank(["VBlank interrupt: the picture goes on screen, the sound is mixed, the buttons are read"])
   vblank -- "another frame" --> tasks
-  vblank -- "n frames done" --> back(["wait(n) returns: the script's next line runs"])
+  vblank -- "n frames done" --> back(["wait(n) returns: the code's next line runs"])
   classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -98,16 +98,21 @@ void wait(s32 frames) {
 }
 ```
 
-A task is whatever has to keep moving while the script waits: the actors
+A task is whatever has to keep moving while the code waits: the actors
 walking, a window typing out its text, the map's water rippling. Each is one
 function in the task table, `gTasks`, and `wait()` calls it in every frame
-until the task is removed. A sequence adds the tasks it needs when it starts:
-the field adds its actors, its map's scrolling and its windows, and a battle
-adds its camera.
+until the task is removed. A sequence adds the tasks it needs when it starts,
+each with a priority that orders it among the rest: the field adds its actors,
+its map's scrolling and its windows, and a battle adds its camera. The actors
+are one task between them, `Actor_UpdateAllThumb`: each frame it gives every
+actor a turn, running the commands of that actor's
+[actor script](glossary.md#actor-script) until one says the actor is done for
+the frame, a step of a walk or a wait, so an actor script moves on a little
+every frame.
 
 A task runs in the middle of somebody else's `wait()`, so it can't do anything
-that takes time itself: it would have to wait, and the script is already
-waiting. A task that notices something leaves a note instead, in the
+that takes time itself: it would have to wait, and the code that called
+`wait()` is already waiting. A task that notices something leaves a note instead, in the
 [work](glossary.md#work) of the code it serves, and that code acts on the note
 once its `wait()` returns. The field sequence's loop is the plainest case:
 
@@ -118,8 +123,8 @@ do {
 } while (Field_CountRequests() == 0);
 ```
 
-During `wait(1)` the task that moves the actors runs the leader's
-[actor script](glossary.md#actor-script), which sees A pressed and sets
+During `wait(1)` the actors' task runs the leader's actor script, which sees A
+pressed and sets
 `aButton` in the field's work. When `wait(1)` returns, the loop finds that
 note, a [request](glossary.md#field-request), leaves the loop and answers it;
 [From a conversation to a battle and back](#from-a-conversation-to-a-battle-and-back)

@@ -14,13 +14,18 @@ built on the one before:
 1. A window is a bordered rectangle on one layer of the screen, opened by
    code that waits while it grows to size.
 2. A message is text unpacked whole from the cartridge, then typed into a
-   window a few letters a frame by a [task](glossary.md#task).
+   window a few letters a frame by the windows' [task](glossary.md#task).
 3. The field menu is a row of icons, each opening a screen that loops a frame
    at a time until the player backs out.
 4. The Pause menu saves the game, sleeps the console and changes the
    settings.
 5. A town's counters, its shops, sanctums and inns, are screens the town's
    [scene](glossary.md#scene) opens when the player talks to the keeper.
+
+While the party walks, the [field sequence](glossary.md#field-sequence) asks
+once a frame whether something should happen, and answers each thing it
+finds, a talk, a menu, the Pause menu, as a
+[request](glossary.md#field-request).
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -43,7 +48,7 @@ and [Shops](src/shop/README.md).
 
 ## Windows
 
-![Isaac opens the field menu in Vale: the party's HP and PP window and the row of command icons grow open from their centres over a few frames, and the selection steps from `Psynergy` through `Djinn` to `Item`.](https://alchemy.pascalpixel.com/guides/window/windows-zoom.gif)
+![Garet's sister speaks in Vale: a window widens open from its centre at the top of the screen, her portrait appears beside it, and `You guys are so lucky, Garet.` is typed into it with the page arrow at its end.](https://alchemy.pascalpixel.com/guides/window/message-speed.gif)
 
 A window is a bordered rectangle drawn on one
 [background layer](glossary.md#background-layer) of the console, placed on a
@@ -52,11 +57,15 @@ layer, and the map keeps the other three, so opening a window changes
 nothing about how the map is drawn, except on the World Map, whose tilted
 view is first redrawn as a still picture ([Field](field.md#the-world-map)).
 The letters typed on the field, the portraits and the pointing hand are
-[sprites](glossary.md#sprite-and-oam) riding on the windows.
+[sprites](glossary.md#sprite-and-oam) riding on the windows. Text the game
+draws in one go rather than types, a menu's entries or `Your Coins`, is a
+label: it becomes tiles of the window itself and costs nothing each frame
+([Windows](src/window/README.md#labels-as-tiles)).
 
 Opening, a window grows out of its centre over eight
-[frames](glossary.md#frame), and closing, it shrinks back over four. The code
-that opens one is code that waits: `Window_Create` takes a slot and stands in
+[frames](glossary.md#frame), and closing, it shrinks back over four: its
+zoom. The code that opens one is code that waits: `Window_Create` takes one
+of the eight places the work keeps for windows, its slot, and stands in
 [`wait(1)`](glossary.md#wait) until the window is at full size, so that the
 caller can write in it as soon as the call returns. A closing window keeps
 its slot until it has shrunk away, so it still counts against the windows
@@ -80,11 +89,9 @@ windows' task, `WindowSystem_Update`, grows and shrinks them once a frame;
 
 A message is the text the game types into a window. The cartridge stores
 the text compressed, and a message is unpacked in full, with its blanks
-filled in, before its first letter appears: the innkeeper's `21` is a number
-the inn's code hands over, which the unpacking writes into the text where
-the message has its blank. Doing the slow work once, ahead of time, leaves
-each frame's typing cheap. The letters then appear a few at a time, to the
-speaker's voice blip, and each page break waits for a button.
+filled in, before its first letter appears; doing the slow part once, ahead
+of time, leaves each frame's typing cheap. The letters then appear a few at
+a time, to the speaker's voice blip, and each page break waits for a button.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -102,8 +109,8 @@ flowchart TD
   class page wait
 ```
 
-The typing is the work of the same task that zooms the windows, which runs
-each frame inside `wait()`: up to three messages can be typing at once, and
+The same task that zooms the windows types the messages, each frame inside
+`wait()`: up to three messages can be typing at once, and
 the code that showed a message waits a frame at a time until its text has
 ended. The player's message speed sets how many letters come a frame, and in
 battle the text runs at a pace of its own, so the battle keeps moving.
@@ -127,20 +134,20 @@ waits in, and [typing](src/window/README.md#typing).
 ![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps from Psynergy to Item to Status, the Status screen opens on Isaac's stats, moves to a page of his elemental levels, Power and Resist, and closes back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
 Pressing A with nothing in front of the leader, or Select, opens a row of
-icons: Psynergy, Djinn, Item and Status, the Djinn icon only once the first
-Djinni has joined. Each icon opens a screen, and backing out of the screen
-brings the icons back. A screen is a function that draws its windows, reads
-the buttons a frame at a time in `wait(1)` and returns when the player backs
-out, so the field sequence's loop, which called the menu to answer the menu
-[request](glossary.md#field-request), carries on walking when it returns.
+icons: [Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn),
+Item and Status, the Djinn icon only once the first Djinni has joined. Each
+icon opens a screen, and backing out of the screen brings the icons back. A
+screen is a function that draws its windows, reads the buttons a frame at a
+time in `wait(1)` and returns when the player backs out, so the field
+sequence's loop, which called the menu to answer the menu request, carries
+on walking when it returns.
 While a screen is open the scene's people are held behind it, and so are the
 weather and the map's animations, with the exceptions under
 [Limits](#limits).
 
 `FieldMenu_Run` draws the row and calls the chosen screen through the menu
 [bank](glossary.md#bank). The screens share one block of memory, the menu
-work, since only one runs at a time;
-[Menus](src/menu/README.md#the-screens) goes through each screen.
+work; [Menus](src/menu/README.md#the-screens) goes through each screen.
 
 | Name              | Value       | Meaning                                       |
 | ----------------- | ----------- | --------------------------------------------- |
@@ -207,9 +214,10 @@ screen of the field menu.
 A town's counters are its shops, sanctums and inns, each opened by the
 town's scene's [event](glossary.md#event) when the player talks to the
 keeper. A shop sells what its row of a stock table lists, and the rare items
-the game calls artifacts, which share one stock across the game: every shop
-of a kind sells a rare item once any shop of that kind has listed it, until
-it is bought. A sanctum's priest revives, cures and lifts curses for a fee.
+the game calls artifacts, which keep one stock counter each across the game:
+a shop adds one to each artifact of its row the first time it is visited,
+and every shop of the kind sells the item while its counter is above zero.
+A sanctum's priest revives, cures and lifts curses for a fee.
 An inn restores the HP and [PP](glossary.md#psynergy-and-pp) of the party
 members still standing, at a price for each of them. A counter is a
 conversation and a few icon menus: the keeper's lines are messages with
@@ -217,9 +225,8 @@ their blanks, the choices rows of icons with a Yes and No, and the coins a
 small window of its own.
 
 A scene opens a shop with `Shop_Run`, a sanctum with `Sanctum_Run` and an
-inn with `Inn_CheckIn`. The counters borrow the field menu's work, since
-only one of the two is open at a time. [Shops](src/shop/README.md#shops) has
-the stock tables and buying,
+inn with `Inn_CheckIn`. The counters borrow the field menu's work.
+[Shops](src/shop/README.md#shops) has the stock tables and buying,
 [the sanctum's services](src/shop/README.md#sanctums) their fees and
 [the inn](src/shop/README.md#inns) its prices.
 
@@ -230,7 +237,8 @@ the stock tables and buying,
 Isaac walks up to Bilibin's innkeeper and presses A. The field sequence's
 loop finds the talk request when its `wait(1)` returns, and the scene's
 trigger row for the innkeeper names an event, which calls `Inn_CheckIn` with
-Bilibin's row of the inn prices and the innkeeper's actor.
+Bilibin's row of the inn prices and the innkeeper's
+[actor](glossary.md#actor).
 
 ### The innkeeper names the price
 
@@ -263,19 +271,18 @@ closed, the work given back, and the event ends.
 | The line is typed out              | the windows' task, a few letters a frame             |
 | `Your Coins: 500`                  | a label drawn as window tiles in a window of its own |
 | Yes or No                          | an icon menu, looping a frame at a time              |
-| The night                          | the shop code, through the field's screen transition |
+| The night                          | the shop code, through the field's screen transition, the oval that closes on the leader (`TRANSITION_WINDOW`) |
 
 ## Design
 
-Every box the player reads goes through one path, `Message_OpenWindow`, and
-one task draws every window, so a conversation, a menu and a counter look and
-behave alike: the same border, the same zoom, the same typing and the same
-buttons. The screens are plain functions that loop in `wait(1)`, which is
-why a menu can be opened from the field sequence's loop, run for as long as
-the player likes, and return to the very line that called it, with the
-scene's people held still behind it the whole time. The counters and the
-field menu share one block of memory because only one of them is open at a
-time, which keeps the heap small.
+Every spoken line goes through one path, `Message_OpenWindow`, and one task
+draws every window, so a conversation, a menu and a counter look and behave
+alike: the same border, the same zoom, the same typing and the same buttons.
+The screens are plain functions that loop in `wait(1)` so that the field
+sequence's loop can call one and get control back at the line that called
+it. The counters and the field menu share one block of memory because only
+one of them is open at a time, which keeps the
+[heap](glossary.md#heap-and-pools) small.
 
 ## Limits
 

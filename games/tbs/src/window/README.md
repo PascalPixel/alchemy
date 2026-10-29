@@ -1,15 +1,15 @@
 # Windows
 
-![Isaac talks to Garet's sister in Vale: a window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out letter by letter with a bobbing arrow at the end, the next page `I wish I could go with you.` follows, and the window closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+![Isaac opens the field menu in Vale: the party's HP and PP window and the row of command icons appear at once, and the selection steps from `Psynergy` through `Djinn` to `Item`.](https://alchemy.pascalpixel.com/guides/window/windows-zoom.gif)
 
 When someone in a town speaks, a bordered box opens on the screen and their
 words appear in it a few letters at a time, with a little voice blip as they
-go. Every box of text in the game works this way: what people say, the Pause
-menu, the shop counters, the battle's commands. The code in this folder draws
-the boxes, unpacks the game's stored text, types it out over several
-[frames](../../glossary.md#frame) and moves the small pictures a box carries:
-its letters, its icons, a portrait and the page arrow. Six mechanisms do it,
-each leaning on the one before:
+go. Every box of text in the game works this way: what people say, the field
+menu's row and its figures, the Pause menu, the shop counters, the battle's
+commands. The code in this folder draws the boxes, unpacks the game's stored
+text, types it out over several [frames](../../glossary.md#frame) and moves
+the sprites a box carries: its letters, its icons, a portrait and the page
+arrow. Six mechanisms do it, each leaning on the one before:
 
 1. The window work is one block of memory holding every window, every
    message being typed and every sprite a window carries, set up afresh for
@@ -30,7 +30,7 @@ each leaning on the one before:
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  caller(["🏡 An event or a screen: Message_OpenWindow"]) --> decode(["Decode the message into the text buffer"])
+  caller(["🏡 An event: Message_OpenWindow"]) --> decode(["Decode the message into the text buffer"])
   decode --> create(["Window_Create: a window slot, then wait while it zooms open"])
   create --> start(["Message_Start: a message slot points at the text"])
   start -- "the caller waits a frame at a time" --> task(["The windows' task, each frame: zoom, type a little, move the sprites"])
@@ -43,7 +43,9 @@ flowchart TD
   class task frame
 ```
 
-After the six mechanisms come the screens built straight from windows: the
+The battle's command row and the file list reach `Message_OpenWindow` the
+same way an event does. After the six mechanisms come the screens built
+straight from windows: the
 area's name on arrival, the Pause menu with saving and the settings, and name
 entry. The field menu's four screens are in [Menus](../menu/README.md), the
 shop counters in [Shops](../shop/README.md), and
@@ -52,18 +54,19 @@ shop counters in [Shops](../shop/README.md), and
 ## The window work
 
 Everything the window code keeps from one frame to the next lives in one
-block of memory, its [work](../../glossary.md#work): the tilemap the windows
-are drawn into, the windows themselves, the three messages that can be typing
-at once, the 64 sprites the windows can carry, the decoded text waiting to be
-typed, and the blanks to fill into it. The block is taken from the
-[heap](../../glossary.md#heap-and-pools) under the
+block of memory, its [work](../../glossary.md#work): the grid of tiles, the
+tilemap, the windows are drawn into, the windows themselves, the three
+messages that can be typing at once, the 64 sprites the windows can carry,
+the decoded text waiting to be typed, and the blanks to fill into it. The
+block is taken from the [heap](../../glossary.md#heap-and-pools) under the
 [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_WINDOW` when a scene or a
-battle starts, and the main routine clears the heap before the next one, so
-every scene starts with empty windows.
+battle starts, and the [main routine](../../glossary.md#main-routine) clears
+the heap before the next one, so every scene starts with empty windows.
 
-The field sequence sets it up with `WindowSystem_InitField`, and the battle
-with `WindowSystem_InitBattle`; both clear the block, blank the tilemap, link
-the 64 sprites into a free list and add the two tasks of the next section.
+The [field sequence](../../glossary.md#field-sequence) sets it up with
+`WindowSystem_InitField`, and the battle with `WindowSystem_InitBattle`; both
+clear the block, blank the tilemap, chain the 64 sprites into the list of
+those no window holds, and add the two tasks of the next section.
 Lucky Dice and Lucky Wheels call the field's setup too. The code reaches the
 block as `WINDOW_WORK`, a `struct WindowWork`. The Japanese
 [edition](../../glossary.md#editions) keeps more windows and a smaller text
@@ -112,34 +115,39 @@ flowchart TD
   class upload hardware
 ```
 
-`WindowSystem_Update` is the frame task, added in the frame pass at
-`TASK_PASS_FRAME`, and it calls `Window_UpdateZooms`, `Message_UpdateAll` and
-`WindowSprite_UpdateAll` in that order. `WindowSystem_UploadTilemap` is the
-VBlank task, added at `TASK_PASS_VBLANK`; it reads the work's `dirty` bits,
+`WindowSystem_Update` is the frame task, added with the priority
+`TASK_PASS_FRAME`, which runs it among the frame's tasks, and it calls
+`Window_UpdateZooms`, `Message_UpdateAll` and `WindowSprite_UpdateAll` in
+that order. `WindowSystem_UploadTilemap` is the VBlank task, added with
+`TASK_PASS_VBLANK`, which runs it among the VBlank's; it reads the work's
+`dirty` bits,
 one for each band and one for the whole tilemap, and clears them.
 
 ## Windows
 
-![Isaac opens the field menu in Vale: the party's HP and PP window and the row of command icons grow open from their centres over a few frames, and the selection steps from `Psynergy` through `Djinn` to `Item`.](https://alchemy.pascalpixel.com/guides/window/windows-zoom.gif)
+![Garet's sister speaks in Vale: a window widens open from its centre at the top of the screen, her portrait appears beside it, and `You guys are so lucky, Garet.` is typed into it with the page arrow at its end.](https://alchemy.pascalpixel.com/guides/window/message-speed.gif)
 
 A [window](../../glossary.md#window) is a bordered rectangle of the tilemap,
 placed on the grid of 8-pixel tiles, 30 across and 20 down, that covers the
 screen. Opening, it grows out of its centre over eight frames; closing, it
-shrinks back into its centre over four. Its [border](../../glossary.md#border)
-and blue filling are tiles of the window layer, and the letters, portrait and
+shrinks back into its centre over four: its zoom. Its
+[border](../../glossary.md#border) and filling, in the colour the settings
+choose, are tiles of the window layer, and the letters, portrait and
 pointing hand it carries are [sprites](../../glossary.md#sprite-and-oam)
 riding on it, released when it is cleared or closed.
 
-Opening a window is code that waits. `Window_Create` finds a free slot among
+Opening a window is code that waits. `Window_Create` finds an empty slot among
 the work's windows, sets its place and size, and stands in `wait(1)` until the
 task has drawn the last stage of the zoom and the window is at full size;
 only then does it return the window, so the caller can write in it. A window
 can instead open at once, with `WINDOW_FLAG_INSTANT`, as the menus' windows
 do. Closing is the other way round: `Window_Close` marks the window closing
 and returns at once, and the task shrinks it over the next four frames and
-then frees its slot. A closing window keeps its slot until it has shrunk away,
+then releases its slot. A closing window keeps its slot until it has shrunk
+away,
 so it still counts against the windows open at once; `Window_IsClosed` says
-when the slot is free, and the code that cares waits on it a frame at a time.
+when the slot is released, and the code that cares waits on it a frame at a
+time.
 
 The zoom draws the window smaller each stage. `Window_DrawZoomBorder` moves
 each edge in by the stage's share of half the width or height and draws the
@@ -184,7 +192,8 @@ decoder keeps those codes as they are, for the typing to act on. The codes
 that stand for a blank it writes out: a number with its sign, a party
 member's name, an item's or a class's name with the small word each language
 puts before it (`a Herb`, `an Elixir`, and in English an `s` or `es` after a
-plural), a Psynergy's name, an area's name. Each blank is filled from a table
+plural), a [Psynergy](../../glossary.md#psynergy-and-pp) name, an area's
+name. Each blank is filled from a table
 of arguments the caller pushes first, one value with its kind, and the decoder
 takes the first argument of the kind the code asks for; the table has eight
 places, and a ninth argument is dropped.
@@ -207,8 +216,9 @@ flowchart TD
 
 One decode flag changes how a line reads. A person stopped by Halt speaks
 haltingly: the decoder puts a short pause before each letter and breaks the
-line off with `...` at its first space, or after eleven letters. The talk
-runner sets that flag for a halted actor's line, and `Message_OpenWindow`
+line off with `...` at its first space, or after eleven letters.
+`Scene_TalkToActor` sets that flag for a line spoken by an
+[actor](../../glossary.md#actor) Halt has stopped, and `Message_OpenWindow`
 clears it once the message is typing.
 
 The text is in the PO catalogs under `games/tbs/text`, one per language, and
@@ -248,20 +258,21 @@ all the typing needs. Every read of the ring steps its index with
 
 ## Typing
 
-![Garet's sister's line in Vale, `You guys are so lucky, Garet.`, is typed out twice, the letters coming a few at a time to her voice blips, with the page arrow bobbing once the line is done and `I wish I could go with you.` typed on the next page.](https://alchemy.pascalpixel.com/guides/window/message-speed.gif)
+![Isaac talks to Garet's sister in Vale: a window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out letter by letter with a bobbing arrow at the end, the next page `I wish I could go with you.` follows, and the window closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
 
 A message is typed into its window a little each frame, with the speaker's
 voice blip every few letters, and the code that showed it waits a frame at a
 time until the text has ended. The typing is the second step of the windows'
 task: each frame, for each of the three messages whose window is fully open,
 `Message_Type` reads the next few codes from the text buffer. A letter is
-drawn at the pen and the pen moves on by the letter's width; a control code
+drawn at the pen, the place the next letter goes, and the pen moves on by
+the letter's width; a control code
 is acted on, and outside battle it ends the frame's share, as a space does,
 so the text comes about a word at a time at the fast speed.
 
 A message's place in the ring, its pen, its colour and style and the frames
 left of a pause are all kept in its `struct Message`, one of the three in the
-work. `Message_Start` takes a free one and points it at a window and a place
+work. `Message_Start` takes an idle one and points it at a window and a place
 in the ring. The message stays taken until its window has closed, and
 `Message_AllTyped` says when every message's text has ended, which is what
 the waiting code asks each frame.
@@ -296,8 +307,8 @@ letter or every tenth. In battle the setting is left aside: 8 letters come a
 frame, or 13 after a frame that ran over into a second VBlank
 ([slowdown](../../glossary.md#slowdown)), so the battle keeps its pace.
 
-Letters go on in 16-pixel cells, and in the international editions two
-narrow letters whose widths together fit in 15 pixels share one cell, so the
+Letters go on in 16-pixel squares, and in the international editions two
+narrow letters whose widths together fit in 15 pixels share one square, so the
 first frame of `You guys are so lucky, Garet.` shows `Yo`. The tables are in
 [message_speed.c](message_speed.c): `gMessageSpeed_Steps`,
 `gMessageSpeed_Delays` and `gMessageSpeed_VoiceGaps`, each indexed by
@@ -322,7 +333,8 @@ text ends in one of two ways: plainly, leaving the window open for the code
 that showed it to close, or waiting for a button, which closes the window
 from inside the task.
 
-A message can also swell its window: on the window animation code the border
+A message can also swell its window: on the control code that starts a
+window animation (`TEXT_WINDOW_STATE`) the border
 is drawn a tile larger on every side and the window's sprites pulse for ten
 frames, then the window goes back to its size. The control codes and their
 frames are listed with their meanings in
@@ -344,14 +356,14 @@ for a page; `Window_StepSwellEffect` draws the swell.
 
 ## Drawing text
 
-![Isaac casts Mind Read on Garet's sister in Vale: the field tints red, then gold and green, as her thought `Gee, I wish I could see new lands, too.` is typed into a round-cornered window beside her portrait.](https://alchemy.pascalpixel.com/abilities/mind-read.gif)
+![Isaac casts Mind Read on Garet's sister in Vale: the field tints blue, then violet and magenta, as her thought `Gee, I wish I could see new lands, too.` is typed into a round-cornered window beside her portrait.](https://alchemy.pascalpixel.com/abilities/mind-read.gif)
 
 A letter reaches the screen in one of three ways, and the way decides what
-the letter can do. A message typed on the field puts each letter cell on as a
-sprite riding on the window, one of the 64, which is what lets a letter bob,
-shake or pop. A battle message is painted into one shared block of tiles,
-the text canvas, so the battle's long lines take no sprites from the
-battlefield, and since there is one canvas only one such window shows at a
+the letter can do. A message typed on the field puts each letter on as a 16
+by 16 sprite riding on the window, one of the 64, which is what lets a
+letter bob, shake or pop. A battle message is painted into one shared block
+of tiles, the text canvas, so the battle's long lines take no sprites from
+the battlefield, and since there is one canvas only one such window shows at a
 time. A label drawn all at once, such as the Pause menu's entries or the
 area's name, becomes tiles of the window layer itself, which costs nothing
 each frame. Under Mind Read a thought's window has round corners and its
@@ -369,8 +381,8 @@ editions the window opens two tiles wider.
 A letter typed on the field is a 16 by 16 sprite with four tiles of its own,
 taken from a sheet of 256 tiles reserved for the 64 window sprites when the
 field's windows are set up. `Text_DrawGlyphPair` paints the letter, with its
-shadow or its outline, into those four tiles, and `Glyph_Draw` takes a free
-sprite from the pool, copies the tiles into sprite memory, places the sprite
+shadow or its outline, into those four tiles, and `Glyph_Draw` takes a
+sprite no window holds, copies the tiles into sprite memory, places the sprite
 half a line below the pen and appends it to the window's list. The sprite
 keeps the motion the text's style gave it, and `WindowSprite_UpdateAll` moves
 it every frame: a wobble swings along a small arc, a shake jitters by a pixel
@@ -381,7 +393,7 @@ sprite too, bobbing over 80 frames through eight pictures.
 | Style (`{text_effect:N}`) | Motion                        | Frames                    |
 | ------------------------- | ----------------------------- | ------------------------- |
 | `TEXT_STYLE_OUTLINED`     | drawn a pixel wider with an outline | still                |
-| `TEXT_STYLE_WOBBLE`       | `WINDOW_SPRITE_MOTION_WOBBLE` | a step every other frame, 20 steps round |
+| `TEXT_STYLE_WOBBLE`       | `WINDOW_SPRITE_MOTION_WOBBLE` | one of its 20 offsets every other frame |
 | `TEXT_STYLE_SHAKE`        | `WINDOW_SPRITE_MOTION_SHAKE`  | a pixel either way, every other frame |
 | `TEXT_STYLE_POP`          | `WINDOW_SPRITE_MOTION_POP`    | double size for 8 frames  |
 | `TEXT_STYLE_SPIN`         | `WINDOW_SPRITE_MOTION_SPIN`   | one turn in about 85 frames |
@@ -392,9 +404,9 @@ The canvas is a block of 120 tiles in the screen's tile memory, mapped into a
 canvas window's interior column by column, so a letter can be painted at any
 pixel across tile edges. The battle message window is a borderless canvas
 along the bottom of the screen, 30 tiles wide and 4 high inside, which uses
-all 120. Its lines are 13 pixels apart, and from the second line on the
-canvas scrolls up 12 pixel rows over two frames instead of starting a new
-line, so a battle's messages run on like a log. The painter,
+all 120. Its lines are 13 pixels apart, and once two lines are on the canvas,
+each further line scrolls it up 12 pixel rows over two frames instead of
+starting a third, so a battle's messages run on like a log. The painter,
 `Glyph_DrawArm` ([glyph_arm.c](glyph_arm.c)), sets the letter's pixels one by
 one; it is copied into RAM for each call, as the decoder is.
 `BattleMessage_Open` opens the window and `BattleMessage_Continue` carries a
@@ -405,16 +417,18 @@ message on below the last line.
 A label is drawn in one go: `Text_DrawMessageAsTiles` decodes the message
 from the start of the ring and `Text_DrawStringAsTiles` paints each letter
 into a text tile and writes the tile's number into the window's tilemap. The
-text tiles are a pool of 128, which the field menu's screens and the battle's
-Djinn menu double to 256 while they are open (`Text_UseExtraTiles`), since
-their lists hold more text than a conversation. A tile is freed when the
-rectangle showing it is cleared or redrawn (`Window_ClearTextTilesInRect`).
+text tiles are the window layer's tiles `0x80` to `0xFF`, and the field
+menu's screens and the battle's Djinn menu add tiles `0x200` to `0x27F`
+while they are open (`Text_UseExtraTiles`, which sets `extraTextTiles`),
+since their lists hold more text than a conversation. A tile is released
+when the rectangle showing it is cleared or redrawn
+(`Window_ClearTextTilesInRect`).
 
 | Name                   | Value          | Meaning                                       |
 | ---------------------- | -------------- | --------------------------------------------- |
-| the glyph sheet        | 256 sprite tiles | four for each of the 64 window sprites      |
+| the glyph sheet        | `128 << 6` bytes | 256 sprite tiles, four for each of the 64 window sprites |
 | `TEXT_CANVAS_SIZE`     | 120 tiles      | the canvas, one canvas window at a time       |
-| text tiles             | 128, or 256 with the extra range | tiles labels are drawn into  |
+| text tiles             | `0x80` to `0xFF`, and `0x200` to `0x27F` with `extraTextTiles` | tiles labels are drawn into |
 
 ## The area name
 
@@ -442,13 +456,13 @@ calls it too ([shortcuts.c](window/shortcuts.c)).
 ![Isaac presses Start by Vale's river: the Pause menu opens with `Save your quest`, `Sleep` and `Change settings`, the pointing hand steps down the entries and back, and the menu closes.](https://alchemy.pascalpixel.com/guides/window/pause-menu.gif)
 
 Start on the field opens the Pause menu: `Save your quest`, `Sleep` and
-`Change settings`, each with an icon that pulses while the hand points at it.
-The menu is one window with labels drawn as tiles and its icons and hand as
-window sprites, and a function that loops a frame at a time reading the
-buttons until A picks an entry or B or Start backs out. Sleep shows
-`Enter Sleep mode.`, with the L and R buttons drawn as the way to resume,
-and asks the system to sleep, which
-the frame loop does ([System](../system/README.md#buttons-and-sleep)). Backing
+`Change settings`, each with an icon that lights while the hand points at it
+and dims otherwise. The menu is one window with labels drawn as tiles and
+its icons and hand as window sprites, and a function that loops a frame at a
+time reading the buttons until A picks an entry or B or Start backs out.
+Sleep shows `Enter Sleep mode.`, with the L and R buttons drawn as the way
+to resume, and asks the system to sleep, which `wait()` does at the end of
+the frame ([System](../system/README.md#buttons-and-sleep)). Backing
 out of the file list or the settings menu brings the Pause menu back. In the
 Battle Arena, Start on the field says `The Pause menu is not available now.`
 instead. In debug mode three more entries show, the Rough menu, Recovery test
@@ -458,7 +472,7 @@ and Restart quest, which the menu returns and the field leaves alone.
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   pause(["PauseMenu_Choose: Save your quest, Sleep, Change settings"]) -- "Save your quest" --> save(["Save_ToChosenFile: the file list, then the write"])
-  pause -- "Sleep" --> sleep(["Enter Sleep mode, then the frame loop sleeps the console"])
+  pause -- "Sleep" --> sleep(["Enter Sleep mode, then wait() stops the console"])
   pause -- "Change settings" --> settings(["SettingsMenu_Run"])
   save -- "B" --> pause
   settings -- "B" --> pause
@@ -486,16 +500,18 @@ the party and Djinn of the file under the cursor; when the chosen file
 already holds a game the code asks `OK to save over this file?` with a Yes
 and No. Then the saved jingle plays, `Saving...` shows, and the game is
 written: the [main routine's work](../../glossary.md#main-routines-work),
-the game flags, where the scene's people stand, and a short summary for the
-file list to show without reading the whole file, the leader's name, level
-and class, the play time, the area, the coins and the Djinn of each element.
+the [game flags](../../glossary.md#game-flag), where the scene's people
+stand, and a short summary for the file list to show without reading the
+whole file, the leader's name, level and class, the play time, the area, the
+coins and the [Djinn](../../glossary.md#djinn) of each element.
 `Your game was saved.` ends it, or `Failed to save.`.
 
 `Save_ToChosenFile` ([save.c](screens/save.c)) does all of it, in that order:
 `Save_InitializeWork` reads the flash, `FileList_SelectFile` runs the list,
 `YesNoMenu_Run` asks, `Save_BuildFileSummary` fills the summary and
-`Save_CaptureActors` the people's places, and `Save_WritePart` writes each of
-the file's two parts. The file list is the same one the File Screen's
+`Save_CaptureActorsFar` the people's places (from the field's code), and
+`Save_WritePart` writes each of the file's two parts. The file list is the
+same one the File Screen's
 Continue, Copy and Erase use. How a part reaches the flash so that one whole
 copy of a save always remains is in
 [System code](../system/README.md#saving).
@@ -520,7 +536,7 @@ itself; Select steps through six preset pairs of hue and brightness. A or
 Start keeps the settings, and B puts the old ones back, which is why the menu
 works on a copy of the five values until then.
 
-The colour is one of 24 hues round a wheel and 15 steps of brightness, and
+The colour is one of 24 hues round a wheel and 15 levels of brightness, and
 from the pair `WindowColor_Apply` recomputes the seven colours of the
 windows' palette, the filling and its lighter and darker shades, so every
 window changes together. `SettingsMenu_Run`
@@ -531,7 +547,7 @@ go into every save file with the rest.
 | Setting           | Values                    | Saved in                              |
 | ----------------- | ------------------------- | ------------------------------------- |
 | Window color      | 24 hues                   | `gMainRoutineWork.windowColor[0]`     |
-| Window brightness | 15 steps                  | `gMainRoutineWork.windowColor[1]`     |
+| Window brightness | 15 levels                 | `gMainRoutineWork.windowColor[1]`     |
 | Message           | Slow, Normal, Fast        | `gMainRoutineWork.messageSpeed`       |
 | Speech            | On, Off                   | `gMainRoutineWork.speech`             |
 | Auto-Sleep        | On, Off                   | `gMainRoutineWork.idleSleepEnabled`   |
@@ -545,8 +561,9 @@ window, beside the leader's portrait. The keyboard is a window whose tiles
 are copied in from a ready-made tilemap, the key under the hand flashing in a
 second palette, and the name window is a label redrawn after every change.
 The player moves the hand over the keys: A puts the key's letter on the name,
-B or `DEL` takes the last letter off, Select switches keyboards, and `END`
-keeps the name, or Start, which jumps the hand there. A name has at most five
+B or `DEL` takes the last letter off, the switch key changes keyboards (as
+Select does in the Japanese edition), and `END` keeps the name, or Start,
+which jumps the hand there. A name has at most five
 letters, after which the hand jumps to `END` by itself, and ending with an
 empty name keeps the old one.
 
@@ -571,7 +588,9 @@ Djinn, Item and Status (`FieldMenu_SelectCommand`), the File Screen's
 Continue, New and the rest (`FileList_SelectAction`), a shop's Buy, Sell,
 Artifacts and Repair, and every Yes and No (`YesNoMenu_Run`). `FieldMenu_Run`
 runs the field menu itself: it opens the party status window, runs the icon
-row, and calls the chosen screen through the menu bank's far-call table,
+row, and calls the chosen screen through the menu
+[bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call)
+table,
 looping back to the row when a screen is backed out of
 ([Menus](../menu/README.md#the-screens)). The battle's command menus, the
 Djinn, summon, item, Psynergy and target choosers and the party's command row,
@@ -592,7 +611,8 @@ The field sequence's loop finds the talk
 [request](../../glossary.md#field-request) when its `wait(1)` returns and
 calls `Scene_TalkToActor`, which looks her up
 in the scene's [trigger](../../glossary.md#trigger) table. Her row names a
-message, so the runner shows it as a one-line event:
+message, so the runner shows it as a one-line event (the line that sets
+halting speech left out):
 
 ```c
 Event_Start();
@@ -636,13 +656,13 @@ moves, and every third letter plays a blip at the normal speed. At the page
 break after `Garet.` the task draws the page arrow and waits for a press;
 when A comes, the window is cleared and refitted for `I wish I could go with
 you.` and the typing goes on. The message's last code waits for a button and
-closes the window, and the task shrinks it over four frames and frees the
+closes the window, and the task shrinks it over four frames and releases the
 slot.
 
 ### The window closes
 
 `Event_ShowMessageAndWait` closes her portrait and waits a frame at a time
-until `Window_IsClosed` says the message window's slot is free; then
+until `Window_IsClosed` says the message window's slot is released; then
 `Event_End` runs, the loop goes back to `wait(1)`, and Isaac can walk on.
 
 | Step                                   | Mechanism                                                |
@@ -660,19 +680,9 @@ until `Window_IsClosed` says the message window's slot is free; then
 
 ## Design
 
-Every window shares one background layer, because the map draws its ground,
-middle and overhead layers on the other three: a scene looks the same however
-many windows are open over it, and opening one costs the map nothing. Letters
-typed on the field ride on the windows as sprites, so they need no layer of
-their own either, and a sprite can move, which gives the text its wobbles and
-pops.
-
-A message is unpacked whole before it is typed, so that the slow part happens
-once: unpacking reads the compressed text bit by bit and fills in the blanks,
-and doing that a letter at a time while typing would cost every frame. Typing
-then only reads the next code from the text buffer. The buffer is a ring for
-the same economy: three messages can be waiting at once with nothing to
-allocate or free.
+Every window shares one background layer because the map draws its ground,
+middle and overhead layers on the other three, so a scene looks the same
+however many windows are open over it.
 
 The two routines that go bit by bit or pixel by pixel, the Huffman walker and
 the canvas painter, are written in ARM, the processor's full 32-bit
@@ -682,11 +692,6 @@ when it has room: IWRAM fetches such an instruction in one read, where the
 cartridge takes two. The rest of the window code runs from the cartridge as
 Thumb code, as the field's line routines do
 ([Field code](../field/README.md#routines-run-from-ram)).
-
-The battle's messages go on the canvas and run on like a log, each new line
-scrolling the last up, and the typing there runs at its own pace, which
-rises after a frame that ran late: the window takes no sprites and waits for
-no button, and a battle's lines keep up with its frames.
 
 ## How it fits with the rest of the game
 
@@ -743,11 +748,13 @@ named by their linker symbols, made from their English text. That `Yo` is
 typed on the first frame follows from the English glyph widths
 (`graphics/font/text.tsv`) and the pairing rule in `Message_Type`, and
 agrees with the recording of the window opening. Halting speech is named
-from where its flag is set: the talk runner sets it only for an actor Halt
-has stopped.
+from where its flag is set: `Scene_TalkToActor` sets it only for an actor
+Halt has stopped.
 
 A message longer than the ring would be cut, its terminator landing on its
 own start, but no message is that long. Counting each control code and line
 break as one code, before the blanks are filled in, the longest message of
 each edition's text is the Lucky Dice rules, at 200 of the Japanese ring's
-256 codes and at most 446 (Italian) of the others' 512.
+256 codes and at most 446 (Italian) of the others' 512, except in German,
+whose longest is the Venus statue's speech
+(`MsgVenusStatueSpeaksIsaacSoulYe`) at 333.

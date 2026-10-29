@@ -20,16 +20,20 @@
 /// were. It draws four random numbers a frame, which only advances the
 /// random number generator. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
-   * stored and loaded again as in the ROM; without volatile, 61 of 90
-   * instructions differ in tbs-en. */
-  volatile u16 bg0cnt;
-  volatile u16 bg1cnt;
-  volatile u16 bg2cnt;
-  volatile u16 bg3cnt;
+  u16 bg0cnt;
+  u16 bg1cnt;
+  u16 bg2cnt;
+  u16 bg3cnt;
   s32 mosaicSize;
   volatile u16 *registerCursor;
 
+  /* FAKEMATCH(dead): the four saved BGxCNT values' addresses taken, so each
+   * is kept on the stack, stored and loaded again as in the ROM; as plain u16
+   * locals, 61 of 90 instructions differ in tbs-en. */
+  (void)&bg0cnt;
+  (void)&bg1cnt;
+  (void)&bg2cnt;
+  (void)&bg3cnt;
   bg0cnt = REG_BG0CNT;
   REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
   registerCursor = &REG_BG0CNT;

@@ -212,12 +212,11 @@ void Unit_Calculate(s32 unitId) {
       stats->item = Item_GetDirect(unit->inventory[index]);
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
-      /* FAKEMATCH(one-pass): the Attack bonus in a once-only block keeps the
+      stats->atk += stats->item->primaryBonus;
+      /* FAKEMATCH(barrier): an empty asm after the Attack bonus keeps the
        * Defense load after the item's second bonus; as plain statements, 1 of
        * 864 instructions differ in tbs-en. */
-      do {
-        stats->atk += stats->item->primaryBonus;
-      } while (0);
+      __asm__("");
       stats->def += stats->item->secondaryBonus;
       for (effectIndex = 0; effectIndex < 4; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;

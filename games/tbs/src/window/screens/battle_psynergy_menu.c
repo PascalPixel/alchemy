@@ -213,7 +213,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           break;
         }
         /* FAKEMATCH(dead): a dead store keeps the test above from being
-         * threaded past the break; without it, 2 of 794 instructions differ in
+         * threaded past the break; without it, 11 of 794 instructions differ in
          * tbs-en. */
         result = -1;
       } else {

@@ -232,8 +232,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             s32 step;
 
             /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table,
-             * so k * 8 is computed again here; without it, 449 of 670
-             * instructions differ in tbs-en. */
+             * so k * 8 is computed again here; as no asm (the call's argument
+             * spelled out or as shot), 449 of 670 instructions differ in
+             * tbs-en. */
             __asm__ volatile("" ::);
             // The shell tumbles through ten images, three frames each; the
             // last five lie on their side.
@@ -275,8 +276,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                 s32 group = k * 4;
 
                 /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table,
-                 * so group * 8 doesn't fold into k * 32; without it, 171 of
-                 * 670 instructions differ in tbs-en. */
+                 * so group * 8 doesn't fold into k * 32; as no asm, 171 of 670
+                 * instructions differ in tbs-en. */
                 __asm__ volatile("" ::);
                 burst = &LOBBED_SHELLS_BURSTS[group * 8 + i];
 

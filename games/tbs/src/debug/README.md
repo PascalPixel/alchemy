@@ -98,6 +98,8 @@ The switch is `gDebugMode`, and the viewer `SpriteViewer_Run`.
 
 ## Setup runs on every visit
 
+![In Menu test Isaac walks to the armor merchant, whose shop greets him with `Come in! Welcome! Take a look at our fine weapons.`; its Artifacts list holds a Shamshir, a Silver Blade and a Masamune, and the Masamune is bought, so `Anything else?` comes with only two left. The room fades out and in again, and the same list holds the Masamune once more.](https://alchemy.pascalpixel.com/guides/debug/menu-test-twice.gif)
+
 A scene's setup runs each time the [party](../../glossary.md#the-party)
 enters, as [Scenes](../scene/README.md#the-entry-table) explains. For a town
 that means restoring what its flags say has happened; for a debug scene it
@@ -109,9 +111,10 @@ emote testers' animations. Menu test's builds a test party: Jenna leaves,
 Garet, Mia and Ivan join, the shops may sell three Shamshirs, two Silver
 Blades, a Masamune and eight rare pieces of armor, and everyone is raised to
 level 30 (Isaac to 50 outside the Japanese edition); in Japanese the coins
-are also set to 777,777. Each visit adds to the shops' stock again, but
-changes a level only while it is below the target, because levels only ever
-go up.
+are also set to 777,777. Each visit adds to the shops' stock again, so a
+Masamune bought out of the room's own shop is on sale again the next time
+the party comes in; but it changes a level only while it is below the
+target, because levels only ever go up.
 
 The setups are `Test_Initialize`, `IncreaseItemAndLevel_Initialize` and
 `MenuTest_Initialize`.

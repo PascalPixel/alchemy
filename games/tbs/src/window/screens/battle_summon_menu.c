@@ -72,7 +72,10 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     sprite = &sprites[index];
     MenuSprite_Initialize(sprites[index], MENU_SPRITE_SHAPE_16X16);
     sprite->oam.f.x = window->x * 8 + 8;
-    sprite->oam.f.y = (y + window->y) * 8 + 4;
+    // The row's top, then 4 pixels down: as one sum, the loop's constants
+    // take other registers and 43 of 946 instructions differ in tbs-en.
+    sprite->oam.f.y = (y + window->y) * 8;
+    sprite->oam.f.y += 4;
   }
   for (index = 0; index < 4; index++) {
     s32 slot = VramCache_AllocEntry(128);
@@ -243,11 +246,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     cur->tile = VramCache_Reload((u16)cursorHandle, (s32)gPointingHandTiles);
     cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
-    /* FAKEMATCH(temporary): the cursor pushed through sprite, re-pointed at it
-     * here, keeps the frame loop's registers; as &cursor or cur pushed
-     * directly, 41 of 946 instructions differ in tbs-en. */
-    sprite = (struct MenuSprite *)&cursorStorage;
-    Oam_AddSpriteAtDepth(sprite, 242);
+    Oam_AddSpriteAtDepth(cur, 242);
 
     // Blink required elements' standby counts every eight frames.
     {

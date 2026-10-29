@@ -885,11 +885,13 @@ prompt:
       state++;
       state--;
       {
-        /* FAKEMATCH(pin): the slot in r1, where the native keeps it; as a
-         * plain s32, 5 of 280 instructions differ in tbs-en. */
-        register s32 slot __asm__("r1") = prizeIndex + 284;
+        s32 slot = prizeIndex + 284;
         s8 *prizeWeight = (s8 *)state + 1;
 
+        /* FAKEMATCH(barrier): an empty asm reading slot and clobbering r2, so
+         * slot outranks the base and takes r1, leaving r0 to the base; as no
+         * asm, 10 of 280 instructions differ in tbs-en. */
+        __asm__("" : : "r"(slot) : "r2");
         if (prizeWeight[slot] > 1) {
           prizeWeight[slot] /= 2;
         }

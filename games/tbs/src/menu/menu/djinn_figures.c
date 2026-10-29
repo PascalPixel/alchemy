@@ -121,8 +121,8 @@ void DjinnFigures_UpdateBottomRow(void) {
       s32 phase;
       s32 limit;
       /* FAKEMATCH(pin): rowY fixed in r2, where the row's second read goes;
-       * as a plain s32, which takes r3 and costs limit its register, 39 of
-       * 120 instructions differ in tbs-en. */
+       * as a plain s32, which takes r3 and costs limit its register, 81 of
+       * 119 instructions differ in tbs-en. */
       register s32 rowY __asm__("r2");
 
       animation->image.priority = 0;

@@ -5,14 +5,13 @@ Golden Sun: The Lost Age byte for byte from readable C, assembly and editable
 pictures, music and text, in all six languages they were released in:
 Japanese, English, German, Spanish, French and Italian. Every build is
 checked against the original cartridges' hashes, bugs included, so the source
-is the game as it shipped. The Broken Seal is complete, and these pages are
-written from its source; The Lost Age is still being rebuilt.
+is the game as it shipped. The Broken Seal is fully rebuilt, and these pages
+are written from its source; The Lost Age is still being rebuilt.
 
 The pages explain how The Broken Seal works, from the moment the console is
-switched on to a battle's spoils, with each idea explained before anything
-leans on it and everything the player can see shown as a recording of the
-game itself. Whoever wants the code reads the code; the pages say how its
-parts fit together, a level above it.
+switched on to a battle's spoils, with everything the player can see shown as
+a recording of the game itself. Whoever wants the code reads the code; the
+pages say how its parts fit together, a level above it.
 
 The chapters run in this order:
 

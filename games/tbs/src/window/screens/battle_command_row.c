@@ -133,7 +133,9 @@ s32 BattleCommandRow_Run(s32 mode) {
     // Draw the strip once, six panels of 3x3 tiles ending at the name
     // window: the panels left empty as WINDOW_TILE_COMMAND_PANEL in the UI
     // tilemap, then each icon's top-left 3x3 tiles in BG1's map (screen block
-    // 31), the UI tilemap cleared to 0 over them.
+    // 31), the UI tilemap cleared to 0 over them. col never passes 2, but
+    // (col & 3) is the source's form: the ROM keeps each and, which plain col
+    // drops.
     if (stripDirty != 0) {
       stripDirty = 0;
       work->holdTilemapUpload = 1;
@@ -151,14 +153,15 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              // VRAM through a volatile pointer: a plain one moves the address
-              // adds (18 of 1037 instructions differ in tbs-en).
+              /* FAKEMATCH(volatile): the store to VRAM keeps its address adds;
+               * as a plain u16 pointer, 19 of 1037 instructions differ in
+               * tbs-en. */
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
 
               vram[panel * 3 + entryIndex * 32 + (col & 3) -
                    selectionUi->iconCount * 3] =
-                  panel * 16 + entryIndex * 4 + col + 0x100;
+                  panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
               *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
                 selectionUi->iconCount * 3 + WINDOW_X) = 0;
             }
@@ -178,14 +181,14 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              // VRAM through a volatile pointer, as in the party member's row
-              // (19 of 1037 instructions differ with a plain one).
+              /* FAKEMATCH(volatile): as in the party member's row; as a plain
+               * u16 pointer, 20 of 1037 instructions differ in tbs-en. */
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
 
               vram[panel * 3 + entryIndex * 32 + (col & 3) -
                    selectionUi->iconCount * 3] =
-                  panel * 16 + entryIndex * 4 + col + 0x100;
+                  panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
               *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
                 selectionUi->iconCount * 3 + 20) = 0;
             }

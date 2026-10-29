@@ -58,14 +58,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct Unit *unit;
   struct BattleWork *battle;
   struct Window *window;
-#if TBS_PATCH_4
   struct Window *conditionWindow;
-#else
-  /* FAKEMATCH(pin): the condition window in r9, where the native keeps it; as
-   * an ordinary local it is spilled, the frame shrinks to 320 bytes and 969
-   * of 1585 instructions differ in tbs-en. */
-  register struct Window *conditionWindow __asm__("r9");
-#endif
   s32 targetIndex;
   s32 targetCount;
   s32 candidateCount;
@@ -96,13 +89,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   targetCount = 0;
   redraw = 0xFFFF;
   cursorSlot = VramCache_AllocEntry(256);
-#if TBS_PATCH_4
-  /* FAKEMATCH(dead): a null derived from selection keeps conditionWindow in
-   * sl; as conditionWindow = 0, 47 of 1684 instructions differ in tbs-es. */
+  /* FAKEMATCH(dead): a null derived from selection, with no constant
+   * equivalence, keeps conditionWindow in a register; as conditionWindow = 0,
+   * 492 of 1585 instructions differ in tbs-en. */
   conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
-#else
-  conditionWindow = 0;
-#endif
   if (spread == 0)
     spread = 1;
   // UB: slot 57 is outside the scalar gBattleWork pointer. Named accesses
@@ -208,6 +198,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[0].x = (u8)actorPosition.x;
     cursorTracks[0].y = 128;
   }
+#if !TBS_PATCH_4
+  /* FAKEMATCH(barrier): an empty asm clobbering r8 and r10 once selection and
+   * mode are dead, so conditionWindow takes r9, selection r10 and mode r8; as
+   * no asm, 96 of 1585 instructions differ in tbs-en. */
+  __asm__("" : : : "r8", "r10");
+#endif
   window = Window_Create(0, 12, 30, 4,
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                              WINDOW_FLAG_OUTLINED_TEXT);

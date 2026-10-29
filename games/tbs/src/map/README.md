@@ -75,7 +75,8 @@ the leader jumps when pushing against them.
 How the ground is shaped is the cell's shape: a kind, one of 16
 (`enum TerrainKind`: flat ground, slopes, steps, bends and others), and three
 height samples in 8-pixel units, from which the height at any pixel of the
-cell is worked out. How far up or down an actor can step from one height to
+cell is worked out. How far up or down an [actor](../../glossary.md#actor)
+can step from one height to
 the next is the field bank's rule
 ([How high a step can go](../field/README.md#how-high-a-step-can-go)), and
 most of the game's walls are made of heights, as the cliff is.
@@ -85,8 +86,9 @@ Behavior and height belong to a layer. Each layer is a window onto the grid
 layer, so the three layers can have different walls and heights. A scene's
 code can move an actor to another layer, and so can a cell: an actor
 standing on a cell whose layer bits are set moves to that cell's layer, and
-one whose priority bits are set is drawn with that priority, which is how
-the roof hides Isaac.
+one whose priority bits are set is drawn with that priority, the console's
+order of what covers what, which is how the roof hides Isaac
+([below](#one-grid-three-layers)).
 
 A loaded cell is `struct MapGridCell`, one 32-bit word: 12 bits pick the
 cell picture, 2 bits the layer and 2 the sprite priority an actor standing
@@ -128,7 +130,7 @@ The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
 layer on `BG1`, and each takes a priority from the header, which is how the
 console draws the roofs over the sprites and the ground under them;
 [the field bank](../field/README.md#towns-and-dungeons-on-screen) explains
-how their priorities put [actors](../../glossary.md#actor) between them.
+how their priorities put actors between them.
 
 ### The header
 
@@ -207,7 +209,7 @@ them.
 
 | Table | Built form | What the loader sees |
 | --- | --- | --- |
-| `map.txt` | `map.grid.lz` | three planes: a byte of behavior a cell, a byte of shape a cell, a halfword of cell picture a cell |
+| `map.txt` | `map.grid.lz` | three planes: a byte of behavior a cell, a byte of shape a cell, a halfword (two bytes) of cell picture a cell |
 | `cell_pictures.tsv` | `cell_pictures.delta0.lz`, `.delta1.lz` or `.delta2.lz` | `CELL_PICTURE_PACKING_RAW`, `_SPLIT_DELTA` or `_DELTA` |
 | `shapes.tsv` | `shapes.table.lz` | 4 bytes a shape |
 | `tileset_anims.tsv`, `blend.tsv` | `.script.lz` | halfword commands |
@@ -264,8 +266,8 @@ table; the shapes come next, into their own buffer; then the three planes
 of the grid are unpacked into the cell buffer and converted in place into
 cell words. The conversion overwrites the first two planes, so they are
 copied aside first, and the routine that converts runs from RAM. After the
-grid come the tileset animations and the blend script, which are unpacked
-after the shapes and started; the treasure spot list stays where it is in
+grid come the tileset animations and the blend script, unpacked into the
+space behind the shapes and started; the treasure spot list stays where it is in
 the map's bytes, since the field reads it in place. Last, the header sets
 up the three layers from their windows, paces and drifts, and the task that
 scrolls them is added.
@@ -356,7 +358,7 @@ pillar reaches the ladder.
 The treasure spot list is (column, row, subject) rows ended by 255, 255, and
 `Field_PlaceTreasureSpots` places an actor at each spot whose subject the
 scene has a trigger for, up to `TREASURE_SPOT_MAX`; a spot the scene has no
-trigger for takes none of the ten. Every map has its own list, and 78 of
+trigger for takes none of the ten. Every map has its own list, and 76 of
 them hold only the end row. Opening a chest and taking a stone are the
 scene's examine triggers
 ([Scenes](../scene/README.md#how-a-trigger-is-chosen)).
@@ -376,8 +378,8 @@ and the whole map changes wherever those tiles are drawn. A map's tileset
 animations say which tiles to copy over which and how many frames to wait
 between copies; its blend script changes, in the same way, how the layers
 mix. Up to 16 tileset animations run side by side, each stepped once a
-frame by one [task](../../glossary.md#task), and 85 maps have some; 35 have
-a blend script.
+frame by one [task](../../glossary.md#task), and 84 of the town and dungeon
+maps have some, as does the World Map; 35 have a blend script.
 
 A tileset animation is a list of halfwords: a start marker naming which of
 the 16 it is, then groups of four values (the tile to copy from, how many
@@ -454,8 +456,9 @@ come back after its still picture
 In each Colosso final Isaac races an opponent to the arena, and the
 opponent follows no rule: it replays a run recorded once, one point a frame,
 which `Colosso_UpdatePathOpponent` steps through from
-`ColossoRaceWork.path`, which has room for 7,200 points. `colosso/` holds
-the three runs, each ending with a row of two zeros.
+`ColossoRaceWork.path`. `colosso/` holds the three runs, each padded with
+rows of two zeros to the 7,200 the work holds; the run ends at the first
+such row.
 
 | Table | Match | Points |
 | --- | --- | --- |
@@ -500,8 +503,9 @@ scroll task is added.
 The field places Isaac at the entrance the door led to and the villagers
 from the scene's actor placements, each standing at the height
 `MapGrid_GetTerrainHeight` gives for its cell. `Field_PlaceTreasureSpots`
-walks the treasure spot list, one spot on this map, and places a chest
-there if the scene's trigger table has a row for its subject. The scene's
+walks the treasure spot list, one spot on this map, and places the Psynergy
+Stone there, since the scene's trigger table has a row for its subject. The
+scene's
 setup runs, the fade in starts, and from the next frame on
 `MapGrid_UpdateLayerScroll` scrolls the three windows after the camera,
 `TilesetAnim_Update` steps the two animations, and
@@ -518,7 +522,7 @@ so that the next roof he walks behind hides him.
 | The water starts moving | the tileset animations, started from the map's commands |
 | The three sheets line up | the header: each layer's window, pace and priority |
 | The villagers stand on the ground | the shapes, through the height of each one's cell |
-| A chest appears | the treasure spot list, matched against the scene's triggers |
+| The Psynergy Stone appears | the treasure spot list, matched against the scene's triggers |
 | Isaac passes behind a roof | the cell's priority bits, read as his sprite is placed |
 
 ## Design

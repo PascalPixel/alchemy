@@ -182,17 +182,12 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  /* FAKEMATCH(temporary): completed cleared a halfword at a time, which keeps
-   * partyMode a copy of its register (adds r2, r7, #0); as an s32 set to 0, 1
-   * of 105 instructions differ in tbs-en. */
-  union {
-    s32 value;
-    u16 halves[2];
-  } completed;
-  s32 partyMode;
+  s32 completed = 0;
+  /* FAKEMATCH(dead): partyMode set to 0 before the party branch sets it from
+   * completed, so cse2 keeps that a copy of completed's register (mov r2,
+   * r7); as one set, 1 of 105 instructions differ in tbs-en. */
+  s32 partyMode = 0;
 
-  completed.halves[0] = 0;
-  completed.halves[1] = 0;
   view->targetYaw = YAW_PARTY_ACTION;
   view->busy = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
@@ -200,7 +195,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
   // The party: each party member that can move runs, the last listed first,
   // eight frames apart.
   if (plan->unitId <= ALLY_MAX) {
-    partyMode = completed.value;
+    partyMode = completed;
 
     if (battle->firstStrike != FIRST_STRIKE_ENEMIES) {
       partyMode = 1;
@@ -224,7 +219,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
         index--;
       }
       wait(22);
-      completed.value = 1;
+      completed = 1;
     }
   } else if (((Random16() * 10) >> 16) <= 6) {
     // An enemy: a roll of 0 to 9, 7 in 10 away.
@@ -242,7 +237,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
   }
 
   view->busy = 0;
-  return completed.value;
+  return completed;
 }
 
 /// Plays a summon or a full-screen Psynergy. The camera turns to the target

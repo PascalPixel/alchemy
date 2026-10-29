@@ -130,7 +130,7 @@ s32 PartyMemberChooser_Run(void) {
   s32 result = 0;
 
   /* FAKEMATCH(one-pass): the slot's clearing in a one-pass block stores the
-   * zero before the slot's offset is built; as a plain statement, 4 of 23
+   * zero before the slot's offset is built; as a plain statement, 4 of 22
    * instructions differ in tbs-en. */
   do {
     work->selectedSlots[0] = result;

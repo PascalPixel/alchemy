@@ -135,6 +135,8 @@ another shop.
 
 ### Buying
 
+![Isaac buys the Long Sword at Bilibin's weapon shop: `Which one of you gets this?`, the hand passes Garet, his Attack, Defense and Agility with an arrow beside each, then Ivan and Mia, drawn smaller with `Can't equip`; `You can't equip this, Ivan. Do you still want it?` is turned down, Isaac takes it, the coins drop from 3000 to 2800, `Would you like to equip it now, Isaac?`, `You look bolder already!`, and `How about 525 coins for your old Bandit's Sword?` sells what it replaced.](https://alchemy.pascalpixel.com/guides/shop/buy-weapon.gif)
+
 Buying asks `What would you like?` over the stock, seven items a page with
 their prices, then `Which one of you gets this?` over the party, then how
 many for an item that stacks, such as a Herb, and takes the price off the
@@ -279,8 +281,9 @@ counts themselves.
 A sanctum's priest offers four services, Revive, Cure poison, Repel evil and
 Remove curse, and serves one party member at a time. The hand can point at
 anyone, and the fee window under the party says what the service would cost
-that party member, or `This ally needs no healing.`, in which case A only
-buzzes; such party members are drawn smaller too. Once the player agrees to
+that party member, or that they don't need it (`This ally needs no healing.`,
+`This ally is not poisoned.`), in which case A only buzzes; such party
+members are drawn smaller too. Once the player agrees to
 the donation, the service is applied, a burst of sparkles plays over the
 party member's figure to the service's tune, and the coins are taken. The
 choice is offered again while anyone who needs the service is left.
@@ -288,6 +291,8 @@ Reviving and lifting a curse cost more for a higher-level party member, and
 lifting a curse takes off every cursed item the party member wears. The same
 counter serves the healers in the towns and temples, the travelling healers,
 and the one in the Battle Arena.
+
+![The Vale Sanctum's priest with Ivan poisoned: Cure Poison is chosen, `Hmm, so you need an antidote to poison or deadly poison?`, `Whom shall I cure?` with `This ally is not poisoned.` under Garet and `Cure for 10 coins` under Ivan, `I require a donation of 10 coins to cure Ivan, OK?`, `I shall apply the cure.`, the room greys while sparkles fly in, `The poison has left Ivan.` as the coins drop from 2000 to 1990, and `Visit us again anytime you need healing.`](https://alchemy.pascalpixel.com/guides/shop/sanctum-cure.gif)
 
 `Sanctum_Run` (`shop/sanctum.c`) runs it: the welcome, then the four icons
 (`Menu_SelectSanctumServiceFar`) and, for the service chosen,

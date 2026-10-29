@@ -125,7 +125,7 @@ one for each band and one for the whole tilemap, and clears them.
 
 ## Windows
 
-![Garet's sister speaks in Vale: a window widens open from its centre at the top of the screen, her portrait appears beside it, and `You guys are so lucky, Garet.` is typed into it with the page arrow at its end.](https://alchemy.pascalpixel.com/guides/window/message-speed.gif)
+![A close look at a villager's window in Vale, slowed while it zooms: the window grows out of its centre to full size, the portrait appears, `Please take care of my brother, Isaac.` is typed into it, and after A it shrinks back into its centre and is gone.](https://alchemy.pascalpixel.com/guides/window/window-zoom.gif)
 
 A [window](../../glossary.md#window) is a bordered rectangle of the tilemap,
 placed on the grid of 8-pixel tiles, 30 across and 20 down, that covers the
@@ -298,6 +298,8 @@ flowchart TD
 
 ### How fast the letters come
 
+![Garet's sister speaks in Vale: a window widens open from its centre at the top of the screen, her portrait appears beside it, and `You guys are so lucky, Garet.` is typed into it with the page arrow at its end.](https://alchemy.pascalpixel.com/guides/window/message-speed.gif)
+
 The player chooses the message speed in the settings menu, and the choice
 picks a row of three small tables. At the slow speed one letter comes a frame
 with a pause of 4 frames after it, which holding any button skips; at the
@@ -323,6 +325,8 @@ first frame of `You guys are so lucky, Garet.` shows `Yo`. The tables are in
 
 ### Pauses, pages and the end
 
+![A man in Vault who has lost his gem: `Waah!` is typed, the typing stops for a moment, `A cat ate my precious stone!` follows with the page arrow under it, A clears the window and it is drawn again at the second page's size for `That never should have happened, but it's true.`, and A closes it.](https://alchemy.pascalpixel.com/guides/window/pauses-pages.gif)
+
 A pause holds the message on its code while a countdown runs: the short and
 longest pauses can be cut short by holding A, B, L or R, and the long one
 runs its course. A page break shows the page arrow in the window's bottom
@@ -334,10 +338,11 @@ that showed it to close, or waiting for a button, which closes the window
 from inside the task.
 
 A message can also swell its window: on the control code that starts a
-window animation (`TEXT_WINDOW_STATE`) the border
-is drawn a tile larger on every side and the window's sprites pulse for ten
-frames, then the window goes back to its size. The control codes and their
-frames are listed with their meanings in
+window animation (`TEXT_WINDOW_STATE`) the border is drawn a tile larger on
+every side and the window's sprites pulse for ten frames, then the window
+goes back to its size. No message in the six editions' text uses that code,
+so the player never sees a window swell. The control codes and their frames
+are listed with their meanings in
 [window_internal.h](window_internal.h) (`TEXT_`), and `Message_Type`
 ([typing.c](window/typing.c)) acts on each; `Text_CheckPauseSkipped` reads
 the held buttons for a pause and `Text_CheckTextDismissed` the pressed ones
@@ -378,6 +383,8 @@ editions the window opens two tiles wider.
 
 ### Letters as sprites
 
+![A sick old man in Imil: `Cough...` is typed with each letter shaking a pixel either way, then `The epidemic has hit almost everyone in Imil.` in still letters; the next page, `I'm sick, too. Cough!`, shakes its last word, and the third ends on a shaking `Cough!`.](https://alchemy.pascalpixel.com/guides/window/text-style.gif)
+
 A letter typed on the field is a 16 by 16 sprite with four tiles of its own,
 taken from a sheet of 256 tiles reserved for the 64 window sprites when the
 field's windows are set up. `Text_DrawGlyphPair` paints the letter, with its
@@ -388,7 +395,10 @@ keeps the motion the text's style gave it, and `WindowSprite_UpdateAll` moves
 it every frame: a wobble swings along a small arc, a shake jitters by a pixel
 every other frame, a pop shows the letter at double size for eight frames,
 and a spin turns it while it circles its place. The page arrow is a window
-sprite too, bobbing over 80 frames through eight pictures.
+sprite too, bobbing over 80 frames through eight pictures. The catalog writes
+a style as its number plus one, which the decoder takes off again, so
+`{text_effect:4}` is the shake; the game's text uses only that and the
+outline, `{text_effect:2}`.
 
 | Style (`{text_effect:N}`) | Motion                        | Frames                    |
 | ------------------------- | ----------------------------- | ------------------------- |
@@ -399,6 +409,8 @@ sprite too, bobbing over 80 frames through eight pictures.
 | `TEXT_STYLE_SPIN`         | `WINDOW_SPRITE_MOTION_SPIN`   | one turn in about 85 frames |
 
 ### The text canvas
+
+![A battle in Goma Cave: `Ghost appeared!` along the bottom of the screen, Fight and Attack chosen for each party member, then `Ivan attacks!`, with `Ghost takes 11 damage!` and `Isaac attacks!` below it, each new line scrolling the canvas up through `Garet attacks!` and `Ghost takes 22 damage!` until the next turn's commands.](https://alchemy.pascalpixel.com/guides/window/battle-log.gif)
 
 The canvas is a block of 120 tiles in the screen's tile memory, mapped into a
 canvas window's interior column by column, so a letter can be painted at any
@@ -413,6 +425,8 @@ one; it is copied into RAM for each call, as the decoder is.
 message on below the last line.
 
 ### Labels as tiles
+
+![Isaac's Item screen with a full pack: `Which item?` lists five of his items, and Right turns to the second page and the third, each page's names drawn anew, then back round to the first.](https://alchemy.pascalpixel.com/guides/window/label-page.gif)
 
 A label is drawn in one go: `Text_DrawMessageAsTiles` decodes the message
 from the start of the ring and `Text_DrawStringAsTiles` paints each letter

@@ -291,6 +291,8 @@ the leader faces, or one whose use belongs to the field, is handed to the
 field as Psynergy is (`Item_ClassifyUseMode`, `ITEM_USE_MODE_FROM_FIELD`):
 the screen writes it into `gFieldWork.item` and returns 1.
 
+![Isaac's Herb on the Item screen in Xian: Give, `Give it to whom?`, Garet, whose pack is full, so `Swap it for what?` over his list, the hand down past what he wears to a Vial, and the two items change hands; then Isaac's Nut, Drop, `Are you sure you want to drop it?`, Yes, and `Dropped it.`](https://alchemy.pascalpixel.com/guides/menu/item-give.gif)
+
 Give asks `Give it to whom?` and moves the item one at a time, asking how
 many of a stack (`ItemMenu_SelectGiveQuantity`), then offers to equip it on
 its new holder with the stats it would give (`ItemMenu_ConfirmEquip`). When
@@ -332,7 +334,11 @@ as they would be, asks `Is this OK?`, and only A makes the change
 preview is made by putting the change on the real party member, working the
 stats out again and putting the party member back from a copy, the same
 trick as the [status panel](#the-status-panel)'s
-(`DjinnMenu_DrawStatPreview`).
+(`DjinnMenu_DrawStatPreview`). A give or a trade previews both party members
+side by side, and R turns its three pages: their stats, then each one's
+Psynergy in turn, with what they would gain and lose.
+
+![Isaac's Flint on the Djinn screen in Xian: `What will you do?`, with Standby over his own column and Trade over the others, the hand on Garet's Fever, a preview of Isaac and Garet side by side with their classes, HP, PP and stats, R through Isaac's Psynergy and Garet's, each with what is gained and lost, and back, then A: Flint goes to Garet's column and Fever to Isaac's.](https://alchemy.pascalpixel.com/guides/menu/djinn-give.gif)
 
 The loop (`DjinnMenu_RunScreen`) runs two choosers one after the other, both
 `DjinnMenu_SelectDjinn`. The first picks a Djinni in any column; A chooses
@@ -405,6 +411,8 @@ something else: they move the party member one place along the party order,
 for good (`PartyMemberChooser_MoveEntry`), and Select lists every Djinni the
 party has found, a column of seven for each element
 (`DjinnMenu_ShowCurrentList`).
+
+![The Status screen's party row in Xian: R carries Isaac one place along the party and then another, L brings him back to the front, and Select opens `Current Djinn`, the eight Djinn the party has found in their four columns, Flint and Granite, Fizz and Sleet, Forge and Fever, Gust and Breeze.](https://alchemy.pascalpixel.com/guides/menu/status-row.gif)
 
 The row is `PartyMemberChooser_RunRearrange`, the status page
 `StatusScreen_SelectCommand`, the Psynergy page `PsynergyMenu_SelectAction`
@@ -508,6 +516,8 @@ and if nothing comes the screen fades out and the logos start again. With no
 save file the logos lead straight to the File Screen. After the prologue the
 same intro plays without the prompt (`Title_ShowIntro(0)`), holds the title
 card five seconds and goes on to Vale.
+
+![The title card with `Press Start` pulsing under it until its minute is up: the screen fades to black and, the logos left out, the intro starts again with the clouds, Mt. Aleph and the sun's lens flares rising, and the title card settles once more.](https://alchemy.pascalpixel.com/guides/graphics/title-timeout.gif)
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%

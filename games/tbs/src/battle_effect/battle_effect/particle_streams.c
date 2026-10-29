@@ -372,10 +372,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         __asm__("" : : : "r6");
         if (frame == 0)
           Sound_PlayFar(SE_RUMBLE);
-        /* FAKEMATCH(barrier): hold's use in an empty asm, which keeps it live
-         * across the call; without it, 168 of 1532 instructions differ in
-         * tbs-en. */
-        __asm__("" : : "r"(hold));
+        /* FAKEMATCH(dead): updates of hold that cancel out, under a test of
+         * hold, keep it live across the call; without them, 354 of 1532
+         * instructions differ in tbs-en. */
+        if (hold) {
+          hold++;
+          hold--;
+        }
       }
       // The heat lines, the 160 backdrop colours that
       // BattleEffect_ArmPaletteHBlankDma streams in one per scanline: black on
@@ -397,10 +400,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           blue += 3;
         blue >>= 2;
         level = blue + heat;
-        /* FAKEMATCH(barrier): an empty asm that clobbers r3 while level is
-         * live, so level takes r2; as level = blue + heat alone, 21 of 1532
-         * instructions differ in tbs-en. */
-        __asm__("" : : : "r3");
+        /* FAKEMATCH(dead): updates of blue that cancel out, under a test of
+         * blue, keep it live past level's sum, so level takes r2; as level =
+         * blue + heat alone, 42 of 1532 instructions differ in tbs-en. */
+        if (blue) {
+          blue++;
+          blue--;
+        }
         blue = level - 32;
         green = level - 80;
 

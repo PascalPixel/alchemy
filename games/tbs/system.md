@@ -464,6 +464,17 @@ MusicPlayer2000, with the mixing code it copies into fast memory.
 
 [Sound](src/sound/README.md#what-a-sound-number-means) covers the players.
 
+## Images
+
+Every image the game shows, the [maps](glossary.md#map)' tiles, the monsters,
+the fonts and the Title, is kept as an indexed PNG with its own colours. Each
+build packs it into the colours and pixels the console reads, usually
+compressed, and places it on the cartridge under the name the code uses. The
+console draws each image from a palette of 16 or 256 colours, and a 16-colour
+image also carries its palette number, which picks one of sixteen palettes.
+[Graphics](src/graphics/README.md#how-an-image-is-built-and-placed) shows how
+an image is built and placed.
+
 ## From Vale into the Sanctum
 
 ![Isaac climbs the steps to the Sanctum's door in Vale: Vale fades out, and the Sanctum's hall fades in with Isaac just inside its door](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)

@@ -891,12 +891,15 @@ prompt:
         s32 slot = prizeIndex + 284;
         s8 *prizeWeight = (s8 *)state + 1;
 
-        /* FAKEMATCH(barrier): an empty asm reading slot and clobbering r2, so
-         * slot outranks the base and takes r1, leaving r0 to the base; as no
-         * asm, 10 of 280 instructions differ in tbs-en. */
-        __asm__("" : : "r"(slot) : "r2");
         if (prizeWeight[slot] > 1) {
-          prizeWeight[slot] /= 2;
+          /* FAKEMATCH(dead): the halving in both arms of a test of slot, which
+           * adds the reference that ranks slot above the base, so slot takes r1
+           * and the base r0; as one halving, 10 of 280 instructions differ in
+           * tbs-en. */
+          if (slot)
+            prizeWeight[slot] /= 2;
+          else
+            prizeWeight[slot] /= 2;
         }
       }
     }

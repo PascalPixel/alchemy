@@ -156,13 +156,13 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   else
     xOffset = -112;
   REG_BG2X = xOffset << 8;
-  // velocityX holds each skull's angle on its orbit; x, y and z are set but
-  // never read.
   i = 0;
   /* FAKEMATCH(barrier): an empty asm after the loop's i = 0, so it comes
    * before the particles' address; as a plain for loop, 1 of 265
    * instructions differ in tbs-en. */
   __asm__("");
+  // velocityX holds each skull's angle on its orbit; x, y and z are set but
+  // never read.
   for (; i != 64; i++) {
     struct Particle *step = &work->particles[i];
 
@@ -182,9 +182,9 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
       screen.x += xOffset;
       // Unsigned, so the frames before this target's turn are skipped too.
       if (memberFrame < 64) {
-        /* FAKEMATCH(dead): rec starts null, a second set in the loop, so
-         * loop.c leaves the point's address in it rather than hoist it into
-         * fp; as one set, 51 of 265 instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): rec initialized to NULL, a second set loop.c
+         * sees, so it keeps the point's address in rec instead of hoisting
+         * it into fp; as s32 *rec, 57 of 265 instructions differ in tbs-en. */
         s32 *rec = NULL;
 
         // The actor's projection is computed, but nothing reads it.

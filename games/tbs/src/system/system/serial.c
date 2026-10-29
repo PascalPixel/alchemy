@@ -480,7 +480,12 @@ s32 Serial_StartSend(void *source, s32 size) {
   gSerialSendSize = size;
   gSerialBlockNumber = 0;
   state->active = 1;
-  IRQ_UNLOCK(savedInterruptMaster);
+  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
+   * apart from the code before it; as IRQ_UNLOCK(savedInterruptMaster) alone, 2
+   * of 27 instructions differ in tbs-en. */
+  do {
+    IRQ_UNLOCK(savedInterruptMaster);
+  } while (0);
   return 0;
 }
 

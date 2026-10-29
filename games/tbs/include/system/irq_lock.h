@@ -10,8 +10,10 @@
 // The three steps take ime, a pointer to REG_IME. Disabling writes the
 // pointer's low halfword (0x0208, bit 0 clear) back through it. Each step is a
 // do { } while (0) statement macro, the shape the lock sites match through;
-// the two restores' wrappers are devices, since a plain restore matches at
-// some sites. Serial_Initialize writes IRQ_LOCK out (see its comment).
+// IME_RESTORE's is a device, since a plain restore matches at some sites.
+// IRQ_UNLOCK is the plain store, and the sites where the restore stays apart
+// from the code before it say so themselves. Serial_Initialize writes IRQ_LOCK
+// out (see its comment).
 
 /// Saves the original IME value in saved.
 #define IME_SAVE(ime, saved)                                                   \
@@ -44,12 +46,6 @@
   } while (0)
 
 /// Restores the IME value saved by IRQ_LOCK.
-/* FAKEMATCH(one-pass): the wrapper keeps the restore apart from the code
- * before it; as REG_IME = saved, 2 instructions differ in 7 of the 8 locking
- * Task_ functions in tbs-en. */
-#define IRQ_UNLOCK(saved)                                                      \
-  do {                                                                         \
-    REG_IME = saved;                                                           \
-  } while (0)
+#define IRQ_UNLOCK(saved) (REG_IME = (saved))
 
 #endif

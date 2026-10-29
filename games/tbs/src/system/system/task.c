@@ -89,7 +89,14 @@ UNUSED s32 Task_Find(TaskFunc func) {
       break;
     }
   }
-  IRQ_UNLOCK(savedInterruptMaster);
+  /* FAKEMATCH(dead): the restore in both arms of a test, which keeps it
+   * apart from the code before it until jump2 merges the arms; as
+   * IRQ_UNLOCK(savedInterruptMaster) alone, 2 of 27 instructions differ in
+   * tbs-en. */
+  if ((s32)savedInterruptMaster < 0)
+    IRQ_UNLOCK(savedInterruptMaster);
+  else
+    IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -139,7 +146,12 @@ s32 Task_Add(TaskFunc func, s32 order) {
     }
   }
   Task_Sort();
-  IRQ_UNLOCK(savedInterruptState);
+  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
+   * apart from the code before it; as IRQ_UNLOCK(savedInterruptState) alone, 2
+   * of 61 instructions differ in tbs-en. */
+  do {
+    IRQ_UNLOCK(savedInterruptState);
+  } while (0);
   return index;
 }
 
@@ -170,7 +182,14 @@ s32 Task_Remove(TaskFunc func) {
       break;
     }
   }
-  IRQ_UNLOCK(savedInterruptMaster);
+  /* FAKEMATCH(dead): the restore in both arms of a test, which keeps it
+   * apart from the code before it until jump2 merges the arms; as
+   * IRQ_UNLOCK(savedInterruptMaster) alone, 2 of 34 instructions differ in
+   * tbs-en. */
+  if ((s32)savedInterruptMaster < 0)
+    IRQ_UNLOCK(savedInterruptMaster);
+  else
+    IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -196,7 +215,12 @@ s32 Task_SuspendAll(TaskFunc func) {
     TASK_STATE_HIGH(task) |= 1;
     result = i;
   }
-  IRQ_UNLOCK(savedInterruptMaster);
+  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
+   * apart from the code before it; as IRQ_UNLOCK(savedInterruptMaster) alone, 2
+   * of 29 instructions differ in tbs-en. */
+  do {
+    IRQ_UNLOCK(savedInterruptMaster);
+  } while (0);
   return result;
 }
 
@@ -221,7 +245,12 @@ s32 Task_SuspendOverlayTasks(void) {
       result = i;
     }
   }
-  IRQ_UNLOCK(savedInterruptMaster);
+  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
+   * apart from the code before it; as IRQ_UNLOCK(savedInterruptMaster) alone, 2
+   * of 33 instructions differ in tbs-en. */
+  do {
+    IRQ_UNLOCK(savedInterruptMaster);
+  } while (0);
   return result;
 }
 
@@ -245,7 +274,12 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
       break;
     }
   }
-  IRQ_UNLOCK(savedInterruptMaster);
+  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
+   * apart from the code before it; as IRQ_UNLOCK(savedInterruptMaster) alone, 2
+   * of 30 instructions differ in tbs-en. */
+  do {
+    IRQ_UNLOCK(savedInterruptMaster);
+  } while (0);
   return result;
 }
 
@@ -267,7 +301,12 @@ s32 Task_ResumeAll(TaskFunc func) {
       result = i;
     }
   }
-  IRQ_UNLOCK(savedInterruptMaster);
+  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
+   * apart from the code before it; as IRQ_UNLOCK(savedInterruptMaster) alone, 2
+   * of 30 instructions differ in tbs-en. */
+  do {
+    IRQ_UNLOCK(savedInterruptMaster);
+  } while (0);
   return result;
 }
 

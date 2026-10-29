@@ -525,7 +525,12 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       state->check = Battle_RandomFar();
       IRQ_LOCK(saved);
       gBattleRandomSeed = state->seed = gRandomSeed;
-      IRQ_UNLOCK(saved);
+      /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
+       * apart from the code before it; as IRQ_UNLOCK(saved) alone, 4 of 178
+       * instructions differ in tbs-en. */
+      do {
+        IRQ_UNLOCK(saved);
+      } while (0);
       if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
         goto fail;
       result = state->count;

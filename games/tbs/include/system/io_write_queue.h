@@ -54,22 +54,21 @@ void IoWriteQueue_ClearBits32(u32 address, u32 value);
 /// IO_WRITE_CLEAR to change bits; or a DMA control word.
 // The body is braces alone: as do { } while (0), 8 linked sections of tbs-en
 // differ (the nine writers, six objects with inline pushes and the overlays).
-/* FAKEMATCH(temporary): count_ holds &q->count; as q->count, 15 linked
- * sections of tbs-en differ (the nine writers, 18 inline pushes, the
- * overlays). */
+// The count is read and written as *&q->count, a pointer to the member: as
+// q->count, the struct store of the new count is scheduled before the first
+// entry word (2 of 27 instructions in IoWriteQueue_Store8 in tbs-en).
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
     struct IoWriteQueue *q = &gIoWriteQueue;                                   \
     u32 saved;                                                                 \
     s32 count;                                                                 \
-    u16 *count_ = &q->count;                                                   \
                                                                                \
     IRQ_LOCK(saved);                                                           \
-    count = *count_;                                                           \
+    count = *&q->count;                                                        \
     if (count <= 31) {                                                         \
       u32 *entry = q->entries[count];                                          \
                                                                                \
-      *count_ = count + 1;                                                     \
+      *&q->count = count + 1;                                                  \
       *entry++ = (value);                                                      \
       *entry++ = (address);                                                    \
       *entry = (control);                                                      \
@@ -79,24 +78,21 @@ void IoWriteQueue_ClearBits32(u32 address, u32 value);
 
 /// Like IO_WRITE_QUEUE_PUSH, but keeps IME's address in the caller's ime
 /// variable while disabling and restoring interrupts.
-/* FAKEMATCH(temporary): count_ as in IO_WRITE_QUEUE_PUSH; as q->count, its
- * users ElementGlow_Play and BattleEffect_RunJudgment differ. */
+// The count is read and written as in IO_WRITE_QUEUE_PUSH.
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control)                  \
   {                                                                            \
     struct IoWriteQueue *q;                                                    \
     u32 saved;                                                                 \
     s32 count;                                                                 \
-    u16 *count_;                                                               \
                                                                                \
     q = &gIoWriteQueue;                                                        \
-    count_ = &q->count;                                                        \
     IME_SAVE(ime, saved);                                                      \
     IME_DISABLE(ime);                                                          \
-    count = *count_;                                                           \
+    count = *&q->count;                                                        \
     if (count <= 31) {                                                         \
       u32 *entry = q->entries[count];                                          \
                                                                                \
-      *count_ = count + 1;                                                     \
+      *&q->count = count + 1;                                                  \
       *entry++ = (value);                                                      \
       *entry++ = (address);                                                    \
       *entry = (control);                                                      \

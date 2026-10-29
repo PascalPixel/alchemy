@@ -610,11 +610,12 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  /* FAKEMATCH(volatile): each BGxCNT value stored at sp+6 with strh on its
-   * way to the register; as a plain u16, 6 of 231 instructions differ in
-   * tbs-en. */
-  volatile u16 cnt;
+  u16 cnt;
 
+  /* FAKEMATCH(dead): cnt's address taken, so each BGxCNT value goes through
+   * its stack slot on the way to the register; as a plain u16, 26 of 231
+   * instructions differ in tbs-en. */
+  (void)&cnt;
   grid = gMapGridWork[0];
 
   Event_Start();
@@ -706,10 +707,11 @@ static void LemurianShip_RaiseTheShip(void) {
 /// leader the Black Orb.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
-  /* FAKEMATCH(volatile): each step stored at sp+2 with strh; as a plain u16, 2
-   * of 165 instructions differ in tbs-en. */
-  volatile u16 cnt;
+  u16 cnt;
 
+  /* FAKEMATCH(dead): cnt's address taken, so each step goes through its
+   * stack slot; as a plain u16, 23 of 165 instructions differ in tbs-en. */
+  (void)&cnt;
   grid = gMapGridWork[0];
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);

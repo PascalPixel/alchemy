@@ -570,9 +570,6 @@ struct SerialHalfword {
 /// blocks again. A finished send or receive clears gSerialSendSource or
 /// gSerialReceiveDestination.
 void Serial_StepBlockTransfer(void) {
-  /* FAKEMATCH(volatile): gSerialSendSize and gSerialBlockNumber are volatile
-   * (serial.h), so each access is its own load or store; as plain
-   * globals, 99 of 257 instructions differ in tbs-en. */
   struct SerialTransferState *peer;
   u32 id;
   struct SerialTransferState *own;

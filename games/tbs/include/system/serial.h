@@ -166,16 +166,17 @@ extern struct SerialTransferState gSerialTransfer;
 extern struct SerialWork gSerialWork;
 extern u16 gSerialExchangeActive;
 extern s32 gSerialSendSource;
-/// volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
-/// system.c)
+// volatile: Serial_StartSend sets it while Serial_StepBlockTransfer, which the
+// VBlank handler runs, counts it down, so it is no device.
 extern volatile u16 gSerialSendSize;
 extern s32 gSerialReceiveDestination;
-/// volatile: tagged where it steers, in LinkBattle_ReceiveActions (tbs
-/// battle.c) and BattleArena_ReceivePartyRecords (tbs battle_arena.c)
+// volatile: Serial_StepBlockTransfer, which the VBlank handler runs, counts it
+// up while the link code outside the interrupt polls it, so it is no device.
 extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
-/// volatile: tagged where it steers, in Serial_StepBlockTransfer (tbs
-/// system.c)
+// volatile: Serial_StartSend and Serial_StartReceive reset it while
+// Serial_StepBlockTransfer, which the VBlank handler runs, steps it, so it is
+// no device.
 extern volatile u8 gSerialBlockNumber;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.

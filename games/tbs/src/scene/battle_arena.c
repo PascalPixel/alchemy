@@ -541,9 +541,6 @@ static s32 BattleArena_ReportDisconnection(void) {
 /// it allocates and frees is never written: the records are received in
 /// place.
 static s32 BattleArena_ReceivePartyRecords(void) {
-  /* FAKEMATCH(volatile): gSerialReceivedSize is volatile (serial.h),
-   * so every read here is a load of its own; without the qualifier, 24 of 190
-   * instructions differ in tbs-en. */
   u16 namePrefix[24];
   u32 size;
   void *heap;

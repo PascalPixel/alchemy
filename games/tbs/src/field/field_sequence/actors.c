@@ -361,22 +361,21 @@ void Scene_AssignViewFlags(struct ActorPlacement *entry) {
   GameFlag_ClearFar(FLAG_IN_VIEW);
   GameFlag_SetFar(FLAG_OUT_OF_VIEW);
   while (entry->sprite != -1) {
-    /* FAKEMATCH(temporary): the condition read into a u16 local and then an
-     * s16 one, which keeps loop.c to one hoisted bound address; as
-     * entry->condition == 0, 18 of 57 instructions differ in tbs-en. */
-    u16 rawCondition = entry->condition;
-    s16 condition = rawCondition;
+    s32 x;
+    s32 z;
 
-    if (condition == 0) {
-      s32 x = entry->x;
-      s32 z = entry->z;
-
-      if (view->minX <= x && x <= view->maxX && view->minY <= z &&
-          z <= view->maxY)
-        entry->condition = FLAG_IN_VIEW;
-      else
-        entry->condition = FLAG_OUT_OF_VIEW;
+    // A placement with a condition of its own keeps it.
+    if (entry->condition != 0) {
+      entry++;
+      continue;
     }
+    x = entry->x;
+    z = entry->z;
+    if (view->minX <= x && x <= view->maxX && view->minY <= z &&
+        z <= view->maxY)
+      entry->condition = FLAG_IN_VIEW;
+    else
+      entry->condition = FLAG_OUT_OF_VIEW;
     entry++;
   }
 }

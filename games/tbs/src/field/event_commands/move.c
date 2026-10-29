@@ -422,22 +422,14 @@ void UpdateRisingParticleBurst(void *object) {
     child =
         Actor_Spawn(SPRITE_SPARKLE, src->x.fixed, src->y.fixed, src->z.fixed);
     if (child != 0) {
-      s32 speed;
-      /* FAKEMATCH(temporary): 1.0 in a block local set before the block's
-       * calls, which loop.c hoists for both uses; as the constant at both
-       * uses, 24 of 93 instructions differ in tbs-en. */
-      s32 unit = Q16_ONE;
-
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
-      speed = Random16();
-      child->acceleration = unit;
-      child->speedLimit = speed + unit;
+      child->speedLimit = Random16() + Q16_ONE;
+      child->acceleration = Q16_ONE;
       child->motionFlags = 2;
       child->gravity = 0xa3d;
       spread = Random16();
       child->velocityY = spread - Random16();
-      dist = Random16() * 24;
-      dist += 8 << 16;
+      dist = Random16() * 24 + (8 << 16);
       Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }

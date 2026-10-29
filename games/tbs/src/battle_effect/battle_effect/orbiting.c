@@ -155,15 +155,15 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  /* FAKEMATCH(one-pass): the store in a one-pass block, so the loop's i = 0
-   * comes before the particles' address; as a plain store, 1 of 265
-   * instructions differ in tbs-en. */
-  do {
-    REG_BG2X = xOffset << 8;
-  } while (0);
+  REG_BG2X = xOffset << 8;
   // velocityX holds each skull's angle on its orbit; x, y and z are set but
   // never read.
-  for (i = 0; i != 64; i++) {
+  i = 0;
+  /* FAKEMATCH(barrier): an empty asm after the loop's i = 0, so it comes
+   * before the particles' address; as a plain for loop, 1 of 265
+   * instructions differ in tbs-en. */
+  __asm__("");
+  for (; i != 64; i++) {
     struct Particle *step = &work->particles[i];
 
     step->x = 0;

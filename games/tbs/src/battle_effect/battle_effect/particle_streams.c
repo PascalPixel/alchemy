@@ -326,7 +326,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     do {
       s32 angle = frame << 8;
       /* FAKEMATCH(pin): count in r2, so the division's +3 works on its copy in
-       * r3; as a plain local, 36 of 1532 instructions differ in tbs-en. */
+       * r3; as a plain local, 74 of 1532 instructions differ in tbs-en. */
       register s32 count __asm__("r2") = work->frame;
       u8 *sheet = work->sheet;
       s32 heat = count / 4;
@@ -335,10 +335,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       s32 x;
       s32 y;
 
-      /* FAKEMATCH(barrier): count and sheet through an empty asm that
-       * clobbers r1, which keeps count live past its copy in r3 and puts
-       * sheet in r0, leaving r1 to the 0x778c offset; as line = sheet + 0x1f80
-       * alone, 34 of 1532 instructions differ in tbs-en. */
+      /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering
+       * r1, so count outlives its r3 copy and sheet takes r0; as line = (u16 *)
+       * (work->sheet + 0x1f80), 69 of 1532 instructions differ in tbs-en. */
       __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1");
       line = (u16 *)(sheet + 0x1f80);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {

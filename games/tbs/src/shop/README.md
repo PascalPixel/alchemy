@@ -58,7 +58,9 @@ memory, and that block is the field menu's: the menu
 ([Menus](../menu/README.md#the-menu-work)). The field menu takes the block
 when the player opens it on the field and gives it back when it closes, and a
 counter opens only from a scene's event, when the field menu is closed, so
-the block is always free for a counter to take. The shops, sanctums and the
+the block is always free for a counter to take, and a counter needs a block
+of the same shape: the party in order, its figures, windows and a hand
+cursor. The shops, sanctums and the
 item picker read it as `struct ShopWork`
 ([`include/shop/shop.h`](../../include/shop/shop.h)), and the inn, which
 needs only the coins window and the innkeeper's portrait, as
@@ -87,14 +89,15 @@ the block back.
 A shop offers four things at its counter, Buy, Sell, Artifacts and Repair,
 and the shopkeeper talks the player through each. Every shop in the game is
 one row of a stock table, which lists the ordinary items it always sells,
-the rare items it adds to the shared stock on its first visit, and whether it
-sells weapons, armor or items. Bilibin's weapon shop, for one, sells the Long
+the rare items it adds, on its first visit, to a stock every shop of its
+kind shares ([Artifacts](#artifacts)), and whether it sells weapons, armor
+or items. Bilibin's weapon shop, for one, sells the Long
 Sword, Broad Sword, Hunter's Sword, Battle Axe and Heavy Mace, and adds the
 Witch's Wand. A town's event names only which row its shop is and which
 [actor](../../glossary.md#actor) is the keeper, whose face the lines show.
 
 `Shop_Run` runs a shop until the player leaves. It adds the row's artifacts
-to the shared stock if this is the shop's first visit
+to that shared stock if this is the shop's first visit
 (`ShopStock_AddArtifacts`), takes the work, reads the shop's type from the
 row (`ShopStock_GetType`), opens the keeper's portrait and greets the player,
 and then loops: the four icons (`Menu_SelectShopCommandFar`, in the window
@@ -102,8 +105,9 @@ code), the keeper's line for the choice, and the choice itself. Buy and
 Artifacts both run `Shop_SelectBuy` (`shop/buy.c`), the one with the row's
 ordinary items copied into the work (`ShopStock_CopyItems`) and the other
 with the artifacts the shop's type can sell (`Shop_ListAvailableArtifacts`);
-Sell and Repair both run `Shop_ChooseMember` (`shop/sell.c`), which asks
-whose items first. B on the icons ends the loop with the farewell. The stock
+Sell runs `Shop_ChooseMember` (`shop/sell.c`), which asks whose items
+first, and Repair reaches it through `Shop_RunRepairMemberChoice`. B on the
+icons ends the loop with the farewell. The stock
 table is `sStockTable` in [`shop/stock.c`](shop/stock.c), its columns named
 there.
 
@@ -112,9 +116,12 @@ same order, so the code always names the weapon shop's line and
 `Shop_ShowKeeperMessage` adds the distance from `MsgWeaponShopWelcome` to
 the armor or item shop's welcome; one call serves every kind of shop. Xian's
 three shops have a further set of their own, whose keepers call the player
-`warrior`, and this set's distance is added on top (`ShopWork.warriorShop`).
-Each keeper's line is a message typed into a window the counter waits for,
-so a shop reads as a conversation with choices in it.
+`warrior`, and this set's distance is added on top (`ShopWork.warriorShop`);
+the sanctum's four services are four sets of the same kind
+(`Shop_MessageByMode`). Each keeper's line is a message typed into a window
+the counter waits for, so a shop reads as a conversation with choices in it.
+The lines quoted on this page are the weapon shop's unless a recording shows
+another shop.
 
 | Name                     | Value | Meaning                                              |
 | ------------------------ | ----- | ---------------------------------------------------- |
@@ -136,7 +143,8 @@ shows what the item would mean to them: for a weapon or armor, how their
 Attack, Defense and Agility would change, with an arrow beside each
 (`Shop_DrawEquipComparison`), and for anything else how many of it they
 already carry (`Shop_DrawCarriedItem`). The party members who cannot equip
-the item are drawn at four fifths of their size (`Shop_DrawParty`).
+the item are drawn at four fifths of their size, `0xcccc` in 16.16 fixed
+point (`Shop_DrawParty`).
 
 `Shop_SelectBuy` runs it. Before taking any coins it tests for room in the
 party member's pack by adding one and taking it out again, so a full pack
@@ -147,23 +155,25 @@ whether to buy it anyway. The count for a stack (`Shop_SelectBuyCount`,
 `Shop_SelectQuantity`) is limited by what the coins buy, by the artifact's
 stock, and by a stack of 30 less what the party member carries. Then
 `Shop_BuyDone` adds the items one at a time, taking each one's price off
-the coins and adding it to the shop credit, offers to equip the item
-(`Shop_ConfirmEquip`) and, if it was equipped, to sell what it replaced
-(`Shop_SellOld`). An artifact bought is taken off its counter only once the
-purchase is complete, and the list is rebuilt.
+the coins and adding it to the shop credit, the count the Game Tickets below
+are earned by, offers to equip the item (`Shop_ConfirmEquip`) and, if it was
+equipped, to sell what it replaced (`Shop_SellOld`). An artifact bought is
+taken off its stock count only once the purchase is complete, and the list
+is rebuilt.
 
 | Name                    | Value | Meaning                                             |
 | ----------------------- | ----- | --------------------------------------------------- |
 | `SHOP_STOCK_PAGE_ITEMS` | 7     | items on one page of the stock, 32 pixels apart     |
 | `SHOP_STACK_LIMIT`      | 30    | the most of one item a party member's stack holds   |
 | `INVENTORY_SLOTS`       | 15    | items a party member carries                        |
-| four fifths             |       | the size a party member who cannot equip the item is drawn at |
+| four fifths             | `0xcccc` | the size a party member who cannot equip the item is drawn at, in 16.16 |
 
 ### Game Tickets
 
 Every coin spent buying also builds up a shop credit, a count kept out of
-the player's sight. Once the credit reaches the next ticket's cost, the
-keeper says `Please take a complimentary Game Ticket.` and hands one over,
+the player's sight. Once the credit reaches the next ticket's cost, the item
+shop's keeper says `Please take a complimentary Game Ticket.` and hands one
+over,
 asking who takes it. The ticket pays for Lucky Wheels in Tolbi, and its cost
 comes off the credit, while the coins stay as they were. The cost rises after
 every fifth ticket, and a purchase gives at most one.
@@ -202,7 +212,7 @@ A stack asks how many. A rare item sold goes back on sale
 party member chosen, which runs `Shop_SellItem` for each item the player
 picks; `Shop_SalePrice` sets the price. Each item sold goes through
 `Inventory_DiscardFar`, the same routine that drops an item, which is what
-puts a rare item back on its counter.
+puts a rare item back on its stock count.
 
 | Name                     | Value | Meaning                                             |
 | ------------------------ | ----- | --------------------------------------------------- |
@@ -237,11 +247,11 @@ seconds from the first wait to the last.
 
 ![At Bilibin's weapon shop the hand reaches Artifacts: `You must be a connoisseur if those caught your eye.`, and the Witch's Wand comes up at 880 coins with its description.](https://alchemy.pascalpixel.com/guides/shop/artifacts.gif)
 
-A rare item belongs to no one shop: it has one rare item counter for the
-whole game, and every shop of its kind sells it while that counter is above
-zero. The first time the player opens a shop, each rare item in its row is
-counted once; buying one takes it off, and selling or dropping one puts it
-back. So a rare item first found in one town is sold by every shop of its
+A rare item belongs to no one shop: it has one stock count for the whole
+game, and every shop of its kind sells it while that count is above zero.
+The first time the player opens a shop, each rare item in its row adds one
+to its count; buying one takes one off, and selling or dropping one puts
+one back. So a rare item first found in one town is sold by every shop of its
 kind afterwards, and one the party gives up comes back on sale.
 
 Vault's weapon shop adds the Magic Rod. The party reaches Vault first, so
@@ -253,14 +263,14 @@ visit adds one, so it can be bought twice.
 [game flag](../../glossary.md#game-flag) for each row,
 `FLAG_SHOP_ARTIFACTS_STOCKED` plus the row, remembers that it has.
 `Shop_ListAvailableArtifacts` builds the Artifacts list from every item of
-the shop's type whose counter is above zero, and `Item_AdjustCounterFar`
-moves a counter. [Game rules](../game/README.md#rare-item-counters) explains
-the counters themselves.
+the shop's type whose count is above zero, and `Item_AdjustCounterFar` moves
+a count. [Game rules](../game/README.md#rare-item-counters) explains the
+counts themselves.
 
 | Name                          | Value | Meaning                                              |
 | ----------------------------- | ----- | ---------------------------------------------------- |
 | `FLAG_SHOP_ARTIFACTS_STOCKED` |       | the first of 35 flags, one a row, set on its first visit |
-| a counter                     | 0 to 99 | how many of a rare item the shops can still sell   |
+| a rare item's count           | 0 to 99 | how many of it the shops can still sell            |
 
 ## Sanctums
 
@@ -301,7 +311,7 @@ fade back.
 
 | Name                 | Value      | Meaning                                                 |
 | -------------------- | ---------- | ------------------------------------------------------- |
-| seven tenths         |            | the size a party member who needs nothing is drawn at   |
+| seven tenths         | `0xb333`   | the size a party member who needs nothing is drawn at, in 16.16 |
 | eighteen sparkles    | 3 frames apart | the burst, in 24 sparkle slots                      |
 | the tint             | 16 frames  | how long the field's colours take to change, and to come back |
 
@@ -319,10 +329,11 @@ inn, like Xian's shops, has lines of its own.
 `sInnPricesPerGuest`: `Inn_RoomPrice` multiplies the row's price by the
 party members whose HP is above 0, the innkeeper names the total, and on Yes
 with the coins to pay it `Inn_PlaySleep` takes the coins, fills each
-standing party member's HP and PP, and plays the night. The night is a
-screen transition closing on the leader over 60 frames, `MUS_INN` played
-through, and the transition opening again over 60 frames; the field's usual
-16-frame transition is put back after.
+standing party member's HP and PP, and plays the night. The night is the
+screen closing in an oval on the leader over 60 frames
+(`Event_StartScreenTransition`), `MUS_INN` played through, and the screen
+opening again over 60 frames; the 16 frames the field's own wipes take are
+put back after.
 
 | Inn      | Coins a guest |
 | -------- | ------------- |
@@ -359,7 +370,7 @@ the fixed form behind `BUGFIX` (`SHOP_CANNOT_REMOVE_STATUS`).
 
 ## Buying a Herb in Bilibin
 
-![Isaac buys a Herb at Bilibin's item shop: `What would you like?`, the Herb at 10 coins, `Now, who is this for?`, `How many do you want?`, the coins drop from 500 to 490, and the keeper says `Please take a complimentary Game Ticket.` and `Who will take this Game Ticket?` before `Is there anything else?`](https://alchemy.pascalpixel.com/guides/shop/game-ticket.gif)
+![Isaac buys a Herb at Bilibin's item shop: `What would you like?`, the Herb at 10 coins, `Now, who is this for?`, `How many do you need?`, the coins drop from 500 to 490, and the keeper says `Please take a complimentary Game Ticket.` and `Who will take this Game Ticket?` before `Is there anything else?`](https://alchemy.pascalpixel.com/guides/shop/game-ticket.gif)
 
 The party walks into Bilibin's item shop with 500 coins, having spent 290 in
 shops so far, and buys a Herb. Each thing that happens is one of the page's
@@ -367,11 +378,10 @@ mechanisms.
 
 Talking to the keeper runs the scene's event, which calls
 `Shop_Run(SHOP_BILIBIN_ITEMS, ACTOR_BILIBIN_ITEM_MERCHANT)` and waits.
-`Shop_Run` sees that `FLAG_SHOP_ARTIFACTS_STOCKED` plus the row is already
-set, so the row's artifacts are not counted again, takes the work with
-`Shop_InitializeWork`, reads the row's type, `SHOP_TYPE_ITEMS`, opens the
-keeper's portrait and shows the welcome, moved from the weapon shop's line
-to the item shop's.
+`ShopStock_AddArtifacts` finds nothing to count, since the item shop's row
+lists no artifacts; `Shop_Run` takes the work with `Shop_InitializeWork`,
+reads the row's type, `SHOP_TYPE_ITEMS`, opens the keeper's portrait and
+shows the welcome, moved from the weapon shop's line to the item shop's.
 
 The four icons come up (`Menu_SelectShopCommandFar`); A on Buy. `Shop_Run`
 copies the row's items into the work (`ShopStock_CopyItems`), says `What
@@ -383,10 +393,10 @@ moves along the items; A on the Herb.
 beside them shows how many Herbs Isaac carries (`Shop_DrawCarriedItem`). A
 on Isaac. It adds a Herb to his pack and takes it out again to test for
 room, checks that 10 coins are there, and asks how many
-(`Shop_SelectBuyCount`), capped by the coins, the stack and nothing else,
-since a Herb is no artifact; one. `Shop_BuyDone` adds the Herb, takes 10
-coins and adds 10 to the shop credit, and offers nothing to equip, since a
-Herb is no equipment.
+(`Shop_SelectBuyCount`), capped by the coins and the stack, the two limits
+that apply to an ordinary item; one. `Shop_BuyDone` adds the Herb, takes 10
+coins and adds 10 to the shop credit, and goes straight on, since the offer
+to equip is for weapons and armor.
 
 `Shop_BuySpecialItem` runs next. The party has been given no tickets, so the
 next cost is 300; the credit is now 300, so the keeper says `Please take a
@@ -394,12 +404,12 @@ complimentary Game Ticket.` and asks who takes it. A on Isaac: the ticket
 goes into his pack, 300 comes off the credit and the ticket count becomes 1.
 The coins stay at 490.
 
-`Shop_SelectBuy` asks `Anything else?` and shows the stock again; B closes
-its windows and returns. `Shop_Run` puts the hand back off screen, asks
-`Anything else today?` and shows the icons; B ends the loop with `Feel free
-to drop in anytime.`, closes the portrait, frees the work with
-`Shop_ReleaseWork` and returns to the event, which ends, and the party can
-walk again.
+`Shop_SelectBuy` asks `Is there anything else?` and shows the stock again;
+B closes its windows and returns. `Shop_Run` puts the hand back off screen,
+says `Feel free to take a look around.` and shows the icons; B ends the loop
+with `Thank you very much. Please come again.`, closes the portrait, frees
+the work with `Shop_ReleaseWork` and returns to the event, which ends, and
+the party can walk again.
 
 | What happened                          | Mechanism                                                     |
 | -------------------------------------- | ------------------------------------------------------------- |
@@ -414,21 +424,11 @@ walk again.
 
 ## Design
 
-Counting artifacts for each item, in one counter the whole game shares, lets
-one counter serve every shop of a kind and every way an item leaves the
+Counting artifacts for each item, in one stock count the whole game shares,
+lets one count serve every shop of a kind and every way an item leaves the
 party: a sale, a drop from the Item screen and a drop from the item picker
 all go through `Inventory_Discard`, and the shops need no list of what each
 has sold.
-
-The counters borrow the field menu's work instead of keeping a block of
-their own, since the two are open at different times and a counter needs a
-block of the same shape: the party in order, its figures, windows and a
-hand cursor.
-
-The keepers' lines are kept as parallel sets, one for each kind of shop and
-one for the sanctum's four services, with every set in the same order, so
-one call shows the right line for whichever kind is open
-(`Shop_ShowKeeperMessage`, `Shop_MessageByMode`).
 
 ### Editions
 
@@ -463,8 +463,6 @@ open a shop with 200,000 coins, broken equipment and a poisoned party
 
 ## Limits
 
-- A stock row lists at most 24 items and 8 artifacts, and there are 35 rows.
-- A shop adds its artifacts once.
 - Shop credit stops at 999,999 and the Game Ticket count at 28
   (`Party_AdjustShopCredit`, `Party_AdjustShopGifts`). Every ticket from the
   26th costs 8,000 either way, so the cap changes nothing the player sees.
@@ -481,11 +479,12 @@ open a shop with 200,000 coins, broken equipment and a poisoned party
   one per shop, with its columns named by `SHOP_STOCK_`.
 - **shop type**: the stock row's last column, `SHOP_TYPE_ITEMS`,
   `SHOP_TYPE_WEAPONS` or `SHOP_TYPE_ARMOR`.
-- **artifact**: a rare item, which a shop sells only while its rare item
-  counter (`Item_AdjustCounter`) is above zero.
+- **artifact**: a rare item, which a shop sells only while its stock count
+  (`Item_AdjustCounter`) is above zero.
 - **shop credit**: `gMainRoutineWork.shopCredit`, the coins spent buying, which
   earns Game Tickets; `gMainRoutineWork.shopGifts` counts the tickets given.
-- **action**: what the player chose at a shop's counter (`enum ShopAction`).
+- **choice at the counter**: Buy, Sell, Artifacts or Repair
+  (`enum ShopAction`).
 - **service**: what a sanctum does for one party member (`enum SanctumService`).
 - **burst**: the sparkles and tinted colours a sanctum plays over the party
   member served (`Sanctum_RunMemberIconBurst`).

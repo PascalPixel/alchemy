@@ -744,10 +744,6 @@ prompt:
   __asm__("" : "+r"(message));
   for (;;) {
     text = MsgTolbiCoins;
-    /* FAKEMATCH(barrier): the coin label kept in r9 and the marker in the pool;
-     * as a plain local, the marker takes fp, state r9, and 10 of 290
-     * instructions differ in tbs-ja. */
-    __asm__("" : "+r"(text));
     state = &gMainRoutineWork;
     coins = state->coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
@@ -757,7 +753,14 @@ prompt:
     Text_DrawMessageAsTiles(text, window, 0, 0);
     Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
     Text_DrawMessageAsTiles(MsgTolbiCounterMarker, window, 104, 0);
-    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
+    {
+      /* FAKEMATCH(temporary): the medal label through a 64-bit local, whose
+       * register pair keeps the coin label in r9 and the marker in the pool;
+       * as text + 1, 20 of 290 instructions differ in tbs-ja. */
+      s64 label = text;
+
+      Text_DrawMessageAsTiles(label + 1, window, 0, 8);
+    }
     Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
     Text_DrawMessageAsTiles(MsgTolbiCounterMarker, window, 104, 8);
     choice = Menu_SelectCoinsOrMedals(choice);

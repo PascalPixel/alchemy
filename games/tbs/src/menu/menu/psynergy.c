@@ -154,7 +154,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       cancelled = -1;
       /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 and 1
        * the ROM's registers; as if (chosen == -1) setting done and useResult,
-       * 6 of 317 instructions differ in tbs-en. */
+       * 12 of 316 instructions differ in tbs-en. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {
@@ -171,19 +171,9 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     case PSYNERGY_STEP_LIST:
       wait(1);
       Unit_GetFar(menu->memberIds[0]);
-      step = PSYNERGY_STEP_MEMBER;
-      if (menu->psynergyCount != 0) {
-        {
-          struct PsynergyMenuWork *savedWork = menu;
-
-          /* FAKEMATCH(dead): menu cleared and restored under a false test, so
-           * the mode's offset is built from its own constant; without the two
-           * tests, 2 of 317 instructions differ in tbs-en. */
-          if (done)
-            menu = NULL;
-          if (done)
-            menu = savedWork;
-        }
+      if (menu->psynergyCount == 0) {
+        step = PSYNERGY_STEP_MEMBER;
+      } else {
         switch (menu->mode) {
         case PSYNERGY_MODE_USE:
           ItemMenu_DrawMessage(0, MsgPsynergyChooseAbility);

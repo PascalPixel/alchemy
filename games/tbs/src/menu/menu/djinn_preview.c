@@ -274,10 +274,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
           Iwram_CopyWords(saved, work, size);
           window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
-          /* FAKEMATCH(barrier): an empty asm keeps the window copy before the
-           * cursor's store, as the ROM does; as a plain statement, 4 of 1276
-           * instructions differ in tbs-en. */
-          __asm__("");
+          /* FAKEMATCH(one-pass): an empty once-only loop keeps the window copy
+           * before the cursor's store, as the ROM does; as a plain statement, 8
+           * of 1276 instructions differ in tbs-en. */
+          do {
+          } while (0);
           menu->cursor->motion = ICON_SHOWN;
           MenuCursor_Slide(2, 96);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
@@ -291,10 +292,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
-          /* FAKEMATCH(barrier): an empty asm keeps the step's store before the
-           * cursor's store, as the ROM does; as a plain statement, 2 of 1276
-           * instructions differ in tbs-en. */
-          __asm__("");
+          /* FAKEMATCH(one-pass): an empty once-only loop keeps the step's store
+           * before the cursor's store, as the ROM does; as a plain statement, 4
+           * of 1276 instructions differ in tbs-en. */
+          do {
+          } while (0);
           menu->cursor->motion = ICON_HIDDEN;
         }
         break;
@@ -305,10 +307,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, work, size);
           window =
               Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
-          /* FAKEMATCH(barrier): an empty asm keeps the window copy before the
-           * cursor's store, as the ROM does; as a plain statement, 5 of 1276
-           * instructions differ in tbs-en. */
-          __asm__("");
+          /* FAKEMATCH(one-pass): an empty once-only loop keeps the window copy
+           * before the cursor's store, as the ROM does; as a plain statement,
+           * 10 of 1276 instructions differ in tbs-en. */
+          do {
+          } while (0);
           menu->cursor->motion = ICON_SHOWN;
           MenuCursor_Slide(106, 56);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
@@ -323,10 +326,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
-          /* FAKEMATCH(barrier): an empty asm keeps the step's store before the
-           * cursor's store, as the ROM does; as a plain statement, 2 of 1276
-           * instructions differ in tbs-en. */
-          __asm__("");
+          /* FAKEMATCH(one-pass): an empty once-only loop keeps the step's store
+           * before the cursor's store, as the ROM does; as a plain statement, 4
+           * of 1276 instructions differ in tbs-en. */
+          do {
+          } while (0);
           menu->cursor->motion = ICON_HIDDEN;
         }
         break;

@@ -134,6 +134,8 @@ range and distance is counted in.
 
 ### The opening
 
+![The battle against the Fusion Dragon opens: cracks spread over a black screen and the picture shatters into white, the Fusion Dragon stands in a storm on the Venus Lighthouse aerie and flashes, the party fades in, `Fusion Dragon appeared!`, and the command menu comes up on Fight](https://alchemy.pascalpixel.com/guides/battle/storm.gif)
+
 The curtain is drawn on a background layer of its own: a closed curtain of
 solid rows, which parts over 80 [frames](../../glossary.md#frame) as one row
 moves up and its mirror image moves down, each running through the curtain's
@@ -146,8 +148,12 @@ battle with a first strike announces it last:
 `<leader>'s party was caught by surprise!`.
 
 One formation opens differently: the Fusion Dragon on the Venus Lighthouse
-aerie arrives in a storm, with the enemies' shattering opening effect
-(`BattleEffect_RunShatteringOpeningFar`) and the party fading in afterwards.
+aerie arrives in a storm. There is no curtain: the picture cracks and
+shatters into white over the storm's battle background, and the Fusion
+Dragon flashes as the colours come back
+(`BattleEffect_RunShatteringOpeningFar`, 128 frames). Only then does the
+status window open and the party fade in, over 16 frames, and the enemy is
+announced last.
 
 ## Turns
 
@@ -560,6 +566,8 @@ BattlePlayback_WaitForReady(); /* until every target has played */
 
 ### An attack
 
+![Isaac attacks a Gryphon while Garet, Ivan and Mia defend: `Isaac attacks!`, the field clears to Isaac and the Gryphon as the camera zooms in, he leaps at it, a ring of light and a spray of sparks burst over it, `Gryphon1 takes 161 damage!`, and the others are shown again](https://alchemy.pascalpixel.com/guides/battle/critical.gif)
+
 The attacker runs up to its first target (`BattleStaging_RunAttack`). The
 camera swings halfway toward the attacker's side, the attacker leaps the
 distance in the frames its leaping picture takes, with the hop its sprite is
@@ -595,21 +603,27 @@ returns to its usual view.
 
 ### An item
 
+![Mia uses a Healing Ring on Garet while the others defend against two Gryphons: `Mia raises the Healing Ring!`, the background dims as light gathers over Garet, `Garet recovers 70 HP!`, and `Your Healing Ring broke!`](https://alchemy.pascalpixel.com/guides/battle/item.gif)
+
 The user raises the item (`BattleStaging_RunItem`). An item with a battle
 effect dims the background over twenty frames while it plays; one with none
 waits a second. Then the item is spent as its kind says: an item that is used
 up leaves the inventory, and later item commands of the same party member this
-turn follow their items to their new slots; an item that may break does so one
-time in eight, `<item> broke!`; Hermes' Water becomes an Empty Bottle.
+turn follow their items to their new slots; an item that may break, such as a
+ring, does so one time in eight, `Your <item> broke!`; Hermes' Water becomes
+an Empty Bottle.
 
 ### A flight
+
+![While the party defends, a Rat Soldier takes its turn: `Rat Soldier runs!`, it flashes, turns and runs off the field, and the Rat beside it is left to act, `Rat is defending!`](https://alchemy.pascalpixel.com/guides/battle/enemy-flees.gif)
 
 The party's flight was decided when the commands were gathered
 (`BattleStaging_RunFlee`). A party that got away runs off the field, each
 party member able to move running one after another, eight frames apart, and
 `Battle_Run` ends the battle; one that failed reads `But there's no escape!`.
-An enemy that runs
-gets away seven times in ten and leaves the battle.
+An enemy that runs, `<enemy> runs!`, gets away seven times in ten: it runs
+off the field and leaves the battle while the camera stays on the party's
+view. Otherwise it too reads `But there's no escape!`.
 
 | Name                      | Value          | Meaning                                                |
 | ------------------------- | -------------- | ------------------------------------------------------ |

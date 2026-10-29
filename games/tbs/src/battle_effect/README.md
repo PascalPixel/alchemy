@@ -116,6 +116,9 @@ handler table is in `battle_effect_table.c`.
 
 ## The three doors and what they lend
 
+![Isaac summons Judgment at Garet, Ivan and Mia: `Isaac summons Judgment!`, Isaac glows and fades, the battle runs down the screen into black and a violet sky runs in after it, Judgment flies forward and bursts in a flash, the blast spreads over a valley seen from above, a beach and a forest, and the battle comes back with `Garet takes 405 damage!!!`, `Ivan takes 510 damage!`, `Mia takes 367 damage!` and `Isaac's Earth Power rises by 61!`](https://alchemy.pascalpixel.com/guides/battle_anim/summon.gif)
+![Isaac attacks a Gryphon and scores a critical hit: the field clears to the two, and a ring of light and a spray of sparks burst over the Gryphon in place of his sword's slash, `Gryphon1 takes 161 damage!`](https://alchemy.pascalpixel.com/guides/battle/critical.gif)
+
 A door is the function the battle calls to play an effect: it takes three
 blocks of memory for the effect, calls the handler, and gives the blocks
 back when the handler returns.

@@ -129,12 +129,13 @@ s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = gMenuWork;
   s32 result = 0;
 
-  /* FAKEMATCH(one-pass): the slot's clearing in a one-pass block stores the
-   * zero before the slot's offset is built; as a plain statement, 4 of 22
-   * instructions differ in tbs-en. */
-  do {
+  /* FAKEMATCH(dead): the slot's clearing in both arms of a test, which ends
+   * the scheduling block before the slot's offset is built until jump2 merges
+   * the arms; as a plain statement, 4 of 22 instructions differ in tbs-en. */
+  if ((s32)work < 0)
     work->selectedSlots[0] = result;
-  } while (0);
+  else
+    work->selectedSlots[0] = result;
   if (StatusScreen_SelectMember(0) == -1)
     result = -1;
   else

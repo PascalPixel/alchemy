@@ -322,14 +322,14 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     } else {
       // A carried item was picked: drop it (the whole stack) and take the new
       // one.
-      Unit_GetFar(member);
       {
-        /* FAKEMATCH(temporary): the slot copied to a block local loads before
-         * the member; as Shop_GetSelectionState(member, slot), 2 of 181
-         * instructions differ in tbs-en. */
-        s32 selectedSlot = slot;
+        struct Unit *unit = Unit_GetFar(member);
+        /* FAKEMATCH(dead): the picked item read into a local nothing uses,
+         * which loads the slot before the member for the call below; as
+         * Unit_GetFar(member) alone, 1 of 181 instructions differ in tbs-en. */
+        s32 pickedItem = unit->inventory[slot];
 
-        discardQuantity = Shop_GetSelectionState(member, selectedSlot);
+        discardQuantity = Shop_GetSelectionState(member, slot);
       }
       // A party member who already carries 30 of the new item (the cap
       // Party_CheckItemLimit counts) cannot take it: say so and ask again.

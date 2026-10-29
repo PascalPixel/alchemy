@@ -76,16 +76,18 @@ u32 Party_GetAverageLevel(void) {
 struct Unit *Unit_Get(u32 unitId) {
   struct Unit *states;
   struct Unit *unit;
+  void *caller = __builtin_return_address(0);
 
-  {
-    void *caller = __builtin_return_address(0);
-
-    /* FAKEMATCH(barrier): an empty asm reading the return address in a low
-     * register, as the ROM's mov r3, lr at entry; as no asm, 1 of 28
-     * instructions differ in tbs-en. */
-    __asm__("" : : "l"(caller));
-  }
   states = gMainRoutineWork.units;
+  /* FAKEMATCH(dead): the party return repeated under a test of the return
+   * address, whose copy of lr into r3 outlives the merged test; as one return
+   * and no return address, 7 of 28 instructions differ in tbs-en. */
+  if (caller == NULL) {
+    if (unitId <= PIERS) {
+      unit = &states[unitId];
+      return unit;
+    }
+  }
   if (unitId <= PIERS) {
     unit = &states[unitId];
     return unit;

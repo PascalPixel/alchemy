@@ -344,21 +344,25 @@ void ShopStock_AddArtifacts(s32 stockRow) {
 /// after, and returns how many. Called by Shop_Run for Buy.
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   const s16 *src;
+  s32 copying;
   s16 *dst;
   s32 count;
 
   count = 0;
   if (sStockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
     dst = output;
+    copying = 1;
     src = sStockTable[stockRow];
     do {
-      /* FAKEMATCH(volatile): only the copy read is volatile, so it stays apart
-       * from the signed sentinel read; as *dst = *src, 19 of 30 instructions
-       * differ in tbs-en. */
-      *dst = *(const volatile s16 *)src;
-      count++;
-      src++;
-      dst++;
+      /* FAKEMATCH(dead): the copy under a test of copying, always 1, which
+       * emits nothing but keeps the copy's read apart from the signed sentinel
+       * read; as a plain copy, 19 of 30 instructions differ in tbs-en. */
+      if (copying) {
+        *dst = *src;
+        count++;
+        src++;
+        dst++;
+      }
       if (count > SHOP_STOCK_ITEM_COUNT - 1)
         break;
     } while (*src != 0);

@@ -208,14 +208,14 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        if ((Ability_Get(actions[result])->flags & ABILITY_USABLE_IN_BATTLE) !=
+        // An unusable ability leaves this if through the empty branch's own
+        // jump, which the ROM keeps; as `if (usable) break;`, jump.c inverts
+        // the test and 1 of 794 instructions differ in tbs-en.
+        if ((Ability_Get(actions[result])->flags & ABILITY_USABLE_IN_BATTLE) ==
             0) {
+        } else {
           break;
         }
-        /* FAKEMATCH(dead): a dead store keeps the test above from being
-         * threaded past the break; without it, 2 of 794 instructions differ in
-         * tbs-en. */
-        result = -1;
       } else {
         result = -1;
         break;

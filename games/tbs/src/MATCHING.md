@@ -112,8 +112,8 @@ written. A device may be replaced only by milder ones, as many as it takes.
   keeps the test, and the registers it reads, through register allocation and
   scheduling, until the jump pass that follows merges the arms and deletes the
   test (`Vault_SpawnDriftingEffect`). The arms last that long only where
-  if-conversion can't merge them first: a store through a pointer, a call or
-  a return lasts, a single store to a local does not.
+  if-conversion can't merge them first, as with a store through a pointer or
+  a return; a single store to a local is merged at once.
 
 A device is the last resort, used only after reshaping the code has failed.
 Taking one out again is part of humanizing, the project's second stage after

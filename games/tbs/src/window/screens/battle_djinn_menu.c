@@ -514,11 +514,11 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 
       cx = listWindow->x * 8;
       /* FAKEMATCH(barrier): an empty asm after the x shift keeps the row's
-       * reload after it; without it, 2 of 1201 instructions differ in
+       * reload after it; as no asm, 2 of 1201 instructions differ in
        * tbs-en. */
       __asm__("");
       /* FAKEMATCH(barrier): an empty asm reading the row in a low register
-       * reloads it before the subtract; without it, 2 of 1201 instructions
+       * reloads it before the subtract; as no asm, 2 of 1201 instructions
        * differ in tbs-en. */
       __asm__("" : : "l"(selectedRow));
       cursorPos.x = cx - 2;

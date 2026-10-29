@@ -361,11 +361,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
         camera->yaw -= 256;
     }
     // Severe Blow's flash: the whole canvas at level 63, the top of the ramp.
-    /* FAKEMATCH(wrapper): this fill calls the fixed entry itself, past the
-     * IWRAM call layer; as Iwram_FillWords, 3 of 776 instructions differ in
-     * tbs-en. */
     if (work->args->variant == SPARK_GROUPS_SEVERE_BLOW && frame == 4)
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     if (mode == SPARK_GROUPS_DYNAMITE || mode == SPARK_GROUPS_RISING) {
       if (frame == 2)
         EFFECT_SHOW_DAMAGE(SE_CRASH);
@@ -455,8 +452,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
               spark->velocityY = -spark->velocityY / 2;
             } else if (spark->x >= 0 && spark->x < (127 << 16) &&
                        spark->y >= 0) {
-              s32 y = spark->y >> 16;
-              s32 x = spark->x >> 16;
+              // A spark's position on the canvas in whole pixels. As s32, the
+              // reload register before the frame loop changes (3 differ).
+              s16 y = spark->y >> 16;
+              s16 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;
 
               EFFECT_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);

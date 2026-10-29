@@ -12,7 +12,7 @@ player backs out the icons come back.
 The code here runs those four screens and the party member chooser that the
 Colosso [scenes](../../glossary.md#scene) open. Two small banks sit beside it,
 because the Title calls them: the title intro and the credits.
-[User Interface](../../user_interface.md#the-field-menu) gives the layer in
+[Interface](../../interface.md#the-field-menu) gives the layer in
 brief. The [windows](../../glossary.md#window) the screens are drawn in, and
 the row of icons itself, belong to [Windows](../window/README.md); the shop
 counters, which borrow the same memory, are in [Shops](../shop/README.md).
@@ -61,7 +61,7 @@ The Psynergy screen asks whose Psynergy, which one, and on whom. Psynergy that
 heals works here and now: the target's HP goes up, the caster pays the PP and
 the list comes back for another choice. Psynergy for the field, such as Move,
 closes the menu so the field can cast it at whatever the leader faces
-([Psynergy and items used on the field](../../user_interface.md#psynergy-and-items-used-on-the-field)).
+([Psynergy and items used on the field](../../interface.md#psynergy-and-items-used-on-the-field)).
 The screen also sets the Psynergy the L and R buttons cast on the field: on
 the party member row, L or R chooses whose field Psynergy to set for that
 button (`PSYNERGY_MODE_SET_L`, `_SET_R`), and in the list, holding Select and
@@ -282,7 +282,7 @@ it. The Djinn and Status screens do this in every
 Japanese, and the Psynergy screen only in the German, French, Spanish and
 Italian ones (`Menu_SuspendFieldTasks`).
 
-[Start](../../user_interface.md#closing-a-screen-with-start) closes a screen
+[Start](../../interface.md#closing-a-screen-with-start) closes a screen
 from any depth through one [game flag](../../glossary.md#game-flag),
 `FLAG_MENU_START_PRESSED`, that every loop checks.
 

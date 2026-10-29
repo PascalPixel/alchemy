@@ -12,7 +12,7 @@ It also builds the screens made directly from windows: the Pause menu and its
 settings menu, the file list that saves the game, the name entry screen, the
 [party](../../glossary.md#the-party) status window, the battle menus and the
 [debug menus](../../glossary.md#debug-menus).
-[User Interface](../../user_interface.md) gives the whole layer in brief; the
+[Interface](../../interface.md) gives the whole layer in brief; the
 field menu's four screens are in [Menus](../menu/README.md), and the shop
 counters in [Shops](../shop/README.md).
 

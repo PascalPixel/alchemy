@@ -3,7 +3,7 @@
 Every page links here the first time it uses one of these words, which come in
 the order a newcomer meets them: the game's own words, then the project's,
 then those of the code's four divisions, the system, the field, the battle and
-the user interface, and last the names of the source's folders. Each entry ends with where its word comes from: Camelot
+the interface, and last the names of the source's folders. Each entry ends with where its word comes from: Camelot
 where Camelot has a word for the thing, else the tradition of the time, else
 plain English.
 
@@ -199,11 +199,11 @@ Evidence: plain English.
 
 ### System
 
-The code the field, the battles and the user interface are built on: start-up,
+The code the field, the battles and the interface are built on: start-up,
 the main routine, waiting and [tasks](#task), interrupts, the
 [heap](#heap-and-pools), the [overlays](#overlay), saving and the sprite
 bank's metadata reader. It is one of the code's four divisions, with Field,
-Battle and User Interface; [System](system.md) explains it. Its code is in
+Battle and Interface; [System](system.md) explains it. Its code is in
 `src/system/` ([System code](src/system/README.md)); the
 [Game Pak](#game-pak)'s is beside it in `src/gamepak/`.
 
@@ -885,12 +885,12 @@ grassland, Goma Cave, a ship's deck (`src/graphics/battle_backgrounds/`).
 
 Evidence: Camelot: the credits' "Battle Backgrounds".
 
-## The user interface
+## The interface
 
-### User Interface
+### Interface
 
 The windows, the messages typed into them, the menus and the counters of the
-shops, sanctums and inns ([User Interface](user_interface.md)). Its code is in
+shops, sanctums and inns ([Interface](interface.md)). Its code is in
 `src/window/`, `src/menu/` and `src/shop/`, and its pictures in
 `src/graphics/ui/`.
 
@@ -907,7 +907,7 @@ Evidence: Camelot: ウインドウ, as in "Window color" (`MsgWindowColorLabel`)
 ### Border
 
 The edge drawn around a window (`Window_DrawBorder`)
-([User Interface](user_interface.md#windows)).
+([Interface](interface.md#windows)).
 
 Evidence: plain English.
 
@@ -926,7 +926,7 @@ Evidence: Camelot: the settings label メッセージスピード ("Message" in 
 The Title; the File Screen, where a file is chosen, copied or erased; the
 Pause menu, which Start opens on the field; the field menu with its
 Psynergy, Djinn, Item and Status screens; the settings menu; name entry; and
-the world picture ([User Interface](user_interface.md)). The Pause menu, the
+the world picture ([Interface](interface.md)). The Pause menu, the
 file list saving and the File Screen share, name entry, the command icon menus
 and the battle's command menus are in `src/window/screens/`; the field menu's
 screens are in `src/menu/`.
@@ -999,7 +999,7 @@ Evidence: Camelot: the credits' "Graphic Arts"; plain English.
   the tile set; Camelot: the credits' "Maps" for the work.
 - `ui`, with `icons/`, `marks/`, `menu_icons/`, `menu_titles/`,
   `menu_cursor/`, `menu_sprites/` and `sprite_cursors/`: every
-  [User Interface](#user-interface) picture. Evidence: Camelot: the credits'
+  [Interface](#interface) picture. Evidence: Camelot: the credits'
   "User Interface", whose banks place them; plain English for the subfolders.
 - The Lost Age's `ending/`, `lettering/`, `summon/`, `field/` and
   `ui/headings/`. Evidence: plain English for what they hold, kept until

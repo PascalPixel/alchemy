@@ -5,7 +5,7 @@ the battle backgrounds (`battle_backgrounds/`), the battle effects' sheets
 (`battle_effects/`), the field effects (`field_effects/`), the monsters, the
 sprites, the tile sets, the font, the staff credits' font (`credits/`), the
 palettes (`palettes/`), Lucky Dice and Lucky Wheels, the Title, the World Map
-and the User Interface's pictures (`ui/`). [Graphics](../../../tbs/src/graphics/README.md)
+and the Interface's pictures (`ui/`). [Graphics](../../../tbs/src/graphics/README.md)
 explains how they are built and drawn.
 
 ## What differs from The Broken Seal

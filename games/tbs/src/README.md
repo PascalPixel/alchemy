@@ -51,7 +51,7 @@ from wherever the linker places it. Each folder name's source is in the
 - [Battle effects](battle_effect/README.md) draws what each ability shows on
   screen, one function for each battle effect.
 
-[User Interface](../user_interface.md), the windows, menus and shops:
+[Interface](../interface.md), the windows, menus and shops:
 
 - [Windows](window/README.md) draws the boxes text appears in, decodes the
   stored messages and types them out, and holds the screens built from

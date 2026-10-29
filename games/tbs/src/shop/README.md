@@ -12,7 +12,7 @@ given an item with every party member's pack full.
 
 Each counter is opened by its town's [scene](../../glossary.md#scene)
 [event](../../glossary.md#event) when the player talks to the keeper.
-[User Interface](../../user_interface.md#shops-sanctums-and-inns) gives the
+[Interface](../../interface.md#shops-sanctums-and-inns) gives the
 counters in brief; the windows and messages they draw with are in
 [Windows](../window/README.md), and the items and their counters in
 [Game rules](../game/README.md).

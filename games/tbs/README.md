@@ -219,7 +219,7 @@ The code falls into four divisions, each with a page:
   game's rules.
 - [Field](field.md): scenes and their requests, actors, maps, the World Map
   and field Psynergy.
-- [User Interface](user_interface.md): windows and messages, the menus,
+- [Interface](interface.md): windows and messages, the menus,
   shops and inns.
 
 Beside them, [Places](https://alchemy.pascalpixel.com/tbs/places) has every scene in story order,

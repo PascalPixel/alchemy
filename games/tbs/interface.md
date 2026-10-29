@@ -1,9 +1,9 @@
-# User Interface
+# Interface
 
 Everything the player reads or chooses over the field comes in a box with a
 [border](glossary.md#border): what people say, the field menu and its screens,
 the Pause menu, the shop, sanctum and inn counters. The
-user interface draws those boxes ([windows](glossary.md#window)), types the
+interface draws those boxes ([windows](glossary.md#window)), types the
 game's [messages](glossary.md#message) into them, runs the field menu's four
 screens
 ([Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn), Item and

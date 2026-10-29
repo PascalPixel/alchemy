@@ -831,7 +831,7 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
 void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
   struct SelectionNode *node;
   s32 i;
-  s32 zero;
+  s32 kind;
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
   state->status = NODE_STATUS_SCROLLING;
@@ -855,18 +855,17 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
     } else {
       node = state->head;
       i = 64;
-      zero = 0;
-      state->records[1].kind = zero;
+      /* FAKEMATCH(temporary): the 0 through kind, which carries the head's kind
+       * at the end, so it keeps r0 across the loop; as a plain 0 and a direct
+       * argument, 28 of 184 instructions differ in tbs-en. */
+      kind = 0;
+      state->records[1].kind = kind;
       while (node->next != NULL) {
         node->targetX = node->x + i;
         node->dx = 12;
         node = node->next;
         i -= 16;
       }
-      /* FAKEMATCH(barrier): the zero read by an empty asm clobbering r2, so it
-       * outlives the OR CSE would store instead and keeps r0 across the loop;
-       * as a plain store of 0, 28 of 184 instructions differ in tbs-en. */
-      __asm__("" : : "r"(zero) : "r2");
       node = state->head;
       while (node->x != node->targetX)
         wait(1);
@@ -901,7 +900,8 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
   state->status = NODE_STATUS_SHOWN;
   SelectionMenu_HighlightIcon(state, state->cursorIndex);
   wait(1);
-  SelectionMenu_OpenNameWindow(state->head->kind, 0);
+  kind = state->head->kind;
+  SelectionMenu_OpenNameWindow(kind, 0);
   wait(1);
 }
 

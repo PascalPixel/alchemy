@@ -60,26 +60,27 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   // branch, the enemies' places in use, whether standing or not. Each walk
   // indexes order from its list's offset in BattleWork, in halfwords.
   if (requireLivingUnit != 0) {
-    /* FAKEMATCH(one-pass): a loop left by its closing break; without it, 14
-     * of 89 instructions differ in tbs-en. */
-    for (;;) {
-      index = 0;
-      slot = (u32)&((struct BattleWork *)0)->partyUnits / sizeof(s16);
-      if (order->items[slot] != BATTLE_UNIT_LIST_END) {
-        entry = order->items;
-        do {
-          value = entry[slot];
-          if (value != BATTLE_UNIT_REMOVED) {
-            if (Unit_GetFar(value)->hp != 0) {
-              positions[count] = index | PLACE_PARTY;
-              count++;
-            }
+    index = 0;
+    slot = (u32)&((struct BattleWork *)0)->partyUnits / sizeof(s16);
+    if (order->items[slot] != BATTLE_UNIT_LIST_END) {
+      entry = order->items;
+      // The walk leaves by a break, so its loop's end note lies just before
+      // the else branch. As a do-while loop the else branch follows a bare
+      // barrier, CSE follows the requireLivingUnit test into it knowing count
+      // is 0, and 33 of 89 instructions differ in tbs-en.
+      for (;;) {
+        value = entry[slot];
+        if (value != BATTLE_UNIT_REMOVED) {
+          if (Unit_GetFar(value)->hp != 0) {
+            positions[count] = index | PLACE_PARTY;
+            count++;
           }
-          slot++;
-          index++;
-        } while (entry[slot] != BATTLE_UNIT_LIST_END);
+        }
+        slot++;
+        index++;
+        if (entry[slot] == BATTLE_UNIT_LIST_END)
+          break;
       }
-      break;
     }
   } else {
     index = 0;

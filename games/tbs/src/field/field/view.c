@@ -71,13 +71,14 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
   base = gDecodeBuffer;
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, TileMap_DrawRows,
                    TileMap_DrawRowsCodeSize);
-  /* FAKEMATCH(barrier): an empty asm after the call keeps gBgTileBuffer's
-   * address load ahead of lines' move into r0, as native; as the bare call,
-   * 1 of 39 instructions differs in tbs-en. */
+  /* FAKEMATCH(one-pass): an empty once-only loop after the call keeps
+   * gBgTileBuffer's address load ahead of lines' move into r0, as native; as
+   * the bare call, 2 of 39 instructions differ in tbs-en. */
   ((TileMapRowDrawer)gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
       lines, pixels, gBgTileBuffer + TILEMAP_TILE_BANK_BYTES,
       base + TILEMAP_MAP_BANK_BYTES);
-  __asm__("");
+  do {
+  } while (0);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
 

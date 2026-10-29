@@ -197,17 +197,14 @@ void SoundTest_Run(void) {
 
   row = 0;
   reverbCode = SOUND_REVERB_NORMAL;
-  /* FAKEMATCH(barrier): an empty asm keeps the build stamp's address load
-   * after reverbCode is set; as the store with only the asm after it, 4 of 140
-   * instructions differ in tbs-en. */
-  __asm__("");
+  /* FAKEMATCH(one-pass): the block keeps the state-address load after
+   * reverbCode setup and the state store before clipTimer setup. Plain store:
+   * differ 8 or more in nine statement orders. */
   // XXX (no evidence): why the sound test clears the first four digits of the
   // build stamp copy; nothing in the game reads that copy.
-  gBuildStamp[0] = 0;
-  /* FAKEMATCH(barrier): an empty asm keeps the store before clipTimer is set;
-   * as the store with only the asm before it, 2 of 140 instructions differ in
-   * tbs-en. */
-  __asm__("");
+  do {
+    gBuildStamp[0] = 0;
+  } while (0);
   clipTimer = 20;
 
   for (;;) {

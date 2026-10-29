@@ -44,6 +44,9 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
   u32 ime;
+  /* FAKEMATCH(temporary): a pointer to ime, which keeps the save in a stack
+   * slot stored through r6; as ime directly, 17 of 43 instructions differ in
+   * tbs-en. */
   u32 *savedInterruptEnable = &ime;
 
   /* FAKEMATCH(one-pass): the IME save in a one-pass block and a loop on a zero

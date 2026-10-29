@@ -274,10 +274,11 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
        * show, which loads the actor id after the two zeros; as a call by its
        * void declaration, 1 of 233 instructions differ in tbs-en. */
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
-      /* FAKEMATCH(barrier): an empty asm, which keeps r0 last among the call
-       * above's arguments; as a plain call, 1 of 233 instructions differ in
-       * tbs-en. */
-      __asm__("");
+      /* FAKEMATCH(one-pass): an empty once-only loop, which keeps r0 last among
+       * the call above's arguments; as a plain call, 2 of 233 instructions
+       * differ in tbs-en. */
+      do {
+      } while (0);
       GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
     guard:
       FieldActor_SetTargetAndCallback(

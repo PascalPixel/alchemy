@@ -211,10 +211,11 @@ static void OrbGlow_Fade(void) {
 /// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
 /// set.
 static void Ship_UpdateSwell(void) {
-  /* FAKEMATCH(volatile): blend kept at sp+18 and loaded again with ldrh for
-   * the register write; as a plain u16, 5 of 225 instructions differ in
-   * tbs-en. */
-  volatile u16 blend;
+  u16 blend;
+  /* FAKEMATCH(dead): blend's address taken before the spray's position is
+   * declared, so blend is kept at sp+18 and loaded again with ldrh for the
+   * register write; as a plain u16, 24 of 225 instructions differ in tbs-en. */
+  UNUSED u16 *blendSlot = &blend;
   struct FixedPointPosition sprayPosition;
   struct FixedPointPosition *position;
   struct MapGridScrollWork *grid;

@@ -21,8 +21,10 @@ field asks for them:
    stands where, where it can leave, and what each thing the player does
    starts.
 3. [How a trigger is chosen](#how-a-trigger-is-chosen) from those tables
-   when the player talks, steps or searches.
-4. [Events](#events), the code a trigger runs.
+   when the player talks, steps or searches, a
+   [trigger](../../glossary.md#trigger) being one row of them.
+4. [Events](#events), the code a trigger runs, an
+   [event](../../glossary.md#event) being the C routine itself.
 5. The [flags that clean themselves up](#state-that-cleans-itself-up), which
    let a scene keep notes without putting anything back.
 
@@ -64,7 +66,7 @@ The six questions, in the order the field asks them while a scene runs:
 | Where does the party arrive? | its entrance table | as the scene starts, for the entrance the party came in by |
 | Who stands where? | its actor placement table | as the scene starts, once the party is placed |
 | Is there anything to set up? | its setup function | as the scene starts, last of all |
-| Has the leader walked into an exit box? | its exit region table | at every step onto a marked cell, while the party walks |
+| Has the leader stepped into a box on the ground that leads out? | its exit region table | at every step onto a marked cell, while the party walks |
 | Where does this exit lead? | its exit table | as the scene ends, with the exit the party took |
 
 Each answer comes from a function, so a scene can answer differently as the
@@ -166,21 +168,12 @@ at least 240 by 160 pixels. `Scene_ApplyEntrance` reads the table, and
 
 ### Exits
 
-![Isaac walks down the path from Sol Sanctum's entrance twice: before the eruption the path leads into Vale as usual, and after it the same path leads into Vale with the villagers gathered by the river](https://alchemy.pascalpixel.com/guides/front/sol-entrance-warp.gif)
-
 An exit is a way out of a scene, named for where it leads:
 `SOL_ENTRANCE_TO_VALE` is the path down from Sol Sanctum's entrance. The exit
 table turns the exit into the scene and entrance that run next, and a row
 can hold only until a flag is set, with the first row that holds winning.
-The path down from Sol Sanctum's entrance has three rows for one exit, which
-is why the recording shows it leading to a different Vale after the
-eruption:
-
-```c
-SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE, FLAG_SOL_SANCTUM_ERUPTED),
-SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, ValeEruption, VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
-SCENE_EXIT_UNLESS(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
-```
+The front page's [Sol Sanctum path](../../README.md#exits-and-entrances)
+shows three rows for one exit, each holding until its flag is set.
 
 A door is named the same from both sides, so each side names the other:
 Vale's `VALE_TO_COTTAGE_ROOMS_A_NORTH` leads to
@@ -215,10 +208,8 @@ Each row of a scene's actor placement table puts one person or thing in the
 scene, as an [actor](../../glossary.md#actor): its sprite, its condition, how
 it moves (standing still, wandering near its spot, or an
 [actor script](../../glossary.md#actor-script) of its own), its position and
-facing, and how it turns when spoken to. The same gate holds a crowd on the
-stormy night and stands quiet after the party has left because the rows'
-conditions read the story flags, and the field places only the rows that
-hold.
+facing, and how it turns when spoken to. The rows' conditions read the
+story flags, so the field places only the rows that hold.
 
 Every row owns an [actor id](../../glossary.md#actor-id), whether or not its
 actor appears. The party takes ids 0 to 7, and the rows take the ids from
@@ -259,8 +250,9 @@ exit as soon as the leader steps into it, for the few places where a map
 edge or a wide opening is easier to draw as a box than to mark cell by cell.
 A row holds the box's two corners, a condition and the exit it leads to; the
 field tests the boxes at every step onto a marked cell, and the first box
-that holds the leader's position takes its exit. Ten scenes have regions,
-Kolima and the Tolbi ship's deck among them; the rest answer with none.
+that holds the leader's position takes its exit. Fourteen scenes have
+regions, Kolima's tunnel and the Tolbi ship's deck among them; the rest
+answer with none.
 
 `Field_CheckExitRegions` tests the rows, `struct SceneExitRegion`, from
 `Field_UpdateWalking`.
@@ -269,7 +261,7 @@ Kolima and the Tolbi ship's deck among them; the rest answer with none.
 
 ![Isaac walks into the door of his house in Vale after the party has left, and Dora, behind it, refuses to believe it is him: `My Isaac would keep his promise... Go away.`](https://alchemy.pascalpixel.com/places/vale/events/Event_EnterIsaacsHouse.gif)
 
-A [trigger](../../glossary.md#trigger) is one row of the scene's trigger
+A trigger is one row of the scene's trigger
 table for one thing the player can do there: what starts it, whom or where
 it answers, when it holds, and what runs. Walking north into the doorstep of
 Isaac's house is one row, and after the party has left Vale that row's event
@@ -309,7 +301,8 @@ searching, a number the scene's own code raises.
 
 A step trigger's form says how firmly the leader must mean it: a plain
 `TRIGGER_STEP` runs on the first step onto the cell, `STEP_TRIGGER_WALKING`
-once the leader has pushed against it for more than 12 frames, and the
+once the leader has pushed against it for more than 12
+[frames](../../glossary.md#frame), and the
 `_FACING` and `_WALKING_INTO` forms only while the leader
 faces within an eighth of a turn of the heading the row names, which is how
 a doorstep opens only to someone walking north into it. A `TRIGGER_EXIT` row
@@ -431,7 +424,8 @@ the leader stops too and the two turn to face each other; then the row's
 message is shown, or its event runs. Afterwards a person whose placement
 says so turns back to its old heading, or keeps turning to watch the leader.
 A person Halt has stopped answers with a `TRIGGER_TALK_HALTED` row where the
-scene has one, and otherwise with one of two lines of dots.
+scene has one; otherwise a talk row that is a message is still shown, and
+one that is an event gives one of two lines of dots instead.
 
 `FieldSequence_Run` finds the person ahead with `Field_FindNearbyTalkTarget`
 and asks `Scene_FindActorTalkTrigger` whether a row exists, and
@@ -472,7 +466,7 @@ set, so that a scene can answer a menu press with a refusal instead.
 
 ![In Vault's inn, Isaac talks to the innkeeper from beside the counter: `Everyone thinks our guests are the thieves, but I think it's unfair to accuse them without any evidence.`, and on the next page `Sure, they look suspicious, but they've been quite polite. And they paid cash!`](https://alchemy.pascalpixel.com/places/log-rooms-a/events/LogRoomsA_TalkToInnkeeper.gif)
 
-An [event](../../glossary.md#event) is the code a trigger row runs: a
+An event is the code a trigger row runs: a
 conversation that does more than show one line, or a cutscene, written as a
 list of [event commands](../../glossary.md#event-command), one to a line,
 which the game plays from top to bottom while the party waits. The door of
@@ -492,7 +486,7 @@ static void Vale_EnterJennasGrandparentsHouse(void) {
 A command that takes time, such as opening the door, a line of dialogue or a
 wait, holds the event until it is done; one that takes no time, such as
 starting a walk, lets the next line run in the same
-[frame](../../glossary.md#frame), which is why the leader is still walking
+frame, which is why the leader is still walking
 when the exit is asked for. A request the event raises, like this exit,
 waits until the event has returned, as the front page's
 [Vault thieves](../../README.md#the-event) wait for their battle.
@@ -504,7 +498,8 @@ once a frame, added with `Task_AddFrame`; or as an update routine, a
 function one actor runs each frame. The thieves climb the ladder on their
 actor scripts while the event waits for them.
 
-Most events open with `Event_Start`, which hides the area's name, stops the
+Most events open with `Event_Start`, which hides the
+[area](../../glossary.md#area)'s name, stops the
 leader and resets the message state, and close with `Event_End`; the door
 above runs without either. The innkeeper's talk in the recording is the
 other usual shape: `Event_Start`, a message chosen by a flag, shown and
@@ -522,7 +517,7 @@ Two ranges of game flags are cleared for scenes as the party moves on, so a
 scene can keep a note without any code to put things back. Scene temp flags
 last until the party next enters a scene, so a pushed stone pillar or an
 opened door kept in one is back where it started the next time the party
-comes in. [Area](../../glossary.md#area) temp flags last while the party
+comes in. Area temp flags last while the party
 stays anywhere in the area, so they hold what must survive moving between
 its scenes, as Fuchin Falls Cave keeps where its logs float. Coming back
 from a battle clears neither, since the party is returning to where it
@@ -591,11 +586,12 @@ that is one of the mechanisms above.
 ### The step
 
 The field sequence is in its walk, and in each frame `Field_UpdateWalking`
-looks at the cell under the leader. The doorstep's cell has cell behavior 9,
-within the scene's own range, so the walk notes a step request for 9 and
-stops. The loop answers it with `Scene_RunStepTriggerOrExit`, which asks
-`Scene_FindTrigger` for the first step row with subject 9 whose condition
-holds. Vale's table has this one:
+looks at the cell under the leader. The doorstep's cell carries the number
+Vale's table gives the grandparents' door, within the scene's own range, so
+the walk notes a step request for it and stops. The loop answers it with
+`Scene_RunStepTriggerOrExit`, which asks `Scene_FindTrigger` for the first
+step row with that subject whose condition holds. Vale's table has this
+one:
 
 ```c
 { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
@@ -660,9 +656,10 @@ scene fades in.
 ## Design
 
 Each overlay is three objects, linked in this order into the overlay area:
-`entry/<scene>`, `<scene>` and `import/<scene>`. Where an overlay's RAM
-variables are still written in assembly, they are a fourth object,
-`bss/<scene>.s`, on the overlay's `bss` row of `objects.tsv`. The scene
+`entry/<scene>`, `<scene>` and `import/<scene>`. Every overlay's RAM
+variables take the overlay's `bss` row of `objects.tsv`; where they are
+still written in assembly, that row names a fourth object,
+`bss/<scene>.s`. The scene
 table, `gScenes` in [`field/scenes.s`](../field/scenes.s), gives each scene
 its overlay, area, scene type and map, and names it `SceneId_<Scene>`;
 several scenes may share one overlay, and then share its file. A scene
@@ -753,7 +750,4 @@ the resource directory.
 
 The stairs exits of `enum ExitStyle` play the leader's leaving and arrival
 animations, named in `enum ActorAnimation` from Isaac's sprite
-(`spr_000.tsv`, animations 23 to 26): an arrival grows from a small figure
-seen side-on to full size facing the player, and a leaving turns from his
-back to side-on as he shrinks and is then hidden. The alternate pair, which
-goes with `SE_STAIRS_DOWN`, has its own drawings of the same turns.
+(`spr_000.tsv`, animations 23 to 26).

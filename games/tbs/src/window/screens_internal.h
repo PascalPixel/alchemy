@@ -58,6 +58,7 @@
 #include "sounds.h"
 #include "flags.h"
 #include "static_assert.h"
+#include "io_write.h"
 #include "event.h"
 #include "battle_action_run.h"
 #include "settings_menu.h"

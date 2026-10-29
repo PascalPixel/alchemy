@@ -558,15 +558,6 @@ void CommandRow_PutBg1InFront(void) {
 /// CommandRow_PutBg1InFront as the VCount handler at line 136, as the command
 /// row does. Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
-  u32 address = (u32)&REG_BG0VOFS;
-  s32 zero = 0;
-
-  *(volatile u16 *)address = zero;
-  /* FAKEMATCH(one-pass): the handler's address set in a block of its own keeps
-   * its load ahead of the handler index; as a plain assignment, 2 of 10
-   * instructions differ in tbs-en. */
-  do {
-    address = (u32)CommandRow_PutBg1InFront;
-  } while (0);
-  Irq_SetHandler(IRQ_VCOUNT, 136, (InterruptHandler)address);
+  Io_Write16(0, &REG_BG0VOFS);
+  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
 }

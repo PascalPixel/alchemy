@@ -466,12 +466,12 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
         y = top << 20;
         kind = 253;
       }
-      /* FAKEMATCH(one-pass): the block keeps found's constant after the height
-       * arithmetic; as no block, 1 of 117 instructions differ in tbs-en. */
-      do {
-        temporaryActor = Actor_Prepare(x, y, z, kind);
-        height = actor->z.fixed - z + y;
-      } while (0);
+      temporaryActor = Actor_Prepare(x, y, z, kind);
+      height = actor->z.fixed - z + y;
+      /* FAKEMATCH(barrier): an empty asm after the height arithmetic, which
+       * keeps found's constant after it; as no asm, 1 of 117 instructions
+       * differ in tbs-en. */
+      __asm__("");
       found = 1;
       break;
     }

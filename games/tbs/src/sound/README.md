@@ -12,12 +12,13 @@ asked for the same way, with one call and a number, and what happens to it
 is the work of five mechanisms:
 
 1. The sound number: the sound layer reads the number's range and decides
-   which kind it is, which player plays it, and what it does to the music
-   already playing.
+   which kind it is, which of the driver's eight music players plays it,
+   and what it does to the music already playing.
 2. The scene's music: how a scene asks for its music when the party arrives,
    and when the music is kept instead.
-3. The sound driver: the players, their tracks and the mixer that turns a
-   song's notes into sound once a [VBlank](../../glossary.md#vblank).
+3. The sound driver: the music players, their tracks and the mixer that
+   turns the notes of a sound's data, which the driver calls a song, into
+   sound once a [VBlank](../../glossary.md#vblank).
 4. The ramps: how the music's volume, tempo and pitch move a step a VBlank,
    which is how the music comes back after a jingle.
 5. The lock and the reverb code: what keeps the mixer and the game's calls
@@ -166,6 +167,9 @@ sequence saved from `Sound_GetCurrentBgm` before the Pause menu
 as `area_music` or `scene_music`. A battle plays the music chosen for its
 encounter, `gMainRoutineWork.battleMusic`, from `battle_music.c`'s list;
 battles the list leaves out, such as the Vault thieves, take `MUS_BATTLE`.
+`Battle_Run` plays that music, or, with none set, `MUS_SATUROS_BATTLE` and
+then `MUS_COLOSSO_BATTLE`, so the second is what plays; a link battle adds
+`MUS_BOULDER_CHASE` with `SOUND_REVERB_NONE` (`battle/battle/run.c`).
 
 ## The sound driver
 
@@ -181,19 +185,22 @@ becomes either a sample, a recording the mixer plays at the note's pitch, or
 a tone from one of the four generators built into the console. The eight
 music players share the mixer: once a VBlank it mixes the next slice of
 every playing sample into two buffers, left and right, which a timer and two
-DMA channels feed to the speaker between VBlanks. The mixer is copied into
+DMA transfers feed to the speaker between VBlanks. The mixer is copied into
 [IWRAM](../../glossary.md#iwram-and-ewram) at start-up, since it runs every
 VBlank whatever else the game is doing, and the ROM keeps the copy it is
 made from.
 
-The data is editable. Each song is a MIDI file in `games/tbs/sound/songs`,
-whose first text event names its header, `sound_000` for Vale's music, and
-its tracks, and `tools/ags-music` turns it into the driver's commands at
-build time; the 32 samples are WAV files in `direct_sound_samples/`, which
-`tools/ags-audio` packs, and nine wave patterns for the console's wave
+The data is editable. Each song with notes is a MIDI file in
+`games/tbs/sound/songs`, whose first text event names its header, `sound_000`
+for Vale's music, and its tracks, and `tools/ags-music` turns it into the
+driver's commands at build time; the trackless ones, `MUS_SILENCE` and
+`SE_STOP_ACTION_SE` among them, are a few lines of assembly; the 32 samples
+are WAV files in `direct_sound_samples/`, which `tools/ags-audio` packs, and
+nine wave patterns for the console's wave
 generator are in `programmable_wave_samples/`. The voices, which say for each
 instrument whether it is a sample or a generator and how its note swells and
-fades, are the rows of `voice_groups.s`, 225 of them in four groups.
+fades, are the rows of `voice_groups.s`, 225 of them in three groups: 128 for
+the music, 16 drums and 81 for the sound effects.
 
 The driver's code is `driver.c`, `audio.c` and `tables.c`, compiled with
 `old_agbcc` ([The compilers](../../glossary.md#the-compilers)), and its mixer
@@ -227,8 +234,8 @@ jingle ends.
 
 During a night at the inn the town's music falls silent, the inn's tune plays
 over the black screen, and the music fades back in once the tune has ended.
-The music never stopped: only its volume went to zero, so it comes back at
-the point it has played on to. When the jingle starts, the sound layer sets
+The music keeps playing at zero volume, so it comes back at the point it
+has played on to. When the jingle starts, the sound layer sets
 the music's volume and its target to zero, starts a countdown of ten VBlanks,
 and leaves it there. Once a VBlank, the handler counts the countdown down to
 one and holds it there until the jingle's player has no track left playing;
@@ -266,15 +273,16 @@ scale. The game uses it once, when the Lemurian ship sails off to the ending
 music played a little slow (`Sound_SetBgmTempo`); the other ways in,
 `Sound_SetBgmPitch`, `Sound_SetBgmTempoPitchTarget`, `Sound_SetBgmVolume` and
 `Sound_SetBgmVolumeTarget`, are reached only through bare rows of the sound
-bank's far-call table.
+bank's [far-call](../../glossary.md#far-call) table.
 
 `Sound_Play` sets the countdown, `gBgmRestoreDelay`;
 `Sound_UpdateBgmRamps`, which the VBlank handler runs through
 `Sound_UpdateBgmRampsFar`, counts it, watches the jingle player's `status`,
 and steps both ramps, each clamped when a step would cross its target. The
-inn and the others wait a frame at a time in `Sound_WaitForJingle`
-(`shop/run.c`), which polls `Sound_GetBgmRestoreDelay`; Vale's Sanctum,
-after the jingle for accepting the Great Healer's quest, waits in
+inn and the others wait a [frame](../../glossary.md#frame) at a time in
+`Sound_WaitForJingle` (`shop/shop/run.c`), which polls
+`Sound_GetBgmRestoreDelay`; Vale's Sanctum, after the jingle for accepting
+the Great Healer's quest, waits in
 `Sound_WaitForBgmRestore`, which gives up after `BGM_WAIT_TIMEOUT_FRAMES`.
 
 | Name                         | Value   | Meaning                                                 |
@@ -362,8 +370,8 @@ steps to. The clip mark is `gSoundMixerClipped`.
 | `SOUND_REVERB_NORMAL`    | a quarter of the mix and an eighth of each buffer's old samples | most music, the Battle Arena |
 | `SOUND_REVERB_LONG`      | an eighth of the mix and a quarter of the old samples      | the Title, the ending's logo and the ending |
 | `SOUND_REVERB_NONE`      | nothing: the mix buffer is cleared                         | a link battle                  |
-| `SOUND_REVERB_MONO`      | one value for both channels                                | the sound test                 |
-| `SOUND_REVERB_CROSSED`   | each channel's old samples crossed with the other's        | the sound test                 |
+| `SOUND_REVERB_MONO`      | one value for both the left and the right buffer           | the sound test                 |
+| `SOUND_REVERB_CROSSED`   | each buffer's old samples crossed with the other's         | the sound test                 |
 | `SOUND_REVERB_CODE_SIZE` | 152 bytes                                                  | each version's length          |
 
 ## A night at the inn
@@ -391,7 +399,7 @@ flowchart TD
 
 ### The inn asks for the jingle
 
-`Inn_PlaySleep` (`shop/inn.c`) takes the coins, restores the party, closes
+`Inn_PlaySleep` (`shop/shop/inn.c`) takes the coins, restores the party, closes
 the screen around the leader over 60 frames, and calls
 `Sound_PlayFar(MUS_INN)`: a far call into the sound bank, with the number 86.
 

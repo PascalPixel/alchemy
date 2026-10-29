@@ -17,17 +17,18 @@ mechanisms:
 2. How an image is built and placed: from a PNG to a packed file, to a
    symbol in the ROM or a row of the
    [resource directory](../../glossary.md#resource-directory).
-3. The forms a picture takes, and the codecs that pack them.
-4. Sprites and their animations: the sprite bank the field and the battle
-   draw their people from.
-5. Tilesets: the tiles and palettes the [maps](../../glossary.md#map) are
-   drawn with.
+3. The forms a picture takes, the layouts the console reads, and the
+   codecs, the compressions that pack them.
+4. Sprites and their [animations](../../glossary.md#sprite-animation): the
+   sprite bank the field and the battle draw their people from.
+5. [Tilesets](../../glossary.md#tileset): the tiles and palettes the
+   [maps](../../glossary.md#map) are drawn with.
 6. Backdrops, monsters, effects and fonts: the pictures each division keeps.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  png(["A PNG in this folder, with its own colours"]) -- "ags-graphics, at build time" --> packed(["A packed file beside it: NAME.FORM.CODEC"])
+  png(["A PNG in this folder, with its own colours"]) -- "ags-graphics, at build time" --> packed(["A packed file beside it, named for its form and codec"])
   packed -- "a .s file's .incbin" --> rom(["Bytes in the ROM, under a symbol, often also a directory row"])
   rom -- "the code unpacks it" --> vram(["Tiles and a palette in video memory"])
   vram --> screen(["The screen: layers of tiles and sprites"])
@@ -39,7 +40,8 @@ flowchart TD
   class vram,screen hardware
 ```
 
-The code that shows the pictures lives with its bank: the title intro and the
+The code that shows the pictures lives with its
+[bank](../../glossary.md#bank): the title intro and the
 credits in [Menus](../menu/README.md), the people in
 [Field code](../field/README.md), the backdrops in
 [Battle code](../battle/README.md), and the decoders beside the code that
@@ -75,7 +77,8 @@ anywhere on the screen, made of one to 64 tiles in one of the console's
 sprite shapes, from 8 by 8 to 64 by 64 pixels, and the console draws up to
 128 of them in front of or between the layers. The console draws both from
 tables in its video memory, and the game's work is to fill those tables:
-copy a picture's tiles and palette in when a scene or a battle starts, and
+copy a picture's tiles and palette in when a
+[scene](../../glossary.md#scene) or a battle starts, and
 write each [frame](../../glossary.md#frame)'s sprite list
 ([System code](../system/README.md#the-frame-loop)).
 
@@ -188,7 +191,7 @@ windows' tiles are stored.
 
 | Form           | Built from         | The console reads                                   | Used by                                      |
 | -------------- | ------------------ | --------------------------------------------------- | -------------------------------------------- |
-| `4bpp`, `8bpp` | a PNG              | 8-pixel tiles, 16 or 256 colours                    | the Interface, the title, the World Map      |
+| `4bpp`, `8bpp` | a PNG              | 8-pixel tiles, 16 or 256 colours                    | [the Interface](../../glossary.md#interface), the title, the World Map |
 | `gbapal`       | a PNG's colours    | a palette, 15 bits a colour                         | every picture with its own colours           |
 | `bitmap`       | a PNG              | the pixels, a byte each                             | the battle backdrops, with `d7`              |
 | `pictures`     | a PNG, one picture wide | a run of pictures with their sizes             | the monsters                                 |
@@ -232,7 +235,7 @@ editions build sprite banks of their own.
 | Name                          | Value   | Meaning                                                   |
 | ----------------------------- | ------- | --------------------------------------------------------- |
 | sheets                        | 312     | `spr_NNN.png`, each one picture wide                      |
-| sprites                       | 370     | `spr_NNN.tsv`, in `layout.tsv`'s order; some share a sheet |
+| sprites                       | 366     | `spr_NNN.tsv`, in `layout.tsv`'s order; some share a sheet |
 | `picture N D`                 |         | show picture N for D frames; N below 239                  |
 | `kind N`                      |         | use facing table N                                        |
 | `loop`, `play N`, `hold`, `end` |       | after the last picture: start again, switch, stay, blank  |
@@ -254,9 +257,9 @@ palettes its tiles use, and up to four sheets of tiles, `tiles_a.png` to
 map stacks. A map says which set it is drawn with, and its grid names a
 cell's picture as four tile numbers into those sheets
 ([Maps](../map/README.md#cells)). Many maps share a set: the directory lists
-76 sets for 182 maps, drawn from 69 folders of sheets, and 50 of its rows
-recolour the set before them with a palette of their own from
-`tileset/palettes/`, drawn with the same tiles.
+76 sets for 182 maps, drawn from 69 folders of sheets, and 54 palettes of
+their own from `tileset/palettes/` recolour a set's tiles, 50 of them placed
+after the rows of the maps that use them.
 
 The build packs each sheet as `tiles_a.4bpp.mtf`, the move-to-front form,
 and the palette as `palette.gbapal.lz`, and the map's own `map.s` places
@@ -272,7 +275,7 @@ palette into the background palettes
 | Name                 | Value          | Meaning                                                |
 | -------------------- | -------------- | ------------------------------------------------------ |
 | tilesets             | 76             | the directory's sets, from `tileset/set_00/` to `set_68/` |
-| recolours            | 50             | `tileset/palettes/pal_00.png` on, over another set's tiles |
+| recolours            | 54             | `tileset/palettes/pal_00.png` to `pal_53.png`, over another set's tiles |
 | a sheet              | 256 pixels wide, 16 colours | one layer's tiles, `tiles_a.4bpp.mtf`     |
 | `Tileset_Set00TilesA` |               | the symbol a map's `map.s` places a sheet under        |
 
@@ -398,7 +401,8 @@ drift to the right wraps without a seam.
 The names are drawn from `credits/font.png`, the `1bpp` form placed in the
 credits' bank as `font.s`: a line of text is drawn glyph by glyph, with a
 shadow a pixel down and to the right, into the tiles of six sprites side by
-side, and the sprites move up a pixel every fourth VBlank. A ring of 32 rows
+side, and the sprites move up a pixel every fourth
+[VBlank](../../glossary.md#vblank). A ring of 32 rows
 of tiles holds the lines, so the memory never grows however long the roll.
 
 ### The same picture, mechanism by mechanism

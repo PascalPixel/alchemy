@@ -1,6 +1,6 @@
 # The Game Pak
 
-![The console switched on: the Golden Sun logo fades in after Camelot's](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
+![Isaac stands in Vale, then A, B, Select and Start restart the game and the Camelot logo comes up](https://alchemy.pascalpixel.com/guides/runtime/soft-reset.gif)
 
 Switch the console on and the logos come up; walk into a house and the room
 is there; save, switch off, and the save is still there the next day. Each of
@@ -20,8 +20,9 @@ from the code:
 3. The [resource directory](../../glossary.md#resource-directory), the one
    list through which a packed picture, map or piece of scene code is found
    by its number.
-4. The [flash chip](../../glossary.md#flash-chip) and the library that
-   writes a save into it and reads it back.
+4. The [flash chip](../../glossary.md#flash-chip), 64 KB written in 16
+   sectors of 4 KB, and the code that writes a save into it and reads it
+   back.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -47,8 +48,6 @@ scene's code is unpacked there, is [System code](../system/README.md).
 
 ## The ROM header
 
-![Isaac stands in Vale, then A, B, Select and Start restart the game and the Camelot logo comes up](https://alchemy.pascalpixel.com/guides/runtime/soft-reset.gif)
-
 The header is the first 192 bytes of the cartridge, a block the console reads
 before it runs anything, with the game's first instruction at its very start.
 
@@ -62,14 +61,16 @@ its four-letter game code, a maker code, a fixed byte and a complement check,
 a sum over the title and the codes that the console checks.
 
 The restart goes the same way. Pressing A, B, Select and Start together asks
-for a reset, and the next [frame](../../glossary.md#frame)'s wait jumps to
-the cartridge's first word, so the game starts over from its header as if the
-console had just been switched on.
+for a reset, and the next [frame](../../glossary.md#frame)'s
+[`wait()`](../../glossary.md#wait) jumps to the cartridge's first word, so
+the game starts over from its header as if the console had just been
+switched on.
 
 The build writes the title and the codes from the source and leaves the logo
 and the complement check empty; `tools/ags-header` fills both in on the
-finished image, as pret's gbafix does, so no logo bytes are kept in the
-source. The header is `Rom_Start` in `rom_header.s`, the branch target
+finished image, as [pret](../../glossary.md#pret)'s gbafix does, so no logo
+bytes are kept in the source. The header is `Rom_Start` in `rom_header.s`,
+the branch target
 `System_Entry`, the edition's letter `gRom_LanguageCode`, and the restart's
 jump `Cart_Start`, the fixed address the first word is at
 (`include/gamepak/rom_header.h`).
@@ -94,19 +95,19 @@ A bank is a stretch of the main image with a fixed start. The
 [System](../../glossary.md#system)'s bank 00 comes first, then the field, the
 windows, the game rules, the main routine and the field sequence, the menus,
 the shops, the battle, the battle effects, the credits, the Title, Lucky
-Dice, Lucky Wheels and the sound, bank 13. Every bank is always in place;
-nothing is switched in or out. [Source](../README.md#banks-and-folders) lists
+Dice, Lucky Wheels and the sound, bank 13. Every bank is always in place.
+[Source](../README.md#banks-and-folders) lists
 which folder holds each bank's code.
 
-Code in one bank calls a function in another through a far call. The callee's
-bank opens with a far-call table, a list of
-[veneers](../../glossary.md#veneer), one for each of its functions that other
-banks call, and the far call goes to the veneer, which jumps on to the
-function. A veneer is named for its function with `Far` added:
-`Sound_PlayFar` is the sound bank's veneer for `Sound_Play`, and the battle
-asks for its music by calling it. Since the table sits at the bank's fixed
-start, a caller's address for the veneer stays right however the bank's code
-behind it moves.
+Code in one bank calls a function in another through a far call, which goes
+to the function's [veneer](../../glossary.md#veneer) in the callee bank's
+far-call table, the list at the bank's fixed start of one veneer for each of
+its functions other banks call
+([System](../../system.md#banks-and-far-calls) introduces them). Since the
+table sits at the bank's fixed start, a caller's address for the veneer
+stays right however the bank's code behind it moves: `Sound_PlayFar` is the
+sound bank's veneer for `Sound_Play`, and the battle asks for its music by
+calling it.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -122,7 +123,8 @@ flowchart TD
 Bank 00 is the exception. The other banks call its functions directly, by
 their plain names, and its table serves only the
 [overlays](../../glossary.md#overlay), the scenes' code, which is unpacked
-into RAM and reaches every bank through an import table of its own
+into RAM and reaches every bank through an
+[import table](../../glossary.md#entry-table-and-import-table) of its own
 ([System
 code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 
@@ -140,8 +142,10 @@ bx r4
 .4byte \target
 ```
 
-It may overwrite `r4` because every game file is compiled with
-`-fcall-used-r4`, so no caller expects `r4` to survive a call. The `bx` also
+It may overwrite `r4` because the game's own C is compiled with
+`-fcall-used-r4` (the `Makefile` leaves the option off only for the sound
+driver's and the flash chip's files), so no caller expects `r4` to survive a
+call. The `bx` also
 switches the processor to ARM when the target is ARM code, so the same veneer
 reaches the ARM routines copied into
 [IWRAM](../../glossary.md#iwram-and-ewram).
@@ -198,7 +202,7 @@ scene's code by a number and get back where its bytes start.
 When the party walks through that door, the
 [scene table](../../glossary.md#scene) gives the room's code as a number, and
 the number picks a row of the directory; the row holds the address of the
-packed stream, and the loader unpacks it into the overlay area. Pictures,
+packed stream, and `Overlay_Load` unpacks it into the overlay area. Pictures,
 maps, tilesets and the battle effects' sheets are found the same way: each
 caller holds a number, looks up its row, and reads from the address the row
 gives. A row is one word, and a resource's number is its position in the
@@ -227,19 +231,21 @@ pictures from the first (`settings_menu.c`). The directory ends with 25 empty
 rows that nothing reads, where a row fits without renumbering any other.
 
 The rows run in groups. The first nineteen point at pieces of the main image
-itself: the header, the directory, the build stamp and the far-call tables;
+itself: the header, the directory, the build stamp (the twelve digits of the
+edition's build time, below) and the far-call tables;
 of these, start-up reads the build stamp's row, and the far-call rows are
 passed only to stubs that do nothing with them (`Stub_NoOpHook`,
 `Stub_ReturnZero`). Then come the windows' tiles and the small font, the
 Title's pictures and logos, the 34 battle backgrounds, Lucky Wheels and Lucky
 Dice, the battle effects' sheets and palettes, the field's default tables, the
 World Map's tiles, the Colosso's paths, the menu cursor's eight pictures, the
-Interface's icons, the 54 monsters, and then every map with its tileset: a
-map's rows, then its palette and its four sheets of tiles, or, for a map that
-only recolours the tileset before it, its rows and a palette alone. The 96
+Interface's icons, the 54 monsters, and then every tileset with its maps:
+one row for each map drawn with it, then the set's palette and its sheets of
+tiles, up to four, or, for a map that only recolours the set before it, its
+row and a palette alone. The 96
 overlays come last, in the order of their numbers, before the empty rows.
 
-The directory is `Resource_DirectoryTable` in `resource_directory.s`, 958
+The directory is `Resource_DirectoryTable` in `resource_directory.s`, 1,000
 rows, each written with one of its macros: `resource NAME, PLACE` for one row,
 which defines `ResourceId_NAME` as the row's position, `group` for a run of
 named rows, `tileset` and `recolor` for a map's rows, `overlays` for a run of
@@ -354,8 +360,8 @@ flowchart TD
   class erase,bytes hardware
 ```
 
-While the library works it slows the cartridge's save-area bus to the
-chip's own wait, the low two bits of `REG_WAITCNT`, and puts the usual wait,
+While the flash code works it sets the save area's wait, the low two bits
+of `REG_WAITCNT`, to the chip's own, and puts the usual wait,
 `WAITCNT_SRAM_8`, back when it is done. A routine reports 0 when the sector is
 written, or an error code: `0x80ff` for a sector number above 15, `0xc001`,
 `0xc002` or `0xc003` when a byte, a sector erase or a chip erase did not come
@@ -436,8 +442,8 @@ directory for the one row of the main image it needs: `System_CopyBuildStamp`
 asks `Resource_GetTableEntry` for `ResourceId_BuildStamp` and copies the
 twelve digits. Then it starts the sound driver with `Sound_InitializeFar`, a
 far call: bank 00 calls bank 13 through the row of `SOUND.S` that names it.
-Last it calls `MainRoutine_RunFar`, bank 04's first row, and the main routine
-sets the Title as what runs next.
+Last it calls `MainRoutine_RunFar`, the second row of `FIELD_SEQUENCE.S`, and
+the main routine sets the Title as what runs next.
 
 ### The Title and the File Screen come from the directory
 

@@ -445,23 +445,22 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
       work.savedAnimationParameters[targetIndex][entryIndex] =
           animation->entries[entryIndex]->colorMode;
   }
-  /* FAKEMATCH(one-pass): the five effects in a one-pass block, which places
-   * each call's argument before its kind's store; as plain statements, 43 of
-   * 180 instructions differ in tbs-en. */
-  do {
-    work.effect.kind = ELEMENT_VENUS;
-    work.effect.variant = 0;
-    BattleEffect_RunElementPillarFar(&work.effect);
-    work.effect.kind = ELEMENT_MERCURY;
-    BattleEffect_RunElementPillarFar(&work.effect);
-    work.effect.kind = ELEMENT_MARS;
-    BattleEffect_RunElementPillarFar(&work.effect);
-    work.effect.kind = ELEMENT_JUPITER;
-    BattleEffect_RunElementPillarFar(&work.effect);
-    work.effect.kind = 0;
-    BattleEffect_RunFromTableFar(&work.effect);
-    Actor_SelectAnimationFar(object, POSE_STANDING);
-  } while (0);
+  work.effect.kind = ELEMENT_VENUS;
+  work.effect.variant = 0;
+  BattleEffect_RunElementPillarFar(&work.effect);
+  work.effect.kind = ELEMENT_MERCURY;
+  BattleEffect_RunElementPillarFar(&work.effect);
+  work.effect.kind = ELEMENT_MARS;
+  BattleEffect_RunElementPillarFar(&work.effect);
+  work.effect.kind = ELEMENT_JUPITER;
+  BattleEffect_RunElementPillarFar(&work.effect);
+  work.effect.kind = 0;
+  BattleEffect_RunFromTableFar(&work.effect);
+  Actor_SelectAnimationFar(object, POSE_STANDING);
+  /* FAKEMATCH(barrier): an empty asm reading object ends CSE's knowledge of
+   * work's address, so the return loop's exit test addresses work afresh; as
+   * plain statements, 43 of 180 instructions differ in tbs-en. */
+  __asm__("" : : "r"(object));
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
     BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
   BattleMotion_ReturnToSpot(work.effect.user);

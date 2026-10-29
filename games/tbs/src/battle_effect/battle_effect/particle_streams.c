@@ -326,22 +326,20 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     do {
       s32 angle = frame << 8;
       /* FAKEMATCH(pin): count in r2, so the division's +3 works on its copy in
-       * r3; as a plain local, 5 of 1532 instructions differ in tbs-en. */
+       * r3; as a plain local, 74 of 1532 instructions differ in tbs-en. */
       register s32 count __asm__("r2") = work->frame;
-      /* FAKEMATCH(pin): work's copy in r0, leaving r1 to the 0x778c offset; as
-       * a plain local, 4 of 1532 instructions differ in tbs-en. */
-      register u8 *base __asm__("r0") = (u8 *)work;
+      u8 *sheet = work->sheet;
       s32 heat = count / 4;
       u16 *line;
       s32 size;
       s32 x;
       s32 y;
 
-      /* FAKEMATCH(barrier): count and base through an empty asm, which loads
-       * count into r2 and copies it to r3; without it, 1 of 1532
-       * instructions differ in tbs-en. */
-      __asm__("" : "=r"(base) : "0"(base), "r"(count));
-      line = (u16 *)(base + 0x1f80);
+      /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering
+       * r1, so count outlives its r3 copy and sheet takes r0; as line = (u16 *)
+       * (work->sheet + 0x1f80), 69 of 1532 instructions differ in tbs-en. */
+      __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1");
+      line = (u16 *)(sheet + 0x1f80);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
           break;
@@ -380,14 +378,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
          * keeping the r3 copy and shift; as level = green / 4 + heat, 5 of
          * 1532 instructions differ in tbs-en. */
         s32 blue = green;
-        /* FAKEMATCH(pin): level in r2; as a plain local, 21 of 1532
-         * instructions differ in tbs-en. */
-        register s32 level __asm__("r2");
+        s32 level;
 
         if (green < 0)
           blue += 3;
         blue >>= 2;
         level = blue + heat;
+        /* FAKEMATCH(barrier): an empty asm that clobbers r3 while level is
+         * live, so level takes r2; as level = blue + heat alone, 21 of 1532
+         * instructions differ in tbs-en. */
+        __asm__("" : : : "r3");
         blue = level - 32;
         green = level - 80;
 

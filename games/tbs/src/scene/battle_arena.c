@@ -843,10 +843,9 @@ next:
     wait(1);
     wait(2);
   }
-  /* FAKEMATCH(one-pass): the shared exit in a one-pass block, which leaves
-   * loop.c no barrier beside done to move the record loop's two failures to,
-   * so both stay where they are written; as a plain label, 62 of 254
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(one-pass): the shared exit in a one-pass block, so loop.c finds
+   * no barrier at done to move the record loop's two failures to; as a plain
+   * label, 62 of 254 instructions differ in tbs-en. */
   do {
   done:
     Heap_Release(heap);

@@ -70,14 +70,15 @@ struct CursorSprite {
 #define MENU_SPRITE_SHAPE_16X16 0x40000000
 
 /// Sets sprite shape (attr0/attr1) and clears the remaining fields.
-/* FAKEMATCH(one-pass): the two stores in a once-only block; as the plain stores
+/* FAKEMATCH(barrier): an empty asm before the two stores; as the plain stores
  * Battle_CollectPartyCommands and BattleStatusScreen_Run match with, 4 of 49
  * instructions differ in tbs-en (Text_DrawCharacter). */
 #define MenuSprite_Initialize(sprite, shape)                                   \
-  do {                                                                         \
+  {                                                                            \
+    __asm__("");                                                               \
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \
-  } while (0)
+  }
 
 /// The party status window's layout: its window, its place and size, and what
 /// it shows (PARTY_STATUS_ flags).

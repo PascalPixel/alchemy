@@ -88,7 +88,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   // (gSummon_OrderList), the rest after them in menu order.
   count = Summon_ListLearnedFar(learnedSummons);
   /* FAKEMATCH(one-pass): the first scan's exit inside a block that runs once
-   * leaves the outer loop's select block in place; as a plain block, 88 of 946
+   * leaves the outer loop's select block in place; as a plain block, 115 of 946
    * instructions differ in tbs-en. */
   do {
     s32 i;

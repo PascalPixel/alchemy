@@ -8,10 +8,10 @@ A with nothing ahead, or Select, and a row of icons comes up over the town:
 Item and Status. Each icon opens a screen that fills the display, asks a few
 questions one after another (whose, which, on whom) and goes away when the
 player backs out, leaving the icons where they were. The town waits behind
-it the whole time. The code here runs those four screens, and two things the
-Title calls on because they sit in the same [bank](../../glossary.md#bank):
-the title intro that plays after the logos, and the staff credits after the
-ending.
+it the whole time. The code here runs those four screens, and two things
+this folder also holds: the title intro that plays after the logos, and the
+staff credits after the ending, each in a [bank](../../glossary.md#bank) of
+its own.
 
 The screens work the same way as everything else the player waits on: each
 is a function that runs from its first question to its last, letting a
@@ -78,12 +78,13 @@ them through its own struct, which names only the fields that screen uses:
 and `struct StatusScreenWork`. A field one screen uses and another leaves
 alone keeps the first screen's name in the second's struct, marked "not
 named here". The shop counters read the block as `struct ShopWork`, which
-works because a counter opens only from a scene's event, while the field
-menu is closed.
+works because a counter opens only from a
+[scene](../../glossary.md#scene)'s [event](../../glossary.md#event), while
+the field menu is closed.
 
 | Name             | Value       | Meaning                                     |
 | ---------------- | ----------- | ------------------------------------------- |
-| `HEAP_SLOT_MENU` |             | the heap slot every screen takes the block from |
+| `HEAP_SLOT_MENU` | 55          | the heap slot every screen takes the block from |
 | `MENU_WORK_SIZE` | 2,672 bytes | the block's size                            |
 | `memberIds`      | 8 entries   | the party in order, as a screen lists it    |
 | `entryIcons`     | 32 sprites  | the item or Psynergy icons a screen lays out |
@@ -108,13 +109,18 @@ The run function holds the field still before it asks anything. It marks the
 [sprites](../../glossary.md#sprite-and-oam) stop being drawn and the video
 memory they held is released, and in most editions it also pauses the scene's
 own [tasks](../../glossary.md#task), the map's animated tiles, the weather
-and any palette blend in progress (`Menu_SuspendFieldTasks`). Then it takes
-the menu work, lists the party, opens its first windows and lets its loop
-run. When the loop returns it closes every window it opened
-(`ItemMenu_Close`), frees the work, lets the actors draw again
-(`Menu_ResumeFieldTasks`) and returns to `FieldMenu_Run` with one number:
--1 means the player backed out and the icons come back; anything else means
-the menu is finished with, and the field sequence's loop goes on walking.
+and any palette blend in progress (`Menu_SuspendFieldTasks`). The Djinn and
+Status screens pause those tasks in every
+[edition](../../glossary.md#editions), the Item screen in every edition but
+the Japanese, and the Psynergy screen only in the German, French, Spanish
+and Italian ones. Then the run function takes the menu work, lists the
+party, opens its first windows and lets its loop run. When the loop returns
+it closes every window it opened (`ItemMenu_Close`), frees the work, lets
+the actors draw again (`Menu_ResumeFieldTasks`) and returns to
+`FieldMenu_Run` with one number. For the Psynergy, Item and Status screens
+-1 means the player backed out and the icons come back, and anything else
+means the menu is finished with, and the field sequence's loop goes on
+walking; the Djinn screen returns 1, and the icons come back.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -149,8 +155,8 @@ Status screen's `StatusScreen_RunPages` and the Djinn screen's
 
 Every chooser reads the buttons through the same two pieces: a paged list
 (`PagedList_HandleInput`, `struct PagedList`) for a list longer than its
-window, which moves the hand with Up and Down and turns pages with Left and
-Right, and a hand cursor (`MenuCursor_Position`, `MenuCursor_Slide`) that
+window, which moves the hand with Up and Down and changes page with Left
+and Right, and a hand cursor (`MenuCursor_Position`, `MenuCursor_Slide`) that
 bobs on the spot and slides to its new place over two frames. A list keeps,
 for each party member, the entry the hand was last on
 (`selectedIndexByMember`), so going back to someone's items lands where the
@@ -172,7 +178,7 @@ running the next question. So the choosers unwind one after another, each
 returning -1 to the one that called it, until the loop ends and the run
 function returns -1. The Djinn screen is the one exception: its choosers
 watch for Start themselves and return `DJINN_RESULT_START`, which its loop
-turns into the same unwinding.
+answers with the same unwinding.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -217,7 +223,8 @@ The Psynergy screen asks `Whose Psynergy?`, `Which Psynergy?` and, for
 Psynergy aimed at one ally, `Use it on whom?`. What happens after the second
 answer depends on the Psynergy chosen, and the screen decides it in one
 place, `PsynergyMenu_ClassifySelectedPsynergy`, in this order. If the scene
-has a trigger for this Psynergy at what the leader faces
+has a [trigger](../../glossary.md#trigger) for this Psynergy at what the
+leader faces
 (`Scene_HasFieldPsynergyTriggerFar`), it is for the field: the screen writes
 the caster and the Psynergy into the field's work (`gFieldWork.psynergy`)
 and returns 1, the menu closes, and the field sequence casts it, which is
@@ -233,7 +240,9 @@ HP!`, counted from `MsgItemUseResult`). The Psynergy screen passes it a scale
 of 0, which makes HP healing grow with the caster's
 [Power](../../glossary.md#power-and-resist) in the Psynergy's element
 (`Battle_CalculateRecoveryFar`), as it does in battle. On success the caster
-pays the PP (`Unit_AddPpFar`), the status panel is redrawn for the target,
+pays the PP (`Unit_AddPpFar`), the status panel, the window on the left that
+shows the chosen party member ([below](#the-status-panel)), is redrawn for
+the target,
 the Psynergy's sound plays (`Ability_PlayUseAnimation`: healing plays
 `SE_RECOVERY`) and the list comes back for another cast; on failure, such
 as healing someone already at full HP, the error sound plays and the screen
@@ -258,7 +267,7 @@ help, and L or R with Select held sets the Psynergy under the hand.
 
 ### The Item screen
 
-![Isaac opens the Item screen in Vale: `Whose item?`, then Garet's items, then `Which item?` with the hand on a Herb, the command grid with Use, and `Use it on whom?`; Garet, at 40 HP, takes it, `You recovered HP!` shows and his HP rises.](https://alchemy.pascalpixel.com/guides/menu/item-use.gif)
+![Isaac opens the Item screen in Vale: `Whose item?`, Isaac; then `Which item?` with the hand on a Herb, the command grid with Use, and `Use it on whom?`; Garet, at 40 HP, takes it, `You recovered HP!` shows and his HP rises.](https://alchemy.pascalpixel.com/guides/menu/item-use.gif)
 
 The Item screen asks `Whose item?` and `Which item?`, then shows a grid of
 six commands for the item under the hand: Use, Equip and Details on the top
@@ -285,10 +294,10 @@ the screen writes it into `gFieldWork.item` and returns 1.
 Give asks `Give it to whom?` and moves the item one at a time, asking how
 many of a stack (`ItemMenu_SelectGiveQuantity`), then offers to equip it on
 its new holder with the stats it would give (`ItemMenu_ConfirmEquip`). When
-the receiver's bag is full the screen asks instead what they give back
+the receiver's pack is full the screen asks instead what they give back
 (`ITEM_STEP_TRADE`), and swaps the two. Drop asks `Yes` or `No`
 (`ItemMenu_ConfirmDrop`) and takes the item out; a dropped rare item goes
-back on the shops' counter (`Item_AdjustCounterFar`), so a shop may sell it
+back on the shops' stock count (`Item_AdjustCounterFar`), so a shop may sell it
 again ([Shops](../shop/README.md#artifacts)). Details opens a large window
 describing the item: its Attack and Defense, each of its effects, whether it
 is cursed or bestows Psynergy, and how many there are
@@ -306,12 +315,12 @@ Agility and Luck in the panel.
 | ---------------------- | ----- | ---------------------------------------------------- |
 | `INVENTORY_SLOTS`      | 15    | items a party member carries                         |
 | `ITEM_STACK_MAX`       | 30    | the most of one item a stack holds                   |
-| `MENU_ITEM_GRID_COLUMNS` | 5   | item icons in a row of the bag's grid                |
+| `MENU_ITEM_GRID_COLUMNS` | 5   | item icons in a row of the pack's grid               |
 | one use in eight       |       | how often an item that may break does                |
 
 ### The Djinn screen
 
-![Isaac opens the Djinn screen: each party member's Djinn stand in a column under their figure, Flint is chosen with `Choose a Djinni.`, Standby is picked, a preview shows Isaac as a Squire with lower HP and the Psynergy he would lose, `Is this OK?` is answered, and Flint goes on standby.](https://alchemy.pascalpixel.com/guides/menu/djinn-standby.gif)
+![Isaac opens the Djinn screen: each party member's Djinn stand in a column under their figure, Flint is chosen with `Choose a Djinni.`, `What will you do?`, Standby is picked, a preview shows Isaac as a Squire with lower HP and Attack and his Psynergy unchanged, `Is this OK?` is answered, and Flint goes on standby.](https://alchemy.pascalpixel.com/guides/menu/djinn-standby.gif)
 
 The Djinn screen shows every party member's Djinn in a column under their
 figure and lets the player set one, put it on standby, give it to another
@@ -387,7 +396,7 @@ by a task (`DjinnFigures_UpdateBottomRow`, in `menu/djinn_figures.c`).
 ![Isaac's Status screen: the party row, then his status page with the four Djinn figures standing on it, `Your status is normal.`, a page of his Psynergy with its PP costs and where each can be used, and a page of his equipment.](https://alchemy.pascalpixel.com/guides/menu/summary-screen.gif)
 
 The Status screen shows one party member at a time: a row to pick the party
-member, then three pages that A turns in a ring, their status (stats,
+member, then three pages A moves through in a ring, their status (stats,
 experience, Djinn and the elemental levels, Power and Resist), their Psynergy
 with each one's PP cost and where it can be used, and their equipment beside
 the four slots they wear it in. L and R switch to the previous or next party
@@ -405,8 +414,10 @@ Djinn
 figures, one for each element, stand on the status page and move out of
 sight for the other two (`DjinnFigures_InitializeTopRow`). The run function
 saves the first two background palettes and the window tiles it draws over
-before it starts, and puts them back as it closes, since the status page
-draws the element icons as window tiles in colours of its own.
+before it starts, and puts them back as it closes: it copies the sprites'
+first palette, the element icons' colours, into those two background
+palettes, one for a highlighted row and one for the rest, so that the
+status and Psynergy pages can draw the element icons as window tiles.
 
 The row on its own, over the field and without the pages, is how the
 Colosso scenes ask the player for a party member: `PartyMemberChooser_Open`
@@ -438,8 +449,8 @@ they were from a copy taken on the heap, freed before the panel returns. The
 game has one way of working out stats, from scratch
 ([Game rules](../game/README.md#why-stats-are-always-worked-out-from-scratch)),
 and the preview uses it, so what it shows is what equipping would do. When
-the item is being given, the preview puts it in the receiver's own bag
-first, making room if that bag is full, and puts the receiver back the same
+the item is being given, the preview puts it in the receiver's own pack
+first, making room if that pack is full, and puts the receiver back the same
 way (`ItemMenu_DrawEquipPreview`).
 
 | Name                      | Value | Meaning                                           |
@@ -457,12 +468,13 @@ way (`ItemMenu_DrawEquipPreview`).
 ![On the Item screen's party member row, L and A are pressed together and Isaac's items change places in their grid, then again, each press a different order.](https://alchemy.pascalpixel.com/guides/menu/item-sort.gif)
 
 Holding L and pressing A on the Item screen's party member row sorts that
-party member's bag, and each press moves on to the next of four orders.
+party member's pack, and each press moves on to the next of four orders.
 Each order is a short list of item types, kept as data in
-[`menu_tables.c`](menu_tables.c), and `ItemMenu_Sort` groups the bag by it,
+[`menu_tables.c`](menu_tables.c), and `ItemMenu_Sort` groups the pack by it,
 runs each group from the highest item id down, and moves empty slots to the
 end. The four are named by `enum ListSort`, and the Status screen's
-equipment page shows its list in the first of them without touching the bag.
+equipment page shows its list in the first of them, leaving the pack as it
+is.
 
 | Order                               | Groups, first to last                                        |
 | ----------------------------------- | ------------------------------------------------------------ |
@@ -543,9 +555,8 @@ sprite list and copies it to the hardware itself, so the intro switches the
 System's usual sprite copy off while it runs (`gOamCopyEnabled`), and back on
 at the flash.
 
-A press of A or Start between frames 20 and 239 does not cut straight to the
-title card: it jumps the intro to frame 239, so the last stretch before the
-flash plays as it always does.
+A press of A or Start between frames 20 and 239 jumps the intro to frame
+239, so the last stretch before the flash plays as it always does.
 
 | Name                        | Value       | Meaning                                          |
 | --------------------------- | ----------- | ------------------------------------------------ |
@@ -686,10 +697,11 @@ it does no harm, since the heap is emptied before the File Screen starts.
 
 For their length the credits run the display themselves: `Credits_Run`
 clears the task table and adds its own three tasks, switches off the
-system's usual copy of the sprite list and sends its own, and turns off the
+System's usual copy of the sprite list and sends its own, and turns off the
 debug displays and the idle sleep. When it ends it reloads the windows'
-tiles and turns the sprite copy back on, as the File Screen expects. The
-title intro does the same with its tasks and sprites.
+tiles and turns the sprite copy back on, as the File Screen expects; the
+idle sleep stays off until a save file is loaded or the settings menu sets
+it again. The title intro does the same with its tasks and sprites.
 
 The credits keep their running state, the sprite buffer's address, the
 scroll, the last line drawn and a latch for the end of the text, in four
@@ -706,7 +718,8 @@ Garet is at 40 HP after a fight, and the player opens the menu to heal him.
 Each thing that happens is one of the page's mechanisms.
 
 The field sequence's loop is in `wait(1)` while the party stands in Vale.
-A is pressed with nobody ahead, the leader's actor script notes it, and when
+A is pressed with nobody ahead, the leader's
+[actor script](../../glossary.md#actor-script) notes it, and when
 `wait(1)` returns the loop finds the request and calls `FieldMenu_Run`,
 which draws the icons. The player picks Psynergy, and `FieldMenu_Run` calls
 `PsynergyMenu_Run` through the menu bank's far-call table.
@@ -758,17 +771,6 @@ which goes on walking.
 
 ## Design
 
-The screens hold the field still while they run, since the field's tasks
-would otherwise go on moving actors and scrolling the map behind windows
-that the screens placed over a town standing still. Each tells the actors
-to stop being drawn, which also frees the
-video memory their sprites held for the screen's own icons, and pauses the
-scene's tasks, its animated tiles, the weather and any palette blend in
-progress; closing undoes it. The Djinn and Status screens do this in every
-[edition](../../glossary.md#editions), the Item screen in every edition but
-the Japanese, and the Psynergy screen only in the German, French, Spanish
-and Italian ones (`Menu_SuspendFieldTasks`).
-
 Start closes a screen through one game flag that every loop checks, so a
 chooser needs no knowledge of the choosers above it, and a new question can
 be added to a screen without touching the others.
@@ -794,39 +796,18 @@ status panel's text further left for their longer labels
 
 ## How it fits with the rest of the game
 
-The field sequence opens the field menu (`FieldMenu_Run`, in the window
-code), which calls each screen through the menu bank's far calls. When a
-screen chooses Psynergy or an item for the field, it leaves it in the field
-work's `psynergy` or `item`, and the field sequence (`FieldSequence_Run`)
-carries it out once the menu has closed (`Field_UsePsynergy`,
-`Field_UseItem`). What a use does to a party member is the game's rules
-(`Ability_ApplyToTargets`, `Djinn_SetFar`, `Unit_CalculateFar`), in
-[Game rules](../game/README.md); the screens only ask and show.
-
-The shop counters borrow `gMenuWork` and set up their party figures through
-`PsynergyMenu_InitializeEntryActorsFar`. The Colosso scenes ask for a party
-member through `PartyMemberChooser_Open`. The World Map opens the Djinn
-screen as the tutorial when Flint joins.
-
-The Title, the File Screen and the Battle Arena are overlays built from
-these screens and the window code; they are scenes
-([Scenes](../scene/README.md#the-title-the-file-screen-and-the-battle-arena)).
-The Title starts the title intro and the credits through the far calls of
-their banks.
+When a screen chooses Psynergy or an item for the field, it leaves it in the
+field work's `psynergy` or `item`, and the field sequence
+(`FieldSequence_Run`) carries it out once the menu has closed
+(`Field_UsePsynergy`, `Field_UseItem`). What a use does to a party member
+is the game's rules (`Ability_ApplyToTargets`, `Djinn_SetFar`,
+`Unit_CalculateFar`), in [Game rules](../game/README.md); the screens only
+ask and show.
 
 ## Limits
 
-- The menu work has room for eight party members and 32 listed entries.
-- A party member carries 15 items (`INVENTORY_SLOTS`), and a stack holds 30.
-- A party member's column of the Djinn list holds 10 Djinn
-  (`DJINN_LIST_ROWS`).
-- A credits image has at most 128 colours and 256 by 120 pixels: half the
-  background colours, and 30 KB of its half's 32 KB of tile memory.
 - A credits line is 192 pixels wide and always centred (the drawing routine
   can also align left or right, but nothing asks it to).
-- The credits last about 3 minutes 8 seconds, besides the time taken loading.
-- The title intro's prompt waits 3,600 frames, a minute, before the logos
-  start again.
 
 ## Words used here
 
@@ -851,14 +832,8 @@ their banks.
   Djinn screens (`DjinnFigures_`).
 - **backdrop**: the Djinn screen's own background, and the block that keeps
   the field's tiles and palettes it covers (`struct DjinnMenuBackdrop`).
-- **level**: one of a colour's three five-bit values, red, green or blue, as
-  the title intro's fade keeps it, with a fraction below it.
-- **half**: one of the two pieces the credits split the background tile
-  memory and colours into (`alternate` in the code).
 - **tile ring**: the credits' 32 rows of text tiles, 16 on screen at a time,
   reused as the text scrolls.
-- **page arrows**: the two tiles beside a paged list's page numbers
-  (`PAGE_ARROW_TILE`), which each screen's loop slides back and forth.
 
 ## Evidence
 
@@ -877,9 +852,5 @@ handles have no window behind them: the Status screen's `unopenedWindow`
 it only closes, so they stay `NULL` and closing them does nothing. The Djinn
 screen's `unopenedWindow` (`struct DjinnMenuWork`) stays `NULL` too, but
 its preview redraws it as it closes (a
-[`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in `djinn_preview.c`).
-That reads the window's place through `NULL`, which on this console is the
-BIOS. Code outside the BIOS reading it gets the last BIOS instruction fetched
-instead; read as a width, that value is over 30 tiles, wider than the screen,
-so `Window_DrawBorder` (through `WindowSprite_RedrawSavedRect`) draws
-nothing.
+[`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in `djinn_preview.c`;
+`struct DjinnMenuWork` says why it draws nothing).

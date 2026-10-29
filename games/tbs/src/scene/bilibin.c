@@ -111,7 +111,6 @@
 #include "event.h"
 #include "event_inline.h"
 #include "scene_tables.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "actor_script.h"

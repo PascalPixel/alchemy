@@ -10,9 +10,10 @@
 /// compiler-steering device. An overlay writes
 /// `Task_AddFrame(func, TASK_PASS_FRAME)` and the inline
 /// calls Task_Add, which resolves to the overlay's import
-/// stub. Main-image code calls the routines as ordinary functions; only the
-/// shared scene/shared/scroll_initialize_hblank_dma.h, which
-/// field/event_commands.c includes as lemurian_ship.c does, reaches the
+/// stub. Main-image code calls the routines as ordinary functions; only
+/// LuckyDice_Run's two decodes, whose bytes reload the buffer's address at
+/// each call, and the shared scene/shared/scroll_initialize_hblank_dma.h,
+/// which field/event_commands.c includes as lemurian_ship.c does, reach the
 /// layer there. event_inline.h includes this layer; rooms without the event
 /// command layer use it directly.
 
@@ -85,9 +86,9 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 }
 
 /// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
-/// `destination`. Scenes, the Title and the File Screen reach the decoder
-/// through it; main-image code calls Decompress_TaggedLz without it,
-/// LuckyDice_Run through call.h's Call2.
+/// `destination`. Scenes, the Title, the File Screen and LuckyDice_Run reach
+/// the decoder through it; other main-image code calls Decompress_TaggedLz
+/// without it.
 static inline s32 FieldDecompress_TaggedLz(const void *source,
                                            void *destination) {
   return Decompress_TaggedLz(source, destination);

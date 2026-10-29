@@ -18,7 +18,7 @@
 #include "iwram_call.h"
 #include "edition.h"
 #include "task.h"
-#include "call.h"
+#include "system_call.h"
 #include "frame.h"
 #include "oam_words.h"
 #include "sounds.h"
@@ -353,13 +353,11 @@ void LuckyDice_Run(void) {
           REG_DMA3);
   Dma_Set((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
   resourceAddress += 112 * 4;
-  // UB: Call2 passes integers to the decoder's two pointer parameters.
-  // Plain typed calls add four bytes to LuckyDice_Run in tbs-en.
-#ifdef UBFIX
-  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapGridCellBuffer);
-#else
-  Call2(Decompress_TaggedLz, resourceAddress, (s32)Ram_MapGridCellBuffer);
-#endif
+  // Through the system call layer, each decode loads the buffer's address
+  // again; called directly, Decompress_TaggedLz keeps it in a register and
+  // LuckyDice_Run is four bytes longer.
+  FieldDecompress_TaggedLz((const void *)resourceAddress,
+                           Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8), DMA_COPY_WORDS(9600),
           REG_DMA3);
   resourceAddress =
@@ -369,11 +367,8 @@ void LuckyDice_Run(void) {
   Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT, DMA_COPY_WORDS(128),
           REG_DMA3);
   resourceAddress += 128 * 4;
-#ifdef UBFIX
-  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapGridCellBuffer);
-#else
-  Call2(Decompress_TaggedLz, resourceAddress, (s32)Ram_MapGridCellBuffer);
-#endif
+  FieldDecompress_TaggedLz((const void *)resourceAddress,
+                           Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),
           REG_DMA3);
   LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);

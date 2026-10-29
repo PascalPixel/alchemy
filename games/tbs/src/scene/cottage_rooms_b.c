@@ -129,7 +129,6 @@
 #include "glyph.h"
 #include "sprite.h"
 #include "io_reg.h"
-#include "call.h"
 #include "field_effect.h"
 #include "heap.h"
 #include "ability_ids.h"

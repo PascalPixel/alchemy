@@ -84,7 +84,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "call.h"
 #include "types.h"
 #include "event.h"
 #include "event_inline.h"

@@ -53,7 +53,6 @@
 #include "flags.h"
 #include "character_ids.h"
 #include "types.h"
-#include "call.h"
 #include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"

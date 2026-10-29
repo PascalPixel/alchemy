@@ -57,7 +57,6 @@
 #include "module/system/system.h"
 #include "tolbi.h"
 #include "iwram_call.h"
-#include "call.h"
 #include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"

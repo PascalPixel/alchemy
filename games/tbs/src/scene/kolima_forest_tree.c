@@ -63,7 +63,6 @@
 #include "field_effect.h"
 #include "battle_unit.h"
 #include "types.h"
-#include "call.h"
 #include "event.h"
 #include "system_call.h"
 #include "scene_ids.h"

@@ -15,7 +15,6 @@
 #include "pushed_actor.h"
 #include "fixed_point_position.h"
 #include "iwram_call.h"
-#include "call.h"
 #include "scene.h"
 #include "map_grid.h"
 #include "map_grid_scroll.h"

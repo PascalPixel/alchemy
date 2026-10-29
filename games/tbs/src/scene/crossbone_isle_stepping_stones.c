@@ -72,7 +72,6 @@
 #include "dma.h"
 #include "edition.h"
 #include "text/msg_ids.h"
-#include "call.h"
 #include "event_inline.h"
 #include "irq.h"
 #include "ability_ids.h"

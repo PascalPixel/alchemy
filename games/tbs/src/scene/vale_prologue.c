@@ -77,7 +77,6 @@
 #include "task.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "call.h"
 #include "event_inline.h"
 #include "actor.h"
 #include "sprite.h"

@@ -63,7 +63,6 @@
 #include "event.h"
 #include "scene_tables.h"
 #include "event_inline.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "battle.h"
 #include "debug.h"

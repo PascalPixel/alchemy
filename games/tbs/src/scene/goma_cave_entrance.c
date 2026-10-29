@@ -51,7 +51,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "edition.h"
-#include "call.h"
 #include "playback_queue.h"
 #include "battle_action_run.h"
 #include "battle_unit.h"

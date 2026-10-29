@@ -59,7 +59,6 @@
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "call.h"
 #include "scene_ids.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"

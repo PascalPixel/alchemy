@@ -107,7 +107,6 @@
 #include "scene_tables.h"
 #include "djinn_ids.h"
 #include "character_ids.h"
-#include "call.h"
 #include "battle_side.h"
 #include "field_effect.h"
 #include "scene.h"

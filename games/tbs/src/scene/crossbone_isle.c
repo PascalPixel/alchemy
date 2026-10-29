@@ -87,7 +87,6 @@
 #include "sound.h"
 #include "edition.h"
 #include "event_inline.h"
-#include "call.h"
 #include "scene_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

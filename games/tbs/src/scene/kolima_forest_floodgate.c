@@ -48,7 +48,6 @@
 #include "event.h"
 #include "system_call.h"
 #include "heap_release.h"
-#include "call.h"
 #include "dma.h"
 #include "map_grid.h"
 #include "io_reg.h"

@@ -95,7 +95,6 @@
 #include "battle_sprite_id.h"
 #include "iwram_call.h"
 #include "task.h"
-#include "call.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "heap_slots.h"

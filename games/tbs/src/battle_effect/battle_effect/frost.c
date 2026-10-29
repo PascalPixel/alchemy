@@ -39,10 +39,6 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   u8 *puffSheet;
-  DrawRectangle *draw;
-  s32 count;
-  s32 lowest;
-  s32 highest;
   s32 xyz[3];
   struct ScreenPoint screen;
   s32 point[3];
@@ -58,10 +54,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
-  /* FAKEMATCH(temporary): the motes, columns, chips and puffs draw through a
-   * pointer to the pair, the columns' second picture through the pair itself;
-   * as pair[1] everywhere, 36 of 782 instructions differ in tbs-en. */
-  BattleEffect_FetchRectangleBlitters(0, draw = pair);
+  BattleEffect_FetchRectangleBlitters(0, pair);
 
   // Motes: x holds the angle, z the radius (56 to 119), y the vertical
   // offset (-64 to -33 pixels, positive downwards on the canvas).
@@ -81,6 +74,10 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   for (frame = 0;
        frame != gFrost_Timings[work->args->variant][FROST_FRAME] + 75;
        frame++) {
+    s32 count;
+    s32 lowest;
+    s32 highest;
+
     // The range of heights the smoke will rise over, in 16.16 pixels,
     // gathered from the motes and chips below.
     lowest = 120 << 16;
@@ -141,11 +138,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 #ifdef UBFIX
             width = gFrost_MoteWidths[cell];
             height = gFrost_MoteHeights[cell];
-            draw[1](canvas, work->sheet + gFrost_MoteCells[cell],
+            pair[1](canvas, work->sheet + gFrost_MoteCells[cell],
                     position->x - (width >> 1), position->y - (height >> 1),
                     width, height);
 #else
-            draw[1](canvas, work->sheet + gFrost_MoteCells[cell],
+            pair[1](canvas, work->sheet + gFrost_MoteCells[cell],
                     position->x - ((width = gFrost_MoteWidths[cell]) >> 1),
                     position->y - ((height = gFrost_MoteHeights[cell]) >> 1),
                     width, height);
@@ -189,12 +186,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME] - 7) {
 #ifdef UBFIX
             height = gFrost_ColumnHeights[cell];
-            draw[1](canvas, work->sheet + gFrost_ColumnCells[cell],
+            pair[1](canvas, work->sheet + gFrost_ColumnCells[cell],
                     gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
                     gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] - height,
                     32, height);
 #else
-            draw[1](canvas, work->sheet + gFrost_ColumnCells[cell],
+            pair[1](canvas, work->sheet + gFrost_ColumnCells[cell],
                     gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
                     gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
                         (height = gFrost_ColumnHeights[cell]),
@@ -248,7 +245,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         if (chip->variant >= 0) {
           s32 cell = i % 8;
 
-          draw[1](canvas, work->sheet + gFrost_ChipCells[cell],
+          pair[1](canvas, work->sheet + gFrost_ChipCells[cell],
                   Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
                   gFrost_ChipWidths[cell], gFrost_ChipHeights[cell]);
           chip->x += chip->velocityX;
@@ -298,12 +295,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
 #ifdef UBFIX
           size = gBattleEffect_PuffSizes[cell];
-          draw[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
+          pair[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
                   Q_16_16_TO_INT(puff->velocityX) - (size >> 1),
                   Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
-          draw[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
+          pair[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
                   Q_16_16_TO_INT(puff->velocityX) -
                       ((size = gBattleEffect_PuffSizes[cell]) >> 1),
                   Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,

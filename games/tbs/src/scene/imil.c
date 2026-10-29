@@ -239,13 +239,6 @@ enum IceRoomsCellBehavior {
   ((u16)((facing) - (FACING_NORTHWEST + 1)) <=                                 \
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
-// Keep native call forms while UBFIX uses the declared void contracts.
-#ifdef UBFIX
-#define IMIL_OPEN_SHOP Shop_Run
-#else
-#define IMIL_OPEN_SHOP ((s32 (*)())Shop_Run)
-#endif
-
 /// The townsfolk's own animations the events play, as their sheets draw them.
 enum ImilAnimation {
   /// Lying in bed, only the head above the covers: the old man
@@ -743,10 +736,7 @@ static void Imil_TalkToItemMerchant(void) {
       Event_Start();
       Event_SetMessageId(MsgMercuryMomsSickGetWhatever);
       Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANTS_DAUGHTER, 0);
-      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-       * show, which loads r1 first; as a call by its void prototype, 1 of 70
-       * instructions differ in tbs-en. */
-      IMIL_OPEN_SHOP(SHOP_IMIL_ITEMS, ACTOR_ITEM_MERCHANTS_DAUGHTER);
+      Shop_Run(SHOP_IMIL_ITEMS, ACTOR_ITEM_MERCHANTS_DAUGHTER);
       Event_End();
     } else {
       Actor_SetAngleToward(ACTOR_ITEM_MERCHANTS_DAUGHTER, ACTOR_PARTY_LEADER,

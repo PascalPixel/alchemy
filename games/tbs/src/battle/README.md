@@ -4,16 +4,16 @@
 
 The party walks into a battle. The enemies appear one by one, and each
 [turn](../../glossary.md#turns-and-actions) the player chooses a command for
-each party member; then every fighter acts in turn, each action with its
-announcement, its picture and its messages, until one side has nobody left
-standing or the party runs away. Everything the rules of a fight decide is
-worked out in this folder: who acts in what order, which move each enemy
-makes, who an ability reaches, whether a blow misses or lands a critical hit,
-how much damage each target takes, which statuses take hold, and what the
-party wins. The answers come from tables and dice rolls, and each shows up on
-screen as a message such as `Ivan takes 15 damage!`.
+each party member; then every fighter acts one after another, each action
+with its announcement, its battle effect and its messages, until one side has
+nobody left standing or the party runs away. Everything the rules of a fight
+decide is worked out in this folder: who acts in what order, which move each
+enemy makes, who an ability reaches, whether a blow misses or lands a critical
+hit, how much damage each target takes, which statuses take hold, and what
+the party wins. The answers come from tables and dice rolls, and each shows
+up on screen as a message such as `Ivan takes 15 damage!`.
 
-A battle runs on these mechanisms, each inside the one before it:
+A battle runs on these mechanisms, in the order control passes through them:
 
 1. [Starting a battle](#starting-a-battle): the
    [formation](../../glossary.md#formation) becomes a row of enemies, and the
@@ -22,8 +22,8 @@ A battle runs on these mechanisms, each inside the one before it:
    gathered, sorted by Agility and played one after another, and the turn
    ends with its countdowns.
 3. [Building an action](#building-an-action): a chosen command becomes an
-   action run, with its ability, its targets and the rolls the picture must
-   show.
+   action run, with its ability, its targets and the rolls the battle effect
+   must show.
 4. [Staging an action](#staging-an-action): a runner moves the
    [units](../../glossary.md#unit) about, plays the
    [battle effect](../../glossary.md#battle-effect) and runs the playback
@@ -36,6 +36,8 @@ A battle runs on these mechanisms, each inside the one before it:
    poison, the Grim Reaper, the Djinn and the countdowns.
 8. [The end of the battle](#the-end-of-the-battle): the spoils, and the way
    back to the field.
+9. [The zoomed battlefield](#the-zoomed-battlefield): one flat picture
+   zoomed by the camera.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -52,35 +54,26 @@ flowchart TD
   class effect,apply frame
 ```
 
-[Battle](../../battle.md) explains a battle as a whole and is the place to
-start. [Battle effects](../battle_effect/README.md) draws what each ability
-looks like, [Windows](../window/README.md) holds the command menu and the
-[party](../../glossary.md#the-party)'s status window, and
-[Game rules](../game/README.md) holds the ability, item and enemy tables and
+[Battle](../../battle.md) explains a battle as a whole.
+[Battle effects](../battle_effect/README.md) draws what each ability looks
+like, [Windows](../window/README.md) holds the command menu and the
+[party](../../glossary.md#the-party)'s status window, and the
+[game rules](../../glossary.md#game-rules)
+([Game rules](../game/README.md)) hold the ability, item and enemy tables and
 the arithmetic the rules call.
 
 ## Starting a battle
 
-![A battle opens: the curtain parts on a Lizard King, a Harridan and two Stone Soldiers, each announced in turn, `Lizard King appeared!`, `Harridan appeared!`, `Stone Soldier1 appeared!`, `Stone Soldier2 appeared!`, and the command menu comes up on Fight](https://alchemy.pascalpixel.com/guides/battle/opening.gif)
+![A battle opens: the curtain parts on a Lizard King, a Harridan and two Stone Soldiers, each announced one after another, `Lizard King appeared!`, `Harridan appeared!`, `Stone Soldier1 appeared!`, `Stone Soldier2 appeared!`, and the command menu comes up on Fight](https://alchemy.pascalpixel.com/guides/battle/opening.gif)
 
-A battle is a [sequence](../../glossary.md#sequence) of its own, which the
-[main routine](../../glossary.md#main-routine) runs between two
-[scenes](../../glossary.md#scene). The scene the party was walking in is
-cleared away before it starts, so everything a battle needs arrives through
-the [main routine's work](../../glossary.md#main-routines-work): the party,
-the number of the formation to fight, the kind of battle, the music an
-[event](../../glossary.md#event) may have chosen and the
-[battle background](../../glossary.md#battle-background) chosen for the
-scene.
-
-The [field sequence](../../glossary.md#field-sequence) leaves all of that
-behind when it answers a battle request: it stops the leader, saves where the
-scene's [actors](../../glossary.md#actor) stand (`Actor_Snapshot`), writes
-`SEQUENCE_BATTLE` as the next sequence and the formation as its entrance, and
-ends. The main routine then calls `Battle_RunFar`, the
-[far call](../../glossary.md#far-call) into this
-[bank](../../glossary.md#bank), and `Battle_Run` plays the whole battle and
-returns how it ended.
+The [scene](../../glossary.md#scene) the party was walking in is cleared away
+before a battle starts, so everything it needs arrives through the
+[main routine's work](../../glossary.md#main-routines-work): the party, the
+[formation](../../glossary.md#formation) to fight, the kind of battle, the
+music an [event](../../glossary.md#event) chose and the
+[battle background](../../glossary.md#battle-background).
+[Battle](../../battle.md#starting-a-battle) follows the handover; here
+`Battle_Run` begins.
 
 `Battle_Run` sets the battle up in one straight run. It takes the battle's
 [heap slots](../../glossary.md#heap-slot): the camera, the battle's own
@@ -117,7 +110,7 @@ Two enemies of one kind need telling apart, so each takes a letter after its
 name: a digit abroad, a letter of the alphabet in Japanese. The first of a
 kind stands bare until a second arrives; then both are lettered,
 `Stone Soldier1` and `Stone Soldier2`. An enemy called into the battle later
-takes the next free letter, and an enemy that leaves gives its letter back
+takes the next unused letter, and an enemy that leaves gives its letter back
 (`BattleEnemy_ClaimNameLetter`, `BattleEnemy_ReleaseNameLetter`).
 
 Every fighter is a unit, a `struct Unit` holding its stats, its HP and
@@ -143,9 +136,9 @@ range and distance is counted in.
 
 The curtain is drawn on a background layer of its own: a closed curtain of
 solid rows, which parts over 80 [frames](../../glossary.md#frame) as one row
-moves up and its mirror image moves down, each stepping through the curtain's
-edge pictures. While it opens, the camera turns round to face the party's side
-and zooms in from 180 to 100 percent (`BattleTransition_AdvanceTimer`,
+moves up and its mirror image moves down, each running through the curtain's
+edge pictures. While it opens, the camera swings round to face the party's
+side and zooms in from 180 to 100 percent (`BattleTransition_AdvanceTimer`,
 `BattleTransition_DrawRows`), the party's status window opens, and each enemy
 is announced with `<enemy> appeared!` (`BattleIntro_AnnounceEncounter`). A
 battle with a first strike announces it last:
@@ -158,13 +151,14 @@ aerie arrives in a storm, with the enemies' shattering opening effect
 
 ## Turns
 
-![A turn against a Lizard King, a Harridan and two Stone Soldiers: Ivan, Isaac and Mia attack the Harridan in turn, Garet defends, the Stone Soldiers cast Blast and Mad Blast, and the Lizard King casts High Impact, `Lizard King's Attack rises by 35!`](https://alchemy.pascalpixel.com/guides/battle/turn-order.gif)
+![A turn against a Lizard King, a Harridan and two Stone Soldiers: Ivan, Isaac and Mia attack the Harridan one after another, Garet defends, the Stone Soldiers cast Blast and Mad Blast, and the Lizard King casts High Impact, `Lizard King's Attack rises by 35!`](https://alchemy.pascalpixel.com/guides/battle/turn-order.gif)
 
 A turn is every unit acting once. The party chooses its commands, the
 enemies make their choices, the actions are sorted so that the fastest acts
-first, and then each action plays in its turn. After every action
-`Battle_Run` asks whether a side has nobody left standing, so a battle can end
-in the middle of a turn. When every action has played, the turn ends with its
+first, and then each action plays in its place in the order. After every
+action `Battle_Run` asks whether a side has nobody left standing, so a battle
+can end in the middle of a turn. When every action has played, the turn ends
+with its
 countdowns, and the next turn begins with the command menu.
 
 ```mermaid
@@ -236,8 +230,10 @@ above any Agility, so the attempt to run plays before anything else.
 | `COMMAND_PSYNERGY` | 1        | the Psynergy chosen, the parameter its ability       |
 | `COMMAND_ITEM`     | 2        | an item, the parameter its inventory slot            |
 | `COMMAND_DEFEND`   | 3        | Defend                                               |
+| `COMMAND_ENEMY_ABILITY` | 4   | an enemy's ability, the parameter its ability        |
 | `COMMAND_DJINN`    | 5        | a Djinni, set or unleashed                           |
 | `COMMAND_SUMMON`   | 6        | a summon                                             |
+| `COMMAND_TOTAL_DEFENSE` | 7   | an enemy's Total Defense: a tenth of the damage      |
 | `COMMAND_NONE`     | 8        | a lost action                                        |
 | `COMMAND_FLEE`     | 99       | the party runs; priority `0x7ffe`, first in the turn |
 | a party member's priority | Agility, plus up to a sixteenth at random | higher acts first |
@@ -279,8 +275,8 @@ list, 6 chances in 11 for the first of two, 6, 5 and 4 in 15 for three.
 | `ACTION_STRATEGY_EVEN`            | at random, each entry 32 in 256                           |
 | `ACTION_STRATEGY_FALLING`         | at random, from 53 in 256 for the first down to 11        |
 | `ACTION_STRATEGY_FIRST_FAVOURED`  | at random, the first 113 in 256, the last 5               |
-| `ACTION_STRATEGY_RANDOM_START`    | a random entry the first time, then each in turn          |
-| `ACTION_STRATEGY_IN_ORDER`        | each in turn, from where it left off                      |
+| `ACTION_STRATEGY_RANDOM_START`    | a random entry the first time, then the next each time    |
+| `ACTION_STRATEGY_IN_ORDER`        | the next each time, from where it left off                |
 | `ACTION_STRATEGY_NEXT_PICK`       | the next entry at each new pick, from the first           |
 | `ACTION_STRATEGY_SAME`            | the entry it picked last time                             |
 
@@ -292,7 +288,7 @@ row is read from `../game/enemy_table.c`.
 `BattleActionOrder_Sort` puts the gathered actions in order, highest priority
 first, by swapping neighbours until nothing is out of place. Equal priorities
 keep the order they were listed in: the party's actions come first, so on a
-tie the party acts first, and the enemies were shuffled before they chose, so
+tie the party acts first, and the enemies' were shuffled before they chose, so
 enemies of equal Agility act in a shuffled order. Three Djinn go before
 everyone: Granite, Flash and Ground, whose effects guard or hold, have their
 priority raised past any Agility.
@@ -483,7 +479,7 @@ added effect is rolled for each target as the blow lands.
 
 The [staging](../../glossary.md#staging) is what happens around a battle
 effect: whether the unit runs up and strikes, raises a hand to cast, or nothing
-moves. Rockslide is staged full screen: the camera turns and the side that is
+moves. Rockslide is staged full screen: the camera swings and the side that is
 left alone fades out.
 
 Most abilities are staged by kind: anything that costs PP is a cast, and an
@@ -514,7 +510,7 @@ The stagings are `enum BattleStaging`:
 | `STAGING_DJINNI`      | a Djinni with no attack                                      |
 | `STAGING_FLEE`        | a unit runs                                                  |
 | `STAGING_ENEMY_CAST`  | the element's streaks in place of the star field             |
-| `STAGING_FULL_SCREEN` | the camera turns and the side left alone fades out           |
+| `STAGING_FULL_SCREEN` | the camera swings and the side left alone fades out          |
 
 ## Staging an action
 
@@ -565,7 +561,7 @@ BattlePlayback_WaitForReady(); /* until every target has played */
 ### An attack
 
 The attacker runs up to its first target (`BattleStaging_RunAttack`). The
-camera turns halfway toward the attacker's side, the attacker leaps the
+camera swings halfway toward the attacker's side, the attacker leaps the
 distance in the frames its leaping picture takes, with the hop its sprite is
 given (`BattleMotion_ApproachTarget`), and the blow's battle effect starts
 eight frames before it lands. A miss plays differently: after ten frames the
@@ -578,7 +574,7 @@ and Mia, and an enemy's own.
 
 ### A cast
 
-The caster raises a hand (`BattleStaging_RunPsynergyCast`). The camera turns
+The caster raises a hand (`BattleStaging_RunPsynergyCast`). The camera swings
 toward the targets from the caster's side, the cast's sound plays and the
 caster glows in its element: the star field gathering on a party member, the
 element's streaks for an enemy's cast, and no glow for a Djinni, whose battle
@@ -590,7 +586,7 @@ playback, and the targets return to their spots.
 ### A summon or a full-screen cast
 
 The summons and the full-screen Psynergy take the whole screen
-(`BattleStaging_HideField`). The camera turns to the targets' side (for a
+(`BattleStaging_HideField`). The camera swings to the targets' side (for a
 summon, the summoner's), the caster raises a hand and glows, and over sixteen
 frames the units of the side left alone fade out; a summon hides its summoner
 too. Only the targets' side stays on the field while the battle effect plays,
@@ -610,14 +606,15 @@ time in eight, `<item> broke!`; Hermes' Water becomes an Empty Bottle.
 
 The party's flight was decided when the commands were gathered
 (`BattleStaging_RunFlee`). A party that got away runs off the field, each
-party member able to move in turn, eight frames apart, and `Battle_Run` ends
-the battle; one that failed reads `But there's no escape!`. An enemy that runs
+party member able to move running one after another, eight frames apart, and
+`Battle_Run` ends the battle; one that failed reads `But there's no escape!`.
+An enemy that runs
 gets away seven times in ten and leaves the battle.
 
 | Name                      | Value          | Meaning                                                |
 | ------------------------- | -------------- | ------------------------------------------------------ |
 | the first action's wait   | 10 frames      | facing the party, before the turn's first action       |
-| the camera's turn         | 60 frames      | a sixteenth of the gap left each frame                 |
+| the camera's swing        | 60 frames      | a sixteenth of the gap left each frame                 |
 | a fade out or in          | 16 frames      | the side left alone, for a summon or a full-screen cast |
 | the critical zoom         | 100 to 130 percent | over the attacker's run up                        |
 | an enemy's escape         | 7 in 10        | an enemy that runs leaves the battle                   |
@@ -696,9 +693,9 @@ applied and shown at once. The queue lives in the battle's work, filled by
 ![Mia casts Ply on Garet: motes of light swirl in to him and `Garet recovers 150 HP!`.](https://alchemy.pascalpixel.com/abilities/ply.gif)
 
 Once the battle effect shows the blow land, or the healing reach its target,
-each target in turn learns what the ability does to it: how much damage it
-takes or how much it heals, and whether the ability's added effect (Sleep, a
-lowered Defense, poison) takes hold. `BattleAbility_ApplyToTarget`
+each target one after another learns what the ability does to it: how much
+damage it takes or how much it heals, and whether the ability's added effect
+(Sleep, a lowered Defense, poison) takes hold. `BattleAbility_ApplyToTarget`
 ([`battle/ability.c`](battle/ability.c)) does this for one target, in phases
 numbered in its body.
 
@@ -716,7 +713,7 @@ afterwards.
 flowchart TD
   setup(["1. The distance from the aimed place, the element, the user's Power"]) --> hit(["2. The Djinn bonus, and whether the added effect lands"])
   hit --> ally(["3. Calling an ally"])
-  ally --> change(["4. Effects that change the damage step"])
+  ally --> change(["4. Effects that change how damage is dealt"])
   change --> damage(["5. The damage or healing, by the ability kind"])
   damage --> added(["6. The added effect"])
   added --> wake(["7. Waking from damage, the stats worked out again"])
@@ -759,8 +756,8 @@ Attack and the target's Defense, plus the power, scaled by the element.
 
 A guard cuts the result: a defending target takes half, one behind Total
 Defense or the Djinni Flash a tenth (`REDUCE_BY_GUARD`). Garet, defending,
-takes 36 from Tornado where Isaac beside him takes 28 and Ivan 32 without a
-guard.
+takes 36 from Tornado; without his guard the same cast would take twice that
+from him.
 
 The kinds are `enum AbilityFormula`, the low four bits of an ability's
 `flags`. The formulas are in
@@ -794,7 +791,7 @@ percent.
 A character's Power and Resist come from the element levels the
 Status screen shows, an enemy's from its element preset, and equipment adds to
 both. A Resistance stage adds 20 Resist in every element. A summon's boost
-raises the element it spent most Djinn of by 10, 30, 60 or 100 Power for one
+adds 10, 30, 60 or 100 Power in the element it spent most Djinn of, for one
 to four Djinn. A Djinni striking the element the target resists worst may also
 earn the Djinn bonus: an enemy it fells gives more coins and experience and is
 likelier to leave its item.
@@ -998,8 +995,8 @@ Regenerate and Reflect run their full course.
 A battle ends in one of three ways, and `Battle_Run` returns a number that
 says which: how many enemies fell for a win, `BATTLE_OUTCOME_FLED` for a
 flight, `BATTLE_OUTCOME_LOST` for a defeat. Every way out passes the same
-last steps: the party members' battle-only state is cleared
-(`BattleParty_ResetActiveRuntimeFields`), the Djinn recover one step, the kind
+last moves: the party members' battle-only state is cleared
+(`BattleParty_ResetActiveRuntimeFields`), the Djinn recover one turn, the kind
 of battle goes back to normal, and the battle's tasks and work are released.
 
 ### The spoils
@@ -1021,7 +1018,8 @@ flight only fades to black.
 
 ### Back to the field
 
-The main routine reads the result (`Scene_ReturnFromSequence`,
+The [main routine](../../glossary.md#main-routine) reads the result
+(`Scene_ReturnFromSequence`,
 [System](../../system.md#the-main-routine)). After a win or a flight the party
 goes back to the scene it came from, standing where it stood
 (`FLAG_KEEP_PARTY_POSITION` puts the saved actors back), unless an event set
@@ -1045,7 +1043,7 @@ Sanctum.
 
 The battlefield is one flat picture of the place, 256 by 120 pixels, with its
 depth already painted in. Once a frame the camera's distance sets the
-hardware's zoom of it and the camera's turn its sideways scroll, while the
+hardware's zoom of it and the camera's swing its sideways scroll, while the
 windows stay flat in front on
 [`BG0`](../../glossary.md#background-layer). The units are sprites over it,
 each placed by the actor system from a position on the field: the party's
@@ -1081,19 +1079,21 @@ the two blocks, and `Graphics_BuildSequentialTileTable` builds the tilemap.
 
 ### The camera
 
+![The camera swings an eighth of a circle toward Isaac as he attacks, back for the Gryphons' casts, and eases home at the turn's end](https://alchemy.pascalpixel.com/guides/battle/round.gif)
+
 The camera is a task of its own, `BattleCamera_Update`, which `Battle_Run`
 adds at `TASK_PASS_FRAME - 1` so that it runs after everything else in the
 battle's frame has moved. Each frame it closes a sixteenth of the gap between
 where it points and where the staging asked it to point, so it slows as it
 arrives, then places its eye behind its focus at its distance and refreshes
-the background's zoom. The staging asks for a turn by setting
-`gBattleBackgroundWork->targetYaw`: an eighth of a turn to one side while a
+the background's zoom. The staging asks for a swing by setting
+`gBattleBackgroundWork->targetYaw`: an eighth of a circle to one side while a
 party member acts, to the other while an enemy does, and halfway toward an
 attacker for its run up.
 
 | Name                       | Meaning                                                                 |
 | -------------------------- | ----------------------------------------------------------------------- |
-| `YAW_PARTY_ACTION`         | the view while a party member acts, an eighth of a turn to one side     |
+| `YAW_PARTY_ACTION`         | the view while a party member acts, an eighth of a circle to one side   |
 | `YAW_ENEMY_ACTION`         | the view while an enemy acts, the same the other way                    |
 | `YAW_BEHIND_ENEMIES`       | from behind the enemies, for an enemy's cast                            |
 | `BACKGROUND_PLANE_UPPER`   | `BG2CNT` for a line in the background's upper half: character block 2   |
@@ -1108,7 +1108,7 @@ attacker for its run up.
 
 Isaac and Garet face two Gryphons. In one turn, Isaac attacks, Garet attacks,
 the first Gryphon casts Impact on the second, and the second casts Tornado on
-the party. Each step is the work of the mechanisms above in order.
+the party. Each moment is the work of the mechanisms above in order.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -1191,7 +1191,7 @@ Garet at it. The cast plays,
 and the playback applies Tornado to the targets in battlefield order: Isaac,
 one place away, takes 80 percent of Tornado's power scaled by Gryphon2's
 Jupiter Power over Isaac's Jupiter Resist, 72; Garet, at the aimed place,
-takes 90. Each shows in turn, `Isaac takes 72 damage!` and then
+takes 90. Each shows one after the other, `Isaac takes 72 damage!` and then
 `Garet takes 90 damage!`, with a flinch before each.
 
 ### The turn's end
@@ -1204,7 +1204,7 @@ with the command menu.
 
 ### The same turn, mechanism by mechanism
 
-| Step                                    | Mechanism                                                   |
+| Moment                                  | Mechanism                                                   |
 | --------------------------------------- | ----------------------------------------------------------- |
 | Isaac and Garet choose Attack           | the party's commands, through the command menu              |
 | The Gryphons are listed after them      | the enemies' choices, their guard kept and the rest deferred; the action order |
@@ -1242,13 +1242,16 @@ of functions ends and the next begins.
 
 ## How it fits with the rest of the game
 
-To the rest of the game a battle is one more sequence: the main routine runs
-it in place of the field sequence, and the party comes back to the same spot
-([Battle](../../battle.md#starting-a-battle)). While it runs the battle
-borrows the system's tasks and heap, the field's actors for its units, the
-window code for its menus and status window, and the
-[game rules](../game/README.md) for its tables and arithmetic, which sit in
-another bank and are reached by far calls. The battle effects
+To the rest of the game a battle is one more
+[sequence](../../glossary.md#sequence): the main routine runs it in place of
+the
+[field sequence](../../glossary.md#field-sequence), and the party comes back
+to the same spot ([Battle](../../battle.md#starting-a-battle)). While it runs
+the battle borrows the system's tasks and heap, the field's
+[actors](../../glossary.md#actor) for its units, the window code for its
+menus and status window, and the [game rules](../game/README.md) for its
+tables and arithmetic, which sit in another [bank](../../glossary.md#bank)
+and are reached by [far calls](../../glossary.md#far-call). The battle effects
 ([Battle effects](../battle_effect/README.md)) are called by the staging and
 hand back control when they finish.
 
@@ -1314,13 +1317,10 @@ are named from what `battle_arithmetic.c` computes, and the playback commands
 from what playback does with each. The shadow under each unit,
 `BATTLE_SHADOW_SPRITE`, is named from what the battle's recordings show.
 
-The chances and counts on this page were checked in a tbs-en build with
-`alchemy-devtools render`, answering `Battle_Random` with chosen numbers.
-
 Bits 0 and 1 of the `flags` column of `gAbilityBattleEffects`
 (`EFFECT_ON_DOWNED`, `EFFECT_OTHER_SIDE`) are read, but no row in either game
 sets them. Building the action adds the first itself for the revive effects;
-nothing adds the second, so the side flip it asks for is unused. Only the Mars
+nothing adds the second, so the side flip it asks for is unused. Only the Venus
 Lighthouse bosses (Saturos's second fight, Menardi and the Fusion Dragon) set
 the class bit that makes a beam blow land with `SE_HEAVY_IMPACT`
 (`BattleSprite_HasHeavyImpact`).

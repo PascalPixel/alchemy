@@ -13,10 +13,6 @@ falls into two halves: the rules, which decide who acts when, who is hit and
 for how much, and the [battle effects](glossary.md#battle-effect), which draw
 it.
 
-This page explains a battle at the pace of the player's eye, from the first
-menu to the spoils, and hands each mechanism on to the folder guide that goes
-into its code:
-
 1. [Starting a battle](#starting-a-battle): how the field hands over to the
    battle [sequence](glossary.md#sequence) and gets the party back.
 2. [Units and abilities](#units-and-abilities): the two things every rule is
@@ -30,7 +26,7 @@ into its code:
 6. [Rules and battle effects run
    together](#rules-and-battle-effects-run-together): how the damage shows
    while the rock is still rising.
-7. [Battle effects](#battle-effects): the pictures.
+7. [Battle effects](#battle-effects): what each ability draws.
 8. [The battlefield on screen](#the-battlefield-on-screen): one flat picture
    zoomed by the camera.
 9. [The end of the battle](#the-end-of-the-battle): a win, a loss or a flight,
@@ -74,12 +70,13 @@ and an [event](glossary.md#event) sets it with
 if it wins and if it loses, as the thieves in Vault's inn loft do.
 
 The [field sequence](glossary.md#field-sequence)'s loop answers the request:
-it saves where the scene's [actors](glossary.md#actor) stand, writes
-`SEQUENCE_BATTLE` as the next sequence and the formation as its entrance into
-the [main routine's work](glossary.md#main-routines-work), and ends the
-scene. The main routine's next pass tears the scene down, so the battle starts
-with the console's memory cleared ([System](system.md#the-main-routine)), and
-calls `Battle_RunFar`, the [far call](glossary.md#far-call) into the battle's
+it saves where the scene's [actors](glossary.md#actor) stand, writes into the
+[main routine's work](glossary.md#main-routines-work) `SEQUENCE_BATTLE` as
+the next sequence and, in the entrance field a scene would use for where the
+party arrives, the formation to fight, and ends the scene. The main routine's
+next pass tears the scene down, so the battle starts with the console's
+memory cleared ([System](system.md#the-main-routine)), and calls
+`Battle_RunFar`, the [far call](glossary.md#far-call) into the battle's
 [bank](glossary.md#bank). `Battle_Run` plays the whole battle and returns how
 it ended. The main routine reads that result to choose the scene to go back
 to: after a win or a flight the party stands where it stood, unless the event
@@ -95,9 +92,10 @@ the curtain opening on them.
 
 Everyone in a fight, party member or enemy, is a [unit](glossary.md#unit),
 and everything a unit can do when it acts is an ability: Attack, Quake, a
-Djinni, a [summon](glossary.md#summons), using an item, an enemy's special
-move. The command menu is how the player chooses one for each party member;
-an enemy's row of the enemy table lists the eight it chooses among.
+[Djinni](glossary.md#djinn), a [summon](glossary.md#summons), using an item,
+an enemy's special move. The command menu is how the player chooses one for
+each party member; an enemy's row of the enemy table lists the eight it
+chooses among.
 
 A unit is a `struct Unit`: its HP, [PP](glossary.md#psynergy-and-pp), Attack,
 Defense, Agility and Luck, its statuses and the turns each has left, and for
@@ -109,9 +107,9 @@ for the battle from its row of the enemy table.
 An ability is a number, and three tables say what that number means: what the
 ability does (its targets, element, range, PP cost, power and added effect),
 which battle effect draws it and how strongly, and anything special about how
-it is staged. The rules and the picture are chosen separately, so abilities
-with different arithmetic can share one battle effect: Quake, Earthquake and
-Quake Sphere share one at three strengths.
+it is staged. The rules and the battle effect are chosen separately, so
+abilities with different arithmetic can share one battle effect: Quake,
+Earthquake and Quake Sphere share one at three strengths.
 
 A unit is read by `Unit_Get` (`src/game/game/units.c`); the ability tables
 are `src/game/ability_table.c` (`struct AbilityDefinition`, read by
@@ -156,22 +154,8 @@ flowchart TD
   class over out
 ```
 
-The loop in `Battle_Run`, simplified:
-
-```c
-for (;;) {                                     /* one turn */
-  actionCount = Battle_GatherActions(battle->actions);
-  for (i = 0; i < actionCount; i++) {          /* one action */
-    if (BattleStaging_DispatchAction(&battle->actions[i], ...) == 1)
-      goto fled;
-    if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
-      goto party_lost;
-    if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0)
-      goto won;
-  }
-  Battle_ProcessTurnEnd();
-}
-```
+One loop runs the turns and, inside it, one runs the actions, stopping at the
+first side beaten ([Battles](src/battle/README.md#turns) quotes it).
 
 An enemy chooses twice in a turn: a guard it picks while the commands are
 gathered is kept, so that its guard goes up with the party's, and anything
@@ -196,9 +180,7 @@ blow, so the action rolls them while it is built, before anything is drawn.
 
 The action is then handed to a runner for its staging: the attacker runs up
 and strikes, the caster raises a hand and glows in its element, a summon
-fades out the side it leaves alone, the user raises an item. Every runner
-adds the playback as a [task](glossary.md#task), calls the battle effect and
-waits for the playback to show every target.
+fades out the side it leaves alone, the user raises an item.
 [Battles](src/battle/README.md#building-an-action) takes the action apart,
 and [Staging an action](src/battle/README.md#staging-an-action) the runners.
 
@@ -206,10 +188,9 @@ and [Staging an action](src/battle/README.md#staging-an-action) the runners.
 
 ![Isaac casts Avalanche at Ivan, Garet and Mia: a wall of rock rises among them, and Ivan, the one aimed at, takes 203 damage, Garet beside him 160 and Mia 120.](https://alchemy.pascalpixel.com/abilities/avalanche.gif)
 
-The ability recordings are made from the battle test menu in the debug menus,
-with copies of the party's characters on the enemy side, placed as a link
-battle places them, and their HP raised so that every cast leaves them
-standing.
+In the ability recordings the party's own characters stand on the enemy side
+([Battle effects](src/battle_effect/README.md#evidence) says how they are
+made).
 
 When Avalanche hits three targets, the one aimed at takes the most and the
 ones beside it less, and a target weak to Venus takes more than one that
@@ -226,7 +207,7 @@ Avalanche's is 160.
   so 160 becomes 175.
 - The distance, counted in places along the target side's line: one place
   away keeps 80 percent and two places 60, so 175, 140 and 105.
-- The luck: a random 0 to 3 is added.
+- The roll: a random 0 to 3 is added.
 - The guard: a defending target takes half; one behind Total Defense or the
   Djinni Flash a tenth.
 
@@ -275,20 +256,10 @@ flowchart TD
   class effect,idle,resolve frame
 ```
 
-The staging runners that play a battle effect (`staging.c`) follow this
-pattern; `BattleStaging_RunPsynergyCast`, simplified:
-
-```c
-Task_Add(BattlePlayback_Run, TASK_PASS_FRAME); /* idle task */
-if (plan->battleEffect & EFFECT_BY_ID_RANGE)
-  BattleEffect_RunByIdRangeFar(&work.effect); /* the battle effect's loop */
-else
-  BattleEffect_RunFromTableFar(&work.effect);
-BattlePlayback_WaitForReady(); /* until every target has played */
-```
-
-The signal is `EFFECT_SHOW_DAMAGE`, and playback is in
-`src/battle/battle/playback.c`.
+Every staging runner that plays a battle effect (`staging.c`) follows this
+pattern: it adds the playback as a [task](glossary.md#task), calls the battle
+effect and waits for the playback to show every target. The signal is
+`EFFECT_SHOW_DAMAGE`, and playback is in `src/battle/battle/playback.c`.
 [Battles](src/battle/README.md#how-outcomes-reach-the-screen) takes one
 target's queue apart.
 
@@ -302,14 +273,9 @@ staging runner that called it waits for it to return. Most draw into the
 [canvas](src/battle_effect/README.md#the-canvas), a small picture kept off
 screen and shown stretched and blended over the battle.
 
-There are three ways in: the ordinary battle effects from one table
-(`BattleEffect_RunFromTable`), a range of numbered battle effects, which are
-the impacts of Djinn and weapon unleashes and the plain attacks' beams and
-critical hits (`BattleEffect_RunByIdRange`), and the summons'
-(`BattleEffect_RunSummon`). Each borrows three blocks of memory for the battle
-effect (its pictures, its working space and the canvas) and gives them back
-afterwards, so a battle effect removes any task that still reads them before
-it returns.
+A battle effect enters through one of three doors, each lending it the memory
+it draws in
+([Battle effects](src/battle_effect/README.md#the-three-doors-and-what-they-lend)).
 [Battle effects](src/battle_effect/README.md#how-an-ability-picks-its-effect)
 describes how the battle effect is chosen and how it draws.
 
@@ -317,12 +283,8 @@ describes how the battle effect is chosen and how it draws.
 
 ![A random battle in Goma Cave with its background layers and sprites pulled apart and spread one behind another, in the order the hardware stacks them.](https://alchemy.pascalpixel.com/guides/battle/layers-3d.gif)
 
-The battlefield is one flat picture of the place, 256 by 120 pixels, with its
-depth already painted in. Once a frame the camera's distance sets the
-hardware's zoom of it and the camera's turn its sideways scroll, while the
-windows stay flat in front. The units are [sprites](glossary.md#sprite-and-oam)
-over it, each placed from a position on the field, and the camera is a task
-that eases toward wherever the staging last pointed it.
+The battlefield is one flat picture zoomed by the camera, with the units as
+[sprites](glossary.md#sprite-and-oam) over it:
 
 | [Layer](glossary.md#background-layer) | What it holds |
 | --- | --- |
@@ -355,7 +317,7 @@ spoils and the way back.
 ![Isaac walks through Goma Cave until a random battle starts: the screen goes black, the battle opens on a Ghost and a Skeleton, the party beats them and takes its experience and coins, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/guides/overworld/battle-return.gif)
 
 The party walks through Goma Cave, a battle starts, the party wins, and the
-cave comes back. Each step is the work of the mechanisms above in order.
+cave comes back. Each moment is the work of the mechanisms above in order.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -387,7 +349,7 @@ screen and ends. The main routine clears the cave away and calls
 `Battle_Run` takes its heap slots, draws the formation into two enemies, a
 Ghost and a Skeleton, each with a unit of its own from `FIRST_ENEMY_UNIT` up,
 lists both sides, places every unit on the battlefield and rolls for a first
-strike. The curtain parts over 80 frames while the camera turns to face the
+strike. The curtain parts over 80 frames while the camera swings to face the
 party, `Ghost appeared!` and `Skeleton appeared!` are announced, and the
 command menu comes up.
 
@@ -411,7 +373,7 @@ places the saved actors where they stood.
 
 ### The same battle, mechanism by mechanism
 
-| Step                                   | Mechanism                                                  |
+| Moment                                 | Mechanism                                                  |
 | -------------------------------------- | ---------------------------------------------------------- |
 | The steps add up in the cave           | the field's random encounters, a request in the field's work |
 | The cave goes away                     | starting a battle: the field sequence ends, the main routine starts the battle sequence |
@@ -422,14 +384,6 @@ places the saved actors where they stood.
 | The cave comes back                    | starting a battle, the other way: the main routine reads the result |
 
 ## Design
-
-The rules and what is drawn are kept apart on purpose: the rules decide
-everything before or while the battle effect plays and leave only a list of
-what to show, and the battle effect decides only when the damage appears. So
-one set of arithmetic serves every battle effect, and a battle effect can be
-replaced without changing an outcome. For the same reason the rolls a picture
-must show (a miss, a critical hit, a double blow) are made when the action is
-built, and every other roll target by target as the blow lands.
 
 A battle is a sequence so that it can start from nothing: everything it needs
 arrives through the main routine's work, and everything it leaves behind goes

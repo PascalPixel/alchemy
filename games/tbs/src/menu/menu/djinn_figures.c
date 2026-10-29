@@ -120,10 +120,7 @@ void DjinnFigures_UpdateBottomRow(void) {
           (241u << 17) - ((u32)(s32)menu->verticalOrigins[objectIndex] << 16);
       s32 phase;
       s32 limit;
-      /* FAKEMATCH(pin): rowY fixed in r2, where the row's second read goes;
-       * as a plain s32, which takes r3 and costs limit its register, 81 of
-       * 119 instructions differ in tbs-en. */
-      register s32 rowY __asm__("r2");
+      s32 rowY;
 
       animation->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale
@@ -143,6 +140,10 @@ void DjinnFigures_UpdateBottomRow(void) {
           ((u32)(s32)menu->positionsY[objectIndex] << 16) + projectedY;
       placement.groundHeight = 0;
       rowY = menu->positionsY[objectIndex];
+      /* FAKEMATCH(barrier): an empty asm that clobbers r3 while rowY is live,
+       * so rowY takes r2 and limit keeps r3; as no asm, 39 of 119
+       * instructions differ in tbs-en. */
+      __asm__("" : : : "r3");
       limit = 0x8000;
       if (rowY >= 0)
         limit = 0x4000;

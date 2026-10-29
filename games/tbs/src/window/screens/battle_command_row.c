@@ -139,7 +139,6 @@ s32 BattleCommandRow_Run(s32 mode) {
       work->holdTilemapUpload = 1;
       if (mode != COMMAND_ROW_PARTY) {
         s32 panel;
-        s32 count;
         for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
@@ -149,34 +148,24 @@ s32 BattleCommandRow_Run(s32 mode) {
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
-          count = selectionUi->iconCount;
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              s32 tmp;
               // VRAM through a volatile pointer: a plain one moves the address
               // adds (18 of 1037 instructions differ in tbs-en).
-              /* FAKEMATCH(temporary): vram, offset and mask keep the row
-               * loop's index and tile pattern; as constants in place, 6 of
-               * 1037 instructions differ in tbs-en. */
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
-              s32 offset = 0x100;
-              s32 mask = 3;
-              /* FAKEMATCH(temporary): tmp, set twice, is no induction variable,
-               * so the tile is recomputed in the column loop; as the two values
-               * in place, 128 of 1037 instructions differ in tbs-en. */
-              vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
-                  tmp = panel * 16 + entryIndex * 4 + col + offset;
-              tmp = col & mask;
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + tmp -
-                count * 3 + WINDOW_X) = 0;
+
+              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+                   selectionUi->iconCount * 3] =
+                  panel * 16 + entryIndex * 4 + col + 0x100;
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
+                selectionUi->iconCount * 3 + WINDOW_X) = 0;
             }
           }
         }
       } else {
         s32 panel;
-        s32 count;
         for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
@@ -186,33 +175,19 @@ s32 BattleCommandRow_Run(s32 mode) {
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
-          /* FAKEMATCH(one-pass): the exit test compares count instead of
-           * reloading work->count; as no block, 99 of 1037 instructions
-           * differ in tbs-en. */
-          do {
-          } while (0);
-          count = selectionUi->iconCount;
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              s32 tmp;
               // VRAM through a volatile pointer, as in the party member's row
               // (19 of 1037 instructions differ with a plain one).
-              /* FAKEMATCH(temporary): vram, offset and mask, as in the party
-               * member's row; as constants in place, 6 of 1037 instructions
-               * differ in tbs-en. */
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
-              s32 offset = 0x100;
-              s32 mask = 3;
-              /* FAKEMATCH(temporary): tmp, as in the party member's row; as the
-               * two values in place, 129 of 1037 instructions differ in tbs-en.
-               */
-              vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
-                  tmp = panel * 16 + entryIndex * 4 + col + offset;
-              tmp = col & mask;
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + tmp -
-                count * 3 + 20) = 0;
+
+              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+                   selectionUi->iconCount * 3] =
+                  panel * 16 + entryIndex * 4 + col + 0x100;
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
+                selectionUi->iconCount * 3 + 20) = 0;
             }
           }
         }

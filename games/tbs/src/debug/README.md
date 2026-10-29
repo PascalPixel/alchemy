@@ -4,9 +4,10 @@
 
 The cartridge still holds ten [scenes](../../glossary.md#scene) the
 developers used to test the game, and the small window they used to reach
-any scene at all. No door leads into them: the only way in is the debug
-scene selector, which the field opens in debug mode, and the released game
-starts with debug mode off. The ten are eight test scenes that hand out
+any scene at all. The only way in is the debug scene selector, which the
+field opens in debug mode, a switch in memory that start-up turns off, so
+the released game starts with it off. The ten are eight test scenes that
+hand out
 [Djinn](../../glossary.md#djinn), one for raising levels and browsing items,
 icons, portraits and abilities, and one of shop and message tests. They
 come from three ordinary scene [overlays](../../glossary.md#overlay), each
@@ -54,7 +55,8 @@ Leaving through the selector is the same handover as walking through a
 door. The selector writes the chosen scene and entrance as what runs next
 and raises an exit request that keeps that destination; the
 [field sequence](../../glossary.md#field-sequence) ends the scene, and the
-main routine starts the chosen one, unpacking its overlay as it would for
+[main routine](../../glossary.md#main-routine) starts the chosen one,
+unpacking its overlay as it would for
 any door ([Scenes](../scene/README.md#exits)). The field opens the selector
 only in debug mode, when the [Pause menu](../window/README.md#the-pause-menu)
 is opened with B held; in the same mode the field menu opened with B and
@@ -78,7 +80,7 @@ for a far call as `DebugBattle_RunMenuFar`, which nothing calls.
 | --- | --- | --- |
 | the scene number | 0 to 200 | a row of `gScenes`; Right past 200 wraps to 0 |
 | the entrance number | 0 to 99 | the entrance the scene starts at; Right past 99 wraps to 0 |
-| R and L on the scene | ten rows | and the entrance goes back to 0 |
+| R and L on the scene | ten rows | steps the scene by ten and sets the entrance back to 0 |
 
 ### Why debug mode stays off
 
@@ -258,10 +260,8 @@ again.
 
 The debug scenes are ordinary overlays reached through the ordinary
 destination, a scene and an entrance, so testing needs no separate code
-path. That works because every scene starts cold: before each one the main
-routine drops the tasks and interrupt handlers and empties the heap, and
-the scene's setup runs again, so any scene can be entered directly, from
-the selector as from a door.
+path; that works because
+[every sequence starts fresh](../../README.md#why-every-sequence-starts-fresh).
 
 ## How it fits with the rest of the game
 

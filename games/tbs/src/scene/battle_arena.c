@@ -863,10 +863,11 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   s32 receiveFirst;
 
   result = 0;
-  /* FAKEMATCH(barrier): an empty asm after result's zero, which loads it
-   * into r6 ahead of the call as the ROM does; as a plain statement, 4 of 63
-   * instructions differ in tbs-en. */
-  __asm__("");
+  /* FAKEMATCH(one-pass): an empty once-only loop after result's zero, which
+   * loads it into r6 ahead of the call as the ROM does; as a plain statement, 4
+   * of 63 instructions differ in tbs-en. */
+  do {
+  } while (0);
   receiveFirst = GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD);
   gLinkExchangeState = result;
   // Every failure reaches the one reset: as nested ifs before a single

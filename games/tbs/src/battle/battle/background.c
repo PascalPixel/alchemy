@@ -37,9 +37,7 @@
 /// level (0 for none).
 /// Called by BattleBackground_RestorePalette with 0, and by battle effects
 /// that dim the background (beams.c, canvas.c). Sets BattleWork.brightness when
-/// it darkens. Interrupts are off while it writes: REG_IME is given its own
-/// address, whose bit 0 is clear, as irq_lock.h's IME_DISABLE does, and is
-/// restored after.
+/// it darkens. Interrupts are off while it writes.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
@@ -49,18 +47,14 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
    * tbs-en. */
   u32 *savedInterruptEnable = &ime;
 
-  /* FAKEMATCH(one-pass): the IME save in a one-pass block and a loop on a zero
-   * local, which keep it in its pointer's register; as a plain block, 4 of 43
-   * instructions differ in tbs-en. */
-  do {
-    u16 *interruptEnable = (u16 *)&REG_IME;
-    s32 once = 0;
-
-    do {
-      *savedInterruptEnable = *interruptEnable;
-      *interruptEnable = (u32)interruptEnable;
-    } while (once);
-  } while (0);
+  /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge that the
+   * pointer is the stack slot's address, so the save stores through r6;
+   * without them, 2 of 43 instructions differ in tbs-en. */
+  if (palette) {
+    savedInterruptEnable++;
+    savedInterruptEnable--;
+  }
+  IRQ_LOCK(*savedInterruptEnable);
 
   if (level == 0) {
     Dma_Set(palette, BATTLE_BG_PALETTE, DMA_COPY_HALFWORDS(128), REG_DMA3);

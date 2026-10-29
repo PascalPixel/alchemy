@@ -948,6 +948,8 @@ two moments: when a unit's action ends, and when the whole turn ends.
 
 ### The end of an action
 
+![Isaac summons Venus at two Gryphons, and as his action ends `Isaac's Earth Power rises by 10!` over a pillar of earth, `The poison does 61 damage to Isaac!`, and `The Grim Reaper calls out to Isaac!` before `Isaac goes down...`.](https://alchemy.pascalpixel.com/guides/battle/action-end.gif)
+
 When a unit's action has played, `BattleUnit_ProcessActionEnd` settles what
 the action leaves behind. The Djinn the unit unleashed come off its set; the
 Djinn a summon used start to recover, one a turn, the first in two turns; and
@@ -960,6 +962,8 @@ poison a fifth), and the Grim Reaper's countdown, which at 0 takes the unit,
 playback queue.
 
 ### The end of a turn
+
+![Isaac and Garet defend, and as the turn ends Flint, the Djinni Isaac's summon used, is set to him again in a burst of earth, `Flint is set to Isaac!`, then `Isaac sees clearly once again!`, and the next turn's command menu opens.](https://alchemy.pascalpixel.com/guides/battle/turn-end.gif)
 
 When every action has played, `Battle_ProcessTurnEnd` goes through the Djinn
 and then every unit, the party's first. A Djinni whose recovery has run out
@@ -1001,6 +1005,8 @@ of battle goes back to normal, and the battle's tasks and work are released.
 
 ### The spoils
 
+![In Goma Cave Isaac and Garet attack a sleeping Skeleton until `Ghost's party goes down!`; then `You got 19 experience points.`, `Isaac is now a level 6 Squire!`, `Mastered the Squire's Spire!`, each stat that rose from `Maximum HP rises by 8!` to `Agility rises by 4!`, and `You got 20 coins.`](https://alchemy.pascalpixel.com/guides/game/level-up.gif)
+
 A win is named after the first enemy to fall, `<enemy> has been downed!` or
 `<enemy>'s party goes down!`, to the victory music; then
 `Battle_AwardSpoils` hands out what the fallen enemies left. The spoils
@@ -1017,6 +1023,8 @@ A loss plays the defeat music and `<leader>'s party has been defeated!`; a
 flight only fades to black.
 
 ### Back to the field
+
+![In Goma Cave, with the party at 1 HP, the enemies down Garet and then Ivan, `Isaac's party has been defeated!`; the screen fades to black and Isaac stands in Vault's Sanctum, the restart point.](https://alchemy.pascalpixel.com/guides/battle/lost.gif)
 
 The [main routine](../../glossary.md#main-routine) reads the result
 (`Scene_ReturnFromSequence`,

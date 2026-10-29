@@ -426,7 +426,7 @@ up, so the Psynergy screen shows it as it is.
 
 ## Levels and experience
 
-![In Goma Cave, Ivan's Magic Rod unleashes Murk on a Skeleton, Isaac and Garet attack it, and after `Ghost's party goes down!` the party takes its 19 experience points and 20 coins.](https://alchemy.pascalpixel.com/guides/battle/won.gif)
+![In Goma Cave Isaac and Garet attack a sleeping Skeleton until `Ghost's party goes down!`; then `You got 19 experience points.`, `Isaac is now a level 6 Squire!`, `Mastered the Squire's Spire!`, each stat that rose from `Maximum HP rises by 8!` to `Agility rises by 4!`, and `You got 20 coins.`](https://alchemy.pascalpixel.com/guides/game/level-up.gif)
 
 A battle's spoils add experience to each party member, and a level is
 reached when the experience passes the next level's threshold; every level

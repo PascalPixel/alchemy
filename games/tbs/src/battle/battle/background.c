@@ -46,19 +46,18 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   u32 ime;
   u32 *savedInterruptEnable = &ime;
 
-  /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table, so the save
-   * stays a store through savedInterruptEnable's register rather than to ime's
-   * stack slot; as no asm, 4 of 43 instructions differ in tbs-en. */
-  __asm__ volatile("" ::);
-  {
+  /* FAKEMATCH(one-pass): the IME save in a one-pass block and a loop on a zero
+   * local, which keep it in its pointer's register; as a plain block, 4 of 43
+   * instructions differ in tbs-en. */
+  do {
     u16 *interruptEnable = (u16 *)&REG_IME;
+    s32 once = 0;
 
-    *savedInterruptEnable = *interruptEnable;
-    /* FAKEMATCH(barrier): ends sched2's region, so the save is stored before
-     * IME is written; as no asm, 1 of 43 instructions differ in tbs-en. */
-    __asm__ volatile("" ::);
-    *interruptEnable = (u32)interruptEnable;
-  }
+    do {
+      *savedInterruptEnable = *interruptEnable;
+      *interruptEnable = (u32)interruptEnable;
+    } while (once);
+  } while (0);
 
   if (level == 0) {
     Dma_Set(palette, BATTLE_BG_PALETTE, DMA_COPY_HALFWORDS(128), REG_DMA3);

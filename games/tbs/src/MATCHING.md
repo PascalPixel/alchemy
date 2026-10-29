@@ -69,31 +69,43 @@ that lets a frame pass:
 base -= *(volatile u32 *)size;
 ```
 
-The kind says which device it is:
+The kind says which device it is. The kinds run from worst to mildest: first
+what the compiler doesn't promise, then what isn't C at all, then C that
+misstates what the program does, and last forms its programmer might have
+written. A device may be replaced only by milder ones, as many as it takes.
 
+- `pin` is a variable fixed to a register. GCC promises that register only to
+  an `asm` statement's operands; anywhere else it is a hint, so a match
+  through it holds by chance and can break when unrelated code changes.
+- `signature` is a function declared with a return or parameter type it
+  doesn't have, such as a `void` function typed `int`. Calling a function
+  through a type it doesn't have is undefined in C, and every caller reads a
+  false interface.
+- `barrier` is an empty `asm`. It emits nothing, but counts as four bytes when
+  the compiler places literal pools, the blocks of constants it puts among a
+  function's code for the function to load, and nothing moves across it. It
+  isn't C, no game's source would hold one, and GCC promises no order even
+  for an `asm` marked volatile.
+- `one-pass` is a block or loop that runs once (`do { } while (0)`). GCC
+  marks every C loop with internal loop notes, and those notes end the
+  stretch in which its common subexpression pass (CSE) reuses values it has
+  already computed, and stop its scheduler moving instructions across them.
+  It is plain C, and the usual shape of a macro that holds statements, so the
+  original may have had one; written out, though, it fakes a loop.
+- `volatile` is a qualifier that forces a load or store to stay where it's
+  written, though nothing else touches the data. One that is part of a
+  macro's own form, such as the fill word of `Dma_Fill32`, is no device. Nor
+  is one on memory an interrupt handler shares with the code it interrupts,
+  such as `gVBlankDone` and `gFrameCount` (`include/system/frame.h`): there
+  the C needs it to be correct.
 - `wrapper` is a call made through a helper, a cast or a library routine in
   place of the plain call or operator. Calling a declared function through a
   cast to another function type is a `wrapper`, with the declared call behind
   `UBFIX`. Calling code that has no declared function type at all, such as
   code copied into RAM, is not (see Calls below).
-- `volatile` is a qualifier that forces a load or store to stay where it's
-  written. One that is part of a macro's own form, such as the fill word of
-  `Dma_Fill32`, is no device. Nor is one on memory an interrupt handler
-  shares with the code it interrupts, such as `gVBlankDone` and `gFrameCount`
-  (`include/system/frame.h`): there the C needs it to be correct.
 - `temporary` is a variable holding a value the plain form wouldn't name.
 - `dead` is code that emits nothing and only changes which registers the
   compiler picks or the order of the instructions.
-- `one-pass` is a block or loop that runs once (`do { } while (0)`). GCC
-  marks every C loop with internal loop notes, and those notes end the
-  stretch in which its common subexpression pass (CSE) reuses values it has
-  already computed, and stop its scheduler moving instructions across them.
-- `barrier` is an empty `asm`. It emits nothing, but counts as four bytes when
-  the compiler places literal pools, the blocks of constants it puts among a
-  function's code for the function to load.
-- `pin` is a variable fixed to a register.
-- `signature` is a function declared with a return or parameter type it
-  doesn't have, such as a `void` function typed `int`.
 
 A device is the last resort, used only after reshaping the code has failed.
 Taking one out again is part of humanizing, the project's second stage after

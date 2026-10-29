@@ -185,7 +185,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
   s32 completed = 0;
   /* FAKEMATCH(dead): partyMode set to 0 before the party branch sets it from
    * completed, so cse2 keeps that a copy of completed's register (mov r2,
-   * r7); as one set, 1 of 105 instructions differ in tbs-en. */
+   * r7); as one set, 2 of 105 instructions differ in tbs-en. */
   s32 partyMode = 0;
 
   view->targetYaw = YAW_PARTY_ACTION;

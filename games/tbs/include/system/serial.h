@@ -201,11 +201,11 @@ static __inline__ void Serial_ResetTransferState(void) {
   IME_SAVE(ime, saved);
   IME_DISABLE(ime);
   zero = 0;
-  /* FAKEMATCH(dead): state set again; as the one assignment above, 8 of 62
+  /* FAKEMATCH(dead): state set again; as the one assignment above, 14 of 62
    * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
   state = &gSerialTransfer;
   /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table, so the
-   * stores take zero's register rather than the constant; as no asm, 13 of 62
+   * stores take zero's register rather than the constant; as no asm, 29 of 62
    * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
   __asm__ volatile("" ::);
   state->status = SERIAL_STATUS_RUNNING;

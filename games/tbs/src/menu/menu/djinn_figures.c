@@ -141,7 +141,7 @@ void DjinnFigures_UpdateBottomRow(void) {
       placement.groundHeight = 0;
       rowY = menu->positionsY[objectIndex];
       /* FAKEMATCH(barrier): an empty asm that clobbers r3 while rowY is live,
-       * so rowY takes r2 and limit keeps r3; as no asm, 39 of 119
+       * so rowY takes r2 and limit keeps r3; as no asm, 81 of 119
        * instructions differ in tbs-en. */
       __asm__("" : : : "r3");
       limit = 0x8000;

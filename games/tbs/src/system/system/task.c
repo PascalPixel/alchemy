@@ -146,12 +146,14 @@ s32 Task_Add(TaskFunc func, s32 order) {
     }
   }
   Task_Sort();
-  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
-   * apart from the code before it; as IRQ_UNLOCK(savedInterruptState) alone, 2
-   * of 61 instructions differ in tbs-en. */
-  do {
+  /* FAKEMATCH(dead): the restore in both arms of a test, which keeps it
+   * apart from the code before it until jump2 merges the arms; as
+   * IRQ_UNLOCK(savedInterruptState) alone, 2 of 61 instructions differ in
+   * tbs-en. */
+  if ((s32)index < 0)
     IRQ_UNLOCK(savedInterruptState);
-  } while (0);
+  else
+    IRQ_UNLOCK(savedInterruptState);
   return index;
 }
 
@@ -245,12 +247,14 @@ s32 Task_SuspendOverlayTasks(void) {
       result = i;
     }
   }
-  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
-   * apart from the code before it; as IRQ_UNLOCK(savedInterruptMaster) alone, 2
-   * of 33 instructions differ in tbs-en. */
-  do {
+  /* FAKEMATCH(dead): the restore in both arms of a test, which keeps it
+   * apart from the code before it until jump2 merges the arms; as
+   * IRQ_UNLOCK(savedInterruptMaster) alone, 2 of 33 instructions differ in
+   * tbs-en. */
+  if ((s32)result < 0)
     IRQ_UNLOCK(savedInterruptMaster);
-  } while (0);
+  else
+    IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 
@@ -274,12 +278,14 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
       break;
     }
   }
-  /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it
-   * apart from the code before it; as IRQ_UNLOCK(savedInterruptMaster) alone, 2
-   * of 30 instructions differ in tbs-en. */
-  do {
+  /* FAKEMATCH(dead): the restore in both arms of a test, which keeps it
+   * apart from the code before it until jump2 merges the arms; as
+   * IRQ_UNLOCK(savedInterruptMaster) alone, 2 of 30 instructions differ in
+   * tbs-en. */
+  if ((s32)result < 0)
     IRQ_UNLOCK(savedInterruptMaster);
-  } while (0);
+  else
+    IRQ_UNLOCK(savedInterruptMaster);
   return result;
 }
 

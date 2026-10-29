@@ -437,19 +437,6 @@ static void ValePlaza_UpdateShowingStrongmanPsynergy(void);
 static void ValePlaza_UpdateSmallRockPalette(void);
 static void ValePlaza_SetProgressFlagsAndExit(void);
 
-#ifdef UBFIX
-#define VALE_PLAZA_TURN_AND_WAIT ValePlaza_FaceDirectionAndWait
-#else
-static inline s32 ValePlaza_TurnAndWaitValue(s32 actorId, s32 facing,
-                                             s32 frames) {
-  /* FAKEMATCH(wrapper): a forwarding inline that calls
-   * ValePlaza_FaceDirectionAndWait as returning a value; as a direct call in
-   * ValePlaza_SentToAidElders, 15 of 455 instructions differ in tbs-en. */
-  return ((s32 (*)())ValePlaza_FaceDirectionAndWait)(actorId, facing, frames);
-}
-#define VALE_PLAZA_TURN_AND_WAIT ValePlaza_TurnAndWaitValue
-#endif
-
 #include "shared/actor_facing.h"
 
 const struct SceneEntrance *ValePlaza_GetEntrances(void) {
@@ -1192,18 +1179,20 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_FaceDirection(ACTOR_STORM_JENNA, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTHEAST, 10);
-    FieldCamera_SetSpeedParameters(PIXELS(6) / 5, PIXELS(3) / 20);
+    // Through event.h: called directly, the speeds' copies lengthen
+    // speechFlags' life and swap r5 and r6 below.
+    FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
     FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(758), 1);
     FieldCamera_WaitForArrival();
-    FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+    FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
     FieldCamera_MoveTo(PIXELS(205), -1, PIXELS(778), 1);
     // He hops down to them; asked about his Psynergy, he has enough to save
     // Felix, thanks to the Psynergy Stone.
     Actor_SetScript(ACTOR_STORM_CHARGED_UP_STRONGMAN,
                     gValePlaza_ChargedUpStrongmanActions);
     Actor_RefreshSelectorById(ACTOR_STORM_CHARGED_UP_STRONGMAN);
-    VALE_PLAZA_TURN_AND_WAIT(ACTOR_STORM_CHARGED_UP_STRONGMAN, FACING_SOUTHEAST,
-                             60);
+    ValePlaza_FaceDirectionAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN,
+                                   FACING_SOUTHEAST, 60);
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
     ValePlaza_SayThenWait(ACTOR_STORM_GARETS_GRANDFATHER, 10);
     Actor_SetAnimationAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN, ANIM_NOD);

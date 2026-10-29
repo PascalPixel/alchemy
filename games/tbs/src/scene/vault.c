@@ -1110,16 +1110,13 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   }
   // Install the custom motion and share the anchor's drawing priority.
   {
-    void (*update)(struct Actor *) = Vault_UpdateDriftingEffect;
-    u8 *spriteFlags;
+    u8 *spriteFlags = &sprite->flags;
 
-    /* FAKEMATCH(one-pass): the block takes the flags address before the update
-     * store; as sprite->flags = 0 after it, 1 of 141 instructions differ in
-     * tbs-en. */
-    do {
-      spriteFlags = &sprite->flags;
-    } while (0);
-    effect->update = update;
+    effect->update = Vault_UpdateDriftingEffect;
+    /* FAKEMATCH(barrier): an empty asm between the two stores, which takes
+     * the flags address before the update store; as sprite->flags = 0 after
+     * it, 1 of 141 instructions differ in tbs-en. */
+    __asm__("");
     *spriteFlags = 0;
   }
   sprite->image.priority = anchor->sprite->image.priority;

@@ -20,25 +20,33 @@
 /// were. It draws four random numbers a frame, which only advances the
 /// random number generator. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
-   * stored and loaded again as in the ROM; without volatile, 28 of 90
-   * instructions differ in tbs-en. */
-  volatile u16 bg0cnt;
-  volatile u16 bg1cnt;
-  volatile u16 bg2cnt;
-  volatile u16 bg3cnt;
+  /* FAKEMATCH(temporary): the four saved BGxCNT values written and read
+   * through pointers to them, which keeps each on the stack as in the ROM; as
+   * plain locals, 34 of 90 instructions differ in tbs-en. */
+  u16 bg0cnt;
+  u16 bg1cnt;
+  u16 bg2cnt;
+  u16 bg3cnt;
+  u16 *saved0;
+  u16 *saved1;
+  u16 *saved2;
+  u16 *saved3;
   s32 mosaicSize;
   volatile u16 *registerCursor;
 
-  bg0cnt = REG_BG0CNT;
-  REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
+  saved0 = &bg0cnt;
+  *saved0 = REG_BG0CNT;
+  REG_BG0CNT = *saved0 | BGCNT_MOSAIC;
   registerCursor = &REG_BG0CNT;
-  bg1cnt = *++registerCursor;
-  *registerCursor = bg1cnt | BGCNT_MOSAIC;
-  bg2cnt = *++registerCursor;
-  *registerCursor = bg2cnt | BGCNT_MOSAIC;
-  bg3cnt = *++registerCursor;
-  *registerCursor = bg3cnt | BGCNT_MOSAIC;
+  saved1 = &bg1cnt;
+  *saved1 = *++registerCursor;
+  *registerCursor = *saved1 | BGCNT_MOSAIC;
+  saved2 = &bg2cnt;
+  *saved2 = *++registerCursor;
+  *registerCursor = *saved2 | BGCNT_MOSAIC;
+  saved3 = &bg3cnt;
+  *saved3 = *++registerCursor;
+  *registerCursor = *saved3 | BGCNT_MOSAIC;
   // 0x21 halfwords on from REG_BG3CNT is REG_BLDCNT.
   registerCursor += 0x21;
   *registerCursor = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
@@ -59,10 +67,10 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   REG_DISPCNT = DISPCNT_MODE_1;
   wait(4);
   registerCursor = &REG_BG0CNT;
-  *registerCursor++ = bg0cnt;
-  *registerCursor++ = bg1cnt;
-  *registerCursor++ = bg2cnt;
-  *registerCursor = bg3cnt;
+  *registerCursor++ = *saved0;
+  *registerCursor++ = *saved1;
+  *registerCursor++ = *saved2;
+  *registerCursor = *saved3;
   return 0;
 }
 

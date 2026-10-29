@@ -42,6 +42,22 @@ the first letter appears. Doing the slow work once, ahead of time, leaves each
 frame's typing cheap. The letters then appear a few at a time, with the
 speaker's voice blip, and each page break waits for a button.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  stored(["Compressed text on the cartridge"]) --> unpacked(["Unpacked in full, blanks filled in"])
+  unpacked --> typed(["Typed a few letters a frame"])
+  typed --> page{"Page break"}
+  page -- "button" --> typed
+  page -- "button on the last page" --> closed(["Window closes"])
+  classDef cart fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef work fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef wait fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class stored cart
+  class unpacked,typed,closed work
+  class page wait
+```
+
 `Message_OpenWindow` does all of it for one message. The text itself is in
 `games/tbs/text`, one PO catalog per language, and code refers to a message by
 its linker symbol, such as `MsgGameSaved`.

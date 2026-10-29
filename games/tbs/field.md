@@ -36,6 +36,23 @@ like this door, simply ends the scene. A random battle is a way out too: the
 battle runs as the next [sequence](glossary.md#sequence), and then the scene
 loads again with its actors put back.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  walk(["wait(1): one frame of walking"]) --> any{"A request set?"}
+  any -- no --> walk
+  any -- yes --> first(["The first one set, in order: leave, a raised trigger, a battle, a step, A, the menu, a talk, a search, Psynergy, an item"])
+  first --> handle(["Dealt with: an event, a battle, a menu"])
+  handle --> any
+  first -- "leave or a battle" --> ends(["The scene ends: the main routine starts what is next"])
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class walk,handle frame
+  class any,first request
+  class ends mainRoutine
+```
+
 `Scene_Arrive` clears the last scene's flags, `FieldSequence_Run` runs the
 scene and `struct FieldWork` holds the requests, which
 [Field code](src/field/README.md#the-field-sequence-serves-requests) lists in

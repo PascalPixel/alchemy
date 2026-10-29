@@ -170,6 +170,21 @@ calls. A direct call cannot reach the cartridge from the overlay area, so the
 scene calls through its entry, which leads to the function's veneer in its
 bank's table. An overlay therefore depends only on each bank's table, which
 keeps its order, and not on where the function itself lies.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  scene(["A scene's code, in the overlay area"]) --> import(["Its import table entry"])
+  import --> veneer(["The function's veneer, in its bank's table"])
+  veneer --> function(["The function, in its bank of the main image"])
+  classDef overlay fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef table fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef image fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class scene overlay
+  class import,veneer table
+  class function image
+```
+
 [System code](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
 describes both tables.
 

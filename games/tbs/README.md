@@ -1,5 +1,7 @@
 # The Broken Seal
 
+![The Title: clouds and the mountain scroll past the sun and its lens flares, and the Golden Sun title card settles over them](https://alchemy.pascalpixel.com/story/title.gif)
+
 In Japan, Golden Sun carries the subtitle 開かれし封印, The Broken Seal. These
 pages call the game by that subtitle, to keep it apart from
 [The Lost Age](glossary.md#the-two-games).
@@ -57,8 +59,26 @@ Every sequence is straight-line code: it does one thing, then the next, and
 where time must pass it calls [`wait(n)`](glossary.md#wait), which returns to
 the next line once n [frames](glossary.md#frame) have gone by. A frame is one
 picture: the game prepares it, then waits for the screen to show it at the
-next [VBlank](glossary.md#vblank), about 60 times a second. Simplified, from
-[frame.c](src/system/system/frame.c):
+next [VBlank](glossary.md#vblank), about 60 times a second.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  call(["Code calls wait(n)"]) --> tasks(["Every task, once"])
+  tasks --> sprites(["This frame's sprites"])
+  sprites --> halt(["Halt until the VBlank"])
+  halt --> vblank(["VBlank interrupt: the picture shown, sound mixed, buttons read"])
+  vblank -- "frames left" --> tasks
+  vblank -- "n frames gone" --> back(["Back to the next line"])
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class call,back code
+  class tasks,sprites,halt frame
+  class vblank hardware
+```
+
+Simplified, from [frame.c](src/system/system/frame.c):
 
 ```c
 void wait(s32 frames) {
@@ -91,6 +111,24 @@ loft, where a villager lies tied up. All of it happens in one scene,
 `SceneId_LogRoomsA`: a single map holding every room inside Vault's buildings,
 all of them walled in logs, each room reached by its own entrance
 ([log_rooms_a.c](src/scene/log_rooms_a.c)).
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  press(["A pressed: a request noted"]) --> row(["The trigger row names the event"])
+  row --> event(["The event runs, then asks for a battle"])
+  event --> leave(["The field sequence ends: next is the battle"])
+  leave --> main1(["Main routine"])
+  main1 --> battle(["Battle sequence"])
+  battle --> main2(["Main routine"])
+  main2 --> loft(["Field sequence: the loft, at the win or loss entrance"])
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class main1,main2 mainRoutine
+  class row,event,leave,battle,loft sequence
+  class press request
+```
 
 ### Talking to the villager
 

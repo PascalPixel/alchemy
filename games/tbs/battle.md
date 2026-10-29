@@ -83,8 +83,27 @@ The party's actions come from the command menu, the enemies' from each
 enemy's habits. They are sorted by Agility, except that the Djinn Granite,
 Flash and Ground go before everyone. Then each action is announced,
 [staged](glossary.md#staging) and drawn, and its targets take its effect;
-when every action has played, the turn ends with statuses counting down. The
-loop in `Battle_Run`, simplified:
+when every action has played, the turn ends with statuses counting down.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  choose(["The party's commands and the enemies' choices"]) --> sort(["Sorted by Agility"])
+  sort --> play(["The next action: announced, staged and drawn, its effect taken"])
+  play --> beaten{"A side beaten, or the party fled?"}
+  beaten -- yes --> over(["The battle ends"])
+  beaten -- "no, actions left" --> play
+  beaten -- "no, all played" --> turnEnd(["Turn end: statuses count down"])
+  turnEnd --> choose
+  classDef turn fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef check fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef out fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class choose,sort,play,turnEnd turn
+  class beaten check
+  class over out
+```
+
+The loop in `Battle_Run`, simplified:
 
 ```c
 for (;;) {                                     /* one turn */

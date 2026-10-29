@@ -430,8 +430,16 @@ $(LIBGCC_WORK)/_lshrdi3.o: alchemy-gcc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 tools:
 	$(MAKE) -f tools/Makefile
 
-test: tools format-check
+test: tools format-check pin-check
 	$(MAKE) -f tools/Makefile test
+
+# ☀️ takes no register pins (AGENTS.md S2): only the proven CAMELOT_ASM
+# helpers, Dma_Set and MulQ16, fix a variable to a register.
+.PHONY: pin-check
+pin-check:
+	@if git grep -n -E 'FAKEMATCH\(pin\)|register[^;]*(__asm__|asm) *\(' -- 'games/tbs/*.c' 'games/tbs/*.h' \
+	    ':!games/tbs/include/system/dma.h' ':!games/tbs/include/system/iwram_call.h'; then \
+	  echo "pin-check: The Broken Seal takes no register pins (AGENTS.md S2)" >&2; exit 1; fi
 
 # ☀️'s C is as clang-format writes it (AGENTS.md S3), and so is the C ⚓️ took
 # from it: the headers in include's folders, the sound library, the save code

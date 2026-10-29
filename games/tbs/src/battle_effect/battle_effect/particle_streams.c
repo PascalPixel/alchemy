@@ -325,20 +325,24 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     frame = 0;
     do {
       s32 angle = frame << 8;
-      /* FAKEMATCH(pin): count in r2, so the division's +3 works on its copy in
-       * r3; as a plain local, 74 of 1532 instructions differ in tbs-en. */
-      register s32 count __asm__("r2") = work->frame;
+      s32 count = work->frame;
       u8 *sheet = work->sheet;
-      s32 heat = count / 4;
+      s32 dividend;
+      s32 heat;
       u16 *line;
       s32 size;
       s32 x;
       s32 y;
 
-      /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering
-       * r1, so count outlives its r3 copy and sheet takes r0; as line = (u16 *)
+      /* FAKEMATCH(barrier): the dividend an empty asm's copy of count, which
+       * CSE cannot trace, so the division tests and biases the copy; as heat =
+       * count / 4, 4 of 1532 instructions differ in tbs-en. */
+      __asm__("" : "=r"(dividend) : "0"(count));
+      heat = dividend / 4;
+      /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering r1
+       * and r3, so count keeps r2 and sheet takes r0; as line = (u16 *)
        * (work->sheet + 0x1f80), 69 of 1532 instructions differ in tbs-en. */
-      __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1");
+      __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1", "r3");
       line = (u16 *)(sheet + 0x1f80);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)

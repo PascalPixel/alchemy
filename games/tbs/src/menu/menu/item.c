@@ -175,11 +175,10 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 #define ITEM_IWRAM_COPY_WORDS                                                  \
   ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
-/// Copies size bytes as Iwram_CopyWords does, reaching the routine from
-/// IwramIrqMain. The trade's unit copies use it.
+/// Copies size bytes as Iwram_CopyWords does, for the trade's unit copies.
 static __inline__ s32 Item_CopyWords(void *dst, const void *src, s32 size) {
-  /* FAKEMATCH(wrapper): a private copy of Iwram_CopyWords reaching the routine
-   * from IwramIrqMain; through Iwram_CopyWords, 2 of 1268 instructions of
+  /* FAKEMATCH(wrapper): the copies reach the routine from IwramIrqMain
+   * through this inline; as Iwram_CopyWords calls, 2 of 1268 instructions of
    * ItemMenu_RunCommands differ in tbs-en. */
   return ITEM_IWRAM_COPY_WORDS(dst, src, size);
 }

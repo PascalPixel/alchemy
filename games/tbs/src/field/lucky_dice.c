@@ -367,6 +367,7 @@ void LuckyDice_Run(void) {
   Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT, DMA_COPY_WORDS(128),
           REG_DMA3);
   resourceAddress += 128 * 4;
+  // The wrapper above.
   FieldDecompress_TaggedLz((const void *)resourceAddress,
                            Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),

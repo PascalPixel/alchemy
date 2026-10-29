@@ -13,9 +13,9 @@
 /// stub. Main-image code calls the routines as ordinary functions; only the
 /// shared scene/shared/scroll_initialize_hblank_dma.h, which
 /// field/event_commands.c includes as lemurian_ship.c does, reaches the
-/// layer there, and LuckyDice_Run's two decodes, where the use is a tagged
-/// wrapper. event_inline.h includes this layer; rooms without the event
-/// command layer use it directly.
+/// layer there, as LuckyDice_Run's two decodes do through a tagged wrapper.
+/// event_inline.h includes this layer; rooms without the event command layer
+/// use it directly.
 
 // Passing arguments through inline parameters rematerializes constants at each
 // call.

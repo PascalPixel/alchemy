@@ -291,8 +291,8 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   through `Item_CopyWords` (tagged), the same inline reaching the routine
   from `IwramIrqMain` rather than at its constant address. An inline call's
   argument is a pseudo of its own, so a flag number used twice is loaded
-  twice; called directly, the number is kept in a callee-saved register (Bilibin's chef,
-  `CottageRoomsC_TalkToBusyChef`).
+  twice; called directly, the number is kept in a callee-saved register
+  (Bilibin's chef, `CottageRoomsC_TalkToBusyChef`).
 - Some calls compile only against an old-style declaration or before any
   declaration: with the exact prototype in scope the arguments are set up in
   another order. Helpers in Colosso and in the Kolima Forest floodgate's

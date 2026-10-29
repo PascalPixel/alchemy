@@ -1590,9 +1590,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairIndex[mode] = entry % 32;
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
     menu->pairMember[mode] = DJINN_MEMBER(entry);
-    /* FAKEMATCH(barrier): an empty asm keeps entry live past the member's
-     * extraction, so the member mask keeps its register; without it, 8 of
-     * 2105 instructions differ in tbs-en. */
+    /* FAKEMATCH(barrier): an empty asm keeps entry live, so the member mask
+     * keeps its register, and its result orders the ids row's base copy;
+     * without it, 8 of 2105 instructions differ in tbs-en. */
     __asm__("" : "+r"(result) : "r"(entry));
   }
   // The cursor, packed as column + row * 10.

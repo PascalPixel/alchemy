@@ -512,14 +512,13 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     {
       s32 cx;
 
-      /* FAKEMATCH(one-pass): the x computed in a block of its own keeps the
-       * row's reload after the x shift; as no block, 2 of 1201 instructions
-       * differ in tbs-en. */
-      do {
-        cx = listWindow->x * 8;
-      } while (0);
+      cx = listWindow->x * 8;
+      /* FAKEMATCH(barrier): an empty asm after the x shift keeps the row's
+       * reload after it; as no asm, 2 of 1201 instructions differ in
+       * tbs-en. */
+      __asm__("");
       /* FAKEMATCH(barrier): an empty asm reading the row in a low register
-       * reloads it before the subtract; without it, 2 of 1201 instructions
+       * reloads it before the subtract; as no asm, 2 of 1201 instructions
        * differ in tbs-en. */
       __asm__("" : : "l"(selectedRow));
       cursorPos.x = cx - 2;

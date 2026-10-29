@@ -7,7 +7,11 @@
 > These pages call the game by that subtitle, to keep it apart from
 > [The Lost Age](glossary.md#the-two-games).
 
-The game runs on four mechanisms, each one running inside the one before it:
+Switch the console on and the title card settles over the mountain. Press
+Start, choose a file, and the party stands in Vale. From here on the player
+sees one thing at a time: the party walking around a town, a conversation,
+a battle, a menu, a game of dice. Underneath, the game runs on four
+mechanisms, each one running inside the one before it:
 
 1. The [main routine](glossary.md#main-routine) runs one
    [sequence](glossary.md#sequence) at a time: the field, a battle, Lucky Dice
@@ -35,17 +39,30 @@ flowchart TD
   class tasks,scripts frame
 ```
 
-The sections below take them in that order, and the last follows one moment
-of the game through all four.
+The sections below take the four in that order, each with what the player
+sees of it, and the last follows one moment of the game through all four.
+The pages for the [four divisions](#the-four-divisions) of the code go
+deeper into each.
 
 ## The main routine and its sequences
 
+![Isaac walks through Goma Cave until a random battle starts: the screen goes black, the battle opens on a Ghost and a Skeleton, the party beats them and takes its experience and coins, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/guides/overworld/battle-return.gif)
+
+Walking through a cave, the party runs into a battle. The cave goes away,
+the battle plays out, and the cave comes back. To the player it is one game;
+to the code it is two sequences, one after the other. The field sequence
+runs while the party walks around a place. The battle sequence runs the
+fight. The two smallest sequences are the games in Tolbi: Lucky Dice is the
+dice sequence and Lucky Wheels the slots sequence, each played from its own
+room.
+
+![A game of Lucky Dice: the dice tumble across the green field, and the bonus and the coins won come up](https://alchemy.pascalpixel.com/guides/overworld/lucky-dice.gif)
+
+![A game of Lucky Wheels: three reels spin, Stop slots halts them one by one, and Jackpot! bursts over the reels](https://alchemy.pascalpixel.com/guides/overworld/lucky-wheels.gif)
+
 The main routine, `MainRoutine_Run`, starts when the console is switched on
 and runs until it is switched off. It runs one sequence, waits for it to
-finish and starts the next. The party walks around a place, or fights a
-battle, or plays Lucky Dice or Lucky Wheels, each in its own room in Tolbi,
-and each of these is a sequence: the field sequence, the battle sequence, the
-dice sequence and the slots sequence.
+finish and starts the next.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -64,26 +81,49 @@ flowchart TD
 A sequence decides what comes after it: before it ends it writes what runs
 next into the [main routine's work](glossary.md#main-routines-work), the one
 piece of memory every sequence shares, and the main routine reads that and
-starts it. What runs next is `gMainRoutineWork.next`.
+starts it. What runs next is `gMainRoutineWork.next`. In the cave, the field
+sequence wrote the battle there and ended; the battle wrote the cave back and
+ended.
 
 ### Scenes
+
+![Isaac climbs the steps to the Sanctum's door in Vale: Vale fades out, and the Sanctum's hall fades in with Isaac just inside its door](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
 
 The field sequence runs one [scene](glossary.md#scene). A scene is a place,
 such as Vale or a room of Vault's inn, or a screen, such as the Title or the
 File Screen. Each has a scene code (`PLOGV00` is Vale on the stormy night of
 the prologue) and an area name.
 
-When the party walks out of a scene, the field sequence ends, and the main
-routine starts it again on the scene the [exit](glossary.md#exit) leads to.
-Walking from Vale to its gate is therefore the same handover as walking into a
-battle: one sequence ends and the next starts. That is why `next` holds either
-kind of thing: a scene's number means the field sequence running that scene,
-and a number above all the scenes means one of the other sequences
-(`SEQUENCE_BATTLE`, `SEQUENCE_DICE`, `SEQUENCE_SLOTS`). When a battle or a game
-of dice ends, the main routine goes back to a scene the field sequence runs
-(`Scene_ReturnFromSequence`).
+Walking through a door is a handover too. When the party walks out of a
+scene, the field sequence ends, and the main routine starts it again on the
+scene the [exit](glossary.md#exit) leads to. The fade to black between Vale
+and the Sanctum's hall is the gap between two sequences.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  vale(["🏡 Field sequence: Vale"]) -- "the party walks into the Sanctum's door" --> next(["next = the Sanctum's hall"])
+  next --> main(["Main routine"])
+  main --> sanctum(["🏡 Field sequence: the Sanctum's hall"])
+  classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class main mainRoutine
+  class vale,sanctum sequence
+  class next request
+```
+
+Walking from Vale into the Sanctum is therefore the same handover as walking
+into a battle: one sequence ends and the next starts. That is why `next`
+holds either kind of thing: a scene's number means the field sequence
+running that scene, and a number above all the scenes means one of the other
+sequences (`SEQUENCE_BATTLE`, `SEQUENCE_DICE`, `SEQUENCE_SLOTS`). When a
+battle or a game of dice ends, the main routine goes back to a scene the
+field sequence runs (`Scene_ReturnFromSequence`).
 
 ### Why every sequence starts fresh
+
+![The debug scene selector in Vale: a window names each scene by its code and area name, SPAV00 Vale, WORLD World Map, TITLE Title screen, MENU Menu test, as the player steps through them](https://alchemy.pascalpixel.com/guides/engine/debug-select.gif)
 
 Between two sequences the main routine clears away everything the last one
 set up: it removes its tasks, the interrupt handlers it set for effects drawn
@@ -91,22 +131,29 @@ line by line, and every block of memory it borrowed from the
 [heap](glossary.md#heap-and-pools), the pool sequences take their working
 memory from. So a sequence passes everything on through the main routine's
 work and the [game flags](glossary.md#game-flag), and any scene or battle can
-follow any other. The [debug menus](glossary.md#debug-menus) rely
-on this: the debug scene selector writes a scene and entrance as what
-runs next and lets the scene end. [System](system.md#the-main-routine) goes
-through the clearing up and the start-up before the first sequence.
+follow any other. The [debug menus](glossary.md#debug-menus) rely on
+this: the debug scene selector writes any scene and entrance as what runs
+next and lets the scene end, and the main routine takes the party there.
+[System](system.md#the-main-routine) goes through the clearing up and the
+start-up before the first sequence.
 
 ## Code that waits
+
+![A villager by Vale's river says `I don't blame Felix.` and waits for A; the river keeps moving, and the next page, `If only we'd been able to save him on that fateful day.`, types out](https://alchemy.pascalpixel.com/guides/engine/waiting-talk.gif)
+
+While the villager's line waits for A, the river keeps flowing and the
+letters of the next page keep appearing. The code that showed the line is
+standing still at one call, and that call is where the rest of the game
+runs.
 
 A sequence's code runs from top to bottom. An event walks the leader to a
 door, waits 30 frames, shows a message and waits for A; a battle shows its
 menu, waits for a choice and plays the attack. Each line runs once the one
-before it has finished.
-
-The game loop is inside `wait(n)`. Each call runs n frames of the game and
-then returns to the next line. In each frame it calls every task's function in
-turn, builds the sprites, and halts until the screen shows the picture at the
-next [VBlank](glossary.md#vblank), about 60 times a second.
+before it has finished. The game loop is inside `wait(n)`. Each call runs n
+frames of the game and then returns to the next line. In each frame it calls
+every task's function in turn, builds the sprites, and halts until the
+screen shows the picture at the next [VBlank](glossary.md#vblank), about 60
+times a second.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -137,24 +184,30 @@ void wait(s32 frames) {
 }
 ```
 
-The VBlank interrupt runs on its own at every VBlank, whatever the code is
-doing. When a frame's work takes longer than one VBlank, everything counted in
-frames runs slow, while the music, mixed at every VBlank, keeps its tempo:
+A frame is the unit of everything that takes time: a walk is so many pixels
+a frame, a message so many letters a frame, a pause so many frames. The
+VBlank interrupt runs on its own at every VBlank, whatever the code is
+doing. When a frame's work takes longer than one VBlank, everything counted
+in frames runs slow, while the music, mixed at every VBlank, keeps its tempo:
 that is [slowdown](glossary.md#slowdown) ([System](system.md#slowdown)).
 
 ## Tasks
 
-A task is whatever has to keep moving while the code waits: the actors
-walking, a window typing out its text, the map's water rippling. Each is one
-function in the task table, `gTasks`, and `wait()` calls it in every frame
-until the task is removed. A sequence adds the tasks it needs when it starts,
-each with a priority that orders it among the rest: the field adds its actors,
-its map's scrolling and its windows, and a battle adds its camera.
+![Isaac talks to Garet's sister in Vale: a window opens at the top of the screen beside her portrait, `You guys are so lucky, Garet.` is typed out letter by letter with a bobbing arrow at the end, the next page `I wish I could go with you.` follows, and the window closes.](https://alchemy.pascalpixel.com/guides/window/talk.gif)
+
+The letters appear a few at a time, and the arrow bobs while the window
+waits: a task does both. A task is whatever has to keep moving while the
+code waits: the actors walking, a window typing out its text, the map's
+water rippling. Each is one function in the task table, `gTasks`, and
+`wait()` calls it in every frame until the task is removed. A sequence adds
+the tasks it needs when it starts, each with a priority that orders it among
+the rest: the field adds its actors, its map's scrolling and its windows, and
+a battle adds its camera.
 
 A task runs in the middle of the code's `wait()`, so it acts within its one
-frame and returns. What it notices for the code it serves, it leaves as a note
-in that code's [work](glossary.md#work), and the code acts on the note once
-its `wait()` returns. The field sequence's loop is the plainest case:
+frame and returns. What it notices for the code it serves, it leaves as a
+note in that code's [work](glossary.md#work), and the code acts on the note
+once its `wait()` returns. The field sequence's loop is the plainest case:
 
 ```c
 do {
@@ -167,6 +220,20 @@ When the player presses A, a task notes it during `wait(1)` (the next section
 says which), and when `wait(1)` returns the loop finds that note, a
 [request](glossary.md#field-request), leaves the loop and answers it.
 
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  press(["Inside wait(1): a task sees A pressed"]) -- "notes it" --> work(["The field's work: aButton"])
+  work -- "wait(1) returns" --> loop(["🏡 The field sequence's loop finds the request"])
+  loop --> answer(["The loop answers it: a talk, a menu, an event"])
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  class press frame
+  class work code
+  class loop,answer sequence
+```
+
 ## Actor scripts
 
 ![Isaac walks through Imil's snow, and each footprint he leaves fades after a moment](https://alchemy.pascalpixel.com/guides/field/snow.gif)
@@ -177,10 +244,30 @@ one of 64 actors, and all of them are moved by one task,
 counting down a wait counts one frame off, and any other runs the commands of
 its actor script until one says the actor is done for the frame, such as a
 step of a walk or a wait. An actor script therefore moves on a little every
-frame, and each actor keeps its own place in its script. A footprint's script
-waits 120 frames and releases its actor. The leader's script hands it to the
-field's built-in player control (`SC_PLAYER`), which reads the buttons, walks
-the leader and notes the field's requests. [Field code](src/field/README.md#everything-that-moves-runs-an-actor-script)
+frame, and each actor keeps its own place in its script. A footprint's whole
+script is two commands, from [facing.c](src/field/facing.c):
+
+```c
+SC_WAIT(120), SC_RELEASE,
+```
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  start(["The leader's step leaves a footprint: an actor with this script"]) --> wait(["SC_WAIT(120): the actor waits, counting one frame off each turn"])
+  wait -- "120 frames, two seconds" --> release(["SC_RELEASE: the actor's slot is given back"])
+  classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class start sequence
+  class wait,release frame
+```
+
+The leader's script hands it to the field's built-in player control
+(`SC_PLAYER`), which reads the buttons, walks the leader and notes the
+field's requests. A villager's script wanders to random spots near its home
+(`SC_WANDER`), and the thieves' scripts in the next section walk them up a
+ladder while the event waits.
+[Field code](src/field/README.md#everything-that-moves-runs-an-actor-script)
 covers the commands.
 
 ## From a conversation to a battle and back
@@ -239,8 +326,7 @@ attack. Every pause between those steps is an `Event_Wait`, which calls
 the windows' task types out what they say.
 At its end the event sets a story flag, writes into the main routine's work
 where the story goes after a win and after a loss, and asks the field for the
-battle (one line, which picks the
-bars that close the screen, is left out):
+battle (one line, which picks the bars that close the screen, is left out):
 
 ```c
 GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
@@ -264,9 +350,10 @@ runs next, and the formation beside it, and then it ends. The main routine
 clears the scene away, its tasks with it, and starts the battle
 sequence (`Battle_RunFar`), which adds tasks of its own, such as its camera.
 Everything the battle reads comes from the main routine's work: the formation,
-the party, the battle music and the background chosen for the scene. When it ends, `Scene_ReturnFromSequence` reads its result: a
-win goes to the after-battle [destination](glossary.md#destination) the event
-wrote, a loss to the defeat destination.
+the party, the battle music and the background chosen for the scene. When it
+ends, `Scene_ReturnFromSequence` reads its result: a win goes to the
+after-battle [destination](glossary.md#destination) the event wrote, a loss
+to the defeat destination.
 
 ### Back in the loft
 

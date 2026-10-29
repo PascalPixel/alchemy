@@ -63,7 +63,6 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   s32 i;
   s32 angle;
   s32 dist;
-  struct Vector3 *p;
 
   effectWork = gFieldEffectWork;
   src = effectWork->mainActor;
@@ -75,30 +74,26 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_StartScriptFar(src, gFieldEffect_SourceHoldScript);
 
   // The hands appear 32 pixels to either side and move to 16 pixels.
-  /* FAKEMATCH(temporary): the position reached through p everywhere but in
-   * the steering loop's first part, which names it; as pos named
-   * everywhere, 10 of 531 instructions differ in tbs-en. */
-  p = &pos;
-  SET_POSITION(p, effectWork->x, effectWork->y + (16 << 16), effectWork->z);
-  actor = FieldEffect_SpawnItemBreakMode1(p->x + (32 << 16), p->y, p->z,
+  SET_POSITION(&pos, effectWork->x, effectWork->y + (16 << 16), effectWork->z);
+  actor = FieldEffect_SpawnItemBreakMode1(pos.x + (32 << 16), pos.y, pos.z,
                                           FACING_WEST);
   hands[0] = actor;
-  right = FieldEffect_SpawnItemBreakMode1(p->x - (32 << 16), p->y, p->z, 0);
+  right = FieldEffect_SpawnItemBreakMode1(pos.x - (32 << 16), pos.y, pos.z, 0);
   hands[1] = right;
   if (hands[0] == NULL || right == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
   wait(15);
-  SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
+  SET_POSITION(&pos, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
-  Actor_SetMoveTargetFar(actor, p->x + (16 << 16), p->y, p->z);
-  Actor_SetMoveTargetFar(right, p->x - (16 << 16), p->y, p->z);
+  Actor_SetMoveTargetFar(actor, pos.x + (16 << 16), pos.y, pos.z);
+  Actor_SetMoveTargetFar(right, pos.x - (16 << 16), pos.y, pos.z);
   Actor_WaitForMoveFar(actor);
   Actor_WaitForMoveFar(right);
-  actor->x.fixed = p->x + (16 << 16);
+  actor->x.fixed = pos.x + (16 << 16);
   actor->velocityX = 0;
-  right->x.fixed = p->x - (16 << 16);
+  right->x.fixed = pos.x - (16 << 16);
   right->velocityX = 0;
 
   // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
@@ -167,7 +162,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     // instructions differ in tbs-en.
     if (i != 0)
       goto blocked;
-    if (FieldEffect_CheckRaisedTargetCollision(target, p) > 0) {
+    if (FieldEffect_CheckRaisedTargetCollision(target, &pos) > 0) {
     blocked: // the way is blocked: a buzzer every 16 frames
       Actor_SelectAnimationFar(hands[0], 4);
       Actor_SelectAnimationFar(hands[1], 4);
@@ -182,8 +177,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       s32 z;
 
       Sound_PlayFar(SE_NOTE_HIGH);
-      x = p->x;
-      z = p->z;
+      x = pos.x;
+      z = pos.z;
       Actor_SelectAnimationFar(hands[0], 4);
       Actor_SelectAnimationFar(hands[1], 4);
       wait(15);
@@ -192,14 +187,14 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       target->paused = i;
       target->speedLimit = 0x3333;
       target->acceleration = 0x3333;
-      Actor_SetMoveTargetFar(target, p->x, p->y, p->z);
+      Actor_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
       hands[0]->speedLimit = 0x3333;
       hands[0]->acceleration = 0x3333;
       second = hands[1];
       second->speedLimit = 0x3333;
       second->acceleration = 0x3333;
-      Actor_SetMoveTargetFar(hands[0], p->x + (16 << 16), p->y, p->z);
-      Actor_SetMoveTargetFar(second, p->x - (16 << 16), p->y, p->z);
+      Actor_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
+      Actor_SetMoveTargetFar(second, pos.x - (16 << 16), pos.y, pos.z);
       Actor_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
@@ -221,23 +216,19 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   Sound_PlayFar(SE_CLICK);
   wait(15);
-  SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
+  SET_POSITION(&pos, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
-  {
-    struct Actor **walk = shards;
-
-    // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
-    for (i = 0; i < CARRY_SHARD_MAX; i++) {
-      actor = Actor_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
-      *walk++ = actor;
-      if (actor != NULL) {
-        Actor_StartScriptFar(actor, gFieldEffect_FragmentScript);
-        actor->speedLimit = Random16() + (2 << 16);
-        actor->acceleration = 2 << 16;
-        actor->motionFlags = 0;
-        dist = Random16() * 24 + (8 << 16);
-        Actor_SetTargetPositionFromMagnitudeAngle(actor, dist, Random16());
-      }
+  // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
+  for (i = 0; i < CARRY_SHARD_MAX; i++) {
+    actor = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
+    shards[i] = actor;
+    if (actor != NULL) {
+      Actor_StartScriptFar(actor, gFieldEffect_FragmentScript);
+      actor->speedLimit = Random16() + (2 << 16);
+      actor->acceleration = 2 << 16;
+      actor->motionFlags = 0;
+      dist = Random16() * 24 + (8 << 16);
+      Actor_SetTargetPositionFromMagnitudeAngle(actor, dist, Random16());
     }
   }
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);

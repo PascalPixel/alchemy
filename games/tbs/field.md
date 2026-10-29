@@ -275,10 +275,21 @@ the after-battle destination if an event set one, else the scene the party
 left, with its position kept; after a defeat the defeat destination, else
 the restart point, usually the last Sanctum.
 
+![Isaac walks about the Goma Cave room of two pillars and a stump, then up into the stairs in its north wall, where he darkens as he goes into the opening; after the screen closes and opens again he steps out of a stair opening in the room of the stream, facing the player](https://alchemy.pascalpixel.com/guides/field/stairs.gif)
+
+An exit's row also says how the leader leaves: with the exit sound,
+silently, or up or down a stair. A stair centres the leader on its cell and
+plays his leaving animation for 18 frames, in which he walks into the
+opening away from the player, darkening as he goes, and sets a flag that
+makes the next scene play the matching arrival, in which he steps out of
+its opening toward the player.
+
 `Field_CheckExitRegions` tests the exit regions and
 `Scene_RunStepTriggerOrExit` the exit cells; `Scene_TakeExit` reads the
 exit table, `Scene_ReturnFromSequence` chooses where a battle returns to and
-`Scene_ApplyEntrance` reads the entrance row. The exits are
+`Scene_ApplyEntrance` reads the entrance row. `Exit_StartStairsUp` and
+`Exit_StartStairsDown` play a stair's leaving and `Entrance_PlayArrival`
+its arrival. The exits are
 `SCENE_EXIT` and `SCENE_EXIT_UNLESS` words, the entrances
 `struct SceneEntrance` and the exit regions `struct SceneExitRegion`, all in
 the scene's overlay; [Scenes](src/scene/README.md#the-tables) describes the

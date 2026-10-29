@@ -317,6 +317,8 @@ to run on and 0 to end the actor's frame.
 
 ### How an actor moves
 
+![The woman in the green dress on the cliff above Vale's waterfall walks a few pixels, stops, turns to face south and then north, and sets off again while Isaac stands beside her](https://alchemy.pascalpixel.com/guides/field/villager.gif)
+
 An actor moves toward a target. Each frame it gains its acceleration in the
 target's direction and is held to its speed limit, so a villager starts
 smoothly and tops out at the speed its script set. An actor with no target
@@ -410,10 +412,13 @@ heading fails the leader stays put, turns toward the pad by at most 22.5
 degrees a frame, and the field counts the frame as a push. A doorstep or a ledge
 answers only once the count passes 12.
 
-A solid actor just ahead blocks the step too, unless it is pushable, such
-as a stone pillar: then it slides a quarter of a pixel away from the
-leader each frame, as long as the ground beyond it is clear, and the leader
-slows to a quarter pixel a frame while pushing.
+A solid actor just ahead blocks the step too, unless it is pushable: then
+it slides a quarter of a pixel away from the leader each frame, as long as
+the ground beyond it is clear, and the leader slows to a quarter pixel a
+frame while pushing. Few actors are pushable, and only while a script makes
+them so, as the old man's does while he searches Vale's plaza for the
+Psynergy Stone after Kalay. A stone pillar is pushed by its scene instead,
+a cell at a time ([Stepping and pushing](#stepping-and-pushing)).
 
 On a map that shows footprints, Imil's snow or Bilibin Cave's, the leader
 leaves one every 18 frames of walking or 12 of running, alternating left
@@ -687,6 +692,8 @@ instead.
 
 ### Stepping and pushing
 
+![Isaac holds Up at the foot of a wooden ladder on the cliff at the Goma Cave Entrance, crouches and jumps onto it, climbs it a step at a time, climbs over the top and walks on north](https://alchemy.pascalpixel.com/guides/field/climb.gif)
+
 Each frame the walking update reads the behavior of the cell under the
 leader. Any marked cell makes the field test the scene's exit regions,
 boxes of pixels that take the party out when the leader is inside one; a
@@ -699,7 +706,20 @@ the leader's climbing animation, and sets the exit request.
 Three values answer a push. Once the leader has pushed for more than 12
 frames, a ledge is jumped down with Down held,
 a climbing spot is climbed up or down with Up or Down, and a gap is jumped
-across; the count then starts again.
+across; the count then starts again. On a climbing spot the leader crouches,
+jumps and holds on, then climbs in 8-pixel steps while the pad is held, and
+pushing Up at the top cell takes him over the edge onto the ground above.
+
+![Isaac walks east into the stone pillar below the cliff in Vale, leans on it for a moment, then he and the pillar slide one cell east together](https://alchemy.pascalpixel.com/guides/field/push-pillar.gif)
+
+A stone pillar is pushed by its scene's step triggers. The cells beside it
+carry a value whose row answers walking into it from one side, and the
+event leans the leader on the pillar for a quarter of a second, checks
+that nothing solid stands beyond it or on it and that the ground there
+takes it, then slides the leader and the pillar one cell together at a
+fifth of a pixel a frame, with the push sound. `PushedActor_AdvancePair`
+in [staged_actor.h](../scene/shared/staged_actor.h), which the scenes with
+things to push include, does the push; Vale's pillar is `Vale_PushPillar`.
 
 ### Searching
 
@@ -822,24 +842,33 @@ random battles the distance counts half as fast. In a town none of this
 happens, and Avoid, which wears off with distance, lasts until the party
 leaves.
 
-The Lamakan Desert's sand hurts on its own. Stepping onto it starts a count
-half way to the limit, each frame on it adds the leader's speed in whole
-pixels, and at the limit, 600 pixels there, the party loses a quarter of
-its maximum HP with a flash and the heavy impact sound.
+![Isaac walks across the Lamakan Desert's sand as the thermometer down the left edge fills; when it is full the screen flashes orange, Isaac flinches and the thermometer empties, and the field menu he opens shows the party's HP](https://alchemy.pascalpixel.com/guides/layout/sand-damage.gif)
+
+The Lamakan Desert's sand hurts on its own. Its sand is a cell behavior of
+the desert's own whose step trigger adds one to the heat count each frame
+the leader moves on it, and a thermometer down the left edge of the screen
+shows the count. At the limit, 600 frames of walking there, the screen
+flashes, the leader flinches and the party loses a quarter of its maximum
+HP, with the heavy impact sound, and the count starts again from nothing.
+As the count passes each quarter, a party member complains of the heat.
+`Field_UpdateWalking` can also count the distance walked on cells of
+`CELL_BEHAVIOR_DESERT_SAND`, starting half way to the limit, but the
+desert marks its sand with its own value, `HeatGauge_CountStep` in
+[lamakan_desert.c](../scene/lamakan_desert.c).
 
 When damage brings a character to 0 HP, the leader flinches, the fallen are
 named one by one, and if nobody is left standing the party is sent to its
 restart point with the leader at 1 HP, to the defeat music.
 
 `Field_UpdateWalking` in [walking.c](field_sequence/walking.c) counts the
-distance and the sand, `Party_AddPp` gives the PP, `Party_ApplyPoisonDamage`
-takes the poison's and `Party_AddHp` the sand's, and the field sequence
-answers the fall as a raised trigger.
+distance and checks the heat count, `Party_AddPp` gives the PP,
+`Party_ApplyPoisonDamage` takes the poison's and `Party_AddHp` the sand's,
+and the field sequence answers the fall as a raised trigger.
 
 | Name                   | Value   | Meaning                                                           |
 | ---------------------- | ------- | ----------------------------------------------------------------- |
 | `walkingDistanceScale` | `0x199` | about 1/160: one PP every 160 pixels walked; 0 in a town          |
-| `hazardLimit`          | 600     | pixels of the Lamakan Desert's sand between one hurt and the next |
+| `hazardLimit`          | 600     | frames walked on the desert's sand between one hurt and the next  |
 | `hazardDamage`         | 25%     | of maximum HP, the desert's damage                                |
 | `POISON_NORMAL`        |         | a twentieth of maximum HP each time                               |
 | `POISON_VENOM`         |         | a tenth of maximum HP each time                                   |
@@ -871,10 +900,15 @@ Altmiller Cave's Mind Read rows do, and
 then the usual cast does not play. Force, Frost and Reveal run the row for
 the moment they act, as they act.
 
+![Isaac casts Cloak in front of the Lunpa Fortress Gates: he blinks white and turns to an outline, walks east along the dark ground below the gate still hidden, and blinks back into sight where the dark ground ends](https://alchemy.pascalpixel.com/guides/field/cloak.gif)
+
 Two casts keep state after they end. Halt holds one actor still at a time,
 so casting it again lets go of the one held before, and Cloak and Reveal
 run out by themselves, and when they do the scene's rows for their ending
-run, so a Reveal can hide again what it showed.
+run, so a Reveal can hide again what it showed. Cloak lasts while the
+leader walks on the ground a map marks as somewhere to hide, and he blinks
+back into sight where it ends; Reveal lasts 600 frames, or until the
+leader walks about 60 pixels from where it was cast.
 
 `Field_UsePsynergy` in [psynergy.c](field_sequence/psynergy.c) runs a
 cast, `Scene_FindPsynergyTrigger` in [items.c](field_sequence/items.c)
@@ -899,6 +933,8 @@ each ability in [ability_table.c](../game/ability_table.c).
 | `FLAG_IN_BATTLE_ARENA`        | `0x17e` | all field Psynergy refuses                                                  |
 
 ## The palette fade
+
+![Isaac casts Halt in Vale with nobody near: the name `Halt` shows, the screen tints cyan over a few frames while the orb scatters into sparkles, and the colours fade back](https://alchemy.pascalpixel.com/guides/field/palette-fade.gif)
 
 When Reveal is cast the backgrounds turn grey in one frame, and most field
 Psynergy tints the screen over 8 frames as it starts and fades back after

@@ -521,22 +521,8 @@ void FileList_UpdatePulse(void) {
       red += 22;
       green += 16;
       colour += 20;
-      /* FAKEMATCH(one-pass): the blue shift in a block of its own stays after
-       * the three adds, in source order; as a plain shift, the red add moves
-       * below the shifts and 6 of 33 instructions differ in tbs-en. */
-      do {
-        colour <<= 10;
-      } while (0);
-      green <<= 5;
-      colour |= green;
-      colour |= red;
+      Io_Write16(RGB(red, green, colour), palette++);
     }
-    /* FAKEMATCH(one-pass): the store in a block of its own stays ahead of the
-     * loop index's increment; as a plain store, 3 of 33 instructions differ
-     * in tbs-en. */
-    do {
-      *palette++ = colour;
-    } while (0);
   } while (++i <= 3);
 }
 

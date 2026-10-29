@@ -811,13 +811,23 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       copyCommand++;
       wait((u16)delay);
       sourceX = copyCommand->source;
+      /* FAKEMATCH(dead): updates that cancel out between the load and its
+       * copy, so CSE does not swap the load into the copy and source stays in
+       * r0; without them, 8 of 53 instructions differ in tbs-en. */
+      if (copyCommand) {
+        sourceX++;
+        sourceX--;
+      }
       {
         u32 nextSourceCopy = sourceX;
 
-        /* FAKEMATCH(barrier): the same ip copy after the wait, which CSE's copy
-         * swap or combine removes in every plain form tried; without the
-         * barrier, 2 of 53 instructions differ in tbs-en. */
-        __asm__("" : "+r"(nextSourceCopy));
+        /* FAKEMATCH(dead): updates that cancel out after the copy end CSE's
+         * knowledge of source, so the comparison keeps its ip copy; without
+         * them, 9 of 53 instructions differ in tbs-en. */
+        if (copyCommand) {
+          sourceX++;
+          sourceX--;
+        }
         if (nextSourceCopy == endMarkerCopy)
           break;
       }

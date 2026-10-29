@@ -446,7 +446,8 @@ Start on the field opens the Pause menu: `Save your quest`, `Sleep` and
 The menu is one window with labels drawn as tiles and its icons and hand as
 window sprites, and a function that loops a frame at a time reading the
 buttons until A picks an entry or B or Start backs out. Sleep shows
-`Enter Sleep mode. Press L+R to resume.` and asks the system to sleep, which
+`Enter Sleep mode.`, with the L and R buttons drawn as the way to resume,
+and asks the system to sleep, which
 the frame loop does ([System](../system/README.md#buttons-and-sleep)). Backing
 out of the file list or the settings menu brings the Pause menu back. In the
 Battle Arena, Start on the field says `The Pause menu is not available now.`
@@ -585,7 +586,7 @@ are here too, called from the battle's turn
 Isaac walks up to Garet's sister in Vale and presses A. Each step of the line
 that follows is one of this page's mechanisms in turn.
 
-### From the press to the message
+### Talking to her
 
 The field sequence's loop finds the talk
 [request](../../glossary.md#field-request) when its `wait(1)` returns and
@@ -606,7 +607,7 @@ her voice, which is the first of her four blip sounds or nothing with Speech
 off. Then it calls `Message_OpenWindow` with the window's place, the zoom
 option and the voice packed together.
 
-### Decoded, fitted, opened, started
+### The window opens
 
 `Message_OpenWindow` is the path every spoken line takes. It decodes the
 message into the text buffer, sizes a window to the first page's text and
@@ -626,7 +627,7 @@ those gaps with the message. Her portrait opens beside the window with
 `Portrait_OpenWindow`, a 5 by 5 window opened at once with the portrait as
 its one sprite.
 
-### The letters, a few a frame
+### The letters are typed
 
 `FieldMessage_ShowAtActor` now stands in `wait(1)` until `Message_AllTyped`
 says the text has ended. In each of those frames the windows' task runs
@@ -638,7 +639,7 @@ you.` and the typing goes on. The message's last code waits for a button and
 closes the window, and the task shrinks it over four frames and frees the
 slot.
 
-### Closed
+### The window closes
 
 `Event_ShowMessageAndWait` closes her portrait and waits a frame at a time
 until `Window_IsClosed` says the message window's slot is free; then

@@ -232,7 +232,7 @@ loop finds the talk request when its `wait(1)` returns, and the scene's
 trigger row for the innkeeper names an event, which calls `Inn_CheckIn` with
 Bilibin's row of the inn prices and the innkeeper's actor.
 
-### The price in a blank
+### The innkeeper names the price
 
 `Inn_CheckIn` takes the counters' work, opens the innkeeper's portrait in a
 window of its own, and works out the night's price: Bilibin's 7 coins for
@@ -243,7 +243,7 @@ is sized to it and zooms open, and the windows' task types it out a few
 letters a frame while the shop code waits. A second window, opened at once,
 shows `Your Coins: 500` as a label drawn in one go.
 
-### Yes or No
+### The party answers Yes
 
 `Shop_AskYesNo` runs an icon menu, a Yes and a No with the pointing hand,
 which is the same loop as the field menu's row: a frame at a time, reading

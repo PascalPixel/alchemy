@@ -157,28 +157,15 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   struct ScreenPoint last;
   void *canvas;
   struct BattleEffectWork *work;
-  s32 size;
-  s32 transparent;
-
-  // As a plain local, frame's allocation priority (20 uses over 232
-  // instructions) ties with size's and outranks transparent's (13 over 240).
-  /* FAKEMATCH(pin): frame fixed to r9, as native; as a plain local it takes sl
-   * and transparent r9, and 15 of 233 instructions differ in tbs-en. */
-  register s32 frame __asm__("r9");
+  s32 frame;
   s32 i;
 
-  /* FAKEMATCH(temporary): size and transparent first hold the slot table's
-   * and REG_BLDALPHA's addresses; as plain slot reads and REG_BLDALPHA, 19 of
-   * 233 instructions differ in tbs-en. */
-  size = (s32)&Ram_HeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = *(void **)size;
-  work = *(struct BattleEffectWork **)(size - 4);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(2));
-  transparent = (s32)&REG_BLDALPHA;
   REG_BG2PA = Q_8_8(1);
-  *(u16 *)transparent =
-      BLEND_ALPHA(0, 16); // REG_BLDALPHA: invisible to start with
+  REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   Projection_ScaledUnit(work->args->targets[0], &first);
   Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
@@ -190,11 +177,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
-  // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
-  // frame's canvas for transfer.
   frame = 0;
-  transparent = 1;
-  size = 32;
   do {
     // Frame loop. The quarters meet near (64, 72): top left, top right
     // mirrored, bottom left flipped, bottom right both. The web's share of
@@ -204,24 +187,23 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
     if (frame > 53)
       REG_BLDALPHA = BLEND_ALPHA(124 - (frame << 1), 16);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41, size,
-                                        size);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        COMPOSITE_TRANSPARENT);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41, 32, 32);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 41, size,
-                                        size);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        COMPOSITE_TRANSPARENT);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 41, 32, 32);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
-                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 72, size,
-                                        size);
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                        COMPOSITE_TRANSPARENT);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 72, 32, 32);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-                        transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72, size,
-                                        size);
+                        COMPOSITE_TRANSPARENT);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72, 32, 32);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_CRACK);
@@ -231,7 +213,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
                                  i, 8);
     }
     BattleEffect_CountDownBattlerTints();
-    work->transferPending = transparent;
+    work->transferPending = 1;
     wait(1);
     frame++;
   } while (frame != SPIDER_WEB_FRAMES);

@@ -37,8 +37,7 @@
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
 // IWRAM variables the code reaches as constants; German moves them 16 bytes
-// up. Only BattleEffect_RunSpiderWeb takes the heap slot table's address as
-// Ram_HeapSlots; other code uses gHeapSlots (MATCHING.md).
+// up.
 // The 16 bytes are space German alone reserves before gOamDepthLists
 // (system/iwram.s), so the test is on the language: French, Spanish and
 // Italian, which take German's other changes, lay IWRAM out as English does.
@@ -49,12 +48,10 @@
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramCacheEntries                                                   \
   FIXED_ADDRESS((u8 *), 0x03001b20, gVramCacheEntries)
-#define Ram_HeapSlots FIXED_ADDRESS((void **), 0x03001e60, gHeapSlots)
 #else
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ad0, gBgScroll)
 #define Ram_VramCacheEntries                                                   \
   FIXED_ADDRESS((u8 *), 0x03001b10, gVramCacheEntries)
-#define Ram_HeapSlots FIXED_ADDRESS((void **), 0x03001e50, gHeapSlots)
 #endif
 
 // Work pointers in the gHeapSlots table. Their users include heap.h,

@@ -228,19 +228,22 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                                      POSE_DAMAGE, k, 16);
             EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
-          /* FAKEMATCH(one-pass): an empty one-pass block ends the CSE block
-           * after the hit, so k * 8 is recomputed; without it, 200 of 670
-           * instructions differ in tbs-en. */
-          do {
-          } while (0);
           if (shot->variant >= 0) {
+            s32 step;
+
+            /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table,
+             * so k * 8 is computed again here; as no asm (the call's argument
+             * spelled out or as shot), 449 of 670 instructions differ in
+             * tbs-en. */
+            __asm__ volatile("" ::);
             // The shell tumbles through ten images, three frames each; the
             // last five lie on their side.
-            s32 step = (frame - k * 8) / 3;
-
+            step = (frame - k * 8) / 3;
             if (step > 9)
               step = 9;
-            Projection_Point(shot, &position);
+            // shot's address spelled out, which loop.c reads from its
+            // strength-reduced register; as shot, r7 is passed (2 differ).
+            Projection_Point(&PARTICLES[k * LOBBED_SHELLS_SLOTS], &position);
             position.x >>= 1;
             if (step > 4)
               draw[0](canvas, work->sheet + step * (32 * 24), position.x - 16,
@@ -262,7 +265,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               shot->variant = 1;
               /* FAKEMATCH(temporary): the table's address held in records
                * loads before the row; as LOBBED_SHELLS_SHATTER(mode) in the
-               * test, 60 of 670 instructions differ in tbs-en. */
+               * test, 135 of 670 instructions differ in tbs-en. */
               row = mode * 2;
               if (records[row] == 0)
                 count = 4;
@@ -272,11 +275,10 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                 struct Particle *burst;
                 s32 group = k * 4;
 
-                /* FAKEMATCH(one-pass): an empty one-pass block ends the CSE
-                 * block between group's set and group * 8; without it, 48 of
-                 * 670 instructions differ in tbs-en. */
-                do {
-                } while (0);
+                /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table,
+                 * so group * 8 doesn't fold into k * 32; as no asm, 171 of 670
+                 * instructions differ in tbs-en. */
+                __asm__ volatile("" ::);
                 burst = &LOBBED_SHELLS_BURSTS[group * 8 + i];
 
                 SET_POSITION(burst, shot->x, shot->y, shot->z);

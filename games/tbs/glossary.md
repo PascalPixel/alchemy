@@ -402,7 +402,7 @@ A folder of `src/` that holds one or more banks' code, grouped by the four
 divisions: the System's `system/` (bank 00, the
 RAM side and the main routine) beside `gamepak/` (the Game Pak, not a
 division); the Field's `field/` (banks 01, 04, 11 and 12); the Battle's
-`battle/` (bank 07) and `battle_effect/` (bank 08); and the User
+`battle/` (bank 07) and `battle_effect/` (bank 08); and the
 Interface's `window/` (bank 02), `menu/` (bank 05, with the credits, bank
 09, and the Title's intro, bank 10) and `shop/` (bank 06). `game/` (bank 03,
 [Game rules](#game-rules)) and `sound/` (bank 13, [Sound](#sound)) belong to

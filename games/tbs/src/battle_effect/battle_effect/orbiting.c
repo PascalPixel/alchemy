@@ -192,12 +192,11 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
         rec = point;
         SET_VECTOR(rec, actor->x.fixed, actor->y.fixed, actor->z.fixed);
         Projection_Point(rec, &center);
-        /* FAKEMATCH(one-pass): the store in a one-pass block, before the spark
+        center.x += xOffset;
+        /* FAKEMATCH(barrier): an empty asm keeps the store before the spark
          * loop's i = 0; as a plain store, 1 of 265 instructions differ in
          * tbs-en. */
-        do {
-          center.x += xOffset;
-        } while (0);
+        __asm__("");
         // Three skulls a third of a turn apart, each turning 1/128 of a turn
         // a frame; skull i is the i-th 24x24 picture, drawn with its bottom
         // 4 pixels above its point on the circle.

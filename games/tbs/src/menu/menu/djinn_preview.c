@@ -274,12 +274,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
           Iwram_CopyWords(saved, work, size);
           window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
-          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
-           * keeps the window copy before it as the ROM does; as a plain
-           * statement, 11 of 1045 instructions differ in tbs-en. */
-          do {
-            menu->cursor->motion = ICON_SHOWN;
-          } while (0);
+          /* FAKEMATCH(barrier): an empty asm keeps the window copy before the
+           * cursor's store, as the ROM does; as a plain statement, 4 of 1276
+           * instructions differ in tbs-en. */
+          __asm__("");
+          menu->cursor->motion = ICON_SHOWN;
           MenuCursor_Slide(2, 96);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0) {
@@ -292,12 +291,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
-          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
-           * keeps the step's store before it as the ROM does; as a plain
-           * statement, 6 of 1045 instructions differ in tbs-en. */
-          do {
-            menu->cursor->motion = ICON_HIDDEN;
-          } while (0);
+          /* FAKEMATCH(barrier): an empty asm keeps the step's store before the
+           * cursor's store, as the ROM does; as a plain statement, 2 of 1276
+           * instructions differ in tbs-en. */
+          __asm__("");
+          menu->cursor->motion = ICON_HIDDEN;
         }
         break;
       case 11:
@@ -307,12 +305,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, work, size);
           window =
               Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
-          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
-           * keeps the window copy before it as the ROM does; as a plain
-           * statement, 13 of 1045 instructions differ in tbs-en. */
-          do {
-            menu->cursor->motion = ICON_SHOWN;
-          } while (0);
+          /* FAKEMATCH(barrier): an empty asm keeps the window copy before the
+           * cursor's store, as the ROM does; as a plain statement, 5 of 1276
+           * instructions differ in tbs-en. */
+          __asm__("");
+          menu->cursor->motion = ICON_SHOWN;
           MenuCursor_Slide(106, 56);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (Message_AllTypedFar() == 0) {
@@ -326,12 +323,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           redraw = 1;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
-          /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, which
-           * keeps the step's store before it as the ROM does; as a plain
-           * statement, 5 of 1045 instructions differ in tbs-en. */
-          do {
-            menu->cursor->motion = ICON_HIDDEN;
-          } while (0);
+          /* FAKEMATCH(barrier): an empty asm keeps the step's store before the
+           * cursor's store, as the ROM does; as a plain statement, 2 of 1276
+           * instructions differ in tbs-en. */
+          __asm__("");
+          menu->cursor->motion = ICON_HIDDEN;
         }
         break;
       default:

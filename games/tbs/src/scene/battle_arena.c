@@ -743,35 +743,25 @@ static s32 BattleArena_SendPartyRecords(void) {
     slotMap[i] = 0;
   }
   for (i = 0; i < memberCount; i++) {
-    /* FAKEMATCH(one-pass): the record's send in a one-pass block, which keeps
-     * the send failure inside the loop and gives the copy's argument order;
-     * as a plain block, 3 of 255 instructions differ in tbs-en. */
-    do {
-      Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
-      heap[0x12a] = 2;
-      // As a u8, i - 128 is 0x80 + i: this party member's unit on the partner's
-      // side.
-      slotMap[memberIds[i]] = i - 128;
-      transferResult = Serial_StartSend(heap, size);
-      tries = 0;
-      if (transferResult == -1) {
-        result = transferResult;
-        goto done;
-      }
-    } while (0);
+    Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
+    heap[0x12a] = 2;
+    // As a u8, i - 128 is 0x80 + i: this party member's unit on the partner's
+    // side.
+    slotMap[memberIds[i]] = i - 128;
+    transferResult = Serial_StartSend(heap, size);
+    tries = 0;
+    if (transferResult == -1) {
+      result = transferResult;
+      goto done;
+    }
     while (Serial_GetActiveTransfers() != 0) {
       wait(1);
       if (--timeout < 0 ||
           (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        /* FAKEMATCH(one-pass): the retry limit's test in a one-pass block,
-         * which keeps this failure inside the loop, its -1 loaded here;
-         * without the block, 11 of 255 instructions differ in tbs-en. */
-        do {
-          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-            result = -1;
-            goto done;
-          }
-        } while (0);
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+          result = -1;
+          goto done;
+        }
       }
     }
     wait(2);
@@ -809,7 +799,7 @@ next:
   heap = Heap_AllocEwram(size);
   /* FAKEMATCH(one-pass): the recovery table's copy in a one-pass block, which
    * gives the copy's argument order and keeps the list base's copy first after
-   * the call; as a plain call, 8 of 255 instructions differ in tbs-en. */
+   * the call; as a plain call, 6 of 254 instructions differ in tbs-en. */
   do {
     Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
   } while (0);
@@ -853,9 +843,14 @@ next:
     wait(1);
     wait(2);
   }
-done:
-  Heap_Release(heap);
-  return result;
+  /* FAKEMATCH(one-pass): the shared exit in a one-pass block, so loop.c finds
+   * no barrier at done to move the record loop's two failures to; as a plain
+   * label, 62 of 254 instructions differ in tbs-en. */
+  do {
+  done:
+    Heap_Release(heap);
+    return result;
+  } while (0);
 }
 
 /// Exchanges the two parties: the parent sends first, the child (area

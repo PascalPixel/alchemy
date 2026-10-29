@@ -231,11 +231,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           if (shot->variant >= 0) {
             s32 step;
 
-            /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table,
-             * so k * 8 is computed again here; as no asm (the call's argument
-             * spelled out or as shot), 449 of 670 instructions differ in
-             * tbs-en. */
-            __asm__ volatile("" ::);
+            /* FAKEMATCH(one-pass): an empty once-only loop ends CSE's block, so
+             * k * 8 is computed again; without it (the call's argument spelled
+             * out or as shot), 449 of 670 instructions differ in tbs-en. */
+            do {
+            } while (0);
             // The shell tumbles through ten images, three frames each; the
             // last five lie on their side.
             step = (frame - k * 8) / 3;
@@ -275,10 +275,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                 struct Particle *burst;
                 s32 group = k * 4;
 
-                /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table,
-                 * so group * 8 doesn't fold into k * 32; as no asm, 171 of 670
-                 * instructions differ in tbs-en. */
-                __asm__ volatile("" ::);
+                /* FAKEMATCH(one-pass): an empty once-only loop ends CSE's
+                 * block, so group * 8 doesn't fold into k * 32; without it, 171
+                 * of 670 instructions differ in tbs-en. */
+                do {
+                } while (0);
                 burst = &LOBBED_SHELLS_BURSTS[group * 8 + i];
 
                 SET_POSITION(burst, shot->x, shot->y, shot->z);

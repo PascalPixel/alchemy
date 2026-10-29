@@ -155,12 +155,13 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  REG_BG2X = xOffset << 8;
+  /* FAKEMATCH(one-pass): the scroll's store in a once-only block, so the
+   * loop's i = 0 comes before the particles' address; as the plain store, 2
+   * of 265 instructions differ in tbs-en. */
+  do {
+    REG_BG2X = xOffset << 8;
+  } while (0);
   i = 0;
-  /* FAKEMATCH(barrier): an empty asm after the loop's i = 0, so it comes
-   * before the particles' address; as a plain for loop, 1 of 265
-   * instructions differ in tbs-en. */
-  __asm__("");
   // velocityX holds each skull's angle on its orbit; x, y and z are set but
   // never read.
   for (; i != 64; i++) {

@@ -22,8 +22,8 @@ struct Window;
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gScreenFadeToWhite;
-/* FAKEMATCH(volatile): the fades load the duration back after storing it; as
- * plain u8, 13 of 29 instructions differ in tbs-en (ScreenFade_Start). */
+// volatile: ScreenFade_Update, which the VBlank handler runs, counts it down to
+// 0 while ScreenFade_Wait waits on it, so it is no device.
 extern volatile u8
     gScreenFadeVBlanks; ///< the fade's length in VBlanks, 0 when idle
 /// VBlanks until the running fade reaches its target; ScreenFade_Update counts
@@ -33,8 +33,8 @@ extern u8 gScreenFadeVBlanksLeft;
 extern u16 gScreenFadeLayers;
 /// The brightness the running fade started from, 0 to 16.
 extern u8 gScreenFadeStartLevel;
-/* FAKEMATCH(volatile): ScreenFade_Update loads the target twice, for the level
- * and for the delta; as plain u8, 11 of 46 instructions differ in tbs-en. */
+// volatile: ScreenFade_Start sets it for ScreenFade_Update, which the VBlank
+// handler runs, so it is no device.
 extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 /// The two page arrow tiles, 4bpp, that Link_DrawPageArrows slides
 /// outward over the border's top edge.

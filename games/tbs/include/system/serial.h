@@ -179,9 +179,8 @@ extern u8 gSerialPeerPayloads[4][24];
 extern volatile u8 gSerialBlockNumber;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
-/* FAKEMATCH(volatile): each mask test loads the status on its own; as plain
- * u16, 155 of 920 instructions differ in tbs-en (FileScreen_Run; 14 of 23 in
- * Serial_WaitForStatusMask). */
+// volatile: the VBlank handler writes it while Serial_WaitForStatusMask and the
+// link screens poll it, so it is no device.
 extern volatile u16 gLinkStatus;
 
 static inline s32 Serial_AddErrorFlag(s32 status) {

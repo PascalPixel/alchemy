@@ -476,9 +476,8 @@ struct SoundInfo {
   u32 ident; ///< ID_NUMBER when free; raised while the driver changes it.
   /// VBlanks until the DMA restart, which reloads it from
   /// transferPeriod; also picks which VBlank's part of the buffers is mixed.
-  /* FAKEMATCH(volatile): the byte is read before it is stored, as pret's
-   * pcmDmaCounter is; as plain u8, 1 of 23 instructions differ in tbs-en
-   * (m4aSoundVSyncOn). */
+  // volatile, as pret's pcmDmaCounter is: m4aSoundVSyncOn clears it while the
+  // VBlank handler's Sound_UpdateBgmRamps reads it, so it is no device.
   volatile u8 transferCountdown;
   u8 reverb;       ///< 0 to 127 (mode bits 6..0); 0 skips the reverb pass.
   u8 pcmNoteCount; ///< PCM notes in use, 8 at start (mode bits 11..8).

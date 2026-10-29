@@ -6,22 +6,18 @@
 ///
 /// The VBlank handler reads the keypad into these cells, and
 /// Input_UpdateKeyRepeatAndDirection turns them into repeats after each frame
-/// (system/system/frame.c). The first five are volatile, a device: each tag
-/// names what differs without it.
+/// (system/system/frame.c). The first three are volatile because the VBlank
+/// handler sets them while the code it interrupts reads them, so they are no
+/// device; the next two are volatile only to match, and their tags name what
+/// differs without it.
 
 #include "types.h"
 
 /// Keys down now.
-/* FAKEMATCH(volatile): as plain u32, 18 functions differ in tbs-en, most
- * Message_Type (249), FileScreen_CheckButtonCodes (134). */
 extern volatile u32 gKeysHeld;
 /// Keys that went down this frame.
-/* FAKEMATCH(volatile): as plain u32, 41 functions differ in tbs-en, most
- * PsynergyMenu_RunList (299), PsynergyMenu_SelectAction (261). */
 extern volatile u32 gKeysPressed;
 /// Pressed keys, repeating while held: after 19 frames, then every 6.
-/* FAKEMATCH(volatile): as plain u32, 54 functions differ in tbs-en, most
- * PartyMemberChooser_RunRearrange (288), PsynergyMenu_SelectAction (236). */
 extern volatile u32 gKeysRepeat;
 /// gKeysRepeat with at most one D-pad direction.
 /* FAKEMATCH(volatile): as plain u32, 70 of 121 instructions differ in tbs-en

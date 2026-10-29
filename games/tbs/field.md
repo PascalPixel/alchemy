@@ -27,7 +27,7 @@ setup (which can move the party straight on) and fades in, naming the
 
 Each [frame](glossary.md#frame) the loop calls `wait(1)`, which runs the game
 for one frame, the leader's walk included
-([The Broken Seal](README.md#frames-waiting-and-tasks)), and then checks the
+([The Broken Seal](README.md#code-that-waits)), and then checks the
 ground under the leader (`Field_UpdateWalking`). What happens during that
 frame can't stop the loop: stepping into a doorway, pressing A beside someone
 or a random battle starting only leaves a
@@ -48,7 +48,7 @@ flowchart TD
   any -- yes --> first(["The first one set, in order: leave, a raised trigger, a battle, a step, A, the menu, a talk, a search, Psynergy, an item"])
   first --> handle(["Dealt with: an event, a battle, a menu"])
   handle --> any
-  first -- "leave or a battle" --> ends(["The scene ends: the main routine starts what is next"])
+  first -- "leave or ⚔️ a battle" --> ends(["🏡 The scene ends: the main routine starts what is next"])
   classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50

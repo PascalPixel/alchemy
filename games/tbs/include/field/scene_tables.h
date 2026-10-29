@@ -105,9 +105,9 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
   SEQUENCE_NONE = 0x1fb,
-  SEQUENCE_SLOTS = 0x1fc, ///< Lucky Wheels in Tolbi's game room,
+  SEQUENCE_SLOTS = 0x1fc, ///< Lucky Wheels, from its room in Tolbi,
                           ///< SceneId_StuccoRoomsC (lucky_wheels.c)
-  SEQUENCE_DICE = 0x1fd,  ///< Lucky Dice in Tolbi's game room,
+  SEQUENCE_DICE = 0x1fd,  ///< Lucky Dice, from its room in Tolbi,
                           ///< SceneId_StuccoRoomsC (lucky_dice.c)
   /// A battle; the entrance is the formation, and the result -1 a
   /// defeat.

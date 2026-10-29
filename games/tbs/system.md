@@ -48,8 +48,8 @@ takes an exit. An id above the scene table's rows runs another sequence
 | Id                | Runs                                                    |
 | ----------------- | ------------------------------------------------------- |
 | `SEQUENCE_BATTLE` | the battle sequence, with the entrance as the formation |
-| `SEQUENCE_DICE`   | the dice sequence, Lucky Dice in Tolbi's game room      |
-| `SEQUENCE_SLOTS`  | the slots sequence, Lucky Wheels in the same room       |
+| `SEQUENCE_DICE`   | the dice sequence, Lucky Dice, from its room in Tolbi   |
+| `SEQUENCE_SLOTS`  | the slots sequence, Lucky Wheels, from its own room     |
 
 Sequences pass nothing to each other directly. Everything goes through the
 main routine's work and the [game flags](glossary.md#game-flag). The work,

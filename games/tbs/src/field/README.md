@@ -33,7 +33,7 @@ The folder holds the Field's code in four [banks](../../glossary.md#bank):
   (`scene_rules.s`), the battle music, the field Psynergy tables
   (`field_sequence_tables.c`), the actor scripts they play (`scripts.s`) and
   the scene table, `scenes.s`.
-- Bank 11: `lucky_dice.c`, the dice sequence, Lucky Dice in Tolbi's game room.
+- Bank 11: `lucky_dice.c`, the dice sequence, Lucky Dice, played from its room in Tolbi.
 - Bank 12: `lucky_wheels.c`, the slots sequence, Lucky Wheels in the same room.
 
 Each scene's own code, its [events](../../glossary.md#event) included, is an

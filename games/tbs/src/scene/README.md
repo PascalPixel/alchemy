@@ -245,14 +245,17 @@ an event can add a table of its own after the scene's.
 
 ### Exit regions
 
-An exit region is a box on the ground that takes the leader out through an
-exit as soon as the leader steps into it, for the few places where a map
-edge or a wide opening is easier to draw as a box than to mark cell by cell.
-A row holds the box's two corners, a condition and the exit it leads to; the
-field tests the boxes at every step onto a marked cell, and the first box
-that holds the leader's position takes its exit. Fourteen scenes have
-regions, Kolima's tunnel and the Tolbi ship's deck among them; the rest
-answer with none.
+![In Kolima's tunnel Isaac walks down from the foot of a ladder, looks along the ledge and comes back, then climbs the ladder; near its top the screen fades to black and Kolima fades in, Isaac standing beside a great tree stump with a door.](https://alchemy.pascalpixel.com/guides/scene/exit-region.gif)
+
+An exit region is a box that takes the leader out through an exit as soon
+as the leader steps into it, for the few places where a map edge or a wide
+opening is easier to draw as a box than to mark cell by cell. A row holds
+the box's two corners, a condition and the exit it leads to; the field
+tests the boxes at every step onto a marked cell, and the first box that
+holds the leader's position takes its exit. A box has a height as well, so
+in Kolima's tunnel each one sits at the top of a ladder, and climbing it is
+the way out. Fourteen scenes have regions, Kolima's tunnel and the Tolbi
+ship's deck among them; the rest answer with none.
 
 `Field_CheckExitRegions` tests the rows, `struct SceneExitRegion`, from
 `Field_UpdateWalking`.
@@ -513,15 +516,17 @@ call compiles as the original did; `event.h` says which.
 
 ## State that cleans itself up
 
+![In Kolima Forest Isaac walks into a log on the river bank; it rolls, tips into the river and floats there. He runs to and fro until a battle with three Skeletons opens; after its end the forest comes back with the log still in the river, and Isaac crosses it and walks away. The screen fades out and in, and on his return the river is empty and the log stands on the far bank again.](https://alchemy.pascalpixel.com/guides/scene/log-state.gif)
+
 Two ranges of game flags are cleared for scenes as the party moves on, so a
 scene can keep a note without any code to put things back. Scene temp flags
-last until the party next enters a scene, so a pushed stone pillar or an
-opened door kept in one is back where it started the next time the party
-comes in. Area temp flags last while the party
-stays anywhere in the area, so they hold what must survive moving between
-its scenes, as Fuchin Falls Cave keeps where its logs float. Coming back
-from a battle clears neither, since the party is returning to where it
-stood.
+last until the party next enters a scene: Kolima Forest keeps the log the
+party tips into its river in one, so the log is back on the bank the next
+time the party comes in. Area temp flags last while the party stays
+anywhere in the area, so they hold what must survive moving between its
+scenes, as Fuchin Falls Cave keeps where its logs float. Coming back from a
+battle clears neither, since the party is returning to where it stood, and
+the log is still in the river after one.
 
 Because the numbers are reused everywhere, each scene names the ones it
 uses for what they hold there, beside its includes:

@@ -233,9 +233,14 @@ slots after it move up (`Inventory_CompactSlots`), so the first empty slot is
 always the end of the list, and `Inventory_Count` can count to it. Giving a
 unit an item joins its first stack of that item, or takes the first empty
 slot (`Inventory_AddItem`); a full stack refuses the item even when another
-slot is free. Giving the party an item tries each party member in order
+slot is free.
+
+![In Sol Sanctum Isaac opens a chest with all 15 of his slots full: `Isaac checked the chest...`, a Small Jewel rises from it, and `Isaac gave a Small Jewel to Garet.` On the Item screen Isaac's list is full, and Garet's ends with the Small Jewel.](https://alchemy.pascalpixel.com/guides/game/pack-full.gif)
+
+Giving the party an item tries each party member in order
 (`PartyInventory_Add`), which is how a chest's item or a battle's spoils
-lands on whoever has room.
+lands on whoever has room: with Isaac's slots full, a chest's Small Jewel
+goes to Garet.
 
 The slots are `Unit.inventory`; `enum InventoryEncoding` in `item.h` gives
 the bit layout, and [game/inventory.c](game/inventory.c) reads and writes
@@ -492,13 +497,14 @@ enemies and Lucky Dice's prizes read (`Party_GetAverageLevel`).
 
 ## The game flags
 
-![In Lunpa Fortress the Mercury Djinni Tonic, beside Isaac, vanishes, a stream of blue drops falls onto him, and a window says `The Mercury Djinni Tonic joined Isaac.`](https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/events/Event_DjinniJoins.gif)
+![In Kolima Isaac talks to the Venus Djinni Granite beside him; the screen turns green, lights rain onto Isaac, a ring of light closes on him, and `The Venus Djinni Granite joined Isaac.` The screen fades out, and when Kolima fades in again Isaac stands in the same place with no one beside him.](https://alchemy.pascalpixel.com/guides/game/djinni-flag.gif)
 
 The game remembers what has happened (a chest opened, a Djinni found, an
-event already played) as 4,096 yes-or-no flags, one bit each. When Tonic
-joins, its found flag is set: a Djinni found once cannot join again, and
-each save file's summary counts the Djinn found. The Title offers its Battle
-option only once some save file's summary counts a Djinni found.
+event already played) as 4,096 yes-or-no flags, one bit each. When Granite
+joins, its found flag is set: a Djinni found once cannot join again, so the
+next visit to Kolima finds no one where it stood, and each save file's
+summary counts the Djinn found. The Title offers its Battle option only
+once some save file's summary counts a Djinni found.
 
 A flag is a number, and the number says where its bit is: the low three
 bits pick the bit within a byte, and the next nine pick the byte of
@@ -532,8 +538,9 @@ uses them).
 
 The named flags are in `flags.h`, each with the evidence for its name. The
 Djinn's found flags start at `FLAG_DJINN_FIRST`, 20 to an element in the
-Djinn table's order, so Tonic's is `FLAG_DJINN_FIRST` plus 20 for Mercury
-plus its index. A new game clears all 512 bytes
+Djinn table's order, so Granite's is `FLAG_DJINN_FIRST` plus 1, the second
+of the Venus Djinn, and Tonic's `FLAG_DJINN_FIRST` plus 20 for Mercury plus
+its index. A new game clears all 512 bytes
 (`MainRoutineWork_InitializeDefaults`).
 
 | Name                  | Value          | Meaning                                            |

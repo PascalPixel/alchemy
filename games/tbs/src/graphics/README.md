@@ -261,6 +261,12 @@ cell's picture as four tile numbers into those sheets
 their own from `tileset/palettes/` recolour a set's tiles, 50 of them placed
 after the rows of the maps that use them.
 
+![Two floors of Crossbone Isle side by side, Isaac standing in each: the same walls, pillars and floor tiles, grey and maroon in the first and brown and rose in the second.](https://alchemy.pascalpixel.com/guides/map/recolour.png)
+
+Crossbone Isle's floors are built that way: one set of tiles, and a palette
+of each floor's own, so the same walls and floor come out in different
+colours on each.
+
 The build packs each sheet as `tiles_a.4bpp.mtf`, the move-to-front form,
 and the palette as `palette.gbapal.lz`, and the map's own `map.s` places
 them after the map's grid, as `Tileset_Set00Palette` and
@@ -304,15 +310,22 @@ are the `Battle_` rows of the resource directory, and
 
 ### Monsters
 
-![A Gryphon uses Twin Beaks: `Gryphon uses Twin Beaks!`, the beaks' pictures flash across the party, and `Ivan takes 58 damage`](https://alchemy.pascalpixel.com/guides/battle_anim/twin-beaks.gif)
+![A battle opens on one Skeleton, `Skeleton appeared!`, and the camera swings in as the party defends; the Skeleton flashes white, rushes at the party, `Skeleton attacks!` and `Ivan takes 1 damage!`, and the camera settles behind the party, the Skeleton seen from another side.](https://alchemy.pascalpixel.com/guides/graphics/monster.gif)
 
 A [monster](../../glossary.md#monster)'s battle picture is a run of pictures
 in one PNG one picture wide, `monster/axe_goblin.png` 64 pixels wide and 768
 tall, packed as `pictures.lz` and placed by `monster.s` as
 `Monster_AxeGoblinSprites`, a row of the directory's `Monster` group; the 54
-monsters each have one. A battle effect's sheet is a run too, but of pictures
-of differing sizes, so it is built from `NAME_00.png`, `NAME_01.png` and on
-into `NAME.bitmaps.lz`, with its palettes beside it, all placed by
+monsters each have one. `monster/skeleton.png` holds twelve: the Skeleton
+standing, turned a little further in each of six, then striking in six
+more, and in battle its picture changes as the camera swings round it and
+as it attacks.
+
+![A Gryphon uses Twin Beaks: `Gryphon uses Twin Beaks!`, the beaks' pictures flash across the party, and `Ivan takes 58 damage`](https://alchemy.pascalpixel.com/guides/battle_anim/twin-beaks.gif)
+
+A battle effect's sheet is a run too, but of pictures of differing sizes,
+so it is built from `NAME_00.png`, `NAME_01.png` and on into
+`NAME.bitmaps.lz`, with its palettes beside it, all placed by
 `battle_effects/battle_effects.s` and found by the directory's
 `BattleEffect` rows; how an effect plays them is
 [Battle effects](../battle_effect/README.md).

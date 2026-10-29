@@ -105,7 +105,15 @@ written. A device may be replaced only by milder ones, as many as it takes.
   code copied into RAM, is not (see Calls below).
 - `temporary` is a variable holding a value the plain form wouldn't name.
 - `dead` is code that emits nothing and only changes which registers the
-  compiler picks or the order of the instructions.
+  compiler picks or the order of the instructions. Two forms recur. Updates
+  that cancel out inside a test, `if (copyCommand) { sourceX++; sourceX--; }`
+  in `MapGrid_PlayMapEdit`, make CSE forget what it knew of the variable
+  without touching anything else. The same statement in both arms of a test
+  keeps the test, and the registers it reads, through register allocation and
+  scheduling, until the jump pass that follows merges the arms and deletes the
+  test (`Vault_SpawnDriftingEffect`). The arms last that long only where
+  if-conversion can't merge them first: a store through a pointer, a call or
+  a return lasts, a single store to a local does not.
 
 A device is the last resort, used only after reshaping the code has failed.
 Taking one out again is part of humanizing, the project's second stage after

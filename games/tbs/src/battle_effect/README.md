@@ -6,7 +6,7 @@ When Isaac casts Earthquake, rock pillars rise under the three targets,
 throw them into the air and sink again, and the damage appears while the
 rock is still on screen. Every [Psynergy](../../glossary.md#psynergy-and-pp),
 [Djinni](../../glossary.md#djinn), [summon](../../glossary.md#summons), item
-and monster attack has a picture like this, its
+and monster attack has a drawing like this played over the battle, its
 [battle effect](../../glossary.md#battle-effect), and the code for all of
 them is in this folder.
 
@@ -49,8 +49,6 @@ flowchart TD
   class frame frame
 ```
 
-The page ends by following one cast, Ivan's Bolt, through all of them.
-
 ## How an ability picks its effect
 
 ![Isaac casts Quake Sphere at Garet, Ivan and Mia: brown rock pillars capped with ground rise under them three times, throwing them high, and `Garet takes 67 damage!!!`.](https://alchemy.pascalpixel.com/abilities/quake-sphere.gif)
@@ -83,7 +81,8 @@ the other side's view (`EFFECT_VIEW_ACROSS`: the summons Venus, Mercury,
 Mars and Jupiter) or turns right round (`EFFECT_VIEW_REVERSED`: twenty
 rows, among them the blessings).
 
-Building the action adjusts the word before the effect sees it: a double or
+Building the [action](../../glossary.md#turns-and-actions) adjusts the word
+before the effect sees it: a double or
 triple blow raises the variant, a revival adds the switch for downed
 targets, and a critical hit adds `EFFECT_ID_CRITICAL_OFFSET` to a plain
 attack's kind, which turns it into the ring and spark effect.
@@ -141,19 +140,20 @@ flowchart TD
 ```
 
 `BattleEffect_RunSummon` switches on the kind to one of the twelve large
-summons, Ramses to Thor. `BattleEffect_RunByIdRange` splits a range of
-numbered kinds: from 100 the casting impacts that Djinn and weapon unleashes
-share, from 136 the beams of plain attacks, and from 200 the ring and spark
-effect of a critical hit. `BattleEffect_RunFromTable` looks the kind up in
+summons, Ramses to Thor. `BattleEffect_RunByIdRange` splits the numbered
+kinds: from 100 the casting impacts that Djinn and weapon unleashes share,
+from 200 the ring and spark effect of a critical hit, and every other kind,
+below 100 and from 136 to 199, the beams of plain attacks.
+`BattleEffect_RunFromTable` looks the kind up in
 the handler table; the kind `BATTLE_EFFECT_NONE` plays nothing.
 
 Whichever door it takes, the handler is lent three blocks of memory from the
 [heap](../../glossary.md#heap-and-pools), each in a
 [heap slot](../../glossary.md#heap-slot) of its own, for as long as it
-plays: a small block for the mote pictures most effects stamp
-(`HEAP_SLOT_BATTLE_SHEET`); its working space, the work block
+plays: a small block for the motes, the ten tiny spark pictures most
+effects stamp (`HEAP_SLOT_BATTLE_SHEET`); its working space, the work block
 (`HEAP_SLOT_BATTLE_EFFECT`, a `struct BattleEffectWork`, which holds the
-sheet its own pictures are unpacked into); and the canvas
+sheet, the run of memory its own pictures are unpacked into); and the canvas
 (`HEAP_SLOT_BATTLE_CANVAS`). The door takes them in that order before the
 handler starts and gives them back in reverse order when it returns. Giving
 a block back also gives back every block taken after it, so a handler must
@@ -175,7 +175,7 @@ other side. The doors are in [`dispatch.c`](battle_effect/dispatch.c) and
 | `EFFECT_RANGE_CASTING_IMPACT` | 100        | the first casting impact's kind                      |
 | `EFFECT_RANGE_BEAM`           | 136        | the first beam's kind                                |
 | `EFFECT_RANGE_RING_AND_SPARK` | 200        | the ring and spark effect, a critical hit's          |
-| `HEAP_SLOT_BATTLE_SHEET`      | `MOTE_SET_BYTES` | the mote pictures, 770 bytes                    |
+| `HEAP_SLOT_BATTLE_SHEET`      | `MOTE_SET_BYTES` | the mote pictures, 770 bytes (1,550 through `BattleEffect_RunByIdRange`) |
 | `HEAP_SLOT_BATTLE_EFFECT`     |            | the work block, `struct BattleEffectWork`, the sheet inside it |
 | `HEAP_SLOT_BATTLE_CANVAS`     |            | the canvas, `CANVAS_BYTES`                           |
 | `BattleEffectParams.side`     | 0 or 1     | the enemies' side or the party's; mirrored for the party |
@@ -184,7 +184,7 @@ other side. The doors are in [`dispatch.c`](battle_effect/dispatch.c) and
 
 ![Garet casts Heat Wave at Mia: a blaze shoots across the screen from Garet and bursts into sparks around her, the battle showing through it.](https://alchemy.pascalpixel.com/abilities/heat-wave.gif)
 
-The canvas is a small picture kept off screen, 128 pixels square, which
+The canvas is a small square of pixels kept off screen, 128 by 128, which
 nearly every effect draws into, and which the hardware shows twice as wide
 and blended over the battle, so that fire and light glow on top of the
 fighters without hiding them.
@@ -216,15 +216,18 @@ flowchart TD
 ```
 
 Opening the canvas takes five frames (`BattleEffect_StartCanvasLayer`):
-it hides `BG2` while its settings change, writes the layer's map, clears the
-canvas in its slot and in video memory, starts the fade that darkens the
-battle background behind the effect, and saves the battlefield's scroll.
-Closing it takes eleven (`BattleEffect_EndCanvasLayer`): the closing sound,
-the scroll put back, the canvas cleared, and the battle background's colours
-brought back over eight frames. A few effects show the canvas at its own
-width instead, Quake among them, so that its pillars hide what is behind
-them (`EFFECT_START_NARROW_CANVAS`), and the beams of plain attacks show it
-on `BG1` through an ordinary tile map (`BattleEffect_SetupCanvasTileMap`).
+it hides `BG2` while its settings change, writes the layer's tile table (its
+screen block), clears the canvas in its slot and in video memory, adds the
+fade task that darkens the battle background once an effect sets a count
+(`fadeFrames`), and saves the battlefield's scroll. Closing it takes eleven
+(`BattleEffect_EndCanvasLayer`): the closing sound, the scroll put back, the
+canvas cleared, and the battle background's colours brought back over eight
+frames. A few effects show the canvas at its own width instead
+(`EFFECT_START_NARROW_CANVAS`: Frost, Judgment and the Helm Splitter among
+them), and Quake sets that width and turns the blending off itself, so that
+its pillars hide what is behind them; the beams of plain attacks show the
+canvas on `BG1` through an ordinary tiled layer
+(`BattleEffect_SetupCanvasTileMap`).
 
 The canvas and its layer are in [`canvas.c`](battle_effect/canvas.c).
 
@@ -334,13 +337,13 @@ and the Lucky Wheels.
 
 The flames, rocks and sparks an effect stamps are small pictures kept packed
 in the game's data and unpacked into the sheet when the effect starts; the
-sheet is the first part of the work block, and each effect reads its
-pictures at its own offsets there.
+sheet is the start of the work block (`work->sheet`), and each effect reads
+its pictures at its own offsets there.
 
 Every one of Quake's pillars is drawn from one picture of rock, 40 by 96
 pixels, [`rock_wall.png`](../graphics/battle_effects/rock_wall.png) in
 `graphics/battle_effects`. The picture never moves; each frame Quake draws
-only its top part, more as a pillar rises and less as it sinks, with a strip
+only its top rows, more as a pillar rises and less as it sinks, with a strip
 of the battle's own ground cut from the background and laid on top as its
 cap.
 
@@ -373,7 +376,9 @@ drawn where it is: every spark, ember, mote and chip of rock is one.
 
 A particle has a position and a speed in three directions, in 16.16 fixed
 point, and one spare number each family uses as it likes: a life, a frame, a
-picture; -1 marks a particle that is free. An effect keeps its particles in
+picture; -1 marks a particle that is idle in the work block's pool, and an
+effect using the large pool picks its own idle mark. An effect keeps its
+particles in
 two pools of fixed size and reuses a finished particle's place, so it never
 asks for memory partway through. The small pool is the work block's 64; the
 large one is the field's map buffer, `PARTICLES`, with room for 1,170, and
@@ -394,7 +399,7 @@ its own particles; a particle is a `struct Particle`
 | -------------------------- | ----------- | ----------------------------------------------- |
 | `work->particles`          | 64          | the small pool, in the work block               |
 | `PARTICLES`                | 1,170       | the large pool, the field's map buffer          |
-| `variant`                  | -1          | the particle is free                            |
+| `variant`                  | -1          | the particle is idle (the work block's pool)    |
 | damping                    | out of 64   | 64 keeps the speed, 60 loses about 6% a frame   |
 | `Projection_Point`         | -16 pixels  | a screen point, raised to a unit's anchor       |
 
@@ -409,10 +414,11 @@ a fixed number of frames; and it releases what the setup took.
 
 Within a frame the steps run in a fixed order, each over its own range of
 frames, and whatever happens on a single frame (a sound, a shake, a change
-of colour) is a test of the frame number. The order is part of the output,
+of colour) is a test of the frame number. The order shows in the output,
 since later steps draw over earlier ones and many draw random numbers. The
 frame on which the damage shows is one such test: `EFFECT_SHOW_DAMAGE`
-starts the battle's playback, which from then on shows each target's
+starts the battle's [playback](../../glossary.md#playback-queue), which from
+then on shows each target's
 flinch, message and falling HP while the effect goes on drawing
 ([Battles](../battle/README.md#how-outcomes-reach-the-screen)).
 `BattleEffect_RunBolt` ([`bolt.c`](battle_effect/bolt.c)), cut down to its
@@ -421,7 +427,7 @@ outline, shows the shape nearly every handler has:
 ```c
 void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   ...
-  EFFECT_GET_SLOTS(slots, cursor, work, canvas); /* the three blocks */
+  EFFECT_GET_SLOTS(slots, cursor, work, canvas); /* the work block, the canvas */
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1)); /* BG2 shows the canvas */
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
@@ -450,14 +456,14 @@ the shake, and the camera's own task places the view afterwards.
 
 | Name                        | Value      | Meaning                                                  |
 | --------------------------- | ---------- | -------------------------------------------------------- |
-| `EFFECT_GET_SLOTS`          |            | the three blocks from their slots                        |
+| `EFFECT_GET_SLOTS`          |            | the work block and the canvas from their slots; `EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET)` reads the motes' block |
 | `EFFECT_LOAD_BLITTER`       |            | a blitter for the 128 by 128 canvas                      |
 | `EFFECT_START_TRANSFER`     |            | the transfer mode, and the task added                    |
 | `EFFECT_SHOW_DAMAGE`        | an `SE_`   | starts playback with the hit's sound                     |
 | `EFFECT_STRIKE_TARGET`      | frames     | the target flashes white and is knocked back             |
 | `EFFECT_END_FRAME`          |            | counts the flashes down, presents the canvas, waits one frame |
 | `EFFECT_FINISH_CANVAS`      |            | stops the transfer, frees the blitters, closes the layer |
-| Bolt's frames               | `8 * targets + 40` | one target's turn every 8 frames                  |
+| Bolt's frames               | `8 * targets + 40` | one target struck every 8 frames                  |
 | Bolt's damage               | frame 24   | `EFFECT_SHOW_DAMAGE(SE_IMPACT)`                          |
 
 ## Effect families
@@ -512,7 +518,7 @@ on the same canvas.
 
 The battle sets the prelude switch in the effect's parameters for a Djinni
 (`CAST_DJINNI` in `staging.c`) and for an attack that plays an effect, and
-the stat changes, the volleys, the healing motes, the Djinn beams, the
+the stat boosts, the volleys, the healing motes, the Djinn beams, the
 flurries, Bind and Luff open with the Djinni only when it is set. Hail,
 Ground, Torch, Kite and Vine always open with it; in Hail and Ground the
 prelude only keeps the Djinni circling. The opening leaves the canvas open
@@ -545,7 +551,7 @@ An impact runs in four phases, each over its own frames:
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   gather(["64 sparks close in on the caster over 32 frames; a Djinni's impact shows its Djinni"]) --> move(["The canvas moves to sit over the target"])
-  move --> impact(["The impact plays for 20 to 80 frames: damage on its third frame, 📣 the heavy impact on the fourth"])
+  move --> impact(["The impact plays for 20 to 80 frames: the damage shows on frame 3, 📣 the heavy impact sounds on frame 4"])
   impact --> release(["The canvas is released"])
   move -- "five impacts hand over here" --> handoff(["Blizzard's volley, Mystic Flame, the comets, Severe Blow's sparks"])
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
@@ -561,10 +567,10 @@ shows its Djinni above the caster. Then the canvas is moved so the impact
 sits over the target. Four impacts no ability selects stop here: three hand
 the canvas to Blizzard's volley, Mystic Flame or the comets, and one simply
 ends. Severe Blow stops here too and hands over to the spark groups' rising
-sparks. Then the impact itself plays for 20 to 80 frames: the damage shows
-on its third frame, the heavy impact sounds on the fourth, and on the sixth
-some impacts knock the target back. Last the canvas is released, except that
-Meltdown hands over to the shield that Impair shatters.
+sparks. Then the impact itself plays for 20 to 80 frames, counted from 0:
+the damage shows on frame 3, the heavy impact sounds on frame 4, and on
+frame 6 some impacts knock the target back. Last the canvas is released,
+except that Meltdown hands over to the shield that Impair shatters.
 
 `BattleEffect_RunCastingImpact`
 ([`casting_impact.c`](battle_effect/casting_impact.c)) is passed an
@@ -575,14 +581,15 @@ phases are marked in its body.
 | ------------------------------ | --------- | --------------------------------------------- |
 | `CASTING_IMPACT_SPARKS`        | 64        | sparks that gather on the caster              |
 | `CASTING_IMPACT_GATHER_FRAMES` | 32        | frames the sparks take to gather              |
-| the impact                     | 20 to 80 frames | by impact; the damage shows on its third frame |
+| the impact                     | 20 to 80 frames | by impact; the damage shows on frame 3     |
 
 ## Ivan's Bolt, mechanism by mechanism
 
 ![Ivan casts Bolt at Isaac: purple sparks gather around Ivan, a bolt of lightning strikes Isaac and crackles away, and `Isaac takes 27 damage!`.](https://alchemy.pascalpixel.com/abilities/bolt.gif)
 
 Ivan casts Bolt at Isaac. The battle has built the action, rolled the
-damage and chosen the staging; what follows is this folder's part.
+damage and chosen the [staging](../../glossary.md#staging); what follows is
+this folder's share.
 
 Bolt's row of `gAbilityBattleEffects` is `BATTLE_EFFECT_BOLT` with no
 variant bits and neither door switch, so the staging runner for a Psynergy
@@ -596,11 +603,11 @@ keeps the brighter level, so a bolt drawn over its sparks brightens rather
 than covers them. It unpacks three sets of pictures: the tornado sheet, used
 only for its glints, and the lightning bolt pictures after it, both into the
 work block's sheet, and the mote pictures the sparks are drawn with into the
-small block the door lent for them.
-Every particle of the large pool is marked free, and the transfer is set to
-keep three quarters of each level, which is what makes the bolt crackle
-away rather than vanish. The row of `gBolt_Counts` for the basic variant
-says 16 sparks, no glints, a spread of 15 pixels and one strike.
+small block the door lent for them. The first 1,024 particles of the large
+pool are given a life of 0, which for Bolt marks them idle, and the transfer
+is set to keep three quarters of each level, which is what makes the bolt
+crackle away rather than vanish. The row of `gBolt_Counts` for the basic
+variant says 16 sparks, no glints, a spread of 15 pixels and one strike.
 
 Then come the frames, `8 * 1 + 40` of them for one target. On frame 0 the
 whole canvas is set to level 16, the flash. From frame 0 to 15 the bolt
@@ -610,12 +617,12 @@ down to 104; on frame 1 the screen starts a four-frame shake; on frame 2
 sixteen sparks are thrown up from the bolt's foot into the large pool, each
 with a life of 32 to 39 frames; on frame 4 Isaac flashes white in his
 damage pose and bounces back. Every frame after that, each living spark
-falls under a gravity of a sixteenth of a pixel a frame, bounces off the
-ground at half speed and is stamped as a mote that shrinks as it dies. On
-frame 24 `EFFECT_SHOW_DAMAGE(SE_IMPACT)` starts the playback, and `Isaac
-takes 27 damage!` appears while the sparks are still falling. Each frame
-ends with `EFFECT_END_FRAME`: the flash timers count down, the canvas is
-marked ready, and `wait(1)` lets the transfer task copy and fade it.
+gains a sixteenth of a pixel a frame of downward speed each frame, bounces
+off the ground at half speed and is stamped as a mote that shrinks as it
+dies. On frame 24 `EFFECT_SHOW_DAMAGE(SE_IMPACT)` starts the playback, and
+`Isaac takes 27 damage!` appears while the sparks are still falling. Each
+frame ends with `EFFECT_END_FRAME`: the flash timers count down, the canvas
+is marked ready, and `wait(1)` lets the transfer task copy and fade it.
 
 After the last frame, `EFFECT_FINISH_CANVAS_ONE_BLITTER` removes the
 transfer task, frees the blitter and closes the canvas layer over eleven
@@ -645,8 +652,8 @@ handler reads like the effect plays, with each frame's work in order and a
 playback) keep running inside those waits. The cost is that one effect
 plays at a time, from start to end, which is all a battle asks.
 
-The canvas trades colour for speed: a pixel that is a level rather than a
-colour can be faded four at a time with one add and one shift, so a trail
+The canvas trades colour for speed: a pixel that is a level, one byte, can
+be faded four at a time with one add and one shift, so a trail
 costs nothing per spark, and a ramp can recolour a whole effect. Building
 each blitter as machine code for one exact case pays the cost of writing a
 routine once per effect to make every stamp of a picture as short as it can
@@ -715,7 +722,8 @@ blitter builder also serves the battle's star field and the Lucky Wheels.
 
 Most handlers use the same names for the same locals: `args` for the
 `struct BattleEffectParams` it is passed, `slots` and `cursor` for the walk
-to the three blocks (`EFFECT_GET_SLOTS`), `work`, `canvas`, `sheet`, `draw`
+to the work block and the canvas (`EFFECT_GET_SLOTS`), `work`, `canvas`,
+`sheet`, `draw`
 for its blitters, `frame` for the frame counter and `cell` for where a
 picture starts in the sheet.
 

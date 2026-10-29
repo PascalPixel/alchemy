@@ -2003,8 +2003,8 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
 static void Vale_MendingTheRoof(void) {
   u32 i;
   /* FAKEMATCH(dead): repairActor's zero initializer, never read, keeps
-   * the event's register allocation; without it, 170 of 1024 instructions
-   * differ in tbs-en. */
+   * the event's register allocation; as an uninitialized declaration, 170
+   * of 1024 instructions differ in tbs-en. */
   struct Actor *repairActor = NULL;
   struct Actor *leader;
   struct Actor *moveHand;

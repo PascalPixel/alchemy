@@ -1112,11 +1112,13 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     u8 *spriteFlags = &sprite->flags;
 
     effect->update = Vault_UpdateDriftingEffect;
-    /* FAKEMATCH(barrier): an empty asm between the two stores, which takes
-     * the flags address before the update store; as sprite->flags = 0 after
-     * it, 1 of 141 instructions differ in tbs-en. */
-    __asm__("");
-    *spriteFlags = 0;
+    /* FAKEMATCH(dead): the flags store in both arms of a test, which ends the
+     * scheduling block after the update store until jump2 merges the arms; as
+     * one store, 2 of 141 instructions differ in tbs-en. */
+    if (flags < 0)
+      *spriteFlags = 0;
+    else
+      *spriteFlags = 0;
   }
   sprite->image.priority = anchor->sprite->image.priority;
 }

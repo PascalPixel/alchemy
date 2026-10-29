@@ -288,11 +288,10 @@ an actor: `FieldPsynergy_LiftOnTarget` keeps its two hands as `void *`.
   `Event_SetFlag` and `Event_ClearFlag`; a unit by
   `Unit_Get` or, from other [banks](../glossary.md#bank), the far call
   `Unit_GetFar`; a unit copy by `Iwram_CopyWords`, through `_call_via_r3`, or
-  through `Item_CopyWords`, the same inline reaching the routine from
-  `IwramIrqMain` rather than at its constant address. An inline call's
+  through `Item_CopyWords` (tagged), the same inline reaching the routine
+  from `IwramIrqMain` rather than at its constant address. An inline call's
   argument is a pseudo of its own, so a flag number used twice is loaded
-  twice; called directly, the
-  number is kept in a callee-saved register (Bilibin's chef,
+  twice; called directly, the number is kept in a callee-saved register (Bilibin's chef,
   `CottageRoomsC_TalkToBusyChef`).
 - Some calls compile only against an old-style declaration or before any
   declaration: with the exact prototype in scope the arguments are set up in

@@ -831,6 +831,7 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
 void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
   struct SelectionNode *node;
   s32 i;
+  s32 zero;
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
   state->status = NODE_STATUS_SCROLLING;
@@ -854,19 +855,18 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
     } else {
       node = state->head;
       i = 64;
-      {
-        /* FAKEMATCH(pin): the zero in r0, live across the first loop as the
-         * native has it; as a plain store of 0, 6 of 184 instructions differ
-         * in tbs-en. */
-        register s32 z __asm__("r0") = 0;
-        state->records[1].kind = z;
-      }
+      zero = 0;
+      state->records[1].kind = zero;
       while (node->next != NULL) {
         node->targetX = node->x + i;
         node->dx = 12;
         node = node->next;
         i -= 16;
       }
+      /* FAKEMATCH(barrier): the zero read by an empty asm clobbering r2, so it
+       * outlives the OR CSE would store instead and keeps r0 across the loop;
+       * as a plain store of 0, 28 of 184 instructions differ in tbs-en. */
+      __asm__("" : : "r"(zero) : "r2");
       node = state->head;
       while (node->x != node->targetX)
         wait(1);

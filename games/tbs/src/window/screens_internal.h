@@ -188,6 +188,11 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define BATTLE_SUMMON_COST_COLUMN 11
 #endif
 
+/// BG1's tile number of the command row's first icon tile. BG1 has 256-colour
+/// tiles of 8x8 bytes from character block 0, and Text_DrawCharacter loads the
+/// icons into character block 1, 16 tiles each.
+#define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
+
 // The chosen item's window.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)

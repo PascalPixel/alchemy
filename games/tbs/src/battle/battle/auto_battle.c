@@ -457,10 +457,11 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   work.effect.kind = 0;
   BattleEffect_RunFromTableFar(&work.effect);
   Actor_SelectAnimationFar(object, POSE_STANDING);
-  /* FAKEMATCH(barrier): an empty asm reading object ends CSE's knowledge of
-   * work's address, so the return loop's exit test addresses work afresh; as
-   * plain statements, 43 of 180 instructions differ in tbs-en. */
-  __asm__("" : : "r"(object));
+  /* FAKEMATCH(one-pass): an empty once-only loop ends CSE's knowledge of
+   * work's address, so the return loop's exit test addresses work afresh;
+   * without it, 103 of 180 instructions differ in tbs-en. */
+  do {
+  } while (0);
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
     BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
   BattleMotion_ReturnToSpot(work.effect.user);

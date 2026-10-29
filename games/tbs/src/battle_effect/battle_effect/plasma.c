@@ -452,8 +452,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
               spark->velocityY = -spark->velocityY / 2;
             } else if (spark->x >= 0 && spark->x < (127 << 16) &&
                        spark->y >= 0) {
-              // A spark's position on the canvas in whole pixels. As s32, the
-              // reload register before the frame loop changes (3 differ).
+              // A spark's position on the canvas in whole pixels: the tests
+              // above keep x in 0 to 126 and y in 0 to 108, so s16 holds them
+              // exactly. As s32, the reload register before the frame loop
+              // changes (3 of 776 instructions differ in tbs-en).
               s16 y = spark->y >> 16;
               s16 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;

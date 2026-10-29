@@ -47,7 +47,7 @@ of the game through all four. The pages for the
 
 ## The console
 
-![The console switched on: the Golden Sun logo fades in after Camelot's](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
+![The console switched on: the Golden Sun logo fades in, and name entry opens on Isaac's name](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
 
 The Game Boy Advance has a screen of 240 by 160 pixels, which it redraws
 about 60 times a second, and ten buttons: the four directions of the D-pad,
@@ -97,11 +97,11 @@ shows each of its pictures for so many frames.
 | `FIELD_RUN_SPEED`  | `0x18000` | 1.5 pixels a frame, with the dash key held    |
 | 60 frames          |           | about one second                              |
 
-A frame is work and then a wait: the game does what the frame needs and
-halts until the next VBlank. The VBlank interrupt runs on its own at every
+A frame is what the game does for one picture, and then a halt until the
+next VBlank. The VBlank interrupt runs on its own at every
 VBlank, whatever the game's code is doing: it puts the finished picture on
-screen, mixes the next slice of sound and reads the buttons. The work of a
-frame is usually done well before its VBlank arrives. When it takes longer
+screen, mixes the next slice of sound and reads the buttons. What a frame has
+to do is usually done well before its VBlank arrives. When it takes longer
 than one VBlank, the picture is shown a VBlank late, and since everything
 counted in frames runs by the frame, it all runs slow together, while the
 music, mixed at every VBlank, keeps its tempo: that is
@@ -110,7 +110,7 @@ music, mixed at every VBlank, keeps its tempo: that is
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  work(["The frame's work: move everything one frame on, fill the tables the screen is drawn from"]) --> halt(["Halt"])
+  work(["The frame: move everything one frame on, fill the tables the screen is drawn from"]) --> halt(["Halt"])
   halt --> vblank(["VBlank: the picture goes on screen, the sound is mixed, the buttons are read"])
   vblank -- "the next frame" --> work
   classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -384,7 +384,7 @@ it is done.
 
 That is possible because the game loop is inside [`wait(n)`](glossary.md#wait).
 Each call runs n frames of the game and then returns to the next line. In
-each frame it calls every task's function in turn, builds the sprites, and
+each frame it calls every task's function one after another, builds the sprites, and
 halts until the VBlank. `Actor_TurnToFaceEachOther` and
 `Event_ShowMessageAndWait` both call it.
 
@@ -547,7 +547,7 @@ through each.
 Every person and moving thing in a scene, down to a footprint in the snow, is
 one of 64 actors, each a slot of `gActors` holding a position, a facing, a
 sprite and a place in a script. All of them are moved by one task,
-`Actor_UpdateAllThumb`. Each frame it gives every actor a turn: an actor
+`Actor_UpdateAllThumb`. Each frame it comes to every actor: an actor
 counting down a wait counts one frame off, and any other runs the commands of
 its actor script until one says the actor is done for the frame, such as a
 step of a walk or a wait. An actor script therefore moves on a little every
@@ -561,7 +561,7 @@ SC_WAIT(120), SC_RELEASE,
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  start(["The leader's step leaves a footprint: an actor with this script"]) --> wait(["SC_WAIT(120): the actor waits, counting one frame off each turn"])
+  start(["The leader's step leaves a footprint: an actor with this script"]) --> wait(["SC_WAIT(120): the actor waits, counting one frame off each frame"])
   wait -- "120 frames, two seconds" --> release(["SC_RELEASE: the actor's slot is given back"])
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef frame fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -663,7 +663,7 @@ loft, where a villager lies tied up. All of it happens in one scene,
 all of them walled in logs, each room reached by its own entrance
 ([log_rooms_a.c](src/scene/log_rooms_a.c)). Talking to the villager starts a
 fight with the three thieves, and each step of it is the work of the four
-mechanisms in turn.
+mechanisms one after another.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%

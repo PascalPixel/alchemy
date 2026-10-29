@@ -385,7 +385,7 @@ with `old_agbcc` ([The compilers](../../glossary.md#the-compilers)), the
 `FLASH_C` route of the `Makefile`, and its version string is `FLASH_V123`.
 Four of its cells hold the credits' state while the credits roll, since no
 save runs then and `IdentifyFlash` sets them again before the chip is next
-used ([Menus](../menu/README.md#taking-over-the-screen)).
+used ([Menus](../menu/README.md#taking-over-the-display)).
 
 | Name                            | Value     | Meaning                                                  |
 | ------------------------------- | --------- | -------------------------------------------------------- |

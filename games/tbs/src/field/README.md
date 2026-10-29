@@ -1,7 +1,7 @@
 # Field code
 
-The [Field](../../glossary.md#field), the division of Camelot's credits that
-runs everywhere the [party](../../glossary.md#the-party) walks, keeps the
+The [Field](../../glossary.md#field), the division of the code that runs
+everywhere the [party](../../glossary.md#the-party) walks, keeps the
 actors (the party, the townspeople, the camera, each footprint), moves them a
 little every [frame](../../glossary.md#frame), draws their sprites, in battles
 too, decides whether the ground ahead can be walked on, and draws the

@@ -40,8 +40,8 @@ is `gMainRoutineWork.next`.
 
 The field sequence runs one [scene](glossary.md#scene). A scene is a place,
 such as Vale or a room of Vault's inn, or a screen, such as the Title or the
-File Screen. Camelot's debug menus label each with a scene code (`PLOGV00` is
-Vale on the stormy night of the prologue) and give it an area name.
+File Screen. Each has a scene code (`PLOGV00` is Vale on the stormy night of
+the prologue) and an area name.
 
 When the party walks out of a scene, the field sequence ends, and the main
 routine starts it again on the scene the [exit](glossary.md#exit) leads to.
@@ -204,15 +204,14 @@ line by line, and every block of memory it borrowed from the
 [heap](glossary.md#heap-and-pools), the pool sequences take their working
 memory from. So a sequence can pass nothing on except through the main
 routine's work and the [game flags](glossary.md#game-flag), and any scene or
-battle can follow any other. Camelot's [debug menus](glossary.md#debug-menus)
-rely on this: the debug scene selector writes a scene and entrance as what
+battle can follow any other. The [debug menus](glossary.md#debug-menus) rely
+on this: the debug scene selector writes a scene and entrance as what
 runs next and lets the scene end. [System](system.md#the-main-routine) goes
 through the clearing up and the start-up before the first sequence.
 
 ## The four divisions
 
-Camelot's credits divide the game's programming into System, Battle, Field,
-User Interface and Support. The first four each have a page:
+The code falls into four divisions, each with a page:
 
 - [System](system.md): start-up, the main routine, waiting and tasks, memory,
   banks, overlays, saving and sound.

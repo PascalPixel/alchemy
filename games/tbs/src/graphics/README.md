@@ -19,10 +19,10 @@ advance arrow does beside `battle/element_glow_tables.s`. The headers for
 pictures, palettes, sprites and glyphs that several parts of the game read are
 in `include/graphics/`.
 
-Each folder is named for the heading the game's credits give its pictures
-(`battle_backgrounds`, `battle_effects`, `monster`), for the game's own word or
-place (`world_map`, `lucky_dice`, `lamakan_desert`, `title`), or in plain
-English for what it holds (`font`, `palettes`, `sprite`, `ui`).
+Each folder holds one kind of picture: the battle backgrounds, the battle
+effects, the monsters, a place (`world_map`, `lucky_dice`, `lamakan_desert`,
+`title`), or the font, the palettes, the sprites and the windows (`font`,
+`palettes`, `sprite`, `ui`).
 
 ## How an image is built and placed
 

@@ -5,9 +5,8 @@ bottom, then pauses for about as long as 68 more lines: the
 [VBlank](glossary.md#vblank), about 59.73 times a second. The game prepares
 one picture in each [frame](glossary.md#frame), and the sprites, scroll and
 queued register writes of a frame reach the screen together, at the VBlank
-after the frame is finished. The System, the first
-division of Camelot's credits, is the code that keeps that beat and that
-Field, Battle and User Interface stand on.
+after the frame is finished. The System is the code that keeps that beat and that Field, Battle and User
+Interface stand on.
 
 ## Start-up
 

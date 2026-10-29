@@ -14,9 +14,9 @@ scene in fewer than 130 lines, and [the test scenes](#the-test-scenes) show it.
 The [debug scene selector](../../glossary.md#debug-menus) is a small
 window with two numbers, a scene and an
 [entrance](../../glossary.md#entrance), beside the scene's code and the
-area name the entrance belongs to, as Camelot labelled them (`TEST0` and Test 0
-for the first test scene, `PLOGV00` for Vale in the prologue). It starts on the
-scene being played. Up and Down switch between the two numbers, Left and
+area name the entrance belongs to (`TEST0` and Test 0 for the first test
+scene, `PLOGV00` for Vale in the prologue). It starts on the scene being
+played. Up and Down switch between the two numbers, Left and
 Right step one, R and L ten, A exits to that scene and entrance and B closes
 it. Scene numbers wrap from 200 back to 0, so the selector reaches every
 scene, the debug scenes included. The field opens it only in debug mode, when

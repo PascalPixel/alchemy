@@ -397,8 +397,8 @@ Evidence: plain English; the project's own word.
 
 ### Bank folder
 
-A folder of `src/` that holds one or more banks' code, grouped by the
-credits' four programming divisions: the System's `system/` (bank 00, the
+A folder of `src/` that holds one or more banks' code, grouped by the four
+divisions: the System's `system/` (bank 00, the
 RAM side and the main routine) beside `gamepak/` (the Game Pak, not a
 division); the Field's `field/` (banks 01, 04, 11 and 12); the Battle's
 `battle/` (bank 07) and `battle_effect/` (bank 08); and the User
@@ -967,8 +967,8 @@ English "game rules", said so.
 
 ### Graphics
 
-The pictures in editable form, each folder named for the credits' heading, the
-game's word or the place it belongs to, with the `.s` files that only place
+The pictures in editable form, each folder named for what it holds or the
+place it belongs to, with the `.s` files that only place
 them; a picture only a mixed data file reads sits beside that file
 (`src/graphics/`, [Graphics](src/graphics/README.md)). The display headers
 several divisions read are in `include/graphics/`.

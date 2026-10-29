@@ -14,8 +14,7 @@ every name here is ours.
 
 ## What each folder holds
 
-The code folders are grouped by the four divisions the game's credits give
-its programming, as [the front page](../README.md#the-four-divisions) describes
+The code folders are grouped by the four divisions of the code, as [the front page](../README.md#the-four-divisions) describes
 them; each holds the code of one or more [banks](../glossary.md#bank)
 ([below](#banks-and-folders)), and the other folders hold one kind of thing
 from wherever the linker places it. Each folder name's source is in the

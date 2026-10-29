@@ -7,7 +7,7 @@ way, through one function, [`wait()`](../../glossary.md#wait), which runs a
 short list of routines, the [tasks](../../glossary.md#task), once every
 [frame](../../glossary.md#frame) while it waits. That function and what it
 needs around it are the core of the [System](../../glossary.md#system), the
-first division of Camelot's credits: start-up, the
+base every other division stands on: start-up, the
 [main routine](../../glossary.md#main-routine), the frame and its handover at
 VBlank, the buttons and sleep, the stack switch, the
 [heap](../../glossary.md#heap-and-pools) and the task runner. Beside them sit
@@ -166,7 +166,7 @@ The game can also fall asleep by itself after three minutes with no button
 pressed, where a screen allows it. Either way, the screen turns white for a
 second before the console sleeps, and after waking the game waits a few
 VBlanks before carrying on. Some moments forbid sleep altogether. In
-Camelot's debug mode (`gDebugMode`), Start and Select held pause the game,
+debug mode (`gDebugMode`), Start and Select held pause the game,
 and A, B, Select or the D-pad then step it one frame at a time.
 
 `wait()` counts the hold and the idle frames against `SLEEP_COMBO_FRAMES` and

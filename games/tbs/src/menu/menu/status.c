@@ -127,14 +127,17 @@ s32 PartyMemberChooser_Open(void) {
 /// -1.
 s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = gMenuWork;
-  s32 result = 0;
+  s32 result;
 
-  /* FAKEMATCH(one-pass): the slot's clearing in a one-pass block stores the
-   * zero before the slot's offset is built; as a plain statement, 4 of 23
-   * instructions differ in tbs-en. */
-  do {
-    work->selectedSlots[0] = result;
-  } while (0);
+  /* FAKEMATCH(barrier): an empty asm after the work pointer's load keeps the
+   * zero below that load; without it, 2 of 22 instructions differ in tbs-en.
+   */
+  __asm__("");
+  result = 0;
+  /* FAKEMATCH(barrier): an empty asm after the zero keeps the slot's offset
+   * below it; without it, 2 of 22 instructions differ in tbs-en. */
+  __asm__("");
+  work->selectedSlots[0] = result;
   if (StatusScreen_SelectMember(0) == -1)
     result = -1;
   else

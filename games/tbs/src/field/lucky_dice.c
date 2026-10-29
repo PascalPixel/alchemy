@@ -76,23 +76,19 @@ void Camera_ResetViewDefaults(void) {
 
 /// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
 UNUSED s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
-  /* FAKEMATCH(temporary): the product built in its own variable from a copy
-   * of right, then rounded into another; as product = left * right adjusted
-   * in place, 4 of 14 instructions differ in tbs-en. */
   s16 left = leftValue;
   s16 right = rightValue;
   s32 product;
   s32 roundedProduct;
-  s32 multiplier;
 
-  multiplier = right;
+  // Rounded by hand: as left * right / 256, right is extended second and
+  // the rounding works in r0.
   product = left;
-  product *= multiplier;
-  if (product >= 0) {
+  product *= right;
+  if (product >= 0)
     roundedProduct = product;
-  } else {
+  else
     roundedProduct = product + 255;
-  }
   return (s16)(roundedProduct >> 8);
 }
 

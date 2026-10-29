@@ -309,12 +309,11 @@ void FieldPsynergy_Move(void) {
   effectWork = gFieldEffectWork;
   object = effectWork->mainActor;
 
-  /* FAKEMATCH(one-pass): the call in a do { } while (0), which keeps the
+  /* FAKEMATCH(barrier): an empty asm before the call, which keeps the
    * mainActor load below the stack frame's sub sp; as a plain call, 2 of 24
    * instructions differ in tbs-en. */
-  do {
-    FieldPsynergy_FadeToCastColor();
-  } while (0);
+  __asm__("");
+  FieldPsynergy_FadeToCastColor();
   object = FieldEffect_StartItemBreak(object);
   FieldEffect_SnapScaleToFull(object);
   if (object != 0) {

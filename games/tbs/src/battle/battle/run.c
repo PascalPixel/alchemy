@@ -124,13 +124,13 @@ s32 Battle_Run(s32 enemyGroup) {
     Battle_SetType(BATTLE_TYPE_LINK);
   }
   if (battle->isLink != 0) {
-    /* FAKEMATCH(one-pass): the seed's store in a one-pass block, which keeps
-     * it ahead of linkWaitFrames' zero; as a plain assignment, 7 of 645
-     * instructions differ in tbs-en. */
-    do {
-      gBattleRandomSeed = 0;
-    } while (0);
-    for (linkWaitFrames = 0;;) {
+    gBattleRandomSeed = 0;
+    linkWaitFrames = 0;
+    /* FAKEMATCH(barrier): an empty asm after the seed's store and
+     * linkWaitFrames' zero keeps them ahead of the wait loop's setup; as the
+     * two plain assignments alone, 2 of 645 instructions differ in tbs-en. */
+    __asm__("");
+    for (;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;
       wait(1);

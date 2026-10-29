@@ -2003,16 +2003,12 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
 static void Vale_MendingTheRoof(void) {
   u32 i;
   /* FAKEMATCH(dead): repairActor's zero initializer, never read, keeps
-   * the event's register allocation; without it, 59 of 1024 instructions differ
-   * in tbs-en. */
+   * the event's register allocation; without it, 170 of 1024 instructions
+   * differ in tbs-en. */
   struct Actor *repairActor = NULL;
   struct Actor *leader;
   struct Actor *moveHand;
   struct Actor *actor;
-  /* FAKEMATCH(temporary): one zero for the hand's flags and update and
-   * the message call; as literal zeros, 7 of 1024 instructions differ in
-   * tbs-en. */
-  s32 stoppedMotionFlags;
   s32 message;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -2161,8 +2157,7 @@ static void Vale_MendingTheRoof(void) {
   Task_AddFrame(Vale_CycleOpeningPillarPalette, TASK_PASS_FRAME);
   actor = Actor_GetById(ACTOR_OPENING_MOVE_HAND);
   Actor_SetSpriteFlags(actor, 0);
-  stoppedMotionFlags = 0;
-  moveHand->motionFlags = stoppedMotionFlags;
+  moveHand->motionFlags = 0;
   moveHand->x.fixed = PIXELS(428);
   moveHand->y.fixed = PIXELS(208);
   moveHand->z.fixed = PIXELS(584);
@@ -2179,7 +2174,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_MoveToAndWait(ACTOR_OPENING_PILLAR, 378, 584);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
-  moveHand->update = (void (*)(struct Actor *))stoppedMotionFlags;
+  moveHand->update = NULL;
   Actor_SetSpritePriority(ACTOR_GARET, 2);
   Actor_Get(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Task_Remove(Vale_UpdateGaretPaletteAndEffects);
@@ -2230,7 +2225,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 40);
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_GARET, 1, 2, 25, 2, ACTOR_JENNA, 10,
-                                    14, 4, 14, stoppedMotionFlags);
+                                    14, 4, 14, 0);
   Event_Wait(40);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

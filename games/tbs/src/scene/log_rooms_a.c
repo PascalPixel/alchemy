@@ -3349,9 +3349,8 @@ static void LogRoomsA_UpdateActorStops(void) {
     if (work->blockedSteps > 0 && dx * dx + dz * dz <= 400 &&
         (facingDifference = (u16)facing - angle) > -FACING_STEP &&
         facingDifference < FACING_STEP) {
-      /* FAKEMATCH(dead): a dead store keeps this branch through jump
-       * optimization (bge to the else, then b past it); as an empty branch, 1
-       * of 269 instructions differ in tbs-en. */
+      // DEAD: facingDifference is not read again; the arm it fills is the
+      // ROM's b past the else, after the bge to it.
       facingDifference = 0;
 #if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {

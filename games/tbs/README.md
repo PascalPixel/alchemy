@@ -1,13 +1,13 @@
 # The Broken Seal
 
-![The Title: clouds and the mountain scroll past the sun and its lens flares, and the Golden Sun title card settles over them](https://alchemy.pascalpixel.com/story/title.gif)
+![The Title: clouds and Mt. Aleph scroll past the sun and its lens flares, and the Golden Sun title card settles over them](https://alchemy.pascalpixel.com/story/title.gif)
 
 > [!NOTE]
 > In Japan, Golden Sun carries the subtitle 開かれし封印, The Broken Seal.
 > These pages call the game by that subtitle, to keep it apart from
 > [The Lost Age](glossary.md#the-two-games).
 
-Switch the console on and the title card settles over the mountain. Press
+Switch the console on and the title card settles over Mt. Aleph. Press
 Start, choose a file, and the party stands in Vale. From here on the player
 sees one thing at a time: the party walking around a town, a conversation,
 a battle, a menu, a game of dice. Underneath, the game runs on four

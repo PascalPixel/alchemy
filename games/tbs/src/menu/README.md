@@ -162,11 +162,11 @@ the bag by one.
 The title intro is the short scene that plays after the logos, before the File
 Screen.
 
-![The title intro: the clouds and the mountain scroll past the sun and its lens flares, ending on the Golden Sun logo](https://alchemy.pascalpixel.com/story/title.gif)
+![The title intro: the clouds and Mt. Aleph scroll past the sun and its lens flares, ending on the Golden Sun logo](https://alchemy.pascalpixel.com/story/title.gif)
 
 At power-on the Nintendo logo shows with its jingle, then the Camelot logo for
 two seconds. If the cartridge holds a save, the intro follows: the clouds and
-the mountain scroll down while the sun and its lens flares rise along the
+Mt. Aleph scroll down while the sun and its lens flares rise along the
 mountain's slope, then the screen flashes white into the Golden Sun logo, where
 "Press Start" pulses for up to a minute. If nothing is pressed, the screen
 fades out and the game starts again from the logos. With no save the logos

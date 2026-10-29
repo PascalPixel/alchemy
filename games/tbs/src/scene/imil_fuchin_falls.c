@@ -1514,11 +1514,7 @@ static void Imil_WalkTowardFever(void) {
 /// room, and the darkness and the fade overlay in the dragon statue's room.
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct Actor *actor;
-  /* FAKEMATCH(temporary): one variable holds the zeros and then the slot word,
-   * so case 5 stores a fresh 0 and gMainRoutineWork stays in r6; as literal
-   * zeros and the slot read in place, 51 of 144 instructions differ in tbs-en.
-   */
-  s32 value;
+  struct FadeOverlayWork *fade;
 
   ImilFuchinFalls_RebuildLogRoom();
   if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
@@ -1535,11 +1531,15 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     }
   } else if (gMainRoutineWork.next ==
              (s32)&SceneId_FuchinFallsCaveDragonStatue) {
-    value = 0;
+    /* FAKEMATCH(dead): fade set to NULL, which nothing reads, so the zero
+     * stores below take its register (r5) and the entrance from the south
+     * half's middle stores a fresh 0; as no such set, 51 of 144 instructions
+     * differ in tbs-en. */
+    fade = NULL;
     actor = Actor_Get(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE);
-    gImilFuchinFalls_TrackLeader = value;
-    actor->motionFlags = value;
-    actor->y.fixed = value;
+    gImilFuchinFalls_TrackLeader = 0;
+    actor->motionFlags = 0;
+    actor->y.fixed = 0;
     Actor_SetSpritePriority(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE, 1);
     Actor_SetSpriteColorById(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE,
                              SPRITE_COLOR_HIDDEN);
@@ -1552,8 +1552,8 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
       FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
-      value = *(s32 *)(gHeapSlots + 36);
-      ((struct FadeOverlayWork *)value)->actor = NULL;
+      fade = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
+      fade->actor = NULL;
       break;
     }
     if (gMainRoutineWork.entrance <=

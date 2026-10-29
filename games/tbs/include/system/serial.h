@@ -200,15 +200,14 @@ static __inline__ void Serial_ResetTransferState(void) {
   ime = &REG_IME;
   IME_SAVE(ime, saved);
   IME_DISABLE(ime);
-  /* FAKEMATCH(one-pass): zero and state set in a once-only block; as plain
-   * statements, 27 of 62 instructions differ in tbs-en
-   * (BattleArena_ExchangePartyRecords). */
-  do {
-    zero = 0;
-    /* FAKEMATCH(dead): state set again; as the one assignment above, 16 of 62
-     * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
-    state = &gSerialTransfer;
-  } while (0);
+  zero = 0;
+  /* FAKEMATCH(dead): state set again; as the one assignment above, 14 of 62
+   * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
+  state = &gSerialTransfer;
+  /* FAKEMATCH(barrier): a volatile empty asm clears CSE's table, so the
+   * stores take zero's register rather than the constant; as no asm, 29 of 62
+   * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
+  __asm__ volatile("" ::);
   state->status = SERIAL_STATUS_RUNNING;
   gSerialSendSource = zero;
   gSerialSendSize = zero;

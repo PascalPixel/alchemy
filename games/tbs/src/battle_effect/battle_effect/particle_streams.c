@@ -334,11 +334,20 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       s32 x;
       s32 y;
 
-      /* FAKEMATCH(barrier): the dividend an empty asm's copy of count, which
-       * CSE cannot trace, so the division tests and biases the copy; as heat =
-       * count / 4, 4 of 1532 instructions differ in tbs-en. */
-      __asm__("" : "=r"(dividend) : "0"(count));
-      heat = dividend / 4;
+      /* FAKEMATCH(temporary): the division written out on a copy of count,
+       * which it tests and biases; as heat = dividend / 4, 27 of 1532
+       * instructions differ in tbs-en. */
+      dividend = count;
+      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count,
+       * so the test reads the copy; without them, 4 of 1532 instructions
+       * differ in tbs-en. */
+      if (sheet) {
+        count++;
+        count--;
+      }
+      if (dividend < 0)
+        dividend += 3;
+      heat = dividend >> 2;
       /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering r1
        * and r3, so count keeps r2 and sheet takes r0; as line = (u16 *)
        * (work->sheet + 0x1f80), 69 of 1532 instructions differ in tbs-en. */

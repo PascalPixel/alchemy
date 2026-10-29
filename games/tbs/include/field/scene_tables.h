@@ -245,9 +245,10 @@ enum TriggerKind {
   TRIGGER_TALK_HALTED = 7
 };
 
-// Isaac's sheet (spr_000.png) shows them: leaving animations 25 and 26
-// turn the leader away and shrink him out of sight, ending blank, and arrivals
-// 23 and 24 grow him back into view facing the player.
+// Isaac's sheet (spr_000.png) and a recording of a stairs exit show them:
+// leaving animations 25 and 26 take the leader, his back turned, into the
+// stair opening, darkening and smaller each picture until he is gone; arrivals
+// 23 and 24 bring him out of it facing the player.
 /// An exit trigger's control bits 5..4: how the leader leaves
 /// (Scene_RunStepTriggerOrExit).
 enum ExitStyle {

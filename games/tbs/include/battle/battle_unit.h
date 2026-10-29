@@ -386,8 +386,8 @@ struct Unit {
   u8 regenerate; ///< Regenerate's turns left, 7 when cast
   s8 reflect;    ///< Reflect's turns left, 7 when cast
   u8 haunt;      ///< set while an evil spirit grips the unit
-  /// The Grim Reaper's countdown: 7 when cursed, down one at each turn's
-  /// end; at 0 the unit falls.
+  /// The Grim Reaper's countdown: 7 when cursed, down one at the end of each
+  /// of the unit's own actions (BattleUnit_ProcessActionEnd); at 0 it falls.
   u8 grimReaper;
   /// The totals of EQUIP_EFFECT_ADD_UNLEASH_CHANCE and EQUIP_EFFECT_24 that
   /// Unit_Calculate sums; TBS never reads them back

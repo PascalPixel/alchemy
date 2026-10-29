@@ -79,7 +79,6 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 i;
   struct CursorSprite cursorStorage;
   struct MenuSprite *iconSprite;
-  struct CursorSprite *sprite;
   u16 messageText[64];
   s32 iconSlots[BATTLE_LIST_ROWS];
   struct MenuSprite sprites[BATTLE_LIST_ROWS];
@@ -115,8 +114,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x210);
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x211);
 
-  sprite = &cursorStorage;
   for (;;) {
+    struct CursorSprite *sprite = &cursorStorage;
+
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
@@ -212,10 +212,6 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    /* FAKEMATCH(dead): sprite set again to the cursor each frame orders
-     * the spill slots of the cursor address and row * 2 as the native stack
-     * frame does; without it, 28 of 770 instructions differ in tbs-en. */
-    sprite = &cursorStorage;
     ((u32 *)sprite)[1] = MENU_SPRITE_SHAPE_16X16;
     ((u32 *)sprite)[2] = 0;
     sprite->tile = VramCache_Reload(cursorHandle, (s32)gPointingHandTiles);

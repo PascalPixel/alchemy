@@ -47,7 +47,7 @@ of the game through all four. The pages for the
 
 ## The console
 
-![The console switched on: the Golden Sun logo fades in, and name entry opens on Isaac's name](https://alchemy.pascalpixel.com/guides/engine/boot.gif)
+![Isaac stands in Vale, then A, B, Select and Start restart the game and the Camelot logo comes up](https://alchemy.pascalpixel.com/guides/runtime/soft-reset.gif)
 
 The Game Boy Advance has a screen of 240 by 160 pixels, which it redraws
 about 60 times a second, and ten buttons: the four directions of the D-pad,

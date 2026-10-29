@@ -130,11 +130,6 @@ s32 WorldMap_InitializePerspective(void) {
   u16 *yaw;
   u16 *pitch;
   u16 *zoomTransitionFrames;
-  /* FAKEMATCH(volatile): the fill word is this function's own volatile local,
-   * filled by Dma_Fill32Cell, so it takes the native stack frame slot at sp+28;
-   * as Dma_Fill32, 2 of 331 instructions differ in tbs-en. */
-  volatile u32 fill;
-  struct FixedPointPosition eyeOffset;
   s32 farPlane;
   s32 tileIndex;
 
@@ -143,7 +138,7 @@ s32 WorldMap_InitializePerspective(void) {
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
   perspective = HeapSlot_Alloc(HEAP_SLOT_MAP_GRID, sizeof(struct WorldMapView));
-  Dma_Fill32Cell(fill, 0, perspective, sizeof(struct WorldMapView));
+  Dma_Fill32(0, perspective, sizeof(struct WorldMapView));
   perspective->viewX = 0;
   perspective->viewY = 0;
   perspective->scaleX = 0x200000;
@@ -226,36 +221,42 @@ s32 WorldMap_InitializePerspective(void) {
   Transform_ApplyYaw(*yaw);
   pitch = &perspective->pitch;
   Transform_ApplyPitch(*pitch);
-  eyeOffset.x = 0;
-  eyeOffset.y = 0;
-  eyeOffset.z = farPlane;
-  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
-  Transform_Reset();
-  Transform_SetLookAt(camera->eye, cameraPosition);
-  RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Transform_UpdateVertices,
-                   &Transform_UpdateVerticesSize);
-  WorldMap_BuildScanlineTable(
-      Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)), cameraPosition,
-      affineWork->scanlines);
-  gScanlineAngle = 0;
-  gScanlinePitch = perspective->pitch;
-  ((WorldMapPlaneFn)gHeapSlots[HEAP_SLOT_RAM_CODE])(
-      camera, cameraPosition, affineWork->scanlines,
-      affinePages[gFrameCount & 1]);
-  // Then the world map's own view: pitch 0xe000 (minus an eighth of a
-  // turn) and yaw 0, with the eye one pixel beyond the distance.
-  SET_VECTOR(cameraPosition, 0, 0, 0);
-  Transform_Reset();
-  Io_Write16Swapped(pitch, 0xe000);
-  *yaw = 0;
-  Transform_Reset();
-  Transform_ApplyPosition(cameraPosition);
-  Transform_ApplyYaw(*yaw);
-  Transform_ApplyPitch(*pitch);
-  eyeOffset.x = 0;
-  eyeOffset.y = 0;
-  eyeOffset.z = *distance + Q16_ONE;
-  Iwram_TransformVector(&eyeOffset, camera->eye);
+  // eyeOffset in the block that uses it: at function scope it would take
+  // Dma_Fill32's word's place at the top of the stack frame.
+  {
+    struct FixedPointPosition eyeOffset;
+
+    eyeOffset.x = 0;
+    eyeOffset.y = 0;
+    eyeOffset.z = farPlane;
+    Iwram_TransformVector(&eyeOffset, (s32 *)camera);
+    Transform_Reset();
+    Transform_SetLookAt(camera->eye, cameraPosition);
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Transform_UpdateVertices,
+                     &Transform_UpdateVerticesSize);
+    WorldMap_BuildScanlineTable(
+        Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)), cameraPosition,
+        affineWork->scanlines);
+    gScanlineAngle = 0;
+    gScanlinePitch = perspective->pitch;
+    ((WorldMapPlaneFn)gHeapSlots[HEAP_SLOT_RAM_CODE])(
+        camera, cameraPosition, affineWork->scanlines,
+        affinePages[gFrameCount & 1]);
+    // Then the world map's own view: pitch 0xe000 (minus an eighth of a
+    // turn) and yaw 0, with the eye one pixel beyond the distance.
+    SET_VECTOR(cameraPosition, 0, 0, 0);
+    Transform_Reset();
+    Io_Write16Swapped(pitch, 0xe000);
+    *yaw = 0;
+    Transform_Reset();
+    Transform_ApplyPosition(cameraPosition);
+    Transform_ApplyYaw(*yaw);
+    Transform_ApplyPitch(*pitch);
+    eyeOffset.x = 0;
+    eyeOffset.y = 0;
+    eyeOffset.z = *distance + Q16_ONE;
+    Iwram_TransformVector(&eyeOffset, camera->eye);
+  }
   REG_MOSAIC = 0;
   Io_Write16(DISPCNT_MODE_2 | DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   gBgScroll[1].x = 0;

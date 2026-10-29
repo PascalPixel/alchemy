@@ -264,13 +264,10 @@ void LuckyDice_Run(void) {
    * keeps at sp+168..200, between screen and the affine halfwords; without it,
    * 21 of 2046 instructions differ in tbs-en. */
   UNUSED s32 unused[8];
-  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each
-   * reloaded with ldrh, the form the bytes prove; as plain u16 locals, 463 of
-   * 2046 instructions differ in tbs-en. */
-  volatile u16 affineA;
-  volatile u16 affineB;
-  volatile u16 affineC;
-  volatile u16 affineD;
+  u16 affineA;
+  u16 affineB;
+  u16 affineC;
+  u16 affineD;
   s32 spinRate[DICE_COUNT];
   s32 flashTimer[DICE_COUNT];   // set on a win; nothing here reads it
   s32 luckyNumbers[DICE_COUNT]; // the two numbers shown at the top, never equal
@@ -326,6 +323,13 @@ void LuckyDice_Run(void) {
   s32 pairCount;
   s16 affineScale;
 
+  /* FAKEMATCH(dead): the four affine halfwords' addresses taken, so each is
+   * stored to sp+166..160 and reloaded with ldrh, the form the bytes prove; as
+   * plain u16 locals, 902 of 2046 instructions differ in tbs-en. */
+  (void)&affineA;
+  (void)&affineB;
+  (void)&affineC;
+  (void)&affineD;
   // Allocate the screen's work blocks and reset the camera and tasks.
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
   spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x200);

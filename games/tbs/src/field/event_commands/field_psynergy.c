@@ -272,36 +272,17 @@ s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
 void Actor_CycleSpriteColors(struct Actor *actor) {
-  struct Actor *owner = (struct Actor *)actor;
-  s32 kind;
-  struct Sprite *animation;
-  s32 initialCount;
-  s32 remainingParts;
-  struct SpriteAnimation **parts;
-  struct SpriteAnimation *spritePart;
-  /* FAKEMATCH(temporary): a pointer local to gFrameCount, volatile as it is
-   * declared, read on each pass; as gFrameCount read in the loop, 6 of 46
-   * instructions differ in tbs-en. */
-  volatile u32 *frameCount;
-  s32 param;
+  struct Sprite *sprite;
+  s32 count;
+  s32 i;
 
-  kind = owner->spriteStorageKind;
-  if (kind == ACTOR_SPRITE_ONE) {
-    animation = owner->sprite;
-    if (animation != 0 && animation->retainCacheEntry == 0) {
-      initialCount = animation->count;
-      if (initialCount != 0) {
-        frameCount = &gFrameCount;
-        parts = animation->entries;
-        remainingParts = initialCount;
-        do {
-          spritePart = *parts++;
-          param = *frameCount % 6;
-          remainingParts--;
-          spritePart->colorMode = param;
-        } while (remainingParts != 0);
-      }
-      animation->dirty = 1;
+  if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+    sprite = actor->sprite;
+    if (sprite != 0 && sprite->retainCacheEntry == 0) {
+      count = sprite->count;
+      for (i = 0; i < count; i++)
+        sprite->entries[i]->colorMode = gFrameCount % 6;
+      sprite->dirty = 1;
     }
   }
 }

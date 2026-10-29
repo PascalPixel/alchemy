@@ -167,32 +167,16 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
       redraw = 0;
       if (djinnCount != 0) {
-        s32 k;
-        u32 selected;
+        /* FAKEMATCH(dead): k set to 0 before the loop sets it again, so cse2
+         * gives the second set redraw's register, which the native reloads;
+         * as one set, 1 of 1201 instructions differ in tbs-en. */
+        s32 k = 0;
         MessageArgument_ClearAll();
         alreadySelected = 0;
-        /* FAKEMATCH(one-pass): a loop that runs once keeps the redraw reload
-         * after the selected-entry load, and none of its instructions
-         * survive; as k = redraw, 3 of 1201 instructions differ in tbs-en. */
-        selected = gBattleMenuWork->chosenDjinn[redraw];
-        for (k = redraw; k == redraw;) {
-          k = redraw;
-          break;
-        }
-        if (selected == selectedDjinn) {
-          alreadySelected = 1;
-        } else {
-          for (;;) {
-            /* FAKEMATCH(dead): the flag, zero on every continuation, keeps k
-             * an index rather than a pointer; as k++, 1 of 1201 instructions
-             * differ in tbs-en. */
-            k += 1 - alreadySelected;
-            if (k > 7)
-              break;
-            if ((u32)gBattleMenuWork->chosenDjinn[k] == selectedDjinn) {
-              alreadySelected = 1;
-              break;
-            }
+        for (k = 0; k <= 7; k++) {
+          if ((u32)gBattleMenuWork->chosenDjinn[k] == selectedDjinn) {
+            alreadySelected = 1;
+            break;
           }
         }
         if (alreadySelected != 0) {

@@ -154,7 +154,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       cancelled = -1;
       /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test give -1 and 1
        * the ROM's registers; as if (chosen == -1) setting done and useResult,
-       * 6 of 317 instructions differ in tbs-en. */
+       * 12 of 316 instructions differ in tbs-en. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {

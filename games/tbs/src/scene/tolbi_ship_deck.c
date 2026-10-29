@@ -1706,18 +1706,11 @@ static void TolbiShipDeck_MonstersBoard(void) {
     wait(1);
   } while (Actor_GetById(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer == 0);
   TolbiShipDeck_OpenFirstDoor();
-  {
-    /* FAKEMATCH(temporary): the actor id held in a local for the empty asm
-     * below; as the constant in both, 20 of 163 instructions differ in
-     * tbs-en. */
-    s32 actor = ACTOR_SEA_OURANOS;
-
-    /* FAKEMATCH(barrier): an empty asm taking the actor id, so r0 = 21 is set
-     * straight after the call above; as a plain call, 1 of 163 instructions
-     * differ in tbs-en. */
-    __asm__("" : : "l"(actor));
-    Actor_WalkTo(actor, 196, 612);
-  }
+  /* FAKEMATCH(one-pass): the block sets r0 = 21 straight after the call above;
+   * as a plain call, 1 of 163 instructions differ in tbs-en. */
+  do {
+    Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
+  } while (0);
   Actor_RefreshSelectorById(ACTOR_SEA_FIRST_ATTACK_MONSTER);
   Event_Wait(10);
   Event_FinishScreenTransition();

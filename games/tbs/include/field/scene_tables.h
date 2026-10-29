@@ -245,8 +245,9 @@ enum TriggerKind {
   TRIGGER_TALK_HALTED = 7
 };
 
-// XXX: what leaving animations 26 and 25 and arrivals 24 and 23 show;
-// recordings of an exit of each style would settle it.
+// Isaac's sheet (spr_000.png) shows them: leaving animations 25 and 26
+// turn the leader away and shrink him out of sight, ending blank, and arrivals
+// 23 and 24 grow him back into view facing the player.
 /// An exit trigger's control bits 5..4: how the leader leaves
 /// (Scene_RunStepTriggerOrExit).
 enum ExitStyle {

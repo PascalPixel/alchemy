@@ -40,8 +40,9 @@ typedef unsigned long long u64;
   ((u32)FIXED_LINKED_(modern_##linked, #linked) -                              \
    (u32)FIXED_LINKED_(modern_##from, #from))
 #else
-/// One of Camelot's fixed addresses, checked against the link, as a constant
-/// of `type`; `linked` names the symbol the modern build reaches it by.
+/// One of Camelot's fixed addresses, as a constant of `type`; `linked` names
+/// the symbol the modern build reaches it by, where `make modern` resolves it
+/// by name.
 #define FIXED_ADDRESS(type, address, linked) (type address)
 /// The distance between two fixed places, `value`, which the modern build
 /// computes from their linked names.

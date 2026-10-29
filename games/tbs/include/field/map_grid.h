@@ -44,10 +44,9 @@ enum CellBehavior {
 /// One cell of a map layer: its cell picture and flags, its cell behavior and
 /// its shape, an index into the shape table.
 struct MapGridCell {
-  // XXX (no evidence): what the four flag bits mark; the grids set them, but
-  // no code reads them, so only Camelot's map tools could say.
-  /// bits: 15..12 flags (15..14 read by MapGrid_GetCellHighFlags) | 11..0
-  /// cell picture
+  /// bits: 15..14 the priority an actor standing on it takes, if not 0
+  /// (also read by MapGrid_GetCellHighFlags) | 13..12 the layer such an
+  /// actor takes, + 1, if not 0 | 11..0 cell picture (struct ActorCameraTile)
   u16 cellPictureAndFlags;
   u8 behavior; ///< an enum CellBehavior
   /// Indexes the 4-byte shape table (gMapGridShapes): the shape's kind in

@@ -182,10 +182,10 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
       screen.x += xOffset;
       // Unsigned, so the frames before this target's turn are skipped too.
       if (memberFrame < 64) {
-        /* FAKEMATCH(pin): rec fixed to r0, so loop.c cannot hoist the point's
-         * address into fp; as an ordinary pointer, 51 of 265 instructions
-         * differ in tbs-en. */
-        register s32 *rec __asm__("r0");
+        /* FAKEMATCH(dead): rec starts null, a second set in the loop, so
+         * loop.c leaves the point's address in it rather than hoist it into
+         * fp; as one set, 51 of 265 instructions differ in tbs-en. */
+        s32 *rec = NULL;
 
         // The actor's projection is computed, but nothing reads it.
         EFFECT_VIEW_FROM_CAMERA(camera);

@@ -126,9 +126,9 @@ s32 Battle_Run(s32 enemyGroup) {
   if (battle->isLink != 0) {
     gBattleRandomSeed = 0;
     linkWaitFrames = 0;
-    /* FAKEMATCH(barrier): an empty asm keeps the seed's store and
-     * linkWaitFrames' zero ahead of the wait loop's setup; without it, 2 of
-     * 645 instructions differ in tbs-en. */
+    /* FAKEMATCH(barrier): an empty asm after the seed's store and
+     * linkWaitFrames' zero keeps them ahead of the wait loop's setup; as the
+     * two plain assignments alone, 2 of 645 instructions differ in tbs-en. */
     __asm__("");
     for (;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)

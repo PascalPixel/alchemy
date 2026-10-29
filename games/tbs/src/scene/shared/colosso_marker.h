@@ -15,7 +15,6 @@
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "types.h"
-#include "call.h"
 #include "sprite.h"
 #include "actor.h"
 #include "actor.h"

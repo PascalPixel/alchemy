@@ -78,7 +78,6 @@
 #include "sound.h"
 #include "system.h"
 #include "field_psynergy_work.h"
-#include "call.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

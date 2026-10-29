@@ -83,7 +83,6 @@
 #include "heap_slots.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
-#include "call.h"
 #include "field_effect.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"

@@ -87,7 +87,6 @@
 #include "sound.h"
 #include "system.h"
 #include "edition.h"
-#include "call.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"

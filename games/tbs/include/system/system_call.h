@@ -13,8 +13,9 @@
 /// stub. Main-image code calls the routines as ordinary functions; only the
 /// shared scene/shared/scroll_initialize_hblank_dma.h, which
 /// field/event_commands.c includes as lemurian_ship.c does, reaches the
-/// layer there. event_inline.h includes this layer; rooms without the event
-/// command layer use it directly.
+/// layer there, as LuckyDice_Run's two decodes do through a tagged wrapper.
+/// event_inline.h includes this layer; rooms without the event command layer
+/// use it directly.
 
 // Passing arguments through inline parameters rematerializes constants at each
 // call.
@@ -86,8 +87,8 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 
 /// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
 /// `destination`. Scenes, the Title and the File Screen reach the decoder
-/// through it; main-image code calls Decompress_TaggedLz without it,
-/// LuckyDice_Run through call.h's Call2.
+/// through it; main-image code calls Decompress_TaggedLz without it, except
+/// LuckyDice_Run, whose use is a tagged wrapper.
 static inline s32 FieldDecompress_TaggedLz(const void *source,
                                            void *destination) {
   return Decompress_TaggedLz(source, destination);

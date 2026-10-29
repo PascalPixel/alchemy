@@ -112,7 +112,6 @@
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "call.h"
 #include "system_call.h"
 #include "scene_ids.h"
 #include "field_effect.h"

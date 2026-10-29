@@ -99,7 +99,6 @@
 #include "io_reg.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
-#include "call.h"
 #include "field_effect.h"
 #include "iwram_call.h"
 #include "dma.h"

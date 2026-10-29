@@ -70,7 +70,6 @@
 #include "heap_release.h"
 #include "dma.h"
 #include "task.h"
-#include "call.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"

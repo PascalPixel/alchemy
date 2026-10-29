@@ -89,7 +89,6 @@
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "call.h"
 #include "display_transition.h"
 #include "field_particle.h"
 #include "item_ids.h"

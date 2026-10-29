@@ -67,7 +67,6 @@
 #include "sound.h"
 #include "system.h"
 #include "sol_sanctum_luna_sol_rooms.h"
-#include "call.h"
 #include "event.h"
 #include "scene_tables.h"
 #include "event_inline.h"

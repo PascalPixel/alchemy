@@ -90,7 +90,6 @@
 #include "scene_ids.h"
 #include "types.h"
 #include "event.h"
-#include "call.h"
 #include "event_inline.h"
 #include "ability_ids.h"
 #include "scene_tables.h"

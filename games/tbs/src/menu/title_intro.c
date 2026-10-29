@@ -634,14 +634,11 @@ s32 Title_ShowCamelotLogo(void) {
                BGCNT_SCREEN_BASE(6);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   gBgScroll[2].y = result;
-  /* FAKEMATCH(temporary): workIndex carries the decode destination before it
-   * counts; as resourceData set before the decode, 13 of 119 instructions
-   * differ in tbs-en. */
-  workIndex = (u32)Ram_MapGridCellBuffer;
-  Decompress_TaggedLz(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
+  resourceData = Resource_GetTableEntry(resourceId);
+  Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
   // The decoded resource: 224 colours, the map, the still tiles, then four
   // animation pictures of 0x400 bytes each.
-  resourceData = (u8 *)workIndex;
+  resourceData = Ram_MapGridCellBuffer;
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
   resourceData += 448;
   Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(0x800 / 4),

@@ -63,7 +63,6 @@
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "edition.h"
-#include "call.h"
 #include "flags.h"
 #include "sounds.h"
 

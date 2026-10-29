@@ -62,7 +62,6 @@
 #include "module/system/system.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "call.h"
 #include "field_blend.h"
 #include "event.h"
 #include "event_inline.h"

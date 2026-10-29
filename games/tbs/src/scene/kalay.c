@@ -116,7 +116,6 @@
 #include "task.h"
 #include "event.h"
 #include "scene_tables.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"

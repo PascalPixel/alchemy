@@ -48,7 +48,6 @@
 #include "system.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
-#include "call.h"
 #include "fixed_math.h"
 #include "actor_script.h"
 #include "flags.h"

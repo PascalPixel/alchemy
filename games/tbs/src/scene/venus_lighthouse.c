@@ -108,7 +108,6 @@
 #include "system.h"
 #include "edition.h"
 #include "iwram_call.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "io_reg.h"

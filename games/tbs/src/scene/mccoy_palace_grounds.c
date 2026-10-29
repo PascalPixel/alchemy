@@ -47,7 +47,6 @@
 #include "system.h"
 #include "mccoy_palace_grounds.h"
 #include "types.h"
-#include "call.h"
 #include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"

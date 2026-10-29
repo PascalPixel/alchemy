@@ -19,7 +19,6 @@
 #include "event_inline.h"
 #include "dma.h"
 #include "resource_ids.h"
-#include "call.h"
 #include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"

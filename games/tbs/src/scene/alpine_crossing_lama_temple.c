@@ -74,7 +74,6 @@
 #include "event.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"

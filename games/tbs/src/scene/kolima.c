@@ -81,7 +81,6 @@
 #include "scene_tables.h"
 #include "kolima.h"
 #include "actor.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "actor_script.h"

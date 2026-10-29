@@ -68,7 +68,6 @@
 #include "tbs_edition.h"
 #include "battle_side.h"
 #include "text/msg_ids.h"
-#include "call.h"
 #include "fixed_point_position.h"
 #include "iwram_call.h"
 #include "inventory.h"

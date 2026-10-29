@@ -66,7 +66,6 @@
 #include "sound.h"
 #include "system.h"
 #include "battle_unit.h"
-#include "call.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "glyph.h"

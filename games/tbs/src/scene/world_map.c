@@ -113,7 +113,6 @@
 #include "event_inline.h"
 #include "iwram_call.h"
 #include "scene_ids.h"
-#include "call.h"
 #include "text/msg_ids.h"
 #include "edition.h"
 #include "tbs_edition.h"

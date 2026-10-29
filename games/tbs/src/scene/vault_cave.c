@@ -92,7 +92,6 @@
 #include "event.h"
 #include "scene_tables.h"
 #include "task.h"
-#include "call.h"
 #include "actor.h"
 #include "ability_ids.h"
 #include "flags.h"

@@ -380,14 +380,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
          * keeping the r3 copy and shift; as level = green / 4 + heat, 5 of
          * 1532 instructions differ in tbs-en. */
         s32 blue = green;
-        /* FAKEMATCH(pin): level in r2; as a plain local, 21 of 1532
-         * instructions differ in tbs-en. */
-        register s32 level __asm__("r2");
+        s32 level;
 
         if (green < 0)
           blue += 3;
         blue >>= 2;
         level = blue + heat;
+        /* FAKEMATCH(barrier): an empty asm that clobbers r3 while level is
+         * live, so level takes r2; as level = blue + heat alone, 21 of 1532
+         * instructions differ in tbs-en. */
+        __asm__("" : : : "r3");
         blue = level - 32;
         green = level - 80;
 

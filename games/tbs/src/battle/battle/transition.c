@@ -21,7 +21,7 @@
 /// random number generator. Returns 0.
 s32 BattleTransition_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
-   * stored and loaded again as in the ROM; without volatile, 28 of 90
+   * stored and loaded again as in the ROM; without volatile, 61 of 90
    * instructions differ in tbs-en. */
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;

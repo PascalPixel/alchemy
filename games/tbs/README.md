@@ -55,21 +55,29 @@ of dice ends, the main routine goes back to a scene the field sequence runs
 
 ## Frames, waiting and tasks
 
-Every sequence is straight-line code: it does one thing, then the next, and
-where time must pass it calls [`wait(n)`](glossary.md#wait), which returns to
-the next line once n [frames](glossary.md#frame) have gone by. A frame is one
-picture: the game prepares it, then waits for the screen to show it at the
-next [VBlank](glossary.md#vblank), about 60 times a second.
+A sequence's code reads like a script. An event walks the leader to a door,
+waits 30 frames, shows a message and waits for A; a battle shows its menu,
+waits for a choice and plays the attack. Each line runs once the one before it
+has finished, and nothing in the code goes back to a loop in between.
+
+Most game engines are built the other way round: the engine owns the game
+loop, calls every object's update function once a frame, and the game's own
+code has to return quickly each time. Here the loop is inside a function the
+script calls. [`wait(n)`](glossary.md#wait) runs n
+[frames](glossary.md#frame) of the game and then returns to the next line. In
+each frame it calls every [task](glossary.md#task)'s function in turn, builds
+the sprites, and halts until the screen shows the picture at the next
+[VBlank](glossary.md#vblank), about 60 times a second.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  call(["Code calls wait(n)"]) --> tasks(["Every task, once"])
-  tasks --> sprites(["This frame's sprites"])
-  sprites --> halt(["Halt until the VBlank"])
-  halt --> vblank(["VBlank interrupt: the picture shown, sound mixed, buttons read"])
-  vblank -- "frames left" --> tasks
-  vblank -- "n frames gone" --> back(["Back to the next line"])
+  call(["The script reaches wait(n)"]) --> tasks(["Call every task's function: the actors move, windows type, water ripples"])
+  tasks --> sprites(["Build the frame's sprites"])
+  sprites --> halt(["Halt until the next VBlank"])
+  halt --> vblank(["VBlank interrupt: the picture goes on screen, the sound is mixed, the buttons are read"])
+  vblank -- "another frame" --> tasks
+  vblank -- "n frames done" --> back(["wait(n) returns: the script's next line runs"])
   classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
@@ -83,20 +91,40 @@ Simplified, from [frame.c](src/system/system/frame.c):
 ```c
 void wait(s32 frames) {
   while (frames--) {
-    Task_RunPass(TASK_PASS_FRAME);  /* every frame-pass task, once */
-    Oam_BuildBuffer(...);           /* this frame's sprites */
+    Task_RunPass(TASK_PASS_FRAME);  /* call every task's function */
+    Oam_BuildBuffer(...);           /* build the frame's sprites */
     VBlankIntrWait();               /* halt until the next VBlank */
   }
 }
 ```
 
-While code waits, things on screen keep moving: people walk, water ripples,
-text types out. Each of these is a [task](glossary.md#task), a short function
-that `wait()` calls once every frame until it is removed. A sequence adds the
-tasks it needs when it starts: the field adds its actors, its map's scrolling
-and its windows, and a battle adds its camera. Each VBlank the VBlank
-interrupt also mixes the next slice of sound and reads the buttons, whatever
-the game is doing.
+A task is whatever has to keep moving while the script waits: the actors
+walking, a window typing out its text, the map's water rippling. Each is one
+function in the task table, `gTasks`, and `wait()` calls it in every frame
+until the task is removed. A sequence adds the tasks it needs when it starts:
+the field adds its actors, its map's scrolling and its windows, and a battle
+adds its camera.
+
+A task runs in the middle of somebody else's `wait()`, so it can't do anything
+that takes time itself: it would have to wait, and the script is already
+waiting. A task that notices something leaves a note instead, in the
+[work](glossary.md#work) of the code it serves, and that code acts on the note
+once its `wait()` returns. The field sequence's loop is the plainest case:
+
+```c
+do {
+  wait(1);                      /* one frame: every task runs */
+  Field_UpdateWalking(...);     /* what the ground under the leader does */
+} while (Field_CountRequests() == 0);
+```
+
+During `wait(1)` the task that moves the actors runs the leader's
+[actor script](glossary.md#actor-script), which sees A pressed and sets
+`aButton` in the field's work. When `wait(1)` returns, the loop finds that
+note, a [request](glossary.md#field-request), leaves the loop and answers it;
+[From a conversation to a battle and back](#from-a-conversation-to-a-battle-and-back)
+follows one through. Beneath all of it, the VBlank interrupt runs on its own
+at every VBlank, whatever the code is doing.
 
 When a frame's work takes longer than one VBlank, everything counted in
 frames runs slow, while the music, mixed at every VBlank, keeps its tempo:
@@ -132,12 +160,11 @@ flowchart TD
 
 ### Talking to the villager
 
-The main routine is running the field sequence for that scene, and the field
-sequence's loop calls `wait(1)` once a frame while the player walks. Pressing
-A does not interrupt anything: the leader's control routine, which a task runs
-during the wait, only notes a [request](glossary.md#field-request)
-(`Field_CheckConfiguredKeys` sets `aButton`). When `wait(1)` returns, the loop
-sees the request, finds the villager ahead (`Field_FindNearbyTalkTarget`) and
+The main routine is running the field sequence for that scene, and its loop
+is in `wait(1)` while the player walks. Pressing A leaves the note the last
+section described (`Field_CheckConfiguredKeys` sets `aButton`). When
+`wait(1)` returns, the loop sees the request, finds the villager ahead
+(`Field_FindNearbyTalkTarget`) and
 looks him up in the scene's [trigger](glossary.md#trigger) table, which holds
 this row:
 

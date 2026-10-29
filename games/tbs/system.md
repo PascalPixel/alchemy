@@ -80,15 +80,20 @@ While a villager's line types out and waits for A, the event that showed it
 is stopped inside one call, yet the letters keep appearing and the river
 keeps moving. A sequence, an event or a menu screen is straight-line code
 that runs from start to finish, and when time has to pass it calls
-[`wait(n)`](glossary.md#wait) to let n frames go by. What keeps moving
-meanwhile is a task, a short routine run once a frame whatever the waiting
-code is doing: the windows are one (`WindowSystem_Update`), the map's
-animated tiles another (`TilesetAnim_Update`). Each frame, `wait()` runs
-every task in the frame pass once, builds the frame's sprites and halts
-until the VBlank. The VBlank interrupt puts the finished picture on
-screen, runs the VBlank pass (`TASK_PASS_VBLANK`), reads the buttons and
-mixes more sound. Tasks are added with `Task_Add` and stopped
+[`wait(n)`](glossary.md#wait), which runs n frames of the game before it
+returns. The game loop is inside that call: in each frame, `wait()` calls
+the function of every task in the frame pass, builds the frame's sprites and
+halts until the VBlank. A task is what keeps moving while the code waits: the
+windows are one (`WindowSystem_Update`), the map's animated tiles another
+(`TilesetAnim_Update`). The VBlank interrupt puts the finished picture on
+screen, calls the tasks of the VBlank pass (`TASK_PASS_VBLANK`), reads the
+buttons and mixes more sound. Tasks are added with `Task_Add` and stopped
 with `Task_Remove`.
+
+A task runs inside the waiting code's `wait()`, so it never waits itself.
+What it notices it leaves as a note in a work, which the waiting code reads
+when its `wait()` returns: the leader's actor script sets the field's
+`aButton`, and the field sequence's loop answers it after `wait(1)`.
 
 A priority's high byte picks the pass and its low byte ranks the task within
 it, higher first. A battle adds `BattleCamera_Update` at
@@ -166,15 +171,16 @@ the tables of where the party arrives and leaves, who stands there and what
 happens there; the rest of the game reaches a scene only through it. At its
 end, the import table has one entry for each main-image function the scene
 calls. A direct call cannot reach the cartridge from the overlay area, so the
-scene calls through its entry, which leads to the function's veneer in its
-bank's table. An overlay therefore depends only on each bank's table, which
+scene calls through its entry, which leads to the function's veneer, a few
+instructions in its bank's table that jump on to the function itself. An
+overlay therefore depends only on each bank's table, which
 keeps its order, and not on where the function itself lies.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
   scene(["A scene's code, in the overlay area"]) --> import(["Its import table entry"])
-  import --> veneer(["The function's veneer, in its bank's table"])
+  import --> veneer(["The function's veneer: a jump to it, in its bank's table"])
   veneer --> function(["The function, in its bank of the main image"])
   classDef overlay fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
   classDef table fill:#FBE7C6,stroke:#E0B46A,color:#7A5212

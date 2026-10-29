@@ -25,12 +25,16 @@ Every scene starts cold ([System](system.md#design)). The
 setup (which can move the party straight on) and fades in, naming the
 [area](glossary.md#area) when the party enters a new one.
 
-Each [frame](glossary.md#frame) the loop calls `wait(1)` and checks the ground
-under the leader (`Field_UpdateWalking`). Stepping into a doorway, pressing A
-beside someone or a random battle starting only fills in a
-[request](glossary.md#field-request), a field of the field sequence's work.
-The walk then stops, the game deals with the requests one at a time in a fixed
-order, and the walk starts again. Leaving comes first, so an
+Each [frame](glossary.md#frame) the loop calls `wait(1)`, which runs the game
+for one frame, the leader's walk included
+([The Broken Seal](README.md#frames-waiting-and-tasks)), and then checks the
+ground under the leader (`Field_UpdateWalking`). What happens during that
+frame can't stop the loop: stepping into a doorway, pressing A beside someone
+or a random battle starting only leaves a
+[request](glossary.md#field-request), a note in the field sequence's work,
+which the loop reads when `wait(1)` returns. The walk then stops, the game
+deals with the requests one at a time in a fixed order, and the walk starts
+again. Leaving comes first, so an
 [event](glossary.md#event) that ends by taking an [exit](glossary.md#exit),
 like this door, simply ends the scene. A random battle is a way out too: the
 battle runs as the next [sequence](glossary.md#sequence), and then the scene
@@ -39,7 +43,7 @@ loads again with its actors put back.
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  walk(["wait(1): one frame of walking"]) --> any{"A request set?"}
+  walk(["wait(1): one frame of the game, the leader walking"]) --> any{"A request set?"}
   any -- no --> walk
   any -- yes --> first(["The first one set, in order: leave, a raised trigger, a battle, a step, A, the menu, a talk, a search, Psynergy, an item"])
   first --> handle(["Dealt with: an event, a battle, a menu"])

@@ -272,25 +272,26 @@ Evidence: tradition: work, named for its owner, the main routine.
 
 ### Frame
 
-One pass of the game's work: every [task](#task) in the frame pass runs once
-and the screen is prepared, then the game halts until the next
-[VBlank](#vblank) shows it. Waits, walking and animation are all counted in
+One pass of the game loop inside `wait()`: the function of every
+[task](#task) in the frame pass is called and the screen is prepared, then the
+game halts until the next [VBlank](#vblank) shows it. Waits, walking and animation are all counted in
 frames ([System](system.md#waiting-and-tasks)).
 
 Evidence: tradition: フレーム, one pass of a game's processing.
 
 ### Wait
 
-Letting frames pass in the middle of a routine: `wait(n)` runs n frames and
-then returns to the next line, so a sequence or an event is written as
-straight-line code ([System](system.md#waiting-and-tasks)).
+Letting frames pass in the middle of a routine: `wait(n)` runs n frames of the
+game, calling every task each frame, and then returns to the next line, so a
+sequence or an event is written as straight-line code while the game loop runs
+inside its waits ([System](system.md#waiting-and-tasks)).
 
 Evidence: tradition: WAIT, the period's word for it.
 
 ### Task
 
-A short routine run once every [frame](#frame), or once every
-[VBlank](#vblank), until it is removed: the windows' typing, the map's
+A function the game calls in every [frame](#frame), or at every
+[VBlank](#vblank), while code waits, until it is removed: the windows' typing, the map's
 scrolling, the lightning over Vale on the stormy night. The task table,
 `gTasks`, holds up to 20, each with its function (`func`) and a priority that
 picks its pass, the frame pass (`TASK_PASS_FRAME`, which `wait()` runs) or

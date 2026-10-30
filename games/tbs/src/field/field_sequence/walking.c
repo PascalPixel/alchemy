@@ -10,9 +10,9 @@
 /// A party member's battle unit, seen as the HP and poison the walking update
 /// reads.
 struct UnitHpPoisonView {
-  u8 unitFieldsBeforeHp[0x38];
+  u8 unitFieldsBeforeHp[56];
   s16 hp; ///< struct Unit's hp: current HP, 0 when downed
-  u8 unitFieldsBeforePoison[0x131 - 0x3a];
+  u8 unitFieldsBeforePoison[305 - 58];
   u8 poison; ///< struct Unit's poison: POISON_NORMAL or POISON_VENOM
 };
 #endif
@@ -97,7 +97,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     u32 tileX;
     u32 tileY;
 
-    // Rounding toward zero, as a signed division by 0x200000 would.
+    // Rounding toward zero, as a signed division by 32 pixels (32 << 16) would.
     fixedX = position.vector.x;
     if (fixedX < 0)
       fixedX += 0x1fffff;
@@ -283,7 +283,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       work->encounter = Encounter_RollMapStep(0, encounterSpeed);
     }
 
-    // Every 0x10000 of distance walked (counted at half speed on ground whose
+    // Every Q16_ONE of distance walked (counted at half speed on ground whose
     // encounter zone is 0; fullEncounterRate holds that zone, 1 on the World
     // Map), the party regains PP, Djinn recover, and poison hurts.
     stepDistance = Iwram_MulQ16(work->walkingDistanceScale, leader->speedLimit);
@@ -443,7 +443,7 @@ void Party_AddHp(s32 amount, s32 percent) {
 /// (POISON_NORMAL or POISON_VENOM), after a flash; Field_UpdateWalking counts a
 /// non-zero result as the party being hurt.
 ///
-/// Called by Field_UpdateWalking each time the distance walked passes 0x10000.
+/// Called by Field_UpdateWalking each time the distance walked passes Q16_ONE.
 s32 Party_ApplyPoisonDamage(void) {
   s32 worstPoison = 0;
   s32 partyCount = Party_CountMembersFar();
@@ -501,7 +501,7 @@ void WorldMap_Freeze(void) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, 0x540);
+    state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, 1344);
     if ((state != NULL) && (state->step != 0)) {
       state->start = 0;
       state->end = 0;

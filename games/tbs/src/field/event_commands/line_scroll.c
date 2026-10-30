@@ -73,7 +73,7 @@ void LineScroll_BuildPage(void) {
     u16 c = x1;
 
     // The sine is 4096 at its peak, so the wave reaches
-    // 4096 * ampX / 0x10000 / 256 pixels: 16 for an ampX of 0x10000.
+    // 4096 * ampX / Q16_ONE / 256 pixels: 16 for an ampX of Q16_ONE.
     amplitude = work->ampX;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
       wave =

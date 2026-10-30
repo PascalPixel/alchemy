@@ -7,10 +7,10 @@
 /// The cell behavior of the cells Cloak can stay hidden on: byte 2 of a
 /// cell (MapGridCell.behavior), or of a 4-byte gCellPictures entry on the
 /// World Map.
-#define CLOAK_TILE 0xfb
+#define CLOAK_TILE 251
 /// The Psynergy request that ends Cloak: ACT_PACKED (no PP) |
 /// ABILITY_CLOAK.
-#define CLOAK_END 0x2092
+#define CLOAK_END (0x2000 | ABILITY_CLOAK)
 
 /// Task of Cloak: when the cell under the leader is not
 /// CLOAK_TILE, requests CLOAK_END. On the World Map it reads
@@ -37,7 +37,7 @@ void FieldPsynergy_CheckCloakTile(void) {
   tile = gMapGridWork[0];
 #else
   // The named map slot avoids reading outside gFieldWork. It adds 4 bytes
-  // to this function in the forced native EN build (0xc0 -> 0xc4).
+  // to this function in the forced native EN build (192 -> 196 bytes).
   tile = (u8 *)*(struct MapGridScrollAnimView **)(slot - 76); // gMapGridWork[0]
 #endif
 

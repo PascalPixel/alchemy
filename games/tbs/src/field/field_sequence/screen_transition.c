@@ -79,7 +79,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   u16 *scanlineData;
 #ifndef UBFIX
   // UB: viewX is a scalar, so indexing its address cannot reach viewY.
-  // Direct named members grow the English function from 0x90c to 0x914
+  // Direct named members grow the English function from 2,316 to 2,324
   // bytes. Modern code reads the actual members below.
   s32 *viewInverse;
   s32 *viewRipple;
@@ -110,7 +110,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   state = gScreenTransitionWork;
 #else
   // UB: this indexes past gMapGridWork into the separate transition-work cell.
-  // The named cell grows 0x90c to 0x910 native bytes in English.
+  // The named cell grows 2,316 to 2,320 native bytes in English.
   state = gMapGridWork[23];
 #endif
 
@@ -202,7 +202,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
           }
         } else {
           // These shared temporaries hold the left and right endpoints here.
-          // Four span-local endpoints shrink 0x90c to 0x8bc bytes in English;
+          // Four span-local endpoints shrink 2,316 to 2,236 bytes in English;
           // keep this reuse until a plain form matches.
           radiusSquaredQ16 = span->x0;
           left = span->y0;
@@ -908,7 +908,7 @@ void ScreenTransition_UpdateScanline(void) {
   state = gMapGridWork[0];
 
   // Keep the same VCount sample across phase changes. A for/switch retry loop
-  // shrinks the English function from 0xd2 to 0xba bytes.
+  // shrinks the English function from 210 to 186 bytes.
 again:
   switch (state->irqPhase) {
   case DISPLAY_TRANSITION_IRQ_WAIT_FIRST:
@@ -1001,14 +1001,14 @@ void ScreenTransition_UpdateDissolve(void) {
 }
 
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
-/// color is -1, makes tile 0 solid color. The fill is 0x500 bytes: the block's
+/// color is -1, makes tile 0 solid color. The fill is 1,280 bytes: the block's
 /// first 20 rows of 32 entries, the screen's height.
 ///
 /// Sets up the dissolve for ScreenTransition_Start (colour 15),
 /// ScreenTransition_Finish and ScreenTransition_InitializeState (colour 0).
 void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   struct ScreenTransitionState *work = gScreenTransitionWork;
-  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
+  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 1280);
   if (color != -1) {
     u32 pattern = 0;
     s32 remainingWords;

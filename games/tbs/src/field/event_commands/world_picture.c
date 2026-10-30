@@ -6,7 +6,7 @@
 #include "../event_commands_internal.h"
 
 /// The generated marker pictures: four 16-colour 8 by 8 tiles, 32 bytes each.
-#define WORLD_MAP_MARKER_TILE_BYTES 0x80
+#define WORLD_MAP_MARKER_TILE_BYTES 128
 #define WORLD_MAP_SCREEN_WIDTH 240  ///< the picture's width, the screen's
 #define WORLD_MAP_SCREEN_HEIGHT 160 ///< the picture's height, the screen's
 /// The World Map's size in field pixels each way, which the picture shows at

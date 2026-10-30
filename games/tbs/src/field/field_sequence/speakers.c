@@ -40,7 +40,7 @@ s32 FieldEffect_GetAnimationValue(s32 id) {
 }
 
 /// Returns the voice of sprite id's messages: the first of its four blip
-/// sounds, 0x100 plus its definition's value, or 0 for none (value 0xff) or
+/// sounds, 256 plus its definition's value, or 0 for none (value 0xff) or
 /// with the Speech option off (gMainRoutineWork.speech).
 /// Message_OpenWindowFar takes it in the high half of its last argument and
 /// Message_SetVoiceFromActor as the window's voiceSound
@@ -52,7 +52,7 @@ s32 Speaker_GetVoice(u32 id) {
       (portraitId = Speaker_FindDefinition(id)->value) == 0xFF) {
     return 0;
   }
-  return portraitId + 0x100;
+  return portraitId + 256;
 }
 
 /// Returns the definition flags of actor id's sprite, which choose its

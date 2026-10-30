@@ -73,7 +73,7 @@ void Leader_StopMoving(void) {
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   actor->speedLimit = Q16_ONE;
-  actor->acceleration = 0x8000;
+  actor->acceleration = Q16_ONE / 2;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
@@ -274,7 +274,7 @@ s32 Party_CheckItemLimit(s32 item) {
 /// FieldSequence_Run gives the pending item and the debug test menu gives items
 /// through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
-  // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;
+  // A for/continue retry loop shrinks native English 452 -> 424 bytes;
   // retain the original backedges until a plain form matches.
   struct FieldWork *work;
   s32 savedMessage;

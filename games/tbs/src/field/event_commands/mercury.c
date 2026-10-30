@@ -68,8 +68,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
                            djinni->z.fixed);
     *cursor++ = copy;
     if (copy != NULL) {
-      copy->scaleY = 0xf000;
-      copy->scaleX = 0xf000;
+      copy->scaleY = Q16_ONE * 15 / 16;
+      copy->scaleX = Q16_ONE * 15 / 16;
       copy->motionFlags = 0;
       copy->priorityFlags = 2;
       copy->steeringFlags |= 1;
@@ -128,7 +128,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
 
   // After 120 frames every droplet still in use takes its last fall.
   // Walking whole slots instead of their state bytes grows native English
-  // from 0x23c to 0x240 bytes.
+  // from 572 to 576 bytes.
   wait(120);
   {
     s32 nextState;

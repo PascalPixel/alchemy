@@ -133,7 +133,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     return nearestActorId;
 
   // The facing rounded to the nearest of the four quarter turns.
-  facingQuadrant = (source->facing + 0x2000) & 0xc000;
+  facingQuadrant = (source->facing + TRIG_TURN / 8) & 0xc000;
   for (actorIndex = 0; actorIndex <= ACTOR_LAST; actorIndex++) {
     if (actorIndex == id)
       continue;
@@ -179,15 +179,16 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     if (distance >= nearestDistance)
       continue;
 
-    // The cone: 0x1800 (about 34 degrees) either side up to 19 pixels,
-    // 0x1000 (22.5 degrees) beyond; 0x2000 (45 degrees) for Mind Read.
+    // The cone: TRIG_TURN * 3 / 32 (about 34 degrees) either side up to 19
+    // pixels, TRIG_TURN / 16 (22.5 degrees) beyond; TRIG_TURN / 8 (45 degrees)
+    // for Mind Read.
     angle = (u16)ArcTan2(candidate->z.fixed - source->z.fixed,
                          candidate->x.fixed - source->x.fixed);
-    coneHalfAngle = 0x1800;
+    coneHalfAngle = TRIG_TURN * 3 / 32;
     if (distance > 19)
-      coneHalfAngle = 0x1000;
+      coneHalfAngle = TRIG_TURN / 16;
     if (kind == FIELD_PSYNERGY_MIND_READ)
-      coneHalfAngle = 0x2000;
+      coneHalfAngle = TRIG_TURN / 8;
 
     if (distance > 11) {
       s32 angleDifference = (s16)(angle - facingQuadrant);

@@ -10,7 +10,7 @@
 /// small.
 void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
   // A shared inline kernel with a constant inversion argument changes both
-  // arc updates from 0x58 to 0x5c bytes in the forced native English build.
+  // arc updates from 88 to 92 bytes in the forced native English build.
   struct Actor *arc = (struct Actor *)actor;
   struct Actor *anchor;
   s32 frame;
@@ -109,7 +109,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     arc->motionFlags = 0;
     arc->timer = 0;
     arc->watchedActor = watched;
-    arc->scaleX = arc->scaleY = 0x1999; // 0.1
+    arc->scaleX = arc->scaleY = Q16_ONE / 10;
     if (sprite == 0)
       continue;
     // A wide 16-colour sprite drawn from the Psynergy's tiles.

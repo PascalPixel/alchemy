@@ -159,10 +159,10 @@ void FieldEffect_SpawnBurstParticleField(void) {
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
     if (particle != 0) {
-      particle->scaleY = 0xb333; // 0.7
-      particle->scaleX = 0xb333;
-      particle->acceleration = 0x18000;
-      particle->speedLimit = 0x18000;
+      particle->scaleY = Q16_ONE * 7 / 10;
+      particle->scaleX = Q16_ONE * 7 / 10;
+      particle->acceleration = Q16_ONE * 3 / 2;
+      particle->speedLimit = Q16_ONE * 3 / 2;
       particle->motionFlags = 0;
       Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_GREEN_TINT);
       Actor_SelectAnimationFar(particle, 7);

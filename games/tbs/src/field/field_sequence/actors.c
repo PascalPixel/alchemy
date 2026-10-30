@@ -105,10 +105,10 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
        entry++, placementSprite = entry->sprite) {
     // Current actor placement tables use sprites 0 to 504, so every live
     // row sets actorIndex.
-    // XXX (no evidence): what the 0x2705 cutoff was for; no table reaches it.
+    // XXX (no evidence): what the 9989 cutoff was for; no table reaches it.
     if (entry->sprite <= 7)
       actorIndex = entry->sprite;
-    else if (entry->sprite <= 0x2705)
+    else if (entry->sprite <= 9989)
       actorIndex = slot++;
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
@@ -173,7 +173,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       // ground below.
       if (object->y.fixed != 0) {
         object->motionFlags = 4;
-        object->y.fixed += 0x8000;
+        object->y.fixed += Q16_ONE / 2;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         // World Map actor placements use single sprites and do not follow

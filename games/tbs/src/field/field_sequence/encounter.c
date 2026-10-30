@@ -201,8 +201,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles. The counter is
     // not cleared here: FieldSequence_Run clears it when it starts the battle.
-    step =
-        Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
+    step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 1 << 20);
     total = gMainRoutineWork.encounterSteps += Iwram_MulQ16(step, steps);
     if (total < work->encounterThreshold)
       return 0;

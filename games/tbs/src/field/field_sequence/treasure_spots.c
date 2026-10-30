@@ -57,7 +57,7 @@ void Field_PlaceTreasureSpots(void) {
   struct FieldWork *work = gFieldWork;
 #else
   // UB: the event cell is a separate global, beyond gMapGridWork's one pointer.
-  // Reading gFieldWork plainly grows 0x254 to 0x25c bytes in English.
+  // Reading gFieldWork plainly grows 596 to 604 bytes in English.
   struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
 #endif
   s32 markerCount = 0;

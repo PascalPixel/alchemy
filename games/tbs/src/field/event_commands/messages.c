@@ -52,7 +52,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   win = (struct WindowWork *)gWindowWork[0];
   // UB: the fabricated HeapSlotsFromWindowView aggregate reaches from the
   // window slot into HEAP_SLOT_FIELD. Its named load adds eight bytes in native
-  // EN (0x344 to 0x34c).
+  // EN (836 to 844 bytes).
 #ifdef UBFIX
   work = gFieldWork;
 #else
@@ -499,7 +499,7 @@ void Message_SetVoiceFromActor(s32 actorId) {
   u8 rate;
   s32 voice;
 
-  // Direct u16 stores shrink the English function from 0x58 to 0x54 bytes.
+  // Direct u16 stores shrink the English function from 88 to 84 bytes.
   // Keep the original signed stores; the corresponding u16 alias is legal.
   if (actorId == 0x80000000) {
     *(s16 *)&state->voiceSound = (rate = 0);

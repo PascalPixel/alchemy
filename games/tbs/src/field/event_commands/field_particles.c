@@ -25,7 +25,7 @@ void FieldParticle_Update(struct FieldParticle *effect) {
 
 /// Draws a field effect sprite at its screen position and scale, when it is
 /// near the screen: x from -32 to 272 pixels and z from -32 to 224, both
-/// exclusive. With flag 4 the slot's z also lifts it (0x1fc pixels less z):
+/// exclusive. With flag 4 the slot's z also lifts it (508 pixels less z):
 /// it is placed at y 508 pixels and raised back to z, so it shows at the
 /// same point but sorts as if at 508.
 void FieldEffect_DrawScaledActor(struct FieldParticle *object) {

@@ -32,14 +32,14 @@ void PaletteEditor_Run(void) {
   u32 blue;
   u32 i;
 
-  // The swatch tiles go to tile 0xd0 of character block 0; colour n is drawn
-  // with tile 0xd0 + n.
+  // The swatch tiles go to tile 208 of character block 0; colour n is drawn
+  // with tile 208 + n.
   Decompress_Halfwords(gDebug_PaletteSwatchTiles, (void *)0x06001a00);
 redraw:
   // Column 0 shows the palette number and R, G, B; columns 1 to 15 show each
   // colour's swatch, drawn in the palette being edited, and its three
   // channels. The letters are tiles at their ASCII codes in WINDOW_PALETTE.
-  tile = (palette << 12) + 0xd1;
+  tile = (palette << 12) + 209;
   paletteColor = &EDITOR_PALETTE[palette * 16 + 1];
   swatchColumn = EDITOR_MAP;
   tileEntry = swatchColumn;

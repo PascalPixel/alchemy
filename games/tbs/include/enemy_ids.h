@@ -9,6 +9,9 @@
 /// party's characters. A formation lists its members by row.
 #define ENEMY_ID_FIRST 8
 
+/// Enemy id `id`'s row of enemy_table.c, as a formation lists its members.
+#define ENEMY_ROW(id) ((id) - ENEMY_ID_FIRST)
+
 /// Enemy ids, one for each row of enemy_table.c in order: an enemy id is the
 /// row plus ENEMY_ID_FIRST, and a row the code doesn't name yet keeps its row
 /// number as its placeholder. Where several rows share a name, each takes what

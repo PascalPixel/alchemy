@@ -1806,13 +1806,8 @@ Func_08125bb8:
 	.section .rom.00125d70, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00125d70, 0x000004a4
-	.section .rom.001263f8, "ax"
+	.section .rom.00126544, "ax"
 	.balign 4
-	.global Func_081263fc
-	.type Func_081263fc, %function
-	.thumb_func
-Func_081263fc:
-	.incbin "baserom.gba", 0x001263f8, 0x0000014c
 	.global BattleCamera_SetRange
 	.type BattleCamera_SetRange, %function
 	.thumb_func

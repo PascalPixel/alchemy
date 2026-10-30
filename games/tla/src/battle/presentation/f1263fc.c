@@ -1,18 +1,3 @@
-// Draft of Func_081263fc, The Broken Seal's BattleBackground_Load
-// (games/tbs/src/battle/battle.c). The Lost Age copies the decoder into a
-// heap block of its own (RamCode_Load and Heap_Release) instead of heap slot 49,
-// scales the palette with ColorBuffer_Scale, and skips the backdrop's palette
-// copy while the battle work's byte at 0x867 is set (summons 4, 6 and 24 set
-// it).
-
-// Exact under -mthumb-slow-loads (differ 0 of 137, tla-en, 2026-10-25), but
-// not adopted: it loads Model_DecodeCodeSize, the decoder's length (0x234
-// bytes, from Model_DecodeCode through model_bit_commands), and nothing
-// defines that symbol until the 08118230 and 08118244 listings join
-// model_decode.s, where it can be `. - Model_DecodeCode` as the relocated
-// kernels' sizes are. Written as the literal 0x234 it compiles to movs and
-// lsls instead of the pool load, and the image shifts from here on.
-
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"

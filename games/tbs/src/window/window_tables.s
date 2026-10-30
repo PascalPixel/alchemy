@@ -4,7 +4,7 @@
 	.global gWindowSprite_PageArrowTiles
 gWindowSprite_PageArrowTiles:
 	.incbin "games/tbs/src/window/page_arrow.8bpp8x16"
-@ The width of each main font glyph in pixels, from the space (0x20)
+@ The width of each main font glyph in pixels, from the space (code 32)
 	.global gFont_GlyphWidths
 gFont_GlyphWidths:
 	.include "games/tbs/src/graphics/font/glyph_widths.inc"
@@ -57,10 +57,10 @@ gStatusScreen_LevelLetterString:
 @ mark, then those that take the semi-voiced mark
 	.global gNameEntry_VoicedMarkRanges
 gNameEntry_VoicedMarkRanges:
-	.byte 0xb6, 0xc4, 0xca, 0xce, 0x96, 0x9f, 0xe0, 0xe4, 0xea, 0xee, 0x93, 0x93, 0xb3, 0xb3, 0x00
+	.byte 182, 196, 202, 206, 150, 159, 224, 228, 234, 238, 147, 147, 179, 179, 0
 	.global gNameEntry_SemivoicedMarkRanges
 gNameEntry_SemivoicedMarkRanges:
-	.byte 0xca, 0xce, 0xea, 0xee, 0x00
+	.byte 202, 206, 234, 238, 0
 	.global gNameEntry_CaretWave
 gNameEntry_CaretWave:
 	.byte 0, 1, 2, 3, 3, 2, 1, 0

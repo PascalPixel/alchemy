@@ -326,10 +326,10 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       line = (win->y + y) * 32;
       switch (*(((struct WindowWork *)base)->tilemap + (line + (win->x + x)))) {
       case WINDOW_TILE_BORDER_TOP:
-        tile -= 0xc0;
+        tile -= 192;
         break;
       case WINDOW_TILE_DIVIDER_HORIZONTAL:
-        tile -= 0xd0;
+        tile -= 208;
         break;
       }
     } else {
@@ -547,10 +547,10 @@ void WindowSprite_UpdateAll(void) {
         effect.angle = windowSprite->animationStep;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
         sprite->affine = 1;
-        sprite->x =
-            windowSprite->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
-        sprite->y =
-            windowSprite->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
+        sprite->x = windowSprite->x -
+                    (Trig_Sin(effect.angle + TRIG_TURN * 29 / 32) >> 14) - 2;
+        sprite->y = windowSprite->y -
+                    (Trig_Cos(effect.angle + TRIG_TURN * 13 / 32) >> 14) - 2;
         break;
       case WINDOW_SPRITE_MOTION_WOBBLE:
         // One step of the 20 of gWindowSprite_WobbleOffsets every other frame.

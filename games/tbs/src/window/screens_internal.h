@@ -263,7 +263,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 // The width inside the border of the name window of the shop's commands
-// (icons 0x11 to 0x14) and of the Sanctum's services (icons 0x19 to 0x1c).
+// (icons 17 to 20) and of the Sanctum's services (icons 25 to 28).
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define ENTRY11_COMMAND_LABEL_WIDTH 8
 #elif LANGUAGE != LANGUAGE_JAPANESE
@@ -298,22 +298,22 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 /// The first of the 20 digit tiles Graphics_ExpandVramTilesByColorTable
 /// builds for the battle lists' page numbers: the UI digits '0' to '9' with
 /// colour 1 drawn as 10, then the same digits in their own colours.
-#define LIST_PAGE_DIGITS_TILE 0x300
+#define LIST_PAGE_DIGITS_TILE 768
 
 /// Tiles the battle lists draw over their window's top edge: the page numbers
 /// and arrows, and the summon list's element icon. The digit and arrow tiles
 /// are built when the party's commands open (Battle_CollectPartyCommands).
 enum {
   /// Element icon: + enum Element, in BASIC_COLORS_PALETTE.
-  LIST_TILE_SUMMON_ELEMENT = (BASIC_COLORS_PALETTE << 12) | 0x001,
+  LIST_TILE_SUMMON_ELEMENT = (BASIC_COLORS_PALETTE << 12) | 1,
   /// Page n's number: + n gives digit n + 1, from LIST_PAGE_DIGITS_TILE + 1,
   /// the UI digits with colour 1 drawn as 10.
   LIST_TILE_PAGE_NUMBER = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 1),
   /// The current page's number, the same digits in their own colours.
   LIST_TILE_PAGE_NUMBER_LIT = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 10 + 1),
-  /// Left arrow, tile 0x334, which Link_DrawPageArrows slides.
-  LIST_TILE_PAGES_LEFT = WINDOW_TILE(0x334),
-  LIST_TILE_PAGES_RIGHT = WINDOW_TILE(0x335) ///< Right arrow, tile 0x335
+  /// Left arrow, tile 820, which Link_DrawPageArrows slides.
+  LIST_TILE_PAGES_LEFT = WINDOW_TILE(820),
+  LIST_TILE_PAGES_RIGHT = WINDOW_TILE(821) ///< Right arrow, tile 821
 };
 
 /// The battle lists' two page arrow tiles in VRAM, which Link_DrawPageArrows
@@ -404,7 +404,7 @@ struct BattleCommandRowWork {
 extern const u8 gDjinnMenu_BlinkTile[32];
 /// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
 /// the one after it stays.
-#define DJINN_MENU_ARROW_TILE 0x328
+#define DJINN_MENU_ARROW_TILE 808
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
 extern const u8 gDjinnMenu_ElementXOffsets[4];

@@ -13,11 +13,11 @@ UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 
 // The kana voicing marks of the Japanese name entry screen, which join the
 // letter before them.
-#define NAME_VOICED_MARK 0xde     ///< dakuten
-#define NAME_SEMIVOICED_MARK 0xdf ///< handakuten
+#define NAME_VOICED_MARK 222     ///< dakuten
+#define NAME_SEMIVOICED_MARK 223 ///< handakuten
 // The keyboard's keys for them, as its tilemap's low bytes hold them.
-#define NAME_VOICED_KEY 0xfe
-#define NAME_SEMIVOICED_KEY 0xff
+#define NAME_VOICED_KEY 254
+#define NAME_SEMIVOICED_KEY 255
 
 /// Returns whether `mark` may follow `letter` in a Japanese name: any
 /// character but a voicing mark may, and a voicing mark only after a letter
@@ -59,7 +59,7 @@ s32 NameEntry_CountLetters(const u8 *name) {
 void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
   struct WindowWork *work = WINDOW_WORK;
   s16 *mirror = (s16 *)work->tilemap;
-  s16 *buffer = Heap_AllocEwram(0x300);
+  s16 *buffer = Heap_AllocEwram(768);
   s16 *input = buffer;
   u32 cell;
   s16 *vram;
@@ -134,7 +134,7 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
 
 /// Loads the pointing hand cursor's tiles into VRAM slot `slot`.
 void NameEntry_LoadPointingHandTiles(s32 slot) {
-  VramCache_Load(slot, 0x80, gPointingHandTiles);
+  VramCache_Load(slot, 128, gPointingHandTiles);
 }
 
 /// Loads the 16x16 sprite gNameEntry_CaretTiles into VRAM slot `slot`.

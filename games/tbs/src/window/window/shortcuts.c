@@ -16,7 +16,7 @@
 /// The area name notice's fields, which live in the field work block
 /// (gFieldWork, a scene's work), for as long as the scene runs.
 struct TimedNoticeWork {
-  u8 fieldWork[0x230];   ///< the field work's other fields
+  u8 fieldWork[560];     ///< the field work's other fields
   struct Window *window; ///< the notice's window; it may since have closed
   u16 countdown;         ///< frames left to show it, from 90
 };

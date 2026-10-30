@@ -1334,7 +1334,7 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
 void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
-  Oam_AddSpriteAtDepth(sprite, 0xFC);
+  Oam_AddSpriteAtDepth(sprite, 252);
 }
 
 /// Frees an arrow sprite's tile slot.

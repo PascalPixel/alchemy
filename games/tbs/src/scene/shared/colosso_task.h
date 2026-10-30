@@ -91,7 +91,7 @@ static void Colosso_LoadLettering(s32 id) {
   u8 *buf;
   s32 off;
 
-  buf = Heap_AllocEwram(0x1c00 + COLOSSO_PALETTE_BYTES);
+  buf = Heap_AllocEwram(7168 + COLOSSO_PALETTE_BYTES);
   if (gColosso_LetteringSlot == -1)
     gColosso_LetteringSlot = VramCache_FindFreeEntry();
   off = gColosso_LetteringPaletteOffsets[id];

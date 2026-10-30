@@ -33,8 +33,8 @@ void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
     object[0x5c] = 1;
     icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(item);
-    icon += 0x400;
-    VramCache_Load(sprite[28], 0x80, icon); // sprite->slot
+    icon += 1024;
+    VramCache_Load(sprite[28], 128, icon); // sprite->slot
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }

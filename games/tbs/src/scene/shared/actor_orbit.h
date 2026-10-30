@@ -15,10 +15,11 @@ static s32 Scene_UpdateFloatingNut(s32 *p) {
     d = -d;
   p[2] = p[14] + Trig_Cos(p[12]) * 2;
   p[3] = p[15] + d;
-  q[15] = Trig_Cos(p[12] + 0x8000) / 8;
+  q[15] = Trig_Cos(p[12] + TRIG_TURN / 2) / 8;
   a = Import_RandomNext();
   b = Import_RandomNext();
-  p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
+  p[12] =
+      p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + TRIG_TURN / 64;
   return 0;
 }
 
@@ -50,7 +51,7 @@ void Scene_FloatNut(s32 id) {
 
   transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_NUT);
-  transfer += 0x400;
+  transfer += 1024;
   VramCache_Load(sprite->palette, 128, transfer);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 

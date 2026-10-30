@@ -56,7 +56,7 @@ PushedActor_FindAtTile(const struct FieldPosition *position,
     struct Actor *actor = slots[i];
 
     // UB: Actor_ClearAll leaves unfilled slots null. The guard grows
-    // this helper from 0x58 to 0x5c bytes in the native English trial.
+    // this helper from 88 to 92 bytes in the native English trial.
 #ifdef UBFIX
     if (actor == NULL)
       continue;
@@ -138,8 +138,8 @@ UNUSED static void PushedActor_AdvancePair(void) {
   next->z.fixed = dst.z;
   next->velocityX = 0;
   next->velocityZ = 0;
-  lead->targetX = 0x80000000;
-  lead->targetZ = 0x80000000;
+  lead->targetX = ACTOR_NO_TARGET;
+  lead->targetZ = ACTOR_NO_TARGET;
   lead->velocityX = 0;
   lead->velocityZ = 0;
   lead->x.fixed = lead->x.part.pixel << 16;
@@ -178,7 +178,7 @@ static s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
 }
 
 // UB: the native s32 update routine is called through Actor's void update. The
-// void form keeps 0xa4 bytes in Altmiller English but changes the return move.
+// void form keeps 164 bytes in Altmiller English but changes the return move.
 #ifdef UBFIX
 /// The leader's update routine while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the
@@ -220,8 +220,8 @@ static s32 PushedActor_StopBlockedMotion(struct Actor *actor) {
     } while (i <= 5);
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    actor->targetX = 0x80000000;
-    actor->targetZ = 0x80000000;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
   }
   step = gPushedActor_DirectionSteps[dir];
   probe.x = actor->x.fixed + (step & 0xffff0000);
@@ -231,8 +231,8 @@ static s32 PushedActor_StopBlockedMotion(struct Actor *actor) {
   if (FieldActor_CheckMovementCollision(actor, &probe) > 0) {
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    actor->targetX = 0x80000000;
-    actor->targetZ = 0x80000000;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
   }
 #ifndef UBFIX
   return 0;
@@ -257,7 +257,7 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
     s32 kind;
     j = 0;
     // UB: the same empty slots are scanned here; the null guard grows the
-    // native English helper from 0x128 to 0x134 bytes.
+    // native English helper from 296 to 308 bytes.
 #ifdef UBFIX
     if (actor == NULL)
       continue;

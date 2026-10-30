@@ -490,8 +490,8 @@ s32 IncreaseItemAndLevel_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
 #if TBS_PATCH_1
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x19999;
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x19999;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = Q16_ONE * 8 / 5;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = Q16_ONE * 8 / 5;
   Import_ActorSetAnimation(ACTOR_FIRST_EMOTE_TESTER, 5);
   Import_ActorSetAnimation(ACTOR_SECOND_EMOTE_TESTER, 2);
 #else

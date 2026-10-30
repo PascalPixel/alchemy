@@ -176,8 +176,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
 
-    // The leap: 10 pixels a frame upwards, against a gravity of 0x91eb, about
-    // 0.57 pixels a frame lost each frame.
+    // The leap: 10 pixels a frame upwards, against a gravity of Q16_ONE * 57 /
+    // 100, about 0.57 pixels a frame lost each frame.
     actor->velocityY = 10 << 16;
     actor->gravity = 0x91eb;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);

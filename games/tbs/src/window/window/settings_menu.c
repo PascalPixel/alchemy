@@ -85,17 +85,17 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
 /// window tint.
 UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
-      WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 5) =
-      WindowColor_ScaleTint(work, 0xD555, 0xBBBB, 0xEEEE);
+      WindowColor_ScaleTint(work, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 5) = WindowColor_ScaleTint(
+      work, Q16_ONE * 5 / 6, Q16_ONE * 11 / 15, Q16_ONE * 14 / 15);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 6) =
-      WindowColor_ScaleTint(work, 0xBBBB, 0xAAAA, 0xCCCC);
+      WindowColor_ScaleTint(work, Q16_ONE * 11 / 15, 0xAAAA, Q16_ONE * 4 / 5);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
       WindowColor_ScaleTint(work, 0xA221, 0x9999, 0xAAAA);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 8) =
       WindowColor_ScaleTint(work, 0x10888, 0xDDDD, 0x13333);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
-      WindowColor_ScaleTint(work, 0x12221, 0xEEEE, 0x15555);
+      WindowColor_ScaleTint(work, 0x12221, Q16_ONE * 14 / 15, Q16_ONE * 4 / 3);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
       WindowColor_ScaleTint(work, 0x13BBB, Q16_ONE, 0x17777);
 }
@@ -181,17 +181,17 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   // and 8 to 10 lighter, up to about 1.23, 1 and 1.47. Colour 4 is the
   // windows' background.
   BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
-      Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 5) =
-      Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee);
+      Color_ScaleComponents(rgb, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 5) = Color_ScaleComponents(
+      rgb, Q16_ONE * 5 / 6, Q16_ONE * 11 / 15, Q16_ONE * 14 / 15);
   BG_PLTT_COLOR(WINDOW_PALETTE, 6) =
-      Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc);
+      Color_ScaleComponents(rgb, Q16_ONE * 11 / 15, 0xaaaa, Q16_ONE * 4 / 5);
   BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
       Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
   BG_PLTT_COLOR(WINDOW_PALETTE, 8) =
       Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
   BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
-      Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555);
+      Color_ScaleComponents(rgb, 0x12221, Q16_ONE * 14 / 15, Q16_ONE * 4 / 3);
   BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
       Color_ScaleComponents(rgb, 0x13bbb, Q16_ONE, 0x17777);
 }

@@ -70,7 +70,7 @@ struct BattleActor {
 /// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
 /// spot, and effects that change a unit's gravity for a leap or a lift give it
 /// this one back.
-#define BATTLE_UNIT_GRAVITY 0xab85
+#define BATTLE_UNIT_GRAVITY (Q16_ONE * 67 / 100)
 
 /// A sprite animation, as battle objects set its palette and
 /// drawing priority: the start of a SpriteAnimation.

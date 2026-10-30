@@ -353,8 +353,8 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
 }
 
 /// Shows the chosen party member walking and the others standing, and draws at
-/// seven tenths of their size (0xb333 in 16.16) the party members who do not
-/// need the service. The sanctum's Shop_DrawParty.
+/// seven tenths of their size (Q16_ONE * 7 / 10 in 16.16) the party members who
+/// do not need the service. The sanctum's Shop_DrawParty.
 void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   struct ShopWork *shop = gMenuWork;
   s32 memberIndex;
@@ -368,7 +368,7 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
         Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 1);
       shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
-        shop->partyMemberScale[memberIndex] = 0xb333;
+        shop->partyMemberScale[memberIndex] = Q16_ONE * 7 / 10;
     }
   }
 }
@@ -507,7 +507,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
-    effect->scaleY = 0xb333;
+    effect->scaleY = Q16_ONE * 7 / 10;
     effect->scaleX = 0xb333;
     wait(3);
     if (effectIndex == 5) {

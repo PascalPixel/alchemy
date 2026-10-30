@@ -396,7 +396,7 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
       shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Item_IsCompatibleWithUnitFar(shop->partyMemberIds[memberIndex],
                                         itemId))
-        shop->partyMemberScale[memberIndex] = 0xcccc;
+        shop->partyMemberScale[memberIndex] = Q16_ONE * 4 / 5;
     }
   }
 }

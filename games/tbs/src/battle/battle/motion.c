@@ -11,7 +11,7 @@
 // The motion values below are 16.16 fixed point, in pixels and frames:
 // acceleration and speedLimit per frame, velocityY the hop's upward speed,
 // and verticalMotionStrength the gravity taken from it each frame
-// (BATTLE_UNIT_GRAVITY about 0.67, Q16_ONE * 3 / 5, and 0x7851 about 0.47).
+// (BATTLE_UNIT_GRAVITY about 0.67, Q16_ONE * 3 / 5, and Q16_ONE * 47 / 100).
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
@@ -55,7 +55,7 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   actor->acceleration = 2 << 16;
   actor->speedLimit = 8 << 16;
   actor->velocityY = 5 << 16;
-  actor->gravity = 0x7851;
+  actor->gravity = Q16_ONE * 47 / 100;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);

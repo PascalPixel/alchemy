@@ -383,7 +383,7 @@ s32 Transform_ProjectPoint(const void *point, s32 *screen) {
       // depth in 16.16, without the low 11 bits of the depth
       scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
     } else {
-      scale = 0x151eb; // about 1.32
+      scale = Q16_ONE * 33 / 25; // 1.32
     }
     screen[0] = projection->centerX + Iwram_MulQ16(screen[0], scale) / Q16_ONE;
     screen[1] = projection->centerY - Iwram_MulQ16(screen[1], scale) / Q16_ONE;

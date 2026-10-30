@@ -145,7 +145,7 @@ shows what the item would mean to them: for a weapon or armor, how their
 Attack, Defense and Agility would change, with an arrow beside each
 (`Shop_DrawEquipComparison`), and for anything else how many of it they
 already carry (`Shop_DrawCarriedItem`). The party members who cannot equip
-the item are drawn at four fifths of their size, `0xcccc` in 16.16 fixed
+the item are drawn at four fifths of their size, `Q16_ONE * 4 / 5` in 16.16 fixed
 point (`Shop_DrawParty`).
 
 `Shop_SelectBuy` runs it. Before taking any coins it tests for room in the
@@ -168,7 +168,7 @@ is rebuilt.
 | `SHOP_STOCK_PAGE_ITEMS` | 7     | items on one page of the stock, 32 pixels apart     |
 | `SHOP_STACK_LIMIT`      | 30    | the most of one item a party member's stack holds   |
 | `INVENTORY_SLOTS`       | 15    | items a party member carries                        |
-| four fifths             | `0xcccc` | the size a party member who cannot equip the item is drawn at, in 16.16 |
+| four fifths             | `Q16_ONE * 4 / 5` | the size a party member who cannot equip the item is drawn at, in 16.16 |
 
 ### Game Tickets
 
@@ -316,7 +316,7 @@ fade back.
 
 | Name                 | Value      | Meaning                                                 |
 | -------------------- | ---------- | ------------------------------------------------------- |
-| seven tenths         | `0xb333`   | the size a party member who needs nothing is drawn at, in 16.16 |
+| seven tenths         | `Q16_ONE * 7 / 10` | the size a party member who needs nothing is drawn at, in 16.16 |
 | eighteen sparkles    | 3 frames apart | the burst, in 24 sparkle slots                      |
 | the tint             | 16 frames  | how long the field's colours take to change, and to come back |
 

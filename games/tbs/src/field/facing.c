@@ -81,7 +81,7 @@ const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 /// ActorSystem_ProjectSprites applies it while battle commands are chosen.
 const s32 gCamera_FixedViewMatrix[12] = {
     Q16_ONE, 0, 0,
-    -0xcccc, Q16_ONE, 0,
+    -(Q16_ONE * 4 / 5), Q16_ONE, 0,
     0, 0, Q16_ONE,
     0, 0, 0,
 };

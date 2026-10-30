@@ -96,14 +96,14 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside
     // down, raised by their own heights so they flip about their middles.
     // Actor.gravity is taken off velocityY each frame the actor is above
-    // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame: 0x91eb
-    // here is about 0.57, the bounce's BATTLE_UNIT_GRAVITY and 0x7851 about
-    // 0.67 and 0.47.
+    // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame: Q16_ONE
+    // * 57 / 100 here is about 0.57, the bounce's BATTLE_UNIT_GRAVITY and
+    // Q16_ONE * 47 / 100 about 0.67 and 0.47.
     if (frame == 0) {
       target->velocityY = 15 << 16;
-      target->gravity = 0x91eb;
+      target->gravity = Q16_ONE * 57 / 100;
       user->velocityY = 15 << 16;
-      user->gravity = 0x91eb;
+      user->gravity = Q16_ONE * 57 / 100;
     }
     if (frame == 11) {
       target->scaleY = -target->scaleY;
@@ -120,7 +120,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       target->velocityY = 8 << 16;
       target->gravity = BATTLE_UNIT_GRAVITY;
       user->velocityY = 5 << 16;
-      user->gravity = 0x7851;
+      user->gravity = Q16_ONE * 47 / 100;
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
       user->steeringFlags = 0;

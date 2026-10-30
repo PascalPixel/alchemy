@@ -18,6 +18,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo_mountains/cell_call.o"(.text)
         "*/games/tla/src/scene/kibombo_mountains/s051c.o"(.text)
         "*/games/tla/src/scene/kibombo_mountains/s05ec.o"(.text)
+        "*/games/tla/src/scene/kibombo_mountains/s063c.o"(.text)
         "*/resource_66f_overlay.o"(.text.x0200863c)
         "*/games/tla/src/scene/kibombo_mountains/prepare.o"(.text)
         "*/games/tla/src/scene/kibombo_mountains/s0960.o"(.text)

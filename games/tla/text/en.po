@@ -8779,7 +8779,7 @@ msgctxt "message"
 msgid "02180"
 msgstr "Pressure"
 
-msgctxt "message"
+msgctxt "MsgAbilityDescription"
 msgid "02181"
 msgstr "?"
 

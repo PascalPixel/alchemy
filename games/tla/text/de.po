@@ -10626,7 +10626,7 @@ msgctxt "message"
 msgid "02641"
 msgstr "Druck"
 
-msgctxt "message"
+msgctxt "MsgAbilityDescription"
 msgid "02642"
 msgstr "?"
 

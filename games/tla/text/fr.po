@@ -10633,7 +10633,7 @@ msgctxt "message"
 msgid "02641"
 msgstr "Pression"
 
-msgctxt "message"
+msgctxt "MsgAbilityDescription"
 msgid "02642"
 msgstr "?"
 

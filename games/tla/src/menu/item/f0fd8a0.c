@@ -1,16 +1,6 @@
-// Under -mthumb-slow-loads (2026-10-25): differ 0 of 89, compiled with the
-// Makefile's options. Not adopted: its message base, MsgAbilityDescription
-// below (number 2181 in English, the first ability description), has no name in
-// this game's catalogs, though The Broken Seal's give it one; the six
-// catalogs need that name first.
-// Near miss, differ 6 of 89, three reordered pairs: the native reads
-// state->page before it finishes the heap address (mov r8, r2; movs r3, #192;
-// ldr r2, [r2, #8]; lsls r3, r3, #18) and loads the message base before it
-// finishes the mask 0x1ff (movs r0, #128; ldr r3; lsls r0, r0, #1); this form
-// finishes each constant first. Reading the page before the menu is differ 20;
-// the message as pointer arithmetic changes nothing.
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
 // Psynergy menu workspace; only identified fields are declared here.
 struct PsynergyMenuState {
@@ -49,8 +39,7 @@ s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
                               s32 value);
 
 // Shows the selected row's description and sets the five rows' backgrounds.
-s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
-                                struct MenuResult *state) {
+s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state) {
   struct PsynergyMenuState *menu;
   s32 combined;
   s32 row;
@@ -70,6 +59,9 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
           (s32)(MsgAbilityDescription + (menu->psynergies[combined] & 0x1ff));
 
       Text_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
+#if LANGUAGE >= LANGUAGE_GERMAN
+      wait(1);
+#endif
     }
   } else {
     GameFlag_ClearBit(0x2ff);

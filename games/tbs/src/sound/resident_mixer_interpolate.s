@@ -67,7 +67,7 @@ IwramSoundMixDone:
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.space 0x0c, 0
+	.space 12, 0
 .syntax unified
 	.section .text.sound_mixer_channel,"ax",%progbits
 	.thumb_func

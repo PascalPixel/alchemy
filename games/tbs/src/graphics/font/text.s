@@ -4,15 +4,15 @@
 gFont_Glyphs:
 	.ifeq EDITION_INTERNATIONAL
 	.ifdef TLA_EDITION_JA
-	.incbin "games/tbs/src/graphics/font/text_tla_ja.font", 0, (0x100 - 0x20) * (2 + 12 * 2)
+	.incbin "games/tbs/src/graphics/font/text_tla_ja.font", 0, (256 - 32) * (2 + 12 * 2)
 	.global gFont_KanjiGlyphs
 gFont_KanjiGlyphs:
-	.incbin "games/tbs/src/graphics/font/text_tla_ja.font", (0x100 - 0x20) * (2 + 12 * 2)
+	.incbin "games/tbs/src/graphics/font/text_tla_ja.font", (256 - 32) * (2 + 12 * 2)
 	.else
-	.incbin "games/tbs/src/graphics/font/text_ja.font", 0, (0x100 - 0x20) * (2 + 12 * 2)
+	.incbin "games/tbs/src/graphics/font/text_ja.font", 0, (256 - 32) * (2 + 12 * 2)
 	.global gFont_KanjiGlyphs
 gFont_KanjiGlyphs:
-	.incbin "games/tbs/src/graphics/font/text_ja.font", (0x100 - 0x20) * (2 + 12 * 2)
+	.incbin "games/tbs/src/graphics/font/text_ja.font", (256 - 32) * (2 + 12 * 2)
 	.endif
 	.else
 	.ifdef TBS_EDITION_DE

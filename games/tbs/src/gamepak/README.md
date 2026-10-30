@@ -261,7 +261,7 @@ code](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 | `ResourceId_BuildStamp`         | row 2   | the build stamp, read at start-up                        |
 | `ResourceId_Map001`             |         | the first map; the maps are counted on from it           |
 | `ResourceId_MenuCursorPictures` |         | the first of the settings menu's eight marker pictures   |
-| the overlays                    | rows `0x36f` to `0x3ce` | the 96 scenes' code, in the scene table's numbering |
+| the overlays                    | rows 879 to 974 | the 96 scenes' code, in the scene table's numbering |
 | empty rows                      | 25      | the last rows, which nothing reads                       |
 
 ### The build stamp
@@ -417,8 +417,8 @@ of one of the four parts of the Game Pak.
 flowchart TD
   keys(["A, B, Select and Start: the next frame's wait jumps to Cart_Start"]) --> header(["The header's first word: b System_Entry"])
   header --> startup(["Bank 00's start-up: the build stamp from the directory, Sound_InitializeFar through SOUND.S"])
-  startup --> title(["🏡 The Title: its overlay from directory row 0x36f"])
-  title --> files(["🏡 The File Screen: its overlay from row 0x370, the 16 sectors read"])
+  startup --> title(["🏡 The Title: its overlay from directory row 879"])
+  title --> files(["🏡 The File Screen: its overlay from row 880, the 16 sectors read"])
   classDef hardware fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
   classDef image fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
@@ -448,10 +448,10 @@ the main routine sets the Title as what runs next.
 ### The Title and the File Screen come from the directory
 
 The main routine loads the Title's code: `Scene_LoadOverlay` takes the
-scene table's number for the Title, `0x36f`, and `Overlay_Load` reads that
+scene table's number for the Title, 879, and `Overlay_Load` reads that
 row of the directory and unpacks the stream at its address into the overlay
 area. The Title shows the logos, and when it ends the File Screen's overlay
-comes the same way from row `0x370`. Each overlay calls back into the banks
+comes the same way from row 880. Each overlay calls back into the banks
 through its import table, whose rows hold the addresses of the far-call
 tables' veneers.
 
@@ -472,7 +472,7 @@ what those sectors held.
 | The build stamp is copied                | the resource directory, read for `ResourceId_BuildStamp`   |
 | The sound driver starts                  | a far call from bank 00 into bank 13 through `SOUND.S`     |
 | The main routine starts                  | a far call into bank 04 through `FIELD_SEQUENCE.S`         |
-| The Title's code arrives                 | the directory's row `0x36f`, unpacked by `Overlay_Load`    |
+| The Title's code arrives                 | the directory's row 879, unpacked by `Overlay_Load`        |
 | The Title calls the banks                | its import table, pointing at the far-call tables' veneers |
 | The chip is identified                   | the flash library, `IdentifyFlash` and `gFlash_Chips`      |
 | The files are listed                     | the flash library, `ReadFlash` over the 16 sectors         |

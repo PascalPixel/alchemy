@@ -3776,10 +3776,12 @@ static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
   pillarPosition.y = light->y.fixed - PIXELS(16);
   pillarPosition.z = light->z.fixed;
   pillar = Actor_FindAtPosition(&pillarPosition, 0);
-  // XXX: whether a light ever reaches an empty socket, where pillar is null
-  // and the read below goes through address 0; on the third floor the lights
-  // start once three pillars are sunk in the four sockets, so a recording with
-  // the north-east socket left empty would settle it.
+  // A light does reach an empty socket: on the third floor one solution, the
+  // one FLAG_VENUS_LIGHTHOUSE_SOCKETS_A records, leaves the south-east
+  // socket empty, and the light sent there always arrives. With no pillar
+  // the reads below go through address 0, into the BIOS, and that light goes
+  // out (gVenusLightGoesOut) while the other opens the gate (render probe
+  // venus-sockets-a).
   sprite = pillar->sprite;
   if (sprite->entries[0]->animationId == SPRITE_SPIRAL_PILLAR) {
     s32 velocityX = light->velocityX;

@@ -422,7 +422,7 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
     effect->targetZ = position.z;
     // 16.16 pixels: at most 2 a frame, gaining 0.4 a frame
     effect->speedMax = 2 << 16;
-    effect->acceleration = 0x6666;
+    effect->acceleration = Q16_ONE * 2 / 5;
     effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
   } else if (state == SANCTUM_SPARKLE_FLYING) {
@@ -488,7 +488,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   shop->burstMember = -1;
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Sound_PlayFar(sSanctumServiceCues[shop->action]);
-  Shop_SaveAndTintFieldPalette(0x00202108);
+  Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   wait(20);
   priority = TASK_PASS_FRAME;
@@ -508,7 +508,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_SetActorModeFar(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
     effect->scaleY = Q16_ONE * 7 / 10;
-    effect->scaleX = 0xb333;
+    effect->scaleX = Q16_ONE * 7 / 10;
     wait(3);
     if (effectIndex == 5) {
       shop->burstMember = member;

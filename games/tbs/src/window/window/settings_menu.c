@@ -88,16 +88,16 @@ UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
       WindowColor_ScaleTint(work, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 5) = WindowColor_ScaleTint(
       work, Q16_ONE * 5 / 6, Q16_ONE * 11 / 15, Q16_ONE * 14 / 15);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 6) =
-      WindowColor_ScaleTint(work, Q16_ONE * 11 / 15, 0xAAAA, Q16_ONE * 4 / 5);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 6) = WindowColor_ScaleTint(
+      work, Q16_ONE * 11 / 15, Q16_ONE * 2 / 3, Q16_ONE * 4 / 5);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
-      WindowColor_ScaleTint(work, 0xA221, 0x9999, 0xAAAA);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 8) =
-      WindowColor_ScaleTint(work, 0x10888, 0xDDDD, 0x13333);
+      WindowColor_ScaleTint(work, 0xA221, Q16_ONE * 3 / 5, Q16_ONE * 2 / 3);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 8) = WindowColor_ScaleTint(
+      work, Q16_ONE * 31 / 30, Q16_ONE * 13 / 15, Q16_ONE * 6 / 5);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
       WindowColor_ScaleTint(work, 0x12221, Q16_ONE * 14 / 15, Q16_ONE * 4 / 3);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
-      WindowColor_ScaleTint(work, 0x13BBB, Q16_ONE, 0x17777);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 10) = WindowColor_ScaleTint(
+      work, Q16_ONE * 37 / 30, Q16_ONE, Q16_ONE * 22 / 15);
 }
 
 /// Returns the window tint with each channel scaled (16.16 fixed point) and
@@ -184,16 +184,16 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
       Color_ScaleComponents(rgb, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
   BG_PLTT_COLOR(WINDOW_PALETTE, 5) = Color_ScaleComponents(
       rgb, Q16_ONE * 5 / 6, Q16_ONE * 11 / 15, Q16_ONE * 14 / 15);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 6) =
-      Color_ScaleComponents(rgb, Q16_ONE * 11 / 15, 0xaaaa, Q16_ONE * 4 / 5);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 6) = Color_ScaleComponents(
+      rgb, Q16_ONE * 11 / 15, Q16_ONE * 2 / 3, Q16_ONE * 4 / 5);
   BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
-      Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 8) =
-      Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
+      Color_ScaleComponents(rgb, 0xa221, Q16_ONE * 3 / 5, Q16_ONE * 2 / 3);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 8) = Color_ScaleComponents(
+      rgb, Q16_ONE * 31 / 30, Q16_ONE * 13 / 15, Q16_ONE * 6 / 5);
   BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
       Color_ScaleComponents(rgb, 0x12221, Q16_ONE * 14 / 15, Q16_ONE * 4 / 3);
   BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
-      Color_ScaleComponents(rgb, 0x13bbb, Q16_ONE, 0x17777);
+      Color_ScaleComponents(rgb, Q16_ONE * 37 / 30, Q16_ONE, Q16_ONE * 22 / 15);
 }
 
 /// The rows of the unused three-row settings cursor (OptionMenuWork.page).

@@ -1,109 +1,109 @@
-channel	0x1
-picture	0x24a	2	0x20a	0
-picture	0x26a	2	0x22a	10
-picture	0x24c	2	0x20a	0
-picture	0x26c	2	0x22a	10
-picture	0x24a	2	0x20a	0
-picture	0x26a	2	0x22a	10
-picture	0x24e	2	0x20a	0
-picture	0x26e	2	0x22a	10
+channel	1
+picture	586	2	522	0
+picture	618	2	554	10
+picture	588	2	522	0
+picture	620	2	554	10
+picture	586	2	522	0
+picture	618	2	554	10
+picture	590	2	522	0
+picture	622	2	554	10
 jump	0
-channel	0x2
-picture	0x9c	4	0x4	0
-picture	0xbc	4	0x24	0
-picture	0xdc	4	0x44	0
-picture	0xfc	4	0x64	20
-picture	0x180	4	0x4	0
-picture	0x1a0	4	0x24	0
-picture	0x1c0	4	0x44	0
-picture	0x1e0	4	0x64	20
-picture	0x184	4	0x4	0
-picture	0x1a4	4	0x24	0
-picture	0x1c4	4	0x44	0
-picture	0x1e4	4	0x64	20
-picture	0x180	4	0x4	0
-picture	0x1a0	4	0x24	0
-picture	0x1c0	4	0x44	0
-picture	0x1e0	4	0x64	20
+channel	2
+picture	156	4	4	0
+picture	188	4	36	0
+picture	220	4	68	0
+picture	252	4	100	20
+picture	384	4	4	0
+picture	416	4	36	0
+picture	448	4	68	0
+picture	480	4	100	20
+picture	388	4	4	0
+picture	420	4	36	0
+picture	452	4	68	0
+picture	484	4	100	20
+picture	384	4	4	0
+picture	416	4	36	0
+picture	448	4	68	0
+picture	480	4	100	20
 jump	0
-channel	0x3
-picture	0x10	4	0x1c	0
-picture	0x30	4	0x3c	0
-picture	0x50	4	0x5c	0
-picture	0x70	4	0x7c	20
-picture	0x14	4	0x1c	0
-picture	0x34	4	0x3c	0
-picture	0x54	4	0x5c	0
-picture	0x74	4	0x7c	20
-picture	0x18	4	0x1c	0
-picture	0x38	4	0x3c	0
-picture	0x58	4	0x5c	0
-picture	0x78	4	0x7c	20
-picture	0x14	4	0x1c	0
-picture	0x34	4	0x3c	0
-picture	0x54	4	0x5c	0
-picture	0x74	4	0x7c	20
+channel	3
+picture	16	4	28	0
+picture	48	4	60	0
+picture	80	4	92	0
+picture	112	4	124	20
+picture	20	4	28	0
+picture	52	4	60	0
+picture	84	4	92	0
+picture	116	4	124	20
+picture	24	4	28	0
+picture	56	4	60	0
+picture	88	4	92	0
+picture	120	4	124	20
+picture	20	4	28	0
+picture	52	4	60	0
+picture	84	4	92	0
+picture	116	4	124	20
 jump	0
-channel	0x4
-picture	0x8c	2	0x80	0
-picture	0xac	2	0xa0	20
-picture	0x8e	2	0x80	0
-picture	0xae	2	0xa0	20
-picture	0x90	2	0x80	0
-picture	0xb0	2	0xa0	20
+channel	4
+picture	140	2	128	0
+picture	172	2	160	20
+picture	142	2	128	0
+picture	174	2	160	20
+picture	144	2	128	0
+picture	176	2	160	20
 jump	0
-channel	0x5
-picture	0x3d6	2	0x396	0
-picture	0x3b6	2	0x3b6	20
-picture	0x416	2	0x396	0
-picture	0x436	2	0x3b6	20
-picture	0x418	2	0x396	0
-picture	0x438	2	0x3b6	20
+channel	5
+picture	982	2	918	0
+picture	950	2	950	20
+picture	1046	2	918	0
+picture	1078	2	950	20
+picture	1048	2	918	0
+picture	1080	2	950	20
 jump	0
-channel	0x6
-picture	0x3b8	2	0x398	20
-picture	0x3d8	2	0x398	20
-picture	0x3f8	2	0x398	20
+channel	6
+picture	952	2	920	20
+picture	984	2	920	20
+picture	1016	2	920	20
 jump	0
-picture	0x0	2	0x398	20
-channel	0x7
-picture	0x39b	1	0x39a	20
-picture	0x3bb	1	0x3ba	20
-picture	0x3da	1	0x39a	20
-picture	0x3fa	1	0x3ba	20
-picture	0x3db	1	0x39a	20
-picture	0x3fb	1	0x3ba	20
+picture	0	2	920	20
+channel	7
+picture	923	1	922	20
+picture	955	1	954	20
+picture	986	1	922	20
+picture	1018	1	954	20
+picture	987	1	922	20
+picture	1019	1	954	20
 jump	0
-channel	0x8
-picture	0x21a	4	0x250	20
-picture	0x23a	4	0x250	20
-picture	0x25a	4	0x250	20
+channel	8
+picture	538	4	592	20
+picture	570	4	592	20
+picture	602	4	592	20
 jump	0
-channel	0x9
-picture	0xcc	4	0x128	20
-picture	0xec	4	0x128	20
-picture	0x11c	4	0x128	20
+channel	9
+picture	204	4	296	20
+picture	236	4	296	20
+picture	284	4	296	20
 jump	0
-channel	0xa
-picture	0x400	2	0x318	0
-picture	0x420	2	0x338	20
-picture	0x410	2	0x318	0
-picture	0x430	2	0x338	20
+channel	10
+picture	1024	2	792	0
+picture	1056	2	824	20
+picture	1040	2	792	0
+picture	1072	2	824	20
 jump	0
-channel	0xb
-picture	0x54a	2	0x508	0
-picture	0x56a	2	0x528	12
-picture	0x542	2	0x508	0
-picture	0x562	2	0x528	12
-picture	0x548	2	0x508	0
-picture	0x568	2	0x528	12
+channel	11
+picture	1354	2	1288	0
+picture	1386	2	1320	12
+picture	1346	2	1288	0
+picture	1378	2	1320	12
+picture	1352	2	1288	0
+picture	1384	2	1320	12
 jump	0
-channel	0xc
-picture	0x54a	2	0x51a	0
-picture	0x56a	2	0x53a	18
-picture	0x542	2	0x51a	0
-picture	0x562	2	0x53a	18
-picture	0x548	2	0x51a	0
-picture	0x568	2	0x53a	18
+channel	12
+picture	1354	2	1306	0
+picture	1386	2	1338	18
+picture	1346	2	1306	0
+picture	1378	2	1338	18
+picture	1352	2	1306	0
+picture	1384	2	1338	18
 jump	0
 end

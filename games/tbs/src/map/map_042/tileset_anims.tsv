@@ -1,9 +1,9 @@
-channel	0x80
-picture	0x0	2	0x0	4
-picture	0x2	2	0x0	4
+paused	0
+picture	0	2	0	4
+picture	2	2	0	4
 jump	0
-channel	0x1
-picture	0x0	2	0x0	4
-picture	0x2	2	0x0	4
+channel	1
+picture	0	2	0	4
+picture	2	2	0	4
 jump	0
 end

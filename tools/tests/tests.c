@@ -311,6 +311,19 @@ graphics(void)
 	Buffer nameReference = {nameBytes, sizeof(nameBytes), 0};
 	equal(&names, &nameReference, "a string column is padded with zeros");
 	free(names.data);
+	textFile("anims.tsv", "channel\t1\npicture\t1536\t2\t1152\t10\njump\t0\n"
+						  "paused\t10\nstop\nend\n");
+	RUN("graphics", true, "anims.tsv", "anims.script");
+	Buffer anims = readFile("anims.script");
+	uint8_t animBytes[] = {0x01, 0xfd, 0x00, 0x06, 0x02, 0x00, 0x80, 0x04,
+						   0x0a, 0x00, 0x00, 0xfe, 0x8a, 0xfd, 0xff, 0xfe,
+						   0xff, 0xff};
+	Buffer animReference = {animBytes, sizeof(animBytes), 0};
+	equal(&anims, &animReference,
+		  "script operands are decimal; paused sets the marker's bit 7");
+	free(anims.data);
+	textFile("anims.tsv", "paused\t128\n");
+	RUN("graphics", false, "anims.tsv", "anims.script");
 	textFile("long.tsv", "name:str2\n\"abc\"\n");
 	RUN("graphics", false, "long.tsv", "long.table");
 	RUN("graphics", false, "tiles.png", "tiles.4bpp", "-mwidth", "0");

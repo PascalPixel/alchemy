@@ -1,129 +1,129 @@
-channel	0x0
-picture	0x600	4	0x1c	0
-picture	0x620	4	0x3c	0
-picture	0x640	4	0x5c	0
-picture	0x660	4	0x7c	15
-picture	0x604	4	0x1c	0
-picture	0x624	4	0x3c	0
-picture	0x644	4	0x5c	0
-picture	0x664	4	0x7c	15
-picture	0x608	4	0x1c	0
-picture	0x628	4	0x3c	0
-picture	0x648	4	0x5c	0
-picture	0x668	4	0x7c	15
-picture	0x60c	4	0x1c	0
-picture	0x62c	4	0x3c	0
-picture	0x64c	4	0x5c	0
-picture	0x66c	4	0x7c	15
+channel	0
+picture	1536	4	28	0
+picture	1568	4	60	0
+picture	1600	4	92	0
+picture	1632	4	124	15
+picture	1540	4	28	0
+picture	1572	4	60	0
+picture	1604	4	92	0
+picture	1636	4	124	15
+picture	1544	4	28	0
+picture	1576	4	60	0
+picture	1608	4	92	0
+picture	1640	4	124	15
+picture	1548	4	28	0
+picture	1580	4	60	0
+picture	1612	4	92	0
+picture	1644	4	124	15
 jump	0
-channel	0x1
-picture	0x680	4	0x9c	0
-picture	0x6a0	4	0xbc	0
-picture	0x6c0	4	0xdc	0
-picture	0x6e0	4	0xfc	15
-picture	0x684	4	0x9c	0
-picture	0x6a4	4	0xbc	0
-picture	0x6c4	4	0xdc	0
-picture	0x6e4	4	0xfc	15
-picture	0x688	4	0x9c	0
-picture	0x6a8	4	0xbc	0
-picture	0x6c8	4	0xdc	0
-picture	0x6e8	4	0xfc	15
-picture	0x68c	4	0x9c	0
-picture	0x6ac	4	0xbc	0
-picture	0x6cc	4	0xdc	0
-picture	0x6ec	4	0xfc	15
+channel	1
+picture	1664	4	156	0
+picture	1696	4	188	0
+picture	1728	4	220	0
+picture	1760	4	252	15
+picture	1668	4	156	0
+picture	1700	4	188	0
+picture	1732	4	220	0
+picture	1764	4	252	15
+picture	1672	4	156	0
+picture	1704	4	188	0
+picture	1736	4	220	0
+picture	1768	4	252	15
+picture	1676	4	156	0
+picture	1708	4	188	0
+picture	1740	4	220	0
+picture	1772	4	252	15
 jump	0
-channel	0x2
-picture	0x610	4	0x11c	0
-picture	0x630	4	0x13c	0
-picture	0x650	4	0x15c	0
-picture	0x670	4	0x17c	15
-picture	0x614	4	0x11c	0
-picture	0x634	4	0x13c	0
-picture	0x654	4	0x15c	0
-picture	0x674	4	0x17c	15
-picture	0x618	4	0x11c	0
-picture	0x638	4	0x13c	0
-picture	0x658	4	0x15c	0
-picture	0x678	4	0x17c	15
-picture	0x61c	4	0x11c	0
-picture	0x63c	4	0x13c	0
-picture	0x65c	4	0x15c	0
-picture	0x67c	4	0x17c	15
+channel	2
+picture	1552	4	284	0
+picture	1584	4	316	0
+picture	1616	4	348	0
+picture	1648	4	380	15
+picture	1556	4	284	0
+picture	1588	4	316	0
+picture	1620	4	348	0
+picture	1652	4	380	15
+picture	1560	4	284	0
+picture	1592	4	316	0
+picture	1624	4	348	0
+picture	1656	4	380	15
+picture	1564	4	284	0
+picture	1596	4	316	0
+picture	1628	4	348	0
+picture	1660	4	380	15
 jump	0
-channel	0x3
-picture	0x690	4	0x19c	0
-picture	0x6b0	4	0x1bc	0
-picture	0x6d0	4	0x1dc	0
-picture	0x6f0	4	0x1fc	15
-picture	0x694	4	0x19c	0
-picture	0x6b4	4	0x1bc	0
-picture	0x6d4	4	0x1dc	0
-picture	0x6f4	4	0x1fc	15
-picture	0x698	4	0x19c	0
-picture	0x6b8	4	0x1bc	0
-picture	0x6d8	4	0x1dc	0
-picture	0x6f8	4	0x1fc	15
-picture	0x69c	4	0x19c	0
-picture	0x6bc	4	0x1bc	0
-picture	0x6dc	4	0x1dc	0
-picture	0x6fc	4	0x1fc	15
+channel	3
+picture	1680	4	412	0
+picture	1712	4	444	0
+picture	1744	4	476	0
+picture	1776	4	508	15
+picture	1684	4	412	0
+picture	1716	4	444	0
+picture	1748	4	476	0
+picture	1780	4	508	15
+picture	1688	4	412	0
+picture	1720	4	444	0
+picture	1752	4	476	0
+picture	1784	4	508	15
+picture	1692	4	412	0
+picture	1724	4	444	0
+picture	1756	4	476	0
+picture	1788	4	508	15
 jump	0
-channel	0x4
-picture	0x700	4	0x212	0
-picture	0x720	4	0x232	0
-picture	0x740	4	0x252	0
-picture	0x760	4	0x272	8
-picture	0x704	4	0x212	0
-picture	0x724	4	0x232	0
-picture	0x744	4	0x252	0
-picture	0x764	4	0x272	8
-picture	0x708	4	0x212	0
-picture	0x728	4	0x232	0
-picture	0x748	4	0x252	0
-picture	0x768	4	0x272	8
-picture	0x70c	4	0x212	0
-picture	0x72c	4	0x232	0
-picture	0x74c	4	0x252	0
-picture	0x76c	4	0x272	8
+channel	4
+picture	1792	4	530	0
+picture	1824	4	562	0
+picture	1856	4	594	0
+picture	1888	4	626	8
+picture	1796	4	530	0
+picture	1828	4	562	0
+picture	1860	4	594	0
+picture	1892	4	626	8
+picture	1800	4	530	0
+picture	1832	4	562	0
+picture	1864	4	594	0
+picture	1896	4	626	8
+picture	1804	4	530	0
+picture	1836	4	562	0
+picture	1868	4	594	0
+picture	1900	4	626	8
 jump	0
-channel	0x5
-picture	0x710	4	0x216	0
-picture	0x730	4	0x236	0
-picture	0x750	4	0x256	0
-picture	0x770	4	0x276	8
-picture	0x714	4	0x216	0
-picture	0x734	4	0x236	0
-picture	0x754	4	0x256	0
-picture	0x774	4	0x276	8
-picture	0x718	4	0x216	0
-picture	0x738	4	0x236	0
-picture	0x758	4	0x256	0
-picture	0x778	4	0x276	8
-picture	0x71c	4	0x216	0
-picture	0x73c	4	0x236	0
-picture	0x75c	4	0x256	0
-picture	0x77c	4	0x276	8
+channel	5
+picture	1808	4	534	0
+picture	1840	4	566	0
+picture	1872	4	598	0
+picture	1904	4	630	8
+picture	1812	4	534	0
+picture	1844	4	566	0
+picture	1876	4	598	0
+picture	1908	4	630	8
+picture	1816	4	534	0
+picture	1848	4	566	0
+picture	1880	4	598	0
+picture	1912	4	630	8
+picture	1820	4	534	0
+picture	1852	4	566	0
+picture	1884	4	598	0
+picture	1916	4	630	8
 jump	0
-channel	0x6
-picture	0x780	5	0x21b	0
-picture	0x7a0	5	0x23b	8
-picture	0x785	5	0x21b	0
-picture	0x7a5	5	0x23b	8
-picture	0x78a	5	0x21b	0
-picture	0x7aa	5	0x23b	8
-picture	0x78f	5	0x21b	0
-picture	0x7af	5	0x23b	8
+channel	6
+picture	1920	5	539	0
+picture	1952	5	571	8
+picture	1925	5	539	0
+picture	1957	5	571	8
+picture	1930	5	539	0
+picture	1962	5	571	8
+picture	1935	5	539	0
+picture	1967	5	571	8
 jump	0
-channel	0x7
-picture	0x7c0	4	0x117	0
-picture	0x7e0	4	0x137	15
-picture	0x7c4	4	0x117	0
-picture	0x7e4	4	0x137	15
-picture	0x7c8	4	0x117	0
-picture	0x7e8	4	0x137	15
-picture	0x7cc	4	0x117	0
-picture	0x7ec	4	0x137	15
+channel	7
+picture	1984	4	279	0
+picture	2016	4	311	15
+picture	1988	4	279	0
+picture	2020	4	311	15
+picture	1992	4	279	0
+picture	2024	4	311	15
+picture	1996	4	279	0
+picture	2028	4	311	15
 jump	0
 end

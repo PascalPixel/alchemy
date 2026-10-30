@@ -1,19 +1,19 @@
-channel	0x0
-picture	0x61c	4	0x0	0
-picture	0x63c	4	0x20	0
-picture	0x65c	4	0x40	0
-picture	0x67c	4	0x60	20
-picture	0x69c	4	0x0	0
-picture	0x6bc	4	0x20	0
-picture	0x6dc	4	0x40	0
-picture	0x6fc	4	0x60	20
-picture	0x618	4	0x0	0
-picture	0x638	4	0x20	0
-picture	0x658	4	0x40	0
-picture	0x678	4	0x60	20
-picture	0x69c	4	0x0	0
-picture	0x6bc	4	0x20	0
-picture	0x6dc	4	0x40	0
-picture	0x6fc	4	0x60	20
+channel	0
+picture	1564	4	0	0
+picture	1596	4	32	0
+picture	1628	4	64	0
+picture	1660	4	96	20
+picture	1692	4	0	0
+picture	1724	4	32	0
+picture	1756	4	64	0
+picture	1788	4	96	20
+picture	1560	4	0	0
+picture	1592	4	32	0
+picture	1624	4	64	0
+picture	1656	4	96	20
+picture	1692	4	0	0
+picture	1724	4	32	0
+picture	1756	4	64	0
+picture	1788	4	96	20
 jump	0
 end

@@ -174,6 +174,7 @@ plane(const Buffer *input)
 
 /*
  * Commands encode either a prefixed operand or a fixed count of halfwords.
+ * `paused n` is `channel n` with the marker's bit 7 set, so n stays below 128.
  */
 Buffer
 script(const Buffer *input)
@@ -185,11 +186,17 @@ script(const Buffer *input)
 		Strings f = split(lines.items[i], '\t');
 		const char *key = f.items[0];
 		size_t n;
-		unsigned prefix = 0;
+		unsigned prefix = 0, operand = 255;
 		if (!strcmp(key, "channel"))
 		{
 			n = 1;
 			prefix = 0xfd00;
+		}
+		else if (!strcmp(key, "paused"))
+		{
+			n = 1;
+			prefix = 0xfd80;
+			operand = 127;
 		}
 		else if (!strcmp(key, "jump"))
 		{
@@ -217,7 +224,8 @@ script(const Buffer *input)
 		if (f.len != n + 1)
 			fail("wrong number of script arguments");
 		if (prefix)
-			half(&out, prefix | (n ? decimalOrHex(trim(f.items[1]), 255) : 0));
+			half(&out,
+				 prefix | (n ? decimalOrHex(trim(f.items[1]), operand) : 0));
 		else
 			for (size_t j = 1; j < f.len; j++)
 				half(&out, decimalOrHex(trim(f.items[j]), 65535));

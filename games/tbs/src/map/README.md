@@ -407,7 +407,8 @@ bed. The names below are the tables' words.
 
 | Word | Value | Meaning |
 | --- | --- | --- |
-| `channel n` | `0xfd00 + n` | tileset animation n starts at the next value; with bit 7 set it starts paused |
+| `channel n` | `0xfd00 + n` | tileset animation n starts at the next value |
+| `paused n` | `0xfd80 + n` | as `channel n`, but the animation starts paused |
 | `picture` | four values below `0xfd00` | source tile, tile count, destination tile, frames to wait |
 | `jump n` | `0xfe00 + n` | continue at value 2n of the animation's commands |
 | `stop` | `0xfeff` | halt the animation |

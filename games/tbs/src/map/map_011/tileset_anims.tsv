@@ -1,9 +1,9 @@
-channel	0x0
-picture	0x600	4	0x4d0	0
-picture	0x620	3	0x4f0	8
-picture	0x604	4	0x4d0	0
-picture	0x624	3	0x4f0	8
-picture	0x608	4	0x4d0	0
-picture	0x628	4	0x4f0	8
+channel	0
+picture	1536	4	1232	0
+picture	1568	3	1264	8
+picture	1540	4	1232	0
+picture	1572	3	1264	8
+picture	1544	4	1232	0
+picture	1576	4	1264	8
 jump	0
 end

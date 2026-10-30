@@ -1,21 +1,21 @@
-channel	0x0
-picture	0x600	2	0x264	0
-picture	0x620	2	0x284	0
-picture	0x640	2	0x2a4	12
-picture	0x602	2	0x264	0
-picture	0x622	2	0x284	0
-picture	0x642	2	0x2a4	12
-picture	0x604	2	0x264	0
-picture	0x624	2	0x284	0
-picture	0x644	2	0x2a4	12
-picture	0x602	2	0x264	0
-picture	0x622	2	0x284	0
-picture	0x642	2	0x2a4	12
+channel	0
+picture	1536	2	612	0
+picture	1568	2	644	0
+picture	1600	2	676	12
+picture	1538	2	612	0
+picture	1570	2	644	0
+picture	1602	2	676	12
+picture	1540	2	612	0
+picture	1572	2	644	0
+picture	1604	2	676	12
+picture	1538	2	612	0
+picture	1570	2	644	0
+picture	1602	2	676	12
 jump	0
-channel	0x1
-picture	0x6a6	1	0x250	15
-picture	0x6a7	1	0x250	15
-picture	0x6a8	1	0x250	15
-picture	0x6a7	1	0x250	15
+channel	1
+picture	1702	1	592	15
+picture	1703	1	592	15
+picture	1704	1	592	15
+picture	1703	1	592	15
 jump	0
 end

@@ -1,32 +1,3 @@
-// Matches: differ 0 of 300 (tla-en, 2026-10-30), plain C with no device
-// (effect kind 37, the bouncing sheep). The one-pass block around the
-// set-up's four assignments is no longer needed: as plain statements the
-// argument's spill, the 0x03000000 base and movs r0, #1 fall in the listing's
-// order. The .text matches the listing byte for byte but for the draft
-// assembler's nop padding and two pool words written as symbols:
-// ResourceId_SheepCardSheet (directory row 0xe3, not yet defined there) where
-// the listing holds 0xe3, and Ram_MapCellBuffer's constant 0x02010000 where
-// the listing holds gMapCellBuffer (FIXED_ADDRESS, the same value).
-
-// ☀️ twin: BattleEffect_RunSleep (games/tbs/src/effect/effect.c), shape
-// 0.776, structure 0.977. ⚓️'s changes: the canvas layer at priority 1; the
-// effect runs 98 frames where ☀️ runs 148; the sheep follow the middle of
-// the targets (Func_0815e22c) where ☀️ moves BG2 for side 1: the middle,
-// less 64, is clamped to 0..112 into BG2's x, and what the clamp cut off
-// becomes a scroll added to every sheep's x; the cels are at sheet + 0x800;
-// the blitters are transparent, ⚓️ mode 2 (☀️ 1).
-
-// Declaration order sets the native stack frame: the middle above the
-// position record, and drawB, drawA, scroll spilled in that order.
-
-// Earlier attempts (differ at the time): trial 0's port with ☀️'s
-// declaration order (2026-10-15) 42; the declaration order above 22;
-// BattleEffect_LoadBlitter returning s32 22; the sheep in the gMapCellBuffer
-// symbol (extern) 56; through Ram_MapCellBuffer 20; a greedy
-// declaration-order scan 20; 2026-10-19 with two tagged devices 12;
-// 2026-10-25 under -mthumb-slow-loads: plain C 6, the one-pass block around
-// the set-up 2.
-
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"

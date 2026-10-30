@@ -237,7 +237,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_DragonCardSheet
 	resource , BattleEffect_BoltCardSheet
 	resource , BattleEffect_ButterflyCardSheet
-	resource , BattleEffect_SheepCardSheet
+	resource SheepCardSheet, BattleEffect_SheepCardSheet
 	resource , BattleEffect_SkeletonCardSheet
 	resource , BattleEffect_SwordCardSheet
 	resource , BattleEffect_BoulderPicture

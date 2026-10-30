@@ -2124,11 +2124,7 @@ BattleEffect_RunVolcano:
 	.thumb_func
 BattleEffect_RunTargetMotes:
 	.incbin "baserom.gba", 0x0014a814, 0x000006a8
-	.global BattleEffect_RunSleep
-	.type BattleEffect_RunSleep, %function
-	.thumb_func
-BattleEffect_RunSleep:
-	.incbin "baserom.gba", 0x0014aebc, 0x000002a4
+	.section .rom.0014b160, "ax"
 	.global BattleEffect_RunCurse
 	.type BattleEffect_RunCurse, %function
 	.thumb_func

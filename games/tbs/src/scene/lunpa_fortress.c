@@ -3082,7 +3082,8 @@ static void LunpaFortress_TalkToDonpa(void) {
 /// LunpaFortressUpperFloor: talking to Tonic, a Mercury Djinni and Donpa's
 /// reward, it joins the party.
 static void LunpaFortress_DjinniJoins(void) {
-  Djinn_JoinParty(ACTOR_UPPER_FLOOR_TONIC, 1, 5);
+  Djinn_JoinParty(ACTOR_UPPER_FLOOR_TONIC, ELEMENT_MERCURY,
+                  DJINNI_INDEX(DJINNI_TONIC));
   GameFlag_Set(FLAG_LUNPA_FORTRESS_REWARD_TAKEN);
 }
 

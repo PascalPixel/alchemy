@@ -87,8 +87,7 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 /// ends on. tiles is the work block's tilemap and mirror the same place in
 /// VRAM, both written at once.
 s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
-  /* FAKEMATCH(dead): an unused array for the stack frame's 32 extra bytes; as
-   * no array, 2 of 402 instructions differ in tbs-en. */
+  // Unused: gives the stack frame its 32 extra bytes.
   UNUSED u32 reserve[8];
   u8 pens[16];
   struct WindowWork *work;

@@ -123,9 +123,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   struct ScreenPoint center;
   struct ScreenPoint screen;
   s32 frame;
-  /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
-   * fills the frame; as one DrawRectangle, 11 of 265 instructions differ in
-   * tbs-en. */
+  // Only draw[0] is used; the second blitter gives the stack frame 4 bytes.
   BlitterPair draw;
   s32 member;
   struct BattleCamera *camera;

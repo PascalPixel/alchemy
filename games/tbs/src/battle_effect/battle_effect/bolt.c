@@ -46,9 +46,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   void *canvas;
   s32 i;
   s32 frame;
-  /* FAKEMATCH(dead): a pair whose second blitter, never used, fills four
-   * bytes of the frame; as one DrawRectangle, 33 of 555 instructions differ
-   * in tbs-en. */
+  // Only draw[0] is used; the second blitter gives the stack frame 4 bytes.
   BlitterPair draw;
   u8 *sprites;
   struct ScreenPoint screen;

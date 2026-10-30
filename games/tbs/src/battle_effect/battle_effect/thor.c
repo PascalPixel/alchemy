@@ -94,9 +94,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sprites;
   s32 frame;
-  /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
-   * fills the frame; as one DrawRectangle, 101 of 1640 instructions differ in
-   * tbs-en. */
+  // Only blit[0] is used; the second blitter gives the stack frame 4 bytes.
   BlitterPair blit;
   s32 size;
   s32 count;

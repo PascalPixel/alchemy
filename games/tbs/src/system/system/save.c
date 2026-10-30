@@ -21,8 +21,8 @@ enum {
   /// The highest counter a write keeps; a copy written past it is
   /// rewritten as 1.
   SAVE_COUNTER_LIMIT = 65000,
-  /// Payload bytes summed into the checksum: all 0xff0 but the last eight.
-  SAVE_CHECKSUM_BYTES = 0xfe8
+  /// Payload bytes summed into the checksum: all 4080 but the last eight.
+  SAVE_CHECKSUM_BYTES = 4072
 };
 
 /// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
@@ -187,7 +187,7 @@ UNUSED u16 Save_EraseSector(u16 sector) {
   return ((EraseSectorProc)gEraseFlashSector)(sector);
 }
 
-/// Saves 0xff0 bytes from `source` as part `partId`: writes the new copy
+/// Saves 4080 bytes from `source` as part `partId`: writes the new copy
 /// with the next counter, then invalidates the old one, updating the
 /// workspace's sector tables. When the counter passes 65000 it restarts at 1,
 /// written back over the old sector. Called by the save screens. Returns 0 on
@@ -245,7 +245,7 @@ s32 Save_WritePart(s32 partId, void *source) {
   return 0;
 }
 
-/// Loads the current copy of part `partId` (0xff0 bytes) into
+/// Loads the current copy of part `partId` (4080 bytes) into
 /// `destination`. Called by the save screens to load or copy a file. Returns
 /// 1 when there is none and 0 otherwise. The checksum result of the read is
 /// ignored: a sector counts as occupied only after the scan's checksum or a
@@ -280,7 +280,7 @@ u32 Save_DeletePart(s32 partId) {
   return (u32)((0 - deletionResult) | deletionResult) >> 31;
 }
 
-/// Sums the first 0xfe8 payload bytes of the workspace's sector buffer; the
+/// Sums the first 4072 payload bytes of the workspace's sector buffer; the
 /// final eight payload bytes are excluded. Called when a sector is read and
 /// before one is written.
 s32 Save_ChecksumSector(void) {

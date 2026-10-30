@@ -11,7 +11,7 @@ extern u8 IwramClearWords[];
 /// VBlank.
 void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
-  // IwramClearWords(destination, bytes): 0x400 bytes are the 256 slot heads.
+  // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads.
   // It zeroes r2 itself, so the third argument is never read.
   _call_via_r3(((u32)&gOamDepthLists), 0x400, ((u32)&gOamMatrixCount),
                (u32)IwramClearWords);
@@ -48,7 +48,7 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   coefficient = matrix->coefficients;
   if ((xScale == yScale || -xScale == yScale) && angle == 0) {
     // Unrotated and evenly scaled (or mirrored): only the diagonal is set.
-    // 0x10000 / scale is the 8.8 inverse of an 8.8 scale.
+    // Q16_ONE / scale is the 8.8 inverse of an 8.8 scale.
     s32 reciprocal;
     s32 xReciprocal;
 

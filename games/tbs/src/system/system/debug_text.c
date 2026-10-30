@@ -124,9 +124,9 @@ void DebugText_Print(const u8 *src) {
     src++;
 
     if (c != 0) {
-      // the end of the 32x20-entry screen (0x500 bytes) wraps to its start
+      // the end of the 32x20-entry screen (1280 bytes) wraps to its start
       u32 mask = WINDOW_PALETTE << 12;
-      addr = (u32)(BG_SCREEN_BLOCK(4) + 0x500);
+      addr = (u32)(BG_SCREEN_BLOCK(4) + 32 * 20 * 2);
       do {
         *dst++ = c | mask;
         if (dst == (u16 *)addr)
@@ -173,7 +173,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
 /// Called by System_Initialize, MainRoutine_Run and the debug modes.
 void DebugText_Clear(void) {
-  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
+  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }
@@ -183,9 +183,9 @@ void DebugText_Clear(void) {
 /// palettes. Called by System_Initialize and by the modes that replace those
 /// graphics and must put them back (the debug battle, the palette editor).
 void Window_LoadGraphics(void) {
-  // 0x800 words: 8 KB, 256 tiles of 4 bits a pixel
+  // 2048 words: 8 KB, 256 tiles of 4 bits a pixel
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
+          BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
   Dma_Set(gWindow_Palette, (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);

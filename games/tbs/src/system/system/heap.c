@@ -15,7 +15,7 @@
 void Heap_Initialize(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 
-  Dma_Fill32(0, work, 0x100);
+  Dma_Fill32(0, work, 256);
   work->heap.nextIwram = gIwramHeap;
   work->heap.nextEwram = gEwramHeap;
 }

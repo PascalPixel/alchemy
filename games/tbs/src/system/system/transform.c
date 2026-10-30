@@ -5,7 +5,7 @@
 #include "../system_internal.h"
 
 // The 3D transform. gTransform is twelve s32 in 16.16 fixed point (1.0 is
-// 0x10000): [0] to [8] a 3x3 rotation, [9] to [11] a translation.
+// Q16_ONE): [0] to [8] a 3x3 rotation, [9] to [11] a translation.
 // Iwram_TransformMatrix multiplies the matrix it is given into gTransform.
 
 #define TRANSFORM_DMA (DMA_COPY_WORDS(12)) ///< one matrix
@@ -340,7 +340,7 @@ void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
 
   halfAngle = (s32)(fieldOfView + (fieldOfView >> 31)) >> 1;
   sine = Trig_Sin(halfAngle);
-  // Iwram_RatioMulQ14(d, v) is v * 0x10000 / d: here 80 * cos / sin
+  // Iwram_RatioMulQ14(d, v) is v * Q16_ONE / d: here 80 * cos / sin
   focal = Iwram_RatioMulQ14(sine, Trig_Cos(halfAngle) * 80);
   gProjection.near = nearDepth;
   gProjection.focal = focal;
@@ -379,7 +379,7 @@ s32 Transform_ProjectPoint(const void *point, s32 *screen) {
     if (projection->focal != 0) {
       u32 shifted = (u32)depth >> 11;
 
-      // (focal << 5) / (depth >> 11) is focal * 0x10000 / depth, focal over
+      // (focal << 5) / (depth >> 11) is focal * Q16_ONE / depth, focal over
       // depth in 16.16, without the low 11 bits of the depth
       scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
     } else {

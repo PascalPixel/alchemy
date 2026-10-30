@@ -98,7 +98,7 @@ IwramFillWords:
 	stmia	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
 	stmia	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
 	stmia	r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
-	subs	r1, r1, #0x100
+	subs	r1, r1, #256
 	bpl	.L_clear_256
 	ands	r1, r1, #0x1c
 	beq	.L_clear_done
@@ -166,7 +166,7 @@ IwramExpandBitRuns:
 IwramTransformVector:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldm	r0, {r2, r3, r4}
-	add	r0, pc, #0xf0
+	add	r0, pc, #240
 	ldmia	r0!, {r5, r6, r7}
 	smull	r8, r9, r2, r5
 	smull	sl, fp, r2, r6
@@ -196,10 +196,10 @@ IwramTransformVector:
 	.global IwramTransformMatrix
 IwramTransformMatrix:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
-	sub	sp, sp, #0x24
+	sub	sp, sp, #36
 	mov	r4, sp
 .L_matrix_row:
-	add	r1, pc, #0x7c
+	add	r1, pc, #124
 	ldmia	r0!, {r2, r3}
 	ldmia	r1!, {r5, r6, r7}
 	smull	r8, r9, r5, r2
@@ -221,7 +221,7 @@ IwramTransformMatrix:
 	lsr	ip, ip, #16
 	orr	ip, ip, lr, lsl #16
 	sub	r2, r4, sp
-	cmp	r2, #0x24
+	cmp	r2, #36
 	stmiane	r4!, {r8, sl, ip}
 	bne	.L_matrix_row
 	ldmia	r1!, {r5, r6, r7}
@@ -238,9 +238,9 @@ IwramTransformMatrix:
 
 	.global gTransform
 gTransform:
-	.4byte 0x00010000, 0, 0, 0
-	.4byte 0x00010000, 0, 0, 0
-	.4byte 0x00010000, 0, 0, 0
+	.4byte 1 << 16, 0, 0, 0
+	.4byte 1 << 16, 0, 0, 0
+	.4byte 1 << 16, 0, 0, 0
 .syntax unified
 	.section .text.iwram_divide,"ax",%progbits
 	.arm
@@ -429,7 +429,7 @@ IwramDecompress:
 	bcc	.L_decompress_backref
 	beq	.L_decompress_flag_reload
 	ldrb	r4, [r0], #1
-	subs	r5, r4, #0xdf
+	subs	r5, r4, #223
 	addhi	r1, r1, r5
 	strbls	r4, [r1], #1
 	b	.L_decompress_flag
@@ -446,7 +446,7 @@ IwramDecompress:
 	add	r4, r4, #1
 .L_decompress_copy:
 	ldrb	r5, [ip], #1
-	subs	r7, r5, #0xdf
+	subs	r7, r5, #223
 	addhi	r1, r1, r7
 	strbls	r5, [r1], #1
 	subs	r4, r4, #1

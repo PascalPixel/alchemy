@@ -9,7 +9,7 @@
 // tiles they draw over and restore them after.
 #if TBS_PATCH_2
 #define PSYNERGY_PROMPT_TILES BG_CHAR_BLOCK(1)
-#define PSYNERGY_PROMPT_TILES_SIZE 0x2000
+#define PSYNERGY_PROMPT_TILES_SIZE 8192
 #endif
 
 // The highlight over the Psynergy list's rows.
@@ -781,7 +781,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   cursor = (struct WindowSprite *)Icon_CreateWithResourceVariant(window, 0, 4);
   cursor->motion = ICON_HIDDEN;
   menu->entryGridCursor = cursor;
-  Portrait_CreateFar(0, 0, 0, window, 0, 0);
+  Portrait_CreateFar(ISAAC, 0, 0, window, 0, 0);
 
   y = 8;
   index = 0;

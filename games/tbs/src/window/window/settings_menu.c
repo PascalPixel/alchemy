@@ -85,19 +85,19 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
 /// window tint.
 UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
-      WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 5) =
-      WindowColor_ScaleTint(work, 0xD555, 0xBBBB, 0xEEEE);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 6) =
-      WindowColor_ScaleTint(work, 0xBBBB, 0xAAAA, 0xCCCC);
+      WindowColor_ScaleTint(work, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 5) = WindowColor_ScaleTint(
+      work, Q16_ONE * 5 / 6, Q16_ONE * 11 / 15, Q16_ONE * 14 / 15);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 6) = WindowColor_ScaleTint(
+      work, Q16_ONE * 11 / 15, Q16_ONE * 2 / 3, Q16_ONE * 4 / 5);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
-      WindowColor_ScaleTint(work, 0xA221, 0x9999, 0xAAAA);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 8) =
-      WindowColor_ScaleTint(work, 0x10888, 0xDDDD, 0x13333);
+      WindowColor_ScaleTint(work, 0xA221, Q16_ONE * 3 / 5, Q16_ONE * 2 / 3);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 8) = WindowColor_ScaleTint(
+      work, Q16_ONE * 31 / 30, Q16_ONE * 13 / 15, Q16_ONE * 6 / 5);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
-      WindowColor_ScaleTint(work, 0x12221, 0xEEEE, 0x15555);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
-      WindowColor_ScaleTint(work, 0x13BBB, 0x10000, 0x17777);
+      WindowColor_ScaleTint(work, 0x12221, Q16_ONE * 14 / 15, Q16_ONE * 4 / 3);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 10) = WindowColor_ScaleTint(
+      work, Q16_ONE * 37 / 30, Q16_ONE, Q16_ONE * 22 / 15);
 }
 
 /// Returns the window tint with each channel scaled (16.16 fixed point) and
@@ -176,24 +176,24 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
-  // Each colour scales the tint by channel, in 16.16 (0x10000 is 1): colours
+  // Each colour scales the tint by channel, in 16.16 (Q16_ONE is 1): colours
   // 4 to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
   // and 8 to 10 lighter, up to about 1.23, 1 and 1.47. Colour 4 is the
   // windows' background.
   BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
-      Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 5) =
-      Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 6) =
-      Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc);
+      Color_ScaleComponents(rgb, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 5) = Color_ScaleComponents(
+      rgb, Q16_ONE * 5 / 6, Q16_ONE * 11 / 15, Q16_ONE * 14 / 15);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 6) = Color_ScaleComponents(
+      rgb, Q16_ONE * 11 / 15, Q16_ONE * 2 / 3, Q16_ONE * 4 / 5);
   BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
-      Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 8) =
-      Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333);
+      Color_ScaleComponents(rgb, 0xa221, Q16_ONE * 3 / 5, Q16_ONE * 2 / 3);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 8) = Color_ScaleComponents(
+      rgb, Q16_ONE * 31 / 30, Q16_ONE * 13 / 15, Q16_ONE * 6 / 5);
   BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
-      Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555);
+      Color_ScaleComponents(rgb, 0x12221, Q16_ONE * 14 / 15, Q16_ONE * 4 / 3);
   BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
-      Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
+      Color_ScaleComponents(rgb, Q16_ONE * 37 / 30, Q16_ONE, Q16_ONE * 22 / 15);
 }
 
 /// The rows of the unused three-row settings cursor (OptionMenuWork.page).
@@ -287,7 +287,7 @@ void SettingsMenu_AnimateCursors(void) {
   } else {
     cursorResource = (s32)&ResourceId_MenuCursorPictures;
   }
-  VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
+  VramCache_Load((u8)work->marker[0].sprite->index, 256,
                  Resource_GetTableEntry(cursorResource));
 
   if (selectedOption == 1) {
@@ -296,7 +296,7 @@ void SettingsMenu_AnimateCursors(void) {
   } else {
     markerResource = (s32)&ResourceId_MenuCursorPictures;
   }
-  VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
+  VramCache_Load((u8)work->marker[1].sprite->index, 256,
                  Resource_GetTableEntry(markerResource));
 
   if (selectedOption > 1)
@@ -511,11 +511,11 @@ s32 SettingsMenu_Run(void) {
       if (gSleepDisabled != 0)
         work->option[4] = 0;
 
-      // Redraw each choice's icon at depth slot 0xfb, dimmed unless it is
+      // Redraw each choice's icon at depth slot 251, dimmed unless it is
       // the row's setting.
       for (i = 0; i <= 2; i++) {
         frame = work->choiceIcons[0][i];
-        frame->sentinel = 0xfb;
+        frame->sentinel = 251;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
@@ -525,7 +525,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         frame = work->choiceIcons[1][i];
-        frame->sentinel = 0xfb;
+        frame->sentinel = 251;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
@@ -535,7 +535,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         frame = work->choiceIcons[2][i];
-        frame->sentinel = 0xfb;
+        frame->sentinel = 251;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
@@ -823,7 +823,7 @@ s32 PauseMenu_Choose(void) {
         pauseIcons = gPauseMenu_Icons;
         do {
           icon = work->icon[i];
-          icon->sentinel = 0xFB;
+          icon->sentinel = 251;
           Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;

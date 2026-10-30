@@ -522,7 +522,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
   struct Actor *actor = updated;
   struct Sprite *state = actor->sprite;
-  s32 v = state->rotation - 0x800;
+  s32 v = state->rotation - TRIG_TURN / 32;
 
   state->rotation = v;
 }
@@ -581,7 +581,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 #else
   *(s32 *)&stump->update = 0;
 #endif
-  stump->sprite->rotation = 0x1000;
+  stump->sprite->rotation = TRIG_TURN / 16;
   p = &params;
   p->type = SPRITE_SPLASH;
   p->startScaleX = Q16_ONE / 2;

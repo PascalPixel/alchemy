@@ -63,7 +63,7 @@ s32 LuckyWheels_Start(void) {
   return 0;
 }
 
-/// Writes count RGB555 colours from src to dst scaled by scale (16.16, 0x10000
+/// Writes count RGB555 colours from src to dst scaled by scale (16.16, Q16_ONE
 /// keeps them). Returns 0.
 s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   s32 n;
@@ -218,7 +218,7 @@ void Palette_StepTowardResource(s32 resource) {
 void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
-  s32 frac = 0x80; // 0.5 in 8-bit fixed point
+  s32 frac = 128; // 0.5 in 8-bit fixed point
   u8 *canvas = ((u8 **)gBattleEffectWork)[1];
   s32 step;
   s32 i;
@@ -340,8 +340,8 @@ struct LuckyWheelsWork {
 /// gMainRoutineWork.wonPrizes (through the field itself LuckyWheels_Update
 /// differs 12)
 struct LuckyWheelsWonPrizesView {
-  u8 beforeWonPrizes[0x120]; ///< gMainRoutineWork from summonMask to
-                             ///< wonPrizes
+  u8 beforeWonPrizes[288]; ///< gMainRoutineWork from summonMask to
+                           ///< wonPrizes
   s8 wonPrizes[16];
 };
 
@@ -792,7 +792,7 @@ void LuckyWheels_Update(void) {
           ((gLuckyWheels_TitleLetterTiles[i] << 4) + LUCKY_WHEELS_TITLE_TILES) |
           0xf000;
       p->y += p->velocityY;
-      p->velocityY += 0x4000;
+      p->velocityY += Q16_ONE / 4;
       if (work->timer % 256 == i * 4 + 200) {
         p->velocityY = 6 << 16;
         p->variant = 0;
@@ -865,7 +865,7 @@ void LuckyWheels_Update(void) {
     if (work->timer <= 47)
       lever = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
     else if (work->timer <= 55)
-      lever = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
+      lever = ((Trig_Sin((work->timer << 12) - TRIG_TURN * 3) << 2) >> 16) + 40;
   }
   work->oam[sprite].attr01 = lever | objMode | 0x80d06000;
   work->oam[sprite].attr2 = 0x500;
@@ -937,7 +937,7 @@ void LuckyWheels_InitializeTitle(void) {
     state->scanlineOffsets[i] = 0;
 
   for (i = 0; i != 40; i++) {
-    angle = i * 0x199;
+    angle = i * 409;
     state->scanlineOffsets[23 + i] = (u32)(Trig_Cos(angle) * 3) >> 15;
     state->scanlineOffsets[110 - i] = (u32)(Trig_Cos(angle) * 3) >> 15;
   }
@@ -977,7 +977,7 @@ void LuckyWheels_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT,
                              sizeof(struct BattleEffectWork));
@@ -1024,12 +1024,12 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 0x500, 0x300);
+  Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 0x500, 768);
   j = 0;
   for (k = 0; k != 20; k++) {
     for (i = 0; i != 32; i++, j += 2) {
       if (k < 2 || k > 16)
-        *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = 0xbf;
+        *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = 191;
       else
         *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = k * 32 + i + 148;
     }
@@ -1052,8 +1052,8 @@ void LuckyWheels_Run(void) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG1HOFS = 0;
   REG_BG2HOFS = 0;
-  REG_BG1VOFS = 0xff60;
-  REG_BG2VOFS = 0xff60;
+  REG_BG1VOFS = -160;
+  REG_BG2VOFS = -160;
   REG_WIN0H = WIN_RANGE(40, 200);
   REG_WIN0V = WIN_RANGE(24, 120);
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
@@ -1062,7 +1062,7 @@ void LuckyWheels_Run(void) {
   REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT);
 
   {
-    u16 *shade = (u16 *)(work->sheet + 0x200);
+    u16 *shade = (u16 *)(work->sheet + 512);
     s32 size = LUCKY_WHEELS_CANVAS_SIZE;
 
     state->state = LUCKY_WHEELS_BETTING;
@@ -1080,8 +1080,7 @@ void LuckyWheels_Run(void) {
             REG_DMA3);
     entry += 480;
     Decompress_TaggedLz(entry, tiles);
-    Dma_Set(tiles, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b30,
-            REG_DMA3);
+    Dma_Set(tiles, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6960), REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsJackpot);
     Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0),
             (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
@@ -1135,8 +1134,8 @@ void LuckyWheels_Run(void) {
             (DMA_ENABLE | DMA_32BIT) << 16 | 256 * sizeof(u16) / 4, REG_DMA3);
     Dma_Set((void *)OBJ_PLTT, shade,
             (DMA_ENABLE | DMA_32BIT) << 16 | 256 * sizeof(u16) / 4, REG_DMA3);
-    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
-    LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 0x100);
+    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 256);
+    LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 256);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(ITEM_GAME_TICKET) == 1) {
@@ -1160,9 +1159,8 @@ void LuckyWheels_Run(void) {
 
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
       if (frame <= 16) {
-        LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
-        LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12,
-                                0x100);
+        LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 256);
+        LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12, 256);
       }
       if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
         s32 phase = frame % 80;
@@ -1278,10 +1276,9 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != 17; j++) {
-      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, Q16_ONE - (j << 12),
-                              0x100);
+      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, Q16_ONE - (j << 12), 256);
       LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, Q16_ONE - (j << 12),
-                              0x100);
+                              256);
       wait(1);
     }
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
@@ -1351,7 +1348,7 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
   if (current < limit) {
     u32 mask = PACK_WINDOW_MASK;
-    u32 removal = base + 0x124;
+    u32 removal = base + 292;
 
     do {
       u32 slot = base + current;

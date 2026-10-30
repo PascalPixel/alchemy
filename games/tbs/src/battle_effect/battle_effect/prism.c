@@ -190,9 +190,10 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 /// Called each frame by BattleEffect_RunBind and
 /// BattleEffect_RunUnusedTriangleStrike (bind.c), BattleEffect_RunShiningStar
 /// (stars.c) and BattleEffect_RunThor (thor.c), which all pass phases a third
-/// of a turn apart (0xaaab, 0x5555 and 0); Thor passes twice its frame, for a
-/// faster shimmer. Level n's channel is (n + sway) / 2, the sway up to 32
-/// levels either way, clamped to 0 to 31. Rewrites background colours 1 to 64.
+/// of a turn apart (TRIG_TURN - TRIG_TURN / 3, TRIG_TURN / 3 and 0); Thor
+/// passes twice its frame, for a faster shimmer. Level n's channel is (n +
+/// sway) / 2, the sway up to 32 levels either way, clamped to 0 to 31. Rewrites
+/// background colours 1 to 64.
 ///
 /// frame      : the effect's frame; the sway turns 1/64 of a circle a frame
 /// redPhase, greenPhase, bluePhase : each channel's offset in the sway

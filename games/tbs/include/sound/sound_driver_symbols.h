@@ -6,6 +6,7 @@
 /// globals it shares with the rest of the game.
 
 #include "types.h"
+#include "sounds.h"
 
 /// Sound_UpdateCommandMask's command: the new gSoundCommandMask, or
 /// with SOUND_COMMAND_MASK_TOGGLE the bits to flip in it.
@@ -21,22 +22,19 @@ enum AudioCommandMask {
 #define AUDIO_INITIAL_MODE 0x0097F800
 
 /// A sound for Sound_Play: bits 11..0 the sound number, 15..12 flags. The
-/// sound README's "What a sound number means" gives the ranges.
+/// sound README's "What a sound number means" gives the ranges; the controls
+/// SOUND_FADE_OUT_BGM, SOUND_KEEP_BGM and SOUND_FADE_OUT_ACTION_SE are rows of
+/// the song table, in sounds.h.
 enum SoundControl {
   SOUND_NUM_MASK = 0xfff,
   SOUND_FLAGS_MASK = 0xf000,
   SOUND_FLAG_FADE_IN = 0x1000, ///< music fades in over 64 VBlanks
-  SOUND_FADE_OUT_BGM = 17,     ///< fades the music out over 112 VBlanks, once
-  SOUND_KEEP_BGM = 18,         ///< keeps the music that is playing
-  /// Fades player 3 out over 48 VBlanks; also the number of the song table's
-  /// row 289, so that row never plays.
-  SOUND_FADE_OUT_ACTION_SE = 0x121,
   /// Sounds from here to SOUND_SE_FIRST are jingles; those below are music,
   /// but for SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM.
-  SOUND_JINGLE_FIRST = 80,
+  SOUND_JINGLE_FIRST = MUS_PUZZLE_SOLVED,
   /// Sounds from here but SOUND_FADE_OUT_ACTION_SE each play on the player
   /// gSongTable names for them.
-  SOUND_SE_FIRST = 100
+  SOUND_SE_FIRST = SE_BELL
 };
 
 /// The music players by their row in gMPlayTable (sound/music_player_table.s),
@@ -86,7 +84,8 @@ struct LzPackWork;
 /// (lucky_wheels_lzpack.h); IdentifyFlash sets it again before the flash code
 /// reads it.
 extern struct LzPackWork *gWaitForFlashWrite;
-/// Plays music; sound 17 fades it and a jingle silences it until it ends.
+/// Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it
+/// ends.
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
 /// Plays jingles; the music returns once it stops.
 extern struct MusicPlayerInfo gMPlayInfo_Jingle;

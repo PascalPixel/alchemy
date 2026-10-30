@@ -127,7 +127,7 @@ void wait(s32 frames) {
     gTasksRunning = 1;
     Task_RunPass(TASK_PASS_FRAME);
     gTasksRunning = 0;
-    Oam_BuildBuffer(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, 0x400));
+    Oam_BuildBuffer(HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH, 1024));
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
       // CPU load: the scanline the frame's work ended on, counted from the

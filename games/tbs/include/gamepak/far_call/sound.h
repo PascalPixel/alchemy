@@ -14,7 +14,7 @@ void Sound_PlayFar(s32 id);
 /// Steps the music's volume and tempo ramps once a VBlank and brings the music
 /// back after a jingle.
 void Sound_UpdateBgmRampsFar(void);
-/// Sets the music's tempo scale until the next sound or ramp, 0x100 being its
+/// Sets the music's tempo scale until the next sound or ramp, 256 being its
 /// own tempo.
 void Sound_SetBgmTempoFar(u16 value);
 /// Returns nonzero while a jingle holds the music; Colosso and the message

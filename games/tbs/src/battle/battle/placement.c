@@ -4,22 +4,6 @@
 
 #include "../battle_internal.h"
 
-/// Isaac and Garet hold a Machete with sprites of their own.
-#define SPRITE_ISAAC_MACHETE 480
-#define SPRITE_GARET_MACHETE 482
-
-/// The shadow a unit casts on the ground, BattleObject.shadow as a battle
-/// object is made: the sprite BattleObject_SpawnObjectsForList adds as a layer
-/// of every one-part body (NARROW_SHADOW_SPRITE on a body 32 pixels wide). Its
-/// 64 by 64 picture (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse
-/// along its bottom edge, NARROW_SHADOW_SPRITE's a 16 by 3 one. It stays on
-/// the ground while the unit is off it (BattleObject_UpdateSpritePriorities),
-/// and adding it clears the sprite's own shadow (Sprite.flags bit 0), so a
-/// unit casts one.
-/// ★ Named from what the player sees: the black ellipse under each unit's
-/// feet (a battle's render)
-#define BATTLE_SHADOW_SPRITE 510
-
 /// Creates the battle object of unit at (x, y) on the battlefield, in
 /// pixels: its sprite (an enemy's from its class, sharing the slot it
 /// already holds; a party member's battle sprite), palette, size and weapon
@@ -65,151 +49,151 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   } else {
     switch (unit->id) {
     case GARET:
-      sprite = BATTLE_CHARACTER(GARET);
+      sprite = SPRITE_BATTLE_GARET;
       break;
     case MIA:
-      sprite = BATTLE_CHARACTER(MIA);
+      sprite = SPRITE_BATTLE_MIA;
       break;
     case IVAN:
-      sprite = BATTLE_CHARACTER(IVAN);
+      sprite = SPRITE_BATTLE_IVAN;
       break;
     case JENNA:
-      sprite = BATTLE_CHARACTER(JENNA);
+      sprite = SPRITE_BATTLE_JENNA;
       break;
     case ISAAC:
     default:
-      sprite = BATTLE_CHARACTER(ISAAC);
+      sprite = SPRITE_BATTLE_ISAAC;
       break;
     }
     if (unitId < 0 || unitId > ALLY_MAX)
       palette = 1;
   }
 
-  // The enemies drawn larger or smaller than their sprites, in 16.16
-  // (0x18000 is 1.5, 0xe666 0.9). Grouping equal scale cases shortens the
-  // matching EN function by 148 bytes, so each case keeps its own store.
+  // The enemies drawn larger or smaller than their sprites, in 16.16.
+  // Grouping equal scale cases shortens the matching EN function by 148
+  // bytes, so each case keeps its own store.
   // Bandit and Orc Captain are set to 1.0 again.
   actor->scale = Q16_ONE;
   switch (unit->id) {
   case ENEMY_KILLER_APE:
-    actor->scale = 0x19999;
+    actor->scale = Q16_ONE * 8 / 5;
     break;
   case ENEMY_MANTICORE:
-    actor->scale = 0x18ccc;
+    actor->scale = Q16_ONE * 31 / 20;
     break;
   case ENEMY_LIVING_STATUE:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case ENEMY_HYDROS_STATUE:
-    actor->scale = 0x19999;
+    actor->scale = Q16_ONE * 8 / 5;
     break;
   case ENEMY_ANT_LION:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_TRET:
-    actor->scale = 0x1cccc;
+    actor->scale = Q16_ONE * 9 / 5;
     break;
   case ENEMY_DEADBEARD:
-    actor->scale = 0x1cccc;
+    actor->scale = Q16_ONE * 9 / 5;
     break;
   case ENEMY_BANDIT:
     actor->scale = Q16_ONE;
     break;
   case ENEMY_KRAKEN:
-    actor->scale = 0x1b333;
+    actor->scale = Q16_ONE * 17 / 10;
     break;
   case ENEMY_FUSION_DRAGON:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_MERCURY_LIGHTHOUSE:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_FUCHIN_FALLS_CAVE:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_ALTIN_PEAK:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_VAULT_CAVE:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_CROSSBONE_ISLE:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_ALTMILLER_CAVE:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_SUHALLA_DESERT:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_PIRATE_SHIP:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_TROLL:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case ENEMY_CAVE_TROLL:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case ENEMY_BRUTAL_TROLL:
-    actor->scale = 0x16666;
+    actor->scale = Q16_ONE * 7 / 5;
     break;
   case ENEMY_ORC_CAPTAIN:
     actor->scale = Q16_ONE;
     break;
   case ENEMY_ORC_LORD:
-    actor->scale = 0x14000;
+    actor->scale = Q16_ONE * 5 / 4;
     break;
   case ENEMY_LIZARD_FIGHTER:
-    actor->scale = 0x16666;
+    actor->scale = Q16_ONE * 7 / 5;
     break;
   case ENEMY_LIZARD_KING:
-    actor->scale = 0x16666;
+    actor->scale = Q16_ONE * 7 / 5;
     break;
   case ENEMY_HOBGOBLIN:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_GRYPHON:
-    actor->scale = 0x14ccc;
+    actor->scale = Q16_ONE * 13 / 10;
     break;
   case ENEMY_CHIMERA:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case ENEMY_AZART_IRON_SHIELD:
-    actor->scale = 0x10ccc;
+    actor->scale = Q16_ONE * 21 / 20;
     break;
   case ENEMY_AZART_PADDED_GLOVES:
-    actor->scale = 0x10ccc;
+    actor->scale = Q16_ONE * 21 / 20;
     break;
   case ENEMY_SATRAGE_CHAIN_MAIL:
-    actor->scale = 0x11999;
+    actor->scale = Q16_ONE * 11 / 10;
     break;
   case ENEMY_SATRAGE_COTTON_SHIRT:
-    actor->scale = 0x11999;
+    actor->scale = Q16_ONE * 11 / 10;
     break;
   case ENEMY_NAVAMPA_CLAYMORE:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case ENEMY_NAVAMPA_HUNTERS_SWORD:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case ENEMY_TOADONPA:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_TORNADO_LIZARD:
-    actor->scale = 0x13333;
+    actor->scale = Q16_ONE * 6 / 5;
     break;
   case ENEMY_STORM_LIZARD:
-    actor->scale = 0x18000;
+    actor->scale = Q16_ONE * 3 / 2;
     break;
   case ENEMY_TEMPEST_LIZARD:
-    actor->scale = 0x18ccc;
+    actor->scale = Q16_ONE * 31 / 20;
     break;
   case ENEMY_RECLUSE:
-    actor->scale = 0x14000;
+    actor->scale = Q16_ONE * 5 / 4;
     break;
   case ENEMY_CEREBUS:
-    actor->scale = 0x14000;
+    actor->scale = Q16_ONE * 5 / 4;
     break;
   case ENEMY_SLIME_SOL_SANCTUM:
   case ENEMY_SLIME_2:
@@ -225,7 +209,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_SATUROS_VENUS_LIGHTHOUSE:
   case ENEMY_MYSTERY_WOMAN:
   case ENEMY_MENARDI:
-    actor->scale = 0xe666;
+    actor->scale = Q16_ONE * 9 / 10;
     break;
   }
 
@@ -240,7 +224,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   actor->shadowEntry = 0;
   actor->active = 0;
   actor->fading = 0;
-  actor->shadow = BATTLE_SHADOW_SPRITE;
+  actor->shadow = SPRITE_BATTLE_SHADOW;
   classId = unit->id;
   actor->overlay = weaponSprite;
 
@@ -258,16 +242,16 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     actor->overlay = 0;
   }
 
-  // Face the centre of the battlefield (0x8000 is half a turn, so the
+  // Face the centre of the battlefield (half a turn on, so the
   // angle points back along the line to the origin); enemies are drawn at
   // 1.3 times their size. ACTOR_FALLS lets the actor fall.
-  facingAngle = ArcTan2(y / 8, x) + 0x8000;
+  facingAngle = ArcTan2(y / 8, x) + TRIG_TURN / 2;
   object->facing = facingAngle;
   object->collisionFlags = 3;
   object->motionFlags = ACTOR_FALLS;
   if (unit->classId == CLASS_NONE) {
-    object->scaleX = 0x14ccc;
-    object->scaleY = 0x14ccc;
+    object->scaleX = Q16_ONE * 13 / 10;
+    object->scaleY = Q16_ONE * 13 / 10;
   } else {
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;

@@ -173,7 +173,8 @@ enum CottageRoomsBActorId {
   /// ★ Named from the game: "Kyle, watch out!"
   /// (MsgValeKyleWatchOutTheBoulderThe)
   ACTOR_KYLE,
-  /// Sprite 208, whose frames are a flame and wisps of smoke; it is placed
+  /// SPRITE_FLAME_AND_SMOKE, whose frames are a flame and wisps of smoke; it is
+  /// placed
   /// outside the house only for CottageRoomsB_HurryToThePlaza, where it shakes,
   /// then
   /// flares up as its animation turns from flame to smoke, and rises 18 pixels
@@ -931,7 +932,7 @@ static void CottageRoomsB_TalkToInnkeeper(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
-  if ((u32)(actor->facing + -0x2000) > 0x9000) {
+  if ((u32)(actor->facing - FACING_SOUTHEAST) > TRIG_TURN * 9 / 16) {
     Inn_CheckIn(0, ACTOR_INNKEEPER);
   } else {
     Event_Start();
@@ -1583,7 +1584,7 @@ struct ActorPlacement gCottageRoomsB_ActorPlacements[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { 208, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    {SPRITE_FLAME_AND_SMOKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -1609,7 +1610,7 @@ struct ActorPlacement gCottageRoomsB_ActorPlacementsAfterLeaving[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_KYLE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { 208, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
+    {SPRITE_FLAME_AND_SMOKE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
@@ -1629,7 +1630,7 @@ struct ActorPlacement gCottageRoomsB_ActorPlacementsAfterKalay[] = {
         PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_FACING_KEEP, 0 },
     { SPRITE_KYLE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { 208, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
+    {SPRITE_FLAME_AND_SMOKE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
     { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         PIXELS(151), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },

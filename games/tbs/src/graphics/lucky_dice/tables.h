@@ -22,7 +22,7 @@ const u8 gLuckyDice_LabelTiles[] = {
 #endif
 };
 
-/// The die face tile at each step of its roll: one for each 0x400 of the
+/// The die face tile at each step of its roll: one for each 1024 of the
 /// roll angle (variant), three to a face. A face's first step shows the face
 /// itself (tile n for face n), the next two pictures between faces.
 const u8 gLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,

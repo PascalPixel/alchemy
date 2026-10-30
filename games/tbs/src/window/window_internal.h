@@ -85,6 +85,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "ability_ids.h"
+#include "enemy_ids.h"
 
 // Edition-specific text and window layout values. The possessives
 // (gLocalizedWord_ItemPossessives) are by number in Spanish, singular and
@@ -173,7 +174,7 @@ enum {
 
 /// The last code the main font draws (gFont_Glyphs, from TEXT_SPACE) and the
 /// window tiles cover; a code above it is a kanji (gFont_KanjiGlyphs).
-#define TEXT_LAST_FONT_CODE 0xff
+#define TEXT_LAST_FONT_CODE 255
 
 // The kana mark drawn with a character, in the top two bits of its code (the
 // index into gFont_MarkGlyphCodes).

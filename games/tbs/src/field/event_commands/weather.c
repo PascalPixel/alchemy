@@ -139,10 +139,10 @@ void Weather_StartRain(void) {
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct WeatherWork));
-  words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x300, words);
+  work->tileBase = VramCache_Load(work->entry, 768, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
     s32 x;
@@ -266,10 +266,10 @@ void FieldMotes_Start(void) {
    * 83 instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
+  work->tileBase = VramCache_Load(work->entry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
     s32 *pos = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
@@ -422,10 +422,10 @@ void FieldEffect_InitializeSparkles(void) {
    * instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_SparkleTiles, tiles);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x200, tiles);
+  work->tileBase = VramCache_Load(work->entry, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   clear = 0;

@@ -46,7 +46,8 @@ typedef struct OrbitingMapActor {
   /// ACTOR_PRIORITY_AUTOMATIC.
   u8 priorityFlags;
   u8 padding24[12];
-  /// 1/65536 turns; advanced by 0x400 plus two random steps each frame.
+  /// 1/65536 turns; advanced by TRIG_TURN / 64 plus two random steps each
+  /// frame.
   s32 orbitAngle;
   u8 padding34[4];
   s32 orbitCenterX; ///< 16.16 fixed-point pixels

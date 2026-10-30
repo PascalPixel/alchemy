@@ -5,9 +5,10 @@
 #include "actor.h"
 #include "event.h"
 #include "sounds.h"
+#include "djinn_ids.h"
 
 /// Brings every Djinni back from recovery (twenty turns of it), then, if Ivan
-/// holds the first Venus Djinni, gives it back to Isaac and recalculates both.
+/// holds DJINNI_FLINT, gives it back to Isaac and recalculates both.
 ///
 /// Called before Ivan leaves the party, at Vault's gates and in the loft.
 // UB: declared s32 with no return value, as the epilogue shows; UBFIX gives
@@ -19,7 +20,7 @@ static s32 Vault_ReturnIsaacsDjinni(void) {
 #endif
   DjinnRecovery_CountDownTwenty();
   if ((Unit_Get(IVAN)->djinnHeld[ELEMENT_VENUS] & 1) != 0) {
-    Djinn_Transfer(IVAN, ELEMENT_VENUS, 0, ISAAC);
+    Djinn_Transfer(IVAN, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT), ISAAC);
     Sound_Play(SE_RECOVERY);
     Unit_Calculate(ISAAC);
     Unit_Calculate(IVAN);

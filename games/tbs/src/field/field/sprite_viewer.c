@@ -409,8 +409,8 @@ s32 SpriteViewer_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
     }
     {
       /* FAKEMATCH(temporary): the bound in a local compares as cmp against
-       * 0x200 with blt, as native; as spriteId >= 0x200, 3 of 25 instructions
-       * differ in tbs-en. */
+       * 512 with blt, as native; as spriteId >= UI_SPRITE_VIEWER_SPRITE_LIMIT,
+       * 3 of 25 instructions differ in tbs-en. */
       s32 spriteLimit = UI_SPRITE_VIEWER_SPRITE_LIMIT;
       if (spriteId >= spriteLimit) {
         spriteId = -1;
@@ -443,7 +443,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   // counter, a full turn every 256 frames.
   if ((gKeysHeld & KEY_B) != 0)
     angle = (s16)(gVBlankCount << 8);
-  // 0x2aaa, 0x2000, 0x1999 and 0x4000 are a sixth, an eighth, a tenth and
+  // The steps are a sixth, an eighth, a tenth and
   // a quarter of a turn. Unused positions of the ten
   // are skipped.
   switch ((u32)facingKind) {
@@ -457,7 +457,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       Vector_AddPolarOffset(56 << 16, (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
-      angle = (s16)(angle + 0x2aaa);
+      angle = (s16)(angle + TRIG_TURN / 6);
     }
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
@@ -475,7 +475,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       Vector_AddPolarOffset(56 << 16, (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
-      angle = (s16)(angle + 0x2000);
+      angle = (s16)(angle + TRIG_TURN / 8);
     }
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
@@ -492,14 +492,14 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       Vector_AddPolarOffset(56 << 16, (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
-      angle = (s16)(angle + 0x1999);
+      angle = (s16)(angle + TRIG_TURN / 10);
     }
     break;
   // Two places 40 pixels out, a quarter turn round and then
   // opposite it, each holding both of the sprite's parts.
   case ANIM_FACING_TWO_PART:
     initialHeading = angle;
-    angle = (s16)(initialHeading + 0x4000);
+    angle = (s16)(initialHeading + TRIG_TURN / 4);
     facingIndex = 0;
     pairedPositions = positions;
     while (facingIndex < 2) {
@@ -517,7 +517,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
         pairedPositions[facingIndex * 2 + 1].y = centerY << 16;
         Vector_AddPolarOffset(40 << 16, (u16)angle, point);
       }
-      angle = ((u32)angle + 0x8000) << 16;
+      angle = ((u32)angle + TRIG_TURN / 2) << 16;
       facingIndex++;
       positions += 2;
       angle >>= 16;
@@ -535,7 +535,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       Vector_AddPolarOffset(56 << 16, (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
-      angle = (s16)(angle + 0x4000);
+      angle = (s16)(angle + TRIG_TURN / 4);
     }
     for (facingIndex = 4; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
          facingIndex++)
@@ -643,7 +643,7 @@ void SpriteViewer_PlaceRing(void) {
   switch (facingKind) {
   case ANIM_FACING_THREE_PICTURES:
     angle = 0;
-    step = 0x2aaa;
+    step = TRIG_TURN / 6;
     count = 6;
     break;
   case ANIM_FACING_FIVE_PICTURES:
@@ -651,13 +651,13 @@ void SpriteViewer_PlaceRing(void) {
   case ANIM_FACING_EIGHT_NO_TABLE:
   case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     angle = 0;
-    step = 0x2000;
+    step = TRIG_TURN / 8;
     count = 8;
     break;
   case ANIM_FACING_FOUR_PICTURES:
   case ANIM_FACING_SIX_PICTURES:
     angle = 0;
-    step = 0x1999;
+    step = TRIG_TURN / 10;
     count = 10;
     break;
   // The two parts at each place face the same way; the second place faces
@@ -665,13 +665,13 @@ void SpriteViewer_PlaceRing(void) {
   case ANIM_FACING_TWO_PART:
     angle = 0;
     step = 0;
-    pairedFacingStep = 0x8000;
+    pairedFacingStep = TRIG_TURN / 2;
     count = 4;
     break;
   // The eighth-turn start matches SpriteViewer_BuildProbeRing's default ring.
   default:
-    angle = 0x2000;
-    step = 0x4000;
+    angle = TRIG_TURN / 8;
+    step = TRIG_TURN / 4;
     count = 4;
     break;
   }

@@ -245,7 +245,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   if (actor != NULL) {
     struct Actor *leader;
 
-    Actor_SetSpeedParameters(actorId, 0x9999, 0x4CCC);
+    Actor_SetSpeedParameters(actorId, Q16_ONE * 3 / 5, Q16_ONE * 3 / 10);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetHorizontalPositionWithTerrain(actorId, leader->x.fixed,
@@ -491,7 +491,7 @@ void FieldEffect_UpdateParticleLinearMotion(struct Actor *actor) {
   z = particle->z.fixed + velocityZ;
   particle->z.fixed = z;
   particle->targetZ = z;
-  y = particle->y.fixed + 0x400;
+  y = particle->y.fixed + Q16_ONE / 64;
   particle->y.fixed = y;
   particle->targetY = y;
   particle->speedLimit = (velocityX - velocityX / 18);
@@ -533,13 +533,14 @@ void FieldEffect_SpawnBurstParticle(struct Actor *source, s32 param) {
       Actor_SetSpriteColor(actor, param);
 
     // speed and acceleration hold the puff's x and z velocity, in steps of
-    // 0x1999 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of 0.2.
+    // Q16_ONE / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of
+    // 0.2.
     actor->motionFlags = 0;
     speed = Random16() % 10 + 5;
-    actor->acceleration = -0x1999 * speed;
+    actor->acceleration = -(Q16_ONE / 10) * speed;
     speed = Random16() % 15 - 7;
     speed <<= 1;
-    actor->speedLimit = 0x1999 * speed;
+    actor->speedLimit = Q16_ONE / 10 * speed;
     actor->timer = 0;
     actor->update = FieldEffect_UpdateParticleLinearMotion;
     child->flags = 0;
@@ -661,7 +662,7 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
   firstTargetAngle = (u16)ArcTan2(second->z.fixed - first->z.fixed,
                                   second->x.fixed - first->x.fixed);
   // The second actor faces the opposite way, half a turn round.
-  secondTargetAngle = firstTargetAngle + 0x8000;
+  secondTargetAngle = firstTargetAngle + TRIG_TURN / 2;
   for (frame = 0; frame < 60; frame++) {
     // Each actor that already faces its way takes one off the count;
     // both facing ends the turn early.
@@ -858,7 +859,7 @@ void Actor_ResetTargetAndSetMode1(u32 actorId) {
 }
 
 /// The event command "actor face direction": the actor turns
-/// toward angle (0x10000 a full turn; Actor_StepAngle), then the event
+/// toward angle (TRIG_TURN a full turn; Actor_StepAngle), then the event
 /// waits the given number of frames. Writes the angle to the actor's timer.
 /// Events reach it (ACTOR_DIR, Actor_FaceDirection); the Djinni, Retreat and
 /// climbing events and Actor_JumpDownLedge call it too.

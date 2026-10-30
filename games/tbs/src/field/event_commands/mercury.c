@@ -68,8 +68,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
                            djinni->z.fixed);
     *cursor++ = copy;
     if (copy != NULL) {
-      copy->scaleY = 0xf000;
-      copy->scaleX = 0xf000;
+      copy->scaleY = Q16_ONE * 15 / 16;
+      copy->scaleX = Q16_ONE * 15 / 16;
       copy->motionFlags = 0;
       copy->priorityFlags = 2;
       copy->steeringFlags |= 1;
@@ -107,7 +107,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
                            ANIM_LEADER_ARMS_RAISED);
   wait(20);
 
-  // The droplets (sprite 240), one a frame, from where the Djinni was on
+  // The droplets (SPRITE_DROPLET), one a frame, from where the Djinni was on
   // screen (FieldEffect_UpdateRandomTargetParticle moves them).
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
@@ -117,7 +117,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   effect = effectWork->particles;
   remaining = MERCURY_PARTICLE_MAX - 1;
   do {
-    FieldParticle_Initialize(effect, 240, position.x, position.z);
+    FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
@@ -128,7 +128,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
 
   // After 120 frames every droplet still in use takes its last fall.
   // Walking whole slots instead of their state bytes grows native English
-  // from 0x23c to 0x240 bytes.
+  // from 572 to 576 bytes.
   wait(120);
   {
     s32 nextState;

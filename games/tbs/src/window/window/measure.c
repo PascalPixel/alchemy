@@ -168,13 +168,13 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
           lineWidth += 7;
         } else {
           // Punctuation at the end of a line takes less room than its cell:
-          // 1 pixel less for code 0xa5, 3 for code 0x21 and 6 for codes 0xa1
-          // and 0xa4.
-          if (code == 0xa5)
+          // 1 pixel less for code 165, 3 for code 33 and 6 for codes 161
+          // and 164.
+          if (code == 165)
             trailing = -1;
-          else if (code == 0x21)
+          else if (code == 33)
             trailing = -3;
-          else if (code == 0xa1 || code == 0xa4)
+          else if (code == 161 || code == 164)
             trailing = -6;
           else
             trailing = 0;
@@ -363,11 +363,11 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         if (code == 32) {
           width += 7;
         } else {
-          if (code == 0xa5)
+          if (code == 165)
             trailing = -1;
-          else if (code == 0x21)
+          else if (code == 33)
             trailing = -3;
-          else if (code == 0xa1 || code == 0xa4)
+          else if (code == 161 || code == 164)
             trailing = -6;
           else
             trailing = 0;

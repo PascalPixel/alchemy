@@ -133,7 +133,7 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
 ///
 /// The trailing comments give each impact's own effect, drawn over the
 /// target after the orb and sparks. Most effects use the 64 particles at
-/// Ram_MapGridCellBuffer + 0x4000, which start at the target; their pictures
+/// Ram_MapGridCellBuffer + 16384, which start at the target; their pictures
 /// are in Ram_MapGridCellBuffer. "Smoke" is puffs of smoke rising from the
 /// target; "hands off" impacts stop after gathering and hand the canvas to
 /// another effect.
@@ -179,14 +179,14 @@ enum CastingImpact {
 };
 
 /// The impact orb, 20x48 pictures packed at half width.
-#define CASTING_IMPACT_ORB_OFFSETS 0x5100
+#define CASTING_IMPACT_ORB_OFFSETS 20736
 /// The Djinni's 20x40 picture, in Ram_MapGridCellBuffer after the impact's own.
-#define CASTING_IMPACT_DJINNI_OFFSETS 0x3c56
+#define CASTING_IMPACT_DJINNI_OFFSETS 15446
 #define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
 #define CASTING_IMPACT_SPARKS 64        ///< sparks in work->particles
 /// The impact pictures' particles, in Ram_MapGridCellBuffer after the Djinni.
 #define CASTING_IMPACT_IMPACT_PARTICLES                                        \
-  ((struct Particle *)(Ram_MapGridCellBuffer + 0x4000))
+  ((struct Particle *)(Ram_MapGridCellBuffer + 16384))
 #define CASTING_IMPACT_IMPACT_PARTICLE_COUNT 64
 
 /// gCastingImpact_ImageX has seven pictures for each side.
@@ -877,7 +877,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       // who glows white from frame 50 to 79. Mote i steers towards the
       // caster's middle from frame i + 23, by a 256th of the distance more
       // each frame, and goes out once it is within 16 pixels of the caster
-      // across and in depth (a 256th of the distance under 0x1000); only the
+      // across and in depth (a 256th of the distance under 4096); only the
       // first 32 are drawn.
       if (frame == 50) {
         BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1,
@@ -1205,12 +1205,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           }
         }
         if (work->args->side == EFFECT_SIDE_PARTY) {
-          blitters[0](canvas, work->imageStorage + 0x1e00, 16, 16, 80, 104);
+          blitters[0](canvas, work->imageStorage + 7680, 16, 16, 80, 104);
         } else {
-          blitters[0](canvas, work->imageStorage + 0x1e00, 32, 16, 80, 104);
+          blitters[0](canvas, work->imageStorage + 7680, 32, 16, 80, 104);
         }
         if (frame == 6 || frame == 7) {
-          blitters[0](canvas, work->imageStorage + 0x3e80, 0, 16, 128, 91);
+          blitters[0](canvas, work->imageStorage + 16000, 0, 16, 128, 91);
         }
         if (frame == 8 || frame == 9) {
           CastingImpact_DrawCroppedImage(canvas, Ram_MapGridCellBuffer, 0, 16,

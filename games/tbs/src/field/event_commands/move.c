@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// Returns the direction of the d-pad (0x10000 a full turn): right
+/// Returns the direction of the d-pad (TRIG_TURN a full turn): right
 /// FACING_EAST, down FACING_SOUTH, left FACING_WEST, up FACING_NORTH;
 /// DPAD_ANGLE_NONE when none or a diagonal is held. Opposite directions cancel,
 /// so a third held direction still counts.
@@ -88,7 +88,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   target = effectWork->child;
   // work->angle is the way the caster faces; the hand's side of the target
   // is the opposite way, toward the caster.
-  angle = effectWork->angle + 0x8000;
+  angle = effectWork->angle + TRIG_TURN / 2;
   moved = 0;
   if (target == NULL)
     return;
@@ -113,11 +113,11 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   // target cycles its colours, keeps its facing while it moves, and reads
   // its ground from the overhead layer.
   pusher->speedLimit = 4 << 16;
-  pusher->acceleration = 0x8000;
+  pusher->acceleration = Q16_ONE / 2;
   pusher->motionFlags = ACTOR_FLOATS;
   target->update = Actor_CycleSpriteColors;
-  target->speedLimit = 0x6666;
-  target->acceleration = 0x3333;
+  target->speedLimit = Q16_ONE * 2 / 5;
+  target->acceleration = Q16_ONE / 5;
   target->steeringFlags = moved;
   target->layer = 2;
   for (;;) {
@@ -211,20 +211,20 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
         pusher, gFieldEffect_QuadrantModes[(u16)(angle - direction) >> 14]);
     wait(15);
     target->paused = 0;
-    target->speedLimit = 0x3333;
-    target->acceleration = 0x3333;
+    target->speedLimit = Q16_ONE / 5;
+    target->acceleration = Q16_ONE / 5;
     Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
     pusher->motionFlags = 0;
-    pusher->speedLimit = 0x3333;
-    pusher->acceleration = 0x3333;
+    pusher->speedLimit = Q16_ONE / 5;
+    pusher->acceleration = Q16_ONE / 5;
     Vector_AddPolarOffset(16 << 16, direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y + (16 << 16),
                            position.z);
     if (moved == 1) {
       Actor_GetById(effectWork->firstActorId)->steeringFlags &=
           ~ACTOR_FACES_MOTION;
-      user->speedLimit = 0x3333;
-      user->acceleration = 0x3333;
+      user->speedLimit = Q16_ONE / 5;
+      user->acceleration = Q16_ONE / 5;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
     }
     // Land exactly on the cell, whatever the braking left.
@@ -288,7 +288,7 @@ next_state:
   if (state == OUT_AND_BACK_AIM_BACK) {
     effect->targetX = effect->originX;
     effect->targetZ = effect->originZ;
-    effect->turnStepMax = 0x400;
+    effect->turnStepMax = TRIG_TURN / 64;
     effect->turnStepLimited = 1;
     (*statePtr)++;
     return;
@@ -340,13 +340,14 @@ void *FieldEffect_StartItemBreak(void *object) {
   u32 spread;
   u32 jitter;
 
-  angle = (source->facing + 0x2000) & 0xc000; // to the nearest quarter turn
+  angle =
+      (source->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter turn
   parent = Actor_Spawn(SPRITE_MOVE_HAND, source->x.fixed,
                        source->y.fixed + (16 << 16), source->z.fixed);
   if (parent == 0)
     return 0;
-  parent->scaleY = 0x4000;
-  parent->scaleX = 0x4000;
+  parent->scaleY = Q16_ONE / 4;
+  parent->scaleX = Q16_ONE / 4;
   parent->update = FieldEffect_UpdateItemBreakFragment;
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
@@ -365,7 +366,7 @@ void *FieldEffect_StartItemBreak(void *object) {
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
       child->motionFlags = 2;
-      child->gravity = 0x51e;
+      child->gravity = Q16_ONE / 50;
       spread = Random16();
       child->velocityY = spread - Random16();
       radius = Random16() * 24 + (8 << 16);
@@ -379,9 +380,9 @@ void *FieldEffect_StartItemBreak(void *object) {
 }
 
 /// Sets an actor's scale at once to full size (its first step of 1/16 past
-/// 0xffff: 0x10000 from a multiple of 1/16) when it is smaller, then waits,
-/// at most 600 frames, for it to arrive at its target. Called by both Move
-/// casts on the hand.
+/// Q16_ONE - 1: exactly Q16_ONE from a multiple of 1/16) when it is smaller,
+/// then waits, at most 600 frames, for it to arrive at its target. Called by
+/// both Move casts on the hand.
 void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   s32 next;
   s32 scale;
@@ -390,7 +391,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
     scale = actor->scaleX;
     if (scale <= 0xffff) {
       do {
-        next = scale + 0x1000;
+        next = scale + Q16_ONE / 16;
         scale = next;
       } while (next <= 0xffff);
       actor->scaleX = next;
@@ -414,9 +415,9 @@ void UpdateRisingParticleBurst(void *object) {
   Sound_PlayFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
     src->y.fixed += 1 << 16;
-    src->facing += 0x2000; // 1/8 turn
-    src->scaleX += -0x800;
-    src->scaleY += -0x800;
+    src->facing += TRIG_TURN / 8;
+    src->scaleX += -Q16_ONE / 32;
+    src->scaleY += -Q16_ONE / 32;
     wait(1);
   }
   for (i = 7; i >= 0; i--) {
@@ -427,7 +428,7 @@ void UpdateRisingParticleBurst(void *object) {
       child->speedLimit = Random16() + Q16_ONE;
       child->acceleration = Q16_ONE;
       child->motionFlags = 2;
-      child->gravity = 0xa3d;
+      child->gravity = Q16_ONE / 25;
       spread = Random16();
       child->velocityY = spread - Random16();
       dist = Random16() * 24 + (8 << 16);

@@ -6,33 +6,33 @@
 
 // The event owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
 
-/// Per-frame update: spins by FACING_STEP + timer * 0x50 a frame, speeding up
-/// (timer counts up) until timer * 0x50 reaches FACING_STEP: from 1/16 turn a
+/// Per-frame update: spins by FACING_STEP + timer * 80 a frame, speeding up
+/// (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
 /// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
 void FieldEffect_UpdateSpinAngle(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   u32 step;
 
-  step = actor->timer * 0x50;
+  step = actor->timer * 80;
   actor->facing = actor->facing + step + FACING_STEP;
   if (step < FACING_STEP)
     actor->timer = actor->timer + 1;
 }
 
-/// Per-frame update: spins 1/8 turn a frame as it shrinks by 0x280, rising a
-/// pixel a frame; once its scale falls below 0x3000 (84 frames from full
-/// size) its sprites are hidden (spriteStorageKind 0), but it is not
+/// Per-frame update: spins 1/8 turn a frame as it shrinks by 640, rising a
+/// pixel a frame; once its scale falls below Q16_ONE * 3 / 16 (84 frames from
+/// full size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
 void FieldEffect_UpdateDescendingActor(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   u32 scale;
 
-  actor->scaleY -= 0x280;
-  scale = actor->scaleX - 0x280;
-  actor->facing += 0x2000;
+  actor->scaleY -= 640;
+  scale = actor->scaleX - 640;
+  actor->facing += TRIG_TURN / 8;
   actor->y.fixed += 1 << 16;
   actor->scaleX = scale;
-  if ((s32)scale < 0x3000)
+  if ((s32)scale < Q16_ONE * 3 / 16)
     actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 }
 
@@ -150,7 +150,7 @@ void FieldPsynergy_Retreat(void) {
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
-    scale = (Random16() >> 1) + 0x13333; // 1.2 to 1.7
+    scale = (Random16() >> 1) + Q16_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
     i++;
@@ -172,13 +172,13 @@ void FieldPsynergy_Retreat(void) {
   wait(10);
 }
 
-/// Per-frame update of a falling arc: grows toward full size (0xc00 a frame)
+/// Per-frame update of a falling arc: grows toward full size (3/64 a frame)
 /// as it falls 2 pixels a frame on the actor it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
 /// the ground (4 on the World Map, MAP_INDEX_WORLD).
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   // One shared inline kernel with constant inversion grows the positive and
-  // negative update routines 0x74 -> 0x7c and 0x78 -> 0x7c in native English.
+  // negative update routines 116 -> 124 and 120 -> 124 bytes in native English.
   struct Actor *particle = (struct Actor *)actor;
   struct Actor *source;
   s32 y;
@@ -196,7 +196,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
     return;
   }
 
-  scale = particle->scaleX + 0xC00;
+  scale = particle->scaleX + Q16_ONE * 3 / 64;
   if (scale > Q16_ONE)
     scale = Q16_ONE;
   particle->scaleX = scale;
@@ -226,7 +226,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
     return;
   }
 
-  scale = particle->scaleX + 0xC00;
+  scale = particle->scaleX + Q16_ONE * 3 / 64;
   if (scale > Q16_ONE)
     scale = Q16_ONE;
   particle->scaleX = scale;
@@ -301,8 +301,8 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
     actor->timer = 0;
     zero = 0;
     actor->watchedActor = source;
-    actor->scaleY = 0x6666;
-    actor->scaleX = 0x6666;
+    actor->scaleY = Q16_ONE * 2 / 5;
+    actor->scaleX = Q16_ONE * 2 / 5;
     if (sprite == NULL)
       continue;
     Sprite_StartAnimationFar((struct Sprite *)sprite, 0);

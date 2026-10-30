@@ -292,11 +292,11 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
   {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-    // Codes above TEXT_LAST_FONT_CODE become code 0x40, as the decoder makes
+    // Codes above TEXT_LAST_FONT_CODE become code 64, as the decoder makes
     // them.
     code = *text++;
     if (code > TEXT_LAST_FONT_CODE)
-      code = 0x40;
+      code = 64;
     if (code == 0)
       break;
 #endif

@@ -18,7 +18,7 @@ static void *Actor_FindAtPosition(const struct FieldPosition *position,
     struct Actor *p = slots[i];
 
     // UB: Actor_ClearAll leaves unused slots null. Skipping them grows
-    // this helper from 0x48 to 0x4c bytes in the native English trial.
+    // this helper from 72 to 76 bytes in the native English trial.
 #ifdef UBFIX
     if (p == NULL)
       continue;

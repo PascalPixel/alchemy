@@ -96,14 +96,14 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside
     // down, raised by their own heights so they flip about their middles.
     // Actor.gravity is taken off velocityY each frame the actor is above
-    // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame: 0x91eb
-    // here is about 0.57, the bounce's BATTLE_UNIT_GRAVITY and 0x7851 about
-    // 0.67 and 0.47.
+    // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame: Q16_ONE
+    // * 57 / 100 here is about 0.57, the bounce's BATTLE_UNIT_GRAVITY and
+    // Q16_ONE * 47 / 100 about 0.67 and 0.47.
     if (frame == 0) {
       target->velocityY = 15 << 16;
-      target->gravity = 0x91eb;
+      target->gravity = Q16_ONE * 57 / 100;
       user->velocityY = 15 << 16;
-      user->gravity = 0x91eb;
+      user->gravity = Q16_ONE * 57 / 100;
     }
     if (frame == 11) {
       target->scaleY = -target->scaleY;
@@ -120,7 +120,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       target->velocityY = 8 << 16;
       target->gravity = BATTLE_UNIT_GRAVITY;
       user->velocityY = 5 << 16;
-      user->gravity = 0x7851;
+      user->gravity = Q16_ONE * 47 / 100;
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
       user->steeringFlags = 0;
@@ -134,7 +134,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
     // Frames 54 and 55: one big flash on the user. Frames 56 to 67: 16
     // flashes in a ring that widens as it rises, through six images, two
-    // frames each (32x64, 0x800 bytes a picture).
+    // frames each (32x64, 2048 bytes a picture).
     if (frame == 54 || frame == 55)
       draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16, 32, 64);
     if (frame >= 56 && frame <= 67) {
@@ -378,11 +378,11 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 
   // The sheet slot takes ParticleSpritesD's flare cells, which
   // EFFECT_DRAW_FLARE reads: the ten squares of 2x2 to 20x20 are 1540 of its
-  // 0x60e (1550) bytes.
+  // 1550 bytes.
   work = (struct BattleEffectWork *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT,
                                                    sizeof *work);
   canvas = (void *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = (u8 *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  sheet = (u8 *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   camera = gBattleCamera;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
@@ -462,7 +462,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       draw[1] = ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
       draw[1](canvas, work->sheet + n * (17 * 64), 47, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
-      glow = work->sheet + n * 1032 + 0x1100;
+      glow = work->sheet + n * 1032 + 4352;
       draw[1](canvas, glow, 40, ground.y - 36, 24, 43);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
@@ -956,7 +956,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   // Setup, as for the element pillar: the battle background darkens for 24
@@ -1023,7 +1023,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     // Frames 28 to 48: the burst of light (48x48), seven images, three
     // frames each.
     if (frame >= 28 && frame <= 48)
-      draw[0](canvas, work->sheet + (frame - 28) / 3 * (48 * 48) + 0x1400, 40,
+      draw[0](canvas, work->sheet + (frame - 28) / 3 * (48 * 48) + 5120, 40,
               ground.y - 24, 48, 48);
     // Frames 0 to 14: a spark (32x32) at each corner, flipped to face
     // outwards (gDeathPlunge_DrawFlags), five images, three frames each; a

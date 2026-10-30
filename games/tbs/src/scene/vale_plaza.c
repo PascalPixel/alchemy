@@ -1252,7 +1252,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(64), PIXELS(144), PIXELS(350), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Event_PrepareActorAndApplyValue(1, 0);
+  Event_PrepareActorAndApplyValue(GARET, 0);
   Event_StartScreenTransition();
   Sound_Play(SOUND_FADE_OUT_BGM);
   Weather_ResumeLightning();
@@ -1458,7 +1458,7 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetSpriteFlags(actor, 0);
   Import_ActorSetAnimation(ACTOR_STORM_GARET, 7);
   actor = Actor_GetById(ACTOR_STORM_GARET);
-  actor->sprite->rotation = 0x1555;
+  actor->sprite->rotation = TRIG_TURN / 12;
   actor = Actor_GetById(ACTOR_STORM_GARET);
   Actor_SetSpriteFlags(actor, 0);
   {
@@ -1482,14 +1482,14 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, PIXELS(12) / 5, PIXELS(6) / 5);
   gravityQ8 = 128;
   actor = Actor_GetById(ACTOR_FIRST_TRAVELER);
-  actor->bounce = 0x28f;
+  actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;
   Actor_SetScript(ACTOR_FIRST_TRAVELER, gValePlaza_FirstTravelerBounceActions);
   Event_Wait(24);
   Actor_SetSpeedParameters(ACTOR_SECOND_TRAVELER, PIXELS(12) / 5,
                            PIXELS(6) / 5);
   actor = Actor_GetById(ACTOR_SECOND_TRAVELER);
-  actor->bounce = 0x28f;
+  actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;
   Actor_RunScriptAndWait(ACTOR_SECOND_TRAVELER,
                          gValePlaza_SecondTravelerBounceActions);
@@ -2467,7 +2467,7 @@ struct ActorPlacement gValePlaza_ActorPlacements[] = {
         PIXELS(370), 0, PIXELS(319), FACING_WEST, TALK_FACING_PARTY, 0 },
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -2512,9 +2512,9 @@ struct ActorPlacement gValePlaza_StormActorPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { GARET_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_GARET_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(234), 0, PIXELS(786), FACING_NORTHEAST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

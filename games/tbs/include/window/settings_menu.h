@@ -17,7 +17,7 @@
 /// SettingsMenu_Release frees it, and cancelling discards the edits. The pause
 /// menu takes the same slot for its cursor, entry (page) and icons.
 struct OptionMenuWork {
-  u8 unused[0x400]; ///< no code names it
+  u8 unused[1024]; ///< no code names it
   /// Seven 52-byte entries (struct OptionMenuEntry in settings_menu.c), whose
   /// state only the unused SettingsMenu_ResetEntries writes.
   u8 entries[7][52];
@@ -32,7 +32,7 @@ struct OptionMenuWork {
   /// The colour preset SELECT last chose, 0 to 5, from
   /// gSettingsMenu_HuePresets and gSettingsMenu_BrightnessPresets.
   u16 preset;
-  u8 unusedAfterPreset[0x14]; ///< no code names it
+  u8 unusedAfterPreset[20]; ///< no code names it
   /// The settings being edited: window hue (0 to 23), window brightness (0
   /// to 14), message speed (0 to 2), voice sounds and auto-sleep (0 or 1).
   s8 option[5];
@@ -40,7 +40,7 @@ struct OptionMenuWork {
   u8 unusedAfterOptions[6]; ///< no code names it
   union MenuCursorRef cursor;
   union MenuCursorRef marker[2];
-  u8 unusedAfterMarkers[0x18]; ///< no code names it
+  u8 unusedAfterMarkers[24]; ///< no code names it
   /// Each choice's icon for message speed, voice sounds and auto-sleep
   /// (options 2 to 4); the chosen one pulses.
   struct WindowSprite *choiceIcons[3][3];

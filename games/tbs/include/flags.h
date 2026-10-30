@@ -14,7 +14,7 @@
 #define FLAG_CHILDHOOD 0x20
 /// The young Isaac wears the tunic Dora made him take on the stormy night:
 /// placed child sprites get its child part (226), and Isaac's grown sprite is
-/// ISAAC_TUNIC. Party_EndChildhood clears it.
+/// SPRITE_ISAAC_TUNIC. Party_EndChildhood clears it.
 /// ★ Named from the game: "Don't go out without your tunic!"
 /// (MsgValeComeOnHurry)
 #define FLAG_ISAAC_WEARS_TUNIC 0x21

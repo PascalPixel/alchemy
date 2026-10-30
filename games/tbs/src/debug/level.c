@@ -222,7 +222,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 /// with every bag full, closes the browser.
 static void IncreaseItemAndLevel_SelectItem(void) {
   // Preserve independent key tests and the direction-specific empty-icon scans.
-  // Ordinary while scans grow the native function from 0x29c to 0x2a0; retain
+  // Ordinary while scans grow the native function from 668 to 672; retain
   // its current polling edges.
   struct Window *window;
   struct Window *details;
@@ -357,7 +357,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
 /// Italian the scene keeps the function and the actor but no event, and
 /// moves the actor to x 80.
 UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
-  // Ordinary while scans grow the native function from 0x248 to 0x260; retain
+  // Ordinary while scans grow the native function from 584 to 608; retain
   // the original polling edges.
   struct Window *window;
 #ifndef UBFIX
@@ -490,13 +490,13 @@ s32 IncreaseItemAndLevel_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
 #if TBS_PATCH_1
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x19999;
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x19999;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = Q16_ONE * 8 / 5;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = Q16_ONE * 8 / 5;
   Import_ActorSetAnimation(ACTOR_FIRST_EMOTE_TESTER, 5);
   Import_ActorSetAnimation(ACTOR_SECOND_EMOTE_TESTER, 2);
 #else
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x1b333;
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x1b333;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = Q16_ONE * 17 / 10;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = Q16_ONE * 17 / 10;
 #endif
   return 0;
 }
@@ -614,18 +614,18 @@ struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[] = {
         TALK_FACING_PARTY, 0},
     {SPRITE_MAN_IN_WHITE_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(864),
         FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0},
-    {21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+    {SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
-    {21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+    {SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
 #else
     {SPRITE_CAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(800), FACING_EAST,
         TALK_FACING_PARTY, 0},
     {SPRITE_MAN_IN_WHITE_TURBAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(80), 0, PIXELS(864),
         FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0},
-    {21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+    {SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(848), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
-    {21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
+    {SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(816), 0, PIXELS(688), FACING_SOUTH + FACING_STEP,
         TALK_FACING_KEEP, 0},
 #endif
     {SCENE_TABLE_END},

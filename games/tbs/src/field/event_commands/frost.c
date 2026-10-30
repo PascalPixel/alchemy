@@ -22,10 +22,10 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor) {
   s32 scale;
 
   if (particle != NULL) {
-    scale = particle->scaleX - 0x1000;
-    particle->scaleY -= 0x1000;
+    scale = particle->scaleX - Q16_ONE / 16;
+    particle->scaleY -= Q16_ONE / 16;
     particle->scaleX = scale;
-    if (scale <= 0x1000)
+    if (scale <= Q16_ONE / 16)
       Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
   }
 }
@@ -125,12 +125,12 @@ void FieldPsynergy_Frost(void) {
   p = &pos;
   remainingCycles = 15;
   do {
-    particle = Actor_Spawn(232, 0, 0, 0);
+    particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 radius;
 
-      scale = (Random16() >> 1) + 0x8000;
+      scale = (Random16() >> 1) + Q16_ONE / 2;
       particle->scaleY = scale;
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)

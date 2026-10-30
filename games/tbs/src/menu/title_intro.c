@@ -64,7 +64,7 @@ struct IntroWork {
   union {
     struct OamWords objects[120];
     struct {
-      u8 introObjects[0x68]; ///< objects[0] to [12], still the intro's
+      u8 introObjects[104]; ///< objects[0] to [12], still the intro's
       struct IntroSprite sprites[8];
     } prompt;
   } area;
@@ -199,30 +199,30 @@ void Title_LoadIntroBackgrounds(void) {
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
   OBJ_PLTT[0] = 0;
-  resourceData += 0x200;
+  resourceData += 512;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_HALFWORDS(3840),
           REG_DMA3);
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
   BG_PLTT[0] = 0;
-  resourceData += 0x200;
+  resourceData += 512;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
-  Dma_Set(Ram_MapGridCellBuffer + 0x2940, BG_CHAR_BLOCK(0),
-          DMA_ENABLE << 16 | 0x2760, REG_DMA3);
-  Dma_Set(Ram_MapGridCellBuffer + 0xa140, (void *)0x06004ec0,
-          DMA_ENABLE << 16 | 0x4ec0, REG_DMA3);
+  Dma_Set(Ram_MapGridCellBuffer + 10560, BG_CHAR_BLOCK(0),
+          DMA_ENABLE << 16 | 10080, REG_DMA3);
+  Dma_Set(Ram_MapGridCellBuffer + 41280, (void *)0x06004ec0,
+          DMA_ENABLE << 16 | 20160, REG_DMA3);
 
-  blankTile = 0x1ff;
+  blankTile = 511;
   tilemap = (u16 *)BG_SCREEN_BLOCK(30);
-  tileIndex = 0x267;
+  tileIndex = 615;
   for (row = 0; row <= 10; row++) {
     for (column = 0; column < 30; column++)
       *tilemap++ = tileIndex++;
     *tilemap++ = blankTile;
     *tilemap++ = blankTile;
   }
-  tileIndex = 0x13b;
+  tileIndex = 315;
   for (row = 11; row <= 31; row++) {
     for (column = 0; column < 30; column++)
       *tilemap++ = tileIndex++;
@@ -317,7 +317,7 @@ s32 Title_ShowIntro(s32 prompt) {
   s32 blankTile;
 
   result = 0;
-  blankTile = 0x1ff;
+  blankTile = 511;
   savedCpuLoadDisplay = gCpuLoadDisplayEnabled;
   work = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, 224);
   DebugText_Clear();
@@ -366,7 +366,7 @@ s32 Title_ShowIntro(s32 prompt) {
         gBgScroll[1].y--;
         y = gBgScroll[1].y;
         if ((y & 7) == 0) {
-          Dma_Set(Ram_MapGridCellBuffer + 0x2580 - work->backRows * 960,
+          Dma_Set(Ram_MapGridCellBuffer + 9600 - work->backRows * 960,
                   (u8 *)0x06004b00 - work->backRows * 960,
                   DMA_COPY_HALFWORDS(480), REG_DMA3);
           work->backRows++;
@@ -380,22 +380,22 @@ s32 Title_ShowIntro(s32 prompt) {
         y = gBgScroll[2].y;
         if ((y & 7) == 0) {
           if (work->frontRows * 8 <= 24) {
-            Dma_Set(Ram_MapGridCellBuffer + 0x99c0 - work->frontRows * 1920,
+            Dma_Set(Ram_MapGridCellBuffer + 39360 - work->frontRows * 1920,
                     (u8 *)0x0600e4c0 - work->frontRows * 1920,
-                    DMA_ENABLE << 16 | 0x3c0, REG_DMA3);
+                    DMA_ENABLE << 16 | 960, REG_DMA3);
           } else {
             // Once the finite picture is exhausted, clear incoming bands
             // so wrapped tile memory cannot expose earlier picture rows.
             clearValue = 0;
             Dma_Set(&clearValue,
                     (u8 *)0x06004ec0 + (160 - work->frontRows * 8) % 160 * 240,
-                    (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 0x3c0, REG_DMA3);
+                    (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 960, REG_DMA3);
             tilemap = (u16 *)0x0600f6c0;
             for (i = 0; i < 5; i++) {
               for (j = 0; j < 30; j++)
-                *tilemap++ = 0x13b;
-              *tilemap++ = 0x13b;
-              *tilemap++ = 0x13b;
+                *tilemap++ = 315;
+              *tilemap++ = 315;
+              *tilemap++ = 315;
             }
           }
           work->frontRows++;
@@ -421,12 +421,12 @@ s32 Title_ShowIntro(s32 prompt) {
       resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
       Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(120), REG_DMA3);
       BG_PLTT[0] = 0;
-      resourceData += 0x200;
+      resourceData += 512;
       Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
-      Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
-              DMA_ENABLE << 16 | 0x4b00, REG_DMA3);
+      Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_ENABLE << 16 | 19200,
+              REG_DMA3);
       tilemap = (u16 *)BG_SCREEN_BLOCK(6);
-      tile = 0x100;
+      tile = 256;
       i = 0;
       break;
     }
@@ -444,7 +444,7 @@ s32 Title_ShowIntro(s32 prompt) {
   Window_LoadGraphics();
   DebugText_Clear();
   if (prompt != 0) {
-    u8 *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+    u8 *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
     struct IntroSprite *sprite = work->area.prompt.sprites;
 
     Decompress_ByteLz(gTitle_PromptTiles, buffer);
@@ -538,7 +538,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   Sound_PlayFar(SE_CHIME);
   gOamCopyEnabled = 1;
   resourceId = (s32)&ResourceId_NintendoLogo;
-  blankTile = 0x1ff;
+  blankTile = 511;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
   DebugText_Clear();
@@ -637,15 +637,15 @@ s32 Title_ShowCamelotLogo(void) {
   resourceData = Resource_GetTableEntry(resourceId);
   Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
   // The decoded resource: 224 colours, the map, the still tiles, then four
-  // animation pictures of 0x400 bytes each.
+  // animation pictures of 1024 bytes each.
   resourceData = Ram_MapGridCellBuffer;
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
   resourceData += 448;
-  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(0x800 / 4),
+  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4), REG_DMA3);
+  resourceData += 2048;
+  Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
           REG_DMA3);
-  resourceData += 0x800;
-  Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x4000 / 4), REG_DMA3);
-  resourceData += 0x4000;
+  resourceData += BG_CHAR_SIZE;
   for (workIndex = 0; workIndex < 4; workIndex++) {
     gBgScroll[workIndex].y = 0;
     gBgScroll[workIndex].x = 0;
@@ -660,8 +660,8 @@ s32 Title_ShowCamelotLogo(void) {
   // Replace only the animated tiles; the rest of the decoded logo stays
   // in VRAM while the four animation pictures cycle.
   for (workIndex = 0; workIndex < 120; workIndex++) {
-    Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + resourceData,
-            BG_CHAR_BLOCK(1) + 0x100, DMA_COPY_WORDS(0x340 / 4), REG_DMA3);
+    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
+            BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
     if (gKeysPressed & (KEY_A | KEY_START))
       break;
     wait(1);
@@ -1005,7 +1005,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     }
   } else {
     if (selectedPalettes == PALETTES_OBJECTS)
-      mode += 0x600;
+      mode += 1536;
     Dma_Set((const void *)mode, destination,
             DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
   }

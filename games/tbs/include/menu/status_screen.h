@@ -32,10 +32,10 @@ struct StatusScreenWork {
   struct Window *unopenedWindow; ///< never given a window; only cleared
   struct Window *helpWindow;
   /// ItemMenuWork's equipWindow to gridCursor; not named here.
-  u8 itemWindows[0x18];
+  u8 itemWindows[24];
   struct WindowSprite *entryIcons[32];
   struct WindowSprite *categoryIcons[8];
-  u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct Window *selectorWindow;
   u8 selectedColumn;
   u8 selectedRow;
@@ -49,7 +49,7 @@ struct StatusScreenWork {
   u16 selectedActions[2];
   struct WindowSprite *statusCursor;
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
-  u8 aroundBackdrop[0x48];
+  u8 aroundBackdrop[72];
   u16 entries[32];
   u16 memberIds[8]; ///< the party in order (Party_ListMembers)
   u8 entryCount;

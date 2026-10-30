@@ -4,416 +4,389 @@
 
 #include "game.h"
 #include "ability_ids.h"
+#include "djinn_ids.h"
 
 // clang-format off
 const struct DjinnDefinition gDjinn_DefinitionTable[] = {
-    // Flint
-    {
+    [DJINNI_FLINT] = {
         .abilityId = ABILITY_DJINNI_FIRST,
         .hp = 8,
         .pp = 4,
         .atk = 3,
     },
-    // Granite
-    {
-        .abilityId = 301,
+    [DJINNI_GRANITE] = {
+        .abilityId = ABILITY_GRANITE,
         .hp = 9,
         .def = 2,
         .agi = 2,
         .luck = 1,
     },
-    // Quartz
-    {
-        .abilityId = 302,
+    [DJINNI_QUARTZ] = {
+        .abilityId = ABILITY_QUARTZ,
         .hp = 10,
         .pp = 3,
         .agi = 3,
     },
-    // Vine
-    {
-        .abilityId = 303,
+    [DJINNI_VINE] = {
+        .abilityId = ABILITY_VINE,
         .hp = 12,
         .pp = 4,
         .def = 3,
         .luck = 1,
     },
-    // Sap
-    {
-        .abilityId = 304,
+    [DJINNI_SAP] = {
+        .abilityId = ABILITY_SAP,
         .hp = 10,
         .atk = 3,
         .luck = 1,
     },
-    // Ground
-    {
-        .abilityId = 305,
+    [DJINNI_GROUND] = {
+        .abilityId = ABILITY_GROUND,
         .hp = 9,
         .pp = 3,
         .agi = 3,
     },
-    // Bane
-    {
-        .abilityId = 306,
+    [DJINNI_BANE] = {
+        .abilityId = ABILITY_BANE,
         .hp = 12,
         .atk = 4,
     },
     // =
-    {
-        .abilityId = 307,
+    [DJINNI_07] = {
+        .abilityId = ABILITY_307,
     },
     // =
-    {
-        .abilityId = 308,
+    [DJINNI_08] = {
+        .abilityId = ABILITY_308,
     },
     // =
-    {
-        .abilityId = 309,
+    [DJINNI_09] = {
+        .abilityId = ABILITY_309,
     },
     // =
-    {
-        .abilityId = 310,
+    [DJINNI_10] = {
+        .abilityId = ABILITY_310,
     },
     // =
-    {
-        .abilityId = 311,
+    [DJINNI_11] = {
+        .abilityId = ABILITY_311,
     },
     // =
-    {
-        .abilityId = 312,
+    [DJINNI_12] = {
+        .abilityId = ABILITY_312,
     },
     // =
-    {
-        .abilityId = 313,
+    [DJINNI_13] = {
+        .abilityId = ABILITY_313,
     },
     // =
-    {
-        .abilityId = 314,
+    [DJINNI_14] = {
+        .abilityId = ABILITY_314,
     },
     // =
-    {
-        .abilityId = 315,
+    [DJINNI_15] = {
+        .abilityId = ABILITY_315,
     },
     // =
-    {
-        .abilityId = 316,
+    [DJINNI_16] = {
+        .abilityId = ABILITY_316,
     },
     // =
-    {
-        .abilityId = 317,
+    [DJINNI_17] = {
+        .abilityId = ABILITY_317,
     },
     // =
-    {
-        .abilityId = 318,
+    [DJINNI_18] = {
+        .abilityId = ABILITY_318,
     },
     // =
-    {
-        .abilityId = 319,
+    [DJINNI_19] = {
+        .abilityId = ABILITY_319,
     },
-    // Fizz
-    {
-        .abilityId = 320,
+    [DJINNI_FIZZ] = {
+        .abilityId = ABILITY_FIZZ,
         .hp = 9,
         .pp = 4,
         .def = 3,
     },
-    // Sleet
-    {
-        .abilityId = 321,
+    [DJINNI_SLEET] = {
+        .abilityId = ABILITY_SLEET,
         .hp = 12,
         .atk = 3,
         .luck = 1,
     },
-    // Mist
-    {
-        .abilityId = 322,
+    [DJINNI_MIST] = {
+        .abilityId = ABILITY_MIST_DJINNI,
         .hp = 11,
         .atk = 4,
     },
-    // Spritz
-    {
-        .abilityId = 323,
+    [DJINNI_SPRITZ] = {
+        .abilityId = ABILITY_SPRITZ,
         .hp = 8,
         .pp = 4,
         .agi = 3,
     },
-    // Hail
-    {
-        .abilityId = 324,
+    [DJINNI_HAIL] = {
+        .abilityId = ABILITY_HAIL,
         .hp = 9,
         .atk = 4,
         .luck = 1,
     },
-    // Tonic
-    {
-        .abilityId = 325,
+    [DJINNI_TONIC] = {
+        .abilityId = ABILITY_TONIC,
         .hp = 8,
         .pp = 3,
         .def = 2,
         .luck = 2,
     },
-    // Dew
-    {
-        .abilityId = 326,
+    [DJINNI_DEW] = {
+        .abilityId = ABILITY_DEW,
         .hp = 13,
         .pp = 4,
         .agi = 4,
     },
     // =
-    {
-        .abilityId = 327,
+    [DJINNI_27] = {
+        .abilityId = ABILITY_327,
     },
     // =
-    {
-        .abilityId = 328,
+    [DJINNI_28] = {
+        .abilityId = ABILITY_328,
     },
     // =
-    {
-        .abilityId = 329,
+    [DJINNI_29] = {
+        .abilityId = ABILITY_329,
     },
     // =
-    {
-        .abilityId = 330,
+    [DJINNI_30] = {
+        .abilityId = ABILITY_330,
     },
     // =
-    {
-        .abilityId = 331,
+    [DJINNI_31] = {
+        .abilityId = ABILITY_331,
     },
     // =
-    {
-        .abilityId = 332,
+    [DJINNI_32] = {
+        .abilityId = ABILITY_332,
     },
     // =
-    {
-        .abilityId = 333,
+    [DJINNI_33] = {
+        .abilityId = ABILITY_333,
     },
     // =
-    {
-        .abilityId = 334,
+    [DJINNI_34] = {
+        .abilityId = ABILITY_334,
     },
     // =
-    {
-        .abilityId = 335,
+    [DJINNI_35] = {
+        .abilityId = ABILITY_335,
     },
     // =
-    {
-        .abilityId = 336,
+    [DJINNI_36] = {
+        .abilityId = ABILITY_336,
     },
     // =
-    {
-        .abilityId = 337,
+    [DJINNI_37] = {
+        .abilityId = ABILITY_337,
     },
     // =
-    {
-        .abilityId = 338,
+    [DJINNI_38] = {
+        .abilityId = ABILITY_338,
     },
     // =
-    {
-        .abilityId = 339,
+    [DJINNI_39] = {
+        .abilityId = ABILITY_339,
     },
-    // Forge
-    {
-        .abilityId = 340,
+    [DJINNI_FORGE] = {
+        .abilityId = ABILITY_FORGE,
         .hp = 10,
         .atk = 2,
         .agi = 2,
         .luck = 2,
     },
-    // Fever
-    {
-        .abilityId = 341,
+    [DJINNI_FEVER] = {
+        .abilityId = ABILITY_FEVER,
         .hp = 8,
         .atk = 3,
         .agi = 2,
     },
-    // Corona
-    {
-        .abilityId = 342,
+    [DJINNI_CORONA] = {
+        .abilityId = ABILITY_CORONA,
         .hp = 12,
         .pp = 3,
         .def = 3,
         .luck = 1,
     },
-    // Scorch
-    {
-        .abilityId = 343,
+    [DJINNI_SCORCH] = {
+        .abilityId = ABILITY_SCORCH,
         .hp = 8,
         .atk = 3,
     },
-    // Ember
-    {
-        .abilityId = 344,
+    [DJINNI_EMBER] = {
+        .abilityId = ABILITY_EMBER,
         .hp = 9,
         .pp = 4,
         .def = 2,
         .agi = 2,
     },
-    // Flash
-    {
-        .abilityId = 345,
+    [DJINNI_FLASH] = {
+        .abilityId = ABILITY_FLASH,
         .hp = 14,
         .pp = 3,
         .def = 2,
     },
-    // Torch
-    {
-        .abilityId = 346,
+    [DJINNI_TORCH] = {
+        .abilityId = ABILITY_TORCH,
         .hp = 9,
         .atk = 3,
         .luck = 1,
     },
     // =
-    {
-        .abilityId = 347,
+    [DJINNI_47] = {
+        .abilityId = ABILITY_347,
     },
     // =
-    {
-        .abilityId = 348,
+    [DJINNI_48] = {
+        .abilityId = ABILITY_348,
     },
     // =
-    {
-        .abilityId = 349,
+    [DJINNI_49] = {
+        .abilityId = ABILITY_349,
     },
     // =
-    {
-        .abilityId = 350,
+    [DJINNI_50] = {
+        .abilityId = ABILITY_350,
     },
     // =
-    {
-        .abilityId = 351,
+    [DJINNI_51] = {
+        .abilityId = ABILITY_351,
     },
     // =
-    {
-        .abilityId = 352,
+    [DJINNI_52] = {
+        .abilityId = ABILITY_352,
     },
     // =
-    {
-        .abilityId = 353,
+    [DJINNI_53] = {
+        .abilityId = ABILITY_353,
     },
     // =
-    {
-        .abilityId = 354,
+    [DJINNI_54] = {
+        .abilityId = ABILITY_354,
     },
     // =
-    {
-        .abilityId = 355,
+    [DJINNI_55] = {
+        .abilityId = ABILITY_355,
     },
     // =
-    {
-        .abilityId = 356,
+    [DJINNI_56] = {
+        .abilityId = ABILITY_356,
     },
     // =
-    {
-        .abilityId = 357,
+    [DJINNI_57] = {
+        .abilityId = ABILITY_357,
     },
     // =
-    {
-        .abilityId = 358,
+    [DJINNI_58] = {
+        .abilityId = ABILITY_358,
     },
     // =
-    {
-        .abilityId = 359,
+    [DJINNI_59] = {
+        .abilityId = ABILITY_359,
     },
-    // Gust
-    {
-        .abilityId = 360,
+    [DJINNI_GUST] = {
+        .abilityId = ABILITY_GUST,
         .hp = 9,
         .atk = 2,
         .agi = 2,
     },
-    // Breeze
-    {
-        .abilityId = 361,
+    [DJINNI_BREEZE] = {
+        .abilityId = ABILITY_BREEZE,
         .hp = 12,
         .pp = 5,
         .def = 2,
         .luck = 1,
     },
-    // Zephyr
-    {
-        .abilityId = 362,
+    [DJINNI_ZEPHYR] = {
+        .abilityId = ABILITY_ZEPHYR,
         .hp = 11,
         .pp = 3,
         .agi = 2,
         .luck = 1,
     },
-    // Smog
-    {
-        .abilityId = 363,
+    [DJINNI_SMOG] = {
+        .abilityId = ABILITY_SMOG,
         .hp = 9,
         .atk = 3,
     },
-    // Kite
-    {
-        .abilityId = 364,
+    [DJINNI_KITE] = {
+        .abilityId = ABILITY_KITE,
         .hp = 8,
         .pp = 4,
         .agi = 3,
     },
-    // Squall
-    {
-        .abilityId = 365,
+    [DJINNI_SQUALL] = {
+        .abilityId = ABILITY_SQUALL,
         .hp = 10,
         .atk = 5,
     },
-    // Luff
-    {
-        .abilityId = 366,
+    [DJINNI_LUFF] = {
+        .abilityId = ABILITY_LUFF,
         .hp = 11,
         .pp = 5,
         .def = 2,
         .luck = 1,
     },
     // =
-    {
-        .abilityId = 367,
+    [DJINNI_67] = {
+        .abilityId = ABILITY_367,
     },
     // =
-    {
-        .abilityId = 368,
+    [DJINNI_68] = {
+        .abilityId = ABILITY_368,
     },
     // =
-    {
-        .abilityId = 369,
+    [DJINNI_69] = {
+        .abilityId = ABILITY_369,
     },
     // =
-    {
-        .abilityId = 370,
+    [DJINNI_70] = {
+        .abilityId = ABILITY_370,
     },
     // =
-    {
-        .abilityId = 371,
+    [DJINNI_71] = {
+        .abilityId = ABILITY_371,
     },
     // =
-    {
-        .abilityId = 372,
+    [DJINNI_72] = {
+        .abilityId = ABILITY_372,
     },
     // =
-    {
-        .abilityId = 373,
+    [DJINNI_73] = {
+        .abilityId = ABILITY_373,
     },
     // =
-    {
-        .abilityId = 374,
+    [DJINNI_74] = {
+        .abilityId = ABILITY_374,
     },
     // =
-    {
-        .abilityId = 375,
+    [DJINNI_75] = {
+        .abilityId = ABILITY_375,
     },
     // =
-    {
-        .abilityId = 376,
+    [DJINNI_76] = {
+        .abilityId = ABILITY_376,
     },
     // =
-    {
-        .abilityId = 377,
+    [DJINNI_77] = {
+        .abilityId = ABILITY_377,
     },
     // =
-    {
-        .abilityId = 378,
+    [DJINNI_78] = {
+        .abilityId = ABILITY_378,
     },
     // =
-    {
-        .abilityId = 379,
+    [DJINNI_79] = {
+        .abilityId = ABILITY_379,
     },
 };
 // clang-format on

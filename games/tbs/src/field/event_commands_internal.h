@@ -96,9 +96,9 @@
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// gMainRoutineWork.pendingDjinni of Djinni 0 (requests.c, djinni.c): a
-/// Djinni battle's event is 300 plus the Djinni's number (element * 20 +
-/// index), with DJINN_NO_HOP beside it.
+/// gMainRoutineWork.pendingDjinni of DJINNI_FLINT (requests.c, djinni.c): a
+/// Djinni battle's event is this plus the Djinni's id (DJINN_PER_ELEMENT to
+/// an element), with DJINN_NO_HOP beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.
@@ -139,8 +139,8 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
 
 /// Defines a per-frame update that spins an actor 1/8 turn a frame while its
 /// scale changes by step, releasing the actor once the scale falls below
-/// 0x3000 (3/16 of full size). step is negative: from full size the actor
-/// lasts 0xd000 / -step frames, rounded down, plus one.
+/// Q16_ONE * 3 / 16. step is negative: from full size the actor
+/// lasts (Q16_ONE * 13 / 16) / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
   void name(struct Actor *actor) {                                             \
     void *obj = actor;                                                         \
@@ -148,9 +148,10 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
                                                                                \
     scale = ((struct Actor *)obj)->scaleX + step;                              \
     ((struct Actor *)obj)->scaleY = ((struct Actor *)obj)->scaleY + step;      \
-    ((struct Actor *)obj)->facing = ((struct Actor *)obj)->facing + 0x2000;    \
+    ((struct Actor *)obj)->facing =                                            \
+        ((struct Actor *)obj)->facing + TRIG_TURN / 8;                         \
     ((struct Actor *)obj)->scaleX = scale;                                     \
-    if (scale < 0x3000) {                                                      \
+    if (scale < Q16_ONE * 3 / 16) {                                            \
       Actor_ReleaseFar(obj);                                                   \
     }                                                                          \
   }
@@ -177,7 +178,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
   // moves the kind load after the coordinate loads in the native English build.
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
-    fragment->gravity = 0x1999;
+    fragment->gravity = Q16_ONE / 10;
     Actor_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
     Actor_StartScriptFar(fragment, gFieldEffect_SharedParticleScript);

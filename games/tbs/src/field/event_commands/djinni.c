@@ -34,14 +34,15 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // The way the leader faces, to the nearest quarter turn.
   djinni = Actor_GetById(djinniId);
   dir =
-      (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
+      (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + TRIG_TURN / 8) &
+      0xc000;
   Event_Start();
   wait(10);
   Sound_PlayFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
-  back = dir + 0x8000;
+  back = dir + TRIG_TURN / 2;
   wait(20);
   Actor_ArmCallback(djinniId, back, 0);
   wait(10);
@@ -71,16 +72,16 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Afterimages of the same sprite at 15/16 size, each closing half the
   // distance to the one before it every frame, tinted by the Djinni's
-  // sprite: the Venus sprite (90) takes param 2, Mars (92) 10, and Mercury
-  // (91) and Jupiter (93) 9 (the scenes' Djinni actor placements show which
-  // sprite is which element). They share one VRAM cache entry.
+  // sprite: SPRITE_VENUS_DJINNI takes param 2, SPRITE_MARS_DJINNI 10, and
+  // SPRITE_MERCURY_DJINNI and SPRITE_JUPITER_DJINNI 9. They share one VRAM
+  // cache entry.
   sprite = djinni->sprite->entries[0]->animationId;
   tint = 9;
-  if (sprite == 90)
+  if (sprite == SPRITE_VENUS_DJINNI)
     tint = 2;
-  if (sprite == 92)
+  if (sprite == SPRITE_MARS_DJINNI)
     tint = 10;
-  if (sprite == 91)
+  if (sprite == SPRITE_MERCURY_DJINNI)
     tint = 9;
   sharedSprite = NULL;
   prev = djinni;
@@ -89,8 +90,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
                            djinni->z.fixed);
     copies[i] = copy;
     if (copy != NULL) {
-      copy->scaleY = 0xf000;
-      copy->scaleX = 0xf000;
+      copy->scaleY = Q16_ONE * 15 / 16;
+      copy->scaleX = Q16_ONE * 15 / 16;
       copy->motionFlags = 0;
       copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       copy->steeringFlags |= 1;
@@ -108,7 +109,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Leap 64 pixels at the leader, 12 pixels a frame upward, and after 24
   // frames freeze wherever it is, landed or not.
-  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 64 << 16, dir + 0x8000);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 64 << 16,
+                                            dir + TRIG_TURN / 2);
   Sound_PlayFar(SE_WHOOSH);
   Actor_Jump(djinniId, 12, 0);
   wait(24);
@@ -332,7 +334,7 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
 /// Per-frame update: spins an actor 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
   struct Actor *object = (struct Actor *)actor;
-  object->facing += 0x2000;
+  object->facing += TRIG_TURN / 8;
 }
 
 /// The states of a Jupiter Djinni's light particle, in order.

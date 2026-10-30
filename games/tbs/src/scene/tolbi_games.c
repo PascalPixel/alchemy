@@ -1357,7 +1357,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     case 2:
       TolbiSpring_SetActorAppearance(
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2,
-          Vector3_Coordinates(&obstacle->position), 0x8000 - obstacle->heading,
+          Vector3_Coordinates(&obstacle->position),
+          TRIG_TURN / 2 - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
           (obstacle->speedMode << 4) + 16);
       break;
@@ -1468,7 +1469,7 @@ static void TolbiSpring_InitializeTossSimulation(void) {
                         2);
 
   {
-    s32 budget = 0xc83;
+    s32 budget = 3203;
     void (*task)(void) = TolbiSpring_UpdateTossSimulation;
 
     Task_AddFrame(task, budget);
@@ -1668,12 +1669,15 @@ const struct Trigger gTolbiSpringTriggers[] = {
 
 /// BLDALPHA steps.
 const u16 gTolbiSpring_AlphaSteps[] = {
-    0x90a, 0xa08, 0xb06, 0xc04, 0xd03, 0xe02, 0xf01, 0x1000,
+    BLEND_ALPHA(10, 9), BLEND_ALPHA(8, 10), BLEND_ALPHA(6, 11), BLEND_ALPHA(4, 12),
+    BLEND_ALPHA(3, 13), BLEND_ALPHA(2, 14), BLEND_ALPHA(1, 15), BLEND_ALPHA(0, 16),
 };
 
 const u32 gTolbiSpring_PrizeItems[] = {
-    23, 124, 81, 152, 37, 108, 171, 142,
-    48, 160, 133, 97, 183, 186, 189,
+    ITEM_ASSASSIN_BLADE, ITEM_EARTH_SHIELD, ITEM_SPIRIT_ARMOR, ITEM_ADEPTS_HELM, ITEM_BURNING_AXE,
+    ITEM_COCKTAIL_DRESS, ITEM_GLITTERING_TIARA, ITEM_GUARDIAN_ARMLET, ITEM_GRIEVOUS_MACE,
+    ITEM_NINJA_HOOD, ITEM_BATTLE_GLOVES, ITEM_KIMONO, ITEM_POTION, ITEM_PSY_CRYSTAL,
+    ITEM_WATER_OF_LIFE,
 };
 
 const u16 gTolbiSpring_CoinPrizes[] = {
@@ -1681,8 +1685,9 @@ const u16 gTolbiSpring_CoinPrizes[] = {
 };
 
 const u32 gTolbiSpring_LuckyWheelsPrizeItems[] = {
-    250, 251, 252, 256, 257, 258, 262, 263,
-    264, 183, 182, 181, 189, 186, 188,
+    ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT, ITEM_RUNNING_SHIRT, ITEM_HYPER_BOOTS, ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,
+    ITEM_ADEPT_RING, ITEM_WAR_RING, ITEM_SLEEP_RING, ITEM_POTION, ITEM_VIAL, ITEM_NUT,
+    ITEM_WATER_OF_LIFE, ITEM_PSY_CRYSTAL, ITEM_ELIXIR,
 };
 
 const u8 gTolbiSpring_SliderFrames[] = {
@@ -1702,6 +1707,6 @@ const u8 gTolbiSpring_ActorPixelZ[] = {
 };
 
 const u16 gTolbiSpring_ActorHeadings[] = {
-    FACING_EAST, 0x1, FACING_EAST, FACING_WEST,
+    FACING_EAST, 1, FACING_EAST, FACING_WEST,
 };
 // clang-format on

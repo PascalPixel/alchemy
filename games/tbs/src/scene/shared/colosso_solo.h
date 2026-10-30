@@ -87,11 +87,11 @@ void Colosso_ControlCharacterAlone(s32 id) {
   s32 v;
   s32 t;
 
-  Party_RemoveMember(0);
-  Party_RemoveMember(1);
-  Party_RemoveMember(2);
-  Party_RemoveMember(3);
-  Party_RemoveMember(5);
+  Party_RemoveMember(ISAAC);
+  Party_RemoveMember(GARET);
+  Party_RemoveMember(IVAN);
+  Party_RemoveMember(MIA);
+  Party_RemoveMember(JENNA);
   Party_AddMember(id);
   gMainRoutineWork.leaderActorId = id;
   FieldCamera_FollowActor(id, 0);
@@ -161,7 +161,8 @@ static void Colosso_TakePlaceForMatch(void) {
     struct Actor *actor = Actor_GetById(actorId);
 
     if (actor != 0 && actor->spriteStorageKind == 1 &&
-        actor->sprite->entries[0]->animationId == 165) {
+        actor->sprite->entries[0]->animationId ==
+            SPRITE_YOUNG_MAN_WITH_FAIR_HAIR) {
       s32 distanceX = (supporter->x.fixed - actor->x.fixed) / PIXELS(1);
       s32 distanceZ = (supporter->z.fixed - actor->z.fixed) / PIXELS(1);
 

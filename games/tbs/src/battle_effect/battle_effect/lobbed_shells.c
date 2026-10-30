@@ -71,13 +71,13 @@ void BattleEffect_RunStickyPoison(struct BattleEffectParams *args) {
 void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_ROTTEN_BLOOD);
 }
-/// The bursts live after the shells in PARTICLES, from PARTICLES[256] (0x1c00
+/// The bursts live after the shells in PARTICLES, from PARTICLES[256] (7168
 /// bytes is 256 particles of 28): 32 slots a target, of which 4 smoke puffs
 /// or 16 shards are used.
 #define LOBBED_SHELLS_BURSTS (PARTICLES + 256)
 #define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
-#define LOBBED_SHELLS_SMOKE_OFFSETS 0x3e80 ///< the smoke pictures in the sheet
+#define LOBBED_SHELLS_SMOKE_OFFSETS 16000 ///< the smoke pictures in the sheet
 
 /// Nonzero when the style's shells burst into shards instead of smoke: the
 /// first of the style's two entries in gLobbedShells_Styles; the second is

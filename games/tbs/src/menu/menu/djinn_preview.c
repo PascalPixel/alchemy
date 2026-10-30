@@ -193,7 +193,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   // The Djinni concerned, after its element icon (BASIC_COLORS_PALETTE): in
   // TEXT_COLOR_RED when it is not set. A trade adds the other Djinni below it;
   // a set or standby shows the same Djinni again below in its new colour, with
-  // tile 0x296 of WINDOW_PALETTE between the two.
+  // tile 662 of WINDOW_PALETTE between the two.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
     Text_SetColorFar(TEXT_COLOR_RED);
@@ -232,7 +232,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
-    Window_SetTilemapEntryFar(menu->helpWindow, WINDOW_TILE(0x296), 7, 1, zero);
+    Window_SetTilemapEntryFar(menu->helpWindow, WINDOW_TILE(662), 7, 1, zero);
   }
 
   for (;;) {
@@ -245,13 +245,13 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     repeatedKeys = gKeysRepeat;
 
     // The tutorial presses A for the player after 100 frames, or shows
-    // its messages; around each message the first 0x200 bytes of the window
+    // its messages; around each message the first 512 bytes of the window
     // work (the tilemap's top eight rows) are saved and put back.
     if (backdrop->tutorialStep != 0) {
       s16 *saved;
       s32 size;
 
-      size = 0x200;
+      size = 512;
       saved = Heap_AllocEwram(size);
       pressedKeys = 0;
       repeatedKeys = 0;
@@ -434,11 +434,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       }
     }
 
-    // The Djinni figures, at a fixed 3/4 size (phase -0xc000), move once a
-    // second: step runs 0 to 29 over frames 5 to 34 of each 60 and holds.
-    // A given Djinni slides right 2 pixels a step from x 34 while hopping up
-    // to 6 pixels (half a sine turn over the 30 steps); in a trade the other
-    // slides left from x 99 the same way, mirrored.
+    // The Djinni figures, at a fixed 3/4 size (phase -(Q16_ONE * 3 / 4)), move
+    // once a second: step runs 0 to 29 over frames 5 to 34 of each 60 and
+    // holds. A given Djinni slides right 2 pixels a step from x 34 while
+    // hopping up to 6 pixels (half a sine turn over the 30 steps); in a trade
+    // the other slides left from x 99 the same way, mirrored.
     frame++;
     step = (frame % 60) - 5;
     if (step < 0) {
@@ -454,7 +454,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       s32 rise;
       s32 slide;
 
-      rise = -Iwram_MulQ16(16, Trig_Sin((step % 30) * 0x444));
+      rise = -Iwram_MulQ16(16, Trig_Sin((step % 30) * 1092));
       if (rise < -6) {
         rise = -6;
       }

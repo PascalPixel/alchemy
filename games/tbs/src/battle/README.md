@@ -1337,7 +1337,7 @@ Abilities and enemies are named from the label columns of their tables,
 `ability` and `enemy`, which follow the English release's text. The formulas
 are named from what `battle_arithmetic.c` computes, and the playback commands
 from what playback does with each. The shadow under each unit,
-`BATTLE_SHADOW_SPRITE`, is named from what the battle's recordings show.
+`SPRITE_BATTLE_SHADOW`, is named from what the battle's recordings show.
 
 Bits 0 and 1 of the `flags` column of `gAbilityBattleEffects`
 (`EFFECT_ON_DOWNED`, `EFFECT_OTHER_SIDE`) are read, but no row in either game

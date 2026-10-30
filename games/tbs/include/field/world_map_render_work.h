@@ -11,13 +11,13 @@
 /// The world map's perspective work (struct WorldMapView) as the world
 /// map overlay sees it, for the map's rotation.
 struct WorldMapRenderWork {
-  u8 beforeActive[0xfc];  ///< WorldMapView's fields before animationActive
-  s8 active;              ///< WorldMapView's animationActive; not read by name
-  u8 unused[3];           ///< WorldMapView's; no code names it
-  s16 first;              ///< WorldMapView's windowTop; not read by name
-  s16 second;             ///< WorldMapView's windowBottom; not read by name
-  u8 windowToPitch[0x16]; ///< WorldMapView's shown window, tiles and pitch
-  u16 rotation;           ///< WorldMapView's yaw, 1/65536 turns
+  u8 beforeActive[252]; ///< WorldMapView's fields before animationActive
+  s8 active;            ///< WorldMapView's animationActive; not read by name
+  u8 unused[3];         ///< WorldMapView's; no code names it
+  s16 first;            ///< WorldMapView's windowTop; not read by name
+  s16 second;           ///< WorldMapView's windowBottom; not read by name
+  u8 windowToPitch[22]; ///< WorldMapView's shown window, tiles and pitch
+  u16 rotation;         ///< WorldMapView's yaw, 1/65536 turns
 };
 
 STATIC_ASSERT(offsetof(struct WorldMapRenderWork, active) == 0xfc);

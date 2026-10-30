@@ -26,11 +26,11 @@ void Palette_UpdatePulseBrightness(void) {
     s32 red;
 
     // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
-    // from 0 to 2.0 (16.16), and a sixth of 1.0 (0x2aaa) is one step.
+    // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
     frameCount = gFrameCount;
     angle = (frameCount * 3U) << 10;
     color = palette[16];
-    brightness = (Q16_ONE - Trig_Cos(angle)) / 0x2AAA;
+    brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
 
     blue = (color >> 10) & channelMask;
     green = (color >> 5) & channelMask;
@@ -61,7 +61,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
   // UB: indexing past scalar gBattleCamera reaches another heap slot. Named
-  // slots add four bytes in the native EN trial (0xd8 to 0xdc).
+  // slots add four bytes in the native EN trial (216 to 220 bytes).
 #ifdef UBFIX
   struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =

@@ -261,7 +261,7 @@ help, and L or R with Select held sets the Psynergy under the hand.
 | `PSYNERGY_MODE_USE`  | 0              | choosing Psynergy to use                           |
 | `PSYNERGY_MODE_SET_L` | 1             | choosing the L shortcut                            |
 | `PSYNERGY_MODE_SET_R` | 2             | choosing the R shortcut                            |
-| `ABILITY_RANGE_ALL`  | `0xff`         | the Psynergy reaches the whole party               |
+| `ABILITY_RANGE_ALL`  | 255            | the Psynergy reaches the whole party               |
 | `LIST_PAGE_SIZE`     | 5              | Psynergy or items shown on one page of a list      |
 | `MENU_TARGET_WHOLE_PARTY` | 9         | the target id passed for Psynergy on the whole party |
 

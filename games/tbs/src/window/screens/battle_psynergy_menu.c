@@ -68,10 +68,10 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], -1);
   }
 
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 0x200);
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 0x201);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x210);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x211);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 512);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 513);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 528);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 529);
 
   iconSprite = &cursor;
   for (;;) {

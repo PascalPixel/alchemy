@@ -7,7 +7,7 @@
 /// The whirlwind sheet holds three 48x64 pictures, then the dust; the violet
 /// comets are decoded further on.
 #define PROCNE_DUST_OFFSETS (3 * (48 * 64))
-#define PROCNE_COMET_OFFSETS 0x3600
+#define PROCNE_COMET_OFFSETS 13824
 
 /// A whirlwind lifts the targets, then comets from a block of sprites in a
 /// violet sky strike them.
@@ -269,8 +269,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (point[index].z > 24)
             point[index].z -= 4;
           point[index].velocityY += point[index].velocityX * 2;
-          if (point[index].velocityY > 0x10000)
-            point[index].velocityY -= 0x10000;
+          if (point[index].velocityY > 65536)
+            point[index].velocityY -= 65536;
           point[index].velocityX += 50;
           if (point[index].velocityX > 4096)
             point[index].velocityX = 4096;

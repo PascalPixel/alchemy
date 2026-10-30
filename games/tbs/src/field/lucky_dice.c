@@ -103,7 +103,7 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 }
 
 /// Unused: the reciprocal of an 8.8 fixed-point value.
-UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
+UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 
 #include "battle_sprite_id.h"
 #include "heap_release.h"
@@ -164,15 +164,15 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #define DICE_WIN_X 9
 #define DICE_WIN_NUMBER_X 48
 #define DICE_WIN_LABEL_X DICE_LABEL_X
-#define DICE_KIND_X 0x278
+#define DICE_KIND_X 632
 #else
 #define DICE_WIN_X 10
 #define DICE_WIN_NUMBER_X 40
 #define DICE_WIN_LABEL_X 40
-#define DICE_KIND_X 0x280
+#define DICE_KIND_X 640
 #endif
 
-/// The used prefix of Lucky Dice's 0x618-byte work block (heap slot 45):
+/// The used prefix of Lucky Dice's 1,560-byte work block (heap slot 45):
 /// its sprites and windows. The allocation extends beyond these members.
 struct LuckyDiceSprites {
   u8 filler[200];                ///< Lucky Dice never touches these bytes
@@ -331,10 +331,10 @@ void LuckyDice_Run(void) {
   (void)&affineC;
   (void)&affineD;
   // Allocate the screen's work blocks and reset the camera and tasks.
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x200);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 512);
   diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
-  sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
+  sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 1560);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
   Stub_NoOpHook((s32)&ResourceId_BattleEffectFarCalls);
   Camera_ResetViewDefaults();
@@ -410,7 +410,7 @@ void LuckyDice_Run(void) {
   winnings = 0;
   payoutTimer = 0;
   // Unsigned arithmetic wraps before storage as signed fixed point. Signed
-  // subtraction grows the English routine from 0x1274 to 0x1280 bytes.
+  // subtraction grows the English routine from 4,724 to 4,736 bytes.
   for (index = 0; index != DICE_COUNT; index++) {
     diceWork->particles[index].x = ((Random16() & 127) - 64) << 16;
     diceWork->particles[index].y = (Random16() & 31) << 16;
@@ -683,7 +683,7 @@ void LuckyDice_Run(void) {
 
       rollingDie = &diceWork->particles[drawOrder[index]];
       // Projection reads the die's three coordinate words directly.
-      // Copying them to an array grows native EN from 0x1274 to 0x1294 bytes.
+      // Copying them to an array grows native EN from 4,724 to 4,756 bytes.
       Transform_ProjectPoint(rollingDie, screen);
       // Depth is clamped to 350..650; the nearer, the larger the die.
       if (screen[2] < 350) {
@@ -697,12 +697,12 @@ void LuckyDice_Run(void) {
       dieX = screen[0] - halfSize;
       dieY = screen[1] - halfSize;
       // An affine, double-size, 256-colour sprite using the die's own
-      // affine matrix (attr1 bits 9 to 13); 0x278 and 0x160 wrap in OAM's 9-
+      // affine matrix (attr1 bits 9 to 13); 632 and 352 wrap in OAM's 9-
       // and 8-bit fields to 120 across and 96 down.
       if (dieY + 96 > -16) {
         sprites->oam[spriteCount].attr01 =
-            ((drawOrder[index] << 25) | (((dieX + 0x278) & 0x1ff) << 16) |
-             ((dieY + 0x160) & 255)) |
+            ((drawOrder[index] << 25) | (((dieX + 632) & 0x1ff) << 16) |
+             ((dieY + 352) & 255)) |
             0x40002300;
         sprites->oam[spriteCount].attr2 =
             (gLuckyDice_FaceTiles[rollingDie->variant / DICE_ROLL_PER_TILE]
@@ -719,7 +719,7 @@ void LuckyDice_Run(void) {
         x = screen[0] - 2048 / (spriteDepth[drawOrder[index]] / 2 + 128);
         y = screen[1] + 768 / (spriteDepth[drawOrder[index]] / 2 + 128);
         sprites->oam[spriteCount].attr01 =
-            ((((x + 0x278) & 0x1ff) << 16) | ((y + 0x160) & 255)) | 0x80002000;
+            ((((x + 632) & 0x1ff) << 16) | ((y + 352) & 255)) | 0x80002000;
         if (index == 1) {
           sprites->oam[spriteCount].attr01 |= 0x10000000;
         }
@@ -749,8 +749,8 @@ void LuckyDice_Run(void) {
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
         sprites->oam[spriteCount].attr01 =
-            (((index + 2) << 25) | (((shadowX + 0x270) & 0x1ff) << 16)) |
-            ((shadowY + 0x158) & 255) | 0x40002300;
+            (((index + 2) << 25) | (((shadowX + 624) & 0x1ff) << 16)) |
+            ((shadowY + 344) & 255) | 0x40002300;
         sprites->oam[spriteCount].attr2 = 0x890;
         spriteCount++;
       }
@@ -819,7 +819,7 @@ void LuckyDice_Run(void) {
         // Gravity; on the board a die bounces, loses speed, sometimes kicks
         // off in a random direction, and spins less. Once it barely bounces
         // it stops, turned to the nearest face.
-        rollingDie->velocityY += -0x8000;
+        rollingDie->velocityY += -Q16_ONE / 2;
         if (rollingDie->y <= 0) {
           rollingDie->y = 0;
           rollingDie->velocityY = -rollingDie->velocityY * 48 / 64;

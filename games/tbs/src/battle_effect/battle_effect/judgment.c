@@ -28,24 +28,24 @@ struct JudgmentWork {
 
 #define JUDGMENT_GATHER_FRAMES 160    ///< frames of the gathering
 #define JUDGMENT_SWEEP_FRAMES 320     ///< frames of the sweep
-#define JUDGMENT_SHEET_FLARE_B 0x4240 ///< the second 24x24 flare picture
+#define JUDGMENT_SHEET_FLARE_B 16960  ///< the second 24x24 flare picture
 #define JUDGMENT_FORMATION_OBJECTS 16 ///< sprites in the formation, 4x4
 #define JUDGMENT_DEBRIS_OBJECTS 16    ///< debris sprites of the sweep
-#define JUDGMENT_SHEET_BURST 0x600    ///< the burst's quarter pictures
+#define JUDGMENT_SHEET_BURST 1536     ///< the burst's quarter pictures
 /// The tornado sheet, whose six glint pictures are the burst's shards
 /// (gJudgment_ShardCells counts from the sheet's start).
-#define JUDGMENT_SHEET_TORNADO 0x95c
+#define JUDGMENT_SHEET_TORNADO 2396
 /// The explosion's four 32x54 pictures, loaded over the flares on the sweep's
 /// frame 64.
-#define JUDGMENT_SHEET_EXPLOSION 0x4000
+#define JUDGMENT_SHEET_EXPLOSION 16384
 /// The first 24x24 flare picture, from the crescent sheet the sweep loads.
-#define JUDGMENT_SHEET_FLARE_A 0x4000
+#define JUDGMENT_SHEET_FLARE_A 16384
 /// The 16x17 small flash, the first of OverlayImageA's three pictures.
-#define JUDGMENT_SHEET_FLASH_SMALL 0x6000
+#define JUDGMENT_SHEET_FLASH_SMALL 24576
 /// The 24x41 large flash picture.
-#define JUDGMENT_SHEET_FLASH_LARGE 0x6110
+#define JUDGMENT_SHEET_FLASH_LARGE 24848
 /// The 22x44 flash streak picture.
-#define JUDGMENT_SHEET_FLASH_STREAK 0x64e8
+#define JUDGMENT_SHEET_FLASH_STREAK 25832
 #define JUDGMENT_EXPLOSION_CELL_BYTES 1728 ///< bytes in each explosion picture
 #define JUDGMENT_WAVE_SIZE 120             ///< the wave picture is 120x120
 /// DMA word that fills the 128x128 canvas.
@@ -208,7 +208,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
 
   // The gathering. A or B ends it after frame 4; on frame 143 the whole
-  // canvas flashes to level 42 (0x2a).
+  // canvas flashes to level 42.
   for (frame = 0; frame != JUDGMENT_GATHER_FRAMES &&
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
@@ -360,7 +360,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         n = 6;
       }
       // Four explicit draws: a shared load, draw and release helper grew
-      // this runner by eight bytes in English (0x167c to 0x1684).
+      // this runner by eight bytes in English (5756 to 5764 bytes).
       high = gJudgment_BurstHeights[n];
       cell = gJudgment_BurstCells[n] + JUDGMENT_SHEET_BURST;
 
@@ -557,9 +557,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     // Frame 64: BG2 back to twice the width, with BG2PA and BG2X queued as a
-    // halfword and a word (0x20000 and 0x30000 are IO_WRITE_16 and
-    // IO_WRITE_32), which VBlank writes once this frame is finished; clear
-    // the canvas and load the explosion and flash pictures.
+    // halfword and a word (IO_WRITE_16 and IO_WRITE_32), which VBlank writes
+    // once this frame is finished; clear the canvas and load the explosion
+    // and flash pictures.
     if (frame == 64) {
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_16);
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_32);

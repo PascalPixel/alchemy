@@ -11,22 +11,23 @@
 #include "character_ids.h"
 #include "sprite_ids.h"
 #include "field_work.h"
+#include "fixed_math.h"
 
 /// The eight compass headings in 1/65536 turns, from east through south: a
-/// quarter turn is 0x4000, and the screen's y axis points south.
+/// quarter turn is TRIG_TURN / 4, and the screen's y axis points south.
 enum Facing {
-  FACING_EAST = 0x0000,
-  FACING_SOUTHEAST = 0x2000,
-  FACING_SOUTH = 0x4000,
-  FACING_SOUTHWEST = 0x6000,
-  FACING_WEST = 0x8000,
-  FACING_NORTHWEST = 0xa000,
-  FACING_NORTH = 0xc000,
-  FACING_NORTHEAST = 0xe000
+  FACING_EAST = 0,
+  FACING_SOUTHEAST = TRIG_TURN / 8,
+  FACING_SOUTH = TRIG_TURN / 4,
+  FACING_SOUTHWEST = TRIG_TURN * 3 / 8,
+  FACING_WEST = TRIG_TURN / 2,
+  FACING_NORTHWEST = TRIG_TURN * 5 / 8,
+  FACING_NORTH = TRIG_TURN * 3 / 4,
+  FACING_NORTHEAST = TRIG_TURN * 7 / 8
 };
 
 /// A sixteenth of a turn, half the step between two headings.
-enum { FACING_STEP = 0x1000 };
+enum { FACING_STEP = TRIG_TURN / 16 };
 
 /// True for a heading strictly between FACING_NORTHWEST and FACING_NORTHEAST.
 #define FACING_IS_NORTH(facing)                                                \
@@ -104,14 +105,14 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 /// in gScenes.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
-  SEQUENCE_NONE = 0x1fb,
-  SEQUENCE_SLOTS = 0x1fc, ///< Lucky Wheels, from its room in Tolbi,
-                          ///< SceneId_StuccoRoomsC (lucky_wheels.c)
-  SEQUENCE_DICE = 0x1fd,  ///< Lucky Dice, from its room in Tolbi,
-                          ///< SceneId_StuccoRoomsC (lucky_dice.c)
+  SEQUENCE_NONE = 507,
+  SEQUENCE_SLOTS = 508, ///< Lucky Wheels, from its room in Tolbi,
+                        ///< SceneId_StuccoRoomsC (lucky_wheels.c)
+  SEQUENCE_DICE = 509,  ///< Lucky Dice, from its room in Tolbi,
+                        ///< SceneId_StuccoRoomsC (lucky_dice.c)
   /// A battle; the entrance is the formation, and the result -1 a
   /// defeat.
-  SEQUENCE_BATTLE = 0x1fe
+  SEQUENCE_BATTLE = 510
 };
 
 /// An exit into a battle: exit kind `exit` fights formation `group`.
@@ -216,9 +217,9 @@ struct Trigger {
   s16 subject;
   s16 condition; ///< CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else
                  ///< the flag clear
-  /// A message below 0x10000, else an event; for an exit, the exit
-  /// kind its scene's exit table matches, and for an examine trigger, a FIND_
-  /// value.
+  /// A message below TRIGGER_RESULT_MESSAGE_END, else an event; for an exit,
+  /// the exit kind its scene's exit table matches, and for an examine trigger,
+  /// a FIND_ value.
   u32 value;
 };
 
@@ -404,8 +405,8 @@ enum ExamineTarget {
 /// ENCOUNTER_ZONE_MIMIC.
 #define FIND_MIMIC 0x00500000
 
-/// An event as a Trigger value; its address is above 0x10000, so
-/// it is never taken for a message.
+/// An event as a Trigger value; its address is above
+/// TRIGGER_RESULT_MESSAGE_END, so it is never taken for a message.
 #define EVENT(script) ((u32)(script))
 #define TRIGGERS_END 0xffffffff ///< ends a trigger table
 

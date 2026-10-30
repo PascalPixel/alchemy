@@ -8,7 +8,7 @@ Field_DefaultGridCells:
 	.byte 0x01	@ PACKER: left in the buffer by Field_PerspectiveDataA+0x39eb
 	.global Field_DefaultTileAnimation
 Field_DefaultTileAnimation:
-	.incbin "games/tbs/src/map/default/tileset_anims.table.lz"
+	.incbin "games/tbs/src/map/default/tileset_anims.script.lz"
 	.byte 0x6b, 0x4e, 0xad	@ PACKER: left in the buffer by Field_DefaultGridCells+0x151
 	.global Field_DefaultCellPictureAttributes
 Field_DefaultCellPictureAttributes:

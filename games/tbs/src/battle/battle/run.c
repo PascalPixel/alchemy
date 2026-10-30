@@ -13,7 +13,7 @@
 /// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
 /// Battle Arena passes the opponent's party to the battle in a copy of this
 /// block (scene/battle_arena.c).
-#define ENEMY_UNITS_SIZE 0x7c8
+#define ENEMY_UNITS_SIZE (6 * BATTLE_UNIT_SIZE)
 
 /// Fights the battle against the enemy formation enemyGroup, from the
 /// opening transition to the end, and returns how it ended: the number of
@@ -64,7 +64,7 @@ s32 Battle_Run(s32 enemyGroup) {
   battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
   enemyUnits = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
   view = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
-  HeapSlot_AllocEwram(11, 0x280);
+  HeapSlot_AllocEwram(11, 640);
   focus = camera->focus;
   /* FAKEMATCH(dead): result set to 0, a store no read sees, whose register
    * CSE takes the setup's zeros from; without it, 122 of 645 instructions
@@ -96,8 +96,8 @@ s32 Battle_Run(s32 enemyGroup) {
                                 sizeof(struct BattleMessageWork));
   Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleMessageWork));
   battle->background = Event_GetSpecialValueFar();
-  HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 0xe00);
-  HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 0x600);
+  HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 3584);
+  HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
   ActorSystem_InitializeFar(ACTOR_SYSTEM_BATTLE);
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0)
     WindowSystem_InitBattleFar(1);
@@ -105,12 +105,12 @@ s32 Battle_Run(s32 enemyGroup) {
     WindowSystem_InitBattleFar(0);
 
   // The camera's starting view, in 16.16 pixels and 1/65536 turns: the focus
-  // 64 pixels up, the eye at (0, 180, 64), a yaw of 0x2800 and a distance of
-  // 256 pixels. Then the enemies.
+  // 64 pixels up, the eye at (0, 180, 64), a yaw of 5/32 of a turn and a
+  // distance of 256 pixels. Then the enemies.
   SET_VECTOR(focus, 0, 64 << 16, 0);
   SET_VECTOR(camera->eye, 0, 180 << 16, 64 << 16);
-  camera->yaw = 0x2800;
-  camera->pitch = 0x5000;
+  camera->yaw = TRIG_TURN * 5 / 32;
+  camera->pitch = TRIG_TURN * 5 / 16;
   camera->distance = 256 << 16;
   enemyCount = BattleFormation_BuildEnemyList(battle->formation);
 
@@ -225,7 +225,7 @@ s32 Battle_Run(s32 enemyGroup) {
       battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
     // The camera eases back to its starting yaw over 60 frames, and the
     // party status window is drawn with or without its Djinn column.
-    view->targetYaw = 0x2800;
+    view->targetYaw = TRIG_TURN * 5 / 32;
     view->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);
 

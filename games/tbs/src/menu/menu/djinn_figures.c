@@ -63,8 +63,8 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 /// pixels, in 16.16. As for the party figures
 /// (Menu_UpdateEntryActorTransforms), the height is 482 less the origin and
 /// the ground lies that far below the row, so the image stands at its row.
-#define FOUR_OBJECT_MOTION_FULL_SCALE 0x10000u
-#define FOUR_OBJECT_MOTION_ORIGIN_Y 0x01e20000u
+#define FOUR_OBJECT_MOTION_FULL_SCALE ((u32)Q16_ONE)
+#define FOUR_OBJECT_MOTION_ORIGIN_Y (482u << 16)
 
 /// Projects the four sprites at full scale from their saved row positions.
 /// Task, each frame from DjinnFigures_InitializeTopRow. The
@@ -103,7 +103,7 @@ void DjinnFigures_UpdateAllPositions(void) {
 /// Task, each frame from DjinnFigures_InitializeBottomRow
 /// (the Djinn menu); it also animates the page arrows. A figure whose y has
 /// DjinnFigures_SetSlotPosition's negative mark (a recovering Djinni)
-/// faces 0x8000 instead of 0x4000.
+/// faces FACING_WEST instead of FACING_SOUTH.
 void DjinnFigures_UpdateBottomRow(void) {
   struct ItemMenuFiguresView *menu = gMenuWork;
   s32 objectIndex;
@@ -124,7 +124,7 @@ void DjinnFigures_UpdateBottomRow(void) {
 
       animation->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale
-      // closes a third of its gap to full size (0x10000) each frame.
+      // closes a third of its gap to full size (Q16_ONE) each frame.
       phase = menu->phases[objectIndex];
       if (phase < 0) {
         scale.x = -phase;
@@ -144,9 +144,9 @@ void DjinnFigures_UpdateBottomRow(void) {
        * so rowY takes r2 and limit keeps r3; as no statement, 81 of 119
        * instructions differ in tbs-en. */
       scale.x = scale.x;
-      limit = 0x8000;
+      limit = FACING_WEST;
       if (rowY >= 0)
-        limit = 0x4000;
+        limit = FACING_SOUTH;
       Actor_ApplyProjectedPlacementFar(animation, &placement, &scale, limit);
     }
     objectIndex++;

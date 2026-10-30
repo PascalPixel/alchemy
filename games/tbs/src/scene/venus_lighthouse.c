@@ -1046,7 +1046,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   landing.x = (leader->x.fixed & 0xfff00000) + PIXELS(8);
   landing.y = leader->y.fixed;
   landing.z = (leader->z.fixed & 0xfff00000) + PIXELS(8);
-  direction = (leader->facing + 0x2000) & 0xc000;
+  direction = (leader->facing + TRIG_TURN / 8) & 0xc000;
   Vector_AddPolarOffset(PIXELS(16), direction, &landing);
 #else
   direction = leader->facing >> 12;
@@ -1062,7 +1062,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
     landing.x = (leader->x.fixed & 0xfff00000) + PIXELS(8);
     landing.y = leader->y.fixed;
     landing.z = (leader->z.fixed & 0xfff00000) + PIXELS(8);
-    Vector_AddPolarOffset(PIXELS(32), (leader->facing + 0x2000) & 0xc000,
+    Vector_AddPolarOffset(PIXELS(32), (leader->facing + TRIG_TURN / 8) & 0xc000,
                           &landing);
 #else
     step = gPushedActor_DirectionSteps[direction];
@@ -2085,7 +2085,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
         VenusLighthouse_CreateLight(888, 680, gVenusThirdFloorLightToNortheast);
     secondGateEffect =
         VenusLighthouse_CreateLight(888, 680, gVenusThirdFloorLightToSoutheast);
-    // SC_RELEASE clears the script pointer; work value 0x28 signals the
+    // SC_RELEASE clears the script pointer; work value 40 signals the
     // opening sound earlier, while the gate effects are still running.
     while ((firstGateEffect)->script != 0 || (secondGateEffect)->script != 0) {
       if (firstGateEffect->riseEnabled != 0 ||
@@ -3401,9 +3401,9 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
 static __inline__ void
 VenusLighthouse_RubbleSetScaleAndSpin(struct EffectOptions *options) {
   options->startScaleX =
-      ((u32)(Import_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+      ((u32)(Import_RandomNext() << 1) >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
   options->startScaleY =
-      ((u32)(Import_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+      ((u32)(Import_RandomNext() << 1) >> 16) * (Q16_ONE * 3 / 10) + 0x17ffc;
   options->spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
 }
 

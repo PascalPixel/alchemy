@@ -1,225 +1,225 @@
 	.section .sym_ewram,"aw",%nobits
 	.global gSaveBuffer
 gSaveBuffer:
-	.space 0x00000040
+	.space 64
 	.global gGameFlagBytes
 gGameFlagBytes:
-	.space 0x00000200
+	.space 512
 	.global gMainRoutineWork
 gMainRoutineWork:
-	.space 0x00000140
+	.space 320
 	.global gRareItemStock
 gRareItemStock:
-	.space 0x000000fc
+	.space 252
 	.global gOverflowItem
 gOverflowItem:
-	.space 0x0000000e
+	.space 14
 	.global gPlayerActorId
 gPlayerActorId:
-	.space 0x0000005a
+	.space 90
 	.global gBattleArenaRecord
 gBattleArenaRecord:
-	.space 0x00000b1c
+	.space 2844
 	.global gSceneLocalState
 gSceneLocalState:
-	.space 0x00000078
+	.space 120
 	.global gInventorySnapshot
 gInventorySnapshot:
-	.space 0x0000008c
+	.space 140
 	@ Slot ids, actor copies and their sprite state: ActorSnapshot.
 	.global gActorSnapshot
 gActorSnapshot:
-	.space 0x00000efc
+	.space 3836
 	.global gSleepActive
 gSleepActive:
-	.space 0x00000004
+	.space 4
 	.global gSaveSlot
 gSaveSlot:
-	.space 0x00000004
+	.space 4
 	.global gSerialSendSize
 gSerialSendSize:
-	.space 0x00000004
+	.space 4
 	.global gTitleBattleOptionEnabled
 gTitleBattleOptionEnabled:
-	.space 0x00000004
+	.space 4
 	.global gTitleSendOptionEnabled
 gTitleSendOptionEnabled:
-	.space 0x00000010
+	.space 16
 	.global gSerialPeerPayloads
 gSerialPeerPayloads:
-	.space 0x00000004
+	.space 4
 	.global gLinkPeerSignatures
 gLinkPeerSignatures:
-	.space 0x0000005c
+	.space 92
 	.global gSerialSendSource
 gSerialSendSource:
-	.space 0x00000010
+	.space 16
 	.global gIoWriteQueue
 gIoWriteQueue:
-	.space 0x00000190
+	.space 400
 	.global gSerialTransfer
 gSerialTransfer:
-	.space 0x00000018
+	.space 24
 	.global gSerialReceivedSize
 gSerialReceivedSize:
-	.space 0x00000008
+	.space 8
 	.global gSerialWork
 gSerialWork:
-	.space 0x00000160
+	.space 352
 	.global gLinkExchangeState
 gLinkExchangeState:
-	.space 0x00000004
+	.space 4
 	.global gSerialBlockNumber
 gSerialBlockNumber:
-	.space 0x00000004
+	.space 4
 	.global gBattleRandomSeed
 gBattleRandomSeed:
-	.space 0x00000004
+	.space 4
 	.global gSerialReceiveDestination
 gSerialReceiveDestination:
-	.space 0x00000004
+	.space 4
 	.global gSavedStack
 gSavedStack:
-	.space 0x00000c50
+	.space 3152
 	.global gBgmRestoreDelay
 gBgmRestoreDelay:
-	.space 0x00000004
+	.space 4
 	.global gSound_UnreadByte
 gSound_UnreadByte:
-	.space 0x00000004
+	.space 4
 	.global gBgmVolume
 gBgmVolume:
-	.space 0x00000004
+	.space 4
 	.global gBgmTempoPitchStep
 gBgmTempoPitchStep:
-	.space 0x00000004
+	.space 4
 	.global gBgmVolumeStep
 gBgmVolumeStep:
-	.space 0x00000004
+	.space 4
 	.global gBgmFadeRequested
 gBgmFadeRequested:
-	.space 0x0000000c
+	.space 12
 	.global gMusicPlayerLastSound
 gMusicPlayerLastSound:
-	.space 0x00000010
+	.space 16
 	.global gBgmTempoPitchTarget
 gBgmTempoPitchTarget:
-	.space 0x00000004
+	.space 4
 	.global gBgmVolumeTarget
 gBgmVolumeTarget:
-	.space 0x00000004
+	.space 4
 	.global gBgmTempoPitch
 gBgmTempoPitch:
-	.space 0x00000004
+	.space 4
 	.global gCurrentBgm
 gCurrentBgm:
-	.space 0x00000004
+	.space 4
 	.global gSoundCommandMask
 gSoundCommandMask:
-	.space 0x00000010
+	.space 16
 	.global gSoundInfo
 gSoundInfo:
-	.space 0x00000fb0
+	.space 4016
 	.global gMPlayJumpTable
 gMPlayJumpTable:
-	.space 0x00000090
+	.space 144
 	.global gCgbChans
 gCgbChans:
-	.space 0x00000100
+	.space 256
 	.global gMPlayInfo_SE5
 gMPlayInfo_SE5:
-	.space 0x00000040
+	.space 64
 	.global gMPlayInfo_SE6
 gMPlayInfo_SE6:
-	.space 0x00000040
+	.space 64
 	.global gMPlayInfo_Jingle
 gMPlayInfo_Jingle:
-	.space 0x00000040
+	.space 64
 	.global gMPlayInfo_SE7
 gMPlayInfo_SE7:
-	.space 0x00000040
+	.space 64
 	.global gMPlayInfo_BGM
 gMPlayInfo_BGM:
-	.space 0x00000040
+	.space 64
 	.global gMPlayInfo_MenuSE
 gMPlayInfo_MenuSE:
-	.space 0x00000040
+	.space 64
 	.global gMPlayInfo_SE4
 gMPlayInfo_SE4:
-	.space 0x00000040
+	.space 64
 	.global gMPlayMemAccArea
 gMPlayMemAccArea:
-	.space 0x00000010
+	.space 16
 	.global gMPlayInfo_ActionSE
 gMPlayInfo_ActionSE:
-	.space 0x00000040
+	.space 64
 	.global gMPlayTrack_Jingle
 gMPlayTrack_Jingle:
-	.space 0x00000140
+	.space 320
 	.global gMPlayTrack_BGM
 gMPlayTrack_BGM:
-	.space 0x00000320
+	.space 800
 	.global gMPlayTrack_MenuSE
 gMPlayTrack_MenuSE:
-	.space 0x000000a0
+	.space 160
 	.global gMPlayTrack_ActionSE
 gMPlayTrack_ActionSE:
-	.space 0x000000a0
+	.space 160
 	.global gMPlayTrack_SE4
 gMPlayTrack_SE4:
-	.space 0x000000a0
+	.space 160
 	.global gMPlayTrack_SE5
 gMPlayTrack_SE5:
-	.space 0x000000a0
+	.space 160
 	.global gMPlayTrack_SE6
 gMPlayTrack_SE6:
-	.space 0x000000a0
+	.space 160
 	.global gMPlayTrack_SE7
 gMPlayTrack_SE7:
-	.space 0x000000a0
-	.space 0x00000040
+	.space 160
+	.space 64
 	.global gWaitForFlashWrite
 gWaitForFlashWrite:
-	.space 0x00000004
+	.space 4
 	.global gProgramFlashSector
 gProgramFlashSector:
-	.space 0x00000004
+	.space 4
 	.global gFlash
 gFlash:
-	.space 0x00000004
+	.space 4
 	.global gFlashNumRemainingBytes
 gFlashNumRemainingBytes:
-	.space 0x00000004
+	.space 4
 	.global gEraseFlashChip
 gEraseFlashChip:
-	.space 0x00000004
+	.space 4
 	.global gEraseFlashSector
 gEraseFlashSector:
-	.space 0x00000004
+	.space 4
 	.global gFlashMaxTime
 gFlashMaxTime:
-	.space 0x00000004
+	.space 4
 	.global gFlashReadRoutine
 gFlashReadRoutine:
-	.space 0x00000004
+	.space 4
 	.global gFlashTimerNum
 gFlashTimerNum:
-	.space 0x00000002
+	.space 2
 	.global gFlashTimerCount
 gFlashTimerCount:
-	.space 0x00000002
+	.space 2
 	.global gFlashTimeoutFlag
 gFlashTimeoutFlag:
-	.space 0x00000004
+	.space 4
 	.global gFlashTimerReg
 gFlashTimerReg:
-	.space 0x00000004
+	.space 4
 	.global gFlashSavedIme
 gFlashSavedIme:
-	.space 0x000033d4
+	.space 13268
 	.global gOverlayArea
 gOverlayArea:
-	.space 0x00008000
+	.space 32768
 @ A layout's 64 KB of cells (Tile_ConvertMapGrid) start here and run on
 @ through gActorSpriteSlots and gDecodeBuffer, so neither holds anything else
 @ while a layout is loaded. Only code that loads the cells again afterwards
@@ -229,34 +229,34 @@ gOverlayArea:
 @ animation reads only past gDecodeBuffer, from gMapGridAnimTiles.
 	.global gMapGridCellBuffer
 	.type gMapGridCellBuffer, %object
-	.size gMapGridCellBuffer, 0xc000
+	.size gMapGridCellBuffer, 49152
 gMapGridCellBuffer:
-	.space 0x00008000
+	.space 32768
 	.global gActorSpriteSlots
 gActorSpriteSlots:
-	.space 0x00004000
+	.space 16384
 	.global gDecodeBuffer
 	.type gDecodeBuffer, %object
-	.size gDecodeBuffer, 0x4000
+	.size gDecodeBuffer, 16384
 gDecodeBuffer:
-	.space 0x00004000
+	.space 16384
 	.global gCellPictures
 	.type gCellPictures, %object
-	.size gCellPictures, 0x8000
+	.size gCellPictures, 32768
 gCellPictures:
-	.space 0x00008000
+	.space 32768
 	.global gMapGridAnimTiles
 	.type gMapGridAnimTiles, %object
-	.size gMapGridAnimTiles, 0x4000
+	.size gMapGridAnimTiles, 16384
 gMapGridAnimTiles:
-	.space 0x00004000
+	.space 16384
 	.global gMapGridShapes
 	.type gMapGridShapes, %object
-	.size gMapGridShapes, 0x4000
+	.size gMapGridShapes, 16384
 gMapGridShapes:
-	.space 0x00004000
+	.space 16384
 	.global gEwramHeap
 gEwramHeap:
-	.space 0x00008000
+	.space 32768
 	.global gBgTileBuffer
 gBgTileBuffer:

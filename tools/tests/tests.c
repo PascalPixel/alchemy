@@ -273,13 +273,31 @@ graphics(void)
 	Buffer gridReference = {gridBytes, sizeof(gridBytes), 0};
 	equal(&grid, &gridReference, "a grid writes behaviors, shapes, cell pictures");
 	free(grid.data);
-	textFile("screen.txt", "palette:14\n80 3ffh\n\n1v 2hv\n");
+	textFile("bases.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n8fff:255:12\n");
+	RUN("graphics", true, "bases.txt", "bases.grid");
+	Buffer bases = readFile("bases.grid");
+	uint8_t basesBytes[] = {255, 12, 0xff, 0x8f};
+	Buffer basesReference = {basesBytes, sizeof(basesBytes), 0};
+	equal(&bases, &basesReference,
+		  "a grid reads its picture in hex, behavior and shape in decimal");
+	free(bases.data);
+	textFile("hexbehavior.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n1:ff\n");
+	RUN("graphics", false, "hexbehavior.txt", "hexbehavior.grid");
+	textFile("wideshape.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n1:0:256\n");
+	RUN("graphics", false, "wideshape.txt", "wideshape.grid");
+	textFile("hexfill.txt", "grid:1x1\tat:0,0\tfill:0:a:0\n1\n");
+	RUN("graphics", false, "hexfill.txt", "hexfill.grid");
+	textFile("screen.txt", "palette:14\n128 1023h\n\n1v 2hv\n");
 	RUN("graphics", true, "screen.txt", "screen.tilemap");
 	Buffer screen = readFile("screen.tilemap");
 	uint8_t screenBytes[] = {0x80, 0xe0, 0xff, 0xe7, 1, 0xe8, 2, 0xec};
 	Buffer screenReference = {screenBytes, sizeof(screenBytes), 0};
 	equal(&screen, &screenReference, "a tile map writes tile, flips, palette");
 	free(screen.data);
+	textFile("hextile.txt", "palette:0\n3ffh\n");
+	RUN("graphics", false, "hextile.txt", "hextile.tilemap");
+	textFile("widetile.txt", "palette:0\n1024\n");
+	RUN("graphics", false, "widetile.txt", "widetile.tilemap");
 	textFile("ragged.txt", "palette:0\n1 2\n3\n");
 	RUN("graphics", false, "ragged.txt", "ragged.tilemap");
 	textFile("walls.txt", "0123 4567\n89ab cdef\n0000 1111\n2222 3333\n\n"
@@ -311,6 +329,47 @@ graphics(void)
 	Buffer nameReference = {nameBytes, sizeof(nameBytes), 0};
 	equal(&names, &nameReference, "a string column is padded with zeros");
 	free(names.data);
+	textFile("anims.tsv", "channel\t1\npicture\t1536\t2\t1152\t10\njump\t0\n"
+						  "paused\t10\nstop\nend\n");
+	RUN("graphics", true, "anims.tsv", "anims.script");
+	Buffer anims = readFile("anims.script");
+	uint8_t animBytes[] = {0x01, 0xfd, 0x00, 0x06, 0x02, 0x00, 0x80, 0x04,
+						   0x0a, 0x00, 0x00, 0xfe, 0x8a, 0xfd, 0xff, 0xfe,
+						   0xff, 0xff};
+	Buffer animReference = {animBytes, sizeof(animBytes), 0};
+	equal(&anims, &animReference,
+		  "script operands are decimal; paused sets the marker's bit 7");
+	free(anims.data);
+	textFile("anims.tsv", "paused\t128\n");
+	RUN("graphics", false, "anims.tsv", "anims.script");
+	Image icon = {.width = 32, .height = 32, .depth = 4};
+	for (unsigned i = 0; i < 48; i++)
+		byte(&icon.palette, i * 8 % 256);
+	for (unsigned i = 0; i < 32 * 32; i++)
+		byte(&icon.pixels, i % 3);
+	Buffer iconPng = writeImage(&icon);
+	writeFile("icon.png", &iconPng);
+	free(iconPng.data);
+	freeImage(&icon);
+	textFile("icons.tsv", "align\t32\nicon\n-\n");
+	RUN("graphics", true, "icons.tsv", "icons.icons4");
+	Buffer icons = readFile("icons.icons4");
+	check(icons.len % 32 == 0 && read16(icons.data) == 4 &&
+			  read16(icons.data + 2) == 0,
+		  "an icon bank's alignment is decimal and the empty slot has no offset");
+	free(icons.data);
+	textFile("icons.tsv", "align\t20\nicon\n");
+	RUN("graphics", false, "icons.tsv", "icons.icons4");
+	writeFile("glyph.png", &png);
+	textFile("glyph.tsv", "first\t41\ntop\t2\nrows\t10\n41\t12\n");
+	RUN("graphics", true, "glyph.png", "glyph.font");
+	Buffer glyph = readFile("glyph.font");
+	check(glyph.len == 22 && read16(glyph.data) == 12 &&
+			  read16(glyph.data + 2) == 0xffff,
+		  "a font's codes are hex, its rows and widths decimal");
+	free(glyph.data);
+	textFile("glyph.tsv", "first\t41\ntop\t0\nrows\tf\n41\t6\n");
+	RUN("graphics", false, "glyph.png", "glyph.font");
 	textFile("long.tsv", "name:str2\n\"abc\"\n");
 	RUN("graphics", false, "long.tsv", "long.table");
 	RUN("graphics", false, "tiles.png", "tiles.4bpp", "-mwidth", "0");
@@ -789,6 +848,36 @@ overlays(void)
 }
 
 static void
+enums(void)
+{
+	textFile("ids.h", "#ifndef IDS_H\n"
+					  "enum Id {\n"
+					  "  /// A comment, enum Fake { NOT_THIS },\n"
+					  "  ID_FIRST, /* also not { this } */\n"
+					  "  ID_SECOND = 0x10,\n"
+					  "  ID_THIRD,\n"
+					  "  ID_AGAIN = ID_FIRST\n"
+					  "};\n"
+					  "enum { ANON = -2u, ANON_NEXT };\n"
+					  "#endif\n");
+	RUN("enums", true, "ids.h", "ids.inc");
+	Buffer out = readFile("ids.inc");
+	check(strstr((char *) out.data, "\t.equiv ID_FIRST, 0\n"
+									 "\t.equiv ID_SECOND, 16\n"
+									 "\t.equiv ID_THIRD, 17\n"
+									 "\t.equiv ID_AGAIN, 0\n"
+									 "\t.equiv ANON, -2\n"
+									 "\t.equiv ANON_NEXT, -1\n") &&
+			  !strstr((char *) out.data, "NOT_THIS"),
+		  "enum constants take their values in order");
+	free(out.data);
+	textFile("bad.h", "enum Bad {\n#if X\n  BAD_A,\n#endif\n};\n");
+	RUN("enums", false, "bad.h", "bad.inc");
+	textFile("bad.h", "enum Bad { BAD_A = 1 << 2 };\n");
+	RUN("enums", false, "bad.h", "bad.inc");
+}
+
+static void
 removeTree(const char *path)
 {
 	DIR *dir = opendir(path);
@@ -819,7 +908,7 @@ main(int argc, char **argv)
 	char scratch[] = "/tmp/alchemy-tools-XXXXXX";
 	check(mkdtemp(scratch) != NULL && !chdir(scratch), "create test directory");
 	const char *names[] = {"graphics", "audio",	  "music",	"text",
-						   "deps",	   "objects", "header", "overlays"};
+						   "deps",	   "objects", "header", "overlays", "enums"};
 	for (size_t i = 0; i < sizeof(names) / sizeof(*names); i++)
 		RUN(names[i], true, "--help");
 	compression();
@@ -833,6 +922,7 @@ main(int argc, char **argv)
 	buildFiles();
 	header();
 	overlays();
+	enums();
 	check(!chdir("/"), "leave test directory");
 	removeTree(scratch);
 	free(tools);

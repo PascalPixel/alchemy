@@ -73,7 +73,7 @@ struct Actor {
   s32 targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
   s32 targetZ; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
   /// The share of its falling speed kept as it bounces on landing, 16.16
-  /// fixed point (0x4000 when created); a floating actor's phase instead.
+  /// fixed point (a quarter when created); a floating actor's phase instead.
   s32 bounce;
   /// Taken off velocityY each frame while it is above the ground, in 16.16
   /// fixed-point pixels per frame (Q16_ONE when created); also scales a
@@ -134,7 +134,7 @@ struct Actor {
     };
     /// Avoid's caster (FieldEffect_UpdatePairedArcSpawner).
     struct {
-      s16 arcPhase;  ///< 1 spins the caster 0xc00 a frame
+      s16 arcPhase;  ///< 1 spins the caster 3/64 turn a frame
       s16 arcFrames; ///< frames since the arcs started
     };
     /// A Venus Djinni's falling motes

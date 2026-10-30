@@ -15,7 +15,7 @@ Flash_MaxTimePanasonic:
 	flash_max_time 500, 0xffbd, 0xc2
 	.global Flash_ChipMacronix
 Flash_ChipMacronix:
-	flash_setup ProgramFlashSector, EraseFlashChip, EraseFlashSector, WaitForFlashWrite, Flash_MaxTimeMacronix, 0x10000, 0x1000, 12, 16, 0, 3, 1, 0x1cc2
+	flash_setup ProgramFlashSector, EraseFlashChip, EraseFlashSector, WaitForFlashWrite, Flash_MaxTimeMacronix, 65536, 4096, 12, 16, 0, 3, 1, 0x1cc2
 	.global Flash_ChipPanasonic
 Flash_ChipPanasonic:
-	flash_setup ProgramFlashSector, EraseFlashChip, EraseFlashSector, WaitForFlashWrite, Flash_MaxTimePanasonic, 0x10000, 0x1000, 12, 16, 0, 0, 2, 0x1b32
+	flash_setup ProgramFlashSector, EraseFlashChip, EraseFlashSector, WaitForFlashWrite, Flash_MaxTimePanasonic, 65536, 4096, 12, 16, 0, 0, 2, 0x1b32

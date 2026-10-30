@@ -1,11 +1,11 @@
-channel	0x0
-picture	0x60a	8	0x18	20
-picture	0x62a	8	0x18	20
-picture	0x64a	8	0x18	20
-picture	0x66a	8	0x18	20
-picture	0x68a	8	0x18	20
-picture	0x66a	8	0x18	20
-picture	0x64a	8	0x18	20
-picture	0x62a	8	0x18	20
+channel	0
+picture	1546	8	24	20
+picture	1578	8	24	20
+picture	1610	8	24	20
+picture	1642	8	24	20
+picture	1674	8	24	20
+picture	1642	8	24	20
+picture	1610	8	24	20
+picture	1578	8	24	20
 jump	0
 end

@@ -71,7 +71,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 
 /// PLAY_FELLED's timer from here counts the Djinn bonus's colour cycle, kept
 /// apart from the counts of the fall itself (0 to 36).
-#define FELLED_FLASH 0x400
+#define FELLED_FLASH 1024
 /// The Djinn bonus's colour cycle lasts 30 frames.
 #define FELLED_FLASH_FRAMES 30
 

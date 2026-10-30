@@ -100,7 +100,7 @@ extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 /// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
 #ifndef OWN_gActors
-/// Heap slot 5: the 64 actors, 0x70 bytes each.
+/// Heap slot 5: the 64 actors, 112 bytes each.
 extern struct Actor *gActors;
 #endif
 /// The world map camera's yaw the scanline parameters were built for; the
@@ -110,7 +110,7 @@ extern u32 gScanlineAngle;
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 #endif
-/// The lighthouse transition's pictures, packed (tagged LZ), decoded 0x1000
+/// The lighthouse transition's pictures, packed (tagged LZ), decoded 4 KB
 /// bytes after the tiles (WorldMap_PlayLighthouseTransition).
 extern const u8 gWorldMapPackedPictures[];
 /// The lighthouse transition's tiles, packed (tagged LZ).

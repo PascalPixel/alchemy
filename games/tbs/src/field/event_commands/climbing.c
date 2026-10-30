@@ -30,7 +30,8 @@ s32 Field_TryJumpForward(void) {
   // failure returns, before taking control of the field again.
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 result = -1;
-  s32 angle = (leader->facing + 0x2000) & 0xc000; // to the nearest quarter
+  s32 angle =
+      (leader->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->motionFlags;
   u8 saved = *flags;
   struct FieldWork *work = gFieldWork;

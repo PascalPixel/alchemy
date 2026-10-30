@@ -163,7 +163,8 @@ enum StormNightActorId {
   ACTOR_JENNAS_MOTHER,
   /// ★ Named from the game: "Oh no! My brother!" (MsgValeNoBrother)
   ACTOR_JENNA_CHILD,
-  /// The Boulder's shadow (sprite 0x120, a black blob), drawn on alternate
+  /// The Boulder's shadow (SPRITE_BLANK_LARGE, a black blob), drawn on
+  /// alternate
   /// frames under the Boulder as it comes down the river, swelling and
   /// shrinking with its bounds (ValePrologue_UpdateBoulderShadow), and twice
   /// its
@@ -900,7 +901,7 @@ static void ValePrologue_FirstRockFalls(void) {
       targetHeight = (rock->y.fixed + PIXELS(240));
       rock->y.fixed += PIXELS(240);
       rock->targetY = targetHeight;
-      rock->bounce = 0x6666;
+      rock->bounce = Q16_ONE * 2 / 5;
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK, 344, 932);
       rockSprite->image.priority = 3;
       rock->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -973,7 +974,7 @@ static void ValePrologue_SecondRockFalls(void) {
       targetHeight = (rock->y.fixed + PIXELS(256));
       rock->y.fixed += PIXELS(256);
       rock->targetY = targetHeight;
-      rock->bounce = 0x8000;
+      rock->bounce = Q16_ONE / 2;
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 1, 290, 833);
       Actor_SetSpritePriority(ACTOR_FIRST_ROCK + 1, 1);
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 1, 258, 852);
@@ -1051,7 +1052,7 @@ static void ValePrologue_ThirdRockFalls(void) {
       actor->acceleration = PIXELS(3) / 2;
       actor->y.fixed += PIXELS(80);
       actor->targetY = actor->y.fixed;
-      actor->bounce = 0x8000;
+      actor->bounce = Q16_ONE / 2;
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 2, 64, 703);
       Event_Wait(40);
       // It lands: the rumble fades, and Isaac is drawn as before.
@@ -1122,7 +1123,7 @@ static void ValePrologue_FourthRockFalls(void) {
       targetHeight = (rock->y.fixed + PIXELS(72));
       rock->y.fixed += PIXELS(72);
       rock->targetY = targetHeight;
-      rock->bounce = 0x8000;
+      rock->bounce = Q16_ONE / 2;
       Actor_SetPositionAndReset(ACTOR_FIRST_ROCK + 3, 432, 1147);
       Event_Wait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
@@ -1304,7 +1305,7 @@ static void ValePrologue_GaretLeavesHisChest(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET_CHILD);
   Import_ActorSetPosition(ACTOR_GARET_CHILD, 0, 0);
-  Event_PrepareActorAndApplyValue(1, 1);
+  Event_PrepareActorAndApplyValue(GARET, 1);
   GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
 
@@ -1364,7 +1365,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     }
     Actor_WaitForMoveById(ACTOR_GARET_CHILD);
     Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
-    Event_PrepareActorAndApplyValue(1, 1);
+    Event_PrepareActorAndApplyValue(GARET, 1);
     Import_ActorSetAnimation(ACTOR_GARETS_CHEST, ANIM_NOD);
     GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
     Event_End();
@@ -2606,7 +2607,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Event_Wait(60);
   Scene_PlayQueuedMusic();
   Event_Wait(60);
-  Party_RemoveMemberRestored(1);
+  Party_RemoveMemberRestored(GARET);
   Weather_ResumeLightning();
 }
 
@@ -3395,15 +3396,15 @@ struct ActorPlacement gValePrologue_ActorPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CHEST_OF_VALUABLES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(420), 0, PIXELS(619), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { GARET_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_GARET_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(396), 0, PIXELS(619), FACING_EAST, TALK_FACING_PARTY, 0 },
-    { FELIX_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_FELIX_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_GREEN_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WOMAN_WITH_PINK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    { SPRITE_JENNA_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },

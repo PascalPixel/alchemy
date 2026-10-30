@@ -365,7 +365,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       // Leave the Djinni tilted while its scale animation continues.
       Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
       spinningDjinni = Actor_GetById(ACTOR_BANE);
-      spinningDjinni->sprite->rotation = 0xf800;
+      spinningDjinni->sprite->rotation = TRIG_TURN * 31 / 32;
       spinningDjinni->facing = 0;
       Actor_SetAnimationSpeed(spinningDjinni, 0);
       Actor_StartScript(spinningDjinni, gCrossboneIsleKeys_BaneSquashScript);
@@ -1609,7 +1609,7 @@ struct ActorPlacement gCrossboneIsleBaneActorPlacements[] = {
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(728), 0, PIXELS(760), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     // Bane, until it is caught
-    { VENUS_DJINNI, FLAG_DJINNI(DJINNI_BANE), MOVEMENT_TYPE_STAND,
+    { SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_BANE), MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

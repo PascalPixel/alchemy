@@ -11,9 +11,9 @@
 /// An inn's work, in the menu work: the coins window and the innkeeper's
 /// portrait.
 struct InnWork {
-  u8 padding000[0x0c];
+  u8 padding000[12];
   struct Window *window; ///< the coins window: ShopWork's moneyWindow
-  u8 padding010[0x380];
+  u8 padding010[896];
   /// ShopWork's six cursor icon slots; not named by TBS code.
   u16 resourceEntries[6];
   u8 padding39c[8];

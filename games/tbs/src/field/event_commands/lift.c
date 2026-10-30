@@ -64,9 +64,9 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   startY = target->y.fixed;
   if (pair[0] != NULL && pair[1] != NULL && startY <= startY + PIXELS(32)) {
     do {
-      ((struct Actor *)pair[0])->y.fixed += 0x4000;
-      ((struct Actor *)pair[1])->y.fixed += 0x4000;
-      target->y.fixed += 0x4000;
+      ((struct Actor *)pair[0])->y.fixed += Q16_ONE / 4;
+      ((struct Actor *)pair[1])->y.fixed += Q16_ONE / 4;
+      target->y.fixed += Q16_ONE / 4;
       wait(1);
     } while (target->y.fixed <= startY + PIXELS(32));
   }
@@ -85,8 +85,8 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 /// This is Lift cast with no target, which FieldPsynergy_Run calls.
 DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnItemBreakMode3)
 
-/// Spawns a hand (sprite 215) and grows it, spinning, from a quarter to full
-/// size over 24 frames; angle is the way it faces once grown. Makes Lift's
+/// Spawns a hand (SPRITE_MOVE_HAND) and grows it, spinning, from a quarter to
+/// full size over 24 frames; angle is the way it faces once grown. Makes Lift's
 /// two hands, for FieldPsynergy_LiftOnTarget and FieldPsynergy_Lift; returns
 /// NULL when no actor could be spawned. Unlike Carry's
 /// (FieldEffect_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
@@ -98,7 +98,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
   Sound_PlayFar(SE_ITEM_BREAK);
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
-    fragment->scaleX = fragment->scaleY = 0x4000;
+    fragment->scaleX = fragment->scaleY = Q16_ONE / 4;
     fragment->acceleration = fragment->speedLimit =
         PIXELS(3); // 3 pixels a frame
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
@@ -106,10 +106,10 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
     scale = fragment->scaleX;
     if (scale < Q16_ONE) {
       do {
-        scale += 0x800;
+        scale += Q16_ONE / 32;
         fragment->scaleY = scale;
         fragment->scaleX = scale;
-        fragment->facing += 0x2000; // 1/8 turn
+        fragment->facing += TRIG_TURN / 8;
         wait(1);
         scale = fragment->scaleX;
       } while (scale <= 0xffff);
@@ -124,7 +124,7 @@ struct Actor *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
 /// freed. Set on Force's 12 flashes by FieldPsynergy_Force in force.c.
 void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
   // A for/continue retry keeps the same states but grows the native English
-  // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
+  // callback from 248 to 252 bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Vector3 pos;
@@ -168,7 +168,7 @@ again:
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->turnStepMax = 0x800;
+    effect->turnStepMax = TRIG_TURN / 32;
     effect->turnStepLimited = 1;
     effect->state++;
     return;
@@ -195,7 +195,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
   pos.x = source->x.fixed;
   pos.y = source->y.fixed;
   pos.z = source->z.fixed;
-  impact = Actor_Spawn(283, pos.x, pos.y - (32 << 16), pos.z);
+  impact = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - (32 << 16), pos.z);
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;

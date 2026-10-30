@@ -14,7 +14,7 @@
 // and drawing one in is a step of 2 pixels a frame along the line to the
 // centre.
 
-#define HEALING_DJINNI_OFFSETS 0x1000 ///< the djinni picture in the sheet
+#define HEALING_DJINNI_OFFSETS 4096 ///< the djinni picture in the sheet
 
 /// The healing motes' modes (BattleEffect_RunHealingMotes), each named for the
 /// first ability that plays it.

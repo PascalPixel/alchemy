@@ -383,7 +383,7 @@ void Actor_UpdateAllThumb(void) {
     SET_ACTOR_POSITION(actor, x, y, z);
 
     // Turn to face the direction of travel, at most a sixteenth of a turn
-    // (0x1000) a frame.
+    // (TRIG_TURN / 16) a frame.
     if ((actor->steeringFlags & 1) != 0) {
       x = actor->velocityX;
       z = actor->velocityZ;
@@ -395,7 +395,7 @@ void Actor_UpdateAllThumb(void) {
         maximumFacingStep = FACING_STEP;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
-        maximumFacingStep = -0x1000;
+        maximumFacingStep = -TRIG_TURN / 16;
         if (facingStep < maximumFacingStep)
           facingStep = maximumFacingStep;
         actor->facing += facingStep;
@@ -661,10 +661,10 @@ void Actor_UpdateAllMotion(void) {
       z = actor->velocityZ;
       if (x != 0 || z != 0) {
         facingStep = (s16)(ArcTan2(z, x) - actor->facing);
-        if (facingStep > 0x1000)
+        if (facingStep > TRIG_TURN / 16)
           facingStep = FACING_STEP;
-        if (facingStep < -0x1000)
-          facingStep = -0x1000;
+        if (facingStep < -TRIG_TURN / 16)
+          facingStep = -TRIG_TURN / 16;
         actor->facing += facingStep;
       }
     }

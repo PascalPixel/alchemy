@@ -26,7 +26,7 @@ extern struct SpritePictureCacheSource gSpritePictureCache_Sources[];
 /// Loads the pictures of animation id number into picture cache slot's
 /// buffer: the resource listed for it in gSpritePictureCache_Sources, decoded,
 /// its picture offsets turned into pointers, and for variant 1-5 its pixel
-/// colours (those up to 0xdf, the basic sprite palettes 0 to 13) remapped
+/// colours (those up to 223, the basic sprite palettes 0 to 13) remapped
 /// through that variant's conversion table; a variant above 5 uses variant 1's.
 /// The caller owns buffer, which must hold the decoded resource. Returns the
 /// image's size in pixels (width * height), or 0 when the slot or id is not
@@ -87,14 +87,14 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     end = (u8 *)buffer + size;
     if (index > 4)
       index = 0;
-    // Values above 0xdf (palettes 14 and 15, which
+    // Values above 223 (palettes 14 and 15, which
     // Palette_LoadBasicSpriteColors does not load) are kept; only the basic
     // palettes' colours change.
     colorMap = (u8 *)gSpriteColorTables[index];
     for (; pixels < end; pixels++) {
       u32 colorIndex = *pixels;
 
-      if (colorIndex <= 0xdf) {
+      if (colorIndex <= 223) {
         colorIndex = colorMap[colorIndex];
         *pixels = colorIndex;
       }

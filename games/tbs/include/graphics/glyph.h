@@ -45,11 +45,11 @@ typedef struct {
   /// The icon unpacked by Tile_Decompress4bpp; a 256-colour command icon
   /// (ResourceId_CommandIcons) is unpacked here by Decompress_ByteLz and
   /// used as it is.
-  u8 input[0x400];
-  u8 tiles[0x200]; ///< the icon as sprite tiles, ready for VRAM
-  s16 width;       ///< tiles
-  s16 height;      ///< tiles
-  u8 *encoded;     ///< the compressed icon
+  u8 input[1024];
+  u8 tiles[512]; ///< the icon as sprite tiles, ready for VRAM
+  s16 width;     ///< tiles
+  s16 height;    ///< tiles
+  u8 *encoded;   ///< the compressed icon
 } GlyphTransfer;
 
 STATIC_ASSERT(sizeof(GlyphTransfer) == 0x608);

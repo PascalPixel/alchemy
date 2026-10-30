@@ -22,7 +22,7 @@
 enum {
   /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8
   /// fixed point.
-  BGM_UNITY_SCALE = 0x100,
+  BGM_UNITY_SCALE = 256,
   /// A ramp's step a VBlank: a full fade in or out takes 64 VBlanks.
   BGM_DEFAULT_RAMP_STEP = 4,
   /// The track mask of every music command here. It selects tracks 0 to 7
@@ -169,9 +169,9 @@ void Sound_UpdateBgmRamps(void) {
       gBgmTempoPitch = gBgmTempoPitchTarget;
     }
     // The tempo scale and the pitch move together, like a record played at
-    // another speed, but in a straight line: 12 semitones for each 0x100 of
-    // scale (pitch is in 1/256 semitone), so 0x200 plays an octave up and
-    // 0x80 half an octave down.
+    // another speed, but in a straight line: 12 semitones for each 256 of
+    // scale (pitch is in 1/256 semitone), so 512 plays an octave up and
+    // 128 half an octave down.
     m4aMPlayTempoControl(&gMPlayInfo_BGM, gBgmTempoPitch);
     m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL,
                          (s16)gBgmTempoPitch * 12 - 12 * BGM_UNITY_SCALE);
@@ -283,10 +283,11 @@ void Sound_Initialize(void) {
   } while (remaining >= 0);
 }
 
-/// Sets the BGM tempo scale directly; 0x100 preserves its native tempo. The
-/// scale lasts until the next music starts (MPlayStart sets 0x100)
-/// or the tempo and pitch ramp moves. Called only by the Lemurian ship event,
-/// which plays MUS_ENDING at 240 (0.94 of its tempo) as the ship sails off.
+/// Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native
+/// tempo. The scale lasts until the next music starts (MPlayStart sets
+/// BGM_UNITY_SCALE) or the tempo and pitch ramp moves. Called only by the
+/// Lemurian ship event, which plays MUS_ENDING at 240 (0.94 of its tempo) as
+/// the ship sails off.
 void Sound_SetBgmTempo(u16 tempoScale) {
   m4aMPlayTempoControl(&gMPlayInfo_BGM, tempoScale);
 }
@@ -299,23 +300,24 @@ void Sound_SetBgmPitch(u16 pitch) {
 }
 
 /// Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
-/// (0x100 the music's own). Reached only through the sound far-call table's
-/// veneer.
+/// (BGM_UNITY_SCALE the music's own). Reached only through the sound far-call
+/// table's veneer.
 void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step) {
   gBgmTempoPitchTarget = targetScale;
   gBgmTempoPitchStep = step;
 }
 
-/// Sets BGM volume (0x100 full) immediately and cancels any outstanding
-/// volume ramp. Reached only through the sound far-call table's veneer.
+/// Sets BGM volume (BGM_UNITY_SCALE full) immediately and cancels any
+/// outstanding volume ramp. Reached only through the sound far-call table's
+/// veneer.
 void Sound_SetBgmVolume(s16 volume) {
   m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, volume);
   gBgmVolumeTarget = volume;
   gBgmVolume = volume;
 }
 
-/// Sets the BGM volume target (0x100 full) and its per-VBlank step. Reached
-/// only through the sound far-call table's veneer.
+/// Sets the BGM volume target (BGM_UNITY_SCALE full) and its per-VBlank step.
+/// Reached only through the sound far-call table's veneer.
 void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
   gBgmVolumeTarget = targetVolume;
   gBgmVolumeStep = step;

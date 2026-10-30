@@ -1250,9 +1250,9 @@ static void Kalay_PrepareTown(void) {
     nut->mode = found;
     nut->y = PIXELS(10);
     nut->visible = 1;
-    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
     Icon_DrawItem(ITEM_NUT);
-    VramCache_Load(sprite->palette, 128, heap + 0x400);
+    VramCache_Load(sprite->palette, 128, heap + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     nut->orbitAngle = found;
     nut->orbitCenterX = nut->x;
@@ -2375,10 +2375,11 @@ static void Kalay_UpdateNutOrbit(void) {
   }
   effect->x = effect->orbitCenterX + Trig_Cos(effect->orbitAngle) * 2;
   effect->y = effect->orbitCenterY + offset;
-  sprite->rotation = Trig_Cos(effect->orbitAngle + 0x8000) >> 3;
+  sprite->rotation = Trig_Cos(effect->orbitAngle + TRIG_TURN / 2) >> 3;
   first = Import_RandomNext();
   effect->orbitAngle += ((u32)(first << 9) >> 16) +
-                        ((u32)(Import_RandomNext() << 9) >> 16) + 0x400;
+                        ((u32)(Import_RandomNext() << 9) >> 16) +
+                        TRIG_TURN / 64;
 }
 
 /// Frost on the puddle in the Kalay Tunnel sinks it into the floor. The puddle
@@ -2487,7 +2488,7 @@ s32 gKalay_GuidePaceScript[] = {
     SC_MOVE(PIXELS(246), 0, PIXELS(296)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, 0xd000),
+    SC_SET(SW_FACING, TRIG_TURN * 13 / 16),
     SC_WAIT(40),
     SC_SET(SW_TIMER, 1),
     SC_END,
@@ -2858,7 +2859,7 @@ struct ActorPlacement gKalay_TunnelActorPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MARS_DJINNI, FLAG_DJINNI(DJINNI_SCORCH), MOVEMENT_TYPE_STAND,
+    { SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_SCORCH), MOVEMENT_TYPE_STAND,
         PIXELS(632), 0, PIXELS(712), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

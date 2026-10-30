@@ -555,7 +555,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
 
   moved = 0;
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
-  facing = (actor->facing + 0x2000) & 0xc000;
+  facing = (actor->facing + TRIG_TURN / 8) & 0xc000;
   SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + PIXELS(8), actor->y.fixed,
              (actor->z.fixed & 0xfff00000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), facing, point);
@@ -587,7 +587,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
              (actor->z.fixed & 0xfff00000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(8), facing, point);
   actor = run->actor;
-  quarter = facing / 0x4000;
+  quarter = facing / (TRIG_TURN / 4);
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);

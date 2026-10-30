@@ -121,7 +121,7 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define ACT_ITEM_ID(c) ((c) & 0x3ff)   ///< the item
 #define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
 #define ACT_PACKED 0x2000              ///< use it without paying PP
-/// No user named: Field_UsePsynergy takes character 0, and Field_UseItem
+/// No user named: Field_UsePsynergy takes ISAAC, and Field_UseItem
 /// whoever holds the item in the most inventory slots.
 #define UNIT_NONE 15
 #define ALLY_MAX 7 ///< the last party member; only users up to it pay PP

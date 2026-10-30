@@ -9,22 +9,29 @@
 #include "types.h"
 #include "static_assert.h"
 #include "palette_buffers.h"
+#include "sounds.h"
 
 /// An actor's animated sprite (struct Sprite), as far as the
 /// pointer to its sprite id.
 struct SpeakerSprite {
-  u8 beforeEntries[0x28]; ///< Sprite's fields before its layers
+  u8 beforeEntries[40]; ///< Sprite's fields before its layers
   /// Sprite.entries[0], its first layer, whose first halfword is the
   /// sprite id it shows (SpriteAnimation.animationId); null for none.
   s16 *firstEntry;
 };
 
+/// SpeakerDefinition.value of a voice: the first of its four blip sounds, less
+/// SE_VOICE_FIRST.
+#define SPEAKER_VOICE(sound) ((sound) - SE_VOICE_FIRST)
+/// SpeakerDefinition.value of a sprite with no voice.
+#define SPEAKER_VOICE_NONE 0xff
+
 /// A speaker definition, a row of gSpeakerDefinitions: a sprite, its
-/// voice (0xff for none) and the flags that choose its idle line.
+/// voice (SPEAKER_VOICE_NONE for none) and the flags that choose its idle line.
 struct SpeakerDefinition {
   u16 id; ///< the sprite id
-  /// The first of its four voice blip sounds, less 256: a message plays sound
-  /// 256 + value as it types (Speaker_GetVoice); 0xff for none.
+  /// The voice, SPEAKER_VOICE of the first of its four blip sounds: a message
+  /// plays SE_VOICE_FIRST + value as it types (Speaker_GetVoice).
   u8 value;
   u8 flags; ///< choose its line when it has nothing to say
             ///< (Speaker_GetIdleFlags)

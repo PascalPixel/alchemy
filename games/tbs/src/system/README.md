@@ -208,10 +208,10 @@ party that fell.
 
 | Name                    | Value   | Meaning                                                   |
 | ----------------------- | ------- | --------------------------------------------------------- |
-| `SEQUENCE_NONE`         | `0x1fb` | the first id above the scene table; runs nothing          |
-| `SEQUENCE_SLOTS`        | `0x1fc` | Lucky Wheels                                              |
-| `SEQUENCE_DICE`         | `0x1fd` | Lucky Dice                                                |
-| `SEQUENCE_BATTLE`       | `0x1fe` | a battle; the entrance is the formation                   |
+| `SEQUENCE_NONE`         | 507     | the first id above the scene table; runs nothing          |
+| `SEQUENCE_SLOTS`        | 508     | Lucky Wheels                                              |
+| `SEQUENCE_DICE`         | 509     | Lucky Dice                                                |
+| `SEQUENCE_BATTLE`       | 510     | a battle; the entrance is the formation                   |
 | `EXIT_KEEP_DESTINATION` |         | the destination is already in the main routine's work     |
 | `MINIGAME_PALETTE_BYTES` | 64 bytes | BG palettes 14 and 15, saved around Lucky Dice or Lucky Wheels |
 
@@ -730,7 +730,7 @@ holds the signature a sector is recognized by.
 | `SAVE_FILE_COUNT`      | 3        | files; file n is parts n and n + 3                     |
 | `SAVE_PART_NONE`       | 16       | the part number of an empty sector                     |
 | `SAVE_COUNTER_LIMIT`   | 65,000   | the highest count kept; the next copy restarts at 1    |
-| `SAVE_CHECKSUM_BYTES`  | `0xfe8`  | payload bytes summed into the checksum                 |
+| `SAVE_CHECKSUM_BYTES`  | 4,072    | payload bytes summed into the checksum                 |
 | `SAVE_FLASH_IDENTIFY_ATTEMPTS` | 8 | tries to find the flash chip, a frame apart          |
 
 ## The link cable

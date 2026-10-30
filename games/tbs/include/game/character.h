@@ -18,7 +18,7 @@ struct Unit;
 /// A character's definition: the growth curves of its stats, its element
 /// bonus, starting level and starting equipment.
 struct CharacterDefinition {
-  u8 reserved[0x50]; ///< twenty words, 0 in every row; read by no code
+  u8 reserved[80]; ///< twenty words, 0 in every row; read by no code
   /// The growth curves: each stat at levels 0, 20, 40, 60, 80 and 100. A
   /// level up adds a twentieth of the step around the new level, with a
   /// random part; level 1 adds the first point (Unit_LevelUp).

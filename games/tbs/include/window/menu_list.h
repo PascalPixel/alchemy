@@ -99,7 +99,7 @@ struct MenuPoint {
   s32 y; ///< screen pixels
 };
 
-/// The battle command menus' work, HEAP_SLOT_BATTLE_MENU (0x104 bytes),
+/// The battle command menus' work, HEAP_SLOT_BATTLE_MENU (260 bytes),
 /// reached as gBattleMenuWork. Battle_CollectPartyCommands allocates it each
 /// turn; it holds the icons beside the command window, the camera slide, the
 /// cursor each list remembers, the link battle's timer, the Djinn tutorial's

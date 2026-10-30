@@ -58,7 +58,7 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
 s32 Battle_Random(void) {
   u32 seed;
 
-  seed = ((u32)gBattleRandomSeed * 0x41c64e6dU) + 0x3039U;
+  seed = ((u32)gBattleRandomSeed * 1103515245U) + 12345U;
   gBattleRandomSeed = seed;
   return (seed << 8) >> 16;
 }

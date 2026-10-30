@@ -91,11 +91,11 @@ one pixel a frame, and runs one and a half with B held; a message types a
 few letters a frame; a pause in a conversation is so many frames; an animation
 shows each of its pictures for so many frames.
 
-| Name               | Value     | Meaning                                       |
-| ------------------ | --------- | --------------------------------------------- |
-| `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame, in 16.16 fixed point         |
-| `FIELD_RUN_SPEED`  | `0x18000` | 1.5 pixels a frame, with the dash key held    |
-| 60 frames          |           | about one second                              |
+| Name               | Value               | Meaning                                       |
+| ------------------ | ------------------- | --------------------------------------------- |
+| `FIELD_WALK_SPEED` | `Q16_ONE`           | 1 pixel a frame, in 16.16 fixed point         |
+| `FIELD_RUN_SPEED`  | `Q16_ONE * 3 / 2`   | 1.5 pixels a frame, with the dash key held    |
+| 60 frames          |                     | about one second                              |
 
 A frame is what the game does for one picture, and then a halt until the
 next VBlank. The VBlank interrupt runs on its own at every

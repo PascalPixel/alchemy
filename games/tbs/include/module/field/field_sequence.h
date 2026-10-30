@@ -134,7 +134,7 @@ struct TriggerView {
 
 /// A trigger result below it is a message number, and from it on the address of
 /// the routine to run: every routine lies above it, so one word holds either.
-#define TRIGGER_RESULT_MESSAGE_END 0x10000
+#define TRIGGER_RESULT_MESSAGE_END 65536
 
 // These masks decode the trigger and search-result words whose bit layouts
 // and values scene_tables.h gives (struct Trigger, enum TriggerKind, FIND_).

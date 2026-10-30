@@ -191,7 +191,7 @@ IwramSoundSynthWave:
 
 	.global IwramSoundMixWorkspace
 IwramSoundMixWorkspace:
-	.space 0x590, 0
+	.space 1424, 0
 .syntax unified
 	.section .text.iwram_copy_words,"ax",%progbits
 	.arm

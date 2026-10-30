@@ -423,7 +423,7 @@ static void AltmillerCave_InitializeDarkness(void) {
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
   // UB: the fourth following pointer cell lies past scalar gFieldWork.
-  // Its named load adds eight bytes in the native EN trial (0x98 to 0xa0).
+  // Its named load adds eight bytes in the native EN trial (152 to 160).
 #ifdef UBFIX
   state = gScreenTransitionWork;
 #else
@@ -675,7 +675,7 @@ static void AltmillerCave_PlaceLights(s32 angle) {
 
   do {
     AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, PIXELS(24), angle);
-    angle -= 0x3333; // One fifth of a full turn.
+    angle -= TRIG_TURN / 5;
     i++;
   } while (i < LIGHT_COUNT);
 }
@@ -708,7 +708,7 @@ static void AltmillerCave_SpinLights(void) {
     s32 chosenAngle = Math_Divide(chosenLight * Q16_ONE, 5);
     if ((unsigned int)(((u32)(wheel->angle - chosenAngle) << 16) +
                        0xc2ff0000) <= 0x5fe0000) {
-      wheel->angle = chosenAngle + 0x4000;
+      wheel->angle = chosenAngle + TRIG_TURN / 4;
       wheel->phase = WHEEL_STOPPED;
       wheel->speed = 0;
       Actor_GetById(ACTOR_FIRST_LIGHT + chosenLight)->update =
@@ -721,7 +721,7 @@ static void AltmillerCave_SpinLights(void) {
     gAltmillerCave_LightWheel->angle += gAltmillerCave_LightWheel->speed;
     AltmillerCave_PlaceLights(gAltmillerCave_LightWheel->angle);
     gAltmillerCave_LightWheel->travel += gAltmillerCave_LightWheel->speed;
-    if (gAltmillerCave_LightWheel->travel > 0x3000) {
+    if (gAltmillerCave_LightWheel->travel > TRIG_TURN * 3 / 16) {
       gAltmillerCave_LightWheel->travel = 0;
       Sound_Play(SE_CLICK);
     }
@@ -765,7 +765,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
     previousLight = ROCK_PUZZLE->chosen;
     wheel = gAltmillerCave_LightWheel;
     chosenLight = ROCK_PUZZLE->chosen;
-    wheel->angle = (chosenLight * Q16_ONE) / 5 + 0x4000;
+    wheel->angle = (chosenLight * Q16_ONE) / 5 + TRIG_TURN / 4;
   }
   // The leftmost rock, then the rightmost, before the rounds of lights.
   if (state == PUZZLE_START) {
@@ -797,7 +797,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
           wait(1);
           scale += 3 * Q16_ONE / 64;
         } while (actor->scaleX < Q16_ONE);
-        angle -= 0x3333;
+        angle -= TRIG_TURN / 5;
       }
       wait(30);
       correctRock = 1;
@@ -838,8 +838,8 @@ static void AltmillerCave_TurnRock(s32 rock) {
         ((s8)(((u32)(Random_Next() << 2) >> 16) + previousLight + 1) + 5) % 5;
     gAltmillerCave_LightWheel->phase = WHEEL_SPEEDING_UP;
     gAltmillerCave_LightWheel->frames = 0;
-    gAltmillerCave_LightWheel->speed = 0x200;
-    gAltmillerCave_LightWheel->travel = 0x3000;
+    gAltmillerCave_LightWheel->speed = TRIG_TURN / 128;
+    gAltmillerCave_LightWheel->travel = TRIG_TURN * 3 / 16;
     Task_AddFrame(AltmillerCave_SpinLights, TASK_PASS_FRAME);
     if (rounds <= 2) {
       while (gAltmillerCave_LightWheel->phase != WHEEL_STOPPED) {
@@ -869,10 +869,10 @@ static void AltmillerCave_TurnRock(s32 rock) {
           actor->scaleX -= 16;
           actor->scaleY -= 16;
           AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, radius, angle);
-          angle -= 0x3333;
+          angle -= TRIG_TURN / 5;
         }
         radius -= PIXELS(1) / 5;
-        angle += 0xc00;
+        angle += TRIG_TURN * 3 / 64;
         wait(1);
       } while (radius > 0);
       for (i = 0; i < LIGHT_COUNT; i++) {
@@ -2102,7 +2102,7 @@ s32 AltmillerCave_Initialize(void) {
       actor = Actor_GetById(ACTOR_INVISIBLE_BABI);
       actor->sprite->image.priority = 1;
       actor->sprite->flags = 2;
-      actor->sprite->rotation = 0x4000;
+      actor->sprite->rotation = TRIG_TURN / 4;
     }
   }
   // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
@@ -2165,7 +2165,7 @@ s32 AltmillerCave_Initialize(void) {
       MapGrid_CopyCellAttributes(42, 8, 1, 1, 31, 8);
     }
     if (state[0] == PUZZLE_LIGHTS_SHOWN) {
-      AltmillerCave_PlaceLights((state[1] * Q16_ONE) / 5 + 0x4000);
+      AltmillerCave_PlaceLights((state[1] * Q16_ONE) / 5 + TRIG_TURN / 4);
     }
     for (i = 0; i < LIGHT_COUNT; i++) {
       actor = Actor_GetById(ACTOR_FIRST_LIGHT + i);
@@ -2251,7 +2251,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
 
   FieldEffect_InitializeSlots();
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
-  Shop_SaveAndTintFieldPalette(0x202108);
+  Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
   position.x = PIXELS(504);
   position.y = PIXELS(24);
   position.z = PIXELS(144);
@@ -2449,7 +2449,7 @@ struct ActorPlacement gAltmillerCave_SquallActorPlacements[] = {
      PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(472), 0,
      PIXELS(328), FACING_SOUTH, TALK_FACING_KEEP, 0},
-    {JUPITER_DJINNI, FLAG_DJINNI(DJINNI_SQUALL), MOVEMENT_TYPE_STAND,
+    {SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_SQUALL), MOVEMENT_TYPE_STAND,
      PIXELS(264), 0, PIXELS(200), FACING_SOUTHWEST, TALK_FACING_PARTY, 0},
     {SCENE_TABLE_END},
 };

@@ -1204,7 +1204,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   FieldEffect_SetAttached(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_GetById(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
-  Actor_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
+  Actor_GetById(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
   Event_End();
 }
 

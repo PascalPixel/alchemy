@@ -76,7 +76,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   effectWork->secondActorId = targetId;
   effectWork->mainActor = user;
   target = Actor_Lookup((s16)targetId);
-  dir = (user->facing + 0x2000) & 0xc000; // to the nearest quarter turn
+  dir = (user->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter turn
   effectWork->child = target;
   effectWork->angle = dir;
   if (target != NULL) {
@@ -134,7 +134,7 @@ void FieldPsynergy_End(void) {
   grid = gMapGridWork[0];
 #else
   // Indexing beyond the scalar global is undefined in C. Named slots add
-  // 8 bytes to this function in the forced native EN build (0xf8 -> 0x100).
+  // 8 bytes to this function in the forced native EN build (248 -> 256 bytes).
   effectWorkCell = (struct FieldEffectWork **)&gFieldEffectWork;
   effectWork = *effectWorkCell;
   runtime = *(struct FieldWork **)((u8 *)effectWorkCell - 116);
@@ -253,7 +253,7 @@ void FieldPsynergy_FadeToCastColor(void) {
   s32 no;
 
   // Save the colours the buffer moves toward into the field work, 224
-  // colours of three channels (0x150 words) a half: the OBJ half at 0x776
+  // colours of three channels (336 words) a half: the OBJ half at 0x776
   // and, unless Reveal is active, the BG half at 0x236. While Reveal lasts
   // the BG target is its grey (reveal.c), and the field's own colours saved
   // before it must stay. Then show the targets at once.
@@ -261,11 +261,9 @@ void FieldPsynergy_FadeToCastColor(void) {
   // with; gFieldWork and gPaletteFadeWork are not measured here.
   field = *(gHeapSlots + HEAP_SLOT_FIELD);
   work = *(gHeapSlots + HEAP_SLOT_PALETTE_FADE);
-  Dma_Set(&work->target[0x2a0], field + 0x776,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
+  Dma_Set(&work->target[672], field + 0x776, DMA_COPY_WORDS(336), REG_DMA3);
   if (((struct FieldWork *)field)->revealActive == 0)
-    Dma_Set(work->target, field + 0x236, (DMA_ENABLE | DMA_32BIT) << 16 | 0x150,
-            REG_DMA3);
+    Dma_Set(work->target, field + 0x236, DMA_COPY_WORDS(336), REG_DMA3);
   Dma_Set(work->target, work->current,
           (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof work->current / 4),
           REG_DMA3);
@@ -335,7 +333,7 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 #else
     // The named map slot avoids stepping outside gFieldWork. In forced native
     // EN it replaces the address copy/subtract with a separate literal load
-    // and changes register allocation; the extent remains 0x68 bytes.
+    // and changes register allocation; the extent remains 104 bytes.
     struct MapGridScrollWork *state =
         *(struct MapGridScrollWork **)((u8 *)eventCell - 76);
 #endif

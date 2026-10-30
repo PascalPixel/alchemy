@@ -8,7 +8,7 @@
 #define UNIT_MAX 14 ///< the party's and the enemies' units together
 
 /// Runs each frame of a battle: advances every unit's status icon, gives an
-/// airborne unit's shadow (BATTLE_SHADOW_SPRITE, placement.c) priority
+/// airborne unit's shadow (SPRITE_BATTLE_SHADOW) priority
 /// 9 and a grounded one's 0, and draws whichever side is nearer the camera in
 /// front. Runs as a task (priority TASK_PASS_FRAME)
 /// that Battle_Run adds after the entry transition and removes as
@@ -16,7 +16,7 @@
 /// priorities.
 void BattleObject_UpdateSpritePriorities(void) {
   // The two side walks stay separate: a shared priority helper changes EN
-  // register allocation despite the same 0x1ac-byte extent.
+  // register allocation despite the same 428-byte extent.
   u16 unitIds[UNIT_MAX];
   // The party's, then the enemies': sprite priority 1 for the side in front,
   // 2 behind (the lower number draws over the higher).
@@ -191,10 +191,9 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObject *battleObject) {
 #define ICON_CYCLE_FRAMES 80
 
 /// The icons' first animations, for units 32 pixels wide and for the rest:
-/// each adds the icon's bit number (ICON_POISON's 0 up), so sprites 340 to
-/// 353 and 355 to 368.
-#define ICON_ANIMATION_NARROW 340
-#define ICON_ANIMATION_WIDE 355
+/// each adds the icon's bit number (ICON_POISON's 0 up).
+#define ICON_ANIMATION_NARROW SPRITE_STATUS_POISON
+#define ICON_ANIMATION_WIDE SPRITE_STATUS_WIDE_POISON
 
 /// Shows a unit's status icons one after another, each for
 /// ICON_CYCLE_FRAMES frames, switching at once when the shown status ends,
@@ -347,10 +346,6 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   }
 }
 
-/// The shadow a body 32 pixels wide takes instead of
-/// BattleObject.shadow's (see BATTLE_SHADOW_SPRITE, placement.c).
-#define NARROW_SHADOW_SPRITE 511
-
 /// Readies the sprites of the units in list: releases those of every place
 /// list lacks, then creates each listed unit's sprites (body, weapon, status
 /// icon and shadow; or the two parts of a two-part enemy) unless it has
@@ -457,7 +452,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         }
         if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
-            spriteId = NARROW_SHADOW_SPRITE;
+            spriteId = SPRITE_BATTLE_SHADOW_NARROW;
           entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimationFar(
               record, spriteId);
           battleObject->shadowEntry = entry;
@@ -658,8 +653,8 @@ void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;
 
-  // Yaw 0x3000 (in 1/65536 turns), pitch 0xfe00, and 510 pixels away
-  // (0x1fe0000 in 16.16), the distance BattleCamera_SetView
+  // A yaw of 3/16 of a turn, a pitch of -1/128 of a turn, and 510 pixels
+  // away, the distance BattleCamera_SetView
   // uses.
   camera->yaw = 192 << 6;
   camera->pitch = 254 << 8;

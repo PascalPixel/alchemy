@@ -127,7 +127,7 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
     // A negative scale is a line below the horizon, whose ray meets the
     // ground; the lines above it are sky and get zeros.
     if (scale < 0) {
-      // MulQ16 by 0x8000 halves: the width scale is half the line's scale
+      // MulQ16 by Q16_ONE / 2 halves: the width scale is half the line's scale
       // over the focal length, and the distance below is stored halved.
       diagonal = Iwram_MulQ16(-scale, Q16_ONE / 2);
       scanline->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);

@@ -677,7 +677,7 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Actor_SetPosition(ACTOR_OPPONENT, PIXELS(1320), PIXELS(192));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1288), PIXELS(192));
   // BUG: FACING_SOUTH is passed where Actor_FaceActor takes an
-  // actor id; Actor_Lookup has no actor past 0xbf, so
+  // actor id; Actor_Lookup has no actor past 191, so
   // neither turns.
 #ifdef BUGFIX
   Actor_FaceDirection(ACTOR_OPPONENT, FACING_SOUTH, 0);
@@ -1757,9 +1757,9 @@ struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
         PIXELS(456), 0, PIXELS(184), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(601), 0, PIXELS(146), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(552), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(664), 0, PIXELS(200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(760), 0, PIXELS(194), FACING_SOUTH, TALK_FACING_KEEP, 0 },

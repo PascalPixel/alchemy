@@ -106,7 +106,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   u32 bits;
 
   work = WINDOW_WORK;
-  canvas = Heap_Alloc(0x800);
+  canvas = Heap_Alloc(2048);
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   paletteBits = work->textPalette << 12;
   Iwram_ClearWords(pens, 16);
@@ -119,11 +119,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   if (paletteBits == WINDOW_PALETTE << 12) {
     pens[1] = gFont_ColorPens[work->colour & 15];
     pens[3] = 3;
-    Iwram_FillWords(canvas, 0x800, 0x04040404);
+    Iwram_FillWords(canvas, 2048, 0x04040404);
   } else {
     pens[1] = (u8)work->colour & 15;
     pens[3] = 1;
-    Iwram_FillWords(canvas, 0x800, 0x0E0E0E0E);
+    Iwram_FillWords(canvas, 2048, 0x0E0E0E0E);
   }
   // Expand glyph pixels and control-code colour changes into a byte canvas.
   if (text != 0) {
@@ -251,8 +251,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       *(u32 *)dst = (glyphCode << 4) >> 16 | bits << 16;
       dst += 4;
     }
-    dst = dst - tileCount * 4 + 0x100;
-    src = (u32 *)((u8 *)src - tileCount * 8 + 0x100);
+    dst = dst - tileCount * 4 + 256;
+    src = (u32 *)((u8 *)src - tileCount * 8 + 256);
   }
 
   // Reuse private text tiles, allocate any new ones, then upload each tile.
@@ -263,11 +263,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 
     if (work->extraTextTiles != 0)
       mask = 255;
-    // Attribute n is text tile 0x80 + n, and with alt set 128 to 255 are
-    // tiles 0x200 to 0x27f.
+    // Attribute n is text tile 128 + n, and with alt set 128 to 255 are
+    // tiles 512 to 639.
     tile = *tiles & TILE_NUMBER_MASK;
-    if ((tile < 0x80 || tile > 0xFF) &&
-        (work->extraTextTiles == 0 || tile < 0x200 || tile > 0x27F)) {
+    if ((tile < 128 || tile > 255) &&
+        (work->extraTextTiles == 0 || tile < 512 || tile > 639)) {
       tile = work->nextTextTile & mask;
       for (column = 0; column <= mask && work->textTileState[tile] != 0;
            column++)
@@ -275,7 +275,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       work->nextTextTile = (tile + 1) & mask;
       work->textTileState[tile] = 1;
       if (tile > 127)
-        tile += 0x180;
+        tile += 384;
       else
         tile |= 0x80;
       *tiles = paletteBits | tile;
@@ -283,13 +283,13 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
     }
     vramTile = (u32 *)(BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP);
     *vramTile++ = ((u32 *)canvas)[index];
-    *vramTile++ = ((u32 *)canvas)[index + 0x40];
-    *vramTile++ = ((u32 *)canvas)[index + 0x80];
-    *vramTile++ = ((u32 *)canvas)[index + 0xC0];
-    *vramTile++ = ((u32 *)canvas)[index + 0x100];
-    *vramTile++ = ((u32 *)canvas)[index + 0x140];
-    *vramTile++ = ((u32 *)canvas)[index + 0x180];
-    *vramTile++ = ((u32 *)canvas)[index + 0x1C0];
+    *vramTile++ = ((u32 *)canvas)[index + 64];
+    *vramTile++ = ((u32 *)canvas)[index + 128];
+    *vramTile++ = ((u32 *)canvas)[index + 192];
+    *vramTile++ = ((u32 *)canvas)[index + 256];
+    *vramTile++ = ((u32 *)canvas)[index + 320];
+    *vramTile++ = ((u32 *)canvas)[index + 384];
+    *vramTile++ = ((u32 *)canvas)[index + 448];
     tiles++;
     mirror++;
   }
@@ -314,8 +314,8 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
     for (column = 0; column < width; column++) {
       u32 tileId = *cursor++ & TILE_NUMBER_MASK;
 
-      if ((tileId - 0x80) <= 0x7F ||
-          (alternateTiles != 0 && tileId > 0x1FF && tileId <= 0x27F)) {
+      if ((tileId - 128) <= 127 ||
+          (alternateTiles != 0 && tileId > 511 && tileId <= 639)) {
         u32 attributeIndex = ((tileId & 0xFF) ^ 0x80);
         ((struct WindowWork *)base)->textTileState[attributeIndex] &= 0xFC;
       }
@@ -345,8 +345,8 @@ void Window_MarkVisibleTextTiles(void) {
     for (x = 0; x < width; x++) {
       u32 tileId = *cursor++ & TILE_NUMBER_MASK;
 
-      if ((tileId - 0x80) <= 0x7f ||
-          (alternateTiles != 0 && tileId > 0x1ff && tileId <= 0x27f)) {
+      if ((tileId - 128) <= 127 ||
+          (alternateTiles != 0 && tileId > 511 && tileId <= 639)) {
         u32 attributeIndex = ((tileId & 0xff) ^ 0x80);
 
         ((struct WindowWork *)base)->textTileState[attributeIndex] |= 2;
@@ -361,7 +361,7 @@ void Window_MarkVisibleTextTiles(void) {
 }
 
 /// Frees the text tiles of the second range (attributes 128 to 255, tiles
-/// 0x200 to 0x27f), and with allowAlternateTiles set lets text tiles take that
+/// 512 to 639), and with allowAlternateTiles set lets text tiles take that
 /// range too; the first range's tiles keep their state. Both branches clear
 /// the same 128 attributes.
 /// The second range extends text capacity from 128 to 256 tiles. The field's
@@ -378,9 +378,9 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
   if (allowAlternateTiles != 0) {
     ((struct WindowWork *)work)->extraTextTiles = 1;
     allowAlternateTiles = 0;
-    for (i = 0x80,
-        attributes = (s8 *)((struct WindowWork *)work)->textTileState + 0x80;
-         i <= 0xFF; i += 1) {
+    for (i = 128,
+        attributes = (s8 *)((struct WindowWork *)work)->textTileState + 128;
+         i <= 255; i += 1) {
       *attributes = allowAlternateTiles;
       attributes += 1;
     }
@@ -388,8 +388,8 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
   }
   ((struct WindowWork *)work)->extraTextTiles = 0;
   allowAlternateTiles = 0;
-  tileAttributes = (s8 *)((struct WindowWork *)work)->textTileState + 0x80;
-  j = 0x7F;
+  tileAttributes = (s8 *)((struct WindowWork *)work)->textTileState + 128;
+  j = 127;
   do {
     j -= 1;
     *tileAttributes = allowAlternateTiles;

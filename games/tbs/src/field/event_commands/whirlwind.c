@@ -9,11 +9,11 @@ enum {
   WHIRLWIND_RADIAL_ANGLE_SHIFT = 12,
   WHIRLWIND_ORBIT_PARTICLES = 16,
   WHIRLWIND_ORBIT_RADIUS = 8 << 16,
-  WHIRLWIND_ORBIT_ANGLE_STEP = 0x800,
+  WHIRLWIND_ORBIT_ANGLE_STEP = TRIG_TURN / 32,
   WHIRLWIND_ORBIT_FRAMES = 121,
   WHIRLWIND_WANDER_FRAMES = 101,
-  WHIRLWIND_TARGET_SCALE_STEP = 0x80,
-  WHIRLWIND_TARGET_MIN_SCALE = 0x8000,
+  WHIRLWIND_TARGET_SCALE_STEP = Q16_ONE / 512,
+  WHIRLWIND_TARGET_MIN_SCALE = Q16_ONE / 2,
   WHIRLWIND_TRAVEL_FRAMES = 10
 };
 
@@ -51,8 +51,8 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
 
   opt.palette = 0;
   opt.update = FieldEffect_UpdateParticleMotionAndScale;
-  opt.startScaleX = 0xcccc; // 0.8
-  opt.startScaleY = 0xcccc;
+  opt.startScaleX = Q16_ONE * 4 / 5;
+  opt.startScaleY = Q16_ONE * 4 / 5;
   i = 0;
   do {
     angle = i << WHIRLWIND_RADIAL_ANGLE_SHIFT;
@@ -91,7 +91,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
   effect->facing += 0xfff0;
   if (effect->turnFrames != 0) {
     effect->turnFrames--;
-    effect->facing += 0x800;
+    effect->facing += TRIG_TURN / 32;
   } else if ((Random16() << 5) >> 16 == 0) // one chance in 32
   {
     effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
@@ -126,7 +126,7 @@ void FieldEffect_CircleAnchor(struct Actor *actor) {
     effect->update = FieldEffect_WanderAroundAnchor;
     effect->swirlFrames = 0;
     effect->turnFrames = 0;
-    effect->gravity = 0x1999;
+    effect->gravity = Q16_ONE / 10;
     effect->velocityY = PIXELS(3);
     effect->facing = Random16();
   }
@@ -189,7 +189,7 @@ void FieldPsynergy_Whirlwind(void) {
   to.y = effectWork->y - (4 << 16);
   to.z = effectWork->z;
   // Include both endpoints of the ten-frame interpolation.
-  ball = Actor_Spawn(218, 0, 0, 0);
+  ball = Actor_Spawn(SPRITE_WHIRLWIND, 0, 0, 0);
   if (ball == 0) {
     return;
   }
@@ -200,15 +200,15 @@ void FieldPsynergy_Whirlwind(void) {
     ball->x.fixed = from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_FRAMES;
     ball->y.fixed = from.y + step * (to.y - from.y) / WHIRLWIND_TRAVEL_FRAMES;
     ball->z.fixed = from.z + step * (to.z - from.z) / WHIRLWIND_TRAVEL_FRAMES;
-    scale =
-        0x4000 + step * 0x10ccc / WHIRLWIND_TRAVEL_FRAMES; // from 0.25 to 1.3
+    scale = Q16_ONE / 4 + step * (Q16_ONE * 21 / 20) /
+                              WHIRLWIND_TRAVEL_FRAMES; // from 0.25 to 1.3
     ball->scaleX = scale;
     ball->scaleY = scale;
     wait(1);
     step++;
   } while (step < steps);
-  ball->scaleX = 0x1b333; // 1.7 wide
-  ball->scaleY = 0x14ccc; // 1.3 high
+  ball->scaleX = Q16_ONE * 17 / 10; // wide
+  ball->scaleY = Q16_ONE * 13 / 10; // high
   Sound_PlayFar(SE_RUSH);
   wait(20);
   // Cleared by FieldPsynergy_Dispatch: cast on a target a trigger
@@ -224,11 +224,11 @@ void FieldPsynergy_Whirlwind(void) {
       s32 dist;
 
       pos.x = ball->x.fixed;
-      pos.y = ball->y.fixed + step * 0xcccc + (4 << 16);
+      pos.y = ball->y.fixed + step * (Q16_ONE * 4 / 5) + (4 << 16);
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = Actor_Spawn(249, pos.x, pos.y, pos.z);
+      particle = Actor_Spawn(SPRITE_LEAF, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_CircleAnchor;
         particle->watchedActor = ball;

@@ -622,7 +622,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   s32 pusher = gMainRoutineWork.leaderActorId;
   struct Actor *pusherActor = Actor_GetById(pusher);
   struct Actor *log = Actor_GetById(logId);
-  s32 heading = (pusherActor->facing + 0x1000) & 0xe000;
+  s32 heading = (pusherActor->facing + TRIG_TURN / 16) & 0xe000;
   s32 alongX = (log->x.fixed >> 20) != halfCellX / 2;
   s32 offsetX;
   s32 offsetZ;
@@ -641,8 +641,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Event_Wait(6);
   log->speedLimit = PIXELS(1) / 2;
   log->acceleration = PIXELS(1) / 5;
-  Actor_SelectAnimation(log,
-                        gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
+  Actor_SelectAnimation(
+      log, gColosseumSatrageMatch_RollLogScript[heading / (TRIG_TURN / 4)]);
   FieldActor_SetMoveTarget(log, halfCellX, 0, halfCellZ);
   Event_Wait(6);
   Import_ActorSetAnimation(pusher, ANIM_WALK);
@@ -961,7 +961,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   Actor_SetPosition(ACTOR_OPPONENT, PIXELS(88), PIXELS(256));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(256));
   // BUG: FACING_SOUTH is passed where Actor_FaceActor takes an
-  // actor id; Actor_Lookup has no actor past 0xbf, so
+  // actor id; Actor_Lookup has no actor past 191, so
   // neither turns.
 #ifdef BUGFIX
   Actor_FaceDirection(ACTOR_OPPONENT, FACING_SOUTH, 0);
@@ -2166,7 +2166,7 @@ struct ActorPlacement gColosseumSatrageMatchActorPlacements[] = {
         PIXELS(392), 0, PIXELS(208), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 259, CONDITION_ALWAYS, 7,
+    {SPRITE_FALLING_LOG, CONDITION_ALWAYS, 7,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(520), 0, PIXELS(258), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -2174,23 +2174,23 @@ struct ActorPlacement gColosseumSatrageMatchActorPlacements[] = {
         PIXELS(712), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(808), 0, PIXELS(280), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(936), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(968), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(1000), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(1032), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(248), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(264), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(296), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 290, CONDITION_ALWAYS, 7,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
         PIXELS(312), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { 259, CONDITION_ALWAYS, 7,
+    {SPRITE_FALLING_LOG, CONDITION_ALWAYS, 7,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1072), 0, PIXELS(280), FACING_WEST, TALK_FACING_KEEP, 0 },

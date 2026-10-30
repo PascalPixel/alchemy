@@ -139,14 +139,14 @@ s32 Sanctum_Run(s32 unitId) {
   }
 
   // The keeper's portrait window; failing that an empty one off the left
-  // edge, and failing that one on screen with side object 2
+  // edge, and failing that one on screen with Ivan's portrait
   listWindow = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   if (listWindow == 0) {
     listWindow = Window_CreateFar(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
   }
   if (listWindow == 0) {
     listWindow = Window_CreateFar(0, 0, 5, 5, WINDOW_FLAG_INSTANT);
-    Portrait_CreateFar(2, 0, 0, listWindow, -4, -4);
+    Portrait_CreateFar(IVAN, 0, 0, listWindow, -4, -4);
   }
 
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
@@ -353,8 +353,8 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
 }
 
 /// Shows the chosen party member walking and the others standing, and draws at
-/// seven tenths of their size (0xb333 in 16.16) the party members who do not
-/// need the service. The sanctum's Shop_DrawParty.
+/// seven tenths of their size (Q16_ONE * 7 / 10 in 16.16) the party members who
+/// do not need the service. The sanctum's Shop_DrawParty.
 void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   struct ShopWork *shop = gMenuWork;
   s32 memberIndex;
@@ -368,7 +368,7 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
         Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 1);
       shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
-        shop->partyMemberScale[memberIndex] = 0xb333;
+        shop->partyMemberScale[memberIndex] = Q16_ONE * 7 / 10;
     }
   }
 }
@@ -422,7 +422,7 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
     effect->targetZ = position.z;
     // 16.16 pixels: at most 2 a frame, gaining 0.4 a frame
     effect->speedMax = 2 << 16;
-    effect->acceleration = 0x6666;
+    effect->acceleration = Q16_ONE * 2 / 5;
     effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
   } else if (state == SANCTUM_SPARKLE_FLYING) {
@@ -488,7 +488,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   shop->burstMember = -1;
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Sound_PlayFar(sSanctumServiceCues[shop->action]);
-  Shop_SaveAndTintFieldPalette(0x00202108);
+  Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   wait(20);
   priority = TASK_PASS_FRAME;
@@ -507,8 +507,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
-    effect->scaleY = 0xb333;
-    effect->scaleX = 0xb333;
+    effect->scaleY = Q16_ONE * 7 / 10;
+    effect->scaleX = Q16_ONE * 7 / 10;
     wait(3);
     if (effectIndex == 5) {
       shop->burstMember = member;

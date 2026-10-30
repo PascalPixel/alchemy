@@ -6,10 +6,11 @@
 #include "mul_q16.h"
 #include "actor_arm_view.h"
 #include "macros.h"
+#include "fixed_math.h"
 
 #define ACTOR_SLOTS 8 ///< script-driven actors updated each frame
 #define TARGET_UNSET ((s32)0x80000000) ///< no movement target
-#define TURN_MAX 0x1000                ///< the most an actor turns in one frame
+#define TURN_MAX (TRIG_TURN / 16)      ///< the most an actor turns in one frame
 
 /// Calls a resident IWRAM routine at its absolute address, which this code
 /// still reaches when it runs from its copy in RAM.

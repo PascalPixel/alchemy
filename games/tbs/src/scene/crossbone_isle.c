@@ -960,7 +960,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
   destination.y = actor->y.fixed;
   destination.z = (actor->z.fixed & 0xfff00000) + PIXELS(8);
   {
-    s32 direction = (actor->facing + 0x2000) & 0xc000;
+    s32 direction = (actor->facing + TRIG_TURN / 8) & 0xc000;
 
     Vector_AddPolarOffset(PIXELS(32), direction, &destination);
   }

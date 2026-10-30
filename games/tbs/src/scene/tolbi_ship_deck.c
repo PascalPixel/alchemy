@@ -1503,7 +1503,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   wait(1);
   Actor_ReleaseById(ACTOR_SEA_KRAKEN);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, PIXELS(238), PIXELS(626));
-  facing = 192; // 192 << 6 is 0x3000, south-southeast
+  facing = 192; // 192 << 6 is TRIG_TURN * 3 / 16, south-southeast
   record = Actor_GetById(ACTOR_SEA_CREW_MEMBER);
   record->facing = (facing << 6);
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED) != 0) {
@@ -2008,7 +2008,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   actor->scaleX = 13 * Q16_ONE / 8;
   actor->scaleY = 13 * Q16_ONE / 8;
   actor->update = TolbiShipDeck_ShrinkToNormalSize;
-  actor->bounce = 0x8000;
+  actor->bounce = Q16_ONE / 2;
   Actor_SetSpeed(ACTOR_SEA_SEAN, PIXELS(6), PIXELS(3));
   Actor_SetPositionAndCommit(ACTOR_SEA_SEAN, 182, 618);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SEA_SEAN), 0);
@@ -2592,11 +2592,11 @@ static void TolbiShipDeck_RowOars(void) {
   TolbiShipDeck_AdvanceStroke(ACTOR_FIRST_STROKE_OAR, 0);
   sStrokePhase[0] = 0;
   TolbiShipDeck_AdvanceStroke(ACTOR_FIRST_STROKE_OAR + 1, 1);
-  sStrokePhase[1] += 0x80;
+  sStrokePhase[1] += 128;
   TolbiShipDeck_AdvanceStroke(ACTOR_FIRST_STROKE_OAR + 2, 2);
-  sStrokePhase[2] += 0x100;
+  sStrokePhase[2] += 256;
   TolbiShipDeck_AdvanceStroke(ACTOR_FIRST_STROKE_OAR + 3, 3);
-  sStrokePhase[3] += 0x200;
+  sStrokePhase[3] += 512;
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR, 0, 0);
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 1, 1, 0);
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 2, 2, 0);
@@ -2614,16 +2614,16 @@ static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot) {
   u16 value = sOarAngle[slot];
 
   if (value >= 0x6801 && value <= 0x6fff) {
-    sStrokePhase[slot] += 0x70;
+    sStrokePhase[slot] += 112;
     Import_ActorSetAnimation(actorId, 3);
   } else if (value >= 0xe801 && value <= 0xefff) {
-    sStrokePhase[slot] += 0xe0;
+    sStrokePhase[slot] += 224;
     Import_ActorSetAnimation(actorId, 3);
   } else if (value >= 0x7001 && value <= 0xefff) {
-    sStrokePhase[slot] += 0x1c0;
+    sStrokePhase[slot] += 448;
     Import_ActorSetAnimation(actorId, 2);
   } else {
-    sStrokePhase[slot] += 0x300;
+    sStrokePhase[slot] += 768;
     Import_ActorSetAnimation(actorId, 1);
   }
 }
@@ -2658,10 +2658,10 @@ static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   }
   if (flags & 1) {
     sine = Trig_Sin(sOarAngle[slot]);
-    sprite->rotation = Trig_Sin(sOarAngle[slot] + 0x8000) >> 5;
+    sprite->rotation = Trig_Sin(sOarAngle[slot] + TRIG_TURN / 2) >> 5;
     actor->z.fixed = sOarDepth[slot] - (sine << 2) - (sine << 1);
   } else {
-    sine = Trig_Sin(sOarAngle[slot] + 0x8000);
+    sine = Trig_Sin(sOarAngle[slot] + TRIG_TURN / 2);
     sprite->rotation = Trig_Sin(sOarAngle[slot]) >> 5;
     actor->z.fixed = sOarDepth[slot] + (sine << 2) + (sine << 1);
   }
@@ -2675,7 +2675,7 @@ static void TolbiShipDeck_RestOars(void) {
   u32 i;
 
   for (i = 0; i <= 7; i++)
-    sOarAngle[i] = 0xc000;
+    sOarAngle[i] = TRIG_TURN * 3 / 4;
   TolbiShipDeck_ShowOar(ACTOR_FIRST_STROKE_OAR);
   Import_ActorSetPosition(ACTOR_FIRST_STROKE_OAR + 1, 0, 0);
   Import_ActorSetPosition(ACTOR_FIRST_STROKE_OAR + 2, 0, 0);
@@ -3160,15 +3160,21 @@ const s32 gTolbiShipDeck_OuranosPatrolsActions[] = {
 /// their scratch fields cleared, then TolbiShipDeck_HoverAndDiveAtOuranos or
 /// TolbiShipDeck_HoverAndDiveAtSean each frame.
 const s32 gTolbiShipDeck_HoverAndDiveAtOuranosActions[] = {
-    SC_SET(SW_MOTION, 0),     SC_SET(SW_TIMER, 0),
-    SC_SET(SW_USER_VALUE, 0), SC_SET(SW_RISE_COUNTER, 0),
-    SC_SET(0x17, 0),          SC_CALL(TolbiShipDeck_HoverAndDiveAtOuranos),
+    SC_SET(SW_MOTION, 0),
+    SC_SET(SW_TIMER, 0),
+    SC_SET(SW_USER_VALUE, 0),
+    SC_SET(SW_RISE_COUNTER, 0),
+    SC_SET(23, 0),
+    SC_CALL(TolbiShipDeck_HoverAndDiveAtOuranos),
 };
 
 const s32 gTolbiShipDeck_HoverAndDiveAtSeanActions[] = {
-    SC_SET(SW_MOTION, 0),     SC_SET(SW_TIMER, 0),
-    SC_SET(SW_USER_VALUE, 0), SC_SET(SW_RISE_COUNTER, 0),
-    SC_SET(0x17, 0),          SC_CALL(TolbiShipDeck_HoverAndDiveAtSean),
+    SC_SET(SW_MOTION, 0),
+    SC_SET(SW_TIMER, 0),
+    SC_SET(SW_USER_VALUE, 0),
+    SC_SET(SW_RISE_COUNTER, 0),
+    SC_SET(23, 0),
+    SC_CALL(TolbiShipDeck_HoverAndDiveAtSean),
 };
 
 /// The second attack's boarding monsters, bobbing in the air

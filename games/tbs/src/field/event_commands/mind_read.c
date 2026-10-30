@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 0x298 bytes. It lives
+/// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 664 bytes. It lives
 /// from FieldPsynergy_StartMindReadWave to
 /// FieldPsynergy_FinishWaveAndReleaseHeapBlock, after the conversation Mind
 /// Read reads.
@@ -36,9 +36,9 @@ struct MindReadWork {
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
   struct MindReadWork *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 0x298);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, 664);
   FieldPsynergy_FadeToCastColor();
-  Dma_Fill32(0, work, 0x298);
+  Dma_Fill32(0, work, 664);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
   FieldEffect_AdvanceHueCycle();
   // PALETTE_TINT_CUSTOM: the BG colours tinted by the hue.
@@ -69,8 +69,8 @@ void FieldPsynergy_FinishWaveAndReleaseHeapBlock(void) {
 /// Task of the wave effect: once its delay has run out, writes
 /// the next page of scanline offsets (a sine wave of 4 pixels either way),
 /// steps the colour fade and the hue, keeps the caster's colours lit, and
-/// every 60 frames sends three particles (sprite 281) from the target to the
-/// caster, with sound 130.
+/// every 60 frames sends three particles (SPRITE_CRESCENT) from the target to
+/// the caster, with SE_PSYNERGY_START.
 void FieldPsynergy_UpdateMindReadWave(void) {
   struct MindReadWork *work = gMindReadWork;
   u16 *line;
@@ -122,12 +122,12 @@ void FieldPsynergy_UpdateMindReadWave(void) {
           (s16)Scene_FindActorPlacement(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
-      particle = Actor_CreateFar(281, to.x, to.y, to.z);
+      particle = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
       if (particle != 0) {
         sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;
-        particle->speedLimit = 0xa3d7; // 0.64 pixels a frame
-        particle->acceleration = 0xa3d7;
+        particle->speedLimit = Q16_ONE * 16 / 25; // 0.64 pixels a frame
+        particle->acceleration = Q16_ONE * 16 / 25;
         particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
         particle->update = FieldEffect_SetCallbackWhenTargetUnset;
         // No shadow or outline, sprite priority 1.

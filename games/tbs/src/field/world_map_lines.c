@@ -5,6 +5,7 @@
 #include "projection.h"
 #include "static_assert.h"
 #include "vector3.h"
+#include "fixed_math.h"
 
 #define VISIBLE_SCANLINES 160 ///< visible scanlines
 
@@ -106,8 +107,8 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
         (u16)FarCall_RuntimeTable.atan2.target(targetDeltaX >> 4, depth >> 4);
   }
   // The texture origin: the target at half scale.
-  originX = MulQ16(target->x, 0x8000);
-  originZ = MulQ16(target->z, 0x8000);
+  originX = MulQ16(target->x, Q16_ONE / 2);
+  originZ = MulQ16(target->z, Q16_ONE / 2);
   if (angle != gScanlineAngle) {
     // The camera turned: recompute every scanline's rotation terms.
     gScanlineAngle = angle;

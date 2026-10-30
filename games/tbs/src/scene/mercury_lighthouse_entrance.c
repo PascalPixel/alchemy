@@ -525,7 +525,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
-    Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0x4000;
+    Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);

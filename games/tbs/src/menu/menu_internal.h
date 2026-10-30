@@ -173,7 +173,7 @@ enum ItemTargetMode {
 
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU. Each screen's run
 /// function takes the block as it opens and releases it as it closes.
-#define MENU_WORK_SIZE 0xa70
+#define MENU_WORK_SIZE 2672
 
 /// Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5

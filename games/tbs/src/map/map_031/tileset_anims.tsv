@@ -1,8 +1,8 @@
-channel	0x0
-picture	0x700	2	0x3e2	6
-picture	0x702	2	0x3e2	6
-picture	0x704	2	0x3e2	6
-picture	0x706	2	0x3e2	6
-picture	0x708	2	0x3e2	6
+channel	0
+picture	1792	2	994	6
+picture	1794	2	994	6
+picture	1796	2	994	6
+picture	1798	2	994	6
+picture	1800	2	994	6
 jump	0
 end

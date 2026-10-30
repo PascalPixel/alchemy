@@ -12,9 +12,9 @@
 // mirrored about its x. Both effects fade out over their last 16 frames.
 
 /// The dust pictures in the vine sheet, after the vines.
-#define GROWING_COLUMNS_VINE_DUST_OFFSETS 0x1e59
+#define GROWING_COLUMNS_VINE_DUST_OFFSETS 7769
 /// The dust pictures in the pillar sheet, after the pillars.
-#define GROWING_COLUMNS_PILLAR_DUST_OFFSETS 0xaff
+#define GROWING_COLUMNS_PILLAR_DUST_OFFSETS 2815
 /// The small thorn in the thorn sheet, after the 48x80 big one.
 #define THORN_SMALL_OFFSETS (48 * 80)
 

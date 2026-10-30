@@ -93,10 +93,10 @@ AlchemyUncreditedEnd_render_decode_1:
 	add	r4, r2, r2
 	ldrsh	r4, [pc, r4]
 	add	pc, pc, r4
-	.2byte 0xfee0, 0x0020, 0x0020, 0x0020
-	.2byte 0x0020, 0x0020, 0x0020, 0xffcc
-	.2byte 0xffcc, 0x001c, 0x001c, 0x001c
-	.2byte 0x001c, 0xffb0, 0xffc4, 0xffbc
+	.2byte -288, 32, 32, 32
+	.2byte 32, 32, 32, -52
+	.2byte -52, 28, 28, 28
+	.2byte 28, -80, -60, -68
 	sub	r2, r2, #2
 	ldr	r4, [pc, #136]
 	cmp	r4, r2
@@ -143,9 +143,9 @@ AlchemyUncreditedEnd_render_decode_1:
 	@ The table number last loaded, then the colour tables' address less
 	@ 224 bytes (unused) and less 256 bytes: table n is the 256 bytes at
 	@ that base + n * 256.
-	.4byte 0x00000000
-	.4byte gSpriteColorTables - 0xe0
-	.4byte gSpriteColorTables - 0x100
+	.4byte 0
+	.4byte gSpriteColorTables - 224
+	.4byte gSpriteColorTables - 256
 	.global gRender_DecodePictureEnd
 gRender_DecodePictureEnd:
 	.space 224, 0

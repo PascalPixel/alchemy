@@ -830,7 +830,7 @@ static void Bilibin_RestoreRiverActors(void) {
       actor = Actor_Get(ACTOR_FALLEN_TREE_STAND_IN);
       Actor_SetSpriteFlags(actor, 0);
       Actor_SetPosition(ACTOR_MIDDLE_TREE, PIXELS(142), PIXELS(156));
-      fallenTree->sprite->rotation = 0x4000;
+      fallenTree->sprite->rotation = TRIG_TURN / 4;
       fallenTree->y.fixed += -PIXELS(8);
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) != 0) {
         Actor_SetPosition(ACTOR_JILL_TREE, PIXELS(132), PIXELS(186));
@@ -1166,7 +1166,7 @@ struct ActorPlacement gBilibinBarricadeActorPlacements[] = {
 struct ActorPlacement gBilibinTreasuryActorPlacements[] = {
     { SPRITE_GOLDEN_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GUST), MOVEMENT_TYPE_STAND,
+    { SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GUST), MOVEMENT_TYPE_STAND,
         PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

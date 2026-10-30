@@ -137,9 +137,9 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
 /// Shows the 32x32 portrait of `character` at (x, y) in `window`, in portrait
 /// slot `side` (0 or 1, or any other value for the first free one; the second
 /// is tried first). Each slot has its own palette, 14 or 15. In the prologue,
-/// characters 0 and 1 show portraits 18 and 19 instead. `unused` is
-/// passed on to the loader, which ignores it. Returns the sprite, or NULL when
-/// the character has no portrait or both slots are taken. The slot records
+/// ISAAC and GARET speak as SPRITE_ISAAC_CHILD and SPRITE_GARET_CHILD. `unused`
+/// is passed on to the loader, which ignores it. Returns the sprite, or NULL
+/// when the character has no portrait or both slots are taken. The slot records
 /// the portrait and its VRAM slot (WindowWork.portraitPictures and
 /// portraitSprites); the message windows' speaker portraits come through here
 /// (window/messages.c).
@@ -153,10 +153,10 @@ struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
   s32 palette;
 
   if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
-    if (character == 0)
-      character = 18;
-    if (character == 1)
-      character = 19;
+    if (character == ISAAC)
+      character = SPRITE_ISAAC_CHILD;
+    if (character == GARET)
+      character = SPRITE_GARET_CHILD;
   }
 
   icon = Portrait_GetForSpeaker(character);
@@ -203,10 +203,10 @@ void Portrait_Reload(u32 side, s32 character, s32 unused) {
   work = WINDOW_WORK;
 
   if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
-    if (character == 0)
-      character = 18;
-    if (character == 1)
-      character = 19;
+    if (character == ISAAC)
+      character = SPRITE_ISAAC_CHILD;
+    if (character == GARET)
+      character = SPRITE_GARET_CHILD;
   }
 
   icon = Portrait_GetForSpeaker(character);

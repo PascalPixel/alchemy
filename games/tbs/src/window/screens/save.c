@@ -8,7 +8,7 @@
 // `file` holds the first half of the 8 KB save buffer and part
 // `file + SAVE_FILE_COUNT` the second.
 #define SAVE_FILE_COUNT 3
-#define SAVE_PART_BYTES 0x1000
+#define SAVE_PART_BYTES 4096
 #define SAVE_NO_FREE_FILE 999
 
 // What the save functions return when they fail, after showing the message.
@@ -173,7 +173,7 @@ u32 Save_BuildFileSummary(void) {
   gMainRoutineWork.buildStamp = BuildStamp_GetTimeFar(0);
   gMainRoutineWork.playTime = gPlayTimeFrames;
   // A second copy of the play time, 256 bytes from gSceneLocalState: past its
-  // 0x78 bytes, in gInventorySnapshot's last word. gSceneLocalState opens the
+  // 120 bytes, in gInventorySnapshot's last word. gSceneLocalState opens the
   // save buffer's second half, so this lands at offset 0x110 of the file's
   // second part (after its 16-byte header), which
   // Save_LoadFileSummaries reads back into
@@ -488,7 +488,7 @@ s32 Save_EraseSelectedFile(void) {
 /// before. With n the sine as a whole number from -4 to 4 (Trig_Sin's 16.16
 /// result over 16384, rounded toward zero), the colour is red 22 + 2n, green
 /// 16 + n and blue 20 + n (of 31): red 14 to 30, green 12 to 20 and blue 16
-/// to 24. The step of 0x300 a frame, in 1/65536 turns, makes a cycle of about
+/// to 24. The step of 3/256 of a turn a frame makes a cycle of about
 /// 85 frames. FileList_StartPulse runs it while the file list is open.
 void FileList_UpdatePulse(void) {
   s32 *vblankCount;
@@ -503,9 +503,10 @@ void FileList_UpdatePulse(void) {
   do {
 #ifdef UBFIX
     // Wrap the frame phase before Trig_Sin takes its low sixteen bits.
-    sine = Trig_Sin((((u32)*vblankCount + i * 8U) * 0x300U) & 0xffffU);
+    sine = Trig_Sin((((u32)*vblankCount + i * 8U) * (TRIG_TURN * 3 / 256U)) &
+                    0xffffU);
 #else
-    sine = Trig_Sin((*vblankCount + i * 8) * 0x300);
+    sine = Trig_Sin((*vblankCount + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
     colour = sine / 16384;
     {
@@ -1293,6 +1294,6 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  VramCache_Load(slot, 0x80, gPointingHandTiles);
+  VramCache_Load(slot, 128, gPointingHandTiles);
   return slot;
 }

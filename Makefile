@@ -93,6 +93,7 @@ OBJLIST := $(TOOLS)/ags-objects
 SCANINC := $(TOOLS)/ags-deps
 OVLPACK := $(TOOLS)/ags-overlays
 GBAFIX  := $(TOOLS)/ags-header
+ENUMS   := $(TOOLS)/ags-enums
 
 # --- Assets (A1) ---------------------------------------------------------
 # A picture or table is built beside its source, in every edition the same:
@@ -219,7 +220,7 @@ STREAM := $(BUILD)/obj/$(OVERLAY_STREAM).o
 LINKED := $(filter-out $(STREAM),$(MAIN_OBJS))
 
 $(BUILD)/deps.mk: $(BUILD)/objects.mk $(SCANINC) $(SRCS)
-	$(SCANINC) $@ $(BUILD) $(BUILD)/obj $(INCLUDES) -I$(BUILD) -G text/ -G overlays/ -G baserom.gba -- $(SRCS)
+	$(SCANINC) $@ $(BUILD) $(BUILD)/obj $(INCLUDES) -I$(BUILD) -G enums/ -G text/ -G overlays/ -G baserom.gba -- $(SRCS)
 # Read once the object list is: the scan needs its sources.
 ifneq ($(wildcard $(BUILD)/objects.mk),)
 include $(BUILD)/deps.mk
@@ -268,6 +269,12 @@ $(BUILD)/text/stamp: games/$(GAME)/text/$(LANG).po $(PO2AGS) $(CHARMAP)
 	$(PO2AGS) $< $(@D)/messages.inc $(if $(CHARMAP),--charmap $(CHARMAP))
 	$(PO2AGS) $< $(@D)/msg_ids.h --header $(if $(filter tbs,$(GAME)),--as-value)
 	@touch $@
+
+# A header's enum constants for the assembly tables that name its ids:
+# a .s file includes enums/NAME.inc for include/NAME.h.
+$(BUILD)/enums/%.inc: games/$(GAME)/include/%.h $(ENUMS)
+	@mkdir -p $(@D)
+	$(ENUMS) $< $@
 
 # ⚓️'s scaffolds read the edition's own ROM (O1), checked against rom.sha1.
 $(BUILD)/baserom.gba: roms/$(EDITION).gba

@@ -35,7 +35,7 @@ struct FieldEffectWork {
   s8 visible; ///< set at the start: the caster flashes with a sound
   s8 active;  ///< set at the start: the ability's name is announced
   void (*finishCallback)(void); ///< run, when set, as Ply ends
-  u8 unusedAfterFinish[0x0c];   ///< no code names it
+  u8 unusedAfterFinish[12];     ///< no code names it
   /// Set by some scenes before a field Psynergy; Carry, Frost, Force and Reveal
   /// treat the target differently with it.
   s8 childOption;

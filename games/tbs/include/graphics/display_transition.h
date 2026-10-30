@@ -15,7 +15,7 @@ struct ScreenTransitionDissolveState {
   /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
   /// dissolve sets two more each frame and copies the tile to BG character
   /// block 0.
-  u8 paletteNibbles[0x22];
+  u8 paletteNibbles[34];
   /// The progress, moved from start to end over duration frames: bit 5 says
   /// whether the dissolve fills or clears, the low 5 bits how far it is.
   u16 value;
@@ -52,7 +52,7 @@ struct ScreenTransitionWin {
   u16 dispcnt;
   /// The map work's fields from fadeStep to its window rows
   /// (WorldMapView's); no transition names them.
-  u8 viewState[0xea];
+  u8 viewState[234];
   /// scanlines: where the screen is hidden, 200 when it is not
   u16 firstLine;
   /// scanlines: where the screen is shown again, 250 when it is not hidden

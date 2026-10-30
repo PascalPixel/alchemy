@@ -59,7 +59,7 @@ enum BattleType {
 /// and options). A save file keeps it.
 ///
 /// It is a fixed struct, never freed and in no heap slot: the one
-/// gMainRoutineWork in EWRAM, right after the 0x200 bytes of game
+/// gMainRoutineWork in EWRAM, right after the 512 bytes of game
 /// flags. Saving writes it whole in a file's first part, with the flags
 /// before it, and a file's checksum covers the 968 words from gGameFlagBytes
 /// to the end of this struct (Save_BuildFileSummary, Save_WriteCurrentFile). A
@@ -79,7 +79,7 @@ struct MainRoutineWork {
   s32 coins; ///< 0 to 999999 (Party_AdjustCoins)
   /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
   /// Djinn_GetRecoveryTable; not named by TBS code.
-  u8 djinnRecovery[0x104];
+  u8 djinnRecovery[260];
   s32 shopCredit; ///< spent on a Game Ticket; not written by name in TBS
   s8 shopGifts;   ///< indexes the Game Ticket's credit cost
   /// Lucky Wheels' prize weights, three prizes to each of 4, 8, 16, 32
@@ -88,7 +88,7 @@ struct MainRoutineWork {
   /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[16];
-  u8 unusedAfterPrizes[0x84]; ///< no code names it
+  u8 unusedAfterPrizes[132]; ///< no code names it
   /// What the main routine runs next: a scene (a SceneId_ row of gScenes),
   /// which means the field sequence running that scene, or a SEQUENCE_ value
   /// above the table's rows for another sequence. During a scene it is the
@@ -199,7 +199,7 @@ struct MainRoutineWork {
   s16 cloaked;             ///< 1 under Cloak, which prevents battles
   u8 paddingAfterCloak[2]; ///< up to the word pausedUpdate starts on
   u32 pausedUpdate; ///< Halt: the stopped actor's update; not read by name
-  u8 unusedAfterHalt[0x50]; ///< no code names it
+  u8 unusedAfterHalt[80]; ///< no code names it
   /// The Battle Arena's tallies: 4 the total wins and 7 the consecutive wins it
   /// reports, 3 cleared on choosing a monster battle; the others not named by
   /// TBS code.

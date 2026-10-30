@@ -13,14 +13,13 @@
 //   drawn chips.
 // - 0 on: embers, ten per target, from frame 302.
 #define CYBELE_FRAMES 366
-#define CYBELE_CHIP_COUNT 48 ///< chips thrown by the thorns
-#define CYBELE_VINES 10      ///< vines drawn
-#define CYBELE_BLAST_OFFSETS                                                   \
-  0x1680                      ///< the blast pictures, after the yellow ring
-#define CYBELE_FIRST_SPARK 16 ///< the first spark in work->particles
-#define CYBELE_FIRST_THORN 32 ///< the first thorn in work->particles
-#define CYBELE_FIRST_CHIP 16  ///< the first chip in work->particles
-#define CYBELE_EMBER_CELL 6   ///< the ember picture in gCybele_EmberOffsets
+#define CYBELE_CHIP_COUNT 48      ///< chips thrown by the thorns
+#define CYBELE_VINES 10           ///< vines drawn
+#define CYBELE_BLAST_OFFSETS 5760 ///< the blast pictures, after the yellow ring
+#define CYBELE_FIRST_SPARK 16     ///< the first spark in work->particles
+#define CYBELE_FIRST_THORN 32     ///< the first thorn in work->particles
+#define CYBELE_FIRST_CHIP 16      ///< the first chip in work->particles
+#define CYBELE_EMBER_CELL 6       ///< the ember picture in gCybele_EmberOffsets
 
 /// Thorns fly in from the right and vines grow out of the ground, lifting the
 /// targets while sparks flash around them; then the picture dissolves pixel by

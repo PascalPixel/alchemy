@@ -402,7 +402,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   u8 flags;
 
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
-  angle = (actor->facing + 0x1000) & 0xe000;
+  angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
   flags = actor->motionFlags;
   SET_POSITION(&position, (actor->x.fixed & 0xfff00000) + PIXELS(8),
                actor->y.fixed, (actor->z.fixed & 0xfff00000) + PIXELS(8));
@@ -597,7 +597,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 10);
-  Import_ActorSetAnimation(ACTOR_MIA, 0x10);
+  Import_ActorSetAnimation(ACTOR_MIA, 16);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 60);
   // Jenna calls out: "Isaac! Garet!"
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1346,7 +1346,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
-  Import_ActorSetAnimation(ACTOR_MIA, 0x10);
+  Import_ActorSetAnimation(ACTOR_MIA, 16);
   Actor_Get(ACTOR_MIA)->scaleX = -Q16_ONE;
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 40);
@@ -1769,7 +1769,7 @@ static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *actor) {
   spark->z.fixed = (Trig_Sin(angle) << 4) + PIXELS(144);
   spark->targetX = spark->x.fixed;
   spark->targetZ = spark->z.fixed;
-  spark->timer -= 0x200;
+  spark->timer -= 512;
 }
 
 /// Every frame: while the view is near the top the beacon flickers

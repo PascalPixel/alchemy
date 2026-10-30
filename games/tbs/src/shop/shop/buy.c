@@ -333,7 +333,7 @@ void Shop_DrawMoney(void) {
 void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,
                         s32 priceKind) {
   // A structured switch with early returns reduced the English native extent
-  // from 0x98 to 0x90, so the existing shared draw tail remains.
+  // from 152 to 144, so the existing shared draw tail remains.
   s32 labelMessage;
 
   if (window == 0)
@@ -396,7 +396,7 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
       shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Item_IsCompatibleWithUnitFar(shop->partyMemberIds[memberIndex],
                                         itemId))
-        shop->partyMemberScale[memberIndex] = 0xcccc;
+        shop->partyMemberScale[memberIndex] = Q16_ONE * 4 / 5;
     }
   }
 }
@@ -622,7 +622,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   s32 unitMessageBase;
 #endif
 
-  tileBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tileBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   redraw = 1;
   maximum -= minimum;
   selectedQuantity = -1;

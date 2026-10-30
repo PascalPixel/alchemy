@@ -179,7 +179,7 @@ struct LevelUpWork {
   s32 classIndex; ///< the unit's class, written and not read again
   s32 level;      ///< the level before this one
   struct CharacterDefinition *growth; ///< the character's growth curves
-  u8 unused[0x20];                    ///< never written
+  u8 unused[32];                      ///< never written
 };
 
 /// Teaches a character action `value` for good (or makes a class action

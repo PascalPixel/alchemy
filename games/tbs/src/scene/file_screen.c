@@ -49,6 +49,7 @@
 #include "map_grid_scroll.h"
 #include "flags.h"
 #include "title.h"
+#include "item_ids.h"
 
 // Edition-specific text and window layout values.
 // The password buffer: a Gold password is 260 symbols
@@ -243,7 +244,7 @@ const u16 gFileScreen_ExtraButtonCode[] = {
 
 // The actual arrays have four and fifteen entries. The original one-element
 // view makes the second key an out-of-bounds access. Direct array reads also
-// reorder both native held-key stores (same 0xf8-byte function extent).
+// reorder both native held-key stores (same 248-byte function extent).
 #ifdef UBFIX
 #define FILE_SCREEN_BUTTON_CODE_KEYS(code) (code)
 #else
@@ -347,16 +348,16 @@ static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
   else if (cell <= 44)
     text[0] = cell - 47;
   else if (cell == 45)
-    text[0] = 0x86;
+    text[0] = 134;
   else {
     if (cell <= 55)
       text[0] = cell + 104;
     else if (cell == 56)
-      text[0] = 0xe0;
+      text[0] = 224;
     else if (cell == 57)
-      text[0] = 0xe3;
+      text[0] = 227;
     else if (cell == 58)
-      text[0] = 0xe4;
+      text[0] = 228;
     else
       text[0] = cell - 81;
     text[1] = TEXT_MARK_VOICED;
@@ -386,7 +387,7 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
 /// A view of the scene state that names its copy of the play time, checked
 /// against the loaded game's.
 struct SaveMenuMapLocalState {
-  u8 mapAndInventory[0x100]; ///< gSceneLocalState, then gInventorySnapshot
+  u8 mapAndInventory[256]; ///< gSceneLocalState, then gInventorySnapshot
   /// The play time in frames, which Save_BuildFileSummary copies here
   /// when saving.
   s32 playTime;
@@ -617,14 +618,14 @@ menu_top:;
     gMainRoutineWork.leaderActorId = 0;
     if (Event_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
-      Party_RemoveMember(0);
-      Party_RemoveMember(1);
-      Party_RemoveMember(2);
-      Party_RemoveMember(3);
-      Party_AddMember(0);
-      Party_AddMember(1);
-      Party_AddMember(2);
-      Party_AddMember(3);
+      Party_RemoveMember(ISAAC);
+      Party_RemoveMember(GARET);
+      Party_RemoveMember(IVAN);
+      Party_RemoveMember(MIA);
+      Party_AddMember(ISAAC);
+      Party_AddMember(GARET);
+      Party_AddMember(IVAN);
+      Party_AddMember(MIA);
     }
     WindowColor_Apply(gMainRoutineWork.windowColor[0],
                       gMainRoutineWork.windowColor[1]);
@@ -718,7 +719,7 @@ menu_top:;
 
       Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
       wait(10);
-      Serial_StartSend(gSaveBuffer, 0x1004);
+      Serial_StartSend(gSaveBuffer, 4100);
       wait(10);
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.
@@ -806,10 +807,10 @@ menu_top:;
         helpWindow = (struct Window *)windowHandle;
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
-      // Copy the font's ten digit tiles to the 20 tiles from 0x300 in two
+      // Copy the font's ten digit tiles to the 20 tiles from 768 in two
       // colourings, for the page numbers.
       Graphics_ExpandVramTilesByColorTable(
-          (u16 *)(BG_CHAR_BLOCK(0) + 0x300 * TILE_SIZE_4BPP));
+          (u16 *)(BG_CHAR_BLOCK(0) + 768 * TILE_SIZE_4BPP));
       WindowSprite_PrepareForRedraw(pageWindow);
       // A turns the page, and on the last returns to the menu; Left and Right
       // turn back and forth, wrapping round; B goes back to the level choice.
@@ -868,17 +869,17 @@ menu_top:;
             v5 = (v5 + 2);
             v7 = (v7 + 1);
           } while (v7 != 4);
-          // The page numbers beside the arrows, on WINDOW_PALETTE: tile 0x301 +
-          // n is the digit n + 1, and 0x30b + n the same digit in the second
+          // The page numbers beside the arrows, on WINDOW_PALETTE: tile 769 +
+          // n is the digit n + 1, and 779 + n the same digit in the second
           // colouring, for the page shown.
           if (pageCount > 1) {
             v7 = 0;
             if (pageCount != 0) {
               v6 = 0;
               do {
-                tileValue = v7 + WINDOW_TILE(0x301);
+                tileValue = v7 + WINDOW_TILE(769);
                 if (v7 == pageIndex) {
-                  tileValue = v7 + WINDOW_TILE(0x30b);
+                  tileValue = v7 + WINDOW_TILE(779);
                 }
                 Window_SetTilemapEntry(pageWindow, tileValue,
                                        v7 + 18 - pageCount, -1, v6);
@@ -959,7 +960,7 @@ UNUSED static void FileList_FillTileGrid(struct Window *window,
   s32 offset;
 
   shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
-  decodedTiles = Heap_AllocEwram(0x300);
+  decodedTiles = Heap_AllocEwram(768);
   FieldDecompress_TaggedLz(compressedTiles, decodedTiles);
   offset = (window->y * 32 + window->x) * 2;
   vram = (u16 *)(WINDOW_TILEMAP_VRAM + offset);
@@ -981,7 +982,7 @@ UNUSED static void FileList_FillTileGrid(struct Window *window,
 /// tile 32.
 UNUSED static void FileList_FillTileBlock(const struct Window *window) {
   s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
-  s16 *buffer = Heap_AllocEwram(0x300);
+  s16 *buffer = Heap_AllocEwram(768);
   s16 *vram;
   s32 cell;
   s32 row;
@@ -1032,10 +1033,10 @@ struct PasswordStats {
 /// inventory and Djinn. A view of struct Unit at its offsets;
 /// FileScreen_PackPasswordData's opening note says why it is kept.
 struct PasswordMember {
-  u8 name[0x0f]; ///< Unit's; not read here
-  u8 level;      ///< clamped to 1 to 99; 7 bits
+  u8 name[15]; ///< Unit's; not read here
+  u8 level;    ///< clamped to 1 to 99; 7 bits
   struct PasswordStats stats;
-  u8 regenToActions[0xb8]; ///< Unit's baseHpRegen to psynergy
+  u8 regenToActions[184]; ///< Unit's baseHpRegen to psynergy
   /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item
   u16 inventory[15];
   u8 padding[2];    ///< Unit's paddingBeforeDjinn
@@ -1058,7 +1059,7 @@ struct PasswordMember {
 /// the coins in bytes 165 to 167.
 static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   // A direct Unit member plus the real member table shrinks the native
-  // function from 0x400 to 0x3f4. The private view remains pending member
+  // function from 1,024 to 1,012 bytes. The private view remains pending member
   // reconciliation; its fields below follow Unit's actual base stats.
   s32 length;
   u32 levelBits;
@@ -1395,7 +1396,7 @@ s32 gFileScreen_ExtraCodeHeld = 0;
 // clang-format off
 /// The party members the password packs: Isaac, Garet, Ivan and Mia.
 u32 gFileScreen_PasswordMembers[] = {
-    0, 1, 2, 3,
+    ISAAC, GARET, IVAN, MIA,
 };
 
 /// The six story flags of the password's byte 7, as halfwords in pairs, bits
@@ -1409,7 +1410,10 @@ u32 gFileScreen_PasswordFlags[] = {
 /// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS (as
 /// halfwords in pairs), which Silver and Bronze record in byte 8.
 u32 gFileScreen_PasswordKeyItems[] = {
-    0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
+    ITEM_ORB_OF_FORCE | ITEM_DOUSE_DROP << 16,
+    ITEM_FROST_JEWEL | ITEM_LIFTING_GEM << 16,
+    ITEM_HALT_GEM | ITEM_CLOAK_BALL << 16,
+    ITEM_CARRY_STONE | ITEM_CATCH_BEADS << 16,
 };
 
 /// The 23 items whose quantity a Gold password keeps for each party member: Herb,
@@ -1418,8 +1422,10 @@ u32 gFileScreen_PasswordKeyItems[] = {
 /// Bomb, Game Ticket, Lucky Medal, Sacred Feather, Oil Drop, Weasel's Claw,
 /// Bramble Seed and Crystal Powder.
 u16 gFileScreen_PasswordStackItems[] = {
-    180, 181, 182, 183, 186, 187, 188, 189,
-    191, 192, 193, 194, 195, 196, 226, 227,
-    228, 229, 236, 238, 239, 240, 241,
+    ITEM_HERB, ITEM_NUT, ITEM_VIAL, ITEM_POTION, ITEM_PSY_CRYSTAL,
+    ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_WATER_OF_LIFE, ITEM_POWER_BREAD,
+    ITEM_COOKIE, ITEM_APPLE, ITEM_HARD_NUT, ITEM_MINT, ITEM_LUCKY_PEPPER,
+    ITEM_SMOKE_BOMB, ITEM_SLEEP_BOMB, ITEM_GAME_TICKET, ITEM_LUCKY_MEDAL,
+    ITEM_SACRED_FEATHER, ITEM_OIL_DROP, ITEM_WEASELS_CLAW, ITEM_BRAMBLE_SEED, ITEM_CRYSTAL_POWDER,
 };
 // clang-format on

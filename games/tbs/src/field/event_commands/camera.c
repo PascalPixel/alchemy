@@ -121,7 +121,7 @@ void Actor_PlaceCurrentWithinCameraBounds(s32 actorId, s32 glide) {
 
   subject = Actor_Lookup(actorId);
   // The field work, looked up and not used.
-  HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xCCC);
+  HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 3276);
   if (subject != NULL) {
     FieldCamera_MoveWithinMapBounds(subject->x.fixed, -1, subject->z.fixed,
                                     glide);

@@ -191,7 +191,7 @@ static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *interpreter) {
 
   actor->x.fixed = center[0] + (cameraX - origin[0]);
   actor->y.fixed = center[1] + (cameraY - origin[1]) / 2;
-  actor->sprite->rotation += 0x600;
+  actor->sprite->rotation += TRIG_TURN * 3 / 128;
   return 0;
 }
 
@@ -1063,7 +1063,7 @@ struct ActorPlacement gTolbiShipMast_ActorPlacements[] = {
 };
 
 struct ActorPlacement gTolbiShipMast_FirstAttackActorPlacements[] = {
-    { 286, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+    {SPRITE_GLINT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },

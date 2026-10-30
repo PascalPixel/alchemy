@@ -62,7 +62,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   if (update == 0 && tile == *shownQuarter)
     return 0;
   *shownQuarter = tile;
-  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz((u8 *)tileOffsets + tileOffsets[tile], decodedTile);
 
   // A tile is 16 by 16 cells of 4 bytes. Each layer's cell picture buffer holds
@@ -141,10 +141,10 @@ s32 WorldMap_InitializePerspective(void) {
   Dma_Fill32(0, perspective, sizeof(struct WorldMapView));
   perspective->viewX = 0;
   perspective->viewY = 0;
-  perspective->scaleX = 0x200000;
-  perspective->scaleY = 0x400000;
-  perspective->limitX = 0x1fe00000;
-  perspective->limitY = 0x1fe00000;
+  perspective->scaleX = Q16_ONE * 32;
+  perspective->scaleY = Q16_ONE * 64;
+  perspective->limitX = 8160 << 16;
+  perspective->limitY = 8160 << 16;
   perspective->script = NULL;
   perspective->tiles =
       Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
@@ -170,7 +170,7 @@ s32 WorldMap_InitializePerspective(void) {
   // map's fade-in turns on: BG0 to BG3 and the sprites.
   perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
                       DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
-  perspective->fadeStep = 0x80;
+  perspective->fadeStep = 128;
   Io_Write16Inline(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) |
                        BGCNT_SCREEN_BASE(8) | BGCNT_WRAP | BGCNT_SIZE(2),
                    &REG_BG3CNT);
@@ -242,11 +242,11 @@ s32 WorldMap_InitializePerspective(void) {
     ((WorldMapPlaneFn)gHeapSlots[HEAP_SLOT_RAM_CODE])(
         camera, cameraPosition, affineWork->scanlines,
         affinePages[gFrameCount & 1]);
-    // Then the world map's own view: pitch 0xe000 (minus an eighth of a
-    // turn) and yaw 0, with the eye one pixel beyond the distance.
+    // Then the world map's own view: pitch TRIG_TURN * 7 / 8 (minus an eighth
+    // of a turn) and yaw 0, with the eye one pixel beyond the distance.
     SET_VECTOR(cameraPosition, 0, 0, 0);
     Transform_Reset();
-    Io_Write16Swapped(pitch, 0xe000);
+    Io_Write16Swapped(pitch, TRIG_TURN * 7 / 8);
     *yaw = 0;
     Transform_Reset();
     Transform_ApplyPosition(cameraPosition);
@@ -279,7 +279,7 @@ s32 WorldMap_InitializePerspective(void) {
 /// tile id grid, and draws it at once when it is next to the view. px and py
 /// count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it is
 /// next to the view when px / 8 and py / 8, in 256-pixel steps, are within
-/// one step of the followed point's. Layer 1 takes the tile 0x140 (320)
+/// one step of the followed point's. Layer 1 takes the tile 320
 /// further on. Called by the world map's events
 /// (Field_SetWorldMapWindowCellTile, through WorldMap_SetWindowCellTileFar).
 /// Sets perspective->tileIds.
@@ -311,7 +311,7 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
 
   if (ABS(originX - px) <= 1 && ABS(originY - py) <= 1) {
     WorldMap_WriteLayerCellTile(0, px / 2, py / 2, tileId, 1);
-    WorldMap_WriteLayerCellTile(1, px / 2, py / 2, tileId + 0x140, 1);
+    WorldMap_WriteLayerCellTile(1, px / 2, py / 2, tileId + 320, 1);
   }
 }
 
@@ -338,7 +338,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   s16 backdropColor;
 
   graphicsSet = 0;
-  buffer = Heap_Alloc(0x200);
+  buffer = Heap_Alloc(512);
   perspective = gMapGridWork[0];
   // The 32-pixel cell under (x, z), 32 cells to a row.
   if (WORLD_MAP_CELLS[((x / (32 << 16)) & 31) + (((z / (32 << 16)) & 31) << 5)]
@@ -366,11 +366,11 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           DMA_COPY_WORDS(2048), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
-  // BG1's map (screen block 5) is filled with tile 0x7f of WINDOW_PALETTE, and
-  // screen block 6 numbers a 30 by 20 tile picture from tile 0x1a8, two
+  // BG1's map (screen block 5) is filled with tile 127 of WINDOW_PALETTE, and
+  // screen block 6 numbers a 30 by 20 tile picture from tile 424, two
   // tile numbers a word, for the still picture WorldMap_StartStillPicture
   // shows.
-  Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 0x600);
+  Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = 0x01a901a8;
   for (screenRow = 0; screenRow < 20; screenRow++) {
@@ -381,12 +381,12 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
     screenTiles++;
   }
   if (graphicsSet == 1) {
-    perspective->tileIds[10] = 0x10a;
-    perspective->tileIds[11] = 0x10b;
-    perspective->tileIds[12] = 0x10c;
-    perspective->tileIds[26] = 0x11a;
-    perspective->tileIds[27] = 0x11b;
-    perspective->tileIds[28] = 0x11c;
+    perspective->tileIds[10] = 266;
+    perspective->tileIds[11] = 267;
+    perspective->tileIds[12] = 268;
+    perspective->tileIds[26] = 282;
+    perspective->tileIds[27] = 283;
+    perspective->tileIds[28] = 284;
     WorldMap_UpdateCurrentTileBlock();
   }
   Heap_Release(buffer);
@@ -487,8 +487,8 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
     sourceCell += 4;
   } while (cellsCopied <= 31);
 
-  screenTile += 0xfc0;
-  sourceCell += 0xf80;
+  screenTile += 4032;
+  sourceCell += 3968;
   cellsCopied = 0;
   do {
     WorldMap_CopyCellTiles(sourceCell, screenTile);

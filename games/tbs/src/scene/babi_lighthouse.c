@@ -1204,7 +1204,7 @@ static void BabiLighthouse_PushRoadPillar(void) {
 static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
-  s32 climbDirection = (leader->facing + 0x2000) & 0xc000;
+  s32 climbDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
   s32 climbResult = -1;
 
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB || ahead == 0) {
@@ -1370,7 +1370,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->sprite->image.priority = 3;
     zero = 0;
     placedActor->sprite->flags = zero;
-    placedActor->sprite->rotation = 0xc000;
+    placedActor->sprite->rotation = TRIG_TURN * 3 / 4;
     Import_ActorSetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, 0);
     placedActor = Actor_GetById(ACTOR_FALLEN_STRONGMAN_ONLY_TWO);
     placedActor->collisionFlags = zero;
@@ -1378,7 +1378,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->wait = 30;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
-    placedActor->sprite->rotation = 0x4000;
+    placedActor->sprite->rotation = TRIG_TURN / 4;
     Import_ActorSetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, 0);
     placedActor = Actor_GetById(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
     placedActor->collisionFlags = zero;
@@ -1386,7 +1386,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->wait = 60;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
-    placedActor->sprite->rotation = 0x8000;
+    placedActor->sprite->rotation = TRIG_TURN / 2;
     Import_ActorSetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, 0);
     placedActor = Actor_GetById(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
     placedActor->collisionFlags = zero;
@@ -1394,7 +1394,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->wait = 90;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
-    placedActor->sprite->rotation = 0x8000;
+    placedActor->sprite->rotation = TRIG_TURN / 2;
     Import_ActorSetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, 0);
   } else if (mapCopy == (s32)&SceneId_BabiLighthouseLuff) {
     // Match the arrival effect and fall to the entrance used in this
@@ -1771,8 +1771,8 @@ struct ActorPlacement gBabiLighthouse_EntryActorPlacements[] = {
 };
 
 struct ActorPlacement gBabiLighthouse_LuffActorPlacements[] = {
-    {JUPITER_DJINNI, FLAG_DJINNI(DJINNI_LUFF), MOVEMENT_TYPE_STAND, PIXELS(472),
-     0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
+    {SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_LUFF), MOVEMENT_TYPE_STAND,
+     PIXELS(472), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACING_PARTY, 0},
     {SCENE_TABLE_END},
 };
 

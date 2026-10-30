@@ -55,7 +55,7 @@ void FieldPsynergy_Catch(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   object->facing = actor->facing;
-  object->speedLimit = 0x14ccc;
+  object->speedLimit = Q16_ONE * 13 / 10;
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, 5);
   Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GRB);
@@ -69,7 +69,7 @@ void FieldPsynergy_Catch(void) {
     SET_ACTOR_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
                        origin.y + (target.y - origin.y) * step / 10,
                        origin.z + (target.z - origin.z) * step / 10);
-    scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step);
+    scale = FieldEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);
@@ -97,7 +97,7 @@ void FieldPsynergy_Catch(void) {
 
   // Rise 1.5 pixels a frame for 13 frames.
   for (i = 0; i < 13; i++) {
-    object->y.fixed += 0x18000;
+    object->y.fixed += Q16_ONE * 3 / 2;
     wait(1);
   }
   wait(10);
@@ -111,7 +111,7 @@ void FieldPsynergy_Catch(void) {
     SET_ACTOR_POSITION(object, target.x + (origin.x - target.x) * step / 10,
                        target.y + (origin.y - target.y) * step / 10,
                        target.z + (origin.z - target.z) * step / 10);
-    scale = FieldEffect_Interpolate(0x4000, Q16_ONE, step);
+    scale = FieldEffect_Interpolate(Q16_ONE / 4, Q16_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);

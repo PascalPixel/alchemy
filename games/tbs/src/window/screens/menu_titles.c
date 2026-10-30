@@ -136,7 +136,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 #define RANGE_PATTERN_PAIR_WORDS 16
 /// The first of the range icons' BG tiles, which Window_DrawThreeTileColumn
 /// draws as tilemap entries.
-#define RANGE_ICON_FIRST_TILE 0x314
+#define RANGE_ICON_FIRST_TILE 788
 
 // Builds the twelve range icons Window_DrawThreeTileColumn draws, as
 // the 24 BG tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an
@@ -288,7 +288,7 @@ void Link_DrawPageArrows(s32 offset) {
       (u32 *)(gPageArrowTiles + 32), (u32 *)(offset + 32), phase);
 }
 
-/// Copies the UI's ten digit tiles ('0' to '9', tiles 0x30 to 0x39) twice into
+/// Copies the UI's ten digit tiles ('0' to '9', tiles 48 to 57) twice into
 /// `dst`, each pixel mapped through gGraphics_ExpandNibbleTable: first with
 /// colour 1 drawn as colour 10, then unchanged. The battle menus build their
 /// page numbers this way at LIST_PAGE_DIGITS_TILE (LIST_TILE_PAGE_NUMBER), as
@@ -408,10 +408,10 @@ s32 Portrait_Load(u32 member, s32 cacheSlot) {
   if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
     switch (portrait) {
     case ISAAC:
-      portrait = FACE_ISAAC_CHILD;
+      portrait = PORTRAIT_ISAAC_CHILD;
       break;
     case GARET:
-      portrait = FACE_GARET_CHILD;
+      portrait = PORTRAIT_GARET_CHILD;
       break;
     }
   }

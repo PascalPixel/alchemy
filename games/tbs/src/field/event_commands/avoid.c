@@ -49,7 +49,7 @@ void FieldEffect_UpdatePairedArcSpawner(struct Actor *actor) {
   }
 
   if (phase == 1)
-    caster->facing += 0xc00;
+    caster->facing += TRIG_TURN * 3 / 64;
 }
 
 /// Avoid (or the Sacred Feather) has worn off, and the game says so.
@@ -108,7 +108,7 @@ void FieldPsynergy_Avoid(void) {
     // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
     // distance is 2,400 pixels in 16.16.
     *tileSlot = slot;
-    VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
+    VramCache_Load((s16)slot, 256, gFieldEffect_ArcSparkTiles);
     gMainRoutineWork.avoidDistance = PIXELS(2400);
     gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
     Actor_SetSpriteColorModeFar(actor, zero);

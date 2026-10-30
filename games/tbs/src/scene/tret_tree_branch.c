@@ -244,7 +244,7 @@ s32 TretTreeBranch_Initialize(void) {
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
   // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
-  // adds six bytes in the native EN trial (0x6a to 0x70).
+  // adds six bytes in the native EN trial (106 to 112 bytes).
 #ifdef UBFIX
   state = gScreenTransitionWork;
 #else
@@ -335,7 +335,7 @@ u32 gTretTreeBranch_Exits[] = {
 
 // clang-format off
 struct ActorPlacement gTretTreeBranch_ActorPlacements[] = {
-    { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
+    { SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

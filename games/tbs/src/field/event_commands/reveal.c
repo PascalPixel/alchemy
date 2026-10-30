@@ -19,7 +19,7 @@ void Actor_SetRevealSpriteColor(s32 value) {
         struct Sprite *animation = actor->sprite;
         struct SpriteAnimation *entry = animation->entries[0];
 
-        if (entry->animationId == 200) {
+        if (entry->animationId == SPRITE_ROCK) {
           entry->colorMode = value;
           animation->dirty = kind;
         }
@@ -62,7 +62,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED
     // | ABILITY_REVEAL), which runs its ending events.
     u16 *slot = (u16 *)&work->psynergy;
-    u32 request = 0x2090;
+    u32 request = 0x2000 | ABILITY_REVEAL;
 
     *slot = request;
   }
@@ -138,7 +138,7 @@ void FieldPsynergy_EndReveal(void) {
   struct FieldWork *state = gFieldWork;
 #else
   // Named slots avoid stepping outside gFieldEffectWork. They add 8 bytes to
-  // this function in the forced native EN build (0xe8 -> 0xf0).
+  // this function in the forced native EN build (232 -> 240 bytes).
   struct FieldEffectWork **cell = &gFieldEffectWork;
   struct FieldEffectWork *effectWork = *cell;
   struct ScreenTransitionState *transition =

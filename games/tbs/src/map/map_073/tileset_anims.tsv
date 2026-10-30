@@ -1,52 +1,52 @@
-channel	0x0
-picture	0x600	2	0x560	0
-picture	0x620	2	0x580	10
-picture	0x602	2	0x560	0
-picture	0x622	2	0x580	10
-picture	0x604	2	0x560	0
-picture	0x624	2	0x580	10
-picture	0x606	2	0x560	0
-picture	0x626	2	0x580	10
-picture	0x604	2	0x560	0
-picture	0x624	2	0x580	10
-picture	0x602	2	0x560	0
-picture	0x622	2	0x580	10
+channel	0
+picture	1536	2	1376	0
+picture	1568	2	1408	10
+picture	1538	2	1376	0
+picture	1570	2	1408	10
+picture	1540	2	1376	0
+picture	1572	2	1408	10
+picture	1542	2	1376	0
+picture	1574	2	1408	10
+picture	1540	2	1376	0
+picture	1572	2	1408	10
+picture	1538	2	1376	0
+picture	1570	2	1408	10
 jump	0
-channel	0x1
-picture	0x608	3	0x5a0	0
-picture	0x628	3	0x5c0	0
-picture	0x648	3	0x5e0	8
-picture	0x60b	3	0x5a0	0
-picture	0x62b	3	0x5c0	0
-picture	0x64b	3	0x5e0	8
-picture	0x60e	3	0x5a0	0
-picture	0x62e	3	0x5c0	0
-picture	0x64e	3	0x5e0	8
-picture	0x611	3	0x5a0	0
-picture	0x631	3	0x5c0	0
-picture	0x651	3	0x5e0	8
-picture	0x60e	3	0x5a0	0
-picture	0x62e	3	0x5c0	0
-picture	0x64e	3	0x5e0	8
-picture	0x60b	3	0x5a0	0
-picture	0x62b	3	0x5c0	0
-picture	0x64b	3	0x5e0	8
+channel	1
+picture	1544	3	1440	0
+picture	1576	3	1472	0
+picture	1608	3	1504	8
+picture	1547	3	1440	0
+picture	1579	3	1472	0
+picture	1611	3	1504	8
+picture	1550	3	1440	0
+picture	1582	3	1472	0
+picture	1614	3	1504	8
+picture	1553	3	1440	0
+picture	1585	3	1472	0
+picture	1617	3	1504	8
+picture	1550	3	1440	0
+picture	1582	3	1472	0
+picture	1614	3	1504	8
+picture	1547	3	1440	0
+picture	1579	3	1472	0
+picture	1611	3	1504	8
 jump	0
-channel	0x2
-picture	0x640	2	0x545	0
-picture	0x660	2	0x565	0
-picture	0x680	2	0x585	10
-picture	0x642	2	0x545	0
-picture	0x662	2	0x565	0
-picture	0x682	2	0x585	10
-picture	0x644	2	0x545	0
-picture	0x664	2	0x565	0
-picture	0x684	2	0x585	10
-picture	0x646	2	0x545	0
-picture	0x666	2	0x565	0
-picture	0x686	2	0x585	10
-picture	0x6a0	2	0x545	0
-picture	0x6c0	2	0x565	0
-picture	0x6e0	2	0x585	10
+channel	2
+picture	1600	2	1349	0
+picture	1632	2	1381	0
+picture	1664	2	1413	10
+picture	1602	2	1349	0
+picture	1634	2	1381	0
+picture	1666	2	1413	10
+picture	1604	2	1349	0
+picture	1636	2	1381	0
+picture	1668	2	1413	10
+picture	1606	2	1349	0
+picture	1638	2	1381	0
+picture	1670	2	1413	10
+picture	1696	2	1349	0
+picture	1728	2	1381	0
+picture	1760	2	1413	10
 jump	0
 end

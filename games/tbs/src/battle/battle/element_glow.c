@@ -22,7 +22,7 @@ struct SparkWork {
   /// The blue ring sheet's pictures, decoded: the sparks' sizes at
   /// gElementGlow_StarPictureOffsets, the rings' pictures at
   /// gElementGlow_RingPictureOffsets.
-  u8 sheet[0x11c0];
+  u8 sheet[4544];
   struct Spark sparks[16];
   struct Ring rings[3];
   s32 frames; ///< frames drawn; new sparks start only in the first 25
@@ -86,7 +86,7 @@ s32 ElementGlow_UpdateStarField(void) {
     spark = &work->sparks[sparkIndex];
     life = spark->life;
     // A live spark ends within 0xfff (4 canvas pixels) of the centre; else
-    // each axis's velocity loses 1/128 and gains a pull of 1.1875 (0x13000)
+    // each axis's velocity loses 1/128 and gains a pull of 1.1875
     // towards the centre, the axis's share of its distance.
     if (life != 0) {
       distance = FixedSqrt((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
@@ -100,8 +100,8 @@ s32 ElementGlow_UpdateStarField(void) {
         axisPosition = spark->motion;
         for (axis = 2; axis >= 0; axis--) {
           coordinate = *axisPosition;
-          acceleration =
-              Iwram_MulQ16(Iwram_MulQ16(-coordinate >> 8, scale), 0x13000);
+          acceleration = Iwram_MulQ16(Iwram_MulQ16(-coordinate >> 8, scale),
+                                      Q16_ONE * 19 / 16);
           axisPosition[3] =
               axisPosition[3] - (axisPosition[3] >> 7) + acceleration;
           *axisPosition = coordinate + axisPosition[3];
@@ -179,7 +179,8 @@ u32 ElementGlow_UploadStarField(void) {
   if (source != 0) {
     if (work->ready != 0) {
       work->ready = 0;
-      PaletteFade_BackupAndScaleThreeQuarters(source, BG_CHAR_BLOCK(1), 0x4000);
+      PaletteFade_BackupAndScaleThreeQuarters(source, BG_CHAR_BLOCK(1),
+                                              BG_CHAR_SIZE);
     }
   }
 }
@@ -218,7 +219,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   // Word 2 of the background's work is BattleBackgroundWork.mode.
   ((s32 *)gBattleBackgroundWork)[2] = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 128 * 128);
   /* FAKEMATCH(one-pass): an empty once-only loop keeps the multiply routine's
    * address ahead of the spark cursor; without it, 2 of 246 instructions
    * differ in tbs-en. */
@@ -246,21 +247,21 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     spark->life = (radius >> 13) + 1;
   }
   for (effectIndex = 0; effectIndex < 3; effectIndex++) {
-    s32 radius = 0x1000;
+    s32 radius = 4096;
     s32 angle;
 
     ring = &work->rings[effectIndex];
-    angle = effectIndex * 0x5555;
+    angle = effectIndex * (TRIG_TURN / 3);
     ring->x = Iwram_MulQ16(Trig_Cos(angle), radius);
     ring->y = Iwram_MulQ16(Trig_Sin(angle), radius);
-    ring->velocityX = Iwram_MulQ16(Trig_Cos(angle), 0x200);
-    ring->velocityY = Iwram_MulQ16(Trig_Sin(angle), 0x200);
+    ring->velocityX = Iwram_MulQ16(Trig_Cos(angle), 512);
+    ring->velocityY = Iwram_MulQ16(Trig_Sin(angle), 512);
     ring->age = 0;
   }
   work->frames = 0;
   work->ready = 0;
   work->canvasOrigin.queued = 0;
-  Iwram_ClearWords(gHeapSlots[HEAP_SLOT_BATTLE_CANVAS], 0x4000);
+  Iwram_ClearWords(gHeapSlots[HEAP_SLOT_BATTLE_CANVAS], 128 * 128);
   // The sheet's 128 bytes of colours, then its pictures; then the
   // element's own colours over them.
   graphics = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
@@ -300,7 +301,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 /// Returns Task_Remove's result, which the caller does not
 /// read.
 s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused) {
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
@@ -385,7 +386,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
 
   wait(1);
   BattleBackground_SetMode(BATTLE_BACKGROUND_FIXED, battle->background, 0);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                                               DISPCNT_BG2_ON | DISPCNT_OBJ_ON |

@@ -451,7 +451,7 @@ static void WorldMap_MeetVine(void) {
 
   if (gMainRoutineWork.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
-    if ((u32)Import_RandomNext() < 0x8000) {
+    if ((u32)Import_RandomNext() < 32768) {
       Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_VENUS_DJINNI, DJINNI_VINE);
       work->encounterBias = 0;
     } else {
@@ -554,7 +554,7 @@ static void WorldMap_CircleFlint(struct Actor *updated) {
     actor->z.fixed = PIXELS(1328);
     Vector_AddPolarOffset(PIXELS(16), *angle, &actor->x);
     actor->facing = *angle + FACING_SOUTH;
-    *angle += 0x400;
+    *angle += TRIG_TURN / 64;
   }
 }
 
@@ -1239,7 +1239,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   actor->scaleY = 3 * Q16_ONE / 2;
   actor->timer = 0;
   actor->y.fixed = PIXELS(64);
-  actor->sprite->rotation = 0xf000;
+  actor->sprite->rotation = TRIG_TURN * 15 / 16;
   Actor_SetSpriteFlags(actor, 0);
   Actor_SelectAnimation(actor, FALLING_ROCK_ANIMATION_TUMBLE);
   wait(1);
@@ -1629,7 +1629,7 @@ static void WorldMap_MeetFlint(void) {
     if (leader != 0)
       Actor_SetPosition(ACTOR_VENUS_DJINNI, leader->x.fixed, leader->z.fixed);
     Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
-    DjinnRecovery_AddStandby(0, 0, 0);
+    DjinnRecovery_AddStandby(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
     WorldMap_Freeze();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Event_Wait(10);
@@ -1663,7 +1663,7 @@ static void WorldMap_MeetFlint(void) {
     djinni->gravity = PIXELS(1);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Event_PlaySound(SE_PSYNERGY_SPARKLE);
-    FieldPsynergy_LoadResources(140, 0);
+    FieldPsynergy_LoadResources(ABILITY_MOVE, 0);
     for (i = 59; i >= 0; i--) {
       if (gFrameCount & 2)
         Actor_SetColorMode(djinni, SPRITE_COLOR_WHITE);
@@ -2127,7 +2127,7 @@ static void WorldMap_UseBlackOrb(void) {
     *motion = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
-    Vram_Load(sprite->slot, 128, buffer + 0x400);
+    Vram_Load(sprite->slot, 128, buffer + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     Event_Wait(20);
     orb->update = WorldMap_PulseOrbAndSpawnSparks;
@@ -2218,7 +2218,7 @@ u16 gWorldMapBlend;
 /// BG0's screen block.
 #define WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, offset)                     \
   IO_WRITE_QUEUE_PUSH((u32)BG_SCREEN_BLOCK(4), (u32)((buffer) + (offset)),     \
-                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x140)
+                      DMA_COPY_WORDS(320))
 
 /// The ending, on the island Jenna and Kraden are adrift on: they talk of the
 /// lit Venus beacon and of Felix and Isaac until Alex comes and leads them to
@@ -2578,7 +2578,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   FieldEffect_ScheduleRatioTransition(7 * Q16_ONE / 5, 300);
   Event_Wait(270);
   gFieldWork->transitionFrames = 16;
-  PLTT_BACKDROP = 0x7fff;
+  PLTT_BACKDROP = RGB(31, 31, 31);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
@@ -2778,7 +2778,7 @@ static inline void WorldMap_ShowTransitionPicture(u8 *buffer, s32 offset,
 /// sets FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void
 WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
-  u8 *buffer = Heap_AllocEwram(0x4000);
+  u8 *buffer = Heap_AllocEwram(16384);
 
   wait(1);
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
@@ -2789,7 +2789,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
                       (u32)(gWorldMapPalettes + lighthouse * 32),
                       DMA_ENABLE << 16 | 16);
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) + 0x1000, (u32)buffer,
-                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x400);
+                      DMA_COPY_WORDS(1024));
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
   WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
@@ -3497,11 +3497,11 @@ s32 gWorldMapStormScript[] = {
 
 // clang-format off
 struct ActorPlacement gWorldMapActorPlacements[] = {
-    { VENUS_DJINNI, FLAG_DJINNI(DJINNI_VINE), (s32)gWorldMapFlintScript,
+    { SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_VINE), (s32)gWorldMapFlintScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MARS_DJINNI, FLAG_DJINNI(DJINNI_CORONA), MOVEMENT_TYPE_STAND,
+    { SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_CORONA), MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_HAIL), MOVEMENT_TYPE_STAND,
+    { SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_HAIL), MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5678), 0, PIXELS(1200), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -3616,7 +3616,7 @@ struct ActorPlacement gWorldMapActorPlacementsHammetsCaravan[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 216, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    {SPRITE_BLUE_CRYSTAL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5848), 0, PIXELS(1576), FACING_SOUTH, TALK_FACING_KEEP, 0 },

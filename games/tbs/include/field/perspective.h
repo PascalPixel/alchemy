@@ -20,10 +20,10 @@ struct WorldMapView {
   u8 animationsAndBlend[0xe4 - 0x17];
   s32 viewX;  ///< 16.16 fixed-point pixels
   s32 viewY;  ///< 16.16 fixed-point pixels
-  s32 scaleX; ///< 0x200000 at load
-  s32 scaleY; ///< 0x400000 at load
-  s32 limitX; ///< 0x1fe00000 at load
-  s32 limitY; ///< 0x1fe00000 at load
+  s32 scaleX; ///< 32 in 16.16 at load
+  s32 scaleY; ///< 64 in 16.16 at load
+  s32 limitX; ///< 8160 in 16.16 at load
+  s32 limitY; ///< 8160 in 16.16 at load
   /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
   /// tileset animations are then neither suspended nor resumed.
   s8 animationActive;
@@ -46,8 +46,8 @@ struct WorldMapView {
   u16 pitch;              ///< 1/65536 turns
   u16 yaw;                ///< 1/65536 turns
   u32 *resources;         ///< a row of gWorldMap_GraphicsResources, by terrain
-  u8 unusedAfterResources[0x18]; ///< no code names it
-  u16 tileIds[256]; ///< the world map tile in each of 16 by 16 cells
+  u8 unusedAfterResources[24]; ///< no code names it
+  u16 tileIds[256];            ///< the world map tile in each of 16 by 16 cells
   /// The tile each quarter of each layer's block buffer shows, so an unchanged
   /// quarter is not decoded again.
   u16 quarterTiles[8];

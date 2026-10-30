@@ -123,7 +123,8 @@ enum CrossboneIsleSteppingStonesActorId {
   /// ★ Named from what the player sees: the puddle by the dragon statue,
   /// drawn frozen around its pillar (its render)
   ACTOR_THIRD_PUDDLE,
-  /// The pillar in CrossboneIsleDragonStatue's third puddle, sprite 290,
+  /// The pillar in CrossboneIsleDragonStatue's third puddle,
+  /// SPRITE_WHITE_PLATFORM,
   /// which rises 32 pixels as Frost freezes the puddle.
   /// ★ Named from what the player sees: a narrow dark pillar standing in the
   /// third puddle (its render)
@@ -561,7 +562,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   flags = &leader->motionFlags;
   savedMotionFlags = *flags;
 #if TBS_PATCH_1
-  jumpDirection = (leader->facing + 0x2000) & 0xc000;
+  jumpDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
 #endif
   if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_WALK) {
     return 0;
@@ -1946,7 +1947,7 @@ struct ActorPlacement gCrossboneIsleDragonStatueActorPlacements[] = {
         PIXELS(296), 0, PIXELS(216), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { 290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(360), 0, PIXELS(264), FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SCENE_TABLE_END },
 };

@@ -60,7 +60,7 @@ struct MapGridLayer {
       *cells; ///< the layer's first cell (MapGridLayerScroll's cells)
   /// The next layer's scroll values (MapGridLayerScroll up to its cells); not
   /// named through this view.
-  u8 nextScroll[0x2c];
+  u8 nextScroll[44];
 };
 
 /// The map's running blend script, which sets the blend registers over time
@@ -124,7 +124,7 @@ struct MapGridScrollAnimView {
   u8 blendControl;
   /// The first layer's scroll values (MapGridLayerScroll up to its cells); not
   /// named through this view.
-  u8 firstScroll[0x2c];
+  u8 firstScroll[44];
   /// Each layer's cells, at MapGridScrollWork's layers[i].cells; readers mask
   /// the layer with 3, and the fourth entry lies past MapGridScrollWork's end.
   struct MapGridLayer layers[4];
@@ -149,8 +149,8 @@ struct WorldPosition {
 extern u32 gCellPictures[];
 
 /// The tileset animations' tiles, 16 KB of EWRAM at 0x02028000. A tileset
-/// animation's source tiles numbered 0x600 and up (0x200 and up for 64-byte
-/// tiles) are read from here, tile 0x600 (0x200) at its first byte.
+/// animation's source tiles numbered 1536 and up (512 and up for 64-byte
+/// tiles) are read from here, tile 1536 (512) at its first byte.
 extern u8 gMapGridAnimTiles[];
 
 /// The map's shape table, 16 KB of EWRAM at 0x0202c000: 4-byte entries

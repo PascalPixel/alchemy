@@ -65,7 +65,7 @@ void ActorSystem_PlaceSprites(void) {
   struct SpritePlacement drawPosition;
   u32 layerPlusOne;
 
-  // MapGridScrollWork owns all three layer cell pointers at their 0x30-byte
+  // MapGridScrollWork owns all three layer cell pointers at their 48-byte
   // stride. UB: map and system work are separate globals, beyond gActors.
   // Reading their named slots adds eight bytes in the forced EN build.
 #ifdef UBFIX
@@ -241,9 +241,9 @@ void ActorSystem_ProjectSprites(void) {
   system->used = 0;
   Transform_Reset();
   // Under the fixed view matrix every sprite also faces an eighth of a turn
-  // (0x2000) further back.
+  // further back.
   if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
-    angle += 0xffffe000;
+    angle += -(TRIG_TURN / 8);
     Iwram_TransformMatrix(gCamera_FixedViewMatrix);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
   } else {

@@ -5,8 +5,8 @@
 #include "../battle_effect_internal.h"
 
 /// The trail particles' random rotations, 48 bytes each, after the 384
-/// particles in PARTICLES (28 bytes each, so they end at 0x2a00).
-#define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 0x3800)
+/// particles in PARTICLES (28 bytes each, so they end at 10752).
+#define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 14336)
 
 /// The pictures in the slash sheet: five flash pictures, then the slash in
 /// three parts. Each starts where the one before ends; the notes give the

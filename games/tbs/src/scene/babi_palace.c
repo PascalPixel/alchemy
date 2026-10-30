@@ -391,7 +391,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
   s32 facingBits;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  roundedFacing = (leader->facing + 0x2000) & 0xc000;
+  roundedFacing = (leader->facing + TRIG_TURN / 8) & 0xc000;
   Event_Start();
   Field_EndBusyAndReveal();
   if (Event_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {
@@ -743,7 +743,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
   u16 facing;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  roundedFacing = (leader->facing + 0x2000) & -0x4000;
+  roundedFacing = (leader->facing + TRIG_TURN / 8) & -0x4000;
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgTolbiLikeSleep);
@@ -1168,7 +1168,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
   // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
-  // adds four bytes in the native English trial (0x82c to 0x830).
+  // adds four bytes in the native English trial (2,092 to 2,096 bytes).
 #ifdef UBFIX
   state = gScreenTransitionWork;
 #else
@@ -2502,11 +2502,11 @@ s32 BabiPalace_ApplyEntryState(void) {
         sprite->count = set;
         sprite->image.fullColor = 0;
         sprite->image.palette = 0;
-        // The icon is drawn 0x400 bytes into the glyph buffer, as the 128 bytes
+        // The icon is drawn 1,024 bytes into the glyph buffer, as the 128 bytes
         // of a 16 by 16 sprite.
-        buf = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+        buf = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
         Item_LoadIcon(ITEM_CLOAK_BALL);
-        Vram_Load(sprite->slot, 128, buf + 0x400);
+        Vram_Load(sprite->slot, 128, buf + 1024);
         HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
       if (gMainRoutineWork.entrance ==

@@ -285,7 +285,7 @@ enum {
 // for the actor's signed16-bit timer and wobble values.
 #ifdef UBFIX
 #define WATER_SPRAY_LATERAL_STEP(timer, wobble)                                \
-  ((timer) * 0x1000 + (wobble) * 0x8000)
+  ((timer) * 4096 + (wobble) * 32768)
 #else
 #define WATER_SPRAY_LATERAL_STEP(timer, wobble)                                \
   (((timer) << 12) + ((wobble) << 15))

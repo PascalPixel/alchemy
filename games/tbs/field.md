@@ -367,15 +367,15 @@ leader slows to a quarter pixel a frame while pushing.
 
 `Actor_UpdatePlayerControl` steers the leader on a town or dungeon map and
 `MapGrid_CheckCollision` judges each point it tests. Speeds are pixels a
-frame with a fraction, `0x10000` being one pixel.
+frame with a fraction, `Q16_ONE` being one pixel.
 
-| Name                 | Value     | Meaning                                       |
-| -------------------- | --------- | --------------------------------------------- |
-| `FIELD_WALK_SPEED`   | `0x10000` | 1 pixel a frame                               |
-| `FIELD_RUN_SPEED`    | `0x18000` | 1.5 pixels a frame, with the dash key held    |
-| `FIELD_ACCELERATION` | `0x4000`  | a quarter pixel a frame faster each frame     |
-| `COLLISION_TOO_HIGH` | 1         | the ground ahead is more than 8 pixels higher |
-| `COLLISION_TOO_LOW`  | -1        | the ground ahead is more than 12 pixels lower |
+| Name                 | Value             | Meaning                                       |
+| -------------------- | ----------------- | --------------------------------------------- |
+| `FIELD_WALK_SPEED`   | `Q16_ONE`         | 1 pixel a frame                               |
+| `FIELD_RUN_SPEED`    | `Q16_ONE * 3 / 2` | 1.5 pixels a frame, with the dash key held    |
+| `FIELD_ACCELERATION` | `Q16_ONE / 4`     | a quarter pixel a frame faster each frame     |
+| `COLLISION_TOO_HIGH` | 1                 | the ground ahead is more than 8 pixels higher |
+| `COLLISION_TOO_LOW`  | -1                | the ground ahead is more than 12 pixels lower |
 
 [Field code](src/field/README.md#walking-and-running) covers running,
 pushing, footprints and the World Map's walk, and
@@ -476,11 +476,11 @@ the still picture and `WorldPicture_Show` draws the world picture.
 through the lines, and [Maps](src/map/README.md#the-world-maps-data) has
 its data.
 
-| Name                   | Value     | Meaning                                       |
-| ---------------------- | --------- | --------------------------------------------- |
-| `WORLD_MAP_WALK_SPEED` | `0x8000`  | half a pixel a frame                          |
-| `WORLD_MAP_RUN_SPEED`  | `0x10000` | 1 pixel a frame, with the dash key held       |
-| `MapIndex_World`       | 1         | the World Map's row of the map table          |
+| Name                   | Value         | Meaning                                       |
+| ---------------------- | ------------- | --------------------------------------------- |
+| `WORLD_MAP_WALK_SPEED` | `Q16_ONE / 2` | half a pixel a frame                          |
+| `WORLD_MAP_RUN_SPEED`  | `Q16_ONE`     | 1 pixel a frame, with the dash key held       |
+| `MapIndex_World`       | 1             | the World Map's row of the map table          |
 
 ## Random encounters
 

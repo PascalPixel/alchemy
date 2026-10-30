@@ -14,8 +14,8 @@
 #define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
 // The first source tile read from gMapGridAnimTiles rather than VRAM, for
 // 32-byte and for 64-byte (wide) tiles: both bases put it at its start.
-#define TILESET_ANIM_RAM_TILE 0x600
-#define TILESET_ANIM_RAM_WIDE_TILE 0x200
+#define TILESET_ANIM_RAM_TILE 1536
+#define TILESET_ANIM_RAM_WIDE_TILE 512
 
 // The blend script's commands (BlendScript_Run): as the tileset animations',
 // and a BLDCNT value, told apart by its top four bits.

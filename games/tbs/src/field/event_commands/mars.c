@@ -133,9 +133,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-/// Spins and shrinks an actor by 0x400 a frame, then releases it: 53 frames
+/// Spins and shrinks an actor by 1,024 a frame, then releases it: 53 frames
 /// from full size.
-DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, 0xFFFFFC00)
+DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, -1024)
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
@@ -155,8 +155,8 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *actor) {
   frames = mote->orbitFrames;
   position.x = leader->x.fixed;
   position.z = leader->z.fixed;
-  Vector_AddPolarOffset(frames * 0x6666, (frames << 11) + mote->orbitAngle,
-                        &position);
+  Vector_AddPolarOffset(frames * (Q16_ONE * 2 / 5),
+                        (frames << 11) + mote->orbitAngle, &position);
   mote->x.fixed = position.x;
   mote->z.fixed = position.z;
   y = mote->y.fixed - PIXELS(1);

@@ -255,7 +255,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     }
 
     // The lightning mode draws the lightning from the user, stepping through
-    // its three 72x62 pictures every 3 frames (0x1200 bytes apart); the others
+    // its three 72x62 pictures every 3 frames (4608 bytes apart); the others
     // fire one burst a frame for 48 frames at a random point near a target.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
@@ -289,7 +289,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Move and draw the bursts; each lasts 24 frames and steps through the
-    // 32x64 pictures (0x800 bytes apart) every 4. The faces have one picture,
+    // 32x64 pictures (2048 bytes apart) every 4. The faces have one picture,
     // mirrored on EFFECT_SIDE_PARTY.
     i = 0;
     width = 32;

@@ -13,11 +13,11 @@ gField_LeaderScript:
 gField_DefaultActorPlacements:
 	.2byte 0, -1
 	.4byte gField_LeaderScript, 300 << 16, 0, 300 << 16
-	.2byte 0x5bb0
+	.2byte 23472
 	.byte 0, 0
 	.2byte -1, 0
 	.4byte 0, 0, 0, 0
-	.2byte 0x0000
+	.2byte 0
 	.byte 0, 0
 @ Screen transition shapes: {first, second, {count, value, x0, x1, y0, y1} x 3}
 	.global gScreenTransition_Shapes
@@ -268,14 +268,14 @@ gMessageSpeed_VoiceRates:
 	.byte 1, 3, 10, 0
 	.global gFieldEffect_WatchedActorScript
 gFieldEffect_WatchedActorScript:
-	.4byte 22, 9, 0xffff8000, 22, 10, 16384, 0, 2
-	.4byte 22, 9, 16384, 22, 10, 0xffffe000, 0, 2
-	.4byte 22, 9, 8192, 22, 10, 0xfffff000, 0, 2
-	.4byte 22, 9, 8192, 22, 10, 0xfffff000, 0, 2
-	.4byte 22, 9, 4096, 22, 10, 0xfffff800, 0, 2
-	.4byte 22, 9, 0xfffff000, 22, 10, 2048, 0, 2
-	.4byte 22, 9, 0xfffff800, 22, 10, 1024, 0, 2
-	.4byte 22, 9, 2048, 22, 10, 0xfffffc00, 0, 2
+	.4byte 22, 9, -32768, 22, 10, 16384, 0, 2
+	.4byte 22, 9, 16384, 22, 10, -8192, 0, 2
+	.4byte 22, 9, 8192, 22, 10, -4096, 0, 2
+	.4byte 22, 9, 8192, 22, 10, -4096, 0, 2
+	.4byte 22, 9, 4096, 22, 10, -2048, 0, 2
+	.4byte 22, 9, -4096, 22, 10, 2048, 0, 2
+	.4byte 22, 9, -2048, 22, 10, 1024, 0, 2
+	.4byte 22, 9, 2048, 22, 10, -1024, 0, 2
 	.4byte 0, 30, 27
 	.global gActor_WaitScript
 gActor_WaitScript:
@@ -346,45 +346,45 @@ gFieldEffect_DurationScripts:
 @ {tile << 16 | flag, area name}
 	.global gWorldPicture_AreaMarkers
 gWorldPicture_AreaMarkers:
-	.4byte 0x10183, 3
-	.4byte 0x10185, 20
-	.4byte 0x10199, 75
-	.4byte 0x101b3, 167
-	.4byte 0x101a2, 104
-	.4byte 0x101a4, 107
-	.4byte 0x101a6, 112
-	.4byte 0x10191, 50
-	.4byte 0x1018b, 36
-	.4byte 0x10197, 72
-	.4byte 0x1019b, 88
-	.4byte 0x10194, 60
-	.4byte 0x10188, 30
-	.4byte 0x101a0, 99
-	.4byte 0x101b7, 178
-	.4byte 0x101a8, 135
-	.4byte 0x20193, 53
-	.4byte 0x20184, 11
-	.4byte 0x201b9, 183
-	.4byte 0x1018a, 35
-	.4byte 0x201b6, 174
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x0, 0
-	.4byte 0x1018c, 39
-	.4byte 0x101ac, 152
+	.4byte 1 << 16 | 0x183, 3
+	.4byte 1 << 16 | 0x185, 20
+	.4byte 1 << 16 | 0x199, 75
+	.4byte 1 << 16 | 0x1b3, 167
+	.4byte 1 << 16 | 0x1a2, 104
+	.4byte 1 << 16 | 0x1a4, 107
+	.4byte 1 << 16 | 0x1a6, 112
+	.4byte 1 << 16 | 0x191, 50
+	.4byte 1 << 16 | 0x18b, 36
+	.4byte 1 << 16 | 0x197, 72
+	.4byte 1 << 16 | 0x19b, 88
+	.4byte 1 << 16 | 0x194, 60
+	.4byte 1 << 16 | 0x188, 30
+	.4byte 1 << 16 | 0x1a0, 99
+	.4byte 1 << 16 | 0x1b7, 178
+	.4byte 1 << 16 | 0x1a8, 135
+	.4byte 2 << 16 | 0x193, 53
+	.4byte 2 << 16 | 0x184, 11
+	.4byte 2 << 16 | 0x1b9, 183
+	.4byte 1 << 16 | 0x18a, 35
+	.4byte 2 << 16 | 0x1b6, 174
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 0, 0
+	.4byte 1 << 16 | 0x18c, 39
+	.4byte 1 << 16 | 0x1ac, 152
 	.4byte -1, 0

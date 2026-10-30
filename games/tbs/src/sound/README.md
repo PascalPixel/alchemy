@@ -287,7 +287,7 @@ the Great Healer's quest, waits in
 
 | Name                         | Value   | Meaning                                                 |
 | ---------------------------- | ------- | ------------------------------------------------------- |
-| `BGM_UNITY_SCALE`            | `0x100` | full volume, or the song's own tempo and pitch, in 8.8 fixed point |
+| `BGM_UNITY_SCALE`            | 256     | full volume, or the song's own tempo and pitch, in 8.8 fixed point |
 | `BGM_DEFAULT_RAMP_STEP`      | 4       | a ramp's step a VBlank: 64 VBlanks from silence to full |
 | `BGM_RESTORE_DELAY_VBLANKS`  | 10      | VBlanks after a jingle starts before the music waits for its end |
 | `BGM_WAIT_TIMEOUT_FRAMES`    | 300     | frames `Sound_WaitForBgmRestore` waits at most, about five seconds |

@@ -36,6 +36,7 @@
 #include "scene_tables.h"
 #include "sounds.h"
 #include "module/sound/sound.h"
+#include "djinn_ids.h"
 
 /// The debug item browser covers IDs 0 through 269.
 #define DEBUG_ITEM_COUNT 270
@@ -48,23 +49,23 @@
 /// with the sprite of someone or something in the game and named for it; what
 /// talking to each does is in gMenuTest_Triggers.
 enum MenuTestActorId {
-  /// Kraden's sprite, 0x1e (ACTOR_KRADEN in
+  /// Kraden's sprite, 30 (ACTOR_KRADEN in
   /// sol_sanctum_elemental_star_room.c);
   /// opens the picker a full party drops an item with.
   /// ★ Named from the game: "Kraden" (MsgDebugGlyphName)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
-  /// Dora's sprite, 0x1f (vale_eruption.c). `You got a Djinni!`
+  /// Dora's sprite, 31 (vale_eruption.c). `You got a Djinni!`
   /// ★ Named from the game: "Dora" (MsgDebugGlyphName)
   ACTOR_DORA,
-  /// Saturos's sprite, 0x20 (sol_sanctum_elemental_star_room.c).
+  /// Saturos's sprite, 32 (sol_sanctum_elemental_star_room.c).
   /// `The body is being torn apart.`
   /// ★ Named from the game: "Saturos" (MsgDebugGlyphName)
   ACTOR_SATUROS,
-  /// Menardi's sprite, 0x21 (sol_sanctum_elemental_star_room.c).
+  /// Menardi's sprite, 33 (sol_sanctum_elemental_star_room.c).
   /// `You got treasure!`
   /// ★ Named from the game: "Menardi" (MsgDebugGlyphName)
   ACTOR_MENARDI,
-  /// The sprite of Vale's armor merchant, 0x7d (cottage_rooms_a.c);
+  /// The sprite of Vale's armor merchant, 125 (cottage_rooms_a.c);
   /// opens
   /// the debug shop.
   /// ★ Named from the game: "Ask me anything about armor."
@@ -77,12 +78,12 @@ enum MenuTestActorId {
   /// Saturos's sprite again. "Kyle... Will they be able to stop the Boulder?"
   /// ★ Named from the game: "Saturos" (MsgDebugGlyphName)
   ACTOR_SECOND_SATUROS,
-  /// The ivy's sprite, 0xf8 ("trapped in the ivy", goma_cave_entrance.c);
+  /// The ivy's sprite, 248 ("trapped in the ivy", goma_cave_entrance.c);
   /// opens the icon browser, and takes Whirlwind, Force and Catch.
   /// ★ Named from the game: "It looks like it's trapped in the ivy."
   /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY,
-  /// Felix's sprite, 0x23 (sol_sanctum_elemental_star_room.c); a shop message
+  /// Felix's sprite, 35 (sol_sanctum_elemental_star_room.c); a shop message
   /// browser, or in Japanese the character selector.
   /// ★ Named from the game: "Felix" (MsgCharacterName)
   ACTOR_FELIX,
@@ -133,7 +134,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
   s32 messageIndex;
 
   gMainRoutineWork.messageSpeed = 2;
-  window = Portrait_OpenWindow(125, 0, 0, 0);
+  window = Portrait_OpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // Supply sample name, item and number substitutions before each message:
     // Garet, the Virtuous Armlet and 123456.
@@ -280,7 +281,7 @@ static void MenuTest_RaisePartyLevels(void) {
 /// 183 the Potion, 186 the Psy Crystal, 192 the Cookie and 236 the Sacred
 /// Feather (MsgItemName + the number).
 static void MenuTest_GiveConsumableTestStock(void) {
-  // A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
+  // A repeated-grant loop shrinks this native function from 1574 to 300;
   // retain the individual calls and their original insertion order.
   FieldMessage_Show(MsgDebugGotItem, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -510,60 +511,60 @@ static void MenuTest_GivePartyDjinn(void) {
 #endif
   // Add and set each element in separate passes, preserving recovery updates.
   FieldMessage_Show(MsgDebugGotDjinni, FIELD_MESSAGE_ZOOM);
-  Djinn_Give(ISAAC, ELEMENT_VENUS, 0);
-  Djinn_Give(ISAAC, ELEMENT_VENUS, 1);
-  Djinn_Give(ISAAC, ELEMENT_VENUS, 2);
-  Djinn_Give(ISAAC, ELEMENT_VENUS, 3);
-  Djinn_Give(ISAAC, ELEMENT_VENUS, 4);
-  Djinn_Give(ISAAC, ELEMENT_VENUS, 5);
-  Djinn_Give(ISAAC, ELEMENT_VENUS, 6);
-  Djinn_Set(ISAAC, ELEMENT_VENUS, 0);
-  Djinn_Set(ISAAC, ELEMENT_VENUS, 1);
-  Djinn_Set(ISAAC, ELEMENT_VENUS, 2);
-  Djinn_Set(ISAAC, ELEMENT_VENUS, 3);
-  Djinn_Set(ISAAC, ELEMENT_VENUS, 4);
-  Djinn_Set(ISAAC, ELEMENT_VENUS, 5);
-  Djinn_Set(ISAAC, ELEMENT_VENUS, 6);
-  Djinn_Give(GARET, ELEMENT_MARS, 0);
-  Djinn_Give(GARET, ELEMENT_MARS, 1);
-  Djinn_Give(GARET, ELEMENT_MARS, 2);
-  Djinn_Give(GARET, ELEMENT_MARS, 3);
-  Djinn_Give(GARET, ELEMENT_MARS, 4);
-  Djinn_Give(GARET, ELEMENT_MARS, 5);
-  Djinn_Give(GARET, ELEMENT_MARS, 6);
-  Djinn_Set(GARET, ELEMENT_MARS, 0);
-  Djinn_Set(GARET, ELEMENT_MARS, 1);
-  Djinn_Set(GARET, ELEMENT_MARS, 2);
-  Djinn_Set(GARET, ELEMENT_MARS, 3);
-  Djinn_Set(GARET, ELEMENT_MARS, 4);
-  Djinn_Set(GARET, ELEMENT_MARS, 5);
-  Djinn_Set(GARET, ELEMENT_MARS, 6);
-  Djinn_Give(MIA, ELEMENT_MERCURY, 0);
-  Djinn_Give(MIA, ELEMENT_MERCURY, 1);
-  Djinn_Give(MIA, ELEMENT_MERCURY, 2);
-  Djinn_Give(MIA, ELEMENT_MERCURY, 3);
-  Djinn_Give(MIA, ELEMENT_MERCURY, 4);
-  Djinn_Give(MIA, ELEMENT_MERCURY, 5);
-  Djinn_Give(MIA, ELEMENT_MERCURY, 6);
-  Djinn_Set(MIA, ELEMENT_MERCURY, 0);
-  Djinn_Set(MIA, ELEMENT_MERCURY, 1);
-  Djinn_Set(MIA, ELEMENT_MERCURY, 2);
-  Djinn_Set(MIA, ELEMENT_MERCURY, 3);
-  Djinn_Set(MIA, ELEMENT_MERCURY, 4);
-  Djinn_Set(MIA, ELEMENT_MERCURY, 5);
-  Djinn_Set(MIA, ELEMENT_MERCURY, 6);
-  Djinn_Give(IVAN, ELEMENT_JUPITER, 0);
-  Djinn_Give(IVAN, ELEMENT_JUPITER, 1);
-  Djinn_Give(IVAN, ELEMENT_JUPITER, 2);
-  Djinn_Give(IVAN, ELEMENT_JUPITER, 3);
-  Djinn_Give(IVAN, ELEMENT_JUPITER, 4);
-  Djinn_Give(IVAN, ELEMENT_JUPITER, 5);
-  Djinn_Set(IVAN, ELEMENT_JUPITER, 0);
-  Djinn_Set(IVAN, ELEMENT_JUPITER, 1);
-  Djinn_Set(IVAN, ELEMENT_JUPITER, 2);
-  Djinn_Set(IVAN, ELEMENT_JUPITER, 3);
-  Djinn_Set(IVAN, ELEMENT_JUPITER, 4);
-  Djinn_Set(IVAN, ELEMENT_JUPITER, 5);
+  Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
+  Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
+  Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_QUARTZ));
+  Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_VINE));
+  Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_SAP));
+  Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND));
+  Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE));
+  Djinn_Set(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
+  Djinn_Set(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
+  Djinn_Set(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_QUARTZ));
+  Djinn_Set(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_VINE));
+  Djinn_Set(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_SAP));
+  Djinn_Set(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND));
+  Djinn_Set(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE));
+  Djinn_Give(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FORGE));
+  Djinn_Give(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FEVER));
+  Djinn_Give(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_CORONA));
+  Djinn_Give(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_SCORCH));
+  Djinn_Give(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER));
+  Djinn_Give(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FLASH));
+  Djinn_Give(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
+  Djinn_Set(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FORGE));
+  Djinn_Set(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FEVER));
+  Djinn_Set(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_CORONA));
+  Djinn_Set(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_SCORCH));
+  Djinn_Set(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER));
+  Djinn_Set(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FLASH));
+  Djinn_Set(GARET, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
+  Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
+  Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_SLEET));
+  Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_MIST));
+  Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_SPRITZ));
+  Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_HAIL));
+  Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_TONIC));
+  Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_DEW));
+  Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
+  Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_SLEET));
+  Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_MIST));
+  Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_SPRITZ));
+  Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_HAIL));
+  Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_TONIC));
+  Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_DEW));
+  Djinn_Give(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_GUST));
+  Djinn_Give(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_BREEZE));
+  Djinn_Give(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_ZEPHYR));
+  Djinn_Give(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
+  Djinn_Give(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
+  Djinn_Give(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SQUALL));
+  Djinn_Set(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_GUST));
+  Djinn_Set(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_BREEZE));
+  Djinn_Set(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_ZEPHYR));
+  Djinn_Set(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
+  Djinn_Set(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
+  Djinn_Set(IVAN, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SQUALL));
   MenuTest_RecalculateParty();
 }
 
@@ -744,7 +745,7 @@ UNUSED static void MenuTest_OpenItemBrowser(void) { MenuTest_SelectItem(); }
 /// Catch Beads, the four Elemental Stars and the Mythril Bag.
 static void MenuTest_GiveTreasureTestStock(void) {
   // Sharing the duplicate grants through a counted loop shrinks this function
-  // from 0x194 to 0x120; retain the original calls.
+  // from 404 to 288; retain the original calls.
   FieldMessage_Show(MsgDebugGotTreasure, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
   Inventory_AddItem(ISAAC, ITEM_HALT_GEM);

@@ -91,7 +91,7 @@ void MPlayContinue(struct MusicPlayerInfo *player) {
 }
 
 /// Starts a fade with the music player's ident raised, resuming the music
-/// player for fade-ins: FadeOutBody moves the level 16 of 0x100 every `period`
+/// player for fade-ins: FadeOutBody moves the level 16 of 256 every `period`
 /// VBlanks, so a whole fade takes 16 * period VBlanks. pret writes this body
 /// out in each of MPlayFadeOut, m4aMPlayFadeOutTemporarily and m4aMPlayFadeIn;
 /// the name is ours.
@@ -115,7 +115,7 @@ void MPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
 }
 
 /// The bytes of mixer code m4aSoundInit copies to IWRAM.
-#define SOUND_MIXER_CODE_SIZE 0x400
+#define SOUND_MIXER_CODE_SIZE 1024
 
 /// Copies the RAM mixer to IWRAM, initializes the PCM and CGB paths and
 /// configures every music player from gMPlayTable. Called by Sound_Initialize

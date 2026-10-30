@@ -172,7 +172,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   s32 i;
 
   result = -1;
-  if (character > 7)
+  if (character > PIERS)
     return 0;
   Unit_GetElementLevels(character, djinn, levels);
   if (GameFlag_Get(FLAG_CHILDHOOD)) {

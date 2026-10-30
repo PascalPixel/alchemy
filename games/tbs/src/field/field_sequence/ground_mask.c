@@ -27,7 +27,7 @@ void FadeOverlay_DrawMarks(void) {
   s32 cameraZ = grid->viewY >> 16;
 #else
   // UB: the legacy halfword overlay aliases the map's s32 coordinates.
-  // Named-member high halves keep 0x1da bytes but change load scheduling
+  // Named-member high halves keep 474 bytes but change load scheduling
   // from .text+0x6cce in English; the actor's named fields match
   // plainly.
   s16 *camera =
@@ -109,7 +109,7 @@ void FadeOverlay_DrawMarks(void) {
 /// Starts the fade overlay on object (the party leader when NULL): loads its
 /// solid tiles, sets the blending and draws it each frame. Allocates
 /// HEAP_SLOT_FADE_OVERLAY for its work, borrows HEAP_SLOT_TILE_SCRATCH for the
-/// tiles (0x200 bytes of colour 1, VRAM cache block 94) and registers
+/// tiles (512 bytes of colour 1, VRAM cache block 94) and registers
 /// FadeOverlay_DrawMarks. Called by seven scene overlays (Venus and Mercury
 /// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
@@ -123,9 +123,9 @@ void FieldEffect_StartFadeOverlay(void *object) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
   // Upload the solid sprite tiles before enabling the drawing task.
-  tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
-  VramCache_Load(94, 0x200, tiles);
+  tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
+  Dma_Fill32Cell(fill, 0x11111111, tiles, 512);
+  VramCache_Load(94, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   Task_Add(FadeOverlay_DrawMarks, TASK_PASS_FRAME);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |

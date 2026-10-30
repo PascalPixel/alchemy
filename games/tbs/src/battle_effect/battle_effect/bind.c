@@ -168,7 +168,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                                    &originY);
   REG_BG2PA = Q_8_8(1);
 
-  // Setup. The rune, the flares at 0x1000 and the Djinni at 0x2000, in the
+  // Setup. The rune, the flares at 4096 and the Djinni at 8192, in the
   // rune's colours; the Djinni sheet's palette is skipped.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -177,10 +177,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
-                      work->sheet + 0x1000);
+                      work->sheet + 4096);
   palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + 0x2000);
+  Decompress_TaggedLz(palette, work->sheet + 8192);
   // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->args->targets[0], &anchor);
@@ -194,7 +194,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(0);
     // Red, green and blue sway a third of a turn apart.
-    BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
 
     // The Djinni sways 20 pixels either way, once every 32 frames, and from
     // frame 33 rises 2 pixels a frame. For its first four frames it is drawn
@@ -208,9 +209,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       BattleEffect_FetchRectangleBlitters(work->args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[0](canvas, work->sheet + 0x2000, x, y, 40, 40);
+      draw[0](canvas, work->sheet + 8192, x, y, 40, 40);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + 0x2000, x, y, 40, 40);
+        draw[1](canvas, work->sheet + 8192, x, y, 40, 40);
       EFFECT_RELEASE_BLITTERS();
     }
     // The blitters, plain and mirrored, keeping the brighter pixel; from
@@ -274,7 +275,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleEffect_FlareCells[size - 1] + 0x1000,
+                      work->sheet + gBattleEffect_FlareCells[size - 1] + 4096,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -342,7 +343,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
 
-  // Setup, as for Bind: the rune, and the flares at 0x1000.
+  // Setup, as for Bind: the rune, and the flares at 4096.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -350,7 +351,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
-  Decompress_TaggedLz(palette, work->sheet + 0x1000);
+  Decompress_TaggedLz(palette, work->sheet + 4096);
   // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->args->targets[0], &anchor);
@@ -367,7 +368,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
                                      16, 0);
-    BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
@@ -419,7 +421,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleEffect_FlareCells[size - 1] + 0x1000,
+                      work->sheet + gBattleEffect_FlareCells[size - 1] + 4096,
                       x - size, y - size, size * 2, size * 2);
             }
           }

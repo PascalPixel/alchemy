@@ -89,24 +89,24 @@ void FieldEffect_SetActorAlternatingWords(struct Actor *actor) {
 }
 
 /// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
-/// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
-/// zeroes the frame count first (Actor.spinRampFrames), as the Mars Djinni's
-/// joining does.
+/// just over 1/8 (TRIG_TURN / 8 + 64), 80 more each frame for 52 frames. The
+/// caller zeroes the frame count first (Actor.spinRampFrames), as the Mars
+/// Djinni's joining does.
 void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   void *obj = (void *)actor;
   struct Actor *spin = obj;
   u32 step;
 
-  step = spin->spinRampFrames * 0x50;
+  step = spin->spinRampFrames * 80;
   spin->facing = spin->facing + step + FACING_STEP;
   if (step < FACING_STEP) {
     spin->spinRampFrames = spin->spinRampFrames + 1;
   }
 }
 
-/// Spins and shrinks an actor by 0x1c0 a frame, then releases it: 119 frames
+/// Spins and shrinks an actor by 448 a frame, then releases it: 119 frames
 /// from full size. The Mars Djinni's joining shrinks the Djinni away with it.
-DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow, 0xFFFFFE40)
+DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow, -448)
 
 /// Field effect sprite callback of a Mars Djinni's sparks (enum
 /// MarsSparkState): the spark flies 120 pixels up the screen (give or take 3/32

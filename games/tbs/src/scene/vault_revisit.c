@@ -119,7 +119,7 @@ enum VaultRevisitActorId {
   /// finished." (MsgVaultThereYouSeeTheRoofRepairs)
   ACTOR_YOUNG_MAN_FIXING_THE_ROOF,
   /// Sap, a Venus Djinni, hiding until the bell calls it. The row before it,
-  /// sprite 0xf8 placed at 0, 0, is never referred to.
+  /// SPRITE_IVY placed at 0, 0, is never referred to.
   /// ★ Named from the game: "Sap" (MsgDjinnName)
   ACTOR_SAP = ACTOR_FIRST_PLACED + 13
 };
@@ -639,8 +639,8 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 
 /// Sets up Vault as the party finds it after reaching Kalay.
 /// On arrival it restores the passage's cell behaviors
-/// (shared/vault_toggle.h), creates the still actor of sprite 223 on the well
-/// that shows nothing, mends the inn's roof, which vault.c
+/// (shared/vault_toggle.h), creates the still actor of SPRITE_CRATE on the
+/// well, which shows nothing, mends the inn's roof, which vault.c
 /// leaves holed, and gives the two children round the well the update routine
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
 /// shown it. Coming in by a gate (ENTRANCE_DEFAULT to
@@ -860,7 +860,7 @@ struct ActorPlacement gVaultRevisit_ActorPlacements[] = {
         PIXELS(152), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0 },
     { SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0 },
-    { 90, 0x34, MOVEMENT_TYPE_STAND,
+    {SPRITE_VENUS_DJINNI, 0x34, MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

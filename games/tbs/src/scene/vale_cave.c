@@ -1152,7 +1152,7 @@ struct ActorPlacement gValeCave_MouthActorPlacements[] = {
 };
 
 struct ActorPlacement gValeCave_KiteActorPlacements[] = {
-    { JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
+    { SPRITE_JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_CRATES, CONDITION_ALWAYS, 7,
         PIXELS(344), 0, PIXELS(632), FACING_SOUTH, TALK_FACING_KEEP, 0 },
@@ -1172,7 +1172,7 @@ struct ActorPlacement gValeCave_KiteActorPlacements[] = {
 };
 
 struct ActorPlacement gValeCave_LogsActorPlacements[] = {
-    { JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
+    { SPRITE_JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
         PIXELS(792), 0, PIXELS(232), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
         PIXELS(200), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },

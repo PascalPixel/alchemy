@@ -35,11 +35,11 @@ struct PsynergyMenuWork {
   struct Window *listWindow;
   /// ItemMenuWork's modalWindow and the two windows it never opens;
   /// not named here.
-  u8 itemWindows[0x0c];
+  u8 itemWindows[12];
   struct WindowSprite *entryGridCursor;
   struct WindowSprite *entryIcons[32];
   struct WindowSprite *categoryIcons[8]; ///< ItemMenuWork's; not named here
-  u8 unusedAfterIcons[0x24];             ///< no view of the menu work names it
+  u8 unusedAfterIcons[36];               ///< no view of the menu work names it
   struct Window *messageWindow;
   /// The cursor grid: its place and its size.
   ///@{
@@ -57,7 +57,7 @@ struct PsynergyMenuWork {
                      ///< entry
   struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
-  u8 aroundBackdrop[0x48];
+  u8 aroundBackdrop[72];
   u16 psynergies[32]; ///< the chosen party member's Psynergy listed
   u16 memberTable[8]; ///< the party in order (Party_ListMembers)
   u8 psynergyCount;
@@ -71,10 +71,10 @@ struct PsynergyMenuWork {
   u16 flags;
   u16 skipSlide; ///< 1 skips the cursor's next slide once
   /// ItemMenuFiguresView's figures and their x; not named here.
-  u8 figureRow[0x18];
+  u8 figureRow[24];
   s16 slotY[4]; ///< screen pixels
   /// ItemMenuFiguresView's phases and DjinnMenuWork's pair; not named here.
-  u8 figurePhases[0x16];
+  u8 figurePhases[22];
   s16 useResult;   ///< the use's result message, after MsgItemUseResult
   s8 equipPreview; ///< ItemMenuWork's; not named here
   u8 listMode;     ///< ItemMenuWork's; not named here

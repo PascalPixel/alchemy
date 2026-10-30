@@ -91,7 +91,7 @@ enum {
 
 /// The deck height of a party member who has not yet boarded: the swell
 /// (Ship_UpdateSwell) moves only those who have.
-#define SHIP_NOT_ON_DECK (-0x10000)
+#define SHIP_NOT_ON_DECK (-PIXELS(1))
 
 /// The sprite of a gangway piece or a party actor.
 // ACTOR_SPRITE reads actor->sprite through an s32, so each store
@@ -141,7 +141,8 @@ static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
 /// Called by LemurianShip_SetupMap, and reached by Reveal as the spell ends.
 static void Ripple_Start(void) {
-  LineScroll_InitWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
+  LineScroll_InitWave(0, Q16_ONE * 4, Q16_ONE, Q16_ONE / 8, Q16_ONE,
+                      Q16_ONE / 2, Q16_ONE / 4);
 }
 
 /// The exit, Reveal and the Black Orb at the water's edge (cell behavior
@@ -581,8 +582,8 @@ static void LemurianShip_SetSail(void) {
 /// scroll offsets, swapped each frame, built from a sine table. Here a line
 /// is one word, BG3's x and y, where LineScrollWork has three.
 struct RippleScrollWork {
-  u16 pages[2][0x3c0]; ///< per page: 160 lines of BG3 x, y; the rest unused
-  u8 page;             ///< the page the HBlank DMA shows; the other is built
+  u16 pages[2][960]; ///< per page: 160 lines of BG3 x, y; the rest unused
+  u8 page;           ///< the page the HBlank DMA shows; the other is built
   u8 mode;
   u16 phase;        ///< frames built so far, added to BG3's y
   u8 unused[4];     ///< zeroed with the block; nothing reads or writes it
@@ -918,10 +919,10 @@ static void Curtain_Close(void) {
 static void Curtain_Start(void) {
   u8 *tiles;
 
-  tiles = Heap_CallAlternatePool(Heap_AllocEwram, 0x100);
+  tiles = Heap_CallAlternatePool(Heap_AllocEwram, 256);
   sCurtainVramSlot = VramCache_FindFreeEntry();
-  Dma_Fill32(0x11111111, tiles, 0x100);
-  VramCache_Load(sCurtainVramSlot, 0x100, tiles);
+  Dma_Fill32(0x11111111, tiles, 256);
+  VramCache_Load(sCurtainVramSlot, 256, tiles);
 
   sCurtainGap = 48;
   Task_AddFrame(Curtain_Close, TASK_PASS_FRAME);
@@ -930,8 +931,9 @@ static void Curtain_Start(void) {
 /// The ship's glow: ShipGlow_CyclePalette shows six of these colours at a
 /// time, from a start that moves one colour every 6 frames.
 u16 gShipGlowPalettes[] = {
-    0x5860, 0x69c0, 0x7f20, 0x69c0, 0x5860, 0x4800,
-    0x5860, 0x69c0, 0x7f20, 0x69c0, 0x5860, 0x0000,
+    RGB(0, 3, 22),  RGB(0, 14, 26), RGB(0, 25, 31), RGB(0, 14, 26),
+    RGB(0, 3, 22),  RGB(0, 0, 18),  RGB(0, 3, 22),  RGB(0, 14, 26),
+    RGB(0, 25, 31), RGB(0, 14, 26), RGB(0, 3, 22),  RGB(0, 0, 0),
 };
 
 /// A drop of spray, at the end of its rise: released.

@@ -909,12 +909,13 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   starCount = 0;
-  inventoryEntry = Unit_Get(1)->inventory;
+  inventoryEntry = Unit_Get(GARET)->inventory;
   remainingSlots = 14;
   do {
     u32 item = *inventoryEntry & 0x1ff;
     inventoryEntry++;
-    if (item == 220 || item == 221 || item == 223)
+    if (item == ITEM_VENUS_STAR || item == ITEM_MERCURY_STAR ||
+        item == ITEM_JUPITER_STAR)
       starCount++;
     remainingSlots--;
   } while (remainingSlots >= 0);
@@ -2079,7 +2080,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED);
-  Party_RemoveMemberRestored(5);
+  Party_RemoveMemberRestored(JENNA);
   // Give out the bags and make the pedestal crossings available.
   SolSanctumElementalStarRoom_GiveMythrilBags();
   MapGrid_CopyCellAttributes(8, 0, 5, 1, 27, 17);
@@ -2210,8 +2211,8 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   ItemDisplay_ShowItem(ITEM_MYTHRIL_BAG, 3);
   FieldMessage_Show(MsgSolSanctumGotFourMythrilBags, 1);
   do {
-    freeSlots = 30 - Inventory_Count(0);
-    freeSlots -= Inventory_Count(1);
+    freeSlots = 30 - Inventory_Count(ISAAC);
+    freeSlots -= Inventory_Count(GARET);
 
     if (freeSlots <= 3) {
       FieldMessage_Show(MsgSolSanctumTooManyItems, 1);

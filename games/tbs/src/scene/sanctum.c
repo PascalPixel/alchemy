@@ -825,18 +825,18 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Event_PlaySound(SE_WISE_ONE_QUEST);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
     Event_Wait(16);
     for (effectIndex = 0; effectIndex < 6; effectIndex++) {
-      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
       Event_Wait(8);
     }
     Event_Wait(8);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
     Event_Wait(96);
     Event_Wait(32);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
@@ -898,9 +898,9 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
     Sanctum_ShowHealerAfterimage();
     Event_PlaySound(SE_WISE_ONE_QUEST);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_DORA, ACTOR_HEALER, 0);
@@ -915,13 +915,13 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_StartRepeatedMotion(ACTOR_WEST_HEALER, 1);
     Actor_StartRepeatedMotion(ACTOR_EAST_HEALER, 1);
     for (effectIndex = 0; effectIndex < 6; effectIndex++) {
-      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+      Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
       Event_Wait(8);
     }
     Event_Wait(8);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
     Event_Wait(32);
-    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, 0x1200);
+    Sanctum_SpawnOrbitingEffect(ACTOR_HEALER, TRIG_TURN * 9 / 128);
     Event_Wait(128);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
     Event_Wait(30);
@@ -1980,10 +1980,10 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
     transferBuffer =
         HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(item);
-    VramCache_Load(sprite->slot, 128, transferBuffer + 0x400);
+    VramCache_Load(sprite->slot, 128, transferBuffer + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     for (frame = 0; frame < 60; frame++) {
-      if ((u32)(icon->velocityY + 255) <= 0x1fe)
+      if ((u32)(icon->velocityY + 255) <= 510)
         icon->motionFlags = 0;
       wait(1);
     }
@@ -2345,7 +2345,7 @@ struct ActorPlacement gSanctum_VaultBilibinActorPlacements[] = {
         PIXELS(200), 0, PIXELS(130), FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0 },
     { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         PIXELS(200), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },
-    { 221, CONDITION_ALWAYS, 7,
+    {SPRITE_SANCTUM_GOLD_STATUE, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -2363,7 +2363,7 @@ struct ActorPlacement gSanctum_QuestActorPlacements[] = {
         PIXELS(168), 0, PIXELS(208), FACING_NORTH + FACING_STEP, 3, 0 },
     { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, 3, 0 },
-    { 252, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    {SPRITE_WISE_ONE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SPRITE_MAN_IN_TALL_HAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0 },

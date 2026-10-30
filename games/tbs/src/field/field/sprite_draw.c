@@ -119,9 +119,9 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         layer->script = 0;
         picture = SPRITE_PICTURE_NONE;
         // Ending any sprite animation lowers the sprite's animation count, as
-        // if the last had ended. Only sprite 283, the impact of Lift, has
-        // animations that end, and it is a sprite of one sprite animation, so
-        // an ending always empties it.
+        // if the last had ended. Only SPRITE_STAR_BURST, the impact of Lift,
+        // has animations that end, and it is a sprite of one sprite animation,
+        // so an ending always empties it.
         animation->count--;
         goto select_direction;
       // Unused commands, skipped. 251 is not among them: it shows as a picture.
@@ -250,7 +250,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == SPRITE_PICTURE_LZ) {
         if (layer->colorMode != 0) {
-          unpacked = Heap_Alloc(0x400);
+          unpacked = Heap_Alloc(1024);
           decodePicture(
               Decompress_Lz(layer->pictures[layer->picture], unpacked), pixels,
               layer->colorMode);
@@ -521,13 +521,13 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       roundedScale = (z + 0x400) & -0x800;
       scaleX = Iwram_MulQ16(roundedScale, *scale++);
       scaleY = Iwram_MulQ16(roundedScale, *scale);
-      // Hold each scale below 2 (0x1f800 is 2 less 1/32): a scaled sprite is
-      // drawn in a double-size box, which the picture exactly fills at 2 and
-      // would overflow, cut off at its edges, beyond it.
+      // Hold each scale below 2 (Q16_ONE * 63 / 32, 2 less 1/32): a scaled
+      // sprite is drawn in a double-size box, which the picture exactly fills
+      // at 2 and would overflow, cut off at its edges, beyond it.
       if (scaleX > 0x1f7ff)
-        scaleX = 0x1f800;
+        scaleX = Q16_ONE * 63 / 32;
       if (scaleY > 0x1f7ff)
-        scaleY = 0x1f800;
+        scaleY = Q16_ONE * 63 / 32;
       offsetX = Iwram_MulQ16(sprite->offsetX, scaleX);
       offsetY = -Iwram_MulQ16((sprite->height >> 1) - sprite->offsetY, scaleY);
       if (scaleX > Q16_ONE || scaleY > Q16_ONE) {

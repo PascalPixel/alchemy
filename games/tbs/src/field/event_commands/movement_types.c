@@ -31,7 +31,7 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
 
   target = actor->watchedActor;
   if (target != 0) {
-    // Whole pixels, rounded toward zero as a division by 0x10000 would.
+    // Whole pixels, rounded toward zero as a division by Q16_ONE would.
     deltaX = target->x.fixed - actor->x.fixed;
     if (deltaX < 0)
       deltaX += 0xffff;

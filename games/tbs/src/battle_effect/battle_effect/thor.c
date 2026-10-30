@@ -4,15 +4,15 @@
 
 #include "../battle_effect_internal.h"
 
-/// 910 sparks from Ram_MapGridCellBuffer + 0xc58; the smoke pictures come
+/// 910 sparks from Ram_MapGridCellBuffer + 3160; the smoke pictures come
 /// before them.
-#define THOR_PARTICLES ((struct Particle *)(Ram_MapGridCellBuffer + 0xc58))
+#define THOR_PARTICLES ((struct Particle *)(Ram_MapGridCellBuffer + 3160))
 
 /// The particle sprites, after the light fan pictures.
-#define THOR_SPRITES_OFFSETS 0x1800
+#define THOR_SPRITES_OFFSETS 6144
 
 /// The violet mote in the second part's sheet.
-#define THOR_MOTE_OFFSETS 0x6000
+#define THOR_MOTE_OFFSETS 24576
 
 #define THOR_PARTICLE_COUNT 910 ///< particles in THOR_PARTICLES
 #define THOR_DIMMED_DOTS 10000  ///< the darker copies of the dot pictures
@@ -203,8 +203,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     }
     // Red, green and blue sway a third of a turn apart, so the canvas
     // colours cycle through the hues.
-    BattleEffect_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
-    // The frame before the beam fills the canvas with level 26 (0x1a in each
+    BattleEffect_UpdatePhasePalette(frame * 2, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
+    // The frame before the beam fills the canvas with level 26 (26 in each
     // byte) instead of fading it.
     if (frame == 150) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(26));
@@ -216,7 +217,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // 128, then sink and shrink into the sky with growing dots (past 22
     // frames the sink holds at 20, not 22); after frame 150 they grow
     // again, with dots of size 5.
-    Projection_Set(0x1fe0000, Iwram_RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
+    Projection_Set(510 << 16, Iwram_RatioMulQ14(510 << 16, Q16_ONE * 3 / 4),
+                   0x7fff0000);
     Transform_Reset();
     if (frame > 128) {
       s32 sinkFrame = frame - 128;
@@ -234,7 +236,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       Transform_ApplyPitch(TRIG_TURN / 2);
       Transform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
-        SET_VECTOR(scale, frame * 0x1800 - 0xd9400, scale[0], scale[0]);
+        SET_VECTOR(scale, frame * 6144 - 889856, scale[0], scale[0]);
         size = 5;
       } else {
         SET_VECTOR(scale, Q16_ONE - sinkFrame * 3 * (Q16_ONE / 64), scale[0],

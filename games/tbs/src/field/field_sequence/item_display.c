@@ -15,8 +15,8 @@ STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 #define EFFECT_OBJECT_POOL gActors
 #else
 // UB: gActors and gFieldWork are separate globals. The named pool load
-// changes register allocation and shrinks StartRandomParticleEmitter from 0x158
-// to 0x156 bytes in tbs-en; keep the native read here.
+// changes register allocation and shrinks StartRandomParticleEmitter from 344
+// to 342 bytes in tbs-en; keep the native read here.
 #define EFFECT_OBJECT_POOL (*(struct Actor **)((u8 *)&gFieldWork - 88))
 #endif
 
@@ -113,11 +113,11 @@ void ItemDisplay_EmitSparkles(struct Actor *actor) {
 /// with sparkles. While Reveal is active, its marks and sparkles are cleared
 /// first. Returns the picture's actor, or 0 without the actor or
 /// an empty actor slot. The picture is sprite 22, thrown up (velocityY 2 << 16,
-/// gravity 0x4000: it rises for 8 frames) while it grows to full size, its icon
-/// drawn through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and loaded
-/// into VRAM. The caller owns the picture: Field_ExamineCell releases it once
-/// the find is told. Called by Field_ExamineCell for coins and items found, and
-/// by FieldEffect_PlayCueAndStartEmitterOnTarget.
+/// gravity Q16_ONE / 4: it rises for 8 frames) while it grows to full size, its
+/// icon drawn through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and
+/// loaded into VRAM. The caller owns the picture: Field_ExamineCell releases it
+/// once the find is told. Called by Field_ExamineCell for coins and items
+/// found, and by FieldEffect_PlayCueAndStartEmitterOnTarget.
 struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
   struct Actor *picture;
 
@@ -180,15 +180,15 @@ struct Actor *FieldEffect_StartRandomParticleEmitter(s32 actorId, s32 item) {
     sprite->image.priority = 1;
 
     picture->velocityY = PIXELS(2);
-    picture->gravity = 0x4000;
+    picture->gravity = Q16_ONE / 4;
 
     // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
-    // sprite's tiles: 128 bytes from offset 0x400 of the block.
-    iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    // sprite's tiles: 128 bytes from byte 1,024 of the block.
+    iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
     Icon_DrawItemFar(item);
 
     sprite->image.tile =
-        VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
+        VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 1024);
 
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     picture->update = ItemDisplay_EmitSparkles;
@@ -242,7 +242,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
       ((struct Actor *)object)->velocityY = PIXELS(2);
-      ((struct Actor *)object)->gravity = 0x4000;
+      ((struct Actor *)object)->gravity = Q16_ONE / 4;
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3) {
@@ -266,7 +266,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// heap reset frees it).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  void *iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  void *iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
   struct Actor *actor =
       Actor_CreateFar(SPRITE_BLANK, leader->x.fixed,
                       leader->y.fixed + (36 << 16), leader->z.fixed);
@@ -281,7 +281,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     sprite->image.priority = 1;
 
     Icon_DrawItemFar(item);
-    VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 0x400);
+    VramCache_Load(sprite->slot, 128, (u8 *)iconBuffer + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
@@ -375,7 +375,7 @@ s32 Field_IsRevealActive(struct Actor *interpreter) {
 /// and 5 up or down of the leader: treasure spots (ids 100 to 239) with no
 /// actor placed, whose examine trigger (TRIGGER_EXAMINE) gives an item, coins,
 /// a Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
-/// actor of sprite 22 running gFieldEffect_MarkerParticleScript. Called by
+/// actor of SPRITE_BLANK running gFieldEffect_MarkerParticleScript. Called by
 /// Reveal (event_commands/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;

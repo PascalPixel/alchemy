@@ -637,15 +637,16 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         }
       } else if (spread != ABILITY_RANGE_ALL) {
         // An enemy: its name, centred under it and kept on the 224 pixels
-        // of the window; enemies 122 and 125 are "Mystery Man" and "Mystery
-        // Woman".
+        // of the window; ENEMY_MYSTERY_MAN and ENEMY_MYSTERY_WOMAN are named
+        // "Mystery Man" and "Mystery Woman".
         target = Unit_GetFar(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(
             candidateIds[targetIndex], ScreenPoint_Coordinates(&namePosition));
         namePosition.y += Trig_Sin(gFrameCount << 12) / 32768;
-        if (target->id == 125 || target->id == 122) {
+        if (target->id == ENEMY_MYSTERY_WOMAN ||
+            target->id == ENEMY_MYSTERY_MAN) {
           width = MsgMysteryPersonName;
-          if (target->id == 125)
+          if (target->id == ENEMY_MYSTERY_WOMAN)
             width++;
           TARGET_MYSTERY_NAME_COPY(width, targetName,
                                    TARGET_MYSTERY_NAME_CAPACITY);

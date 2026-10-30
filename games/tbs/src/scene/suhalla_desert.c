@@ -860,7 +860,7 @@ s32 Scene_Initialize(void) {
 /// the sand haze is faded in if a storm has risen before.
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
   // Trial: sharing the blend tail through an ordinary inline shrinks this
-  // function from 0x144 to 0x138 bytes in tbs-en; retain the original body.
+  // function from 324 to 312 bytes in tbs-en; retain the original body.
   struct Actor *actor;
   s32 stormId;
   s32 stormAlpha = 0;
@@ -906,7 +906,7 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
 /// first sprite part takes parameter 10, and once the chasing storm has been
 /// doused it is gone for good.
 static void SuhallaDesert_SetUpSecondMapStorms(void) {
-  // Trial: the same blend-tail inline shrinks this function from 0x158 to 0x14c
+  // Trial: the same blend-tail inline shrinks this function from 344 to 332
   // bytes in tbs-en; retain the original body.
   struct Actor *actor;
   struct Sprite *sprite;
@@ -1098,7 +1098,7 @@ struct ActorPlacement gSuhallaDesertSouthActorPlacements[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
-    { MARS_DJINNI, FLAG_DJINNI(DJINNI_FLASH), MOVEMENT_TYPE_STAND,
+    { SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_FLASH), MOVEMENT_TYPE_STAND,
         PIXELS(72), 0, PIXELS(696), FACING_SOUTH, TALK_FACING_PARTY, 0 },
     { SCENE_TABLE_END },
 };

@@ -10,7 +10,7 @@
 /// small.
 void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
   // A shared inline kernel with a constant inversion argument changes both
-  // arc updates from 0x58 to 0x5c bytes in the forced native English build.
+  // arc updates from 88 to 92 bytes in the forced native English build.
   struct Actor *arc = (struct Actor *)actor;
   struct Actor *anchor;
   s32 frame;
@@ -84,9 +84,9 @@ struct SpriteArcOamView {
   struct SpriteAnimation *child; ///< entries[0], its first layer
 };
 
-/// Spawns the two swelling arcs (sprite 26) on an actor, A and B (B upside
-/// down); they follow it for 32 frames, then release themselves. They draw
-/// with the Psynergy's spark tiles, so they need the Psynergy's work; the
+/// Spawns the two swelling arcs (SPRITE_GOLDEN_RINGS) on an actor, A and B (B
+/// upside down); they follow it for 32 frames, then release themselves. They
+/// draw with the Psynergy's spark tiles, so they need the Psynergy's work; the
 /// casting update routines below spawn them every 16 frames, and
 /// FieldPsynergy_End waits for the last to end (at most 30
 /// frames).
@@ -109,7 +109,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     arc->motionFlags = 0;
     arc->timer = 0;
     arc->watchedActor = watched;
-    arc->scaleX = arc->scaleY = 0x1999; // 0.1
+    arc->scaleX = arc->scaleY = Q16_ONE / 10;
     if (sprite == 0)
       continue;
     // A wide 16-colour sprite drawn from the Psynergy's tiles.

@@ -29,7 +29,7 @@ void System_Initialize(void) {
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
   // Clear IWRAM up to the heap's end (the stacks above it are in use), then
   // install the resident IWRAM code before any service can use its work blocks
-  Dma_Fill32(0, (void *)IWRAM_START, 0x7800);
+  Dma_Fill32(0, (void *)IWRAM_START, 30 * 1024);
   Heap_Initialize();
   System_InstallIwramAndIrqs();
   // UB: the count and its pad are cleared with one word store
@@ -266,8 +266,8 @@ void System_InstallIwramAndIrqs(void) {
   // Keep interrupts masked while replacing both the dispatcher and its table.
   Io_Write16(0, &REG_IME);
   iwram = IwramIrqMain;
-  // 0x1400 bytes of resident code and data
-  Dma_Set(IwramResident_Rom, iwram, DMA_COPY_WORDS(0x500), REG_DMA3);
+  // 5120 bytes of resident code and data
+  Dma_Set(IwramResident_Rom, iwram, DMA_COPY_WORDS(1280), REG_DMA3);
   gIrqVector = iwram;
   Dma_Set(gDefaultIrqHandlers, gIrqHandlers, DMA_COPY_WORDS(IRQ_COUNT),
           REG_DMA3);

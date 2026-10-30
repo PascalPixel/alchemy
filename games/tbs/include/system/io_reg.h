@@ -179,7 +179,7 @@ enum DisplayControl {
 
 /// Palette RAM, as pret names it: the background colours, then the sprites'.
 #define PLTT 0x05000000
-#define BG_PLTT_SIZE 0x200 ///< bytes of background colours, 256 of them
+#define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
 
 /// Background colour 0, the backdrop shown where no layer draws.
 #define PLTT_BACKDROP (*(volatile u16 *)PLTT)
@@ -204,8 +204,8 @@ enum DisplayControl {
 #define EWRAM_END 0x02040000
 /// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
 #define VRAM 0x06000000
-#define BG_CHAR_SIZE 0x4000  ///< bytes in a character block, 16 KB
-#define BG_SCREEN_SIZE 0x800 ///< bytes in a screen block, 2 KB
+#define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB
+#define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
 #define BG_CHAR_BLOCK(n) ((u8 *)VRAM + (n) * BG_CHAR_SIZE)
@@ -299,7 +299,7 @@ enum DisplayControl {
 
 #define OAM ((void *)0x07000000) ///< the sprites' attributes
 /// OAM's size in bytes: 128 sprites of 8 bytes.
-#define OAM_SIZE 0x400
+#define OAM_SIZE 1024
 
 /// A sprite's mode, OAM attribute 0's bits 11..10.
 enum ObjMode {

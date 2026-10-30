@@ -123,7 +123,7 @@ extern s32 gElementGlow_StarPictureOffsets[];
 /// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
 extern u8 gElementGlow_StarSizes[];
 /// Where SparkWork.sheet holds the ring's four 32 by 32 frames: byte offsets,
-/// 0x400 apart.
+/// 1,024 apart.
 extern s32 gElementGlow_RingPictureOffsets[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
 /// sixteen (a pulse up to 8 and back) over and over.

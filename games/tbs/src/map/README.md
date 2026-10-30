@@ -183,8 +183,12 @@ them together behind its header.
 | `*_patch.tsv` | bytes [Camelot](../../glossary.md#camelot) changed after packing |
 
 `map.txt` holds one line of the grid per row, each cell written
-`picture:behavior:shape` in hexadecimal, a field left off the end being 0
-(`4fff:ff`, `20`). Its first line gives the grid's size, the cell its first
+`picture:behavior:shape`, a field left off the end being 0 (`4fff:255`,
+`20`). The picture is in hexadecimal, since it is the halfword the game
+reads: the top four bits the priority and layer flags, the low twelve the
+cell picture (`8fff` is cell picture `fff` with priority 2). The behavior,
+one of `enum CellBehavior`, and the shape, a row of `shapes.tsv`, are in
+decimal. Its first line gives the grid's size, the cell its first
 written row starts at (column, then row), and the cell every cell the rows
 leave out holds; in the part of Vale with the shops and the Psynergy Stone
 (`map_003`) it is `grid:128x128	at:0,0	fill:2b:0:0`. Every map's rows
@@ -407,7 +411,8 @@ bed. The names below are the tables' words.
 
 | Word | Value | Meaning |
 | --- | --- | --- |
-| `channel n` | `0xfd00 + n` | tileset animation n starts at the next value; with bit 7 set it starts paused |
+| `channel n` | `0xfd00 + n` | tileset animation n starts at the next value |
+| `paused n` | `0xfd80 + n` | as `channel n`, but the animation starts paused |
 | `picture` | four values below `0xfd00` | source tile, tile count, destination tile, frames to wait |
 | `jump n` | `0xfe00 + n` | continue at value 2n of the animation's commands |
 | `stop` | `0xfeff` | halt the animation |

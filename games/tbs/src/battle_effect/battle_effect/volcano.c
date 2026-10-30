@@ -12,11 +12,11 @@
 // idle.
 
 #define VOLCANO_FRAMES 96
-#define VOLCANO_ERUPTION 200            ///< sparks thrown as a pillar starts
-#define VOLCANO_TRICKLE 4               ///< and each frame after
-#define VOLCANO_SPARK_POOL 1024         ///< sparks in PARTICLES
-#define VOLCANO_FLAME_IMAGE_ODD 0xdd0   ///< the flame on odd frames
-#define VOLCANO_FLAME_IMAGE_EVEN 0x10b4 ///< the flame on even frames
+#define VOLCANO_ERUPTION 200          ///< sparks thrown as a pillar starts
+#define VOLCANO_TRICKLE 4             ///< and each frame after
+#define VOLCANO_SPARK_POOL 1024       ///< sparks in PARTICLES
+#define VOLCANO_FLAME_IMAGE_ODD 3536  ///< the flame on odd frames
+#define VOLCANO_FLAME_IMAGE_EVEN 4276 ///< the flame on even frames
 
 /// One, two or four columns of fire (gVolcano_Counts by args->variant) rise
 /// near the far edge on the targets' side, at the depths of gVolcano_Depths,
@@ -152,7 +152,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 
               speed = (Random16() & 0x3ff) + 32;
               angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-              SET_POSITION(spark, screen.x << 8, (screen.y << 8) + 0x1000,
+              SET_POSITION(spark, screen.x << 8, (screen.y << 8) + (16 << 8),
                            (Trig_Sin(angle) * speed) >> 15);
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
               spawned++;

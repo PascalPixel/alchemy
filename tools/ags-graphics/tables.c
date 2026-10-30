@@ -174,6 +174,7 @@ plane(const Buffer *input)
 
 /*
  * Commands encode either a prefixed operand or a fixed count of halfwords.
+ * `paused n` is `channel n` with the marker's bit 7 set, so n stays below 128.
  */
 Buffer
 script(const Buffer *input)
@@ -185,11 +186,17 @@ script(const Buffer *input)
 		Strings f = split(lines.items[i], '\t');
 		const char *key = f.items[0];
 		size_t n;
-		unsigned prefix = 0;
+		unsigned prefix = 0, operand = 255;
 		if (!strcmp(key, "channel"))
 		{
 			n = 1;
 			prefix = 0xfd00;
+		}
+		else if (!strcmp(key, "paused"))
+		{
+			n = 1;
+			prefix = 0xfd80;
+			operand = 127;
 		}
 		else if (!strcmp(key, "jump"))
 		{
@@ -217,7 +224,8 @@ script(const Buffer *input)
 		if (f.len != n + 1)
 			fail("wrong number of script arguments");
 		if (prefix)
-			half(&out, prefix | (n ? decimalOrHex(trim(f.items[1]), 255) : 0));
+			half(&out,
+				 prefix | (n ? decimalOrHex(trim(f.items[1]), operand) : 0));
 		else
 			for (size_t j = 1; j < f.len; j++)
 				half(&out, decimalOrHex(trim(f.items[j]), 65535));
@@ -284,11 +292,14 @@ blocks(const Buffer *input)
 }
 
 /*
- * A layout's grid: one text cell per map square, `picture[:behavior[:shape]]`
- * in hex, a left-out part 0. The header gives the grid's size, where the
- * written rows start and the cell that fills every square they leave out, in
- * the same order. The game reads three planes, behaviors (u8), shapes (u8) and
- * cell pictures (u16), one after another.
+ * A layout's grid: one text cell per map square, `picture[:behavior[:shape]]`,
+ * a left-out part 0. The picture is in hex, since its top four bits are the
+ * layer and priority flags over a 12-bit cell picture; the behavior and the
+ * shape, a cell behavior and an index into the shape table, are in decimal.
+ * The header gives the grid's size, where the written rows start and the
+ * cell that fills every square they leave out, in the same order. The game
+ * reads three planes, behaviors (u8), shapes (u8) and cell pictures (u16), one
+ * after another.
  */
 Buffer
 grid(const Buffer *input)
@@ -306,8 +317,8 @@ grid(const Buffer *input)
 	if (fill.len != 3)
 		fail("grid fill needs picture:behavior:shape");
 	uint32_t fills[3] = {number(fill.items[0], 16, 0xffff),
-						 number(fill.items[1], 16, 0xff),
-						 number(fill.items[2], 16, 0xff)};
+						 number(fill.items[1], 10, 255),
+						 number(fill.items[2], 10, 255)};
 	if (!width || !height || height > SIZE_MAX / width)
 		fail("invalid grid dimensions");
 	uint32_t *cells[3];
@@ -330,9 +341,9 @@ grid(const Buffer *input)
 				fail("grid cell needs one to three parts");
 			size_t at = (top + y - 1) * width + left + x;
 			for (unsigned k = 0; k < 3; k++)
-				cells[k][at] = k < parts.len
-								   ? number(parts.items[k], 16, k ? 0xff : 0xffff)
-								   : 0;
+				cells[k][at] = k < parts.len ? number(parts.items[k], k ? 10 : 16,
+														 k ? 255 : 0xffff)
+											 : 0;
 			freeStrings(&parts);
 		}
 		freeStrings(&row);
@@ -355,9 +366,9 @@ grid(const Buffer *input)
 /*
  * A background's tile map as the screen shows it: a `palette:N` header, then
  * one text row per row of the screen, one cell per 8x8 square, the tile's
- * number in hex followed by `h` and `v` where it is flipped. Blank lines may
- * separate screens. Each cell becomes the hardware's halfword; the width, when
- * asked for, is the number of cells in a row.
+ * number in decimal followed by `h` and `v` where it is flipped. Blank lines
+ * may separate screens. Each cell becomes the hardware's halfword; the width,
+ * when asked for, is the number of cells in a row.
  */
 Buffer
 tilemap(const Buffer *input, size_t *width)
@@ -390,7 +401,7 @@ tilemap(const Buffer *input, size_t *width)
 				flips |= 1;
 				cell[--len] = 0;
 			}
-			half(&out, number(cell, 16, 1023) | flips << 10 | palette << 12);
+			half(&out, number(cell, 10, 1023) | flips << 10 | palette << 12);
 		}
 		freeStrings(&row);
 	}

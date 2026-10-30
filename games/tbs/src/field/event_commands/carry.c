@@ -105,20 +105,20 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SetSpriteFlagsFar(target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= 24 << 16) {
-      actor->y.fixed += 0x6000;
-      right->y.fixed += 0x6000;
-      target->y.fixed += 0x6000;
+      actor->y.fixed += Q16_ONE * 3 / 8;
+      right->y.fixed += Q16_ONE * 3 / 8;
+      target->y.fixed += Q16_ONE * 3 / 8;
       wait(1);
     }
   }
   hands[0]->speedLimit = 4 << 16;
-  hands[0]->acceleration = 0x8000;
+  hands[0]->acceleration = Q16_ONE / 2;
   hands[1]->speedLimit = 4 << 16;
-  hands[1]->acceleration = 0x8000;
+  hands[1]->acceleration = Q16_ONE / 2;
   // As in Move: the target keeps its facing and reads its ground from layer
   // 2 while it is carried.
-  target->speedLimit = 0x6666;
-  target->acceleration = 0x3333;
+  target->speedLimit = Q16_ONE * 2 / 5;
+  target->acceleration = Q16_ONE / 5;
   target->steeringFlags = 0;
   target->layer = 2;
 
@@ -185,14 +185,14 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       // i is the overlap test's 0 here: unpause the target and, once it is
       // on the cell, stop it dead. It moves at 0.2 pixels a frame.
       target->paused = i;
-      target->speedLimit = 0x3333;
-      target->acceleration = 0x3333;
+      target->speedLimit = Q16_ONE / 5;
+      target->acceleration = Q16_ONE / 5;
       Actor_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
-      hands[0]->speedLimit = 0x3333;
-      hands[0]->acceleration = 0x3333;
+      hands[0]->speedLimit = Q16_ONE / 5;
+      hands[0]->acceleration = Q16_ONE / 5;
       second = hands[1];
-      second->speedLimit = 0x3333;
-      second->acceleration = 0x3333;
+      second->speedLimit = Q16_ONE / 5;
+      second->acceleration = Q16_ONE / 5;
       Actor_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
       Actor_SetMoveTargetFar(second, pos.x - (16 << 16), pos.y, pos.z);
       Actor_WaitForMoveFar(target);
@@ -243,7 +243,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->update = effectWork->savedCallback;
   target->motionFlags = 3;
   target->velocityY = 10 << 16;
-  target->bounce = 0x3333;
+  target->bounce = Q16_ONE / 5;
   target->layer = 0;
   src->update = 0;
   Actor_SetSpriteColorModeFar(src, SPRITE_COLOR_NORMAL);
@@ -269,8 +269,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 /// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnItemBreakMode1)
 
-/// Spawns a hand (sprite 215) with the item break sound, in animation 1, and
-/// grows it, spinning 1/8 turn a frame, from a quarter to full size over 24
+/// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound, in animation 1,
+/// and grows it, spinning 1/8 turn a frame, from a quarter to full size over 24
 /// frames; angle is the way it faces once grown. Returns the hand, or NULL
 /// when it cannot be spawned (Actor_Spawn); Carry and its no-target cast
 /// release it.
@@ -281,8 +281,8 @@ struct Actor *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
   Sound_PlayFar(SE_ITEM_BREAK);
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
-    fragment->scaleY = 0x4000;
-    fragment->scaleX = 0x4000;
+    fragment->scaleY = Q16_ONE / 4;
+    fragment->scaleX = Q16_ONE / 4;
     fragment->speedLimit = PIXELS(3);
     fragment->acceleration = PIXELS(3);
     fragment->steeringFlags = 0;
@@ -290,10 +290,10 @@ struct Actor *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
     scale = fragment->scaleX;
     if (scale < Q16_ONE) {
       do {
-        scale += 0x800;
+        scale += Q16_ONE / 32;
         fragment->scaleY = scale;
         fragment->scaleX = scale;
-        fragment->facing += 0x2000;
+        fragment->facing += TRIG_TURN / 8;
         wait(1);
         scale = fragment->scaleX;
       } while (scale <= 0xffff);

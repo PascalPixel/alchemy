@@ -38,7 +38,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   }
 }
 
-/// Arms DMA 0 to write one halfword of the table at work->sheet + 0x1f80 into
+/// Arms DMA 0 to write one halfword of the table at work->sheet + 8064 into
 /// background colour 0 at each horizontal blank, so the backdrop colour
 /// changes line by line.
 ///
@@ -50,7 +50,7 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->sheet + 0x1f80, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(work->sheet + 8064, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
 
@@ -80,7 +80,7 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define PARTICLE_STREAMS_BURST_FRAMES 54 ///< frames of the burst
 
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
-#define PARTICLE_STREAMS_MOTE_OFFSETS 0x3200
+#define PARTICLE_STREAMS_MOTE_OFFSETS 12800
 
 /// The stream runs in two halves. The rise dissolves the battle map into a
 /// starfield, then for up to PARTICLE_STREAMS_RISE_FRAMES lifts a formation of
@@ -176,10 +176,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
 
-    // The leap: 10 pixels a frame upwards, against a gravity of 0x91eb, about
-    // 0.57 pixels a frame lost each frame.
+    // The leap: 10 pixels a frame upwards, against a gravity of Q16_ONE * 57 /
+    // 100, about 0.57 pixels a frame lost each frame.
     actor->velocityY = 10 << 16;
-    actor->gravity = 0x91eb;
+    actor->gravity = Q16_ONE * 57 / 100;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlayFar(SE_CRASH);
     direction = work->args->side == EFFECT_SIDE_PARTY ? mode : -1;
@@ -199,7 +199,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // spawned sprite.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
-      struct Sprite *sprite = Sprite_CreateFar(483 + i * SPRITE_SECOND_PART);
+      struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_FUSION_DRAGON +
+                                               i * SPRITE_SECOND_PART);
 
       work->sprites[i] = sprite;
       if (sprite != 0) {
@@ -219,7 +220,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     Iwram_CopyWords(colors,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
-  // The map picture, 32x16 tiles of 8x8 pixels (256x128, 0x2000 words), all
+  // The map picture, 32x16 tiles of 8x8 pixels (256x128, 8192 words), all
   // colour 1; its first BATTLE_BACKGROUND_BYTES are what BG1 shows.
   fill = CANVAS_FILL_WORD(1);
   Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(256 * 128 / 4),
@@ -306,7 +307,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
     // One pointer serves both slot reads: two separate reads of gHeapSlots
-    // make the function 0xe48 bytes long, where tbs-en's is 0xe38.
+    // make the function 3656 bytes long, where tbs-en's is 3640.
     void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
     struct BattleBackgroundWork *view = slots[0];
 
@@ -350,9 +351,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       heat = dividend >> 2;
       /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering r1
        * and r3, so count keeps r2 and sheet takes r0; as line = (u16 *)
-       * (work->sheet + 0x1f80), 69 of 1532 instructions differ in tbs-en. */
+       * (work->sheet + 8064), 69 of 1532 instructions differ in tbs-en. */
       __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1", "r3");
-      line = (u16 *)(sheet + 0x1f80);
+      line = (u16 *)(sheet + 8064);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
           break;
@@ -480,7 +481,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Projection_Point(vector, screenPosition = &spot);
         screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
         screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
-        draw(Ram_MapGridCellBuffer, work->sheet + 0x1f40, screenPosition->x - 4,
+        draw(Ram_MapGridCellBuffer, work->sheet + 8000, screenPosition->x - 4,
              screenPosition->y - 4, 8, 8);
       }
       if (direction == 1)
@@ -494,7 +495,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 drop = gParticleStreams_DropPoints[i][1] + y;
 
         if (drop <= 93)
-          draw(Ram_MapGridCellBuffer, work->sheet + 0x1c80,
+          draw(Ram_MapGridCellBuffer, work->sheet + 7296,
                gParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
         else if (drop <= 95)
           ParticleStreams_SpawnFlame(

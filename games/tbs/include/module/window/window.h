@@ -39,12 +39,12 @@ enum {
   WINDOW_FLAG_FIXED_X = 0x100,
 };
 
-// The text canvas tiles in VRAM: 120 4bpp tiles from tile 0x128, enough for
+// The text canvas tiles in VRAM: 120 4bpp tiles from tile 296, enough for
 // the interior of a full-width window six tiles tall. The tiles run down
 // columns, each as tall as the window's interior.
 #define TEXT_CANVAS_VRAM ((void *)0x06002500)
-#define TEXT_CANVAS_SIZE 0xf00
-#define TEXT_CANVAS_FIRST_TILE 0x128
+#define TEXT_CANVAS_SIZE (120 * TILE_SIZE_4BPP)
+#define TEXT_CANVAS_FIRST_TILE 296
 
 /// The UI tilemap in VRAM (BG screen block 4), which WindowSystem_UploadTilemap
 /// copies the work block's tilemap to.
@@ -97,10 +97,10 @@ enum TextColor {
 #define WINDOW_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
 
 // The two page arrows beside a paged list's page numbers, in the menus and
-// the File Screen: tiles 0x128 and 0x129 of character block 0, which
+// the File Screen: tiles 296 and 297 of character block 0, which
 // Link_DrawPageArrows slides back and forth each frame, and their
 // tilemap entries.
-#define PAGE_ARROW_TILE 0x128
+#define PAGE_ARROW_TILE 296
 #define PAGE_ARROW_VRAM                                                        \
   ((s32)BG_CHAR_BLOCK(0) + PAGE_ARROW_TILE * TILE_SIZE_4BPP)
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
@@ -110,58 +110,57 @@ enum TextColor {
 /// animation sets it while it greys WINDOW_PALETTE and scrolls BG0 by scanline)
 /// the corners are one rounded tile, flipped for each corner.
 enum {
-  WINDOW_TILE_BLANK = WINDOW_TILE(0x00),
-  WINDOW_TILE_BORDER_TOP_LEFT = WINDOW_TILE(0x10),
-  WINDOW_TILE_BORDER_TOP = WINDOW_TILE(0x11),
-  WINDOW_TILE_BORDER_TOP_RIGHT = WINDOW_TILE(0x12),
-  WINDOW_TILE_BORDER_BOTTOM_LEFT = WINDOW_TILE(0x13),
-  WINDOW_TILE_BORDER_BOTTOM = WINDOW_TILE(0x14),
-  WINDOW_TILE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(0x15),
-  WINDOW_TILE_BORDER_LEFT = WINDOW_TILE(0x16),
-  WINDOW_TILE_BORDER_RIGHT = WINDOW_TILE(0x17),
-  WINDOW_TILE_BORDER_ROUND_CORNER = WINDOW_TILE(0x1c),
-  WINDOW_TILE_WINDOW_FILL = WINDOW_TILE(0x20),
+  WINDOW_TILE_BLANK = WINDOW_TILE(0),
+  WINDOW_TILE_BORDER_TOP_LEFT = WINDOW_TILE(16),
+  WINDOW_TILE_BORDER_TOP = WINDOW_TILE(17),
+  WINDOW_TILE_BORDER_TOP_RIGHT = WINDOW_TILE(18),
+  WINDOW_TILE_BORDER_BOTTOM_LEFT = WINDOW_TILE(19),
+  WINDOW_TILE_BORDER_BOTTOM = WINDOW_TILE(20),
+  WINDOW_TILE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(21),
+  WINDOW_TILE_BORDER_LEFT = WINDOW_TILE(22),
+  WINDOW_TILE_BORDER_RIGHT = WINDOW_TILE(23),
+  WINDOW_TILE_BORDER_ROUND_CORNER = WINDOW_TILE(28),
+  WINDOW_TILE_WINDOW_FILL = WINDOW_TILE(32),
   // Divider lines (Window_DrawDividerLine) and their joins.
   WINDOW_TILE_DIVIDER_TEE_DOWN =
-      WINDOW_TILE(0x09), ///< a vertical line leaving below
+      WINDOW_TILE(9), ///< a vertical line leaving below
   WINDOW_TILE_DIVIDER_TEE_UP =
-      WINDOW_TILE(0x0a), ///< a vertical line leaving above
+      WINDOW_TILE(10), ///< a vertical line leaving above
   /// a horizontal line leaving right
-  WINDOW_TILE_DIVIDER_TEE_RIGHT = WINDOW_TILE(0x0b),
+  WINDOW_TILE_DIVIDER_TEE_RIGHT = WINDOW_TILE(11),
   WINDOW_TILE_DIVIDER_TEE_LEFT =
-      WINDOW_TILE(0x0c), ///< a horizontal line leaving left
-  WINDOW_TILE_DIVIDER_CROSS = WINDOW_TILE(0x0d),
-  WINDOW_TILE_DIVIDER_HORIZONTAL = WINDOW_TILE(0x0e),
-  WINDOW_TILE_DIVIDER_VERTICAL = WINDOW_TILE(0x0f),
-  WINDOW_TILE_BORDER_TOP_TEE =
-      WINDOW_TILE(0x18), ///< the top edge meeting a line
+      WINDOW_TILE(12), ///< a horizontal line leaving left
+  WINDOW_TILE_DIVIDER_CROSS = WINDOW_TILE(13),
+  WINDOW_TILE_DIVIDER_HORIZONTAL = WINDOW_TILE(14),
+  WINDOW_TILE_DIVIDER_VERTICAL = WINDOW_TILE(15),
+  WINDOW_TILE_BORDER_TOP_TEE = WINDOW_TILE(24), ///< the top edge meeting a line
   WINDOW_TILE_BORDER_BOTTOM_TEE =
-      WINDOW_TILE(0x19), ///< the bottom edge meeting a line
+      WINDOW_TILE(25), ///< the bottom edge meeting a line
   WINDOW_TILE_BORDER_LEFT_TEE =
-      WINDOW_TILE(0x1a), ///< the left edge meeting a line
+      WINDOW_TILE(26), ///< the left edge meeting a line
   WINDOW_TILE_BORDER_RIGHT_TEE =
-      WINDOW_TILE(0x1b), ///< the right edge meeting a line
+      WINDOW_TILE(27), ///< the right edge meeting a line
   /// In battle, the bottom border tiles' lower rows, which
   /// WindowSystem_InitBattle copies to tiles 128 to 130.
-  WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT = WINDOW_TILE(0x80),
-  WINDOW_TILE_BATTLE_BORDER_BOTTOM = WINDOW_TILE(0x81),
-  WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(0x82),
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT = WINDOW_TILE(128),
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM = WINDOW_TILE(129),
+  WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT = WINDOW_TILE(130),
   /// In battle, the tile the command row fills its empty panels with
   /// (screens/battle_command_row.c), and Window_EraseBorderRect below row 16.
-  WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(0x7f),
+  WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(127),
   /// The HP and PP labels before a number (Text_DrawPrefixedNumberAtOffset)
   /// or a Psynergy's cost: each label's first tile, and the second tile the
   /// HP label always takes.
-  WINDOW_TILE_HP_LABEL = WINDOW_TILE(0x1d),
-  WINDOW_TILE_HP_LABEL_END = WINDOW_TILE(0x1e),
-  WINDOW_TILE_PP_LABEL = WINDOW_TILE(0x1f),
+  WINDOW_TILE_HP_LABEL = WINDOW_TILE(29),
+  WINDOW_TILE_HP_LABEL_END = WINDOW_TILE(30),
+  WINDOW_TILE_PP_LABEL = WINDOW_TILE(31),
 };
 
 /// The PP label's second tile: the HP label's in English, German and
 /// Japanese, a tile of its own in Spanish, French and Italian.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-#define WINDOW_TILE_PP_LABEL_END WINDOW_TILE(0x05)
+#define WINDOW_TILE_PP_LABEL_END WINDOW_TILE(5)
 #else
 #define WINDOW_TILE_PP_LABEL_END WINDOW_TILE_HP_LABEL_END
 #endif

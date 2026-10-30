@@ -71,10 +71,10 @@ void BattleEffect_RunZephyr(struct BattleEffectParams *args) {
 }
 /// Where each picture sits in the sheet.
 enum StatBoostSheet {
-  STAT_BOOST_FLARES = 0x0000,  ///< flares (ParticleSpritesD)
-  STAT_BOOST_BURST = 0x060e,   ///< six 40x40 bursts of light (GlowOrb)
-  STAT_BOOST_PICTURE = 0x2b8e, ///< the picture the mode picks
-  STAT_BOOST_DJINNI = 0x65c0   ///< the 40x40 Djinni
+  STAT_BOOST_FLARES = 0,      ///< flares (ParticleSpritesD)
+  STAT_BOOST_BURST = 1550,    ///< six 40x40 bursts of light (GlowOrb)
+  STAT_BOOST_PICTURE = 11150, ///< the picture the mode picks
+  STAT_BOOST_DJINNI = 26048   ///< the 40x40 Djinni
 };
 
 #define STAT_BOOST_SCATTERED 512 ///< flares scattered at the start
@@ -432,7 +432,7 @@ BattleEffect_RunUnusedStatReduction(struct BattleEffectParams *args) {
 }
 /// The shard picture in the sheet, followed by seven copies of it, each
 /// with its colour levels capped 7 lower than the one before.
-#define STAT_REDUCTION_SHARD_OFFSETS 0x2580
+#define STAT_REDUCTION_SHARD_OFFSETS 9600
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
 #define STAT_REDUCTION_SHARDS 24       ///< shards drawn for each target
 #define STAT_REDUCTION_SLOTS 32        ///< particles reserved for each target

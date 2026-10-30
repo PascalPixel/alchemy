@@ -31,8 +31,8 @@ struct MapGridMarkers {
 
 /// The sprites of the actors a map's treasure spots place.
 enum {
-  TREASURE_SPOT_CHEST_SPRITE = 20,
-  TREASURE_SPOT_PSYNERGY_STONE_SPRITE = 28
+  TREASURE_SPOT_CHEST_SPRITE = SPRITE_CHEST,
+  TREASURE_SPOT_PSYNERGY_STONE_SPRITE = SPRITE_PSYNERGY_STONE
 };
 
 /// The chest sprite's animations.
@@ -57,7 +57,7 @@ void Field_PlaceTreasureSpots(void) {
   struct FieldWork *work = gFieldWork;
 #else
   // UB: the event cell is a separate global, beyond gMapGridWork's one pointer.
-  // Reading gFieldWork plainly grows 0x254 to 0x25c bytes in English.
+  // Reading gFieldWork plainly grows 596 to 604 bytes in English.
   struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
 #endif
   s32 markerCount = 0;

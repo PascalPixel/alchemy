@@ -706,18 +706,18 @@ void SerialTest_Run(void) {
 
   Sound_PlayFar(MUS_PALACE);
   Serial_Initialize();
-  // Row 16, columns 0 to 19: tiles 0x80 to 0x80 + 19 of BG_CHAR_BLOCK(0) in
+  // Row 16, columns 0 to 19: tiles 128 to 128 + 19 of BG_CHAR_BLOCK(0) in
   // WINDOW_PALETTE, where the received 640 bytes are copied
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
-  value = (s16)(WINDOW_PALETTE << 12 | (0x80 + 19));
+  value = (s16)(WINDOW_PALETTE << 12 | (128 + 19));
   do {
     n--;
     *tile = value;
     tile--;
     value--;
   } while (n >= 0);
-  Cpu_Fill32(0, gMapGridCellBuffer, 0x400);
+  Cpu_Fill32(0, gMapGridCellBuffer, 1024);
   Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
 restart:
   Serial_StartReceive(gMapGridCellBuffer);
@@ -735,7 +735,7 @@ restart:
       } while (delay >= 0);
     }
     if (gSerialReceiveDestination == 0) {
-      Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(0) + 0x80 * TILE_SIZE_4BPP,
+      Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(0) + 128 * TILE_SIZE_4BPP,
               DMA_COPY_WORDS(160), REG_DMA3);
       goto restart;
     }

@@ -431,8 +431,8 @@ message on below the last line.
 A label is drawn in one go: `Text_DrawMessageAsTiles` decodes the message
 from the start of the ring and `Text_DrawStringAsTiles` paints each letter
 into a text tile and writes the tile's number into the window's tilemap. The
-text tiles are the window layer's tiles `0x80` to `0xFF`, and the field
-menu's screens and the battle's Djinn menu add tiles `0x200` to `0x27F`
+text tiles are the window layer's tiles `128` to `255`, and the field
+menu's screens and the battle's Djinn menu add tiles `512` to `639`
 while they are open (`Text_UseExtraTiles`, which sets `extraTextTiles`),
 since their lists hold more text than a conversation. A tile is released
 when the rectangle showing it is cleared or redrawn
@@ -442,7 +442,7 @@ when the rectangle showing it is cleared or redrawn
 | ---------------------- | -------------- | --------------------------------------------- |
 | the glyph sheet        | `128 << 6` bytes | 256 sprite tiles, four for each of the 64 window sprites |
 | `TEXT_CANVAS_SIZE`     | 120 tiles      | the canvas, one canvas window at a time       |
-| text tiles             | `0x80` to `0xFF`, and `0x200` to `0x27F` with `extraTextTiles` | tiles labels are drawn into |
+| text tiles             | `128` to `255`, and `512` to `639` with `extraTextTiles` | tiles labels are drawn into |
 
 ## The area name
 

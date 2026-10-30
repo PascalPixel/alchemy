@@ -183,7 +183,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, BitDecoder_DecodeImage,
                    BitDecoder_Size);
   {
-    u32 offset = 0x100;
+    u32 offset = 256;
     void *vram;
 
     /* FAKEMATCH(dead): two updates that cancel, under a test that emits
@@ -210,8 +210,9 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
       *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
-  // Clears BG1's last row, 0x7c0 bytes in, which BuildTilemap leaves.
-  Iwram_ClearWords((BG_SCREEN_BLOCK(31) + 0x7c0), 64);
+  // Clears BG1's last row, 64 bytes from the end of its screen block, which
+  // BuildTilemap leaves.
+  Iwram_ClearWords((BG_SCREEN_BLOCK(31) + BG_SCREEN_SIZE - 64), 64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   view->mode = mode;
@@ -332,7 +333,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 
   SET_VECTOR(focus, x, depth, y);
   sourceBounds[0] = 0;
-  alpha = 0xc000;
+  alpha = Q16_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
@@ -385,7 +386,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 
   SET_VECTOR(focus, x, depth, y);
   sourceBounds[0] = 0;
-  alpha = 0xc000;
+  alpha = Q16_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 

@@ -448,18 +448,18 @@ climbable wall, all in [player_control.c](field/player_control.c), with
 the edition's values chosen at the top of the file;
 `Field_CheckConfiguredKeys`, at the end of each, raises the requests for
 Select, A, Start and the two shortcut keys. Speeds are pixels a frame with
-a fraction: `0x10000` is one pixel.
+a fraction: `Q16_ONE` (65,536) is one pixel.
 
-| Name                     | Value     | Meaning                                                              |
-| ------------------------ | --------- | -------------------------------------------------------------------- |
-| `FIELD_WALK_SPEED`       | `0x10000` | 1 pixel a frame                                                      |
-| `FIELD_RUN_SPEED`        | `0x18000` | 1.5 pixels a frame, with B held                                      |
-| `FIELD_ACCELERATION`     | `0x4000`  | a quarter pixel a frame faster each frame                            |
-| `FIELD_FAST_WALK_SPEED`  | `0x40000` | 4 pixels a frame, B held with `FLAG_FAST_WALK`, which nothing sets   |
-| `WORLD_MAP_WALK_SPEED`   | `0x8000`  | half a pixel a frame                                                 |
-| `WORLD_MAP_RUN_SPEED`    | `0x10000` | 1 pixel a frame, with B held                                         |
-| `WORLD_MAP_FAST_SPEED`   | `0x40000` | 4 pixels a frame, while L repeats                                    |
-| `WORLD_MAP_PROBE_RADIUS` | 7 or 8 pixels | how far ahead the World Map's ground is tested, by edition       |
+| Name                     | Value             | Meaning                                                              |
+| ------------------------ | ----------------- | -------------------------------------------------------------------- |
+| `FIELD_WALK_SPEED`       | `Q16_ONE`         | 1 pixel a frame                                                      |
+| `FIELD_RUN_SPEED`        | `Q16_ONE * 3 / 2` | 1.5 pixels a frame, with B held                                      |
+| `FIELD_ACCELERATION`     | `Q16_ONE / 4`     | a quarter pixel a frame faster each frame                            |
+| `FIELD_FAST_WALK_SPEED`  | `Q16_ONE * 4`     | 4 pixels a frame, B held with `FLAG_FAST_WALK`, which nothing sets   |
+| `WORLD_MAP_WALK_SPEED`   | `Q16_ONE / 2`     | half a pixel a frame                                                 |
+| `WORLD_MAP_RUN_SPEED`    | `Q16_ONE`         | 1 pixel a frame, with B held                                         |
+| `WORLD_MAP_FAST_SPEED`   | `Q16_ONE * 4`     | 4 pixels a frame, while L repeats                                    |
+| `WORLD_MAP_PROBE_RADIUS` | 7 or 8 pixels     | how far ahead the World Map's ground is tested, by edition           |
 
 ## How high a step can go
 
@@ -867,7 +867,7 @@ and the field sequence answers the fall as a raised trigger.
 
 | Name                   | Value   | Meaning                                                           |
 | ---------------------- | ------- | ----------------------------------------------------------------- |
-| `walkingDistanceScale` | `0x199` | about 1/160: one PP every 160 pixels walked; 0 in a town          |
+| `walkingDistanceScale` | `409`   | about 1/160: one PP every 160 pixels walked; 0 in a town          |
 | `hazardLimit`          | 600     | frames walked on the desert's sand between one hurt and the next  |
 | `hazardDamage`         | 25%     | of maximum HP, the desert's damage                                |
 | `POISON_NORMAL`        |         | a twentieth of maximum HP each time                               |
@@ -1008,10 +1008,10 @@ line into a canvas of its own.
 in [lucky_wheels.c](lucky_wheels.c) are each one game played to the end,
 and `Scene_ReturnFromSequence` brings the party back.
 
-| Name             | Value   | Meaning                                                 |
-| ---------------- | ------- | ------------------------------------------------------- |
-| `SEQUENCE_DICE`  | `0x1fd` | what the scene asks for to play Lucky Dice              |
-| `SEQUENCE_SLOTS` | `0x1fc` | what the scene asks for to play Lucky Wheels            |
+| Name             | Value | Meaning                                                 |
+| ---------------- | ----- | ------------------------------------------------------- |
+| `SEQUENCE_DICE`  | `509` | what the scene asks for to play Lucky Dice              |
+| `SEQUENCE_SLOTS` | `508` | what the scene asks for to play Lucky Wheels            |
 
 ## From a step in Goma Cave to a battle and back
 

@@ -446,7 +446,7 @@ void Text_DrawStatComparison(const struct Unit *after,
 }
 
 /// Size of one 16x16 4bpp sprite tile block.
-#define ICON_TILE_BYTES 0x80
+#define ICON_TILE_BYTES 128
 
 /// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
 /// into a free VRAM block. Returns the sprite, or 0 when the free block found
@@ -586,7 +586,7 @@ void PsynergyMenu_InitializeEntryActors(void *source, s32 originX, s32 originY,
     menu->tabSprites[i] = 0;
   }
   // 200 << 4 is TASK_PASS_FRAME: once a frame in the frame
-  // pass, rank 0x80.
+  // pass, rank 128.
   {
     s32 priority = 200;
     priority <<= 4;
@@ -635,7 +635,7 @@ void Menu_UpdateEntryActorTransforms(void) {
     // which puts every figure in the same depth slot ((482 >> 1) + 10 = 251,
     // Render_ApplyProjectedPlacement), and raising the image by this height
     // brings it back up to its row.
-    s32 placeY = 0x01e20000 - (menu->rowPositions[i] << 16);
+    s32 placeY = (482 << 16) - (menu->rowPositions[i] << 16);
 
     if (figure != 0) {
       figure->image.priority = 0;

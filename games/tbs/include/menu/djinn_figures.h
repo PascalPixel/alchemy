@@ -14,13 +14,13 @@ struct Sprite;
 /// figure's sprite, screen position and scale.
 struct ItemMenuFiguresView {
   /// ItemMenuWork's fields before memberY; not named here.
-  u8 beforeMemberY[0x144];
+  u8 beforeMemberY[324];
   /// Screen pixels: the party figures' memberY, which moves only the depth
   /// slot.
   s16 verticalOrigins[4];
   /// ItemMenuWork's fields from memberY[4] to completionFlag; not
   /// named here.
-  u8 beforeFigures[0xd8];
+  u8 beforeFigures[216];
   struct Sprite *animations[4];
   s16 positionsX[4]; ///< screen pixels
   /// Screen pixels; negative marks a recovering Djinni, which faces

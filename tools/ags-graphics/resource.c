@@ -140,7 +140,7 @@ iconBank(const char *input, const Buffer *data)
 	{
 		if (!strncmp(lines.items[i], "align\t", 6))
 		{
-			align = number(trim(lines.items[i] + 6), 16, 65536);
+			align = number(trim(lines.items[i] + 6), 10, 65536);
 			if (!align || align & (align - 1))
 				fail("icon alignment is not a power of two");
 		}

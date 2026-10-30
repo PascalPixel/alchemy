@@ -15,9 +15,9 @@ enum {
   /// The wander probes' distance, 8 pixels in 16.16: past the point for
   /// ground, and along the heading for solid actors (SC_WANDER_HOME).
   SCRIPT_WANDER_PROBE_DISTANCE = 8 * Q16_ONE,
-  SCRIPT_WANDER_DIAGONAL_ANGLE = 0x2000, ///< one eighth of a turn
-  SCRIPT_WANDER_SIDE_ANGLE = 0x4000,     ///< one quarter of a turn
-  SCRIPT_HALF_TURN = 0x8000,
+  SCRIPT_WANDER_DIAGONAL_ANGLE = TRIG_TURN / 8, ///< one eighth of a turn
+  SCRIPT_WANDER_SIDE_ANGLE = TRIG_TURN / 4,     ///< one quarter of a turn
+  SCRIPT_HALF_TURN = TRIG_TURN / 2,
   /// Whole pixels SC_APPROACH_WATCHED stays short of its watched actor.
   SCRIPT_APPROACH_DISTANCE = 16,
   /// Under 64 pixels (16.16) SC_CAMERA measures its distance in 16.16.
@@ -171,7 +171,7 @@ s32 ActorScript_JumpIfFalse(struct Actor *interpreter) {
 
 /// SC_END: hands the actor back to the idle script, gActorScript_EndScript,
 /// whose lone SC_END runs again each frame. Returns 0. The table's unused
-/// command numbers from 0x24 also point here.
+/// command numbers from 36 also point here.
 s32 ActorScript_End(struct Actor *interpreter) {
   s32 result;
 
@@ -591,7 +591,7 @@ retry:
     if (ActorScript_CheckOverlap(actor, (s32 *)&candidatePosition) != 0 ||
         MapGrid_CheckCollision(actor, &candidatePosition) != COLLISION_NONE)
       goto retry;
-    // Probes 8 pixels past the point, ahead and at 45 degrees (0x2000)
+    // Probes 8 pixels past the point, ahead and at 45 degrees (TRIG_TURN / 8)
     // either side.
     travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
     SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,

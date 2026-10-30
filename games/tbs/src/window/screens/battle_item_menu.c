@@ -35,12 +35,12 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
   return 0;
 }
 
-// XXX: what shows those copies is not found; tiles 0x200 to 0x27f are also the
+// XXX: what shows those copies is not found; tiles 512 to 639 are also the
 // second text-tile range (Text_UseExtraTiles), and a tilemap entry naming one
 // of the four would settle it.
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy
-/// the border's top and bottom tees to tiles 0x200, 0x201, 0x210 and 0x211 as
+/// the border's top and bottom tees to tiles 512, 513, 528 and 529 as
 /// they open.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
@@ -109,10 +109,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], -1);
   }
 
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 0x200);
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 0x201);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x210);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 0x211);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 512);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 513);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 528);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 529);
 
   for (;;) {
     struct CursorSprite *sprite = &cursorStorage;

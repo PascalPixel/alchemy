@@ -20,12 +20,12 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = firstSlot;
   if (firstSlot != -1) {
-    VramCache_Load(firstSlot, 0x80, gMenu_PairSpriteATiles);
+    VramCache_Load(firstSlot, 128, gMenu_PairSpriteATiles);
   }
   secondSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[1] = secondSlot;
   if (secondSlot != -1) {
-    VramCache_Load(secondSlot, 0x80, gMenu_PairSpriteBTiles);
+    VramCache_Load(secondSlot, 128, gMenu_PairSpriteBTiles);
   }
 }
 
@@ -41,7 +41,7 @@ void IconMenu_ReleaseArrows(void) {
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
-/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 0x608
+/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 1544
 /// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again. Returns the
 /// slot's first sprite tile (VramCache_Reload).
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
@@ -50,10 +50,10 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 firstTile;
   s32 allocationBits;
 
-  allocationBits = (s32)HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  allocationBits = (s32)HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 1544);
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &decodedResource, 1);
-  firstTile = VramCache_Reload(slot, allocationBits + 0x400);
+  firstTile = VramCache_Reload(slot, allocationBits + 1024);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return firstTile;
 }

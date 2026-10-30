@@ -107,7 +107,7 @@ struct SerialWork {
   u16 *pendingBuffer[4];
   /// The buffers' memory: two 32-byte send buffers, then 96 bytes a console
   /// for its incoming, ready and pending packets.
-  u8 storage[0x100];
+  u8 storage[256];
 };
 
 STATIC_ASSERT(sizeof(struct SerialWork) == 0x160);

@@ -144,7 +144,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   for (frame = 0; frame != gFalling_IceCounts[work->args->variant][ICE_FRAMES];
        frame++) {
     // Frame loop. 16 frames before the end, the battle shows the damage,
-    // with sound 132 as each target is hit.
+    // with SE_WATER as each target is hit.
     if (frame == gFalling_IceCounts[work->args->variant][ICE_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_WATER);
 
@@ -356,7 +356,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
        frame != gFalling_Counts[work->args->variant][FALLING_BOLT_DURATION];
        frame++) {
     // Frame loop. 64 frames before the end, the battle shows the damage,
-    // with sound 132 as each target is hit.
+    // with SE_WATER as each target is hit.
     if (frame ==
         gFalling_Counts[work->args->variant][FALLING_BOLT_DURATION] - 64)
       EFFECT_SHOW_DAMAGE(SE_WATER);

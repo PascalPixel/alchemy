@@ -17,16 +17,16 @@
 
 // The window tiles the Status menu saves and restores.
 #if TBS_PATCH_1
-#define STATUS_SAVED_TILE_BYTES 0x2000
+#define STATUS_SAVED_TILE_BYTES 8192
 #else
-#define STATUS_SAVED_TILE_BYTES 0x800
+#define STATUS_SAVED_TILE_BYTES 2048
 #endif
 
 // The longest status help text, in characters.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define STATUS_HELP_TEXT_MAX 0x80
+#define STATUS_HELP_TEXT_MAX 128
 #else
-#define STATUS_HELP_TEXT_MAX 0x40
+#define STATUS_HELP_TEXT_MAX 64
 #endif
 
 // The stat column of the status page's top rows: three digits from 200 or
@@ -720,7 +720,7 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
     cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
     // The portrait goes to depth slot 240, as the category sprites do.
-    if ((cursor->sentinel = 0xF0, menu->page) == STATUS_SCREEN_PAGE_CHOOSER) {
+    if ((cursor->sentinel = 240, menu->page) == STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries((struct ItemMenuWork *)menu, window);
     }
     Menu_CreateEightEntryActors(window);
@@ -1121,7 +1121,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
 #if TBS_PATCH_1
 /// Spins for 256 loop passes (international editions only). Nothing calls it.
 void Menu_BusyWait(void) {
-  s32 count = 0xff;
+  s32 count = 255;
 
   // Written with goto (MATCHING.md): as a do-while loop, the loop optimizer
   // deletes the empty loop and leaves 1 of the 7 instructions.
@@ -1266,24 +1266,24 @@ extern const struct TileMask gMenu_PatternRowMasks[];
 /// six tile pairs (24 8x8 tiles), each a fill of WINDOW_BACKGROUND_COLOR with
 /// the rows of gMenu_PatternRowMasks XORed in, the first set growing row by row
 /// and the second skipping its top row. Pair n is range icon n, at
-/// RANGE_ICON_TILE + 2n (tile 0x200, or 0x280 in the international editions,
-/// whose tiles start 0x1000 bytes further on), which PsynergyMenu_DrawRange
+/// RANGE_ICON_TILE + 2n (tile 512, or 640 in the international editions,
+/// whose tiles start 4096 bytes further on), which PsynergyMenu_DrawRange
 /// draws. Called as the Status menu's Psynergy page opens
 /// (PsynergyMenu_SelectAction).
 void Menu_BuildPatternTiles(void) {
 #if TBS_PATCH_1
-  u32 *vram = (u32 *)(BG_CHAR_BLOCK(1) + 0x1000);
+  u32 *vram = (u32 *)(BG_CHAR_BLOCK(1) + 4096);
 #else
   u32 *vram = (u32 *)BG_CHAR_BLOCK(1);
 #endif
   s32 set;
   s32 tileIndex;
 
-  // A 4bpp tile row is one word: a pair is 16 words (64 bytes), a set 0x60
+  // A 4bpp tile row is one word: a pair is 16 words (64 bytes), a set 96
   // words (384 bytes).
   for (set = 0; set < 2; set++) {
     for (tileIndex = 0; tileIndex < 6; tileIndex++) {
-      u32 *tile = vram + set * 0x60 + tileIndex * 0x10;
+      u32 *tile = vram + set * 96 + tileIndex * 16;
       s32 rowIndex;
 
       Iwram_FillWords(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
@@ -2069,7 +2069,7 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
       Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
     }
     entryIndex += 1;
-  } while (entryIndex <= 0x1F);
+  } while (entryIndex <= 31);
 }
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
@@ -2079,11 +2079,11 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
   s32 entryIndex;
 
   entryIndex = index;
-  if (entryIndex > 0x1F) {
+  if (entryIndex > 31) {
     entryIndex = 0;
   }
-  icon->y = (entryIndex / columns * 0x10) + originY;
-  icon->x = (entryIndex % columns * 0x10) + originX;
+  icon->y = (entryIndex / columns * 16) + originY;
+  icon->x = (entryIndex % columns * 16) + originX;
   Icon_PrepareActor(icon);
 }
 
@@ -2156,15 +2156,15 @@ s32 Menu_CreateEightEntryActors(struct Window *window) {
   struct WindowSprite *icon;
   s32 slotIndex;
   struct ItemMenuWork *menu;
-  s32 spriteFlags;
+  s32 y;
 
   menu = gMenuWork;
   slotIndex = 0;
-  spriteFlags = 0xA8;
+  y = 168;
   slot = menu->categoryIcons;
   do {
     icon = WindowSprite_CreateFromResourceFar(ICON_KIND_ITEM, slotIndex, window,
-                                              0xF8, spriteFlags);
+                                              248, y);
     slotIndex += 1;
     *slot = icon;
     slot += 1;

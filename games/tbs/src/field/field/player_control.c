@@ -17,17 +17,17 @@
 #endif
 
 // The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
-// point: the top 16 bits are whole pixels, so 0x10000 is one pixel.
-#define FIELD_WALK_SPEED 0x10000      ///< 1 pixel a frame
-#define FIELD_RUN_SPEED 0x18000       ///< 1.5, with a dash key held
-#define FIELD_ACCELERATION 0x4000     ///< a quarter pixel faster each frame
-#define FIELD_FAST_WALK_SPEED 0x40000 ///< 4, B held with FLAG_FAST_WALK
-#define FIELD_FAST_WALK_ACCELERATION 0x10000
-#define WORLD_MAP_WALK_SPEED 0x8000 ///< half a pixel a frame
-#define WORLD_MAP_RUN_SPEED 0x10000 ///< 1, with a dash key held
-#define WORLD_MAP_RUN_ACCELERATION 0x14000
-#define WORLD_MAP_ACCELERATION 0x4000
-#define WORLD_MAP_FAST_SPEED 0x40000 ///< 4, while L repeats
+// point: the top 16 bits are whole pixels, so Q16_ONE is one pixel.
+#define FIELD_WALK_SPEED Q16_ONE          ///< 1 pixel a frame
+#define FIELD_RUN_SPEED (Q16_ONE * 3 / 2) ///< 1.5, with a dash key held
+#define FIELD_ACCELERATION (Q16_ONE / 4)  ///< a quarter pixel faster each frame
+#define FIELD_FAST_WALK_SPEED (Q16_ONE * 4) ///< 4, B held with FLAG_FAST_WALK
+#define FIELD_FAST_WALK_ACCELERATION Q16_ONE
+#define WORLD_MAP_WALK_SPEED (Q16_ONE / 2) ///< half a pixel a frame
+#define WORLD_MAP_RUN_SPEED Q16_ONE        ///< 1, with a dash key held
+#define WORLD_MAP_RUN_ACCELERATION (Q16_ONE * 5 / 4)
+#define WORLD_MAP_ACCELERATION (Q16_ONE / 4)
+#define WORLD_MAP_FAST_SPEED (Q16_ONE * 4) ///< 4, while L repeats
 
 /// What a shortcut key's assignment requests: its top two bits.
 enum FieldShortcutKind {
@@ -262,23 +262,26 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(8 << 16, (u16)angle + 0x1000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)angle + TRIG_TURN / 16,
+                              &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE) {
           testPosition.x = actor->x.fixed;
           testPosition.y = actor->y.fixed;
           testPosition.z = actor->z.fixed;
-          Vector_AddPolarOffset(8 << 16, (u16)angle - 0x1000, &testPosition);
+          Vector_AddPolarOffset(8 << 16, (u16)angle - TRIG_TURN / 16,
+                                &testPosition);
           if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE) {
             testPosition.x = actor->x.fixed;
             testPosition.y = actor->y.fixed;
             testPosition.z = actor->z.fixed;
-            Vector_AddPolarOffset(8 << 16, (u16)angle + 0x2000, &testPosition);
+            Vector_AddPolarOffset(8 << 16, (u16)angle + TRIG_TURN / 8,
+                                  &testPosition);
             if (MapGrid_CheckCollision(actor, &testPosition) ==
                 COLLISION_NONE) {
               testPosition.x = actor->x.fixed;
               testPosition.y = actor->y.fixed;
               testPosition.z = actor->z.fixed;
-              Vector_AddPolarOffset(8 << 16, (u16)angle - 0x2000,
+              Vector_AddPolarOffset(8 << 16, (u16)angle - TRIG_TURN / 8,
                                     &testPosition);
               if (MapGrid_CheckCollision(actor, &testPosition) ==
                   COLLISION_NONE) {
@@ -294,12 +297,12 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       // passes slides the player along the wall.
       direction = angle;
       headingCount = 0;
-      angleOffsets[headingCount++] = direction + 0x1000;
-      angleOffsets[headingCount++] = direction - 0x1000;
-      angleOffsets[headingCount++] = direction + 0x2000;
-      angleOffsets[headingCount++] = direction - 0x2000;
-      angleOffsets[headingCount++] = direction + 0x3000;
-      angleOffsets[headingCount++] = direction - 0x3000;
+      angleOffsets[headingCount++] = direction + TRIG_TURN / 16;
+      angleOffsets[headingCount++] = direction - TRIG_TURN / 16;
+      angleOffsets[headingCount++] = direction + TRIG_TURN / 8;
+      angleOffsets[headingCount++] = direction - TRIG_TURN / 8;
+      angleOffsets[headingCount++] = direction + TRIG_TURN * 3 / 16;
+      angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
       for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
         heading = angleOffsets[angleIndex];
         position.x = actor->x.fixed;
@@ -311,25 +314,29 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(8 << 16, (u16)heading + 0x1000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)heading + TRIG_TURN / 16,
+                              &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(8 << 16, (u16)heading - 0x1000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)heading - TRIG_TURN / 16,
+                              &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(8 << 16, (u16)heading + 0x2000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)heading + TRIG_TURN / 8,
+                              &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) != COLLISION_NONE)
           continue;
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(8 << 16, (u16)heading - 0x2000, &testPosition);
+        Vector_AddPolarOffset(8 << 16, (u16)heading - TRIG_TURN / 8,
+                              &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE)
           goto push_objects;
       }
@@ -372,7 +379,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
           testPosition.y = pushedActor->y.fixed;
           testPosition.z = pushedActor->z.fixed;
           heading = direction;
-          Vector_AddPolarOffset(0x4000, direction, &testPosition);
+          Vector_AddPolarOffset(Q16_ONE / 4, direction, &testPosition);
           if (!ActorScript_CheckOverlap(pushedActor, (s32 *)&testPosition)) {
             testPosition.x = pushedActor->x.fixed;
             testPosition.y = pushedActor->y.fixed;
@@ -383,7 +390,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
               testPosition.x = pushedActor->x.fixed;
               testPosition.y = pushedActor->y.fixed;
               testPosition.z = pushedActor->z.fixed;
-              Vector_AddPolarOffset(10 << 16, direction + 0x1000,
+              Vector_AddPolarOffset(10 << 16, direction + TRIG_TURN / 16,
                                     &testPosition);
               // The same probe is tested twice.
               if (MapGrid_CheckCollision(pushedActor, &testPosition) ==
@@ -393,12 +400,12 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
                 testPosition.x = pushedActor->x.fixed;
                 testPosition.y = pushedActor->y.fixed;
                 testPosition.z = pushedActor->z.fixed;
-                Vector_AddPolarOffset(10 << 16, direction - 0x1000,
+                Vector_AddPolarOffset(10 << 16, direction - TRIG_TURN / 16,
                                       &testPosition);
                 if (MapGrid_CheckCollision(pushedActor, &testPosition) ==
                     COLLISION_NONE) {
                   Vector_AddPolarOffset(
-                      0x4000, direction,
+                      Q16_ONE / 4, direction,
                       (struct FieldPosition *)&pushedActor->x.fixed);
                   pushedActor->targetX = TARGET_UNSET;
                   pushedActor->targetY = TARGET_UNSET;
@@ -414,8 +421,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       }
       // Pushing: a quarter pixel a frame.
       if (collision == 0 && pushed != 0) {
-        actor->speedLimit = 0x4000;
-        actor->acceleration = 0x2000;
+        actor->speedLimit = Q16_ONE / 4;
+        actor->acceleration = Q16_ONE / 8;
       }
     }
   }
@@ -455,10 +462,10 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
 
       difference = (u16)angle - actor->facing;
       difference = (s16)difference;
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > TRIG_TURN / 16)
+        difference = TRIG_TURN / 16;
+      if (difference < -TRIG_TURN / 16)
+        difference = -TRIG_TURN / 16;
       actor->facing += difference;
     }
     actor->timer = 0;
@@ -503,7 +510,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       if (animation != 0) {
         Sprite_StartAnimation(animation, 1);
         animation->flags = collision;
-        animation->rotation = footprintAngle + 0x4000;
+        animation->rotation = footprintAngle + TRIG_TURN / 4;
         animation->image.priority = 3;
       }
       // The first footprint after a stop takes animation 2 and restarts the
@@ -514,7 +521,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
         actor->userValue = collision;
       }
       if (*(s16 *)&actor->userValue != 0)
-        effect->facing = 0x8000;
+        effect->facing = TRIG_TURN / 2;
       if (movementAnimation == 5)
         actor->timer = 12;
       else
@@ -595,8 +602,8 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
     Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
     // Debug L walks anywhere. Otherwise the English release on tests the
     // step and 22.5 and 45 degrees either side, then headings up to 90
-    // degrees off; the Japanese one tests the step and 30 degrees (0x1555)
-    // either side, then headings up to 67.5 degrees off.
+    // degrees off; the Japanese one tests the step and 30 degrees (TRIG_TURN /
+    // 12) either side, then headings up to 67.5 degrees off.
     if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0) {
 #if TBS_PATCH_1
       if (WorldMap_IsWalkable((s32)actor, (struct WorldPosition *)&position) ==
@@ -604,29 +611,29 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1000,
-                              &testPosition);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction + TRIG_TURN / 16, &testPosition);
         if (WorldMap_IsWalkable((s32)actor,
                                 (struct WorldPosition *)&testPosition) == 0) {
           testPosition.x = actor->x.fixed;
           testPosition.y = actor->y.fixed;
           testPosition.z = actor->z.fixed;
-          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1000,
-                                &testPosition);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction - TRIG_TURN / 16, &testPosition);
           if (WorldMap_IsWalkable((s32)actor,
                                   (struct WorldPosition *)&testPosition) == 0) {
             testPosition.x = actor->x.fixed;
             testPosition.y = actor->y.fixed;
             testPosition.z = actor->z.fixed;
-            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
-                                  &testPosition);
+            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                  direction + TRIG_TURN / 8, &testPosition);
             if (WorldMap_IsWalkable(
                     (s32)actor, (struct WorldPosition *)&testPosition) == 0) {
               testPosition.x = actor->x.fixed;
               testPosition.y = actor->y.fixed;
               testPosition.z = actor->z.fixed;
-              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
-                                    &testPosition);
+              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                    direction - TRIG_TURN / 8, &testPosition);
               if (WorldMap_IsWalkable(
                       (s32)actor, (struct WorldPosition *)&testPosition) == 0)
                 goto update_object;
@@ -635,14 +642,14 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
         }
       }
       count = 0;
-      angleOffsets[count++] = direction + 0x1000;
-      angleOffsets[count++] = direction - 0x1000;
-      angleOffsets[count++] = direction + 0x2000;
-      angleOffsets[count++] = direction - 0x2000;
-      angleOffsets[count++] = direction + 0x3000;
-      angleOffsets[count++] = direction - 0x3000;
-      angleOffsets[count++] = direction + 0x4000;
-      angleOffsets[count++] = direction - 0x4000;
+      angleOffsets[count++] = direction + TRIG_TURN / 16;
+      angleOffsets[count++] = direction - TRIG_TURN / 16;
+      angleOffsets[count++] = direction + TRIG_TURN / 8;
+      angleOffsets[count++] = direction - TRIG_TURN / 8;
+      angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
+      angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
+      angleOffsets[count++] = direction + TRIG_TURN / 4;
+      angleOffsets[count++] = direction - TRIG_TURN / 4;
       for (angleIndex = 0; angleIndex < count; angleIndex++) {
         direction = angleOffsets[angleIndex];
         position.x = actor->x.fixed;
@@ -655,7 +662,23 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction + TRIG_TURN / 16, &testPosition);
+        if (WorldMap_IsWalkable((s32)actor,
+                                (struct WorldPosition *)&testPosition) != 0)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction - TRIG_TURN / 16, &testPosition);
+        if (WorldMap_IsWalkable((s32)actor,
+                                (struct WorldPosition *)&testPosition) != 0)
+          continue;
+        testPosition.x = actor->x.fixed;
+        testPosition.y = actor->y.fixed;
+        testPosition.z = actor->z.fixed;
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + TRIG_TURN / 8,
                               &testPosition);
         if (WorldMap_IsWalkable((s32)actor,
                                 (struct WorldPosition *)&testPosition) != 0)
@@ -663,23 +686,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
         testPosition.x = actor->x.fixed;
         testPosition.y = actor->y.fixed;
         testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1000,
-                              &testPosition);
-        if (WorldMap_IsWalkable((s32)actor,
-                                (struct WorldPosition *)&testPosition) != 0)
-          continue;
-        testPosition.x = actor->x.fixed;
-        testPosition.y = actor->y.fixed;
-        testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
-                              &testPosition);
-        if (WorldMap_IsWalkable((s32)actor,
-                                (struct WorldPosition *)&testPosition) != 0)
-          continue;
-        testPosition.x = actor->x.fixed;
-        testPosition.y = actor->y.fixed;
-        testPosition.z = actor->z.fixed;
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - TRIG_TURN / 8,
                               &testPosition);
         if (WorldMap_IsWalkable((s32)actor,
                                 (struct WorldPosition *)&testPosition) != 0)
@@ -693,24 +700,24 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
       leftPosition.x = actor->x.fixed;
       leftPosition.y = actor->y.fixed;
       leftPosition.z = actor->z.fixed;
-      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1555,
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + TRIG_TURN / 12,
                             &leftPosition);
       rightPosition.x = actor->x.fixed;
       rightPosition.y = actor->y.fixed;
       rightPosition.z = actor->z.fixed;
-      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1555,
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - TRIG_TURN / 12,
                             &rightPosition);
       if ((WorldMap_IsWalkable((s32)actor, (struct WorldPosition *)&position) |
            WorldMap_IsWalkable((s32)actor,
                                (struct WorldPosition *)&leftPosition) |
            WorldMap_IsWalkable((s32)actor,
                                (struct WorldPosition *)&rightPosition)) != 0) {
-        angleOffsets[count++] = direction + 0x1000;
-        angleOffsets[count++] = direction - 0x1000;
-        angleOffsets[count++] = direction + 0x2000;
-        angleOffsets[count++] = direction - 0x2000;
-        angleOffsets[count++] = direction + 0x3000;
-        angleOffsets[count++] = direction - 0x3000;
+        angleOffsets[count++] = direction + TRIG_TURN / 16;
+        angleOffsets[count++] = direction - TRIG_TURN / 16;
+        angleOffsets[count++] = direction + TRIG_TURN / 8;
+        angleOffsets[count++] = direction - TRIG_TURN / 8;
+        angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
+        angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
         for (angleIndex = 0; angleIndex < count; angleIndex++) {
           direction = angleOffsets[angleIndex];
           position.x = actor->x.fixed;
@@ -720,13 +727,13 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
           leftPosition.x = actor->x.fixed;
           leftPosition.y = actor->y.fixed;
           leftPosition.z = actor->z.fixed;
-          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x1555,
-                                &leftPosition);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction + TRIG_TURN / 12, &leftPosition);
           rightPosition.x = actor->x.fixed;
           rightPosition.y = actor->y.fixed;
           rightPosition.z = actor->z.fixed;
-          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x1555,
-                                &rightPosition);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction - TRIG_TURN / 12, &rightPosition);
           if ((WorldMap_IsWalkable((s32)actor,
                                    (struct WorldPosition *)&position) |
                WorldMap_IsWalkable((s32)actor,
@@ -764,10 +771,10 @@ update_object:
     if ((collision & 3) != 0) {
       direction = angle;
       difference = (s16)(direction - actor->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > TRIG_TURN / 16)
+        difference = TRIG_TURN / 16;
+      if (difference < -TRIG_TURN / 16)
+        difference = -TRIG_TURN / 16;
       actor->facing += difference;
     }
     actor->timer = 0;
@@ -786,15 +793,15 @@ update_object:
   }
 
   // Turn the camera towards the pad's yaw by an eighth of the difference a
-  // frame, at most 0x200 (about 2.8 degrees), finishing the turn once the
-  // step falls under 16.
+  // frame, at most TRIG_TURN / 128 (about 2.8 degrees), finishing the turn once
+  // the step falls under 16.
   perspective = gMapGridWork[0];
   targetCameraYaw = gWorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - perspective->yaw) / 8;
-  if (yawStep > 0x200)
-    yawStep = 0x200;
-  if (yawStep < -0x200)
-    yawStep = -0x200;
+  if (yawStep > TRIG_TURN / 128)
+    yawStep = TRIG_TURN / 128;
+  if (yawStep < -TRIG_TURN / 128)
+    yawStep = -TRIG_TURN / 128;
   if (yawStep > -16 && yawStep < 16)
     yawStep = targetCameraYaw - perspective->yaw;
   perspective->yaw += yawStep;
@@ -876,15 +883,15 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
   s32 deltaZ;
   s32 groundHeight;
 
-  actor->speedLimit = 0x8000;
-  actor->acceleration = 0x4000;
+  actor->speedLimit = Q16_ONE / 2;
+  actor->acceleration = Q16_ONE / 4;
   animation = 12;
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = 4;
   } else {
-    // The animation by the pad's heading: 14 for headings below 0x1000, 15
-    // for 0x8000 to 0x8fff, 10 for the rest.
+    // The animation by the pad's heading: 14 for headings below a sixteenth of
+    // a turn, 15 for the sixteenth from a half turn on, 10 for the rest.
     animation = 14;
     if ((angle & 0xf000) != 0) {
       animation = 15;

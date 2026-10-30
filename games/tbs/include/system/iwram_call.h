@@ -50,8 +50,8 @@
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03001388, IwramCopyWords)
 
-/// value * 0x10000 / divisor: the 16.16 ratio of two 16.16 numbers. It is
-/// value times 0x40000000 / divisor, shifted down 14 from a 64-bit product,
+/// value * Q16_ONE / divisor: the 16.16 ratio of two 16.16 numbers. It is
+/// value times (1 << 30) / divisor, shifted down 14 from a 64-bit product,
 /// so that quotient is truncated toward zero first and a large divisor costs
 /// precision.
 static inline s32 Iwram_RatioMulQ14(s32 divisor, s32 value) {

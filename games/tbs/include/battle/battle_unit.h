@@ -11,9 +11,9 @@
 /// The sizes the STATIC_ASSERTs below hold the structs to, and the
 /// action id's bits in an action list entry.
 enum {
-  ABILITY_DEFINITION_SIZE = 0x10, ///< bytes in a struct AbilityDefinition
+  ABILITY_DEFINITION_SIZE = 16, ///< bytes in a struct AbilityDefinition
   /// Bytes in a struct Unit, which the code clears and copies whole.
-  BATTLE_UNIT_SIZE = 0x14c,
+  BATTLE_UNIT_SIZE = 332,
   PSYNERGY_ABILITY_MASK = 0x3fff ///< PsynergyEntry.encodedAction's action id
 };
 

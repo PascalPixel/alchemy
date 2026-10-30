@@ -11,7 +11,7 @@
 /// straight at up to 4 pixels a frame and come back turning at most 1/16 turn a
 /// frame.
 void FieldEffect_UpdateRadialCamera(struct FieldParticle *effect) {
-  // A for/continue retry grows the native English callback 0x100 -> 0x104.
+  // A for/continue retry grows the native English callback 256 -> 260 bytes.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
   struct FieldEffectWork *effectWork;
@@ -51,7 +51,7 @@ top:
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->turnStepMax = 0x1000;
+    effect->turnStepMax = TRIG_TURN / 16;
     effect->turnStepLimited = 1;
     *statePointer = *statePointer + 1;
     return;
@@ -91,7 +91,7 @@ void FieldPsynergy_Halt(void) {
   s32 i;
 
   effectWork->y = caster->y.fixed;
-  orb = Actor_Spawn(250, 0, 0, 0);
+  orb = Actor_Spawn(SPRITE_STOPWATCH, 0, 0, 0);
   step = 0;
   Actor_SelectAnimationFar(orb, 0);
   if (orb == 0)
@@ -113,7 +113,8 @@ void FieldPsynergy_Halt(void) {
     SET_ACTOR_POSITION(orb, from.x + (to.x - from.x) * step / 10,
                        from.y + (to.y - from.y) * step / 10,
                        from.z + (to.z - from.z) * step / 10);
-    scale = FieldEffect_Interpolate(Q16_ONE, 0x4000, step); // from 0.25 to full
+    scale = FieldEffect_Interpolate(Q16_ONE, Q16_ONE / 4,
+                                    step); // from 0.25 to full
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);

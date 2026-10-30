@@ -499,7 +499,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
   Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), 0x33333333);
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
-  Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 0x1000));
+  Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 4096));
   Iwram_CopyWords(BG_CHAR_BLOCK(1) +
                       DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
@@ -1792,7 +1792,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
         px = x * 8;
         Text_DrawMessageAsTilesFar(MsgClassName + unit->classId, window, px,
                                    y * 8 + 48);
-        Window_SetTilemapEntryFar(window, WINDOW_TILE(0x296), x + 2, 5, 0);
+        Window_SetTilemapEntryFar(window, WINDOW_TILE(662), x + 2, 5, 0);
       }
       column = x;
       if (originalUnit->classId != unit->classId)

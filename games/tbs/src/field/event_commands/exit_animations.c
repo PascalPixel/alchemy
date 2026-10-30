@@ -40,8 +40,8 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 #endif
   x = actor->x.fixed - cameraX;
   z = actor->z.fixed - cameraZ - actor->y.fixed;
-  *position++ = x / 0x10000;
-  *position = z / 0x10000;
+  *position++ = x / Q16_ONE;
+  *position = z / Q16_ONE;
   if ((actor->spriteStorageKind & 15) == ACTOR_SPRITE_ONE)
     *position -= (s8)Resource_GetMetadataRecordFar(
                      actor->sprite->entries[0]->animationId)
@@ -113,7 +113,8 @@ void Exit_PrepareAnimation(s32 animation) {
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   context = actor->sprite;
-  effect = (struct SpriteAnimation *)Sprite_AddAnimationFar(context, 27);
+  effect =
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(context, SPRITE_DOORWAY);
   zero = 0;
   param = SPRITE_COLOR_HIDDEN;
 
@@ -162,7 +163,8 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnimation *eff =
-      (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation, 27);
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation,
+                                                       SPRITE_DOORWAY);
 
   zero = 0;
   mask = FIELD_CELL_MASK;

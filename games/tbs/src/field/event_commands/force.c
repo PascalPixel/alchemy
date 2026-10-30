@@ -53,14 +53,14 @@ void FieldPsynergy_Force(void) {
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
-    effect->scaleY = 0xb333; // 0.7
-    effect->scaleX = 0xb333;
+    effect->scaleY = Q16_ONE * 7 / 10;
+    effect->scaleX = Q16_ONE * 7 / 10;
     wait(2);
     effect++;
   }
 
   // The shot: 8 pixels in front of the caster, growing from 0.25 to full
-  // size by 0x500 a frame (39 frames).
+  // size by 5/256 a frame (39 frames).
   caster = effectWork->mainActor;
   pos.x = caster->x.fixed;
   pos.y = caster->y.fixed + ABOVE;
@@ -71,8 +71,8 @@ void FieldPsynergy_Force(void) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
-  projectile->scaleY = 0x4000;
-  projectile->scaleX = 0x4000;
+  projectile->scaleY = Q16_ONE / 4;
+  projectile->scaleX = Q16_ONE / 4;
   projectile->facing = effectWork->angle;
   projectile->speedLimit = 4 << 16;
   projectile->acceleration = 4 << 16;
@@ -82,7 +82,7 @@ void FieldPsynergy_Force(void) {
   scale = projectile->scaleX;
   if (scale < Q16_ONE) {
     do {
-      scale += 0x500;
+      scale += Q16_ONE * 5 / 256;
       projectile->scaleY = scale;
       projectile->scaleX = scale;
       wait(1);
@@ -97,8 +97,8 @@ void FieldPsynergy_Force(void) {
     copy = copies[i] = Actor_Spawn(SPRITE_MOVE_HAND, projectile->x.fixed,
                                    projectile->y.fixed, projectile->z.fixed);
     if (copy != NULL) {
-      copy->scaleY = 0xf000;
-      copy->scaleX = 0xf000;
+      copy->scaleY = Q16_ONE * 15 / 16;
+      copy->scaleX = Q16_ONE * 15 / 16;
       copy->facing = effectWork->angle;
       copy->speedLimit = 4 << 16;
       copy->acceleration = 4 << 16;

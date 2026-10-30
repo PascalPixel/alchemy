@@ -50,7 +50,8 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   Transform_Reset();
   Transform_SetLookAt(camera->eye, camera->focus);
-  Projection_Set(510 << 16, Iwram_RatioMulQ14(510 << 16, 0xc000), 0x7fff0000);
+  Projection_Set(510 << 16, Iwram_RatioMulQ14(510 << 16, Q16_ONE * 3 / 4),
+                 0x7fff0000);
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;
     wait(delay);
@@ -262,7 +263,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   u32 kept;
   struct Actor *object;
   // UB: indexing past scalar gBattleWork reaches another heap slot. Named
-  // slots keep the native EN size (0x3ba), but reorder address setup.
+  // slots keep the native EN size (954 bytes), but reorder address setup.
 #ifndef UBFIX
   void **slots = (void **)&gBattleWork;
 #endif
@@ -494,11 +495,11 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   z = actor->z.fixed;
   x = actor->x.fixed;
   angle = (u16)ArcTan2(x, z);
-  adjusted = angle - 0x2000;
+  adjusted = angle - TRIG_TURN / 8;
   if (plan->unitId > ALLY_MAX)
-    adjusted = angle + 0x6000;
+    adjusted = angle + TRIG_TURN * 3 / 8;
   adjusted &= 0x7fff;
-  facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
+  facingAngle = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
 
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
@@ -640,11 +641,11 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   z = actor->z.fixed;
   x = actor->x.fixed;
   angle = (u16)ArcTan2(x, z);
-  adjusted = angle - 0x2000;
+  adjusted = angle - TRIG_TURN / 8;
   if (savedInput->unitId > ALLY_MAX)
-    adjusted = angle + 0x6000;
+    adjusted = angle + TRIG_TURN * 3 / 8;
   adjusted &= 0x7fff;
-  facingAngle = (adjusted - 0x2000) / 2 + 0x2000;
+  facingAngle = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
 
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
@@ -745,7 +746,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   }
 
   // An item with a battle effect dims the background over 20 frames, to about
-  // two thirds of its brightness (19 steps of 0x444 in 16.16), then plays it;
+  // two thirds of its brightness (19 steps of a sixtieth), then plays it;
   // one with none waits a second.
   Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
   if (work.effect.kind != 0) {
@@ -766,7 +767,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
       }
       wait(1);
       targetOrFadeIndex++;
-      fade += 0x444;
+      fade += Q16_ONE / 60;
     } while (targetOrFadeIndex < 20);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work.effect);
@@ -878,11 +879,11 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   s32 targetIndex;
 
   // The camera. EFFECT_VIEW_ACROSS takes the other side's view (an enemy's
-  // cast YAW_BEHIND_ENEMIES) over 60 frames. Otherwise it starts 0x1800 off the
-  // caster's bearing (less for the party, more for an enemy) and goes three
-  // quarters of the way to the caster's side's view; a cast on the caster's own
-  // side takes 0x2400 instead (-0x2400 for an enemy). EFFECT_VIEW_REVERSED
-  // then overrides it with the opposite side's view.
+  // cast YAW_BEHIND_ENEMIES) over 60 frames. Otherwise it starts 3/32 of a turn
+  // off the caster's bearing (less for the party, more for an enemy) and goes
+  // three quarters of the way to the caster's side's view; a cast on the
+  // caster's own side takes 9/64 of a turn instead (-9/64 for an enemy).
+  // EFFECT_VIEW_REVERSED then overrides it with the opposite side's view.
   if (plan->battleEffect & EFFECT_VIEW_ACROSS) {
     view->targetYaw =
         plan->unitId <= ALLY_MAX ? YAW_ENEMY_ACTION : YAW_BEHIND_ENEMIES;
@@ -893,16 +894,17 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
     s32 targetYaw;
 
     if (plan->unitId <= ALLY_MAX)
-      targetYaw = angle - 0x1800;
+      targetYaw = angle - TRIG_TURN * 3 / 32;
     else
-      targetYaw = angle + 0x1800;
+      targetYaw = angle + TRIG_TURN * 3 / 32;
     targetYaw = (s16)targetYaw;
     targetYaw +=
         ((plan->unitId <= ALLY_MAX ? YAW_PARTY_ACTION : YAW_ENEMY_ACTION) -
          targetYaw) *
         3 / 4;
     if (!((plan->unitId <= ALLY_MAX) ^ (plan->targetIds[0] <= ALLY_MAX)))
-      targetYaw = plan->unitId <= ALLY_MAX ? 0x2400 : -0x2400;
+      targetYaw =
+          plan->unitId <= ALLY_MAX ? TRIG_TURN * 9 / 64 : -(TRIG_TURN * 9 / 64);
     if (view->targetYaw != targetYaw)
       view->targetYaw = targetYaw;
   }

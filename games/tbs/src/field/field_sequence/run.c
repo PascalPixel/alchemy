@@ -86,10 +86,10 @@ s32 FieldSequence_Run(s32 entrance) {
   work->transitionFrames = 16;
   work->transitionActive = 0;
   // Field_UpdateWalking scales the leader's speed by this (16.16) into the
-  // distance counted towards PP, Djinn recovery and poison: 0x10000 / 0x199
+  // distance counted towards PP, Djinn recovery and poison: Q16_ONE / 160
   // counts each of them on by one about every 160 pixels walked. Towns turn it
   // off and block Retreat.
-  work->walkingDistanceScale = 0x199;
+  work->walkingDistanceScale = Q16_ONE / 160;
   work->walkingDistance = 0;
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     work->walkingDistanceScale = 0;

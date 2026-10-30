@@ -4,10 +4,10 @@ gHeatGauge_VramSlot:
 	.space 16
 	.global gHeatGauge_Sprites
 gHeatGauge_Sprites:
-	.space 0x50
+	.space 80
 	.global gHeatGauge_TileBuffer
 gHeatGauge_TileBuffer:
-	.space 0x900
+	.space 2304
 	.global gHeatGauge_Held
 gHeatGauge_Held:
 	.space 2

@@ -720,7 +720,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
       MapGrid_CopyCellsTo(46, 59, 30, 36, 1, 1);
       MapGrid_CopyCellsTo(46, 59, 30, 37, 1, 5);
       break;
-    case 0x50:
+    case 80:
       MapGrid_CopyCellsTo(46, 49, 30, 33, 1, 10);
       break;
     }
@@ -766,7 +766,7 @@ static void SolSanctumLunaSolRooms_UpdateSecondFallingLight(void) {
       MapGrid_CopyCellsTo(47, 59, 42, 36, 1, 1);
       MapGrid_CopyCellsTo(47, 59, 42, 37, 1, 5);
       break;
-    case 0x5a:
+    case 90:
       MapGrid_CopyCellsTo(47, 49, 42, 33, 1, 10);
       break;
     }
@@ -804,7 +804,7 @@ static void SolSanctumLunaSolRooms_UpdateThirdFallingLight(void) {
       MapGrid_CopyCellsTo(48, 59, 31, 39, 1, 1);
       MapGrid_CopyCellsTo(48, 59, 31, 40, 1, 5);
       break;
-    case 0x5f:
+    case 95:
       MapGrid_CopyCellsTo(48, 49, 31, 36, 1, 10);
       break;
     }
@@ -842,7 +842,7 @@ static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
       MapGrid_CopyCellsTo(46, 59, 41, 39, 1, 1);
       MapGrid_CopyCellsTo(46, 59, 41, 40, 1, 5);
       break;
-    case 0x55:
+    case 85:
       MapGrid_CopyCellsTo(46, 49, 41, 36, 1, 10);
       break;
     }

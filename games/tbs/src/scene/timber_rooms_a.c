@@ -153,7 +153,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// after Babi's audience, asks whether the party is surprised to find so few
 /// shops.
 static void TimberRoomsA_TalkToMerchant(s32 actorId) {
-  u16 facing = (Actor_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+  u16 facing =
+      (Actor_GetById(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
@@ -177,7 +178,8 @@ static void TimberRoomsA_TalkToMerchant(s32 actorId) {
 /// innkeeper offers a room; otherwise has nothing to do until Tolbi's festival
 /// ends, or, after Babi's audience, has been busy since the sandstorms began.
 static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
-  u16 facing = (Actor_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+  u16 facing =
+      (Actor_GetById(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Inn_CheckIn(INN_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
@@ -194,7 +196,8 @@ static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
 /// Tolbi's rule, or, after Babi's audience, wonders why there are so many
 /// sandstorms.
 static void TimberRoomsA_TalkToHealer(s32 actorId) {
-  u16 facing = (Actor_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+  u16 facing =
+      (Actor_GetById(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Sanctum_Run(actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
@@ -537,11 +540,11 @@ s32 Scene_Initialize(void) {
   // Each soldier lies a quarter turn over, with no shadow.
   actor = Actor_GetById(ACTOR_SOLDIER_SOUTH);
   actor->sprite->flags = 0;
-  actor->sprite->rotation = 0x4000;
+  actor->sprite->rotation = TRIG_TURN / 4;
   actor->sprite->image.priority = 1;
   actor = Actor_GetById(ACTOR_SOLDIER_NORTH);
   actor->sprite->flags = 0;
-  actor->sprite->rotation = 0x4000;
+  actor->sprite->rotation = TRIG_TURN / 4;
   actor->motionFlags = ACTOR_FALLS;
   actor->y.fixed = 0;
   return 0;

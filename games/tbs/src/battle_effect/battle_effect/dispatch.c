@@ -142,11 +142,11 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
 /// table and stops and re-arms DMA channel 0.
 ///
 /// Ram_MapGridCellBuffer + 0    : the base right edge (u16)
-/// Ram_MapGridCellBuffer + 2    : how far each of lines 8 to 135 pulls the edge
+/// Ram_MapGridCellBuffer + 2   : how far each of lines 8 to 135 pulls the edge
 /// in
 ///                            (u8 x 128)
-/// Ram_MapGridCellBuffer + 0x82 : the WIN0H table built here (u16 x 160)
-/// Lines outside 8 to 135 get 0xfff1, a left edge (255) past the right (241);
+/// Ram_MapGridCellBuffer + 130 : the WIN0H table built here (u16 x 160)
+/// Lines outside 8 to 135 get WIN_RANGE(255, 241), a left edge past the right;
 /// window 0's vertical range, lines 16 to 135 since
 /// BattleEffect_ConfigureEffectDisplay, leaves them out anyway. Edges are
 /// clamped to 0 to 240.
@@ -158,7 +158,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   s32 rightEdge;
 
   baseRightEdge = (u16 *)Ram_MapGridCellBuffer;
-  scanlineEdges = (u16 *)(Ram_MapGridCellBuffer + 0x82);
+  scanlineEdges = (u16 *)(Ram_MapGridCellBuffer + 130);
   edgeOffsets = Ram_MapGridCellBuffer + 2;
   for (scanline = 0; scanline != 160; scanline++) {
     if (scanline >= 8 && scanline <= 135) {
@@ -173,7 +173,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     volatile u16 *channel = REG_DMA0;
 
     Dma_Stop(channel);
-    Dma_Set(Ram_MapGridCellBuffer + 0x82, (void *)&REG_WIN0H,
+    Dma_Set(Ram_MapGridCellBuffer + 130, (void *)&REG_WIN0H,
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }
 }

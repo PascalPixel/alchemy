@@ -12,10 +12,10 @@ s32 Task_AddFar(TaskFunc func, s32 order);
 /// Removes the task running `func` and returns its old index, or -1.
 s32 Task_RemoveFar(TaskFunc func);
 /// Advances the random number generator and returns 16 bits of the new seed,
-/// 0 to 0xffff.
+/// 0 to 65535.
 u32 Random16Far(void);
-/// Returns the angle of (x, y) in 1/65536 turns, 0 along +y and 0x4000 along
-/// +x; (0, 0) gives 0.
+/// Returns the angle of (x, y) in 1/65536 turns, 0 along +y and TRIG_TURN / 4
+/// along +x; (0, 0) gives 0.
 s32 ArcTan2Far(s32 x, s32 y);
 /// Returns the square root of a 16.16 value in 16.16, whose low eight bits are
 /// always 0.

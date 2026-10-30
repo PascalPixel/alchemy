@@ -32,7 +32,7 @@ struct DjinnListTable {
 /// first, as it opens, and frees it (Heap_Release) as it closes.
 struct DjinnMenuBackdrop {
   struct DjinnListTable list;
-  u8 tiles[0x2000];  ///< BG character block 1's first 0x2000 bytes
+  u8 tiles[8192];    ///< BG character block 1's first 8 KB
   u16 palette[64];   ///< BG palettes 4 to 7
   s32 tutorialTimer; ///< frames into the tutorial's current step
   /// The Djinn tutorial's step (DJINN_TUTORIAL_ in menu_internal.h), chosen
@@ -66,11 +66,11 @@ struct DjinnMenuWork {
   struct Window *secondWindow;
   /// ItemMenuWork's last windows and its icons; not named here.
   ///@{
-  u8 itemWindows[0x10];
+  u8 itemWindows[16];
   struct WindowSprite *entryIcons[32];
   struct WindowSprite *categoryIcons[8];
   ///@}
-  u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct Window *helpWindow;
   /// ItemMenuWork's cursor grid, selectedColumn to rowCount; not named
   /// here.
@@ -85,7 +85,7 @@ struct DjinnMenuWork {
   struct WindowSprite *secondCursor;
   u8 unusedBeforeBackdrop[4]; ///< no view of the menu work names it
   struct DjinnMenuBackdrop *backdrop;
-  u8 unusedAfterBackdrop[0x40];    ///< no view of the menu work names it
+  u8 unusedAfterBackdrop[64];      ///< no view of the menu work names it
   u16 entries[32];                 ///< ItemMenuWork's items; not named here
   u16 members[DJINN_LIST_MEMBERS]; ///< the party in order
   u8 pairCount;

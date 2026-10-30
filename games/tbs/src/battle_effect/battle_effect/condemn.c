@@ -187,7 +187,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
               canvas, work->sheet, CONDEMN_PANEL_X(panelColumn, 0),
               CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57, 98);
         }
-        draw[work->args->side](canvas, work->sheet + 0x15d2,
+        draw[work->args->side](canvas, work->sheet + 5586,
                                CONDEMN_PANEL_X(panelColumn, 1),
                                CONDEMN_PANEL_Y(panelRow, 1) + screenY, 99, 69);
         if ((frame - 88) <= 1U) {
@@ -195,7 +195,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         }
         if ((frame - 90) <= 1U) {
           draw[work->args->side](
-              canvas, work->sheet + 0x3081, CONDEMN_PANEL_X(panelColumn, 2),
+              canvas, work->sheet + 12417, CONDEMN_PANEL_X(panelColumn, 2),
               CONDEMN_PANEL_Y(panelRow, 2) + screenY, 128, 91);
         }
         if ((frame - 92) <= 1U) {
@@ -204,19 +204,19 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
               CONDEMN_PANEL_Y(panelRow, 3) + screenY, 128, 91);
         }
         if ((frame - 94) <= 1U) {
-          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 0x2d80,
+          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 11648,
                                  CONDEMN_PANEL_X(panelColumn, 4),
                                  CONDEMN_PANEL_Y(panelRow, 4) + screenY, 128,
                                  59);
         }
         if ((frame - 96) <= 1U) {
-          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 0x4b00,
+          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 19200,
                                  CONDEMN_PANEL_X(panelColumn, 5),
                                  CONDEMN_PANEL_Y(panelRow, 5) + screenY, 122,
                                  29);
         }
         if ((frame - 98) <= 1U) {
-          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 0x58d2,
+          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 22738,
                                  CONDEMN_PANEL_X(panelColumn, 6),
                                  CONDEMN_PANEL_Y(panelRow, 6) + screenY, 76,
                                  25);

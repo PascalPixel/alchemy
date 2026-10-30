@@ -926,7 +926,7 @@ static void AltinPeak_ForceLogOver(void) {
   while (1) {
     rotationStep += 8;
     sprite->rotation += rotationStep;
-    cosine = Math_Cos(sprite->rotation + 0x4000);
+    cosine = Math_Cos(sprite->rotation + TRIG_TURN / 4);
     actor->x.fixed = (cosine << 4) + originX;
     if (sprite->rotation > 0x8fff) {
       break;
@@ -937,9 +937,9 @@ static void AltinPeak_ForceLogOver(void) {
   while (1) {
     rotationStep += 8;
     sprite->rotation -= rotationStep;
-    cosine = Math_Cos(sprite->rotation + 0x4000);
+    cosine = Math_Cos(sprite->rotation + TRIG_TURN / 4);
     actor->x.fixed = (cosine << 4) + originX;
-    if (sprite->rotation <= 0x7000) {
+    if (sprite->rotation <= TRIG_TURN * 7 / 16) {
       break;
     }
     wait(1);
@@ -948,10 +948,10 @@ static void AltinPeak_ForceLogOver(void) {
   while (1) {
     rotationStep += rotationStep >> 3;
     sprite->rotation += rotationStep;
-    cosine = Math_Cos(sprite->rotation + 0x4000);
-    sine = Math_Sin(sprite->rotation + 0x8000);
+    cosine = Math_Cos(sprite->rotation + TRIG_TURN / 4);
+    sine = Math_Sin(sprite->rotation + TRIG_TURN / 2);
     actor->x.fixed = (cosine << 4) + originX;
-    if (sprite->rotation > 0x8000) {
+    if (sprite->rotation > TRIG_TURN / 2) {
       actor->y.fixed = originHeight - (sine << 3);
     }
     if (sprite->rotation + rotationStep > 0xbfff) {
@@ -960,7 +960,7 @@ static void AltinPeak_ForceLogOver(void) {
     wait(1);
   }
   wait(1);
-  sprite->rotation = 0xc000;
+  sprite->rotation = TRIG_TURN * 3 / 4;
   Event_PlaySound(SE_STONE_RUMBLE);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Event_Wait(20);
@@ -1024,7 +1024,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Event_Wait(20);
   rock->x.fixed += PIXELS(14);
   rock->y.fixed += -PIXELS(8);
-  rock->sprite->rotation = 0xc000;
+  rock->sprite->rotation = TRIG_TURN * 3 / 4;
   Event_PlaySound(SE_TREMOR);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -1823,13 +1823,13 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
   actor->motionFlags = 0;
   actor->scaleX = 9 * Q16_ONE / 10;
   actor->scaleY = 3 * Q16_ONE / 5;
-  actor->sprite->rotation = 0x8000;
+  actor->sprite->rotation = TRIG_TURN / 2;
   Actor_GetById(ACTOR_FALLING_ROCK_SIGN)->motionFlags = 0;
   Actor_GetById(ACTOR_FALLING_ROCK_SIGN)->y.fixed = -PIXELS(28);
   if (Event_GetFlag(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     actor->x.fixed += PIXELS(14);
     actor->y.fixed += -PIXELS(8);
-    actor->sprite->rotation = 0xc000;
+    actor->sprite->rotation = TRIG_TURN * 3 / 4;
   }
   if (GameFlag_Get(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     MapGrid_CopyCellsTo(25, 36, 43, 36, 11, 9);
@@ -2014,8 +2014,7 @@ static void AltinPeak_SpawnDebris(void) {
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gAltinPeak_DebrisScript);
       SET_VELOCITY(debris, (((u32)(Import_RandomNext() * 6) >> 16) - 3) << 16,
-                   PIXELS(8),
-                   ((u32)(Import_RandomNext() * 0x600) >> 16) - 0x300);
+                   PIXELS(8), ((u32)(Import_RandomNext() * 1536) >> 16) - 768);
     }
   }
 }
@@ -2393,24 +2392,24 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
   s32 z;
   s32 turnFrame;
 
-  angle = (actor->facing + 0x4000) & 0xc000;
+  angle = (actor->facing + TRIG_TURN / 4) & 0xc000;
   point = &position;
   SET_POSITION(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   FieldVector_AddPolarOffset(PIXELS(24), angle, point);
   x = (point->x + PIXELS(8)) & 0xfff00000;
   z = (point->z + PIXELS(8)) & 0xfff00000;
-  angle += 0x8000;
+  angle += TRIG_TURN / 2;
   Actor_SelectAnimation(actor, 5);
   turnFrame = 0;
   Sound_Play(SE_CART_TURN);
   while (turnFrame < 16) {
-    angle += 0x400;
+    angle += TRIG_TURN / 64;
     point->x = x;
     point->z = z;
     FieldVector_AddPolarOffset(PIXELS(24), angle, point);
     actor->x.fixed = point->x;
     actor->z.fixed = point->z;
-    actor->facing = angle + 0x4000;
+    actor->facing = angle + TRIG_TURN / 4;
     wait(1);
     turnFrame++;
   }
@@ -2426,24 +2425,24 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
   s32 z;
   s32 turnFrame;
 
-  angle = (actor->facing - 0x4000) & 0xc000;
+  angle = (actor->facing - TRIG_TURN / 4) & 0xc000;
   point = &position;
   SET_POSITION(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   FieldVector_AddPolarOffset(PIXELS(24), angle, point);
   x = (point->x + PIXELS(8)) & 0xfff00000;
   z = (point->z + PIXELS(8)) & 0xfff00000;
-  angle += 0x8000;
+  angle += TRIG_TURN / 2;
   Actor_SelectAnimation(actor, 6);
   turnFrame = 0;
   Sound_Play(SE_CART_TURN);
   while (turnFrame < 16) {
-    angle -= 0x400;
+    angle -= TRIG_TURN / 64;
     point->x = x;
     point->z = z;
     FieldVector_AddPolarOffset(PIXELS(24), angle, point);
     actor->x.fixed = point->x;
     actor->z.fixed = point->z;
-    actor->facing = angle - 0x4000;
+    actor->facing = angle - TRIG_TURN / 4;
     wait(1);
     turnFrame++;
   }
@@ -2460,7 +2459,7 @@ static void AltinPeak_StartCartCountdown(struct Actor *actor) {
 /// Rolls the cart on by a frame and picks its animation from the terrain ahead
 /// of and behind it: flat, uphill or downhill.
 static void AltinPeak_AdvanceCart(struct Actor *actor) {
-  s32 angle = 0xc000;
+  s32 angle = TRIG_TURN * 3 / 4;
   s32 radius;
   s16 *timer;
   struct FieldPosition position;
@@ -2532,7 +2531,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
     if (MapGrid_GetTerrainHeight(2, position.x, position.z) == actor->y.fixed) {
       break;
     }
-    heading += 0x4000;
+    heading += TRIG_TURN / 4;
   }
   if (directionIndex == 4) {
     return;
@@ -2540,7 +2539,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   actor->layer = 2;
   leader->x.fixed = 0;
   leader->z.fixed = 0;
-  Sprite_AddAnimation(actor->sprite, 16);
+  Sprite_AddAnimation(actor->sprite, SPRITE_CART_RIDER);
   FieldCamera_FollowActor(id, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(PIXELS(16), PIXELS(2));
@@ -3010,7 +3009,7 @@ struct ActorPlacement gAltinPeak_SpritzActorPlacements[] = {
         TALK_FACING_KEEP, 0},
     {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(520), 0, PIXELS(632), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
-    {MERCURY_DJINNI, FLAG_DJINNI(DJINNI_SPRITZ), MOVEMENT_TYPE_STAND, PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY, 0},
+    {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_SPRITZ), MOVEMENT_TYPE_STAND, PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACING_PARTY, 0},
     {SCENE_TABLE_END},
 };
 
@@ -3032,7 +3031,7 @@ struct ActorPlacement gAltinPeak_FallingRocksActorPlacements[] = {
 };
 
 struct ActorPlacement gAltinPeak_HydrosStatueActorPlacements[] = {
-    {199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
+    {SPRITE_HYDROS_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
         TALK_FACING_KEEP, 0},

@@ -33,7 +33,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
     particle->timer = decrementedTimer;
     remainingFrames = decrementedTimer;
     if (remainingFrames != 0) {
-      // The angle turns 1/32 of a circle (0x800) each frame left.
+      // The angle turns 1/32 of a circle (TRIG_TURN / 32) each frame left.
       pos.x = effectWork->x;
       pos.y = effectWork->y + (10 << 16);
       pos.z = effectWork->z;
@@ -80,7 +80,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *actor) {
     // and is released after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
       spark->update = FieldEffect_SwayParticle;
-      spark->scaleX = spark->scaleY = 0x9999; // 0.6
+      spark->scaleX = spark->scaleY = Q16_ONE * 3 / 5;
       spark->motionFlags = ACTOR_FALLS;
       spark->gravity = 458;
       spark->timer = Random16() >> 9;
@@ -123,11 +123,11 @@ void FieldPsynergy_Ply(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    actor = Actor_Spawn(233, target->x.fixed, target->y.fixed + PIXELS(32),
-                        target->z.fixed);
+    actor = Actor_Spawn(SPRITE_WINGED_FIGURE, target->x.fixed,
+                        target->y.fixed + PIXELS(32), target->z.fixed);
     if (actor != 0) {
-      actor->scaleY = 0xb333; // 0.7
-      actor->scaleX = 0xb333;
+      actor->scaleY = Q16_ONE * 7 / 10;
+      actor->scaleX = Q16_ONE * 7 / 10;
       actor->update = FieldEffect_UpdateShrinkingOrbitActor;
       actor->timer = 120;
       actor->userValue = i << 13;
@@ -148,11 +148,11 @@ void FieldPsynergy_Ply(void) {
   wait(110);
 
   // The one in the centre.
-  target = Actor_Spawn(233, 0, 0, 0);
+  target = Actor_Spawn(SPRITE_WINGED_FIGURE, 0, 0, 0);
   actor = target;
   if (target != 0) {
-    target->scaleY = 0xb333;
-    target->scaleX = 0xb333;
+    target->scaleY = Q16_ONE * 7 / 10;
+    target->scaleX = Q16_ONE * 7 / 10;
     target->x.fixed = effectWork->x;
     target->y.fixed = effectWork->y + PIXELS(16);
     target->z.fixed = effectWork->z;
@@ -191,15 +191,16 @@ void FieldPsynergy_Ply(void) {
       wait(192);
   }
 
-  // Fly away: 192 pixels at angle 0xe800, and release it once it arrives.
-  // Its timer is the emitter's phase: -1 stops the sway that would hold it
-  // in place.
+  // Fly away: 192 pixels at angle TRIG_TURN * 29 / 32, and release it once it
+  // arrives. Its timer is the emitter's phase: -1 stops the sway that would
+  // hold it in place.
   if (target != 0) {
     target->timer = -1;
     target->speedLimit = PIXELS(5);
-    target->acceleration = 0x6666;
+    target->acceleration = Q16_ONE * 2 / 5;
     target->steeringFlags = 0;
-    Actor_SetTargetPositionFromMagnitudeAngle(target, PIXELS(192), 0xe800);
+    Actor_SetTargetPositionFromMagnitudeAngle(target, PIXELS(192),
+                                              TRIG_TURN * 29 / 32);
     Actor_WaitForMoveFar(target);
     Actor_ReleaseFar(target);
   }

@@ -63,9 +63,6 @@ extern const u8 gData_0200161c[];
     Func_02001160((actor), emote_, frames_);                                   \
   }
 
-// The JA edition has its own form of this function; it stays on its listing in
-// recon/tla/raw/overlays (S4).
-#if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_02000a24(void) {
   s16 *target;
   s32 angle = 0xe000;
@@ -187,4 +184,3 @@ void Func_02000a24(void) {
   Call3(Func_020010e8, 18, 0, 0);
   Func_02001088();
 }
-#endif

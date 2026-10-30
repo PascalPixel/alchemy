@@ -51,9 +51,6 @@ void Party_SetFields1f2And1f4();
     Func_02001160((actor), emote_, frames_);                                   \
   }
 
-// The JA edition has its own form of this function; it stays on its listing in
-// recon/tla/raw/overlays (S4).
-#if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_02000430(void) {
   s32 angle;
 
@@ -195,4 +192,3 @@ void Func_02000430(void) {
   Party_SetFields1f2And1f4((s32)&SceneId_Ov695, 21);
   Call2(Func_020011a0, 102, 2);
 }
-#endif

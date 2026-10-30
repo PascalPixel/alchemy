@@ -50,9 +50,6 @@ void Message_CloseFinishedWindows();
     Func_02001160((actor), emote_, frames_);                                   \
   }
 
-// The JA edition has its own form of this function; it stays on its listing in
-// recon/tla/raw/overlays (S4).
-#if (LANGUAGE != LANGUAGE_JAPANESE)
 void Func_0200087c(void) {
   s32 angle = 0xa000;
 
@@ -106,11 +103,12 @@ void Func_0200087c(void) {
   Call1(FieldEvent_Wait, 20);
   Call2(Func_02001190, (s16)gMainRoutineWork.savedScene,
         (s16)gMainRoutineWork.savedEntrance);
+#if LANGUAGE != LANGUAGE_JAPANESE
   Call2(Func_02001208, gMainRoutineWork.scene, gMainRoutineWork.entrance);
+#endif
   ((struct {
      u8 unk000[0x1ac];
      s32 value;
    } *)Ram_HeapSlots->eventWork)
       ->value = 0;
 }
-#endif

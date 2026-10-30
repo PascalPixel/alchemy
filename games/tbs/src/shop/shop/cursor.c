@@ -6,17 +6,17 @@
 
 /// Where each of the quantity bar's 30 segments starts in its tile buffer: a
 /// byte column of a 4-bit tile, so four segments to a tile and the next tile
-/// 0x20 bytes on, eight tiles in all.
+/// 32 bytes on, eight tiles in all.
 // clang-format off
 static const u16 sSelectorTileOffsets[30] = {
-    0x00, 0x01, 0x02, 0x03,
-    0x20, 0x21, 0x22, 0x23,
-    0x40, 0x41, 0x42, 0x43,
-    0x60, 0x61, 0x62, 0x63,
-    0x80, 0x81, 0x82, 0x83,
-    0xa0, 0xa1, 0xa2, 0xa3,
-    0xc0, 0xc1, 0xc2, 0xc3,
-    0xe0, 0xe1,
+    0, 1, 2, 3,
+    32, 33, 34, 35,
+    64, 65, 66, 67,
+    96, 97, 98, 99,
+    128, 129, 130, 131,
+    160, 161, 162, 163,
+    192, 193, 194, 195,
+    224, 225,
 };
 // clang-format on
 
@@ -51,7 +51,7 @@ void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
 /// Where each of a price's five digits starts in its tile buffer, ones first.
 // clang-format off
 static const u16 sPriceDigitTileOffsets[5] = {
-    0xc0, 0x90, 0x80, 0x50, 0x40,
+    192, 144, 128, 80, 64,
 };
 // clang-format on
 
@@ -91,7 +91,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   s32 resourceSlot;
   struct WindowSprite *priceSprite;
 
-  tileBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tileBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   priceSprite = 0;
   // the blank price's eight tiles (8 * TILE_SIZE_4BPP bytes)
   Dma_Set(gShop_PriceTiles, tileBuffer, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
@@ -129,7 +129,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
 /// burst; Shop_RestoreFieldPalette restores the saved colours afterward.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gFieldWork. Its named load adds eight
-  // bytes in the native EN trial (0x54 to 0x5c).
+  // bytes in the native EN trial (84 to 92).
 #ifdef UBFIX
   struct PaletteFade *paletteBuffers = gPaletteFadeWork;
   u8 *eventBytes = (u8 *)gFieldWork;

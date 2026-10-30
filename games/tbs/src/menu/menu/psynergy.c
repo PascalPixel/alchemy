@@ -9,7 +9,7 @@
 // tiles they draw over and restore them after.
 #if TBS_PATCH_2
 #define PSYNERGY_PROMPT_TILES BG_CHAR_BLOCK(1)
-#define PSYNERGY_PROMPT_TILES_SIZE 0x2000
+#define PSYNERGY_PROMPT_TILES_SIZE 8192
 #endif
 
 // The highlight over the Psynergy list's rows.

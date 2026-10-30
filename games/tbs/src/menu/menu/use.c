@@ -116,7 +116,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           elementPower = caster->element[elementIndex].power;
         } else
           elementPower = 100;
-        amount = Battle_CalculateRecoveryFar(amount, elementPower, 0x100);
+        amount = Battle_CalculateRecoveryFar(amount, elementPower, 256);
       }
 
       if (target->hp <= 0) {

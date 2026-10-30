@@ -102,7 +102,7 @@ s32 ItemMenu_Run(void) {
   // editions keep 8 KB of the field's window tiles aside while the menu is up
   // and free the copy after putting the tiles back.
 #if TBS_PATCH_1
-  size = 0x2000;
+  size = 8192;
   backup = Heap_AllocEwram(size);
 #endif
   screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
@@ -2017,10 +2017,10 @@ void ItemMenu_TryBreak(void) {
   struct ItemMenuWork *menu;
 
   menu = gMenuWork;
-  // One time in eight: 0x2000 of Random16's 0x10000 values.
+  // One time in eight: 8192 of Random16's 65536 values.
   if ((Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0])
            ->useType == ITEM_USE_MAY_BREAK) &&
-      (Random16() < 0x2000U)) {
+      (Random16() < 8192U)) {
     Inventory_BreakFar(menu->sideMember[0], menu->selectedSlots[0]);
     Sound_PlayFar(SE_ITEM_BREAK);
     ItemMenu_ShowMessage(MsgItemBroke, 0, -1);
@@ -2442,7 +2442,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   struct ItemMenuWork *menu = gMenuWork;
   // 1 KB of HEAP_SLOT_TILE_SCRATCH to draw the dial's digits in, released
   // before returning.
-  void *tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  void *tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   struct Window *window;
   struct WindowSprite *rightDial;
 

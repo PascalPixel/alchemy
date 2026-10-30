@@ -50,7 +50,7 @@
 #define CREDITS_RING_BYTES (CREDITS_RING_TILES * TILE_SIZE_4BPP)
 /// A line's raster: nine rows of 256 one-byte pixels, the ninth for the
 /// shadow below the eighth.
-#define CREDITS_BUFFER_BYTES 0x900
+#define CREDITS_BUFFER_BYTES 2304
 #define CREDITS_RASTER_STRIDE 256
 /// OAM entries 0 to 23: the opaque strips above and below the text.
 #define CREDITS_BORDER_SPRITES 24
@@ -79,8 +79,8 @@ void Credits_ClearBuffer(s32 alternate) {
     tileDestination = BG_CHAR_BLOCK(2);
     paletteDestination = (void *)&BG_PLTT[128];
   }
-  Dma_Fill32Cell(dmaFill, fillColor, tileDestination, 0x7800);
-  Dma_Fill32Cell(dmaFill, 0, paletteDestination, 0x100);
+  Dma_Fill32Cell(dmaFill, fillColor, tileDestination, 30720);
+  Dma_Fill32Cell(dmaFill, 0, paletteDestination, 256);
 }
 
 typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
@@ -162,7 +162,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   // Queue palette RAM writes for VBlank rather than transferring colours
   // during the active display.
   IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData,
-                      DMA_COPY_WORDS(0x40));
+                      DMA_COPY_WORDS(64));
 }
 
 /// Builds the 512 tilemap words surrounding a sliding credits picture:
@@ -339,8 +339,8 @@ static const u8 sBlankCreditLine[] = "";
 #endif
 
 /// Credits text, one row per line, terminated by 0. A line is 8 pixels of
-/// scroll, 32 frames; the text is drawn with gCredits_Font, ASCII 0x20
-/// to 0x7f.
+/// scroll, 32 frames; the text is drawn with gCredits_Font, ASCII 32
+/// to 127.
 // clang-format off
 const void *gCredits_Lines[] = {
     sBlankCreditLine,
@@ -1029,7 +1029,7 @@ void Credits_DrawEnteringLine(void) {
 /// pool after it and given back.
 void Credits_InitTextSprites(void) {
   // Sharing the three border-strip loops through an ordinary inline helper
-  // changes registers at the same 0x178-byte native English extent.
+  // changes registers at the same 376-byte native English extent.
   volatile u32 dmaFill;
   u32 *oamWords;
   u32 row;
@@ -1041,7 +1041,7 @@ void Credits_InitTextSprites(void) {
   // rows at the top and bottom of the window.
   Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);
   Dma_Fill32Cell(dmaFill, 0x11111111, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
-                 0x100);
+                 256);
 
   // OAM attributes 0 and 1 share the first word; attribute 2 is the second.
   // Here row counts the sprites across, 32 pixels apart (row << 21 is x).
@@ -1133,8 +1133,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
     GameFlag_SetFar(FLAG_CREDITS_LINE_DRAWN);
   } else {
-    Iwram_CopyWords(linePixels, linePixels + 0x800, 0x100);
-    Iwram_FillWords(linePixels + 0x100, 0x800, 0);
+    Iwram_CopyWords(linePixels, linePixels + 2048, 256);
+    Iwram_FillWords(linePixels + 256, 2048, 0);
   }
 
   // Measure text with the actual credits font before choosing its start.
@@ -1164,7 +1164,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
         glyphMask = 0x80;
         for (columnIndex = 7; columnIndex >= 0; columnIndex--) {
           if (glyphBits & glyphMask) {
-            destination[0x101] = 1;
+            destination[257] = 1;
             destination[0] = 15;
           }
           destination++;
@@ -1198,14 +1198,14 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     s32 tileIndex = firstTile + row;
     u32 *words = (u32 *)linePixels + row;
 
-    *(u32 *)(OBJ_VRAM0 + tileIndex * 32) = words[0x000];
-    *(u32 *)(OBJ_VRAM0 + 4 + tileIndex * 32) = words[0x040];
-    *(u32 *)(OBJ_VRAM0 + 8 + tileIndex * 32) = words[0x080];
-    *(u32 *)(OBJ_VRAM0 + 12 + tileIndex * 32) = words[0x0c0];
-    *(u32 *)(OBJ_VRAM0 + 16 + tileIndex * 32) = words[0x100];
-    *(u32 *)(OBJ_VRAM0 + 20 + tileIndex * 32) = words[0x140];
-    *(u32 *)(OBJ_VRAM0 + 24 + tileIndex * 32) = words[0x180];
-    *(u32 *)(OBJ_VRAM0 + 28 + tileIndex * 32) = words[0x1c0];
+    *(u32 *)(OBJ_VRAM0 + tileIndex * 32) = words[0];
+    *(u32 *)(OBJ_VRAM0 + 4 + tileIndex * 32) = words[64];
+    *(u32 *)(OBJ_VRAM0 + 8 + tileIndex * 32) = words[128];
+    *(u32 *)(OBJ_VRAM0 + 12 + tileIndex * 32) = words[192];
+    *(u32 *)(OBJ_VRAM0 + 16 + tileIndex * 32) = words[256];
+    *(u32 *)(OBJ_VRAM0 + 20 + tileIndex * 32) = words[320];
+    *(u32 *)(OBJ_VRAM0 + 24 + tileIndex * 32) = words[384];
+    *(u32 *)(OBJ_VRAM0 + 28 + tileIndex * 32) = words[448];
   }
   Heap_Release(linePixels);
   return 0;

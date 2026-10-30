@@ -40,7 +40,7 @@ gBattlePlacement_StepPairs:
 	.balign 4
 	.global gBattleCamera_CommandMatrix
 gBattleCamera_CommandMatrix:
-	.4byte 1 << 16, 0, 0, -0xcccc
+	.4byte 1 << 16, 0, 0, -(4 << 16) / 5
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 80 << 16, 0, 0

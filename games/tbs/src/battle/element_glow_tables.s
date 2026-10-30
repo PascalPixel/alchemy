@@ -16,7 +16,7 @@ gElementGlow_StarSizes:
 	.balign 4
 	.global gElementGlow_RingPictureOffsets
 gElementGlow_RingPictureOffsets:
-	.4byte 0x4e, 0x44e, 0x84e, 0xc4e
+	.4byte 78, 1102, 2126, 3150
 	.4byte 0, 10, 20, 0
 	.global gBattle_UnusedCharacterIdPairs
 gBattle_UnusedCharacterIdPairs:

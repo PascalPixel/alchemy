@@ -551,7 +551,7 @@ void BattleMotion_PlayFall(s32 unitId) {
 /// BattleAbility_ReplaceDefeated's result when the target's side is all down.
 /// It does not come up: Battle_Run ends the battle as soon as a
 /// side is down, before the next action.
-#define TARGET_SIDE_DEFEATED 0x100
+#define TARGET_SIDE_DEFEATED 256
 
 /// Returns the action's target, or a random living unit of its side when
 /// the target is down; TARGET_SIDE_DEFEATED when none is left. Called by

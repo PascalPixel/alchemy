@@ -20,7 +20,7 @@ gBattleKnockback_SpeedLimit:
 	.4byte 4 << 16, 4 << 16, 4 << 16, 4 << 16, 20 << 16, 4 << 16, 4 << 16, 4 << 16
 	.global gBattleKnockback_VelocityY
 gBattleKnockback_VelocityY:
-	.4byte 3 << 16, 6 << 16, 7 << 16, 10 << 16, 5 << 16, 2 << 16, 3 << 16, 0x58000
+	.4byte 3 << 16, 6 << 16, 7 << 16, 10 << 16, 5 << 16, 2 << 16, 3 << 16, 11 << 15
 	.global gBattleKnockback_DistancePercent
 gBattleKnockback_DistancePercent:
 	.4byte 140, 140, 150, 200, 200, 150, 100, 100

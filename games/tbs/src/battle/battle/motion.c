@@ -11,7 +11,7 @@
 // The motion values below are 16.16 fixed point, in pixels and frames:
 // acceleration and speedLimit per frame, velocityY the hop's upward speed,
 // and verticalMotionStrength the gravity taken from it each frame
-// (BATTLE_UNIT_GRAVITY about 0.67, 0x9999 0.6, 0x7851 about 0.47).
+// (BATTLE_UNIT_GRAVITY about 0.67, Q16_ONE * 3 / 5, and 0x7851 about 0.47).
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
@@ -40,7 +40,7 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   z = battleObject->anchorZ;
   if (z < 0)
     z += 7;
-  actor->facing = ArcTan2(z >> 3, battleObject->anchorX) - 0x8000;
+  actor->facing = ArcTan2(z >> 3, battleObject->anchorX) - TRIG_TURN / 2;
 }
 
 /// Sends unitId running off its side of the battlefield, three times
@@ -121,7 +121,7 @@ void BattleMotion_HopBack(s32 unitId) {
   actor->acceleration = Q16_ONE;
   actor->speedLimit = 4 << 16;
   actor->velocityY = 3 << 16;
-  actor->gravity = 0x9999;
+  actor->gravity = Q16_ONE * 3 / 5;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
@@ -141,12 +141,13 @@ void BattleMotion_LeapBack(s32 unitId) {
   actor->acceleration = 128 << 9;
   actor->speedLimit = 128 << 11;
   actor->velocityY = 128 << 11;
-  actor->gravity = 0x9999;
+  actor->gravity = Q16_ONE * 3 / 5;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
-  Actor_SetMoveTargetFar(actor, Iwram_MulQ16(battleObject->anchorX, 0x14ccc), 0,
-                         battleObject->anchorZ);
+  Actor_SetMoveTargetFar(actor,
+                         Iwram_MulQ16(battleObject->anchorX, Q16_ONE * 13 / 10),
+                         0, battleObject->anchorZ);
   Actor_SelectAnimationFar(actor, POSE_DAMAGE);
 }
 
@@ -169,7 +170,7 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
     // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
     if (actor->y.fixed == 0 || variant > KNOCKBACK_HURL)
       actor->velocityY = gBattleKnockback_VelocityY[variant];
-    actor->gravity = 0x9999;
+    actor->gravity = Q16_ONE * 3 / 5;
     actor->bounce = 0;
     actor->steeringFlags = 0;
     Actor_StartIdleFar(actor);
@@ -276,7 +277,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   position.y = 0;
   position.z = (firstZ + secondZ) / 2;
 
-  BattleMotion_MidpointNoOp(&position, 0x1000);
+  BattleMotion_MidpointNoOp(&position, 4096);
 }
 
 /// The hit flash's sprite layer, sprite 283: a star burst that grows and

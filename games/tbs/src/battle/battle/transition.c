@@ -43,8 +43,8 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   *registerCursor = bg2cnt | BGCNT_MOSAIC;
   bg3cnt = *++registerCursor;
   *registerCursor = bg3cnt | BGCNT_MOSAIC;
-  // 0x21 halfwords on from REG_BG3CNT is REG_BLDCNT.
-  registerCursor += 0x21;
+  // 33 halfwords on from REG_BG3CNT is REG_BLDCNT.
+  registerCursor += 33;
   *registerCursor = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                     BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 |
                     BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ |
@@ -102,8 +102,8 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
 }
 
 /// Builds BG1's flat map of the same picture: rows 0 to 3 0xffff, rows 4 and
-/// 5 tile 0x3ff, rows 6 to 20 tiles 0x200 to 0x3df in order, then tile 0x3ff.
-/// In 256 colours from character block 0, tile 0x200 is the start of block 2,
+/// 5 tile 1023, rows 6 to 20 tiles 512 to 991 in order, then tile 1023.
+/// In 256 colours from character block 0, tile 512 is the start of block 2,
 /// where BattleBackground_Load decodes the picture. Called with screen block
 /// 31 (BATTLE_BG1CNT) by BattleBackground_Load and
 /// BattleBackground_SetMode.
@@ -190,9 +190,10 @@ void BattleTransition_AdvanceTimer(void) {
   if (scroll < 0)
     scroll = 0;
   offset->y = scroll;
-  // 360 a frame from 0xaf80 reaches 0x12000, YAW_PARTY_ACTION, at frame 80.
+  // 360 a frame from 44928 reaches 73728, a turn past YAW_PARTY_ACTION, at
+  // frame 80.
   if (frame <= 80U)
-    camera->yaw = 45 * frame * 8 + 0xaf80;
+    camera->yaw = 45 * frame * 8 + 44928;
   next = (*timer = *timer + 1);
   if (next <= 80U) {
     BattleCamera_SetView(0, 0, 0, 180 - next);
@@ -390,7 +391,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
         id = index;
       battleObject = BattleObject_Get(id);
       if (Unit_GetFar(id)->id != ENEMY_FUSION_DRAGON)
-        battleObject->scale = 0xb333;
+        battleObject->scale = Q16_ONE * 7 / 10;
     }
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON |

@@ -215,12 +215,12 @@ enum BattleCastKind {
 /// The camera's yaw while a party member acts, and while an enemy does, in
 /// 1/65536 turns: an eighth of a turn either side of 0. The camera task
 /// eases toward it (BattleCamera_Update).
-#define YAW_PARTY_ACTION 0x2000
-#define YAW_ENEMY_ACTION -0x2000
+#define YAW_PARTY_ACTION (TRIG_TURN / 8)
+#define YAW_ENEMY_ACTION (-(TRIG_TURN / 8))
 
 /// The camera's yaw from behind the enemies, which an enemy's staged effect
 /// and cast take in place of YAW_ENEMY_ACTION.
-#define YAW_BEHIND_ENEMIES 0x5000
+#define YAW_BEHIND_ENEMIES (TRIG_TURN * 5 / 16)
 
 /// REG_BLDCNT: blend the semi-transparent sprites (SPRITE_SEMI_TRANSPARENT)
 /// over every layer, to fade them.

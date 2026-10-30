@@ -20,7 +20,7 @@
 /// page.
 void BattleCamera_Update(void) {
   // UB: indexing past scalar gBattleCamera reaches other heap slots. Named
-  // slots add four bytes in the native EN trial (0xf8 to 0xfc).
+  // slots add four bytes in the native EN trial (248 to 252 bytes).
 #ifdef UBFIX
   struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =

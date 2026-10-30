@@ -16,7 +16,7 @@
 /// priorities.
 void BattleObject_UpdateSpritePriorities(void) {
   // The two side walks stay separate: a shared priority helper changes EN
-  // register allocation despite the same 0x1ac-byte extent.
+  // register allocation despite the same 428-byte extent.
   u16 unitIds[UNIT_MAX];
   // The party's, then the enemies': sprite priority 1 for the side in front,
   // 2 behind (the lower number draws over the higher).
@@ -658,8 +658,8 @@ void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;
 
-  // Yaw 0x3000 (in 1/65536 turns), pitch 0xfe00, and 510 pixels away
-  // (0x1fe0000 in 16.16), the distance BattleCamera_SetView
+  // A yaw of 3/16 of a turn, a pitch of -1/128 of a turn, and 510 pixels
+  // away, the distance BattleCamera_SetView
   // uses.
   camera->yaw = 192 << 6;
   camera->pitch = 254 << 8;

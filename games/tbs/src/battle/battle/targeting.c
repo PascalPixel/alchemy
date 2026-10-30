@@ -25,7 +25,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   s32 count;
 
   // UB: the native view treats distinct BattleWork members as one array.
-  // Walking the actual unit list changes EN from 0xc2 to 0xa8 bytes.
+  // Walking the actual unit list changes EN from 194 to 168 bytes.
 #ifdef UBFIX
   s16 *unitIds;
   s32 unitId;

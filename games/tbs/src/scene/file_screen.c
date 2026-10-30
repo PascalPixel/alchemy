@@ -49,6 +49,7 @@
 #include "map_grid_scroll.h"
 #include "flags.h"
 #include "title.h"
+#include "item_ids.h"
 
 // Edition-specific text and window layout values.
 // The password buffer: a Gold password is 260 symbols
@@ -1395,7 +1396,7 @@ s32 gFileScreen_ExtraCodeHeld = 0;
 // clang-format off
 /// The party members the password packs: Isaac, Garet, Ivan and Mia.
 u32 gFileScreen_PasswordMembers[] = {
-    0, 1, 2, 3,
+    ISAAC, GARET, IVAN, MIA,
 };
 
 /// The six story flags of the password's byte 7, as halfwords in pairs, bits
@@ -1409,7 +1410,10 @@ u32 gFileScreen_PasswordFlags[] = {
 /// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS (as
 /// halfwords in pairs), which Silver and Bronze record in byte 8.
 u32 gFileScreen_PasswordKeyItems[] = {
-    0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
+    ITEM_ORB_OF_FORCE | ITEM_DOUSE_DROP << 16,
+    ITEM_FROST_JEWEL | ITEM_LIFTING_GEM << 16,
+    ITEM_HALT_GEM | ITEM_CLOAK_BALL << 16,
+    ITEM_CARRY_STONE | ITEM_CATCH_BEADS << 16,
 };
 
 /// The 23 items whose quantity a Gold password keeps for each party member: Herb,
@@ -1418,8 +1422,10 @@ u32 gFileScreen_PasswordKeyItems[] = {
 /// Bomb, Game Ticket, Lucky Medal, Sacred Feather, Oil Drop, Weasel's Claw,
 /// Bramble Seed and Crystal Powder.
 u16 gFileScreen_PasswordStackItems[] = {
-    180, 181, 182, 183, 186, 187, 188, 189,
-    191, 192, 193, 194, 195, 196, 226, 227,
-    228, 229, 236, 238, 239, 240, 241,
+    ITEM_HERB, ITEM_NUT, ITEM_VIAL, ITEM_POTION, ITEM_PSY_CRYSTAL,
+    ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_WATER_OF_LIFE, ITEM_POWER_BREAD,
+    ITEM_COOKIE, ITEM_APPLE, ITEM_HARD_NUT, ITEM_MINT, ITEM_LUCKY_PEPPER,
+    ITEM_SMOKE_BOMB, ITEM_SLEEP_BOMB, ITEM_GAME_TICKET, ITEM_LUCKY_MEDAL,
+    ITEM_SACRED_FEATHER, ITEM_OIL_DROP, ITEM_239, ITEM_240, ITEM_241,
 };
 // clang-format on

@@ -570,7 +570,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Sound_Play(SE_HEAVY_IMPACT);
     Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
     Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
-    effectParams.type = SPRITE_283;
+    effectParams.type = SPRITE_STAR_BURST;
     effectParams.script = gXian_TreeImpactScript;
     effectParams.rotation = TRIG_TURN / 4;
     FieldEffect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,

@@ -1532,7 +1532,7 @@ const struct Formation gFormations[] = {
 /// The 20 enemies whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
 const u16 gBattleFormation_LevelMatchedEnemies[] = {
-    117,
+    ENEMY_109,
     ENEMY_MYSTERY_MAN,
     ENEMY_MYSTERY_WOMAN,
     ENEMY_AZART_PADDED_GLOVES,

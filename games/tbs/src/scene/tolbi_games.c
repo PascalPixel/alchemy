@@ -1674,8 +1674,10 @@ const u16 gTolbiSpring_AlphaSteps[] = {
 };
 
 const u32 gTolbiSpring_PrizeItems[] = {
-    23, 124, 81, 152, 37, 108, 171, 142,
-    48, 160, 133, 97, 183, 186, 189,
+    ITEM_023, ITEM_EARTH_SHIELD, ITEM_081, ITEM_ADEPTS_HELM, ITEM_BURNING_AXE,
+    ITEM_COCKTAIL_DRESS, ITEM_GLITTERING_TIARA, ITEM_GUARDIAN_ARMLET, ITEM_048,
+    ITEM_160, ITEM_BATTLE_GLOVES, ITEM_KIMONO, ITEM_POTION, ITEM_PSY_CRYSTAL,
+    ITEM_WATER_OF_LIFE,
 };
 
 const u16 gTolbiSpring_CoinPrizes[] = {
@@ -1683,8 +1685,9 @@ const u16 gTolbiSpring_CoinPrizes[] = {
 };
 
 const u32 gTolbiSpring_LuckyWheelsPrizeItems[] = {
-    250, 251, 252, 256, 257, 258, 262, 263,
-    264, 183, 182, 181, 189, 186, 188,
+    ITEM_250, ITEM_251, ITEM_RUNNING_SHIRT, ITEM_256, ITEM_257, ITEM_FUR_BOOTS,
+    ITEM_262, ITEM_263, ITEM_264, ITEM_POTION, ITEM_VIAL, ITEM_NUT,
+    ITEM_WATER_OF_LIFE, ITEM_PSY_CRYSTAL, ITEM_ELIXIR,
 };
 
 const u8 gTolbiSpring_SliderFrames[] = {

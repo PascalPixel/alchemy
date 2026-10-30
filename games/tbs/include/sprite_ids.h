@@ -752,7 +752,11 @@ enum SpriteId {
   SPRITE_280,
   SPRITE_281,
   SPRITE_282,
-  SPRITE_283,
+  /// The impact of Lift and of Xian's training tree, and the battle's hit flash
+  /// (BattleMotion_PlayHitFlash, which nothing calls).
+  /// ★ Named from what the player sees: a star burst that grows and breaks
+  /// apart over ten frames (spr_283.png)
+  SPRITE_STAR_BURST,
   /// The particles of Growth and of a Djinni's capture, and the gate effects
   /// of Venus Lighthouse.
   SPRITE_PARTICLE,

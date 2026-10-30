@@ -280,10 +280,6 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   BattleMotion_MidpointNoOp(&position, 4096);
 }
 
-/// The hit flash's sprite layer, sprite 283: a star burst that grows and
-/// breaks apart over ten frames (graphics/sprite/spr_283.png).
-#define HIT_FLASH_ANIMATION 283
-
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
 /// single-sprite actor takes it. Nothing in the source calls it.
 void BattleMotion_PlayHitFlash(s32 unitId) {
@@ -294,7 +290,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
   actor = BattleObject_Get(unitId)->actor;
   if ((actor != NULL) && ((ACTOR_SPRITE_KIND_MASK & actor->spriteStorageKind) ==
                           ACTOR_SPRITE_ONE)) {
-    effectHandle = Sprite_AddAnimationFar(actor->sprite, HIT_FLASH_ANIMATION);
+    effectHandle = Sprite_AddAnimationFar(actor->sprite, SPRITE_STAR_BURST);
     if (effectHandle != 0) {
       effect = (struct SpriteAnimation *)effectHandle;
       SpriteAnimation_StartFar(effect, 1);

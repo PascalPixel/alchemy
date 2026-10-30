@@ -195,7 +195,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
   pos.x = source->x.fixed;
   pos.y = source->y.fixed;
   pos.z = source->z.fixed;
-  impact = Actor_Spawn(SPRITE_283, pos.x, pos.y - (32 << 16), pos.z);
+  impact = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - (32 << 16), pos.z);
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;

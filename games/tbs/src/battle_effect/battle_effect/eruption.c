@@ -137,8 +137,11 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     // falling under a gravity of 1/8 pixel a frame per frame. The half-width
     // x is shifted 16 pixels left, or right on EFFECT_SIDE_PARTY. A mote is
     // size 9 at depth 160 or nearer and one smaller for each 64 deeper; from
-    // depth 736 the size is 0, which would read gBattleEffect_MoteCells[-1].
-    // XXX: whether a mote ever gets that deep needs a run of the effect.
+    // depth 736 the size is 0, which reads the halfword before
+    // gBattleEffect_MoteCells and asks for a picture 0 by 0, which the
+    // blitter leaves undrawn. Motes get that deep: one of Blast's 16 and
+    // eight of Fiery Blast's 128, each for some of its frames (render probe
+    // effect-depth).
     for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
       struct Particle *mote = &PARTICLES[i];
 

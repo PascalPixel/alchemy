@@ -254,10 +254,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
             position.depth = 160;
           if (position.depth > 799)
             position.depth = 799;
-          // Nearer is larger: 9 pixels at depth 160 or less.
-          // XXX: from depth 736 on the size is 0, and EFFECT_DRAW_MOTE would
-          // read gBattleEffect_MoteCells[-1]; whether an ember ever gets that
-          // far needs a run of the effect to settle.
+          // Nearer is larger: 9 pixels at depth 160 or less. From depth 736
+          // on the size is 0: EFFECT_DRAW_MOTE reads the halfword before
+          // gBattleEffect_MoteCells and asks for a picture 0 by 0, which the
+          // blitter leaves undrawn, its rows used up before the first. Embers
+          // get that far: in a cast eight of the motes do, for up to half of
+          // their frames (render probe effect-depth).
           size = 9 - (position.depth - 160) / 64;
           if (i > 47) {
             if (ember->variant <= 11) {

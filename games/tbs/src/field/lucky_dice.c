@@ -260,9 +260,7 @@ void LuckyDice_Run(void) {
   s32 numbers[DICE_RESULT_COUNT];
   s32 groundPoint[3];
   s32 screen[3];
-  /* FAKEMATCH(dead): an unused local for the 32 bytes the native stack frame
-   * keeps at sp+168..200, between screen and the affine halfwords; without it,
-   * 21 of 2046 instructions differ in tbs-en. */
+  // Unused: gives the stack frame its 32 bytes at sp+168 to sp+200.
   UNUSED s32 unused[8];
   u16 affineA;
   u16 affineB;

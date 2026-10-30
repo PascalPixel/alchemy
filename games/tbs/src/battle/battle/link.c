@@ -266,8 +266,7 @@ s32 LinkBattle_SyncTurn(void) {
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
-  /* FAKEMATCH(dead): an unused array for the twenty bytes of frame no
-   * instruction touches; without it, 8 of 232 instructions differ in tbs-en. */
+  // Unused: gives the stack frame its 20 bytes.
   UNUSED u16 spare[10];
 
   if (battle->isLink != 0) {

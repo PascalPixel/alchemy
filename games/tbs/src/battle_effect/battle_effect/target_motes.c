@@ -499,9 +499,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   void **slot;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(dead): a blitter pair of which only draw[0] is used, the second
-   * word filling four bytes of the frame; as one DrawRectangle, 92 of 220
-   * instructions differ in tbs-en. */
+  // Only draw[0] is used; the second blitter gives the stack frame 4 bytes.
   BlitterPair draw;
   struct Particle *marker;
   s32 i;

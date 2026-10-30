@@ -119,8 +119,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct Actor *actor;
   struct Sprite *info;
   s32 scale;
-  /* FAKEMATCH(dead): an unused vector for the stack frame's 12 bytes; without
-   * it, 1 of 52 instructions differ in tbs-en. */
+  // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
   camera = gBattleCamera;

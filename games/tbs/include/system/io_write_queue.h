@@ -73,12 +73,7 @@ void IoWriteQueue_ClearBits32(u32 address, u32 value);
       *entry++ = (address);                                                    \
       *entry = (control);                                                      \
     }                                                                          \
-    /* FAKEMATCH(one-pass): the restore in a once-only block, which keeps it   \
-     * apart from the code before it; as IRQ_UNLOCK(saved) alone, 25 of the    \
-     * 49 pushes differ, by 2 to 44 instructions, in tbs-en. */                \
-    do {                                                                       \
-      IRQ_UNLOCK(saved);                                                       \
-    } while (0);                                                               \
+    IRQ_UNLOCK(saved);                                                         \
   }
 
 /// Like IO_WRITE_QUEUE_PUSH, but keeps IME's address in the caller's ime

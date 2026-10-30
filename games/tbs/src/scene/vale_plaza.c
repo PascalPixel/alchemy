@@ -1458,7 +1458,7 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetSpriteFlags(actor, 0);
   Import_ActorSetAnimation(ACTOR_STORM_GARET, 7);
   actor = Actor_GetById(ACTOR_STORM_GARET);
-  actor->sprite->rotation = 0x1555;
+  actor->sprite->rotation = TRIG_TURN / 12;
   actor = Actor_GetById(ACTOR_STORM_GARET);
   Actor_SetSpriteFlags(actor, 0);
   {
@@ -1482,14 +1482,14 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, PIXELS(12) / 5, PIXELS(6) / 5);
   gravityQ8 = 128;
   actor = Actor_GetById(ACTOR_FIRST_TRAVELER);
-  actor->bounce = 0x28f;
+  actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;
   Actor_SetScript(ACTOR_FIRST_TRAVELER, gValePlaza_FirstTravelerBounceActions);
   Event_Wait(24);
   Actor_SetSpeedParameters(ACTOR_SECOND_TRAVELER, PIXELS(12) / 5,
                            PIXELS(6) / 5);
   actor = Actor_GetById(ACTOR_SECOND_TRAVELER);
-  actor->bounce = 0x28f;
+  actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;
   Actor_RunScriptAndWait(ACTOR_SECOND_TRAVELER,
                          gValePlaza_SecondTravelerBounceActions);

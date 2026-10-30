@@ -248,7 +248,7 @@ enum ValeActorId {
   /// ★ Named from the game: "Mt. Aleph is a sacred peak."
   /// (MsgValeMtAlephIsASacredPeak)
   ACTOR_MAN_GUARDING_MT_ALEPH,
-  /// The boards on the roof, sprite 0xce, which Isaac moves into place with
+  /// The boards on the roof, sprite 206, which Isaac moves into place with
   /// Psynergy at the roof's end (Vale_RoofMended).
   /// ★ Named from what the player sees: a short plank of yellow wood,
   /// spr_206.png (its render)
@@ -283,8 +283,8 @@ enum ValeAfterKalayActorId {
   /// Felix and I used to play here...*Sniff*"
   /// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
   ACTOR_STRONGMAN_REMEMBERING_FELIX,
-  /// Three sprites of water, CrossboneIsleFloodgate's water sprite 0xd6. Only
-  /// Vale_UnusedWaterBurstsByTheRiver shows them: during a
+  /// Three sprites of water, CrossboneIsleFloodgate's water sprite
+  /// SPRITE_SPLASH. Only Vale_UnusedWaterBurstsByTheRiver shows them: during a
   /// tremor each in turn grows from a tenth of its size at (266, 1230), north
   /// of ACTOR_STRONGMAN_REMEMBERING_FELIX, and vanishes
   /// (gVale_UnusedWaterGrows). The row after them places the woman with fair
@@ -345,7 +345,7 @@ enum ValeOpeningActorId {
   /// ★ Named from what the player sees: a short plank of yellow wood,
   /// spr_206.png (its render)
   ACTOR_OPENING_THIRD_BOARD,
-  /// Sprite 0xd7, the hand of Move (event_commands/catch.c): it pushes the
+  /// SPRITE_MOVE_HAND, the hand of Move (event_commands/catch.c): it pushes the
   /// pillar for Garet, shedding sparkles.
   /// ★ Named from what the player sees: a large open hand,
   /// spr_215.png (its render)
@@ -2952,7 +2952,7 @@ static void Vale_RoofMended(void) {
 #if TBS_PATCH_1
   leader->motionFlags = 3;
   leader->y.fixed = PIXELS(160);
-  leader->targetY = 0x80000000;
+  leader->targetY = ACTOR_NO_TARGET;
   leader->velocityY = 0;
 #else
   Actor_GetById(ACTOR_PARTY_LEADER)->motionFlags = 3;
@@ -3031,8 +3031,8 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
       force != 0) {
     angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
                          target->x.fixed - actor->x.fixed);
-    left = (angle - 0x1000) & 0xf000;
-    right = (angle + 0x1000) & 0xf000;
+    left = (angle - FACING_STEP) & 0xf000;
+    right = (angle + FACING_STEP) & 0xf000;
     angle &= 0xf000;
     dir = actor->facing & 0xf000;
     if (angle == dir || right == dir || left == dir || force != 0) {
@@ -3120,7 +3120,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
 
   for (frameCountdown = 30; frameCountdown >= 0; frameCountdown--) {
     emitter->y.fixed += PIXELS(1);
-    emitter->facing = (u16)(emitter->facing + 0x2000);
+    emitter->facing = (u16)(emitter->facing + TRIG_TURN / 8);
     emitter->scaleX += -2048;
     emitter->scaleY += -2048;
     wait(1);

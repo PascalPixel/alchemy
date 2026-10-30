@@ -645,7 +645,7 @@ s32 SolSanctumEruption_Initialize(void) {
 /// each ember's actor script, gEruption_EmberScript.
 static s32 SolSanctumEruption_AlignEmberToHeading(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
-  actor->sprite->rotation = actor->facing + 0x4000;
+  actor->sprite->rotation = actor->facing + TRIG_TURN / 4;
   return 1;
 }
 
@@ -680,7 +680,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     spun = Actor_GetById(crystalIndex + 16);
     sprite = spun->sprite;
     angle = crystalIndex << 12;
-    sprite->rotation = angle - 0x4000;
+    sprite->rotation = angle - TRIG_TURN / 4;
     offsetX = Iwram_MulQ16(Trig_Cos(angle), PIXELS(256));
     offsetZ = Iwram_MulQ16(Trig_Sin(angle), PIXELS(256));
     FieldActor_SetMoveTarget(spun, spun->x.fixed + offsetX, spun->y.fixed,
@@ -923,8 +923,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   leaderSprite = leader->sprite;
   garetSprite = garet->sprite;
   for (frame = 0; frame < 20; frame++) {
-    leaderSprite->rotation += 0x100;
-    garetSprite->rotation -= 0x100;
+    leaderSprite->rotation += TRIG_TURN / 256;
+    garetSprite->rotation -= TRIG_TURN / 256;
     leader->x.fixed += PIXELS(3) / 8;
     garet->x.fixed -= PIXELS(3) / 8;
     wait(1);
@@ -1309,7 +1309,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     starSprite->image.palette = 0;
     starSprite->image.priority = 1;
     Icon_DrawItem(ITEM_MARS_STAR);
-    VramCache_Load(starSprite->slot, 128, iconPixels + 0x400);
+    VramCache_Load(starSprite->slot, 128, iconPixels + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
     ItemDisplay_ShowPicture(star, 3);

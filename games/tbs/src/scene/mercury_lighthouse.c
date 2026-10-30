@@ -821,7 +821,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   MapGrid_CopyCellsTo(78, 59, 110, 36, 1, 1);
   MapGrid_CopyCellsTo(76, 59, 109, 36, 1, 1);
   options = &optionsStorage;
-  // The shared initializer grows this path from 0x150 to 0x154 bytes and
+  // The shared initializer grows this path from 336 to 340 bytes and
   // moves its palette store after the scales; the stop path also reorders
   // stores. Keep the ordinary assignments, without a new steering wrapper.
   options->palette = 7;
@@ -837,7 +837,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
     do {
       if ((particleIndex & 1) != 0) {
         randomX = Random_Next();
-        // The original add/shift tree is multiplication by 0x3333.
+        // The original add/shift tree is multiplication by PIXELS(1) / 5.
         velocityX =
             ((u32)(randomX << 3) >> 16) * (PIXELS(1) / 5) - PIXELS(4) / 5;
         negativeIndex = -particleIndex;
@@ -1062,7 +1062,7 @@ enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 /// Chooses the random speed component used by stone-door particles.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
   // Sharing a centered-velocity helper with other sprays shrinks the fountain
-  // from 0x150 to 0x128 bytes and grows this door from 0x27c to 0x284 in
+  // from 336 to 296 bytes and grows this door from 636 to 644 bytes in
   // English.
   u32 drift = Import_RandomNext();
 
@@ -2832,7 +2832,7 @@ static void MercuryLighthouse_RideLift(void) {
 
   liftLayer = &((struct MapGridScrollWork *)gMapGridWork[0])
                    ->layers[MAPGRID_LAYER_OVERHEAD];
-  liftSpeed = 0x9c28;
+  liftSpeed = 39976;
   liftLayer->offsetY = PIXELS(1161);
   liftLayer->speedY = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -2861,8 +2861,8 @@ static void MercuryLighthouse_RideLift(void) {
     Actor_Get(ACTOR_LIFT_STATUE)->targetZ =
         Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
     if (liftLayer->offsetY > PIXELS(1024)) {
-      if ((gFrameCount & 15) == 0 && liftSpeed > 0xccb)
-        liftSpeed += -0x560;
+      if ((gFrameCount & 15) == 0 && liftSpeed > 3275)
+        liftSpeed += -1376;
       wait(1);
       continue;
     }
@@ -2888,7 +2888,7 @@ static void MercuryLighthouse_RideLift(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 736, 584);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 1);
-  Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0x4000;
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Event_Wait(6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);

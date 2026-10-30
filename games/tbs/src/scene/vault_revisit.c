@@ -119,7 +119,7 @@ enum VaultRevisitActorId {
   /// finished." (MsgVaultThereYouSeeTheRoofRepairs)
   ACTOR_YOUNG_MAN_FIXING_THE_ROOF,
   /// Sap, a Venus Djinni, hiding until the bell calls it. The row before it,
-  /// sprite 0xf8 placed at 0, 0, is never referred to.
+  /// SPRITE_IVY placed at 0, 0, is never referred to.
   /// ★ Named from the game: "Sap" (MsgDjinnName)
   ACTOR_SAP = ACTOR_FIRST_PLACED + 13
 };

@@ -680,7 +680,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
   Actor_Get(ACTOR_IODEM)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + 0x100, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + TRIG_TURN / 256, 0);
   Event_Wait(30);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);

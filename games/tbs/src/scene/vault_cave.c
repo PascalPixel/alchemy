@@ -952,7 +952,7 @@ static void VaultCave_StartFrostControlledFalls(void) {
 
     Actor_SetSpriteFlags(Actor_GetById(actorSlot), 0);
     fallingActor = Actor_GetById(actorSlot);
-    fallingActor->bounce = 0x1999;
+    fallingActor->bounce = Q16_ONE / 10;
     fallingActor->gravity = 0;
     remaining--;
     fallingActor->y.fixed = PIXELS(255);
@@ -972,7 +972,7 @@ static void VaultCave_StartTimedFalls(void) {
 
     Actor_SetSpriteFlags(Actor_GetById(actorSlot), 0);
     fallingActor = Actor_GetById(actorSlot);
-    fallingActor->bounce = 0x1999;
+    fallingActor->bounce = Q16_ONE / 10;
     fallingActor->gravity = 0;
     fallingActor->y.fixed = PIXELS(255);
     Actor_SetSpritePriority(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP, 1);

@@ -280,7 +280,7 @@ static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *updated) {
 
   if ((s16)(rotation - 1) < 0) {
     {
-      s32 nextRotation = rotation - 0xa00;
+      s32 nextRotation = rotation - TRIG_TURN * 5 / 128;
       sprite->rotation = nextRotation;
     }
   }
@@ -340,7 +340,7 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   u8 flags;
 
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
-  angle = (actor->facing + 0x1000) & 0xe000;
+  angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
   flags = actor->motionFlags;
   SET_VECTOR(destination.coordinates, (actor->x.fixed & 0xfff00000) + PIXELS(8),
              actor->y.fixed, (actor->z.fixed & 0xfff00000) + PIXELS(8));
@@ -1563,7 +1563,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
         HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     // Display the Venus Star icon before sending it toward the beacon.
     Item_LoadIcon(ITEM_VENUS_STAR);
-    Vram_Load(sprite->slot, 128, iconPixels + 0x400);
+    Vram_Load(sprite->slot, 128, iconPixels + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   Actor_SetSpritePriority(ACTOR_VENUS_STAR_SHADOW, 1);
@@ -1924,7 +1924,7 @@ static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *actor) {
   effect->z.fixed = center->z.fixed + Trig_Sin(angle) * 2;
   effect->targetX = effect->x.fixed;
   effect->targetZ = effect->z.fixed;
-  effect->timer -= 0x800;
+  effect->timer -= 2048;
 }
 
 /// Orbits a particle around the rising beam using its rise counter as a radius.
@@ -2586,7 +2586,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Event_SetDestination((s32)&SceneId_WorldMap,
                        WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
   {
-    u16 white = 0x7fff;
+    u16 white = RGB(31, 31, 31);
 
     PLTT_BACKDROP = white;
   }
@@ -3226,7 +3226,7 @@ static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
   ((struct FieldEffect *)actor)->z = Trig_Sin(spin) * 16 + PIXELS(164);
   actor->targetX = ((struct FieldEffect *)actor)->x;
   actor->targetZ = ((struct FieldEffect *)actor)->z;
-  ((struct FieldEffect *)actor)->spin -= 0x200;
+  ((struct FieldEffect *)actor)->spin -= TRIG_TURN / 128;
 }
 
 s32 gFieldEffect_ShortScript[] = {

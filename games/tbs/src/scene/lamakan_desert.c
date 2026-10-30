@@ -372,7 +372,8 @@ static s32 Reveal_HideSecrets(void) {
     markerId = markerId + 1;
   } while (markerId <= 107);
   if (gMainRoutineWork.next != (s32)&SceneId_LamakanDesertCave) {
-    LineScroll_StartWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
+    LineScroll_StartWave(0, Q16_ONE * 4, Q16_ONE, Q16_ONE / 8, Q16_ONE,
+                         Q16_ONE / 2, Q16_ONE / 4);
   }
 }
 
@@ -799,7 +800,7 @@ static void LamakanDesert_FallIntoPit(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   record = Actor_GetById(ACTOR_PARTY_LEADER);
-  actor->facing = (record->facing + 0x8000) & -0x1000;
+  actor->facing = (record->facing + TRIG_TURN / 2) & -0x1000;
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 10, PIXELS(1) / 20);
@@ -1076,7 +1077,7 @@ static void HeatGauge_Draw(void) {
   }
   display = *Ram_DisplayWork;
   if (display != NULL) {
-    s16 *line = (s16 *)(display + display[0x539] * 644);
+    s16 *line = (s16 *)(display + display[1337] * 644);
     s32 shift = (s16)(counter << 3);
 
     line = (s16 *)((u8 *)line + 38);
@@ -1087,7 +1088,7 @@ static void HeatGauge_Draw(void) {
   }
 
   // Tint the six changing palette entries before composing the gauge tiles.
-  buffer = Heap_Alloc(0x900);
+  buffer = Heap_Alloc(2304);
   Dma_Set(gHeatGauge_Palette, buffer, (DMA_ENABLE | DMA_16BIT) << 16 | 16,
           REG_DMA3);
   colors = (s16 *)(buffer + 12);
@@ -1135,8 +1136,7 @@ static void HeatGauge_Draw(void) {
   }
 
   // Fill the remaining bar and overlay its nontransparent frame pixels.
-  Dma_Set(gHeatGauge_TileBuffer, buffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x240,
-          REG_DMA3);
+  Dma_Set(gHeatGauge_TileBuffer, buffer, DMA_COPY_WORDS(576), REG_DMA3);
   if (gHeatGaugeFlash <= 118) {
     column = (u32 *)(buffer + 80);
     fill = 0xeeeeeeee;
@@ -1151,8 +1151,8 @@ static void HeatGauge_Draw(void) {
     column[8] = ((u32 *)buffer)[8];
   }
   destination = buffer;
-  source = buffer + 0x480;
-  for (i = 0; i < 0x480; i++) {
+  source = buffer + 1152;
+  for (i = 0; i < 1152; i++) {
     u8 value = *source++;
 
     if (value != 0) {
@@ -1160,7 +1160,7 @@ static void HeatGauge_Draw(void) {
     }
     destination++;
   }
-  VramCache_Load((*(s16 *)&gHeatGauge_VramSlot), 0x480, buffer);
+  VramCache_Load((*(s16 *)&gHeatGauge_VramSlot), 1152, buffer);
 
   // Submit four 16x32 sprites down the screen's left edge and the 16x16 cap
   // at the gauge's foot; x counts down the screen, since attr01 puts it in
@@ -1194,7 +1194,7 @@ void HeatGauge_Start(void) {
   slotAddress = &gHeatGauge_VramSlot;
   slot = VramCache_FindFreeEntry();
   *slotAddress = slot;
-  VramCache_Load((s16)slot, 0x480, 0);
+  VramCache_Load((s16)slot, 1152, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
   Task_AddFrame(HeatGauge_Draw, TASK_PASS_FRAME - 10);

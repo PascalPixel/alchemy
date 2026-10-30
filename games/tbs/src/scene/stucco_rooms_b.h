@@ -188,6 +188,7 @@ enum StuccoRoomsBCellBehavior {
 };
 
 /// A facing rounded to the nearest of east, south, west and north.
-#define FACING_NEAREST_CARDINAL(facing) ((u16)(((facing) + 0x2000) & ~0x3fff))
+#define FACING_NEAREST_CARDINAL(facing)                                        \
+  ((u16)(((facing) + TRIG_TURN / 8) & ~0x3fff))
 
 #endif

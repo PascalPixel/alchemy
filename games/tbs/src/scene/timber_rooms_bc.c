@@ -250,7 +250,7 @@ const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
 /// south, west and north. Facing north, the leader is across the counter
 /// from a shopkeeper.
 static inline u16 TimberRoomsBC_LeaderGetSide(void) {
-  return (Actor_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+  return (Actor_GetById(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
 }
 
 /// The weapon merchant sells weapons, or talks of Sheba and the sea. In
@@ -262,7 +262,7 @@ static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   // TimberRoomsBC_LeaderGetSide's rounding, written with the mask 0xc000,
   // which loads from the literal pool where the helper's builds the mask.
-  u16 side = (leader->facing + 0x2000) & 0xc000;
+  u16 side = (leader->facing + TRIG_TURN / 8) & 0xc000;
 
   if (side == FACING_NORTH) {
     Shop_Run(LALIVERO_WEAPON_STOCK, keeper);

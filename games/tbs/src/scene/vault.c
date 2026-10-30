@@ -1058,7 +1058,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     x += baseX;
     baseY = anchor->y.fixed;
     z += baseZ;
-    effect = Actor_Create(0xac, x, baseY, z);
+    effect = Actor_Create(172, x, baseY, z);
   }
   if (effect == NULL)
     return;

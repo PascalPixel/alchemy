@@ -182,7 +182,7 @@ static void Xian_UpdateFrozenPuddleLayer(void) {
 static void Xian_RotateTrainingTree(void) {
   struct Actor *tree = Actor_GetById(ACTOR_TRAINING_TREE);
   struct Sprite *sprite = tree->sprite;
-  sprite->rotation += 0x1400;
+  sprite->rotation += TRIG_TURN * 5 / 64;
 }
 
 /// Emits particles beside the student every fourth frame.
@@ -243,8 +243,8 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
       forceTracking != 0) {
     u16 angle = ArcTan2(target->z.fixed - actor->z.fixed,
                         target->x.fixed - actor->x.fixed);
-    s32 previousHeading = (angle - 0x1000) & 0xf000;
-    s32 nextHeading = (angle + 0x1000) & 0xf000;
+    s32 previousHeading = (angle - FACING_STEP) & 0xf000;
+    s32 nextHeading = (angle + FACING_STEP) & 0xf000;
     s32 targetHeading = angle & 0xf000;
     s32 currentHeading = actor->facing & 0xf000;
 
@@ -570,9 +570,9 @@ static void Xian_TalkToKungFuStudent(void) {
     Sound_Play(SE_HEAVY_IMPACT);
     Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
     Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
-    effectParams.type = 0x11b;
+    effectParams.type = 283;
     effectParams.script = gXian_TreeImpactScript;
-    effectParams.rotation = 0x4000;
+    effectParams.rotation = TRIG_TURN / 4;
     FieldEffect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                           EFFECT_USE_SCRIPT | EFFECT_USE_ROTATION,
@@ -599,7 +599,7 @@ static void Xian_TalkToKungFuStudent(void) {
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Task_Remove(Xian_RotateTrainingTree);
     Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
-    Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = 0x4000;
+    Actor_GetById(ACTOR_KUNG_FU_STUDENT)->bounce = Q16_ONE / 4;
     Actor_GetById(ACTOR_KUNG_FU_STUDENT)->gravity = PIXELS(1);
     Event_Wait(30);
     Actor_ArmCallback(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
@@ -639,8 +639,8 @@ static void Xian_JumpOverSpilledWater(void) {
     landing->x = (leader->x.fixed & -0x100000) + PIXELS(8);
     landing->y = leader->y.fixed;
     landing->z = (leader->z.fixed & -0x100000) + PIXELS(8);
-    FieldVector_AddPolarOffset(PIXELS(32), (leader->facing + 0x2000) & 0xc000,
-                               landing);
+    FieldVector_AddPolarOffset(
+        PIXELS(32), (leader->facing + TRIG_TURN / 8) & 0xc000, landing);
     if (FieldActor_CheckMovementCollision(leader, landing) == 0) {
       Event_Start();
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
@@ -742,7 +742,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -PIXELS(1) / 5, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   Task_Remove(rotationFunc);
-  Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
+  Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
   Import_ActorSetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
   Event_Wait(20);
   Actor_SetAngleToward(ACTOR_KUNG_FU_STUDENT, ACTOR_TRAINING_TREE, 0);
@@ -870,7 +870,7 @@ s32 Xian_Initialize(void) {
   actor->targetY = PIXELS(16);
   actor->scaleX = 11 * Q16_ONE / 20;
   actor->scaleY = 2 * Q16_ONE / 5;
-  actor->sprite->rotation = 0x8000;
+  actor->sprite->rotation = TRIG_TURN / 2;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FORCE_TARGET), 0);
   Actor_GetById(ACTOR_FORCE_TARGET)->motionFlags = 0;
   Actor_GetById(ACTOR_FORCE_TARGET)->y.fixed = 0;

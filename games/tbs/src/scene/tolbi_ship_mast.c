@@ -191,7 +191,7 @@ static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *interpreter) {
 
   actor->x.fixed = center[0] + (cameraX - origin[0]);
   actor->y.fixed = center[1] + (cameraY - origin[1]) / 2;
-  actor->sprite->rotation += 0x600;
+  actor->sprite->rotation += TRIG_TURN * 3 / 128;
   return 0;
 }
 

@@ -436,7 +436,8 @@ static void LogRoomsA_CheckCrateMoved(void) {
 /// Reached by talking to the weapon merchant (ACTOR_WEAPON_MERCHANT), before
 /// and after the thieves are jailed (FLAG_VAULT_THIEVES_JAILED picks the line).
 /// The armor merchant, the inn and the item shop below work the same way: the
-/// counter is between them when the leader faces north (0xa001 to 0xdfff).
+/// counter is between them when the leader faces north (strictly between
+/// FACING_NORTHWEST and FACING_NORTHEAST).
 static void LogRoomsA_TalkToWeaponMerchant(void) {
   s32 leaderFacing = Actor_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -710,7 +711,8 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
   Event_SetMessageId(MsgVaultOwStop);
   Event_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 0);
   Actor_SetSpeedParameters(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
-  if ((u32)((suspect->facing & 0xf000) - 0x5000) <= 0x6000) {
+  if ((u32)((suspect->facing & 0xf000) - TRIG_TURN * 5 / 16) <=
+      TRIG_TURN * 3 / 8) {
     routeState = (s16 *)&suspect->timer;
     routeIndex = *routeState;
     if (routeIndex <= 2) {
@@ -3220,7 +3222,7 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
   stopIndex = -1;
   chosenFacing = *requestedFacing;
   connection = node->connections;
-  nearestDifference = 0x8000;
+  nearestDifference = TRIG_TURN / 2;
   for (connectionIndex = 0; connectionIndex <= 2;
        connectionIndex++, connection++) {
     connectionFacing = connection->facing << 8;
@@ -3381,7 +3383,7 @@ static void LogRoomsA_UpdateActorStops(void) {
     facing = ((turn - 0x30000000) >> 16) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
-      facing = actor->facing + 0x8000;
+      facing = actor->facing + TRIG_TURN / 2;
       destination = LogRoomsA_SnapToNearestStop(entry, &facing);
       if (LogRoomsA_CheckStopOccupancy(destination) == 0) {
         FieldEffect_SetAttached(ACTOR_SUSPECTED_LEADER, ATTACHED_EFFECT_ONCE);
@@ -3407,7 +3409,7 @@ static void LogRoomsA_UpdateActorStops(void) {
     facing = ((turn - 0x30000000) >> 16) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
-      facing = actor->facing + 0x8000;
+      facing = actor->facing + TRIG_TURN / 2;
       destination = LogRoomsA_SnapToNearestStop(entry, &facing);
       if (LogRoomsA_CheckStopOccupancy(destination) == 0) {
         FieldEffect_SetAttached(ACTOR_SUSPECTED_THIEF, ATTACHED_EFFECT_ONCE);
@@ -3583,7 +3585,7 @@ s32 gLogRoomsA_FirstThiefEntryScript[] = {
     SC_MOVE(PIXELS(800), 0, PIXELS(400)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, 0x3000),
+    SC_SET(SW_FACING, TRIG_TURN * 3 / 16),
     SC_WAIT(20),
     SC_END,
 };
@@ -3595,7 +3597,7 @@ s32 gLogRoomsA_SecondThiefEntryScript[] = {
     SC_MOVE(PIXELS(776), 0, PIXELS(416)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, 0x3000),
+    SC_SET(SW_FACING, TRIG_TURN * 3 / 16),
     SC_WAIT(20),
     SC_END,
 };

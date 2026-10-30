@@ -1357,7 +1357,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     case 2:
       TolbiSpring_SetActorAppearance(
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2,
-          Vector3_Coordinates(&obstacle->position), 0x8000 - obstacle->heading,
+          Vector3_Coordinates(&obstacle->position),
+          TRIG_TURN / 2 - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
           (obstacle->speedMode << 4) + 16);
       break;
@@ -1468,7 +1469,7 @@ static void TolbiSpring_InitializeTossSimulation(void) {
                         2);
 
   {
-    s32 budget = 0xc83;
+    s32 budget = 3203;
     void (*task)(void) = TolbiSpring_UpdateTossSimulation;
 
     Task_AddFrame(task, budget);
@@ -1668,7 +1669,8 @@ const struct Trigger gTolbiSpringTriggers[] = {
 
 /// BLDALPHA steps.
 const u16 gTolbiSpring_AlphaSteps[] = {
-    0x90a, 0xa08, 0xb06, 0xc04, 0xd03, 0xe02, 0xf01, 0x1000,
+    BLEND_ALPHA(10, 9), BLEND_ALPHA(8, 10), BLEND_ALPHA(6, 11), BLEND_ALPHA(4, 12),
+    BLEND_ALPHA(3, 13), BLEND_ALPHA(2, 14), BLEND_ALPHA(1, 15), BLEND_ALPHA(0, 16),
 };
 
 const u32 gTolbiSpring_PrizeItems[] = {
@@ -1702,6 +1704,6 @@ const u8 gTolbiSpring_ActorPixelZ[] = {
 };
 
 const u16 gTolbiSpring_ActorHeadings[] = {
-    FACING_EAST, 0x1, FACING_EAST, FACING_WEST,
+    FACING_EAST, 1, FACING_EAST, FACING_WEST,
 };
 // clang-format on

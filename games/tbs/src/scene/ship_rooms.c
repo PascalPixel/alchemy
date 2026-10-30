@@ -1227,18 +1227,19 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
         ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
   }
   // Try the leader's right, then left, then the space behind.
-  direction = (((leader->facing + 0x4000) & 0xf000) >> 12);
-  if (ShipRooms_IsSpotFree((((leader->facing + 0x4000) & 0xf000) >> 12)) != 0) {
+  direction = (((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12);
+  if (ShipRooms_IsSpotFree(
+          (((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12)) != 0) {
     blocked = 0;
   }
   if (blocked != 0) {
-    direction = (((leader->facing + -0x4000) & 0xf000) >> 12);
-    if (ShipRooms_IsSpotFree((((leader->facing + -0x4000) & 0xf000) >> 12)) !=
-        0) {
+    direction = (((leader->facing - TRIG_TURN / 4) & 0xf000) >> 12);
+    if (ShipRooms_IsSpotFree(
+            (((leader->facing - TRIG_TURN / 4) & 0xf000) >> 12)) != 0) {
       blocked = 0;
     }
     if (blocked != 0) {
-      direction = (((leader->facing + 0x8000) & 0xf000) >> 12);
+      direction = (((leader->facing + TRIG_TURN / 2) & 0xf000) >> 12);
     }
   }
   leaderPosition = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -1503,7 +1504,7 @@ static void ShipRooms_TalkToHealer(void) {
   struct Actor *leader;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - 0x2000) > 0xc000) {
+  if ((u16)(leader->facing - FACING_SOUTHEAST) > TRIG_TURN * 3 / 4) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0 &&
         GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
       Sanctum_Run(ACTOR_SEA_HOLD_HEALER);
@@ -3134,7 +3135,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   sprite->image.palette = 0;
   buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
-  VramCache_Load(sprite->slot, 128, buffer + 0x400);
+  VramCache_Load(sprite->slot, 128, buffer + 1024);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   gShipRooms_AnchorObject = actor;

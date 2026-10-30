@@ -31,8 +31,8 @@ struct MapGridMarkers {
 
 /// The sprites of the actors a map's treasure spots place.
 enum {
-  TREASURE_SPOT_CHEST_SPRITE = 20,
-  TREASURE_SPOT_PSYNERGY_STONE_SPRITE = 28
+  TREASURE_SPOT_CHEST_SPRITE = SPRITE_CHEST,
+  TREASURE_SPOT_PSYNERGY_STONE_SPRITE = SPRITE_PSYNERGY_STONE
 };
 
 /// The chest sprite's animations.

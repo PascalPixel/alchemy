@@ -12,6 +12,8 @@
 /// summons' figures, from SPRITE_ATALANTA on, are each summon's own sprite:
 /// its event creates its objects of it (BattleEffect_SpawnObjects), each
 /// playing one of its animations.
+/// A row sprites.tsv leaves empty, with no size and no pictures, keeps its
+/// number: it shows nothing to name.
 enum SpriteId {
   /// ★ Named from what the player sees: Isaac (spr_000.png)
   SPRITE_ISAAC,
@@ -21,12 +23,12 @@ enum SpriteId {
   SPRITE_IVAN,
   /// ★ Named from what the player sees: Mia (spr_003.png)
   SPRITE_MIA,
-  SPRITE_004,
+  SPRITE_004, ///< empty: Felix's character number, whose sprite is SPRITE_FELIX
   /// ★ Named from what the player sees: Jenna (spr_005.png)
   SPRITE_JENNA,
   /// ★ Named from what the player sees: Sheba (spr_006.png)
   SPRITE_SHEBA,
-  SPRITE_007,
+  SPRITE_007, ///< empty: Piers's character number
   SPRITE_008,
   SPRITE_009,
   SPRITE_010,
@@ -35,7 +37,11 @@ enum SpriteId {
   SPRITE_013,
   SPRITE_014,
   SPRITE_015,
-  SPRITE_016,
+  /// The leader riding one of Altin's mine carts, added as a layer of the
+  /// cart's sprite (AltinPeak_RollCart).
+  /// ★ Named from what the player sees: Isaac's head and shoulders over the
+  /// cart's side, turned every way (spr_016.png)
+  SPRITE_CART_RIDER,
   /// Isaac's grown sprite while FLAG_ISAAC_WEARS_TUNIC is set.
   SPRITE_ISAAC_TUNIC,
   /// Isaac as a child, shown in his place while FLAG_CHILDHOOD is set.
@@ -46,7 +52,11 @@ enum SpriteId {
   /// some chests turn out to be.
   /// ★ Named from what the player sees: a red treasure chest (its render)
   SPRITE_CHEST,
-  SPRITE_021,
+  /// The bubbles an actor shows over its head (Actor_ShowEmote).
+  /// ★ Named from what the player sees: speech bubbles holding a face, an
+  /// exclamation mark, a question mark, a heart, an angry face and a light bulb
+  /// (spr_021.png)
+  SPRITE_EMOTE,
   /// A blank 16-pixel square: an actor that shows nothing, such as a
   /// shop
   /// counter, or that a map draws an item's icon on, as for the Nuts that
@@ -63,12 +73,20 @@ enum SpriteId {
   /// ★ Named from what the player sees: rings spreading on water
   /// (spr_024.png)
   SPRITE_RIPPLE,
-  SPRITE_025,
+  /// Nothing in the source names this sprite.
+  /// ★ Named from what the player sees: small white prints, one and then a pair
+  /// (spr_025.png)
+  SPRITE_FOOTPRINTS,
   /// The sparkles of Tret's glamour that rain on Kolima and its forest.
   /// ★ Named from what the player sees: rings of golden light (spr_026.png)
   SPRITE_GOLDEN_RINGS,
-  SPRITE_027,
-  SPRITE_028,
+  /// The dark doorway added as a second part of the leader's sprite as the
+  /// leader leaves through an exit (Exit_PrepareAnimation).
+  /// ★ Named from what the player sees: a black arched doorway (spr_027.png)
+  SPRITE_DOORWAY,
+  /// The Psynergy Stones a map's treasure spots place.
+  /// ★ Named from the game: "a Psynergy Stone." (MsgGotPsynergyStone)
+  SPRITE_PSYNERGY_STONE,
   SPRITE_029,
   /// The sprite of Kraden.
   /// ★ Named from what the player sees: an old man with white hair and a
@@ -478,7 +496,9 @@ enum SpriteId {
   SPRITE_184,
   SPRITE_185,
   SPRITE_186,
-  SPRITE_187,
+  /// Toadonpa in Lunpa Fortress, before his battle.
+  /// ★ Named from the game: "Toadonpa" (MsgEnemyName)
+  SPRITE_TOADONPA,
   /// The Tolbi-bound Ship's oars and the sea monsters that attack it.
   /// ★ Named from what the player sees: a wooden oar held at rest, slanting
   /// (its render)
@@ -496,12 +516,18 @@ enum SpriteId {
   SPRITE_APE,
   /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
   SPRITE_LIZARD_MAN,
-  SPRITE_193,
+  /// The Ant Lions of Lamakan Desert, whose battle is slot 4 of
+  /// ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN.
+  /// ★ Named from the game: "Ant Lion" (MsgEnemyName)
+  SPRITE_ANT_LION,
   /// The Kraken, which the party fights on the ship's deck.
   /// ★ Named from the game: "You did good against that Kraken."
   /// (MsgTolbiShipThankIsaacDidGoodAgainst)
   SPRITE_KRAKEN,
-  SPRITE_195,
+  /// The Manticore of Lamakan Desert, fought by talking to it
+  /// (LamakanDesert_FightManticore).
+  /// ★ Named from the game: "Manticore" (MsgEnemyName)
+  SPRITE_MANTICORE,
   /// ★ Named from what the player sees: a pink winged monster (its render)
   SPRITE_PINK_WINGED_MONSTER,
   /// ★ Named from what the player sees: a blue winged monster with claws (its
@@ -510,7 +536,9 @@ enum SpriteId {
   /// ★ Named from what the player sees: a green lizard-like monster (its
   /// render)
   SPRITE_LIZARD_MONSTER,
-  SPRITE_199,
+  /// Altin Peak's Hydros Statue, before its battle.
+  /// ★ Named from the game: "Hydros Statue" (MsgEnemyName)
+  SPRITE_HYDROS_STATUE,
   /// A big round rock: the rocks that fall across Vale's paths on the stormy
   /// night, and the Boulder of Mt. Aleph drawn at twice its size.
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
@@ -535,10 +563,14 @@ enum SpriteId {
   /// ★ Named from what the player sees: a log lying north to south (its
   /// render)
   SPRITE_LOG_NORTH_SOUTH,
-  SPRITE_206,
+  /// The boards Isaac moves into place on a Vale roof (Vale_RoofMended).
+  /// ★ Named from what the player sees: two golden planks (spr_206.png)
+  SPRITE_ROOF_BOARDS,
   /// ★ Named from what the player sees: a log lying west to east (its render)
   SPRITE_LOG_WEST_EAST,
-  SPRITE_208,
+  /// ★ Named from what the player sees: a small flame, then wisps of smoke
+  /// (spr_208.png)
+  SPRITE_FLAME_AND_SMOKE,
   /// The effect FieldEffect_SetAttached attaches to an actor
   /// or shows
   /// once, as the leader flinches on hazard ground.
@@ -551,7 +583,10 @@ enum SpriteId {
   SPRITE_STONE_PILLAR,
   /// ★ Named from what the player sees: a tree stump (its render)
   SPRITE_STUMP,
-  SPRITE_213,
+  /// Nothing in the source names this sprite.
+  /// ★ Named from what the player sees: hands grasping, clenched and open, the
+  /// last two blue (spr_213.png)
+  SPRITE_HANDS,
   /// Spray thrown up where water is struck: where Goma Cave's stumps land,
   /// at Kolima Forest's floodgate, and over the Tolbi-bound Ship's side.
   /// ★ Named from what the player sees: a splash of white and pale blue
@@ -561,15 +596,31 @@ enum SpriteId {
   /// to push something in an event.
   /// ★ Named from what the player sees: a large open hand (spr_215.png)
   SPRITE_MOVE_HAND,
-  SPRITE_216,
-  SPRITE_217,
-  SPRITE_218,
-  SPRITE_219,
+  /// The sixteen crystals thrown out in a ring as Sol Sanctum erupts, and one
+  /// on the world map.
+  /// ★ Named from what the player sees: a blue crystal that bursts into
+  /// sparkles (spr_216.png)
+  SPRITE_BLUE_CRYSTAL,
+  /// The vines that appear around Growth's target.
+  /// ★ Named from what the player sees: a green vine that grows leaves and
+  /// withers (spr_217.png)
+  SPRITE_VINE,
+  /// The whirlwind Whirlwind spins up.
+  /// ★ Named from what the player sees: a small white whirlwind (spr_218.png)
+  SPRITE_WHIRLWIND,
+  /// Nothing in the source names this sprite.
+  /// ★ Named from what the player sees: a flame that bursts into sparks and
+  /// dies to a wisp (spr_219.png)
+  SPRITE_FLAME_BURST,
   /// The fields of Psynergy that rise over the party as Kolima's curse falls.
   /// ★ Named from the game: "You know what those fields were?"
   /// (MsgKolimaKnowThoseFieldsWere)
   SPRITE_PSYNERGY_FIELD,
-  SPRITE_221,
+  /// The gold statue stolen from Vault's Sanctum: it rises from a chest in
+  /// log_rooms_a.c and stands in the Sanctum again.
+  /// ★ Named from the game: "Found a gold statue."
+  /// (MsgVaultYouIsaacRightWontForget)
+  SPRITE_SANCTUM_GOLD_STATUE,
   /// A puff of dust kicked up where an actor stands; the water beasts of
   /// Altin
   /// and its mine spit it as spray, drawn SPRITE_COLOR_BGR or
@@ -612,8 +663,13 @@ enum SpriteId {
   /// ★ Named from what the player sees: a wooden mine cart on iron wheels
   /// (spr_231.png)
   SPRITE_MINE_CART,
-  SPRITE_232,
-  SPRITE_233,
+  /// Frost's particles.
+  /// ★ Named from what the player sees: a snowflake (spr_232.png)
+  SPRITE_SNOWFLAKE,
+  /// The figures that spiral in around Ply's target.
+  /// ★ Named from what the player sees: a little winged figure with teal hair
+  /// (spr_233.png)
+  SPRITE_WINGED_FIGURE,
   /// ★ Named from what the player sees: a snowman with a red cap and a green
   /// scarf (spr_234.png)
   SPRITE_SNOWMAN,
@@ -629,8 +685,12 @@ enum SpriteId {
   /// The sprout Growth grows.
   /// ★ Named from what the player sees: a green sprout (its render)
   SPRITE_SPROUT,
-  SPRITE_239,
-  SPRITE_240,
+  /// The cloud Douse gathers over its target.
+  /// ★ Named from what the player sees: a grey cloud (spr_239.png)
+  SPRITE_RAIN_CLOUD,
+  /// The drops of Douse's rain, and those a Mercury Djinni leaves as it goes.
+  /// ★ Named from what the player sees: a drop of water (spr_240.png)
+  SPRITE_DROPLET,
   /// ★ Named from what the player sees: a stack of two wooden crates (its
   /// render)
   SPRITE_CRATES,
@@ -663,16 +723,33 @@ enum SpriteId {
   /// ★ Named from the game: "It looks like it's trapped in the ivy."
   /// (MsgGomaNoUsePsynergy)
   SPRITE_IVY,
-  SPRITE_249,
-  SPRITE_250,
-  SPRITE_251,
-  SPRITE_252,
+  /// The leaves Whirlwind scatters.
+  /// ★ Named from what the player sees: a green leaf, turning (spr_249.png)
+  SPRITE_LEAF,
+  /// Halt's stopwatch.
+  /// ★ Named from what the player sees: a gold stopwatch, its hand going round
+  /// (spr_250.png)
+  SPRITE_STOPWATCH,
+  /// The mayor's urn, which rises from the first chest in log_rooms_a.c.
+  /// ★ Named from the game: "Found the mayor's precious urn."
+  /// (MsgVaultYouIsaacRightWontForget)
+  SPRITE_URN,
+  /// ★ Named from the game: "Could that be . . . the Wise One?!?"
+  /// (MsgSolSanctumKradenCouldThatBeThe)
+  SPRITE_WISE_ONE,
   /// The pillars Move shifts in the Tunnel Ruins and the lighthouses.
   /// ★ Named from what the player sees: a stone pillar with a glowing yellow
   /// cap (its render)
   SPRITE_CAPPED_PILLAR,
-  SPRITE_254,
-  SPRITE_255,
+  /// The Tunnel Ruins' small pillars, which the leader pushes or shifts with
+  /// Move.
+  /// ★ Named from what the player sees: a small stone pillar with a white top
+  /// on a wooden base (spr_254.png)
+  SPRITE_SMALL_PILLAR,
+  /// The Tunnel Ruins' pillars that sink into the water.
+  /// ★ Named from what the player sees: a stone pillar with a white top, then
+  /// with water over it (spr_255.png)
+  SPRITE_SINKING_PILLAR,
   /// The pillars Move, Carry and pushes shift in Venus Lighthouse and on the
   /// Road to Babi Lighthouse. Animations 1 and 2 show a grey and an orange
   /// spiral on top; 3 to 8 a piece of gold track instead, along which Venus
@@ -689,7 +766,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a statue of a woman with a green
   /// wreath, holding a sheaf (spr_258.png)
   SPRITE_STATUE_WITH_WREATH,
-  SPRITE_259,
+  /// The log Force knocks down onto the Board Walk in Satrage's match.
+  /// ★ Named from what the player sees: a log standing on end, then lying on
+  /// its side (spr_259.png)
+  SPRITE_FALLING_LOG,
   SPRITE_260,
   /// ★ Named from what the player sees: houses with orange roofs among trees
   /// (spr_261.png)
@@ -749,8 +829,14 @@ enum SpriteId {
   /// ★ Named from what the player sees: a grey gatehouse between green walls
   /// (spr_279.png)
   SPRITE_WORLD_MAP_GATEHOUSE,
-  SPRITE_280,
-  SPRITE_281,
+  /// The letters that rise from a sleeper: Garet's grandfather, and Isaac after
+  /// the last Colosso match.
+  /// ★ Named from what the player sees: a white letter Z (spr_280.png)
+  SPRITE_LETTER_Z,
+  /// The particles Mind Read sends from its target to the caster, also shot in
+  /// Fuchin Temple.
+  /// ★ Named from what the player sees: pale crescents (spr_281.png)
+  SPRITE_CRESCENT,
   SPRITE_282,
   /// The impact of Lift and of Xian's training tree, and the battle's hit flash
   /// (BattleMotion_PlayHitFlash, which nothing calls).
@@ -782,8 +868,14 @@ enum SpriteId {
   /// drawn on the world map beside it.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   SPRITE_SANDSTORM,
-  SPRITE_290,
-  SPRITE_291,
+  /// The Board Walk's platforms, the Scales of Justice's ledges and the pillar
+  /// that rises in a Crossbone Isle puddle.
+  /// ★ Named from what the player sees: a white square platform (spr_290.png)
+  SPRITE_WHITE_PLATFORM,
+  /// The Wall Wedge's pistons.
+  /// ★ Named from the game: "The pistons move back and forth."
+  /// (MsgColossoPlaceCalledWall)
+  SPRITE_PISTON,
   /// The lights of Altmiller Cave's rock puzzle, coloured by their palette.
   /// ★ Named from the game: "Lights will appear on the wall."
   /// (MsgAltmillerDontTrustAnyone)
@@ -793,7 +885,9 @@ enum SpriteId {
   /// ★ Named from the game: "Turn the five rocks in accordance with those
   /// colors." (MsgAltmillerDontTrustAnyone)
   SPRITE_TURNING_ROCK,
-  SPRITE_294,
+  /// The log Force knocks off the Moving Sidewalk Stage.
+  /// ★ Named from what the player sees: a log standing on end (spr_294.png)
+  SPRITE_STANDING_LOG,
   /// The boulders of Gondowan Cave that Lift raises.
   /// ★ Named from what the player sees: a round grey boulder (its render)
   SPRITE_ROUND_BOULDER,
@@ -808,7 +902,10 @@ enum SpriteId {
   /// ★ Named from what the player sees: a white stone column lying west to
   /// east (its render)
   SPRITE_FALLEN_COLUMN_WEST_EAST,
-  SPRITE_299,
+  /// Vault Cave's pillars.
+  /// ★ Named from what the player sees: a pink stone pillar with a flame
+  /// burning on top (spr_299.png)
+  SPRITE_FLAME_PILLAR,
   /// Isaac in battle. The party members' battle sprites follow in character
   /// order, Felix's row left empty.
   /// ★ Named from what the player sees: Isaac in battle (spr_300.png)
@@ -836,55 +933,129 @@ enum SpriteId {
   SPRITE_317,
   SPRITE_318,
   SPRITE_319,
-  SPRITE_320,
-  SPRITE_321,
-  SPRITE_322,
-  SPRITE_323,
+  /// The weapons drawn in a party member's hand as they attack, from here to
+  /// SPRITE_WEAPON_JENNA_BLADE: each member's gBattleUnit_WeaponAnimations
+  /// table (battle_tables.s) gives one for each enum BattleWeaponKind. Isaac's
+  /// for long swords, and for staffs, ankhs and anything the list lacks.
+  /// ★ Named from what the player sees: a sword with a green jewel in its hilt
+  /// (spr_320.png)
+  SPRITE_WEAPON_ISAAC_SWORD,
+  /// Garet's for maces, staffs, ankhs and anything the list lacks.
+  /// ★ Named from what the player sees: a spiked ball on a handle (spr_321.png)
+  SPRITE_WEAPON_GARET_MACE,
+  /// Ivan's for staffs and anything the list lacks.
+  /// ★ Named from what the player sees: a staff with a red forked head
+  /// (spr_322.png)
+  SPRITE_WEAPON_IVAN_STAFF,
+  /// Mia's for swords, light blades, ankhs and anything the list lacks.
+  /// ★ Named from what the player sees: a silver ankh on a staff (spr_323.png)
+  SPRITE_WEAPON_MIA_ANKH,
   SPRITE_324,
-  SPRITE_325,
-  SPRITE_326,
-  SPRITE_327,
-  SPRITE_328,
-  SPRITE_329,
-  SPRITE_330,
-  SPRITE_331,
-  SPRITE_332,
-  SPRITE_333,
-  SPRITE_334,
-  SPRITE_335,
-  SPRITE_336,
+  /// Jenna's for axes, maces, staffs, ankhs and anything the list lacks.
+  /// ★ Named from what the player sees: a golden staff with a crescent head
+  /// (spr_325.png)
+  SPRITE_WEAPON_JENNA_STAFF,
+  /// ★ Named from what the player sees: a double-bladed axe (spr_326.png)
+  SPRITE_WEAPON_ISAAC_AXE,
+  /// ★ Named from what the player sees: a mace with a spiked head (spr_327.png)
+  SPRITE_WEAPON_ISAAC_MACE,
+  /// ★ Named from what the player sees: a long-hafted axe (spr_328.png)
+  SPRITE_WEAPON_GARET_AXE,
+  /// Garet's for long swords and light blades.
+  /// ★ Named from what the player sees: a broad sword (spr_329.png)
+  SPRITE_WEAPON_GARET_SWORD,
+  /// ★ Named from what the player sees: a golden ankh on a staff (spr_330.png)
+  SPRITE_WEAPON_IVAN_ANKH,
+  /// Ivan's for swords, light blades, axes and maces.
+  /// ★ Named from what the player sees: a slender sword (spr_331.png)
+  SPRITE_WEAPON_IVAN_BLADE,
+  /// ★ Named from what the player sees: a staff with a blue crystal head
+  /// (spr_332.png)
+  SPRITE_WEAPON_MIA_STAFF,
+  /// Mia's for axes and maces.
+  /// ★ Named from what the player sees: a mace (spr_333.png)
+  SPRITE_WEAPON_MIA_MACE,
+  /// ★ Named from what the player sees: a straight sword with a brown hilt
+  /// (spr_334.png)
+  SPRITE_WEAPON_ISAAC_LIGHT_BLADE,
+  /// Unused: no gBattleUnit_WeaponAnimations table holds it, so no attack shows
+  /// it; the player would have seen this sword in a party member's hand.
+  /// ★ Named from what the player sees: a sword with a golden hilt
+  /// (spr_335.png)
+  SPRITE_WEAPON_UNUSED_SWORD,
+  /// Jenna's for swords and light blades.
+  /// ★ Named from what the player sees: a short sword (spr_336.png)
+  SPRITE_WEAPON_JENNA_BLADE,
   SPRITE_337,
   SPRITE_338,
   SPRITE_339,
-  SPRITE_340,
-  SPRITE_341,
-  SPRITE_342,
-  SPRITE_343,
-  SPRITE_344,
-  SPRITE_345,
-  SPRITE_346,
-  SPRITE_347,
-  SPRITE_348,
-  SPRITE_349,
-  SPRITE_350,
-  SPRITE_351,
-  SPRITE_352,
-  SPRITE_353,
+  /// The status icons over a unit 32 pixels wide, in the order of objects.c's
+  /// ICON_ bits (BattleStatusIcon_Cycle); from SPRITE_STATUS_WIDE_POISON on,
+  /// the same over wider units.
+  /// ★ Named from what the player sees: a green skull trailing bubbles
+  /// (spr_340.png)
+  SPRITE_STATUS_POISON,
+  /// ★ Named from what the player sees: a red skull trailing bubbles
+  /// (spr_341.png)
+  SPRITE_STATUS_VENOM,
+  /// ★ Named from what the player sees: yellow zigzags either side
+  /// (spr_342.png)
+  SPRITE_STATUS_STUN,
+  /// ★ Named from what the player sees: a pink seal (spr_343.png)
+  SPRITE_STATUS_PSY_SEAL,
+  /// ★ Named from what the player sees: blue letters Z (spr_344.png)
+  SPRITE_STATUS_SLEEP,
+  /// ★ Named from what the player sees: a purple cloud (spr_345.png)
+  SPRITE_STATUS_DELUSION,
+  /// ★ Named from what the player sees: a pale wisp (spr_346.png)
+  SPRITE_STATUS_HAUNT,
+  /// The curse's turns left, one to seven, as that many flames.
+  /// ★ Named from what the player sees: one flame (spr_347.png)
+  SPRITE_STATUS_GRIM_REAPER_1,
+  /// ★ Named from what the player sees: two flames (spr_348.png)
+  SPRITE_STATUS_GRIM_REAPER_2,
+  /// ★ Named from what the player sees: three flames (spr_349.png)
+  SPRITE_STATUS_GRIM_REAPER_3,
+  /// ★ Named from what the player sees: four flames (spr_350.png)
+  SPRITE_STATUS_GRIM_REAPER_4,
+  /// ★ Named from what the player sees: five flames (spr_351.png)
+  SPRITE_STATUS_GRIM_REAPER_5,
+  /// ★ Named from what the player sees: six flames (spr_352.png)
+  SPRITE_STATUS_GRIM_REAPER_6,
+  /// ★ Named from what the player sees: seven flames (spr_353.png)
+  SPRITE_STATUS_GRIM_REAPER_7,
   SPRITE_354,
-  SPRITE_355,
-  SPRITE_356,
-  SPRITE_357,
-  SPRITE_358,
-  SPRITE_359,
-  SPRITE_360,
-  SPRITE_361,
-  SPRITE_362,
-  SPRITE_363,
-  SPRITE_364,
-  SPRITE_365,
-  SPRITE_366,
-  SPRITE_367,
-  SPRITE_368,
+  /// ★ Named from what the player sees: a green skull trailing bubbles
+  /// (spr_355.png)
+  SPRITE_STATUS_WIDE_POISON,
+  /// ★ Named from what the player sees: a red skull trailing bubbles
+  /// (spr_356.png)
+  SPRITE_STATUS_WIDE_VENOM,
+  /// ★ Named from what the player sees: yellow zigzags either side
+  /// (spr_357.png)
+  SPRITE_STATUS_WIDE_STUN,
+  /// ★ Named from what the player sees: a pink seal (spr_358.png)
+  SPRITE_STATUS_WIDE_PSY_SEAL,
+  /// ★ Named from what the player sees: blue letters Z (spr_359.png)
+  SPRITE_STATUS_WIDE_SLEEP,
+  /// ★ Named from what the player sees: a purple cloud (spr_360.png)
+  SPRITE_STATUS_WIDE_DELUSION,
+  /// ★ Named from what the player sees: a pale wisp (spr_361.png)
+  SPRITE_STATUS_WIDE_HAUNT,
+  /// ★ Named from what the player sees: one flame (spr_362.png)
+  SPRITE_STATUS_WIDE_GRIM_REAPER_1,
+  /// ★ Named from what the player sees: two flames (spr_363.png)
+  SPRITE_STATUS_WIDE_GRIM_REAPER_2,
+  /// ★ Named from what the player sees: three flames (spr_364.png)
+  SPRITE_STATUS_WIDE_GRIM_REAPER_3,
+  /// ★ Named from what the player sees: four flames (spr_365.png)
+  SPRITE_STATUS_WIDE_GRIM_REAPER_4,
+  /// ★ Named from what the player sees: five flames (spr_366.png)
+  SPRITE_STATUS_WIDE_GRIM_REAPER_5,
+  /// ★ Named from what the player sees: six flames (spr_367.png)
+  SPRITE_STATUS_WIDE_GRIM_REAPER_6,
+  /// ★ Named from what the player sees: seven flames (spr_368.png)
+  SPRITE_STATUS_WIDE_GRIM_REAPER_7,
   SPRITE_369,
   /// ★ Named from the game: "Atalanta" (MsgDjinnName)
   SPRITE_ATALANTA,
@@ -945,43 +1116,66 @@ enum SpriteId {
   /// ★ Named from the game: "If you toss a Lucky Medal"
   /// (MsgTolbiTossLuckyMedal)
   SPRITE_SPRING_LUCKY_MEDAL,
-  SPRITE_400,
-  SPRITE_401,
-  SPRITE_402,
-  SPRITE_403,
-  SPRITE_404,
+  /// The enemies' battle sprites follow, gBattleSprites's by enemy id, each
+  /// named for the first enemy that shows it; their pictures are
+  /// graphics/monster's, by gSpritePictureCache_Sources.
+  /// ★ Named from the game: "Troll" (MsgEnemyName)
+  SPRITE_BATTLE_TROLL,
+  /// ★ Named from the game: "Zombie" (MsgEnemyName)
+  SPRITE_BATTLE_ZOMBIE,
+  /// ★ Named from the game: "Harpy" (MsgEnemyName)
+  SPRITE_BATTLE_HARPY,
+  /// ★ Named from the game: "Golem" (MsgEnemyName)
+  SPRITE_BATTLE_GOLEM,
+  /// ★ Named from the game: "Ghost" (MsgEnemyName)
+  SPRITE_BATTLE_GHOST,
   SPRITE_405,
   SPRITE_406,
   SPRITE_407,
-  SPRITE_408,
-  SPRITE_409,
-  SPRITE_410,
-  SPRITE_411,
+  /// ★ Named from the game: "Gryphon" (MsgEnemyName)
+  SPRITE_BATTLE_GRYPHON,
+  /// ★ Named from the game: "Rat Soldier" (MsgEnemyName)
+  SPRITE_BATTLE_RAT_SOLDIER,
+  /// ★ Named from the game: "Ghoul" (MsgEnemyName)
+  SPRITE_BATTLE_GHOUL,
+  /// ★ Named from the game: "Chimera" (MsgEnemyName)
+  SPRITE_BATTLE_CHIMERA,
   SPRITE_412,
   SPRITE_413,
   SPRITE_414,
-  SPRITE_415,
+  /// ★ Named from the game: "Deadbeard" (MsgEnemyName)
+  SPRITE_BATTLE_DEADBEARD,
   SPRITE_416,
-  SPRITE_417,
+  /// ★ Named from the game: "Manticore" (MsgEnemyName)
+  SPRITE_BATTLE_MANTICORE,
   SPRITE_418,
   SPRITE_419,
   SPRITE_420,
-  SPRITE_421,
+  /// ★ Named from the game: "Kobold" (MsgEnemyName)
+  SPRITE_BATTLE_KOBOLD,
   SPRITE_422,
   SPRITE_423,
-  SPRITE_424,
+  /// ★ Named from the game: "Gargoyle" (MsgEnemyName)
+  SPRITE_BATTLE_GARGOYLE,
   SPRITE_425,
   SPRITE_426,
   SPRITE_427,
   SPRITE_428,
-  SPRITE_429,
-  SPRITE_430,
+  /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
+  SPRITE_BATTLE_LIZARD_MAN,
+  /// ★ Named from the game: "Orc" (MsgEnemyName)
+  SPRITE_BATTLE_ORC,
   SPRITE_431,
   SPRITE_432,
-  SPRITE_433,
-  SPRITE_434,
-  SPRITE_435,
-  SPRITE_436,
+  /// The Venus Djinn's, as Quartz and Vine fight.
+  /// ★ Named from the game: "Quartz" (MsgDjinnName)
+  SPRITE_BATTLE_VENUS_DJINNI,
+  /// ★ Named from the game: "Breeze" (MsgDjinnName)
+  SPRITE_BATTLE_JUPITER_DJINNI,
+  /// ★ Named from the game: "Forge" (MsgDjinnName)
+  SPRITE_BATTLE_MARS_DJINNI,
+  /// ★ Named from the game: "Sleet" (MsgDjinnName)
+  SPRITE_BATTLE_MERCURY_DJINNI,
   SPRITE_437,
   SPRITE_438,
   SPRITE_439,
@@ -993,47 +1187,90 @@ enum SpriteId {
   SPRITE_445,
   SPRITE_446,
   SPRITE_447,
-  SPRITE_448,
+  /// ★ Named from the game: "Dread Hound" (MsgEnemyName)
+  SPRITE_BATTLE_DREAD_HOUND,
   SPRITE_449,
-  SPRITE_450,
-  SPRITE_451,
+  /// ★ Named from the game: "Mauler" (MsgEnemyName)
+  SPRITE_BATTLE_MAULER,
+  /// ★ Named from the game: "Siren" (MsgEnemyName)
+  SPRITE_BATTLE_SIREN,
   SPRITE_452,
-  SPRITE_453,
-  SPRITE_454,
-  SPRITE_455,
-  SPRITE_456,
-  SPRITE_457,
-  SPRITE_458,
-  SPRITE_459,
-  SPRITE_460,
-  SPRITE_461,
-  SPRITE_462,
-  SPRITE_463,
-  SPRITE_464,
-  SPRITE_465,
-  SPRITE_466,
-  SPRITE_467,
-  SPRITE_468,
-  SPRITE_469,
-  SPRITE_470,
-  SPRITE_471,
-  SPRITE_472,
-  SPRITE_473,
-  SPRITE_474,
-  SPRITE_475,
-  SPRITE_476,
-  SPRITE_477,
-  SPRITE_478,
-  SPRITE_479,
+  /// ★ Named from the game: "Vermin" (MsgEnemyName)
+  SPRITE_BATTLE_VERMIN,
+  /// ★ Named from the game: "Wild Mushroom" (MsgEnemyName)
+  SPRITE_BATTLE_WILD_MUSHROOM,
+  /// ★ Named from the game: "Slime" (MsgEnemyName)
+  SPRITE_BATTLE_SLIME,
+  /// ★ Named from the game: "Cuttle" (MsgEnemyName)
+  SPRITE_BATTLE_CUTTLE,
+  /// ★ Named from the game: "Bat" (MsgEnemyName)
+  SPRITE_BATTLE_BAT,
+  /// ★ Named from the game: "Rat" (MsgEnemyName)
+  SPRITE_BATTLE_RAT,
+  /// ★ Named from the game: "Stone Soldier" (MsgEnemyName)
+  SPRITE_BATTLE_STONE_SOLDIER,
+  /// ★ Named from the game: "Drone Bee" (MsgEnemyName)
+  SPRITE_BATTLE_DRONE_BEE,
+  /// ★ Named from the game: "Spider" (MsgEnemyName)
+  SPRITE_BATTLE_SPIDER,
+  /// ★ Named from the game: "Mole" (MsgEnemyName)
+  SPRITE_BATTLE_MOLE,
+  /// ★ Named from the game: "Dirge" (MsgEnemyName)
+  SPRITE_BATTLE_DIRGE,
+  /// ★ Named from the game: "Grub" (MsgEnemyName)
+  SPRITE_BATTLE_GRUB,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  SPRITE_BATTLE_APE,
+  /// ★ Named from the game: "Salamander" (MsgEnemyName)
+  SPRITE_BATTLE_SALAMANDER,
+  /// ★ Named from the game: "Living Statue" (MsgEnemyName)
+  SPRITE_BATTLE_LIVING_STATUE,
+  /// ★ Named from the game: "Gnome" (MsgEnemyName)
+  SPRITE_BATTLE_GNOME,
+  /// ★ Named from the game: "Skeleton" (MsgEnemyName)
+  SPRITE_BATTLE_SKELETON,
+  /// ★ Named from the game: "Will Head" (MsgEnemyName)
+  SPRITE_BATTLE_WILL_HEAD,
+  /// ★ Named from the game: "Tornado Lizard" (MsgEnemyName)
+  SPRITE_BATTLE_TORNADO_LIZARD,
+  /// ★ Named from the game: "Ant Lion" (MsgEnemyName)
+  SPRITE_BATTLE_ANT_LION,
+  /// ★ Named from the game: "Mimic" (MsgEnemyName)
+  SPRITE_BATTLE_MIMIC,
+  /// ★ Named from the game: "Toadonpa" (MsgEnemyName)
+  SPRITE_BATTLE_TOADONPA,
+  /// ★ Named from the game: "Amaze" (MsgEnemyName)
+  SPRITE_BATTLE_AMAZE,
+  /// The Kraken's left half; SPRITE_BATTLE_KRAKEN_RIGHT is drawn 64 pixels to
+  /// its right (sprites.tsv).
+  /// ★ Named from the game: "Kraken" (MsgEnemyName)
+  SPRITE_BATTLE_KRAKEN,
+  /// ★ Named from what the player sees: the Kraken's spotted body and a
+  /// tentacle, its right half (graphics/monster/slime.png)
+  SPRITE_BATTLE_KRAKEN_RIGHT,
+  /// ★ Named from the game: "Saturos" (MsgEnemyName)
+  SPRITE_BATTLE_SATUROS,
+  /// ★ Named from the game: "Menardi" (MsgEnemyName)
+  SPRITE_BATTLE_MENARDI,
   /// Isaac's battle sprite while he holds a Machete, drawn as part of it.
   SPRITE_ISAAC_MACHETE,
-  SPRITE_481,
+  /// ★ Named from the game: "Tret" (MsgEnemyName)
+  SPRITE_BATTLE_TRET,
   /// Garet's battle sprite while he holds a Machete, drawn as part of it.
   SPRITE_GARET_MACHETE,
-  SPRITE_483,
-  SPRITE_484,
-  SPRITE_485,
-  SPRITE_486,
+  /// The Fusion Dragon's left half; SPRITE_BATTLE_FUSION_DRAGON_RIGHT is drawn
+  /// 64 pixels to its right (sprites.tsv).
+  /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
+  SPRITE_BATTLE_FUSION_DRAGON,
+  /// ★ Named from what the player sees: the Fusion Dragon's head and forelegs,
+  /// its right half (graphics/monster/purple_beast.png)
+  SPRITE_BATTLE_FUSION_DRAGON_RIGHT,
+  /// The Colosso finalists Azart, Satrage and Navampa in battle.
+  /// ★ Named from what the player sees: a warrior in a golden helmet with a red
+  /// crest, with a sword (graphics/monster/red_warrior.png)
+  SPRITE_BATTLE_WARRIOR_IN_GOLDEN_HELMET,
+  /// ★ Named from the game: "Bandit" (MsgEnemyName)
+  SPRITE_BATTLE_BANDIT,
   SPRITE_487,
   SPRITE_488,
   SPRITE_489,

@@ -2539,7 +2539,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   actor->layer = 2;
   leader->x.fixed = 0;
   leader->z.fixed = 0;
-  Sprite_AddAnimation(actor->sprite, SPRITE_016);
+  Sprite_AddAnimation(actor->sprite, SPRITE_CART_RIDER);
   FieldCamera_FollowActor(id, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(PIXELS(16), PIXELS(2));
@@ -3031,7 +3031,7 @@ struct ActorPlacement gAltinPeak_FallingRocksActorPlacements[] = {
 };
 
 struct ActorPlacement gAltinPeak_HydrosStatueActorPlacements[] = {
-    {SPRITE_199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
+    {SPRITE_HYDROS_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(84), FACING_SOUTH,
         TALK_FACING_KEEP, 0},
     {SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(328), 0, PIXELS(88), FACING_SOUTH,
         TALK_FACING_KEEP, 0},

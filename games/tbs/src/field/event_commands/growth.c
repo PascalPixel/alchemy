@@ -5,7 +5,6 @@
 #include "../event_commands_internal.h"
 
 #define GROWTH_PARTICLE_MAX 24 ///< particles round the target
-#define GROWTH_FALL_OBJECT 217 ///< the falling actors' sprite
 #define GROWTH_FALL_LAST 4     ///< five falling actors, 0 to 4
 
 /// A point Growth works out round the Psynergy's position.
@@ -77,7 +76,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 ///
 /// Abilities: Growth (FIELD_PSYNERGY_GROWTH).
 ///
-/// The actors (sprite 217) appear 2 or 3 frames apart and each lasts 60 frames
+/// The actors (SPRITE_VINE) appear 2 or 3 frames apart and each lasts 60 frames
 /// (gFieldEffect_BurstParticleActorScript).
 void FieldPsynergy_Growth(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
@@ -98,8 +97,8 @@ void FieldPsynergy_Growth(void) {
     radius = (Random16() * 6) + PIXELS(4);
     Vector_AddPolarOffset(radius, Random16(), p);
     p->values[1] = effectWork->y;
-    particle = Actor_Spawn(GROWTH_FALL_OBJECT, p->values[0], p->values[1],
-                           p->values[2]);
+    particle =
+        Actor_Spawn(SPRITE_VINE, p->values[0], p->values[1], p->values[2]);
     if (particle != 0) {
       Actor_StartScriptFar(particle, gFieldEffect_BurstParticleActorScript);
       particle->motionFlags = ACTOR_FALLS;
@@ -185,5 +184,4 @@ void FieldEffect_SpawnBurstParticleField(void) {
 
 #undef GROWTH_PARTICLE_MAX
 #undef SPRITE_PARTICLE
-#undef GROWTH_FALL_OBJECT
 #undef GROWTH_FALL_LAST

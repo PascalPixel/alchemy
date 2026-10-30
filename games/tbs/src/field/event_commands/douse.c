@@ -68,7 +68,7 @@ void FieldEffect_SpawnRandomAngleTriplet(struct Actor *actor) {
     // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
     // away.
     for (i = 0; i <= 2; i++) {
-      p = (struct ActorDouseView *)Actor_Spawn(SPRITE_240, particle->x,
+      p = (struct ActorDouseView *)Actor_Spawn(SPRITE_DROPLET, particle->x,
                                                particle->y, particle->z);
       if (p == NULL) {
         break;
@@ -133,7 +133,8 @@ void FieldPsynergy_Douse(void) {
   s32 y;
   struct ActorDouseView *particle;
 
-  lightOrb = (struct ActorDouseView *)Actor_Spawn(SPRITE_239, step = 0, 0, 0);
+  lightOrb =
+      (struct ActorDouseView *)Actor_Spawn(SPRITE_RAIN_CLOUD, step = 0, 0, 0);
   if (lightOrb == 0)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -202,8 +203,8 @@ void FieldPsynergy_Douse(void) {
         pos.y = lightOrb->y;
         pos.z = lightOrb->z;
       }
-      particle =
-          (struct ActorDouseView *)Actor_Spawn(SPRITE_240, pos.x, pos.y, pos.z);
+      particle = (struct ActorDouseView *)Actor_Spawn(SPRITE_DROPLET, pos.x,
+                                                      pos.y, pos.z);
       if (particle != 0) {
         particle->altitude = pos.y - (32 << 16);
         particle->callback = FieldEffect_SpawnRandomAngleTriplet;

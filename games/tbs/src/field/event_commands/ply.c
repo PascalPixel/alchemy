@@ -123,7 +123,7 @@ void FieldPsynergy_Ply(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    actor = Actor_Spawn(SPRITE_233, target->x.fixed,
+    actor = Actor_Spawn(SPRITE_WINGED_FIGURE, target->x.fixed,
                         target->y.fixed + PIXELS(32), target->z.fixed);
     if (actor != 0) {
       actor->scaleY = Q16_ONE * 7 / 10;
@@ -148,7 +148,7 @@ void FieldPsynergy_Ply(void) {
   wait(110);
 
   // The one in the centre.
-  target = Actor_Spawn(SPRITE_233, 0, 0, 0);
+  target = Actor_Spawn(SPRITE_WINGED_FIGURE, 0, 0, 0);
   actor = target;
   if (target != 0) {
     target->scaleY = Q16_ONE * 7 / 10;

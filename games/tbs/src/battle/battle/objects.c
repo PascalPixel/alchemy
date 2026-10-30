@@ -191,10 +191,9 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObject *battleObject) {
 #define ICON_CYCLE_FRAMES 80
 
 /// The icons' first animations, for units 32 pixels wide and for the rest:
-/// each adds the icon's bit number (ICON_POISON's 0 up), so sprites 340 to
-/// 353 and 355 to 368.
-#define ICON_ANIMATION_NARROW 340
-#define ICON_ANIMATION_WIDE 355
+/// each adds the icon's bit number (ICON_POISON's 0 up).
+#define ICON_ANIMATION_NARROW SPRITE_STATUS_POISON
+#define ICON_ANIMATION_WIDE SPRITE_STATUS_WIDE_POISON
 
 /// Shows a unit's status icons one after another, each for
 /// ICON_CYCLE_FRAMES frames, switching at once when the shown status ends,

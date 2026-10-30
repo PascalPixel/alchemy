@@ -107,7 +107,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
                            ANIM_LEADER_ARMS_RAISED);
   wait(20);
 
-  // The droplets (SPRITE_240), one a frame, from where the Djinni was on
+  // The droplets (SPRITE_DROPLET), one a frame, from where the Djinni was on
   // screen (FieldEffect_UpdateRandomTargetParticle moves them).
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
@@ -117,7 +117,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   effect = effectWork->particles;
   remaining = MERCURY_PARTICLE_MAX - 1;
   do {
-    FieldParticle_Initialize(effect, SPRITE_240, position.x, position.z);
+    FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);

@@ -114,7 +114,7 @@ void Exit_PrepareAnimation(s32 animation) {
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   context = actor->sprite;
   effect =
-      (struct SpriteAnimation *)Sprite_AddAnimationFar(context, SPRITE_027);
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(context, SPRITE_DOORWAY);
   zero = 0;
   param = SPRITE_COLOR_HIDDEN;
 
@@ -164,7 +164,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnimation *eff =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation,
-                                                       SPRITE_027);
+                                                       SPRITE_DOORWAY);
 
   zero = 0;
   mask = FIELD_CELL_MASK;

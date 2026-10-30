@@ -158,7 +158,7 @@ void FieldEffect_SpawnAttached(s32 actorId, s32 emote, s32 frames) {
 
   target = Actor_Lookup(actorId);
   if (target != 0) {
-    struct Actor *bubble = Actor_CreateFar(SPRITE_021, target->x.fixed,
+    struct Actor *bubble = Actor_CreateFar(SPRITE_EMOTE, target->x.fixed,
                                            target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {

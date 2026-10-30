@@ -287,13 +287,17 @@ graphics(void)
 	RUN("graphics", false, "wideshape.txt", "wideshape.grid");
 	textFile("hexfill.txt", "grid:1x1\tat:0,0\tfill:0:a:0\n1\n");
 	RUN("graphics", false, "hexfill.txt", "hexfill.grid");
-	textFile("screen.txt", "palette:14\n80 3ffh\n\n1v 2hv\n");
+	textFile("screen.txt", "palette:14\n128 1023h\n\n1v 2hv\n");
 	RUN("graphics", true, "screen.txt", "screen.tilemap");
 	Buffer screen = readFile("screen.tilemap");
 	uint8_t screenBytes[] = {0x80, 0xe0, 0xff, 0xe7, 1, 0xe8, 2, 0xec};
 	Buffer screenReference = {screenBytes, sizeof(screenBytes), 0};
 	equal(&screen, &screenReference, "a tile map writes tile, flips, palette");
 	free(screen.data);
+	textFile("hextile.txt", "palette:0\n3ffh\n");
+	RUN("graphics", false, "hextile.txt", "hextile.tilemap");
+	textFile("widetile.txt", "palette:0\n1024\n");
+	RUN("graphics", false, "widetile.txt", "widetile.tilemap");
 	textFile("ragged.txt", "palette:0\n1 2\n3\n");
 	RUN("graphics", false, "ragged.txt", "ragged.tilemap");
 	textFile("walls.txt", "0123 4567\n89ab cdef\n0000 1111\n2222 3333\n\n"

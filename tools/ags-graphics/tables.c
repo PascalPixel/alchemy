@@ -366,9 +366,9 @@ grid(const Buffer *input)
 /*
  * A background's tile map as the screen shows it: a `palette:N` header, then
  * one text row per row of the screen, one cell per 8x8 square, the tile's
- * number in hex followed by `h` and `v` where it is flipped. Blank lines may
- * separate screens. Each cell becomes the hardware's halfword; the width, when
- * asked for, is the number of cells in a row.
+ * number in decimal followed by `h` and `v` where it is flipped. Blank lines
+ * may separate screens. Each cell becomes the hardware's halfword; the width,
+ * when asked for, is the number of cells in a row.
  */
 Buffer
 tilemap(const Buffer *input, size_t *width)
@@ -401,7 +401,7 @@ tilemap(const Buffer *input, size_t *width)
 				flips |= 1;
 				cell[--len] = 0;
 			}
-			half(&out, number(cell, 16, 1023) | flips << 10 | palette << 12);
+			half(&out, number(cell, 10, 1023) | flips << 10 | palette << 12);
 		}
 		freeStrings(&row);
 	}

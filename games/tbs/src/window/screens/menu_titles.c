@@ -408,10 +408,10 @@ s32 Portrait_Load(u32 member, s32 cacheSlot) {
   if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
     switch (portrait) {
     case ISAAC:
-      portrait = FACE_ISAAC_CHILD;
+      portrait = PORTRAIT_ISAAC_CHILD;
       break;
     case GARET:
-      portrait = FACE_GARET_CHILD;
+      portrait = PORTRAIT_GARET_CHILD;
       break;
     }
   }

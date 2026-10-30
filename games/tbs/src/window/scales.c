@@ -89,20 +89,20 @@ const s8 gPauseMenu_Icons[8] = {
 /// {character, portrait} pairs of the playable characters, ending in -1, which
 /// Portrait_GetForSpeaker searches for speakers below 20.
 const s16 gPortrait_CharacterMap[20] = {
-    ISAAC, ISAAC,
-    SPRITE_ISAAC_CHILD, FACE_ISAAC_CHILD,
-    GARET, GARET,
-    SPRITE_GARET_CHILD, FACE_GARET_CHILD,
-    IVAN, IVAN,
-    MIA, MIA,
-    FELIX, FELIX,
-    JENNA, JENNA,
-    SHEBA, SHEBA,
+    ISAAC, PORTRAIT_ISAAC,
+    SPRITE_ISAAC_CHILD, PORTRAIT_ISAAC_CHILD,
+    GARET, PORTRAIT_GARET,
+    SPRITE_GARET_CHILD, PORTRAIT_GARET_CHILD,
+    IVAN, PORTRAIT_IVAN,
+    MIA, PORTRAIT_MIA,
+    FELIX, PORTRAIT_FELIX,
+    JENNA, PORTRAIT_JENNA,
+    SHEBA, PORTRAIT_SHEBA,
     -1, -1,
 };
 
 /// {sprite, portrait} pairs of the other speakers, ending in -1: portrait n
-/// of this list is portrait 128 + n.
+/// of this list is portrait 128 + n, the row PORTRAIT_16 + n.
 const s16 gPortrait_SpriteMap[100] = {
     SPRITE_JUPITER_DJINNI, 0,
     SPRITE_VENUS_DJINNI, 1,

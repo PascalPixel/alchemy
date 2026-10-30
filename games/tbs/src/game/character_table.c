@@ -38,7 +38,7 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {4, 4, 4, 4, 4, 4},
         .elementBonus = {2, 1, 3, 54},
         .startingLevel = 4,
-        .items = {55, 90, 136, 166, ITEM_HERB},
+        .items = {ITEM_055, ITEM_090, ITEM_136, ITEM_166, ITEM_HERB},
     },
     [MIA] = {
         .hp = {29, 173, 317, 462, 606, 751},
@@ -49,7 +49,7 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {5, 5, 5, 5, 5, 5},
         .elementBonus = {3, 54, 2, 1},
         .startingLevel = 10,
-        .items = {57, 104, 128, 157, ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR},
+        .items = {ITEM_057, ITEM_104, ITEM_128, ITEM_157, ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR},
     },
     [FELIX] = {},
     [JENNA] = {
@@ -61,7 +61,7 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {4, 4, 4, 4, 4, 4},
         .elementBonus = {1, 2, 54, 3},
         .startingLevel = 1,
-        .items = {55, 103, ITEM_PADDED_GLOVES, ITEM_HERB},
+        .items = {ITEM_055, ITEM_103, ITEM_PADDED_GLOVES, ITEM_HERB},
     },
     [SHEBA] = {},
     [PIERS] = {},

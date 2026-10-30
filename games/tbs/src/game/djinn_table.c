@@ -15,322 +15,322 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .atk = 3,
     },
     [DJINNI_GRANITE] = {
-        .abilityId = 301,
+        .abilityId = ABILITY_301,
         .hp = 9,
         .def = 2,
         .agi = 2,
         .luck = 1,
     },
     [DJINNI_QUARTZ] = {
-        .abilityId = 302,
+        .abilityId = ABILITY_302,
         .hp = 10,
         .pp = 3,
         .agi = 3,
     },
     [DJINNI_VINE] = {
-        .abilityId = 303,
+        .abilityId = ABILITY_303,
         .hp = 12,
         .pp = 4,
         .def = 3,
         .luck = 1,
     },
     [DJINNI_SAP] = {
-        .abilityId = 304,
+        .abilityId = ABILITY_304,
         .hp = 10,
         .atk = 3,
         .luck = 1,
     },
     [DJINNI_GROUND] = {
-        .abilityId = 305,
+        .abilityId = ABILITY_305,
         .hp = 9,
         .pp = 3,
         .agi = 3,
     },
     [DJINNI_BANE] = {
-        .abilityId = 306,
+        .abilityId = ABILITY_306,
         .hp = 12,
         .atk = 4,
     },
     // =
     [DJINNI_07] = {
-        .abilityId = 307,
+        .abilityId = ABILITY_307,
     },
     // =
     [DJINNI_08] = {
-        .abilityId = 308,
+        .abilityId = ABILITY_308,
     },
     // =
     [DJINNI_09] = {
-        .abilityId = 309,
+        .abilityId = ABILITY_309,
     },
     // =
     [DJINNI_10] = {
-        .abilityId = 310,
+        .abilityId = ABILITY_310,
     },
     // =
     [DJINNI_11] = {
-        .abilityId = 311,
+        .abilityId = ABILITY_311,
     },
     // =
     [DJINNI_12] = {
-        .abilityId = 312,
+        .abilityId = ABILITY_312,
     },
     // =
     [DJINNI_13] = {
-        .abilityId = 313,
+        .abilityId = ABILITY_313,
     },
     // =
     [DJINNI_14] = {
-        .abilityId = 314,
+        .abilityId = ABILITY_314,
     },
     // =
     [DJINNI_15] = {
-        .abilityId = 315,
+        .abilityId = ABILITY_315,
     },
     // =
     [DJINNI_16] = {
-        .abilityId = 316,
+        .abilityId = ABILITY_316,
     },
     // =
     [DJINNI_17] = {
-        .abilityId = 317,
+        .abilityId = ABILITY_317,
     },
     // =
     [DJINNI_18] = {
-        .abilityId = 318,
+        .abilityId = ABILITY_318,
     },
     // =
     [DJINNI_19] = {
-        .abilityId = 319,
+        .abilityId = ABILITY_319,
     },
     [DJINNI_FIZZ] = {
-        .abilityId = 320,
+        .abilityId = ABILITY_320,
         .hp = 9,
         .pp = 4,
         .def = 3,
     },
     [DJINNI_SLEET] = {
-        .abilityId = 321,
+        .abilityId = ABILITY_321,
         .hp = 12,
         .atk = 3,
         .luck = 1,
     },
     [DJINNI_MIST] = {
-        .abilityId = 322,
+        .abilityId = ABILITY_322,
         .hp = 11,
         .atk = 4,
     },
     [DJINNI_SPRITZ] = {
-        .abilityId = 323,
+        .abilityId = ABILITY_323,
         .hp = 8,
         .pp = 4,
         .agi = 3,
     },
     [DJINNI_HAIL] = {
-        .abilityId = 324,
+        .abilityId = ABILITY_324,
         .hp = 9,
         .atk = 4,
         .luck = 1,
     },
     [DJINNI_TONIC] = {
-        .abilityId = 325,
+        .abilityId = ABILITY_325,
         .hp = 8,
         .pp = 3,
         .def = 2,
         .luck = 2,
     },
     [DJINNI_DEW] = {
-        .abilityId = 326,
+        .abilityId = ABILITY_326,
         .hp = 13,
         .pp = 4,
         .agi = 4,
     },
     // =
     [DJINNI_27] = {
-        .abilityId = 327,
+        .abilityId = ABILITY_327,
     },
     // =
     [DJINNI_28] = {
-        .abilityId = 328,
+        .abilityId = ABILITY_328,
     },
     // =
     [DJINNI_29] = {
-        .abilityId = 329,
+        .abilityId = ABILITY_329,
     },
     // =
     [DJINNI_30] = {
-        .abilityId = 330,
+        .abilityId = ABILITY_330,
     },
     // =
     [DJINNI_31] = {
-        .abilityId = 331,
+        .abilityId = ABILITY_331,
     },
     // =
     [DJINNI_32] = {
-        .abilityId = 332,
+        .abilityId = ABILITY_332,
     },
     // =
     [DJINNI_33] = {
-        .abilityId = 333,
+        .abilityId = ABILITY_333,
     },
     // =
     [DJINNI_34] = {
-        .abilityId = 334,
+        .abilityId = ABILITY_334,
     },
     // =
     [DJINNI_35] = {
-        .abilityId = 335,
+        .abilityId = ABILITY_335,
     },
     // =
     [DJINNI_36] = {
-        .abilityId = 336,
+        .abilityId = ABILITY_336,
     },
     // =
     [DJINNI_37] = {
-        .abilityId = 337,
+        .abilityId = ABILITY_337,
     },
     // =
     [DJINNI_38] = {
-        .abilityId = 338,
+        .abilityId = ABILITY_338,
     },
     // =
     [DJINNI_39] = {
-        .abilityId = 339,
+        .abilityId = ABILITY_339,
     },
     [DJINNI_FORGE] = {
-        .abilityId = 340,
+        .abilityId = ABILITY_340,
         .hp = 10,
         .atk = 2,
         .agi = 2,
         .luck = 2,
     },
     [DJINNI_FEVER] = {
-        .abilityId = 341,
+        .abilityId = ABILITY_341,
         .hp = 8,
         .atk = 3,
         .agi = 2,
     },
     [DJINNI_CORONA] = {
-        .abilityId = 342,
+        .abilityId = ABILITY_342,
         .hp = 12,
         .pp = 3,
         .def = 3,
         .luck = 1,
     },
     [DJINNI_SCORCH] = {
-        .abilityId = 343,
+        .abilityId = ABILITY_343,
         .hp = 8,
         .atk = 3,
     },
     [DJINNI_EMBER] = {
-        .abilityId = 344,
+        .abilityId = ABILITY_344,
         .hp = 9,
         .pp = 4,
         .def = 2,
         .agi = 2,
     },
     [DJINNI_FLASH] = {
-        .abilityId = 345,
+        .abilityId = ABILITY_345,
         .hp = 14,
         .pp = 3,
         .def = 2,
     },
     [DJINNI_TORCH] = {
-        .abilityId = 346,
+        .abilityId = ABILITY_346,
         .hp = 9,
         .atk = 3,
         .luck = 1,
     },
     // =
     [DJINNI_47] = {
-        .abilityId = 347,
+        .abilityId = ABILITY_347,
     },
     // =
     [DJINNI_48] = {
-        .abilityId = 348,
+        .abilityId = ABILITY_348,
     },
     // =
     [DJINNI_49] = {
-        .abilityId = 349,
+        .abilityId = ABILITY_349,
     },
     // =
     [DJINNI_50] = {
-        .abilityId = 350,
+        .abilityId = ABILITY_350,
     },
     // =
     [DJINNI_51] = {
-        .abilityId = 351,
+        .abilityId = ABILITY_351,
     },
     // =
     [DJINNI_52] = {
-        .abilityId = 352,
+        .abilityId = ABILITY_352,
     },
     // =
     [DJINNI_53] = {
-        .abilityId = 353,
+        .abilityId = ABILITY_353,
     },
     // =
     [DJINNI_54] = {
-        .abilityId = 354,
+        .abilityId = ABILITY_354,
     },
     // =
     [DJINNI_55] = {
-        .abilityId = 355,
+        .abilityId = ABILITY_355,
     },
     // =
     [DJINNI_56] = {
-        .abilityId = 356,
+        .abilityId = ABILITY_356,
     },
     // =
     [DJINNI_57] = {
-        .abilityId = 357,
+        .abilityId = ABILITY_357,
     },
     // =
     [DJINNI_58] = {
-        .abilityId = 358,
+        .abilityId = ABILITY_358,
     },
     // =
     [DJINNI_59] = {
-        .abilityId = 359,
+        .abilityId = ABILITY_359,
     },
     [DJINNI_GUST] = {
-        .abilityId = 360,
+        .abilityId = ABILITY_360,
         .hp = 9,
         .atk = 2,
         .agi = 2,
     },
     [DJINNI_BREEZE] = {
-        .abilityId = 361,
+        .abilityId = ABILITY_361,
         .hp = 12,
         .pp = 5,
         .def = 2,
         .luck = 1,
     },
     [DJINNI_ZEPHYR] = {
-        .abilityId = 362,
+        .abilityId = ABILITY_362,
         .hp = 11,
         .pp = 3,
         .agi = 2,
         .luck = 1,
     },
     [DJINNI_SMOG] = {
-        .abilityId = 363,
+        .abilityId = ABILITY_363,
         .hp = 9,
         .atk = 3,
     },
     [DJINNI_KITE] = {
-        .abilityId = 364,
+        .abilityId = ABILITY_364,
         .hp = 8,
         .pp = 4,
         .agi = 3,
     },
     [DJINNI_SQUALL] = {
-        .abilityId = 365,
+        .abilityId = ABILITY_365,
         .hp = 10,
         .atk = 5,
     },
     [DJINNI_LUFF] = {
-        .abilityId = 366,
+        .abilityId = ABILITY_366,
         .hp = 11,
         .pp = 5,
         .def = 2,
@@ -338,55 +338,55 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
     },
     // =
     [DJINNI_67] = {
-        .abilityId = 367,
+        .abilityId = ABILITY_367,
     },
     // =
     [DJINNI_68] = {
-        .abilityId = 368,
+        .abilityId = ABILITY_368,
     },
     // =
     [DJINNI_69] = {
-        .abilityId = 369,
+        .abilityId = ABILITY_369,
     },
     // =
     [DJINNI_70] = {
-        .abilityId = 370,
+        .abilityId = ABILITY_370,
     },
     // =
     [DJINNI_71] = {
-        .abilityId = 371,
+        .abilityId = ABILITY_371,
     },
     // =
     [DJINNI_72] = {
-        .abilityId = 372,
+        .abilityId = ABILITY_372,
     },
     // =
     [DJINNI_73] = {
-        .abilityId = 373,
+        .abilityId = ABILITY_373,
     },
     // =
     [DJINNI_74] = {
-        .abilityId = 374,
+        .abilityId = ABILITY_374,
     },
     // =
     [DJINNI_75] = {
-        .abilityId = 375,
+        .abilityId = ABILITY_375,
     },
     // =
     [DJINNI_76] = {
-        .abilityId = 376,
+        .abilityId = ABILITY_376,
     },
     // =
     [DJINNI_77] = {
-        .abilityId = 377,
+        .abilityId = ABILITY_377,
     },
     // =
     [DJINNI_78] = {
-        .abilityId = 378,
+        .abilityId = ABILITY_378,
     },
     // =
     [DJINNI_79] = {
-        .abilityId = 379,
+        .abilityId = ABILITY_379,
     },
 };
 // clang-format on

@@ -59,60 +59,60 @@ const u8 gMindRead_CasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
 /// Grows from half size to full size, a step every 2 frames.
 const s32 gFieldEffect_ParticleEmitterScript[] = {
-    SC_SET(SW_SCALE_X, 0x8000),
-    SC_SET(SW_SCALE_Y, 0x8000),
+    SC_SET(SW_SCALE_X, Q16_ONE / 2),
+    SC_SET(SW_SCALE_Y, Q16_ONE / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0xc000),
-    SC_SET(SW_SCALE_Y, 0xc000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 3 / 4),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 3 / 4),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0xe000),
-    SC_SET(SW_SCALE_Y, 0xe000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 7 / 8),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 7 / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0xf000),
-    SC_SET(SW_SCALE_Y, 0xf000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 15 / 16),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 15 / 16),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_END,
 };
 
-/// Pulses twice, to 1.5 times full size (0x18000), then rests, over and
-/// over: the found item's picture held over the leader (field_sequence/item_display.c).
+/// Pulses twice, to 1.5 times full size, then rests, over and over: the found
+/// item's picture held over the leader (field_sequence/item_display.c).
 const s32 gFieldEffect_RisingPulseScript[] = {
     SC_WAIT(10),
-    SC_SET(SW_SCALE_X, 0x16000),
-    SC_SET(SW_SCALE_Y, 0x16000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 11 / 8),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 11 / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 3 / 2),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 3 / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x12000),
-    SC_SET(SW_SCALE_Y, 0x12000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 9 / 8),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 9 / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x16000),
-    SC_SET(SW_SCALE_Y, 0x16000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 11 / 8),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 11 / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 3 / 2),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 3 / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x12000),
-    SC_SET(SW_SCALE_Y, 0x12000),
+    SC_SET(SW_SCALE_X, Q16_ONE * 9 / 8),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 9 / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_WAIT(2),
     SC_WAIT(50),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_END,
 };
 
-/// Sinks a quarter pixel a frame (y, the height, less 0x4000) for 60 frames,
+/// Sinks a quarter pixel a frame for 60 frames,
 /// then disappears.
 const s32 gFieldEffect_ParticleScript[] = {
-    SC_ADD(SW_Y, -0x4000),
+    SC_ADD(SW_Y, -PIXELS(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_RELEASE,
@@ -315,43 +315,43 @@ const struct SpeakerDefinition gSpeakerDefinitions[131] = {
 /// event_commands.c adds (3 - v) << 7 bytes and reads it through an s32 *.
 const s32 gActor_VariantScripts[97] = {
     // variant 3
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(4),
     // variant 2
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(4),
     // variant 1
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
+    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
     SC_WAIT(4),
     SC_END,
 };
@@ -464,7 +464,7 @@ const struct SparklePicture gFieldEffect_SparklePictures[32] = {
 /// Two scales that alternate ((gVBlankCount >> 2) & 1): full size and 0.97 of
 /// it (FieldEffect_SetActorAlternatingWords, jupiter.c); nothing reads the
 /// third word.
-const u32 gFieldEffect_PulseScales[3] = {0x10000, 0xf851, 16};
+const u32 gFieldEffect_PulseScales[3] = {Q16_ONE, 0xf851, 16};
 
 /// [0] only releases the actor, +1 waits for it to arrive and releases it; +3 is
 /// gFieldEffect_SourceHoldScript, which follows.
@@ -487,7 +487,7 @@ const s32 gFieldEffect_SourceHoldScript[] = {
 /// releases itself 10 frames later.
 const s32 gFieldEffect_FragmentScript[] = {
     SC_SYNC,
-    SC_SET(SW_SPEED, 0x1000),
+    SC_SET(SW_SPEED, PIXELS(1) / 16),
     SC_ANIMATION(0),
     SC_WAIT(10),
     SC_RELEASE,
@@ -555,11 +555,12 @@ const u8 gWorldMap_MarkerBlendCycle[32] = {
     16, 15, 15, 14, 12, 10, 9, 9, 8, 9, 9, 10, 12, 14, 14, 15,
 };
 
-/// An angle for each +Control Pad direction (eight of them); 0xffff for none.
+/// An angle for each +Control Pad direction (eight of them); DPAD_ANGLE_NONE
+/// for none.
 const u16 gWorldMap_CursorDirectionAngles[16] = {
-    0xffff, 0x0000, 0x8000, 0xffff,
-    0xc000, 0xe000, 0xa000, 0xc000,
-    0x4000, 0x2000, 0x6000, 0x4000,
-    0xffff, 0x0000, 0x8000, 0xffff,
+    DPAD_ANGLE_NONE, FACING_EAST, FACING_WEST, DPAD_ANGLE_NONE,
+    FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
+    FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH,
+    DPAD_ANGLE_NONE, FACING_EAST, FACING_WEST, DPAD_ANGLE_NONE,
 };
 // clang-format on

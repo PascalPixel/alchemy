@@ -250,7 +250,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == SPRITE_PICTURE_LZ) {
         if (layer->colorMode != 0) {
-          unpacked = Heap_Alloc(0x400);
+          unpacked = Heap_Alloc(1024);
           decodePicture(
               Decompress_Lz(layer->pictures[layer->picture], unpacked), pixels,
               layer->colorMode);

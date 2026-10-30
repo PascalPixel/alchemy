@@ -302,7 +302,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       object->spriteStorageKind = spriteStorageKind;
       // Through the sprite union this store moves before the next.
       *(struct Sprite **)&object->sprite = (struct Sprite *)spriteSlots;
-      Dma_Fill32(0, spriteSlots, 0x10);
+      Dma_Fill32(0, spriteSlots, 16);
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
         actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
@@ -330,7 +330,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
     object->acceleration = Q16_ONE;
     object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     motion->gravity = Q16_ONE;
-    motion->bounce = 0x4000;
+    motion->bounce = Q16_ONE / 4;
     object->collisionFlags = 0;
     object->steeringFlags = ACTOR_FACES_MOTION;
     actor->riseBaseY = 0;
@@ -501,7 +501,7 @@ void Actor_StartIdle(struct Actor *actor) {
 void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (watchedActorHandle != 0) {
-    actor->acceleration = 0x8000;
+    actor->acceleration = Q16_ONE / 2;
     actor->speedLimit = 4 << 16;
     actor->watchedActor = (struct Actor *)watchedActorHandle;
     actor->timer = 0;

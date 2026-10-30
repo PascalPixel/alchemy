@@ -118,11 +118,11 @@ void TileMap_ConvertBuffer(void) {
   TilemapConvertFn convertGrid;
   u32 savedBytes;
 
-  savedBytes = 0x8000;
+  savedBytes = 32768;
   savedCells = Heap_AllocEwram(savedBytes);
   Iwram_CopyWords(savedCells, Ram_MapGridCellBuffer, savedBytes);
   RamCode_Load(convertGrid, Tile_ConvertMapGrid, Tile_ConvertMapGridCodeSize);
-  convertGrid(((u8 *)gMapGridCellBuffer + 0x8000), Ram_MapGridCellBuffer,
+  convertGrid(((u8 *)gMapGridCellBuffer + 32768), Ram_MapGridCellBuffer,
               savedCells);
   Heap_Release(convertGrid);
   Heap_Release(savedCells);
@@ -338,11 +338,11 @@ s32 MapGrid_LoadMap(s32 index) {
   if (GameFlag_GetFar(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
     GameFlag_ClearFar(FLAG_KEEP_LAYER_GRAPHICS);
   } else {
-    // One 16 KB buffer takes each resource in turn: the palette (0x1c0
+    // One 16 KB buffer takes each resource in turn: the palette (448
     // bytes, 14 of the 16 BG palettes), the three 16 KB tilesets, and
     // last the tileset animations' tiles, which decode straight to
     // gMapGridAnimTiles. Without the memory, nothing is loaded.
-    graphicsBuffer = Heap_Alloc(0x4000);
+    graphicsBuffer = Heap_Alloc(16384);
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
       backdrop = *(s16 *)BG_PLTT;
@@ -353,22 +353,22 @@ s32 MapGrid_LoadMap(s32 index) {
       /* FAKEMATCH(wrapper): these four copies call the fixed entry itself, past
        * the IWRAM call layer; as Iwram_CopyWords, 103 of 349 instructions
        * differ in tbs-en. */
-      Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
+      Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 448);
       Decompress_MoveToFrontLz(
           Resource_GetTableEntry(mapResources->resources[2] +
                                  (u32)&ResourceId_Map001),
           graphicsBuffer);
-      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, 0x4000);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, 16384);
       Decompress_MoveToFrontLz(
           Resource_GetTableEntry(mapResources->resources[3] +
                                  (u32)&ResourceId_Map001),
           graphicsBuffer);
-      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, 0x4000);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, 16384);
       Decompress_MoveToFrontLz(
           Resource_GetTableEntry(mapResources->resources[4] +
                                  (u32)&ResourceId_Map001),
           graphicsBuffer);
-      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
+      Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 16384);
       Decompress_MoveToFrontLz(
           Resource_GetTableEntry(mapResources->resources[5] +
                                  (u32)&ResourceId_Map001),
@@ -726,7 +726,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
       // The first layer whose visible area (16x12 cells) holds the cell has
       // the cell picture written to its BG map too, and only that one (a map
       // lays its layers out in different parts of the grid); offset is the
-      // cell's place in a 32x32 BG map (128 bytes a cell row, 4 a cell), 0x800
+      // cell's place in a 32x32 BG map (128 bytes a cell row, 4 a cell), 2,048
       // bytes per layer from screen block 5.
       for (; i < 3; i++) {
         if (visibleLayer->x <= (s32)x && 16 + visibleLayer->x > (s32)x &&
@@ -752,7 +752,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
           *(u32 *)screenTile = *(u32 *)cellPictureRows;
           break;
         }
-        offset += 0x800;
+        offset += 2048;
         visibleLayer++;
       }
     }
@@ -902,7 +902,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
         i = 0;
         tmp6 = tmp13;
         offset = tmp6;
-        // In a layer's visible area, write its BG map in VRAM too (0x800
+        // In a layer's visible area, write its BG map in VRAM too (2,048
         // bytes per layer).
         for (; i < 3; i += 1) {
           if (visibleLayer->x <= x && 16 + (*visibleLayer).x > x &&
@@ -949,7 +949,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
             *screenTile = tmp2;
             break;
           }
-          n = 0x800; // the next layer's BG map
+          n = 2048; // the next layer's BG map
           offset += n;
           visibleLayer++;
         }
@@ -1049,7 +1049,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
         tmp13 = n * 4;
         tmp6 = tmp13;
         offset = tmp6;
-        // In a layer's visible area, write its BG map in VRAM too (0x800
+        // In a layer's visible area, write its BG map in VRAM too (2,048
         // bytes per layer).
         for (; i < 3; i += 1) {
           if (visibleLayer->x <= x && 16 + (*visibleLayer).x > x &&
@@ -1077,7 +1077,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
             *(u32 *)screenTile = *(u32 *)cellPictureRows;
             break;
           }
-          n = 0x800; // the next layer's BG map
+          n = 2048; // the next layer's BG map
           offset += n;
           visibleLayer++;
         }

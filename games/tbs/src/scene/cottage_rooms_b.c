@@ -628,17 +628,12 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   struct MapGridScrollWork *grid;
   struct Actor *viewCenter;
   struct FieldWork **eventSlot;
+  struct FieldWork *work;
 
   eventSlot = (struct FieldWork **)Ram_FieldWork;
-  /* FAKEMATCH(temporary): the event record read into a block-local before
-     the map work and view centre; as reads in place, 11 of 430 instructions
-     differ in tbs-en (13 with the view centre first). */
-  {
-    struct FieldWork *work = *eventSlot;
-
-    grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
-    viewCenter = work->camera;
-  }
+  work = *eventSlot;
+  grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
+  viewCenter = work->camera;
   sprite = Actor_GetById(ACTOR_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm event.
   Event_Start();

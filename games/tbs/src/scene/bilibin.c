@@ -830,7 +830,7 @@ static void Bilibin_RestoreRiverActors(void) {
       actor = Actor_Get(ACTOR_FALLEN_TREE_STAND_IN);
       Actor_SetSpriteFlags(actor, 0);
       Actor_SetPosition(ACTOR_MIDDLE_TREE, PIXELS(142), PIXELS(156));
-      fallenTree->sprite->rotation = 0x4000;
+      fallenTree->sprite->rotation = TRIG_TURN / 4;
       fallenTree->y.fixed += -PIXELS(8);
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) != 0) {
         Actor_SetPosition(ACTOR_JILL_TREE, PIXELS(132), PIXELS(186));

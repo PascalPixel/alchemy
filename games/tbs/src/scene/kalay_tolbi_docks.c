@@ -450,7 +450,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
   s16 cardinalFacing;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  cardinalFacing = ((leader->facing + 0x2000) & ~0x3fff);
+  cardinalFacing = ((leader->facing + TRIG_TURN / 8) & ~0x3fff);
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     if (Event_GetFlag(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
@@ -767,7 +767,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     ((u8 *)actor->sprite)[9] |= 12;
     ((u8 *)actor->sprite)[38] = 0;
     zero = 0;
-    actor->sprite->rotation = 0xc000;
+    actor->sprite->rotation = TRIG_TURN * 3 / 4;
     actor = Actor_GetById(ACTOR_STRANDED_WOMAN);
     actor->priorityFlags = zero;
     ((u8 *)actor->sprite)[9] |= 12;
@@ -1073,7 +1073,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   ((u8 *)actor->sprite)[9] |= 12;
   ((u8 *)actor->sprite)[38] = 0;
-  actor->sprite->rotation = 0xc000;
+  actor->sprite->rotation = TRIG_TURN * 3 / 4;
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
   Actor_GetById(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1129,7 +1129,7 @@ u16 gKalayTolbiDocks_TolbiDoorCells[] = {
 };
 
 s32 gKalayTolbiDocks_BodyguardSpinScript[] = {
-    SC_ADD(SW_FACING, -0x2000),
+    SC_ADD(SW_FACING, -(TRIG_TURN / 8)),
     SC_WAIT(2),
     SC_LOOP(8, SC_TOP),
     SC_END,

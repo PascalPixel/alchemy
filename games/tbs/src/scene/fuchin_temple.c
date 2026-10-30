@@ -822,7 +822,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   Actor_GetById(ACTOR_TRAINING_TREE)->y.fixed = PIXELS(12);
   Actor_GetById(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
   Actor_GetById(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
-  Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = 0x8000;
+  Actor_GetById(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
   Sound_Play(SE_CHEST_OPEN);
   Event_Wait(40);
   Actor_SetPositionAndReset(ACTOR_TREE_STUDENT, 216, 152);
@@ -874,7 +874,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   tree = Actor_GetById(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = tree->sprite;
-    s32 rotation = 0x8000;
+    s32 rotation = TRIG_TURN / 2;
 
     sprite->rotation = rotation;
   }
@@ -1184,7 +1184,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = actor->sprite;
-    s32 rotation = 0x8000;
+    s32 rotation = TRIG_TURN / 2;
 
     sprite->rotation = rotation;
   }
@@ -1466,7 +1466,7 @@ static void FuchinTemple_FehSeesChi(void) {
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   {
     struct Sprite *sprite = actor->sprite;
-    s32 rotation = 0x8000;
+    s32 rotation = TRIG_TURN / 2;
 
     sprite->rotation = rotation;
   }
@@ -2382,7 +2382,7 @@ s32 Scene_Initialize(void) {
         trainingTree->targetY = PIXELS(12);
         trainingTree->scaleX = 4 * Q16_ONE / 5;
         trainingTree->scaleY = Q16_ONE / 2;
-        trainingTree->sprite->rotation = 0x8000;
+        trainingTree->sprite->rotation = TRIG_TURN / 2;
         if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
           Import_ActorSetPosition(ACTOR_FEH, PIXELS(248), PIXELS(208));
           if (!GameFlag_Get(FLAG_FEH_SAW_KI)) {
@@ -2406,7 +2406,7 @@ s32 Scene_Initialize(void) {
         trainingTree->scaleX = 4 * Q16_ONE / 5;
         trainingTree->scaleY = Q16_ONE / 2;
         trainingTree->collisionFlags |= ACTOR_NOT_TARGETED;
-        trainingTree->sprite->rotation = 0x8000;
+        trainingTree->sprite->rotation = TRIG_TURN / 2;
         MapGrid_CopyCellAttributes(14, 11, 1, 1, 14, 10);
       }
       // A crate painted solid black and translucent, over the lattice door to

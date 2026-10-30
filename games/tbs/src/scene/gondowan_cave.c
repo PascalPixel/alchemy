@@ -424,7 +424,7 @@ static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
 static void GondowanCave_RotateLeapingActor(struct Actor *actor) {
-  actor->sprite->rotation -= 0x400;
+  actor->sprite->rotation -= TRIG_TURN / 64;
 }
 
 /// Waits at most forty frames for the actor to descend to the height
@@ -454,7 +454,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->motionFlags = 0;
   for (stepIndex = 0; stepIndex < 9; stepIndex++) {
     wait(1);
-    actor->sprite->rotation -= 0x100;
+    actor->sprite->rotation -= TRIG_TURN / 256;
     actor->x.fixed -= Trig_Cos(actor->sprite->rotation) / 2;
     actor->targetX = ACTOR_NO_TARGET;
   }
@@ -487,7 +487,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   Actor_WaitForMoveById(actorId);
   GondowanCave_WaitForDescent(actor, PIXELS(32));
   actor->update = 0;
-  actor->sprite->rotation = 0x1000;
+  actor->sprite->rotation = TRIG_TURN / 16;
   Sound_Play(SE_CAST);
   Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();

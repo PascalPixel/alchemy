@@ -561,7 +561,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   flags = &leader->motionFlags;
   savedMotionFlags = *flags;
 #if TBS_PATCH_1
-  jumpDirection = (leader->facing + 0x2000) & 0xc000;
+  jumpDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
 #endif
   if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_WALK) {
     return 0;

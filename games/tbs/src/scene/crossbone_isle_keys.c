@@ -365,7 +365,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       // Leave the Djinni tilted while its scale animation continues.
       Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
       spinningDjinni = Actor_GetById(ACTOR_BANE);
-      spinningDjinni->sprite->rotation = 0xf800;
+      spinningDjinni->sprite->rotation = TRIG_TURN * 31 / 32;
       spinningDjinni->facing = 0;
       Actor_SetAnimationSpeed(spinningDjinni, 0);
       Actor_StartScript(spinningDjinni, gCrossboneIsleKeys_BaneSquashScript);

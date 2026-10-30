@@ -103,13 +103,13 @@
 // Link transfers use three unit records followed by one recovery-table record.
 // Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
 // a block and ends a send only when its count reaches exactly 0.
-/// The bytes sent for each party member: a Unit (BATTLE_UNIT_SIZE, 0x14c) and
-/// the eight bytes after it, 17 blocks of 20.
-#define LOBBY_UNIT_RECORD_BYTES 0x154
+/// The bytes sent for each party member: a Unit (BATTLE_UNIT_SIZE, 332 bytes)
+/// and the eight bytes after it, 17 blocks of 20.
+#define LOBBY_UNIT_RECORD_BYTES (17 * 20)
 /// The bytes sent for the Djinn recovery table after the party members: the
 /// table (struct DjinnRecoveryTable, 268 bytes) and the 52 bytes after it, 16
 /// blocks of 20, two more than the table needs.
-#define LOBBY_RECOVERY_RECORD_BYTES 0x140
+#define LOBBY_RECOVERY_RECORD_BYTES (16 * 20)
 /// The party members a linked battle takes; a smaller party sends absent
 /// records.
 #define LOBBY_UNIT_RECORD_COUNT 3
@@ -412,7 +412,7 @@ static s32 BattleArena_PollPeerReady(void) {
   result = 1;
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
-  if (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed > 0xe00000) {
+  if (Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed > PIXELS(224)) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
   }
   // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.
@@ -534,7 +534,7 @@ static s32 BattleArena_ReportDisconnection(void) {
 #endif
 }
 
-/// Receives the partner's three party member records into units 0x80 to 0x82
+/// Receives the partner's three party member records into units 128 to 130
 /// (the battle's enemies, by Unit_Get) and its Djinn recovery table into the
 /// enemy side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
 /// MsgEnemyLabel ("Enemy" in English) in front, within the 14 letters a
@@ -622,7 +622,7 @@ next:
   if (slot > 2) {
     goto second;
   }
-  // The partner's party members become this battle's enemies 0x80 to 0x82.
+  // The partner's party members become this battle's enemies 128 to 130.
   record = (u8 *)Unit_Get(slot + 128);
   tries = 0;
   if ((transferResult = Serial_StartReceive(record)) == -1) {
@@ -654,7 +654,7 @@ testRecovery:
   }
   goto done;
 second:
-  // Then the recovery table, into the enemy side's (unit 0x83's record).
+  // Then the recovery table, into the enemy side's (unit 131's record).
   Heap_Release(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = Heap_AllocEwram(size);
@@ -685,7 +685,7 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 #ifdef UBFIX
     // The original short-pointer addition traverses a struct as an array.
     // The actual member avoids that UB; used plainly, it removes four native
-    // bytes (0x44 to 0x40), so matching builds retain the old address form.
+    // bytes (68 to 64), so matching builds retain the old address form.
     source = gMainRoutineWork.party;
 #else
     partyAddress += 252;
@@ -710,7 +710,7 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 /// (BATTLE_SIDE_PARTY), and for a smaller party absent records, copies of
 /// the last party member marked side 0. Then sends this side's Djinn recovery
 /// table, rewritten for the partner: each entry's party member becomes the
-/// number the partner gives that party member (0x80 plus its place), and the
+/// number the partner gives that party member (128 plus its place), and the
 /// entries of party members not sent are dropped. Returns 0, or -1 when a send
 /// fails or runs out of time. The copies go through an EWRAM pool buffer freed
 /// before returning.
@@ -744,7 +744,7 @@ static s32 BattleArena_SendPartyRecords(void) {
   for (i = 0; i < memberCount; i++) {
     Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
     heap[0x12a] = 2;
-    // As a u8, i - 128 is 0x80 + i: this party member's unit on the partner's
+    // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
     // side.
     slotMap[memberIds[i]] = i - 128;
     transferResult = Serial_StartSend(heap, size);
@@ -972,10 +972,10 @@ static s32 BattleArena_EnterBattle(void) {
     // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
     // units (LINK_OWNER_STATES_SIZE, battle/battle/run.c). While it is
     // allocated, the exchange below receives the partner's party members and
-    // Djinn into units 0x80 to 0x83. The copy to gActorSpriteSlots
+    // Djinn into units 128 to 131. The copy to gActorSpriteSlots
     // (gMapGridCellBuffer
     // + 0x8000) hands them to Battle_Run, which copies them back.
-    savedWork = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
+    savedWork = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 1992);
     Task_Remove((TaskFunc)BattleArena_PollPeerReady);
     // Run the map's tileset animation 5 for eight frames.
     TilesetAnim_Resume(5);
@@ -986,7 +986,7 @@ static s32 BattleArena_EnterBattle(void) {
       Event_SetMessageId(MsgLobbyGoodLuck);
       FieldMessage_ShowAtActor(ACTOR_ATTENDANT, 0);
       wait(45);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
       Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 184);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
@@ -994,15 +994,15 @@ static s32 BattleArena_EnterBattle(void) {
     } else {
       // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
       // the parties are exchanged, then a half.
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
       Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE / 10, Q16_ONE / 20);
       Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the Battle Arena,
       // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
         Actor_ResetAndSetPositionInMode2(ACTOR_PARTY_LEADER, 216, 200);
         TilesetAnim_Resume(5);
         wait(8);
@@ -1022,7 +1022,7 @@ static s32 BattleArena_EnterBattle(void) {
         Event_End();
         return LOBBY_NO_RESULT;
       }
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE / 2, Q16_ONE / 4);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     }
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
@@ -1052,7 +1052,7 @@ static s32 BattleArena_EnterBattle(void) {
     do {
       i++;
       *destination++ = *source++;
-    } while (i <= 0x7c7);
+    } while (i <= 1991);
     HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
   Event_End();
@@ -1468,8 +1468,8 @@ u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 /// stamp (gBattleArenaRecord) into the current file. BattleArena_RunRoundResult
 /// calls it after each linked battle won or lost.
 static s32 BattleArena_SaveBattleResults(void) {
-  // A shared inline message-pair helper grows each save routine from 0x6c to
-  // 0x70 in the native build, so retain the two copies.
+  // A shared inline message-pair helper grows each save routine from 108 to
+  // 112 bytes in the native build, so retain the two copies.
   struct Window *window;
 
   Sound_Play(MUS_SAVED);

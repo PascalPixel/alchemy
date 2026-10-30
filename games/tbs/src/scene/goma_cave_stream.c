@@ -152,7 +152,7 @@ s32 Scene_Initialize(void) {
 static void GomaCaveStream_SpinStump(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
 
-  sprite->rotation -= 0x800;
+  sprite->rotation -= TRIG_TURN / 32;
 }
 
 #include "shared/actor_wait_below_height.h"
@@ -206,7 +206,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
 #else
   *(u32 *)&stump->update = 0;
 #endif
-  stump->sprite->rotation = 0x1000;
+  stump->sprite->rotation = TRIG_TURN / 16;
   options.type = SPRITE_SPLASH;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = 4 * Q16_ONE / 5;

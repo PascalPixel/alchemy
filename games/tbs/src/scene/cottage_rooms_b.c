@@ -931,7 +931,7 @@ static void CottageRoomsB_TalkToInnkeeper(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(ACTOR_PARTY_LEADER);
-  if ((u32)(actor->facing + -0x2000) > 0x9000) {
+  if ((u32)(actor->facing - FACING_SOUTHEAST) > TRIG_TURN * 9 / 16) {
     Inn_CheckIn(0, ACTOR_INNKEEPER);
   } else {
     Event_Start();

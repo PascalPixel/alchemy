@@ -629,7 +629,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   behavior = 23;
   z = actor->z.fixed >> 20;
   if (x == 81 && z == 12) {
-    if ((actor->facing & 0xE000) == 0x4000) {
+    if ((actor->facing & 0xE000) == FACING_SOUTH) {
       behavior = CELL_BEHAVIOR_CLIMB;
     }
     MapGrid_SetCellBehaviorAt(0, x << 20, z << 20, behavior);

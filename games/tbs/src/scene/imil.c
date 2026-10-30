@@ -1703,7 +1703,7 @@ s32 gImil_LeaderStepAsideScript[] = {
     SC_MOVE(PIXELS(155), 0, PIXELS(135)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, 0xd000),
+    SC_SET(SW_FACING, TRIG_TURN * 13 / 16),
     SC_END,
     SC_ADD(SW_SCALE_Y, 3 * Q16_ONE / 8),
     SC_WAIT(2),

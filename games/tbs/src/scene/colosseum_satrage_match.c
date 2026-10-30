@@ -622,7 +622,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   s32 pusher = gMainRoutineWork.leaderActorId;
   struct Actor *pusherActor = Actor_GetById(pusher);
   struct Actor *log = Actor_GetById(logId);
-  s32 heading = (pusherActor->facing + 0x1000) & 0xe000;
+  s32 heading = (pusherActor->facing + TRIG_TURN / 16) & 0xe000;
   s32 alongX = (log->x.fixed >> 20) != halfCellX / 2;
   s32 offsetX;
   s32 offsetZ;
@@ -641,8 +641,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Event_Wait(6);
   log->speedLimit = PIXELS(1) / 2;
   log->acceleration = PIXELS(1) / 5;
-  Actor_SelectAnimation(log,
-                        gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
+  Actor_SelectAnimation(
+      log, gColosseumSatrageMatch_RollLogScript[heading / (TRIG_TURN / 4)]);
   FieldActor_SetMoveTarget(log, halfCellX, 0, halfCellZ);
   Event_Wait(6);
   Import_ActorSetAnimation(pusher, ANIM_WALK);
@@ -961,7 +961,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   Actor_SetPosition(ACTOR_OPPONENT, PIXELS(88), PIXELS(256));
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(256));
   // BUG: FACING_SOUTH is passed where Actor_FaceActor takes an
-  // actor id; Actor_Lookup has no actor past 0xbf, so
+  // actor id; Actor_Lookup has no actor past 191, so
   // neither turns.
 #ifdef BUGFIX
   Actor_FaceDirection(ACTOR_OPPONENT, FACING_SOUTH, 0);

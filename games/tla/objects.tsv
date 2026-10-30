@@ -872,9 +872,8 @@ main	rom_main_02	recon/tla/fr/rom	.rom.00041710	fr
 main	rom_main_02	recon/tla/es/rom	.rom.00041600	es
 main	rom_main_02	recon/tla/es/rom	.rom.0004172c	es
 main	rom_main_02	recon/tla/de/rom	.rom.000415f4	de
-main	rom_main_02	recon/tla/de/rom	.rom.00041720	de
 main	rom_main_02	recon/tla/raw/080415a0	.text	en
-main	rom_main_02	recon/tla/raw/080416cc	.text	en
+main	rom_main_02	games/tla/src/window/f0416cc	.text	en de
 main	rom_main_02	recon/tla/ja/rom	.rom.000416c4	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.000417f0	ja
 main	rom_main_02	games/tla/src/window/tile_attributes	.text
@@ -3877,12 +3876,7 @@ main	rom_main_09	recon/tla/de/rom	.rom.00163e14	de
 main	rom_main_09	recon/tla/raw/08163e14	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.00163e14	ja
 main	rom_main_09	games/tla/src/battle_effect/f16442c	.text
-main	rom_main_09	recon/tla/ja/rom	.rom.0016467c	ja
-main	rom_main_09	recon/tla/de/rom	.rom.0016467c	de
-main	rom_main_09	recon/tla/es/rom	.rom.0016467c	es
-main	rom_main_09	recon/tla/fr/rom	.rom.0016467c	fr
-main	rom_main_09	recon/tla/it/rom	.rom.0016467c	it
-main	rom_main_09	recon/tla/raw/0816467c	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f16467c	.text
 main	rom_main_09	games/tla/src/battle_effect/f164a4c	.text
 main	rom_main_09	games/tla/src/battle_effect/f164abc	.text
 main	rom_main_09	games/tla/src/battle_effect/f164b2c	.text
@@ -4237,12 +4231,7 @@ main	rom_main_10	recon/tla/raw/081a0be8	.text	en
 main	rom_main_10	recon/tla/ja/rom	.rom.001a0bd4	ja
 main	rom_main_10	games/tla/src/menu/credits/scrolobj	.text
 main	rom_main_10	games/tla/src/menu/credits/scroll_close	.text
-main	rom_main_10	recon/tla/it/rom	.rom.001a101c	it
-main	rom_main_10	recon/tla/fr/rom	.rom.001a101c	fr
-main	rom_main_10	recon/tla/es/rom	.rom.001a101c	es
-main	rom_main_10	recon/tla/de/rom	.rom.001a101c	de
-main	rom_main_10	recon/tla/raw/081a101c	.text	en
-main	rom_main_10	recon/tla/ja/rom	.rom.001a1008	ja
+main	rom_main_10	games/tla/src/menu/credits/f1a101c	.text
 main	rom_main_10	games/tla/src/menu/credits/scene_state_set_halfword	.text
 main	rom_main_10	games/tla/src/menu/credits/scroll_map	.text
 main	rom_main_10	recon/tla/it/rom	.rom.001a133c	it

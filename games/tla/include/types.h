@@ -11,6 +11,7 @@ typedef signed long long s64;
 typedef unsigned long long u64;
 
 #define NULL ((void *)0)
+#define UNUSED __attribute__((unused))
 
 #ifdef MODERN
 /// the modern build places code and data where its own compiler puts them:

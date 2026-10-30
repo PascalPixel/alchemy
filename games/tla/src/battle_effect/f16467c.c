@@ -1,26 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 6 of 430, with no device:
-// the BG2PA store is plain and the empty asm at the start is gone (both
-// matched no better). Left, two places: the native spills formation and y
-// (str r0, str r2) before it starts the RAM base, here after the base's
-// first half, and spills the canvas (str r1, [sp, #24]) right after copying
-// the work, here three rows later; at the end it loads Iwram_ClearWords'
-// address (ldr r3) before the size's shift, here after. An empty asm or
-// one-pass block at the start stores the arguments first but moves x's copy
-// to fp up as well (6); the heap reads in the other order (18).
-
-// Draft, differ 44 of 430 (2026-10-15; 46 before BattleEffect_LoadBlitter returned its
-// loader's s32, as nibble_pair.c now does): The Broken Seal's
-// BattleEffect_RunImpactBurst with The Lost Age's blitter loads
-// (BattleEffect_LoadBlitter(104, 19) and (188, 3), read back from the heap slots at 0x68
-// and 0xbc), its resources (0x134, 0x120, 0x121) and callback (BattleEffect_ProcessPendingGraphicsTransfer at
-// 0xc80). Everything matches but reordered rows, all of one kind: the native
-// puts a store, a load or a pool load before an independent constant (the
-// arguments' spills before 0x03000000, the spills of the heap reads, movs r1,
-// #19 before movs r0, #104, the 0xffff angle mask after the particle stores,
-// the pooled sheet offsets), and the shifted literal pools follow. The empty
-// asm at the start and the BG2PA halfword pinned in a one-pass block (as
-// BattleEffect_RunUndeadSword) take it from 54 to 48, and the tables declared without const
-// to 46.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -47,9 +24,13 @@ extern u16 gData_08197410[];
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 kind);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Sound_PlayFar(s32 cue);
 void Func_0816442c(s32 formation, s32 x, s32 y);
+
+static __inline__ s32 ClearWords_(void *destination, s32 size) {
+  return Iwram_ClearWords(destination, size);
+}
 
 void Func_0816467c(s32 formation, s32 x, s32 y) {
   struct BattleFxWork *work;
@@ -64,6 +45,9 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
 
   work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
+  /* FAKEMATCH(barrier): the empty asm spills the canvas before x's copy; as
+   * no asm, 2 of 430 instructions differ in tla-en. */
+  __asm__("");
   sheet = Ram_HeapSlots->unk64[0];
   orgX = x;
   x += 40 << 16;
@@ -188,7 +172,10 @@ void Func_0816467c(s32 formation, s32 x, s32 y) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  /* FAKEMATCH(wrapper): the clear forwarded through ClearWords_, which loads
+   * its address before the size's shift; as Iwram_ClearWords called directly,
+   * 2 of 430 instructions differ in tla-en. */
+  ClearWords_((void *)0x06004000, 0x4000);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
 }

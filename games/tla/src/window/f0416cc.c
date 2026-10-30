@@ -1,22 +1,3 @@
-// Draft, differ 6 of 428 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
-// an empty asm after `u32 bits;`; an empty asm after `glyphs =
-// Resource_GetTableEntry((s32)&ResourceId_WindowTiles);`, and finds nothing
-// closer.
-// Near miss, differ 26 of 428, 2026-10-15: The Broken Seal's
-// Text_DrawStringAsTiles in the form of its English edition (the German
-// one is the same size; Spanish, French and Italian are 12 bytes longer and
-// Japanese 32, as in The Broken Seal's edition branches). The IWRAM clear
-// and fill go through inline wrappers, as The Broken Seal's call layer
-// does: called straight through the fixed address, the pens' address is
-// kept in sl across the clear instead of being rebuilt in each branch
-// (differ 95). Remaining: ten reordered pairs, each a load or store the
-// native issues before a constant or copy of equal priority (the incoming
-// arguments' stores, the spilled attribute's reload before 0xf000, the
-// glyph sheet and canvas reloads); the sched2 dump shows the constant
-// winning on its class against the call before it or on dependents.
-// Five minutes of alchemy permute on the direct-call form found nothing.
 #include "types.h"
 #include "heap_release.h"
 #include "ram_buffer.h"
@@ -37,7 +18,8 @@ static inline s32 FillWords(void *destination, s32 size, u32 value) {
 }
 
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
-  /* FAKEMATCH: an unread 32-byte reserve, the native stack frame's extra bytes. */
+  /* FAKEMATCH(dead): an unused array for the stack frame's 32 extra bytes; as
+   * no array, 4 of 428 instructions differ in tla-en. */
   u32 reserve[8];
   u8 pens[16];
   struct WindowWork *work;
@@ -56,9 +38,19 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
 
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   canvas = Heap_Alloc(0x800);
-  glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+  /* FAKEMATCH(one-pass): the sheet's fetch in a once-only block, which stores
+   * it before the work's copy; as a plain statement, 2 of 428 instructions
+   * differ in tla-en. */
+  do {
+    glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+  } while (0);
   attr = work->level << 12;
+  /* FAKEMATCH(wrapper): the clear forwarded through ClearWords, which keeps
+   * its own constants; as Iwram_ClearWords called directly, 69 of 428
+   * instructions differ in tla-en. */
   ClearWords(pens, 16);
+  /* FAKEMATCH(wrapper): both fills forwarded through FillWords; as
+   * Iwram_FillWords called directly, 8 of 428 instructions differ in tla-en. */
   if (attr == 0xF000) {
     pens[1] = gText_ColourPens[work->colour & 15];
     pens[3] = 3;

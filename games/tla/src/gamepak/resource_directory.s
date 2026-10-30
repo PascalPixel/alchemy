@@ -298,8 +298,8 @@ Resource_DirectoryTable:
 	resource , BattleEffect_YellowSparkSheet
 	resource , BattleEffect_ProjectileVolleyImage
 	resource , BattleEffect_ShurikenSheet
-	resource , BattleEffect_FlareSheet
-	resource , BattleEffect_FlareImage
+	resource FlareSheet, BattleEffect_FlareSheet
+	resource FlareImage, BattleEffect_FlareImage
 	resource , BattleEffect_VioletPaletteB
 	resource , BattleEffect_FireSwirlSheet
 	resource , BattleEffect_VioletLightningSheetB

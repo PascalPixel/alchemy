@@ -1,14 +1,3 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
-// 279: only the copy's first argument (adds r0, r4, #0), which the native
-// sets after 0x100's shift. A greedy device search found nothing lower.
-// Near miss: differ 4 of 279, The Broken Seal's DisplayScroll_DrawLine. Two
-// scheduling swaps remain: the copy's buffer argument (adds r0, r4, #0) comes
-// before 0x100's shift instead of after, and the font's pool load comes after
-// -32's split instead of inside it. The two one-pass blocks (the buffer for the
-// second fill, and the tile count) each fix one swap and were found by a greedy
-// search over one-pass blocks, barriers and block temporaries; the buffer's
-// block moved the copy's argument. Tried: inline wrappers for the fill, a glyph
-// pointer without the font local, eleven permuter minutes.
 #include "types.h"
 #include "heap_release.h"
 #include "iwram_call.h"
@@ -39,6 +28,9 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
   s32 bit;
   u32 bits;
   u32 mask;
+  /* FAKEMATCH(dead): an unused array for the stack frame's 32 bytes no
+   * instruction touches; as no array, 4 of 279 instructions differ in tla-en.
+   */
   u32 unused[8];
 
   if (text == NULL)
@@ -47,11 +39,11 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
     Iwram_FillWords(buf, 0x900, 0);
     GameFlag_SetBit(0x200);
   } else {
+    /* FAKEMATCH(wrapper): the copy forwarded through DisplayScroll_CopyWords,
+     * which keeps its own constants; as Iwram_CopyWords called directly, 71
+     * of 279 instructions differ in tla-en. */
     DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
-    do {
-      dst = buf;
-    } while (0);
-    Iwram_FillWords(dst + 0x100, 0x800, 0);
+    Iwram_FillWords(buf + 0x100, 0x800, 0);
   }
 
   p = text;
@@ -92,9 +84,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
     }
   }
 
-  do {
-    tiles = width / 8;
-  } while (0);
+  tiles = width / 8;
   p = buf;
   dst = buf;
   for (row = 0; row < 8; row++) {
@@ -123,3 +113,6 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align) {
   Heap_Release(buf);
   return 0;
 }
+
+// Unused: an empty function nothing calls, after the pool.
+UNUSED void Func_081a1284(void) {}

@@ -22,7 +22,7 @@
 #define FELIX_CHILD 36
 #define JENNA_CHILD 48
 /// Isaac's grown sprite while FLAG_ISAAC_WEARS_TUNIC is set.
-#define ISAAC_TUNIC 0x11
+#define ISAAC_TUNIC 17
 
 /// The sprite of each element's Djinni (gDjinn_ElementSprites).
 #define VENUS_DJINNI 90

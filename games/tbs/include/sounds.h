@@ -688,7 +688,7 @@
 /// A Colosso warrior fading in (Colosso_FadeInWarrior).
 /// ★ Named from what the player sees: a Colosso warrior appearing (its render)
 #define SE_COLOSSO_WARRIOR_APPEAR 252
-/// The first voice blip of a message: an actor's voice is 0x100 plus its
+/// The first voice blip of a message: an actor's voice is 256 plus its
 /// sprite's value (Speaker_GetVoice), and every few letters typed play
 /// it plus the letter code's low two bits (Message_Type), so a voice is
 /// four blips. gSpeakerDefinitions gives each sprite one of eight voices; this

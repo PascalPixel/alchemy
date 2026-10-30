@@ -7,8 +7,7 @@
 
 // clang-format off
 const struct CharacterDefinition gCharacter_DefinitionTable[] = {
-    // Isaac
-    {
+    [ISAAC] = {
         .hp = {30, 182, 334, 486, 638, 790},
         .pp = {20, 80, 130, 170, 210, 250},
         .atk = {13, 86, 162, 237, 313, 388},
@@ -19,8 +18,7 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .startingLevel = 1,
         .items = {ITEM_MACHETE, ITEM_COTTON_SHIRT, ITEM_PADDED_GLOVES, ITEM_HERB, ITEM_HERB, ITEM_HERB},
     },
-    // Garet
-    {
+    [GARET] = {
         .hp = {33, 191, 351, 510, 670, 830},
         .pp = {18, 76, 124, 162, 200, 238},
         .atk = {11, 83, 156, 228, 301, 373},
@@ -31,8 +29,7 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .startingLevel = 1,
         .items = {ITEM_MACHETE, ITEM_COTTON_SHIRT, ITEM_PADDED_GLOVES, ITEM_HERB, ITEM_HERB},
     },
-    // Ivan
-    {
+    [IVAN] = {
         .hp = {28, 166, 304, 442, 581, 719},
         .pp = {24, 92, 150, 196, 242, 288},
         .atk = {8, 76, 144, 211, 277, 344},
@@ -43,8 +40,7 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .startingLevel = 4,
         .items = {55, 90, 136, 166, ITEM_HERB},
     },
-    // Mia
-    {
+    [MIA] = {
         .hp = {29, 173, 317, 462, 606, 751},
         .pp = {23, 90, 146, 190, 235, 280},
         .atk = {9, 79, 150, 220, 289, 359},
@@ -55,10 +51,8 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .startingLevel = 10,
         .items = {57, 104, 128, 157, ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR},
     },
-    // Felix
-    {},
-    // Jenna
-    {
+    [FELIX] = {},
+    [JENNA] = {
         .hp = {29, 182, 334, 486, 638, 790},
         .pp = {19, 80, 130, 170, 210, 250},
         .atk = {10, 81, 153, 224, 295, 366},
@@ -69,9 +63,7 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .startingLevel = 1,
         .items = {55, 103, ITEM_PADDED_GLOVES, ITEM_HERB},
     },
-    // Sheba
-    {},
-    // Piers
-    {},
+    [SHEBA] = {},
+    [PIERS] = {},
 };
 // clang-format on

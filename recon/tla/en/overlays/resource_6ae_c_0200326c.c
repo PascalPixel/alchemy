@@ -1,10 +1,14 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 92; left: as overlay 69e's
-// Func_020001a4 (resource_69e_c_020001a4.c), the priority byte loads before the
-// radius store.
-// Draft, differ 2 of 92 under -mthumb-slow-loads: adopted in ee174ba9e6 and
-// exact under the old options; with the new option it no longer compiles
-// exactly, so it is back on its listing. Overlay 69e's Func_020001a4
-// (resource_69e_c_020001a4.c) is the same function and differs the same way.
+// Near miss, differ 2 of 92 (tla-en, 2026-10-30): as overlay 69e's
+// Func_020001a4 (resource_69e_c_020001a4.c), the sprite's priority byte loads
+// before the radius store, where the native loads it after the store and the
+// zero's copy out of r8: -mthumb-slow-loads's read-modify-write exception
+// gives the load no wait after the store (that draft's header has the sched2
+// reading). The random value needs no pin (it was pinned to r2 here) and the
+// frame count no __umodsi3 wrapper: written as overlay 6a5's Func_020004c8,
+// both differ 2 as before.
+// History: adopted in ee174ba9e6 and exact under the old options; with
+// -mthumb-slow-loads (2026-10-26) it no longer compiles exactly, so it is back
+// on its listing.
 #include "types.h"
 #include "field_event.h"
 #include "flag_call.h"
@@ -30,7 +34,6 @@ struct OrbitEffect {
 extern u32 gFrameCount;
 extern u32 gData_02006afc[];
 
-u32 __umodsi3(u32 a, u32 b);
 struct FieldActor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 s32 Math_Sine(u32 angle);
@@ -39,11 +42,12 @@ struct OrbitEffect *Func_02005574(s32 type, s32 x, s32 y, s32 z);
 void Func_0200556c(struct OrbitEffect *object, const void *script);
 void Func_02003210(struct FieldActor *self);
 
-static inline struct OrbitEffect *CreateOrbitEffect(s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarding through the inline evaluates the position before the
-   * effect type; called directly, the type's second half comes before the z
-   * load (differ 2). */
-  return Func_02005574(0x2a0, x, y, z);
+static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
+                                                    s32 z) {
+  /* FAKEMATCH(wrapper): the effect created through an inline, which
+   * evaluates the position before the type; as a direct call of
+   * Func_02005574, 4 of 92 instructions differ in tla-en. */
+  return Func_02005574(type, x, y, z);
 }
 
 /// Every third frame, or every frame once flag 0x200 is set, starts a particle
@@ -54,22 +58,25 @@ void Func_0200326c(void) {
   struct OrbitEffect *effect;
   struct FieldSprite *sprite;
   s32 angle;
-  /* FAKEMATCH(pin): the random value in r2, where the native copies the
-   * call's result; as u32 random, 18 of 92 instructions differ in tla-en. */
-  register u32 random asm("r2");
 
-  if (Flag_IsSet(0x200) == 0 && __umodsi3(gFrameCount, 3) != 0)
+  if (Flag_IsSet(0x200) == 0 && gFrameCount % 3 != 0)
     return;
   center = Actor_GetById(23);
   if (Flag_IsSet(0x200) != 0) {
+    u32 random;
+
     random = Random16Far();
     effect = CreateOrbitEffect(
-        center->x, (s32)((u32)(random << 8) >> 16 << 16) + center->y - 0x1c0000,
+        0x2a0, center->x,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y - 0x1c0000,
         center->z);
   } else {
+    u32 random;
+
     random = Random16Far();
     effect = CreateOrbitEffect(
-        center->x, (s32)((u32)(random << 6) >> 16 << 16) + center->y - 0x1c0000,
+        0x2a0, center->x,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y - 0x1c0000,
         center->z);
   }
   if (effect != 0) {

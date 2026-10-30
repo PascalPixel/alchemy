@@ -1,8 +1,21 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 142 in tla-en, instruction
-// order and register choice. The native's flag loop counts up with a signed
-// counter (ble) that loop.c does not reverse; here a signed counter is reversed
-// (subs, bge) and an unsigned one closes with bls. A counter that stays live
-// after the loop (djinni) is reversed too. No single empty asm lowers it.
+// Near miss, differ 2 of 142 (tla-en, 2026-10-30): the first inner loop
+// closes with bls for the native's ble. The native's flag loop counts up with
+// a signed counter (ble) that loop.c does not reverse; here a signed counter
+// is reversed (subs, bge: differ 8) and an unsigned one closes with bls. The
+// loop dumps say why: loop.c's second pass reverses a counter that has no
+// givs left (check_dbra_loop's no_use_except_counting), and with k and i * 20
+// invariant in the first pass both flag numbers are reduced there. Written
+// plainly, i * 7 and i * 20 with no k and no asm (differ 20), the inner loop
+// matches exactly: i * 7 stays in the inner loop in pass one ("not
+// desirable"), so its giv is only reduced in pass two and the counter is
+// kept; but the outer loop then strength-reduces i * 20 to a register
+// stepped by 20, which the native recomputes from i every pass. Tried
+// 2026-10-30, none closer: do-while inner or outer loop, continue, a flag and
+// bit pair stepped with j (22), an inline helper per element (20), an outer
+// loop built from labels with k (8, reversed) or i * 7 (81), k from 0x800
+// (28), k stepped at the outer body's end (28), the dead update pair on i
+// (58). A counter that stays live after the loop (djinni) is reversed too; no
+// single empty asm lowers it (2026-10-26).
 // Draft, differ 6 of 142 (2026-10-18): applies data carried over from The
 // Broken Seal: each of the 28 djinn flags from 0x800 (seven per element) sets
 // the matching flag from 0x30 (twenty per element), item 222 is removed,
@@ -49,8 +62,9 @@ void Func_080ae6e4(void) {
       if (GameFlag_Test(0x800 + k + j))
         GameFlag_SetBit(0x30 + i * 20 + j);
     }
-    /* FAKEMATCH: keeps i * 20 from being strength-reduced (differ 18 as
-     * i * 7 and i * 20 without it) */
+    /* FAKEMATCH(barrier): an empty asm on i keeps i * 20 from being
+     * strength-reduced; as the same loops without it, 22 of 142
+     * instructions differ in tla-en. */
     asm("" : "+r"(i));
   }
   PartyInventory_Remove(222);

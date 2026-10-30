@@ -1,3 +1,4 @@
+// Near miss, differ 2 of 374 (tla-en, 2026-10-30): one reordered row, below.
 // Draft: picks items from one unit's five-column inventory grid for the shop's
 // item action (sell, repair or forge) and runs it, until B or the inventory is
 // empty. As ☀️'s Shop_SelectSell (games/tbs/src/shop/shop.c), with ⚓️'s
@@ -6,15 +7,26 @@
 // quantity, Func_0810a03c), Shop_RepairItem (Func_0810a2d8) or
 // Forge_OfferItem (Func_0810b6cc), each followed by its "anything else?"
 // message. SELECT held shows the item's details until it is released.
-// Near miss, differ 4 of 374. The locals declared in reverse of their native
-// stack slots give those slots (84 to 46); the plain-name message as a
-// symbol, which the native loads from the pool (32); slot set before the
-// count gives their constants' registers (24); the item window read in
-// place keeps the inventory offset in r7 (10); a barrier before the shop
-// work's load keeps it after sub sp (6), and one after the details are shown
-// reloads the input's address after the store (4). Left: the native stores
-// the name window one row after its call returns (a barrier there stores it
-// at once: 6; an operand barrier on it, 24).
+// Left: the native stores the name window (str r0, [sp, #20]) one row after
+// its call returns, between movs r3, #128 and lsls r3, r3, #3; here after
+// the lsls. sched2 ranks the spill store 11 (the cursor anchor's load 9,
+// plus the slow-load cost 2 of a load after a store) and the anchor's
+// address 12 (three steps to the same load), so the address goes first; the
+// native's order needs the store ranked 12. No statement boundary falls
+// between movs and lsls, so no block or barrier can hold it (a barrier
+// after the call stores it at once: 6; an operand barrier on it, 24).
+// Measured (2026-10-30): the details flag cleared through a byte pointer
+// replaces the barrier that kept the input's restored address after it (as
+// shop->detailsHidden = 0 the restore, in a disjoint alias set, moves above
+// the store: 6; with the barrier the Window_CreateFar arguments came out
+// r2 first, as the barrier depended on r2's set: 4); an empty one-pass block
+// replaces the barrier before the shop work's load (same 2; without
+// either, 4); five minutes of permute (nothing below 2).
+// Earlier: the locals declared in reverse of their native stack slots give
+// those slots (84 to 46); the plain-name message as a symbol, which the
+// native loads from the pool (32); slot set before the count gives their
+// constants' registers (24); the item window read in place keeps the
+// inventory offset in r7 (10).
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -82,10 +94,11 @@ s32 Func_08109cac(s32 unitId) {
   s32 result;
   s32 count;
 
-  /* FAKEMATCH(barrier): the shop work loads after sub sp and the unit's
-   * spill; as its declaration's initializer, 4 of 374 instructions differ
-   * in tla-en. */
-  __asm__ volatile("");
+  /* FAKEMATCH(one-pass): an empty one-pass block keeps the unit id's spill
+   * ahead of the shop work's address; as the function without it, 4 of 374
+   * instructions differ in tla-en. */
+  do {
+  } while (0);
   shop = Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(unitId);
   slot = 0;
@@ -132,10 +145,11 @@ s32 Func_08109cac(s32 unitId) {
         Sound_PlayFar(126);
         window = Window_CreateFar(0, 9, 16, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
-        shop->detailsHidden = 0;
-        /* FAKEMATCH(barrier): the input's address reloads after the store;
-         * as plain statements, 2 of 374 instructions differ in tla-en. */
-        __asm__ volatile("");
+        // Through a byte pointer the store may alias any memory, so the
+        // input address saved across the calls is restored after it, as
+        // the native does; as shop->detailsHidden = 0, the restore moves
+        // above it (6 of 374 instructions differ in tla-en).
+        *(u8 *)&shop->detailsHidden = 0;
         while (gInput.held & 4)
           wait(1);
         shop->detailsHidden = 1;

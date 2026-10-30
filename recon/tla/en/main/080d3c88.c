@@ -1,3 +1,13 @@
+// Near miss, differ 2 of 385 (tla-en, 2026-10-30, same source as 2026-10-26's
+// 4): one swap after the first call. The native stores the speaker's sprite
+// (str r0, [sp, #24]) right after it reloads the event work, before the two
+// zeros; here it comes after ands r3, r6. In sched2 that store has priority
+// 48 (its one true dependant is the messageId ldrsh, 47) while the zero stores
+// and movs r2, #226 have 50 (through the r3 and fp chain), so no order of the
+// opening statements lets it ahead. The native ranks it higher, which
+// alchemy-gcc's cost model does not reproduce: the store's link to that ldrsh
+// costs 1, since the -mthumb-slow-loads rule for a load after a store that
+// may alias it charges only a plain MEM load, not a sign-extending one.
 // Under -mthumb-slow-loads (2026-10-26): differ 4 of 385 in tla-en, instruction
 // order only. Setting handle and portrait before loading the event work changes
 // nothing; no empty asm placement lowers it; permute (4 minutes) found nothing

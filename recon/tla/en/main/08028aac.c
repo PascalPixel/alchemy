@@ -1,3 +1,13 @@
+// Near miss, differ 4 of 736 (tla-en, 2026-10-30), two swaps, both sched2
+// ranking: (1) gInput's literal load issues before the acceleration store
+// here (priority 15, a load ranked a cycle slower, against the store's 14)
+// and after it natively; the empty asm after the store below still gives 2;
+// (2) before the angle loop, angleIndex's movs r4, #0 (priority 2) issues
+// before count's spill store of 6 to [sp, #4] (priority 1) here, and after
+// it natively. Tried (2026-10-30): held read through a u32 view (4), angle
+// and direction set in one statement (4), collision = 0 after the stores
+// (68), motionFlags cleared after collision (10); five minutes of permute,
+// 6,421 candidates, none below 4.
 // Draft, differ 6 of 736 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 2 with

@@ -1,3 +1,12 @@
+// Near miss, differ 2 of 157 (tla-en, 2026-10-30): after the raised object's
+// motionFlags strb, sched2 has y's load (priority 50: its latency plus the
+// -mthumb-slow-loads cycle) and movs r2, #128 (49) ready at once; the native
+// issues the movs first. That order follows only if the load waits two cycles
+// after the strb, which -mthumb-slow-loads gives a load after a store unless a
+// later store in the block writes back to the address it read, and y's store
+// does. Even at equal priority, the load would win: it is data dependent on the
+// strb at latency 1 and the movs only anti dependent. Measured on 30 October: y
+// read before the motionFlags store (16).
 // Draft, differ 2 of 157: rewritten from the listing with the loops as goto
 // loops (as for loops loop.c hoists the masks and the zero: 79). Under flag
 // 0x200, when the leader stands on a cell of kind 77, it centres the leader

@@ -1,3 +1,11 @@
+// Matches: differ 0 of 138 (tla-en, 2026-10-30); the object's bytes and
+// relocations equal the listing's, literal pool included. The last row was the
+// prepared actor's copy into r7: the three insns left after the call (that copy,
+// the motionFlags store, i = 0) tie in sched2 and go in RTL order, and the copy
+// is emitted right after the call. A temporary assigned to actor after the
+// store is merged back by copy propagation (2); an empty asm with "+l" on it
+// still allocates it to r7 (10). Holding it in r0 (a pin, tagged below) emits
+// the copy after the store.
 // Under -mthumb-slow-loads (2026-10-26): differ 2 of 138; left: the effect
 // pointer's copy (adds r7, r0) comes before the motionFlags store here, after
 // it in the native; assigning it after the store changes nothing.
@@ -62,9 +70,18 @@ void Func_020021c0(void) {
       REG_BLDALPHA = alpha;
     }
     REG_BLDCNT = 0x3f10;
-    actor = OverlayObject_PrepareObject(other->x, other->terrainHeight,
-                                        other->z + 0x300000, 312);
-    other->motionFlags = 0;
+    {
+      /* FAKEMATCH(pin): the prepared actor held in r0, the register it is
+       * returned in, until the motion flags are cleared; as actor =
+       * OverlayObject_PrepareObject(...) ahead of the store, 2 of 138
+       * instructions differ in tla-en. */
+      register struct FieldActor *prepared __asm__("r0") =
+          OverlayObject_PrepareObject(other->x, other->terrainHeight,
+                                      other->z + 0x300000, 312);
+
+      other->motionFlags = 0;
+      actor = prepared;
+    }
     i = 0;
     do {
       other->y -= 0x10000;

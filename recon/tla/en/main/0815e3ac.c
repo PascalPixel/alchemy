@@ -1,11 +1,29 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 10 of 687. Both BG1CNT
-// stores are plain again (the pinned halfwords and their one-pass blocks
-// matched no better); the empty asm at the start still saves two rows (12
-// without it). Left, three places, each a load or store one or two slots
-// from the native's: the flipped blitter's slot read (ldr r3, [r3, #0])
-// before the first blitter's spill, here after; the step pointer's spill
-// (str r6, [sp, #8]) before the loop's zero, here after; and a stack reload
-// (ldr r5, [sp, #12]) before the two stacked argument stores, here after.
+// Near miss, differ 10 of 687 (tla-en, 2026-10-30), unchanged since
+// 2026-10-26. Both BG1CNT stores are plain (the pinned halfwords and their
+// one-pass blocks matched no better); the empty asm at the start still saves
+// two rows (12 without it). Left, three places where the native issues a
+// store before a load or constant this schedules first:
+// - draw[0]'s store (str r2, [sp, #56]) comes before draw[1]'s slot read
+//   (ldr r3, [r3, #0]) and the array's address (mov r1, sp) in the native,
+//   after both here; in the sched2 dump the store has priority 37, the read 40
+//   and the copy 39.
+// - camera + 3, hoisted before the frame loop (adds r6, #12; str r6, [sp,
+//   #8]), comes right after the camera's reload in the native, after the
+//   frame's zero and &pos here: all three have priority 2 and the zero is
+//   first in insn order; the native also puts the store (priority 1) before
+//   the zero.
+// - the spark draw's two stacked arguments (str r4, [sp, #0] and [sp, #4])
+//   come before the array's reload (ldr r5, [sp, #12]) in the native, after
+//   it here.
+// Tried on 2026-10-30, none below 10: an empty asm after each statement of
+// the body, a one-pass block around each one-line statement, both around
+// the draw pair (12) or the wait after it (12), the pair written in the
+// other order (29), through a pointer (24) or as *draw and *(draw + 1) (24),
+// camera + 3 as &camera[3] (10) or a named eye set before the loop (66) or
+// at the start (309), the draw called through (*draw[...]), its size * 2
+// named, its index as i / 2 & 1 (all 10), size = (size >> 3) + 2 (14).
+// The permuter stopped at "Text_MessageContexts: no main-image code
+// extent" on this tree.
 
 // Draft of Func_0815e3ac, the battle effect BattleEffect_DispatchByIdRange
 // runs for kinds below 100 (except 10): a beam strikes the target and

@@ -1,7 +1,15 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 4 of 641: the native copies
-// a byte's address into r8 (and r10) after storing through it, the draft
-// before; alchemy permute (5 to 6 minutes) and an empty asm or one-pass block
-// after any one statement do not move it.
+// Near miss, differ 4 of 641 (tla-en, 2026-10-30): the native copies the
+// motion flags' address into r8 (actor 13) and r10 (actor 14) after storing 0
+// through it (strb, then mov r8, r3); the draft copies first. In sched2 the
+// copy and the strb are both leaves of priority 1 after ldr r6 (the sprite);
+// the strb is anti-dependent on that load (the animation read and the flags
+// store share alias sets), which puts it in haifa's second class and the
+// copy, independent, ahead. Read through another type the sprite load loses
+// that dependence but then issues earlier (8); swapping the two statements,
+// reading the sprite as u32, storing the flags as u8 or s8 change nothing (4);
+// a flags pointer kept for the later = 3 stores is far worse (45 to 53).
+// Earlier (26 October): alchemy permute (5 to 6 minutes) and an empty asm or
+// one-pass block after any one statement do not move it.
 // Draft, differ 12 of 641: actors 13, 14 and 15 rise in turn after
 // MsgKandoreanTemple04. Calls go through call.h except those whose
 // constants the native shares. Left: each rise loop's y load is issued

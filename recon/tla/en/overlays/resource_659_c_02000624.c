@@ -1,8 +1,16 @@
-// Draft, differ 2 of 161 under -mthumb-slow-loads: the compiler issues
-// gMainRoutineWork's load (ldr r5) before lsls r2, r2, #1 and the add into the event
-// work; the native issues it after them, as in its twin, overlay 65e's
+// Near miss, differ 2 of 161 (tla-en, 2026-10-30): the compiler issues
+// gMainRoutineWork's load (ldr r5) before lsls r2, r2, #1 and the add into the
+// event work; the native issues it after them, as in its twin, overlay 65e's
 // Func_02000340. Adopted in 3c40e77e72, when it matched without the option;
-// back on the listing since.
+// back on the listing since. Why (sched2 dump, 30 October): -mthumb-slow-loads
+// ranks the pool load at priority 50, one above its plain latency path; at 49,
+// haifa's ties (dependent count, then insn order) give exactly the native's
+// lsls r2, adds r3, ldr r5, adds r2. No C was found that lowers it: the store
+// through struct EventWork or a route pointer, a party pointer, an empty asm
+// between the route and its store (6: it also moves the 521 build and sub sp,
+// as any full barrier before the call must), "+l" asms on the route or the
+// party pointer (2, or 20 when the party pointer passes through the asm), the
+// owner read before the store (19).
 #include "types.h"
 #include "scene_tables.h"
 #include "actor.h"

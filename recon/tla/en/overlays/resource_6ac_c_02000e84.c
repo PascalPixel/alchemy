@@ -1,4 +1,11 @@
-// Draft, differ 4 of 237: rewritten from the listing. Sets the blend in rooms 2
+// Matches: differ 0 of 237 (tla-en, 2026-10-30); assembled with the build's as,
+// its bytes equal the listing's but for the pool words the listing writes as
+// numbers, and its pool has the listing's eleven words, SceneId_Ov6ACRoom3 twice.
+// The palette's scene id is a second extern name of SceneId_Ov6ACRoom3 (an
+// __asm__ label, as Resource_LoadTableEntry names its table four times), so the
+// two uses no longer share one pool entry. Still carried: the signature, the
+// memory-clobber asm and the volatile asm below, none of them tagged by kind yet.
+// Earlier: differ 4 of 237: rewritten from the listing. Sets the blend in rooms 2
 // to 6, places objects 8 and 9 by the entrance in room 6, sets up room 1's
 // cells for its entrances, and under flag 0xa30 loads the room's palette as
 // Mars Lighthouse entrance's Func_02001930 does. Func_02000058 is declared
@@ -111,9 +118,14 @@ s32 Func_02000e84(void) {
         Func_020031f8(15, 0, 0);
     }
   }
-  if (GameFlag_Test(0xa30))
+  if (GameFlag_Test(0xa30)) {
+    // A second name of the one scene id: the ROM keeps a literal for each
+    // use, and with one name they share one.
+    extern char SceneId_Ov6ACRoom3Second __asm__("SceneId_Ov6ACRoom3");
+
     Func_020031b8(gMainRoutineWork.map +
-                      ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
+                      ((s32)&SceneId_Ov6ACRoom3Second - (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
+  }
   return 0;
 }

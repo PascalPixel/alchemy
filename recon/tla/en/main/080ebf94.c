@@ -1,4 +1,17 @@
-// Draft of Func_080ebf94, differ 2 of 192 (2026-10-26; 98 before): sets up
+// Near miss, differ 2 of 192 (tla-en, 2026-10-30): one swap after the
+// cursor's first OAM word, below. The native puts an independent instruction
+// between a post-increment store through a spilled pointer (stmia rX!) and the
+// copy of rX for its stack slot wherever one is ready: here, in 0803a8fc's
+// packing loop and in 08104ef8; it reads rX right after the stmia only where
+// nothing else can go (0804a134, 080d8740, 080df1fc). alchemy-gcc gives the
+// stmia's written-back base a latency of 1 (store1), so the copy is ready at
+// once and wins on its dependants (the sched2 dump's depend count, 5 to 3) or
+// its chain; a written-back base ready a cycle later gives the native order.
+// That is the compiler's model, not the C. Tried 2026-10-30: 0x40000000 held
+// in a variable set before the first word (its lsls then precedes the copy in
+// RTL order; still 2); the cursor pointer's and scroll's stores moved earlier
+// (10 to 52); permuter 5 minutes, seed 7: nothing.
+// Draft of Func_080ebf94 (differ 2 of 192 on 2026-10-26; 98 before): sets up
 // the world map screen, as ☀️'s FieldEffect_SetupResourcesAndWindow
 // (games/tbs/src/field/event_commands/world_picture.c): the marker tiles and
 // their 128 OAM entries, the cursor at the leader's place (or a fixed spot

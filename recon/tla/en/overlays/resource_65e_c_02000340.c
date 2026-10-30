@@ -1,3 +1,14 @@
+// Near miss, differ 2 of 114 (tla-en, 2026-10-30): one reordered row, the load
+// of gMainRoutineWork's address into r5. In sched2 that load has priority 47:
+// its latency of 2, plus the cycle -mthumb-slow-loads adds to a load on the
+// critical path, above the currentOwner read (44). lsls r2 (the 0x209 store's
+// value) also has 47 and the add into the event work 46, so the load wins the
+// tie on its four dependents. The native order needs it at 46, the plain
+// latency: after both, before adds r2, #255. Measured: the store through struct
+// EventWork's screenEffect (2), gMainRoutineWork through a local pointer (2),
+// currentOwner read before the store (21), the barrier form of
+// champa_interiors/scene_tables.c (2: the load moves after adds r2, #255 and
+// the barrier counts 4 pool bytes), alchemy permute 5 minutes (nothing better).
 // Draft, differ 2 of 114 under -mthumb-slow-loads: the compiler issues
 // gMainRoutineWork's load (ldr r5) before lsls r2, r2, #1 and the add into the event
 // work; the native issues it after them. Adopted in 573088529f, when it

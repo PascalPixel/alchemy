@@ -1,8 +1,17 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 4 of 177: the velocity
-// array's address, which the native builds after the cosine call in each pass
-// and the draft hoists out of the loop (also as a goto loop); alchemy permute
-// (5 to 6 minutes) and an empty asm or one-pass block after any one statement
-// do not move it.
+// Near miss, differ 4 of 177 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16), which the native builds after the cosine call in
+// each pass and the draft hoists out of the loop. Here gcse's PRE hoists it
+// (PRE/HOIST: edge (0,1) in the gcse dump) and global gives the hoisted pseudo
+// r6; the native's place, at the first use after the loop label and kept in r6
+// across the sine call, is what reload leaves for an unallocated pseudo equal
+// to sp + 16, so the native's pseudo was likely never given a register. ☀️'s
+// twin compiles with the address hoisted too. Tried today (all 4 unless
+// noted): velocity as a struct Vector3, through a local pointer, as
+// *velocity, ++i in the loop test; i unpinned as a do or for loop (16: i and
+// the options pointer trade r8 and sl, the address still hoisted); i pinned
+// in a for loop (10). Earlier (26 October): alchemy permute (5 to 6 minutes)
+// and an empty asm or one-pass block after any one statement do not move it;
+// a goto loop hoists it as well.
 // Draft, differ 10 of 177 (was 22): written from the listing (its ☀️ twin is
 // VenusLighthouse_LandWithRadialDust in scene/venus_lighthouse.c, without
 // the random terms). i pinned to r10 gives the

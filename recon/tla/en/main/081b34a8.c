@@ -1,3 +1,13 @@
+// Near miss, differ 6 of 1016 (tla-en, 2026-10-30), no device: the two
+// swaps described below, both sched2 ranking. After Task_ResetAll the
+// gRenderOamEnabled store (priority 1) waits behind the loop constants'
+// literal loads (priority 3, a load ranked a cycle slower) and count's zero
+// (2), where the native stores it as soon as its address is loaded; in the
+// sparks' draw call the spilled draw-table address reload (priority 7)
+// issues before the first stack argument's store (6), where the native
+// stores first. Tried (2026-10-30): gRenderOamEnabled = 0 after count = 0
+// or j = 0 (6), k = 0 apart from its loop (6), j = 0 before count = 0 (17);
+// five more minutes of permute, 4,106 candidates, none below 6.
 // Draft, differ 8 of 1016 (tla-en): Lucky Wheels, The Broken Seal's matched
 // LuckyWheels_Run (games/tbs/src/field/lucky_wheels.c) on this game's
 // heap slots (sheet 100, canvas 96, effect work 92, wheel work 180), with a

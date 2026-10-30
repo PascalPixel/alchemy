@@ -1,10 +1,21 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 94; left: the sprite's
-// priority byte loads before the radius store. Read and written through a
-// signed char pointer, the load follows the store (the store and the bitfield
-// are in unrelated alias sets) but still precedes the zero's copy out of r8.
-// Draft, differ 2 of 94 under -mthumb-slow-loads: adopted in ab36ea7bce and
-// exact under the old options; with the new option it no longer compiles
-// exactly, so it is back on its listing.
+// Near miss, differ 2 of 94 (tla-en, 2026-10-30): the sprite's priority byte
+// (ldrb r2, [r6, #9]) loads before the radius store; the native loads it after
+// the store and after the zero's copy out of r8 (mov r3, r8). The sched2 dump
+// says why: the load opens a read-modify-write of that byte, so
+// -mthumb-slow-loads's read-modify-write exception gives it no wait after the
+// store; the native's order needs that wait (a cost of 2 from the store, so the
+// zero's copy issues first). Unaliased (as here) the load ties the store and
+// the copy on priority and wins on its three dependants; read and written
+// through a signed char pointer it follows the store but still precedes the
+// copy (class 3 against the copy's anti dependence). Tried 2026-10-30: the
+// two sprite stores swapped (6), the radius held in a temporary and stored
+// after the frame byte (6), the byte rewritten through u8 (21). The random
+// value needs no pin and the frame count no __umodsi3 wrapper: written as
+// overlay 6a5's Func_020004c8 (resource_6a5_c_020004c8.c), the same function,
+// both differ 2 as before.
+// History: adopted in ab36ea7bce and exact under the old options; with
+// -mthumb-slow-loads (2026-10-26) it no longer compiles exactly, so it is back
+// on its listing.
 #include "types.h"
 #include "field_event.h"
 #include "flag_call.h"
@@ -30,7 +41,6 @@ struct OrbitEffect {
 extern u32 gFrameCount;
 extern u32 gData_02003214[];
 
-u32 __umodsi3(u32 a, u32 b);
 struct FieldActor *Actor_GetById(s32 id);
 u32 Random16Far(void);
 s32 Math_Sine(u32 angle);
@@ -39,11 +49,12 @@ struct OrbitEffect *Func_02002828(s32 type, s32 x, s32 y, s32 z);
 void Func_02002820(struct OrbitEffect *object, const void *script);
 void Func_02000148(struct FieldActor *self);
 
-static inline struct OrbitEffect *CreateOrbitEffect(s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarding through the inline evaluates the position before the
-   * effect type; called directly, the type's second half comes before the z
-   * load (differ 2). */
-  return Func_02002828(0x2a0, x, y, z);
+static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
+                                                    s32 z) {
+  /* FAKEMATCH(wrapper): the effect created through an inline, which
+   * evaluates the position before the type; as a direct call of
+   * Func_02002828, 4 of 94 instructions differ in tla-en. */
+  return Func_02002828(type, x, y, z);
 }
 
 /// Every third frame, or every frame once flag 0x201 is set, starts a particle
@@ -53,22 +64,25 @@ void Func_020001a4(void) {
   struct OrbitEffect *effect;
   struct FieldSprite *sprite;
   s32 angle;
-  /* FAKEMATCH: the random value pinned to r2, where the native copies the
-   * call's result; unpinned it is shifted straight out of r0 (differ 2). */
-  register u32 random asm("r2");
 
-  if (Flag_IsSet(0x201) == 0 && __umodsi3(gFrameCount, 3) != 0)
+  if (Flag_IsSet(0x201) == 0 && gFrameCount % 3 != 0)
     return;
   center = Actor_GetById(23);
   if (Flag_IsSet(0x201) != 0) {
+    u32 random;
+
     random = Random16Far();
     effect = CreateOrbitEffect(
-        center->x, (s32)((u32)(random << 8) >> 16 << 16) + center->y - 0x1c0000,
+        0x2a0, center->x,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y - 0x1c0000,
         center->z);
   } else {
+    u32 random;
+
     random = Random16Far();
     effect = CreateOrbitEffect(
-        center->x, (s32)((u32)(random << 6) >> 16 << 16) + center->y - 0x1c0000,
+        0x2a0, center->x,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y - 0x1c0000,
         center->z);
   }
   if (effect != 0) {

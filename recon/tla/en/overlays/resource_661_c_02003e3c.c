@@ -1,13 +1,23 @@
-// Draft, differ 2 of 93 (was 22): sets up one rising platform entry (timer,
-// limits in order, a 360-frame period) unless flag 0x109 is set, and spawns
-// its rider object. Measured: the work pointer as a local keeps the entries'
-// offset apart from the table address (adds r5, r3, #4), the swap saves the
-// low limit, and the height and max stores sit where the native's allocation
-// follows (alchemy permute found the last). Left: the native builds the
-// priority byte's address (adds r1, r6, #0) after the collision byte's store,
-// as Aqua Rock's Func_02002020 does; a one-pass block around that store, as
-// there, moves the halfword stores before it (6), and with the stores
-// reordered around it the allocation changes (25).
+// Near miss, differ 2 of 93 (tla-en, 2026-10-30; was 22): sets up one rising
+// platform entry (timer, limits in order, a 360-frame period) unless flag
+// 0x109 is set, and spawns its rider object. Measured: the work pointer as a
+// local keeps the entries' offset apart from the table address (adds r5, r3,
+// #4), the swap saves the low limit, and the height and max stores sit where
+// the native's allocation follows (alchemy permute found the last). Left: the
+// native builds the priority byte's address (adds r1, r6, #0) after the
+// collision byte's store, as Aqua Rock's Func_02002020 does. In sched2 the
+// copy ranks 7 and the store 6: the priority byte's load opens a
+// read-modify-write, so -mthumb-slow-loads's exception gives it no wait after
+// the collision store (cost 1, not 2); with the wait the store would rank 7,
+// tie the copy and win on its three dependants, the native's order. A
+// one-pass block around that store, as there, moves the halfword stores before
+// it (6); an empty asm after it, the same (4). Tried 2026-10-30: with the
+// height and max stores moved after the barrier the limits trade registers
+// (low takes r7: high's live range now outlasts low's, 43 insns against 35):
+// height alone 20, max alone 25, both 23, both after the priority byte 27,
+// with min moved down too 33; under a one-pass block 22 and 25; permute 4
+// minutes over both statement orders around the barrier (13,800 candidates)
+// found nothing below 23.
 #include "types.h"
 #include "actor.h"
 

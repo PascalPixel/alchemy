@@ -1,5 +1,16 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 138 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
+// Near miss, differ 2 of 138 (tla-en, 2026-10-30): one reordered row in the
+// entry block, instruction order only. The native stores the leader to its
+// stack slot (str r1, [sp, #0]) right after building 4, before mov sl, r3;
+// here it follows adds r6, r0, #0. In the sched2 dump the store is a leaf
+// of that block with priority 1, so it waits behind every other ready insn
+// (sl = r3 has priority 2); the native's order fits a schedule in which a
+// store costs 3 cycles, as the near misses of Func_08043cd8 and
+// Func_0811df70 do, where this compiler gives it 1: likely a compiler
+// question. Tried 2026-10-30, none closer (2 each): work and the leader
+// assigned after the declarations, the leader read after i = 0, the leader
+// as ((struct ArcObject **)work)[4], objects declared first. Five minutes
+// of permute (47,000 candidates) found nothing closer. No empty asm before
+// any one statement lowers it (2026-10-26).
 // Near miss, differ 8 (four reordered rows, same instructions): the twin of The
 // Broken Seal's BattleEffect_SpawnDescendingArcParticles with this game's sprite
 // layout (resource 16, active 17, animation 26) and tile slot (0x710). The

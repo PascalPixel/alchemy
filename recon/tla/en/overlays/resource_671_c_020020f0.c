@@ -1,7 +1,14 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 4 of 198: the gMainRoutineWork
-// load at the start, where the native issues a load one slot later after a
-// store, where alchemy-gcc issues it at once; alchemy permute (5 to 6 minutes)
-// and an empty asm or one-pass block after any one statement do not move it.
+// Near miss, differ 4 of 198 (tla-en, 2026-10-30): the opening. The native
+// issues ldr r3 (gData_02005af0), adds r5, r0, ldr r6 (gMainRoutineWork), str
+// r5, then the scene offset's movs r1, #240; sched2 here ranks the pool load of
+// gMainRoutineWork at 8 against the direction copy's 7 (-mthumb-slow-loads adds
+// a cycle to every load's critical path), and the store (6) below the offset's
+// movs (7), so it issues ldr r6 second and the store after movs r1. The
+// native's order needs the copy at or above the pool load and the store at or
+// above the offset; no plain C found changes those priorities. Overlay 659's
+// Func_02000624 shows the same pool-load ranking. Earlier (26 October):
+// alchemy permute (5 to 6 minutes) and an empty asm or one-pass block after any
+// one statement do not move it.
 // Draft, differ 4 of 198: stores its argument and makes each room's calls by
 // gMainRoutineWork.scene. Its Func_02005674 calls go through an inline that keeps
 // each call's own constants, as ☀️'s scene layer does (differ 96 called

@@ -1,43 +1,35 @@
-// Draft, differ 2 of 214: ⚓️'s Effect_Spawn as overlay 6b0 links it after
-// field/field_effect/move.c, the twin of ☀️'s EFFECT_SPAWN with party actor 0,
-// default type 285 and the sprite priority both written and set. Left: after
-// the mode call the native loads the script table's address before it copies
-// the flags from sl (ldr r2, =gData_02003840; mov r3, sl); the draft copies
-// first. sched2 ranks the copy one above the table's reload (61 against 60),
-// and the table's pseudo, shared with the scale-to-target block by cse and
-// again by cse2, is never allocated. Measured: a script local (11), a table
-// pinned to r2 (8), one-pass blocks around the mode or script call (2 or 4), a
-// barrier after the table (32), index forms (2 or 34); alchemy permute 7
-// minutes found nothing below 2. The sprite view with an s32 member makes the
-// priority store alias the options read, as the native's two reads need; the
-// one-pass block around it is alchemy permute's (6 to 2).
+// Matches: differ 0 of 214 (tla-en, 2026-10-30); its literal pool's three
+// words (gData_02003840, the update hook, 0xffff0000) agree with the
+// listing's. ⚓️'s Effect_Spawn as overlay 6b0 links it after
+// field/field_effect/move.c: games/tla/src/field/field_effect/spawn.c's
+// EFFECT_SPRITE_PRIORITY form word for word, except that the party is actor 0
+// (Actor_GetById(0)) where spawn.c reads gMainRoutineWork.currentOwner; it
+// matches with or without spawn.c's Effect_Create wrapper, so it is written
+// without. Adopting it through spawn.c needs only a way to name the party.
+// Earlier: the draft read the velocity as velocityX..Z, which the header now
+// spells velocity.x..z; with that fix its own form (the sprite priority set
+// through a SpriteView in a one-pass block with the priority call) also
+// measured differ 0, and 4 without the block.
 #include "types.h"
-#include "field_effect.h"
+#include "main_routine_work.h"
 #include "field_sprite.h"
+#include "field_effect.h"
+#include "fixed_math.h"
 
-struct SpriteView {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[10];
-  s32 unk14;
-};
-
+extern struct FieldEffect *Actor_GetById(s32 id);
+extern struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+extern void Func_020032e0(struct FieldEffect *effect, s32 mode);
+extern void Func_020032e8(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02003840[];
-
-struct FieldActor *Actor_GetById(s32 id);
-struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Func_020032e0(struct FieldActor *object, s32 mode);
-void Func_020032e8(struct FieldActor *object, const void *script);
-void Actor_SetSingleChildFlags(struct FieldActor *object, u32 value);
-void Actor_SetPartAttribute(struct FieldActor *object, s32 attribute);
-void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
+extern void Actor_SetSingleChildFlags(struct FieldEffect *effect, u32 flags);
+extern void Scene_SetActorSpritePriority(struct FieldEffect *effect,
+                                         s32 priority);
+extern void Actor_SetPartAttribute(struct FieldEffect *effect, s32 attribute);
 
 void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = Actor_GetById(0);
+  struct FieldEffect *party = Actor_GetById(0);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -51,17 +43,15 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Func_020032e0((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_020032e8((struct FieldActor *)effect,
-                gData_02003840[flags & EFFECT_SCRIPT_MASK]);
+  Func_020032e0(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Func_020032e8(effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  Actor_SetSingleChildFlags((struct FieldActor *)effect, 0);
+  Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
-  effect->velocityX = velocityX;
-  effect->velocityY = velocityY;
-  effect->velocityZ = velocityZ;
-  Scene_SetActorSpritePriority((struct FieldActor *)effect,
-                           party->sprite->priority);
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
+  Scene_SetActorSpritePriority(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -69,13 +59,16 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & 0xffff0000) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute((struct FieldActor *)effect, options->palette);
+    Actor_SetPartAttribute(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    /* FAKEMATCH(one-pass): the flag cleared in a once-only block; as a plain
+     * statement, 4 of 214 instructions differ in tla-en. */
     do {
-      ((struct SpriteView *)sprite)->priority = options->priority;
-      Scene_SetActorSpritePriority((struct FieldActor *)effect, options->priority);
+      effect->priorityFlags &= ~1;
     } while (0);
+    // Read as its low byte: (u8)options->priority orders the loads apart.
+    sprite->priority = *(u8 *)&options->priority;
+    Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
   if (start != 0) {
@@ -93,13 +86,13 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (targetX - Q16_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_020032e0((struct FieldActor *)effect, 1);
-    Func_020032e8((struct FieldActor *)effect, options->script);
+    Func_020032e0(effect, 1);
+    Func_020032e8(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;

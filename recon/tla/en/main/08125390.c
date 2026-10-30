@@ -1,10 +1,23 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 2 of 305 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, a register tie on each local after
-// each statement, each local pinned to each register, each call argument
-// copied into its argument register (pinned) at the call or up to three
-// statements before it, five minutes of permute; none reaches 0.
-// Near miss, differ 2 of 305: drains one of a unit's Djinn at random, a Set one
+// Near miss, differ 2 of 305 (tla-en, 2026-10-30), plain C: one row in the
+// prologue. The native copies unitId to r9 (mov r9, r0) after the stores
+// of all and shown; here it comes one slot ahead of them. In sched2 the
+// copy, the spill of all and the store of shown all have priority 1, the
+// same class and no dependents, so sched2 takes the lowest RTL order, the
+// parameter copy that assign_parms emits first; the native's order needs
+// that copy after shown's store. A local copy of the parameter written after
+// shown = 0 is propagated away (GCSE's copy propagation) and changes nothing.
+// Tried 2026-10-30 (differ): that local copy (2); shown initialized at its
+// declaration (2); !shown and shown = 1 as shown == 0 and shown++ (2); an
+// old-style definition (2); the outer loop as do while (155); alchemy
+// permute, 5 minutes, 3 jobs: nothing below 2.
+// Tried 2026-10-26, one edit at a time: an empty asm barrier after each
+// statement, each adjacent pair of statements swapped, a register tie on
+// each local after each statement, each local pinned to each register, each
+// call argument copied into its argument register (pinned) at the call or up
+// to three statements before it, five minutes of permute; earlier, the local
+// copy pinned to r9, behind an empty volatile asm or an asm copy, and u8,
+// u16, s8 and s16 parameters, four minutes of permute; none reaches 0.
+// The function drains one of a unit's Djinn at random, a Set one
 // when it has any (Djinn_IsActiveFar), else one Djinn_IsReadyFar accepts: up
 // to ten candidates are gathered and one picked. A Set Djinni goes on standby;
 // with announce the event says so (MsgDjinnOnStandby) and stops. Otherwise
@@ -13,11 +26,6 @@
 // (MsgDjinnDrained, the next message for an enemy; MsgAllDjinnDrained with
 // all, which repeats until none is left). The outer loop is a goto: as a
 // do-while, loop.c hoists both arrays' addresses and the stack frame grows by 8.
-// Left: the prologue's mov r9, r0 (unitId) one slot ahead of the stores of
-// all and shown; sched2 takes the parameter copy first by RTL order, where
-// the native has it after the shown store. Tried: a local copy of the
-// parameter after shown = 0 (plain, pinned to r9, behind an empty volatile
-// asm or an asm copy), u8, u16, s8 and s16 parameters, four minutes of permute.
 // The three message names are not in the catalogs yet: English 3220, 3222 and
 // 3223, the other editions to be checked.
 #include "types.h"

@@ -1,3 +1,16 @@
+// Near miss, differ 4 of 453 (tla-en, 2026-10-30): two reordered pairs,
+// instruction order only. After the target list is built the native stores
+// the actor's id ([sp, #12]) and copies the plan to r0 before it loads the
+// target's id (ldrb r2, [r2, #3]); here the ldrb comes first. Before the
+// first BattleParty_ListActorIds the native reloads the units pointer from
+// its stack slot (ldr r1, [sp, #4]) right after storing it and before
+// movs r0, #3; here it comes after. The sched2 dump explains both by
+// costs, not source: the native's order fits a store that the following
+// ldrb waits 3 cycles for (here 1: -mthumb-slow-loads' miss rule skips
+// zero-extending loads), and a reload of the stack slot just stored that
+// waits 1 (here 2: -mthumb-slow-loads' same-address rule); likely a
+// compiler question. Five minutes of permute (9,900 candidates) found
+// nothing closer.
 // Under -mthumb-slow-loads (26 October 2026): differ 6 of 453 in tla-en.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, each local pinned to each register,

@@ -1,3 +1,16 @@
+// Near miss, differ 2 of 240 (tla-en, 2026-10-30): the native stores the set
+// counter and the Djinn array's address to their stack slots before it builds
+// the zeroing loop's 0 in r2; here the 0 comes first. The sched2 dump shows
+// why: both spill stores carry an output dependence on the table count's
+// store, because reload gives a pseudo it turns into a stack slot alias set 0
+// (reload1.c: "We have no alias information about this newly created MEM"),
+// which conflicts with the count store's set 6, and rank_for_schedule puts an
+// output-dependent insn (cost 0, class 2) behind the independent zero (class
+// 3). With the slots' own alias sets, as alter_reg gives them, the stores
+// would be independent and plain RTL order gives the native's. Also tried
+// (2026-10-30): the zeroing loop counting down (29), set or done as the
+// stored zero (18 each), set = 0 before the count store (16), the loop before
+// set = 0 (34).
 // Under -mthumb-slow-loads (26 October 2026): differ 2 of 240 in tla-en.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, a register tie on each local after

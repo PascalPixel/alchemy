@@ -1,16 +1,16 @@
-// Draft, differ 4 of 521 under -mthumb-slow-loads: written from the listing
+// Matches: differ 0 of 521 (tla-en, 2026-10-30). Written from the listing
 // with the scene-layer wrappers of s253c.c, where it adopts after
-// Func_020027cc. Its Func_0200578c calls go through s253c.c's
-// Func_0200578c_ArgsFirst (the two values pinned to r1 and r2), which sets the
-// id last as the native does at all but the first call of the if branch (38 to
-// 24). The else branch's 0x6007 in a local set early fixes the event work
-// counter's registers (24 to 4, alchemy permute). Left: the if branch's
-// Func_0200578c(7, 256, 20) sets the id before the 20, and the speed 0xc000
-// finishes one row early (lsls r5 before adds r6); empty asms or one-pass
-// blocks after any one statement do not move either. Tried: call.h Call3, unprototyped, u8, s16 or u16
-// ids, an argument barrier in the wrapper (124) or in a do-while macro (67).
-// FieldMessage_ShowAtActor is unprototyped, as the native's argument order
-// needs (40 to 38).
+// Func_020027cc. Every Func_0200578c call, the if branch's first included,
+// goes through s253c.c's Func_0200578c_ArgsFirst (the two values pinned to r1
+// and r2), which sets the id last as the native does. The leader's id is read
+// into a local before the speed 0xc000 is set, so the speed's lsls r5 follows
+// the owner address's adds r6 as in the native (2 to 0). The else branch's
+// 0x6007 in a local set early gives the event work counter its registers.
+// FieldMessage_ShowAtActor is declared as field/event/msgprompt.c has it
+// (void *, prototyped); declared void, 2 differ. Earlier tries: call.h Call3,
+// u8, s16 or u16 ids, an argument barrier in the wrapper (124) or in a
+// do-while macro (67); empty asms or one-pass blocks after any one statement.
+// Its literal pool's eight words agree with the listing's.
 #include "types.h"
 #include "text/msg_ids.h"
 #include "actor.h"
@@ -116,21 +116,21 @@ static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
 
 extern u32 gData_02005c40[];
 
-static __inline__ void Func_0200578c_(s32 id, s32 a, s32 b) {
-  Func_0200578c(id, a, b);
-}
-
 static __inline__ void Func_02005764_(s32 id, s32 value) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005764(id, value);
 }
 
 struct Actor *Func_020057bc(void);
 void Event_FinishScreenTransition(void);
 void Func_0200581c(void);
-s32 FieldMessage_ShowAtActor();
+void *FieldMessage_ShowAtActor(s32 object, s32 message);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
+  /* FAKEMATCH(pin): the second and third arguments pinned to r1 and r2, so the
+   * id is set last; as calls through a plain forwarding inline, 16 of 521
+   * instructions differ in tla-en. */
   register s32 a_ asm("r1") = a;
   register s32 b_ asm("r2") = b;
 
@@ -144,10 +144,19 @@ void Func_02002a64(void) {
   Func_020056b4();
   Func_0200580c(0);
   Camera_SetBounds(-1, -1, -1, 0);
-  speed = 0xc000;
-  Actor_Slide(gMainRoutineWork.currentOwner, 174 << 17, 156 << 17, speed);
+  {
+    /* FAKEMATCH(temporary): the leader's id read into a local before the speed
+     * is set; as Actor_Slide(gMainRoutineWork.currentOwner, ...), 2 of 521
+     * instructions differ in tla-en. */
+    s32 owner = gMainRoutineWork.currentOwner;
+
+    speed = 0xc000;
+    Actor_Slide(owner, 174 << 17, 156 << 17, speed);
+  }
   Actor_Slide(7, 165 << 17, 156 << 17, speed);
   {
+    /* FAKEMATCH(temporary): actor 23's speed in a local; as the constant in the
+     * call, 4 of 521 instructions differ in tla-en. */
     s32 slow = 0xb000;
 
     Actor_Slide(23, 216 << 17, 156 << 17, slow);
@@ -166,7 +175,7 @@ void Func_02002a64(void) {
   Func_020057a4(0xcccc, 0x1999);
   /* FAKEMATCH(temporary): the else branch's 0x6007 set here in a local, which
    * gives the event work counter r3 and r2 as the native has them; as
-   * Func_02005764(0x6007, 0), 24 of 521 instructions differ in tla-en. */
+   * Func_02005764(0x6007, 0), 20 of 521 instructions differ in tla-en. */
   cue = 0x6007;
   Camera_SetBounds(196 << 17, -1, 146 << 17, 1);
   Func_020057b4();
@@ -178,7 +187,7 @@ void Func_02002a64(void) {
   Func_02005764_(0x4006, 0);
   FieldMessage_ShowAtActor(0x6005, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    Func_0200578c(7, 256, 20);
+    Func_0200578c_ArgsFirst(7, 256, 20);
     Actor_SetSpeed(7, 0x20000, 0x10000);
     Actor_Walk(7, 340, 296);
     Actor_Walk(7, 354, 296);

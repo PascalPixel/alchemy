@@ -1,8 +1,17 @@
-// Draft, differ 4 of 259 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
-// an empty asm after `item = Item_Get(code & 0x1ff);`, and finds nothing
-// closer.
+// Near miss, differ 2 of 259 (tla-en, 2026-10-30), with one one-pass block
+// around the work's read (tagged below; milder than the empty asm after the
+// item's fetch that also gave 2). Without it, 4 differ: the item's spill
+// (str r0, [sp, #0]) comes after 0x03000000's movs instead of before, the
+// movs winning on its class against the call (output- rather than
+// data-dependent) at equal priority. Left: the code's reload (ldr r2, [sp,
+// #8]) comes after the movs that starts 0x1ff instead of right after the
+// code's home store. -mthumb-slow-loads makes a load from the address just
+// stored wait a cycle, so the reload is not ready when the movs is; a barrier
+// before the mask lets the reload go first but carries the layers' copy (mov
+// fp, r1) and the zeroes up with it (differ 4 or 8), and a copy of the code
+// through a one-pass block or barrier does the same (8 to 10). The mask as a
+// local or macro, as 0x1ff & code, code % 0x200 or (s32)code changes nothing;
+// (u16)code gives 21; the zeroes after the fetch give 9 or more.
 // Draft, differ 20 of 259 (2026-10-18): only scheduling remains; ten times
 // the native loads (the code from its stack slot, the item, the work) between
 // the first two instructions of a split constant, where this builds the
@@ -37,7 +46,12 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   overlay = 0;
   count = 0;
   item = Item_Get(code & 0x1ff);
-  work = Ram_HeapSlots->glyphWork;
+  /* FAKEMATCH(one-pass): the work's read in a once-only block, which keeps
+   * the item's spill before the RAM base; as a plain statement, 4 of 259
+   * instructions differ in tla-en. */
+  do {
+    work = Ram_HeapSlots->glyphWork;
+  } while (0);
   if (work == NULL)
     return -1;
   if (layers & ICON_BASE) {

@@ -1,9 +1,19 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 2 of 180 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, a register tie on each local after
-// each statement, each local pinned to each register, each call argument
-// copied into its argument register (pinned) at the call or up to three
-// statements before it, five minutes of permute; none reaches 0.
+// Near miss, differ 2 of 180 (tla-en, 2026-10-30): one reordered row in the
+// reset loop, below. Why it stays (2026-10-30, from the sched2 dump): the
+// actor's ldrsh depends on the spill store before it (str r2, [sp, #4], in
+// the alias set every memory access shares) at a cost of 1, so it is ready
+// one cycle later and outranks caller-save's store (40 against 39, as it
+// feeds the call). The native's order needs that load to wait a second
+// cycle; arm_adjust_cost's slow-load rule would give 2, but it looks only at
+// a plain memory source, and a sign-extending load's source is a
+// sign_extend. Nothing in the C changes which load the argument needs, and a
+// shared alias set on the load would only tie it before the save store.
+// Under -mthumb-slow-loads (26 October 2026), tried, one edit at a time: an
+// empty asm barrier after each statement, each adjacent pair of statements
+// swapped, a register tie on each local after each statement, each local
+// pinned to each register, each call argument copied into its argument
+// register (pinned) at the call or up to three statements before it, five
+// minutes of permute; none reaches 0.
 // Near miss, differ 2 of 180 (one reordered row): The Broken Seal's
 // BattleStaging_RunUnitAction with its one-pass block, this game's heap slots and
 // Actor_SetMode for the dispatch argument. In the reset loop the native stores

@@ -1,4 +1,4 @@
-// Near miss, differ 4 of 376 (2026-10-25, under -mthumb-slow-loads).
+// Near miss, differ 2 of 376 (tla-en, 2026-10-30): one reordered row.
 
 // No twin: an unused ⚓️ function that no handler or caller reaches. Its
 // set-up is 0813eb70's (The Broken Seal's
@@ -8,15 +8,30 @@
 // frames, until A is pressed; B starts the fade again. It reads as a viewer
 // left in from development.
 
-// Left: two rows where alchemy-gcc issues a load one slot earlier than the
-// native: the background view's load before the effect argument's copy
-// (mov r2, fp), and the scroll's store before view->secondMode's.
+// Left: the background view's load (ldr r6, [r3]) is issued before the
+// effect argument's copy (mov r2, fp); the native copies first. Under the
+// slow-load rule the load would wait two cycles after the battle pointer's
+// spill store (str r1, [sp, #8]), but the rule takes it for a
+// read-modify-write, because work->effect's store a few rows later also
+// writes [r3] (another address in the same register); so it waits one and
+// outranks the copy (82 against 79). Both addresses are r3 in the native
+// too, so no spelling reaches it.
+// Measured (2026-10-30): the background id read through a union view keeps
+// view->secondMode's store before the scroll's (4 to 2: the union member's
+// alias set makes the read depend on both stores, so their tie goes to
+// source order); an empty one-pass block does the barrier's work (2 with
+// either, 4 without); five minutes of permute (nothing below 2).
+// Earlier: two rows where alchemy-gcc issued a load one slot earlier than
+// the native: the one above, and the scroll's store before
+// view->secondMode's.
 
 // Tried:
 // from the listing on 0813eb70's set-up                      46
 // the held keys read through a volatile (tagged): the native
 // reloads them for the second test                         36
 // under -mthumb-slow-loads, the two devices tagged below          4
+// the background id through a union view; the barrier
+// replaced by an empty one-pass block (2026-10-30)               2
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -49,8 +64,16 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #define TASK_PASS_FRAME 0xc80
 
-// The battle background's id.
-#define BACKGROUND(battle) (*(u16 *)(battle)->unk670)
+// The battle background's id, read through a union view of the bytes that
+// begin with it. A union's member has the union's alias set, which conflicts
+// with every store, so the read waits for view->secondMode's store as well
+// as the scroll's and the scheduler keeps the two stores in source order; as
+// *(u16 *)(battle)->unk670, 4 of 376 instructions differ in tla-en.
+union BattleBackgroundId {
+  u16 id;
+  u8 bytes[6];
+};
+#define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
 
 void BattleEffect_ClearActorTimers(void);
 void Func_08191530(struct BattleEffectArgument *effect);
@@ -96,9 +119,11 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
-  /* FAKEMATCH(barrier): the canvas pointer's spill is stored before the heap
-   * base starts; as plain C, 6 of 376 instructions differ in tla-en. */
-  __asm__ volatile("");
+  /* FAKEMATCH(one-pass): an empty one-pass block stores the canvas
+   * pointer's spill before the heap base starts; as the function without
+   * it, 4 of 376 instructions differ in tla-en. */
+  do {
+  } while (0);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
@@ -160,7 +185,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   // Fade the colours up a shade every two frames; B starts again, A ends.
   for (frame = 0; frame != 32096; frame++) {
     /* FAKEMATCH(volatile): the held keys are read afresh for each test, as
-     * the native reads them; as gInput.held, 14 of 376 instructions differ in
+     * the native reads them; as gInput.held, 12 of 376 instructions differ in
      * tla-en. */
     if (*(volatile u32 *)&gInput.held & 2)
       frame = 0;

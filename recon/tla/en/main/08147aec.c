@@ -1,4 +1,16 @@
-// Near miss, differ 10 of 1072.
+// Near miss, differ 4 of 1072 (tla-en, 2026-10-30): two stack loads that
+// alchemy-gcc issues one slot early: the argument effect's spill (ldr r2,
+// [sp, #64]) before alternate = 0 is stored, and the blitter pair's address
+// (ldr r1, [sp, #40]) before the spark draw's fifth argument is stored.
+// -mthumb-slow-loads ranks every load a cycle slower, so each load outranks
+// the store beside it; the native issues only its pool loads early. An empty
+// asm or a one-pass block after alternate = 0 closes the first but moves the
+// transfer value's add r2, sl (4 either way); alternate volatile, 267;
+// alternate set in an else or from the comparison, 42 and 198; the slot or
+// the actor read before alternate = 0, 200. The plain form measured 6 on
+// 2026-10-30 (10 on 2026-10-25, same source); its third row, Iwram_CopyWords's
+// pool load after the destination's shift, closes with the routine's address
+// in a temporary (tagged at the call).
 //
 // Measured 2026-10-25 under -mthumb-slow-loads: differ 10. Most rows left are
 // loads from memory or the stack that alchemy-gcc issues one slot earlier than
@@ -16,8 +28,9 @@
 // resource 647; two separate mode-0 tests at the teardown; the callback at
 // 0xc80.
 
-// Left: order only: about twenty single swaps of a load (the argument's
-// spill, a pooled constant, the work pointer) with the constant beside it.
+// Left earlier (before -mthumb-slow-loads): order only: about twenty single
+// swaps of a load (the argument's spill, a pooled constant, the work pointer)
+// with the constant beside it.
 
 // Tried (2026-10-15): The Broken Seal's layout, every local at the top,
 // 102 (the spill slots of dir, the alternate flag and focus come before
@@ -123,10 +136,18 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              work->sheet + STREAK_SHEET, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  if (mode == 1)
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-                    128);
+  if (mode == 1) {
+    const void *lightning =
+        Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
+    s32 (*copy)(void *destination, const void *source, s32 size) =
+        Iwram_CopyWords;
+
+    /* FAKEMATCH(temporary): the routine's address named once the palette's
+     * source is fetched, so its pool load leads the destination's shift; as
+     * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 6
+     * of 1072 instructions differ in tla-en. */
+    copy((void *)BG_PLTT, lightning, 128);
+  }
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);

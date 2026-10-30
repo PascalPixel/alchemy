@@ -1,10 +1,12 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 94; left: as overlay 69e's
-// Func_020001a4 (resource_69e_c_020001a4.c), the priority byte loads before the
-// radius store.
-// Draft, differ 2 of 94 under -mthumb-slow-loads: adopted in 90246a275d and
-// exact under the old options; with the new option it no longer compiles
-// exactly, so it is back on its listing. Overlay 69e's Func_020001a4
-// (resource_69e_c_020001a4.c) is the same function.
+// Near miss, differ 2 of 94 (tla-en, 2026-10-30): as overlay 69e's
+// Func_020001a4 (resource_69e_c_020001a4.c), the same function, the sprite's
+// priority byte loads before the radius store, where the native loads it after
+// the store and the zero's copy out of r8: -mthumb-slow-loads's
+// read-modify-write exception gives the load no wait after the store (that
+// draft's header has the sched2 reading and what was tried).
+// History: adopted in 90246a275d and exact under the old options; with
+// -mthumb-slow-loads (2026-10-26) it no longer compiles exactly, so it is back
+// on its listing.
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -21,10 +23,10 @@ void Func_02005764(struct Actor *object, const void *script);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02000090(void);
 
-static inline struct Actor *Actor_Create(s32 type, s32 x, s32 y,
-                                                  s32 z) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters order the
-   * arguments; a direct call loads the type first */
+static inline struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z) {
+  /* FAKEMATCH(wrapper): the effect created through an inline, which
+   * evaluates the position before the type; as a direct call of
+   * Func_0200576c, 4 of 94 instructions differ in tla-en. */
   return Func_0200576c(type, x, y, z);
 }
 

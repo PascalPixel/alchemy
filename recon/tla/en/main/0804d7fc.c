@@ -1,5 +1,17 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 147 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
+// Near miss, differ 2 of 147 (tla-en, 2026-10-30): one reordered pair in the
+// password case, instruction order only. The native moves the message to r0
+// (adds r0, r5) before it stores the upper window; here the store comes
+// first. In the sched2 dump the two tie (priority 70, three dependents
+// each), so the store goes first by insn order; the message's move is the
+// call's argument load, emitted at the call after every statement before
+// it, so no statement order puts it ahead. Tried 2026-10-30, none closer:
+// the window stored inside the call's argument, the call reading *upper
+// (2), the store through upper set before Window_Create (49, 51); for the
+// transfer case's pool load, without the one-pass block, a message
+// temporary (51 shared, 4 block-local), *upper as the argument, and
+// &MsgTransferMethodX[0] (4 each). Five minutes of permute (29,000
+// candidates) found nothing closer. No empty asm before any one statement
+// lowers it (2026-10-26).
 // Near miss, differ 4 of 147 (two reordered pairs), 2026-10-18: The
 // Broken Seal's Menu_SelectResourceLayout with the mode reduced to its low
 // bit, callbacks at 0x476 and the English edition's windows. Messages 4472
@@ -73,8 +85,9 @@ s32 Func_0804d7fc(s32 mode) {
     window = Window_Create(6, 0, 18, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
-    /* FAKEMATCH: the one-pass block issues the message's pool load ahead
-       of the two coordinates, as the native does (differ 6 without). */
+    /* FAKEMATCH(one-pass): an empty one-pass block after the window's store
+     * issues the message's pool load ahead of the two coordinates; as the
+     * call alone, 4 of 147 instructions differ in tla-en. */
     do {
     } while (0);
     Text_DrawMessage((s32)MsgTransferMethodX, (s32)window, 12, 4);

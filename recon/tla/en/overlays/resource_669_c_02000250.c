@@ -1,8 +1,13 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 2 of 170: the 0x100000 step
-// after the priority byte store, where the native issues a load one slot later
-// after a store, where alchemy-gcc issues it at once; the step is read plainly
-// again, since reading it as long no longer changes anything; alchemy permute (5 to 6 minutes) and an empty asm or
-// one-pass block after any one statement do not move it.
+// Near miss, differ 2 of 170 (tla-en, 2026-10-30): actor 15's y load (ldr r3,
+// [r0, #12]) right after the priority byte store, where the native builds the
+// 0x100000 step's movs r2, #128 first. The start now matches. Why: the native
+// makes the load wait a cycle after the strb; -mthumb-slow-loads' store rule
+// would, but its read-modify-write exception (the str back to [r0, #12] later
+// in the block) lets alchemy-gcc issue the load at once, and no plain C gives
+// the y store another address. Earlier: the step is read plainly again, since
+// reading it as long no longer changes anything; alchemy permute (5 to 6
+// minutes) and an empty asm or one-pass block after any one statement do not
+// move it.
 // Draft, differ 2 of 170: the scene setup of overlay 669, written from the
 // listing (its ☀️ twin by shape, CottageRoomsA_Initialize in
 // scene/cottage_rooms_a.c, is a different scene). Left: one scheduling

@@ -1,3 +1,13 @@
+// Near miss, differ 2 of 203 (tla-en, 2026-10-30): the packing loop's one
+// swap, below. In sched2 the block is the load of out, line++, stmia r0!,
+// the copy of r0 and its store to out's stack slot, pixel += 24 and the
+// branch; the copy (priority 2, two dependants) always beats pixel += 24
+// (priority 1), whatever the statement order, because alchemy-gcc makes the
+// stmia's written-back base ready the next cycle (store1, latency 1). The
+// native puts an independent instruction between such a stmia and the copy
+// of its base wherever one is ready (also 080ebf94 and 08104ef8), as a
+// written-back base ready a cycle later would: the compiler's model, not the
+// C.
 // Draft, differ 2 of 203 in tla-en under -mthumb-slow-loads (2026-10-26). No
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).

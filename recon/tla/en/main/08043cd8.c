@@ -1,8 +1,25 @@
-// Draft, differ 10 of 749 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 8 with
-// an empty asm after `summaryDirty = 0;`; the volatile reads made plain, and
-// finds nothing closer.
+// Near miss, differ 10 of 749 (tla-en, 2026-10-30): two spill stores the
+// native issues earlier, instruction order only. After the file list window
+// is made the native stores the name pointer (save + 0x303c, [sp, #20])
+// before it finishes building 0x3058; in the redraw, it stores the cleared
+// redraw flag ([sp, #12]) right after copying the selected file, before it
+// shifts 0xc0 into 0x3000. The draft is now device-free: the casts that made
+// gInput.pressed volatile here are gone, since struct InputState declares
+// pressed volatile (the same instructions either way). The sched2 dump shows
+// why no reshaping reaches the redraw's order: there the flag's store has
+// priority 5 and 0xc0's move 8, yet the native issues the zero for the store
+// first; the native's rows all fit a list schedule in which the ldrb after
+// the store waits 3 cycles for it, where -mthumb-slow-loads charges 1 (its
+// miss rule skips zero-extending loads), so this is likely a compiler
+// question. Tried 2026-10-30, none closer: summaryDirty as u32, u8 or s8
+// (10, unchanged), or declared first or last (66, 22); the summary pointer
+// set before the window or after the fill (16), or stepped first (20); a
+// summary pointer for the redraw (526).
+// Earlier (2026-10-26): differ 10 under -mthumb-slow-loads. A device search
+// (each statement followed by an empty asm or a one-pass block, wrapped in
+// one, or swapped with the next, kept when it helps) reaches 8 with an empty
+// asm after `summaryDirty = 0;`; the volatile reads made plain, and finds
+// nothing closer.
 // Near miss, differ 14 of 749: the save file menu, The Broken Seal's
 // SaveMenu_SelectSlot with this game's modes: 1 skips files whose send flag
 // is set, 4 files with no flag count, 5 files whose send flag is clear and 6
@@ -257,13 +274,11 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
                (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
                (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
-      /* FAKEMATCH: the native reads the pressed keys again for each test;
-       * read plainly the second test reuses the first load (differ 26). */
-    } else if (((volatile struct InputState *)&gInput)->pressed & 2) {
+    } else if (gInput.pressed & 2) {
       Sound_PlayFar(113);
       result = -1;
       break;
-    } else if (((volatile struct InputState *)&gInput)->pressed & 1) {
+    } else if (gInput.pressed & 1) {
       Sound_PlayFar(112);
       result = selectedFile;
       break;

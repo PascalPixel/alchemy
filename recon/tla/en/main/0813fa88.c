@@ -1,4 +1,23 @@
-// Near miss, differ 2 of 280 as plain C (2026-10-25, under -mthumb-slow-loads).
+// Near miss, differ 2 of 280 (tla-en, 2026-10-30), plain C: one row in the
+// prologue. The native stores the canvas pointer to its stack slot (str r0,
+// [sp, #4]) before it starts the heap base for the battle and view reads
+// (movs r3, #192); here the base's movs comes first. In sched2 both have
+// priority 53 after the canvas call: the spill reaches the battle load in
+// two cycles (a store the load may read), the base in two (movs, lsls).
+// The spill depends on the call's result and the movs only on its clobber
+// of r3, so the last-scheduled-insn class test prefers the movs. A barrier
+// after the allocation puts the spill first but cuts the dependences that
+// keep lsls r1, r1, #7 ahead of the work's copy (mov r9, r0), so that row
+// moves instead.
+// Tried 2026-10-30 (differ): a one-pass block around the canvas
+// allocation, an empty one after it, an empty asm (volatile or not) after
+// it, asm after both allocations, an empty one-pass block after the
+// allocation and before the reads (2 each, the work's copy moving); a
+// one-pass block around the battle and view reads (4), around both
+// allocations (6), around the work's allocation with an asm after the
+// canvas's (6); the view read before the battle read (17); the reads before
+// the canvas allocation (12); alchemy permute, 5 minutes, 3 jobs: nothing
+// below 2.
 
 // Twin: The Broken Seal's BattleEffect_StartElementStreaks, the start of the
 // light-streak backdrop the scenes raise behind the battle (BattleEffect_EndElementStreaks,
@@ -9,16 +28,12 @@
 // the streaks are halved into VRAM each frame (BattleEffect_TransferHalvedCanvas) rather than
 // through the canvas transfer.
 
-// Left: one row in the prologue. The native stores the canvas pointer to its
-// stack slot before it starts the heap base for the battle and view reads;
-// here the base's movs comes first.
-
 // The other eight rows were three values the native loads from the pool
 // before it starts their register's address (BLDCNT, BG2CNT, BG2PA), once
 // held by pins behind barriers; under -mthumb-slow-loads plain C loads them
 // as the native does.
 
-// Tried:
+// Tried before 2026-10-30:
 // from the listing, on canvas.c's set-up                     10
 // BG2CNT's value set in a one-pass block: it becomes a split
 // constant (movs, lsls, adds)                              29

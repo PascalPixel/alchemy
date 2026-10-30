@@ -1,3 +1,20 @@
+// Near miss, differ 6 of 783 (both functions; tla-en, 2026-10-30), with one
+// tagged empty asm (8 without it); measure with alchemy-devtools diff
+// 08122514.c 081224d8,08122514. Left, both scheduling: (1) failedChoices'
+// zero (movs r3, #0) and its spill store: the native builds the zero before
+// the unit's reload and stores it between needsChoice's and itemsAllowed's,
+// where sched2 here ranks it at 6 under the stores of 1 (7) and the reload
+// (8); (2) abilityId's copy to r9 for an item, ahead of the two request
+// stores here (all three priority 1, class 3, and the earlier insn wins) and
+// after them natively. Writing abilityId = item->actionId after both stores
+// puts the copy where the native has it, but item's pseudo (8 refs over 11
+// insns) then ranks under useItem's (24 over 42) in global allocation and
+// the two swap r5 and r6: 32; with only the command store before it, 6;
+// useItem's two ands as one expression, 81. Tried (2026-10-30): the opening
+// assignments in five orders and as separate statements (6 to 12; selection
+// = -1U first, 331), the inventory mask's operands swapped (6); on the
+// stores-first form, item and useItem declared in other orders (still 32).
+// alchemy-devtools permute cannot parse the nested function.
 // 2026-10-26: differ 6 of 783 (both functions). The summon search reads
 // each Djinni count through the definition (summon->djinnRequired[element]),
 // as The Broken Seal's action.c does, rather than through a pointer to the
@@ -329,8 +346,10 @@ select_again:
         request->command = COMMAND_SUMMON;
         Func_08123574(0, counts);
         summonIndex = Summon_ListLearnedFar(summons);
-        // An empty asm here (one barrier search, 2026-10-26) moves the
-        // summon count call's result copy as the native has it: 8 to 6.
+        /* FAKEMATCH(barrier): an empty asm after the summon count call
+         * (found by a barrier search, 2026-10-26), which places the call's
+         * result copy as the native has it; as without it, 8 of 783
+         * instructions differ in tla-en (with the nested Func_081224d8). */
         asm("");
         for (summonIndex--; summonIndex >= 0; summonIndex--) {
           summon = SummonDefinition_Get(summons[summonIndex]);

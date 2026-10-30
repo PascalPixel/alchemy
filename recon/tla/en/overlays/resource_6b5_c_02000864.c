@@ -1,11 +1,17 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 329; left: the payload's
-// 0x43 store, as recorded below; no single barrier or one-pass block after any
+// Near miss, differ 2 of 329 (tla-en, 2026-10-30): after the bound's movs r4,
+// #217 the native stores 0x43 (strh r3, [r2, #6]) before lsls r4; here sched2
+// ranks the bound's lsls r4 at priority 2 against the store's 1 (the store has
+// nothing after it in its block), so the 0x43 store falls after the other two.
+// The battle rule is now a plain store: the one-pass block before it no longer
+// changes anything (2 either way). Five more minutes of alchemy permute,
+// randomizing only the payload and copy statements, found nothing below 2.
+// Earlier (2026-10-26): no single barrier or one-pass block after any
 // statement changes it.
 // Draft of overlay 6b5's Func_02000864 (0x02008864), ported from ☀️'s
 // EV10_TOUCH: differ 4 of 329. Devices in place, each measured: the 0x173
 // test's result kept while the scene symbol is loaded once for both
-// branches; a one-pass block loading gMainRoutineWork before the battle rule's
-// offset; the copy loop as a goto loop with its bound in a variable and the
+// branches; (then) a one-pass block loading gMainRoutineWork before the battle
+// rule's offset; the copy loop as a goto loop with its bound in a variable and the
 // byte read ahead of the increments (as ☀️'s do/while or a for loop, loop.c
 // hoists and strength-reduces the destination, differ 18-20). Left: after
 // the payload's first store the native loads 0x43 and stores it before the
@@ -173,6 +179,9 @@ s32 Func_02000864(void) {
       Actor_SetSpeed(4, 0x8000, 0x4000);
       Actor_WaitForMoveById(4);
     }
+    /* FAKEMATCH(temporary): the flag test's result kept while the scene
+     * symbol is loaded once for both branches; as if (Flag_IsSet(0x173)), 4 of
+     * 329 instructions differ in tla-en. */
     set = Flag_IsSet(0x173);
     scene = (s32)&SceneId_LinkLobby;
     if (set) {
@@ -182,13 +191,7 @@ s32 Func_02000864(void) {
       Party_SetFields1eeAnd1f0(scene, 10);
       Party_SetFields1f2And1f4(scene, 11);
     }
-    {
-      struct MainRoutineWork *party = &gMainRoutineWork;
-
-      do {
-      } while (0);
-      party->battleRule24b = 4;
-    }
+    gMainRoutineWork.battleRule24b = 4;
     Func_02001a8c(1, 1);
     table = (u16 *)gSerialTransfer.payload;
     table[0] = 0x45;
@@ -196,6 +199,8 @@ s32 Func_02000864(void) {
     table[2] = 0x45;
     table[3] = 0x43;
     {
+      /* FAKEMATCH(temporary): the copy's bound in a variable; as i <= 0x7c7, 16
+       * of 329 instructions differ in tla-en. */
       u32 last = 0x7c7;
 
       i = 0;

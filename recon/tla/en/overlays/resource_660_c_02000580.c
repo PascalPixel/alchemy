@@ -1,3 +1,9 @@
+// Near miss, differ 2 of 158 (tla-en, 2026-10-30): the same row as overlay
+// 65e's Func_02000340 (resource_65e_c_02000340.c, whose header gives sched2's
+// priorities): -mthumb-slow-loads counts the load of gMainRoutineWork's address
+// one cycle above its plain latency, so it ties lsls r2 and wins on its
+// dependents; the native has it at the plain latency, after the add into the
+// event work. No reshaping of the store or of the reads after it moves it.
 // Draft, differ 2 of 158 under -mthumb-slow-loads: the compiler issues
 // gMainRoutineWork's load (ldr r5) before lsls r2, r2, #1 and the add into the event
 // work; the native issues it after them, as in overlay 65e's Func_02000340.

@@ -1,3 +1,16 @@
+// Near miss, differ 2 of 266 (tla-en, 2026-10-30), through two tagged
+// devices: the -1 result's negs issues before mov fp here and after it
+// natively (sched2: the same priority, 37, and the earlier insn wins).
+// The Broken Seal's twin, Field_UseItem (games/tbs/src/field/
+// field_sequence/items.c), writes the plain itemId = ACT_ITEM_ID(packedItem)
+// and compiles to the native's form there: the pool-loaded 0x3ff moved into
+// fp, then mov r2, fp; and; mov fp, r2. Here the same C is 12: the split
+// constant (*thumb_movsi_split_const) reaches fp through an output reload in
+// a spill register, and the and's reload inherits that register instead of
+// reading fp. Tried (2026-10-30), all without devices: arg & 0x3ff, 0x3ff &
+// arg, arg then &= 0x3ff, a mask local, u32, % 0x400 (12 each); the result or
+// the actor computed between the two steps (16 to 59); a label (12), a
+// one-pass block (14), asm("") without operands (16), a volatile mask (67).
 // Under -mthumb-slow-loads (2026-10-26): differ 2 of 266 in tla-en, instruction
 // order only. No empty asm before any one statement lowers it.
 // Draft, differ 6 of 266, from the listing: an item used from the field
@@ -73,6 +86,9 @@ void Inventory_RemoveFar(s32 actor, s32 slot);
 
 s32 Func_080ce0ac(s32 arg, s32 slot) {
   s32 result;
+  /* FAKEMATCH(pin): the item id fixed to r11, where the native keeps it; as
+   * a plain s32 local (the empty asm kept), 48 of 266 instructions differ in
+   * tla-en. */
   register s32 itemId asm("r11");
   s32 actor;
   struct ItemUnit *obj;
@@ -86,6 +102,9 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
 
   result = -1;
   itemId = 0x3ff;
+  /* FAKEMATCH(barrier): an empty asm through the item id between the mask
+   * and the and, so the and reloads it from r11; as itemId = arg & 0x3ff
+   * (the pin kept or not), 12 of 266 instructions differ in tla-en. */
   asm("" : "+r"(itemId));
   itemId &= arg;
   actor = (arg >> 10) & 0xf;

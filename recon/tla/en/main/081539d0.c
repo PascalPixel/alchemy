@@ -1,17 +1,27 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 272, one row. The
-// native copies the frame counter's zero to sl (mov sl, r5) after the
-// record's three stores, here before them. Tried (differ): the record set
-// before the transfer mode (51), frame = 0 apart from its loop (2), the
-// record's stores in other orders (4, 6), the record declared later (6) or
-// as struct EffectPosition (2), frame declared first (2), the loop as do
-// while (2); an empty asm after the record's stores or a one-pass block
-// around frame = 0 or record[2] puts the copy after the stores but moves
-// the transfer value's offset and the 0xc80 shift before the Task_Add call
-// (4); an asm before the call as well (6); alchemy permute 5 minutes,
-// 2 jobs (nothing below 2).
+// Near miss, differ 2 of 272 (tla-en, 2026-10-30): one row. The native
+// copies the frame counter's zero to sl (mov sl, r5) after the record's
+// three stores, here before them. In sched2 the copy and the three stores
+// all have priority 1 once the record's address is spilled (str r2,
+// [sp, #12]); the stores have an output dependence on that spill (its slot
+// has alias set 0, so it may alias them) and the copy has none, so the copy
+// wins the last-scheduled-insn class test. The native's order needs the
+// stores free of the spill, or the copy tied to it.
+// Tried 2026-10-30 (differ): the empty asm after the stores, the one-pass
+// block around frame = 0 or around record[2] (4 each, as before: the
+// barrier also cuts the dependences that order the transfer value's offset
+// and the 0xc80 shift before Task_Add); the three stores in one one-pass
+// block (6); an empty one-pass block before record[2] (39); the record as
+// an initialized array in a block before the loop (88); register-tied asm
+// with a memory clobber on frame or after the stores (33 to 125);
+// alchemy permute, 5 minutes, 3 jobs, from this draft: nothing below 2.
+// Earlier (2026-10-26, differ): the record set before the transfer mode
+// (51), frame = 0 apart from its loop (2), the record's stores in other
+// orders (4, 6), the record declared later (6) or as struct EffectPosition
+// (2), frame declared first (2), the loop as do while (2); an asm before
+// the call as well (6); alchemy permute 5 minutes, 2 jobs (nothing below
+// 2).
 
-// Near miss of Func_081539d0, an unused effect (no caller): differ 14 of
-// 272 (draft 272).
+// Func_081539d0 is an unused effect (no caller).
 
 // Twin: The Broken Seal's BattleEffect_RunSwirlingStars (effect.c), call for
 // call. The Lost Age reads the effect from its argument, takes its heap
@@ -19,14 +29,15 @@
 // ResourceId_StarDotSheet is row 0x14f of directory.s (asset
 // BattleEffect_StarDotSheet), not yet named there.
 
-// Left: seven reordered pairs, each the native placing a load one row
+// Before -mthumb-slow-loads (2026-10-15, differ 14) seven reordered pairs
+// were left, each the native placing a load one row
 // earlier (the particle base before the blitter call, the second loop's
 // particle base, the cell offset table, the camera word) or a use of a
 // loaded word one row later (frame's copy to r10 after the record's
 // stores, the negations of the star's coordinates after the stores of the
 // previous sums). Each follows from a load latency of 3 in sched2.
 
-// Tried: the particle pointer set before the blitter call (differ 32, r5
+// Tried then: the particle pointer set before the blitter call (differ 32, r5
 // and r6 trade); alchemy permute, 6 minutes, 2 jobs (2026-10-15): nothing
 // below 14 (its best weighted candidate differs 20).
 

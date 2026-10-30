@@ -1,17 +1,22 @@
-// Draft, differ 2 of 181 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Near miss, differ 8 of 181: ☀️'s FieldObject_Create (games/tbs/src/field/
-// field.c) on The Lost Age's object, which also clears the four words at its
-// end. Left: the native loads the halfword zero for collisionFlags from the
-// pool right after the speedLimit store (sched2 here ranks it 6 against the
-// step zero's 7 and takes it seven rows later), which also moves the pool one
-// branch earlier (two pool offsets); and it stores the second sprite slot's
-// address after the first slot (add r2, sl one row later). Measured: the
-// same pin and barrier as the animationKind zero cannot hold it, as the
-// barrier would stop the 0x10000 and the motionFlags address the native
-// builds before the load; *entry = sprite; entry++; is the same as
-// *entry++.
+// Near miss, differ 2 of 181 (tla-en, 2026-10-30), with no device: one
+// reordered row. ☀️'s FieldObject_Create (games/tbs/src/field/field.c) on
+// The Lost Age's object, which also clears the four words at its end. Left:
+// in case 2 the native stores the first sprite (mov r3, r8; str r5, [r3])
+// before it steps entry (add r2, sl; mov r8, r2); here the add comes first.
+// In sched2 both are ranked 2 after the radius's strh; the step is
+// independent of the strh while the copy of entry into r3 is anti-dependent
+// on it (the strh reads r3), so the tie goes to the step. No memory or alias
+// set takes part, so no spelling of the store changes it.
+// Measured (2026-10-30): the pin and barrier on the animationKind zero are no
+// longer needed: as object->animationKind = 0 the zero still loads from the
+// pool (GAS assembles ldrh r3, .L as the same ldr) and nothing else moves
+// (2, as with them), so they are gone. Tried, all 2 or worse: entry = entry
+// + 1, entry[0] and &entry[1], (u8) on boxY, the radius kept in a local and
+// stored after the sprite (22), *entry++ = sprite before the radius (6);
+// five minutes of permute (nothing below 2).
+// Earlier (2026-10-26): no single empty asm, one-pass block, wrapping block
+// or swap of neighbouring statements brings it closer (device search);
+// *entry = sprite; entry++; is the same as *entry++.
 #include "types.h"
 #include "actor.h"
 #include "sprite_metadata.h"
@@ -44,14 +49,7 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
         object->animation = sprite;
         object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
       } else {
-        /* FAKEMATCH: the native loads the halfword zero from the pool before
-         * it addresses animationKind (differ 2 without the pin and barrier).
-         */
-        register u16 none asm("r3") = 0;
-
-        /* FAKEMATCH: the barrier of the pin above. */
-        asm volatile("" : "+l"(none));
-        object->animationKind = none;
+        object->animationKind = 0;
       }
       break;
     case 2:

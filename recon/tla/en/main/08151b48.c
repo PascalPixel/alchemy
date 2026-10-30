@@ -1,15 +1,25 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 6 of 519. Declared returning
-// s32, as nibble_pair.c defines it, BattleEffect_LoadBlitter gets r1 before
-// r0 at both calls (12 to 8); the tagged empty one-pass block stores the
-// argument before the RAM base (8 to 6). Left, two places: before the bolt
-// loop the native spills frame << 11 (str r2, [sp, #8]) before it copies the
-// zero to fp, here after; after count++ in the spark loop the native reloads
-// count (ldr r2, [sp, #16]) right after the variant, here just before the
-// compare, and the table address moves with it. Tried (differ): the angle's
-// operands in either order (6), bolt set before its loop (6), count set
-// after the angle (10), ++count or count = count + 1 in the test (6), the
-// table read first (8), count declared in the bolt loop (6), alchemy permute
-// 6 minutes, 2 jobs (nothing below 6).
+// Near miss, differ 2 of 519 (tla-en, 2026-10-30), with no device: one
+// reordered row. Left: before the bolt loop the native spills frame << 11
+// (str r2, [sp, #8]) before it copies the zero to fp (mov fp, r1, bolt = 0);
+// here after. In sched2 the two end their block ranked 1 each, neither
+// depending on the shift just issued and neither with a dependent, so the
+// tie goes to RTL order: gcse inserts frame << 11 at the end of the block
+// that sets bolt, after bolt = 0. Computing frame << 11 into a local before
+// the loop puts the store first but swaps its register and stack slot with
+// the zero's and the draw table's (16, declared in the function or in the
+// frame < 16 block; 31 initialized at that block's top, before the wipe;
+// with the 0x4000 added in, 218).
+// Measured (2026-10-30): the spark loop's count reload and the argument's
+// spill now match as written; the empty one-pass block that held the spill
+// is gone (2 without it, as with it). Tried: bolt set at the top of the
+// frame < 16 block (8), frame * 2048, the angle's factors swapped (2);
+// five minutes of permute, 2 jobs (best 16).
+// Earlier (2026-10-26), at differ 6: declared returning s32, as
+// nibble_pair.c defines it, BattleEffect_LoadBlitter gets r1 before r0 at
+// both calls (12 to 8). Tried then: the angle's operands in either order,
+// bolt set before its loop, ++count or count = count + 1 in the test, count
+// declared in the bolt loop (6), count set after the angle (10), the table
+// read first (8), six minutes of permute.
 
 // Near miss of BattleEffect_RunRay, effect kind 17.
 
@@ -99,12 +109,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   struct EffectPosition midpoint;
   s32 i;
 
-  /* FAKEMATCH(one-pass): an empty one-pass block keeps the argument's spill
-   * ahead of the RAM base, as the native stores it; as the function without
-   * it, 8 of 519 instructions differ in tla-en. */
-  do {
-  } while (0);
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  work =(struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
   xOffset = 0;

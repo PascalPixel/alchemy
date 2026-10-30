@@ -1,21 +1,24 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 4 of 174: the native issues
-// a load one slot later after a store, where alchemy-gcc issues it at once (two
-// sites; an empty asm after the sprite mode store fixes one); alchemy permute
-// (5 to 6 minutes) and a second asm or block does not move it.
-// Draft, differ 4 of 174: pushing a block through sand: on even frames a
-// dust effect rises at the block, thrown faster while a key is held, then the
-// block steps on and is pulled toward its cell centre across the push. Left:
-// the native loads gInput's address after the sprite store and before the
-// second test's mask (a one-pass block around the sprite store leaves 2).
+// Matches: differ 0 of 174 (tla-en, 2026-10-30), with one tagged one-pass block
+// after the sprite mode store (the remaining site the 26 October notes left).
+// Pushing a block through sand: on even frames a dust effect rises at the
+// block, thrown faster while a key is held, then the block steps on and is
+// pulled toward its cell centre across the push. gInput is read as
+// input.h's InputState (held at offset 0).
+// Earlier (26 October 2026, under -mthumb-slow-loads): differ 4 of 174, the
+// native issuing gInput's address load one slot later after a store, where
+// alchemy-gcc issues it at once (two sites); an empty asm after the sprite
+// mode store also matches, but the one-pass block is the milder device;
+// volatile on the sprite pointer or on the gInput read leaves 2; alchemy
+// permute (5 to 6 minutes) found nothing.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "input.h"
 
 #define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
 
 extern u32 gFrameCount;
-extern s32 gInput;
 extern u32 gData_020042f0[];
 
 struct Actor *Actor_GetById(s32 id);
@@ -56,12 +59,17 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         Func_02003fb8(dust, gData_020042f0);
         sprite = dust->animation;
         sprite->mode = 1;
-        if (gInput != 0) {
+        /* FAKEMATCH(one-pass): the loop note after the sprite store keeps
+         * gInput's address load after it; as the store alone, 2 of 174
+         * instructions differ in tla-en. */
+        do {
+        } while (0);
+        if (gInput.held != 0) {
           FIELD32(dust, 68) =
               Math_Cosine(((Random16Far() << 3) >> 16) << 14) + dx;
           FIELD32(dust, 76) =
               Math_Sine(((Random16Far() << 3) >> 16) << 14) + dz;
-          if (gInput & 2) {
+          if (gInput.held & 2) {
             FIELD32(dust, 68) += dx;
             FIELD32(dust, 76) += dz;
           }
@@ -81,14 +89,14 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
   }
   if (dx != 0) {
     object->x += dx;
-    if (!(gInput & 240)) {
+    if (!(gInput.held & 240)) {
       s32 z = object->z >> 16;
 
       object->z += ((8 - z % 16) << 16) >> 3;
     }
   } else {
     object->z += dz;
-    if (!(gInput & 240)) {
+    if (!(gInput.held & 240)) {
       s32 x = object->x >> 16;
 
       object->x += ((8 - x % 16) << 16) >> 3;

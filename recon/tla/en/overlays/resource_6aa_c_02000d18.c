@@ -1,11 +1,19 @@
-// Draft, differ 2 of 93 (was 116), rewritten from the listing: draws a sprite
-// (resource gData_020068a2's tiles) at the leader's cell on the ground, written
-// to the OAM entry Data_020068a4 when on screen and handed to Func_02004b80
-// with its depth; the same shape as the 69d family's light sprites
-// (resource_69d/02008e58.c). Left: scheduling: the native stores the second
-// word before it builds 0x400 for the third. Tried: the third word through tile
+// Near miss, differ 2 of 93 (tla-en, 2026-10-30; was 116), rewritten from the
+// listing: draws a sprite (resource gData_020068a2's tiles) at the leader's
+// cell on the ground, written to the OAM entry Data_020068a4 when on screen
+// and handed to Func_02004b80 with its depth; the same shape as the 69d
+// family's light sprites (resource_69d/02008e58.c). Left: scheduling: the
+// native stores the second word (stmia r2!, {r4}) before it builds 0x400 for
+// the third. In sched2, once the second word is complete both are ready; the
+// store ranks 3 (the third word's store, then the call) and movs r3, #128
+// ranks 5 (lsls, orrs r7, the third word's store, the call), so the constant
+// goes first. The native's order needs the store to rank at least as high, and
+// nothing in the C lengthens its chain. Tried: the third word through tile
 // |= 0x400 (2, or 12 earlier), a barrier between the two stores (2: it holds
-// back the call's argument), every single-statement move, permute 5 minutes.
+// back the call's argument, ldr r0, which the native loads before the second
+// word's or), every single-statement move, permute 5 minutes; 2026-10-30: the
+// call's argument taken into a local before the barrier (4: CSE shares one
+// literal load, copied to r2), a one-pass block around the second store (4).
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

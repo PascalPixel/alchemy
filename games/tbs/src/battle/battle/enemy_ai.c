@@ -153,11 +153,16 @@ select_again:
         // 1,018 bytes past the unit's inventory. For the first three enemies
         // that is the twelfth inventory slot of the enemy three places on,
         // which no enemy fills, so the item is the empty one and the enemy
-        // defends (MsgActorDefends); for the others it lies past the enemy
-        // units.
-        // XXX: what a fourth to sixth enemy's action shows; a Brigand or Rat
-        // Fighter (TARGET_STRATEGY_MOST_HP, item places) in such a place, out
-        // of items, would show it.
+        // defends (MsgActorDefends). For the others it lies past the enemy
+        // units: for the fourth and fifth in the 640 bytes Battle_Run takes
+        // for heap slot 11, which read 0 at every enemy's choice in the
+        // battles measured, and for the sixth in the sprite pool
+        // (HEAP_SLOT_SPRITES), the high half of a sprite's image link, 0 or
+        // the 0x0203 of an EWRAM address. Those name ITEM_000 or the
+        // Claymore, neither with an ability, so these enemies defend too
+        // (render probe enemy-slot-509-field). Of the enemies that come here,
+        // only a Rat Fighter stands that far along, fourth or fifth, in its
+        // formations with Apes, Grubs or Orcs.
         request->parameter = ABILITY_CANT_USE;
         return;
       }

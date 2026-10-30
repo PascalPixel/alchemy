@@ -1,17 +1,21 @@
-#ifndef CHARACTER_IDS_H
-#define CHARACTER_IDS_H
+#ifndef ALCHEMY_CHARACTER_IDS_H
+#define ALCHEMY_CHARACTER_IDS_H
 
 /// @file
 /// Character numbers, with each character's Japanese name.
 
-#define ISAAC 0 ///< Robin
-#define GARET 1 ///< Jerald
-#define IVAN 2  ///< Ivan
-#define MIA 3   ///< Mary
-#define FELIX 4 ///< Garcia
-#define JENNA 5 ///< Jasmine
-#define SHEBA 6 ///< Sheba
-#define PIERS 7 ///< Picard
+/// The characters, one for each row of gCharacter_DefinitionTable
+/// (character_table.c) in order; unit ids below ENEMY_ID_FIRST are these.
+enum CharacterId {
+  ISAAC, ///< Robin
+  GARET, ///< Jerald
+  IVAN,  ///< Ivan
+  MIA,   ///< Mary
+  FELIX, ///< Garcia
+  JENNA, ///< Jasmine
+  SHEBA, ///< Sheba
+  PIERS  ///< Picard
+};
 
 #define BATTLE_CHARACTER(no) (300 + (no)) ///< the character's battle sprite
 

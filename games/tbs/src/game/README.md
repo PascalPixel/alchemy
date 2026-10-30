@@ -105,7 +105,7 @@ cartridge, and the number of that row is the only name the code has for it.
 The Healing Ring costs 800 coins, heals like Cure when used, and is called
 `Healing Ring` on screen. Those facts sit in different places, the price in
 the item table and the name in the game's text, and what joins them is a
-number: the ring is item 265.
+number: the ring is item 265, `ITEM_HEALING_RING`.
 
 The tables have no column saying which item a row is: an item's number is
 its row, counting from 0. Every line of the game's text is a numbered

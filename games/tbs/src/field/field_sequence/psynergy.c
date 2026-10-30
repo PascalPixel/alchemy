@@ -5,7 +5,7 @@
 #include "../field_sequence_internal.h"
 
 /// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9), its
-/// user (bits 10 to 13; 15 for character 0) and ACT_PACKED to use it without
+/// user (bits 10 to 13; UNIT_NONE for ISAAC) and ACT_PACKED to use it without
 /// paying PP. Checks it can be used here (Reveal not on the World Map, Retreat
 /// where it is not blocked, after asking), pays its PP, then plays it
 /// between the scene's Psynergy triggers for what the leader faces:

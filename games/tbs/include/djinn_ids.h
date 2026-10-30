@@ -13,14 +13,24 @@
 
 /// Djinn, numbered as Field_RequestDjinnBattle and FLAG_DJINN_FIRST count them:
 /// DJINN_PER_ELEMENT to an element, in the order Venus, Mercury, Mars, Jupiter.
-/// A Djinni's English name is the message MsgDjinnName + its number.
+/// A Djinni's English name is the message MsgDjinnName + its number. The
+/// text names each element's last 13 numbers "=", and their rows of
+/// gDjinn_DefinitionTable hold only their abilities, which the text names "="
+/// too; they keep their numbers.
 enum DjinniId {
+  /// ★ Named from the game: "Flint" (MsgDjinnName)
   DJINNI_FLINT,
+  /// ★ Named from the game: "Granite" (MsgDjinnName)
   DJINNI_GRANITE,
+  /// ★ Named from the game: "Quartz" (MsgDjinnName)
   DJINNI_QUARTZ,
+  /// ★ Named from the game: "Vine" (MsgDjinnName)
   DJINNI_VINE,
+  /// ★ Named from the game: "Sap" (MsgDjinnName)
   DJINNI_SAP,
+  /// ★ Named from the game: "Ground" (MsgDjinnName)
   DJINNI_GROUND,
+  /// ★ Named from the game: "Bane" (MsgDjinnName)
   DJINNI_BANE,
   DJINNI_07,
   DJINNI_08,
@@ -35,12 +45,19 @@ enum DjinniId {
   DJINNI_17,
   DJINNI_18,
   DJINNI_19,
+  /// ★ Named from the game: "Fizz" (MsgDjinnName)
   DJINNI_FIZZ,
+  /// ★ Named from the game: "Sleet" (MsgDjinnName)
   DJINNI_SLEET,
+  /// ★ Named from the game: "Mist" (MsgDjinnName)
   DJINNI_MIST,
+  /// ★ Named from the game: "Spritz" (MsgDjinnName)
   DJINNI_SPRITZ,
+  /// ★ Named from the game: "Hail" (MsgDjinnName)
   DJINNI_HAIL,
+  /// ★ Named from the game: "Tonic" (MsgDjinnName)
   DJINNI_TONIC,
+  /// ★ Named from the game: "Dew" (MsgDjinnName)
   DJINNI_DEW,
   DJINNI_27,
   DJINNI_28,
@@ -55,12 +72,19 @@ enum DjinniId {
   DJINNI_37,
   DJINNI_38,
   DJINNI_39,
+  /// ★ Named from the game: "Forge" (MsgDjinnName)
   DJINNI_FORGE,
+  /// ★ Named from the game: "Fever" (MsgDjinnName)
   DJINNI_FEVER,
+  /// ★ Named from the game: "Corona" (MsgDjinnName)
   DJINNI_CORONA,
+  /// ★ Named from the game: "Scorch" (MsgDjinnName)
   DJINNI_SCORCH,
+  /// ★ Named from the game: "Ember" (MsgDjinnName)
   DJINNI_EMBER,
+  /// ★ Named from the game: "Flash" (MsgDjinnName)
   DJINNI_FLASH,
+  /// ★ Named from the game: "Torch" (MsgDjinnName)
   DJINNI_TORCH,
   DJINNI_47,
   DJINNI_48,
@@ -75,12 +99,19 @@ enum DjinniId {
   DJINNI_57,
   DJINNI_58,
   DJINNI_59,
+  /// ★ Named from the game: "Gust" (MsgDjinnName)
   DJINNI_GUST,
+  /// ★ Named from the game: "Breeze" (MsgDjinnName)
   DJINNI_BREEZE,
+  /// ★ Named from the game: "Zephyr" (MsgDjinnName)
   DJINNI_ZEPHYR,
+  /// ★ Named from the game: "Smog" (MsgDjinnName)
   DJINNI_SMOG,
+  /// ★ Named from the game: "Kite" (MsgDjinnName)
   DJINNI_KITE,
+  /// ★ Named from the game: "Squall" (MsgDjinnName)
   DJINNI_SQUALL,
+  /// ★ Named from the game: "Luff" (MsgDjinnName)
   DJINNI_LUFF,
   DJINNI_67,
   DJINNI_68,

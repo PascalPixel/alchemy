@@ -4126,11 +4126,16 @@ struct Trigger gLunpaFortressTriggersOther[] = {
     { TRIGGER_STEP, 20, FLAG_LUNPA_FORTRESS_FINDING_HAMMET, EVENT(LunpaFortress_FindHammet) },
     { TRIGGER_TALK, ACTOR_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },
-    // These two rows give ACTOR_TOADONPA_HAMMET Dodonpa's lines from his
-    // cell, though Hammet is put out of sight at (0, 0) once Dodonpa is
-    // jailed; before then he stands where the party finds him.
-    // XXX: whether the party can talk to Hammet before step trigger 20 starts
-    // LunpaFortress_FindHammet; a recording walking up to him would settle it.
+    // Unused: these two rows give ACTOR_TOADONPA_HAMMET Dodonpa's lines from
+    // his cell, but the player never reaches them. Before Dodonpa is jailed
+    // Hammet stands in his cell, whose only way in is the row of five cells
+    // of step trigger 20, so LunpaFortress_FindHammet starts before the
+    // leader is beside him, and no ground outside the cell is within Mind
+    // Read's reach of him (render probe hammet). After the battle
+    // LunpaFortress_DonpaJudgesDodonpa ends with the party leading him out,
+    // and once Dodonpa is jailed he is put out of sight at (0, 0). Talking
+    // to him would have shown Dodonpa's "I was wrong! I'll turn over a new
+    // leaf, Dad!" (MsgLunpaWrongTurnOver).
     { TRIGGER_TALK, ACTOR_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
     { TRIGGER_TALK, ACTOR_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_TalkToJailedDodonpa) },

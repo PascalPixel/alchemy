@@ -464,7 +464,7 @@ const struct SparklePicture gFieldEffect_SparklePictures[32] = {
 /// Two scales that alternate ((gVBlankCount >> 2) & 1): full size and 0.97 of
 /// it (FieldEffect_SetActorAlternatingWords, jupiter.c); nothing reads the
 /// third word.
-const u32 gFieldEffect_PulseScales[3] = {Q16_ONE, 0xf851, 16};
+const u32 gFieldEffect_PulseScales[3] = {Q16_ONE, Q16_ONE * 97 / 100, 16};
 
 /// [0] only releases the actor, +1 waits for it to arrive and releases it; +3 is
 /// gFieldEffect_SourceHoldScript, which follows.

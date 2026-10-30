@@ -521,13 +521,13 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       roundedScale = (z + 0x400) & -0x800;
       scaleX = Iwram_MulQ16(roundedScale, *scale++);
       scaleY = Iwram_MulQ16(roundedScale, *scale);
-      // Hold each scale below 2 (0x1f800 is 2 less 1/32): a scaled sprite is
-      // drawn in a double-size box, which the picture exactly fills at 2 and
-      // would overflow, cut off at its edges, beyond it.
+      // Hold each scale below 2 (Q16_ONE * 63 / 32, 2 less 1/32): a scaled
+      // sprite is drawn in a double-size box, which the picture exactly fills
+      // at 2 and would overflow, cut off at its edges, beyond it.
       if (scaleX > 0x1f7ff)
-        scaleX = 0x1f800;
+        scaleX = Q16_ONE * 63 / 32;
       if (scaleY > 0x1f7ff)
-        scaleY = 0x1f800;
+        scaleY = Q16_ONE * 63 / 32;
       offsetX = Iwram_MulQ16(sprite->offsetX, scaleX);
       offsetY = -Iwram_MulQ16((sprite->height >> 1) - sprite->offsetY, scaleY);
       if (scaleX > Q16_ONE || scaleY > Q16_ONE) {

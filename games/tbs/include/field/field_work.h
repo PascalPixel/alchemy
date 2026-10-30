@@ -90,9 +90,9 @@ struct FieldWork {
   s16 mode;               ///< an enum ActorSystemMode
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles
-  s32 encounterThreshold; ///< encounter steps before a battle; 0x100000
-  /// Scales the leader's speed into walkingDistance, 16.16 fixed point: 0x199
-  /// (about 1/160) on entry, 0 in a town.
+  s32 encounterThreshold; ///< encounter steps before a battle; 16 * Q16_ONE
+  /// Scales the leader's speed into walkingDistance, in 16.16 fixed point:
+  /// Q16_ONE / 160 on entry, 0 in a town.
   s32 walkingDistanceScale;
   /// Distance walked toward the next Q16_ONE, at which the party regains PP,
   /// Djinn recover and poison hurts (Field_UpdateWalking).

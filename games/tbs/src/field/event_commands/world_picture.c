@@ -111,15 +111,17 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   work->markerVramBlock = VramCache_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
-  markerTiles[0] = 255;
+  // The marker tiles' pixel rows: eight 4-bit pixels a word, the leftmost
+  // in the low bits.
+  markerTiles[0] = 0xff;
   markerTiles[1] = 0x1ff;
-  markerTiles[2] = 272;
-  markerTiles[8] = 68;
-  markerTiles[9] = 324;
-  markerTiles[10] = 272;
-  markerTiles[16] = 119;
+  markerTiles[2] = 0x110;
+  markerTiles[8] = 0x44;
+  markerTiles[9] = 0x144;
+  markerTiles[10] = 0x110;
+  markerTiles[16] = 0x77;
   markerTiles[17] = 0x177;
-  markerTiles[18] = 272;
+  markerTiles[18] = 0x110;
   markerTiles[24] = 0xff0;
   markerTiles[25] = 0xffff;
   markerTiles[26] = 0x1ffff;
@@ -552,8 +554,8 @@ void Field_UpdateActorVisibilityBounds(void) {
   } while (id < WORLD_MAP_MARKER_CAPACITY);
 }
 
-/// On the World Map, zooms the view out (0x9d89) while L is held, then back.
-/// Each zoom takes 6 frames; 0x9d89 is about 0.62, which sets the view 1.6
+/// On the World Map, zooms the view out to Q16_ONE * 8 / 13 while L is held,
+/// then back. Each zoom takes 6 frames; eight thirteenths sets the view 1.6
 /// times as far (FieldEffect_ScheduleRatioTransition). FieldSequence_Run runs
 /// it for event -889; the overlay tasks are suspended meanwhile.
 void FieldEffect_RunVisibilityTransition(void) {
@@ -564,7 +566,7 @@ void FieldEffect_RunVisibilityTransition(void) {
     Task_SuspendOverlayTasks();
     Field_UpdateActorVisibilityBounds();
     Leader_StopMoving();
-    FieldEffect_ScheduleRatioTransition(0x9d89, 6);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE * 8 / 13, 6);
     if (gKeysHeld & KEY_L) {
       do {
         wait(1);

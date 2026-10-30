@@ -21,15 +21,33 @@
 /// several places takes `_2` onwards in row order.
 enum EnemyId {
   ENEMY_000 = ENEMY_ID_FIRST,
-  ENEMY_001,
-  ENEMY_002,
-  ENEMY_003,
-  ENEMY_004,
-  ENEMY_005,
-  ENEMY_006,
-  ENEMY_007,
-  ENEMY_008,
-  ENEMY_009,
+  /// Level 1: fought on the stormy night in Vale (slots 0 and 3 of
+  /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum.
+  /// ★ Named from the game: "Vermin" (MsgEnemyName)
+  ENEMY_VERMIN,
+  /// Level 3: fought on the world map around Vale and Vault and in Goma Cave.
+  /// ★ Named from the game: "Vermin" (MsgEnemyName)
+  ENEMY_VERMIN_2,
+  /// ★ Named from the game: "Mad Vermin" (MsgEnemyName)
+  ENEMY_MAD_VERMIN,
+  /// Level 1: fought on the stormy night in Vale (slots 1 and 3 of
+  /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum.
+  /// ★ Named from the game: "Bat" (MsgEnemyName)
+  ENEMY_BAT,
+  /// Level 3: fought on the world map and in Goma Cave and the Kolima Tunnel.
+  /// ★ Named from the game: "Bat" (MsgEnemyName)
+  ENEMY_BAT_2,
+  /// ★ Named from the game: "Rabid Bat" (MsgEnemyName)
+  ENEMY_RABID_BAT,
+  /// Level 1: fought on the stormy night in Vale (slot 2 of
+  /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum.
+  /// ★ Named from the game: "Wild Mushroom" (MsgEnemyName)
+  ENEMY_WILD_MUSHROOM,
+  /// Level 3: fought on the world map around Vale and Vault and in Goma Cave.
+  /// ★ Named from the game: "Wild Mushroom" (MsgEnemyName)
+  ENEMY_WILD_MUSHROOM_2,
+  /// ★ Named from the game: "Death Cap" (MsgEnemyName)
+  ENEMY_DEATH_CAP,
   /// Level 2: fought only in Sol Sanctum (formations 11 to 14 and 16).
   /// ★ Named from its area name: Sol Sanctum
   ENEMY_SLIME_SOL_SANCTUM,
@@ -37,108 +55,214 @@ enum EnemyId {
   /// Vale and Vault (formations 23 and 27), and of Goma Cave (formation 32).
   /// Fought in both, it has no one place to be named for.
   ENEMY_SLIME_2,
+  /// ★ Named from the game: "Ooze" (MsgEnemyName)
   ENEMY_OOZE,
+  /// ★ Named from the game: "Slime Beast" (MsgEnemyName)
   ENEMY_SLIME_BEAST,
-  ENEMY_014,
-  ENEMY_015,
-  ENEMY_016,
-  ENEMY_017,
-  ENEMY_018,
-  ENEMY_019,
-  ENEMY_020,
+  /// ★ Named from the game: "Ghost" (MsgEnemyName)
+  ENEMY_GHOST,
+  /// ★ Named from the game: "Ghost Mage" (MsgEnemyName)
+  ENEMY_GHOST_MAGE,
+  /// ★ Named from the game: "Horned Ghost" (MsgEnemyName)
+  ENEMY_HORNED_GHOST,
+  /// ★ Named from the game: "Lich" (MsgEnemyName)
+  ENEMY_LICH,
+  /// Level 4: fought on the world map and in Goma Cave and the Kolima Tunnel.
+  /// ★ Named from the game: "Zombie" (MsgEnemyName)
+  ENEMY_ZOMBIE,
+  /// ★ Named from the game: "Undead" (MsgEnemyName)
+  ENEMY_UNDEAD,
+  /// ★ Named from the game: "Wight" (MsgEnemyName)
+  ENEMY_WIGHT,
+  /// ★ Named from the game: "Bandit" (MsgEnemyName)
   ENEMY_BANDIT,
+  /// ★ Named from the game: "Thief" (MsgEnemyName)
   ENEMY_THIEF,
-  ENEMY_023,
-  ENEMY_024,
-  ENEMY_025,
-  ENEMY_026,
-  ENEMY_027,
-  ENEMY_028,
-  ENEMY_029,
-  ENEMY_030,
-  ENEMY_031,
-  ENEMY_032,
-  ENEMY_033,
-  ENEMY_034,
-  ENEMY_035,
-  ENEMY_036,
-  ENEMY_037,
-  ENEMY_038,
+  /// ★ Named from the game: "Brigand" (MsgEnemyName)
+  ENEMY_BRIGAND,
+  /// ★ Named from the game: "Skeleton" (MsgEnemyName)
+  ENEMY_SKELETON,
+  /// ★ Named from the game: "Bone Fighter" (MsgEnemyName)
+  ENEMY_BONE_FIGHTER,
+  /// ★ Named from the game: "Skull Warrior" (MsgEnemyName)
+  ENEMY_SKULL_WARRIOR,
+  /// ★ Named from the game: "Will Head" (MsgEnemyName)
+  ENEMY_WILL_HEAD,
+  /// ★ Named from the game: "Death Head" (MsgEnemyName)
+  ENEMY_DEATH_HEAD,
+  /// ★ Named from the game: "Willowisp" (MsgEnemyName)
+  ENEMY_WILLOWISP,
+  /// ★ Named from the game: "Rat" (MsgEnemyName)
+  ENEMY_RAT,
+  /// ★ Named from the game: "Armored Rat" (MsgEnemyName)
+  ENEMY_ARMORED_RAT,
+  /// ★ Named from the game: "Plated Rat" (MsgEnemyName)
+  ENEMY_PLATED_RAT,
+  /// ★ Named from the game: "Rat Soldier" (MsgEnemyName)
+  ENEMY_RAT_SOLDIER,
+  /// ★ Named from the game: "Rat Fighter" (MsgEnemyName)
+  ENEMY_RAT_FIGHTER,
+  /// ★ Named from the game: "Rat Warrior" (MsgEnemyName)
+  ENEMY_RAT_WARRIOR,
+  /// ★ Named from the game: "Drone Bee" (MsgEnemyName)
+  ENEMY_DRONE_BEE,
+  /// ★ Named from the game: "Fighter Bee" (MsgEnemyName)
+  ENEMY_FIGHTER_BEE,
+  /// ★ Named from the game: "Warrior Bee" (MsgEnemyName)
+  ENEMY_WARRIOR_BEE,
+  /// ★ Named from the game: "Troll" (MsgEnemyName)
   ENEMY_TROLL,
+  /// ★ Named from the game: "Cave Troll" (MsgEnemyName)
   ENEMY_CAVE_TROLL,
+  /// ★ Named from the game: "Brutal Troll" (MsgEnemyName)
   ENEMY_BRUTAL_TROLL,
-  ENEMY_042,
-  ENEMY_043,
+  /// ★ Named from the game: "Spider" (MsgEnemyName)
+  ENEMY_SPIDER,
+  /// ★ Named from the game: "Tarantula" (MsgEnemyName)
+  ENEMY_TARANTULA,
+  /// ★ Named from the game: "Recluse" (MsgEnemyName)
   ENEMY_RECLUSE,
-  ENEMY_045,
-  ENEMY_046,
-  ENEMY_047,
-  ENEMY_048,
-  ENEMY_049,
-  ENEMY_050,
-  ENEMY_051,
-  ENEMY_052,
-  ENEMY_053,
-  ENEMY_054,
-  ENEMY_055,
-  ENEMY_056,
-  ENEMY_057,
-  ENEMY_058,
-  ENEMY_059,
+  /// ★ Named from the game: "Gnome" (MsgEnemyName)
+  ENEMY_GNOME,
+  /// ★ Named from the game: "Gnome Mage" (MsgEnemyName)
+  ENEMY_GNOME_MAGE,
+  /// ★ Named from the game: "Gnome Wizard" (MsgEnemyName)
+  ENEMY_GNOME_WIZARD,
+  /// ★ Named from the game: "Ghoul" (MsgEnemyName)
+  ENEMY_GHOUL,
+  /// ★ Named from the game: "Fiendish Ghoul" (MsgEnemyName)
+  ENEMY_FIENDISH_GHOUL,
+  /// ★ Named from the game: "Cannibal Ghoul" (MsgEnemyName)
+  ENEMY_CANNIBAL_GHOUL,
+  /// ★ Named from the game: "Mauler" (MsgEnemyName)
+  ENEMY_MAULER,
+  /// ★ Named from the game: "Ravager" (MsgEnemyName)
+  ENEMY_RAVAGER,
+  /// ★ Named from the game: "Grisly" (MsgEnemyName)
+  ENEMY_GRISLY,
+  /// ★ Named from the game: "Cuttle" (MsgEnemyName)
+  ENEMY_CUTTLE,
+  /// ★ Named from the game: "Calamar" (MsgEnemyName)
+  ENEMY_CALAMAR,
+  /// ★ Named from the game: "Man o' War" (MsgEnemyName)
+  ENEMY_MAN_O_WAR,
+  /// ★ Named from the game: "Harpy" (MsgEnemyName)
+  ENEMY_HARPY,
+  /// ★ Named from the game: "Virago" (MsgEnemyName)
+  ENEMY_VIRAGO,
+  /// ★ Named from the game: "Harridan" (MsgEnemyName)
+  ENEMY_HARRIDAN,
+  /// ★ Named from the game: "Siren" (MsgEnemyName)
   ENEMY_SIREN,
+  /// ★ Named from the game: "Succubus" (MsgEnemyName)
   ENEMY_SUCCUBUS,
+  /// ★ Named from the game: "Nightmare" (MsgEnemyName)
   ENEMY_NIGHTMARE,
-  ENEMY_063,
-  ENEMY_064,
-  ENEMY_065,
-  ENEMY_066,
-  ENEMY_067,
-  ENEMY_068,
-  ENEMY_069,
+  /// ★ Named from the game: "Mole" (MsgEnemyName)
+  ENEMY_MOLE,
+  /// ★ Named from the game: "Mad Mole" (MsgEnemyName)
+  ENEMY_MAD_MOLE,
+  /// ★ Named from the game: "Mole Mage" (MsgEnemyName)
+  ENEMY_MOLE_MAGE,
+  /// ★ Named from the game: "Dirge" (MsgEnemyName)
+  ENEMY_DIRGE,
+  /// ★ Named from the game: "Foul Dirge" (MsgEnemyName)
+  ENEMY_FOUL_DIRGE,
+  /// ★ Named from the game: "Vile Dirge" (MsgEnemyName)
+  ENEMY_VILE_DIRGE,
+  /// ★ Named from the game: "Ape" (MsgEnemyName)
+  ENEMY_APE,
+  /// ★ Named from the game: "Killer Ape" (MsgEnemyName)
   ENEMY_KILLER_APE,
-  ENEMY_071,
-  ENEMY_072,
-  ENEMY_073,
-  ENEMY_074,
-  ENEMY_075,
+  /// ★ Named from the game: "Dirty Ape" (MsgEnemyName)
+  ENEMY_DIRTY_APE,
+  /// ★ Named from the game: "Grub" (MsgEnemyName)
+  ENEMY_GRUB,
+  /// ★ Named from the game: "Worm" (MsgEnemyName)
+  ENEMY_WORM,
+  /// ★ Named from the game: "Acid Maggot" (MsgEnemyName)
+  ENEMY_ACID_MAGGOT,
+  /// ★ Named from the game: "Orc" (MsgEnemyName)
+  ENEMY_ORC,
+  /// ★ Named from the game: "Orc Captain" (MsgEnemyName)
   ENEMY_ORC_CAPTAIN,
+  /// ★ Named from the game: "Orc Lord" (MsgEnemyName)
   ENEMY_ORC_LORD,
-  ENEMY_078,
-  ENEMY_079,
-  ENEMY_080,
+  /// ★ Named from the game: "Salamander" (MsgEnemyName)
+  ENEMY_SALAMANDER,
+  /// ★ Named from the game: "Earth Lizard" (MsgEnemyName)
+  ENEMY_EARTH_LIZARD,
+  /// ★ Named from the game: "Thunder Lizard" (MsgEnemyName)
+  ENEMY_THUNDER_LIZARD,
+  /// ★ Named from the game: "Manticore" (MsgEnemyName)
   ENEMY_MANTICORE,
-  ENEMY_082,
-  ENEMY_083,
+  /// ★ Named from the game: "Magicore" (MsgEnemyName)
+  ENEMY_MAGICORE,
+  /// ★ Named from the game: "Manticore King" (MsgEnemyName)
+  ENEMY_MANTICORE_KING,
+  /// ★ Named from the game: "Kobold" (MsgEnemyName)
   ENEMY_KOBOLD,
-  ENEMY_085,
+  /// ★ Named from the game: "Goblin" (MsgEnemyName)
+  ENEMY_GOBLIN,
+  /// ★ Named from the game: "Hobgoblin" (MsgEnemyName)
   ENEMY_HOBGOBLIN,
-  ENEMY_087,
-  ENEMY_088,
-  ENEMY_089,
+  /// ★ Named from the game: "Gargoyle" (MsgEnemyName)
+  ENEMY_GARGOYLE,
+  /// ★ Named from the game: "Clay Gargoyle" (MsgEnemyName)
+  ENEMY_CLAY_GARGOYLE,
+  /// ★ Named from the game: "Ice Gargoyle" (MsgEnemyName)
+  ENEMY_ICE_GARGOYLE,
+  /// ★ Named from the game: "Gryphon" (MsgEnemyName)
   ENEMY_GRYPHON,
-  ENEMY_091,
-  ENEMY_092,
-  ENEMY_093,
-  ENEMY_094,
-  ENEMY_095,
-  ENEMY_096,
+  /// ★ Named from the game: "Wild Gryphon" (MsgEnemyName)
+  ENEMY_WILD_GRYPHON,
+  /// ★ Named from the game: "Wise Gryphon" (MsgEnemyName)
+  ENEMY_WISE_GRYPHON,
+  /// ★ Named from the game: "Golem" (MsgEnemyName)
+  ENEMY_GOLEM,
+  /// ★ Named from the game: "Earth Golem" (MsgEnemyName)
+  ENEMY_EARTH_GOLEM,
+  /// ★ Named from the game: "Grand Golem" (MsgEnemyName)
+  ENEMY_GRAND_GOLEM,
+  /// ★ Named from the game: "Dread Hound" (MsgEnemyName)
+  ENEMY_DREAD_HOUND,
+  /// ★ Named from the game: "Cerebus" (MsgEnemyName)
   ENEMY_CEREBUS,
-  ENEMY_098,
-  ENEMY_099,
-  ENEMY_100,
-  ENEMY_101,
+  /// ★ Named from the game: "Fenrir" (MsgEnemyName)
+  ENEMY_FENRIR,
+  /// ★ Named from the game: "Stone Soldier" (MsgEnemyName)
+  ENEMY_STONE_SOLDIER,
+  /// ★ Named from the game: "Boulder Beast" (MsgEnemyName)
+  ENEMY_BOULDER_BEAST,
+  /// ★ Named from the game: "Raging Rock" (MsgEnemyName)
+  ENEMY_RAGING_ROCK,
+  /// ★ Named from the game: "Chimera" (MsgEnemyName)
   ENEMY_CHIMERA,
-  ENEMY_103,
+  /// ★ Named from the game: "Chimera Mage" (MsgEnemyName)
+  ENEMY_CHIMERA_MAGE,
   ENEMY_104,
-  ENEMY_105,
-  ENEMY_106,
-  ENEMY_107,
-  ENEMY_108,
-  ENEMY_109,
+  /// Level 2: fought only in Sol Sanctum.
+  /// ★ Named from the game: "Amaze" (MsgEnemyName)
+  ENEMY_AMAZE_SOL_SANCTUM,
+  /// Level 3: fought only on the world map around Vale and Vault.
+  /// ★ Named from the game: "Amaze" (MsgEnemyName)
+  ENEMY_AMAZE_WORLD_MAP,
+  /// ★ Named from the game: "Creeper" (MsgEnemyName)
+  ENEMY_CREEPER,
+  /// ★ Named from the game: "Spirit" (MsgEnemyName)
+  ENEMY_SPIRIT,
+  /// The battle that ends Flint's lesson on the world map
+  /// (WorldMap_ShowDjinnTutorial, slot 6 of
+  /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT): ENEMY_ZOMBIE's stats but agility 1,
+  /// and it leaves no coins, item or experience.
+  /// ★ Named from the game: "Zombie" (MsgEnemyName)
+  ENEMY_ZOMBIE_DJINN_LESSON,
   ENEMY_110,
   ENEMY_111,
   ENEMY_112,
+  /// ★ Named from the game: "Kraken" (MsgEnemyName)
   ENEMY_KRAKEN,
+  /// ★ Named from the game: "Mystery Man" (MsgEnemyName)
   ENEMY_MYSTERY_MAN,
   /// Level 18.
   /// ★ Named from what the player sees: Saturos, fought alone at Mercury
@@ -148,12 +272,19 @@ enum EnemyId {
   /// ★ Named from what the player sees: Saturos, fought beside Menardi at
   /// Venus Lighthouse's aerie (its render)
   ENEMY_SATUROS_VENUS_LIGHTHOUSE,
+  /// ★ Named from the game: "Mystery Woman" (MsgEnemyName)
   ENEMY_MYSTERY_WOMAN,
+  /// ★ Named from the game: "Menardi" (MsgEnemyName)
   ENEMY_MENARDI,
-  ENEMY_119,
+  /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
+  ENEMY_LIZARD_MAN,
+  /// ★ Named from the game: "Lizard Fighter" (MsgEnemyName)
   ENEMY_LIZARD_FIGHTER,
+  /// ★ Named from the game: "Lizard King" (MsgEnemyName)
   ENEMY_LIZARD_KING,
+  /// ★ Named from the game: "Living Statue" (MsgEnemyName)
   ENEMY_LIVING_STATUE,
+  /// ★ Named from the game: "Hydros Statue" (MsgEnemyName)
   ENEMY_HYDROS_STATUE,
   /// The Colosso finalists, two rows each: whoever reaches a match's arena
   /// first takes its better prize, and the battle (ENCOUNTER_ZONE_COLOSSO,
@@ -179,17 +310,28 @@ enum EnemyId {
   /// Navampa having reached the arena second.
   /// ★ Named from the game: "Hunter's Sword" (MsgItemName)
   ENEMY_NAVAMPA_HUNTERS_SWORD,
+  /// ★ Named from the game: "Ant Lion" (MsgEnemyName)
   ENEMY_ANT_LION,
-  ENEMY_131,
-  ENEMY_132,
+  /// ★ Named from the game: "Roach" (MsgEnemyName)
+  ENEMY_ROACH,
+  /// ★ Named from the game: "Doodle Bug" (MsgEnemyName)
+  ENEMY_DOODLE_BUG,
+  /// ★ Named from the game: "Toadonpa" (MsgEnemyName)
   ENEMY_TOADONPA,
-  ENEMY_134,
+  /// ★ Named from the game: "Poison Toad" (MsgEnemyName)
+  ENEMY_POISON_TOAD,
   ENEMY_135,
+  /// ★ Named from the game: "Tornado Lizard" (MsgEnemyName)
   ENEMY_TORNADO_LIZARD,
+  /// ★ Named from the game: "Storm Lizard" (MsgEnemyName)
   ENEMY_STORM_LIZARD,
+  /// ★ Named from the game: "Tempest Lizard" (MsgEnemyName)
   ENEMY_TEMPEST_LIZARD,
+  /// ★ Named from the game: "Tret" (MsgEnemyName)
   ENEMY_TRET,
+  /// ★ Named from the game: "Fusion Dragon" (MsgEnemyName)
   ENEMY_FUSION_DRAGON,
+  /// ★ Named from the game: "Deadbeard" (MsgEnemyName)
   ENEMY_DEADBEARD,
   /// ★ Named from what the player sees: the Mimic that leaps out of the second
   /// chest of Mercury Lighthouse's entrance (FIND_MIMIC, slot 0) (its render)

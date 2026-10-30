@@ -730,10 +730,10 @@ enum AbilityId {
   /// Power 220; no enemy's abilities hold it.
   /// ★ Named from the game: "Storm Blessing" (MsgDjinnName)
   ABILITY_STORM_BLESSING_STRONG,
-  /// Power 5: the second Bat row's (enemy_table.c).
+  /// Power 5: ENEMY_BAT_2's.
   /// ★ Named from the game: "Sonic Wave" (MsgDjinnName)
   ABILITY_SONIC_WAVE,
-  /// Power 45 against the Bat's 5: the Rabid Bat's, the Clay Gargoyle's,
+  /// Power 45 against ENEMY_BAT_2's 5: the Rabid Bat's, the Clay Gargoyle's,
   /// the Ant Lion's and the Roach's.
   /// ★ Named from the game: "Sonic Wave" (MsgDjinnName)
   ABILITY_SONIC_WAVE_STRONG,

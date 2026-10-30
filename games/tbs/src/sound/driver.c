@@ -829,7 +829,7 @@ void CgbSound(void) {
   }
 }
 
-/// Sets the tempo multiplier (0x100 the song's own tempo) and updates the
+/// Sets the tempo multiplier (256 the song's own tempo) and updates the
 /// number of ticks advanced per VBlank. Called by the music layer's tempo and
 /// pitch ramp and Sound_SetBgmTempo (sound.c); does nothing while the music
 /// player's ident is raised.
@@ -843,7 +843,7 @@ void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale) {
 }
 
 /// Sets the volume scale of active tracks selected by the bit mask and marks
-/// their output for recalculation. `volume` runs 0 to 0x100 (full) and is
+/// their output for recalculation. `volume` runs 0 to 256 (full) and is
 /// kept as volumeScale, a quarter of it. Called by the music layer's volume
 /// ramps and commands (sound.c).
 void m4aMPlayVolumeControl(struct MusicPlayerInfo *player, u16 mask,

@@ -179,7 +179,7 @@ enum DisplayControl {
 
 /// Palette RAM, as pret names it: the background colours, then the sprites'.
 #define PLTT 0x05000000
-#define BG_PLTT_SIZE 0x200 ///< bytes of background colours, 256 of them
+#define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
 
 /// Background colour 0, the backdrop shown where no layer draws.
 #define PLTT_BACKDROP (*(volatile u16 *)PLTT)
@@ -299,7 +299,7 @@ enum DisplayControl {
 
 #define OAM ((void *)0x07000000) ///< the sprites' attributes
 /// OAM's size in bytes: 128 sprites of 8 bytes.
-#define OAM_SIZE 0x400
+#define OAM_SIZE 1024
 
 /// A sprite's mode, OAM attribute 0's bits 11..10.
 enum ObjMode {

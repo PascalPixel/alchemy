@@ -13,7 +13,7 @@ void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
   // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads.
   // It zeroes r2 itself, so the third argument is never read.
-  _call_via_r3(((u32)&gOamDepthLists), 0x400, ((u32)&gOamMatrixCount),
+  _call_via_r3(((u32)&gOamDepthLists), 1024, ((u32)&gOamMatrixCount),
                (u32)IwramClearWords);
 }
 

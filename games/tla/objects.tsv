@@ -3631,13 +3631,18 @@ main	rom_main_09	recon/tla/es/rom	.rom.0014a812	es
 main	rom_main_09	recon/tla/es/rom	.rom.0014a814	es
 main	rom_main_09	recon/tla/de/rom	.rom.0014a812	de
 main	rom_main_09	recon/tla/de/rom	.rom.0014a814	de
-main	rom_main_09	recon/tla/raw/0814a812	.text	en
-main	rom_main_09	recon/tla/raw/0814a814	.text	en
-main	rom_main_09	recon/tla/raw/0814aebc	.text	en
-main	rom_main_09	recon/tla/raw/0814b160	.text	en
-main	rom_main_09	recon/tla/raw/0814b350	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.0014a812	ja
 main	rom_main_09	recon/tla/ja/rom	.rom.0014a814	ja
+main	rom_main_09	recon/tla/raw/0814a812	.text	en
+main	rom_main_09	recon/tla/raw/0814a814	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f14aebc	.text
+main	rom_main_09	recon/tla/it/rom	.rom.0014b160	it
+main	rom_main_09	recon/tla/fr/rom	.rom.0014b160	fr
+main	rom_main_09	recon/tla/es/rom	.rom.0014b160	es
+main	rom_main_09	recon/tla/de/rom	.rom.0014b160	de
+main	rom_main_09	recon/tla/ja/rom	.rom.0014b160	ja
+main	rom_main_09	recon/tla/raw/0814b160	.text	en
+main	rom_main_09	recon/tla/raw/0814b350	.text	en
 main	rom_main_09	games/tla/src/battle_effect/render_mode_entry	.text
 main	rom_main_09	recon/tla/it/rom	.rom.0014b9e8	it
 main	rom_main_09	recon/tla/fr/rom	.rom.0014b9e8	fr

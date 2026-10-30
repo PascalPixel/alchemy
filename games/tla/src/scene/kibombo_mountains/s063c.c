@@ -1,36 +1,14 @@
-// Matches: differ 0 of 341 (tla-en, 2026-10-30), unchanged source; the object's
-// bytes and relocations equal the listing's English branch, literal pool
-// included (gMainRoutineWork, SceneId_Ov66fRoom1 and SceneId_Ov66fRoom2 for
-// its 0x6b and 0x6c). The Japanese branch of the listing is not measured here.
-// The block copies, Func_02001124 and the placements still go through call.h's
-// forwarding inlines (wrapper).
-// 26 October 2026, under -mthumb-slow-loads: differ 4 of 341: two calls' first
-// argument after a byte store, where the native issues a load one slot later
-// after a store, where alchemy-gcc issues it at once; alchemy permute (5 to 6
-// minutes) and an empty asm or one-pass block after any one statement do not
-// move it. (No longer reproduced on 30 October.)
-// Draft of Func_0200063c (overlay 66F, 341 instructions; the English branch of
-// the listing, the Japanese one differs), differ 6: the overlay's entry, which
-// restores rooms 1 and 2 (SceneId_Ov66fRoom1/2, ids 0x6b and 0x6c) from their
-// flags. Written from the listing; the block copies go through Call6,
-// Func_02001124 through Call2 and the placements through Call3 (all direct:
-// differ 76), and the raised lift is its own block-local pointer so it can stay
-// in r0 (differ 34 to 6). Three scheduling ties remain, each broken the other
-// way by sched2: gMainRoutineWork's load before the priority flags' orrs, and twice
-// the terrain query's r0 = 0 before its x and z loads (here the loads have more
-// dependents and win the tie). Measured: the terrain query through Value3, both
-// drops to the ground through one inline helper (no change).
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
 #include "call.h"
+#include "edition.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020004f4(s32 id, s32 x, s32 z);
 void Func_02000af0(void);
@@ -42,6 +20,9 @@ void Func_0200117c(s32 a, s32 b, s32 c, s32 d);
 s32 Func_02001184(void);
 void Func_0200118c(s32 actor, s32 value);
 
+// The JA edition has its own form of this function; it stays on its listing in
+// recon/tla/raw/overlays (S4).
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 s32 Func_0200063c(void) {
   struct Actor *object;
   s16 scene;
@@ -126,3 +107,4 @@ s32 Func_0200063c(void) {
   }
   return 0;
 }
+#endif

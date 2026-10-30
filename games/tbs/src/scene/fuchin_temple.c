@@ -2477,7 +2477,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 
   nyunpa = Actor_GetById(ACTOR_NYUNPA);
   options.priority = 1;
-  options.type = 281;
+  options.type = SPRITE_281;
   options.script = gFuchinTemple_ShotScript;
   options.targetScaleX = 224 << 10;
   options.targetScaleY = 192 << 9;

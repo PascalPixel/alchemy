@@ -117,7 +117,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   effect = effectWork->particles;
   remaining = MERCURY_PARTICLE_MAX - 1;
   do {
-    FieldParticle_Initialize(effect, 240, position.x, position.z);
+    FieldParticle_Initialize(effect, SPRITE_240, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);

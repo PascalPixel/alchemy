@@ -8,7 +8,7 @@
 #define UNIT_MAX 14 ///< the party's and the enemies' units together
 
 /// Runs each frame of a battle: advances every unit's status icon, gives an
-/// airborne unit's shadow (BATTLE_SHADOW_SPRITE, placement.c) priority
+/// airborne unit's shadow (SPRITE_BATTLE_SHADOW) priority
 /// 9 and a grounded one's 0, and draws whichever side is nearer the camera in
 /// front. Runs as a task (priority TASK_PASS_FRAME)
 /// that Battle_Run adds after the entry transition and removes as
@@ -347,10 +347,6 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   }
 }
 
-/// The shadow a body 32 pixels wide takes instead of
-/// BattleObject.shadow's (see BATTLE_SHADOW_SPRITE, placement.c).
-#define NARROW_SHADOW_SPRITE 511
-
 /// Readies the sprites of the units in list: releases those of every place
 /// list lacks, then creates each listed unit's sprites (body, weapon, status
 /// icon and shadow; or the two parts of a two-part enemy) unless it has
@@ -457,7 +453,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
         }
         if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
-            spriteId = NARROW_SHADOW_SPRITE;
+            spriteId = SPRITE_BATTLE_SHADOW_NARROW;
           entry = (struct SpriteAnimationHeadView *)Sprite_AddAnimationFar(
               record, spriteId);
           battleObject->shadowEntry = entry;

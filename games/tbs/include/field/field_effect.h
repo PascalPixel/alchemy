@@ -110,7 +110,7 @@ enum EffectSpawnFlags {
   /// script's repeat count.
   EFFECT_SCALE_TO_TARGET = 0x40000,
   EFFECT_USE_START_SCALE = 0x80000, ///< options.startScaleX and startScaleY
-  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else actor type 222
+  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else SPRITE_DUST_PUFF
   EFFECT_USE_SCRIPT = 0x200000,     ///< options.script, run in mode 1
   EFFECT_USE_ROTATION = 0x400000,   ///< options.rotation, as the sprite's
   EFFECT_USE_SPIN = 0x800000,       ///< options.spin
@@ -143,7 +143,7 @@ struct EffectOptions {
   s32 startScaleY;   ///< 16.16 fixed point, Q16_ONE full size
   s32 targetScaleX;  ///< 16.16 fixed point, Q16_ONE full size
   s32 targetScaleY;  ///< 16.16 fixed point, Q16_ONE full size
-  s16 type;          ///< the actor type to create; 222 without the flag
+  s16 type;          ///< the sprite, SPRITE_DUST_PUFF without the flag
   const s32 *script; ///< the actor script, run in mode 1
   u16 rotation;      ///< 1/65536 turns
   u16 spin;          ///< 1/65536 turns per frame

@@ -125,7 +125,7 @@ void FieldPsynergy_Frost(void) {
   p = &pos;
   remainingCycles = 15;
   do {
-    particle = Actor_Spawn(232, 0, 0, 0);
+    particle = Actor_Spawn(SPRITE_232, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 radius;

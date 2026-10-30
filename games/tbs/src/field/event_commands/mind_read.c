@@ -122,7 +122,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
           (s16)Scene_FindActorPlacement(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
-      particle = Actor_CreateFar(281, to.x, to.y, to.z);
+      particle = Actor_CreateFar(SPRITE_281, to.x, to.y, to.z);
       if (particle != 0) {
         sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;

@@ -133,7 +133,7 @@ static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
   s32 messageIndex;
 
   gMainRoutineWork.messageSpeed = 2;
-  window = Portrait_OpenWindow(125, 0, 0, 0);
+  window = Portrait_OpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
   for (messageIndex = 0; messageIndex < messageCount; messageIndex++) {
     // Supply sample name, item and number substitutions before each message:
     // Garet, the Virtuous Armlet and 123456.

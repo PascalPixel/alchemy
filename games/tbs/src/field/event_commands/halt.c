@@ -91,7 +91,7 @@ void FieldPsynergy_Halt(void) {
   s32 i;
 
   effectWork->y = caster->y.fixed;
-  orb = Actor_Spawn(250, 0, 0, 0);
+  orb = Actor_Spawn(SPRITE_250, 0, 0, 0);
   step = 0;
   Actor_SelectAnimationFar(orb, 0);
   if (orb == 0)

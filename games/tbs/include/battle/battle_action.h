@@ -20,7 +20,7 @@ struct BattleObject {
   u16 resource;        ///< the unit's sprite
   u16 overlay;   ///< a second sprite drawn over it, the weapon; 0 for none
   u16 animation; ///< the status icon's animation shown; 0 for none
-  u16 shadow;    ///< the shadow sprite under the unit (BATTLE_SHADOW_SPRITE)
+  u16 shadow;    ///< the shadow sprite under the unit (SPRITE_BATTLE_SHADOW)
   s32 anchorX;   ///< 16.16 fixed-point pixels
   s32 anchorZ;   ///< 16.16 fixed-point pixels
   /// The unit sprite's SpriteColorMode: an enemy's own, 1 for a

@@ -4,22 +4,6 @@
 
 #include "../battle_internal.h"
 
-/// Isaac and Garet hold a Machete with sprites of their own.
-#define SPRITE_ISAAC_MACHETE 480
-#define SPRITE_GARET_MACHETE 482
-
-/// The shadow a unit casts on the ground, BattleObject.shadow as a battle
-/// object is made: the sprite BattleObject_SpawnObjectsForList adds as a layer
-/// of every one-part body (NARROW_SHADOW_SPRITE on a body 32 pixels wide). Its
-/// 64 by 64 picture (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse
-/// along its bottom edge, NARROW_SHADOW_SPRITE's a 16 by 3 one. It stays on
-/// the ground while the unit is off it (BattleObject_UpdateSpritePriorities),
-/// and adding it clears the sprite's own shadow (Sprite.flags bit 0), so a
-/// unit casts one.
-/// ★ Named from what the player sees: the black ellipse under each unit's
-/// feet (a battle's render)
-#define BATTLE_SHADOW_SPRITE 510
-
 /// Creates the battle object of unit at (x, y) on the battlefield, in
 /// pixels: its sprite (an enemy's from its class, sharing the slot it
 /// already holds; a party member's battle sprite), palette, size and weapon
@@ -240,7 +224,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   actor->shadowEntry = 0;
   actor->active = 0;
   actor->fading = 0;
-  actor->shadow = BATTLE_SHADOW_SPRITE;
+  actor->shadow = SPRITE_BATTLE_SHADOW;
   classId = unit->id;
   actor->overlay = weaponSprite;
 

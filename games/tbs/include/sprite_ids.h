@@ -1021,9 +1021,11 @@ enum SpriteId {
   SPRITE_477,
   SPRITE_478,
   SPRITE_479,
-  SPRITE_480,
+  /// Isaac's battle sprite while he holds a Machete, drawn as part of it.
+  SPRITE_ISAAC_MACHETE,
   SPRITE_481,
-  SPRITE_482,
+  /// Garet's battle sprite while he holds a Machete, drawn as part of it.
+  SPRITE_GARET_MACHETE,
   SPRITE_483,
   SPRITE_484,
   SPRITE_485,
@@ -1063,8 +1065,19 @@ enum SpriteId {
   SPRITE_507,
   SPRITE_508,
   SPRITE_509,
-  SPRITE_510,
-  SPRITE_511
+  /// The shadow a unit casts on the ground in battle, BattleObject.shadow as a
+  /// battle object is made: the sprite BattleObject_SpawnObjectsForList adds as
+  /// a layer of every one-part body (SPRITE_BATTLE_SHADOW_NARROW on a body 32
+  /// pixels wide). Its 64 by 64 picture holds only a 32 by 6 ellipse along its
+  /// bottom edge, SPRITE_BATTLE_SHADOW_NARROW's a 16 by 3 one. It stays on the
+  /// ground while the unit is off it (BattleObject_UpdateSpritePriorities), and
+  /// adding it clears the sprite's own shadow (Sprite.flags bit 0), so a unit
+  /// casts one.
+  /// ★ Named from what the player sees: the black ellipse under each unit's
+  /// feet (a battle's render)
+  SPRITE_BATTLE_SHADOW,
+  /// The shadow a body 32 pixels wide takes instead of SPRITE_BATTLE_SHADOW.
+  SPRITE_BATTLE_SHADOW_NARROW
 };
 
 /// SPRITE_STUMP's animations beyond its standing frame (spr_212.tsv).

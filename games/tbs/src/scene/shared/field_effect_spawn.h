@@ -3,6 +3,7 @@
 #include "edition.h"
 #include "far_call.h"
 #include "scene_tables.h"
+#include "sprite_ids.h"
 #include "fixed_math.h"
 
 // Twenty-four scenes, and the main image's field Psynergy (whirlwind.c, with
@@ -29,7 +30,7 @@ void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor) {
 extern const s32 *gFieldEffect_DurationScripts[];
 
 enum {
-  EFFECT_DEFAULT_TYPE = 222,
+  EFFECT_DEFAULT_TYPE = SPRITE_DUST_PUFF,
   EFFECT_OPTION_MASK = 0xffff0000,
   EFFECT_SCRIPT_REPEAT_COUNT = 3
 };

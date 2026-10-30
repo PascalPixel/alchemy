@@ -72,16 +72,16 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Afterimages of the same sprite at 15/16 size, each closing half the
   // distance to the one before it every frame, tinted by the Djinni's
-  // sprite: the Venus sprite (90) takes param 2, Mars (92) 10, and Mercury
-  // (91) and Jupiter (93) 9 (the scenes' Djinni actor placements show which
-  // sprite is which element). They share one VRAM cache entry.
+  // sprite: SPRITE_VENUS_DJINNI takes param 2, SPRITE_MARS_DJINNI 10, and
+  // SPRITE_MERCURY_DJINNI and SPRITE_JUPITER_DJINNI 9. They share one VRAM
+  // cache entry.
   sprite = djinni->sprite->entries[0]->animationId;
   tint = 9;
-  if (sprite == 90)
+  if (sprite == SPRITE_VENUS_DJINNI)
     tint = 2;
-  if (sprite == 92)
+  if (sprite == SPRITE_MARS_DJINNI)
     tint = 10;
-  if (sprite == 91)
+  if (sprite == SPRITE_MERCURY_DJINNI)
     tint = 9;
   sharedSprite = NULL;
   prev = djinni;

@@ -1063,7 +1063,7 @@ struct ActorPlacement gTolbiShipMast_ActorPlacements[] = {
 };
 
 struct ActorPlacement gTolbiShipMast_FirstAttackActorPlacements[] = {
-    { 286, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+    {SPRITE_GLINT, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },

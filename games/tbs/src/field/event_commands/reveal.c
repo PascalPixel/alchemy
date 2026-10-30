@@ -19,7 +19,7 @@ void Actor_SetRevealSpriteColor(s32 value) {
         struct Sprite *animation = actor->sprite;
         struct SpriteAnimation *entry = animation->entries[0];
 
-        if (entry->animationId == 200) {
+        if (entry->animationId == SPRITE_ROCK) {
           entry->colorMode = value;
           animation->dirty = kind;
         }

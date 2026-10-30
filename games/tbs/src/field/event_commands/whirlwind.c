@@ -189,7 +189,7 @@ void FieldPsynergy_Whirlwind(void) {
   to.y = effectWork->y - (4 << 16);
   to.z = effectWork->z;
   // Include both endpoints of the ten-frame interpolation.
-  ball = Actor_Spawn(218, 0, 0, 0);
+  ball = Actor_Spawn(SPRITE_218, 0, 0, 0);
   if (ball == 0) {
     return;
   }
@@ -228,7 +228,7 @@ void FieldPsynergy_Whirlwind(void) {
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = Actor_Spawn(249, pos.x, pos.y, pos.z);
+      particle = Actor_Spawn(SPRITE_249, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_CircleAnchor;
         particle->watchedActor = ball;

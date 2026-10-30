@@ -194,7 +194,7 @@ static void Xian_SpawnTrainingParticles(void) {
     struct EffectOptions config;
     config.priority = 1;
     config.palette = 9;
-    config.type = 169;
+    config.type = SPRITE_GIRL_IN_PINK;
     config.script = gXian_TrainingParticleScript;
     FieldEffect_Spawn(*(s32 *)(studentActor + offsetof(struct Actor, x)),
                       *(s32 *)(studentActor + offsetof(struct Actor, y)),
@@ -570,7 +570,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Sound_Play(SE_HEAVY_IMPACT);
     Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
     Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
-    effectParams.type = 283;
+    effectParams.type = SPRITE_283;
     effectParams.script = gXian_TreeImpactScript;
     effectParams.rotation = TRIG_TURN / 4;
     FieldEffect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,

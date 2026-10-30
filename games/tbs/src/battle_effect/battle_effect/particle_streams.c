@@ -199,7 +199,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // spawned sprite.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
-      struct Sprite *sprite = Sprite_CreateFar(483 + i * SPRITE_SECOND_PART);
+      struct Sprite *sprite =
+          Sprite_CreateFar(SPRITE_483 + i * SPRITE_SECOND_PART);
 
       work->sprites[i] = sprite;
       if (sprite != 0) {

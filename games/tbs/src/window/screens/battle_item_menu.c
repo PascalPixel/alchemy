@@ -35,13 +35,14 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
   return 0;
 }
 
-// XXX: what shows those copies is not found; tiles 512 to 639 are also the
-// second text-tile range (Text_UseExtraTiles), and a tilemap entry naming one
-// of the four would settle it.
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy
 /// the border's top and bottom tees to tiles 512, 513, 528 and 529 as
-/// they open.
+/// they open, and nothing shows the copies: while a list is open no entry of
+/// a shown layer names those bytes, and painting them changes no pixel. They
+/// overwrite the 256-colour tiles 256 and 264 of BG1, the layer shown with
+/// the command row, which is hidden then and gets its own tiles back when the
+/// list closes (render probe list-tees).
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(0) +

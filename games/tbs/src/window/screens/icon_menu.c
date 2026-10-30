@@ -538,12 +538,16 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   return command;
 }
 
-// With Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE,
-// because gFileList_ActionByPosition lists Battle before Send in every row.
-// XXX: whether that can happen, which needs a file cleared with no Djinni
-// found (flags 48-127 clear); a play that walks past Flint's ground on the
-// world map (CELL_BEHAVIOR_WORLD_MAP_FLINT) without meeting him would show
-// whether he can be missed.
+// With Send shown but not Battle, Send's place would map to
+// SAVE_ACTION_BATTLE, because gFileList_ActionByPosition lists Battle before
+// Send in every row. That never happens: Send needs a cleared file, and a
+// file is cleared only by saving after the credits, while Battle needs any
+// file with a Djinni found, no Djinni's flag is ever cleared, and no game
+// gets that far without Flint. Leaving
+// Vale, the party cannot walk on from the World Map's first stretch without
+// stepping onto his ground (CELL_BEHAVIOR_WORLD_MAP_FLINT), and his lesson
+// runs on through the tutorial battle until he joins (render probe flint,
+// flint-play).
 /// Builds the File Screen's menu from the save summaries and optional send
 /// flags. Translates the chosen visible position back to its action (enum
 /// FileAction), or -1 when cancelled or the backup memory cannot be read. With

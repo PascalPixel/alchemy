@@ -1,22 +1,3 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 2 of 426 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, a register tie on each local after
-// each statement, each local pinned to each register, each call argument
-// copied into its argument register (pinned) at the call or up to three
-// statements before it; none reaches 0.
-// Near miss, differ 2 of 426 (one reordered row), from The Broken Seal's
-// BattleObject_Make (games/tbs/src/battle/battle/placement.c): this game keys the
-// sprite and scale by the unit's enemy id, has eight characters, sets the
-// effect (686) before the scale switch and a visible flag beside the fade
-// flag. The cases are written in the listing's body order, each group as its
-// jump table shares a body. Devices so far: a volatile barrier on the
-// switch's index (it loads the id before building 386; 4 without it) and a
-// one-pass block over the clears and the machete test (it places the byte
-// zero's pool and the pool; 12 without either device). Left: the native
-// builds the zero (movs r5, #0) before the pooled byte zero (ldr r6); here
-// the load comes first. Tried: a zero temporary behind a barrier (6), a
-// pinned zero (67), a chained byte store (2), the bytes copied from active
-// (22), five minutes of permute before the barrier (no gain).
 #include "types.h"
 #include "motobj.h"
 #include "objdisp.h"
@@ -63,7 +44,6 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   struct MotionObject *object;
   s32 facingAngle;
   s32 weaponSprite;
-  u32 enemyId;
 
   fixedX = x * 65536;
   fixedZ = y * 65536;
@@ -112,9 +92,8 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
 
   actor->scale = 0x10000;
   actor->effect = 686;
-  enemyId = unit->enemyId;
-  __asm__ volatile("" : "+l"(enemyId));
-  switch (enemyId) {
+
+  switch (unit->enemyId) {
   case 0:
     actor->scale = 0x10000;
     break;
@@ -409,25 +388,23 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   actor->palette = palette;
   actor->resource = sprite;
   weaponSprite = BattleUnit_LookupWeaponValueByClass(unitId);
-  do {
-    actor->animation = 0;
-    actor->animationEntry = 0;
-    actor->effectEntry = 0;
-    actor->active = 0;
-    actor->overlay = weaponSprite;
-    actor->fading = 0;
-    actor->visible = 0;
-    if (unit->enemyId <= 1 && Inventory_GetEquippedItemFar(unit, 1) == 15) {
-      if (unit->enemyId == 0) {
-        sprite = 635;
-        actor->resource = sprite;
-      } else {
-        sprite = 637;
-        actor->resource = sprite;
-      }
-      actor->overlay = 0;
+  actor->animation = 0;
+  actor->animationEntry = 0;
+  actor->effectEntry = 0;
+  actor->active = 0;
+  actor->overlay = weaponSprite;
+  actor->fading = 0;
+  actor->visible = 0;
+  if (unit->enemyId <= 1 && Inventory_GetEquippedItemFar(unit, 1) == 15) {
+    if (unit->enemyId == 0) {
+      sprite = 635;
+      actor->resource = sprite;
+    } else {
+      sprite = 637;
+      actor->resource = sprite;
     }
-  } while (0);
+    actor->overlay = 0;
+  }
 
   facingAngle = ArcTan2(y / 8, x) + 0x8000;
   object->angle = facingAngle;

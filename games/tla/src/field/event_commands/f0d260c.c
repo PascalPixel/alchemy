@@ -1,16 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 192 in tla-en, instruction
-// order only. The native sets Item_AdjustCounterFar's second argument (movs r1,
-// #1) before copying the first; no single empty asm lowers it.
-// Draft of PartyInventory_GiveItem: differ 6 of 192 (tla-en, 2026-10-18).
-// It gives the party an item. When nobody can carry it, it asks what to
-// drop: the chosen item is dropped (unless Inventory_CountItemFar finds the
-// member past 29) and the new item given; no choice offers to leave the new
-// item, which an important item refuses. It restores the event work's
-// message. Its ☀️ twin is games/tbs/src/object/psynergy_effects.c's function
-// of the same name, which has neither that test nor the member's refresh.
-//
-// Left: instruction order only (an argument copy and the message offset's
-// build each sit one place apart). Written as a loop, the retry rotates.
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -33,7 +20,7 @@ s32 Func_08108068(s32 *member, s32 *slot);
 struct ItemHead *Item_Get(s32 item);
 s32 Func_080d295c(s32 mode);
 void Message_CloseFinishedWindowsFar(void);
-void Item_AdjustCounterFar(s32 item, s32 delta);
+s32 Item_AdjustCounterFar(s32 item, s32 delta);
 void *Unit_Get(s32 owner);
 s32 Inventory_GetQuantityFar(s32 member, s32 slot);
 s32 Inventory_CountItemFar(s32 member, s32 item);
@@ -64,8 +51,7 @@ s32 PartyInventory_GiveItem(s32 item) {
       if (result == -1) {
         if (Item_Get(item)->flags & 8) {
           MessageArgument_PushFar(item, 2);
-          FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4,
-                                                 1);
+          FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, 1);
           goto retry;
         }
         MessageArgument_PushFar(item, 2);

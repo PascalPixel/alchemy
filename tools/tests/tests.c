@@ -324,6 +324,24 @@ graphics(void)
 	free(anims.data);
 	textFile("anims.tsv", "paused\t128\n");
 	RUN("graphics", false, "anims.tsv", "anims.script");
+	Image icon = {.width = 32, .height = 32, .depth = 4};
+	for (unsigned i = 0; i < 48; i++)
+		byte(&icon.palette, i * 8 % 256);
+	for (unsigned i = 0; i < 32 * 32; i++)
+		byte(&icon.pixels, i % 3);
+	Buffer iconPng = writeImage(&icon);
+	writeFile("icon.png", &iconPng);
+	free(iconPng.data);
+	freeImage(&icon);
+	textFile("icons.tsv", "align\t32\nicon\n-\n");
+	RUN("graphics", true, "icons.tsv", "icons.icons4");
+	Buffer icons = readFile("icons.icons4");
+	check(icons.len % 32 == 0 && read16(icons.data) == 4 &&
+			  read16(icons.data + 2) == 0,
+		  "an icon bank's alignment is decimal and the empty slot has no offset");
+	free(icons.data);
+	textFile("icons.tsv", "align\t20\nicon\n");
+	RUN("graphics", false, "icons.tsv", "icons.icons4");
 	textFile("long.tsv", "name:str2\n\"abc\"\n");
 	RUN("graphics", false, "long.tsv", "long.table");
 	RUN("graphics", false, "tiles.png", "tiles.4bpp", "-mwidth", "0");

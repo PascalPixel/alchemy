@@ -222,7 +222,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 /// with every bag full, closes the browser.
 static void IncreaseItemAndLevel_SelectItem(void) {
   // Preserve independent key tests and the direction-specific empty-icon scans.
-  // Ordinary while scans grow the native function from 0x29c to 0x2a0; retain
+  // Ordinary while scans grow the native function from 668 to 672; retain
   // its current polling edges.
   struct Window *window;
   struct Window *details;
@@ -357,7 +357,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
 /// Italian the scene keeps the function and the actor but no event, and
 /// moves the actor to x 80.
 UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
-  // Ordinary while scans grow the native function from 0x248 to 0x260; retain
+  // Ordinary while scans grow the native function from 584 to 608; retain
   // the original polling edges.
   struct Window *window;
 #ifndef UBFIX

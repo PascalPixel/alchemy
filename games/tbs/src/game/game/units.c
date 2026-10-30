@@ -540,11 +540,11 @@ u32 BuildStamp_GetTime(void) {
 
 /// A view of EWRAM from gSceneLocalState on, which
 /// MainRoutineWork_InitializeDefaults writes one byte through.
-/// gSceneLocalState's 0x78 bytes and gInventorySnapshot's 0x8c come first, so
+/// gSceneLocalState's 120 bytes and gInventorySnapshot's 140 come first, so
 /// firstSnapshotSlot is the first byte of gActorSnapshot.
 struct MapLocalStateSnapshotView {
-  u8 mapAndInventory[0x100]; ///< gSceneLocalState, then most of
-                             ///< gInventorySnapshot
+  u8 mapAndInventory[256]; ///< gSceneLocalState, then most of
+                           ///< gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
   /// uses; nothing reads or writes it through this view.
   u32 playTime;

@@ -70,9 +70,8 @@ struct CursorSprite {
 #define MENU_SPRITE_SHAPE_16X16 0x40000000
 
 /// Sets sprite shape (attr0/attr1) and clears the remaining fields.
-/* FAKEMATCH(one-pass): the two stores in a once-only block; as the plain stores
- * Battle_CollectPartyCommands and BattleStatusScreen_Run match with, 4 of 49
- * instructions differ in tbs-en (Text_DrawCharacter). */
+// A statement macro (4 sites), the shape every use matches through; as plain
+// stores, 4 of 49 instructions differ in tbs-en (Text_DrawCharacter).
 #define MenuSprite_Initialize(sprite, shape)                                   \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
@@ -172,9 +171,8 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
   } while (0)
 
 /// Saves the selection: page, row and return row.
-/* FAKEMATCH(one-pass): the three stores in a once-only block; as the plain
- * stores BattleDjinnMenu_Run matches with, 46 of 770 instructions differ in
- * tbs-en (BattleItemMenu_Run). */
+// A statement macro (7 sites), the shape every use matches through; as plain
+// stores, 46 of 770 instructions differ in tbs-en (BattleItemMenu_Run).
 #define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
     gBattleMenuWork->page = (page_);                                           \

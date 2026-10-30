@@ -337,7 +337,8 @@ so it is built from `NAME_00.png`, `NAME_01.png` and on into
 The text font is `font/text.png`, a two-colour sheet of 16-pixel cells, one
 glyph each, 256 pixels wide; `text.tsv` beside it gives the first glyph's
 code, the first row of each cell kept and how many rows, and then each
-glyph's width in pixels, one line per code. The `font` form writes each
+glyph's width in pixels, one line per code, the codes in hex as the
+character map writes them. The `font` form writes each
 glyph as its width and then its rows, 16 bits a row, which is what the
 windows type from a column at a time
 ([Windows](../window/README.md#drawing-text)).

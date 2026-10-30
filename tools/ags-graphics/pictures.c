@@ -9,6 +9,8 @@
 
 /*
  * Metadata supplies the glyph range and the rows kept from each 16x16 cell.
+ * Glyph codes are hex, as the character map writes them; the first row kept,
+ * the number of rows and the widths are decimal.
  */
 static Buffer
 font(const char *input, const Image *image)
@@ -34,9 +36,9 @@ font(const char *input, const Image *image)
 		if (!strcmp(f.items[0], "first"))
 			first = number(f.items[1], 16, SIZE_MAX);
 		else if (!strcmp(f.items[0], "top"))
-			top = number(f.items[1], 16, 16);
+			top = number(f.items[1], 10, 16);
 		else if (!strcmp(f.items[0], "rows"))
-			rows = number(f.items[1], 16, 16);
+			rows = number(f.items[1], 10, 16);
 		else
 		{
 			if (first == SIZE_MAX || top > 16 || rows > 16 || top + rows > 16 ||
@@ -47,7 +49,7 @@ font(const char *input, const Image *image)
 			if (y + 16 > image->height)
 				fail("glyph lies outside font sheet");
 			for (size_t j = 1; j < f.len; j++)
-				half(&out, number(trim(f.items[j]), 16, 65535));
+				half(&out, number(trim(f.items[j]), 10, 65535));
 			for (size_t dy = 0; dy < rows; dy++)
 			{
 				unsigned value = 0;

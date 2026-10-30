@@ -342,6 +342,16 @@ graphics(void)
 	free(icons.data);
 	textFile("icons.tsv", "align\t20\nicon\n");
 	RUN("graphics", false, "icons.tsv", "icons.icons4");
+	writeFile("glyph.png", &png);
+	textFile("glyph.tsv", "first\t41\ntop\t2\nrows\t10\n41\t12\n");
+	RUN("graphics", true, "glyph.png", "glyph.font");
+	Buffer glyph = readFile("glyph.font");
+	check(glyph.len == 22 && read16(glyph.data) == 12 &&
+			  read16(glyph.data + 2) == 0xffff,
+		  "a font's codes are hex, its rows and widths decimal");
+	free(glyph.data);
+	textFile("glyph.tsv", "first\t41\ntop\t0\nrows\tf\n41\t6\n");
+	RUN("graphics", false, "glyph.png", "glyph.font");
 	textFile("long.tsv", "name:str2\n\"abc\"\n");
 	RUN("graphics", false, "long.tsv", "long.table");
 	RUN("graphics", false, "tiles.png", "tiles.4bpp", "-mwidth", "0");

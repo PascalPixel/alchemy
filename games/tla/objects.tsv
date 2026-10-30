@@ -3069,19 +3069,7 @@ main	rom_main_08	games/tla/src/gamepak/far_call/table_46
 main	rom_main_08	games/tla/src/gamepak/far_call/battlepl
 main	rom_main_08	games/tla/src/gamepak/far_call/battleac
 main	rom_main_08	games/tla/src/battle/model_decode
-main	rom_main_08	recon/tla/it/rom	.rom.00118230	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00118230	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00118230	es
-main	rom_main_08	recon/tla/de/rom	.rom.00118230	de
-main	rom_main_08	recon/tla/raw/08118230		en
-main	rom_main_08	recon/tla/ja/rom	.rom.00118230	ja
 main	rom_main_08	games/tla/src/battle/model_bit_dispatch
-main	rom_main_08	recon/tla/it/rom	.rom.00118244	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00118244	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00118244	es
-main	rom_main_08	recon/tla/de/rom	.rom.00118244	de
-main	rom_main_08	recon/tla/raw/08118244		en
-main	rom_main_08	recon/tla/ja/rom	.rom.00118244	ja
 main	rom_main_08	games/tla/src/battle/model_bit_commands
 main	rom_main_08	games/tla/src/battle/color_scale_kernel
 main	rom_main_08	games/tla/src/battle/color_scale_loader

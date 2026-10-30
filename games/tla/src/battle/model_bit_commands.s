@@ -82,3 +82,5 @@ Model_SetBitValue:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
+	.global Model_DecodeEnd
+Model_DecodeEnd:

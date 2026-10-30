@@ -65,3 +65,4 @@ AlchemyUncreditedEnd_08118162:
 	bne	.L_081181a8
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
+	.4byte 0x60606060, Model_BitCommandTable

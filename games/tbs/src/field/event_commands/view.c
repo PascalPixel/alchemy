@@ -29,33 +29,29 @@ void FieldEffect_StepRatioTransition(void) {
 #else
 s32 FieldEffect_StepRatioTransition(void) {
 #endif
-  struct WorldMapView *perspective;
-  s16 *frames;
+  struct WorldMapView *perspective = gMapGridWork[0];
   s32 *from;
-  s16 *step;
-  s32 zoom;
   s32 delta;
+  s32 zoom;
 
-  perspective = gMapGridWork[0];
   if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
                                                sizeof(struct FieldWork)))
           ->camera->paused != 0)
     return;
-  frames = (s16 *)&perspective->zoomTransitionFrames;
-  if (*frames == 0)
+  if (perspective->zoomTransitionFrames == 0)
     return;
+  /* FAKEMATCH(temporary): from, the start's address, read once for the
+   * difference and again after the division; as perspective->previousZoom,
+   * 8 of 87 instructions differ in tbs-en. */
   from = &perspective->previousZoom;
   delta = perspective->zoom - *from;
-  step = &perspective->zoomTransitionStep;
-  (*step)++;
-  /* FAKEMATCH(wrapper): the division written as a call to __divsi3, an
-   * ordinary call where the operator makes a libcall block; as
-   * delta * *step / *frames, 93 of 87 instructions differ in tbs-en. */
-  zoom = *from + __divsi3(delta * *step, *frames);
+  perspective->zoomTransitionStep++;
+  zoom = *from + delta * perspective->zoomTransitionStep /
+                     perspective->zoomTransitionFrames;
   perspective->distance = Iwram_MulQ16(perspective->farPlane, zoom);
   gScanlinePitch = perspective->pitch + 1;
-  if (*step == *frames) {
-    *frames = 0;
+  if (perspective->zoomTransitionStep == perspective->zoomTransitionFrames) {
+    perspective->zoomTransitionFrames = 0;
 #ifdef UBFIX
     Task_Remove(FieldEffect_StepRatioTransition);
 #else
@@ -100,11 +96,11 @@ void Event_WaitForZoomTransition(void) {
                                                sizeof(struct FieldWork)))
           ->mode == ACTOR_SYSTEM_WORLD_MAP) {
     frames = 0;
-    if (*(s16 *)&perspective->zoomTransitionFrames != 0) {
+    if (perspective->zoomTransitionFrames != 0) {
       do {
         wait(1);
         frames++;
-      } while (frames < 300 && *(s16 *)&perspective->zoomTransitionFrames != 0);
+      } while (frames < 300 && perspective->zoomTransitionFrames != 0);
     }
   }
 }

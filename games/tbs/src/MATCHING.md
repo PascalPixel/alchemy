@@ -97,7 +97,13 @@ written. A device may be replaced only by milder ones, as many as it takes.
   macro's own form, such as the fill word of `Dma_Fill32`, is no device. Nor
   is one on memory an interrupt handler shares with the code it interrupts,
   such as `gVBlankDone` and `gFrameCount` (`include/system/frame.h`): there
-  the C needs it to be correct.
+  the C needs it to be correct. Nor is one the original evidently declared:
+  where several unrelated functions each reread a global the way only a
+  volatile allows, reloading it straight after storing it or keeping a read
+  whose value they discard, the qualifier is the source's form, and a note
+  beside the declaration names those functions. Rereads in one function alone
+  are still a device: `gTasksRunning`'s discarded read shows only in
+  `Task_Add`.
 - `wrapper` is a call made through a helper, a cast or a library routine in
   place of the plain call or operator. Calling a declared function through a
   cast to another function type is a `wrapper`, with the declared call behind
@@ -114,6 +120,16 @@ written. A device may be replaced only by milder ones, as many as it takes.
   test (`Vault_SpawnDriftingEffect`). The arms last that long only where
   if-conversion can't merge them first, as with a store through a pointer or
   a return; a single store to a local is merged at once.
+
+  An unused local that only gives the stack frame its size is not a device.
+  Old GCC gives an array or struct local its stack slot even when nothing
+  reads it, and a programmer could easily have left one behind, such as the
+  `struct Spark` nothing uses in `ElementGlow_InitializeStarField`, which
+  gives its frame 28 bytes. Such a declaration emits no instruction; it
+  carries a plain note saying what it does. Dead stores, a local whose address
+  is taken so that it is stored and loaded through the stack, updates that
+  cancel out and anything else that emits or reorders instructions stay
+  devices.
 
 A device is the last resort, used only after reshaping the code has failed.
 Taking one out again is part of humanizing, the project's second stage after

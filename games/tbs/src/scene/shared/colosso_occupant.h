@@ -16,7 +16,7 @@ void *Colosso_FindActorAhead(void) {
 
   record = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  facing = (record->facing + 0x2000) & 0xc000;
+  facing = (record->facing + TRIG_TURN / 8) & 0xc000;
 
   position.x = (record->x.fixed & 0xfff00000) + PIXELS(8);
   position.y = record->y.fixed;

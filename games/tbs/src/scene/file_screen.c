@@ -347,16 +347,16 @@ static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
   else if (cell <= 44)
     text[0] = cell - 47;
   else if (cell == 45)
-    text[0] = 0x86;
+    text[0] = 134;
   else {
     if (cell <= 55)
       text[0] = cell + 104;
     else if (cell == 56)
-      text[0] = 0xe0;
+      text[0] = 224;
     else if (cell == 57)
-      text[0] = 0xe3;
+      text[0] = 227;
     else if (cell == 58)
-      text[0] = 0xe4;
+      text[0] = 228;
     else
       text[0] = cell - 81;
     text[1] = TEXT_MARK_VOICED;

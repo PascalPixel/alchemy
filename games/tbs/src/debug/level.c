@@ -495,8 +495,8 @@ s32 IncreaseItemAndLevel_Initialize(void) {
   Import_ActorSetAnimation(ACTOR_FIRST_EMOTE_TESTER, 5);
   Import_ActorSetAnimation(ACTOR_SECOND_EMOTE_TESTER, 2);
 #else
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x1b333;
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x1b333;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = Q16_ONE * 17 / 10;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = Q16_ONE * 17 / 10;
 #endif
   return 0;
 }

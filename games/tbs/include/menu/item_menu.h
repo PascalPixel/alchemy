@@ -44,7 +44,7 @@ struct ItemMenuWork {
   struct WindowSprite *gridCursor;     ///< only prepared by name in TBS
   struct WindowSprite *entryIcons[32];
   struct WindowSprite *categoryIcons[8];
-  u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
+  u8 unusedAfterIcons[36]; ///< no view of the menu work names it
   struct Window *questionWindow;
   /// The cursor grid: its place and its size, 1 by 1 at first.
   ///@{
@@ -61,7 +61,7 @@ struct ItemMenuWork {
   u16 selectedItems[2];            ///< each side's inventory entry chosen
   struct WindowSprite *cursor;
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
-  u8 aroundBackdrop[0x48];
+  u8 aroundBackdrop[72];
   u16 items[32];    ///< the inventory entries listed
   u16 memberIds[8]; ///< the party in order (Party_ListMembers)
   u8 itemCount;
@@ -72,15 +72,15 @@ struct ItemMenuWork {
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
   /// ItemMenuFiguresView's row of four figures and DjinnMenuWork's pair;
   /// not named here.
-  u8 figureRow[0x36];
+  u8 figureRow[54];
   s16 messageOffset; ///< the item use's result, after MsgItemUseResult
   s8 equipPreview;   ///< 1 while the stats preview a removal, not an equip
   u8 listMode; ///< the command chosen last (ItemMenuCommand); 0xff for none
   u8 unusedAfterListMode[2];   ///< no view of the menu work names it
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
-  u8 mode;             ///< not named through this struct; PsynergyMenuWork.mode
-  u8 shopStock[0x129]; ///< ShopWork's stock, party and cursor; not named
-                       ///< here
+  u8 mode;           ///< not named through this struct; PsynergyMenuWork.mode
+  u8 shopStock[297]; ///< ShopWork's stock, party and cursor; not named
+                     ///< here
   s16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 

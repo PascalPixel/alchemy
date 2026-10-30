@@ -58,8 +58,8 @@ static inline void Item_ShowFound(s32 item, s32 height) {
 /// moved it.
 static inline void MapGrid_Redraw(void) { MapGrid_CenterOnFollowedPoint(); }
 
-/// The cosine of an angle, a full turn being 0x10000, in 16.16, for an event's
-/// circling motion.
+/// The cosine of an angle, a full turn being TRIG_TURN, in 16.16, for an
+/// event's circling motion.
 static inline s32 Math_Cos(s32 angle) { return Trig_Cos(angle); }
 
 /// The sine of an angle in 16.16, as Math_Cos takes it.

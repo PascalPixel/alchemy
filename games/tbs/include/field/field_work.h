@@ -94,7 +94,7 @@ struct FieldWork {
   /// Scales the leader's speed into walkingDistance, 16.16 fixed point: 0x199
   /// (about 1/160) on entry, 0 in a town.
   s32 walkingDistanceScale;
-  /// Distance walked toward the next 0x10000, at which the party regains PP,
+  /// Distance walked toward the next Q16_ONE, at which the party regains PP,
   /// Djinn recover and poison hurts (Field_UpdateWalking).
   s32 walkingDistance;
   struct MapGridCell *currentCell;  ///< the cell the leader last stepped onto
@@ -112,14 +112,14 @@ struct FieldWork {
   s16 unusedBeforeCamera[2];
   struct Actor
       *camera; ///< the actor the map view follows, which has no actor id
-  u8 unusedAfterCamera[0x10]; ///< no code names it
-  s32 speaker;                ///< the actor speaking; the leader at each event
-  s32 messageWindow;          ///< the open message window, 0 for none
-  s32 sideWindow;             ///< the speaker's portrait window
+  u8 unusedAfterCamera[16]; ///< no code names it
+  s32 speaker;              ///< the actor speaking; the leader at each event
+  s32 messageWindow;        ///< the open message window, 0 for none
+  s32 sideWindow;           ///< the speaker's portrait window
   /// The leader's two-row actor placement table (its row and an end
   /// row), which Actor_ResetForLeader builds through its offset.
-  u8 leaderPlacements[0x30];
-  u8 unusedAfterPlacements[0xa86]; ///< no code names it
+  u8 leaderPlacements[48];
+  u8 unusedAfterPlacements[2694]; ///< no code names it
   /// Set while a raised or step trigger runs; Event_Start then resets the
   /// effect counter.
   u16 busy;

@@ -30,7 +30,7 @@ enum SoundControl {
   SOUND_KEEP_BGM = 18,         ///< keeps the music that is playing
   /// Fades player 3 out over 48 VBlanks; also the number of the song table's
   /// row 289, so that row never plays.
-  SOUND_FADE_OUT_ACTION_SE = 0x121,
+  SOUND_FADE_OUT_ACTION_SE = 289,
   /// Sounds from here to SOUND_SE_FIRST are jingles; those below are music,
   /// but for SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM.
   SOUND_JINGLE_FIRST = 80,

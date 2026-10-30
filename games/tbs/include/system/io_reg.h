@@ -204,8 +204,8 @@ enum DisplayControl {
 #define EWRAM_END 0x02040000
 /// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
 #define VRAM 0x06000000
-#define BG_CHAR_SIZE 0x4000  ///< bytes in a character block, 16 KB
-#define BG_SCREEN_SIZE 0x800 ///< bytes in a screen block, 2 KB
+#define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB
+#define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
 #define BG_CHAR_BLOCK(n) ((u8 *)VRAM + (n) * BG_CHAR_SIZE)

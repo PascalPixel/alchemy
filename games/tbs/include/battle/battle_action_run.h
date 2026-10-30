@@ -12,7 +12,7 @@ enum {
   /// Targets an action can hold: as many units as BattleWork.objects holds, 8
   /// party places and 6 enemies.
   BATTLE_TARGET_CAPACITY = 14,
-  BATTLE_ACTION_RUN_SIZE = 0x64
+  BATTLE_ACTION_RUN_SIZE = 100
 };
 
 /// BattleActionRun.targetCritical: the critical hit rolled for each target.

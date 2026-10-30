@@ -160,7 +160,7 @@ struct TileMask {
 /// The six row patterns that mark the battle menus' range icons, colour 5
 /// over a colour-4 fill, read by Menu_BuildLocalizedPatternTiles.
 extern const struct TileMask gMenu_BarPatternRows[];
-/// The credits' 8x8 one-bit font, ASCII 0x20 to 0x7f.
+/// The credits' 8x8 one-bit font, ASCII 32 to 127.
 extern const u8 gCredits_Font[];
 extern const u8 gScreenTransition_DitherTable[];
 extern s8 gScreenTransition_EdgeOffsets[];
@@ -294,7 +294,7 @@ extern const s8 gWindowSprite_WobbleOffsets[][2];
 extern const u8 gFont_ColorPens[];
 /// Glyph_DrawArm, copied to the heap for each character drawn.
 extern u8 Glyph_DrawCodeSize[];
-/// Each main font glyph's width in pixels, from the space (0x20) on.
+/// Each main font glyph's width in pixels, from the space (32) on.
 extern const u8 gFont_GlyphWidths[];
 extern const struct ArticleTable gArticle_Indefinite;
 /// Points a struct MessageReader at a message's compressed bits and first

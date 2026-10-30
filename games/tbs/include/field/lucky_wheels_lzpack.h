@@ -17,7 +17,7 @@ struct LzPackNode {
   struct LzPackNode *next; ///< Next node with the same value.
   struct LzPackNode
       *previous; ///< Previous node, or the bucket field at the head.
-  s32 slot;      ///< its window position, 0 to 0x3ff
+  s32 slot;      ///< its window position, 0 to 1023
 };
 
 /// The LZ packer's work: a node per window position, a chain head per byte
@@ -25,13 +25,13 @@ struct LzPackNode {
 /// packer in field/lucky_wheels.c uses it, and nothing in this game calls
 /// that.
 struct LzPackWork {
-  struct LzPackNode nodes[0x400];   ///< one per window position
-  struct LzPackNode *bucket[0x100]; ///< each byte value's chain, or null
-  s32 flagMask;            ///< the flag bit of the next item, 0x80 first
-  s32 bucketBySlot[0x400]; ///< each position's byte; -1 past the input
-  s32 outCount;            ///< bytes of outBuffer in use
+  struct LzPackNode nodes[1024];  ///< one per window position
+  struct LzPackNode *bucket[256]; ///< each byte value's chain, or null
+  s32 flagMask;                   ///< the flag bit of the next item, 0x80 first
+  s32 bucketBySlot[1024];         ///< each position's byte; -1 past the input
+  s32 outCount;                   ///< bytes of outBuffer in use
   /// The group being built: its flag byte, then up to eight items.
-  u8 outBuffer[0x24];
+  u8 outBuffer[36];
   s32 matchOffset; ///< the best match's distance back (LzPack_FindWindowMatch)
   s32 matchLength; ///< its length; 1 for none
   s32 position;    ///< the window position being packed

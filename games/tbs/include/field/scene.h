@@ -79,7 +79,7 @@ STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
 /// Every scene's row, by scene number (field/scenes.s).
 extern const struct Scene gScenes[];
-/// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
+/// The running scene's overlay, loaded into these 32 KB of EWRAM at
 /// each scene change; its code opens with its 48-byte entry table. Every
 /// overlay is linked to run at this one fixed address (0x02008000).
 extern struct SceneEntryPoints gOverlayArea;

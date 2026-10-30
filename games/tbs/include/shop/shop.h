@@ -16,7 +16,7 @@
 /// A shop's work: its windows, the party members' icons, the stock, the cursor
 /// and its icons, and the field effect sprites.
 ///
-/// It is the HEAP_SLOT_MENU block, the same 0xa70 bytes as the field menu's
+/// It is the HEAP_SLOT_MENU block, the same 2,672 bytes as the field menu's
 /// work: Shop_InitializeWork takes and clears it as a shop, the inn,
 /// the sanctum or the item picker opens, and Shop_ReleaseWork frees it.
 struct ShopWork {
@@ -24,17 +24,17 @@ struct ShopWork {
   s32 selectedMember; ///< the menu screens' chosen party member; not named here
   struct Window *moneyWindow; ///< the coins window
   /// The menu screens' first window and their two sides; not named here.
-  u8 menuSides[0x10];
+  u8 menuSides[16];
   struct Window *itemWindow;
   /// The menu screens' windows, icons and cursor grid; not named here.
-  u8 menuWindows[0xf0];
+  u8 menuWindows[240];
   struct Sprite *partyMemberIcons[8]; ///< the party row's sprites
   s16 partyMemberX[8];                ///< pixels
   s16 partyMemberY[8];                ///< pixels
   s32 partyMemberScale[8];            ///< 16.16 fixed point, Q16_ONE full size
   /// The menu screens' choices, entries and party and the row of four
   /// figures; not named here.
-  u8 menuLists[0xf8];
+  u8 menuLists[248];
   s16 stockItemIds[129];    ///< the items on sale, ended by 0
   s16 partyMemberIds[9];    ///< the party in order (Party_ListMembers)
   struct MenuCursor cursor; ///< the hand cursor

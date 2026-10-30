@@ -66,7 +66,7 @@ enum BattleStaging {
 
 /// The effect kind Severe Blow alone has: the status window drops its PP row
 /// while it plays.
-#define EFFECT_ID_SEVERE_BLOW 0x87
+#define EFFECT_ID_SEVERE_BLOW 135
 
 /// More of BattleActionRun.battleEffect: the camera takes the other side's
 /// view (an enemy's cast a view of its own), or turns right round.

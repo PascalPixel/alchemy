@@ -72,9 +72,9 @@ struct SaveWork {
   union {
     struct {
       struct SaveSectorHeader header;
-      u8 payload[0xff0];
+      u8 payload[4080];
     } part;
-    u8 bytes[0x1000];
+    u8 bytes[4096];
   } slot; ///< one sector, read from or written to flash
   struct SaveFileSummary summary[3]; ///< each file's, read from its first part
 };

@@ -119,12 +119,12 @@ struct WindowWork {
   struct Message messages[3]; ///< the messages, NULL work when free
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
-  /// Per text tile (tiles 0x80 to 0xFF, then 0x200 to 0x27F): bit 0 once
+  /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once
   /// allocated, bit 1 while the tilemap shows it, 0 when free. The first
   /// three hold the bottom border tiles' lower rows and are 4.
   u8 textTileState[256];
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
-  u8 extraTextTiles; ///< 1 lets text use 256 tiles, adding tiles 0x200 to 0x27F
+  u8 extraTextTiles; ///< 1 lets text use 256 tiles, adding tiles 512 to 639
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
   u8 dirty;
   /// Set while Mind Read shows thoughts: round border corners, colour 8 text

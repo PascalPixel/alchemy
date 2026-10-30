@@ -86,8 +86,8 @@ struct ActorSystemWork {
   s16 suspended; ///< nonzero while a menu has suspended sprite projection
   u8 edge;       ///< outline edge colour; 15 when the field sets up
   u8 fill;       ///< outline fill colour; 0 when the field sets up
-  u8 spriteGroups[0x10]; ///< the sprite group tables, taken in turn by count
-  s32 count;             ///< sprite group tables taken from spriteGroups
+  u8 spriteGroups[16]; ///< the sprite group tables, taken in turn by count
+  s32 count;           ///< sprite group tables taken from spriteGroups
   struct SpritePictureCache
       pictureCaches[8]; ///< found by tag (SpritePictureCache_FindByTag)
 };

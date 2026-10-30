@@ -62,16 +62,16 @@ struct BattleEffectWork {
   /// The tile-effect mask extends beyond sheet into the table area.
   union {
     struct {
-      u8 sheet[0x6980];   ///< the effect's decoded pictures, at fixed offsets
+      u8 sheet[27008];    ///< the effect's decoded pictures, at fixed offsets
       s32 bg2xLines[160]; ///< BG2X for each scanline, for an HBlank DMA
       /// The rest of imageStorage, which only effects that skip the scanline
       /// table reach through it.
-      u8 imageTail[0x480];
+      u8 imageTail[1152];
     };
-    u8 imageStorage[0x7080];
+    u8 imageStorage[28800];
     /// The tracked elemental effect stages its origin inside the image area.
     struct {
-      u8 image[0x13c4];
+      u8 image[5060];
       struct BattleBg2Origin origin;
     } trackedCanvas;
   };

@@ -130,7 +130,7 @@ struct BattleWork {
   u8 unusedAfterPlacement[2]; ///< no code names it
   /// The actions chosen for the turn.
   struct BattleAction actions[BATTLE_ACTION_CAPACITY];
-  u8 unusedAfterActions[0x104]; ///< no code names it
+  u8 unusedAfterActions[260]; ///< no code names it
   /// What the defeated enemies leave; spoils.defeated, their count, is also
   /// what Battle_Run returns after a win or a broken link.
   struct BattleSpoils spoils;

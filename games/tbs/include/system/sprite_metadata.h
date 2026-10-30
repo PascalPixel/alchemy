@@ -14,7 +14,7 @@
 struct AnimationMetadata {
   u8 width;    ///< pixels
   u8 height;   ///< pixels
-  u16 scale;   ///< 8.8 fixed point, 0x100 full size
+  u16 scale;   ///< 8.8 fixed point, 256 full size
   u8 drawKind; ///< SpriteAnimation.kind: the facing table its pictures follow
   /// The scripts in animation; an animation number at or past it is not
   /// played.

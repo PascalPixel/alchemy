@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A sprite's rotation and scale: scales in 8.8 fixed point (0x100 is full
+/// A sprite's rotation and scale: scales in 8.8 fixed point (256 is full
 /// size), the angle in 1/65536 turns.
 struct AffineTransform {
   u16 scaleX;  ///< 8.8 fixed point, read signed: negative mirrors the sprite

@@ -146,7 +146,7 @@ enum SoundModulationTarget {
 
 enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 
-#define SOUND_FADE_FULL_VOLUME 0x100
+#define SOUND_FADE_FULL_VOLUME 256
 #define SOUND_FADE_STEP 16
 
 /// A voice a track plays its notes with: its kind and base key, the sample or
@@ -375,7 +375,7 @@ struct MusicPlayerTrack {
   u8 outVolumeB; ///< Left volume: (127 - pan) * scaled volume / 256.
   u8 volume;     ///< The song's volume command, scaled by volumeScale / 32.
   /// 0 to 64 (full, the reset value): a player volume or fade level of 0 to
-  /// 0x100 divided by 4.
+  /// 256 divided by 4.
   u8 volumeScale;
   s8 pan;       ///< The pan command's byte - 64, -64 to 63; doubled for output.
   s8 panOffset; ///< Added to the doubled pan, from m4aMPlayPanpotControl.
@@ -456,7 +456,7 @@ struct MusicPlayerInfo {
   u16 tempoCount;
   u16 fadePeriod;  ///< VBlanks between fade steps; 0 when not fading.
   u16 fadeCounter; ///< VBlanks left until the next fade step.
-  /// bits: 8..4 level, 0 to 0x100 in steps of 16 | 1 fade in | 0 pause at the
+  /// bits: 8..4 level, 0 to 256 in steps of 16 | 1 fade in | 0 pause at the
   /// end (MusicPlayerFadeFlag).
   u16 fadeVolume;
   u8 padding[2]; ///< Up to the word tracks starts on; implicit in pret's.

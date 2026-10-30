@@ -40,7 +40,7 @@
 #define STORE_CONST(place) (place)
 #endif
 
-/// 0x78 bytes of EWRAM where scene overlays keep state of their own, such as
+/// 120 bytes of EWRAM where scene overlays keep state of their own, such as
 /// Altmiller Cave's rock puzzle. It lies outside the heap, so a scene change
 /// leaves it alone; MainRoutineWork_InitializeDefaults clears it for a new
 /// game.
@@ -172,7 +172,7 @@ void Import_ActorSetAnimation();
 /// Sets a game flag (GameFlag_Set), for the two scenes whose calls compile only
 /// as calls of a void routine.
 void Import_GameFlagSet(s32 flag);
-/// Advances the game's random number generator and returns 0 to 0xffff
+/// Advances the game's random number generator and returns 0 to 65535
 /// (Random16).
 s32 Import_RandomNext();
 /// The remainder of an unsigned division, from the ARM routine in IWRAM that
@@ -355,7 +355,7 @@ static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }
 #endif
 
-/// A random number from 0 to 0xffff for an event.
+/// A random number from 0 to 65535 for an event.
 static inline s32 Random_Next(void) { return Import_RandomNext(); }
 
 /// Signed division written as a call; the `/` compiles to __divsi3.

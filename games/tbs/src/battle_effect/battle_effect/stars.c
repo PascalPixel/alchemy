@@ -279,7 +279,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   trails = PARTICLES;
   for (frame = 0; frame != 128; frame++) {
     // The three channels sway a third of a turn apart.
-    BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != 8; i++) {

@@ -203,7 +203,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     }
     // Red, green and blue sway a third of a turn apart, so the canvas
     // colours cycle through the hues.
-    BattleEffect_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame * 2, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
     // The frame before the beam fills the canvas with level 26 (26 in each
     // byte) instead of fading it.
     if (frame == 150) {

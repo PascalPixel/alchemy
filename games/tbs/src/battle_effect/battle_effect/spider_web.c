@@ -119,14 +119,14 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
       work->shakeFrames = 8;
     }
     // Spinning Beat throws the target up at 12 pixels a frame on frame 13, and
-    // shows the damage as it lands on frame 65. Its gravity, 0x7851, takes
-    // about 0.47 pixel a frame off its speed each frame, and
+    // shows the damage as it lands on frame 65. Its gravity, Q16_ONE * 47 /
+    // 100, takes about 0.47 pixel a frame off its speed each frame, and
     // verticalMotionPhase Q16_ONE / 4 is the quarter of its speed a bounce
     // keeps.
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
         actor->velocityY = 12 << 16;
-        actor->gravity = 0x7851;
+        actor->gravity = Q16_ONE * 47 / 100;
         actor->bounce = Q16_ONE / 4;
       }
       if (frame == 65) {

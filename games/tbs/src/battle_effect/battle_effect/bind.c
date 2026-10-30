@@ -194,7 +194,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(0);
     // Red, green and blue sway a third of a turn apart.
-    BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
 
     // The Djinni sways 20 pixels either way, once every 32 frames, and from
     // frame 33 rises 2 pixels a frame. For its first four frames it is drawn
@@ -367,7 +368,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
                                      16, 0);
-    BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
+                                    TRIG_TURN / 3, 0);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];

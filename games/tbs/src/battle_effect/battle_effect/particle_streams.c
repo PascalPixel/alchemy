@@ -179,7 +179,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     // The leap: 10 pixels a frame upwards, against a gravity of Q16_ONE * 57 /
     // 100, about 0.57 pixels a frame lost each frame.
     actor->velocityY = 10 << 16;
-    actor->gravity = 0x91eb;
+    actor->gravity = Q16_ONE * 57 / 100;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlayFar(SE_CRASH);
     direction = work->args->side == EFFECT_SIDE_PARTY ? mode : -1;

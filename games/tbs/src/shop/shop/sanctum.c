@@ -139,14 +139,14 @@ s32 Sanctum_Run(s32 unitId) {
   }
 
   // The keeper's portrait window; failing that an empty one off the left
-  // edge, and failing that one on screen with side object 2
+  // edge, and failing that one on screen with Ivan's portrait
   listWindow = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
   if (listWindow == 0) {
     listWindow = Window_CreateFar(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
   }
   if (listWindow == 0) {
     listWindow = Window_CreateFar(0, 0, 5, 5, WINDOW_FLAG_INSTANT);
-    Portrait_CreateFar(2, 0, 0, listWindow, -4, -4);
+    Portrait_CreateFar(IVAN, 0, 0, listWindow, -4, -4);
   }
 
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,

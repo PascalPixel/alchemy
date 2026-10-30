@@ -20,17 +20,20 @@ gElementGlow_StarSizes:
 gElementGlow_RingPictureOffsets:
 	.4byte 78, 1102, 2126, 3150
 	.4byte 0, 10, 20, 0
+@ {character, portrait} pairs, as in gPortrait_CharacterMap
 	.global gBattle_UnusedCharacterIdPairs
 gBattle_UnusedCharacterIdPairs:
 	.2byte SPRITE_ISAAC_CHILD, PORTRAIT_ISAAC_CHILD
-	.2byte SPRITE_GARET, PORTRAIT_GARET
+	.2byte GARET, PORTRAIT_GARET
 	.2byte SPRITE_GARET_CHILD, PORTRAIT_GARET_CHILD
-	.2byte SPRITE_IVAN, PORTRAIT_IVAN
-	.2byte SPRITE_MIA, PORTRAIT_MIA
-	.2byte SPRITE_004, PORTRAIT_FELIX
-	.2byte SPRITE_JENNA, PORTRAIT_JENNA
-	.2byte SPRITE_SHEBA, PORTRAIT_SHEBA
+	.2byte IVAN, PORTRAIT_IVAN
+	.2byte MIA, PORTRAIT_MIA
+	.2byte FELIX, PORTRAIT_FELIX
+	.2byte JENNA, PORTRAIT_JENNA
+	.2byte SHEBA, PORTRAIT_SHEBA
 	.2byte -1, -1
+@ {sprite, portrait} pairs, as in gPortrait_SpriteMap: portrait n is the row
+@ PORTRAIT_16 + n
 	.global gBattle_UnusedActorKindIdPairs
 gBattle_UnusedActorKindIdPairs:
 	.2byte SPRITE_JUPITER_DJINNI, 0

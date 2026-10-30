@@ -781,7 +781,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   cursor = (struct WindowSprite *)Icon_CreateWithResourceVariant(window, 0, 4);
   cursor->motion = ICON_HIDDEN;
   menu->entryGridCursor = cursor;
-  Portrait_CreateFar(0, 0, 0, window, 0, 0);
+  Portrait_CreateFar(ISAAC, 0, 0, window, 0, 0);
 
   y = 8;
   index = 0;

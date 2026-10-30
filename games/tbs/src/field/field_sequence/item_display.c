@@ -375,7 +375,7 @@ s32 Field_IsRevealActive(struct Actor *interpreter) {
 /// and 5 up or down of the leader: treasure spots (ids 100 to 239) with no
 /// actor placed, whose examine trigger (TRIGGER_EXAMINE) gives an item, coins,
 /// a Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
-/// actor of sprite 22 running gFieldEffect_MarkerParticleScript. Called by
+/// actor of SPRITE_BLANK running gFieldEffect_MarkerParticleScript. Called by
 /// Reveal (event_commands/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;

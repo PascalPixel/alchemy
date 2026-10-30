@@ -170,7 +170,7 @@ void Scene_TakeExit(s32 exitId) {
 /// Chooses where the game continues after a sequence other than the field
 /// sequence (see MainRoutine_Run). result is its result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
-/// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
+/// with FLAG_CHILDHOOD, fully heals Isaac and Garet) and
 /// returns to the story battle's defeat point
 /// (Event_SetDefeatDestination) or, when none is set, to the restart
 /// point, usually the last Sanctum (Scene_SetRestartPoint). Any other

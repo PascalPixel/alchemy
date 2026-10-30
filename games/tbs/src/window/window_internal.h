@@ -85,6 +85,7 @@
 #include "macros.h"
 #include "flags.h"
 #include "ability_ids.h"
+#include "enemy_ids.h"
 
 // Edition-specific text and window layout values. The possessives
 // (gLocalizedWord_ItemPossessives) are by number in Spanish, singular and

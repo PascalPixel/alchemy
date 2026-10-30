@@ -119,7 +119,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         layer->script = 0;
         picture = SPRITE_PICTURE_NONE;
         // Ending any sprite animation lowers the sprite's animation count, as
-        // if the last had ended. Only sprite 283, the impact of Lift, has
+        // if the last had ended. Only SPRITE_283, the impact of Lift, has
         // animations that end, and it is a sprite of one sprite animation, so
         // an ending always empties it.
         animation->count--;

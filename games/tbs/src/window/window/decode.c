@@ -1088,12 +1088,14 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             unit = Unit_GetFar(
                 MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear));
-            // In battle a unit of class 122 is called Mystery Man and one of
-            // class 125 Mystery Woman (MsgMysteryPersonName and the next).
+            // In battle ENEMY_MYSTERY_MAN is called Mystery Man and
+            // ENEMY_MYSTERY_WOMAN Mystery Woman (MsgMysteryPersonName and the
+            // next).
             if (work->battleMode != WINDOW_FIELD &&
-                (unit->id == 122 || unit->id == 125)) {
+                (unit->id == ENEMY_MYSTERY_MAN ||
+                 unit->id == ENEMY_MYSTERY_WOMAN)) {
               message = MsgMysteryPersonName;
-              if (unit->id == 125)
+              if (unit->id == ENEMY_MYSTERY_WOMAN)
                 message++;
               Message_DecodeRaw(message, name, 10);
               writePosition = Message_AppendArticleName(

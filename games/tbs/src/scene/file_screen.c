@@ -617,14 +617,14 @@ menu_top:;
     gMainRoutineWork.leaderActorId = 0;
     if (Event_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
-      Party_RemoveMember(0);
-      Party_RemoveMember(1);
-      Party_RemoveMember(2);
-      Party_RemoveMember(3);
-      Party_AddMember(0);
-      Party_AddMember(1);
-      Party_AddMember(2);
-      Party_AddMember(3);
+      Party_RemoveMember(ISAAC);
+      Party_RemoveMember(GARET);
+      Party_RemoveMember(IVAN);
+      Party_RemoveMember(MIA);
+      Party_AddMember(ISAAC);
+      Party_AddMember(GARET);
+      Party_AddMember(IVAN);
+      Party_AddMember(MIA);
     }
     WindowColor_Apply(gMainRoutineWork.windowColor[0],
                       gMainRoutineWork.windowColor[1]);

@@ -85,8 +85,8 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 /// This is Lift cast with no target, which FieldPsynergy_Run calls.
 DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnItemBreakMode3)
 
-/// Spawns a hand (sprite 215) and grows it, spinning, from a quarter to full
-/// size over 24 frames; angle is the way it faces once grown. Makes Lift's
+/// Spawns a hand (SPRITE_MOVE_HAND) and grows it, spinning, from a quarter to
+/// full size over 24 frames; angle is the way it faces once grown. Makes Lift's
 /// two hands, for FieldPsynergy_LiftOnTarget and FieldPsynergy_Lift; returns
 /// NULL when no actor could be spawned. Unlike Carry's
 /// (FieldEffect_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps

@@ -1252,7 +1252,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(64), PIXELS(144), PIXELS(350), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Event_PrepareActorAndApplyValue(1, 0);
+  Event_PrepareActorAndApplyValue(GARET, 0);
   Event_StartScreenTransition();
   Sound_Play(SOUND_FADE_OUT_BGM);
   Weather_ResumeLightning();

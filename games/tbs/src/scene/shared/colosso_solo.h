@@ -87,11 +87,11 @@ void Colosso_ControlCharacterAlone(s32 id) {
   s32 v;
   s32 t;
 
-  Party_RemoveMember(0);
-  Party_RemoveMember(1);
-  Party_RemoveMember(2);
-  Party_RemoveMember(3);
-  Party_RemoveMember(5);
+  Party_RemoveMember(ISAAC);
+  Party_RemoveMember(GARET);
+  Party_RemoveMember(IVAN);
+  Party_RemoveMember(MIA);
+  Party_RemoveMember(JENNA);
   Party_AddMember(id);
   gMainRoutineWork.leaderActorId = id;
   FieldCamera_FollowActor(id, 0);

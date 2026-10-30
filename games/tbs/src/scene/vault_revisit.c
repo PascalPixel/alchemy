@@ -639,8 +639,8 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 
 /// Sets up Vault as the party finds it after reaching Kalay.
 /// On arrival it restores the passage's cell behaviors
-/// (shared/vault_toggle.h), creates the still actor of sprite 223 on the well
-/// that shows nothing, mends the inn's roof, which vault.c
+/// (shared/vault_toggle.h), creates the still actor of SPRITE_CRATE on the
+/// well, which shows nothing, mends the inn's roof, which vault.c
 /// leaves holed, and gives the two children round the well the update routine
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
 /// shown it. Coming in by a gate (ENTRANCE_DEFAULT to

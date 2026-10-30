@@ -107,7 +107,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
                            ANIM_LEADER_ARMS_RAISED);
   wait(20);
 
-  // The droplets (sprite 240), one a frame, from where the Djinni was on
+  // The droplets (SPRITE_240), one a frame, from where the Djinni was on
   // screen (FieldEffect_UpdateRandomTargetParticle moves them).
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;

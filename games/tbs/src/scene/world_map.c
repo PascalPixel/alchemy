@@ -1629,7 +1629,7 @@ static void WorldMap_MeetFlint(void) {
     if (leader != 0)
       Actor_SetPosition(ACTOR_VENUS_DJINNI, leader->x.fixed, leader->z.fixed);
     Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
-    DjinnRecovery_AddStandby(0, 0, 0);
+    DjinnRecovery_AddStandby(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
     WorldMap_Freeze();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Event_Wait(10);
@@ -1663,7 +1663,7 @@ static void WorldMap_MeetFlint(void) {
     djinni->gravity = PIXELS(1);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Event_PlaySound(SE_PSYNERGY_SPARKLE);
-    FieldPsynergy_LoadResources(140, 0);
+    FieldPsynergy_LoadResources(ABILITY_MOVE, 0);
     for (i = 59; i >= 0; i--) {
       if (gFrameCount & 2)
         Actor_SetColorMode(djinni, SPRITE_COLOR_WHITE);

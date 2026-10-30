@@ -594,7 +594,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.firstShortcut = 0;
   gMainRoutineWork.secondShortcut = 0;
   gMainRoutineWork.leaderActorId = 0;
-  Party_AddMember(0);
+  Party_AddMember(ISAAC);
   gMainRoutineWork.coins = 0;
   gMainRoutineWork.messageSpeed = 1;
   gMainRoutineWork.speech = 1;

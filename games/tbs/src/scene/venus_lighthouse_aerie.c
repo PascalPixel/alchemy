@@ -486,13 +486,13 @@ s32 VenusLighthouseAerie_Initialize(void) {
   case VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT:
     Event_Start();
     if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER) != 0) {
-      Inventory_AddItem(0, ITEM_SHAMANS_ROD);
+      Inventory_AddItem(ISAAC, ITEM_SHAMANS_ROD);
     } else if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER + 1) != 0) {
-      Inventory_AddItem(1, ITEM_SHAMANS_ROD);
+      Inventory_AddItem(GARET, ITEM_SHAMANS_ROD);
     } else if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER + 2) != 0) {
-      Inventory_AddItem(2, ITEM_SHAMANS_ROD);
+      Inventory_AddItem(IVAN, ITEM_SHAMANS_ROD);
     } else {
-      Inventory_AddItem(3, ITEM_SHAMANS_ROD);
+      Inventory_AddItem(MIA, ITEM_SHAMANS_ROD);
     }
     Import_EventSetExitRequest(VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B);
     break;

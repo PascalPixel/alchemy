@@ -69,8 +69,8 @@ void FieldPsynergy_FinishWaveAndReleaseHeapBlock(void) {
 /// Task of the wave effect: once its delay has run out, writes
 /// the next page of scanline offsets (a sine wave of 4 pixels either way),
 /// steps the colour fade and the hue, keeps the caster's colours lit, and
-/// every 60 frames sends three particles (sprite 281) from the target to the
-/// caster, with sound 130.
+/// every 60 frames sends three particles (SPRITE_281) from the target to the
+/// caster, with SE_PSYNERGY_START.
 void FieldPsynergy_UpdateMindReadWave(void) {
   struct MindReadWork *work = gMindReadWork;
   u16 *line;

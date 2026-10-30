@@ -6,7 +6,7 @@
 #include "event.h"
 #include "ability_ids.h"
 
-/// Prepares the effect work and spark tiles of Move (ability 140) for the
+/// Prepares the effect work and spark tiles of Move (ABILITY_MOVE) for the
 /// event's Psynergy.
 void Scene_StartEventPsynergy(void) {
   FieldPsynergy_LoadResources(ABILITY_MOVE, 0);

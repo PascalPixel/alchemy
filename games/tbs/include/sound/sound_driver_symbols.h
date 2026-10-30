@@ -84,7 +84,8 @@ struct LzPackWork;
 /// (lucky_wheels_lzpack.h); IdentifyFlash sets it again before the flash code
 /// reads it.
 extern struct LzPackWork *gWaitForFlashWrite;
-/// Plays music; sound 17 fades it and a jingle silences it until it ends.
+/// Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it
+/// ends.
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
 /// Plays jingles; the music returns once it stops.
 extern struct MusicPlayerInfo gMPlayInfo_Jingle;

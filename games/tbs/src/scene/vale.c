@@ -248,7 +248,7 @@ enum ValeActorId {
   /// ★ Named from the game: "Mt. Aleph is a sacred peak."
   /// (MsgValeMtAlephIsASacredPeak)
   ACTOR_MAN_GUARDING_MT_ALEPH,
-  /// The boards on the roof, sprite 206, which Isaac moves into place with
+  /// The boards on the roof, SPRITE_206, which Isaac moves into place with
   /// Psynergy at the roof's end (Vale_RoofMended).
   /// ★ Named from what the player sees: a short plank of yellow wood,
   /// spr_206.png (its render)

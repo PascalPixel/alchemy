@@ -173,7 +173,7 @@ enum CottageRoomsBActorId {
   /// ★ Named from the game: "Kyle, watch out!"
   /// (MsgValeKyleWatchOutTheBoulderThe)
   ACTOR_KYLE,
-  /// Sprite 208, whose frames are a flame and wisps of smoke; it is placed
+  /// SPRITE_208, whose frames are a flame and wisps of smoke; it is placed
   /// outside the house only for CottageRoomsB_HurryToThePlaza, where it shakes,
   /// then
   /// flares up as its animation turns from flame to smoke, and rises 18 pixels

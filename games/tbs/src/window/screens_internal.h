@@ -86,6 +86,7 @@
 #include "module/window/scales.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
+#include "enemy_ids.h"
 
 #ifdef MODERN
 // The menu object calls these window functions with no prototype in scope, as

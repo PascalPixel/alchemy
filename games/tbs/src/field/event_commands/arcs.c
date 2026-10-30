@@ -84,9 +84,9 @@ struct SpriteArcOamView {
   struct SpriteAnimation *child; ///< entries[0], its first layer
 };
 
-/// Spawns the two swelling arcs (sprite 26) on an actor, A and B (B upside
-/// down); they follow it for 32 frames, then release themselves. They draw
-/// with the Psynergy's spark tiles, so they need the Psynergy's work; the
+/// Spawns the two swelling arcs (SPRITE_GOLDEN_RINGS) on an actor, A and B (B
+/// upside down); they follow it for 32 frames, then release themselves. They
+/// draw with the Psynergy's spark tiles, so they need the Psynergy's work; the
 /// casting update routines below spawn them every 16 frames, and
 /// FieldPsynergy_End waits for the last to end (at most 30
 /// frames).

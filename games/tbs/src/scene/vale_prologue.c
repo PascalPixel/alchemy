@@ -163,7 +163,8 @@ enum StormNightActorId {
   ACTOR_JENNAS_MOTHER,
   /// ★ Named from the game: "Oh no! My brother!" (MsgValeNoBrother)
   ACTOR_JENNA_CHILD,
-  /// The Boulder's shadow (sprite 288, a black blob), drawn on alternate
+  /// The Boulder's shadow (SPRITE_BLANK_LARGE, a black blob), drawn on
+  /// alternate
   /// frames under the Boulder as it comes down the river, swelling and
   /// shrinking with its bounds (ValePrologue_UpdateBoulderShadow), and twice
   /// its
@@ -1304,7 +1305,7 @@ static void ValePrologue_GaretLeavesHisChest(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET_CHILD);
   Import_ActorSetPosition(ACTOR_GARET_CHILD, 0, 0);
-  Event_PrepareActorAndApplyValue(1, 1);
+  Event_PrepareActorAndApplyValue(GARET, 1);
   GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
 
@@ -1364,7 +1365,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     }
     Actor_WaitForMoveById(ACTOR_GARET_CHILD);
     Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
-    Event_PrepareActorAndApplyValue(1, 1);
+    Event_PrepareActorAndApplyValue(GARET, 1);
     Import_ActorSetAnimation(ACTOR_GARETS_CHEST, ANIM_NOD);
     GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
     Event_End();
@@ -2607,7 +2608,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Event_Wait(60);
   Scene_PlayQueuedMusic();
   Event_Wait(60);
-  Party_RemoveMemberRestored(1);
+  Party_RemoveMemberRestored(GARET);
   Weather_ResumeLightning();
 }
 

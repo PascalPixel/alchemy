@@ -146,7 +146,7 @@ s32 DebugParameterSet_Load(s32 set) {
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;
-  struct Unit *unit = Unit_GetFar(0);
+  struct Unit *unit = Unit_GetFar(ISAAC);
   s32 i;
   s32 index;
   struct Window *messageWindow;
@@ -304,7 +304,7 @@ restart:
       // (Event_GetSpecialValueFar in Battle_Run).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetFar(FLAG_LINK_BATTLE);
-      Unit_CalculateFar(0);
+      Unit_CalculateFar(ISAAC);
       gMainRoutineWork.special = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetFar(FLAG_DJINN_LESSON);

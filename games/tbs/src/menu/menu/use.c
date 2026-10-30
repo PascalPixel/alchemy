@@ -88,7 +88,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   if (targetId != MENU_TARGET_WHOLE_PARTY)
     target = Unit_GetFar(targetId);
   else
-    target = Unit_GetFar(0);
+    target = Unit_GetFar(ISAAC);
 
   /* FAKEMATCH(dead): a test that is never true (partyResultShown is still
    * 0), which emits nothing but loads effect->range ahead of the loop's count

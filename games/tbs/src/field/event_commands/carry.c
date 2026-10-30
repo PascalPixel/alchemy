@@ -269,8 +269,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 /// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnItemBreakMode1)
 
-/// Spawns a hand (sprite 215) with the item break sound, in animation 1, and
-/// grows it, spinning 1/8 turn a frame, from a quarter to full size over 24
+/// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound, in animation 1,
+/// and grows it, spinning 1/8 turn a frame, from a quarter to full size over 24
 /// frames; angle is the way it faces once grown. Returns the hand, or NULL
 /// when it cannot be spawned (Actor_Spawn); Carry and its no-target cast
 /// release it.

@@ -1327,7 +1327,7 @@ UNUSED static void State_NoOp(void) {}
 /// one line per character, at actor id - 1; Felix's holds "?".
 static s32 BattleArena_TalkByProgress(s32 actorId) {
   s32 messageBase = MsgLobbyCantWaitLets;
-  s32 isaacPresent = BattleArena_PartyContains(0);
+  s32 isaacPresent = BattleArena_PartyContains(ISAAC);
   s32 speakerPresent = BattleArena_PartyContains(actorId);
 
   Event_Start();

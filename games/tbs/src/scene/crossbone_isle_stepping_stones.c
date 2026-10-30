@@ -123,7 +123,7 @@ enum CrossboneIsleSteppingStonesActorId {
   /// ★ Named from what the player sees: the puddle by the dragon statue,
   /// drawn frozen around its pillar (its render)
   ACTOR_THIRD_PUDDLE,
-  /// The pillar in CrossboneIsleDragonStatue's third puddle, sprite 290,
+  /// The pillar in CrossboneIsleDragonStatue's third puddle, SPRITE_290,
   /// which rises 32 pixels as Frost freezes the puddle.
   /// ★ Named from what the player sees: a narrow dark pillar standing in the
   /// third puddle (its render)

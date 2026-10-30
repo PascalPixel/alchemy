@@ -273,6 +273,20 @@ graphics(void)
 	Buffer gridReference = {gridBytes, sizeof(gridBytes), 0};
 	equal(&grid, &gridReference, "a grid writes behaviors, shapes, cell pictures");
 	free(grid.data);
+	textFile("bases.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n8fff:255:12\n");
+	RUN("graphics", true, "bases.txt", "bases.grid");
+	Buffer bases = readFile("bases.grid");
+	uint8_t basesBytes[] = {255, 12, 0xff, 0x8f};
+	Buffer basesReference = {basesBytes, sizeof(basesBytes), 0};
+	equal(&bases, &basesReference,
+		  "a grid reads its picture in hex, behavior and shape in decimal");
+	free(bases.data);
+	textFile("hexbehavior.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n1:ff\n");
+	RUN("graphics", false, "hexbehavior.txt", "hexbehavior.grid");
+	textFile("wideshape.txt", "grid:1x1\tat:0,0\tfill:0:0:0\n1:0:256\n");
+	RUN("graphics", false, "wideshape.txt", "wideshape.grid");
+	textFile("hexfill.txt", "grid:1x1\tat:0,0\tfill:0:a:0\n1\n");
+	RUN("graphics", false, "hexfill.txt", "hexfill.grid");
 	textFile("screen.txt", "palette:14\n80 3ffh\n\n1v 2hv\n");
 	RUN("graphics", true, "screen.txt", "screen.tilemap");
 	Buffer screen = readFile("screen.tilemap");

@@ -4,6 +4,7 @@
 #include "module/window/scales.h"
 #include "types.h"
 #include "character_ids.h"
+#include "sprite_ids.h"
 #include "module/window/window.h"
 
 /// A sprite's pulse, as a scale where 256 is its normal size: it swells to
@@ -89,9 +90,9 @@ const s8 gPauseMenu_Icons[8] = {
 /// Portrait_GetForSpeaker searches for speakers below 20.
 const s16 gPortrait_CharacterMap[20] = {
     ISAAC, ISAAC,
-    ISAAC_CHILD, FACE_ISAAC_CHILD,
+    SPRITE_ISAAC_CHILD, FACE_ISAAC_CHILD,
     GARET, GARET,
-    GARET_CHILD, FACE_GARET_CHILD,
+    SPRITE_GARET_CHILD, FACE_GARET_CHILD,
     IVAN, IVAN,
     MIA, MIA,
     FELIX, FELIX,

@@ -11,8 +11,9 @@ enum {
 };
 
 /// Returns the sprite of character, which is the character itself except that
-/// FLAG_CHILDHOOD gives Isaac and Garet ISAAC_CHILD and GARET_CHILD, and
-/// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite ISAAC_TUNIC.
+/// FLAG_CHILDHOOD gives Isaac and Garet SPRITE_ISAAC_CHILD and
+/// SPRITE_GARET_CHILD, and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite
+/// SPRITE_ISAAC_TUNIC.
 ///
 /// Called by Event_SpawnActorPlacements for every actor
 /// placement, and by PsynergyMenu_InitializeEntryActors (through
@@ -24,14 +25,14 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
   if (sprite <= 8) {
     if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
       if (sprite == ISAAC) {
-        sprite = ISAAC_CHILD;
+        sprite = SPRITE_ISAAC_CHILD;
       }
       if (sprite == GARET) {
-        sprite = GARET_CHILD;
+        sprite = SPRITE_GARET_CHILD;
       }
     } else if ((GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) != 0) &&
                (sprite == ISAAC)) {
-      sprite = ISAAC_TUNIC;
+      sprite = SPRITE_ISAAC_TUNIC;
     }
   }
   return sprite;
@@ -42,17 +43,17 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 ///
 /// Called by FileList_ShowPartySprites through
 /// Party_RemapCharacterIdIfEnabledFar. Save summaries omit the tunic flag,
-/// so this never gives sprite ISAAC_TUNIC.
+/// so this never gives sprite SPRITE_ISAAC_TUNIC.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
   sprite = character;
   if ((sprite <= 8) && (childhood != 0)) {
     if (sprite == ISAAC) {
-      sprite = ISAAC_CHILD;
+      sprite = SPRITE_ISAAC_CHILD;
     }
     if (sprite == GARET) {
-      sprite = GARET_CHILD;
+      sprite = SPRITE_GARET_CHILD;
     }
   }
   return sprite;
@@ -142,7 +143,8 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       }
       // Dora's tunic overlays the young sprites with its child part.
       if (GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) &&
-          (u32)(spriteId - ISAAC_CHILD) <= GARET_CHILD - ISAAC_CHILD)
+          (u32)(spriteId - SPRITE_ISAAC_CHILD) <=
+              SPRITE_GARET_CHILD - SPRITE_ISAAC_CHILD)
         Actor_RegisterSpriteMetadataFar(object, SPRITE_TUNIC);
     } else if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);

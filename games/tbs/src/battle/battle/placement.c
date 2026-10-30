@@ -65,20 +65,20 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   } else {
     switch (unit->id) {
     case GARET:
-      sprite = BATTLE_CHARACTER(GARET);
+      sprite = SPRITE_BATTLE_GARET;
       break;
     case MIA:
-      sprite = BATTLE_CHARACTER(MIA);
+      sprite = SPRITE_BATTLE_MIA;
       break;
     case IVAN:
-      sprite = BATTLE_CHARACTER(IVAN);
+      sprite = SPRITE_BATTLE_IVAN;
       break;
     case JENNA:
-      sprite = BATTLE_CHARACTER(JENNA);
+      sprite = SPRITE_BATTLE_JENNA;
       break;
     case ISAAC:
     default:
-      sprite = BATTLE_CHARACTER(ISAAC);
+      sprite = SPRITE_BATTLE_ISAAC;
       break;
     }
     if (unitId < 0 || unitId > ALLY_MAX)

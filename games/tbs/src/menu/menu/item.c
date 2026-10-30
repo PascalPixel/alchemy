@@ -172,16 +172,10 @@ s32 ItemMenu_Run(void) {
 /// The resident IWRAM word copy, called through its address.
 typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 
+/// Iwram_CopyWords's routine reached from IwramIrqMain rather than at its
+/// fixed address: the trade's snapshot copies call it this way.
 #define ITEM_IWRAM_COPY_WORDS                                                  \
   ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
-
-/// Copies size bytes as Iwram_CopyWords does, for the trade's unit copies.
-static __inline__ s32 Item_CopyWords(void *dst, const void *src, s32 size) {
-  /* FAKEMATCH(wrapper): the copies reach the routine from IwramIrqMain
-   * through this inline; as Iwram_CopyWords calls, 2 of 1268 instructions of
-   * ItemMenu_RunCommands differ in tbs-en. */
-  return ITEM_IWRAM_COPY_WORDS(dst, src, size);
-}
 
 /// The steps of the item menu's command loop (ItemMenu_RunCommands).
 enum ItemMenuStep {
@@ -633,8 +627,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       targetUnit = Unit_GetFar(menu->sideMember[1]);
       sourceCopy = Heap_Alloc(BATTLE_UNIT_SIZE);
       targetCopy = Heap_Alloc(BATTLE_UNIT_SIZE);
-      Item_CopyWords(sourceCopy, sourceUnit, BATTLE_UNIT_SIZE);
-      Item_CopyWords(targetCopy, targetUnit, BATTLE_UNIT_SIZE);
+      ITEM_IWRAM_COPY_WORDS(sourceCopy, sourceUnit, BATTLE_UNIT_SIZE);
+      ITEM_IWRAM_COPY_WORDS(targetCopy, targetUnit, BATTLE_UNIT_SIZE);
       // Take both whole stacks out, one item at a time (at most a stack of
       // 30): Inventory_RemoveFar returns INVENTORY_REMOVE_LAST for the last one
       // and INVENTORY_REMOVE_EMPTY_SLOT for an empty slot. Each count ends one
@@ -702,8 +696,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       }
       wait(1);
       if (transferFailed == 1) {
-        Item_CopyWords(sourceUnit, sourceCopy, BATTLE_UNIT_SIZE);
-        Item_CopyWords(targetUnit, targetCopy, BATTLE_UNIT_SIZE);
+        Iwram_CopyWords(sourceUnit, sourceCopy, BATTLE_UNIT_SIZE);
+        Iwram_CopyWords(targetUnit, targetCopy, BATTLE_UNIT_SIZE);
         WindowSprite_ClearListFar(menu->descriptionWindow);
         ItemMenu_ShowMessage(MsgCannotTrade, ITEM_CANNOT_TRADE_X, 14);
 #if TBS_PATCH_LEVEL == 3

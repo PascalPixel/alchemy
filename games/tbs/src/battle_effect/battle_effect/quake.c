@@ -23,7 +23,7 @@ struct RockWallHeights {
 #define QUAKE_PILLAR_WIDTH 40 ///< a pillar's width in pixels
 /// The rock picture in the sheet; the sheet starts with the 40x16 strip of
 /// ground cut from the background.
-#define QUAKE_WALL_OFFSETS 0x1e00
+#define QUAKE_WALL_OFFSETS 7680
 
 /// Three rock pillars rise from the left, 4 frames apart, and sink again,
 /// throwing the targets standing on them into the air.
@@ -33,8 +33,8 @@ struct RockWallHeights {
 /// Each pillar is capped with a strip of ground cut from the background.
 ///
 /// Writes REG_BG2PA, REG_BLDCNT and, on EFFECT_SIDE_PARTY, REG_BG2X; overwrites
-/// the first 0x8000 bytes of Ram_MapGridCellBuffer with BG tiles; sets the
-/// targets' vertical velocity and gravity; arms work->shakeFrames.
+/// the first two character blocks of Ram_MapGridCellBuffer with BG tiles; sets
+/// the targets' vertical velocity and gravity; arms work->shakeFrames.
 ///
 /// args: the targets; variant picks the row of gQuake_Timings.
 void BattleEffect_RunQuake(struct BattleEffectParams *args) {
@@ -73,10 +73,10 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + QUAKE_WALL_OFFSETS, 1, 1);
 
-  // Copy the background tiles (0x8000 bytes from VRAM 0x06008000) and cut
-  // the strip at x 32 to 71, y 96 to 111 into the start of the sheet: the
+  // Copy the background tiles (two character blocks from VRAM 0x06008000) and
+  // cut the strip at x 32 to 71, y 96 to 111 into the start of the sheet: the
   // ground that caps each pillar.
-  Iwram_CopyWords(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(2), 0x8000);
+  Iwram_CopyWords(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(2), 2 * BG_CHAR_SIZE);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != QUAKE_PILLAR_WIDTH; col++) {

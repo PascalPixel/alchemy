@@ -5,10 +5,10 @@
 #include "../battle_effect_internal.h"
 
 /// The smoke trails behind the spray, after the 128 spray particles in
-/// PARTICLES (28 bytes each, 0xe00 in all).
+/// PARTICLES (28 bytes each, 3584 in all).
 #define BOREAS_ICE_BLOCK_TRAILS (PARTICLES + 128)
-#define BOREAS_BIG_BLOCK_OFFSETS 0xc46      ///< the dropping 24x48 ice block
-#define BOREAS_FALLING_BLOCK_OFFSETS 0x14f9 ///< the diagonal 40x80 ice block
+#define BOREAS_BIG_BLOCK_OFFSETS 3142     ///< the dropping 24x48 ice block
+#define BOREAS_FALLING_BLOCK_OFFSETS 5369 ///< the diagonal 40x80 ice block
 
 /// gBoreas_Points has an x and a y for each rock.
 #define BOREAS_POINT_X(rock) gBoreas_Points[rock][0]
@@ -107,7 +107,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   // gets a new one when its wave throws it. The window's edge (from frame 0),
   // its insets and its table (frames 1 to 15,
   // BattleEffect_BuildWindowEdgeTable) are written over chips 0 to 16, the
-  // first 0x1c2 bytes of the buffer; the first wave throws chips 0 to 31 anew
+  // first 450 bytes of the buffer; the first wave throws chips 0 to 31 anew
   // on frame 32, before any chip is drawn.
   for (i = 0; i != 64; i++) {
     PARTICLES[i].x = (Random16() & 63) + 32;

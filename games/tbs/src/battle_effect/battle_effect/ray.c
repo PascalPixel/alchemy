@@ -6,8 +6,8 @@
 
 #define RAY_SPARK_COUNT 1024 ///< sparks in PARTICLES
 
-#define RAY_OFFSETS 0x60e ///< the bolt pictures in the sheet
-#define RAY_COUNT 4       ///< bolts
+#define RAY_OFFSETS 1550 ///< the bolt pictures in the sheet
+#define RAY_COUNT 4      ///< bolts
 
 /// Four bolts close in, turning towards the centre for 16 frames and
 /// scattering sparks from their roots; the sparks fly on until frame 64.
@@ -79,7 +79,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
     speed = (Random16() & 0x3ff) + 256;
     angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-    SET_POSITION(spark, 0x4000, 0x7000, (Trig_Sin(angle) * speed) >> 16);
+    SET_POSITION(spark, 64 << 8, 112 << 8, (Trig_Sin(angle) * speed) >> 16);
     spark->velocityZ = -(Trig_Cos(angle) * speed * 2) >> 16;
     spark->variant = 0;
   }

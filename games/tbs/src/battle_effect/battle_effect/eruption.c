@@ -36,7 +36,7 @@ enum {
 };
 
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
-#define ERUPTION_FIELD_MOTE_OFFSETS 0x3200
+#define ERUPTION_FIELD_MOTE_OFFSETS 12800
 
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one frame apart from frame 6.

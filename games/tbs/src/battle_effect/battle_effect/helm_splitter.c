@@ -16,7 +16,7 @@
 #define HELM_SPLITTER_FRAMES 70
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// The pink star effect, after the swirl.
-#define HELM_SPLITTER_STAR_OFFSETS 0x3e80
+#define HELM_SPLITTER_STAR_OFFSETS 16000
 #define HELM_SPLITTER_CLEARED_SLOTS 1024 ///< PARTICLES slots freed first
 #define HELM_SPLITTER_SPARKS 16          ///< sparks scattered by the strike
 #define HELM_SPLITTER_SPARK_SLOTS 128    ///< spark slots moved and drawn
@@ -234,7 +234,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 }
 
 /// The fragment pictures in the sheet, four of 12x24, after the flash.
-#define IMPACT_BURST_SHARD_OFFSETS 0x59d8
+#define IMPACT_BURST_SHARD_OFFSETS 23000
 #define IMPACT_BURST_FRAGMENT_WIDTH 12  ///< each fragment picture's width
 #define IMPACT_BURST_FRAGMENT_HEIGHT 24 ///< and height
 

@@ -82,9 +82,9 @@ enum FlurryColumn {
 };
 
 /// The flash pictures, packed to half width after the arcs.
-#define FLURRY_FLASH_OFFSETS 0x5100
+#define FLURRY_FLASH_OFFSETS 20736
 /// The wave pictures, in the map grid buffer past the motes.
-#define FLURRY_WAVE_OFFSETS (Ram_MapGridCellBuffer + 0x5e00)
+#define FLURRY_WAVE_OFFSETS (Ram_MapGridCellBuffer + 24064)
 
 /// The user closes on the first target and strikes it again and again; each
 /// strike shows an arc (or, with FLURRY_ARCS_AND_WAVES, a wave for the

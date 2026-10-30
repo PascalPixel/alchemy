@@ -15,8 +15,8 @@
 /// Wrapping columns of fire; gNereid_Columns has a fourth row that nothing
 /// draws.
 #define NEREID_COLUMNS 3
-#define NEREID_EMBERS 1024        ///< embers in PARTICLES
-#define NEREID_COLUMN_IMAGE 0x6e4 ///< the column of fire in the sheet
+#define NEREID_EMBERS 1024       ///< embers in PARTICLES
+#define NEREID_COLUMN_IMAGE 1764 ///< the column of fire in the sheet
 
 /// A formation of twelve sprites sweeps in among embers and columns of fire,
 /// and explodes.
@@ -56,7 +56,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, draw);
 
   // The band along the bottom from WaterSpray, the columns from FirePillarA
-  // (at sheet + 0x6e4). FirePillarA's own palette is skipped, so both are
+  // (at sheet + 1764). FirePillarA's own palette is skipped, so both are
   // drawn in the water spray's colours.
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);

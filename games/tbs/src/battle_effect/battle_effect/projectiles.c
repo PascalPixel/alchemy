@@ -260,9 +260,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
 // Projectile volleys and rushing strikes.
 // The folder README describes them under "Effect families".
 
-#define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST 0x30 ///< the user's, while firing
+#define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST 48 ///< the user's, while firing
 /// The user's effect step after the volley: the usual speed.
-#define PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL 0x10
+#define PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL 16
 
 /// Six comets fly at each target, three frames apart, and burst into a flash
 /// and sparks; the effect's variant picks one of three comets.
@@ -371,17 +371,17 @@ enum VolleyField {
 };
 
 // Where the volley's pictures sit in the sheet.
-#define PROJECTILE_VOLLEY_COMET_OFFSETS 0x1000 ///< comets: the top half of each
-#define PROJECTILE_VOLLEY_STREAK_OFFSETS 0x2000 ///< wind streaks
+#define PROJECTILE_VOLLEY_COMET_OFFSETS 4096  ///< comets: the top half of each
+#define PROJECTILE_VOLLEY_STREAK_OFFSETS 8192 ///< wind streaks
 /// The hit flashes turned on their side, after the upright ones.
-#define PROJECTILE_VOLLEY_FLASH_TURNED 0x128a
+#define PROJECTILE_VOLLEY_FLASH_TURNED 4746
 /// The yellow spark sheet: the small spark (12x8) first, then the medium one
 /// (18x13), then the large one.
 #define PROJECTILE_VOLLEY_MEDIUM_SPARK_OFFSETS (12 * 8)
 #define PROJECTILE_VOLLEY_LARGE_SPARK_OFFSETS (12 * 8 + 18 * 13)
-#define PROJECTILE_VOLLEY_DJINNI_OFFSETS 0x65c0 ///< the small Mercury Djinni
-#define PROJECTILE_VOLLEY_FIRST_SPARK 100 ///< the first spark in PARTICLES
-#define PROJECTILE_VOLLEY_FIRST_TRAIL 512 ///< the first trail in PARTICLES
+#define PROJECTILE_VOLLEY_DJINNI_OFFSETS 26048 ///< the small Mercury Djinni
+#define PROJECTILE_VOLLEY_FIRST_SPARK 100      ///< the first spark in PARTICLES
+#define PROJECTILE_VOLLEY_FIRST_TRAIL 512      ///< the first trail in PARTICLES
 
 /// Shots fly from the user to each target and burst into a flash and sparks
 /// when they pass it. The hit sound plays at most once every 8 frames.

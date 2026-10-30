@@ -37,7 +37,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 #define PALETTE_PARTICLES_FLASHES 24     ///< flashes, work->particles 0 to 23
 #define PALETTE_PARTICLES_SPARKS 24      ///< sparks, work->particles 40 to 63
 /// The streak pictures in the sheet.
-#define PALETTE_PARTICLES_STREAK_IMAGES 0x3000
+#define PALETTE_PARTICLES_STREAK_IMAGES 12288
 
 /// Embers rise from the ground, and pressing A or B during frames 49 to 159
 /// skips to frame 160. The targets reel on frame 138, the screen flares white
@@ -99,7 +99,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
   draw[1] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE_2);
 
   // The flashes from FlashBurst, the streaks from EmberStreak (at sheet +
-  // 0x3000).
+  // 12288).
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;

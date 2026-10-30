@@ -5,7 +5,7 @@
 #include "../battle_effect_internal.h"
 
 /// The standing wall's top in the rebuilt sheet, 48x96 (stretched from 48x32).
-#define GAIA_WALL_TOP_OFFSETS 0x13c0
+#define GAIA_WALL_TOP_OFFSETS 5056
 /// The standing wall's foot in the rebuilt sheet, 48x21.
 #define GAIA_WALL_FOOT_OFFSETS (GAIA_WALL_TOP_OFFSETS + 48 * 96)
 #define GAIA_WALL_FOOT_BYTES (48 * 21)
@@ -162,7 +162,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     struct Particle *rock = &work->particles[10 + i];
 
     SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
-    SET_VELOCITY(rock, i, 1, 0x8000);
+    SET_VELOCITY(rock, i, 1, 32768);
     rock->variant = 44 - i * 4;
   }
   // Then particles[16] to particles[21] take the fixed columns of

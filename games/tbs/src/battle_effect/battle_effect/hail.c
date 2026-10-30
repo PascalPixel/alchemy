@@ -7,7 +7,7 @@
 #define HAIL_CHIP_COUNT 64 ///< ice chips
 
 #define HAIL_CHIP_OFFSETS (32 * 32) ///< the ice chips, after the 32x32 wave
-#define HAIL_DJINNI_OFFSETS 0x65c0  ///< the small Mercury Djinni
+#define HAIL_DJINNI_OFFSETS 26048   ///< the small Mercury Djinni
 
 #define HAIL_FRAMES 64
 
@@ -165,7 +165,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 }
 
 /// The small Venus Djinni in the rock toss's sheet.
-#define GROUND_DJINNI_OFFSETS 0x65c0
+#define GROUND_DJINNI_OFFSETS 26048
 
 #define GROUND_FRAMES 96
 #define GROUND_LAUNCHED 8       ///< rocks launched

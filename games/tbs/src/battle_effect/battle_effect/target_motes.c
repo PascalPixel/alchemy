@@ -99,7 +99,7 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
   (!((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_PARALYZE))
 
 /// Where Paralyze keeps its glint images in work->sheet.
-enum { TARGET_MOTES_GLINT_OFFSETS = 0x2580 };
+enum { TARGET_MOTES_GLINT_OFFSETS = 9600 };
 
 #define TARGET_MOTES 512      ///< motes scattered at the start
 #define TARGET_MOTES_SLOTS 64 ///< particles reserved for each target
@@ -307,8 +307,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 draw[1](canvas, work->sheet + cell * (40 * 40), screen.x - 20,
                         screen.y - 20, 40, 40);
               else if (mode == TARGET_MOTES_DROWN)
-                draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
-                        screen.y - 12, 12, 24);
+                draw[1](canvas, work->sheet + 3072, screen.x - 6, screen.y - 12,
+                        12, 24);
               else if (mode == TARGET_MOTES_HEARTRENDER)
                 draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
                         42);
@@ -454,7 +454,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
           drawUpright(canvas, work->sheet + (cell << 10),
                       (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
         else
-          drawFlipped(canvas, work->sheet + (cell << 10) - 0x1000,
+          drawFlipped(canvas, work->sheet + (cell << 10) - 4096,
                       (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
         current->y += current->velocityY;
         current->velocityY += Q16_ONE / 8;

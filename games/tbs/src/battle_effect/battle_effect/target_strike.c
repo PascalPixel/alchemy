@@ -7,13 +7,13 @@
 // Target strikes: repeated slashes or columns of light on the first target.
 // The folder README describes them under "Effect families".
 
-/// The strike sparks, 512 of them, from PARTICLES[512] (0x3800 bytes in);
+/// The strike sparks, 512 of them, from PARTICLES[512] (14336 bytes in);
 /// the motes use PARTICLES 0 to 127. Only the first 128 sparks are drawn,
 /// though a heavy hit lights all 512.
 #define TARGET_STRIKE_SPARKS (PARTICLES + 512)
 
 /// The smoke pictures in the sheet: six 24x48 puffs.
-#define TARGET_STRIKE_SMOKE_OFFSETS 0x3200
+#define TARGET_STRIKE_SMOKE_OFFSETS 12800
 
 /// Column `field` of style `mode`'s row of gTargetStrike_Styles.
 #define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Styles[(mode)][(field)]
@@ -156,17 +156,17 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The images: glints at the start of the sheet, the slashes or the
-  // columns at 0xc80, smoke at TARGET_STRIKE_SMOKE_OFFSETS, and the style's
+  // columns at 3200, smoke at TARGET_STRIKE_SMOKE_OFFSETS, and the style's
   // palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet + 0xc80,
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet + 3200,
                                0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
-                               work->sheet + 0xc80, 0, 0);
+                               work->sheet + 3200, 0, 0);
   switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOR)) {
   case STRIKE_COLOR_BLUE:
     resource = (s32)&ResourceId_BlueBeamSheet;
@@ -373,14 +373,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-          canvas, work->sheet + stage * (18 * 48) + 0xc80,
+          canvas, work->sheet + stage * (18 * 48) + 3200,
           targetPosition.x / 2 - 18, 56, 18, 48);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-          canvas, work->sheet + stage * (18 * 48) + 0xc80, targetPosition.x / 2,
+          canvas, work->sheet + stage * (18 * 48) + 3200, targetPosition.x / 2,
           56, 18, 48);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       if (frame % (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) ==

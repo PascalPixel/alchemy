@@ -253,8 +253,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
               mote->velocityX += dx;
               mote->velocityY += dy;
               mote->velocityZ += dz;
-              if ((dx > -0x1000 && dx < 0x1000) &&
-                  (dz > -0x1000 && dz < 0x1000))
+              if ((dx > -4096 && dx < 4096) && (dz > -4096 && dz < 4096))
                 mote->variant = -1;
             }
           }

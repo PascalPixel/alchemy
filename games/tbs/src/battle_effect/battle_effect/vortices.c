@@ -4,7 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-#define FROTH_MOTE_CELL 0xc00 ///< the mote picture in the sheet
+#define FROTH_MOTE_CELL 3072  ///< the mote picture in the sheet
 #define FROTH_FIRST_TARGET 32 ///< the first target seat in work->particles
 /// The motes set up in work->particles, before the target seats: no row of
 /// gVortices_Counts may ask for more.

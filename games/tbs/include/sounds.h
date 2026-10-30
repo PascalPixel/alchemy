@@ -5,7 +5,11 @@
 /// Sound ids, one for each row of gSongTable (sound/song_table.s) in order:
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences
 /// in sound/songs are named. A row nothing plays by name yet keeps its number
-/// as its placeholder; the named ones are the code's own, the field music
+/// as its placeholder. Unused: every such row is a dummy (dummy_song_header,
+/// which plays nothing) or a sequence no code or table in the game plays, by
+/// name or by number; only the sound test (SoundTest_Run), which nothing calls,
+/// can start one, so none is heard where a name could come from. The named
+/// ones are the code's own, the field music
 /// gScene_MusicRules and gEncounter_BattleMusic choose, and the
 /// voices and defeat sounds reached by adding to a first id. Three rows are
 /// controls no sound plays from. They are named as pret names its sounds:
@@ -269,6 +273,9 @@ enum SoundId {
   /// The jingle as a party member levels up after a battle, and as a Colosso
   /// round begins.
   MUS_LEVEL_UP,
+  /// A dummy row: the Colosso's result jingle is chosen as 90 plus the match's
+  /// result (ColosseumAzartMatch_ShowMatchResult), which lands here, playing
+  /// nothing, for a result of 0.
   MUS_090,
   /// The smallest prize jingle: two pairs in Lucky Dice, a Tolbi Spring prize
   /// under 5,000 coins, and one level from the debug level editor; also an item

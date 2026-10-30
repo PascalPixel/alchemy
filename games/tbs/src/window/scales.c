@@ -102,7 +102,7 @@ const s16 gPortrait_CharacterMap[20] = {
 };
 
 /// {sprite, portrait} pairs of the other speakers, ending in -1: portrait n
-/// of this list is portrait 128 + n, the row PORTRAIT_16 + n.
+/// of this list is portrait 128 + n, the row PORTRAIT_JUPITER_DJINNI + n.
 const s16 gPortrait_SpriteMap[100] = {
     SPRITE_JUPITER_DJINNI, 0,
     SPRITE_VENUS_DJINNI, 1,

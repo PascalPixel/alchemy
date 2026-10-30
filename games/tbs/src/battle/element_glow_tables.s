@@ -33,7 +33,7 @@ gBattle_UnusedCharacterIdPairs:
 	.2byte SHEBA, PORTRAIT_SHEBA
 	.2byte -1, -1
 @ {sprite, portrait} pairs, as in gPortrait_SpriteMap: portrait n is the row
-@ PORTRAIT_16 + n
+@ PORTRAIT_JUPITER_DJINNI + n
 	.global gBattle_UnusedActorKindIdPairs
 gBattle_UnusedActorKindIdPairs:
 	.2byte SPRITE_JUPITER_DJINNI, 0

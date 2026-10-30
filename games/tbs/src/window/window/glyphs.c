@@ -154,11 +154,9 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
     Iwram_ExpandBitRuns(glyph, pixels + 33, colour);
     if (markGlyph != 0) {
-      /* FAKEMATCH(temporary): pixel assigned in the argument computes pixels
-       * + 7 in r1 and copies it to r5, as native; as a plain pixels + 7
-       * argument, 4 of 185 instructions differ in tbs-ja. */
-      Iwram_ExpandBitRuns(markGlyph, pixel = pixels + 7, colour);
-      Iwram_ExpandBitRuns(markGlyph, pixels + 8, colour);
+      pixel = pixels + 7;
+      Iwram_ExpandBitRuns(markGlyph, pixel, colour);
+      Iwram_ExpandBitRuns(markGlyph, pixel + 1, colour);
     }
     width++;
   } else {
@@ -167,10 +165,8 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
       Iwram_ExpandBitRuns(markGlyph, pixels + 24, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
     if (markGlyph != 0) {
-      /* FAKEMATCH(temporary): pixel assigned in the argument, as in the
-       * outlined path above; as a plain pixels + 7 argument, 4 of 185
-       * instructions differ in tbs-ja. */
-      Iwram_ExpandBitRuns(markGlyph, pixel = pixels + 7, colour);
+      pixel = pixels + 7;
+      Iwram_ExpandBitRuns(markGlyph, pixel, colour);
     }
   }
 #endif

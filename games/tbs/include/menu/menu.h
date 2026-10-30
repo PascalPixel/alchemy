@@ -108,8 +108,8 @@ extern const u8 gMenu_HpString[];
 /// The Status screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gMenu_LvString[];
 #endif
-/// The four Djinn sprites, one per element from Venus (90 to 93), that
-/// FileList_ShowDjinnSprites shows in a row.
+/// The four Djinn sprites, one per element from SPRITE_VENUS_DJINNI to
+/// SPRITE_JUPITER_DJINNI, that FileList_ShowDjinnSprites shows in a row.
 extern const s32 gMenu_PartySpriteResourceIds[4];
 /// `.`, the decimal point of an item's stat multiplier (`x1.2`).
 extern u8 gMenu_PointString[];

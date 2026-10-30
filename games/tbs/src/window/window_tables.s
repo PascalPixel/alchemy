@@ -1,4 +1,5 @@
 	.include "games/tbs/include/ed_asm.h"
+	.include "enums/sprite_ids.inc"
 	.section .rodata
 	.balign 4
 	.global gWindowSprite_PageArrowTiles
@@ -104,15 +105,18 @@ gNameEntry_EndKeyLabel:
 @ The sprite of each element's Djinni (Venus, Mercury, Mars, Jupiter)
 	.global gDjinn_ElementSprites
 gDjinn_ElementSprites:
-	.2byte 90, 91, 92, 93
+	.2byte SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI, SPRITE_MARS_DJINNI
+	.2byte SPRITE_JUPITER_DJINNI
 @ The sprite of each party member
 	.global gCharacter_SpriteTable
 gCharacter_SpriteTable:
-	.2byte 0, 1, 2, 3, 35, 5, 6, 7
-@ The sprite of each party member as a child (while flag 32 is set)
+	.2byte SPRITE_ISAAC, SPRITE_GARET, SPRITE_IVAN, SPRITE_MIA, SPRITE_FELIX
+	.2byte SPRITE_JENNA, SPRITE_SHEBA, SPRITE_007
+@ The sprite of each party member as a child (while FLAG_CHILDHOOD is set)
 	.global gCharacter_ChildSpriteTable
 gCharacter_ChildSpriteTable:
-	.2byte 18, 19, 2, 3, 36, 48, 6, 7	@ child Isaac, child Garet, ...
+	.2byte SPRITE_ISAAC_CHILD, SPRITE_GARET_CHILD, SPRITE_IVAN, SPRITE_MIA
+	.2byte SPRITE_FELIX_CHILD, SPRITE_JENNA_CHILD, SPRITE_SHEBA, SPRITE_007
 	.global gMenuTitleBobOffsets
 gMenuTitleBobOffsets:
 	.ifdef TBS_EDITION_ES

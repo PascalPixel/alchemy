@@ -1,12 +1,13 @@
 	.include "games/tbs/include/ed_asm.h"
+	.include "enums/sounds.inc"
 
-@ Field music: the music of the first rule matching the scene or its area and
-@ the entrance (-1 for any) whose flag (-1 for always) is set.
-	.macro scene_music scene:req, entrance:req, flag:req, cue:req
-	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000, \flag, \cue
+@ Field music: the music (a MUS_ id) of the first rule matching the scene or
+@ its area and the entrance (-1 for any) whose flag (-1 for always) is set.
+	.macro scene_music scene:req, entrance:req, flag:req, music:req
+	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000, \flag, \music
 	.endm
-	.macro area_music area:req, entrance:req, flag:req, cue:req
-	.2byte \area, \entrance & 0x7fff, \flag, \cue
+	.macro area_music area:req, entrance:req, flag:req, music:req
+	.2byte \area, \entrance & 0x7fff, \flag, \music
 	.endm
 
 @ Area names: the name of the scene or its area and the entrance (-1
@@ -40,130 +41,130 @@
 	.balign 4
 	.global gScene_MusicRules
 gScene_MusicRules:
-	area_music 1, -1, -1, 74
-	area_music 2, 90, -1, 19
-	area_music 2, 91, -1, 19
-	area_music 2, 65, -1, 41
-	area_music 2, 66, -1, 41
-	area_music 2, 67, -1, 41
-	area_music 2, 68, -1, 41
-	area_music 2, 69, -1, 41
-	area_music 2, 70, -1, 41
-	area_music 2, 75, -1, 41
-	area_music 2, 73, -1, 22
-	area_music 2, -1, 0x16e, 9
-	area_music 2, -1, -1, 42
-	scene_music Sanctum, -1, 0x9f0, 74
-	scene_music Sanctum, -1, 0x814, 2
-	scene_music Sanctum, -1, -1, 74
-	scene_music CottageRoomsB, 19, -1, 3
-	area_music 3, -1, 0x9f0, 0
-	area_music 3, -1, 0x814, 2
-	area_music 3, -1, 0x901, 0
-	area_music 3, -1, 0x900, 23
-	area_music 3, -1, -1, 19
-	scene_music SolSanctumElementalStarRoom, -1, -1, 22
-	scene_music SolSanctumEruption, -1, -1, 63
-	area_music 4, -1, 0x9f0, 2
-	area_music 4, -1, 0x814, 63
-	scene_music SolEntrance, -1, -1, 20
-	area_music 4, -1, -1, 20
-	scene_music StoneRooms, 2, -1, 1
-	area_music 5, -1, -1, 0
-	area_music 6, -1, -1, 42
-	area_music 7, -1, -1, 24
-	area_music 8, -1, 0x845, 1
-	area_music 8, -1, -1, 2
-	area_music 9, -1, -1, 3
-	area_music 10, -1, 0x845, 1
-	area_music 10, -1, -1, 2
-	scene_music KolimaTunnel, -1, -1, 2
-	area_music 11, -1, 0x845, 1
-	area_music 11, -1, -1, 2
-	area_music 12, -1, 0x845, 1
-	area_music 12, -1, -1, 2
-	area_music 13, -1, 0x845, 1
-	area_music 13, -1, -1, 21
-	area_music 14, -1, 0x845, 1
-	area_music 14, -1, 0x844, 21
-	area_music 14, -1, -1, 4
-	scene_music BilibinCaveEntrance, -1, -1, 42
-	area_music 15, -1, -1, 24
-	area_music 17, -1, 0x881, 26
-	area_music 17, -1, -1, 2
-	area_music 18, -1, -1, 24
-	scene_music MercuryLighthouseAerie, -1, -1, 22
-	area_music 19, -1, 0x881, 22
-	area_music 19, -1, -1, 27
-	scene_music LacquerRoomsA, 3, -1, 60
-	area_music 20, -1, -1, 5
-	area_music 21, -1, -1, 28
-	area_music 22, -1, -1, 21
-	area_music 23, -1, -1, 5
-	area_music 24, -1, -1, 42
-	area_music 25, -1, 0x909, 0
-	area_music 25, -1, -1, 4
-	area_music 26, -1, -1, 23
-	area_music 27, -1, -1, 5
-	area_music 28, -1, -1, 25
-	area_music 29, -1, -1, 0
-	area_music 30, -1, -1, 24
-	area_music 31, -1, -1, 24
-	area_music 32, -1, -1, 6
-	area_music 33, -1, -1, 3
-	scene_music RockRooms, 10, -1, 24
-	area_music 34, -1, -1, 1
-	area_music 35, -1, -1, 24
-	area_music 36, -1, -1, 6
-	area_music 37, -1, 0x8f0, 29
-	area_music 37, -1, -1, 41
-	area_music 38, -1, -1, 6
-	scene_music CrossboneIsle, -1, -1, 42
-	scene_music PirateShip, -1, -1, 61
-	area_music 39, -1, -1, 28
-	area_music 40, -1, 0x950, 1
-	area_music 40, -1, -1, 10
-	area_music 41, -1, -1, 3
-	scene_music ColosseumAzartMatch, 1, -1, 7
-	scene_music ColosseumSatrageMatch, 1, -1, 7
-	scene_music ColosseumNavampaMatch, 1, -1, 7
-	scene_music ColosseumAzartMatch, -1, -1, 8
-	scene_music ColosseumSatrageMatch, -1, -1, 8
-	scene_music ColosseumNavampaMatch, -1, -1, 8
-	scene_music Colosseum, 2, -1, 3
-	scene_music Colosseum, 4, -1, 3
-	scene_music Colosseum, 8, -1, 3
-	scene_music Colosseum, 12, -1, 3
-	scene_music Colosseum, 21, -1, 3
-	scene_music Colosseum, 31, -1, 3
-	scene_music Colosseum, 64, -1, 3
-	scene_music ColosseumEntrance, -1, 0x950, 1
-	area_music 42, -1, -1, 8
-	area_music 43, -1, -1, 29
-	area_music 44, -1, -1, 42
-	area_music 45, -1, -1, 42
-	area_music 46, -1, -1, 24
-	area_music 47, -1, -1, 24
-	area_music 48, -1, -1, 1
-	area_music 49, -1, -1, 23
-	area_music 50, -1, -1, 25
-	area_music 51, -1, -1, 26
-	area_music 52, -1, -1, 24
-	scene_music TunnelRuinsLadyStatues, 1, -1, 28
-	scene_music TunnelRuinsLadyStatues, 2, -1, 28
-	scene_music TunnelRuinsLadyStatues, 3, -1, 28
-	area_music 53, -1, -1, 29
-	area_music 54, -1, -1, 28
-	area_music 55, -1, 0x9a7, 1
-	area_music 55, -1, -1, 2
-	area_music 56, -1, -1, 27
-	scene_music VenusLighthouseAerie, -1, 0x351, 22
-	scene_music VenusLighthouseAerie, -1, 0x350, 30
-	scene_music VenusLighthouseAerie, -1, -1, 19
-	area_music 57, -1, -1, 43
-	area_music 58, -1, -1, 22
-	area_music 59, -1, -1, 9
-	area_music 60, -1, -1, 9
+	area_music 1, -1, -1, MUS_FILE_SCREEN
+	area_music 2, 90, -1, MUS_SILENCE
+	area_music 2, 91, -1, MUS_SILENCE
+	area_music 2, 65, -1, MUS_TOLBI_BOUND_SHIP
+	area_music 2, 66, -1, MUS_TOLBI_BOUND_SHIP
+	area_music 2, 67, -1, MUS_TOLBI_BOUND_SHIP
+	area_music 2, 68, -1, MUS_TOLBI_BOUND_SHIP
+	area_music 2, 69, -1, MUS_TOLBI_BOUND_SHIP
+	area_music 2, 70, -1, MUS_TOLBI_BOUND_SHIP
+	area_music 2, 75, -1, MUS_TOLBI_BOUND_SHIP
+	area_music 2, 73, -1, MUS_ELEMENTAL_STARS
+	area_music 2, -1, 0x16e, MUS_DJINN_LESSON
+	area_music 2, -1, -1, MUS_WORLD_MAP
+	scene_music Sanctum, -1, 0x9f0, MUS_FILE_SCREEN
+	scene_music Sanctum, -1, 0x814, MUS_TOWN_IN_TROUBLE
+	scene_music Sanctum, -1, -1, MUS_FILE_SCREEN
+	scene_music CottageRoomsB, 19, -1, MUS_PALACE
+	area_music 3, -1, 0x9f0, MUS_VALE
+	area_music 3, -1, 0x814, MUS_TOWN_IN_TROUBLE
+	area_music 3, -1, 0x901, MUS_VALE
+	area_music 3, -1, 0x900, MUS_DANGER
+	area_music 3, -1, -1, MUS_SILENCE
+	scene_music SolSanctumElementalStarRoom, -1, -1, MUS_ELEMENTAL_STARS
+	scene_music SolSanctumEruption, -1, -1, MUS_ERUPTION
+	area_music 4, -1, 0x9f0, MUS_TOWN_IN_TROUBLE
+	area_music 4, -1, 0x814, MUS_ERUPTION
+	scene_music SolEntrance, -1, -1, MUS_SOL_SANCTUM
+	area_music 4, -1, -1, MUS_SOL_SANCTUM
+	scene_music StoneRooms, 2, -1, MUS_TOWN
+	area_music 5, -1, -1, MUS_VALE
+	area_music 6, -1, -1, MUS_WORLD_MAP
+	area_music 7, -1, -1, MUS_CAVE
+	area_music 8, -1, 0x845, MUS_TOWN
+	area_music 8, -1, -1, MUS_TOWN_IN_TROUBLE
+	area_music 9, -1, -1, MUS_PALACE
+	area_music 10, -1, 0x845, MUS_TOWN
+	area_music 10, -1, -1, MUS_TOWN_IN_TROUBLE
+	scene_music KolimaTunnel, -1, -1, MUS_TOWN_IN_TROUBLE
+	area_music 11, -1, 0x845, MUS_TOWN
+	area_music 11, -1, -1, MUS_TOWN_IN_TROUBLE
+	area_music 12, -1, 0x845, MUS_TOWN
+	area_music 12, -1, -1, MUS_TOWN_IN_TROUBLE
+	area_music 13, -1, 0x845, MUS_TOWN
+	area_music 13, -1, -1, MUS_FOREST
+	area_music 14, -1, 0x845, MUS_TOWN
+	area_music 14, -1, 0x844, MUS_FOREST
+	area_music 14, -1, -1, MUS_TRET_TREE
+	scene_music BilibinCaveEntrance, -1, -1, MUS_WORLD_MAP
+	area_music 15, -1, -1, MUS_CAVE
+	area_music 17, -1, 0x881, MUS_SUHALLA
+	area_music 17, -1, -1, MUS_TOWN_IN_TROUBLE
+	area_music 18, -1, -1, MUS_CAVE
+	scene_music MercuryLighthouseAerie, -1, -1, MUS_ELEMENTAL_STARS
+	area_music 19, -1, 0x881, MUS_ELEMENTAL_STARS
+	area_music 19, -1, -1, MUS_MERCURY_LIGHTHOUSE
+	scene_music LacquerRoomsA, 3, -1, MUS_IVAN
+	area_music 20, -1, -1, MUS_FUCHIN_TEMPLE
+	area_music 21, -1, -1, MUS_DUNGEON
+	area_music 22, -1, -1, MUS_FOREST
+	area_music 23, -1, -1, MUS_FUCHIN_TEMPLE
+	area_music 24, -1, -1, MUS_WORLD_MAP
+	area_music 25, -1, 0x909, MUS_VALE
+	area_music 25, -1, -1, MUS_TRET_TREE
+	area_music 26, -1, -1, MUS_DANGER
+	area_music 27, -1, -1, MUS_FUCHIN_TEMPLE
+	area_music 28, -1, -1, MUS_DESERT
+	area_music 29, -1, -1, MUS_VALE
+	area_music 30, -1, -1, MUS_CAVE
+	area_music 31, -1, -1, MUS_CAVE
+	area_music 32, -1, -1, MUS_KALAY
+	area_music 33, -1, -1, MUS_PALACE
+	scene_music RockRooms, 10, -1, MUS_CAVE
+	area_music 34, -1, -1, MUS_TOWN
+	area_music 35, -1, -1, MUS_CAVE
+	area_music 36, -1, -1, MUS_KALAY
+	area_music 37, -1, 0x8f0, MUS_CONFRONTATION
+	area_music 37, -1, -1, MUS_TOLBI_BOUND_SHIP
+	area_music 38, -1, -1, MUS_KALAY
+	scene_music CrossboneIsle, -1, -1, MUS_WORLD_MAP
+	scene_music PirateShip, -1, -1, MUS_OMINOUS
+	area_music 39, -1, -1, MUS_DUNGEON
+	area_music 40, -1, 0x950, MUS_TOWN
+	area_music 40, -1, -1, MUS_TOLBI
+	area_music 41, -1, -1, MUS_PALACE
+	scene_music ColosseumAzartMatch, 1, -1, MUS_COLOSSO_INTRO
+	scene_music ColosseumSatrageMatch, 1, -1, MUS_COLOSSO_INTRO
+	scene_music ColosseumNavampaMatch, 1, -1, MUS_COLOSSO_INTRO
+	scene_music ColosseumAzartMatch, -1, -1, MUS_COLOSSO
+	scene_music ColosseumSatrageMatch, -1, -1, MUS_COLOSSO
+	scene_music ColosseumNavampaMatch, -1, -1, MUS_COLOSSO
+	scene_music Colosseum, 2, -1, MUS_PALACE
+	scene_music Colosseum, 4, -1, MUS_PALACE
+	scene_music Colosseum, 8, -1, MUS_PALACE
+	scene_music Colosseum, 12, -1, MUS_PALACE
+	scene_music Colosseum, 21, -1, MUS_PALACE
+	scene_music Colosseum, 31, -1, MUS_PALACE
+	scene_music Colosseum, 64, -1, MUS_PALACE
+	scene_music ColosseumEntrance, -1, 0x950, MUS_TOWN
+	area_music 42, -1, -1, MUS_COLOSSO
+	area_music 43, -1, -1, MUS_CONFRONTATION
+	area_music 44, -1, -1, MUS_WORLD_MAP
+	area_music 45, -1, -1, MUS_WORLD_MAP
+	area_music 46, -1, -1, MUS_CAVE
+	area_music 47, -1, -1, MUS_CAVE
+	area_music 48, -1, -1, MUS_TOWN
+	area_music 49, -1, -1, MUS_DANGER
+	area_music 50, -1, -1, MUS_DESERT
+	area_music 51, -1, -1, MUS_SUHALLA
+	area_music 52, -1, -1, MUS_CAVE
+	scene_music TunnelRuinsLadyStatues, 1, -1, MUS_DUNGEON
+	scene_music TunnelRuinsLadyStatues, 2, -1, MUS_DUNGEON
+	scene_music TunnelRuinsLadyStatues, 3, -1, MUS_DUNGEON
+	area_music 53, -1, -1, MUS_CONFRONTATION
+	area_music 54, -1, -1, MUS_DUNGEON
+	area_music 55, -1, 0x9a7, MUS_TOWN
+	area_music 55, -1, -1, MUS_TOWN_IN_TROUBLE
+	area_music 56, -1, -1, MUS_MERCURY_LIGHTHOUSE
+	scene_music VenusLighthouseAerie, -1, 0x351, MUS_ELEMENTAL_STARS
+	scene_music VenusLighthouseAerie, -1, 0x350, MUS_BABI
+	scene_music VenusLighthouseAerie, -1, -1, MUS_SILENCE
+	area_music 57, -1, -1, MUS_VENUS_LIGHTHOUSE
+	area_music 58, -1, -1, MUS_ELEMENTAL_STARS
+	area_music 59, -1, -1, MUS_DJINN_LESSON
+	area_music 60, -1, -1, MUS_DJINN_LESSON
 	.2byte -1, -1, -1, 0	@ end
 
 	.global gArea_NameRules

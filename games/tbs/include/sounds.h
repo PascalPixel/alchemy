@@ -6,7 +6,7 @@
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences
 /// in sound/songs are named. A row nothing plays by name yet keeps its number
 /// as its placeholder; the named ones are the code's own, the field music
-/// gScene_MusicRules and gEncounter_BattleMusic choose by number, and the
+/// gScene_MusicRules and gEncounter_BattleMusic choose, and the
 /// voices and defeat sounds reached by adding to a first id. Three rows are
 /// controls no sound plays from. They are named as pret names its sounds:
 /// music by the place or moment the player knows it from, or by what it sounds

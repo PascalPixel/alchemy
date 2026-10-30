@@ -848,6 +848,36 @@ overlays(void)
 }
 
 static void
+enums(void)
+{
+	textFile("ids.h", "#ifndef IDS_H\n"
+					  "enum Id {\n"
+					  "  /// A comment, enum Fake { NOT_THIS },\n"
+					  "  ID_FIRST, /* also not { this } */\n"
+					  "  ID_SECOND = 0x10,\n"
+					  "  ID_THIRD,\n"
+					  "  ID_AGAIN = ID_FIRST\n"
+					  "};\n"
+					  "enum { ANON = -2u, ANON_NEXT };\n"
+					  "#endif\n");
+	RUN("enums", true, "ids.h", "ids.inc");
+	Buffer out = readFile("ids.inc");
+	check(strstr((char *) out.data, "\t.equiv ID_FIRST, 0\n"
+									 "\t.equiv ID_SECOND, 16\n"
+									 "\t.equiv ID_THIRD, 17\n"
+									 "\t.equiv ID_AGAIN, 0\n"
+									 "\t.equiv ANON, -2\n"
+									 "\t.equiv ANON_NEXT, -1\n") &&
+			  !strstr((char *) out.data, "NOT_THIS"),
+		  "enum constants take their values in order");
+	free(out.data);
+	textFile("bad.h", "enum Bad {\n#if X\n  BAD_A,\n#endif\n};\n");
+	RUN("enums", false, "bad.h", "bad.inc");
+	textFile("bad.h", "enum Bad { BAD_A = 1 << 2 };\n");
+	RUN("enums", false, "bad.h", "bad.inc");
+}
+
+static void
 removeTree(const char *path)
 {
 	DIR *dir = opendir(path);
@@ -878,7 +908,7 @@ main(int argc, char **argv)
 	char scratch[] = "/tmp/alchemy-tools-XXXXXX";
 	check(mkdtemp(scratch) != NULL && !chdir(scratch), "create test directory");
 	const char *names[] = {"graphics", "audio",	  "music",	"text",
-						   "deps",	   "objects", "header", "overlays"};
+						   "deps",	   "objects", "header", "overlays", "enums"};
 	for (size_t i = 0; i < sizeof(names) / sizeof(*names); i++)
 		RUN(names[i], true, "--help");
 	compression();
@@ -892,6 +922,7 @@ main(int argc, char **argv)
 	buildFiles();
 	header();
 	overlays();
+	enums();
 	check(!chdir("/"), "leave test directory");
 	removeTree(scratch);
 	free(tools);

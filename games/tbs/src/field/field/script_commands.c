@@ -621,13 +621,16 @@ retry:
       goto retry;
     // The retry gotos stay: as for (;;) with continue, loop.c hoists the two
     // positions' addresses, which the native recomputes each try.
-    /* FAKEMATCH(one-pass): it ends cse2's block, so the division works on the
-     * loaded x; as plain statements, 8 of 184 instructions differ in tbs-en.
-     */
-    do {
+    /* FAKEMATCH(dead): the offsets in both arms of a test of actor, which
+     * keeps the test through cse2 so the division works on the loaded x; as
+     * plain statements, 8 of 184 instructions differ in tbs-en. */
+    if (actor != 0) {
       dx = candidatePosition.x / Q16_ONE - actor->homeX;
       dz = candidatePosition.z / Q16_ONE - actor->homeZ;
-    } while (0);
+    } else {
+      dx = candidatePosition.x / Q16_ONE - actor->homeX;
+      dz = candidatePosition.z / Q16_ONE - actor->homeZ;
+    }
     if (dx * dx + dz * dz > homeRadiusSquared)
       goto retry;
   } else {

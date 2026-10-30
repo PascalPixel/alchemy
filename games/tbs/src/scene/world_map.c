@@ -2843,8 +2843,8 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
-/// Unused: an update routine that blinks an actor and now and then creates
-/// its attached effects; no actor is given it.
+/// An actor's update routine that blinks it and now and then creates its
+/// attached effects.
 UNUSED static void WorldMap_UpdateBlinkingLinkedEffects(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
@@ -2856,8 +2856,8 @@ UNUSED static void WorldMap_UpdateBlinkingLinkedEffects(struct Actor *actor) {
   }
 }
 
-/// Unused: an update routine that cycles an actor's palettes and now and
-/// then creates its attached effects; no actor is given it.
+/// An actor's update routine that cycles its palettes and now and then
+/// creates its attached effects.
 UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     Actor_SetColorMode(actor, ((u32)((gFrameCount >> 1)) % (u32)6));
@@ -2867,8 +2867,7 @@ UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
   }
 }
 
-/// Unused: an update routine that advances an actor's palette on odd
-/// frames; no actor is given it.
+/// An actor's update routine that advances its palette on odd frames.
 UNUSED static void WorldMap_CycleActorPalettes(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;

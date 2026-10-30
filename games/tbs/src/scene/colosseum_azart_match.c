@@ -1363,8 +1363,7 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
 #include "shared/colosso_marker.h"
 #include "shared/colosso_item_icon.h"
 
-/// Unused: writes eight hexadecimal digits and a terminating null; nothing
-/// calls it.
+/// Writes value as eight hexadecimal digits and a terminating null.
 UNUSED static void String_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
 
@@ -1380,8 +1379,7 @@ UNUSED static void String_WriteU32AsHex(u8 *buf, u32 value) {
 
 static void ColosseumAzartMatch_NoOp(void) {}
 
-/// Unused: marks the shared stage state ready for the waiting script; nothing
-/// calls it.
+/// Marks the shared stage state ready for the waiting script.
 UNUSED static void ColosseumAzartMatch_MarkStageReady(void) {
   s16 *ready = (s16 *)gSceneLocalState;
   u16 nine = 9;

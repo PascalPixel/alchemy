@@ -2114,9 +2114,8 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
 #include "shared/colosso_marker.h"
 #include "shared/colosso_item_icon.h"
 
-/// Unused: writes eight hexadecimal digits followed by a terminator; nothing
-/// calls it.
-UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
+/// Writes value as eight hexadecimal digits and a terminating null.
+UNUSED static void String_WriteU32AsHex(u8 *hexText, u32 value) {
   s32 digitIndex;
 
   hexText += 8;
@@ -2131,7 +2130,7 @@ UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
 
 static void ColosseumNavampaMatch_EmptyHook(void) {}
 
-/// Unused: marks the opponent path recorder as finished; nothing calls it.
+/// Marks the opponent's path recorder finished.
 UNUSED static void ColosseumNavampaMatch_MarkOpponentFinished(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
 

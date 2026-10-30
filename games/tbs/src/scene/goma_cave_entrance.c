@@ -201,7 +201,6 @@ static void GomaCaveEntrance_PushWestPillar(void) {
 
 UNUSED static void GomaCaveEntrance_NoOpA(void) {}
 
-/// Unused: a second empty function nothing calls.
 UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 
 /// Whirlwind on the second ivy at Goma Cave Entrance: it is blown away for

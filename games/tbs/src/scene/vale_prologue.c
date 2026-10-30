@@ -1664,8 +1664,7 @@ static void ValePrologue_SetActorFrameMode(struct Actor *actor, s32 mode) {
   }
 }
 
-/// Unused: alternates the four elders between their normal and flashing frame
-/// modes; nothing calls it.
+/// Alternates the four elders between their normal and flashing frame modes.
 UNUSED static void ValePrologue_FlashBoulderMapAnimationEntries(void) {
   if (((gFrameCount >> sShakeShift) & 3) != 0) {
     ValePrologue_SetActorFrameMode(Actor_GetById(ACTOR_ELDER_EAST), 1);

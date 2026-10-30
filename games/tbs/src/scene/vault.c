@@ -1026,8 +1026,7 @@ static void Vault_UpdateDriftingEffect(struct Actor *updated) {
   effect->acceleration = verticalRate - Math_Divide(verticalRate, 28);
 }
 
-/// Unused: spawns a drifting sprite near the dog, sharing its drawing
-/// priority; nothing calls it.
+/// Spawns a drifting sprite near the dog, sharing its drawing priority.
 UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   struct Actor *anchor;
   struct Actor *effect;

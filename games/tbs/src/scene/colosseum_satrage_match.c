@@ -1693,8 +1693,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
 #include "shared/colosso_marker.h"
 #include "shared/colosso_item_icon.h"
 
-/// Unused: writes eight uppercase hexadecimal digits followed by a terminator;
-/// nothing calls it.
+/// Writes value as eight hexadecimal digits and a terminating null.
 static UNUSED void String_WriteU32AsHex(u8 *destination, u32 value) {
   s32 digit;
 
@@ -1711,8 +1710,7 @@ static UNUSED void String_WriteU32AsHex(u8 *destination, u32 value) {
 /// Retains the empty hook called before the finish.
 static void MapLocalState_EmptyHook(void) {}
 
-/// Unused: marks the opponent's path recorder finished
-/// (PATH_RECORDER_FINISHED); nothing calls it.
+/// Marks the opponent's path recorder finished.
 static UNUSED void ColosseumSatrageMatch_MarkOpponentFinished(void) {
   ((struct PathRecorder *)gSceneLocalState)->mode = PATH_RECORDER_FINISHED;
 }

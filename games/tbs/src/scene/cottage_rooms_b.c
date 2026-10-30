@@ -1209,8 +1209,8 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
-/// Unused: an update routine that flashes between two palettes and gives off a
-/// pair of effects every sixteen frames; no actor is given it.
+/// An actor's update routine that flashes it between two palettes and gives
+/// off a pair of effects every sixteen frames.
 UNUSED static void CottageRoomsB_FlashPaletteAndSpawnPair(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetColorMode(actor, 7);
@@ -1301,13 +1301,13 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
 // Shared Psynergy setup precedes the scene's Psynergy wrappers.
 #include "shared/event_psynergy.h"
 
-/// Unused: cycles Dora's palette with particles; nothing calls it.
+/// Cycles Dora's palette and gives off pairs of effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {
   CottageRoomsB_CyclePaletteAndSpawnPair(
       (struct Actor *)Actor_GetById(ACTOR_DORA));
 }
 
-/// Unused: cycles Dora's palette without particles; nothing calls it.
+/// Cycles the tunic's palette, with no effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
   CottageRoomsB_CyclePaletteOnOddFrames(
       (struct Actor *)Actor_GetById(ACTOR_TUNIC));

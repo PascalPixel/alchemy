@@ -55,7 +55,7 @@ struct ShopWork {
   s8 stockCount;
   s8 partyMemberCount;
   u8 mode;        ///< passed on as the hand cursor's kind; set to 12 at first
-  u8 shopType;    ///< the stock row's type: 0 items, 2 armor, else weapons
+  u8 shopType;    ///< the stock row's type (enum ShopType)
   s8 action;      ///< the counter chosen (enum ShopAction)
   s8 burstMember; ///< the sanctum's party member whose pose is randomized; -1
                   ///< none

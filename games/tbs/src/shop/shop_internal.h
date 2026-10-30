@@ -66,6 +66,7 @@ enum ShopAction {
 /// shop lists and which of the keepers' lines it says.
 enum ShopType {
   SHOP_TYPE_ITEMS = EQUIPMENT_GROUP_NONE, ///< an item shop
+  /// ★ Named from the game: "Weapon Shop" (MsgKalayDidFindNeededInWeapon)
   SHOP_TYPE_WEAPONS = EQUIPMENT_GROUP_WEAPON,
   SHOP_TYPE_ARMOR = EQUIPMENT_GROUP_ARMOR
 };

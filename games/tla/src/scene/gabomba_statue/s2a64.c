@@ -1,16 +1,3 @@
-// Matches: differ 0 of 521 (tla-en, 2026-10-30). Written from the listing
-// with the scene-layer wrappers of s253c.c, where it adopts after
-// Func_020027cc. Every Func_0200578c call, the if branch's first included,
-// goes through s253c.c's Func_0200578c_ArgsFirst (the two values pinned to r1
-// and r2), which sets the id last as the native does. The leader's id is read
-// into a local before the speed 0xc000 is set, so the speed's lsls r5 follows
-// the owner address's adds r6 as in the native (2 to 0). The else branch's
-// 0x6007 in a local set early gives the event work counter its registers.
-// FieldMessage_ShowAtActor is declared as field/event/msgprompt.c has it
-// (void *, prototyped); declared void, 2 differ. Earlier tries: call.h Call3,
-// u8, s16 or u16 ids, an argument barrier in the wrapper (124) or in a
-// do-while macro (67); empty asms or one-pass blocks after any one statement.
-// Its literal pool's eight words agree with the listing's.
 #include "types.h"
 #include "text/msg_ids.h"
 #include "actor.h"
@@ -62,8 +49,7 @@ void Func_02005774(s32 id, s32 value);
 void Func_020057b4(void);
 void Func_02004f40(s32 *x_out, s32 *z_out);
 struct Actor *Func_0200563c(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02005624(struct Actor *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct Actor *object);

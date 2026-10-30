@@ -26,7 +26,7 @@ SECTIONS
         "*/games/tla/src/scene/prox/s0914.o"(.text)
         "*/games/tla/src/scene/prox/s0ad8.o"(.text)
         "*/games/tla/src/scene/prox/s0dac.o"(.text)
-        "*/resource_6a8_overlay.o"(.text.x020095d0)
+        "*/games/tla/src/scene/prox/s15d0.o"(.text)
         "*/games/tla/src/scene/prox/s1770.o"(.text)
         "*/games/tla/src/scene/prox/s17e4.o"(.text)
         "*/games/tla/src/scene/prox/s1800.o"(.text)

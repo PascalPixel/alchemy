@@ -16,7 +16,7 @@ SECTIONS
         "*/resource_6b0_overlay.o"(.text.x02008446)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_6b0_overlay.o"(.text.x0200847e)
-        "*/resource_6b0_overlay.o"(.text.x02008480)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s0480.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0654.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0660.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s06a4.o"(.text)

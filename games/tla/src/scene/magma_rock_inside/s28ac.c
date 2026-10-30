@@ -1,18 +1,3 @@
-// Matches: differ 0 of 120 (tla-en, 2026-10-30); the object's bytes and
-// relocations equal the listing's, literal pool included. As in
-// resource_692_c_020021c0.c, the prepared actor is held in r0 (a pin, tagged
-// below) until the motionFlags store, so its copy into r7 follows the store.
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 120; left: as
-// Func_020021c0 in this overlay (resource_692_c_020021c0.c), the effect
-// pointer's copy before the motionFlags store.
-// Near miss of Func_020028ac of overlay 692 (120 instructions, 2 differ): one
-// scheduling row. After OverlayObject_PrepareObject the native clears the
-// motion flags byte before it copies the returned actor into r7; the draft
-// copies it first. Tried for that: i = 0 before the store (15), Value4 for the
-// prepare call (2), the store through a u8 pointer (2), an empty asm after the
-// store (12), four minutes of alchemy permute (nothing better). Func_020021c0
-// is the same scene behind the 0x303 and 0x304 flags and misses by the same
-// row.
 #include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
 #include "io_reg.h"
 #include "call.h"

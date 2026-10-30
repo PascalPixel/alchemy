@@ -1,15 +1,3 @@
-// Matches: differ 0 of 214 (tla-en, 2026-10-30); its literal pool's three
-// words (gData_02003840, the update hook, 0xffff0000) agree with the
-// listing's. ⚓️'s Effect_Spawn as overlay 6b0 links it after
-// field/field_effect/move.c: games/tla/src/field/field_effect/spawn.c's
-// EFFECT_SPRITE_PRIORITY form word for word, except that the party is actor 0
-// (Actor_GetById(0)) where spawn.c reads gMainRoutineWork.currentOwner; it
-// matches with or without spawn.c's Effect_Create wrapper, so it is written
-// without. Adopting it through spawn.c needs only a way to name the party.
-// Earlier: the draft read the velocity as velocityX..Z, which the header now
-// spells velocity.x..z; with that fix its own form (the sprite priority set
-// through a SpriteView in a one-pass block with the priority call) also
-// measured differ 0, and 4 without the block.
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"

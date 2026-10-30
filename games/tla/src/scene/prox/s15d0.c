@@ -1,12 +1,3 @@
-// Matches: differ 0 of 172 (tla-en, 2026-10-30); the object's bytes and
-// relocations equal the listing's, literal pool included. The fields are read
-// through struct Actor and gMainRoutineWork.currentOwner, with no barrier. The
-// earlier FIELD_AT form gave each access an anonymous struct type of its own,
-// so alias analysis let the flag stores pass the currentOwner loads after them:
-// without barriers each store followed the next call's first arguments (differ
-// 4), and the two barriers that put them back moved the 1 kept in r8 after the
-// step to the field (differ 2). Typed, the loads depend on the stores and the
-// 1's copy keeps its six later readers, as in the native.
 #include "../../../../games/tla/src/scene/prox/local.h"
 #include "actor.h"
 
@@ -40,8 +31,7 @@ void Func_020015d0(void) {
   Call2((void (*)())Actor_SetSpritePriority, 20, 3);
   object = (struct Actor *)Value1(Actor_GetById, gMainRoutineWork.currentOwner);
   object->actionFlags &= 0xfe;
-  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 0x198,
-        0x146);
+  Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 0x198, 0x146);
   Call1(FieldEvent_Wait, 1);
   object = (struct Actor *)Value1(Actor_GetById, gMainRoutineWork.currentOwner);
   object->actionFlags |= 1;

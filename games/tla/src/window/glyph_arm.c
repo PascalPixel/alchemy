@@ -1,26 +1,27 @@
-// Draft, ARM C (game ARM route, GCC 2.95.2), behind the Thumb veneer
-// Func_080385e0 (bx pc): matches. ☀️'s Glyph_DrawArm
-// (games/tbs/src/window/glyph_arm.c) as ⚓️ English has it: the kana-mark
-// test of ☀️'s Japanese and English editions, without English's bound on
-// codes above 143, and no FAKEMATCH device. The listing is mixed-mode,
-// which alchemy-devtools diff cannot compare; checked instead by objcopying the
-// --arm draft's .text and the listing's ARM words: the 792 bytes are
-// identical (196 instructions, the two pool words gFont_GlyphWidths and
-// gFont_Glyphs at the same places). Its entry is 0x080385e4.
+/// @file
+/// The text canvas renderer, compiled as ARM code and copied to RAM to run,
+/// entered in Thumb through Glyph_DrawCode (glyph_arm_entries.s).
+
+#include "module/window/glyph_arm.h"
 #include "types.h"
 #include "uiwindow.h"
 #include "glyph.h"
 
+/// The pixel rows text may reach: four tiles; a glyph is cut off below it.
 #define TEXT_CANVAS_PIXEL_HEIGHT 32
 #define SCREEN_TILE_COLUMNS 30
-#define UI_CANVAS_VRAM ((void *)0x06002500)
-#define UI_WINDOW_OUTLINED_TEXT 0x40
+#define TEXT_CANVAS_VRAM ((void *)0x06002500)
+/// The window's canvas text gets an outline.
+#define WINDOW_FLAG_OUTLINED_TEXT 0x40
 
 extern const u8 gFont_GlyphWidths[];
 
+/// Sets one pixel in the column-major text canvas. windowHeight includes the
+/// two border rows; doubledPixelRow is twice the row within a tile.
+/// repeatedColor holds the colour index in all four nibbles.
 static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
-                                             u32 doubledPixelRow, u8 *canvas,
-                                             u32 repeatedColor) {
+                                           u32 doubledPixelRow, u8 *canvas,
+                                           u32 repeatedColor) {
   u16 *pixelHalfword;
   u32 pixelMask;
 
@@ -31,7 +32,18 @@ static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
   *pixelHalfword = (*pixelHalfword & ~pixelMask) | (pixelMask & repeatedColor);
 }
 
-s32 Func_080385e4(struct Window *window, u32 character, u32 x, u32 y,
+/// Draws one character into a window's text canvas with its top-left corner at
+/// pixel (x, y) of the window's interior, and returns how far the text
+/// advances.
+///
+/// With font set, the character comes from that small two-colour font, 32
+/// bytes a character. With no font, it comes from the main font
+/// (gFont_Glyphs), drawn in four passes: the first three draw an outline in
+/// colour 5 (offset left, right and down when the window has
+/// WINDOW_FLAG_OUTLINED_TEXT) and the last draws the glyph itself in colour 1.
+/// Kana marks (codes 222 and 223) sit over the previous character and advance
+/// by 0.
+s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
                   const u8 *font) {
   const u16 *glyphRows;
   u32 glyphWidth;
@@ -60,7 +72,7 @@ s32 Func_080385e4(struct Window *window, u32 character, u32 x, u32 y,
       if (y < TEXT_CANVAS_PIXEL_HEIGHT) {
         u8 *vram;
 
-        vram = UI_CANVAS_VRAM;
+        vram = TEXT_CANVAS_VRAM;
         while (1) {
           u32 tileY;
           u32 rowLine;
@@ -80,7 +92,7 @@ s32 Func_080385e4(struct Window *window, u32 character, u32 x, u32 y,
                 color = foregroundColor;
               if (((x + column) >> 3) < SCREEN_TILE_COLUMNS)
                 Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
-                                      vram, color);
+                                    vram, color);
             }
             column++;
             if (column > 7)
@@ -93,12 +105,10 @@ s32 Func_080385e4(struct Window *window, u32 character, u32 x, u32 y,
       }
       return fontWidth;
     }
-    glyphRows =
-        (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 26);
+    glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 26);
     glyphWidth = *glyphRows++;
   } else {
-    glyphRows =
-        (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 32);
+    glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 32);
     glyphWidth = *glyphRows;
     glyphRows += 4;
   }
@@ -119,7 +129,7 @@ s32 Func_080385e4(struct Window *window, u32 character, u32 x, u32 y,
       color = 0x1111;
     else
       color = 0x5555;
-    if (window->flags & UI_WINDOW_OUTLINED_TEXT) {
+    if (window->flags & WINDOW_FLAG_OUTLINED_TEXT) {
       if (outlinePass <= 1) {
         if (outlinePass == 1)
           x += 2;
@@ -136,7 +146,7 @@ s32 Func_080385e4(struct Window *window, u32 character, u32 x, u32 y,
     bits <<= 16;
     nextGlyphRow = glyphRows + 1;
     if (y < TEXT_CANVAS_PIXEL_HEIGHT) {
-      vram = UI_CANVAS_VRAM;
+      vram = TEXT_CANVAS_VRAM;
       while (1) {
         u32 tileY;
         u32 rowLine;
@@ -147,8 +157,8 @@ s32 Func_080385e4(struct Window *window, u32 character, u32 x, u32 y,
         rowLine = ((y + row) & 7) << 1;
         while (1) {
           if ((s32)bits < 0)
-            Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
-                                  vram, color);
+            Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine, vram,
+                                color);
           bits <<= 1;
           if (bits == 0)
             break;

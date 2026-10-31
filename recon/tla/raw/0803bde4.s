@@ -219,7 +219,7 @@ Func_0803bde4:
 .L_0803bf7c:
 	.4byte 0x0000031c
 .L_0803bf80:
-	.4byte Data_080385e0
+	.4byte Glyph_DrawCode
 .L_0803bf84:
 	.4byte 0xfffff8d0
 .L_0803bf88:

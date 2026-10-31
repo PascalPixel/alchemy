@@ -13,8 +13,8 @@
 // Draft, differ 8 of 292 in tla-en under -mthumb-slow-loads (2026-10-26). No
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
-// The RAM routine's size is a linker constant in the listing (0x31c):
-// Text_DrawGlyphCodeSize stands for it.
+// The RAM routine is Glyph_DrawCode (window/glyph_arm_entries.s) and its
+// size the linker constant Glyph_DrawCodeSize.
 // ☀️'s Glyph_Draw (the international form) on this game's
 // WindowWork: a text canvas window draws the glyph with the routine copied
 // to RAM, other windows show it as a sprite.
@@ -43,8 +43,8 @@ struct GlyphCell {
 
 typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 
-extern const u8 Data_080385e0[];
-extern u8 Text_DrawGlyphCodeSize[];
+extern const u8 Glyph_DrawCode[];
+extern u8 Glyph_DrawCodeSize[];
 extern char ResourceId_WindowTiles;
 
 s32 Func_0803a8fc(s32 character, u32 *tiles);
@@ -72,7 +72,7 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
     font = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     width = 4;
     if (character != ' ') {
-      RamCode_Load(draw, Data_080385e0, Text_DrawGlyphCodeSize);
+      RamCode_Load(draw, Glyph_DrawCode, Glyph_DrawCodeSize);
       result = draw(window, character, x, y, font);
       Heap_Release(draw);
       return result;

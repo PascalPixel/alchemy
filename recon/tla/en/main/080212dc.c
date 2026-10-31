@@ -131,7 +131,7 @@ void Func_080212dc(s32 depth, s32 *position, struct ScanVertex *scanline) {
   }
 }
 
-void Func_0802146c(struct Position *eye, struct Position *target,
+void Func_08021470(struct Position *eye, struct Position *target,
                    struct ScanVertex *line, struct BgAffine *affine) {
   u32 angle;
   s32 originX;

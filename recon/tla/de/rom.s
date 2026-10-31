@@ -276,8 +276,6 @@ Func_0802de8c:
 	.incbin "baserom.gba", 0x0002de8c, 0x000005b8
 	.section .rom.00030310, "ax"
 	.incbin "baserom.gba", 0x00030310, 0x00000010
-	.section .rom.000385e0, "ax"
-	.incbin "baserom.gba", 0x000385e0, 0x0000031c
 	.section .rom.0003939a, "ax"
 	.incbin "baserom.gba", 0x0003939a, 0x00000002
 	.section .rom.00039452, "ax"

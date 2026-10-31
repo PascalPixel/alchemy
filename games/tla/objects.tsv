@@ -3350,8 +3350,8 @@ main	rom_main_08	recon/tla/fr/rom	.rom.00126560	fr
 main	rom_main_08	recon/tla/es/rom	.rom.00126560	es
 main	rom_main_08	recon/tla/de/rom	.rom.00126560	de
 main	rom_main_08	recon/tla/raw/08126548	.text	en
-main	rom_main_08	recon/tla/raw/08126700	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.00126544	ja
+main	rom_main_08	games/tla/src/battle/presentation/f126700	.text
 main	rom_main_08	games/tla/src/battle/presentation/setup_transition_scene	.text
 main	rom_main_08	games/tla/src/battle/presentation/setup_transition_at_pair_midpoint	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0012695a	it

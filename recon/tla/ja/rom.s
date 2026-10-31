@@ -1789,7 +1789,7 @@ Func_08125bb8:
 	.type BattleCamera_SetRange, %function
 	.thumb_func
 BattleCamera_SetRange:
-	.incbin "baserom.gba", 0x00126544, 0x000002bc
+	.incbin "baserom.gba", 0x00126544, 0x000001b8
 	.section .rom.0012693e, "ax"
 	.incbin "baserom.gba", 0x0012693e, 0x00000002
 	.section .rom.00126940, "ax"

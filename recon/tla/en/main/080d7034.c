@@ -1,6 +1,14 @@
-// Near miss, differ 4 of 232 (tla-en, 2026-10-30): prologue order only; the
+// Near miss, differ 4 of 232 (tla-en, 2026-10-31): prologue order only; the
 // listing stores spawnX (str r1, [sp, #4]) straight after the map load, the
 // draft issues sparkle's `adds r7, #8` there instead.
+// Sched2 (2026-10-31): the listing's order follows only if the spawnX, spawnZ
+// and i stores carry no anti-dependence on the map load, while the map load
+// still waits two cycles for the work and spawned stores; every stack slot
+// here is alias set 0, so both hold or neither does. No barrier can reach it:
+// sparkle's `adds r7, r0, #0` and `adds r7, #8` come from one statement and
+// straddle the map load and the spawnX store. Also 4: spawnX = 0 before the
+// map load, sparkle set before the map load, sparkle through a block
+// temporary.
 // Under -mthumb-slow-loads (2026-10-26): differ 4 of 232 in tla-en, instruction
 // order only. An empty asm before `spawnZ = 0;` lowers it to 2; no second one
 // closes it. Permute (4 minutes) best differ 4; again 2026-10-30 (4 minutes,

@@ -2,7 +2,14 @@
 // sched2 issues `lsls r3, r3, #1`, the second half of the slot offset 362,
 // before the unit's store to [sp, #4]; the native stores between the halves.
 // In the sched2 dump the shift outranks the store by one priority (78 to 77),
-// so no tie is left for the order to settle.
+// so no tie is left for the order to settle. In that dump both reach the
+// member's reread (`ldrb r3, [r6]`, priority 76): the store directly at cost
+// 1, the shift through the add (77) and the slot load and `mov sl, r3`, which
+// the reread must follow because it reuses r3. Round 5 (2026-10-31): a
+// 4-minute permuter run (20461 candidates) found nothing under 2; slot as u32,
+// member as u8 or u32, and the owner reread as either argument all measure 2;
+// slot as u16 or read again in the call 53; asm("" : "+m"(paneOwner[1]))
+// before the slot read 316.
 // The size local moves the copy-back's `lsls r2, r2, #1` after `mov r1, fp` as
 // in the native: with 332 written there, its pseudo is set ahead of the call
 // address and wins the tie by order (the permuter found it, 2026-10-31).

@@ -6,6 +6,19 @@
 // the row step 1 (movs r2, #1); here the constant outranks the leaf store
 // (priority 2 against 1). Both native orders would follow if a store cost two
 // cycles (untested). The permuter (16,604 candidates) found nothing closer.
+// Devices measured (2026-10-31), none closer: an empty asm after the row's
+// store gives the native order there, but light and row trade r8 and lr
+// (differ 24); a one-pass block around the store, or around row++, puts the
+// store first but r7's step (adds r7, #4, the barrier after the loop note)
+// then leads the movs (differ 4); an empty asm or one-pass block before the
+// mode test moves the y copy ahead of both stores (differ 6); y copied into
+// its own local after `filled` comes after the stores but still after the
+// ldrb, with window and y trading r5 and r6 (differ 68, 70 with the one-pass
+// block); the store in both arms of a test on result, pixels, id or row
+// grows the code to 175 to 179 instructions (differ 111 to 132), and on
+// col > 7 folds away (differ 4). The y copy can only follow the stores
+// if the ldrb waits on it, and a barrier that makes it wait ranks the copy
+// first by its earlier insn number.
 // Earlier: differ 6 under -mthumb-slow-loads (2026-10-26), where no single
 // empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brought it closer (device search).

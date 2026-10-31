@@ -1,31 +1,5 @@
-// Near miss, differ 2 of 266 (tla-en, 2026-10-30), through two tagged
-// devices: the -1 result's negs issues before mov fp here and after it
-// natively (sched2: the same priority, 37, and the earlier insn wins).
-// The Broken Seal's twin, Field_UseItem (games/tbs/src/field/
-// field_sequence/items.c), writes the plain itemId = ACT_ITEM_ID(packedItem)
-// and compiles to the native's form there: the pool-loaded 0x3ff moved into
-// fp, then mov r2, fp; and; mov fp, r2. Here the same C is 12: the split
-// constant (*thumb_movsi_split_const) reaches fp through an output reload in
-// a spill register, and the and's reload inherits that register instead of
-// reading fp. Tried (2026-10-30), all without devices: arg & 0x3ff, 0x3ff &
-// arg, arg then &= 0x3ff, a mask local, u32, % 0x400 (12 each); the result or
-// the actor computed between the two steps (16 to 59); a label (12), a
-// one-pass block (14), asm("") without operands (16), a volatile mask (67).
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 266 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Draft, differ 6 of 266, from the listing: an item used from the field
-// menu. It finds the holder with the most of the item when no actor is
-// given, runs the facing trigger's message or callback if there is one,
-// and otherwise runs the item's action effect, asking first for action 149
-// and setting an exit; the used item is removed when flag 0x143 is set.
-// The item id lives in fp in the native, and its 0x3ff mask is built in fp
-// before the and: here a register pin on r11 and an empty asm barrier over
-// the mask give both (plain, differ 16; the pin alone, 16; the barrier
-// alone, 52); both are devices to tag under S2 before adoption. Left: two
-// scheduling swaps, the -1 result's negs issued before mov fp instead of
-// after it, and the party pointer's literal load after movs r0, #128
-// instead of before it. Tried: alchemy permute, two jobs (best weighted
-// 255 at differ 18, by moving one statement).
+// Matches: differ 0 (tla-en, 2026-10-31); held back from adoption: it uses message
+// names the catalogues do not have yet (MsgActorUsesItem, MsgUseItemQuestion).
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -86,11 +60,9 @@ void Inventory_RemoveFar(s32 actor, s32 slot);
 
 s32 Func_080ce0ac(s32 arg, s32 slot) {
   s32 result;
-  /* FAKEMATCH(pin): the item id fixed to r11, where the native keeps it; as
-   * a plain s32 local (the empty asm kept), 48 of 266 instructions differ in
-   * tla-en. */
-  register s32 itemId asm("r11");
+  s32 itemId;
   s32 actor;
+  s32 actorMask;
   struct ItemUnit *obj;
   struct ItemTrigger *event;
   s32 j;
@@ -101,13 +73,14 @@ s32 Func_080ce0ac(s32 arg, s32 slot) {
   struct ItemFieldWork *runtime;
 
   result = -1;
+  // The mask is assigned first, as games/tbs/src/MATCHING.md describes.
   itemId = 0x3ff;
-  /* FAKEMATCH(barrier): an empty asm through the item id between the mask
-   * and the and, so the and reloads it from r11; as itemId = arg & 0x3ff
-   * (the pin kept or not), 12 of 266 instructions differ in tla-en. */
-  asm("" : "+r"(itemId));
+  /* FAKEMATCH(temporary): the actor field's mask held in a local, loaded
+   * before the item id's and; as actor = (arg >> 10) & 0xf, 12 of 266
+   * instructions differ in tla-en. */
+  actorMask = 0xf;
   itemId &= arg;
-  actor = (arg >> 10) & 0xf;
+  actor = (arg >> 10) & actorMask;
   {
     best = 0;
     count = Party_CountActiveOwnersFar();

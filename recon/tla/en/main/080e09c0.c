@@ -1,10 +1,18 @@
-// Near miss, differ 4 of 308 (tla-en, 2026-10-30): scheduler order only.
+// Near miss, differ 4 of 308 (tla-en, 2026-10-31): scheduler order only.
 // After the second VramCache_Load the native issues `add r3, sl` before
 // `movs r6/r5` and the tileB `strh` before `lsls r6/r5`; here sched2 gives the
 // store's chain priority 2 against the pointer setups' 3 and puts both later.
 // Tried (2026-10-30): tileB in a temporary stored at once (4) or after the
 // pointer setup (6); an indexed count-up loop (4; particles first, 10); the
 // pointers set before the second load (56); 4 minutes of permuter (4).
+// 2026-10-31: the native order needs the strh (insn 273 in the sched2 dump)
+// at priority 2, so `add r3, sl` ties the pointer setups at 3 and wins on RTL
+// order; that takes a cost-1 dependent of the store inside its block, and the
+// native block has no load and no later read of r0 or r3 to be one. A
+// loop-note barrier or empty asm anywhere in the block also raises the
+// pointer setups or holds them behind the store (worked through from
+// rank_for_schedule). Measured: the tree's resource.h, task.h,
+// heap_release.h and system.h prototypes (4); a volatile tileB store (4).
 // Func_080e09c0, the effect that
 // lifts an object (363) over the caster, drops it, and, unless the scene is
 // enabled, runs Func_080e0618's five phases as a frame callback until they
@@ -17,6 +25,10 @@
 #include "actor.h"
 #include "field_psynergy_work.h"
 #include "effect_sprite.h"
+#include "graphics/resource.h"
+#include "system/task.h"
+#include "system/heap_release.h"
+#include "system/system.h"
 
 struct ScatterParticle {
   s32 x;
@@ -50,25 +62,16 @@ struct ScatterEvent {
   s8 targetZ;
 };
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Actor_Destroy(struct Actor *object);
-void *Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(void *resource, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Resource_ResetEntry(s32 slot);
-s32 VramCache_Load(s32 slot, s32 size, void *data);
-u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
 void wait(s32 frames);
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 void Func_080d92d4(s32 target, s32 y, s32 z);
-void Task_Add(void (*func)(void), s32 priority);
-void Task_Remove(void (*func)(void));
 void Func_080e0618(void);
 
 extern char ResourceId_SparkleFade;

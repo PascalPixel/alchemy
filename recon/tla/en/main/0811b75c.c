@@ -86,6 +86,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
   s32 spriteId;
   s32 releasedUnitId;
   u8 boxY;
+  struct TlaSpriteRecord **slot;
 
   if (releaseOthers) {
     for (unitIndex = 0; unitIndex < 14; unitIndex++) {
@@ -130,6 +131,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
       Iwram_ClearWords(records, 16);
       record = ResourceObject_CreateFar(spriteId);
       if (record != 0) {
+PERM_RANDOMIZE(
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         boxY = Resource_GetMetadataRecordFarFar(spriteId)->boxY;
         /* FAKEMATCH(one-pass): the height and the first record stored in a
@@ -140,6 +142,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
           *records = record;
         } while (0);
         records++;
+)
       }
       record->flags = 0;
       record = ResourceObject_CreateFar(spriteId + 0x2001);

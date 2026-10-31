@@ -6,6 +6,15 @@
 // separate zero set after the barrier. A `u8` zero local set after the block
 // is merged the same way (4); targets then velocities inside the block, 6.
 // The permuter (4 minutes, 23224 candidates) found nothing below 4.
+// Fifth round (2026-10-31), all 4: an s32, s16, u16, s8 or u8 zero local set
+// after the block (PROMOTE_MODE makes each SImode), the flag stored through a
+// `u8 *` taken in its block, and the zero local also used in the flag test,
+// the second pause call or the event byte (cse1 folds those to constants).
+// cse2's path that falls into the quantity block ends at its closing label, so
+// the zero local's last use (the flag's clearing store) never lies beyond the
+// path, and make_regs_eqv keeps the velocity zero canonical. With the local
+// kept apart by an asm (analysis only, 21) the six stores schedule exactly as
+// the native's, so the merge of the two zeros is all that remains.
 // Under -mthumb-slow-loads (2026-10-26): differ 4 of 109 in tla-en, instruction
 // order only. An empty asm before `object->velocityY = 0;` lowers it to 2; no
 // second one closes it.

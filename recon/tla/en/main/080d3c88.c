@@ -1,3 +1,11 @@
+// Near miss, differ 2 of 385 (tla-en, 2026-10-31): the same one swap. In
+// sched2 every priority here hangs off the messageId ldrsh (P): the sprite
+// store is P + 1, while movs r2, #226 and the two zero stores are P + 3
+// (through its address chain and the r3 reuse), whatever the statement order;
+// a barrier cannot help, since none fits between the shared zero's movs and its
+// first store. volatile sprite differs 211, volatile extra 346, and
+// asm("" : "+r"(sprite)) after the call 78; permute (two minutes, 12,500
+// candidates) found nothing lower.
 // Near miss, differ 2 of 385 (tla-en, 2026-10-30, same source as 2026-10-26's
 // 4): one swap after the first call. The native stores the speaker's sprite
 // (str r0, [sp, #24]) right after it reloads the event work, before the two

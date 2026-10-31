@@ -5,7 +5,17 @@
 // (priority 7), and nothing in the C moves either. 2026-10-31: 4 measured
 // with no source change; Q16_ONE held in ratio from the scale test to the
 // Iwram_RatioMulQ14 call (a tagged temporary) lets reload rebuild it after
-// scale is copied, as natively: 4 -> 2.
+// scale is copied, as natively: 4 -> 2. Round 5 (2026-10-31), still 2: the
+// shift's priority 8 runs view load -> r2's 0x800 -> horizon's store -> r2's
+// 0x10000 -> the scale branch; the stores reach 7 through the view and
+// scanlines loads. A barrier cannot place it, as the native schedules the
+// scale load (before the heap base in RTL) after both builds. Measured: a
+// heap pointer local, horizon and wrap set at their declarations, ratio set
+// before or between them, centerX copied to a local (2); scanlines read
+// first (plain 4), camera first (58), view last (91); wrap set first or
+// declared first (18); wrap s32 or u32 (45); the scale test with an else
+// (43); camera read just before the test (28, 30); any parameter volatile
+// (75 to 133); 22,386 permuter candidates, none below 2.
 // Draft, differ 6 of 199 (2026-10-26; 55 before): ☀️'s BattleCamera_SetRange
 // (games/tbs/src/battle/battle/background.c), ported: builds the next affine
 // background page from the view centre, offsets and zoom, dividing scanlines

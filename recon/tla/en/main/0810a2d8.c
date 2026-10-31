@@ -1,8 +1,10 @@
-// Near miss, differ 4 of 170 (tla-en, 2026-10-31): sched2 order only, two
-// pairs. The native spills the slot argument (str r1) before it builds the
-// heap slots' address; in sched2 the address chain (movs, lsls, adds, then the
-// load) has priority 151 against the spill's 150, so its movs goes first, the
-// same swap as Shop_SellItem (0810a108). After Inventory_FindEquippedFar the
+// Near miss, differ 2 of 170 (tla-en, 2026-10-31): sched2 order only, one
+// pair. An empty asm before the price read (tagged below) settles the second
+// pair the earlier notes describe (4 to 2); the first remains. The native
+// spills the slot argument (str r1) before it builds the heap slots' address;
+// in sched2 the address chain (movs, lsls, adds, then the load) has priority
+// 151 against the spill's 150, so its movs goes first, the same swap as
+// Shop_SellItem (0810a108). After Inventory_FindEquippedFar the
 // native spills the equipped slot (str r0) before it copies the unit pointer
 // for the price's halfword load (mov r3, r8); both have priority 35, and
 // sched2 prefers the copy, which depends on the call only through r3's
@@ -11,6 +13,13 @@
 // offset's copy and the 0x1ff mask with no barrier (6 to 4; the earlier draft
 // kept an untagged empty asm before the mask). Prototype variants for
 // Shop_GetItemPrice (u16, unprototyped) change nothing, and a 4-minute
+// permuter run found nothing better (2026-10-31). With the barrier in place:
+// an empty asm or one-pass block ahead of the shop read puts the slot spill
+// first but moves the unitId copy (adds r7, r0) ahead of it too, since that
+// copy is an entry insn (2 either way); a copy of unitId made after it is
+// merged back to the entry; a one-pass block before the price read in place of
+// the asm upsets allocation (134); a volatile shop read, u32 slot and a
+// separate assignment of equipped change nothing; and a second 4-minute
 // permuter run found nothing better (2026-10-31).
 // The shop repairs a unit's damaged item at slot (refusing other kinds,
 // undamaged items, cursed equipped items and a price over the party's coins),
@@ -59,11 +68,17 @@ void Func_0810a2d8(s32 unitId, s32 slot) {
   s32 itemId = unit->inventory[slot] & 0x1ff;
   struct ItemDefinition *item = Item_Get(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
-  u32 price = Shop_GetItemPrice(unit->inventory[slot]);
+  u32 price;
   s32 message;
   u8 kind;
   u32 saved;
 
+  /* FAKEMATCH(barrier): the empty asm ends the scheduling block after the
+   * equipped slot's spill, so it is stored before the unit pointer is copied
+   * for the price's load; as the function without it, 4 of 170 instructions
+   * differ in tla-en. */
+  asm("");
+  price = Shop_GetItemPrice(unit->inventory[slot]);
   kind = item->useType;
   if (kind != 2) {
     MessageArgument_PushFar(itemId, 2);

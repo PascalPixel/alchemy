@@ -1,9 +1,19 @@
-// Near miss, differ 2 of 84 (tla-en, 2026-10-30): instruction order only.
+// Near miss, differ 2 of 84 (tla-en, 2026-10-31): instruction order only.
 // sched2 issues the workspace address's first move (movs r3, #192) before the
 // empty result's store (str r2, [sp, #4]); the native stores first. In the
 // sched2 dump the store's priority (6) is below the address chain's (7), so
 // no statement order reaches it; the permuter (4 minutes, 13,715 candidates)
-// found nothing better.
+// found nothing better. The gap is fixed by the cost model: the store reaches
+// the workspace load at cost 2 (the slow-loads miss rule), the address at 3.
+// Tried 2026-10-31: a second empty asm right after the store orders it but
+// holds the position's copy (mov sl, r0) above it, differ 2; copying position
+// below that asm, plainly or through a tied asm, is merged back into the
+// entry copy (gcse, regmove), differ 2; a register variable in r10, differ
+// 44. `if (work != NULL) { ...; return found; } return NULL;` needs no
+// barrier, but if-conversion then sizes the set-up instead of the NULL
+// return and leaves `movs r0, #0` behind a branch at the end, differ 9. A
+// one-pass block around the set-up, the test or the store does not stop the
+// hoisting (differ 29 to 31), nor does best as a one-element array (31).
 // Func_080d5670's twin over the heap slot 0xa0 workspace's nodes: finds the
 // used node nearest to a position, within a squared distance of 0x400
 // (coordinates in 1/256 units, squared with the IWRAM Q16 multiply); NULL

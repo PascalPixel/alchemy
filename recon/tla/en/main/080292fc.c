@@ -14,7 +14,15 @@
 // count <= 127, a while loop, point++ in the body (4); rail indexed by
 // count (35); best, bestDistance, point and the null check reordered (14 to
 // 35); value set before watchedObject or after the position (12, 16).
-// Permute 4 minutes from here: nothing below 4.
+// Permute 4 minutes from here: nothing below 4 (twice).
+// Measured 2026-10-31 (second pass): the 127 is a reload into the next of
+// the spill registers r0 to r3 in turn after r1 (268), r2 (best's NULL) and
+// r3 (bestDistance); without best = NULL it lands in r3, so the null check
+// on rail takes no spill register here, and the native spends one more
+// between bestDistance and the count. Without the null check (12), or with
+// if (rail != NULL) around the loop (6), it stays r0; an empty asm before
+// the null check (4), after it (19) or between best and bestDistance (10)
+// does not move it; count as u32 or the loop to != 128 (105), as u16 (161).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

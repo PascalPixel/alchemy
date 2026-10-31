@@ -1,9 +1,18 @@
-// Near miss, differ 2 of 258 (tla-en, 2026-10-30): one reordered pair, the
+// Near miss, differ 2 of 258 (tla-en, 2026-10-31): one reordered pair, the
 // native's `movs r3, #63` before `ldrb r2, [r0, #7]` (the affine index's
 // read-modify-write right after matrix's masked value is stored back to
 // sp+28). sched2 orders the pair as the native does not: the ROM waits before
 // that byte load after the store, while -mthumb-slow-loads exempts an
 // extended load and one that opens a read-modify-write, so it ranks first.
+// The sched2 dump (2026-10-31) shows the whole of it: the byte load is ready
+// one cycle after the store-back (cost 1, the exemption), and its priority,
+// 13 (latency 2 plus the slow-loads ranking), beats the mask constant's 12,
+// so it issues first whenever it is ready; only a cost of 2 on that store
+// would give the ROM's order, and the store rule never charges a load
+// followed in its block by a store to its own address. No device moves it
+// either (2026-10-31): `matrix &= 31;` before the store, differ 23, with an
+// empty asm between them 31; an empty asm before the store's statement or
+// an operand asm on part, 10; the store through a volatile part, 2.
 // No source form moves it (store order, matrix or affine unsigned, x and y
 // swapped; 5,792 permuter candidates); the rest is exact. The pin is gone:
 // one `part` for the shadow and the image, as in The Broken Seal, takes r0

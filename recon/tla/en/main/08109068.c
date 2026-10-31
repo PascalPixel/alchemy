@@ -7,6 +7,14 @@
 // spill's priority always trails the move's by one and no reshaping moves
 // the pair; permute 4 minutes found nothing better. No single empty asm or
 // one-pass block reaches 0 (2026-10-26).
+// Measured 2026-10-31: the spill's other successors (the stock count load,
+// movs r1, #156, the reload for the division) all rank lower, and the move
+// touches no memory, so only a barrier between the two can lift the spill;
+// any barrier also holds the window's parameter copy (mov r9, r0) ahead of
+// it. An empty asm with window copied to a local after it: the copy is
+// propagated away, differ 4; the copy made through an asm output: window
+// moves to r8, differ 30; selected declared volatile: differ 41. Permute 4
+// minutes again (26,340 candidates): nothing beats the draft.
 // First draft of Func_08109068: draws a seven-item stock page of the shop,
 // the selection highlight, page arrows and price sprites; the twin of ☀️'s
 // Shop_DrawStock (games/tbs/src/shop/shop/buy.c), with the page start written

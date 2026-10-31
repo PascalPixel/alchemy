@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Text_DrawCharacterAtOffset
 	.thumb_func
 Text_DrawCharacterAtOffset:

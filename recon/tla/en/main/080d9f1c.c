@@ -6,7 +6,13 @@
 // equal priority the native order would follow (fewer dependents put r0 last).
 // Unmoved by putting result or the differences before the work's load (worse),
 // a u32 index, reading the slot through a cast, the loop counter's placement or
-// the angle's mask; a 4-minute permuter run found nothing better.
+// the angle's mask; two 4-minute permuter runs found nothing better. The gap is
+// the cost model: each spill reaches the work's load at cost 2 (a missing load
+// after a store, -mthumb-slow-loads), the address adds 3 behind r3's store, and
+// every later successor sits below that load, so no reshaping ties them. An
+// empty asm opening the body ties the four stores but sorts r0 first and lifts
+// the stack arguments' loads (parameter copies, ahead of the body) above the
+// work's load: differ 16.
 // Builds a slot's chain of nodes in the heap slot 0xa0 work, one node
 // for each 6 units of the distance between two points, spread evenly along
 // the line; the last node is kind 2, the others kind 1, and each records its

@@ -14,6 +14,18 @@
 // found only a one-pass block from the first wait loop to the gravity store:
 // 2, the offset's movs r2, #128 then after the gravity store, not before the
 // y store; taking &work->resource inside that block is 4 or 10.
+// Round 5 (2026-10-31), sched2's priorities: the offset's lsls r2 69, the
+// gravity store 67; the native order needs the store at 69 or more. The
+// store's link to the ldrsh costs 1 (the slow-loads rules skip a
+// sign-extending load), so no plain dependence raises it. The resource read
+// through a union (alias set 0): 4; read into a temporary between the y and
+// gravity stores: 10; &work->resource taken before the stores: 12. Devices
+// measured, none kept: an empty asm after the gravity store, 2 (movs r2, #128
+// after the store, as the permuter's one-pass); asm("" : "+r"(work) :
+// "m"(object->gravity)) there, 2 (the store rises only to 68, since a link
+// into an asm costs nothing, and lsls r2 still goes one place early); the
+// offset split around such an asm (0x1000, then += 0x2c, the address held by
+// a second asm) gives the native order with r2 and r3 swapped, 12 to 26.
 // Near miss of Func_080e9db4 (first written 2026-10-12): differ 4 of 90 since
 // 2026-10-19 (6 on 2026-10-18).
 #include "types.h"

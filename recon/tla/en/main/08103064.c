@@ -10,7 +10,15 @@
 // and its spill store priority 2 (store cost 1), so no C order moves it. Tried
 // (2026-10-31): the shifted owner as a local set before the loop (differ 12),
 // memberId <<= 8 there (differ 152), the owner in the set entry's one OR
-// expression (differ 8); the permuter's best was differ 11.
+// expression (differ 8); the permuter's best was differ 11. A two-cycle
+// store alone would not do it: the zero for r8 and r9 (movs r1) has two
+// dependents and would still issue third. The listing's order needs the shift
+// to tie the pointer chain at priority 3 and movs r1 to wait for the spill
+// store, a dependence nothing in these eight instructions gives. Also tried
+// (2026-10-31): the owner bits as a volatile local (differ 177), a one-element
+// array (12, kept in a register), an empty asm before the loop (4) or after
+// the local (10), a one-pass block around or after the local (12), the owner
+// first in the set entry's OR (8), the set entry built in three |= steps (4).
 #include "types.h"
 
 #define DJINN_ENTRY_SET (-0x8000)

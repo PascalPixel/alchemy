@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 259 (tla-en, 2026-10-30), with one one-pass block
+// Near miss, differ 2 of 259 (tla-en, 2026-10-31), with one one-pass block
 // around the work's read (tagged below; milder than the empty asm after the
 // item's fetch that also gave 2). Without it, 4 differ: the item's spill
 // (str r0, [sp, #0]) comes after 0x03000000's movs instead of before, the
@@ -12,6 +12,18 @@
 // through a one-pass block or barrier does the same (8 to 10). The mask as a
 // local or macro, as 0x1ff & code, code % 0x200 or (s32)code changes nothing;
 // (u16)code gives 21; the zeroes after the fetch give 9 or more.
+// 2026-10-31, from the sched2 dump: the reload and the movs tie at priority
+// 42, but arm_adjust_cost gives the home store to reload link a cost of 2
+// (the same-address rule), so only the movs and the layers' copy are ready
+// in the cycle after the store. Cutting that link with a barrier or loop
+// note makes the first instruction after it depend on the layers' copy,
+// which is entry code, so mov fp, r1 then lands before the reload; copying
+// the layers after a barrier at the body's start gives 4 (copy propagation
+// folds the copy back to entry). Without -mthumb-slow-loads the movs wins
+// on priority (40 to 39), so the listing wants the slow loads' priority
+// without the same-address stall here: a K2 question, not a C one. The
+// tree's s32 code gives 6 (the count's shifts become asrs); s32 layers
+// changes nothing. A 4-minute permuter run found nothing under 2.
 // Draft, differ 20 of 259 (2026-10-18): only scheduling remains; ten times
 // the native loads (the code from its stack slot, the item, the work) between
 // the first two instructions of a split constant, where this builds the

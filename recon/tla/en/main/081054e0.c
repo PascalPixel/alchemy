@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 72 (tla-en, 2026-10-30): one reordered pair, a
+// Near miss, differ 2 of 72 (tla-en, 2026-10-31): one reordered pair, a
 // scheduler tie. The status panel's list of the five status names, each with
 // its icon, or MsgStatusNameNormal when none is set. The native spills the icon
 // column (str r3, [sp, #0]) before it builds the count's zero (movs r1, #0);
@@ -16,6 +16,15 @@
 // count as u32, `!count` or a do-while loop 2, count as s16 51 or u8 21, the
 // icon row as a loop-invariant base plus y 10 or 53; the permuter (4 minutes,
 // 11,569 candidates) found nothing better.
+// Measured 2026-10-31: reload hands out r1, r2, r1, r2 in turn to the count's
+// zero, the column's and the row's ldrsh index and the -16, as the native
+// does, only with the count's zero first in RTL, so the tie's two
+// instructions and their dependences are the native's own; the column or the
+// count volatile 57 or 35, the column read inside the loop 51, an empty asm
+// with operands on the column 45 or 46 (the count goes to the stack); a
+// barrier or one-pass block before the zero must also hold back mov r8, r0,
+// which the native schedules last. The permuter (4 minutes, 25,670
+// candidates) again found nothing better.
 #include "types.h"
 
 struct MenuPanel {

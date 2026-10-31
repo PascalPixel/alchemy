@@ -364,9 +364,6 @@ Func_0803c198:
 	.thumb_func
 Func_0803c274:
 	.incbin "baserom.gba", 0x0003c270, 0x00000104
-	.section .rom.0003c408, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0003c408, 0x0000013c
 	.section .rom.0003c544, "ax"
 	.global WindowSprite_UpdateAll
 	.type WindowSprite_UpdateAll, %function
@@ -769,6 +766,10 @@ Func_080ce31c:
 	.section .rom.000dbc34, "ax"
 	.incbin "baserom.gba", 0x000dbc34, 0x0000020c
 	.section .rom.000dc554, "ax"
+	.global Func_080cf554
+	.type Func_080cf554, %function
+	.thumb_func
+Func_080cf554:
 	.incbin "baserom.gba", 0x000dc554, 0x000001a8
 	.section .rom.000dc78c, "ax"
 	.global Func_080cf78c
@@ -963,25 +964,24 @@ Func_080d8a00:
 	.thumb_func
 Func_080d8c10:
 	.incbin "baserom.gba", 0x000e5c10, 0x00000130
-	.section .rom.000e5d68, "ax"
-	.balign 4
-	.global Func_080d8d68
-	.type Func_080d8d68, %function
+	.section .rom.000e5e08, "ax"
+	.global Func_080d8e08
+	.type Func_080d8e08, %function
 	.thumb_func
-Func_080d8d68:
-	.incbin "baserom.gba", 0x000e5d68, 0x00000240
-	.section .rom.000e5fa8, "ax"
-	.global Func_080d8fa8
-	.type Func_080d8fa8, %function
+Func_080d8e08:
+	.incbin "baserom.gba", 0x000e5e08, 0x000001a0
+	.section .rom.000e5ff8, "ax"
+	.global Func_080d8ff8
+	.type Func_080d8ff8, %function
 	.thumb_func
-Func_080d8fa8:
-	.incbin "baserom.gba", 0x000e5fa8, 0x0000015c
-	.section .rom.000e6104, "ax"
-	.global Func_080d9104
-	.type Func_080d9104, %function
+Func_080d8ff8:
+	.incbin "baserom.gba", 0x000e5ff8, 0x0000010c
+	.section .rom.000e6194, "ax"
+	.global Func_080d9194
+	.type Func_080d9194, %function
 	.thumb_func
-Func_080d9104:
-	.incbin "baserom.gba", 0x000e6104, 0x000001a0
+Func_080d9194:
+	.incbin "baserom.gba", 0x000e6194, 0x00000110
 	.section .rom.000e62d4, "ax"
 	.global Func_080d92d4
 	.type Func_080d92d4, %function
@@ -1008,12 +1008,18 @@ Func_080d9b80:
 	.thumb_func
 Func_080d9e98:
 	.incbin "baserom.gba", 0x000e6e98, 0x000001c8
-	.section .rom.000e7060, "ax"
-	.global Func_080da060
-	.type Func_080da060, %function
+	.section .rom.000e70b0, "ax"
+	.global Func_080da0b0
+	.type Func_080da0b0, %function
 	.thumb_func
-Func_080da060:
-	.incbin "baserom.gba", 0x000e7060, 0x000008a8
+Func_080da0b0:
+	.incbin "baserom.gba", 0x000e70b0, 0x00000284
+	.section .rom.000e73bc, "ax"
+	.global Func_080da3bc
+	.type Func_080da3bc, %function
+	.thumb_func
+Func_080da3bc:
+	.incbin "baserom.gba", 0x000e73bc, 0x0000054c
 	.section .rom.000e7ab0, "ax"
 	.balign 4
 	.global Func_080daab0
@@ -1076,12 +1082,6 @@ Func_080dd054:
 	.incbin "baserom.gba", 0x000ea054, 0x000003e8
 	.section .rom.000ea526, "ax"
 	.incbin "baserom.gba", 0x000ea526, 0x00000002
-	.section .rom.000ea820, "ax"
-	.global Func_080dd820
-	.type Func_080dd820, %function
-	.thumb_func
-Func_080dd820:
-	.incbin "baserom.gba", 0x000ea820, 0x00000130
 	.section .rom.000ea950, "ax"
 	.global Func_080dd950
 	.type Func_080dd950, %function
@@ -1205,14 +1205,8 @@ Func_080e3074:
 	.thumb_func
 Func_080e3d04:
 	.incbin "baserom.gba", 0x000f0d04, 0x00000540
-	.section .rom.000f1244, "ax"
-	.global Func_080e4244
-	.type Func_080e4244, %function
-	.thumb_func
-Func_080e4244:
-	.incbin "baserom.gba", 0x000f1244, 0x00000090
 	.section .rom.000f146c, "ax"
-	.incbin "baserom.gba", 0x000f146c, 0x00000134
+	.incbin "baserom.gba", 0x000f146c, 0x000000a4
 	.section .rom.000f1730, "ax"
 	.balign 4
 	.global Func_080e4730
@@ -1331,10 +1325,8 @@ Func_080ea14c:
 	.thumb_func
 Func_080ea7c0:
 	.incbin "baserom.gba", 0x000f77c0, 0x000000e8
-	.section .rom.000f78a8, "ax"
-	.global Func_080ea8a8
-Func_080ea8a8:
-	.incbin "baserom.gba", 0x000f78a8, 0x0000002c
+	.section .rom.000f78d2, "ax"
+	.incbin "baserom.gba", 0x000f78d2, 0x00000002
 	.section .rom.000f78d4, "ax"
 	.global Func_080ea8d4
 	.type Func_080ea8d4, %function
@@ -1772,7 +1764,7 @@ Func_08125bb8:
 	.type BattleCamera_SetRange, %function
 	.thumb_func
 BattleCamera_SetRange:
-	.incbin "baserom.gba", 0x00126560, 0x000002bc
+	.incbin "baserom.gba", 0x00126560, 0x000001b8
 	.section .rom.0012695a, "ax"
 	.incbin "baserom.gba", 0x0012695a, 0x00000002
 	.section .rom.0012695c, "ax"

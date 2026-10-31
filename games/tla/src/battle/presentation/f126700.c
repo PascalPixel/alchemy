@@ -1,14 +1,3 @@
-// Matches: differ 0 of 112 (tla-en, 2026-10-30), with no device.
-// The Broken Seal's BattleCamera_SetViewAtDepth (battle/battle/background.c)
-// with the camera from its heap slot, as in its adopted sibling
-// BattleCamera_SetView (setup_transition_scene.c): the same plain C,
-// Iwram_RatioMulQ14 called directly, the division written as / 100, the eye
-// passed as scene->eye and the projection centre stored to
-// gCameraSceneParameters, the listing's own pool symbol. The previous draft
-// (direct __divsi3, a local entry pointer, gProjection) already measured
-// differ 0 on 2026-10-30; its header's 2 of 112 was stale. The zoom is
-// read uninitialized (lsls r0, r4, #16) as in The Broken Seal: original
-// behaviour kept with BUG and UBFIX, not a device.
 #include "types.h"
 #include "battle_display.h"
 #include "graphics.h"
@@ -24,12 +13,12 @@ void SceneTransform_ApplyPitch(s32 pitch);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 #ifdef UBFIX
-void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
+void Func_08126700(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
-void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
+void Func_08126700(s32 x, s32 depth, s32 y) {
 #endif
   s32 span = 0x01fe0000;
-  // BUG: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
+  // UB: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
 #ifndef UBFIX
   s32 zoom;
 #endif

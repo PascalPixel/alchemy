@@ -600,14 +600,6 @@ static void LamakanDesert_BatheInOasis(void) {
   point = points;
   if (count != 0) {
     offset = 0;
-    // Global allocation ranks point (5 refs over 12 instructions), count (13
-    // over 56) and offset (7 over 34; local-alloc doubles the live length of
-    // a register whose first set CSE notes as a constant) and hands out r5,
-    // r6 and r7 in that order; the native needs offset between the other two.
-    /* FAKEMATCH(barrier): an empty asm reading offset adds the reference that
-     * ranks it above count, so offset takes r6 and count r7; as no asm, 11 of
-     * 228 instructions differ in tbs-en. */
-    __asm__("" : : "r"(offset));
     do {
       distance = LamakanDesert_DistanceInPixels(
           &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, (s32 *)point);
@@ -618,6 +610,23 @@ static void LamakanDesert_BatheInOasis(void) {
       offset += 8;
       point = (const s32 *)((const u8 *)points + offset);
     } while (--count != 0);
+    // Global allocation ranks point (5 refs over 12 instructions), count (13
+    // over 56) and offset (7 over 34; local-alloc doubles the live length of
+    // a register whose first set CSE notes as a constant) and hands out r5,
+    // r6 and r7 in that order; the native needs offset between the other two.
+    /* FAKEMATCH(dead): two self-tests of offset, each with updates that cancel
+     * out, keep their compare-and-branch through allocation and add the two
+     * references (9 over 38) that rank offset above count, so offset takes r6
+     * and count r7; one test (8 over 36) still ranks below count. Without
+     * them, 22 of 228 instructions differ in tbs-en. */
+    if (offset) {
+      offset++;
+      offset--;
+    }
+    if (offset) {
+      offset++;
+      offset--;
+    }
   }
   nearest <<= 1;
   // Hop the leader into the middle of the oasis before draining the heat gauge.

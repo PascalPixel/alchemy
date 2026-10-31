@@ -26,7 +26,7 @@ typedef struct ActorScriptWords ActorScriptWords;
 /// struct Actor, field for field, as Actor_UpdateAll (actor_update_arm.c) reads
 /// it. actor_update_arm.c is ARM code built with GCC 2.95.2, which cannot read
 /// struct Actor's anonymous unions, so it keeps this copy of the layout with
-/// the script as words and the bounce as a union (MATCHING.md).
+/// the script as words and the bounce as a union.
 struct ActorArmView {
   const ActorScriptWords *script; ///< null when its slot is released
   u16 scriptCursor;               ///< in words; read signed

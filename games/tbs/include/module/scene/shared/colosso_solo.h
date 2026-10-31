@@ -30,7 +30,7 @@ enum ColossoGuideReply {
 
 s32 Colosso_GreetAtStage(s32 speaker, s32 warrior);
 void Colosso_RepeatStageNumber(s32 speaker, s32 warrior);
-// Native calls precede this definition; see MATCHING.md.
+// Native calls precede this definition.
 #ifdef UBFIX
 void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage);
 #endif

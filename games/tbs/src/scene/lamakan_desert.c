@@ -301,7 +301,6 @@ const struct Trigger *LamakanDesert_GetTriggers(void) {
   return gLamakanDesertTriggers;
 }
 
-// Native event return forms: see MATCHING.md.
 #ifdef UBFIX
 /// Reveal wears off, and the desert's secrets sink under the sand again. It
 /// also runs on every entry to Lamakan Desert: the pits, the Manticore and Smog

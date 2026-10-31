@@ -1088,7 +1088,7 @@ All 64 actors are the same 112-byte `struct Actor`, which the script
 commands, the motion loop, the cameras, the battle and the
 [field effects](../../glossary.md#field-effect) (`struct FieldEffect`,
 fields in the same places) all take. Three field-for-field copies remain
-only for matching ([Matching](../MATCHING.md#views-of-one-struct)).
+only for matching.
 
 ### Actor scripts without addresses
 
@@ -1120,7 +1120,7 @@ the set-up for every arrival.
 
 Several structures are reached by more than one spelling (the field's work,
 the field effect, the map's view, the palette fade), each site keeping the
-one it matches with; [Matching](../MATCHING.md#heap-slots) explains why.
+one it matches with.
 
 ## How it fits with the rest of the game
 
@@ -1200,8 +1200,7 @@ the map work (`gMapGridWork[0]`), and `perspective` the World Map's.
 written as parts in a folder of its name
 ([Source](../README.md#objects-and-parts) says how they are compiled), so a
 part's own types and macros carry its family's name (`ActorCamera`,
-`MapGrid`, `WorldMap`). [Matching](../MATCHING.md) explains why some sites
-keep an unusual spelling.
+`MapGrid`, `WorldMap`).
 
 ## Evidence
 

@@ -23,7 +23,7 @@ void Window_UpdateZooms(void) {
   s32 index = 0;
   u8 dirty;
 
-  // The loop is written with goto (MATCHING.md): as a do-while loop, loop.c
+  // The loop is written with goto: as a do-while loop, loop.c
   // keeps the 1 stored on closing in a saved register, and 59 of 99
   // instructions differ in tbs-en.
 loop:

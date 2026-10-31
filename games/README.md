@@ -35,8 +35,6 @@ what the game keeps but never plays; and the [glossary](tbs/glossary.md)
 defines the words every page shares, in the order a newcomer meets them, with
 the source of each word.
 
-To build the games yourself, see [Building Alchemy](../INSTALL.md);
-[Matching](tbs/src/MATCHING.md) explains how the C is written so that it
-compiles to exactly the original bytes.
+To build the games yourself, see [Building Alchemy](../INSTALL.md).
 
 <img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />

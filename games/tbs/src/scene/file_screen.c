@@ -478,7 +478,7 @@ s32 FileScreen_Run(void) {
   gSleepDisabled = blendStarted;
   // Choose a new game, existing save, arena entry, or data transfer. This
   // menu, the transfer's choices and the save question above are loops
-  // written with goto (MATCHING.md): with the save question as for (;;) and
+  // written with goto: with the save question as for (;;) and
   // continue, 101 of 920 instructions differ in tbs-en, and with this menu as
   // for (;;), 462.
 menu_top:;

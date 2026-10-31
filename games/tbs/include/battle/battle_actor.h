@@ -19,7 +19,7 @@ struct Actor;
 /// wait and userValue unsigned. Through struct Actor, whose sprite is a
 /// struct Sprite pointer, the store of a two-part enemy's sprite list moves
 /// after the next store, and a view that pads the fields it does not read
-/// with bytes moves it too (MATCHING.md).
+/// with bytes moves it too.
 struct BattleActor {
   const s32 *script;
   u16 scriptCursor;

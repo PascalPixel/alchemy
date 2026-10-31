@@ -93,7 +93,7 @@ s32 DebugParameterSet_Load(s32 set) {
       member->djinnSet[i] = 0;
     }
     // The slot's first halfword, its encodedAction, stored through a cast:
-    // the zero comes from the literal pool, as in the ROM (MATCHING.md).
+    // the zero comes from the literal pool, as in the ROM.
     for (i = 0; i < 32; i++)
       *(u16 *)&member->psynergy[i] = 0;
     for (i = 0; i < 2; i++) {

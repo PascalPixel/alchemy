@@ -277,7 +277,7 @@ s32 IconMenu_Run(s32 initial) {
   s32 resource;
 
   work->selection = initial;
-  // The redraw is a loop written with goto (MATCHING.md): as a for (;;) round
+  // The redraw is a loop written with goto: as a for (;;) round
   // the key loop, left with break after a move, the frame and registers change
   // and only 52 of 134 instructions still line up in tbs-en.
 redraw:

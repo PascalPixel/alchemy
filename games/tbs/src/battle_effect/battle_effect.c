@@ -14,8 +14,7 @@
 /// selects, and each row of gBattleEffect_Handlers (battle_effect_table.c)
 /// gives an effect kind's enumerator, the part that defines its handler and,
 /// where an ability selects it, the first one that does. README.md gives the
-/// words and prefixes the parts use, and ../MATCHING.md the spellings some
-/// sites keep to match.
+/// words and prefixes the parts use.
 ///
 /// A reach line follows the sentence saying what the player sees, in a form
 /// the docs build reads to put each ability's recording beside its handler:

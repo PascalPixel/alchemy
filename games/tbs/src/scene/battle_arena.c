@@ -560,7 +560,7 @@ static s32 BattleArena_ReceivePartyRecords(void) {
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
   slot = 0;
-  // The record loop and both waits are written with goto (MATCHING.md): as a
+  // The record loop and both waits are written with goto: as a
   // for loop round while loops, 105 of 189 instructions differ in tbs-en.
   goto next;
 waitRecord:
@@ -765,7 +765,7 @@ static s32 BattleArena_SendPartyRecords(void) {
     }
     wait(2);
   }
-  // The padding loop is written with goto (MATCHING.md): as for (; i <= 2;
+  // The padding loop is written with goto: as for (; i <= 2;
   // i++) round a while loop, 127 of 254 instructions differ in tbs-en.
   goto next;
 wait:

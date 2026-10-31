@@ -10,7 +10,7 @@
 /// compiler-steering device. An event writes
 /// `Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);` and the inline
 /// makes the call; a site that matches only with the direct call names the
-/// routine instead, and MATCHING.md says why both spellings stay. Where a site
+/// routine instead. Where a site
 /// matches only through a second inline over the same routine, that inline
 /// takes the FieldActor_ prefix, as FieldActor_JumpDownLedge does; where an
 /// inline would have its routine's name, the routine keeps it and the inline

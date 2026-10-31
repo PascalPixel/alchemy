@@ -339,7 +339,7 @@ static inline void MapGrid_SetShake(s32 horizontal, s32 vertical, s32 decay) {
 // directly; the events that match only through an inline call spell them
 // Event_GetFlag, Event_SetFlag and Event_ClearFlag. An inline call's
 // argument is a pseudo of its own, so a flag number two calls share is loaded
-// twice instead of kept in a register (MATCHING.md).
+// twice instead of kept in a register.
 
 /// GameFlag_Get, from an event: 1 when the FLAG_ is set.
 static inline s32 Event_GetFlag(s32 flag) { return GameFlag_Get(flag); }

@@ -181,8 +181,8 @@ static void SolSanctum_UpdateRing(void) {
 /// each drawn translucent and starting at its largest scale.
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // Each light is read here as FieldEffect, union ActorOrEffect's effect
-  // view of the same object, the plain-C form this site matches with
-  // (MATCHING.md): through Actor's sprite union, the sprite-flags address
+  // view of the same object, the plain-C form this site matches with:
+  // through Actor's sprite union, the sprite-flags address
   // moves after the ring-entry store. The task reads Actor.
   struct SolSanctumRingList *list;
   struct SolSanctumRingEntry *entry;

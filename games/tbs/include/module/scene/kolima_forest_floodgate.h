@@ -27,7 +27,7 @@ const u32 *KolimaForestFloodgate_GetExits(void);
 const struct ActorPlacement *KolimaForestFloodgate_GetActorPlacements(void);
 const struct Trigger *KolimaForestFloodgate_GetTriggers(void);
 s32 KolimaForestFloodgate_Initialize(void);
-// Native calls precede this definition; see MATCHING.md.
+// Native calls precede this definition.
 #ifdef UBFIX
 void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
                                          s32 value);

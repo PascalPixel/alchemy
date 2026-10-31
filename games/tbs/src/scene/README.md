@@ -691,9 +691,7 @@ and some keep older descriptive names (`Scene_`,
 `Actor_SetFlagBitByRelativeDepth`). A run of functions inside one overlay
 that is about one thing takes that thing's name, and a party member's or the
 leader's part in an event takes that character's (`Ivan_StepOnDeck`,
-`Leader_StopMoving`). The spellings some sites keep to match (fields reached
-through `offsetof`, another struct's view of an actor, update routines
-returning `s32`) are in [Matching](../MATCHING.md).
+`Leader_StopMoving`).
 
 ## How it fits with the rest of the game
 

@@ -22,7 +22,7 @@ extern void *gHeapSlots[64];
 /// Slot n's block, or null before it is allocated.
 // Reached through the slot's own address, adjacent slots by offsets from it;
 // gHeapSlots[n] addresses from the table's start instead. Each site keeps the
-// form it matches with (MATCHING.md).
+// form it matches with.
 #define HEAP_SLOT_BLOCK(n) (*(gHeapSlots + (n)))
 
 /// The heap's 64 slots, the first two holding the next free EWRAM and

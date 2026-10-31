@@ -11,7 +11,7 @@ enum PathRecorderMode {
   PATH_RECORDER_FINISHED = 9 ///< the opponent has reached the finish
 };
 
-// Native calls precede this definition; see MATCHING.md.
+// Native calls precede this definition.
 #ifdef UBFIX
 void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
                             s32 segments, s32 finishX, s32 finishZ,

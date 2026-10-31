@@ -753,7 +753,6 @@ static void SuhallaDesert_PulseRevealPalette(void) {
   SUHALLA_REVEAL_PALETTE_COLOR = ((u32)color << 16) >> 16;
 }
 
-// Native event return forms: see MATCHING.md.
 #ifdef UBFIX
 /// Reveal wears off, and what it showed is hidden again. It runs as Reveal
 /// ends and whenever a scene is entered, and only in SuhallaDesertSouth does it

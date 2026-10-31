@@ -15,7 +15,7 @@ const u32 *Scene_GetExits(void);
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 ColosseumSatrageMatch_Initialize(void);
-// The native call precedes this definition; see MATCHING.md.
+// The native call precedes this definition.
 #ifdef UBFIX
 void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
                                          s32 segments, s32 finishX, s32 finishZ,

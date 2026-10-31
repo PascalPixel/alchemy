@@ -274,9 +274,7 @@ as ARM, the processor's 32-bit instructions, and the rest as Thumb, its
 16-bit ones. Two of the three ARM C files are copied into RAM before they
 run, since ARM instructions run slowly over the cartridge's 16-bit bus; the
 third, the ARM actor update, is unused
-([Field](field/README.md#routines-run-from-ram)). [Matching](MATCHING.md)
-explains how a build is judged against the cartridge and why some of the C is
-written as it is.
+([Field](field/README.md#routines-run-from-ram)).
 
 | Code                                   | Compiler                           | Where                                                                       |
 | -------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------- |
@@ -286,7 +284,7 @@ written as it is.
 
 Code stays assembly only where its instructions show that none of those
 compilers wrote it. Each such file states that proof in comment lines at its
-top that begin `@ Why` ([Matching](MATCHING.md#the-other-markers)). The
+top that begin `@ Why`. The
 proofs are instructions the compilers never emit: a branch on a shift's carry
 (`system/trig.s`, `system/decompress_byte_lz.s`), a load into `pc` from a
 table the code rewrites (`battle/background_decode.s`), a switch from Thumb

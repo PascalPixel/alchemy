@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// Native calls precede these definitions; see MATCHING.md.
+// Native calls precede these definitions.
 #ifdef UBFIX
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z);
 void Colosso_ShowPointer(u32 x, u32 y, u32 style);

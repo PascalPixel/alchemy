@@ -101,7 +101,7 @@ Evidence: Camelot: the game's text.
 Alchemy is C and assembly written by hand that compiles back into exactly the
 bytes on the cartridges, checked against `rom.sha1`, so the source sometimes
 keeps an unusual form where plainer C would behave the same
-([Introduction](../README.md), [Matching](src/MATCHING.md)).
+([Introduction](../README.md)).
 
 Evidence: plain English; the project's own words.
 
@@ -139,7 +139,7 @@ Evidence: the group's own name.
 The game's Thumb C builds with alchemy-gcc, a GCC of July 2000 in the
 `alchemy-gcc` submodule, its few ARM files with GCC 2.95.2, and its sound and
 save code with pret's `old_agbcc`; `make modern` also compiles the C with a
-current GCC, only to check it ([Matching](src/MATCHING.md)).
+current GCC, only to check it.
 
 Evidence: the compilers' own names.
 
@@ -147,7 +147,7 @@ Evidence: the compilers' own names.
 
 A tag on code kept in an unusual form only because the plain C compiles to
 different instructions; it names the plain form and how many instructions it
-gets wrong ([Matching](src/MATCHING.md#fakematch)).
+gets wrong.
 
 Evidence: plain English; the project's own word.
 
@@ -155,8 +155,7 @@ Evidence: plain English; the project's own word.
 
 `// BUG:` keeps one of the original game's bugs, with a fix behind `BUGFIX`;
 `// UB:` keeps undefined behaviour as it matches, with the defined form behind
-`UBFIX`
-([Matching](src/MATCHING.md#the-other-markers)).
+`UBFIX`.
 
 Evidence: plain English, in pret's markers.
 

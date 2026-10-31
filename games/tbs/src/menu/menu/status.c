@@ -1123,7 +1123,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
 void Menu_BusyWait(void) {
   s32 count = 255;
 
-  // Written with goto (MATCHING.md): as a do-while loop, the loop optimizer
+  // Written with goto: as a do-while loop, the loop optimizer
   // deletes the empty loop and leaves 1 of the 7 instructions.
 spin:
   count--;

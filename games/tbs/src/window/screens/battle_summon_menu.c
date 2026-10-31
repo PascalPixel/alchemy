@@ -166,7 +166,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
           s32 element, col, y;
 
           index = 0;
-          // The rows are a loop written with goto (MATCHING.md): as a
+          // The rows are a loop written with goto: as a
           // do-while loop inside this test, 523 of 946 instructions differ in
           // tbs-en.
           if ((id = orderedSummons[firstEntry + index]) != SUMMON_END) {

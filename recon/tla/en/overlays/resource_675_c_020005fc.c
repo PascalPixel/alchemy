@@ -1,16 +1,15 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 4 of 63; left: the native reads
-// position[1] at (index * 8 + 4) + base + 2, reusing position[0]'s offset; this
-// form adds 6 to the scaled index. A position pointer, struct and s16 types
-// were worse.
-// Draft, differ 8 of 63 (10 before). The (owner, 0, -4) call and the table
-// call now go through call.h, which fixes the -4 halves. Left: the native
-// shifts the index after Func_02001344 returns and reads the second halfword
-// through the table plus the first's offset (adds r3, r3, r0; ldrh r2, [r3,
-// #2]); here the shift rises above the call and the second halfword is read as
-// [table + offset + 6]. Tried 2026-10-15: a position pointer (12), the address
-// of position[0] indexed (8), a one-pass block before the shift (10); permute
-// 4 minutes found nothing below 16.
+// Matches: differ 0 of 63 (tla-en, 2026-10-31). The native reads position[0]
+// straight from the table, then reads position[1] through a pointer built from
+// the table and the same scaled offset (adds r3, r3, r0; ldrh r2, [r3, #2]);
+// the FAKEMATCH(temporary) below keeps that order. Read straight from the
+// table, position[1] folds into [table + index * 8 + 6] (differ 4); a pointer
+// from &gData_020019ec[index].position folds the 4 into the table's literal
+// (12); the offset added inline also folds (4); the pointer built before
+// position[0] is read takes both reads (2).
+// Earlier: the (owner, 0, -4) call and the table call go through call.h,
+// which fixes the -4 halves.
 #include "types.h"
+#include "stddef.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -43,8 +42,8 @@ void Func_020005fc(void) {
 
   Func_02001254();
   Func_02001324(0);
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes rebuild the zero on every pass, and a for loop hoists it. */
+  // A goto loop carries no loop notes: the bytes rebuild the zero on every
+  // pass; as a for loop, loop.c hoists it and 20 of 63 instructions differ.
   i = 8;
 loop:
   {
@@ -59,8 +58,19 @@ loop:
   index = *(s16 *)(work + 0x154) - 1;
   Func_02001344(158);
   index >>= 1;
-  Call3((void (*)())Func_0200122c, gData_020019ec[index].value,
-        gData_020019ec[index].position[0], gData_020019ec[index].position[1]);
+  {
+    s32 x = gData_020019ec[index].position[0];
+    /* FAKEMATCH(temporary): position[0] read first and position[1] read
+     * through a pointer from a separate byte offset; as
+     * gData_020019ec[index].position[1] in the call, 4 of 63 instructions
+     * differ in tla-en. */
+    u32 offset = index * sizeof(struct IsletCaveEntry) +
+                 offsetof(struct IsletCaveEntry, position);
+    const u16 *position = (const u16 *)((const u8 *)gData_020019ec + offset);
+
+    Call3((void (*)())Func_0200122c, gData_020019ec[index].value, x,
+          position[1]);
+  }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Call3((void (*)())Actor_OffsetPositionAndResetMotion,

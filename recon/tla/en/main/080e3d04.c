@@ -1,4 +1,11 @@
-// Draft, differ 615 of 609: a field Psynergy that sprays from the caster, its
+// Near miss, differ 22 of 609 (tla-en, 2026-10-31): only scheduling is left.
+// Four stores come out later than the native's: pos[0] and pos[1] before
+// each Actor_Spawn, and the stores of dropTile and puffTile. The native
+// places each store, its address and its value ahead of the independent
+// constants that build the next address, as if a store's own latency were
+// 2; alchemy-gcc's sched2 gives a store latency 1, so the longer constant
+// chains (movs/lsls of the next field's offset) go first.
+// A field Psynergy that sprays from the caster, its
 // look chosen by the target (an object of kind 418 whose definition's sixth
 // byte is 4, 1 or 3 picks one of resources 0x1dd to 0x1df, else 0x1dc), with
 // a colour transition from Data_080f0f90. Cast at an object, it aims at the
@@ -10,11 +17,17 @@
 // drop reaches an object: then the object's stage-6 event runs and, when it
 // has a stage-2 event, its index is stored at 0xd30 of the event work. The
 // spray stops and waits up to 60 frames for the drops to land.
-// Same calls, offsets and control flow; left: register allocation (the
-// native keeps the work in r8, the event work and caster on the stack, and
-// its frame is 32 bytes against 36), which shifts most rows. The resource
-// flames are FieldEffect_RedFlameBurst to BlueFlameBurst (0x1dc to 0x1df),
-// the smoke FieldEffect_DustPuffA (0x1e1).
+// Forms the native needs: the scene is read before the event work; the
+// sixteen-sprite loops count up with j, indexing the sprite and stepping the
+// particle pointer (loop.c reverses them to 15..0, and an explicit countdown
+// hoists the -13 priority mask and 0xc000 out of the loops); j is also the
+// landing scan's counter and k the two frame loops' (one counter for all
+// loops gives r7 to the work instead of r8); the candidate object and the
+// particle cursor are one variable (r6), so the distance gets r5; case 0 and
+// default both name the red flame (a decision tree rooted at 1, with look
+// reloaded after the range test); the event work's 0xd30 and 0xd38 bytes are
+// struct fields. The resource flames are FieldEffect_RedFlameBurst to
+// BlueFlameBurst (0x1dc to 0x1df), the smoke FieldEffect_DustPuffA (0x1e1).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -69,6 +82,10 @@ struct FxScene {
 struct FxEvent {
   u8 unk00[20];
   struct Actor *objects[80];
+  u8 unk154[0xd30 - 0x154];
+  u8 unkd30;
+  u8 unkd31[7];
+  s8 unkd38;
 };
 
 struct ObjectAnimation {
@@ -122,7 +139,10 @@ void Func_080e3d04(void) {
   struct Actor *caster;
   struct Actor *object;
   struct EffectSprite *sprite;
-  struct SprayParticle *particle;
+  union {
+    struct Actor *object;
+    struct SprayParticle *particle;
+  } cursor;
   void *pending;
   s32 pos[3];
   s32 kind;
@@ -131,15 +151,18 @@ void Func_080e3d04(void) {
   s32 distance;
   s32 height;
   s32 id;
+  s32 resourceId;
   s32 dropSlot;
   s32 puffSlot;
   s32 tile;
   s32 i;
   s32 j;
+  s32 k;
+  s32 mode;
 
   work = HeapSlot_Alloc(92, sizeof(struct SprayWork));
-  event = Ram_HeapSlots->eventWork;
   scene = Ram_HeapSlots->effectWork;
+  event = Ram_HeapSlots->eventWork;
   caster = scene->mainObject;
   look = 0;
   object = scene->child;
@@ -160,28 +183,28 @@ void Func_080e3d04(void) {
     work->origin[2] = scene->z;
     best = 9999;
     for (i = 0; i < 80; i++) {
-      object = event->objects[i];
-      id = OBJECT_DEFINITION(object)[0];
-      if (object != NULL && object->script != NULL &&
+      cursor.object = event->objects[i];
+      id = OBJECT_DEFINITION(cursor.object)[0];
+      if (cursor.object != NULL && cursor.object->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
         distance = Func_080cdac0(scene->fieldKind, scene->firstObjectId, i);
-        if (distance != -1 && distance < best) {
-          height =
-              Resource_GetMetadataRecordFarFar(OBJECT_DEFINITION(object)[0])
-                  ->height
-              << 16;
+        if (distance != -1 && best > distance) {
+          height = Resource_GetMetadataRecordFarFar(
+                       OBJECT_DEFINITION(cursor.object)[0])
+                       ->height
+                   << 16;
           work->mode = 1;
-          work->origin[0] = object->x;
-          work->origin[1] = object->y + height;
-          work->origin[2] = object->z;
+          work->origin[0] = cursor.object->x;
+          work->origin[1] = cursor.object->y + height;
+          work->origin[2] = cursor.object->z;
           scene->secondObjectId = i;
-          scene->child = object;
+          scene->child = cursor.object;
           best = distance;
         }
       }
     }
   } else {
-    if (((s8 *)event)[0xd38] == 0)
+    if (event->unkd38 == 0)
       work->mode = 2;
     else
       work->mode = 3;
@@ -197,7 +220,8 @@ void Func_080e3d04(void) {
     work->origin[2] = scene->z;
   }
 
-  if (work->mode == 1) {
+  mode = work->mode;
+  if (mode == 1) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
@@ -214,14 +238,14 @@ void Func_080e3d04(void) {
     wait(10);
     goto end;
   }
-  if (work->mode == 0) {
+  if (mode == 0) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
     object = Actor_Spawn(367, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
-    ((u8 *)object)[85] = work->mode;
+    ((u8 *)object)[85] = mode;
     Actor_SetMode(object, 2);
     Sound_PlayFar(186);
     wait(45);
@@ -235,67 +259,69 @@ void Func_080e3d04(void) {
   work->angle = scene->angle;
   work->targetAngle = scene->angle;
   switch (look) {
+  case 0:
+    resourceId = (s32)&ResourceId_RedFlameBurst;
+    break;
   case 1:
-    id = (s32)&ResourceId_VioletFlameBurst;
+    resourceId = (s32)&ResourceId_VioletFlameBurst;
     break;
   case 2:
-    id = (s32)&ResourceId_YellowFlameBurst;
+    resourceId = (s32)&ResourceId_YellowFlameBurst;
     break;
   case 3:
-    id = (s32)&ResourceId_BlueFlameBurst;
+    resourceId = (s32)&ResourceId_BlueFlameBurst;
     break;
   default:
-    id = (s32)&ResourceId_RedFlameBurst;
+    resourceId = (s32)&ResourceId_RedFlameBurst;
     break;
   }
-  Resource_DecodeType01(Resource_GetTableEntry(id), work);
+  Resource_DecodeType01(Resource_GetTableEntry(resourceId), work);
   dropSlot = Resource_FindFreeEntry();
   tile = VramCache_Load(dropSlot, 0x1000, work);
   work->dropTile = tile;
-  particle = work->dropMotion;
-  sprite = work->drops;
-  for (i = 15; i >= 0; i--) {
+  cursor.particle = work->dropMotion;
+  for (j = 0; j < 16; j++) {
+    sprite = &work->drops[j];
+
     Func_080eaf98(sprite, 15, 24, 0x80000000, tile);
     sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
     sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    particle->timer = -1;
-    sprite++;
-    particle++;
+    cursor.particle->timer = -1;
+    cursor.particle++;
   }
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
                         work);
   puffSlot = Resource_FindFreeEntry();
   tile = VramCache_Load(puffSlot, 0x800, work);
   work->puffTile = tile;
-  particle = work->puffMotion;
-  sprite = work->puffs;
-  for (i = 15; i >= 0; i--) {
+  cursor.particle = work->puffMotion;
+  for (j = 0; j < 16; j++) {
+    sprite = &work->puffs[j];
+
     Func_080eaf98(sprite, 8, 15, 0x40000000, tile);
-    sprite->scaleX = sprite->scaleY = 0xc000;
+    sprite->scaleY = sprite->scaleX = 0xc000;
     sprite->depth = 250;
     sprite->oam.priority = 0;
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    particle->timer = -1;
-    sprite++;
-    particle++;
+    cursor.particle->timer = -1;
+    cursor.particle++;
   }
   wait(1);
   work->emitting = 1;
   Task_Add(Func_080e38c8, 0x480);
-  for (i = 0; i < 80; i++) {
+  for (k = 0; k < 80; k++) {
     wait(1);
     if (work->hit != 0) {
       pending = Func_080ce458(0x60000005, scene->fieldKind,
                               (s16)(work->hitObject | 0x100));
       if (pending != NULL)
-        Field_RunPsynergyEvent(pending, scene->firstObjectId,
-                                     work->hitObject);
+        Field_RunPsynergyEvent(pending, scene->firstObjectId, work->hitObject);
       if (Func_080ce458(0x20000005, scene->fieldKind,
                         (s16)(work->hitObject | 0x100)) != NULL) {
-        ((u8 *)event)[0xd30] = work->hitObject;
+        event->unkd30 = work->hitObject;
         break;
       }
     }
@@ -304,10 +330,10 @@ void Func_080e3d04(void) {
   }
   Sound_PlayFar(395);
   work->emitting = 0;
-  for (i = 0; i < 60; i++) {
-    particle = work->dropMotion;
-    for (j = 0; j < 16 && particle->timer == -1; j++)
-      particle++;
+  for (k = 0; k < 60; k++) {
+    cursor.particle = work->dropMotion;
+    for (j = 0; j < 16 && cursor.particle->timer == -1; j++, cursor.particle++)
+      ;
     if (j == 16)
       break;
     wait(1);

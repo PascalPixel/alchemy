@@ -1,5 +1,14 @@
+// Near miss, differ 12 of 495 (tla-en, 2026-10-31): sched2 order only. With
+// Text_DrawPrefixedNumberAtOffset called with no prototype in scope, as The
+// Broken Seal's, hp reaches r0 last (18); a tagged dead `i = 0;` in the Djinn
+// block puts the tiles' zero in i's register there (12). Left: the prologue's
+// menu-state load scheduled before `mov r9, r0` (it is ready one cycle after
+// the y slot's store and outranks the move), and the member loop's preheader,
+// where x's `mov r3, r8`/`movs r2, #1` chain (priority 3, two dependants) is
+// picked before `mov r0, sp` and `str r4, [sp, #4]` lands last. Earlier notes
+// follow.
 // Draft, differ 20 of 495 (2026-10-26, 22 before): the window read before the
-// work pointer. Earlier notes follow.
+// work pointer.
 // Draft, differ 22 of 495 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 20
@@ -9,12 +18,8 @@
 // Near miss, differ 26 of 495: The Broken Seal's PartyStatus_Draw on this
 // game's work: at most four party members outside battle, the Djinn counts
 // drawn as tiles, with the glyphs past 9 copied to VRAM when any count passes
-// 9. Left, instruction order only but for one row: the native stores the
-// work pointer's stack slot and reads its menu state one row later, sets up
-// the member loop's stack slots in another order, copies hp to r0 before the
-// call's other arguments rather than last, and builds the zero for the Djinn
-// tiles' last argument (movs r7, #0) inside the Djinn block, where here it is
-// set before the menu-state test.
+// 9. (The hp argument order and the Djinn tiles' zero it listed as left are
+// settled above.)
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
@@ -60,8 +65,9 @@ void PartyStatus_BuildLayoutBounds(s32 flags);
 void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
 struct StatusUnit *Unit_Get(s32 owner);
 void Func_08041f70(s32 nibble);
-void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *window,
-                                       s32 x, s32 y, s32 kind);
+// Text_DrawPrefixedNumberAtOffset is called with no prototype in scope, as The
+// Broken Seal's screens.c calls it: with one, hp reaches r0 before the call's
+// other arguments rather than last (2 of 495 instructions in tla-en).
 void Text_DrawStringAtOffset(u8 *text, struct Window *window, s32 x, s32 y);
 s32 Func_08042808(struct Window *window, s32 x, s32 y, s32 value);
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
@@ -180,6 +186,10 @@ void PartyStatus_Draw(s32 flags) {
   if (work->menuState != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;
 
+    /* FAKEMATCH(dead): the form kept; as the block without `i = 0;`, 18 of 495 instructions differ in tla-en. */
+    // The zero the first four tiles pass last is then i's, set here (movs r7,
+    // #0) rather than the level store's mask zero before the menu-state test.
+    i = 0;
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
     Func_08118130(0, standbyDjinn);

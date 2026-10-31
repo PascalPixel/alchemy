@@ -1,185 +1,119 @@
-// Draft, differ 359 of 280: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
+// Near miss, differ 197 of 280 (tla-en, 2026-10-31): control flow, calls,
+// fields and constants are the native's; what remains is allocation. The
+// native keeps dx in r11, dz in r9, &spark in r10 and &gFrameCount (then
+// gFrameCount & 4) in r7, spilling gFrameCount & 3 to sp+16; this draft ranks
+// gFrameCount & 3 above dx, so dx spills (sp+24, shifting targetX/targetZ
+// down a slot), &spark takes r7, gFrameCount & 4 takes r5 and 0xb0000 is
+// rebuilt per call. In the offset block the native gives cosine * 12 r3 and
+// the first actor->x load r1; here the load takes r3. The first spawn's x, y
+// and z are read before the gFrameCount & 4 test, as the native does, only
+// through the locals x0, y0, z0. Names are still placeholders.
 #include "actor.h"
-#include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "text/msg_ids.h"
 #include "types.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct Spark {
+  s32 mode;
+  s32 kind;
+  s32 scaleX;
+  s32 scaleY;
+  u8 unk10[0x18];
+};
 
-extern u8 gFrameCount[];
-s32 Actor_GetById();
-void Func_02001fac();
-void Func_02002044();
-s32 Math_Cosine();
-s32 Math_Sine();
-s32 Func_0200034c();
-void Func_02001f6c();
-void Func_02002054();
-void Func_0200015c();
-void wait();
-s32 Func_02001f9c();
-s32 Func_02001fb4();
+struct EventWork {
+  u8 unk000[0x154];
+  s16 unk154;
+};
 
-s32 Func_02000818(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 v0, r8, r6, r5, v1, r11, v2, r9, r1, r3, v3, r2, r7, r10, v4, v5, r4, r0,
-      v6, v7, v8;
-  s32 stack[24];
+extern u32 gFrameCount;
+struct Actor *Actor_GetById(s32 id);
+void Func_02001fac(void);
+void Func_02001fb4(void);
+void Func_02002044(s32 skip);
+void Func_02002054(s32 cue);
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+s32 Func_0200034c(u32 layer, s32 x, s32 y);
+void Func_02001f6c(struct Actor *actor, s32 x, s32 y, s32 z);
+s32 Func_02001f9c(struct Actor *actor);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d,
+                   struct Spark *spark);
+void wait(s32 frames);
 
-  /* sub (s32)stack, #96 */
-  stack[9] = (s32)Ram_HeapSlots->eventWork;
-  v0 = Actor_GetById(8);
-  r8 = v0;
-  r6 = stack[9] + 340;
-  r5 = FIELD_AT(r6, u16, 0);
+void Func_02000818(void) {
+  s32 pos[4];
+  struct Spark spark;
+  struct EventWork *work;
+  struct Actor *actor;
+  s16 angle;
+  s32 x, z, dx, dz, targetX, targetZ;
+  s32 cosine, sine;
+  s32 x0, y0, z0;
+
+  work = Ram_HeapSlots->eventWork;
+  actor = Actor_GetById(8);
+  angle = (work->unk154 - 45) << 14;
   Func_02001fac();
-  Call1((void (*)())Func_02002044, 0);
-  r5 = r5 - 45;
-  stack[8] = (FIELD_AT(r8, s32, 8)) >> 20;
-  r5 = r5 << 30;
-  r5 = r5 >> 16;
-  stack[7] = (FIELD_AT(r8, s32, 16)) >> 20;
-  v1 = Math_Cosine(r5);
-  r11 = v1 >> 16;
-  v2 = Math_Sine(r5);
-  r9 = v2 >> 16;
-  r5 = r8;
-  FIELD_AT(r5, s32, 48) = 0x40000;
-  FIELD_AT(r5, s32, 52) = 0x40000;
-  stack[5] = 0;
-  stack[6] = 0;
-  r1 = r9;
-  if (r9 < 0) {
-    r1 = -r1;
+  Func_02002044(0);
+  x = actor->x >> 20;
+  z = actor->z >> 20;
+  dx = Math_Cosine(angle) >> 16;
+  dz = Math_Sine(angle) >> 16;
+  actor->speedLimit = 0x40000;
+  actor->acceleration = 0x40000;
+  targetZ = 0;
+  targetX = 0;
+  if (Func_0200034c(1, x + (dz < 0 ? -dz : dz), z + (dx < 0 ? -dx : dx)) >> 8 ==
+      work->unk154) {
+    targetX = (dz < 0 ? -dz : dz) * 15 << 16;
+    targetZ = (dx < 0 ? -dx : dx) * 15 << 16;
   }
-  r1 = stack[8] + r1;
-  r3 = r11;
-  if (r11 < 0) {
-    r3 = -r3;
-  }
-  r5 = stack[7];
-  v3 = Func_0200034c(1, r1, r5 + r3);
-  if ((v3 >> 8) == (FIELD_AT(r6, s16, 0))) {
-    r2 = r9;
-    if (r9 < 0) {
-      r2 = -r2;
+  targetX += x << 20;
+  targetZ += z << 20;
+  while (Func_0200034c(1, x, z) >> 8 == work->unk154) {
+    x += dx;
+    z += dz;
+    targetX += dx << 20;
+    targetZ += dz << 20;
+    Func_02001f6c(actor, targetX, actor->y, targetZ);
+    while (Func_02001f9c(actor) == 0) {
+      if ((gFrameCount & 3) == 0) {
+        if ((gFrameCount & 10) == 0) {
+          Func_02002054(0x255);
+        }
+        spark.mode = 2;
+        spark.kind = 7;
+        spark.scaleX = 0x16666;
+        spark.scaleY = 0x13333;
+        cosine = Math_Cosine(actor->angle);
+        sine = Math_Sine(actor->angle);
+        pos[0] = cosine * 12;
+        pos[1] = sine * 12;
+        pos[2] = -(cosine * 12);
+        pos[3] = -(sine * 12);
+        pos[0] += actor->x;
+        pos[1] += actor->z;
+        pos[2] += actor->x;
+        pos[3] += actor->z;
+        if (pos[1] != actor->z) {
+          pos[1] -= 0xc0000;
+          pos[3] -= 0xc0000;
+        }
+        x0 = pos[0];
+        y0 = actor->y;
+        z0 = pos[1];
+        if (gFrameCount & 4) {
+          Func_0200015c(x0 + 0x40000, y0, z0, 0x8000, 0, 0, 0xb0000, &spark);
+          Func_0200015c(pos[2] - 0x40000, actor->y, pos[3], -0x8000, 0, 0,
+                        0xb0000, &spark);
+        } else {
+          Func_0200015c(x0 - 0x40000, y0, z0, -0x8000, 0, 0, 0xb0000, &spark);
+          Func_0200015c(pos[2] + 0x40000, actor->y, pos[3], 0x8000, 0, 0,
+                        0xb0000, &spark);
+        }
+      }
+      wait(1);
     }
-    stack[6] = ((r2 << 4) - r2) << 16;
-    r2 = r11;
-    if (r11 < 0) {
-      r2 = -r2;
-    }
-    stack[5] = ((r2 << 4) - r2) << 16;
   }
-  r5 = stack[6];
-  r5 = r5 + (stack[8] << 20);
-  stack[6] = r5;
-  stack[5] = stack[5] + (stack[7] << 20);
-  r3 = stack[7] << 20;
-  goto L_02008a3c;
-L_020088e2:
-  stack[8] = stack[8] + r11;
-  r5 = r11;
-  stack[7] = stack[7] + r9;
-  stack[6] = stack[6] + (r5 << 20);
-  stack[5] = stack[5] + (r9 << 20);
-  Func_02001f6c(r8, stack[6], FIELD_AT(r8, s32, 12), stack[5]);
-  goto L_02008a30;
-L_02008912:
-  r7 = (s32)gFrameCount;
-  r5 = 3;
-  r5 = r5 & (FIELD_AT(r7, s32, 0));
-  stack[4] = r5;
-  r2 = FIELD_AT(r7, s32, 0);
-  if (r5 == 0)
-    goto L_02008922;
-  goto L_02008a2a;
-L_02008922:
-  r3 = 10 & r2;
-  if ((10 & r2) == 0) {
-    Call1((void (*)())Func_02002054, 0x255);
-  }
-  FIELD_AT((s32)((u8 *)stack + 40), s32, 0) = 2;
-  FIELD_AT((s32)((u8 *)stack + 40), s32, 4) = 7;
-  FIELD_AT((s32)((u8 *)stack + 40), s32, 8) = 0x16666;
-  FIELD_AT((s32)((u8 *)stack + 40), s32, 12) = 0x13333;
-  r10 = (s32)((u8 *)stack + 40);
-  v4 = Math_Cosine(FIELD_AT(r8, u16, 6));
-  r5 = v4;
-  v5 = Math_Sine(FIELD_AT(r8, u16, 6));
-  r6 = (s32)((u8 *)stack + 80);
-  r4 = -(((v5 << 1) + v5) << 2);
-  FIELD_AT(r6, s32, 0) = ((r5 << 1) + r5) << 2;
-  FIELD_AT(r6, s32, 4) = ((v5 << 1) + v5) << 2;
-  FIELD_AT(r6, s32, 8) = -(((r5 << 1) + r5) << 2);
-  FIELD_AT(r6, s32, 12) = r4;
-  r5 = r8;
-  FIELD_AT(r6, s32, 0) = (((r5 << 1) + r5) << 2) + (FIELD_AT(r5, s32, 8));
-  FIELD_AT(r6, s32, 4) = (((v5 << 1) + v5) << 2) + (FIELD_AT(r5, s32, 16));
-  FIELD_AT(r6, s32, 8) = (-(((r5 << 1) + r5) << 2)) + (FIELD_AT(r5, s32, 8));
-  r4 = r4 + (FIELD_AT(r5, s32, 16));
-  FIELD_AT(r6, s32, 12) = r4;
-  r2 = (((v5 << 1) + v5) << 2) + (FIELD_AT(r5, s32, 16));
-  if (((((v5 << 1) + v5) << 2) + (FIELD_AT(r5, s32, 16))) ==
-      (FIELD_AT(r5, s32, 16)))
-    goto L_020089a2;
-  FIELD_AT(r6, s32, 4) = r2 - 786432;
-  FIELD_AT(r6, s32, 12) = r4 - 786432;
-L_020089a2:
-  r7 = FIELD_AT(r7, s32, 0);
-  r7 = r7 & 4;
-  r1 = FIELD_AT(r8, s32, 12);
-  r2 = FIELD_AT(r6, s32, 4);
-  r0 = FIELD_AT(r6, s32, 0);
-  if (r7 == 0)
-    goto L_020089f2;
-  r5 = stack[4];
-  stack[0] = r5;
-  stack[1] = r5;
-  stack[3] = r10;
-  r5 = 176;
-  r5 = r5 << 12;
-  Func_0200015c(r0 + 262144, r1, r2, 0x8000, r5, r5, r5, r10);
-  stack[0] = stack[4];
-  stack[1] = stack[4];
-  stack[2] = r5;
-  r5 = r10;
-  Func_0200015c((FIELD_AT(r6, s32, 8)) - 262144, FIELD_AT(r8, s32, 12),
-                FIELD_AT(r6, s32, 12), -0x8000, stack[4], stack[4], r5, r5);
-  goto L_02008a2a;
-L_020089f2:
-  r5 = 176;
-  r5 = r5 << 12;
-  Func_0200015c(r0 - 262144, r1, r2, -0x8000, r7, r7, r5, r10);
-  Func_0200015c((FIELD_AT(r6, s32, 8)) + 262144, FIELD_AT(r8, s32, 12),
-                FIELD_AT(r6, s32, 12), 0x8000, r7, r7, r5, r10);
-L_02008a2a:
-  Call1((void (*)())wait, 1);
-L_02008a30:
-  v6 = Func_02001f9c(r8);
-  if (v6 != 0)
-    goto L_02008a3c;
-  goto L_02008912;
-L_02008a3c:
-  v7 = Func_0200034c(1, stack[8], stack[7]);
-  r5 = stack[9];
-  r0 = v7 >> 8;
-  r1 = 0x154;
-  r2 = 0;
-  r3 = FIELD_AT(r5, s16, 340);
-  if ((v7 >> 8) != (FIELD_AT(r5, s16, 340)))
-    goto L_02008a5a;
-  goto L_020088e2;
-L_02008a5a:
-  v8 = Func_02001fb4();
-  /* add (s32)stack, #96 */
-  return v8;
+  Func_02001fb4();
 }

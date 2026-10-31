@@ -1,5 +1,15 @@
-// Near miss of Func_020002e8, differ 6 of 83 in the form of overlay 6a5's
-// Func_02003f60, whose header says what still differs.
+// Near miss, differ 6 of 83 (tla-en, 2026-10-31): the native keeps both loop
+// invariants (mov r7, sp and the table's address) inside the loop and loads
+// the table as [table, offset]; this keeps only the table load in the loop.
+// It has the form of overlay 6a5's Func_02003f60, whose header says what still
+// differs. The 07.gcse dump shows PRE hoisting the colours' address
+// (sfp - 32) out of the goto loop in every form tried. Expansion puts the
+// constant table address last in the sum, so only a table held in a pointer
+// local gives [table, offset], and gcse then hoists that load too (40). Also
+// measured: colours throughout or p set inside the loop 14; for (i < 5) with
+// gData_020023e8[i + 2] 14 (loop.c folds the table into its giv); do-while
+// with the offset 36 (loop.c hoists the table); k = (phase + i) % 5 first 8.
+// A four-minute permuter run (7,337 candidates) beat none of these.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
 #include "iwram_call.h"
 #include "dma.h"

@@ -1,10 +1,16 @@
-// Draft, differ 10 of 260 (was 41): the scene in which actor 12 gives the
-// party item 198 and leaps away. Its motion flags are cleared after the
-// sprite's rotation is set: the native stores that zero from the pool (CSE does
-// not reach the earlier zero), and in the other order the zero is shared and
-// every register after it moves. Left: instruction order only, the motion
-// flags' address formed before the scale store, and the rotation's closing
-// store issued before the mode call's argument.
+// Near miss, differ 10 of 260 (tla-en, 2026-10-31): sched2 order only. The
+// scene in which actor 12 gives the party item 198 and leaps away. Its motion
+// flags are cleared after the sprite's rotation is set: the native stores that
+// zero from the pool (CSE does not reach the earlier zero), and in the other
+// order the zero is shared and every register after it moves. Left: the motion
+// flags' address formed before the scale store and y read before 0x40000 is
+// built (sched2 ranks y's load at priority 102 against 101 for the constant,
+// so the load goes first whenever both are ready), and the rotation's closing
+// store issued before the mode call's argument (a tie at priority 86 that the
+// dependence count gives to the store; the native order looks like that store
+// depending on the scale store, which the rotation's u16 type does not give).
+// Every order of either group of four stores measures 10 or more; the
+// permuter's one-pass block around the first motion-flags store measures 12.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "call.h"
 

@@ -1,11 +1,42 @@
-// Draft, differ 1199 of 1077 (tla-en; ja and fr differ in layout): the
-// password entry screen: a 17 by 4 character grid, the entered password in
-// pages of 50 and its check before the clear data is loaded. Left: register
-// choice and the frame throughout.
+// Near miss, differ 1010 of 1077 (tla-en, 2026-10-31; ja and fr differ in
+// layout): the password entry screen: a 17 by 4 character grid, the entered
+// password in pages of 50 and its check before the clear data is loaded.
+// Reshaped from 1199: WindowSprite_Create takes five arguments and
+// OUTPUT_SIZE_16X16, the two cursors are 16-byte ShopCursor locals passed by
+// address, the grid cursor's priority is cleared through the OAM bitfield
+// (the native's -13 mask), gInput is the tree's volatile InputState, the
+// discarded cursor % 10 is a call (1022 without it), the code read from the
+// grid is s32 (signed compare), the CRC is narrowed to s16 after the check
+// window opens, and the first two clearing loops and the page and cell loops
+// are goto loops (the native keeps their constants and page * 50 inside
+// them; as C loops 1099). Left: allocation and the frame (sub sp 136, not
+// 124): the native recomputes add rN, sp, #imm at every use of the two
+// cursors and the glyph buffer, where here each address is one pseudo
+// (shared by CSE, then by GCSE across the sprite tests) spilled to its own
+// slot; column takes r11 here and is spilled there, so every slot shifts.
+// Also left: the key test (native tests bit 0 of the s16 keys as a halfword,
+// lsl 16 against 0x10000; every form tried ands with 1) and the CRC's sign
+// extension (native sign-extends the raw return; here it is zero-extended
+// first). The main loop as a goto loop measured 1023.
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "dma.h"
+#include "input.h"
+#include "uiwindow.h"
+#include "oam.h"
+#include "fixed_math.h"
+
+/// A selection cursor, as the shops keep theirs (shop/cursor_set.c).
+struct ShopCursor {
+  struct WindowSprite *anchor;
+  u16 x;
+  u16 y;
+  s16 targetX;
+  s16 targetY;
+  s8 active;
+  s8 kind;
+};
 
 struct PasswordWork {
   void *glyphs[50];
@@ -14,13 +45,6 @@ struct PasswordWork {
   u8 unk1c2[26];
 };
 
-struct Window {
-  u8 unk00[12];
-  s16 x;
-  s16 y;
-};
-
-extern u32 gInput[];
 extern u32 gVBlankCount;
 extern s8 gData_02002438[];
 extern u8 gData_02002440[];
@@ -41,25 +65,23 @@ extern char MsgFieldInvalidPassword[];
 void *Heap_AllocEwram(s32 size);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
 void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length,
-                              s32 mode);
+                            s32 mode);
 void Window_SetTilemapEntry(struct Window *window, s32 tile, s32 x, s32 y,
-                              s32 mode);
+                            s32 mode);
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, s32 x,
-                               s32 y);
+                             s32 y);
 void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x,
-                                  s32 y);
+                                s32 y);
 void Window_Close(struct Window *window, s32 release);
 void WindowSprite_RedrawSavedRect(struct Window *window);
-u8 *WindowSprite_Create(s32 entry, s32 address, struct Window *window,
-                        s32 mode);
 s32 Resource_FindFreeEntry(void);
 void Party_RemoveActiveOwner(s32 id);
 void Party_AddActiveOwner(s32 id);
 void wait(s32 frames);
-void Func_02000a70(s32 code, u16 *glyph);
-void Func_02000db4(struct Window *window, s32 column, s32 row, s32 mode,
-                   s32 a, s32 b);
-s32 Func_0200217c(s32 length, u8 *data);
+void Func_02000a70(s32 cell, u16 *text);
+void Func_02000db4(struct Window *window, s32 x, s32 y, s32 width, s32 height,
+                   s32 palette);
+u16 Func_0200217c(u32 length, u8 *p);
 void Func_020018e0(s32 mode, u8 *data);
 s32 Func_02002068(u8 *src, s32 length, u8 *dst);
 void Func_02002208(void);
@@ -73,9 +95,9 @@ void Func_02002328(s32 glyph, void *cell);
 void *Func_02002330(struct Window *window, void *glyph, s32 x, s32 y);
 void Func_02002350(void);
 void Func_020023e8(void);
-void Func_020023f0(u8 **sprite);
-void Func_020023f8(u8 **sprite, s32 x, s32 y, s32 visible);
-void Func_02002400(u8 *sprite, s32 x, s32 y);
+void Func_020023f0(struct ShopCursor *cursor);
+void Func_020023f8(struct ShopCursor *cursor, s32 x, s32 y, s32 kind);
+void Func_02002400(struct ShopCursor *cursor, s32 x, s32 y);
 void Func_02002408(s32 cue);
 
 /// Draws the password screen's title and key help into the main window.
@@ -83,27 +105,47 @@ void Func_02002408(s32 cue);
   {                                                                            \
     s32 message = MSGNO(MsgFieldSpace);                                        \
                                                                                \
-    Text_DrawStringInWindow(gData_02002440, window, 0, 0);                   \
-    Text_DrawStringInWindow(gData_02002454, window, 0, 8);                   \
-    Text_DrawStringInWindow(gData_02002468, window, 0, 16);                  \
-    Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                  \
-    Window_DrawDividerLine(window, 20, 0, 20, 5);                            \
-    Text_DrawCharacterAtOffset(message++, window, 160, 0);                   \
-    Text_DrawCharacterAtOffset(message++, window, 160, 8);                   \
-    Text_DrawCharacterAtOffset(message, window, 160, 24);                    \
+    Text_DrawStringInWindow(gData_02002440, window, 0, 0);                     \
+    Text_DrawStringInWindow(gData_02002454, window, 0, 8);                     \
+    Text_DrawStringInWindow(gData_02002468, window, 0, 16);                    \
+    Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                    \
+    Window_DrawDividerLine(window, 20, 0, 20, 5);                              \
+    Text_DrawCharacterAtOffset(message++, window, 160, 0);                     \
+    Text_DrawCharacterAtOffset(message++, window, 160, 8);                     \
+    Text_DrawCharacterAtOffset(message, window, 160, 24);                      \
   }
 
 s32 Func_02000e44(void) {
-  u8 *sprite[2][4];
+  struct ShopCursor cursorSprite;
+  struct ShopCursor gridSprite;
+  u16 glyph[12];
+  s32 mode;
+  s32 cursor;
+  struct Window *grid;
+  s32 column;
+  s32 row;
+  s32 length;
+  s32 pages;
   struct PasswordWork *work;
-  struct Window *window, *grid, *box;
-  s32 mode, length, pages, page, cursor = 0, column = 0, row = 0;
-  s32 advance = 0, state, action, drawColumn, drawRow, drawMode;
-  s32 cursorX, cursorY, i, entry, x, y, count;
+  s32 drawColumn;
+  s32 drawRow;
+  s32 drawMode;
+  s32 cursorX;
+  s32 cursorY;
+  s32 state;
+  s32 advance;
+  struct Window *window;
+  struct Window *box;
+  s32 action;
+  s32 page;
+  s32 count;
+  s32 i;
+  s32 entry;
   u16 *palette = (u16 *)0x050001c0;
 
   Func_02002208();
-  Func_02002310(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  Func_02002310(gMainRoutineWork.paletteGlow[0],
+                gMainRoutineWork.paletteGlow[1]);
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
           (volatile u32 *)0x040000d4);
   palette[4] = 0x6318;
@@ -111,7 +153,11 @@ s32 Func_02000e44(void) {
   if (mode == -1)
     return -1;
   Func_02002408(71);
+  cursor = 0;
+  column = 0;
+  row = 0;
   work = Heap_AllocEwram(476);
+  advance = 0;
   Func_02002320((void *)0x06006000);
   length = 260;
   if (mode != 0) {
@@ -123,40 +169,56 @@ s32 Func_02000e44(void) {
   window = Window_Create(1, 13, 29, 6, 2);
   DRAW_TITLE(window)
   grid = Window_Create(5, 1, 20, 12, 2);
-  for (i = 0; i != 26; i++)
-    work->unk1c2[i] = 0;
-  for (i = 0; i != 260; i++)
-    Data_0200274a[i] = 99;
+  i = 0;
+clear_unknown:
+  work->unk1c2[i] = 0;
+  i++;
+  if (i != 26)
+    goto clear_unknown;
+  {
+    u8 *p = Data_0200274a;
+
+    i = 0;
+  clear_entered:
+    *p = 99;
+    i++;
+    p++;
+    if (i != 260)
+      goto clear_entered;
+  }
   for (i = 0; i != 50; i++) {
     s32 col = i % 10;
+    s32 x = col * 12 + 8;
+    s32 y = i / 10 * 16 + 2;
 
-    x = col * 12 + 8;
-    y = i / 10 * 16 + 2;
     if (col > 4)
       x = col * 12 + 18;
     work->cells[i] = Func_02002330(grid, work->glyphs[i], x, y);
     work->shown[i] = 99;
-    Iwram_ClearWordsEntry(work->cells[i], 128);
+    Iwram_ClearWords(work->cells[i], 128);
   }
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
     Func_02002300();
-    sprite[1][0] = WindowSprite_Create(entry, 0x20000000, window, 0);
-    Func_02002400(sprite[1][0], window->x * 8 - 2, window->y * 8 + 12);
+    cursorSprite.anchor = WindowSprite_Create(
+        entry, OUTPUT_SIZE_16X16, (struct RenderInput *)window, 0, 0);
+    Func_02002400(&cursorSprite, (s16)window->x * 8 - 2,
+                  (s16)window->y * 8 + 12);
   }
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
     Func_02002308();
-    sprite[0][0] = WindowSprite_Create(entry, 0x20000000, window, 0);
-    sprite[0][0][15] = 255;
-    sprite[0][0][25] &= ~12;
-    Func_02002400(sprite[0][0], grid->x * 8 - 4, grid->y * 8 + 12);
+    gridSprite.anchor = WindowSprite_Create(
+        entry, OUTPUT_SIZE_16X16, (struct RenderInput *)window, 0, 0);
+    gridSprite.anchor->sentinel = 255;
+    gridSprite.anchor->oam.priority = 0;
+    Func_02002400(&gridSprite, (s16)grid->x * 8 - 4, (s16)grid->y * 8 + 12);
   }
   drawMode = 1;
   drawColumn = 0;
   drawRow = 0;
-  cursorX = window->x * 8 - 8;
-  cursorY = window->y * 8 + 11;
+  cursorX = (s16)window->x * 8 - 8;
+  cursorY = (s16)window->y * 8 + 11;
   state = 0;
   for (;;) {
     action = -1;
@@ -164,27 +226,27 @@ s32 Func_02000e44(void) {
       state = 1;
     Func_02000db4(window, drawColumn, drawRow, drawMode, 1, 15);
     if (state == 0) {
-      if (gInput[3] & 16) {
+      if (gInput.repeat & 16) {
         Func_02002408(111);
         if (row == 2)
           column = (column + 1) % 16;
         else
           column = (column + 1) % 17;
       }
-      if (gInput[3] & 32) {
+      if (gInput.repeat & 32) {
         Func_02002408(111);
         if (row == 2)
           column = (column + 15) % 16;
         else
           column = (column + 16) % 17;
       }
-      if (gInput[3] & 128) {
+      if (gInput.repeat & 128) {
         Func_02002408(111);
         row = (row + 1) % 4;
         if (column == 16 && row == 2)
           row = 3;
       }
-      if (gInput[3] & 64) {
+      if (gInput.repeat & 64) {
         Func_02002408(111);
         row = (row + 3) % 4;
         if (column == 16 && row == 2)
@@ -205,47 +267,50 @@ s32 Func_02000e44(void) {
     if (column > 15)
       drawColumn++;
     Func_02000db4(window, drawColumn, row, drawMode, 1, 14);
-    x = (window->x + column) * 8 - 8;
-    y = (window->y + row) * 8 + 11;
-    if (column > 4)
-      x = (window->x + column) * 8;
-    if (column > 9)
-      x += 8;
-    if (column > 14)
-      x += 8;
-    if (column > 15)
-      x += 8;
-    cursorX += (x - cursorX) / 2;
-    cursorY += (y - cursorY) / 2;
-    Func_020023f8(sprite[1], cursorX, cursorY, 1);
-    Func_020023f0(sprite[1]);
+    {
+      s32 x = ((s16)window->x + column) * 8 - 8;
+      s32 y = ((s16)window->y + row) * 8 + 11;
+
+      if (column > 4)
+        x = ((s16)window->x + column) * 8;
+      if (column > 9)
+        x += 8;
+      if (column > 14)
+        x += 8;
+      if (column > 15)
+        x += 8;
+      cursorX += (x - cursorX) / 2;
+      cursorY += (y - cursorY) / 2;
+    }
+    Func_020023f8(&cursorSprite, cursorX, cursorY, 1);
+    Func_020023f0(&cursorSprite);
     {
       s32 cell = cursor % 50;
+      s32 y = (cell / 10 * 2 + (s16)grid->y) * 8 - 2;
       s32 frame = (gVBlankCount >> 1) & 7;
       s32 col = cell % 10;
+      s32 x = col * 12 + (s16)grid->x * 8 + 16;
 
-      y = (cell / 10 * 2 + grid->y) * 8 - 2;
-      x = col * 12 + grid->x * 8 + 16;
       if (col > 4)
         x += 10;
-      Func_020023f8(sprite[0], x + gData_02002438[frame],
+      Func_020023f8(&gridSprite, x + gData_02002438[frame],
                     y + gData_02002438[(frame + 5) & 7], 1);
-      Func_020023f0(sprite[0]);
+      Func_020023f0(&gridSprite);
     }
     if (advance > 0 && ++advance == 8) {
       advance = 0;
       cursor++;
     }
     if (advance == 0) {
-      u32 keys;
+      s16 keys;
 
       if (column == 16 && row == 0)
-        keys = gInput[3];
+        keys = gInput.repeat;
       else if (column == 16 && row == 1)
-        keys = gInput[3];
+        keys = gInput.repeat;
       else
-        keys = gInput[1];
-      if ((s16)keys & 1 && state == 0) {
+        keys = gInput.pressed;
+      if (keys & 1 && state == 0) {
         action = 0;
         if (column == 16) {
           if (row == 0)
@@ -255,11 +320,13 @@ s32 Func_02000e44(void) {
           else if (row == 3)
             action = 3;
         } else if (cursor < length) {
-          u8 code = gData_0200265e[column + row * 16];
+          s32 code = gData_0200265e[column + row * 16];
 
           if (code <= 63) {
             Func_02002408(112);
             Data_0200274a[cursor] = code;
+            // The native calls the remainder and reads nothing back.
+            __modsi3(cursor, 10);
             if (cursor < length - 1) {
               if (cursor % 50 == 49)
                 advance = 1;
@@ -272,20 +339,22 @@ s32 Func_02000e44(void) {
         }
       }
       if (action != 0 || state == 1) {
-        if (gInput[1] & 8 || action == 3 || state == 1) {
+        if (gInput.pressed & 8 || action == 3 || state == 1) {
           s32 size = Func_02002068(Data_0200274a, length, Data_0200288a);
           s32 check = Func_0200217c(size - 2, Data_0200288a);
+          s16 crc;
 
           state = 0;
           box = Window_Create(5, 12, 20, 3, 2);
-          if (Data_0200288a[size - 2] == (u8)((u16)check >> 8) &&
-              Data_0200288a[size - 1] == (u8)check) {
+          crc = check;
+          if (Data_0200288a[size - 2] == (u16)crc >> 8 &&
+              Data_0200288a[size - 1] == (u16)crc % 256) {
             Text_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), box,
-                                         0, 0);
+                                       0, 0);
             Func_02002408(112);
             do
               wait(1);
-            while (!(gInput[1] & 1));
+            while (!(gInput.pressed & 1));
             Func_02002408(112);
             Func_02002350();
             gMainRoutineWork.currentOwner = 0;
@@ -312,24 +381,24 @@ s32 Func_02000e44(void) {
           }
           Func_02002408(113);
           Text_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0,
-                                       0);
+                                     0);
           do
             wait(1);
-          while (!(gInput[1] & 1) && !(gInput[1] & 2));
+          while (!(gInput.pressed & 1) && !(gInput.pressed & 2));
           Window_Close(box, 2);
           WindowSprite_RedrawSavedRect(window);
           DRAW_TITLE(window)
-        } else if (gInput[3] & 512 || action == 2) {
+        } else if (gInput.repeat & 512 || action == 2) {
           if (cursor > 0) {
             Func_02002408(111);
             cursor--;
           }
-        } else if (gInput[3] & 256 || action == 1) {
+        } else if (gInput.repeat & 256 || action == 1) {
           if (cursor < length - 1) {
             Func_02002408(111);
             cursor++;
           }
-        } else if (gInput[1] & 2) {
+        } else if (gInput.pressed & 2) {
           if (cursor > 0) {
             Func_02002408(111);
             cursor--;
@@ -345,14 +414,31 @@ s32 Func_02000e44(void) {
     }
     page = cursor / 50;
     WindowSprite_RedrawSavedRect(grid);
-    for (i = 0, y = 2; i != 4; i++, y += 2)
-      Window_DrawDividerLine(grid, 0, y, 18, y);
-    for (i = 0, x = 18 - pages; i != pages; i++, x++) {
-      s32 tile = i + 0xf301;
+    {
+      s32 y;
 
-      if (i == page)
-        tile = i + 0xf30b;
-      Window_SetTilemapEntry(grid, tile, x, 10, 0);
+      for (i = 0, y = 2; i != 4; i++, y += 2)
+        Window_DrawDividerLine(grid, 0, y, 18, y);
+    }
+    {
+      s32 x;
+
+      i = 0;
+      if (pages != 0) {
+        x = 18 - pages;
+      draw_page:
+        {
+          s32 tile = i + 0xf301;
+
+          if (i == page)
+            tile = i + 0xf30b;
+          Window_SetTilemapEntry(grid, tile, x, 10, 0);
+        }
+        i++;
+        x++;
+        if (i != pages)
+          goto draw_page;
+      }
     }
     count = length;
     if (length > 49) {
@@ -361,26 +447,45 @@ s32 Func_02000e44(void) {
       else
         count = 50;
     }
-    for (i = 0; i != count; i++) {
-      u8 code = Data_0200274a[page * 50 + i];
+    i = 0;
+    if (count != 0) {
+      void **cell = work->cells;
+      u8 *shown = work->shown;
 
-      if (code != work->shown[i]) {
-        work->shown[i] = code;
-        if (code == 99) {
-          Iwram_ClearWordsEntry(work->cells[i], 128);
-        } else {
-          u16 glyph;
+    draw_cell:
+      {
+        s32 code = Data_0200274a[page * 50 + i];
 
-          Func_02000a70(Data_0200274a[page * 50 + i], &glyph);
-          Func_02002328(glyph, work->cells[i]);
+        if (code != *shown) {
+          *shown = code;
+          if (code == 99) {
+            Iwram_ClearWords(*cell, 128);
+          } else {
+            Func_02000a70(Data_0200274a[page * 50 + i], glyph);
+            Func_02002328(glyph[0], *cell);
+          }
         }
       }
+      i++;
+      cell++;
+      shown++;
+      if (i != count)
+        goto draw_cell;
     }
-    for (; i != 50; i++) {
-      if (work->shown[i] != 99) {
-        work->shown[i] = 99;
-        Iwram_ClearWordsEntry(work->cells[i], 128);
+    if (i != 50) {
+      void **cell = &work->cells[i];
+      u8 *shown = &work->shown[i];
+
+    clear_cell:
+      if (*shown != 99) {
+        *shown = 99;
+        Iwram_ClearWords(*cell, 128);
       }
+      i++;
+      cell++;
+      shown++;
+      if (i != 50)
+        goto clear_cell;
     }
     wait(1);
   }

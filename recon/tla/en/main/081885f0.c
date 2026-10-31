@@ -1,7 +1,14 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
-// 141: only the size's copy to r4 in the prologue, which the native makes
-// after the three stack stores. A greedy device search found nothing lower.
-// Near miss: listing 141 instructions, draft 141, differ 4 (was 6: three pairs;
+// Near miss, differ 2 of 141 (tla-en, 2026-10-31), with no device: only the
+// size's copy to r4 in the prologue, which the native makes after the stores
+// of y and the ring base. In sched2 the copy, a parameter move, ties with
+// those stores at priority 1 and goes first on insn order; compiled with
+// -mtune=arm7tdmi (analysis only) a store holds the core a second cycle, the
+// copy waits behind the stores and the prologue matches, so the order is the
+// scheduler's cost model's, not the C's. The end marker's pinned triangles
+// pointer is gone: with the Makefile's options the plain
+// triangles[segments * 2] also leaves only this pair. 2026-10-25: a greedy
+// device search found nothing lower.
+// Earlier: listing 141 instructions, draft 141, differ 4 (was 6: three pairs;
 // -mtune=arm7tdmi as an analysis: also 6, the prologue pair fixed and the
 // outer loop's y += 18 one slot early). No ☀️ twin: The Broken Seal has no
 // mesh builder of this kind (closest call order PsynergyMenu_BuildPageResult,
@@ -20,9 +27,9 @@
 // 2026-10-15 (fx-n3): rewritten for reading (names, comments, clang-format);
 // still 6. A running ring base and y stepped by the outer loop (the native
 // keeps both in stack slots): 104.
-// 2026-10-18: alchemy-devtools permute (6 min, 2 jobs, seed 31): no candidate below
-// the draft.
-// 2026-10-19 (run 33): the end marker's pinned pointer (tagged below): 6 to
+// 2026-10-18: alchemy-devtools permute (6 min, 2 jobs, seed 31): no candidate
+// below the draft.
+// 2026-10-19 (run 33): the end marker's pinned pointer (since removed): 6 to
 // 4. The same device in the ring's triangle block (the pointer pinned to r3,
 // the asm holding r5) orders that pair too, but without the triangles reload
 // the reload registers rotate differently after it (mov r3, sl for i, and
@@ -75,6 +82,9 @@ void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
 
       // The side from this vertex to the next, as two triangles.
       if (ring < 1) {
+        // A byte offset added to the base: as
+        // &triangles[(ring * segments + i) * 2], 4 of 141 differ (base +
+        // offset, where the native adds offset + base).
         struct MeshTriangle *triangle =
             (struct MeshTriangle *)((ring * segments + i) * 24 +
                                     (u32)triangles);
@@ -111,17 +121,7 @@ void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
   }
 
   // The end of the list.
-  {
-    /* FAKEMATCH(pin): the triangles pointer pinned to r1 behind an empty asm
-     * that holds r3, so its reload comes before the * 24 chain; as
-     * triangles[segments * 2], 2 of 141 instructions differ in tla-en. */
-    register u32 base __asm__("r1") = (u32)triangles;
-    struct MeshTriangle *end;
-
-    __asm__("" : "+l"(base) : : "r3");
-    end = (struct MeshTriangle *)(segments * 24 + base);
-    end->vertex[0] = 0;
-    end->vertex[1] = 0;
-    end->vertex[2] = 0;
-  }
+  triangles[segments * 2].vertex[0] = 0;
+  triangles[segments * 2].vertex[1] = 0;
+  triangles[segments * 2].vertex[2] = 0;
 }

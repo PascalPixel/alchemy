@@ -1,6 +1,11 @@
-// Near miss, differ 8 of 57: scheduling only. The native opens the frame and
-// saves the third argument before it starts the heap slot address, and the
-// argument setup of Func_080da6e0 is ordered as in Func_080da334.
+// Near miss, differ 2 of 57 (tla-en, 2026-10-31): one swapped pair. The
+// native spills the third argument (str r2, [sp, #16]) before building the
+// heap slot address 0x030000a0; here that constant's first movs goes first.
+// In sched2 the movs starts a chain into the work's load and the first call,
+// priority 69 against the spill's 68, so no statement order moves it
+// (scheduler order), as in its twin Func_080d9710. The argument setup of
+// Func_080da6e0 now matches. u32 ids and declaring the locals before
+// assigning them measured the same.
 #include "worka0.h"
 #include "actor.h"
 #include "system.h"

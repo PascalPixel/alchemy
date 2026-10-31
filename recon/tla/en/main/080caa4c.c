@@ -1,7 +1,15 @@
-// Draft, differ 16 of 292 (2026-10-26, 26 before): renderMode 0 stored through
-// a byte pointer, so the layer's read stays after it as in the native. Left:
-// the opening table's offset halves around its stores, and two pool and
-// field loads one row apart. Earlier notes follow.
+// Near miss, differ 6 of 292 (tla-en, 2026-10-31): scheduler order only, three
+// instructions in the leader's row after ObjectTable_Clear. sched2 ties the
+// gMainRoutineWork pool load with the -1 constant's shift (priority 25) and
+// takes the load on its six dependents, and ranks the 0x1fc and 0x204 offset
+// constants one above the stores before them (24 over 23, 19 over 18: a
+// store-to-load cost of 2 under -mthumb-slow-loads); the listing's order fits a
+// cost of 3. Swapping the condition and sprite stores, reading x into a local
+// first, an s16 or u16 leader, CONDITION_ALWAYS and a 4-minute permuter run
+// (9,649 candidates) leave it at 6 or worse.
+// Differ 16 of 292 (2026-10-26, 26 before): renderMode 0 stored through a byte
+// pointer, so the layer's read stays after it as in the native. Earlier notes
+// follow.
 // Under -mthumb-slow-loads (2026-10-26): differ 26 of 292 in tla-en,
 // instruction order and register choice. Empty asms before `entry->sprite =
 // leader;` and the cell's load lower it to 14.

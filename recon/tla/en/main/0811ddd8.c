@@ -1,16 +1,24 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 4 of 78 in tla-en.
+// Near miss, differ 4 of 78 (tla-en, 2026-10-31): scheduler order only. The
+// native issues sub sp right after the variant's store, then the actor's ldrb,
+// then mov sl, r1 before the actor's store; here the ldrb comes first, sub sp
+// after it and mov sl, r1 after the targetCount load. sched2's dump gives the
+// native order exactly if the ldrb waits two cycles after the variant's store,
+// which may alias it; -mthumb-slow-loads charges that wait only for a plain
+// load, not an extending one, so the ldrb issues at once (080d3c88 records the
+// same for an ldrsh). No device: this is the Broken Seal's form with the added
+// test. A one-pass block around the kind's store scores 2 by making sub sp a
+// barrier's predecessor, so it issues after the flags' load, ten slots ahead of
+// the native; not kept. The earlier draft's one-pass block before the count's
+// read no longer changes anything.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, each local pinned to each register,
-// five minutes of permute; none reaches 0. Left: the native copies the plan
-// into r6 after the flags' store and issues sub sp after the variant's store,
-// as if its prologue followed the first statements.
-// Draft, differ 4 of 78: Func_0811ddd8 is ☀️'s BattleStaging_BuildTargetList
+// every order of the opening's seven statements (none under 4), five minutes
+// of permute (26 October) and four more (31 October, 12,903 candidates: best
+// the one-pass block above); none reaches 0.
+// Func_0811ddd8 is ☀️'s BattleStaging_BuildTargetList
 // (games/tbs/src/battle/battle/staging.c) with ⚓️'s added test that the
 // target is in the battle (BattleParty_IsUnitListed); void, as its callers
-// load r0 before r1 for it. Left: the opening, the plan's copy into r6 one
-// slot ahead of the flags' store, and sub sp four slots early (the one-pass
-// block that places mov sl, r1 moves it). Devices: one-pass blocks (tagged);
-// without them 12 differ (10 for the old for-loop draft).
+// load r0 before r1 for it.
 #include "types.h"
 #include "battle_type.h"
 #include "battle_display.h"
@@ -24,18 +32,12 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
   u32 flags;
   s32 livingTargets;
   s32 targetIndex;
-  s32 count;
   u8 *inputTarget;
 
   livingTargets = 0;
   effect->flags = 0;
   flags = plan->presentationFlags;
-  /* FAKEMATCH(one-pass): the kind's store ends a CSE block, so
-   * targetIndex's zero is copied before the actor's store; as a plain
-   * statement, 8 of 78 instructions differ in tla-en. */
-  do {
-    effect->kind = flags & 0xfff;
-  } while (0);
+  effect->kind = flags & 0xfff;
   effect->variant = (flags & 0x3000) >> 12;
   effect->actor = plan->actorId;
   targetIndex = 0;
@@ -49,15 +51,9 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
         *outputTarget++ = *inputTarget;
         livingTargets++;
       }
-      count = plan->targetCount;
-      /* FAKEMATCH(one-pass): the count is read before targetIndex
-       * steps; as while (targetIndex < plan->targetCount), 10 of 78
-       * instructions differ in tla-en. */
-      do {
-      } while (0);
       targetIndex++;
       inputTarget++;
-    } while (targetIndex < count);
+    } while (targetIndex < plan->targetCount);
   }
   if (livingTargets == 0) {
     effect->actors[0] = plan->targetIds[0];

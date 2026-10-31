@@ -1,9 +1,16 @@
-// Near miss, differ 10 of 237 (2026-10-26): the twin of The Broken Seal's
-// FieldEffect_RunMercuryDjinnCapture, with The Lost Age's effect work
-// (Ram_HeapSlots->effectWork), leader (gMainRoutineWork.currentOwner), droplet
-// object 301, sprite slots from 80 and the cache slot byte at 16. Only
-// instruction order is left: after each store the native issues another
-// instruction before the next load (the afterimage setup, the position copy).
+// Near miss, differ 6 of 237 (tla-en, 2026-10-31): three sched2 ties, each
+// broken the other way (equal priority, then dependence class or insn order):
+// the cursor's stack store `str r1, [sp]` falls after `mov sl, r3; mov fp, r1`
+// instead of before, `adds r1, r5, #0` for collisionFlags rises above
+// `subs r2, #50`, and `mov sl, r0` comes before `str r1, [r5, #104]`. Compiled
+// without -mtune=arm9tdmi all three come out in the listing's order, as The
+// Broken Seal's build of the twin does from the same C. Reordering the loop
+// setup or hoisting `list = copies` does not move them; the permuter's best
+// (differ 4) only wraps the afterimage setup in a one-pass block.
+// The twin of The Broken Seal's FieldEffect_RunMercuryDjinnCapture, with The
+// Lost Age's effect work (Ram_HeapSlots->effectWork), leader
+// (gMainRoutineWork.currentOwner), droplet object 301, sprite slots from 80 and
+// the cache slot byte at 16.
 #include "resource.h"
 #include "types.h"
 #include "actor_view.h"

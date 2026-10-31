@@ -9,6 +9,7 @@
 #include "iwram_call.h"
 #include "heap_release.h"
 #include "ram_buffer.h"
+#include "field_sprite.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -144,9 +145,20 @@ extern const u8 Data_08199bec[];
 extern const u8 Data_08199bf9[];
 extern const u8 Data_08199d2f[];
 
-void *ResourceObject_CreateFar(s32 resource);
+// Resource ids, named after their places in the resource directory.
+extern char ResourceId_Data0F7;
+extern char ResourceId_EmberStreakSheet;
+extern char ResourceId_Data0B4;
+extern char ResourceId_MossCaveBackdrop;
+extern char ResourceId_BlueArcSheetB;
+extern char ResourceId_MarsDjinnSheet;
+extern char ResourceId_OrangePaletteB;
+extern char ResourceId_SmokeBandSheet;
+extern char ResourceId_Data134;
+
+struct FieldSprite *ResourceObject_CreateFar(s32 resource);
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-u8 *Func_0815b290(s32 width, s32 height, u32 shape, s32 mode);
+struct FieldSprite *Func_0815b290(s32 width, s32 height, u32 shape, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
 void Func_0813ba50(void);
 void Func_08163c2c(s32 a, s32 b);
@@ -159,9 +171,6 @@ void BattleEffect_ProcessPendingStampTransfer(void); // copies the 0x6780 canvas
 void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
-#define OBJ_FLAGS(obj, n) (((u8 *)(obj))[n])
-#define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[((u8 *)(obj))[16]].tile)
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 #define HALF_HI(v) (((s16 *)&(v))[1])
@@ -172,25 +181,27 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   u8 *battle;
   u8 *canvas;
   struct BattleEffectWork *work;
+  DrawRectangle stamp;
+  DrawRectangle blit;
+  s32 frame;
   u8 *sprites;
   s32 *transition;
-  DrawRectangle blit;
-  DrawRectangle stamp;
-  s32 frame;
+  s32 py;
+  s32 px;
+  s32 vy;
+  s32 vx;
+  s32 morph;
+  s32 morphStep;
+  s32 dived;
   s32 i;
   s32 j;
   s32 k;
   s32 m;
-  s32 vx;
-  s32 vy;
-  s32 px;
-  s32 py;
-  s32 morph;
-  s32 morphStep;
-  s32 dived;
   s32 row;
   s32 cut;
   s32 scroll;
+  struct RenderModel *model;
+  void *verts;
   s32 place[4];
   s32 place2[4];
   struct WordPair req;
@@ -200,10 +211,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   struct ModelTexture texture2;
   struct ModelTexture texture3;
   struct ModelTexture texture4;
-  struct RenderModel *model;
-  void *verts;
   struct EffectStep *p;
-  u8 *obj;
+  struct FieldSprite *sprite;
 
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -212,8 +221,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
-  *(volatile u16 *)BG_PLTT = 0;
-  *(volatile u16 *)(BG_PLTT + 2) = 0;
+  BG_PLTT[0] = 0;
+  BG_PLTT[1] = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Func_08163c2c(1, 0);
@@ -231,36 +240,36 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   dived = 0;
   BattleEffect_SpawnObjects(2, 0x293, 2);
   for (i = 0; i != 4; i++) {
-    obj = ResourceObject_CreateFar(0x294);
-    work->objects[12 + i] = obj;
-    if (obj != NULL) {
-      obj[26] = 0;
-      Animation_ApplyChildArgumentFar(obj, 0);
-      obj = work->objects[12 + i];
-      OBJ_FLAGS(obj, 9) = (OBJ_FLAGS(obj, 9) & ~12) | 4;
-      OBJ_FLAGS(obj, 5) = (OBJ_FLAGS(obj, 5) & ~12) | 4;
+    sprite = ResourceObject_CreateFar(0x294);
+    work->objects[12 + i] = sprite;
+    if (sprite != NULL) {
+      sprite->nextFrame = 0;
+      Animation_ApplyChildArgumentFar(sprite, 0);
+      sprite = work->objects[12 + i];
+      sprite->priority = 1;
+      sprite->blendMode = 1;
     }
   }
   for (i = 0; i != 2; i++) {
-    obj = ResourceObject_CreateFar(0x295);
-    work->objects[16 + i] = obj;
-    if (obj != NULL) {
-      obj[26] = 0;
-      Animation_ApplyChildArgumentFar(obj, 0);
-      obj = work->objects[16 + i];
-      OBJ_FLAGS(obj, 9) = (OBJ_FLAGS(obj, 9) & ~12) | 4;
+    sprite = ResourceObject_CreateFar(0x295);
+    work->objects[16 + i] = sprite;
+    if (sprite != NULL) {
+      sprite->nextFrame = 0;
+      Animation_ApplyChildArgumentFar(sprite, 0);
+      sprite = work->objects[16 + i];
+      sprite->priority = 1;
     }
   }
-  obj = Func_0815b290(64, 64, 0xc0002000, 0);
-  work->objects[18] = obj;
-  OBJ_FLAGS(obj, 5) = (OBJ_FLAGS(obj, 5) & ~12) | 4;
-  STAMP_TILES(work) = OBJ_TILES(obj);
+  sprite = Func_0815b290(64, 64, 0xc0002000, 0);
+  work->objects[18] = sprite;
+  sprite->blendMode = 1;
+  STAMP_TILES(work) = 0x06010000 + gResourceTableEntries[sprite->vramBlock].tile;
   {
     u8 *c = work->sheet;
 
-    Resource_LoadAndDecompress(0xf7, c, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0F7, c, 0, 0);
     Func_0816ae40(c, gData_02014000, 64, 64);
-    Resource_LoadAndDecompress(0x178, c, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, c, 1, 0);
     for (i = 0; i != 0x1781; i++, c++) {
       if (*c != 0) {
         *c = (*c >> 2) + 224;
@@ -270,7 +279,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   {
     u32 *w = (u32 *)(work->sheet + 0x4000);
 
-    Resource_LoadAndDecompress(0xb4, w, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, w, 0, 0);
     for (i = 0; i != 1024; i++) {
       *w = (*w >> 1) & 0x7f7f7f7f;
       w++;
@@ -292,7 +301,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Data_02010be0[1] = 0;
   Data_02010be0[2] = 0;
   {
-    volatile u16 *dst = (volatile u16 *)(BG_PLTT + 2);
+    volatile u16 *dst = BG_PLTT + 1;
 
     for (i = 1; i != 64; i++) {
       s32 r;
@@ -321,7 +330,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
   }
   {
-    volatile u16 *dst = (volatile u16 *)(BG_PLTT + 0x3c0);
+    volatile u16 *dst = &OBJ_PLTT_COLOR(14, 0);
 
     for (i = 0; i != 16; i++) {
       s32 r = i * 2 + 2;
@@ -336,7 +345,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       *dst++ = b << 10 | (i + 2) << 5 | r;
     }
   }
-  BattleBackground_LoadFar(1, 0x5a, 0);
+  BattleBackground_LoadFar(1, (s32)&ResourceId_MossCaveBackdrop, 0);
   frame = 0;
   if (!(gInput.repeat & 3)) {
     row = -0x1c29;
@@ -348,7 +357,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         py = 0x780000;
         vx = 0;
         vy = 0;
-        Iwram_CopyWords((void *)(BG_PLTT + 0xc0), battle + 0x56c, 256);
+        Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), battle + 0x56c, 256);
         {
           u8 *q = Data_02010fa0;
 
@@ -580,11 +589,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             p = &work->particles[4];
             for (i = 0; i != 8; i++, p++) {
               s32 n = (p->variant / 4) % 6;
-              s32 w = gData_08197467[n];
+              u32 w = gData_08197467[n];
 
               stamp(STAMP_CANVAS(work), work->sheet + gData_0819747a[n],
-                    p->x - (w >> 1), p->y + gData_08197473[n], w,
-                    gData_0819746d[n]);
+                    p->x - (w >> 1), p->y + gData_08197473[n],
+                    w, gData_0819746d[n]);
               if (++p->variant == 24) {
                 p->variant = 0;
                 p->x = (Random16() & 15) + 24;
@@ -618,7 +627,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         s32 s;
 
         if (frame == 267) {
-          volatile u16 *dst = (volatile u16 *)(BG_PLTT + 2);
+          volatile u16 *dst = BG_PLTT + 1;
 
           for (i = 1; i != 64; i++) {
             s32 v = i;
@@ -631,8 +640,9 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             }
             *dst++ = v;
           }
-          Resource_LoadAndDecompress(0x17a, work->sheet, 1, 0);
-          Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x150), 512);
+          Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
+          Iwram_CopyWords((void *)BG_PLTT,
+                          Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
           work->transferMode = 1;
           work->transferValue = 0x01010101;
         }
@@ -728,7 +738,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           vx -= (frame - 397) << 14;
           vy -= (frame - 397) << 13;
           px += vx;
-          py += vy;
+          py += vx; // vx, not vy, as the ROM has it
         }
         for (i = 0; i != 11; i++) {
           place2[0] = (Data_08199a12[i].x << 16) + px;
@@ -774,12 +784,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model->kind = 1;
         model->vertices = verts;
         model->shade = (s32)Data_02010fa0;
-        {
-          u8 *q;
-
-          for (q = Data_02010fa0; q != Data_02010fa0 + 31; q++) {
-            *q = 1;
-          }
+        for (i = 0; i != 31; i++) {
+          Data_02010fa0[i] = 1;
         }
         p = work->particles;
         for (i = 0; i != 31; i++, p++, mesh += 12) {
@@ -847,8 +853,9 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Func_0814cca8();
   gCameraSceneParameters[4] = 120;
   BattleEffect_SpawnObjects(11, 0x293, 2);
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 512);
-  Resource_LoadAndDecompress(0x17a, work->sheet, 1, 0);
+  Iwram_CopyWords((void *)BG_PLTT,
+                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+  Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   Iwram_ClearWords(gMapCellBuffer, 0x6c00);
   for (k = 0; k != 6; k++) {
     for (j = 0; j != 72; j++) {
@@ -860,8 +867,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
   }
-  Resource_LoadAndDecompress(0xf4, work->sheet, 1, 0);
-  Resource_LoadAndDecompress(0x134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
   REG_BLDALPHA = 0x1010;

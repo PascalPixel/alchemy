@@ -1,23 +1,30 @@
-// Near miss, differ 36 of 744: Func_0814b350, an effect no table reaches
-// (unused), with one tagged dead store (462 without).
+// Near miss, differ 16 of 744 (tla-en, 2026-10-31): five pairs of rows sched2
+// orders differently, all around reload's spills; same instruction count.
+// Func_0814b350, an effect no table reaches (unused), with one tagged dead
+// store (448 without).
 //
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 36. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 34).
+// What is left (2026-10-31): in the travel set-up, mov r6, sp; adds r6, #132
+// (delta's spilled address) issued before the target spill's reload and
+// goal->x, where the native issues them after; in the spark loop's set-up,
+// str r1, [sp, #36] issued after the pool load and mov sl, r0, where the
+// native issues it at once; and three stack reloads (ldr r6, [sp, #52]
+// before the rider draw, ldr r1/r0, [sp, #72] for effect->count) issued one
+// to three slots before the neighbouring stack stores the native puts first.
+// The sched2 dump shows the travel row's loads queued two cycles after the
+// spill store, so the register copy goes first: a cost the C cannot move
+// (the -mthumb-slow-loads approximation, K2). The permuter (4 minutes, about
+// 6,000 candidates) found nothing below 16.
+//
+// Measured 2026-10-25: differ 36, with the argument's spill and an extra
+// movs r2, #156; add r2, sp; both now match.
 
-// ☀️ twin: BattleEffect_RunSparkTravel (games/tbs/src/effect/effect.c), shape
-// 0.888, structure 1.000. ⚓️'s changes: the effect argument read directly,
+// ☀️ twin: BattleEffect_RunDjinnHeal
+// (games/tbs/src/battle_effect/battle_effect/djinn_heal.c), shape 0.888,
+// structure 1.000. ⚓️'s changes: the effect argument read directly,
 // the Mercury Djinn's small sheet (directory row 0x155) as ☀️'s, the
 // transfer callback at 0xc80, and ⚓️'s names for the shared routines.
 // ☀️'s dead store of the size series A draws at carries over with its tag:
-// without it the frame and allocation move (462).
-
-// What is left: one instruction more than the native (745 of 744), where
-// agscc builds the rider record's address as movs r2, #156; add r2, sp and
-// the native as add r2, sp, #156; neighbouring rows in the other order in
-// the prologue and the travel set-up; and pool offsets that follow them.
+// without it the frame and allocation move (448).
 
 // Tried (differ):
 // ☀️'s body with ⚓️'s names, without the dead store                  462
@@ -283,9 +290,9 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
                 view.depth = 314;
               if (view.depth > 634)
                 view.depth = 634;
-              /* FAKEMATCH: the size series A draws its sparks at, kept from
-               * that effect and never used here, as in ☀️. Without the dead
-               * store: differ 462 (☀️: 479). */
+              /* FAKEMATCH(dead): the size by depth series A draws its sparks
+               * at, a store nothing reads, as in ☀️; without it, 448 of 744
+               * instructions differ in tla-en. */
               cel = 3 - (view.depth - 314) / 128;
               cel = (i * 4 + frame) % 9;
               {

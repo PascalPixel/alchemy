@@ -1,4 +1,4 @@
-// Near miss, differ 16 of 456.
+// Near miss, differ 16 of 456 (tla-en, 2026-10-31): three sched2 orderings.
 //
 // Measured 2026-10-25 under -mthumb-slow-loads: differ 16; an empty asm before
 // the first statement does not help (differ 20).
@@ -10,11 +10,18 @@
 // unused GetBattleObjectSlotFar call, works out the glow's picture again for
 // the mirrored half, and reads the strength from the argument.
 
-// Left: order only; the allocation matches. Single rows where the native
-// builds a constant or issues a load one slot earlier (the heap base and the
-// work fields after the allocations, BLDALPHA's value, the pillar's sheet
-// offsets, the fleck's y and step constants), and the pool offsets they
-// move.
+// Left: order only; the allocation matches. Three sites, all sched2:
+// - after the sheet's allocation the native spills it (str r0, [sp, #16])
+//   before building the heap base; the draft builds 0x3000000 first, a
+//   priority tie its RTL order breaks the other way;
+// - before the frame loop the native computes camera->pos (adds r4, #12;
+//   str r4, [sp, #8]) before frame = 0, a tie at priority 2 the draft gives
+//   to frame = 0, the earlier insn;
+// - in the fleck loop the native issues the loads of fleck->y and fleck->x
+//   a cycle after the stores to point[2] and point[1] and fills the slots
+//   with the 0x400 and 5 << 16 constants and the call's r0/r1 moves; under
+//   -mthumb-slow-loads those loads are read-modify-write openers and wait
+//   only one cycle, so the draft issues them at once.
 
 // Tried:
 // the twin as ported (its two FAKEMATCH devices dropped)      261
@@ -29,6 +36,10 @@
 // shared the pillar's register (129 -> 42; a step local of
 // its own gives 56)                                         42
 // the same without the one-pass block                        259
+// (2026-10-31, from 16) the fleck's point[2] before point[0]      22
+// a camera->pos local set before the loop                    28
+// the frame loop as do { } while (++frame != 56)             16
+// alchemy permute, 4 minutes: nothing below                  16
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -179,10 +190,10 @@ void Func_0813e3d0(struct BattleEffectArgument *effect) {
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
       BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
-      /* FAKEMATCH: the native works out the pillar's and the glow's
-       * pictures again for the mirrored half. The one-pass block ends CSE's
-       * block, so they are not carried over (differ 259 without it, 42 with
-       * it; found by alchemy permute). */
+      /* FAKEMATCH(one-pass): the left half's pillar draw and glow index
+       * in a one-pass block, which ends CSE's block so the mirrored half
+       * works out both pictures again; as plain statements, 247 of 456
+       * instructions differ in tla-en. */
       do {
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);

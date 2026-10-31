@@ -1,3 +1,11 @@
+// Near miss, differ 14 of 676 (tla-en, 2026-10-31): four single-row
+// sched2 ties, each a copy or store the native issues one row earlier than
+// the draft: the prologue's `adds r1, #60` (&draw) before the second
+// blitter load, the gathering's velocity saves with the frame counter's
+// `mov r9, r5`, the burst's `mov r9, r3` after the camera->pos spill, and
+// the spark draw's second stack argument before the draw-pair reload (the
+// reload ranks 10 to the store's 9 in the sched2 dump).
+
 // Draft of Func_0815e9f4, the battle effect BattleEffect_DispatchByIdRange
 // runs for kinds 201 to 209 and 211 up: a ring of sparks gathers, then a
 // burst of sparks at the target.
@@ -47,11 +55,19 @@
 // statement, statement moves and each local scoped to a block gain only
 // the prologue's row or rows of that kind.
 
+// 2026-10-31: 18 at the start. The blitter pair read through a
+// DrawRectangle pointer, as ☀️'s slots (the loads then share the stores'
+// alias set, so draw[0]'s store issues before draw[1]'s load)   18 -> 14;
+// the camera read through struct BattleCamera (kept)             14;
+// the draw pair as void * instead of the slots pointer           14;
+// the permuter, 4 minutes over 5,000 candidates                 14.
+
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"
 #include "battle_action.h"
 #include "battle_work.h"
+#include "battle_display.h"
 #include "bg_scroll.h"
 #include "dma.h"
 #include "effect_step.h"
@@ -131,13 +147,14 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 shake;
   u8 *sheet;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
   s32 acceleration;
   s32 strength;
   BlitterPair draw;
+  DrawRectangle *slots;
   struct MotionObject *object;
   struct MotionObject *target;
   u16 *background;
@@ -174,8 +191,9 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         COMPOSITE_FLIP_X));
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  slots = (DrawRectangle *)Ram_HeapSlots;
+  draw[0] = slots[HEAP_BLITTER / 4];
+  draw[1] = slots[HEAP_BLITTER_ALTERNATE / 4];
   BattleCamera_SetViewAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
   wait(1);
@@ -330,7 +348,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
     else if (frame <= 7)
       draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
     Render_ResetTransformState();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->pos);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.
     if (frame >= 4 && frame <= 31) {

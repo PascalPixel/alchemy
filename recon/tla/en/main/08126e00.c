@@ -1,12 +1,14 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 14 of 267 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
+// Near miss, differ 10 of 267 (tla-en, 2026-10-31): scheduling order only,
+// in three places; see "Left" below.
+// Earlier, under -mthumb-slow-loads (26 October 2026), tried one edit at a
+// time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, each local pinned to each register,
 // each call argument copied into its argument register (pinned) at the call
 // or up to three statements before it; none reaches 0. One barrier (after
 // line 152 of the draft as it stood) lowers it to 12, and no second one
 // lowers it further; six minutes of permute reach 12.
 // Draft of Func_08126e00, The Broken Seal's ElementGlow_UpdateStarField
-// (games/tbs/src/battle/battle.c): differ 14 of 267 (tla-en, 2026-10-15),
+// (games/tbs/src/battle/battle/element_glow.c),
 // ported with The Lost Age's heap slots: the work at 92, the canvas at 96,
 // the blitters at 104 and 188. The work's layout is the twin's. Two
 // changes from the twin: the spiral step rereads *pos after the two
@@ -14,12 +16,19 @@
 // held value spills k: differ 69), and the new spark's depth is unsigned
 // (lsrs).
 
-// Left: order only. In the prologue the native starts the ready flag's
-// offset (movs r1, #158) before it loads the work, and stores the loop
-// count (15) between the halves of the spark cursor's offset; after the
-// ratio multiply it copies the result to r10 after the life store. alchemy
-// permute 6 minutes: differ 12 with a forced pointer temporary for
-// pos[4]'s first operand (not kept).
+// Left: order only, in sched2. In the prologue the native computes the spark
+// cursor (movs r7, #142; lsls; add r7, r9) after the ready store, around the
+// loop count's store; here its three-instruction chain outranks the store's
+// and goes first (6 instructions). After the ratio multiply the native
+// copies the result to r10 after the life store; here the copy follows the
+// call, a tie the scheduler breaks by insn order (2 instructions). In the
+// ring loop the native stores the age before it loads the picture table;
+// here the table load, a slow load, outranks the store (2 instructions).
+// Moving the pointer init, the loop's form and the result through a
+// temporary changes none of these. Four minutes of permute (31 October),
+// from plain Iwram_MulQ16 calls, reach 10 by wrapping the ring's draw call
+// in a one-pass do { } while (0), which puts the ring's age store before its
+// table load; with the local multiply pointer as well, differ 8 (not kept).
 
 #include "types.h"
 #include "iwram_call.h"
@@ -92,6 +101,7 @@ void Func_08126e00(void) {
   s32 x;
   s32 y;
   s32 life;
+  s32 (*mul)(s32 a, s32 b);
 
   dest = Ram_HeapSlots->battleFxWork[1];
   work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
@@ -109,9 +119,14 @@ void Func_08126e00(void) {
       } else {
         scale = Iwram_RatioMulQ14(dist, 0x10000);
         spark->life--;
+        /* FAKEMATCH(temporary): the multiply called through a local pointer
+         * to its fixed entry, set before the spiral, so its address is
+         * loaded before the cursor and the axis count; as plain
+         * Iwram_MulQ16 calls, 12 of 267 instructions differ in tla-en. */
+        mul = Iwram_MulQ16;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {
-          step = Iwram_MulQ16(Iwram_MulQ16(-*pos >> 8, scale), 0x13000);
+          step = mul(mul(-*pos >> 8, scale), 0x13000);
           pos[3] = pos[3] - (pos[3] >> 7) + step;
           *pos += pos[3];
           pos++;

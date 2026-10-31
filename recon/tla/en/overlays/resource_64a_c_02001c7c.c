@@ -1,8 +1,34 @@
-// Draft, differ 706 of 479: packs the four units' stats, levels, Djinn,
-// items and their counts into clear data, sized by the password kind. Left:
-// loop forms (the native indexes its tables) and register choice.
+// Near miss, differ 586 of 479 (tla-en, 2026-10-31): packs the four units'
+// base stats, levels, Djinn, items and their counts into clear data, sized by
+// the password kind. The shape is the native's (base stats through one
+// pointer at baseHp, the u16 and u8 floors through an int, (u32)(-mode | mode)
+// >> 31 for the offset, unsigned coins shifts, goto loops where the native
+// keeps its constants inside); a register-blind comparison leaves 221 lines.
+// Left, all compiler-level: mode is spilled ([sp, #28], a 64-byte frame)
+// where the native keeps it in r11 and out in r8, which moves every hi
+// register; gcse load motion turns each clamp's reload after its store into
+// a copy (as -fno-gcse the clamps come out as the native's); gcse's PRE
+// hoists stat = stats out of the zero loop and unit->inventory and k * 2 out
+// of goto loops; loop.c steps stat as a pointer where the native indexes it
+// from its stack slot with an i * 8 + 4 (and i * 16 + 4) offset giv, and
+// hoists the j loops' 1 and the count loop's table entry and 0x1ff.
+// Tried, each worse: one variable for bit and shift (595), counters scoped
+// per loop (661), the j loops as goto loops (612, 635), the scalars and stats
+// in one local struct (757); stat as a one-element array changes nothing.
 #include "types.h"
 #include "main_routine_work.h"
+#include "battle_unit.h"
+
+struct UnitBaseStats {
+  s16 hp;
+  s16 pp;
+  s16 hpGauge;
+  s16 ppGauge;
+  u16 attack;
+  u16 defense;
+  u16 agility;
+  u8 luck;
+};
 
 extern u16 gData_02002700[];
 extern s32 gData_020026f0[];
@@ -10,13 +36,13 @@ extern u16 gData_0200270c[];
 extern u16 gData_0200271c[];
 
 s32 GameFlag_Test(s32 flag);
-u8 *Unit_Get(s32 id);
+void *Unit_Get(s32 owner);
 
 s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   s32 size = 11;
-  u32 stats[8];
+  u32 levels, djinn, found, flags;
   u32 *stat;
-  u32 flags, levels, djinn, found;
+  u32 stats[8];
   s32 i, k, j;
 
   switch (mode) {
@@ -30,65 +56,91 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     size = 9;
     break;
   }
-  for (i = 0; i != size; i++)
-    out[i] = 0;
+  i = 0;
+  if (size != 0) {
+    u8 *p = out;
+
+  clear:
+    *p = 0;
+    i++;
+    p++;
+    if (i != size)
+      goto clear;
+  }
   levels = 0;
   djinn = 0;
   found = 0;
   flags = 0;
-  for (i = 0; i != 8; i++) {
-    stat = stats;
-    stat[i] = 0;
-  }
-  for (i = 0; i != 6; i++) {
-    if (GameFlag_Test(gData_02002700[i]))
-      flags = (u8)(flags | 1 << i);
-  }
+  i = 0;
+zero:
+  stat = stats;
+  stat[i] = 0;
+  i++;
+  if (i != 8)
+    goto zero;
+  i = 0;
+test:
+  if (GameFlag_Test(gData_02002700[i]))
+    flags = (u8)(flags | 1 << i);
+  i++;
+  if (i != 6)
+    goto test;
   for (i = 0; i != 4; i++) {
-    u8 *unit = Unit_Get(gData_020026f0[i]);
-    s16 *hp = (s16 *)(unit + 16);
-    u16 *pp = (u16 *)(unit + 24);
+    struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
+    struct UnitBaseStats *base = (struct UnitBaseStats *)&unit->baseHp;
     u32 *djinni;
     u16 *items;
     s32 shift;
+    s32 value;
 
-    if (hp[0] > 1999)
-      hp[0] = 1999;
-    if (hp[0] < 0)
-      hp[0] = 0;
-    if (hp[1] > 1999)
-      hp[1] = 1999;
-    if (hp[1] < 0)
-      hp[1] = 0;
-    if (pp[0] > 999)
-      pp[0] = 999;
-    if (pp[0] < 0)
-      pp[0] = 0;
-    if (pp[1] > 999)
-      pp[1] = 999;
-    if (pp[1] < 0)
-      pp[1] = 0;
-    if (pp[2] > 999)
-      pp[2] = 999;
-    if (pp[2] < 0)
-      pp[2] = 0;
-    if (unit[30] > 99)
-      unit[30] = 99;
-    if (unit[30] < 0)
-      unit[30] = 0;
-    stat[i * 2] = hp[0] << 21 | hp[1] << 10 | pp[0];
-    stat[i * 2 + 1] = pp[1] << 22 | pp[2] << 12 | unit[30] << 4;
-    if (unit[15] > 99)
-      unit[15] = 99;
-    if (unit[15] == 0)
-      unit[15] = 1;
-    levels |= unit[15] << (i * 8 - i);
-    djinni = (u32 *)(unit + 248);
+    if (base->hp > 1999)
+      base->hp = 1999;
+    if (base->hp < 0)
+      base->hp = 0;
+    if (base->pp > 1999)
+      base->pp = 1999;
+    if (base->pp < 0)
+      base->pp = 0;
+    if (base->attack > 999)
+      base->attack = 999;
+    value = base->attack;
+    if (value < 0)
+      value = 0;
+    base->attack = value;
+    if (base->defense > 999)
+      base->defense = 999;
+    value = base->defense;
+    if (value < 0)
+      value = 0;
+    base->defense = value;
+    if (base->agility > 999)
+      base->agility = 999;
+    value = base->agility;
+    if (value < 0)
+      value = 0;
+    base->agility = value;
+    if (base->luck > 99)
+      base->luck = 99;
+    value = base->luck;
+    if (value < 0)
+      value = 0;
+    base->luck = value;
+    stat[i * 2] = base->hp << 21 | base->pp << 10 | base->attack;
+    stat[i * 2 + 1] =
+        base->defense << 22 | base->agility << 12 | base->luck << 4;
+    if (unit->level > 99)
+      unit->level = 99;
+    if (unit->level == 0)
+      unit->level = 1;
+    levels |= unit->level << (i * 7);
+    djinni = unit->djinnAvailable;
     for (k = 0, shift = 0; k != 4; k++, shift += 7)
       djinn += *djinni++ << shift;
-    items = (u16 *)(unit + 216);
-    for (k = 0; k != 15; k++, items++) {
-      u32 item = *items & 0x1ff;
+    items = unit->inventory;
+    k = 0;
+  item:
+    {
+      s32 item = *items & 0x1ff;
       u16 *wanted = gData_0200270c;
 
       for (j = 0; j != 8; j++) {
@@ -96,6 +148,10 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
           found = (u8)(found | 1 << j);
       }
     }
+    k++;
+    items++;
+    if (k != 15)
+      goto item;
   }
   if (mode == 0) {
     s32 pos = 39;
@@ -103,11 +159,14 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     s32 shift;
 
     for (i = 0; i != 4; i++) {
-      u16 *items = (u16 *)(Unit_Get(gData_020026f0[i]) + 216);
+      struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
+      u16 *items = unit->inventory;
       u8 *p = out + pos;
 
-      for (k = 0; k != 15; k++) {
-        u32 item = *items++ & 0x1ff;
+      k = 0;
+    pack:
+      {
+        s32 item = *items++ & 0x1ff;
 
         p[0] += item >> (bit + 1);
         p[1] += item << (7 - bit);
@@ -120,19 +179,24 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
           pos++;
         }
       }
+      k++;
+      if (k != 15)
+        goto pack;
     }
     pos = 107;
     shift = -1;
     for (i = 0; i != 4; i++) {
-      u8 *unit = Unit_Get(gData_020026f0[i]);
+      struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
       u8 *p = out + pos;
 
-      for (k = 0; k != 23; k++) {
-        u16 *items = (u16 *)(unit + 216);
+      k = 0;
+    count:
+      {
+        u16 *items = unit->inventory;
         u16 count = 0;
 
         for (j = 0; j != 15; j++) {
-          u16 value = *items++;
+          u32 value = *items++;
 
           if ((value & 0x1ff) == gData_0200271c[k])
             count = value >> 11;
@@ -151,13 +215,16 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
           shift = 3;
         }
       }
+      k++;
+      if (k != 23)
+        goto count;
     }
-    out[165] = *(u16 *)((u8 *)&gMainRoutineWork + 18);
-    out[166] = *(u32 *)((u8 *)&gMainRoutineWork + 16) >> 8;
-    out[167] = *(u32 *)((u8 *)&gMainRoutineWork + 16);
+    out[165] = (u32)gMainRoutineWork.coins >> 16;
+    out[166] = (u32)gMainRoutineWork.coins >> 8;
+    out[167] = gMainRoutineWork.coins;
   }
   if (mode != 2) {
-    u8 *p = out + 8 + (mode != 0);
+    u8 *p = out + (((u32)(-mode | mode) >> 31) + 8);
 
     for (i = 0; i != 2; i++) {
       u32 w0 = stat[i * 4];

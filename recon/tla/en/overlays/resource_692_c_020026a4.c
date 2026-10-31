@@ -1,11 +1,21 @@
-// Draft, differ 4 of 122: a glow at cell (x, z): creates a blended object (type
-// 288) there with sound 106, fades its blend in over 8 frames and out over 16
-// inside the object window, then copies the 1 by 2 cells from 64 columns across
-// (Func_02004cd8), clears the cell's high byte (Func_02000694) and removes the
-// object. The copy goes through Call6, which keeps the stack arguments 1 and 2
-// in their own registers (called directly: 14). Left: the native builds the
-// display control's address after the window store before it and after the
-// blend store at the end (an empty asm or one-pass block there: 8 or more).
+// Near miss, differ 4 of 122 (tla-en, 2026-10-31): scheduler order only. The
+// native builds the display control's address after the window store before it
+// and after the blend store at the end; sched2 ranks the address's movs
+// (priority 39, two insns ahead of the ldrh) above the store (38, one ahead),
+// with the same dependences and registers as the native, so no C form moves it.
+// An empty asm or one-pass block there: 8 or more (a one-pass after the window
+// store ends sched2's first block and reorders the prologue's shifts and
+// Func_02000694's arguments; after the blend store, those arguments: 4).
+// Unchanged at 4: REG_DISPCNT = REG_DISPCNT | DISPCNT_OBJWIN_ON, 0x8000u, the
+// WINOUT_* and ~DISPCNT_OBJWIN_ON spellings; a u16 or u32 temporary for the
+// display control: 8; a temporary for the window value: 35. The permuter (4
+// minutes, 21204 candidates) found nothing better.
+// A glow at cell (x, z): creates a blended object (type 288) there with sound
+// 106, fades its blend in over 8 frames and out over 16 inside the object
+// window, then copies the 1 by 2 cells from 64 columns across (Func_02004cd8),
+// clears the cell's high byte (Func_02000694) and removes the object. The copy
+// goes through Call6, which keeps the stack arguments 1 and 2 in their own
+// registers (called directly: 14).
 #include "types.h"
 #include "call.h"
 #include "io_reg.h"

@@ -1,216 +1,159 @@
-// Draft, differ 458 of 347: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
+// Near miss, differ 264 of 347 (tla-en, 2026-10-31): the shape is the native's
+// (calls, branches, loops, fields); what remains is allocation. GCSE hoists the
+// retry loop's invariant addresses (position, &object->terrainId) above the
+// retry label and copy-propagates p and q into one callee-saved register (r8),
+// where the native recomputes them in the loop (p in r10, q in r6, add sp, #28
+// at each call); IwramMulQ16's address then goes to a stack slot instead of r8,
+// and the overlap loop's counter to r4 with caller saves instead of r10. The
+// native also tests gData_02003cd0 as ldrh, lsls #16, cmp #0, which only a
+// volatile s16 view gives here, at a cost of 2 more elsewhere (264 to 266);
+// the second wait loop hoists the flag's address, which the native reloads.
+// Japanese is an older layout: no first wait loop; Func_02002fb8 and the
+// update hook come before the walk.
+#include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "text/msg_ids.h"
-#include "types.h"
+#include "iwram_call.h"
+#include "input.h"
+#include "call.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+extern u16 gData_02003cd0;
+extern s16 gData_020032b2[];
+void Func_020017dc(struct Actor *object);
+void Func_02001868(void);
+s32 Func_02002fe0(s32 layer, s32 x, s32 z);
+void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32 ArcTan2(s32 y, s32 x);
+void Func_02002fb0(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02002f80(struct Actor *object, s32 mode);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
+void Func_02002fb8(struct Actor *object);
+s32 Func_02003018(struct Actor *object);
+s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+void wait(s32 frames);
 
-extern u8 gData_02003cd0[];
-extern u8 IwramMulQ16[];
-extern u8 gInput[];
-extern u8 gData_020032b2[];
-extern u8 Func_020017dc[];
-void Func_02001868();
-s32 Func_02002fe0();
-void Vector_AddPolarOffsetFar();
-s32 Map_GetTerrainHeight();
-void Func_02002fb0();
-s32 Func_02002f80();
-void Actor_SetAnimationSpeed();
-void wait();
-s32 Func_02003018();
-s32 Func_02003028();
-void Func_02002fb8();
+void Func_02001b48(void) {
+  struct Actor *object;
+  s32 radius;
+  u8 *layer;
+  s32 z;
+  s32 x;
+  s32 targetZ;
+  s32 targetX;
+  s32 startCell;
+  s32 position[3];
+  s32 dx, dz;
+  s32 cell;
+  s16 angle;
+  s32 i;
+  s32 j;
+  struct Actor *entry;
+  u8 *flags;
+  s32 *p;
+  s32 *q;
 
-s32 Func_02001b48(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 v0, r7, r0, r2, r3, r10, r1, v1, r6, r8, v2, r5, v3, r9, v4, v5, r11, v6,
-      v7, v8, v9, v10, v11, v12, v13;
-  s32 stack[10];
-
-  /* sub (s32)stack, #40 */
-  v0 = ObjectTable_Get(FIELD_AT((s32)(s32)&gMainRoutineWork, s32, 532));
-  r7 = v0;
-  FIELD_AT((s32)gData_02003cd0, u16, 0) = 0;
-  r0 = v0;
-  r2 = (s32)gData_02003cd0;
-  r3 = 0;
-L_02009b6e:
-  Func_02001868(r0, r1);
-  FIELD_AT(r7, s32, 48) = 0x10000;
-  FIELD_AT(r7, s32, 52) = 0x8000;
-  FIELD_AT(r7, s32, 56) = -0x80000000;
-  FIELD_AT(r7, s32, 64) = -0x80000000;
-  FIELD_AT(r7, s32, 36) = 0;
-  FIELD_AT(r7, s32, 44) = 0;
-  r10 = (s32)((u8 *)stack + 28);
-  stack[3] = ((FIELD_AT(r7, s32, 8)) & -1048576) + 524288;
-  FIELD_AT(r10, s32, 0) = ((FIELD_AT(r7, s32, 8)) & -1048576) + 524288;
-  r0 = r10;
-  r2 = 0x80000;
-  r1 = -0x100000;
-  goto L_02009bb4;
-L_02009bb4:
-  FIELD_AT(r0, s32, 4) = FIELD_AT(r7, s32, 12);
-  stack[2] = ((FIELD_AT(r7, s32, 16)) & r1) + r2;
-  FIELD_AT(r0, s32, 8) = ((FIELD_AT(r7, s32, 16)) & r1) + r2;
-  stack[4] = ((FIELD_AT(r7, s32, 16)) & r1) + r2;
-  stack[5] = stack[3];
-  stack[1] = r7 + 34;
-  v1 = Func_02002fe0(FIELD_AT(r7, u8, 34), stack[3], stack[4]);
-  stack[6] = v1;
-  r6 = FIELD_AT(r7, s32, 16);
-  r6 = stack[4] - r6;
-  r8 = (s32)IwramMulQ16;
-  v2 = Iwram_MulQ16(stack[5] - (FIELD_AT(r7, s32, 8)),
-                    stack[5] - (FIELD_AT(r7, s32, 8)));
-  r5 = v2;
-  v3 = Iwram_MulQ16(r6, r6);
-  r5 = r5 + v3;
-  if (r5 >= 0x40000)
-    goto L_02009c30;
-  r9 = *(s16 *)(((s32)gData_020032b2) +
-                ((((u32)(FIELD_AT((s32)gInput, s32, 0)) >> 4) & 15) << 1));
-  if (((*(s16 *)(((s32)gData_020032b2) +
-                 ((((u32)(FIELD_AT((s32)gInput, s32, 0)) >> 4) & 15) << 1)))
-       << 16) != -0x10000)
-    goto L_02009c5c;
-  goto L_02009e26;
-L_02009c30:
-  v4 = ArcTan2(stack[4] - (FIELD_AT(r7, s32, 16)),
-               stack[5] - (FIELD_AT(r7, s32, 8)));
-  r9 = (v4 << 16) >> 16;
-  r9 = (((8192 + r9) & -16384) << 16) >> 16;
-  goto L_02009c5c;
-L_02009c5c:
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, r9,
-        (s32)((u8 *)stack + 28));
-  v5 = Func_02002fe0(FIELD_AT(stack[1], u8, 0), FIELD_AT(r10, s32, 0),
-                     FIELD_AT(r10, s32, 8));
-  r11 = v5;
-  if (v5 == 255)
-    goto L_02009cd6;
-  v6 = Map_GetTerrainHeight(FIELD_AT(stack[1], u8, 0), FIELD_AT(r10, s32, 0),
-                            FIELD_AT(r10, s32, 8));
-  if ((v6 - (FIELD_AT(r7, s32, 12))) > 0x80000)
-    goto L_02009cd6;
-  FIELD_AT(r10, s32, 0) = stack[3];
-  FIELD_AT(r10, s32, 8) = stack[2];
-  FIELD_AT(r7, s32, 48) = 0x20000;
-  FIELD_AT(r7, s32, 52) = 0x1999;
-  FIELD_AT(r7, u16, 100) = 0;
-  Func_02002fb0(r7, stack[3], FIELD_AT(r7, s32, 12), stack[2]);
-  Call2((void (*)())Func_02002f80, r7, 2);
-  Call2((void (*)())Actor_SetAnimationSpeed, r7, 48);
-  r5 = 0;
-  goto L_02009cfe;
-L_02009cd6:
-  FIELD_AT(r7, u16, 6) = r9;
-  FIELD_AT(r7, s32, 36) = 0;
-  FIELD_AT(r7, s32, 44) = 0;
-  FIELD_AT(r7, s32, 8) = stack[3];
-  FIELD_AT(r7, s32, 16) = stack[2];
-  goto L_02009e26;
-L_02009cea:
-  if (((FIELD_AT((s32)gData_02003cd0, u16, 0)) << 16) == 0)
-    goto L_02009cf6;
-  goto L_02009e26;
-L_02009cf6:
-  Call1((void (*)())wait, 1);
-  r5 = r5 + 1;
-L_02009cfe:
-  if (r5 <= 179) {
-    v7 = Func_02003018(r7);
-    if (v7 == 0)
-      goto L_02009cea;
+  /* FAKEMATCH(wrapper): the polar steps go through Call3; as direct calls,
+   * 276 of 347 instructions differ in tla-en. */
+  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  gData_02003cd0 = 0;
+retry:
+  Func_02001868();
+  object->speedLimit = 0x10000;
+  object->acceleration = 0x8000;
+  object->targetX = 0x80000000;
+  object->targetZ = 0x80000000;
+  object->velocityX = 0;
+  object->velocityZ = 0;
+  p = position;
+  p[0] = x = (object->x & 0xfff00000) + 0x80000;
+  p[1] = object->y;
+  p[2] = z = (object->z & 0xfff00000) + 0x80000;
+  targetZ = z;
+  targetX = x;
+  layer = &object->terrainId;
+  startCell = Func_02002fe0(*layer, targetX, targetZ);
+  dx = targetX - object->x;
+  dz = targetZ - object->z;
+  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
+    angle = gData_020032b2[(gInput.held >> 4) & 15];
+    // -1 for no direction, tested as its halfword (as angle == -1, 268).
+    if ((u16)angle == 0xffff)
+      goto end;
+  } else {
+    angle = ArcTan2(targetZ - object->z, targetX - object->x);
+    angle = (angle + 0x2000) & 0xc000;
   }
-  FIELD_AT(r7, s32, 108) = (s32)Func_020017dc;
-  goto L_02009dda;
-L_02009d12:
-  v8 = Map_GetTerrainHeight(FIELD_AT(stack[1], u8, 0), FIELD_AT(r6, s32, 0),
-                            FIELD_AT(r6, s32, 8));
-  if ((v8 - (FIELD_AT(r7, s32, 12))) > 0x80000)
-    goto L_02009dfa;
-  if (((FIELD_AT((s32)gData_02003cd0, u16, 0)) << 16) != 0)
-    goto L_02009e26;
-  stack[0] = (FIELD_AT(r7, u16, 32)) - 2;
-  r5 = (s32)Ram_HeapSlots->scriptObjects;
-  r10 = 0;
-  r8 = 89 + r5;
-L_02009d4a:
-  if ((FIELD_AT(r5, s32, 0)) == 0)
-    goto L_02009d74;
-  if ((1 & (FIELD_AT(r8, u8, 0))) == 0)
-    goto L_02009d74;
-  if (r5 == r7)
-    goto L_02009d74;
-  v9 = Func_02003028(r5 + 8, stack[0], (s32)((u8 *)stack + 28),
-                     (FIELD_AT(r5, u16, 32)) - 2, (FIELD_AT(r7, u16, 32)) - 2);
-  if (v9 >= 0)
-    goto L_02009dfa;
-L_02009d74:
-  r10 = r10 + 1;
-  r8 = r8 + 128;
-  r5 = r5 + 128;
-  if (r10 <= 63)
-    goto L_02009d4a;
-  stack[5] = FIELD_AT(r6, s32, 0);
-  stack[4] = FIELD_AT(r6, s32, 8);
-  FIELD_AT(r7, s32, 48) = 0x20000;
-  FIELD_AT(r7, s32, 52) = 0x1999;
-  r5 = 0;
-  Func_02002fb0(r7, FIELD_AT(r6, s32, 0), FIELD_AT(r6, s32, 4),
-                FIELD_AT(r6, s32, 8));
-  goto L_02009db2;
-L_02009daa:
-  Call1((void (*)())wait, 1);
-  r5 = r5 + 1;
-L_02009db2:
-  if (r5 > 179)
-    goto L_02009dca;
-  v10 = Func_02003018(r7);
-  if (v10 != 0)
-    goto L_02009dca;
-  if (((FIELD_AT((s32)gData_02003cd0, u16, 0)) << 16) == 0)
-    goto L_02009daa;
-L_02009dca:
-  if (((FIELD_AT((s32)gData_02003cd0, u16, 0)) << 16) != 0)
-    goto L_02009e26;
-  if (r11 != stack[6])
-    goto L_02009e20;
-L_02009dda:
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, r9,
-        (s32)((u8 *)stack + 28));
-  r6 = (s32)((u8 *)stack + 28);
-  v11 = Func_02002fe0(FIELD_AT(stack[1], u8, 0), FIELD_AT(r6, s32, 0),
-                      FIELD_AT(r6, s32, 8));
-  r11 = v11;
-  if (v11 != 255)
-    goto L_02009d12;
-L_02009dfa:
-  FIELD_AT(r7, s32, 48) = 0x20000;
-  FIELD_AT(r7, s32, 52) = 0x10000;
-  Func_02002fb0(r7, stack[5], FIELD_AT(r7, s32, 12), stack[4]);
-  Func_02002fb8(r7);
-  Call1((void (*)())wait, 2);
-  r0 = v12;
-  goto L_02009b6e;
-L_02009e20:
-  Call1((void (*)())wait, 10);
-L_02009e26:
-  FIELD_AT(r7, s32, 108) = 0;
-  FIELD_AT(r7, u8, 90) = 1 | (FIELD_AT(r7, u8, 90));
-  FIELD_AT(r7, s32, 52) = 0x4000;
-  v13 = Func_02002f80(r7, 1);
-  /* add (s32)stack, #40 */
-  return v13;
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  cell = Func_02002fe0(*layer, p[0], p[2]);
+  if (cell == 255 ||
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
+    object->angle = angle;
+    object->velocityX = 0;
+    object->velocityZ = 0;
+    object->x = x;
+    object->z = z;
+    goto end;
+  }
+  p[0] = x;
+  p[2] = z;
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  object->action = 0;
+  Func_02002fb0(object, x, object->y, z);
+  Func_02002f80(object, 2);
+  Actor_SetAnimationSpeed(object, 48);
+  for (i = 0; i <= 179 && Func_02003018(object) == 0; i++) {
+    if (gData_02003cd0 != 0)
+      goto end;
+    wait(1);
+  }
+  object->update = (void (*)(void))Func_020017dc;
+  for (;;) {
+    Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+    q = position;
+    cell = Func_02002fe0(*layer, q[0], q[2]);
+    if (cell == 255)
+      break;
+    if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
+      goto blocked;
+    if (gData_02003cd0 != 0)
+      goto end;
+    radius = object->radius - 2;
+    entry = Ram_HeapSlots->scriptObjects;
+    flags = &entry->collisionFlags;
+    for (j = 0; j < 64; j++, entry++, flags += sizeof(*entry)) {
+      if (entry->script != NULL && (1 & *flags) && entry != object) {
+        if (Func_02003028(&entry->x, radius, position, entry->radius - 2) >= 0)
+          goto blocked;
+      }
+    }
+    targetX = q[0];
+    targetZ = q[2];
+    object->speedLimit = 0x20000;
+    object->acceleration = 0x1999;
+    Func_02002fb0(object, q[0], q[1], q[2]);
+    for (i = 0; i <= 179 && Func_02003018(object) == 0 && gData_02003cd0 == 0;
+         i++)
+      wait(1);
+    if (gData_02003cd0 != 0)
+      goto end;
+    if (cell != startCell) {
+      wait(10);
+      goto end;
+    }
+  }
+blocked:
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x10000;
+  Func_02002fb0(object, targetX, object->y, targetZ);
+  Func_02002fb8(object);
+  wait(2);
+  goto retry;
+end:
+  object->update = NULL;
+  object->actionFlags |= 1;
+  object->acceleration = 0x4000;
+  Func_02002f80(object, 1);
 }

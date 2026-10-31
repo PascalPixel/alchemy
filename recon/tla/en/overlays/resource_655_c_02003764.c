@@ -89,6 +89,8 @@ void Func_02003764(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   u32 i;
+  struct EffectOptions *opts;
+  s32 spawn;
 
   Func_02003c28();
   Func_02003d78(0);
@@ -105,24 +107,37 @@ void Func_02003764(void) {
   Func_02003df8(204);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
-  options.palette = 7;
+  opts = &options;
+  opts->palette = 7;
+  opts->update = Effect_AdvanceMotion;
+  opts->startScaleX = 0xa3d7;
+  opts->startScaleY = 0xa3d7;
+  opts = &options;
+  spawn = 1;
   i = 0;
-  options.update = Effect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
-  for (; i <= 16; i++) {
+loop:
+  {
+    s32 angle;
     s32 velocity[3];
+    s32 cosine;
 
-    velocity[0] = Math_Cosine(i << 12);
-    velocity[1] = 0;
-    velocity[2] = Math_Sine(i << 12);
-    velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16Far() * 3) << 14) >> 16;
-    velocity[0] += -0x6000;
-    velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
-    Func_02000fc4(leader->x, leader->y, leader->z, velocity[0], velocity[1],
-                  velocity[2], 0x01090001, &options);
+    angle = i << 12;
+    cosine = Math_Cosine(angle);
+    if (spawn) {
+      velocity[0] = cosine;
+      velocity[1] = 0;
+      velocity[2] = Math_Sine(angle);
+      velocity[0] += velocity[0] >> 1;
+      velocity[0] += ((Random16Far() * 3) << 14) >> 16;
+      velocity[0] += -0x6000;
+      velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
+      Func_02000fc4(leader->x, leader->y, leader->z, velocity[0], velocity[1],
+                    velocity[2], 0x01090001, opts);
+    }
+    i++;
   }
+  if (i <= 16)
+    goto loop;
   Func_02003df8(188);
   Func_02003cd0(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);

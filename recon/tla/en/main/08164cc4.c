@@ -1,5 +1,7 @@
-// Draft, differ 50 of 1681 (the two nested helpers first, then the body;
-// alchemy diff DRAFT 08164c0c,08164c70,08164cc4):
+// Near miss, differ 24 of 1681 (tla-en, 2026-10-31): sched2 orders loads
+// later than the native, which counts their latency higher (the nested
+// helpers first, then the body; alchemy diff DRAFT
+// 08164c0c,08164c70,08164cc4):
 // BattleEffect_RunParticleStreams, summon 11 and summon 0's default
 // (BattleEffect_RunSceneEffect's default case, through BattleEffect_RunMeteor and
 // BattleEffect_RunOuterSpace in particle_stream_modes.c), with its nested
@@ -21,20 +23,30 @@
 // (08164c70), now match alone (2026-10-26, under -mthumb-slow-loads; they
 // differed by 4 rows each before it).
 
-// Left, 50 rows (2026-10-26; 73 before the IWRAM calls went through local
+// Left, 24 rows (2026-10-31; 36 before the transfer mode was held in a
+// variable, 50 on 2026-10-26, 73 before the IWRAM calls went through local
 // inline forwarders, as f143d80.c makes them and as The Broken Seal's IWRAM
 // call layer makes every IWRAM call, which reloads the map cell buffer for
-// each fill as the native does): the prologue's argument spill and heap
-// reads in the other order (the 0x03000000 base first here), and loads
-// issued one slot earlier in the native, the known store-then-load
-// scheduling limit; and the constant 3 that the native keeps in r6 across
-// the blitter build for the transfer mode, where here it is set again.
+// each fill as the native does): all scheduling, each a load the native
+// issues earlier: IwramCopyWords' and IwramFillWords' entry and the
+// spilled canvas before the size and value (sched2 ranks a load feeding the
+// call one cycle below the native, then prefers r1 and r2 for their
+// output dependences), ldr r1 before movs r0, #0 ahead of the 63 colours,
+// and gBgScroll[1].y's ldrh one slot later in the native after savedX's
+// spill, which leaves the 3 for the transfer mode (r6, now right) after
+// the blitter build here instead of filling the transition load's slot;
+// one ldr r4, [sp, #40] and the movs r2, #0 / mov fp, r2 pair in act two.
+// The known store-then-load limit of -mthumb-slow-loads (the sched2 dump
+// shows each); the prologue now matches.
 
 // Tried (differ): the plain port without devices and with the unused fill
 // word ☀️ needs for its DMA (877 listed parent first, 709 helpers first);
 // without fill, which fixes the frame of the nested functions' chain (546);
 // the heat devices one by one (477 without the clobber block, 236 without
-// the pins, 219 without the level pin); mode tested directly (189).
+// the pins, 219 without the level pin); mode tested directly (189); on
+// 2026-10-31, from 24, each IWRAM call direct instead of through its
+// forwarder, in order: 26, 45, 26, 24, 26; the transfer mode variable also
+// passed as the blitter's flags (24, the call still takes movs r3, #3).
 
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -348,13 +360,18 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 savedY = gBgScroll[1].y;
     struct BattlePresentationTransition *transition =
         Ram_HeapSlots->transitionWork;
+    s32 transferMode = 3;
 
+    /* FAKEMATCH(temporary): the transfer mode set before the blitter build,
+     * so its 3 stays in r6 across the call as the native keeps it; as
+     * work->transferMode = 3 after the call, 36 of 1681 instructions differ
+     * in tla-en. */
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     Func_08196404(HEAP_BLITTER, 8, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                   BLIT_MAX);
     draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    work->transferMode = 3;
+    work->transferMode = transferMode;
     work->transferValue = 0x02020202;
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
     for (i = 0; i != 64; i++)

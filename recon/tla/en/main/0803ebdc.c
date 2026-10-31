@@ -1,35 +1,36 @@
-// Draft, differ 8 of 212 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Draft, differ 8 of 212 (2026-10-24): a one-pass block around the
-// records[1].base store and an empty asm after the status store, as in its
-// sibling 0803eb2c, take six rows off. Left: load-before-constant orders of
-// the same kind.
-// Near miss, differ 14 of 212, 2026-10-15: Menu_StepRight on the shared
-// SelectionScreen and SelectionNode of menu/select.h, which reads the row
-// targets baseX and baseY as the native does without the earlier draft's
-// FAKEMATCH halfword macros (the same 14 either way). Every instruction is
-// the native's and only the order differs, in four places: the native
-// stores the incremented cursor before it builds the count's 0x394 offset,
-// this after; the native builds the 0x398 offset after the last node's
-// first target store, this before; before scrolling down the native copies
-// the screen into r0 before loading top and sets r1 before the increment,
-// this after both; and at the end the native finishes the cursor's 0x39e
-// offset after the status store, this before it.
+// Near miss, differ 6 of 212 (tla-en, 2026-10-31): scheduler order, three
+// single instructions, each where the native waits longer after a store than
+// -mthumb-slow-loads charges. (1) After the cursor's increment the native
+// stores it before shifting the count's 0x394 offset: the sched2 dump ranks
+// the store 5 and the shift 6, because the count load is a zero-extended
+// ldrh, which the store-then-load rule skips; at cost 2 the two would tie and
+// RTL order would give the native's. (2) Before scrolling, the native copies
+// the screen into r0 between the arrow store and the top load: the top load
+// opens top++'s read-modify-write, which the rule excuses, so it issues at
+// once. (3) At the end the native builds the first instruction of the
+// cursor's 0x39e offset (movs r0, #192) before the status store, as in its
+// sibling 0803eb2c, where the dump needs a three-cycle wait. No C form makes
+// either load plain or moves the costs; the two one-pass blocks below are the
+// mildest devices that hold 6 (an empty asm after the status store does no
+// better). The tree's prototypes and the Broken Seal twin's indexed entry loop
+// compile the same. Permuter (4 minutes, 16944 candidates): nothing below 6.
+// Earlier (2026-10-15): every instruction is the native's and only the order
+// differs; Menu_StepRight on the shared SelectionScreen and SelectionNode of
+// menu/select.h reads the row targets baseX and baseY as the native does.
 #include "types.h"
 #include "select.h"
 
 void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
 void Menu_LoadSelectionNodeResource(struct SelectionScreen *screen, u32 index);
 void wait(s32 frames);
-void MenuSelection_SetupEntry(u32 kind, u32 base, struct SelectionNode *node,
-                              s32 mode);
-void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 direction);
+void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node,
+                              s32 unused);
+void Menu_ScrollSelectionList(struct SelectionScreen *screen, u32 down);
 void Menu_OpenSelectionWindow(s32 mode, u32 count);
 
 void Menu_StepRight(struct SelectionScreen *state) {
   struct SelectionNode *node;
-  u16 *ids;
+  u32 entryIndex;
   s32 y;
   u32 end;
 
@@ -55,11 +56,12 @@ void Menu_StepRight(struct SelectionScreen *state) {
         wait(1);
       node = state->head;
       if (node != NULL) {
-        ids = state->kinds;
+        entryIndex = 0;
         do {
-          MenuSelection_SetupEntry(ids[0], ids[16], node, 1);
+          MenuSelection_SetupEntry(state->kinds[entryIndex],
+                                   state->bases[entryIndex], node, 1);
           node = node->next;
-          ids++;
+          entryIndex++;
         } while (node != NULL);
       }
       state->cursorIndex = 0;
@@ -77,6 +79,7 @@ void Menu_StepRight(struct SelectionScreen *state) {
     } else if (state->cursorIndex == 4 && end + 1 < state->count) {
       state->cursorIndex--;
       do {
+        /* FAKEMATCH(one-pass): the form kept; as a plain records[1].base store, 8 of 212 instructions differ in tla-en. */
         state->records[1].base = 8;
       } while (0);
       state->top++;
@@ -88,8 +91,10 @@ void Menu_StepRight(struct SelectionScreen *state) {
   } else if (state->cursorIndex == state->count) {
     state->cursorIndex = 0;
   }
-  state->status = 1;
-  __asm__ volatile("");
+  do {
+    /* FAKEMATCH(one-pass): the form kept; as a plain status store, 10 of 212 instructions differ in tla-en. */
+    state->status = 1;
+  } while (0);
   Menu_LoadSelectionNodeResource(state, state->cursorIndex);
   wait(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);

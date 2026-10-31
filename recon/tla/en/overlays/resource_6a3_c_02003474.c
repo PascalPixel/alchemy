@@ -6,6 +6,7 @@
 // every order of the five stores (10 is best), a chained zero, one-pass
 // blocks around them (16 to 18), permute 10 minutes.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "field_effect.h"
@@ -40,31 +41,25 @@ void Func_020032b4(struct GustObject *object);
 void Func_02003b7c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-static __inline__ s32 Gust_PolarX(u16 angle, s32 radius) {
-  return Iwram_MulQ16(radius, Math_Cosine(angle));
-}
-
-static __inline__ s32 Gust_PolarZ(u16 angle, s32 radius) {
-  return Iwram_MulQ16(radius, Math_Sine(angle));
-}
-
 struct GustObject *Func_02003474(struct GustObject *source) {
   struct Vector3 position;
   struct EffectOptions options;
   struct GustObject *object;
 
   Func_020049c4(222);
-  position.x = source->x + Gust_PolarX(source->angle, 0x80000);
-  position.z = source->z + Gust_PolarZ(source->angle, 0x80000);
+  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Cosine(source->angle));
+  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Sine(source->angle));
   object = Func_0200470c(280, position.x, source->y, position.z);
   Func_020046f4(object, 2);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
+  object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->angle = source->angle;
   object->update = Func_020032b4;
   object->unk30 = 0x18000;
   options.priority = 1;

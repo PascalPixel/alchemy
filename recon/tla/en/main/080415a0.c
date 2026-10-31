@@ -1,16 +1,17 @@
-// Draft, differ 6 of 144 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 4 with
-// an empty asm after `u32 following = (value + 1) % 128;`, and finds nothing
-// closer.
-// Near miss, differ 8 of 144 (four reordered rows), 2026-10-15: The Broken
-// Seal's Window_OverlayTilePattern; this game finds the free tile in a
-// do-while (as a for loop the first pass is peeled). Remaining: the native
-// stores the mirror argument to its stack slot right after sub sp (this
-// after the first two copies) and in the search loop masks the next cursor
-// and stores it before it zero-extends the slot (ands; lsls; strh; lsrs,
-// where this gives lsls; ands; lsrs; strh). The tile cursor is the
-// halfword at the work's start.
+// Near miss, differ 4 of 144 (tla-en, 2026-10-31): scheduler order. In the
+// search loop the native masks the next cursor and stores it before it
+// zero-extends the slot (ands; lsls; strh; lsrs, where this gives lsls; ands;
+// lsrs; strh). sched2 ranks the slot's lsls (priority 7) over the mask (6)
+// and its lsrs (6) over the store (5); the native's order needs the store to
+// rank higher, as the ROM's wait before a load that follows a store would
+// make it, but -mthumb-slow-loads models that wait only for whole loads and
+// the next ldrb is a zero-extended byte. The two shifts come from one
+// zero-extension, so no barrier can fall between them. The plain C reaches 4
+// with no device; a device search (each statement followed by an empty asm or
+// a one-pass block, wrapped in one, or swapped with the next) found nothing
+// closer (2026-10-26).
+// The Broken Seal's Window_OverlayTilePattern; this game finds the free tile
+// in a do-while (as a for loop the first pass is peeled).
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -69,11 +70,11 @@ void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap) {
   if ((s8)slot >= 0) {
     n = 0;
     do {
-      u32 value = *(u16 *)work;
+      u32 value = work->tileCursor;
       u32 following = (value + 1) % 128;
 
       slot = (u8)value;
-      *(u16 *)work = following;
+      work->tileCursor = following;
       if (work->tileAttributes[slot] == 0)
         break;
       n++;

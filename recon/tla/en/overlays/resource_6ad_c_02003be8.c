@@ -1,3 +1,12 @@
+// Near miss, differ 8 of 131 (tla-en, 2026-10-31): register allocation of the
+// first currentOwner address only. The draft loads the pool word into r3 and
+// builds 0x214 in r1 (adds r1, r1, r3); the native loads the pool word into r1
+// and 0x214 into r2 (adds r1, r1, r2). The greg dump shows why: local-alloc
+// puts the base and the address in r6, global gives r6 to object instead, the
+// base is reallocated to r3 and the address to r10, and reload builds 0x214 in
+// its output register. Tried 2026-10-31: the shrink loop as a goto (8), an
+// s32 pointer to currentOwner (9: one pool word, no split), object assigned
+// after the declarations (8), permute 4 minutes (nothing better).
 // Draft of overlay 6ad's Func_02003be8, the twin of overlay 69c's
 // Func_02001db8: its draft (resource_69c_c_02001db8.c) with this overlay's
 // symbols: differ 8 of 131 under -mthumb-slow-loads. Left: what that draft's header records.

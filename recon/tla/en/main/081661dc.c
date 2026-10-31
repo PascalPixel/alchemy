@@ -1,8 +1,16 @@
+// Near miss, differ 2 of 427 (tla-en, 2026-10-31): scheduler order, one
+// swapped pair in the shard loop: the native stores the sixth argument
+// (size * 2, sp+4) between the lsrs and the adds of size / 2. In sched2 both
+// are ready together; the halving chain ranks 10 (through the anti
+// dependence on the fp copy the blitter load uses) and the store 9 (a store
+// before a load that may miss costs 2 under -mthumb-slow-loads), so the add
+// goes first; at a tie the store would win on its three dependents. Every
+// row around the pair is the native's, so the C leaves no dependence to move.
+// BattleEffect_RunAnnihilation, effect kind 55, The Broken Seal's
+// BattleEffect_RunAnnihilation.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 10 of
 // 427; a greedy search over an empty asm after, or a one-pass block around,
 // each statement found nothing lower.
-// Draft, differ 26 of 427: BattleEffect_RunAnnihilation, effect kind 55, The Broken Seal's
-// BattleEffect_RunAnnihilation.
 
 // Twin: ☀️ BattleEffect_RunAnnihilation (games/tbs/src/effect/effect.c),
 // ported: the effect stays an argument, the camera comes from its heap slot
@@ -13,13 +21,9 @@
 // frame declared before the sheet and camera gives the native's spill slots
 // (62 to 26).
 
-// Left: everything is reordered rows where the native puts a load or a store
-// ahead of an independent constant or copy (the pooled map cell address and
-// 0xff after the heap reads, the work's reload before 0x7780 and before the
-// blitter's frame, the particle's x before the third random's mask, the
-// second size store before the halved size), the same kind as
-// Func_08164b2c's, where a load costing 3 and a store 2 give the native order
-// (not worked through here).
+// Tried 2026-10-31 (differ): size + size for size * 2, 2; screen.x -= size / 2
+// as its own statement, 270; the blitter read into a local before the call,
+// 38.
 
 // Tried (differ): alchemy permute 6 minutes, 2 jobs, on this draft: 24 with
 // size * 2 passed through an inline helper (a wrapper device that closes 2 of

@@ -1,7 +1,30 @@
+// Near miss, differ 4 of 620 (tla-en, 2026-10-31): two pairs of rows in the
+// other order, both decided by sched2 ties the C does not reach. Before the
+// column loop, the zeroing of the flash offset's spill (str [sp, #8]) and of
+// the spark index (mov r8) have equal priority, so sched2 keeps RTL order,
+// which is the order loop.c made the two inductions in: the spark one in its
+// first pass, the flash one in its second; the native zeroes the flash one
+// first. In the spark draw, the native stores the size argument (str r0,
+// [sp, #0]) before the height (str r5, [sp, #4]); here the height's store
+// ranks 5 against 4, from r5's reload right after it. Index order (i + col
+// * n), arguments written inline and size + size all leave both pairs.
+// 2026-10-31, measured again: the first pair is loop.c's order. gcse hoists
+// col << 4 out of the flash loop, so that loop reduces its pointer in loop's
+// first pass and the outer loop sees the flash offset only in the second;
+// the 340 multiply stays inside the spark loop, so the outer loop reduces
+// the spark index in the first pass. One pass zeroes its offsets in reverse
+// body order, spark first again; the native order needs the flash offset in
+// the earlier pass. In the second pair sched2 ranks the height's store 5,
+// the size's 4 (a tie would go the native's way). Tried, differ: a separate
+// frame-loop column 197; draw[i & 1] read into a local first 193, after the
+// size 269; lane set after the offsets 203; the offsets before the picture
+// 71; py before px 29; the flash pointer as work->particles + n 152;
+// 2 * size and py = py - size 4. Permuter, 4 minutes, 6896 candidates: none
+// better.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 8 of
 // 620; a greedy search over an empty asm after, or a one-pass block around,
 // each statement found nothing lower.
-// Draft, differ 44 of 620: BattleEffect_RunRagnarok, effect kind 58, The Broken Seal's
+// BattleEffect_RunRagnarok, effect kind 58, The Broken Seal's
 // BattleEffect_RunRagnarok.
 
 // Twin: ☀️ BattleEffect_RunRagnarok (games/tbs/src/effect/effect.c), ported:
@@ -10,11 +33,6 @@
 // where ☀️ applies argument 2 to the children), the effect stays an argument
 // (☀️ also forces variant 1), each target is also flashed when its column
 // starts, callback BattleEffect_ProcessPendingGraphicsTransfer at 0xc80.
-
-// Left: everything is reordered rows where the native puts a load (mostly the
-// work's reload from sp+52, the pooled tables) ahead of an independent
-// constant or shift: the kind Func_08164b2c's header traces to a load costing
-// 3 and a store 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

@@ -1,13 +1,18 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 22 of 318 in tla-en. First difference: this issues `movs r2, #128` earlier
-// (row 50) than the native does (row 53).
-// Near miss, differ 10 of 318 (2026-10-18, written from the listing; ☀️ has
-// no twin): field Psynergy kind 24, the glow Func_080e9940 draws each frame.
-// Two tagged empty asm barriers in the fall bring 16 to 10; what remains is
-// the sprite's address built before the scale's store (an empty asm there
-// fixes it but reorders the opening, 18; a one-pass block 14), the search
-// counter's save among the position stores, and the glow's store and the
-// motion flags pointer's copy after the scale's address. The resource is
+// Near miss, differ 16 of 318 (tla-en, 2026-10-31): scheduler order only.
+// 12 at the opening: the tile's address starts before the slot's store and
+// the tile's store comes before the scale's address. -mthumb-slow-loads
+// charges 2 from the tile's store to its reload for Func_080eaf98 (same
+// address), so in sched2 the tile's address chain ranks 72 against the scale's
+// 71; the native's interleaving fits the two at equal rank. 4 in the fall: the
+// glow's 100 is stored and the motion flags pointer copied to r10 before the
+// scale's address starts; the native starts that address (movs, lsls r6)
+// before the store and copies after it. The render mode's barrier is gone (16
+// without it, 18 with it); the remaining barrier placed before the glowHeld
+// store or after the scale's store gives 20, a one-pass block round the glow's
+// stores 18. alchemy-devtools permute (4 minutes): nothing below 16.
+// Near miss, differ 10 of 318 (2026-10-18, before -mthumb-slow-loads, written
+// from the listing; ☀️ has no twin): field Psynergy kind 24, the glow
+// Func_080e9940 draws each frame. The resource is
 // directory entry 0x1da, FieldEffect_RingOrb: adoption names it RingOrb in
 // gamepak/resource_directory.s. The object search has a counter of its own, as
 // the ROM keeps it in r4 and saves it around the call (one i for every loop
@@ -149,8 +154,9 @@ void Func_080e9af4(void) {
     work->scale = 0;
     event->glowHeld = 0;
     event->glow = 100;
-    /* FAKEMATCH: ⚓️ builds the scale's address after the glow's constant;
-     * plainly agscc starts it among the stores before (differ 2). */
+    /* FAKEMATCH(barrier): the empty asm keeps the scale's address after the
+     * glow's stores; as the plain stores, 18 of 318 instructions differ in
+     * tla-en. */
     asm("");
     for (i = 0; i < 32; i++) {
       if (i == 10)
@@ -162,9 +168,6 @@ void Func_080e9af4(void) {
     player->motionFlags = 4;
     player->y = player->terrainHeight + 0x248000;
     player->gravity = 0x30000;
-    /* FAKEMATCH: ⚓️ starts the render mode's offset after the gravity store;
-     * plainly agscc starts it before (differ 4). */
-    asm("");
     gMainRoutineWork.renderMode = 10;
     work->fading = 1;
     event->glowHeld = 1;

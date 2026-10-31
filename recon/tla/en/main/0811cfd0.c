@@ -1,17 +1,21 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 6 of 193 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, a register tie on each local after
-// each statement, each local pinned to each register, each call argument
-// copied into its argument register (pinned) at the call or up to three
-// statements before it, five minutes of permute; none reaches 0.
-// Draft, differ 6 of 193: the enemies' actions for the round, ☀️'s
+// Near miss, differ 2 of 193 (tla-en, 2026-10-31): one pair one slot apart,
+// the encounter mode's ldrb ahead of the entry pointer's add after
+// entryCount's store. sched2 issues that zero-extended load one cycle after
+// the store (cost 1), where the ROM waits two; -mthumb-slow-loads charges the
+// wait only to whole loads (alchemy-gcc README, Scheduling), so the C cannot
+// move it. Counting the shuffle up from 0 rather than down from 31 settled
+// the shuffle count's mov r8 against the list reload (a sched2 tie broken by
+// insn order); four more minutes of permute found nothing.
+// Earlier, at differ 6, one edit at a time: an empty asm barrier after each
+// statement, each adjacent pair of statements swapped, a register tie on each
+// local after each statement, each local pinned to each register, each call
+// argument copied into its argument register (pinned) at the call or up to
+// three statements before it, five minutes of permute; none reached 0.
+// Draft: the enemies' actions for the round, ☀️'s
 // Battle_BuildOpponentActions (games/tbs/src/battle/battle.c) with ⚓️'s
 // changes: each action records its index, and an enemy acting several times
 // a turn acts later by steps (four actions: 5/6, 4/6, then 1/2 of its
-// Agility; three: 3/4, then 1/2; otherwise 1/2). Left: instruction order
-// only, three pairs one slot apart: the heap address's movs ahead of the two
-// parameter stores, the shuffle count's mov r8 ahead of the list reload, and
-// the encounter mode's ldrb ahead of the entry pointer's add.
+// Agility; three: 3/4, then 1/2; otherwise 1/2).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -38,7 +42,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
   if (unitCount == 0)
     return 0;
 
-  for (shuffleOrUnitIndex = 31; shuffleOrUnitIndex >= 0; shuffleOrUnitIndex--) {
+  for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < 32; shuffleOrUnitIndex++) {
     u32 first = (unitCount * Random16()) >> 16;
     u32 second = (unitCount * Random16()) >> 16;
     s32 swap = unitIds[first];

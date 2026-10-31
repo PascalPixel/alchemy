@@ -1,19 +1,20 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 8 of 298 in tla-en. The native spills its arguments to the stack before it
-// builds the heap slots' address; this builds the address first (row 8). No
-// single empty asm or one-pass block reaches 0.
+// Near miss, differ 2 of 298 (tla-en, 2026-10-31): scheduler order only. The
+// native stores range and mode to their stack slots before the movs r3, #192
+// that starts the heap slots' address; this starts the address first. In
+// sched2 the address chain (movs, lsls, adds into the load) ranks 80 and each
+// store 79 (a store before a load that misses costs 2 under
+// -mthumb-slow-loads), and no reshaping moves either. An empty asm before the
+// first statement puts the stores first but pins mov fp, r0 ahead of them, the
+// same 2 instructions; a 4-minute permuter run found nothing better.
 // First draft of Func_080fbe6c: "How many?", the item menu's quantity
 // selector for a stack of the selected item. Left and Right move the count
 // from 1 to range, the window shows what the owner in pane 0 keeps and, in
 // mode 0, what the member in pane 1 will have; A returns the choice less one
 // and B -1. Two arrows built from gMenu_QuantityTiles flank the count.
 //
-// Near miss, differ 12 of 298, instruction order only: the native stores the
-// two stacked parameters before it builds the heap address, stores the 1 for
-// changed after the 0 for targetCount, and twice loads the selected item
-// before it builds the 0x1ff mask. value initialized from base before
-// anything else (the copy then lives longest and takes r8, the window r7) and
-// entry declared before changed (the spill slots' order) took 150 to 12.
+// value initialized from base before anything else (the copy then lives
+// longest and takes r8, the window r7) and entry declared before changed (the
+// spill slots' order) took 150 to 12.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

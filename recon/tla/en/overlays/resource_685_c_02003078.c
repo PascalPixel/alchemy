@@ -1,12 +1,12 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 4 of 103; left: two stores of
-// the position array issue one row later than the native's; a barrier after
-// position[0] fixes one.
-// Draft, differ 4 of 103: hides the glow: shrinks its second sprite, then its
-// first, waits a frame, stops its callback and the shake and frees its
-// video slots and work. Left: the native stores position[0] before it
-// finishes the next field offset (adds r1, #4) and position[1] before it
-// builds the third offset; an empty asm after the first store moves the
-// stack setup instead. Permute, 3 minutes: nothing better.
+// Near miss, differ 2 of 103 (tla-en, 2026-10-31): one pair in the scheduler's
+// order. The native stores position[1] between the two halves of the rebuilt
+// third field offset (movs r1, #128; str; lsls); sched2 ranks that lsls at
+// priority 7 and the store at 6, since the store's priority is two above the
+// third load's and the lsls's three above it whatever the C. An array, a
+// struct, moving state and time, or subtracting separately all measure 2.
+// Hides the glow: shrinks its second sprite, then its first, waits a frame,
+// stops its callback and the shake and frees its video slots and work.
+// Permute, 3 minutes: nothing better.
 #include "types.h"
 #include "ram_buffer.h"
 

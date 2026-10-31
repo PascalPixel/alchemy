@@ -1,8 +1,13 @@
-// Near miss, differ 6 of 178 (2026-10-26). The arc's bound is a local the
-// loop compares with (the native keeps it in r11), while the divisions use
-// the literal 20 (42 -> 6). Left: order only, the scale constants and the arc's
-// position copies, where after a store the native issues another instruction
-// before the next load.
+// Near miss, differ 2 of 178 (tla-en, 2026-10-31): order only. The spin step
+// 0x1000, hoisted out of the grow loop as an HImode pool load (ldr r5), comes
+// before the 0.4 scale's last add and its two stores; the native loads it
+// after them. In sched2 the load has priority 3 (its cost 2, plus the cycle
+// -mthumb-slow-loads adds to a load), the add 2 and the stores 1; the native
+// order is what priority 1 would give, the load being last in RTL order. No
+// loop form (do, while, for, for with break), split or reordered scale
+// stores, or spelling of the angle step moves it.
+// The arc's bound is a local the loop compares with (the native keeps it in
+// r11), while the divisions use the literal 20 (42 -> 6).
 // An event command. Creates object sprite at (x, 0, z), which grows
 // from 0.4 to full size while spinning, turns it and the controlled owner to
 // face each other, plays the owner's variant 3 and Func_080d489c(, 258), then

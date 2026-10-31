@@ -1,3 +1,11 @@
+// Near miss, differ 6 of 421 (tla-en, 2026-10-31): three rows one place
+// apart, each a stack store the native issues before a load, which sched2
+// orders the other way. The spark-offset spill (str r3, [sp, #8]) loses a
+// priority-1 tie on original insn order to movs r7, #0 and mov r6, fp; at
+// both draw[1] calls the reload of draw (ldr r0, [sp, #12]) carries the
+// -mthumb-slow-loads +1 load cost and beats the native's argument store.
+// Swapping the puff loop's two initializers (8) or stepping a spark pointer
+// per puff (309) does worse; alchemy permute, 4 minutes: no candidate beat 6.
 // Draft of BattleEffect_RunMars, effect kind 282: the Mars Djinn's puffs.
 
 // On screen: a glowing orb swells over the targets for 24 frames; at frame

@@ -1,5 +1,12 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 8 of 158 in tla-en, instruction
-// order only. An empty asm before `count++;` lowers it to 6.
+// Near miss, differ 4 of 158 (tla-en, 2026-10-31; 8 on 2026-10-26): scheduler
+// order only, in the last block. The native loads `lost` before `removed` and
+// issues `add sp` before the last store. Here sched2 takes the reload of
+// `removed` first (it follows the `*gained` store at cost 1, a better class
+// than `lost`'s anti-dependent load), and the USE of the return register takes
+// the cycle after the loads, so the store, earlier in RTL, wins the tie with
+// `add sp` (a void function gets that slot, as 080d7b04 does). Unsigned
+// counters, return or out-pointer types and an empty asm before `count++;`
+// leave it at 4; storing `*lost` first gives 12.
 #include "battle_system.h"
 
 struct DjinnSlot {

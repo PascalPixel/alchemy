@@ -1,5 +1,15 @@
-// Draft, differ 7 of 61: overlay 668's copy of overlay 671's Func_02005428
-// (the same listing), whose draft holds its notes.
+// Near miss, differ 7 of 61 (tla-en, 2026-10-31): the entry's first test
+// (movs r1, #255 before the jump), the list word read before the id, and the
+// count copied after the mode. Overlay 668's copy of overlay 671's
+// Func_02005428 (the same listing), whose draft holds its earlier notes.
+// Written with a first test (while (1) { if (*list == 0xffff) break; ... },
+// or the if before a goto loop), the prologue matches the listing up to the
+// jump, but gcse's PRE moves the id load onto the split entry edge (ldrh, its
+// sign extension apart, 11; the permuter found nothing under 16 from there).
+// An asm memory barrier after list += 3 stops PRE but lets loop.c move the
+// end mark and the id out of the loop (42). So the listing's loop head had no
+// entry edge when gcse ran: its first test came later and jump2 merged it
+// into the loop's own test after sched2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

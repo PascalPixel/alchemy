@@ -1,10 +1,18 @@
+// Near miss, differ 6 of 83 (tla-en, 2026-10-31): mov r7, sp outside the loop
+// and the table word loaded as [offset, table].
 // Draft of overlay 6ad's Func_020014e8, the palette cycle of overlay 69f's
-// Func_020002e8 with this overlay's symbols: differ 6 of 83 in tla-en. The
+// Func_020002e8 with this overlay's symbols. The
 // colours' address goes through p, set before the loop, so it takes r7 as the
 // native's does (as colors throughout: 14). Left: the native builds that
 // address (mov r7, sp) inside the loop, before the __modsi3 call, where gcse's
 // PRE hoists it out of the goto loop here; and it loads the table word as
 // [table, offset] where this has [offset, table], however the sum is written.
+// Measured 2026-10-31: p = colors inside the goto loop is hoisted by PRE just
+// the same (14; and set both before and in the loop, 8). A for loop with
+// gData_02007068[i + 2] puts the table first but loop.c folds it into one
+// table + 4 pointer (12 to 14). The table comes first in this goto loop only
+// through a local pointer, which then takes r8 (34): the native's table is a
+// constant pool load after the call, base first. Permuter, 4 minutes: none.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
 #include "iwram_call.h"
 #include "dma.h"

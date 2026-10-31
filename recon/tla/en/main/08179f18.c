@@ -106,10 +106,10 @@ struct ResourceTableEntry {
 
 struct FloraObject {
   u8 unk0[8];
-  u16 tile : 10;
-  u16 unk08 : 6;
-  u8 flags;
-  u8 unk0b[5];
+  u32 tile : 10;
+  u32 flags : 2;
+  u32 unk08 : 20;
+  u8 unk0c[4];
   u8 resource;
 };
 
@@ -147,6 +147,11 @@ extern const s8 Data_08199446[];
 extern const s8 Data_0819944a[];
 extern const u8 gData_08199210[];
 extern const u8 gData_08199364[];
+extern char ResourceId_VioletSkyBackdrop;
+extern char ResourceId_Data098;
+extern char ResourceId_Data09A;
+extern char ResourceId_Data0C2;
+extern char ResourceId_Data134;
 
 struct FloraObject *Func_0815b290(s32 width, s32 height, u32 shape, s32 mode);
 struct FloraObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
@@ -173,7 +178,7 @@ void Heap_Release(void *buffer);
 void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
-  u16 savedScroll;
+  s32 savedScroll;
   s32 *transition;
   struct FloraWork *w;
   u8 *sprites;
@@ -198,7 +203,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   struct RenderModel *model;
   void *verts;
   struct EffectStep *p;
-  struct FloraObject *obj;
   struct EffectPosition pos;
   struct EffectPosition out;
   struct EffectPosition pos2;
@@ -226,54 +230,54 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
 
       gCameraSceneParameters[4] = 240;
       BattleEffect_SelectLivingTargets(work->effect);
-      BattleBackground_LoadFar(1, 0x45, 0);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
       work->scrollTimer = 0;
       work->scrollInterval = 1;
       work->scrollStepX = -3;
       work->scrollStepY = 0;
       Task_Add(Func_0813baec, 3200);
       transition[4] = 1;
-      e = Resource_GetTableEntry(0x9a);
+      e = Resource_GetTableEntry((s32)&ResourceId_Data09A);
       Iwram_CopyWords((void *)(BG_PLTT + 0x3e0), e, 32);
       Resource_DecodeType01(e + 32, gMapCellBuffer);
       cells = gMapCellBuffer;
       for (i = 0; i != 15; i++) {
-        obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
+        struct FloraObject *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
-        obj->flags = (obj->flags & ~12) | 8;
+        obj->flags = 2;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 128);
         cells += 128;
         w->tiles[i] = ((struct FloraObject *)work->objects[12 + i])->tile;
       }
       for (i = 0; i != 17; i++) {
-        obj = Func_0815b3b0(16, 16, 0x40000000, 0xf000);
+        struct FloraObject *obj = Func_0815b3b0(16, 16, 0x40000000, 0xf000);
         work->objects[27 + i] = obj;
         Iwram_CopyWords(obj, work->objects[12], 24);
       }
       for (i = 0; i != 32; i++) {
         w->phase[i] = (Random16() % 15) << 8;
-        obj = work->objects[12 + i];
-        obj->tile = w->tiles[w->phase[i] >> 8];
+        ((struct FloraObject *)work->objects[12 + i])->tile =
+            w->tiles[w->phase[i] >> 8];
       }
-      e = Resource_GetTableEntry(0x98);
+      e = Resource_GetTableEntry((s32)&ResourceId_Data098);
       Resource_DecodeType01(e + 480, gMapCellBuffer);
       cells = gMapCellBuffer;
       for (i = 0; i != 12; i++) {
-        obj = Func_0815b290(32, 32, 0x80002000, 0);
-        obj->flags = (obj->flags & ~12) | 8;
+        struct FloraObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
+        obj->flags = 2;
         work->objects[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 0x400);
         cells += 0x400;
       }
-      Resource_LoadAndDecompress(0xc2, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet, 0, 0);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
     work->transferPending = 1;
     wait(1);
   }
-  Resource_LoadAndDecompress(0x134, gMapCellBuffer, 0, 0);
-  Resource_LoadAndDecompress(0x134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, gMapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   for (i = 0; i != 10; i++) {
     u8 *dst = sprites + i * 18 + 590;
 
@@ -344,7 +348,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     u = frame - 112;
     if (u <= 31) {
-      u16 *e = Resource_GetTableEntry(0x98);
+      u16 *e = Resource_GetTableEntry((s32)&ResourceId_Data098);
 
       for (i = 0; i != 240; i++) {
         u32 c = w->palette[i];
@@ -444,105 +448,105 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
 
       if (i == 0) {
         if (frame == 0) {
-          w->x[0] = 0xf00000;
-          w->y[0] = 0x300000;
+          w->x[i] = 0xf00000;
+          w->y[i] = 0x300000;
         } else if (frame <= 47) {
-          w->x[0] += -0x30000;
-          w->y[0] += 0x18000;
+          w->x[i] += -0x30000;
+          w->y[i] += 0x18000;
         } else if (frame <= 79) {
-          w->x[0] += -0x10000;
-          w->y[0] += -0x10000;
+          w->x[i] += -0x10000;
+          w->y[i] += -0x10000;
         } else if (frame <= 111) {
-          w->x[0] += 0x30000;
+          w->x[i] += 0x30000;
         }
         if (frame == 112) {
-          w->x[0] = 0x1000000;
+          w->x[i] = 0x1000000;
         }
       } else if (i == 1) {
         if (frame <= 27) {
-          w->x[1] = 0x1000000;
-          w->y[1] = 0x300000;
+          w->x[i] = 0x1000000;
+          w->y[i] = 0x300000;
         } else if (frame == 28) {
-          w->x[1] = 0x100000;
-          w->y[1] = 0x200000;
+          w->x[i] = 0x100000;
+          w->y[i] = 0x200000;
         } else if (frame <= 62) {
-          w->x[1] += 0x1d6d8;
-          w->y[1] += 0x1fde8;
+          w->x[i] += 0x1d6d8;
+          w->y[i] += 0x1fde8;
         } else if (frame <= 79) {
-          w->x[1] += 0x19c40;
-          w->y[1] += 0x6710;
+          w->x[i] += 0x19c40;
+          w->y[i] += 0x6710;
         } else if (frame <= 141) {
-          w->x[1] += 0x30000;
+          w->x[i] += 0x30000;
         }
         if (frame == 112) {
-          w->x[1] = 0x1000000;
+          w->x[i] = 0x1000000;
         }
       } else if (i == 2) {
         if (frame <= 49) {
-          w->x[2] = 0x1000000;
-          w->y[2] = 0x300000;
+          w->x[i] = 0x1000000;
+          w->y[i] = 0x300000;
         } else if (frame == 50) {
-          w->x[2] = 0;
-          w->y[2] = 0x7c0000;
+          w->x[i] = 0;
+          w->y[i] = 0x7c0000;
         } else if (frame <= 62) {
-          w->x[2] += 0x40000;
-          w->y[2] += -0x14000;
+          w->x[i] += 0x40000;
+          w->y[i] += -0x14000;
         } else if (frame <= 93) {
-          w->x[2] += 0x30000;
-          w->y[2] += 0xc000;
+          w->x[i] += 0x30000;
+          w->y[i] += 0xc000;
         } else if (frame <= 125) {
-          w->x[2] += 0x30000;
-          w->y[2] += -0x10000;
+          w->x[i] += 0x30000;
+          w->y[i] += -0x10000;
         }
         if (frame == 112) {
-          w->x[2] = 0x1000000;
+          w->x[i] = 0x1000000;
         }
       } else if (i == 3) {
         if (frame <= 49) {
-          w->x[3] = 0x1000000;
-          w->y[3] = 0x300000;
+          w->x[i] = 0x1000000;
+          w->y[i] = 0x300000;
         } else if (frame == 50) {
-          w->x[3] = 0;
-          w->y[3] = 0x6c0000;
+          w->x[i] = 0;
+          w->y[i] = 0x6c0000;
         } else if (frame <= 103) {
-          w->x[3] += 0x30000;
-          w->y[3] += -0x14000;
+          w->x[i] += 0x30000;
+          w->y[i] += -0x14000;
         } else if (frame <= 135) {
-          w->x[3] += 0x10000;
-          w->y[3] += 0x10000;
+          w->x[i] += 0x10000;
+          w->y[i] += 0x10000;
         }
         if (frame == 112) {
-          w->x[3] = 0x1000000;
+          w->x[i] = 0x1000000;
         }
       } else if (i == 4) {
         if (frame <= 59) {
-          w->x[4] = 0x1000000;
-          w->y[4] = 0x300000;
+          w->x[i] = 0x1000000;
+          w->y[i] = 0x300000;
         } else if (frame == 60) {
-          w->x[4] = 0x100000;
-          w->y[4] = 0x200000;
+          w->x[i] = 0x100000;
+          w->y[i] = 0x200000;
         } else if (frame <= 82) {
-          w->x[4] += 0x40000;
-          w->y[4] += 0x30000;
+          w->x[i] += 0x40000;
+          w->y[i] += 0x30000;
         } else if (frame <= 135) {
-          w->x[4] += 0x40000;
+          w->x[i] += 0x40000;
         }
         if (frame == 112) {
-          w->x[4] = 0x1000000;
+          w->x[i] = 0x1000000;
         }
       } else if (i == 5) {
         if (frame <= 85) {
-          w->x[5] = 0x1000000;
-          w->y[5] = 0x300000;
+          w->x[i] = 0x1000000;
+          w->y[i] = 0x300000;
         } else if (frame == 86) {
-          w->x[5] = 0x900000;
-          w->y[5] = 0x200000;
+          w->x[i] = 0x900000;
+          w->y[i] = 0x200000;
         } else if (frame <= 135) {
-          w->x[5] += 0x10000;
-          w->y[5] += 0x30000;
+          w->x[i] += 0x10000;
+          w->y[i] += 0x30000;
         }
         if (frame == 112) {
-          w->x[5] = 0x1000000;
+          w->x[i] = 0x1000000;
         }
       } else if (i <= 15) {
         if (frame == 0) {
@@ -599,8 +603,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       } else {
         w->phase[i] = (w->phase[i] + 128) % 3840;
       }
-      obj = work->objects[12 + i];
-      obj->tile = w->tiles[w->phase[i] >> 8];
+      ((struct FloraObject *)work->objects[12 + i])->tile =
+          w->tiles[w->phase[i] >> 8];
     }
     for (i = 0; i != 32; i++) {
       place[0] = w->x[i] + -0x80000;
@@ -669,7 +673,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         spread = 0;
         grow = 0;
       }
-      if (frame > 194) {
+      if (frame <= 194) {
         grow += 32;
         spread += 3;
       }
@@ -815,7 +819,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x80;
   {
-    u8 *e = Resource_GetTableEntry(0x9a);
+    u8 *e = Resource_GetTableEntry((s32)&ResourceId_Data09A);
     s32 row;
     s32 a;
     s32 b;

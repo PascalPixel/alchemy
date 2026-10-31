@@ -1,13 +1,18 @@
-// Draft, differ 4 of 49 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Draft, differ 10 of 49, three pairs in the other order: the native loads
-// the window work before it starts the count's offset, loads the entry mask
-// from the pool before it rereads the count, and advances to the entries
-// before the mask is applied. Measured: an empty asm barrier after the
-// window work swaps r5 and r6 (differ 22). Twin of The Broken Seal's
-// Text_DrawMessage.
+// Near miss, differ 4 of 49 (tla-en, 2026-10-31): after the decode the
+// native loads the entry mask from the pool before it rereads the count, and
+// advances to the entries before the + 1; here sched2 takes the reread first
+// (priority 70 to the pool load's 69: the reread's + 1 is one step longer)
+// and the advance after the and. Measured: the mask pinned to r2 and set
+// first inside a one-pass block holding the count update and the draw,
+// differ 2 (that block matches, but its barrier takes the later read of sl
+// from mov sl, r1, which then loses its tie with the first count store); the
+// pin set before that block, or with only the update in it, 4 to 6; the pin
+// with an empty asm, 4; a u16 mask local, 7 to 64; (count)++ then &=, 7;
+// the mask written first, 4; permute 4 minutes, nothing better.
+// Under -mthumb-slow-loads (2026-10-26): no single empty asm, one-pass
+// block, wrapping block or swap of neighbouring statements brings it closer,
+// nor any pair of empty asm statements or one-pass blocks (device search).
+// Twin of The Broken Seal's Text_DrawMessage.
 #include "text_render.h"
 #include "window.h"
 #include "ram_buffer.h"

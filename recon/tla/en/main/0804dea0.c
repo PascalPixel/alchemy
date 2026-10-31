@@ -1,5 +1,12 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 8 of 87 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
+// Near miss, differ 8 of 87 (tla-en, 2026-10-31): instruction order only, in
+// the loop setup after the second draw. sched2 ties row = 0 (r1, priority 3,
+// two dependents) with the copy of bits into r8 (priority 3, one dependent) and
+// takes row = 0 first; the listing takes the bits copy and the label end
+// (sp + 33) first, which needs a dependence or cost the C does not create. No
+// reshaping moves it (y as its own variable, do-while, i at function scope,
+// flag set before the calls, a pointer clear, i != 16, u8 buffers), nor a
+// 4-minute permuter run (12,000 candidates). No empty asm before any one
+// statement lowers it.
 #include "types.h"
 extern const u8 gMenu_HexDigitsString[];
 

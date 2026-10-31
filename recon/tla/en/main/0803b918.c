@@ -1,16 +1,19 @@
-// Draft, differ 8 of 217 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Near miss, differ 10 of 217: The Broken Seal's international
-// Text_MeasureEntry with ⚓️'s changes: code 176 is a control
-// code, a page break (1) resets the counters before it ends the text, a text
-// mode window taller than 44 pixels keeps two lines and flags spacing[3], and
-// the counters are reset at the end. With case 1 before case 3 the call
-// block moves (differ 30). The barrier keeps the prologue's parameter
-// spills before the work pointer is started (differ 14 without it, 12 with a
-// one-pass block). Left: the lineWidths address
-// is built and spilled late, and in case 9 the jump table reloads after the
-// mask is started: scheduling only.
+// Near miss, differ 8 of 217 (tla-en, 2026-10-31): only the prologue's order.
+// The listing builds the lineWidths address and spills it to [sp, #8] before
+// it copies height into r9 and starts the lineSpacingCounts address; sched2
+// ranks the height copy (priority 3, through the r2 it shares with the
+// lineSpacingCounts address) above the lineWidths chain's add (priority 2),
+// so the listing's order needs a dependence this C does not give. The empty
+// asm that once kept the parameter spills first is gone: the code is the
+// same without it. No single empty asm, one-pass block, wrapping block or
+// swap of neighbouring statements brings it closer (device search, 26
+// October); neither do signed locals, a [2][4] line array or 4 minutes of
+// the permuter (31 October).
+// The Broken Seal's international Text_MeasureEntry with ⚓️'s changes: code
+// 176 is a control code, a page break (1) resets the counters before it ends
+// the text, a text mode window taller than 44 pixels keeps two lines and
+// flags spacing[3], and the counters are reset at the end. With case 1
+// before case 3 the call block moves (differ 30).
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
@@ -34,8 +37,6 @@ void Text_MeasureEntry(s32 entryIndex, u32 *outWidth,
   s32 gap;
   u32 style;
 
-  /* FAKEMATCH: the parameter spills are stored before the work load. */
-  asm("");
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   width = 0;
   height = 15;

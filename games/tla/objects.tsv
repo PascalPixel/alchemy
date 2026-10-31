@@ -221,13 +221,8 @@ main	rom_main_01	recon/tla/raw/08021470	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.000212d8	ja
 main	rom_main_01	games/tla/src/field/map_grid_convert
 main	rom_main_01	games/tla/src/field/copy_strided
-main	rom_main_01	recon/tla/it/rom	.rom.00021824	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00021824	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00021824	es
-main	rom_main_01	recon/tla/de/rom	.rom.00021824	de
-main	rom_main_01	recon/tla/raw/08021824	.text	en
-main	rom_main_01	recon/tla/raw/08021828	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00021824	ja
+main	rom_main_01	games/tla/src/field/f021828_entries	.text
+main	rom_main_01	games/tla/src/field/f021828	.text
 main	rom_main_01	games/tla/src/field/metadata	.text
 main	rom_main_01	games/tla/src/field/lz	.text
 main	rom_main_01	recon/tla/it/rom	.rom.000219cc	it

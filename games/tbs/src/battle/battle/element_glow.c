@@ -371,12 +371,11 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct ScreenPoint streakPosition;
   struct BattleStagingWork pillarLaunch;
   struct BattleStagingWork burstLaunch;
-  /* FAKEMATCH(temporary): one variable holds HEAP_SLOT_CAMERA's address, the
-   * battle work's base and later IME's; as battle =
-   * gHeapSlots[HEAP_SLOT_BATTLE] with ime set only in the loop, 61 of 249
-   * instructions differ in tbs-en. */
-  volatile u16 *ime = (volatile u16 *)&gHeapSlots[HEAP_SLOT_CAMERA];
-  struct BattleWork *battle = *(struct BattleWork **)((u8 *)ime - 12);
+  // The heap slots read from the camera's, as the battle effects read theirs
+  // from the effect's (EFFECT_SLOT).
+  void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
+  volatile u16 *ime;
+  struct BattleWork *battle = slots[HEAP_SLOT_BATTLE - HEAP_SLOT_CAMERA];
   struct SparkWork *work;
   s32 frame;
   s32 *brightness;

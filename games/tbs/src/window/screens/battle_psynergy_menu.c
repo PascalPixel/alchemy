@@ -208,14 +208,12 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        if ((Ability_Get(actions[result])->flags & ABILITY_USABLE_IN_BATTLE) !=
+        if ((Ability_Get(actions[result])->flags & ABILITY_USABLE_IN_BATTLE) ==
             0) {
+          // Not usable in battle: the menu stays open.
+        } else {
           break;
         }
-        /* FAKEMATCH(dead): a dead store keeps the test above from being
-         * threaded past the break; without it, 11 of 794 instructions differ in
-         * tbs-en. */
-        result = -1;
       } else {
         result = -1;
         break;

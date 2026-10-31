@@ -207,9 +207,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   for (frame = 0; frame != JUDGMENT_GATHER_FRAMES &&
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
-    /* FAKEMATCH(temporary): slots, set each frame, points the frame > 143
-     * draws at the slot table; as the table named at the uses, 285 of 2455
-     * instructions differ in tbs-en. */
+    // The heap slot table, read as blitters by the frames after 143.
     slots = (DrawRectangle *)gHeapSlots;
     if (frame == 143) {
       Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));

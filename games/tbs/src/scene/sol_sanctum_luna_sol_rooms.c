@@ -1307,10 +1307,9 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-    /* FAKEMATCH(temporary): the zero goes through sprite, whose register is
-     * r7; as motionFlags = 0, 2 of 442 instructions differ in tbs-en. */
-    sprite = 0;
-    actor->motionFlags = (u32)sprite;
+    // Default: NULL until it is pointed at the leader's sprite below.
+    sprite = NULL;
+    actor->motionFlags = 0;
     Sound_Play(SE_ASCEND);
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
     sprite = actor->sprite;

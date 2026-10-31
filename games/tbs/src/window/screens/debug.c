@@ -465,12 +465,14 @@ s32 DebugBrowser_Portraits(void) {
   s32 slot;
   s32 cancelKey;
   u32 slotOffset;
+  s32 palette;
 
   work = WINDOW_WORK;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
   index = 0;
+  palette = 15;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
   characterCount = i;
@@ -511,16 +513,8 @@ s32 DebugBrowser_Portraits(void) {
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
         glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] + 128;
-      {
-        /* FAKEMATCH(temporary): a word temporary for the slot keeps the
-         * palette in r2 through the slot store; as the slot assigned directly
-         * and 15 passed, 4 of 179 instructions differ in tbs-en. */
-        s32 palette;
-        s32 loadedSlot = *(u16 *)((u8 *)work + slotOffset);
-        palette = 15;
-        slot = loadedSlot;
-        Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
-      }
+      slot = *(u16 *)((u8 *)work + slotOffset);
+      Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);
     }

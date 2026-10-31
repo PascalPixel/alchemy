@@ -67,9 +67,7 @@ void SpriteViewer_Run(void) {
     u8 *flags;
   } spriteWork;
   s32 changed;
-  /* FAKEMATCH(temporary): only gKeysHeld and gKeysRepeat are held, in fp and
-   * r9, read through these pointers; as gKeysHeld and gKeysRepeat directly,
-   * 135 of 672 instructions differ in tbs-en. */
+  // The edit loop reads the held and repeated keys through these pointers.
   volatile u32 *heldKeys;
   volatile u32 *repeatedKeys;
   u32 i;

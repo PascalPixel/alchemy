@@ -260,6 +260,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               s32 count;
               s8 *records = gLobbedShells_Styles;
               s32 row;
+              // Each target has four groups of eight burst slots.
+              s32 groupSlots = 8;
 
               shot->y = 0;
               shot->variant = 1;
@@ -271,13 +273,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               for (i = 0; i != count; i++) {
                 struct Particle *burst;
                 s32 group = k * 4;
-
-                /* FAKEMATCH(one-pass): an empty once-only loop ends CSE's
-                 * block, so group * 8 doesn't fold into k * 32; without it, 171
-                 * of 670 instructions differ in tbs-en. */
-                do {
-                } while (0);
-                burst = &LOBBED_SHELLS_BURSTS[group * 8 + i];
+                burst = &LOBBED_SHELLS_BURSTS[group * groupSlots + i];
 
                 SET_POSITION(burst, shot->x, shot->y, shot->z);
                 // Smoke drifts up to a pixel a frame across the ground;

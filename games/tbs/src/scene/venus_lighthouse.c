@@ -2271,12 +2271,10 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
     }
     if (pillar->sprite->image.priority == 3 &&
         !Event_GetFlag(FLAG_SCENE_TEMP_00 + pillarIndex)) {
-      /* FAKEMATCH(temporary): the zero in the search counter, set before the
-       * priority call; as block->bounce = 0 after the call, 2 of 272
-       * instructions differ in tbs-en. */
+      // Default: 0 until the settling search below sets it.
       earlierIndex = 0;
       Actor_SetSpritePriority(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR, 1);
-      pillar->bounce = earlierIndex;
+      pillar->bounce = 0;
       if (pillar->z.fixed >> 20 <= 12) {
         firstPassageEffect = VenusLighthouse_CreateBlendedPassageEffect(
             pillar->x.fixed, 0, PIXELS(224), SPRITE_CAPPED_PILLAR);

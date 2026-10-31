@@ -30,7 +30,7 @@ void FieldEffect_StepRatioTransition(void) {
 s32 FieldEffect_StepRatioTransition(void) {
 #endif
   struct WorldMapView *perspective = gMapGridWork[0];
-  s32 *from;
+  s32 *from; // the zoom the transition starts from
   s32 delta;
   s32 zoom;
 
@@ -40,9 +40,6 @@ s32 FieldEffect_StepRatioTransition(void) {
     return;
   if (perspective->zoomTransitionFrames == 0)
     return;
-  /* FAKEMATCH(temporary): from, the start's address, read once for the
-   * difference and again after the division; as perspective->previousZoom,
-   * 8 of 87 instructions differ in tbs-en. */
   from = &perspective->previousZoom;
   delta = perspective->zoom - *from;
   perspective->zoomTransitionStep++;

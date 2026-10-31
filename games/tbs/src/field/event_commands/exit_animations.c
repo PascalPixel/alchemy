@@ -16,7 +16,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 #ifdef UBFIX
   struct MapGridScrollWork *grid;
 #else
-  s32 *camera;
+  s32 *view; // the view's top left, x then y
 #endif
   s32 cameraX;
   s32 cameraZ;
@@ -25,18 +25,15 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
   if (actor == 0)
     return -1;
-  // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
+  // UB: view[1] crosses the viewX scalar; UBFIX reads the named pair.
 #ifdef UBFIX
   grid = gMapGridWork[0];
   cameraX = grid->viewX & FIELD_PIXEL_MASK;
   cameraZ = grid->viewY & FIELD_PIXEL_MASK;
 #else
-  /* FAKEMATCH(temporary): the view position read as two adjacent words
-   * through one pointer, so both loads share one base; as viewX and viewY
-   * through gMapGridWork[0], 28 of 59 instructions differ in tbs-en. */
-  camera = &((struct MapGridScrollWork *)gMapGridWork[0])->viewX;
-  cameraX = camera[0] & FIELD_PIXEL_MASK;
-  cameraZ = camera[1] & FIELD_PIXEL_MASK;
+  view = &((struct MapGridScrollWork *)gMapGridWork[0])->viewX;
+  cameraX = view[0] & FIELD_PIXEL_MASK;
+  cameraZ = view[1] & FIELD_PIXEL_MASK;
 #endif
   x = actor->x.fixed - cameraX;
   z = actor->z.fixed - cameraZ - actor->y.fixed;

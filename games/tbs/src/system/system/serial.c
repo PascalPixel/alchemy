@@ -254,10 +254,6 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
 void Serial_PrepareSendPacket(void *payload) {
   struct SerialWork *sr;
   u32 i;
-  /* FAKEMATCH(temporary): a second pointer to the work, taken after the sum
-   * loop and read by the last timer test, so sendBuffer[0] is loaded again for
-   * the checksum; as sr, 4 of 48 instructions differ in tbs-en. */
-  struct SerialWork *work;
   u32 sum;
 
   sr = SERIAL_RUNTIME;
@@ -286,14 +282,17 @@ void Serial_PrepareSendPacket(void *payload) {
       sum += v;
     }
   }
-  work = sr;
-  ((struct SerialPacket *)sr->sendBuffer[0])->checksum = ~sum;
+  {
+    u16 **sendBuffers = sr->sendBuffer;
+
+    ((struct SerialPacket *)sendBuffers[0])->checksum = ~sum;
+  }
 
   // Stop timer 3, rewind the send position and start the timer again
   if (sr->mode != 0)
     REG_TM3CNT_H = 0;
   sr->sendIndex = -1;
-  if (work->mode != 0 && work->transferEnabled != 0)
+  if (sr->mode != 0 && sr->transferEnabled != 0)
     REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
 }
 

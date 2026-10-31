@@ -416,10 +416,6 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     PARTICLES[i].z = (Random16() & 0x1ff) + i * 2;
     PARTICLES[i].variant = -i;
   }
-  /* FAKEMATCH(dead): two updates of work that cancel, raising its priority in
-   * allocation; without them, 25 of 420 instructions differ in tbs-en. */
-  work++;
-  work--;
   // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -457,7 +453,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       n = i % 4;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      draw[1] = ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
+      draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
       draw[1](canvas, work->sheet + n * (17 * 64), 47, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
       glow = work->sheet + n * 1032 + 4352;
@@ -485,11 +481,12 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 
       if (fleck->variant >= 0) {
         s32 size;
+        s32 turnSteps = 64; // frames a mote takes to circle once
 
         point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
-        fleck->x += TRIG_TURN / 64;
+        fleck->x += TRIG_TURN / turnSteps;
         fleck->y += 5 << 16;
         fleck->z += 64;
         Projection_Point(point, &screenPosition);
@@ -511,10 +508,6 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
-  /* FAKEMATCH(dead): two updates of frame that cancel, which order two stack
-   * slots; without them, 9 of 420 instructions differ in tbs-en. */
-  frame ^= 1;
-  frame ^= 1;
 }
 
 /// Sets the pixel at (x, y) of the 256x120 8bpp tile picture in

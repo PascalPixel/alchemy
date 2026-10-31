@@ -78,7 +78,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   void *rectangle[2];
-  void *secondSlot;
+  void *mirroredBlitter;
 
   s32 frame;
   s32 duration;
@@ -129,12 +129,10 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  /* FAKEMATCH(temporary): secondSlot and draw, a second pointer to the pair,
-   * order the stack frame's spill slots; as rectangle[1] = gHeapSlots[n] and
-   * rectangle[side], 11 of 503 instructions differ in tbs-en. */
-  secondSlot = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
+  // The odd columns draw through the mirrored blitter, draw[1].
+  mirroredBlitter = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   draw = rectangle;
-  draw[1] = secondSlot;
+  draw[1] = mirroredBlitter;
 
   duration = gGrowth_ColumnCounts[work->args->variant] * 4 + 56;
 

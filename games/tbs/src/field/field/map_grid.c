@@ -350,9 +350,8 @@ s32 MapGrid_LoadMap(s32 index) {
                                                  (u32)&ResourceId_Map001),
                           graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
-      /* FAKEMATCH(wrapper): these four copies call the fixed entry itself, past
-       * the IWRAM call layer; as Iwram_CopyWords, 103 of 349 instructions
-       * differ in tbs-en. */
+      // These four copies call the IWRAM routine at its fixed address, not
+      // through Iwram_CopyWords.
       Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 448);
       Decompress_MoveToFrontLz(
           Resource_GetTableEntry(mapResources->resources[2] +

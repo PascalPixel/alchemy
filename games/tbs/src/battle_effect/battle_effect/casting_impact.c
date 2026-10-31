@@ -312,9 +312,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 0);
   CastingImpact_LoadResource(&ResourceId_YellowOrbSheet, Ram_MapGridCellBuffer,
                              1, 0);
-  /* FAKEMATCH(temporary): the orb's dimensions named, which orders the
-   * packing's argument setup; as literal 40 and 288, 2 of 3070 instructions
-   * differ in tbs-en. */
   {
     s32 width = 40;
     s32 height = 288;

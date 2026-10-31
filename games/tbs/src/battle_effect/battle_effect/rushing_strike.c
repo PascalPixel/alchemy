@@ -103,9 +103,6 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   s32 paletteId;
   u8 *cells;
 
-  /* FAKEMATCH(temporary): cells names the buffer, whose address then loads
-   * after the row count; as Ram_MapGridCellBuffer at both uses, 1 of 382
-   * instructions differ in tbs-en. */
   cells = Ram_MapGridCellBuffer;
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);

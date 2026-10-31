@@ -559,9 +559,6 @@ void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 side) {
 
   state->records[side].kind = 0;
   if (side != 0) {
-    /* FAKEMATCH(temporary): the tile pointer in a local, loaded early into r5;
-     * as gMenu_CursorActorTiles where right is read, 35 of 136 instructions
-     * differ in tbs-en. */
     const u8 *right = gMenu_CursorActorTiles;
 
     count = state->count;

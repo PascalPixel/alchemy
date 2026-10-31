@@ -263,9 +263,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
               shot->y = 0;
               shot->variant = 1;
-              /* FAKEMATCH(temporary): the table's address held in records
-               * loads before the row; as LOBBED_SHELLS_SHATTER(mode) in the
-               * test, 135 of 670 instructions differ in tbs-en. */
               row = mode * 2;
               if (records[row] == 0)
                 count = 4;

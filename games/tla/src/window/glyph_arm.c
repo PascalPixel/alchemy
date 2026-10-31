@@ -6,6 +6,8 @@
 #include "types.h"
 #include "uiwindow.h"
 #include "glyph.h"
+#include "text_font.h"
+#include "edition.h"
 
 /// The pixel rows text may reach: four tiles; a glyph is cut off below it.
 #define TEXT_CANVAS_PIXEL_HEIGHT 32
@@ -36,13 +38,14 @@ static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
 /// pixel (x, y) of the window's interior, and returns how far the text
 /// advances.
 ///
-/// With font set, the character comes from that small two-colour font, 32
+/// With font set, the character comes from that small font: the 10-row, 1bpp
+/// kana and numeral font in Japanese, or an 8x8 two-colour font elsewhere, 32
 /// bytes a character. With no font, it comes from the main font
-/// (gFont_Glyphs), drawn in four passes: the first three draw an outline in
-/// colour 5 (offset left, right and down when the window has
-/// WINDOW_FLAG_OUTLINED_TEXT) and the last draws the glyph itself in colour 1.
-/// Kana marks (codes 222 and 223) sit over the previous character and advance
-/// by 0.
+/// (gFont_Glyphs, and in Japanese gFont_KanjiGlyphs for codes from 256), drawn
+/// in four passes: the first three draw an outline in colour 5 (offset left,
+/// right and down when the window has WINDOW_FLAG_OUTLINED_TEXT) and the last
+/// draws the glyph itself in colour 1. Kana marks (codes 222 and 223) sit over
+/// the previous character and advance by 0.
 s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
                   const u8 *font) {
   const u16 *glyphRows;
@@ -53,6 +56,10 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
   u32 row;
   u32 nextRow;
   u32 column;
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+  // Unused: gives the stack frame its 64 extra bytes.
+  UNUSED struct RenderInput unusedStackFrame[4];
+#endif
 
   windowHeight = window->height;
   if (character <= 255 || (font != NULL && character - 222 <= 1)) {
@@ -60,6 +67,55 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
       const u8 *source;
       u32 color;
       u32 bits;
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+      u32 fontWidth;
+
+      // The small font: 10 rows of a byte, bit 0 the leftmost pixel, in
+      // colour 1 (0x1111 is the colour in all four nibbles). A character is
+      // drawn a pixel in and advances 8; a kana mark goes 2 further left and
+      // a row up, and advances 2.
+      color = 0x1111;
+      fontWidth = 8;
+      x++;
+      if (character - 222 <= 1) {
+        character += 32;
+        x -= 2;
+        y--;
+        fontWidth = 2;
+      }
+      character -= 32;
+      source = font + character * 10;
+      row = 0;
+      bits = *source++;
+      while (y + row < TEXT_CANVAS_PIXEL_HEIGHT) {
+        u32 tileY;
+        u32 rowLine;
+        u8 *vram;
+
+        column = 0;
+        // The increment is written in both arms, which keeps it after the
+        // compare; written once ahead of the test it is scheduled before it.
+        if (bits == 0)
+          nextRow = row + 1;
+        else {
+          nextRow = row + 1;
+          tileY = (y + row) >> 3;
+          vram = TEXT_CANVAS_VRAM;
+          rowLine = ((y + row) & 7) << 1;
+          do {
+            if (bits & 1)
+              Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
+                                  vram, color);
+            column++;
+            bits >>= 1;
+          } while (bits != 0);
+        }
+        row = nextRow;
+        if (row > 9)
+          break;
+        bits = *source++;
+      }
+#else
       u32 foregroundColor;
       u32 secondaryColor;
       u32 fontWidth;
@@ -103,14 +159,20 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
             break;
         }
       }
+#endif
       return fontWidth;
     }
     glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 26);
     glyphWidth = *glyphRows++;
   } else {
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+    glyphWidth = 10;
+    glyphRows = (const u16 *)(gFont_KanjiGlyphs + (character - 256) * 24);
+#else
     glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 32);
     glyphWidth = *glyphRows;
     glyphRows += 4;
+#endif
   }
   if (character - 222 <= 1) {
     x -= 3;

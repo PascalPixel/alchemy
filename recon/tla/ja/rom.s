@@ -279,7 +279,14 @@ Func_0802de8c:
 	.section .rom.000385e0, "ax"
 	.global Glyph_DrawCode
 Glyph_DrawCode:
-	.incbin "baserom.gba", 0x000385e0, 0x00000310
+	.incbin "baserom.gba", 0x000385e0, 0x00000004
+	.section .rom.000385e4, "ax"
+	.arm
+	.global Glyph_DrawArm
+	.type Glyph_DrawArm, %function
+Glyph_DrawArm:
+	.incbin "baserom.gba", 0x000385e4, 0x0000030c
+	.thumb
 	.section .rom.0003938e, "ax"
 	.incbin "baserom.gba", 0x0003938e, 0x00000002
 	.section .rom.00039446, "ax"

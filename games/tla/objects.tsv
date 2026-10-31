@@ -560,6 +560,7 @@ main	rom_main_02	games/tla/src/window/lookup_symbol
 main	rom_main_02	games/tla/src/window/glyph_arm_entries	.text	en de es fr it
 main	rom_main_02	games/tla/src/window/glyph_arm	.text	en de es fr it
 main	rom_main_02	recon/tla/ja/rom	.rom.000385e0	ja
+main	rom_main_02	recon/tla/ja/rom	.rom.000385e4	ja
 main	rom_main_02	games/tla/src/window/cell_picture_entries	.text
 main	rom_main_02	games/tla/src/window/cell_picture	.text
 main	rom_main_02	games/tla/src/window/decompress_4bpp

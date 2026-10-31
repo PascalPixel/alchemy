@@ -1,16 +1,3 @@
-// Matches: differ 0 of 76 (tla-en, 2026-10-30; tla-de, tla-es, tla-fr and
-// tla-it also differ 0), through one one-pass block and two temporaries. The
-// plain form (the mode stored through Ram_HeapSlots->eventWork, then
-// gMainRoutineWork read directly) differs in 2 of 76 under -mthumb-slow-loads:
-// its ranking gives gMainRoutineWork's literal load (ldr r1) sched2 priority 8
-// against 7 for the event work's add and lsls r2, r2, #2, so the compiler
-// issues it before them; the native issues it after them, just before the
-// store. The instructions fix that dependence graph, so no plain form reaches
-// it; the one-pass block's loop notes keep the load after the mode's address
-// and value and before their store. The Japanese form, without the saved scene
-// and entrance, still matches in scene_events.c. Adopted in every edition in
-// 7ea8af9935, when it matched without the option; the international editions
-// are back on the listing.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -29,7 +16,7 @@
 #include "scene_ids.h"
 #include "edition.h"
 
-#define Actor_SetPartAttribute                                                \
+#define Actor_SetPartAttribute                                                 \
   ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
 
 enum { ENTRANCE_OPENING = 99 };
@@ -39,6 +26,8 @@ struct AerieEventWork {
   s32 mode;
 };
 
+// The Japanese edition has no form of this function here.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 s32 VenusLighthouse_Start(void) {
   /* FAKEMATCH(temporary): the mode's address held in a local, built before
    * the one-pass block; as a store through Ram_HeapSlots->eventWork after it,
@@ -79,3 +68,4 @@ s32 VenusLighthouse_Start(void) {
   }
   return 0;
 }
+#endif

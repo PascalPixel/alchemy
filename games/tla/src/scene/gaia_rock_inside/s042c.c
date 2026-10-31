@@ -1,14 +1,5 @@
-// Matches: differ 0 of 177 (tla-en, 2026-10-30), with the pinned i and one
-// dead test (both tagged).
-// The leader drops into the room from above: the screen fades in, the leader
-// lands with seventeen dust effects, a shake and a bounce. Overlay 671's
-// Func_02002394 (whose draft holds the notes) is the same scene with other
-// scales; overlay 686's Func_02000418 is a copy; overlay 698's Func_02001674
-// (resource_698_c_02001674.c) is the same loop, and its header says how the
-// goto loop and the dead test keep the velocity array's address in the loop,
-// where GCSE hoisted it before (differ 4 of 177 under -mthumb-slow-loads,
-// 26 October; differ 10 before that option).
 #include "types.h"
+#include "edition.h"
 #include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -37,6 +28,8 @@ void Func_02004e24(s32 a, s32 b, s32 c);
 void Func_02004e2c(void);
 s32 Func_02004e64(void);
 
+// The Japanese edition has no form of this function here.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
 s32 Func_0200042c(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
@@ -107,3 +100,4 @@ loop:
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   return Func_02004e64();
 }
+#endif

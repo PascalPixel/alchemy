@@ -364,9 +364,6 @@ Func_0803c198:
 	.thumb_func
 Func_0803c274:
 	.incbin "baserom.gba", 0x0003c274, 0x00000104
-	.section .rom.0003c40c, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0003c40c, 0x0000013c
 	.section .rom.0003c548, "ax"
 	.global WindowSprite_UpdateAll
 	.type WindowSprite_UpdateAll, %function
@@ -1303,7 +1300,7 @@ Func_080e3d04:
 Func_080e4244:
 	.incbin "baserom.gba", 0x000e4238, 0x00000090
 	.section .rom.000e4460, "ax"
-	.incbin "baserom.gba", 0x000e4460, 0x00000134
+	.incbin "baserom.gba", 0x000e4460, 0x000000a4
 	.section .rom.000e4724, "ax"
 	.balign 4
 	.global Func_080e4730

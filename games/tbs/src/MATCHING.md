@@ -134,6 +134,13 @@ written. A device may be replaced only by milder ones, as many as it takes.
   cancel out and anything else that emits or reorders instructions stay
   devices.
 
+  A 0 or `NULL` default is not a device either. Game code of the period
+  often gives a local a 0 or `NULL` before the code sets it for real, as
+  `BattleDjinnMenu_Run` sets `k` to 0 before its loop sets it again. The
+  compiler drops the first store, but it still changes which registers the
+  function gets. Such a default carries a short note; an unread store of any
+  other value stays a device.
+
 A device is the last resort, used only after reshaping the code has failed.
 Taking one out again is part of humanizing, the project's second stage after
 matching, which renames, types and explains the matched C until it reads

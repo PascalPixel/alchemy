@@ -77,7 +77,6 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   s32 djinnIndex;
   s32 i;
   s32 j;
-  struct CursorSprite *sprite;
 
   work = WINDOW_WORK;
   previewWindow = 0;
@@ -140,11 +139,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   djinnEntries[djinnCount] = DJINN_ENTRY_END;
   work->dirty = 1;
 
-  /* FAKEMATCH(dead): sprite set before the loop, which sets it again,
-   * keeps the native allocation; without it, 197 of 1201 instructions differ
-   * in tbs-en. */
-  sprite = &cursorStorage;
   for (;;) {
+    struct CursorSprite *sprite = &cursorStorage;
+
     // Rebuild descriptions only when the selection or preview page changes:
     // the message ("Cannot use the same Djinni twice.", "Ready to summon."
     // for a ready standby Djinni, the Djinni's effect otherwise, or "You have
@@ -509,10 +506,6 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       cursorPos.x = cx - 2;
     }
     cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;
-    /* FAKEMATCH(dead): sprite set again to the cursor it already points
-     * at keeps the native reload; without it, 18 of 1201 instructions differ
-     * in tbs-en. */
-    sprite = &cursorStorage;
     ((u32 *)sprite)[1] = MENU_SPRITE_SHAPE_16X16;
     ((u32 *)sprite)[2] = 0;
     sprite->tile = VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);

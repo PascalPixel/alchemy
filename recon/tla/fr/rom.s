@@ -1570,11 +1570,6 @@ Func_0810b5c4:
 	.thumb_func
 Func_0810b7b4:
 	.incbin "baserom.gba", 0x0010b7b8, 0x000004ec
-	.section .rom.0010bca4, "ax"
-	.global Func_0810bca0
-	.thumb_func
-Func_0810bca0:
-	.incbin "baserom.gba", 0x0010bca4, 0x00000110
 	.section .rom.0010bdf8, "ax"
 	.global Func_0810bdf4
 	.type Func_0810bdf4, %function

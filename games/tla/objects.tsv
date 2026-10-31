@@ -1276,8 +1276,7 @@ main	rom_main_03	games/tla/src/game/character/initialize_characters	.text
 main	rom_main_03	games/tla/src/game/character/level_hook	.text
 main	rom_main_03	games/tla/src/game/character/level_up	.text
 main	rom_main_03	games/tla/src/game/advance_owner_count_to_target	.text
-main	rom_main_03	games/tla/src/game/f0afbec	.text	en de es fr it
-main	rom_main_03	recon/tla/ja/rom	.rom.000aabe8	ja
+main	rom_main_03	games/tla/src/game/f0afbec	.text
 main	rom_main_03	games/tla/src/game/party/count_active_owners	.text
 main	rom_main_03	games/tla/src/game/party/list_active_owners	.text
 main	rom_main_03	games/tla/src/game/party/counters	.text
@@ -1616,8 +1615,7 @@ main	rom_main_05	games/tla/src/field/event_commands/clear_packed_events	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d260c	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000d760c	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000db60c	es
-main	rom_main_05	recon/tla/de/rom	.rom.000df60c	de
-main	rom_main_05	games/tla/src/field/event_commands/f0d260c	.text	en ja
+main	rom_main_05	games/tla/src/field/event_commands/f0d260c	.text	ja en de
 main	rom_main_05	games/tla/src/field/event_commands/try_add_and_return_owner	.text
 main	rom_main_05	games/tla/src/field/event_commands/invent	.text
 main	rom_main_05	games/tla/src/field/event_commands/confirm	.text
@@ -2742,8 +2740,7 @@ main	rom_main_06	recon/tla/de/rom	.rom.00107898	de
 main	rom_main_06	recon/tla/raw/080fd6f0	.text	en
 main	rom_main_06	recon/tla/ja/rom	.rom.000fd724	ja
 main	rom_main_06	games/tla/src/menu/item/f0fd80c	.text
-main	rom_main_06	games/tla/src/menu/item/f0fd8a0	.text	en de es fr it
-main	rom_main_06	recon/tla/ja/rom	.rom.000fd8d4	ja
+main	rom_main_06	games/tla/src/menu/item/f0fd8a0	.text
 main	rom_main_06	games/tla/src/menu/item/f0fd968	.text
 main	rom_main_06	recon/tla/ja/rom	.rom.000fdb08	ja
 main	rom_main_06	recon/tla/it/rom	.rom.000fdbd0	it
@@ -2945,8 +2942,7 @@ main	rom_main_07	recon/tla/raw/0810928c	.text	en
 main	rom_main_07	recon/tla/raw/081093a4	.text	en
 main	rom_main_07	recon/tla/ja/rom	.rom.0010928a	ja
 main	rom_main_07	games/tla/src/shop/buynum	.text
-main	rom_main_07	games/tla/src/shop/f1096f8	.text	en de es fr it
-main	rom_main_07	recon/tla/ja/rom	.rom.001096f8	ja
+main	rom_main_07	games/tla/src/shop/f1096f8	.text
 main	rom_main_07	games/tla/src/shop/buy	.text
 main	rom_main_07	games/tla/src/shop/sell_price	.text
 main	rom_main_07	recon/tla/it/rom	.rom.00109ad8	it
@@ -3019,16 +3015,14 @@ main	rom_main_07	games/tla/src/shop/fwd6bc	.text
 main	rom_main_07	games/tla/src/shop/f10b6cc	.text
 main	rom_main_07	games/tla/src/shop/fwd79c	.text
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b7b8	fr
-main	rom_main_07	recon/tla/fr/rom	.rom.0010bca4	fr
 main	rom_main_07	recon/tla/es/rom	.rom.0010f7b8	es
-main	rom_main_07	recon/tla/es/rom	.rom.0010fcb4	es
 main	rom_main_07	recon/tla/raw/0810b7b4	.text	en
 main	rom_main_07	recon/tla/raw/0810b9c0	.text	en
 main	rom_main_07	recon/tla/de/rom	.rom.001137b8	de
 main	rom_main_07	recon/tla/it/rom	.rom.0010b798	it
-main	rom_main_07	games/tla/src/shop/f10bca0	.text	en de it
+main	rom_main_07	games/tla/src/shop/f10bca0	.text	en de es fr it
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b7c4	ja
-main	rom_main_07	recon/tla/ja/rom	.rom.0010bcb4	ja
+main	rom_main_07	games/tla/src/shop/f10bca0	.text	ja
 main	rom_main_07	games/tla/src/shop/item_icon	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010bde8	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010bdf8	fr
@@ -3403,8 +3397,8 @@ main	rom_main_08	games/tla/src/battle/f127588	.text
 main	rom_main_08	games/tla/src/battle/formation_select_level_matched_candidate	.text
 main	rom_main_08	games/tla/src/battle/f12786c	.text
 main	rom_main_08	games/tla/src/battle/raise_base_stats	.text
-main	rom_main_08	games/tla/src/battle/f127adc	.text	en de es fr it
-main	rom_main_08	recon/tla/ja/rom	.rom.00127ad8	ja
+main	rom_main_08	games/tla/src/battle/f127adc	.text
+main	rom_main_08	recon/tla/ja/rom	.rom.00127b9a	ja
 main	rom_main_08	games/tla/src/battle/summon/charge	.text
 main	rom_main_08	games/tla/src/battle/formation_select_random_available_member	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00127cec	it

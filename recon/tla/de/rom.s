@@ -794,12 +794,6 @@ Func_080d1840:
 	.thumb_func
 Func_080d1f20:
 	.incbin "baserom.gba", 0x000def20, 0x00000164
-	.section .rom.000df60c, "ax"
-	.global PartyInventory_GiveItem
-	.type PartyInventory_GiveItem, %function
-	.thumb_func
-PartyInventory_GiveItem:
-	.incbin "baserom.gba", 0x000df60c, 0x000001e0
 	.section .rom.000e0376, "ax"
 	.incbin "baserom.gba", 0x000e0376, 0x00000002
 	.section .rom.000e0378, "ax"

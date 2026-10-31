@@ -1,6 +1,18 @@
 #include "types.h"
 #include "battle_unit.h"
 #include "iwram_call.h"
+#include "edition.h"
+
+// A unit whose suffix is below SUFFIX_COUNT gets one more character after its
+// name, SUFFIX_BASE plus the suffix: the digits 1 to 9 outside Japan, and the
+// codes 65 to 90 in the Japanese release (Func_08128228 reads it back).
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define SUFFIX_BASE 65
+#define SUFFIX_COUNT 26
+#else
+#define SUFFIX_BASE '1'
+#define SUFFIX_COUNT 9
+#endif
 
 struct EnemyRecord {
   u8 unk00[15];
@@ -73,8 +85,8 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   Message_DecodeRawFar(index + (s32)MsgEnemyName, name, 15);
   for (i = 0; i < 14 && name[i] != 0; i++)
     unit->name[i] = name[i];
-  if (suffix <= 8) {
-    unit->name[i] = '1' + suffix;
+  if (suffix <= SUFFIX_COUNT - 1) {
+    unit->name[i] = SUFFIX_BASE + suffix;
     i++;
   }
   unit->name[i] = 0;

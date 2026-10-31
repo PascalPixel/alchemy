@@ -19,13 +19,20 @@
 
 // The quantity window: outside the English edition the count sits further left
 // and the price and coins label move with their words; the Spanish, French and
-// Italian windows are wider.
+// Italian windows are wider; Japanese draws the counter コ after the count.
 #if LANGUAGE == LANGUAGE_ENGLISH
 #define QUANTITY_WINDOW_X 7
 #define QUANTITY_WINDOW_WIDTH 23
 #define QUANTITY_COUNT_X 72
 #define QUANTITY_PRICE_X 88
 #define QUANTITY_COINS_X 136
+#elif LANGUAGE == LANGUAGE_JAPANESE
+#define QUANTITY_WINDOW_X 7
+#define QUANTITY_WINDOW_WIDTH 23
+#define QUANTITY_COUNT_X 64
+#define QUANTITY_PIECE_X 80
+#define QUANTITY_PRICE_X 96
+#define QUANTITY_COINS_X 144
 #elif LANGUAGE == LANGUAGE_GERMAN
 #define QUANTITY_WINDOW_X 7
 #define QUANTITY_WINDOW_WIDTH 23
@@ -79,8 +86,7 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
   maximum -= minimum;
   result = -1;
   count = 0;
-  window =
-      Window_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3, 2);
+  window = Window_CreateFar(QUANTITY_WINDOW_X, 4, QUANTITY_WINDOW_WIDTH, 3, 2);
   if (window != 0) {
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
@@ -126,10 +132,16 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
           VramCache_Load(slot, 0x100, buffer);
           result = selected;
           Text_DrawNumberInWindowFar(result, 2, window, QUANTITY_COUNT_X, 0);
+#if LANGUAGE == LANGUAGE_JAPANESE
+          // MsgPiece, the counter after the count, written as the message after
+          // MsgCoins: the coins label below then shares its literal-pool word.
+          Text_DrawCharacterAtOffsetFar((s32)MsgCoins + 1, window,
+                                        QUANTITY_PIECE_X, 0);
+#endif
           Text_DrawNumberInWindowFar(price * result, 6, window,
-                                       QUANTITY_PRICE_X, 0);
-          Text_DrawCharacterAtOffsetFar((s32)MsgCoins, window,
-                                          QUANTITY_COINS_X, 0);
+                                     QUANTITY_PRICE_X, 0);
+          Text_DrawCharacterAtOffsetFar((s32)MsgCoins, window, QUANTITY_COINS_X,
+                                        0);
         }
         wait(1);
       }

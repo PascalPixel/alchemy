@@ -1,5 +1,28 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+// The note sits under the item's name; the price line reads "Price", the
+// price, then "Coins". Japanese indents the note by 8 pixels; Japanese and
+// French draw the price and the coins label 8 pixels further left, Spanish
+// the coins label 8 pixels further right.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define SHOP_PRICE_NOTE_X 8
+#else
+#define SHOP_PRICE_NOTE_X 0
+#endif
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_FRENCH
+#define SHOP_PRICE_NUMBER_X 32
+#else
+#define SHOP_PRICE_NUMBER_X 40
+#endif
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_FRENCH
+#define SHOP_PRICE_COINS_X 72
+#elif LANGUAGE == LANGUAGE_SPANISH
+#define SHOP_PRICE_COINS_X 88
+#else
+#define SHOP_PRICE_COINS_X 80
+#endif
 
 struct ShopRuntime {
   u8 unk000[0x50b];
@@ -20,7 +43,7 @@ struct ShopUnit *Unit_Get(s32 unitId);
 void WindowSprite_RedrawSavedRectFar(void *window);
 void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
-                                  s32 y);
+                                s32 y);
 s32 Func_080ad268(s32 unitId, s32 slot);
 s32 Func_080ad270(s32 unitId, s32 slot);
 s32 Shop_GetSellPrice(s32 item);
@@ -49,15 +72,17 @@ void Func_0810bca0(void *window, s32 unitId, s32 slot) {
   else
     flags = Func_080ad270(unitId, slot);
   if (flags & 2) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, 0, 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgCannotDrop, window, SHOP_PRICE_NOTE_X,
+                                  8);
   } else if (flags & 1) {
-    Text_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window, 0, 8);
+    Text_DrawCharacterAtOffsetFar((s32)MsgCannotRemove, window,
+                                  SHOP_PRICE_NOTE_X, 8);
   } else if (shop->dropMode == 0) {
     price = Shop_GetSellPrice(unit->inventory[slot]) * quantity;
     message = (s32)MsgPriceHeading;
     Text_DrawCharacterAtOffsetFar(message, window, 8, 8);
-    Text_DrawNumberInWindowFar(price, 5, window, 40, 8);
+    Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
     // Five messages before the price heading: MsgCoins.
-    Text_DrawCharacterAtOffsetFar(message - 5, window, 80, 8);
+    Text_DrawCharacterAtOffsetFar(message - 5, window, SHOP_PRICE_COINS_X, 8);
   }
 }

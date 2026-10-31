@@ -640,13 +640,6 @@ Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000a9c64, 0x0000003c
 	.section .rom.000aa0de, "ax"
 	.incbin "baserom.gba", 0x000aa0de, 0x00000002
-	.section .rom.000aabe8, "ax"
-	.balign 4
-	.global Func_080afbec
-	.type Func_080afbec, %function
-	.thumb_func
-Func_080afbec:
-	.incbin "baserom.gba", 0x000aabe8, 0x000001d0
 	.section .rom.000ab080, "ax"
 	.global Unit_CalculateBaseElements
 	.type Unit_CalculateBaseElements, %function
@@ -1431,11 +1424,6 @@ Func_080fd2e8:
 	.thumb_func
 Func_080fd6f0:
 	.incbin "baserom.gba", 0x000fd724, 0x0000011c
-	.section .rom.000fd8d4, "ax"
-	.global Func_080fd8a0
-	.thumb_func
-Func_080fd8a0:
-	.incbin "baserom.gba", 0x000fd8d4, 0x000000c8
 	.section .rom.000fdb08, "ax"
 	.global Func_080fdad4
 	.type Func_080fdad4, %function
@@ -1559,12 +1547,6 @@ Func_08108b70:
 	.incbin "baserom.gba", 0x00108b70, 0x00000600
 	.section .rom.0010928a, "ax"
 	.incbin "baserom.gba", 0x0010928a, 0x00000326
-	.section .rom.001096f8, "ax"
-	.global Func_081096f8
-	.type Func_081096f8, %function
-	.thumb_func
-Func_081096f8:
-	.incbin "baserom.gba", 0x001096f8, 0x000001d8
 	.section .rom.00109ae8, "ax"
 	.global Func_08109ad8
 	.type Func_08109ad8, %function
@@ -1609,11 +1591,6 @@ Func_0810b5c4:
 	.thumb_func
 Func_0810b7b4:
 	.incbin "baserom.gba", 0x0010b7c4, 0x000004f0
-	.section .rom.0010bcb4, "ax"
-	.global Func_0810bca0
-	.thumb_func
-Func_0810bca0:
-	.incbin "baserom.gba", 0x0010bcb4, 0x00000110
 	.section .rom.0010be08, "ax"
 	.global Func_0810bdf4
 	.type Func_0810bdf4, %function
@@ -1803,12 +1780,8 @@ Func_08126e00:
 	.thumb_func
 Func_08127308:
 	.incbin "baserom.gba", 0x00127304, 0x00000264
-	.section .rom.00127ad8, "ax"
-	.global BattleEnemy_ClaimNameLetter
-	.type BattleEnemy_ClaimNameLetter, %function
-	.thumb_func
-BattleEnemy_ClaimNameLetter:
-	.incbin "baserom.gba", 0x00127ad8, 0x000000c4
+	.section .rom.00127b9a, "ax"
+	.incbin "baserom.gba", 0x00127b9a, 0x00000002
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
 	.section .rom.001284bc, "ax"

@@ -1,3 +1,4 @@
+// Near miss, differ 12 of 973 (tla-en, 2026-10-30): scheduler order only.
 // Draft of BattleEffect_RunGaia, effect kind 3: a wall of rock rises and sinks.
 
 // On screen: the background darkens, the ground in front of the caster
@@ -44,6 +45,17 @@
 // store-then-load scheduling limit); barriers and one-pass blocks at each
 // statement, statement moves and each local scoped to a block gain only
 // the prologue's row or rows of that kind.
+
+// 2026-10-30: differ 12 of 973, the same instructions and registers. All
+// 12 rows are the head of the growing and the sinking wall's i loop (six
+// each): the native issues row * 2 (lsls r1, r5, #1) before the
+// Data_08198632 literal load and its spill (str r1, [sp, #8]) right after
+// movs r2, #224; ours issues both later. The sched2 dump shows why: the
+// spill store is a leaf of priority 1, so the shift has priority 2 against
+// the literal load's 4. The native order follows exactly if that store
+// counted as cost 3, so it is the cost model, not the source.
+// &work->sheet[...], a function-scope row and the permuter (4 minutes)
+// change nothing; *(table + row) spellings and an else-if clamp are worse.
 
 #include "types.h"
 #include "ram_buffer.h"

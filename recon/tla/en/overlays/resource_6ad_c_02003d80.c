@@ -1,6 +1,15 @@
-// Draft, differ 4 of 169: overlay 6ad's copy of the landing burst drafted in
-// resource_698_c_02001674.c, with this overlay's symbols;
-// resource_6ab_c_02003e04.c says what is left.
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): overlay 6ad's copy of the
+// landing burst drafted in resource_698_c_02001674.c, with this overlay's
+// symbols; resource_6ab_c_02003e04.c says what is left: the velocity array's
+// address (add r6, sp, #16) is built once before the loop, where the native
+// builds it after the cosine call. The gcse dump shows PRE hoisting it
+// (PRE/HOIST: edge (0,1)) and the loop dump shows loop then moving the
+// in-loop copy out (insn 170, life 38). Tried 30 October: a loop entered at
+// its bottom test (goto test; body: ...; test: if (i <= 16) goto body;)
+// leaves the address after the cosine call in r6 exactly as the native has
+// it, PRE finding nothing to hoist, but keeps the entry branch (b; differ 13
+// of 170, 25 with i unpinned); as a goto do-while, cse2 replaces the in-loop
+// copy with the hoisted register (differ 4).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

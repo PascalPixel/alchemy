@@ -1,16 +1,8 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 6 of 993: the polar
-// offset's position vector, where the native issues a load one slot later after
-// a store, where alchemy-gcc issues it at once; alchemy permute (5 to 6
-// minutes) and an empty asm or one-pass block after any one statement do not
-// move it.
-// Draft of overlay 66a's Func_02000818, differ 4 of 993: the scene where the
-// item breaks. The only difference is in the polar offset's position vector:
-// the native starts the angle (movs r1, #192) before it loads object 15's z,
-// this draft loads z first (the load is ready one cycle after the y store and
-// outranks the angle, priority 275 to 274). Tried: the z store before y, the
-// linked-object store moved, a struct vector, the address as &position[0], a z
-// local, a "+l" asm on object 15 or z (differ 12), one-pass blocks around the y
-// or z store (differ 6-8), alchemy permute (5 minutes).
+// Matches: differ 0 of 993 (tla-en, 2026-10-30), with no device.
+// Draft of overlay 66a's Func_02000818: the scene where the item breaks. The
+// polar offset's position vector (the angle started before object 15's z is
+// loaded), which differed by 4 to 6 instructions on 26 October, now matches as
+// written, unchanged.
 #include "../../../../games/tla/src/scene/alhafran_cave/local.h"
 #include "call.h"
 extern u8 MsgYouHereTo[];

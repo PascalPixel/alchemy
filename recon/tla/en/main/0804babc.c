@@ -1,14 +1,21 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 110 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Draft, differ 8 of 110: sorts the living party's action slots (one per
-// actionEntryCount) for a turn: a unit that is asleep, or confused, charmed
-// or stunned (the word at delusion masked past its first byte) gets a forced
+// Near miss, differ 2 of 110 (tla-en, 2026-10-30): instruction order only, the
+// stack spill of the id pointer (str r5, [sp]) issued three slots later in the
+// inner loop's setup. In sched2 that store has no dependents (priority 1) and
+// loses to the ready-slot pointer's shift (priority 3); the listing's order
+// needs the store to outrank it, a cost-model difference no source form
+// reaches. No empty asm before any one statement lowers it.
+// Sorts the living party's action slots (one per actionEntryCount) for a
+// turn: a unit that is asleep, confused, charmed or stunned gets a forced
 // action record (command 8, target 384, at its Agility) appended at *cursor;
-// the others list their unit id in ready. Stores the forced count, advances
-// *cursor past the records and returns the ready count. Left: instruction
-// order only, in the inner loop's setup (the stack spill of the id pointer
-// and the copies to r9 and lr). Tried: the record indexed as entries[forced]
-// (differ 126); forced++ inside the address (differ 26).
+// the others list their unit id in ready. GCC folds the confusion, charm and
+// stun tests into one load of the word at delusion masked past its first
+// byte, as the listing reads it. Stores the forced count, advances *cursor
+// past the records and returns the ready count. Tried: the record indexed as
+// entries[forced] (differ 126); forced++ inside the address (differ 26); a
+// pointer to unitIds[i] in the outer loop (differ 103); command stored before
+// priority (differ 6); forced++ before the target (differ 134); the action
+// counter as u8 (differ 128) or u32 (differ 6); forced declared before
+// readyCount (differ 18); entries + forced or a split readyCount++ (differ 2).
 #include "types.h"
 #include "battle_unit.h"
 #include "battle_action.h"
@@ -31,7 +38,8 @@ s32 Func_0804babc(u16 *ready, struct BattleActionRecord **cursor,
     struct BattleUnit *unit = Unit_Get(unitIds[i]);
 
     for (action = 0; action < unit->actionEntryCount; action++) {
-      if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00) != 0) {
+      if (unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||
+          unit->stun != 0) {
         struct BattleActionRecord *entry = &entries[forced];
 
         entry->unitId = unitIds[i];

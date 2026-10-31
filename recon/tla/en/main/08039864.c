@@ -1,19 +1,28 @@
-// Draft, differ 12 of 697 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Near miss, differ 34 of 697: The Broken Seal's English
-// Message_StepScript with ⚓️'s changes: the VBlanks the last frame took clamp
-// at 3, the page and wait codes take their countdown from gData_080aa0df by text speed
-// and clear the pending presses in a window mode, the page arrow is skipped
-// for an empty window, code 176 is a no-op control code, the window effect
-// counts 11 frames, a text-mode channel with spacing[3] set draws at y / 320
-// - 3, and a glyph that draws nothing closes the channel. Both reads of
-// globals the twin reads volatile are volatile here (the held keys' first
-// sample and gLastFrameVBlanks, which ☀️'s frame.h declares volatile; plain,
-// differ 68). Left, all one-slot scheduling: the parameter copy and the
-// keys sample swap, and five times a split constant's first half is issued
-// between a store and the load that follows it (the native fills the
-// store-to-load slot), as in this lane's other near misses.
+// Near miss, differ 12 of 697 (tla-en, 2026-10-30): three one-slot
+// scheduling ties in the page code's window refit, which no source form
+// reaches. The old height's ldrh issues before the page-arrow flag's split
+// constant ends (the native fills the store-to-load slot); the first
+// Window_EraseBorderRect loads height before y (native: x, y, height,
+// width); and before the first Window_FitOnScreen the native computes &x
+// (add r0, sp, #48) ahead of the &y and &newWidth copies. sched2's dumps
+// show each as a priority, dependence-class or dependence-count tie that the
+// native breaks the other way, as in this lane's other near misses.
+// Tried 2026-10-30, none closer: ☀️'s read order (20), height before width
+// (18), x and y swapped (20), the arrow flag cleared after the redraw call
+// (22), newHeight != oldHeight (14), temporaries for the erase's arguments
+// (12 or 134), a spacing pointer (86), unsigned old size and entry index
+// (12), and 4 minutes of the permuter (3652 candidates, none below 12).
+// Earlier: no single empty asm, one-pass block, wrapping block or swap of
+// neighbouring statements brings it closer (device search, 2026-10-26).
+// The Broken Seal's English Message_StepScript with ⚓️'s changes: the
+// VBlanks the last frame took clamp at 3, the page and wait codes take their
+// countdown from gData_080aa0df by text speed and clear the pending presses
+// in a window mode, the page arrow is skipped for an empty window, code 176
+// is a no-op control code, the window effect counts 11 frames, a text-mode
+// channel with spacing[3] set draws at y / 320 - 3, and a glyph that draws
+// nothing closes the channel. Both reads of globals the twin reads volatile
+// are volatile here (the held keys' first sample and gLastFrameVBlanks,
+// which ☀️'s frame.h declares volatile; ⚓️'s frame.h does not), each tagged.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
@@ -66,9 +75,11 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
   s32 glyphWidth;
   s32 glyphAdvance;
 
+  /* FAKEMATCH(volatile): the form kept; as a plain read of gInput.held, 43 of 697 instructions differ in tla-en. */
   (void)keys;
 
   if (work->menuState != 0) {
+    /* FAKEMATCH(volatile): the form kept; as a plain read of gLastFrameVBlanks, 37 of 697 instructions differ in tla-en. */
     frameVBlanks = *(volatile u16 *)&gLastFrameVBlanks;
     if (frameVBlanks < 0)
       frameVBlanks = 0;

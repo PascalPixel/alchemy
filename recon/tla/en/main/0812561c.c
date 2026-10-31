@@ -1,3 +1,18 @@
+// Near miss, differ 8 of 498 (tla-en, 2026-10-30): scheduler order only, in
+// two places. At entry sched2 issues the actor id's ldrb (priority 36) before
+// battleContinues' movs r1, #0 (priority 34), where the native clears first.
+// Before the Djinn recovery loop, loop.c hoists the -2 (r9) ahead of the
+// stack copy of &pending->count (str r7, [sp, #0]), so the draft builds the
+// whole -2 first, where the native stores the copy between movs r0, #2 and
+// negs. Both are priority or tie-break choices no source form reached.
+// Tried 30 October, one edit at a time: battleContinues cleared first (differ
+// 14), unitId as s32 (20) or u8 (8), the three opening statements as
+// initialisers (28), recoveryTurn or the recovery block's locals moved to the
+// other scope (8), for (;;) as while (1) (8), ++recoveryTurn folded into its
+// test (8), recoveryTurn = -1 before the owner test (29), counts zeroed before
+// the table is fetched (95), the owner read after the search loop (113), and
+// four more minutes of permute (2052 candidates, 2032 of them failing to
+// compile; none better).
 // Under -mthumb-slow-loads (26 October 2026): differ 8 of 498 in tla-en.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, each local pinned to each register,
@@ -11,13 +26,9 @@
 // unit that keeps 1 HP (BattleUnit_KeepsOneHp) survives the curse and poison
 // at 1 HP and is spared the Grim Reaper; and the stats are recalculated only
 // while the unit still has its battle object.
-// Near miss, differ 16 of 498 (2026-10-19, first draft). Left: instruction
-// order only: the native clears battleContinues (movs r1, #0) before it
-// loads the actor id; it stores the count's address to the stack after the
-// -2 is built and before the -1; and three times it reloads the unit from
-// the stack (ldr r2, [sp, #8]) before building a field offset (0x12c, 0x131,
-// 0x141), where this draft builds the offset first. Tried: battleContinues
-// cleared first (differ 26).
+// First draft (2026-10-19): differ 16 of 498; the three reloads of the unit
+// it also left (ldr r2, [sp, #8] before a field offset) match since
+// -mthumb-slow-loads.
 #include "types.h"
 #include "battle.h"
 #include "battle_side.h"

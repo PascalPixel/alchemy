@@ -1,6 +1,11 @@
-// Draft, differ 4 of 169: overlay 6b0's copy of the landing burst drafted in
-// resource_698_c_02001674.c, with this overlay's symbols;
-// resource_6ab_c_02003e04.c says what is left.
+// Matches: differ 0 of 169 (tla-en, 2026-10-30), with the pinned i and one
+// dead test (both tagged).
+// Overlay 6b0's copy of the landing burst drafted in resource_698_c_02001674.c,
+// with this overlay's symbols. The last 4 (the velocity array's address, add
+// r6, sp, #16, hoisted out of the loop where the native builds it after the
+// cosine call) went as there: a goto loop, which loop.c leaves alone, and the
+// spawn under a constant test that GCSE folds only after its partial
+// redundancy pass.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -39,9 +44,10 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 void Func_02002f48(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
-   * plain local, 22 of 177 instructions differ in tla-en. */
+   * plain local, 12 of 169 instructions differ in tla-en. */
   register u32 i asm("r10");
   struct EffectOptions options;
+  s32 spawn = 1;
 
   Func_02003398();
   Func_02003488(0);
@@ -63,21 +69,34 @@ void Func_02002f48(void) {
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   i = 0;
-  do {
+  // A goto loop carries no loop notes: as a do, for or while loop, loop.c
+  // moves the velocity array's address out of the loop.
+loop:
+  {
     s32 angle;
     s32 velocity[3];
+    s32 cosine;
 
     angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
-    velocity[1] = 0;
-    velocity[2] = Math_Sine(angle);
-    velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-    Func_02002780(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                  velocity[2], 0x1090001, &options);
+    cosine = Math_Cosine(angle);
+    /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
+     * partial redundancy pass, so that pass leaves the velocity array's
+     * address in the loop, built after the cosine call as the native has it;
+     * as the plain body, 4 of 169 instructions differ in tla-en. */
+    if (spawn) {
+      velocity[0] = cosine;
+      velocity[1] = 0;
+      velocity[2] = Math_Sine(angle);
+      velocity[0] += velocity[0] >> 1;
+      velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
+      velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
+      Func_02002780(actor->x, actor->y, actor->z, velocity[0], velocity[1],
+                    velocity[2], 0x1090001, &options);
+    }
     i++;
-  } while (i <= 16);
+  }
+  if (i <= 16)
+    goto loop;
   Func_020034b8(188);
   Func_02003410(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);

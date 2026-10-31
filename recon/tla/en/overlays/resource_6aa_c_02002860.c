@@ -1,13 +1,12 @@
+// Matches: differ 0 of 138 (tla-en, 2026-10-30).
 // Draft of overlay 6aa's Func_02002860, rewritten from its listing as C over
-// the ride's state (the four Mars Lighthouse overlays keep one copy each):
-// differ 4 of 138 in tla-en. Left: the native loads the leader's z before the
-// car's z step, and sets r0 for the last Animation_ApplyChildValues before it
-// clears the update hook (one row each). The -10 call is declared returning
-// s32, which it does not, so its arguments are set in the native's order
-// (declared void: 6). Ride_CarSteps reloads the car for the second step test
-// into r3 as the native does (as ride->car: 10).
+// the ride's state (the four Mars Lighthouse overlays keep one copy each).
+// The flag calls go through the scene layer's Flag_Set and Flag_Clear (as
+// direct GameFlag calls: 37). Three tagged devices hold the match: the function
+// typed int, the -10 call declared returning s32 and Ride_CarSteps; each tag
+// gives its plain form's count. frame is never read but gives the native's
+// 12-byte frame (without it: 10). Permute 4 minutes found the int return type.
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
-#include "call.h"
 
 s32 Func_020024c0(s32 a, s32 b);
 void Func_02004d10(s32 a, s32 b);
@@ -55,30 +54,37 @@ static __inline__ u8 *Ride_CarSteps(u8 *slot) {
   return ((struct Actor *)*(s32 *)slot)->unk70;
 }
 
-void Func_02002860(void) {
+int Func_02002860(void) {
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
   s32 frame[3];
 
+  /* FAKEMATCH(signature): typed as returning int, though it returns nothing;
+   * the return register then waits on the leader's copy into r0, which the
+   * scheduler issues before the update hook is cleared; as void, 2 of 138
+   * instructions differ in tla-en. */
   if (event->started == 0) {
     Func_02004d50(event->field1ac, event->field1b4);
     event->started = 1;
   }
-  Call1((void (*)())GameFlag_ClearBit, 0x106);
+  Flag_Clear(0x106);
   event->field166 = 0;
   event->field15a = 0;
   event->field15e = 0;
   event->field15c = 0;
   event->field164 = 0;
+  /* FAKEMATCH(signature): Func_020024c0 declared returning s32, though it
+   * returns nothing, so the -10 call sets r1 before negating r0; as void, 2 of
+   * 138 instructions differ in tla-en. */
   Func_020024c0(-10, 0);
   Func_02004d10(0x70000, 0xe000);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
-  Call1((void (*)())GameFlag_SetBit, 0x106);
+  Flag_Set(0x106);
   Func_02004ca8();
   Func_02004da0(0);
-  Call1((void (*)())GameFlag_ClearBit, 0x106);
+  Flag_Clear(0x106);
   leader->update = Func_02002614;
   leader->angle = 0x4000;
   Func_02004bc0(leader, 49);
@@ -95,6 +101,10 @@ step:
     } else {
       if (car->stepX != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
+      /* FAKEMATCH(wrapper): the car's z step read through Ride_CarSteps, which
+       * reloads the car into r3 for this test; as
+       * ((struct RideCar *)ride->car)->stepZ, 6 of 138 instructions differ in
+       * tla-en. */
       if (((s32 *)Ride_CarSteps((u8 *)ride + 0x6c))[2] != 0)
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }

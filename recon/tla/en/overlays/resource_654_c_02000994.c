@@ -1,13 +1,18 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 8 of 360: the frame's sub
-// sp and its store at the start, and the native issues a load one slot later
-// after a store, where alchemy-gcc issues it at once; alchemy permute (5 to 6
-// minutes) and an empty asm or one-pass block after any one statement do not
-// move it.
-// Draft, differ 8 of 360: the Shrine of the Sea God's descent: the map's
-// three layers and the party move down while the blend steps from 0x80c to
-// 0x1000 and Func_0200094c draws the steps. Left: the stack frame's sub sp and
-// the third layer's spill one load later than the native, and the
-// leader's id loaded after the 1 of its SetActionVariant call.
+// Near miss, differ 4 of 360 (tla-en, 2026-10-30): only the opening's order
+// is left: sched2 issues the pool load of gMainRoutineWork (r5) right after
+// `movs r2, #188`, where the native issues it after the third layer's
+// `adds r2, r3, r2`, and the 133 of the 0x214 offset before the third layer's
+// spill to [sp, #12], where the native issues it after. The sched2 dump shows
+// why: the native order needs the spill store's link to the leader-id load
+// `ldr r0, [r5]` to cost 3, as a pool load's link to its use does, where
+// -mthumb-slow-loads costs it 2; with the same instructions no source form
+// changes those costs, and no barrier can sit between the spill and its add.
+// Permute (4 minutes, 6068 candidates) found nothing better.
+// 26 October 2026: alchemy permute (5 to 6 minutes) and an empty asm or
+// one-pass block after any one statement do not move it.
+// The Shrine of the Sea God's descent: the map's three layers and the party
+// move down while the blend steps from 0x80c to 0x1000 and Func_0200094c draws
+// the steps.
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "io_reg.h"
 #include "io_write.h"

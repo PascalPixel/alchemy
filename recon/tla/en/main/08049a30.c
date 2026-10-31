@@ -1,4 +1,5 @@
-// Draft, differ 20 of 790 (545 before, 2026-10-26): the battle item menu, The
+// Near miss, differ 18 of 790 (tla-en, 2026-10-30): scheduler order only.
+// Earlier: 545, then 20 (2026-10-26). The battle item menu, The
 // Broken Seal's BattleItemMenu_Run (games/tbs/src/window/screens/battle_item_menu.c)
 // on this game's work, messages and tiles; the frame tees are copied with
 // Func_08049a04 (The Broken Seal's Vram_CopyTile). Written again from the
@@ -8,10 +9,20 @@
 // once-only blocks as the twin's macros are, pageTile (58). The cursor pointer
 // set once more in the item branch is a dead store that orders the spill
 // slots of the sprite and cursor addresses as the native stack frame does (58 to
-// 20); it would be tagged FAKEMATCH(dead). Left, instruction order only: the
-// native stores the three parameters before it builds the heap base, issues
-// two pool loads later, and a few stores one slot later. No single device or
-// pair, no declaration order and 15 minutes of permute move them.
+// 20); it would be tagged FAKEMATCH(dead). Left, the same instructions in
+// another order within six blocks (the parameter stores now match): the
+// native issues the 0xfffffe00 and 0xfffffc00 mask loads after the sprite and
+// icon-slot addresses are built and spilled; in the first loop the attr23
+// zero before the row offset; in the second the -1 before the slot pointer's
+// spill copy; before the page redraw loop it loads the icon-slot base before
+// the sprite base and copies the latter into sl last. The sched2 dumps show
+// equal priorities broken by RTL order or dependence class, which no source
+// form reached: no single device or pair, no declaration order, 15 minutes and
+// then 4 more of permute (2026-10-30, no candidate beat 18). Tried 2026-10-30
+// without gain: the row offset inlined (539) or set inside the once-only block
+// (52), the initializer as plain stores (28) or through iconSprite (56, 66),
+// the icon tile through iconSprite (335) or a temporary (255), the slot
+// allocation as the reload call's argument or a named temporary (18).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

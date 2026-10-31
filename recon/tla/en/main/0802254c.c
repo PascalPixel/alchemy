@@ -1,17 +1,18 @@
-// Draft, differ 8 of 279 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Near miss, differ 12 of 279 (four reordered pairs, no register or frame
-// difference): ☀️'s Render_PlaceProjectedSprite (games/tbs/src/field/field.c)
-// on The Lost Age's sprite: the image's attributes written as one word, a
-// zero scale leaving the image unplaced, and the off-screen release held in
-// battle. Left: the native stores point's and flip's spill slots one row
-// earlier, builds affine 3 before the doubled halves, reloads affine before
-// movs r3, #4 and builds -63 before the affineIndex byte's load. Measured:
-// halfWidth taken through matrix (as u32) gives the native's allocation
-// (differ 115 with its own temporary, 38 with a signed one); affine declared
-// before the offsets gives the native's spill slots (26 after); matrix's
-// shift in two statements (32 in one).
+// Near miss, differ 2 of 279 (tla-en, 2026-10-30): one reordered pair, no
+// register or frame difference. ☀️'s Render_PlaceProjectedSprite
+// (games/tbs/src/field/field.c) on The Lost Age's sprite: the image's
+// attributes written as one word, a zero scale leaving the image unplaced,
+// and the off-screen release held in battle. Left: the native stores flip's
+// spill slot right after z >> 10, before the + 1; the draft adds first.
+// sched2 ranks the + 1 (priority 70) above the store (69, through its
+// memory dependence on scale[0]'s load), so the order is the scheduler's
+// cost model; splitting the rounding into statements (differ 8) or moving
+// the call (31) does not reach it.
+// Measured: affine = 3 set before the doubled halves, with the width read
+// plainly, gives the native's reload registers and order there (the earlier
+// form, the width passed through matrix with affine set last, left 6);
+// affine declared before the offsets gives the native's spill slots (26
+// after); matrix's shift in two statements (32 in one).
 #include "types.h"
 #include "sprite.h"
 #include "ram_buffer.h"
@@ -79,13 +80,11 @@ void Func_0802254c(struct LayeredSprite *sprite, s32 *point, s32 *scale,
         scaleY = 0x1f800;
       halfHeight = sprite->height >> 1;
       offsetY = Iwram_MulQ16(sprite->offsetY - halfHeight, scaleY);
-      /* FAKEMATCH: the width passes through matrix, which gives the native's
-       * allocation (differ 115 with a temporary of its own). */
-      halfWidth = (matrix = sprite->width) >> 1;
+      halfWidth = sprite->width >> 1;
       if (scaleX > 0x10000 || scaleY > 0x10000) {
+        affine = 3;
         halfWidth <<= 1;
         halfHeight <<= 1;
-        affine = 3;
       } else {
         affine = 1;
         if (scaleX == 0x10000 && sprite->rotation == 0 && scaleY == scaleX)

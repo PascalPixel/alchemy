@@ -1,6 +1,16 @@
-// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 69c's copy of the function drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
-// header says what it is, what still differs and what was tried.
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16), built once before the loop where the native
+// builds it after the cosine call in every pass. Overlay 69c's copy of the
+// function drafted in resource_698_c_02001674.c (overlay 698's Func_02001674,
+// differ 4 there too), whose header says what it is and what was tried.
+// The RTL dumps (30 October) show two passes hoisting it: gcse's PRE inserts
+// sfp - 52 on the loop's entry edge and leaves a copy at the first use, then
+// loop.c moves that copy out too (savings 1, life 38 of 56 insns). As a goto
+// loop, loop.c leaves the copy, but cse2 rewrites the loop's uses to the
+// hoisted register and flow deletes the copy (still 4). The array inside a
+// static inline helper called from the loop is also 4. The native shape would
+// need the hoisted register left unallocated and rematerialised at the copy,
+// which no source form reached.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

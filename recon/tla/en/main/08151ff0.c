@@ -1,12 +1,22 @@
+// Near miss, differ 6 of 464 (tla-en, 2026-10-30): two sched2 ties, no
+// source form found. The mode argument's store (str r1, [sp, #40]) now lands
+// where the native's does. Left: before the frame loop the native stores the
+// doubled variant offset (str r3, [sp, #12]) before it copies the zero to r9,
+// here after the add that follows; and in mode 1's cue call the native stores
+// the stacked argument, then sets r2, r3 and r1, here r2 before the store and
+// r1 before r3. The sched2 dump explains both: the actor's ldrsh and the
+// stacked argument's store keep an anti-dependence (a struct load through a
+// reloaded register is never told apart from an sp store), which ranks r2=5
+// first; without it the native order follows. The spill store reaches its
+// native slot only if the row's ldrb after it waited 3 cycles for it (1 here).
+// Tried (2026-10-30): the cue test as i + 6 == frame (8), the actor in a
+// temporary (6), variant u32 (6), !mode (6), the actor parameter s16 (6),
+// frame + 48 == the length (47); alchemy permute 4 minutes (nothing below 6).
+
 // Under -mthumb-slow-loads (2026-10-26): differ 8 of 464. The BLDALPHA
 // store is plain again (its pinned halfword and one-pass block matched no
-// better). Left, three places: the native stores the mode argument
-// (str r1, [sp, #40]) before it starts the RAM base, here after; an empty
-// one-pass block or asm before the heap reads stores it first but moves the
-// effect's copy to sl up as well (8 either way); before the frame loop the
-// native stores a doubled frame offset (str r3, [sp, #12]) before it copies
-// the zero to r9; and for the cue call it sets r2 and r1 after the stacked
-// argument's store, here before it.
+// better). An empty one-pass block or asm before the heap reads moved the
+// mode argument's store but also the effect's copy to sl (8 either way).
 
 // Near miss of Func_08151ff0, the body of effect kinds 14 (mode 0, through
 // BattleEffect_RunBlast) and 380 (mode 1, through BattleEffect_RunSmokeBomb).

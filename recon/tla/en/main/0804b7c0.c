@@ -1,8 +1,13 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 82 in tla-en, instruction
-// order only. The native sets Window_Create's second argument before its
-// fourth; no single empty asm and 1 minute of permute lower it.
-// Near miss: listing 82 instructions, draft 82, common 77, differ 10; the rest
-// differs in instruction order.
+// Near miss, differ 2 of 82 (tla-en, 2026-10-30): scheduler order only. After
+// storing the fifth argument (42) through r3, the native sets Window_Create's
+// fourth argument (r3 = 4) before its second (r1 = 7). In sched2 here, r3 = 4
+// is anti-dependent on that store, which arm_adjust_cost prices at 0, so it
+// ranks below the independent r1 = 7; were that dependence 1, its four
+// dependents would put it first and give the native's r3, r1, r2, r0. No
+// source form reaches it: The Broken Seal's if form (kept here), u8/u16,
+// unprototyped and variadic Window_Create prototypes, a single empty asm and
+// 1 + 4 minutes of permute all leave differ 2; an empty asm cannot sit
+// between a call's stack store and its register loads.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -49,11 +54,8 @@ s32 Message_ShowLocalizedAndWait(void) {
     if (*(s8 *)((u8 *)state + 0x43) != 0) {
       result = 1;
     }
-    if (result != 0) {
-      goto active;
-    }
-  } else {
-  active:
+  }
+  if (result != 0) {
     work = Window_Create(0, 7, 30, 4, 42);
     Vram_FillWindowBlockPattern();
     Message_CopyExpanded((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);

@@ -1,5 +1,6 @@
+// Near miss, differ 8 of 418 (tla-en, 2026-10-30): scheduler order only.
 // Draft of Func_0803fd28, the option screen's window (Menu_OpenWorkspaceOptions
-// here): differ 8 of 418 (tla-en, 2026-10-26; 38 before). Its ☀️ twin is
+// here; 38 before the union). Its ☀️ twin is
 // games/tbs/src/window/window/settings_menu.c's OptionMenu_Open: the labels, the
 // slider tiles and palette, the two markers, the cursor and the setting frames.
 // The Lost Age's window is a column narrower (27), takes the cursor's tiles
@@ -12,6 +13,17 @@
 // Left: instruction order only. Each marker's output store comes before the
 // copy of the window pointer the next read needs in the native, after it here;
 // in the slider block the palette byte's load is a row earlier here.
+//
+// Why (sched2 dump, 2026-10-30): a store through the union has alias set 0,
+// so it output-depends on the marker's palette256 byte store just before it;
+// ranked against the independent window copy at equal priority, the copy wins
+// the scheduler's last-insn class. A typed store instead (the markers as a
+// plain struct: 28; a word store: 36) no longer conflicts with the window's
+// halfword reads and sinks below them, and reading the window through a union
+// view does not give its read alias set 0 (28). In the slider block
+// the native waits a cycle after the index store before the palette load;
+// -mthumb-slow-loads exempts that load as a read-modify-write, so it issues
+// at once here. A four-minute permuter run found nothing better.
 
 #include "resource.h"
 #include "types.h"

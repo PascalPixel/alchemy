@@ -1,21 +1,19 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 75; left: the Iwram_MulQ16
-// address loads before the cosine call; a barrier after that call fixes it but
-// then the angle step reads the angle before the speed.
-// Near miss, differ 2 of 75 (was 67): the native loads the multiply
-// routine's address (ldr r6) after the cosine call, beside the radius; this
-// draft loads it before the call, in the free cycle after the angle is
-// read. Measured: a volatile barrier after the cosine call keeps the load
-// below the call but then the angle is read before the speed (differ 2 at
-// another place); reading the speed into a local first changes the load
-// (ldrsh, or r0 for the pointer); an in-out asm on the cosine result does
-// not hold the load. An empty asm between the cosine call (into its own
-// local) and the first multiply holds the load (differ 2: the angle is then
-// read before the speed); the angle sum written six ways, five minutes of
-// alchemy permute on that form, no better. Its copy group is led by 664's
-// Func_02003f94 in another lane.
-// Measured against its copies: overlay 67C's Func_0200147c (differ 2 of 75).
+// Matches: differ 0 of 75 (tla-en, 2026-10-30); differ 0 in tla-ja, tla-de,
+// tla-es, tla-fr and tla-it as well.
+// The multiply is called by IwramMulQ16's own linked name (0x0300021c in the
+// map), declared long_call: its address is then a literal-pool load of a
+// symbol, a memory read the scheduler keeps after the cosine call, as the
+// native does. Through iwram_call.h's Iwram_MulQ16 (a cast constant address)
+// the same load has no dependence on the call and rose into the load stall
+// before it (differ 2 of 75, ldr r6 one call early). Under that form an empty
+// asm after the cosine call or after the radius read, a one-pass block, a
+// cosine local, a volatile barrier and five minutes of alchemy permute only
+// moved the difference (the angle read before the speed, or the speed
+// pointer copied a slot early): a barrier cuts the later dependents that
+// order those loads.
+// Its copy group is led by 664's Func_02003f94 in another lane; this form
+// also gives differ 0 against 664's Func_02003f94 and 67C's Func_0200147c.
 #include "types.h"
-#include "iwram_call.h"
 #include "frame.h"
 
 struct GaiaRockInsideOrbit {
@@ -36,6 +34,7 @@ struct GaiaRockInsideOrbit {
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
+s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 
 // Moves around in a circle.
 s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
@@ -45,8 +44,8 @@ s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
   s32 z;
 
   *angle += *speed;
-  object->x = Iwram_MulQ16(Math_Cosine(*angle), object->radius);
-  z = Iwram_MulQ16(Math_Sine(*angle), object->radius);
+  object->x = IwramMulQ16(Math_Cosine(*angle), object->radius);
+  z = IwramMulQ16(Math_Sine(*angle), object->radius);
   object->x += object->centreX;
   growth = (u8 *)angle - 1;
   object->z = (z >> 1) + object->centreZ;

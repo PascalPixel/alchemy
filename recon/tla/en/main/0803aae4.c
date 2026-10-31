@@ -1,7 +1,16 @@
-// Draft, differ 2 of 126 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
+// Near miss, differ 2 of 126 (tla-en, 2026-10-30): one swap in the NULL
+// branch. The native issues text = work->entries (adds r5, r6, r2) between
+// the entry store and the count reread; here the reread comes first. sched2
+// ranks the reread above the add (priority 6 to 5), and under
+// -mthumb-slow-loads a load that a later store in its block writes back
+// (count's read-modify-write) waits one cycle after the entry store, not two,
+// so it is ready first: the cost model's order, which no source form reaches.
+// Storing the entry before text = work->entries with an empty asm after them
+// gives the native order, but the count address's constant then takes r2 for
+// r3 (differ 8); a 4-minute permuter run found nothing closer.
+// Under -mthumb-slow-loads (2026-10-26): no single empty asm, one-pass block,
+// wrapping block or swap of neighbouring statements brings it closer, nor any
+// pair of empty asm statements or one-pass blocks (device search).
 // Draft, differ 10 of 126: The Broken Seal's international
 // Text_DrawWideStringAtOffset with ⚓️'s additions: code 176 joins the
 // control codes (with no case of its own) and glyphs are drawn by

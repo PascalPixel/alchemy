@@ -1,15 +1,14 @@
-// Draft, differ 2 of 95 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Near miss: differ 8 of 95 (2026-10-12). From ☀️ Party_ShowJoinedMessage.
-// Three scheduling differences remain, no instruction or register differs:
-// the palette load comes after the 0xe000 mask starts (native: load first);
-// the button mask 0x303 starts two calls early (native: after Sound_PlayFar,
-// interleaved with the gInput address); and in the wait loop the entry
-// pointer is moved to r0 before r1 takes 250 (native: r1 first).
-// A barrier after Sound_PlayFar fixes the second but moves
-// MessageArgument_Push's arguments; four permuter minutes found nothing.
+// Matches: differ 0 of 95 (tla-en, 2026-10-30), with one tagged device:
+// Oam_AddSpriteAtDepth declared returning s32. From ☀️ Party_ShowJoinedMessage.
+// Declared void, 2 of 95 differ: in the wait loop the entry pointer is moved
+// to r0 before r1 takes 250 (native: r1 first). sched2 gives both moves the
+// same priority and then prefers the one more later instructions depend on;
+// a call that sets r0 takes wait(1)'s r0 store off the entry move, so r1 goes
+// first. Under -mthumb-slow-loads no single empty asm, one-pass block,
+// wrapping block or swap of neighbouring statements brought the void form
+// closer, nor any pair of empty asm statements or one-pass blocks (device
+// search, 2026-10-26), nor a for (;;) loop with breaks or passing sprite
+// itself (2026-10-30).
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -18,7 +17,6 @@
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "task.h"
 #include "resource.h"
 #include "types.h"
 #include "input.h"
@@ -34,6 +32,7 @@ void Sound_PlayFar(s32);
 s32 Func_08044b80(u32 index);
 extern u8 MsgJoinedParty[];
 struct Window *Window_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
+s32 Oam_AddSpriteAtDepth(void *entry, s32 priority);
 
 void Func_08044b98(s32 member) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -60,6 +59,9 @@ void Func_08044b98(s32 member) {
     Message_Start(
         window, Message_DecodeMode1((s32)MsgJoinedParty), 36, 2, 0);
     Sound_PlayFar(81);
+    /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32,
+     * though it returns nothing; as void Oam_AddSpriteAtDepth(void *, s32),
+     * 2 of 95 instructions differ in tla-en. */
     do {
       Oam_AddSpriteAtDepth(entry, 250);
       wait(1);

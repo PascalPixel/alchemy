@@ -22,8 +22,7 @@ extern u32 gFrameCount;
 extern u32 gData_020042f0[];
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003fa8(struct Actor *object, s32 mode);
 void Func_02003fb8(struct Actor *object, const void *script);
@@ -40,8 +39,7 @@ struct DustSprite {
 };
 
 void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   if (gMainRoutineWork.renderMode != 5) {
     u32 odd = gFrameCount & 1;
 

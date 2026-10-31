@@ -1,11 +1,13 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 4 of 177; left: the velocity
-// array's address is hoisted out of the loop by GCSE, as overlay 698's copy
-// records (resource_698_c_02001674.c).
-// Draft, differ 10 of 177: the leader drops into the room from above: the
-// screen fades in, the leader lands with seventeen dust effects, a shake and a
-// bounce. Overlay 671's Func_02002394 (whose draft holds the notes) is the same
-// scene with other scales; overlay 686's Func_02000418 is a copy. Measured
-// against its copies: overlay 686's Func_02000418 (differ 10 of 177).
+// Matches: differ 0 of 177 (tla-en, 2026-10-30), with the pinned i and one
+// dead test (both tagged).
+// The leader drops into the room from above: the screen fades in, the leader
+// lands with seventeen dust effects, a shake and a bounce. Overlay 671's
+// Func_02002394 (whose draft holds the notes) is the same scene with other
+// scales; overlay 686's Func_02000418 is a copy; overlay 698's Func_02001674
+// (resource_698_c_02001674.c) is the same loop, and its header says how the
+// goto loop and the dead test keep the velocity array's address in the loop,
+// where GCSE hoisted it before (differ 4 of 177 under -mthumb-slow-loads,
+// 26 October; differ 10 before that option).
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -37,10 +39,11 @@ s32 Func_02004e64(void);
 
 s32 Func_0200042c(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
-  /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer, as in
-   * overlay 671's draft. */
+  /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
+   * plain local, 12 of 177 instructions differ in tla-en. */
   register u32 i asm("r10");
   struct EffectOptions options;
+  s32 spawn = 1;
 
   Func_02004e5c();
   Func_02004fcc(0);
@@ -62,21 +65,34 @@ s32 Func_0200042c(void) {
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
   i = 0;
-  do {
+  // A goto loop carries no loop notes: as a do, for or while loop, loop.c
+  // moves the velocity array's address out of the loop.
+loop:
+  {
     s32 angle;
     s32 velocity[3];
+    s32 cosine;
 
     angle = i << 12;
-    velocity[0] = Math_Cosine(angle);
-    velocity[1] = 0;
-    velocity[2] = Math_Sine(angle);
-    velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-    Func_0200015c(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                  velocity[2], 0x1090001, &options);
+    cosine = Math_Cosine(angle);
+    /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
+     * partial redundancy pass, so that pass leaves the velocity array's
+     * address in the loop, built after the cosine call as the native has it;
+     * as the plain body, 4 of 177 instructions differ in tla-en. */
+    if (spawn) {
+      velocity[0] = cosine;
+      velocity[1] = 0;
+      velocity[2] = Math_Sine(angle);
+      velocity[0] += velocity[0] >> 1;
+      velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
+      velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
+      Func_0200015c(actor->x, actor->y, actor->z, velocity[0], velocity[1],
+                    velocity[2], 0x1090001, &options);
+    }
     i++;
-  } while (i <= 16);
+  }
+  if (i <= 16)
+    goto loop;
   Func_02005014(188);
   Func_02004f34(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);

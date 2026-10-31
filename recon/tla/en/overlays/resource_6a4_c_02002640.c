@@ -1,6 +1,17 @@
-// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 6a4's copy of the function drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
-// header says what it is, what still differs and what was tried.
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16), which the native builds after the cosine call in
+// each pass and gcse's PRE hoists here (PRE/HOIST: edge (0,1)). The native is
+// the cse dump's form left in place: PRE leaves the address in the loop only
+// when the loop's header is its exit test, as when the entry jumps to a bottom
+// test (i pinned, "goto test" at entry and the test after the body: the
+// address stays after the cosine call, 13 of 169 with the entry branch and one
+// load a row later; unpinned, 25). No plain loop keeps that entry jump past
+// gcse: jump1 copies a simple exit test to the top and cse1 folds it (for and
+// while loops, unpinned 16, pinned 10 with the entry test kept and the address
+// inserted after it). A pointer pinned to r6 only copies the hoisted
+// register (61). Overlay 6a4's copy of the function drafted in
+// resource_698_c_02001674.c (overlay 698's Func_02001674), whose header says
+// what it is, what still differs and what was tried.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

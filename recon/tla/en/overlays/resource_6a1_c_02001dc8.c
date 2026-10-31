@@ -1,6 +1,15 @@
-// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 6a1's copy of the function drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
-// header says what it is, what still differs and what was tried.
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16), which the native builds after the cosine call in
+// every pass and the draft builds once before the loop. GCSE's PRE hoists it
+// (PRE/HOIST: edge (0,1) in the 07.gcse dump); an analysis-only compile with
+// -fno-gcse shows loop.c hoists it as well and leaves the options address in
+// the loop, the reverse of the native, which keeps the options address in r8
+// and the velocity address in the loop. Tried today: velocity through a
+// pointer pinned to r6 assigned after the cosine call (53: the pointer only
+// copies the hoisted register, now in r9); permuter 4 minutes, 11,414
+// candidates, none better. Overlay 6a1's copy of the function drafted in
+// resource_698_c_02001674.c (overlay 698's Func_02001674), whose header says
+// what it is, what still differs and what was tried.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

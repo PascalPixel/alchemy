@@ -1,8 +1,8 @@
+// Matches: differ 0 of 67 (tla-ja, 2026-10-30), literal pool included.
 // Draft of overlay 6a8's Func_020003bc in Japanese, the one edition still on
-// its listing (English to Italian link games/tla/src/scene/prox/s03bc.c):
-// differ 2 of 67 in tla-ja. Left: the native copies the actor into r5 after
-// it loads the window tiles, where this copies it first; a barrier after that
-// load, a pin on it and the locals assigned apart do not move the copy.
+// its listing (English to Italian link games/tla/src/scene/prox/s03bc.c, a
+// longer form, so a tla-en diff of this draft compares a different body).
+// The earlier 2-instruction miss (the actor's copy into r5) no longer shows.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

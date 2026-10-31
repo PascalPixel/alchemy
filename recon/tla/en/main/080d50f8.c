@@ -1,12 +1,22 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 6 of 324 in tla-en, instruction
-// order only. The leader's map cell goes through a function-scope temporary
-// (ground), declared between the sprite flags and gridY, which gives the
-// native's registers (24 before; found by permute; a FAKEMATCH(temporary) to
-// tag on adoption). Left: the leader's copy (adds r7, r0) comes after the two
-// stack spills in the native, the 8 of gridX is built earlier, and for
-// Actor_SetSingleChildFlagsFar the native reloads the sprite flags
-// into r1 before copying the leader to r0. No single empty asm lowers it.
-// Near miss, differ 30 of 324: The Broken Seal twin (Field_ClimbDown), with
+// Near miss, differ 6 of 324 (tla-en, 2026-10-30): three one-slot moves, each
+// sched2's cost model, which no source form reaches (read from the sched2
+// trace with --rtl). (1) The leader's copy (adds r7, r0) ties at priority 21
+// with the two stack spills (sprite flags, map) and wins on RTL order; the
+// native issues both spills first, as it would if the ldrsh of leader->x
+// waited a cycle after a store it may read (the slow-loads store rule skips
+// extended loads). (2) The 8 of gridY (movs r2, #8): the native issues it
+// before the ldrsh of leader->y, again as if that ldrsh waited a cycle after
+// the spill of gridX. (3) For Actor_SetSingleChildFlagsFar the native reloads
+// the sprite flags into r1 straight after storing them; the slow-loads rule
+// for a load from the address just stored makes that load wait, so the
+// leader's copy to r0 goes first. A 4-minute permute found nothing better;
+// u8 or s32 sprite flags, the &= inside the call's arguments, and swapping
+// the gridY and gridZ lines or the flags and gridX lines measure 6 to 105.
+// The leader's map cell goes through a function-scope temporary (ground),
+// declared between the sprite flags and gridY, which gives the native's
+// registers (24 before; found by permute; a FAKEMATCH(temporary) to tag on
+// adoption). No single empty asm lowers it.
+// Earlier, differ 30 of 324: The Broken Seal twin (Field_ClimbDown), with
 // this game's checks. On the ground, when the leader's map cell and the one
 // south of it are both climbable (attribute 0x40), the cell below is not a
 // wall (255), the ground drops away south and nothing stands in the way, the
@@ -15,9 +25,8 @@
 // 0, or -1 when there is nothing to climb or the way is blocked. Sprite flags
 // are s16 as in the twin (the native spills them as words and loads the
 // shared 1 from the pool), declared after the x grid so they take the lower
-// stack slot. Left: the leader cell's address takes r2 where the native has
-// r3 (and the bases of the two cell tests swap r1 and r3), and a few
-// one-slot moves.
+// stack slot. What was left then (the leader cell's address in r2 where the
+// native has r3) the ground temporary settled.
 #include "types.h"
 #include "map.h"
 #include "actor.h"

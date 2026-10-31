@@ -1,7 +1,15 @@
-// Draft, differ 2 of 66 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
+// Near miss, differ 2 of 66 (tla-en, 2026-10-30): scheduler cost model. In the
+// inner loop the listing advances source before reloading window->width; here
+// the reload comes first. sched2 shows why: the reload depends on the two
+// stores, each of latency 1 under -mthumb-slow-loads, so it is ready the cycle
+// after the second store and its priority (4) outranks source++ (1); the
+// listing's order follows if a store feeding a dependent load costs 2 cycles.
+// An empty asm after source++ (col++ moved before it, vram assigned before map
+// to keep the allocation) fixes the tail but puts source++ between the two
+// stores (the output-dependence tie-break), still differ 2. No single empty
+// asm, one-pass block, wrapping block or swap of neighbouring statements
+// brings it closer, nor any pair of empty asm statements or one-pass blocks
+// (device search); a 4-minute permuter run found nothing closer.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"

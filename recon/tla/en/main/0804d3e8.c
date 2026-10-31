@@ -1,3 +1,11 @@
+// Near miss, differ 2 of 75 (tla-en, 2026-10-30): one reordered pair, the
+// scheduler's tie-break. sched2 dump: after the resourceBase store, the count
+// address's reload (movs r1, #142) and the row address's adds r3, #2 both
+// have priority 44; the reload is independent of the last store (class 3),
+// the add anti-dependent on it (class 2), so the reload goes first. With this
+// allocation the two chains always tie (each runs through the count load).
+// Tried again without gain: no count local, s16 count, width += 2, guarded
+// do-while, a count pointer, reordered sums; permuter 4 minutes: no better.
 // Under -mthumb-slow-loads (2026-10-26): differ 2 of 75 in tla-en, instruction
 // order only. No empty asm before any one statement lowers it.
 // Near miss, differ 2 of 75 (one reordered pair), 2026-10-15: The Broken

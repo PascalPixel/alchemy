@@ -1,22 +1,38 @@
+// Near miss, differ 12 of 804 (tla-en, 2026-10-30), with no device: in three
+// places the native issues a store earlier than alchemy-gcc schedules it, the
+// remaining rows being the same instructions in another order.
+//   - The frame's position.groundHeight = 0 and position.height = 0: native
+//     movs r3, #0; movs r6, #238; lsls r6, #7; both str; ldr r5, [sp, #20];
+//     ldr r4, =-0x200000; adds r6, #220; the draft issues both loads and the
+//     movs r3 before the stores (8 rows).
+//   - The bounced rock's rock->velocityY = -rock->velocityY / 2: native stores
+//     right after its asrs, the draft after movs r2, #255; lsls r6, #2 (2 rows).
+//   - The spark draw's sixth argument (size * 2, str r5, [sp, #4]): native
+//     stores it before ldr r0, [sp, #28] (draw), the draft after (2 rows).
+// In each the draft's store waits behind independent loads and constants of
+// equal or higher priority, the instruction order -mthumb-slow-loads only
+// approximates; no source form tried moves a store earlier.
+// Measured at 12: position as struct SpritePlacement (kept, as the twin) or as
+// s32[4]; size << 1 for size * 2; (*&draw[i & 1]). Worse: draw[i & 1] read
+// into a local before the call (317). An empty asm between the two zero
+// stores gives 8 (str [sp, #92] moves before movs r6, still out of place), a
+// second at the top of the function changes nothing; both are dropped as
+// untagged devices that reach no match. The permuter, 4 minutes on 2 jobs from
+// this form, wrote nothing better than its start (weighted 680, differ 12).
 // 2026-10-26: differ 18 of 804, with BattleEffect_LoadBlitter returning s32 as
 // nibble_pair.c defines it.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 20 of
-// 804 with two empty asm the greedy device search placed (26 without them);
-// the rest is the instruction order described below.
-// Draft, differ 78 of 804: BattleEffect_RunRamses, summon 1 (BattleEffect_RunSceneEffect's case 1,
+// 804 with two empty asm the greedy device search placed (26 without them).
+// Draft: BattleEffect_RunRamses, summon 1 (BattleEffect_RunSceneEffect's case 1,
 // actflags 0x8001), The Broken Seal's BattleEffect_RunRamses.
 
 // Twin: ☀️ BattleEffect_RunRamses
-// (games/tbs/src/effect/effect.c), ported: Func_0813ba50 sets the display,
-// the six rock objects are resource 653 at objects 9 to 14 (☀️ 390), the
-// formation is resource 648 (☀️ 379), the blitters come from
+// (games/tbs/src/battle_effect/battle_effect/ramses.c), ported: Func_0813ba50
+// sets the display, the six rock objects are resource 653 at objects 9 to 14
+// (☀️ 390), the formation is resource 648 (☀️ 379), the blitters come from
 // BattleEffect_LoadBlitter(104, 19) and (188, 3), the effect stays an argument for the
 // hit loop, callback BattleEffect_ProcessPendingGraphicsTransfer at 0xc80.
 
-// Left: the 78 differing rows are only reordered (as a multiset they are the
-// native's): loads and stores ahead of independent constants, and the literal
-// pools that shift with them, the kind Func_08164b2c's header traces to a
-// load costing 3 and a store 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -26,6 +42,7 @@
 #include "input.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "render_placement.h"
 
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -109,7 +126,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildB
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Sound_PlayFar(s32 cue);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
+                                       struct SpritePlacement *position, s32 *scale, s32 mode);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Func_08118088(s32 actor,
@@ -137,7 +154,7 @@ void BattleEffect_EndCanvasLayer(void);
 // the targets are struck and the sparks burst. At the end the results phase
 // begins and every object is released.
 void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
-  s32 position[4];
+  struct SpritePlacement position;
   DrawRectangle draw[2];
   struct FxScale scale;
   void *canvas;
@@ -148,7 +165,6 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   struct FxScale orb;
   s32 i;
   s32 k;
-  __asm__("");
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -235,13 +251,12 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       work->shakeFrames = 1;
 
     // The formation, a 3 x 3 block behind the orb.
-    position[3] = 0;
-  __asm__("");
-    position[1] = 0;
+    position.groundHeight = 0;
+    position.height = 0;
     for (i = 0; i != 7; i++) {
-      position[0] = (gData_08198a64[i] << 16) + base.x - 0x200000;
-      position[2] = (gData_08198a6d[i] << 16) + base.y - 0x200000;
-      Render_ApplyProjectedPlacementFar(work->objects[i], position, &scale.x,
+      position.x = (gData_08198a64[i] << 16) + base.x - 0x200000;
+      position.y = (gData_08198a6d[i] << 16) + base.y - 0x200000;
+      Render_ApplyProjectedPlacementFar(work->objects[i], &position, &scale.x,
                                         0);
     }
 
@@ -279,27 +294,27 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     if (frame >= THROW_FRAME && frame <= 275)
       orb.x -= (frame - 250) << 16;
     if (frame < HIT_FRAME) {
-      position[0] = orb.x;
-      position[1] = -0x1000000;
-      position[2] = orb.y - 0x1000000;
-      Render_ApplyProjectedPlacementFar(work->objects[ORB_LEFT], position,
+      position.x = orb.x;
+      position.height = -0x1000000;
+      position.y = orb.y - 0x1000000;
+      Render_ApplyProjectedPlacementFar(work->objects[ORB_LEFT], &position,
                                         &scale.x, 0);
-      position[0] = orb.x + 0x200000;
-      Render_ApplyProjectedPlacementFar(work->objects[ORB_RIGHT], position,
+      position.x = orb.x + 0x200000;
+      Render_ApplyProjectedPlacementFar(work->objects[ORB_RIGHT], &position,
                                         &scale.x, 0);
     }
 
     // The rocks fall, bounce once at y = 120 in two puffs of dust, and are
     // dropped again until frame 199.
-    position[1] = 0;
+    position.height = 0;
     for (i = 0; i != ROCK_COUNT; i++) {
       struct EffectStep *rock = &work->particles[i];
 
       if (rock->variant != 2) {
-        position[0] = rock->x;
-        position[2] = rock->y;
+        position.x = rock->x;
+        position.y = rock->y;
         Render_ApplyProjectedPlacementFar(work->objects[FIRST_ROCK + i],
-                                          position, &scale.x, 0);
+                                          &position, &scale.x, 0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
         if (frame > ROCKS_FALL)

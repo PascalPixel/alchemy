@@ -1,23 +1,25 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 91 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Near miss, differ 8 of 91 (2026-10-19; was 24), The Broken Seal's
-// FieldPsynergy_StartCloak: Cloak. ⚓️ takes the caster from the
-// effect scene, sets its mode directly and schedules the ground check at
-// 0x480 where ☀️ uses 0xc80.
+// Matches: differ 0 of 91 (tla-en, 2026-10-30).
+// The Broken Seal's FieldPsynergy_StartCloak: Cloak. ⚓️ takes the caster from
+// the effect scene, sets its mode directly and schedules the ground check in
+// TASK_PASS_VBLANK where ☀️ uses TASK_PASS_FRAME.
+// The last two instructions (r1's shift before r0's copy) came from declaring
+// Task_Add with its real s32 return (system/task.h) instead of void: the call
+// then sets r0, so the check's copy into r0 loses one dependant and sched2's
+// tie falls to the native order (was differ 2 of 91, 2026-10-26).
 // The task priority through a local set before the stores after the loop
 // (found by alchemy-devtools permute, tagged) gives the native's allocation: the
-// flicker count in r5, the 2 in r6. Left: four loads one row late after the
-// loop (the check literal, gMainRoutineWork literal, the event work from the
-// stack, and the check copied to r0 for the call); a one-pass block round the
-// call and the party pointer, or the check set first, measured 12 and 56.
-// Tried: ☀️'s do/while with n reused as the zero after the loop, differ 59
-// (n then lives in a high register); a for loop and literal zeros, 24.
+// flicker count in r5, the 2 in r6.
+// Tried (with the s32 return, 2026-10-30): the priority as a literal, 18; the
+// count as s32 (counts down), 10; as u8 (masks), 6; direct calls without the
+// check pointer, 18; the check set at its declaration, 78; ☀️'s do/while with
+// n reused as the zero after the loop, 55.
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_psynergy_work.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "sprite.h"
+#include "system/task.h"
 
 // ⚓️'s composite sprite (as polar_target.c's CompositeAnimation).
 struct CloakSprite {
@@ -41,7 +43,6 @@ struct CloakEvent {
   s16 psynergyRequest;
 };
 
-void Task_Add(void (*func)(void), s32 order);
 void FieldEffect_CheckCloakTile(void);
 void Func_080debd8(void);
 void wait(s32 frames);
@@ -66,7 +67,7 @@ void Func_080decb8(void) {
   struct AnimationEntry *entry = sprite->entries[0];
   u32 n;
   void (*check)(void);
-  u32 order;
+  s32 order;
 
   Sound_PlayFar(SE_CLOAK);
   Actor_SetMode((struct Actor *)caster, 0);
@@ -84,8 +85,8 @@ void Func_080decb8(void) {
 
   /* FAKEMATCH(temporary): the task priority through a local set before the
    * stores, which gives the flicker count r5 and the 2 r6; as a literal
-   * 0x480 in the call, 24 of 91 instructions differ in tla-en. */
-  order = 0x480;
+   * TASK_PASS_VBLANK in the call, 18 of 91 instructions differ in tla-en. */
+  order = TASK_PASS_VBLANK;
   sprite->blend = 2;
   entry->param = 0;
   sprite->dirty = 1;

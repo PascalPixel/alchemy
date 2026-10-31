@@ -1,9 +1,18 @@
+// Near miss, differ 4 of 863 (tla-en, 2026-10-30): scheduling only. The
+// sparks' setup builds i's 0 (movs r0, #0; mov r8, r0) two rows before the
+// native, which shifts and stores origin first (the known store-before-build
+// pattern): both pairs are ready together and alchemy-gcc's sched2 ranks the
+// 0 higher. origin assigned before i swaps their reload registers (r0 and r1);
+// a for loop, or an explicit spark pointer in any of three orders, measures 4
+// or 10; 6,500 permuter candidates on that setup found nothing better.
+// 2026-10-30: 18 measured before this round with no source change (the
+// prologue's spill order now matches). The column's height a local set after
+// its phase and before the sheet, x and blitter, which gives the native's
+// reload registers (104 in r3, the blitter in r1, the -256 in r2): 18 to 4.
 // 2026-10-26 (round 5): differ 22 of 863. The column's two blits written with
-// their width and height as numbers (34 and 104), not locals, so the native's
-// register choice follows: 48 to 30; the blitter read first, then the sheet and
-// x: 22. Left: the prologue's heap base built after the effect's spill and the
-// 0 for r8 a row early (the known store-before-build pattern), and the column's
-// blitter load and pool load in the other order.
+// their width and height as numbers (34 and 104), not locals declared after
+// the blitter, so the native's register choice follows: 48 to 30; the blitter
+// read first, then the sheet and x: 22.
 // Draft, differ 48 of 863 (863 here; 2026-10-26: 91 before the column blits
 // were reordered as the listing has them, the second, lower one first, with
 // the sheet local before the blitter, 91 to 52; BattleEffect_LoadBlitter
@@ -21,11 +30,6 @@
 
 // frame declared before the blitters, and the sheet held in a local for the
 // column blits, give the native's stack slots (252 to 149).
-
-// Left: 41 rows differ by register, the frame reloads in the dust loop taking
-// other scratch registers (the loop's pointer and counter start in r1 here,
-// r5 and r6 in the native), and one extra row; the rest is reordered rows of
-// the kind Func_08164b2c's header traces to memory costs.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -305,12 +309,13 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
 
     if (step >= 0 && step <= 31) {
       s32 phase = frame * 16;
-      DrawRectangle blit = draw[0];
+      s32 height = 104;
       u8 *src = work->sheet;
       s32 x = centerX - 17;
-      s32 size = (phase - 256) % 104;
+      DrawRectangle blit = draw[0];
+      s32 size = (phase - 256) % height;
 
-      blit(canvas, src, x, 4 - size, 34, 104);
+      blit(canvas, src, x, 4 - size, 34, height);
       blit(canvas, src, x, 108 - size, 34, size);
     }
 

@@ -1,10 +1,22 @@
-// Near miss, differ 12 of 429 (effect kind 20, the tornado).
+// Near miss, differ 4 of 429 (tla-en, 2026-10-30): one pair of rows in the funnel loop's latch, scheduler order.
+// (Effect kind 20, the tornado.)
 //
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 12. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 10).
+// Same frame, registers, stack slots and instruction count; the prologue,
+// the glint loop and the literal pools now match with no device. What is
+// left is where the funnel loop's latch puts the reload of the effect
+// argument (ldr r1, [sp, #40]) for its test: the native issues it after
+// both strength-reduced stores (the angle at [sp, #16], the glint offset at
+// [sp, #12]), with the glint offset's add before the angle's store;
+// alchemy-gcc issues the reload between the two stores. Its sched2 dump
+// (diff --rtl) ranks the reload 12 and the glint offset's store 11, because
+// -mthumb-slow-loads counts the reload a cycle slower: the effect->variant
+// load takes it as its address. Worked through by hand from that dump, the
+// two ranked equal would give the native's order through sched2's own
+// tie-breaks, so the cost approximation, not the source, holds these rows.
+// A 4-minute permuter run (7,441 candidates, 2026-10-30) found nothing better.
+//
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 12, the argument's
+// spill in the prologue and loads issued one slot earlier than the native.
 
 // ☀️ twin: BattleEffect_RunWhirlwind (games/tbs/src/effect/effect.c), shape 0.835,
 // structure 0.941. Ported with ⚓️'s checklist: the effect argument read
@@ -14,14 +26,6 @@
 // gData_081979ae (☀️ gVortices_Shapes) and the glint cell tables
 // gData_08197486/92/98, Func_08118088 for the struck targets, and the two
 // blitters released before the task function is removed, as ☀️ does.
-
-// Same frame, registers and instruction count. What is left is order: each
-// row a load (pool word, heap slot, the argument spill) that the native
-// issues one instruction earlier than agscc, and the literal pools that
-// move with them (each pool load's offset differs by 4). The prologue's
-// first row is the argument spill (str r0) that the native issues before
-// the 0x03000000 base; the glint loop's cell offset load and the funnel's
-// segment sums account for most of the rest.
 
 // Tried (differ):
 // the repository draft (local copy of the work struct)                66

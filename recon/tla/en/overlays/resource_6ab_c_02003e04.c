@@ -1,11 +1,17 @@
-// Draft, differ 4 of 169: overlay 6ab's copy of the landing burst drafted in
-// resource_698_c_02001674.c (the leader drops from 130 pixels while the screen
-// transition runs, then seventeen effects burst outward and the leader
-// bounces), with this overlay's symbols. Left, as there: the velocity array's
-// address (add r6, sp, #16) is built once before the loop, where the native
-// builds it after the cosine call in every pass; GCSE hoists it whatever the
-// loop's form, and an asm-tied pointer only copies the hoisted register (differ
-// 110).
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16) and the loop branch's offset. Overlay 6ab's copy
+// of the landing burst drafted in resource_698_c_02001674.c (the leader drops
+// from 130 pixels while the screen transition runs, then seventeen effects
+// burst outward and the leader bounces), with this overlay's symbols. Left, as
+// there: the address is built once before the loop, where the native builds it
+// after the cosine call in every pass; GCSE hoists it whatever the loop's form
+// (07.gcse: "PRE/HOIST: edge (0,1)" for sfp - 52), and an asm-tied pointer
+// only copies the hoisted register (differ 110). Tried 30 October (all 4
+// unless noted): the three stores as one comma expression (SET_VECTOR's
+// form); the cosine taken into a local and velocity declared in a block after
+// it; the loop body as an inline helper taking the angle and &options; i
+// unpinned with options through a named pointer (16: i still takes r8 and the
+// options pointer sl).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

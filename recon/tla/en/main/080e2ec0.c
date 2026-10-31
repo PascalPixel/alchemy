@@ -1,10 +1,17 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 6 of 204 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Near miss, differ 8 of 204 with three barriers (was 100 with the work read
-// first, 14 with none): the native loads the work after building the 0xe0
-// slot's address, before the effect pointer; here after it. The radius
-// pointer is copied to ip before its store here, after it in the native, and
-// the follower offset's first constant is built before the timer store there.
+// Near miss, differ 6 of 204 (tla-en, 2026-10-30): scheduler order only. With
+// the radius store in a one-pass block (8 without), the native still copies
+// the radius pointer to ip after the angle and position offsets are built and
+// starts the angle's offset before the radius store; here the copy comes
+// before the store and the angle waits for it. At the end the native builds
+// the follower offset's first constant before the timer step and shifts it
+// after the timer store; here the shift comes before the store. Both read as
+// the native costing a load after a possibly aliasing store more than this
+// compiler does: the sched2 dump gives the radius store priority 18 against
+// 21 for the angle offset, where the native order needs 20. Empty asm
+// barriers after the radius store, around the climb's step and after the
+// timer step reach 6 at best; one before any single statement does not lower
+// it, nor do the plain reshapings tried (the sine scaled by multiplication,
+// the angle step spelled out, the angle through a pointer).
 // A task for the heap slot 0x5c work, the sibling of
 // Func_080e2d64. In state 0 it carries the effect owner from one point to
 // another over 128 frames, circling the path at a radius that swells and
@@ -37,14 +44,15 @@ void Func_080e2ec0(void) {
   struct Actor *owner = *(struct Actor **)(effect + 16);
   s32 timer = work->timer;
   s32 position[3];
-  s32 y;
 
   switch (work->state) {
   case 0:
-    work->radius = Trig_Sin(timer << 8) << 5;
-    /* FAKEMATCH: holds the angle offset's constant after the radius store
-       (differ 2 more without) */
-    __asm__("");
+    /* FAKEMATCH(one-pass): the radius store in a once-only block, so the
+       angle's address is built after it; as a plain store, 8 of 204
+       instructions differ in tla-en. */
+    do {
+      work->radius = Trig_Sin(timer << 8) << 5;
+    } while (0);
     work->angle += 0x500;
     position[0] = work->from[0] + (work->to[0] - work->from[0]) * timer / 128;
     position[1] = work->from[1] + (work->to[1] - work->from[1]) * timer / 128;
@@ -69,19 +77,12 @@ void Func_080e2ec0(void) {
     }
     break;
   case 2:
-    y = owner->y;
-    /* FAKEMATCH: loads the owner's y before the 0x3cccc step is built
-       (differ 4 more without) */
-    __asm__("");
-    owner->y = y + 0x3cccc;
+    owner->y += 0x3cccc;
     if (timer == 40)
       work->state = 999;
     break;
   }
   work->timer++;
-  /* FAKEMATCH: builds the follower offset after the timer store (differ 2
-     more without) */
-  __asm__("");
   work->follower->x = owner->x;
   work->follower->y = owner->y;
   work->follower->z = owner->z;

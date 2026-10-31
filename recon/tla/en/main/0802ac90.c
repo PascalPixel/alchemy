@@ -1,9 +1,18 @@
-// Near miss, differ 2 of 114 (94 before, 2026-10-26): The Broken Seal's
-// Map_RenderCellPictureColumn with the layer window of Func_0802abbc (adopted in
-// field/map/layer_render.c, whose forms this follows) and its
-// CopyCellPictureHalfColumn helper. Left: the native loads the second cell picture
-// row's literal (Data_02020004) one slot later, just before the first store;
-// an empty asm at each line of the function measured 2 or worse.
+// Near miss, differ 2 of 114 (tla-en, 2026-10-30): scheduler order only. The
+// Broken Seal's Map_RenderCellPictureColumn with the layer window of
+// Func_0802abbc (adopted in field/map/layer_render.c, whose forms this follows)
+// and its CopyCellPictureHalfColumn helper (94 before, 2026-10-26). Left: the
+// native loads the second cell picture row's literal (Data_02020004) one slot
+// later, after `add r3, r9`, just before the first store. In sched2 that
+// literal's reload has priority 9 (load latency 3 into the add, ldrh, strh
+// chain) against 8 for the screen address add, so it goes first; the native
+// order needs it at 8 or less, where the add wins the tie by its three
+// dependents. The instructions, registers and dependences are otherwise the
+// same, so the gap is the scheduler's cost model, not the source. An empty asm
+// at each line of the function measured 2 or worse; computing the screen tile
+// first (10), array indexing (77), both loads before the stores (52), a u16
+// screen pointer with [32], `screenTile += 64` and `screenTile = screenMap;
+// +=` (2 each) do not move it; permute (4 minutes, 2 jobs) best differ 2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

@@ -1,9 +1,15 @@
-// Near miss, differ 8 of 308 (2026-10-26): Func_080e09c0, the effect that
+// Near miss, differ 4 of 308 (tla-en, 2026-10-30): scheduler order only.
+// After the second VramCache_Load the native issues `add r3, sl` before
+// `movs r6/r5` and the tileB `strh` before `lsls r6/r5`; here sched2 gives the
+// store's chain priority 2 against the pointer setups' 3 and puts both later.
+// Tried (2026-10-30): tileB in a temporary stored at once (4) or after the
+// pointer setup (6); an indexed count-up loop (4; particles first, 10); the
+// pointers set before the second load (56); 4 minutes of permuter (4).
+// Func_080e09c0, the effect that
 // lifts an object (363) over the caster, drops it, and, unless the scene is
 // enabled, runs Func_080e0618's five phases as a frame callback until they
 // finish (999). The event slot is read after the scene slot and the sprite's
-// palette set after its palette256 flag (60 -> 8). Left: instruction order after
-// stores, where the native issues another instruction before the next load.
+// palette set after its palette256 flag (60 -> 8).
 // The two resources are 0x1ea and 0x1eb in directory.s
 // (FieldEffect_SparkleFade, FieldEffect_StarSparkleFade), still unnamed there.
 #include "types.h"

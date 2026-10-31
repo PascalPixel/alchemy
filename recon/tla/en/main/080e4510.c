@@ -1,11 +1,13 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 68 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Near miss: listing 68 instructions, draft 68, common 66, differ 4; the rest
-// differs in instruction order.
+// Matches: differ 0 of 68 (tla-en, 2026-10-30).
+// Reading the control mode through struct EventWork gives that load the
+// struct's alias set, so it no longer waits on the sprite's color store and
+// the scheduler keeps the listing's order; as *(s8 *)(event + 394), 2 of 68
+// instructions differ (instruction order only).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "event_work.h"
 
 struct EffectSprite {
   u8 unk00[4];
@@ -56,7 +58,7 @@ s32 Trig_Sin(s32 angle);
 
 void Func_080e4510(struct EffectSprite *sprite, s32 tiles) {
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 position[3];
 
   Func_080eaf98(sprite, 16, 30, 0x80000000, tiles);
@@ -64,7 +66,7 @@ void Func_080e4510(struct EffectSprite *sprite, s32 tiles) {
   sprite->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   sprite->color = 1;
   sprite->palette = 0;
-  if (*(s8 *)(event + 394) == 3) {
+  if (event->controlMode == 3) {
     sprite->scaleX = 0xc000;
     sprite->scaleY = 0xc000;
   } else {

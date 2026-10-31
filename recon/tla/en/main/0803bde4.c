@@ -1,12 +1,20 @@
+// Near miss, differ 2 of 292 (tla-en, 2026-10-30): one row of scheduling
+// remains, with no device. The native stores glyphSpacing's spill a row
+// earlier, between the movs and the lsls that build 0xf38. In sched2 that
+// store has priority 5 (its successors are the reuse of r3 and the
+// lineSpacing load), the lsls 7, so it cannot go first; no order or type of
+// the two spacing reads changes that graph (swapped, s32 or u16 spacings,
+// assignments after the declarations, width first: differ 16, 40, 156, 2
+// and 2), and a 4-minute permuter run (about 10,000 candidates) found
+// nothing better.
+// The cell's y is a byte read as *&sprite->y: through the cell's struct
+// (as sprite->y, differ 6) the load passes the stores of the output's x
+// and next, which the native keeps it behind.
 // Draft, differ 8 of 292 in tla-en under -mthumb-slow-loads (2026-10-26). No
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
-// Draft, differ 18 of 292 (2026-10-18): only scheduling remains; the native
-// stores x before y's copy, takes the character and both spacing loads
-// earlier, loads the window's x before it builds 0xfffe, and moves the
-// window argument after the stores of y and next (the lane's load-earlier
-// near misses). The RAM routine's size is a linker constant in the listing
-// (0x31c): Text_DrawGlyphCodeSize stands for it.
+// The RAM routine's size is a linker constant in the listing (0x31c):
+// Text_DrawGlyphCodeSize stands for it.
 // ☀️'s Glyph_Draw (the international form) on this game's
 // WindowWork: a text canvas window draws the glyph with the routine copied
 // to RAM, other windows show it as a sprite.
@@ -22,7 +30,7 @@
 
 struct GlyphCell {
   struct GlyphCell *next;
-  u16 y : 8;
+  u8 y;
   u16 affine : 2;
   u16 mode : 2;
   u16 mosaic : 1;
@@ -141,7 +149,8 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
     output->sentinel = 253;
     output->x = sprite->x;
     output->next = NULL;
-    output->y = sprite->y;
+    // As *&, the load stays behind the stores of x and next.
+    output->y = *&sprite->y;
     output->index = index;
     WindowSprite_AppendToList(&window->output, output);
   }

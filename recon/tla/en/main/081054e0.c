@@ -1,13 +1,21 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 2 of 72 in tla-en. First difference: this issues `movs r1, #0` earlier (row
-// 17) than the native does (row 19). No single empty asm or one-pass block
-// reaches 0.
-// Near miss, differ 2 of 72 (one reordered pair): the status panel's list of
-// the five status names, each with its icon, or MsgStatusNameNormal when none
-// is set. The native spills the icon column (str r3, [sp, #0]) before it builds
-// the count's zero; this builds the zero first. Declaring the column before the
-// count measured 13, a barrier between them 15, a one-pass block around the
-// column 17 and around both 10.
+// Near miss, differ 2 of 72 (tla-en, 2026-10-30): one reordered pair, a
+// scheduler tie. The status panel's list of the five status names, each with
+// its icon, or MsgStatusNameNormal when none is set. The native spills the icon
+// column (str r3, [sp, #0]) before it builds the count's zero (movs r1, #0);
+// this builds the zero first. In sched2 both are ready together at priority 8
+// and in the same class; rank_for_schedule then prefers the zero for having
+// more dependents (mov fp, r1 and the ldrsh that clobbers r1; the store has
+// only that ldrsh). The store would lead only if its dependence into the
+// sign-extending ldrsh cost 2 cycles, which -mthumb-slow-loads gives a plain
+// load but not ldrsh: the cost model, not a source form.
+// Measured before: declaring the column before the count 13, a barrier between
+// them 15, a one-pass block around the column 17 and around both 10; no single
+// empty asm or one-pass block reaches 0. Measured 2026-10-30: the count's zero
+// assigned between the two coordinates 13 (reload then builds -16 from that
+// zero), coordinates before the count 38 to 40, the row before the column 14,
+// count as u32, `!count` or a do-while loop 2, count as s16 51 or u8 21, the
+// icon row as a loop-invariant base plus y 10 or 53; the permuter (4 minutes,
+// 11,569 candidates) found nothing better.
 #include "types.h"
 
 struct MenuPanel {

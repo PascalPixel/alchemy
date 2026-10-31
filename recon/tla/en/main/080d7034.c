@@ -1,6 +1,19 @@
+// Near miss, differ 4 of 232 (tla-en, 2026-10-30): prologue order only; the
+// listing stores spawnX (str r1, [sp, #4]) straight after the map load, the
+// draft issues sparkle's `adds r7, #8` there instead.
 // Under -mthumb-slow-loads (2026-10-26): differ 4 of 232 in tla-en, instruction
 // order only. An empty asm before `spawnZ = 0;` lowers it to 2; no second one
-// closes it. Permute (4 minutes) best differ 4.
+// closes it. Permute (4 minutes) best differ 4; again 2026-10-30 (4 minutes,
+// 3081 candidates), best differ 4.
+// Why (sched2 dump, 2026-10-30): the zero stores to the spawnX, spawnZ and i
+// spill slots (alias set 0) are anti-dependent on the map load, so right
+// after it rank_for_schedule puts them in class 2, below the independent
+// `adds r7, #8` and the delay/sx/sy copies (class 3, equal priority). The
+// listing's order needs the spawnX store ranked first. Not reached by: 600
+// random orders of the eleven initializations (best 4), chained zeroing
+// (`spawnX = spawnZ = 0`: 4; `delay = sx = sy = 0`: 8), `&map->viewX` read
+// afresh (4), `&work->sparkles[i]` (4), a for loop (6), a while loop (4),
+// spawnX made addressable (14).
 #include "types.h"
 #include "heap_release.h"
 #include "ram_buffer.h"
@@ -52,8 +65,8 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void Func_080140d8(void *entry, s32 priority);
 
 void FieldEffect_UpdateSparkles(void) {
-  /* FAKEMATCH: needed to match: an unsigned-long frame read keeps size and flip
-   * stores together. */
+  /* FAKEMATCH: the unsigned long frame read keeps the size and flip stores
+   * together; as gFrameCount, 33 of 232 instructions differ in tla-en. */
   struct SparkleWork *work;
   u32 spawned;
   u32 i;

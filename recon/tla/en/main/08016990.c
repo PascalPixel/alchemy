@@ -1,15 +1,18 @@
-// Draft, differ 4 of 268 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Draft, differ 4 of 268 (2026-10-24): The Broken Seal's
-// Serial_StepBlockTransfer (games/tbs/src/system/system/serial.c) on this
-// game's names, the same source but for one one-pass block. As ☀️ wrote it,
-// differ 6; the one-pass block around the send size's -20 loads the size
-// before it builds 0xffec (permuter). Left: twice the 127 mask, held in lr,
-// is copied there one slot off: the native reads the block number byte before
-// mov lr, r2 in the receive test, and copies lr before reading it again in
-// the rewind clear. No single empty asm, one-pass block or statement swap
-// improves it.
+// Near miss, differ 2 of 268 (tla-en, 2026-10-30): one swap in the rewind
+// clear (own->active = 0, then gSerialBlockNumber &= 0x7f). The native copies
+// the 127 mask from lr before it reads the block number byte; this compiler
+// reads the byte first. That read opens a read-modify-write, so
+// -mthumb-slow-loads lets it issue straight after the own->active store, and
+// its slower load rank puts it ahead of the copy; the ROM waits a cycle there.
+// Scheduler cost model: the rewind clear as x = x & 0x7f, as 0x7f & x or
+// through a u8 temporary stays at differ 2, its two statements swapped give
+// differ 44, and permute (4 minutes) found nothing better.
+// The Broken Seal's Serial_StepBlockTransfer
+// (games/tbs/src/system/system/serial.c) on this game's names. The one-pass
+// block around the send size's -20 that the 2026-10-24 draft needed changes
+// nothing under -mthumb-slow-loads and is gone. With it, the 2026-10-26
+// device search found no single empty asm, one-pass block, wrapping block or
+// swap of neighbouring statements that brings it closer.
 #include "types.h"
 #include "io_reg.h"
 #include "serial.h"
@@ -23,6 +26,9 @@ void Serial_StepBlockTransfer(void) {
   u32 id;
   struct SerialTransferState *own;
   u32 gap;
+  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the
+   * pool into r8 at entry; as the constant 1 at both stores, 86 of 268
+   * instructions differ in tla-en. */
   struct SerialHalfword one;
 
   id = ~((REG_SIOCNT << 26) >> 30) & 1;
@@ -84,9 +90,7 @@ void Serial_StepBlockTransfer(void) {
         }
         if (gSerialSendSize != 0) {
           Dma_Set((void *)*send, own->payload, DMA_COPY_WORDS(5), REG_DMA3);
-          do {
-            gSerialSendSize += -20;
-          } while (0);
+          gSerialSendSize += -20;
           if (gSerialSendSize != 0) {
             own->peerFlags = 1;
             own->active = gSerialBlockNumber & 0x7f;

@@ -1,4 +1,5 @@
-// Near miss, differ 20 of 689 as plain C (2026-10-25, under -mthumb-slow-loads).
+// Near miss, differ 14 of 689 (tla-en, 2026-10-30): plain C, no device;
+// three single-slot scheduler swaps remain, which no source form reached.
 
 // Summon 2 (BattleEffect_RunSceneEffect's case 2). Twin: The Broken Seal's
 // BattleEffect_RunNereid, ported call for call. The Lost Age's changes:
@@ -9,11 +10,14 @@
 // the effect argument. The resource rows WaterSpraySheet (303) and
 // FirePillarSheetA (326) have no name yet in directory.s.
 
-// Left: order only, and the literal pool offsets that follow it. The
-// prologue stores the argument before it builds the 0x03000000 base in the
-// native, after it here; the rest are single swaps of a pooled or stack load
-// with its neighbour, and the frame loop's pool sits one block later than
-// the native's without the REG_BLDALPHA block.
+// Left (2026-10-30): the prologue and the pools now agree; three sched2
+// choices differ. After Task_Add the native builds focus's and rise's
+// constants before storing velocity.y, and stores velocity.x last; here
+// each pool load is stored as soon as it lands. In the motion update the
+// native loads focus.y and velocity.y before `movs r3, #58`; here sched2
+// ranks the 58 at priority 6 against the loads' 5. In a spark's draw the
+// native stores size to [sp] before reloading &draw from [sp, #32]; here
+// the reload ranks 13 against the store's 12.
 
 // Tried (trial 2, 2026-10-15): the plain port 91; the hit loop through the
 // argument 88; the one-pass block around REG_BLDALPHA 60; alchemy permute
@@ -22,6 +26,12 @@
 // an empty asm before the first statement 18 (the argument's spill then
 // comes first). Most rows left are loads from memory or the stack that
 // alchemy-gcc issues one slot earlier than the native.
+// 2026-10-30, from plain C at 14: focus and velocity as arrays 14, as four
+// scalars 50 (one pair as scalars 34); the five starting values in other
+// orders 14 to 365; the motion update's statements reordered 24 to 32;
+// 58 * velocity.x 14; the spark's blitter through a temporary 120; size * 2
+// as size + size or size << 1 14; alchemy permute 4 minutes (5,646
+// candidates) found nothing below 14.
 
 #include "battle.h"
 #include "graphics.h"

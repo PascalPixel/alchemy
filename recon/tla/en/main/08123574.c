@@ -1,17 +1,22 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 2 of 103 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, a register tie on each local after
-// each statement, each local pinned to each register, each call argument
-// copied into its argument register (pinned) at the call or up to three
-// statements before it; none reaches 0.
-// Near miss, differ 2 of 103 (4 plainly): The Broken Seal's
-// BattleParty_CountStandbyDjinn. An empty barrier on the entry's timer
-// puts its load before the -1 it is compared with, as the native. Left: the
+// Near miss, differ 2 of 103 (tla-en, 2026-10-30): sched2's order alone. The
 // native stores the spilled count address to its stack slot (str r2, [sp])
-// first in the loop's preheader, this draft after the zero for lr; sched2
-// gives that zero's chain priority 2 and the store 1. Measured: i set inside
-// the count test (differ 17), found set later (91), four minutes of permute
-// (no gain).
+// first in the loop's preheader, this draft after the zero for lr and
+// mov ip, r9. loop.c puts that hoisted address and the loop's induction
+// starts together before the loop note, where the store has no dependent:
+// sched2 ranks it 1 against the lr zero's chain of 2, so issuing it first
+// needs a store cost of 2 or a barrier between them, which no source form
+// places. The Broken Seal's BattleDjinn_CountStandby, as plain C: the empty
+// barrier the 26 October draft kept on the entry's timer is no longer needed
+// (differ 2 with or without it).
+// Tried before, with that barrier, one edit at a time: an empty asm barrier
+// after each statement, each adjacent pair of statements swapped, a register
+// tie on each local after each statement, each local pinned to each
+// register, each call argument copied into its argument register (pinned) at
+// the call or up to three statements before it; none reaches 0.
+// Measured: i set inside the count test (differ 17), found set later (91),
+// the loop as a for or a while (2), wrapped in a once-only loop (2), a
+// pointer to the count set after the test (69; 73 with a barrier after it),
+// four minutes of permute on each form (no gain).
 #include "types.h"
 #include "battle_side.h"
 
@@ -57,10 +62,7 @@ s32 BattleParty_CountStandbyDjinn(u32 arg0, u8 *counts) {
   i = 0;
   if (list->count != 0) {
     do {
-      s32 timer = list->entries[i].timer;
-
-      __asm__ volatile("" : "+l"(timer));
-      if (timer == -1) {
+      if (list->entries[i].timer == -1) {
         for (j = 0; j < total; j++)
           if (values[j] == list->entries[i].id)
             break;

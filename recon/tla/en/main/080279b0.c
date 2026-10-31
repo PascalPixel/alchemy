@@ -1,21 +1,25 @@
-// Draft, differ 14 of 503 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 12
-// with an empty asm after `struct EventWork *work;`, and finds nothing closer.
-// Near miss, differ 24 of 503, instruction order only: script command 0x1a,
-// the twin of The Broken Seal's Actor_MoveOnWorldMap in its Japanese layout
-// (three probes 30 degrees apart, six retry headings), with this game's dash
-// keys, flag 0x163 beside the debug L key, and Field_CheckConfiguredKeys'
-// shortcut setting the event work's unk16a. Left, all scheduling: the opening
-// stores of collision and the animation around gMainRoutineWork's load, the
-// retry list's first index load, the copy of the right probe's address, the
-// yaw table's and the input's pool loads (native earlier), and two ripple
-// stores. Measured: angleOffsets[22] as ☀️'s (as [6] the stack frame is 32 bytes
+// Near miss, differ 12 of 503 (tla-en, 2026-10-30): instruction order only,
+// three scheduling choices under -mthumb-slow-loads. The opening issues
+// gMainRoutineWork's pool load and collision's store before the parameter
+// copy (native: the copy, that load, then both opening stores together); the
+// else branch's collision reset loads its 0 after the probe address's spill
+// (native before it); and the retry loop's angleIndex = 0 store follows the
+// copy of the right probe's address into r8 (native before it; in sched2's
+// dump both are ready at priority 1 and the copy is chosen).
+// Script command 0x1a, the twin of The Broken Seal's Actor_MoveOnWorldMap in
+// its Japanese layout (three probes 30 degrees apart, six retry headings),
+// with this game's dash keys, flag 0x163 beside the debug L key, and
+// Field_CheckConfiguredKeys' shortcut setting the event work's unk16a.
+// Measured: angleOffsets[22] as ☀️'s (as [6] the stack frame is 32 bytes
 // short), the ripple sprite's mode and priority as 2-bit fields (as byte
-// masks, differ 70); an empty asm passing gMainRoutineWork and the input
-// through before the shortcut test orders those loads but swaps r1 and r2
-// (differ 30); the opening assignments in other orders (differ 28 to 243).
-// Permute 8 minutes: nothing better by differ.
+// masks, differ 70); the opening assignments in other orders (differ 12 to
+// 243, never fewer). On 2026-10-30, 12 or worse: the earlier empty asm after
+// the declarations (12 with or without it), the parameter copied into a local
+// as ☀️'s, collision, movementAnimation, count or angleIndex as other integer
+// types, the dash test's operands swapped or read as unk23c, the retry loop as
+// a do-while or with its index set before the list, the else branch's reset
+// after the probe's copy, and other declaration orders. Permute 8 minutes,
+// then 4 more: nothing better by differ.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

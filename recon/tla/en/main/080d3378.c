@@ -1,9 +1,13 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 94 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Near miss, differ 2 of 94 (☀️'s BattleEffect_SpawnBurstParticle): the native
-// stores the cleared action (strh r5) before it starts the priority flags'
-// address (adds r0, r6, #0); sched2 here ranks the address first by one
-// (store cost 1 where the native's model fits 2). The rate is a variable as
+// Near miss, differ 2 of 94 (tla-en, 2026-10-30): scheduler order only, as
+// ☀️'s BattleEffect_SpawnBurstParticle. No empty asm before any one statement
+// lowers it. The native stores the cleared action (strh r5) before it starts
+// the priority flags' address (adds r0, r6, #0); sched2 here ranks the address
+// first by one: the flags' ldrb waits on the strh by its store cost 1 (prio
+// 23) and on the address by two adds (prio 24), so only a store-to-load
+// latency of 2, the native's model, orders them as the native does. Also
+// tried 2026-10-30: the flags through a u8 pointer or a raw byte offset
+// (differ 6), the action through a u16 cast or flags = flags | 2 (differ 2).
+// The rate is a variable as
 // the native multiplies by its pool constant: as -0x1999 * speed it is
 // synthesized from shifts (differ 26). An empty asm after the store moves the
 // pool's zero ahead of it (differ 4, 8 with a memory clobber); a one-pass

@@ -1,16 +1,19 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 6 of 276 in tla-en.
+// Near miss, differ 4 of 276 (tla-en, 2026-10-30): one swap at entry. The
+// native reloads the action from its stack slot before setting livingCount's
+// zero; sched2 queues that reload two cycles behind the parameter's spill
+// store, so at the next cycle only the zero is ready and goes first. Ready a
+// cycle earlier, the reload's priority (40 to the zero's 35) would give the
+// native order; no source order reaches it (scheduler cost model).
+// The Broken Seal's twin is AutoBattle_RunPsynergy (battle/auto_battle.c),
+// with this game's heap slots.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, a register tie on each local after
 // each statement, each local pinned to each register, each call argument
 // copied into its argument register (pinned) at the call or up to three
-// statements before it, five minutes of permute; none reaches 0.
-// Near miss, differ 14 of 276 (seven reordered rows, 28 before): The Broken
-// Seal's BattleStaging_RunPairedUnitTransition with this game's heap
-// slots. Left are load-before-constant swaps of the ARM9 schedule: the
-// transition work's heap base after the stacked parameter, fp after the zero
-// store, and three BLDCNT/BLDALPHA blocks where the native loads the pool value
-// before or between the register address rows. Not yet tried: f18284c.c's
-// pinned value and one-pass blocks on those stores.
+// statements before it, five minutes of permute; none reaches 0. Also
+// (30 October): livingCount set after actorId (22 differ) or before its loops
+// (83), the else arm's sideStart before its call (23), the count temporary in
+// both arms (78), four minutes of permute.
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -57,8 +60,13 @@ s32 Func_0811c710(struct BattleActionRecord *action) {
     sideCount = BattleParty_ListLivingUnits(2, visibleUnits);
     sideStart = 0x80;
   } else {
-    sideCount = BattleParty_ListLivingUnits(1, visibleUnits);
+    /* FAKEMATCH(temporary): the count held until sideStart is stored, so the
+     * spill store comes before sideCount's copy; as sideCount =
+     * BattleParty_ListLivingUnits(1, visibleUnits), 6 of 276 instructions
+     * differ in tla-en. */
+    u32 count = BattleParty_ListLivingUnits(1, visibleUnits);
     sideStart = 0;
+    sideCount = count;
   }
 
   for (index = 0; index != sideCount; index++) {

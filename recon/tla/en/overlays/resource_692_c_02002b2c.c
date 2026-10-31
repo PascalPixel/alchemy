@@ -1,5 +1,14 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 75; left: as overlay 681's
-// Func_0200142c (resource_681_c_0200142c.c).
+// Near miss, differ 2 of 75 (tla-en, 2026-10-30): sched2 issues the multiply
+// routine's address load (ldr r6, a constant set with no dependence) before
+// the cosine call, in the stall after the angle's ldrh; the native has that
+// stall empty and loads r6 after the call and after the radius load, as if
+// the load depended on the call (as a pool read after a call would). Measured
+// on 2026-10-30: an empty asm after the angle step, differ 4 (the angle is then
+// read before the speed, r6 before the radius); an empty asm after the cosine
+// call into a local, differ 2 (the angle read before the speed: the barrier
+// takes the later r3 uses from the speed load, so sched2's tie goes to RTL
+// order); with it the sum as *speed + *angle, differ 15; through an s16 or s32
+// local, differ 10 and 8. Scheduler order; no source form reached.
 // Draft, differ 2 of 75: overlay 692's copy of the function drafted in
 // resource_681_c_0200142c.c (overlay 681's Func_0200142c, differ 2 there), whose
 // header says what it is, what still differs and what was tried.

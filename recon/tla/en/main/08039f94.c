@@ -1,7 +1,17 @@
-// Draft, differ 2 of 92 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
+// Near miss, differ 2 of 92 (tla-en, 2026-10-30): sched2's tie-break after
+// the second call. There the ready list holds the width shift (asrs r0) and
+// the next part's multiply at equal priority (118 each under
+// -mthumb-slow-loads); the class rule prefers the multiply, independent of
+// the store just issued, over the shift, anti-dependent on it (it rewrites
+// r0). The instructions and their dependences are the native's, so no source
+// form seen moves it. Measured 2026-10-30: a barrier after the shift with the
+// width copied after the part (the copy is propagated away and the move to
+// fp still precedes the multiply: differ 2); size as u16 (differ 9); the
+// duration's address or the shift moved after the part (differ 2); permuter,
+// 4 minutes: nothing better.
+// Earlier (2026-10-26): no single empty asm, one-pass block, wrapping block
+// or swap of neighbouring statements brings it closer, nor any pair of empty
+// asm statements or one-pass blocks (device search).
 // Near miss of Window_UpdateInterpolatedGeometry (The Broken Seal twin in
 // window/window.c; first written 2026-10-12): differ 2 of 92. After
 // each of three ratio calls the native loads the next operand (window->x,

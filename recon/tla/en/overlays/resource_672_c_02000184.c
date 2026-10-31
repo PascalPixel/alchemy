@@ -1,23 +1,23 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 10 of 895: the rise loop's
-// count, the palette address register and, at the end, the native issues a load
-// one slot later after a store, where alchemy-gcc issues it at once; an empty
-// asm after the rise loop's wait() leaves 6; alchemy permute (5 to 6
-// minutes) and a second asm or block does not move it.
-// Draft, differ 14 of 895: the long scene in the Gabomba Statue's chamber
-// (message MsgOhYoungWitch on): the statue object rises 40 pixels, actors 9,
-// 10, 12, 13 and 14 move, emote and speak, the screen flashes white, the party
-// gets item 242 (Func_02001d48 lifts the statue object above the leader), two
-// yes-or-no questions count up the event work's halfword 0x1c4, the screen
-// fades out to MsgCarriedTheMessage, flags 0x8ff, 0x86b and 0x8f2 change and
-// the retreat and saved places become Kibombo. Left: the native counts up in
-// the rise loop after building wait()'s argument, keeps the palette address
-// in r5, and reloads two literal pool values in another order.
+// Matches: differ 0 of 895 (tla-en, 2026-10-30).
+// The long scene in the Gabomba Statue's chamber (message MsgOhYoungWitch on):
+// the statue object rises 40 pixels, actors 9, 10, 12, 13 and 14 move, emote
+// and speak, the screen flashes white, the party gets item 242 (Func_02001d48
+// lifts the statue object above the leader), two yes-or-no questions count up
+// the event work's halfword 0x1c4, the screen fades out to
+// MsgCarriedTheMessage, flags 0x8ff, 0x86b and 0x8f2 change and the retreat
+// and saved places become Kibombo. The rise loop is a goto loop that counts up
+// in its test after wait(), as the native has it. The white flash's palette
+// entry address is taken before the fade's wait, which keeps it in r5 as the
+// native does (FAKEMATCH(temporary)); written plainly after the wait, 4 of 895
+// instructions differ. Earlier attempts (an empty asm after the rise loop's
+// wait(), permute runs) are superseded.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
 #include "scene_ids.h"
+#include "io_reg.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
@@ -75,6 +75,7 @@ void Func_02001eb0();
 void Func_02000184(void) {
   struct Actor *object, *leader;
   u32 i;
+  volatile u16 *color;
 
   Func_02001da0();
   Call1(Func_02001ee8, 0);
@@ -95,9 +96,8 @@ void Func_02000184(void) {
     if (i == 20)
       Value3(Func_02001e88, 10, 0x100, 0);
     gData_02002058->y += 0x8000;
-    i++;
     wait(1);
-    if (i <= 79)
+    if (++i <= 79)
       goto rise;
     gData_02002058->motionFlags = 4;
   }
@@ -184,9 +184,13 @@ void Func_02000184(void) {
   Call2(Actor_SetModeById, 8, 3);
   Call2(Func_02001ec0, 0x10000, 2);
   Call2(Func_02001eb8, 0x10003, 2);
+  /* FAKEMATCH(temporary): the palette entry's address taken before the fade's
+   * wait; as OBJ_PLTT_COLOR(0, 15) = 0x7fff after it, 4 of 895 instructions
+   * differ in tla-en. */
+  color = &OBJ_PLTT_COLOR(0, 15);
   Value1(Func_02001ec8, 10);
   Call1(wait, 10);
-  *(u16 *)0x0500021e = 0x7fff;
+  *color = 0x7fff;
   Call1(wait, 1);
   Call3(Func_02001d88, (s16)(*(u16 *)(EVENT_WORK + 0x1c4))++, 0, 2);
   Call2(Func_02001eb8, 0x10000, 2);

@@ -1,3 +1,6 @@
+// Near miss, differ 18 of 1243 (tla-en, 2026-10-30): seven scheduling ties,
+// one slot each, left in sched2's cost model (see Left).
+
 // Draft of BattleEffect_RunHealingMotes, the body behind the eleven wrappers of
 // series_a.c (18 effect kinds).
 
@@ -21,8 +24,6 @@
 // BattleEffect_OrangePaletteB, 0x166 BattleEffect_CyanPalette and the eight Djinn
 // sheets 0x150-0x157.
 
-// Draft: differ 34 of 1243 (draft 1243), tla-en, 2026-10-26.
-
 // What moved it: the yaw angles written (frame - start) where The Broken
 // Seal's twin writes (frame - member * 8). As member * 8 they are givs of
 // their own, which loop.c combines with start and strength-reduces into a
@@ -36,9 +37,15 @@
 // the frame loop's invariants, whose spill slots (camera + 12, mode - 3
 // and &point) then fall in the native's order (50 to 34).
 
-// Left: the prologue's argument spill and shift's zero before the first
-// call, and order rows in the draws' arguments: the known store-then-load
-// scheduling limit, one row each.
+// Left (2026-10-30): six reloads of a spilled pointer (effect at sp+76,
+// draw at sp+40) the native issues after the stack stores beside them
+// (limit, the draws' stack arguments, the frame loop's counters), and
+// mode - 3 computed before the literal load at the motes' loop entry. In
+// sched2 the load ranks above the store's chain because a load's latency
+// is 3 under -mthumb-slow-loads and a store's 1. Worked through by hand
+// for the limit and mode - 3 blocks, the native order follows exactly
+// when a store's latency equals a slow load's (3): the compiler model,
+// not the source.
 
 // Tried (2026-10-15):
 // - The Broken Seal's declaration order: 315; the five arrays declared
@@ -49,6 +56,9 @@
 // Tried (2026-10-26): declaration order, statement moves, each local
 // scoped to a block, point through a pointer, member volatile: no gain;
 // shift = 0 back before the canvas layer: 36.
+// Tried (2026-10-30): shift = 0 before the canvas layer measures 18 (24
+// after it, as the draft had), the prologue now exact; permuter, 4
+// minutes: no gain.
 
 #include "types.h"
 #include "battle_display.h"
@@ -159,8 +169,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode)
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
-  BattleEffect_StartCanvasLayer(0);
   shift = 0;
+  BattleEffect_StartCanvasLayer(0);
   if (mode == 13)
     work->fadeFrames = 24;
 

@@ -1,192 +1,115 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 8 of 288: the loop's
-// argument 1 and, after a byte store, the native issues a load one slot later
-// after a store, where alchemy-gcc issues it at once; alchemy permute (5 to 6
-// minutes) and an empty asm or one-pass block after any one statement do not
-// move it.
-// Draft of overlay 670's Func_02004a28, translated from its listing: differ 6
-// of 288. Left: instruction order around
-//   lsls r1, r1, #11
-//   ldr r3, [r2, #12]
-//   - movs r0, #1
-//   adds r3, r3, r1
-//   str r3, [r2, #12]
-// (- the listing, + this draft). Tried: Call, Value and direct forms of each
-// call, empty asms and one-pass blocks between statements.
-#include "types.h"
-#include "main_routine_work.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
-void FieldEvent_Wait();
-void Func_02003640();
-void Func_020036e0();
-void Func_02004524();
-void Func_02005b0c();
-void Func_02005b4c();
-void Func_02005b5c();
-void Func_02005b64();
-void Func_02005b7c();
-void Func_02005b94();
-void Func_02005b9c();
-void Func_02005bc4();
-void Func_02005c9c();
-void GameFlag_SetBit();
-void Motion_SetModeAndWaitAnimation();
-void Actor_SetSpritePriority();
-void Actor_SetPositionAndReset();
-void Actor_SetSpeedParameters();
-s32 Actor_GetById();
-void Actor_SetModeById();
-void Actor_SetPartAttribute();
-void Actor_SetPositionAndResetMotion();
-void wait();
-extern u8 MsgLookTheGreatGabomba[];
-extern u8 gData_02007950[];
+// Near miss, differ 2 of 288 (tla-en, 2026-10-30): in the rising loop the
+// native loads the scale step (ldr r2, -0x2000) before object->scaleY, so that load
+// waits a cycle after the store to gData_02007950->y; alchemy-gcc's
+// -mthumb-slow-loads exempts it (the load opens a read-modify-write), and
+// sched2 then ranks the data-dependent load first. A scheduler cost-model
+// difference; no source form tried moves it.
+// Reading the fields through struct KibomboObject rather than byte offsets
+// gives its loads and stores one alias set, which settled every other
+// difference and cleared the five empty asms (was differ 8); the scene's
+// inline wrappers keep the call constants unshared. alchemy permute (4 minutes,
+// 8,024 candidates, 30 October) found nothing better.
+// 26 October 2026: an empty asm or one-pass block after any one statement
+// and alchemy permute (5 to 6 minutes) did not move this load.
+#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 void Func_02004a28(void) {
-  s32 t1, t5, t7, t10, t12, t22, t43, v_r5, v_r6;
+  struct KibomboObject *object;
+  u32 i;
 
-  t1 = Value1((s32 (*)())Actor_GetById, 14);
-  v_r6 = t1;
+  object = Actor_GetById(14);
   Func_02004524();
-  Call2((void (*)())Actor_SetSpritePriority, 17, 1);
-  Call1((void (*)())Func_02005c9c, 0x240);
-  t5 = Value1((s32 (*)())Actor_GetById, 12);
-  Call2((void (*)())Actor_SetPartAttribute, t5, 7);
-  t7 = Value1((s32 (*)())Actor_GetById, 13);
-  Call2((void (*)())Actor_SetPartAttribute, t7, 7);
-  Call1((void (*)())wait, 8);
-  t10 = Value1((s32 (*)())Actor_GetById, 12);
-  Call2((void (*)())Actor_SetPartAttribute, t10, 0);
-  t12 = Value1((s32 (*)())Actor_GetById, 13);
-  Call2((void (*)())Actor_SetPartAttribute, t12, 0);
-  Call1((void (*)())wait, 8);
-  Call3((void (*)())Func_02005b94, 17, 0x100, 20);
-  Call1((void (*)())Func_02005b4c, (s32)&MsgLookTheGreatGabomba);
-  Call3((void (*)())Func_02005b5c, 17, 0, 20);
-  Call1((void (*)())Func_02005c9c, 0x240);
-  Call2((void (*)())Func_020036e0, 1, 0);
-  Call1((void (*)())FieldEvent_Wait, 20);
-  Call1((void (*)())Func_02005c9c, 233);
-  FIELD_AT(v_r6, s32, 28) = 0x1999;
-  t22 = Value1((s32 (*)())Actor_GetById, 14);
-  Call4((void (*)())Actor_SetPositionAndResetMotion, t22, 0x1080000, 0x180000,
-        0x1340000);
-  Call1((void (*)())wait, 1);
-  Call2((void (*)())Actor_SetModeById, 14, 3);
-  v_r5 = 0;
-L_0200cae8:
-  FIELD_AT(v_r6, s32, 28) = (FIELD_AT(v_r6, s32, 28) + 0x400);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 8 of 288 instructions differ in
-   * tla-en. */
-  asm("");
-  FIELD_AT(v_r6, s32, 12) = (FIELD_AT(v_r6, s32, 12) + 0x2000);
-  v_r5 = (v_r5 + 1);
-  Call1((void (*)())wait, 1);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 8 of 288 instructions differ in
-   * tla-en. */
-  asm("");
-  if ((u32)v_r5 <= (u32)63)
-    goto L_0200cae8;
-  Call1((void (*)())Func_02005c9c, 0x12a);
-  if (FIELD_AT(gData_02007950, s32, 0) == 0)
-    goto L_0200cb48;
-  FIELD_AT(FIELD_AT(gData_02007950, s32, 0), u8, 85) = 0;
-  if (FIELD_AT(FIELD_AT(gData_02007950, s32, 0), s32, 12) <= 0x240000)
-    goto L_0200cb48;
-L_0200cb2a:
-  v_r5 = (s32)&gData_02007950;
-  FIELD_AT(FIELD_AT(v_r5, s32, 0), s32, 12) =
-      (FIELD_AT(FIELD_AT(v_r5, s32, 0), s32, 12) + -0x8000);
-  Call1((void (*)())wait, 1);
-  if (FIELD_AT(FIELD_AT(v_r5, s32, 0), s32, 12) > 0x240000)
-    goto L_0200cb2a;
-L_0200cb48:
-  Call1((void (*)())Func_02005c9c, 232);
-  if (FIELD_AT(gData_02007950, s32, 0) == 0)
-    goto L_0200cbb2;
-  FIELD_AT(FIELD_AT(gData_02007950, s32, 0), u8, 85) = 0;
-  v_r5 = 0;
-L_0200cb5e:
-  FIELD_AT(FIELD_AT(gData_02007950, s32, 0), s32, 12) =
-      (FIELD_AT(FIELD_AT(gData_02007950, s32, 0), s32, 12) + 0x60000);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 8 of 288 instructions differ in
-   * tla-en. */
-  asm("");
-  FIELD_AT(v_r6, s32, 28) = (FIELD_AT(v_r6, s32, 28) + -0x2000);
-  v_r5 = (v_r5 + 1);
-  FIELD_AT(v_r6, s32, 12) = (FIELD_AT(v_r6, s32, 12) + -0x8000);
-  Call1((void (*)())wait, 1);
-  if ((u32)v_r5 <= (u32)3)
-    goto L_0200cb5e;
-  Call4((void (*)())Actor_SetPositionAndResetMotion,
-        FIELD_AT(gData_02007950, s32, 0), 0, 0, 0);
-  v_r5 = 0;
-L_0200cb96:
-  FIELD_AT(v_r6, s32, 28) = (FIELD_AT(v_r6, s32, 28) + -0x2000);
-  FIELD_AT(v_r6, s32, 12) = (FIELD_AT(v_r6, s32, 12) + -0x8000);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 8 of 288 instructions differ in
-   * tla-en. */
-  asm("");
-  v_r5 = (v_r5 + 1);
-  Call1((void (*)())wait, 1);
-  if ((u32)v_r5 <= (u32)3)
-    goto L_0200cb96;
-L_0200cbb2:
-  Call3((void (*)())Func_02005b0c, 14, 0, 0);
-  Call2((void (*)())Func_020036e0, 0, 0);
-  Call2((void (*)())Func_02003640, 1, 1);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Func_02003640, 0, 1);
-  Call1((void (*)())FieldEvent_Wait, 40);
-  Call1((void (*)())Func_02005c9c, 0x240);
-  Call2((void (*)())Func_02003640, 1, 1);
-  Call2((void (*)())Func_020036e0, 1, 0);
-  Call1((void (*)())Func_02005c9c, 132);
-  t43 = Value1((s32 (*)())Actor_GetById, 14);
-  Call4((void (*)())Actor_SetPositionAndResetMotion, t43, 0x1080000, 0x180000,
-        0x1340000);
-  Call1((void (*)())wait, 1);
-  v_r5 = 0;
-L_0200cc1c:
-  FIELD_AT(v_r6, s32, 28) = (FIELD_AT(v_r6, s32, 28) + 0x2000);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 8 of 288 instructions differ in
-   * tla-en. */
-  asm("");
-  FIELD_AT(v_r6, s32, 12) = (FIELD_AT(v_r6, s32, 12) + 0x8000);
-  v_r5 = (v_r5 + 1);
-  Call1((void (*)())wait, 1);
-  /* FAKEMATCH(barrier): an empty asm ends the scheduling block here, as
-   * the listing orders it; without it, 8 of 288 instructions differ in
-   * tla-en. */
-  asm("");
-  if ((u32)v_r5 <= (u32)7)
-    goto L_0200cc1c;
-  Call2((void (*)())Func_02005b9c, 17, 0x102);
-  Call1((void (*)())FieldEvent_Wait, 40);
-  Call2((void (*)())Func_02005b7c, 17, 0x3000);
-  Call2((void (*)())Func_02005b64, 0x4011, 0);
-  Value3((s32 (*)())Func_02005b94, 17, 0x108, 20);
-  Call2((void (*)())Func_02005b64, 0x4011, 0);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, 17, 3);
-  Call2((void (*)())Func_02005b64, 0x4011, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 17, 0xcccc, 0x6666);
-  Call3((void (*)())Actor_SetPositionAndReset, 17, 0x108, 0x140);
-  Call3((void (*)())Func_02005b0c, 17, 0, 0);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x203;
+  Actor_SetSpritePriority(17, 1);
+  Kibombo_SePlay(0x240);
+  Actor_SetPartAttribute(Actor_GetById(12), 7);
+  Actor_SetPartAttribute(Actor_GetById(13), 7);
+  wait(8);
+  Actor_SetPartAttribute(Actor_GetById(12), 0);
+  Actor_SetPartAttribute(Actor_GetById(13), 0);
+  wait(8);
+  Func_02005b94(17, 0x100, 20);
+  Func_02005b4c((s32)MsgLookTheGreatGabomba);
+  Func_02005b5c(17, 0, 20);
+  Kibombo_SePlay(0x240);
+  Func_020036e0(1, 0);
+  FieldEvent_Wait(20);
+  Func_02005c9c(233);
+  object->scaleY = 0x1999;
+  Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
+                                  0x1340000);
+  wait(1);
+  Actor_SetModeById(14, 3);
+  for (i = 0; i < 64; i++) {
+    object->scaleY += 0x400;
+    object->y += 0x2000;
+    wait(1);
+  }
+  Func_02005c9c(0x12a);
+  if (gData_02007950 != 0) {
+    gData_02007950->motionFlags = 0;
+    // As a while loop, which moves the global's address out of the loop, 24
+    // of 288 instructions differ in tla-en.
+    if (gData_02007950->y > 0x240000) {
+    lower:
+      gData_02007950->y -= 0x8000;
+      wait(1);
+      if (gData_02007950->y > 0x240000)
+        goto lower;
+    }
+  }
+  Func_02005c9c(232);
+  if (gData_02007950 != 0) {
+    gData_02007950->motionFlags = 0;
+    // As a for loop, which moves the global's address out of the loop, 25 of
+    // 288 instructions differ in tla-en.
+    i = 0;
+  rise:
+    gData_02007950->y += 0x60000;
+    object->scaleY -= 0x2000;
+    object->y -= 0x8000;
+    wait(1);
+    i++;
+    if (i < 4)
+      goto rise;
+    Actor_SetPositionAndResetMotion(gData_02007950, 0, 0, 0);
+    for (i = 0; i < 4; i++) {
+      object->scaleY -= 0x2000;
+      object->y -= 0x8000;
+      wait(1);
+    }
+  }
+  Func_02005b0c(14, 0, 0);
+  Func_020036e0(0, 0);
+  Func_02003640(1, 1);
+  FieldEvent_Wait(10);
+  Func_02003640(0, 1);
+  FieldEvent_Wait(40);
+  Kibombo_SePlay(0x240);
+  Func_02003640(1, 1);
+  Func_020036e0(1, 0);
+  Func_02005c9c(132);
+  Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
+                                  0x1340000);
+  wait(1);
+  for (i = 0; i < 8; i++) {
+    object->scaleY += 0x2000;
+    object->y += 0x8000;
+    wait(1);
+  }
+  Func_02005b9c(17, 0x102);
+  FieldEvent_Wait(40);
+  Kibombo_ObjTurn(17, 0x3000);
+  Kibombo_MessagePut(0x4011, 0);
+  Kibombo_ObjEmote(17, 0x108, 20);
+  Kibombo_MessagePut(0x4011, 0);
+  Motion_SetModeAndWaitAnimation(17, 3);
+  Kibombo_MessagePut(0x4011, 0);
+  Kibombo_ObjSpeed(17, 0xcccc, 0x6666);
+  Kibombo_ObjWalk(17, 0x108, 0x140);
+  Func_02005b0c(17, 0, 0);
+  ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Call1((void (*)())GameFlag_SetBit, 0x8fb);
-  Call1((void (*)())Func_02005bc4, 13);
+  GameFlag_SetBit(0x8fb);
+  Func_02005bc4(13);
 }

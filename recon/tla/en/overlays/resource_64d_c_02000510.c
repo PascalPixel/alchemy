@@ -1,10 +1,22 @@
-// 26 October 2026: differ 45 of 2142 (was 58). The 1 of the six bit sets goes
-// through a variable set at the first one, as the native keeps it in r8 from
-// there and ties the last set's result to it (a temporary device if adopted).
-// Left: at the four middle sets the native loads the byte straight into the
-// result register and copies the 1 beside it, where this draft does the
-// reverse; pool offsets; and instruction order at a few calls and the spark
-// callback stores.
+// Near miss, differ 31 of 2142 (tla-en, 2026-10-30): the last of the six bit
+// sets ties its result to the shared 1 (r8) in the native and to the byte
+// here (`orrs r2, r3` and an extra `mov r8, r2`, which also moves two pool
+// offsets and the pool branch); the rest is instruction order: the adds pair
+// at the fourth spark actor's scale call, the spark callback load, the target
+// strh against the 0x4000 store, one callback store at actor 17, the r9 copy
+// at the 0x4000 turn of actor 5, and `movs r0, #8` at one call.
+// Why the 1 is shared: alchemy-gcc's CSE flushes its table every 1,000 insns
+// (cse.c) and starts again at each block. The native shares the 1 of the first
+// set with the next five (r8) but gives the 254 a new register from the third
+// clear on; in CSE1 that needs a break between the first clear and the first
+// set, and CSE2's own flush (after the second clear) splits the 254s. This
+// draft's CSE1 counts flush between the first and second sets instead, so the
+// plain `|= 1` gets two 1s (differ 51); an earlier draft carried the 1 in a
+// variable `one` (differ 45), which regmove copies into the result at the
+// middle sets. The empty one-pass block ends CSE1's block at that point.
+// 30 October 2026: with the block in place, the callback barrier after the
+// first lookup changed nothing and the one at actor 17's second spark store
+// cost 2 (33 with both, 31 without); both are gone.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -81,7 +93,6 @@ void Scene_RunSoldierInterception(void) {
   s32 rec;
   u8 *record;
   s32 v5;
-  s32 one;
   s32 callback;
 
   Call1(Func_02002854, 0x890);
@@ -440,16 +451,13 @@ void Scene_RunSoldierInterception(void) {
   v5 = 0;
   rec = Func_020028cc(20);
   callback = (s32)VenusLighthouseEntrance_UpdateSparkTrail;
-  /* FAKEMATCH: the barrier loads the spark callback right after the actor
-   * lookup, where the native loads it; without it the load follows the timer
-   * address (differ 2). */
-  __asm__("" : "+l"(callback));
   *(u16 *)(rec + 100) = v5;
   {
     s32 next = 19;
 
-    /* FAKEMATCH: the native loads the next actor id before it stores the spark
-     * callback; the plain order stores first (one reordered pair, differ 2). */
+    /* FAKEMATCH(barrier): the native loads the next actor id before it stores
+     * the spark callback; as the plain store then lookup, 35 of 2142
+     * instructions differ in tla-en. */
     asm volatile("" : "+l"(next));
     *(s32 *)(rec + 108) = callback;
     rec = (s32)Func_020028cc(next);
@@ -458,8 +466,9 @@ void Scene_RunSoldierInterception(void) {
   {
     s32 next = 18;
 
-    /* FAKEMATCH: the native loads the next actor id before it stores the spark
-     * callback; the plain order stores first (one reordered pair, differ 2). */
+    /* FAKEMATCH(barrier): the native loads the next actor id before it stores
+     * the spark callback; as the plain store then lookup, 35 of 2142
+     * instructions differ in tla-en. */
     asm volatile("" : "+l"(next));
     *(s32 *)(rec + 108) = callback;
     rec = (s32)Func_020028cc(next);
@@ -468,8 +477,9 @@ void Scene_RunSoldierInterception(void) {
   {
     s32 next = 20;
 
-    /* FAKEMATCH: the native loads the next actor id before it stores the spark
-     * callback; the plain order stores first (one reordered pair, differ 2). */
+    /* FAKEMATCH(barrier): the native loads the next actor id before it stores
+     * the spark callback; as the plain store then call, 33 of 2142
+     * instructions differ in tla-en. */
     asm volatile("" : "+l"(next));
     *(s32 *)(rec + 108) = callback;
     Func_02002914(next, 10);
@@ -498,8 +508,9 @@ void Scene_RunSoldierInterception(void) {
   {
     s32 next = 17;
 
-    /* FAKEMATCH: the native loads the next actor id before it stores the spark
-     * callback; the plain order stores first (one reordered pair, differ 2). */
+    /* FAKEMATCH(barrier): the native loads the next actor id before it stores
+     * the spark callback; as the plain store then call, 33 of 2142
+     * instructions differ in tla-en. */
     asm volatile("" : "+l"(next));
     *(s32 *)(rec + 108) = callback;
     Func_02002914(next, 10);
@@ -546,15 +557,8 @@ void Scene_RunSoldierInterception(void) {
   Func_020028ac(14);
   Func_020028ac(20);
   *(u16 *)p10 = v5;
-  {
-    s32 next = 17;
-
-    /* FAKEMATCH: the native loads the next actor id before it stores the spark
-     * callback; the plain order stores first (one reordered pair, differ 2). */
-    asm volatile("" : "+l"(next));
-    *(s32 *)(rec + 108) = callback;
-    Func_02002914(next, 10);
-  }
+  *(s32 *)(rec + 108) = callback;
+  Func_02002914(17, 10);
   Call3(Func_020028e4, 17, 224, 0x1d8);
   Func_020028ac(30);
   *(s32 *)(rec + 108) = v5;
@@ -601,7 +605,12 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(14) + 90) &= 254;
   Call3(Func_020028f4, 14, 0x1c8, 0x1a8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(14) + 90) |= (one = 1);
+  do {
+    /* FAKEMATCH(one-pass): its loop-end note ends CSE1's block between the
+     * first clear and the first set, so the six sets share one 1; as no
+     * block, 51 of 2142 instructions differ in tla-en. */
+  } while (0);
+  *(u8 *)(Func_020028cc(14) + 90) |= 1;
   Call3(Func_02002954, 14, 0x6000, 0);
   Call3(Func_020028d4, 14, 0x10000, 0x8000);
   Func_020028ac(20);
@@ -617,7 +626,7 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(15) + 90) &= 254;
   Call3(Func_020028f4, 15, 0x1c8, 0x1b8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(15) + 90) |= one;
+  *(u8 *)(Func_020028cc(15) + 90) |= 1;
   Func_020028ac(10);
   Value3(Func_02002964, 9, 0x108, 30);
   Call3(Func_0200294c, 0x1009, 0, 10);
@@ -636,11 +645,11 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(14) + 90) &= 254;
   Call3(Func_020028f4, 14, 0x1e8, 0x1a8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(14) + 90) |= one;
+  *(u8 *)(Func_020028cc(14) + 90) |= 1;
   *(u8 *)(Func_020028cc(15) + 90) &= 254;
   Call3(Func_020028f4, 15, 0x1e8, 0x1b8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(15) + 90) |= one;
+  *(u8 *)(Func_020028cc(15) + 90) |= 1;
   Call3(Func_020028f4, 9, 0x1c8, 0x1b0);
   Func_02002954(9, 0, 0);
   Func_020028ac(10);
@@ -655,12 +664,12 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(14) + 90) &= 254;
   Call3(Func_020028f4, 14, 0x1f8, 0x1a8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(14) + 90) |= one;
+  *(u8 *)(Func_020028cc(14) + 90) |= 1;
   Func_0200290c(14, 0, 0);
   *(u8 *)(Func_020028cc(15) + 90) &= 254;
   Call3(Func_020028f4, 15, 0x1f8, 0x1b8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(15) + 90) |= one;
+  *(u8 *)(Func_020028cc(15) + 90) |= 1;
   Func_0200290c(15, 0, 0);
   Func_020028ac(10);
   Call3(Func_020028d4, 9, 0xcccc, 0x6666);

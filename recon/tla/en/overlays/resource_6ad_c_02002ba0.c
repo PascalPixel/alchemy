@@ -1,13 +1,15 @@
+// Matches: differ 0 of 138 (tla-en, 2026-10-30).
 // Draft of overlay 6ad's Func_02002ba0, rewritten from its listing as C over
-// the ride's state (the four Mars Lighthouse overlays keep one copy each):
-// differ 4 of 138 in tla-en. Left: the native loads the leader's z before the
-// car's z step, and sets r0 for the last Animation_ApplyChildValues before it
-// clears the update hook (one row each). The -10 call is declared returning
-// s32, which it does not, so its arguments are set in the native's order
-// (declared void: 6). Ride_CarSteps reloads the car for the second step test
-// into r3 as the native does (as ride->car: 10).
+// the ride's state (the four Mars Lighthouse overlays keep one copy each).
+// Declared returning s32 with no return, the leader's r0 for the last
+// Animation_ApplyChildValues is set before the update hook is cleared, as in
+// the native (as void: 2). The -10 call is declared returning s32, which it
+// does not, so its arguments are set in the native's order (declared void:
+// 2). Ride_CarSteps reloads the car for the second step test into r3 as the
+// native does (as ride->car: 6). The flag calls go through flag_call.h's
+// Flag_Set and Flag_Clear, as the room's matched code does.
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
-#include "call.h"
+#include "flag_call.h"
 
 s32 Func_02002800(s32 a, s32 b);
 void Func_020055d0(s32 a, s32 b);
@@ -55,7 +57,9 @@ static __inline__ u8 *Ride_CarSteps(u8 *slot) {
   return ((struct Actor *)*(s32 *)slot)->unk70;
 }
 
-void Func_02002ba0(void) {
+s32 Func_02002ba0(void) {
+  /* FAKEMATCH(signature): declared returning s32 with no return; as void, 2 of 138 instructions differ in tla-en. */
+  /* FAKEMATCH(signature): Func_02002800 declared returning s32; as void, 2 of 138 instructions differ in tla-en. */
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
@@ -65,7 +69,7 @@ void Func_02002ba0(void) {
     Func_02005610(event->field1ac, event->field1b4);
     event->started = 1;
   }
-  Call1((void (*)())GameFlag_ClearBit, 0x106);
+  Flag_Clear(0x106);
   event->field166 = 0;
   event->field15a = 0;
   event->field15e = 0;
@@ -75,10 +79,10 @@ void Func_02002ba0(void) {
   Func_020055d0(0x70000, 0xe000);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   ride = (struct RideState *)(gData_020023c4 + 0x188);
-  Call1((void (*)())GameFlag_SetBit, 0x106);
+  Flag_Set(0x106);
   Func_02005560();
   Func_02005648(0);
-  Call1((void (*)())GameFlag_ClearBit, 0x106);
+  Flag_Clear(0x106);
   leader->update = Func_02002954;
   leader->angle = 0x4000;
   Func_02005480(leader, 49);

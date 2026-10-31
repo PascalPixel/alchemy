@@ -1,8 +1,18 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 4 of
-// 212: the pointer's copy to r0 for the column test and the backward loop's
-// 14. Reading the column test through the block pointer, kept in scope or
-// copied to a local, gives 56. A greedy device search found nothing lower.
-// Draft, differ 4 of 212: the scrolling picture scene's per-frame callback
+// Near miss, differ 2 of 212 (tla-en, 2026-10-30): scheduler order only. The
+// ROM issues the column test's pointer copy (adds r0, r4) between the scroll
+// word's store and Data_02007518's load; the draft issues the load first.
+// That load opens a read-modify-write, which -mthumb-slow-loads lets issue
+// straight after a store (alchemy-gcc's README: a measured exception, and this
+// is a case it misses), so no source form reaches the ROM's order.
+// 2026-10-30: writing the update as gData_0200751c += d, not through the block
+// pointer, turns PRE's reload of the column test's address into the copy the
+// ROM makes, as the position's already was; and the backward loop is the
+// forward loop's for (i = 0; i < 15; i++), which loop.c reverses, emitting
+// its 14 after the two hoisted step constants (from 4).
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): reading the
+// column test through the block pointer, kept in scope or copied to a local,
+// gives 56. A greedy device search found nothing lower.
+// The scrolling picture scene's per-frame callback
 // (Func_081a150c adds it). Fades BLDALPHA in over 64 frames, eases the
 // position toward the target at most the speed a frame, eases the 16.16
 // scroll toward the position, and when the scroll crosses an 8-pixel column
@@ -11,12 +21,9 @@
 // The native reads the scroll word at every use (volatile here; plain, differ
 // 80) except where one read serves a compare and its arm (the locals). A
 // block pointer to the scroll word loads its address before the position's
-// ldrsh (differ 8 without it; at function scope for the later reads too,
-// differ 32). Left: instruction order only: the native copies the pointer to
-// r0 for the column test where the draft reloads it from the pool, and sets
-// the backward loop's 14 after its two step constants. A pin and barrier for
-// the address moves the allocation (differ 156); five permuter minutes found
-// nothing.
+// ldrsh (at function scope for the later reads too, differ 32). A pin and
+// barrier for the address moved the allocation (differ 156); five permuter
+// minutes found nothing.
 // 2026-10-24: the later reads through a second pointer copied from the
 // block's (32). Func_081a1294, which this callback's column copy mirrors, is
 // adopted (games/tla/src/menu/credits/scroll_map.c).
@@ -70,6 +77,7 @@ void Func_081a133c(void) {
     gData_02007520 += d;
   }
   {
+    /* FAKEMATCH(temporary): the form kept; as scroll = gData_0200751c, 6 of 212 instructions differ in tla-en. */
     volatile s32 *word = &gData_0200751c;
     s32 target = gData_02007520 << 16;
 
@@ -84,7 +92,7 @@ void Func_081a133c(void) {
       else
         d = -(Data_02007524 << 16);
     }
-    *word += d;
+    gData_0200751c += d;
     Data_02007518 += d;
   }
   }
@@ -106,7 +114,7 @@ void Func_081a133c(void) {
     } else {
       from = ((u32)gData_0200751c >> 19) << 6;
       offset = start & 0x7ff;
-      for (i = 14; i >= 0; i--) {
+      for (i = 0; i < 15; i++) {
         Dma_Set(source + from, destination + offset, 0x84000010, REG_DMA3);
         source += 0x1000;
         destination += 0x800;

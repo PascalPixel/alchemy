@@ -1,10 +1,23 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 12 of 421 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, each local pinned to each register,
-// each call argument copied into its argument register (pinned) at the call
-// or up to three statements before it, five minutes of permute; none reaches
-// 0. Barriers after lines 102 and 113 of the draft as it stood lower it to 8,
-// and no third single barrier lowers it further.
+// Near miss, differ 8 of 421 (tla-en, 2026-10-30): sched2's tie-breaking and
+// cost model, which no source form found reaches. 2 at the Func_0811d7e8 call:
+// mov r0, fp goes ahead of add r1, sl, because result = 0 sets r0 again in the
+// same block and gives the copy one more dependent (a one-pass block after the
+// call, or an s32 return on Func_0811d7e8, takes these 2 off: differ 6). 6 in
+// kind 10: before the first Func_0811f088 call the native starts actorId2's
+// address one slot later, and in the first swap it loads actorId ahead of
+// actorId2; our cost model ranks each actorId2 load one priority higher. An
+// empty asm or a one-pass block after `swap = battle->plan.actorId` fixes the
+// swap but moves 4 instructions before the call (differ 10). Also measured
+// with no gain: swap as s32 or u32 or at function scope, actorId2 read into an
+// s32 in either swap, the projection with 255 << 17 or 510 << 16 literals
+// (22), and four more minutes of permute (7421 candidates; its best is the
+// one-pass block after the Func_0811d7e8 call).
+// Calling Iwram_RatioMulQ14 through a local settled the projection (10 to 8),
+// which earlier took two barriers. Tried before, one edit at a time: an empty
+// asm barrier after each statement, each adjacent pair of statements swapped,
+// each local pinned to each register, each call argument copied into its
+// argument register (pinned) at the call or up to three statements before it,
+// five minutes of permute; none reaches 0.
 // Draft of Func_0811d9cc: ☀️'s BattleStaging_DispatchAction
 // (games/tbs/src/battle/battle/staging.c), ported: plays one action of the
 // round. An enemy picks its ability now (Func_08122514 with retry 1), the
@@ -18,13 +31,11 @@
 // Recovery!" when Func_08124cc4 finds none), kinds 12 and 13 (Func_0811d89c,
 // Func_0811d914), and the turn's end through Func_0812561c and Func_0811d9a4.
 // The message names are ours, from their text (3213, 3214, 3297; en.po has no
-// names for them yet). Near miss, differ 20 of 421 (2026-10-24), instruction
-// order only: nine loads the native issues one or two slots earlier and one
-// argument copy. Forms measured: case 0 written (else the table starts at 1),
-// the projection's 0x1fe0000 rebuilt for each argument as camera.c writes it
-// (else the constant is kept across the call), the message symbols (pool
-// loads), and one u8 for the saved target and both swaps (210 with a u8 for
-// each: those take r10 and leave the battle work r9).
+// names for them yet). Forms measured: case 0 written (else the table starts
+// at 1), the projection's 0x1fe0000 rebuilt for each argument as camera.c
+// writes it (else the constant is kept across the call), the message symbols
+// (pool loads), and one u8 for the saved target and both swaps (210 with a u8
+// for each: those take r10 and leave the battle work r9).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -103,10 +114,13 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   {
     s32 param;
     s32 ratio;
+    // Called through a local, as camera/bounds.c calls it: the routine's
+    // address is then loaded ahead of the shift that finishes param.
+    s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14;
 
     param = 255;
     param <<= 17;
-    ratio = Iwram_RatioMulQ14(param, 192 << 8);
+    ratio = ratioMul(param, 192 << 8);
     param = 255;
     param <<= 17;
     Projection_Set(param, ratio, 0x7fff0000);

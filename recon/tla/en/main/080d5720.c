@@ -1,6 +1,7 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 87 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Near miss, differ 2 of 87: the leader grabs the nearest workspace item
+// Near miss, differ 2 of 87 (tla-en, 2026-10-30): instruction order only, a
+// sched2 priority no source form reaches. No empty asm before any one
+// statement lowers it.
+// The leader grabs the nearest workspace item
 // (Func_080d5670): with none it returns 0; otherwise cue 152, the leader is
 // moved onto the item and linked to it, its motion flags, sprite picture and
 // priority are saved, it is drawn at priority 1, and the render mode becomes 3.
@@ -8,13 +9,21 @@
 // the priority flags' address (adds r0, r5; adds r0, #35) after the saved
 // priority's store, this just before it. Reading the flags through a pointer
 // taken before the frame copy brought it from 4 to 2 (permute, 2026-10-18).
+// Why (sched2 dump, 2026-10-30): the address copy depends only on r0 and r5,
+// so it is ready long before the store, and the copy, add, flags load chain
+// ranks it one above the store (store 16, copy 17); the store could win only
+// if its cost to the flags load were 2 (a tie), so the remaining order looks
+// like the compiler's cost model. Reordering the tail's statements (differ 8 to
+// 28), taking the flags pointer at each point (2 to 27), and moving the
+// watched object's store or folding it into Actor_SetMode's argument (2 to
+// 4) never beat 2; permute (4 minutes, 10295 candidates) found nothing.
 // An empty asm barrier after the priority's store puts the address in place
 // but moves the watched object's store (str r6, [r5, #104]) a slot earlier,
-// wherever the barrier stands after it (differ 2): sched2 links every asm,
-// volatile or not, to the stores still pending, which gives that store a
-// third dependent and puts it ahead of the mode's movs r1, #2 (tied in
-// priority). Empty asms taking the leader or the flags' address, with or
-// without the stored value, measured 2 to 27; a one-pass block there
+// wherever the barrier stands after it (differ 2): the barrier depends on
+// every earlier use of r5 and r6, which gives that store a second dependent,
+// as many as the mode's movs r1, #2 (tied in priority), and the earlier
+// statement wins the tie. Empty asms taking the leader or the flags' address,
+// with or without the stored value, measured 2 to 27; a one-pass block there
 // changes the allocation (differ 29); volatile byte accesses 13 to 27. The
 // event work halfword and the saved priority byte are struct fields: through
 // cast pointers the halfword's zero comes from the pool and the byte store

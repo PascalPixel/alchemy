@@ -1,13 +1,12 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 12 of 783: the third
-// placement's constants in another order and, after Actor_SetModeById(12, 7),
-// the native issues a load one slot later after a store, where alchemy-gcc
-// issues it at once; alchemy permute (5 to 6 minutes) and an empty asm or
-// one-pass block after any one statement do not move it.
-// Draft, differ 16 of 783 (also in tla-ja, whose listing has 773):
-// actor 12's offer after MsgKandoreanTemple07, its leap and the party's
-// follow; English also sets screenEffect 0x209 at the end. Left: the third
-// placement's constants and the stores after Actor_SetModeById(12, 7) in
-// another order.
+// Near miss, differ 2 of 783 (tla-en, 2026-10-30): after the byte store
+// that clears actor 12's motion flags, the native builds the 0x40000 step
+// before loading object->y, where alchemy-gcc loads y at once: the
+// -mthumb-slow-loads cost model issues a load one slot later after a store.
+// Writing it y = y + 0x40000 does not move it, nor (26 October) alchemy
+// permute or an empty asm or one-pass block after any one statement.
+// Actor 12's offer after MsgKandoreanTemple07, its leap and the party's
+// follow; English also sets screenEffect 0x209 at the end (tla-ja's listing
+// has 773 instructions).
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "event_work.h"
 #include "edition.h"
@@ -36,6 +35,7 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
 void Func_0200482c(void) {
   struct Actor *object;
   struct FieldSprite *sprite;
+  u8 *flags;
 
   Func_020051c0();
   Call1((void (*)())Func_02005370, 0);
@@ -45,7 +45,13 @@ void Func_0200482c(void) {
   Call4((void (*)())Func_02005238, 16, 0x1780000, 0x1880000, 0);
   Call4((void (*)())Func_02005238, gMainRoutineWork.currentOwner, 0x1780000,
         0x1980000, 0);
-  Call4((void (*)())Func_02005238, 12, 0x1d80000, 0x1c60000, 0xb000);
+  {
+    /* FAKEMATCH(temporary): the angle in a temporary, built ahead of the other
+     * arguments as in s3c54.c; as a plain argument, 6 of 783 instructions
+     * differ in tla-en. */
+    s32 angle = 0xb000;
+    Call4((void (*)())Func_02005238, 12, 0x1d80000, 0x1c60000, angle);
+  }
   WORK->screenEffect = 0x202;
   Event_StartScreenTransition();
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
@@ -185,13 +191,18 @@ void Func_0200482c(void) {
   Call2((void (*)())Actor_SetModeById, 12, 7);
   object->scaleX = 0xffff0000;
   sprite->rotation = 0xe000;
-  object->motionFlags = 0;
+  /* FAKEMATCH(temporary): the motion flags written through a byte pointer, so
+   * the store may alias the rotation and stays after it; as
+   * object->motionFlags, which keeps the struct's alias set, 8 of 783
+   * instructions differ in tla-en. */
+  flags = &object->motionFlags;
+  *flags = 0;
   object->y += 0x40000;
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x6666, 0x3333);
   Call4((void (*)())Func_02005160, (s32)object, 0x1bc0000, 0x280000, 0x1780000);
   Call1((void (*)())Actor_WaitForMoveById, 12);
-  object->motionFlags = 3;
+  *flags = 3;
   Actor_SetSingleChildFlags(Actor_GetById(12), 1);
   sprite->rotation = 0;
   object->scaleX = 0x10000;

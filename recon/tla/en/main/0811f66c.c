@@ -1,25 +1,35 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 14 of 776 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, each local pinned to each register,
-// each call argument copied into its argument register (pinned) at the call
-// or up to three statements before it; none reaches 0. One barrier (after
-// line 296 of the draft as it stood) lowers it to 12, and no second one
-// lowers it further.
-// Draft, differ 16 of 776: ☀️'s BattleTarget_SelectForAction
-// (games/tbs/src/battle/battle/ targeting.c), ported: picks the target of an
-// enemy's ability (or a confused unit's) as a place code, among the units of
-// the side it may target that it would affect, at random; a single-target
-// attack by an enemy with a strategy favours the strongest. Returns -2 when the
-// side has no one, -1 when the ability would affect no one. ⚓️ adds effects 70,
-// 71 (healing), 73 (revival), 85 (as Paralyze) and 47 and 88 (only while the
-// guard level is at most 1), and ability kinds 7 (always worth it) and 11 (PP
-// healing). Left: instruction order only, six pairs: in the prologue the heap
-// address's movs ahead of the actorId spill and the action's targetMode
-// load ahead of the count's mov r8 (zeros set before the heap read,
-// declaration initializers and one-pass blocks around the read change
-// nothing or worse); each scan loop's PLACE_ constant pooled one slot late;
-// the enemies' scan start; in the sort, the str of the inner pointer and
-// the -1 step. Six minutes of permute: no gain.
+// Near miss, differ 10 of 776 (tla-en, 2026-10-30): instruction order only,
+// five instructions one or two slots out of place, each a sched2 choice
+// among instructions ready together. In the prologue the action's targetMode
+// ldrb goes ahead of the count's mov r8; at the enemies' scan start the adds
+// of the scan's base goes ahead of the targetIndex spill; in the sort's
+// set-up adds r6, #56 goes ahead of the lsls, the str of the unitIds base
+// ahead of the adds r0 that uses it, and the str of the inner pointer two
+// slots late. sched2's dumps decide each by priority and its tie-breaks from
+// -mthumb-slow-loads' load-after-store costs: the scan start and the sort's
+// first two follow the ROM's order if the ldrsh (an extended load, which the
+// model never makes wait) waited after its store and the reload of the
+// unitIds base from [sp+16] did not wait after its store; no single such
+// cost explains the prologue's or the inner pointer's. No source order
+// reaches them. Setting candidateCount before the heap read and targetCount
+// after it took this from 12 to 10 (the other orders of the three: 16); the
+// scan's sides written as ☀️'s if/else (no gotos) compile the same. Then:
+// the sort bound as innerIndex + 1 < targetCount, the slot form in the
+// enemies' scan and selected = -1 at the switch, all far worse; four
+// minutes of permute (2 jobs): no gain.
+// Earlier, under -mthumb-slow-loads (26 October 2026), at 14: tried, one
+// edit at a time, an empty asm barrier after each statement, each adjacent
+// pair of statements swapped, each local pinned to each register, each call
+// argument copied into its argument register (pinned) at the call or up to
+// three statements before it; none reached 0. One barrier lowered it to 12.
+// Draft: ☀️'s BattleAI_ChooseTarget (games/tbs/src/battle/battle/
+// targeting.c), ported: picks the target of an enemy's ability (or a
+// confused unit's) as a place code, among the units of the side it may
+// target that it would affect, at random; a single-target attack by an enemy
+// with a strategy favours the strongest. Returns -2 when the side has no one,
+// -1 when the ability would affect no one. ⚓️ adds effects 70, 71 (healing),
+// 73 (revival), 85 (as Paralyze) and 47 and 88 (only while the guard level is
+// at most 1), and ability kinds 7 (always worth it) and 11 (PP healing).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -266,9 +276,9 @@ s32 Func_0811f66c(s32 actorId, struct BattleAct *action) {
   u32 roll;
   s16 *slot;
 
+  candidateCount = 0;
   turnOrder = Ram_HeapSlots->battleWork;
   targetCount = 0;
-  candidateCount = 0;
 
   if (action->targetMode != TARGET_MODE_NONE) {
     ownSide = 0;
@@ -276,46 +286,38 @@ s32 Func_0811f66c(s32 actorId, struct BattleAct *action) {
         action->targetMode == TARGET_MODE_SELF)
       ownSide = 1;
 
-    if (actorId < 0 || actorId > 7) {
-      if (ownSide != 0)
-        goto scan_enemies;
-    } else if (ownSide == 0) {
-      goto scan_enemies;
-    }
-
-    targetIndex = 0;
-    while (turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END) {
-      slot = &turnOrder->partyUnits[targetIndex];
-      unitId = *slot;
-      if (unitId != BATTLE_UNIT_REMOVED) {
-        if (action->targetMode != TARGET_MODE_SELF || unitId == actorId) {
-          unitIds[candidateCount] = unitId;
-          orderPositions[candidateCount] = PLACE_PARTY;
-          orderPositions[candidateCount] |= targetIndex;
-          candidateCount++;
+    if (((actorId < 0 || actorId > 7) && ownSide == 0) ||
+        (actorId >= 0 && actorId <= 7 && ownSide != 0)) {
+      targetIndex = 0;
+      while (turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END) {
+        slot = &turnOrder->partyUnits[targetIndex];
+        unitId = *slot;
+        if (unitId != BATTLE_UNIT_REMOVED) {
+          if (action->targetMode != TARGET_MODE_SELF || unitId == actorId) {
+            unitIds[candidateCount] = unitId;
+            orderPositions[candidateCount] = PLACE_PARTY;
+            orderPositions[candidateCount] |= targetIndex;
+            candidateCount++;
+          }
         }
+        targetIndex++;
       }
-      targetIndex++;
-    }
-    goto scan_complete;
-
-  scan_enemies:
-    targetIndex = 0;
-    while (turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END) {
-      unitId = turnOrder->enemyIds[targetIndex];
-      if (unitId != BATTLE_UNIT_REMOVED) {
-        if (action->targetMode != TARGET_MODE_SELF || unitId == actorId) {
-          unitIds[candidateCount] = unitId;
-          orderPositions[candidateCount] = PLACE_ENEMY;
-          orderPositions[candidateCount] |= targetIndex;
-          candidateCount++;
+    } else {
+      targetIndex = 0;
+      while (turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END) {
+        unitId = turnOrder->enemyIds[targetIndex];
+        if (unitId != BATTLE_UNIT_REMOVED) {
+          if (action->targetMode != TARGET_MODE_SELF || unitId == actorId) {
+            unitIds[candidateCount] = unitId;
+            orderPositions[candidateCount] = PLACE_ENEMY;
+            orderPositions[candidateCount] |= targetIndex;
+            candidateCount++;
+          }
         }
+        targetIndex++;
       }
-      targetIndex++;
     }
   }
-
-scan_complete:
 
   if (candidateCount == 0)
     return -2;
@@ -343,8 +345,8 @@ scan_complete:
            innerIndex++) {
         thisUnit = Unit_Get(unitIds[innerIndex]);
         nextUnit = Unit_Get(unitIds[innerIndex + 1]);
-        if (Enemy_GetDefinitionFar(Unit_Get(actorId)->enemyId)->targetStrategy ==
-            STRATEGY_MOST_HP) {
+        if (Enemy_GetDefinitionFar(Unit_Get(actorId)->enemyId)
+                ->targetStrategy == STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
         } else {

@@ -1,18 +1,20 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 85 in tla-en, instruction
-// order only. Without the two barriers it differs 33; no placement of one to
-// three empty asms does better than the draft's two. Copying position to a
-// second variable after the workspace load changes nothing.
-// Near miss, differ 6 of 85: finds the used item of the heap slot 0x9c workspace
+// Near miss, differ 2 of 85 (tla-en, 2026-10-30): instruction order only, the
+// scheduler's cost model. The native stores the empty result (str r2, [sp, #4])
+// before it builds the workspace address (movs r3, #192); here sched2 issues
+// the address first: its chain to the workspace load has priority 7, the
+// store's 6 (a store before a load that may miss costs 2 under
+// -mthumb-slow-loads, the address's three steps 3). An empty asm between the
+// store and the workspace load restores that order but pins the position's
+// copy (mov sl, r0) above it, before the load where the native issues it:
+// also differ 2, with a second device. Copying position to a second variable
+// after that asm changes nothing (gcse's copy propagation folds the copy back).
+// Earlier notes still true: finds the used item of the heap slot 0x9c workspace
 // nearest to a position, within a squared distance of 0x400 (coordinates taken
 // in 1/256 units, squared with the IWRAM Q16 multiply); NULL when none. No ☀️
 // twin found. The count runs up (loop.c reverses it to 127 down, giving the
 // native registers: counting down in the source swaps the count and the
-// IWRAM entry, differ 22); two tagged barriers keep the empty result's
-// store first and the loop's set-up after the workspace test. Left:
-// instruction order only: the native copies the position (mov sl, r0) after
-// the workspace load, not before it, issues the IWRAM entry's pool load before
-// the best distance's shift, and shifts the first difference (asrs r1) after
-// the third coordinate's load.
+// IWRAM entry, differ 22). Without the remaining barrier, the if-conversion
+// pass (ce, IF-CASE-2) hoists the loop's set-up above the workspace test.
 #include "types.h"
 #include "iwram_call.h"
 #include "work9c.h"
@@ -32,15 +34,13 @@ struct Work9cItem *Func_080d5670(s32 *position) {
   s32 i;
 
   found = NULL;
-  /* FAKEMATCH: the barrier stores the empty result before the workspace is
-   * loaded (differ 8 without it). */
-  asm("");
   work = WORK_9C;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH: the barrier keeps the loop's set-up (the item pointer, the
-   * best distance, the count and the IWRAM entry) after the workspace test,
-   * where if-conversion otherwise hoists it (differ 35 without it). */
+  /* FAKEMATCH(barrier): the empty asm keeps the loop's set-up (the item
+   * pointer, the best distance, the count and the IWRAM entry) after the
+   * workspace test, where if-conversion would hoist it; as plain C without
+   * it, 31 of 85 instructions differ in tla-en. */
   asm("");
   item = work->items;
   best = 0x10000000;

@@ -1,9 +1,17 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 6 of 413 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, each local pinned to each register,
-// each call argument copied into its argument register (pinned) at the call
-// or up to three statements before it, five minutes of permute; none reaches
-// 0.
+// Near miss, differ 2 of 413 (tla-en, 2026-10-30): one copy out of order. In
+// the else branch (saved->unitId = plan->actorId) the native stores the byte
+// before "mov r8, r1"; here the copy comes first. The copy is reload's output
+// reload of &saved->unitId into r8, emitted right after the add, and sched2
+// ranks it and the store equal (priority 1, no dependents), so RTL order
+// decides. Measured 2026-10-30: the if inverted (20), the store through a u8
+// pointer or another member's address (12), a u8 *unitId local assigned after
+// each store (26: the store then does come first, but the address is computed
+// in a low register as mov/adds), four minutes of permute (no better).
+// Tried earlier (differ 6), one edit at a time: an empty asm barrier after
+// each statement, each adjacent pair of statements swapped, each local pinned
+// to each register, each call argument copied into its argument register
+// (pinned) at the call or up to three statements before it, five minutes of
+// permute; none reaches 0.
 // Draft of Func_0811e3ac, from the listing (no ☀️ twin found): for a plan
 // whose outcome is 15 to 17 and that has not failed, saves a battle object and
 // shows a class's sprite in its place: the actor's own object when actor and
@@ -14,15 +22,13 @@
 // falls from 40 pixels up over 30 frames, turning, while the side fades back.
 // Returns the saved object (Func_0811e7dc shows it, Func_0811e830 puts it
 // back), or NULL. Reached from Func_0811ea0c and Func_0811f088.
-// Near miss, differ 18 of 413 (2026-10-24), instruction order only: seven
-// loads the native issues one slot earlier and two copies after the store or
-// address they follow. Forms measured: the class chosen into a local and
-// stored once (170 with a store per case: saved then outranks the gcse copy
-// of &saved->unitId for r8), the side bit through a u8 (186 as one
-// expression), separate locals for the actor's object and the shown object,
-// single declared first (its slot above battleObject's), the first
-// BattleObject_Reset call with one argument (the native leaves r1 as it is),
-// and the alpha written (i << 8) | (16 - i).
+// Before -mthumb-slow-loads (2026-10-24, differ 18), forms measured: the
+// class chosen into a local and stored once (170 with a store per case: saved
+// then outranks the gcse copy of &saved->unitId for r8), the side bit through
+// a u8 (186 as one expression), separate locals for the actor's object and
+// the shown object, single declared first (its slot above battleObject's),
+// the first BattleObject_Reset call with one argument (the native leaves r1
+// as it is), and the alpha written (i << 8) | (16 - i).
 #include "types.h"
 #include "battle.h"
 #include "battle_type.h"

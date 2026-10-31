@@ -1,9 +1,20 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 2 of 75: the pool load for
-// lr's call, which the native issues after the call before it; alchemy permute
-// (5 to 6 minutes) and an empty asm or one-pass block after any one statement
-// do not move it.
-// Near miss, differ 2 of 75: overlay 664's copy of overlay 681's
-// Func_0200142c (the same listing), whose draft holds its notes.
+// Near miss, differ 2 of 75 (tla-en, 2026-10-30): scheduler order. sched2
+// hoists the multiply routine's address (a bare constant set of r6, with no
+// dependence) above the cosine call into the stall after the angle's load;
+// the native issues it after the call and the radius load, as if that load
+// depended on the call.
+// Measured 30 October: a barrier holds the load only by cutting the later r3
+// and r5 dependences that settle two earlier ties in sched2. Barrier right
+// after the cosine call or on the radius load (asm or one-pass block): the
+// angle loads before the speed (differ 2). Barrier after the radius load
+// (asm, or a one-pass block setting a local pointer to the routine): mov r1,
+// r8 goes before adds r5, #100 (differ 2). Barrier before the cosine call:
+// differ 4. Calling through a local pointer alone: differ 2 (unchanged).
+// Reading the speed first: differ 15. No barrier position settles both ties.
+// 26 October: alchemy permute (5 to 6 minutes) did not move it; 30 October,
+// 4 minutes on the barrier-after-radius form: no better.
+// Overlay 664's copy of overlay 681's Func_0200142c (the same listing), whose
+// draft holds its notes.
 #include "types.h"
 #include "iwram_call.h"
 #include "frame.h"

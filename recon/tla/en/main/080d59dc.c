@@ -1,6 +1,16 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 87 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
-// Near miss, differ 2 of 87: Func_080d5720 for the heap slot 0xa0
+// Near miss, differ 2 of 87 (tla-en, 2026-10-30): scheduler order only. The
+// native issues the saved priority's strb before the flags' address (adds r0,
+// r5; adds r0, #35). sched2 ranks that address 17 and the store 16: the
+// address is two insns from the flags' ldrb, the store one (a cost-1
+// store-to-load link). At equal rank the store would win, with two dependents
+// to the address's one. So the native's cost model charged that link more;
+// no source form reaches it. Measured 2026-10-30: plain flags reads 4, the
+// pointer taken after the priority store, a local for the priority or 0xfe
+// for ~1 still 2, the frame cleared before the flags 6, the frame and priority
+// stored through one save struct 12 to 20; permute (4 minutes) found nothing
+// better. Under -mthumb-slow-loads (2026-10-26) no empty asm before any one
+// statement lowers it.
+// Func_080d5720 for the heap slot 0xa0
 // workspace's nodes (Func_080d5930), the render mode becoming 4: the leader
 // grabs the nearest node, saving its motion flags, frame and priority.
 // Returns 1, or 0 with none near. Left: as in 080d5720, instruction order

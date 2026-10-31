@@ -1,16 +1,12 @@
-// Draft, differ 4 of 146 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
-// the earlier barrier or pin removed, and finds nothing closer.
-// Draft, differ 6 of 146 (2026-10-24): an empty asm after the affine index
-// store takes one reordered pair off. Left: instruction order only.
-// Draft of WindowSprite_UpdateScaleAnimation: differ 8 of 146 (tla-en,
-// 2026-10-18). Its ☀️ twin is games/tbs/src/window/window.c's function of
-// the same name: it steps a window output's bounce or grow scale and builds
-// the sprite's affine matrix for it.
-//
-// Left: instruction order only (a byte store, an and and a 256 build each sit
-// one place apart).
+// Matches: differ 0 of 146 (tla-en, 2026-10-30), with no device. The empty
+// asm after the affine index store, which the 2026-10-24 and 2026-10-26
+// drafts kept, now costs one reordered pair (differ 2 with it); the x read
+// through a u16 pointer is The Broken Seal's spelling (as (u16)output->x,
+// differ 2). Other editions not measured.
+// Draft of WindowSprite_UpdateScaleAnimation. Its ☀️ twin is
+// games/tbs/src/window/window/sprites.c's function of the same name: it steps
+// a window output's bounce or grow scale and builds the sprite's affine matrix
+// for it.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -71,12 +67,10 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
     effect.scaleY = scale;
     effect.angle = 0;
     sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
-    __asm__ volatile("");
     if (scale > 256) {
       sprite->affine = 3;
-      /* FAKEMATCH: preserve the original unsigned halfword read at
-         the logical x cell. Casting the signed member value swaps the
-         x load and -8 pool load at the same 460-byte module extent. */
+      // x read through a u16 pointer, which loads it after the -8 is built;
+      // as (u16)output->x the two loads swap.
       sprite->x = *(u16 *)&output->x - 8;
       sprite->y = (u16)output->y - 8;
     } else {

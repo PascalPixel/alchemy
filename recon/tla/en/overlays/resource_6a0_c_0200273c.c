@@ -1,6 +1,13 @@
-// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 6a0's copy of the function drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
-// header says what it is, what still differs and what was tried.
+// Matches: differ 0 of 169 (tla-en, 2026-10-30).
+// Overlay 6a0's copy of the function drafted in resource_698_c_02001674.c
+// (overlay 698's Func_02001674), whose header says what it is and what was
+// tried. The velocity array's address (add r6, sp, #16), which the listing
+// builds after the cosine call in every pass, needed two things: a goto loop,
+// so loop.c has no loop notes to hoist it by, and a test of a flag that is
+// always set around the loop's body, so gcse's PRE finds the address not
+// anticipated at the loop's entry and leaves it in place; gcse's last
+// constant propagation then folds the test away. Without either, the address
+// is hoisted out of the loop (differ 4).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -39,9 +46,10 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 void Func_0200273c(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
-   * plain local, 22 of 177 instructions differ in tla-en. */
+   * plain local, 12 of 169 instructions differ in tla-en. */
   register u32 i asm("r10");
   struct EffectOptions options;
+  s32 always;
 
   Func_02002b6c();
   Func_02002c0c(0);
@@ -62,8 +70,13 @@ void Func_0200273c(void) {
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
+  always = 1;
   i = 0;
-  do {
+  // A goto loop: as a do-while loop, 4 of 169 instructions differ in tla-en.
+loop:
+  /* FAKEMATCH(dead): the body tested on a flag that is always set; without
+   * the test, 4 of 169 instructions differ in tla-en. */
+  if (always) {
     s32 angle;
     s32 velocity[3];
 
@@ -76,8 +89,10 @@ void Func_0200273c(void) {
     velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
     Func_02001f74(actor->x, actor->y, actor->z, velocity[0], velocity[1],
                   velocity[2], 0x1090001, &options);
-    i++;
-  } while (i <= 16);
+  }
+  i++;
+  if (i <= 16)
+    goto loop;
   Func_02002c5c(188);
   Func_02002bbc(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);

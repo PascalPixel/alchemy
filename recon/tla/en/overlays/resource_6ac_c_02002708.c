@@ -1,11 +1,16 @@
+// Matches: differ 0 of 138 (tla-en, 2026-10-30), through three tagged devices.
 // Draft of overlay 6ac's Func_02002708, rewritten from its listing as C over
-// the ride's state (the four Mars Lighthouse overlays keep one copy each):
-// differ 4 of 138 in tla-en. Left: the native loads the leader's z before the
-// car's z step, and sets r0 for the last Animation_ApplyChildValues before it
-// clears the update hook (one row each). The -10 call is declared returning
-// s32, which it does not, so its arguments are set in the native's order
-// (declared void: 6). Ride_CarSteps reloads the car for the second step test
-// into r3 as the native does (as ride->car: 10).
+// the ride's state (the four Mars Lighthouse overlays keep one copy each).
+// The native keeps r0 live to the return, as a function typed to return a
+// value does: typed s32, the r0 for the last Animation_ApplyChildValues is set
+// before the update hook is cleared, as in the native; typed void, after it
+// (2). The -10 call is declared returning s32 for the same reason (declared
+// void: 2), though its listing never sets r0 before returning either; both
+// read as functions declared int that return nothing, and the callers in
+// mars_lighthouse_room_m declare this one void. Ride_CarSteps reloads the car
+// for the second step test into r3 on both paths, as the native does (as
+// ride->car: 6). The unused frame[3] is the native's 12-byte frame (without
+// it: 10).
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 #include "call.h"
 
@@ -55,7 +60,9 @@ static __inline__ u8 *Ride_CarSteps(u8 *slot) {
   return ((struct Actor *)*(s32 *)slot)->unk70;
 }
 
-void Func_02002708(void) {
+s32 Func_02002708(void) {
+  /* FAKEMATCH(signature): typed to return s32, which it never sets; as void,
+   * 2 of 138 instructions differ in tla-en. */
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
@@ -71,6 +78,8 @@ void Func_02002708(void) {
   event->field15e = 0;
   event->field15c = 0;
   event->field164 = 0;
+  /* FAKEMATCH(signature): Func_02002368 declared returning s32, which it
+   * never sets; declared void, 2 of 138 instructions differ in tla-en. */
   Func_02002368(-10, 0);
   Func_02003218(0x70000, 0xe000);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -95,6 +104,9 @@ step:
     } else {
       if (car->stepX != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
+      /* FAKEMATCH(wrapper): the car's z step read through Ride_CarSteps; as
+       * ((struct RideCar *)ride->car)->stepZ, 6 of 138 instructions differ in
+       * tla-en. */
       if (((s32 *)Ride_CarSteps((u8 *)ride + 0x6c))[2] != 0)
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }

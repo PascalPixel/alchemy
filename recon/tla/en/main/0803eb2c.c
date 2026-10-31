@@ -1,15 +1,19 @@
+// Near miss, differ 2 of 80 (tla-en, 2026-10-30): scheduler order. After the
+// branches join, the native builds the first instruction of the cursor's
+// 0x39e offset (movs r1, #192) before the status store; this builds all of it
+// after. Plain C gives 6 (the two offsets interleaved), and the sched2 dump
+// shows why: the native orders the block as if the status store delayed the
+// cursor load by three cycles, where the cost model charges one (the
+// -mthumb-slow-loads store-then-load rule skips a zero-extended ldrh, and
+// would give two). No source form reaches that; the one-pass block below,
+// milder than the earlier empty asm, keeps the 2. The plain two-field test of
+// top and cursor already compiles to the native's one word load (GCC merges
+// adjacent field compares), and the upScroll store needs no block any more.
+// Permuter (4 minutes): best differ 2, a one-pass block after the store.
 // Draft, differ 2 of 80 in tla-en under -mthumb-slow-loads (2026-10-26). No
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
-// Draft, differ 4 of 80 (2026-10-24): a one-pass block around the upScroll
-// store and an empty asm after the status store place the upScroll offset and
-// the reloads as the native has them. Left: in the else branch the native
-// reads the cursor before it builds 0xffff, and it builds the cursor offset
-// before the status store.
-// Near miss, differ 10 of 80 (2026-10-12): three scheduling differences, all
-// loads the listing takes before the 0xffff constant it adds, and the up-arrow
-// offset built after the store instead of before.
 #include "types.h"
 #include "io_reg.h"
 #include "scene.h"
@@ -69,8 +73,7 @@ void Menu_OpenSelectionWindow(u16 type, u32 value);
 void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   u32 cursor;
 
-  /* FAKEMATCH: top and cursor are tested together as one word. */
-  if (*(u32 *)&screen->top == 0) {
+  if (screen->top == 0 && screen->cursor == 0) {
     return;
   }
   Menu_ReloadNodeResource(screen, screen->cursor);
@@ -78,9 +81,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   wait(1);
   cursor = screen->cursor;
   if (cursor == 1 && screen->top != 0) {
-    do {
-      screen->upScroll = ARROW_SCROLL_FRAMES;
-    } while (0);
+    screen->upScroll = ARROW_SCROLL_FRAMES;
     screen->top--;
     Menu_ScrollSelectionList(screen, 0);
     if (screen->top == 0) {
@@ -90,8 +91,10 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   } else {
     screen->cursor--;
   }
-  screen->status = NODE_STATUS_SHOWN;
-  __asm__ volatile("");
+  do {
+    /* FAKEMATCH(one-pass): the form kept; as a plain status store, 6 of 80 instructions differ in tla-en. */
+    screen->status = NODE_STATUS_SHOWN;
+  } while (0);
   Menu_LoadSelectionNodeResource(screen, screen->cursor);
   wait(1);
   Menu_OpenSelectionWindow(screen->node->kind, 0);

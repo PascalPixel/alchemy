@@ -1,6 +1,14 @@
-// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 6a2's copy of the function drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
-// header says what it is, what still differs and what was tried.
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16), which the native builds after the cosine call in
+// each pass and gcse's PRE hoists out of the loop here (PRE/HOIST: edge (0,1)
+// in the gcse dump; global then gives the hoisted pseudo r6). ☀️'s twin,
+// VenusLighthouse_LandWithRadialDust, has the address hoisted in its native
+// too. Tried today: a volatile velocity array (30, still hoisted), a pointer
+// pinned to r6 inside the body with the cosine taken first (53), alchemy
+// permute over the loop (4 minutes, nothing below 4).
+// Overlay 6a2's copy of the function drafted in resource_698_c_02001674.c
+// (overlay 698's Func_02001674, differ 4 there too), whose header says what it
+// is, what still differs and what was tried.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

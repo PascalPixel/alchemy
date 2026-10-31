@@ -1,13 +1,19 @@
-// Draft, differ 2 of 68 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Near miss, differ 2 of 68, one reordered pair in the loop's setup: the native
-// stores the slot pointer to its stack home before it copies the zero index to
-// r8 (str r2, [sp, #4]; mov r8, r1), this form copies first. The two tagged
-// empty asm statements keep the pictures store ahead of the animation store;
-// without them the pictures are stored two rows later and that pair differs as
-// well (differ 4).
+// Near miss, differ 2 of 68 (tla-en, 2026-10-30): one reordered pair in the
+// loop's setup. The native stores the slot pointer to its stack home before it
+// copies the zero index to r8 (str r2, [sp, #4]; mov r8, r1); this form copies
+// first. Both are ready together in sched2 with equal priority, so the tie goes
+// to RTL order: loop.c hoists the stores' zero (r8) before strength reduction
+// emits the slot pointer, and reload's spill of the pointer follows it. No
+// index type (s32, u32, u8, s16), pointer walk, zero variable, NULL, while or
+// goto loop form changes that order, nor a four-minute permuter run; the
+// earlier device search (any single or pair of empty asm statements or one-pass
+// blocks, wrapping blocks, swaps of neighbouring statements) found nothing
+// closer either.
+// The Broken Seal's twin is Sprite_ResetAnimations
+// (games/tbs/src/field/field/sprite_animation.c), which matches in plain C.
+// Here the pictures need the u8 ** view below (UBFIX gives the declared
+// store); stored plainly, they pass the drawing kind's store (differ 4). It
+// replaces the two empty asm statements of the 2026-10-26 draft.
 #include "types.h"
 #include "sprite.h"
 #include "sprite_metadata.h"
@@ -33,8 +39,8 @@ s32 InitializeAnimationObjects(struct MetadataSlotState *state) {
     struct AnimationEntry *object = state->entries[index];
     struct AnimationMetadata *metadata =
         Resource_GetMetadataRecordFar(object->animId);
-    s32 pictures;
-    s32 animation;
+    void **pictures;
+    u8 **animation;
 
     if (metadata->width == 0)
       continue;
@@ -49,16 +55,19 @@ s32 InitializeAnimationObjects(struct MetadataSlotState *state) {
 
     pictures = metadata->pictures;
     if (pictures == 0)
-      pictures = Animation_LookupValueByKey(object->animId);
+      pictures = (void **)Animation_LookupValueByKey(object->animId);
 
     object->kind = metadata->drawKind;
     animation = metadata->animation;
-    asm volatile(""); /* FAKEMATCH: first fence of the pair below */
-    *(s32 *)&object->pictures = pictures;
-    asm volatile(""); /* FAKEMATCH: the listing stores the pictures before the
-                         animation; unfenced, the pictures are stored two rows
-                         later (one reordered row) */
-    *(s32 *)&object->scripts = animation;
+    // UB: the pictures are stored through a u8 ** view of the field, the
+    // scripts' type, which keeps the store after the scripts' load; stored as
+    // void **, it passes the load and the drawing kind's store.
+#ifdef UBFIX
+    object->pictures = pictures;
+#else
+    *(u8 ***)&object->pictures = (u8 **)pictures;
+#endif
+    object->scripts = animation;
     object->mode = metadata->pictureCodec;
     object->picture = 0xff;
     object->script = 0;

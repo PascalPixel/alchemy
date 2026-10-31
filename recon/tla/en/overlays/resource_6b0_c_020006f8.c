@@ -1,5 +1,14 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 73; left: the animation
-// pointer (ldr r0, [r7, #76]) loads one row before the native's.
+// Matches: differ 0 of 73 (tla-en, 2026-10-30).
+// The last two rows were the first step's call arguments: the native loads the
+// radius (ldr r0, [r7, #76]) before the angle (movs r3, #0; ldrsh r1). As
+// mover->angle the angle's load waits on the x, y and z stores, and sched2
+// picks it over the radius on its dependents; read as *(s16 *)&mover->angle
+// it waits only on the z store's r3, and the radius goes first. The permuter
+// found it (as a pointer temporary). Earlier tries, each still differ 2: the
+// steps as an inline helper, radius or angle or &x in a temporary, the struct
+// without byte arrays, the helper taking s16; taking u16 (differ 8); volatile
+// reads (radius 2, both 15).
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 73.
 // Near miss, differ 4 of 73 (21 before, 2026-10-12): rewritten with a struct;
 // the function returns 0 when the radius is under the step and 1 after two
 // steps. Two rows are left in another order, both in the first step only: the
@@ -38,7 +47,10 @@ s32 Func_020006f8(struct Mover *mover) {
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
-  Vector_AddPolarOffsetFar(mover->radius, mover->angle, &mover->x);
+  // Read through a pointer of its own type, an access alchemy-gcc keeps apart
+  // from the s32 stores before it: as mover->angle, the angle loads before
+  // the radius (2 of 73 instructions differ).
+  Vector_AddPolarOffsetFar(mover->radius, *(s16 *)&mover->angle, &mover->x);
   Func_020006a4(mover);
   mover->radius -= mover->step >> 1;
   mover->angle += mover->spin >> 1;

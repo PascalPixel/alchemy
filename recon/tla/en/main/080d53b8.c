@@ -1,9 +1,23 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 8 of 311 in tla-en, instruction
-// order and register choice. The same temporary as Func_080d50f8's (ground)
-// gives the native's registers (24 before). Left: as in Func_080d50f8, plus
-// gMainRoutineWork pool load before the action flags' store, which an empty asm
-// before Actor_SetPositionAndCommit fixes (differ 6).
-// Near miss, differ 34 of 311: The Broken Seal twin (Field_ClimbUp), with this
+// Near miss, differ 6 of 311 (tla-en, 2026-10-30): three one-slot moves, each
+// sched2's cost model, which no source form reaches (read from the sched2
+// trace with --rtl), as in Func_080d50f8. (1) The leader's copy (adds r7, r0)
+// ties at priority 22 with the two stack spills (map, sprite flags) and wins
+// on RTL order; the native issues both spills first, as it would if the ldrsh
+// of leader->x waited a cycle after a store. (2) The pool load of
+// gMainRoutineWork for Actor_SetPositionAndCommit ties at priority 65 with the
+// action flags' address (adds r6, #90) and wins on its count of dependents
+// (4 to 3); the native issues the address first. (3) For
+// Actor_SetSingleChildFlagsFar the native reloads the sprite flags into r1
+// straight after storing them; here that load waits two cycles after the
+// store, so the leader's copy to r0 goes first. All three look like the
+// -mthumb-slow-loads approximation's costs, not the source. An empty asm
+// before or after the action flags' store no longer helps (6); the &= inside
+// the call's arguments or as a plain assignment measures 6, before the motion
+// flags' store 10, the owner read into a temporary first 10, and a 4-minute
+// permute found nothing better.
+// The same temporary as Func_080d50f8's (ground) gives the native's registers
+// (24 before; a FAKEMATCH(temporary) to tag on adoption).
+// Earlier, differ 34 of 311: The Broken Seal twin (Field_ClimbUp), with this
 // game's checks. On the ground, when the leader's map cell and the one north
 // of it are both climbable (attribute 0x40), the cell above is not a wall
 // (255), the ground rises north and nothing is in the way, the leader steps
@@ -15,9 +29,9 @@
 // loads the shared 1 from the pool (s32 differs 95); the render mode is
 // cleared before the action flags so its zero is the shared one, not a pool
 // load (differ 82 the other way), and the count starts before the object
-// table is loaded. Left: as in 080d50f8, the leader cell's address takes r2
-// where the native has r3 and the bases of the cell tests swap, and a few
-// one-slot moves.
+// table is loaded. What was left then (the leader cell's address in r2 where
+// the native has r3, the bases of the cell tests swapped) the ground
+// temporary settled.
 #include "types.h"
 #include "map.h"
 #include "actor.h"

@@ -1,6 +1,15 @@
-// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 69b's copy of the function drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
-// header says what it is, what still differs and what was tried.
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16), which the native builds after the cosine call in
+// every pass and the draft hoists before the loop (the gcse dump: PRE/HOIST on
+// edge (0,1)). Overlay 69b's copy of the landing burst drafted in
+// resource_698_c_02001674.c; its header and resource_671_c_02002394.c's say
+// what it is and what was tried. Tried today: a top-tested goto loop leaves
+// the add after the cosine call, as the native has it, but keeps an entry test
+// and a back jump (20 with i pinned, 30 unpinned); a while loop with i pinned
+// keeps the entry test and hoists the add past it (10). Matched code hoists
+// the same address: BattleEffect_SpawnRadialParticleRing
+// (field/event_commands/radial.c) builds add r6, sp, #16 before its do-while,
+// so what keeps the native's inside this loop is still unknown.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

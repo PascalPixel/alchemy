@@ -1,6 +1,15 @@
-// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 6a3's copy of the function drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
-// header says what it is, what still differs and what was tried.
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16), which the native builds after the cosine call in
+// every pass and the draft builds once before the loop: gcse's PRE hoists it
+// (PRE/HOIST: edge (0,1) in the 07.gcse dump). Overlay 6a3's copy of the
+// landing burst drafted in resource_698_c_02001674.c (overlay 698's
+// Func_02001674), whose header says what it is and what was tried. Tried here:
+// alchemy permute 4 minutes (no candidate beat the draft); a for or while loop
+// (10: the pinned i keeps an entry test and the address is still hoisted); the
+// loop as gotos entered at its test (13): PRE no longer hoists, and the address
+// lands after the cosine call as in the native, but the entry branch stays
+// (shifting every pool load) and one load of velocity[0] moves a row;
+// unpinned, that goto form differs 25 and a for loop 16.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

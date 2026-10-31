@@ -1,8 +1,15 @@
-// Near miss, differ 8 of 304 (2026-10-26, written from the listing; ☀️ has no
-// twin, though field.c's Render_ApplyProjectedPlacement builds its affine
-// matrix the same way). Left: instruction order after stores, where the native
-// issues another instruction before the next load (the prologue's OAM sizes,
-// the height product). Measured: declaration order sets the spill slots
+// Near miss, differ 8 of 304 (tla-en, 2026-10-30): scheduler order only.
+// Written from the listing; ☀️ has no twin, though field.c's
+// Render_ApplyProjectedPlacement builds its affine matrix the same way. Every
+// left difference is an extended load (ldrh) issued straight after a store:
+// the prologue's width and height after the scaleY and width spills, and the
+// rotated branch's width after the cos spill. The native waits a cycle there
+// (mov fp, the -1 and the stacked scaleY go first); sched2 does not, because
+// -mthumb-slow-loads deliberately leaves extended loads out of its store rule
+// (alchemy-gcc's README, Scheduling). Same registers, slots and insns; a
+// 4-minute permute found nothing better, and checking depth on its own or the
+// height product first change nothing or get worse (22). Measured: declaration
+// order sets the spill slots
 // (affineMode, matrix, then x, y, scaleX, scaleY); the OAM x and y stored right
 // after the screen box, before the affine mode and matrix (34 -> 8); the
 // height and pivot products with scaleY second; width times scaleX. Worse:

@@ -1,6 +1,16 @@
-// Draft, differ 4 of 169 under -mthumb-slow-loads: overlay 69e's copy of the function drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674, differ 10 there), whose
-// header says what it is, what still differs and what was tried.
+// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
+// address (add r6, sp, #16) is built once before the loop, where the native
+// builds it after the cosine call in every pass. Overlay 69e's copy of the
+// landing burst drafted in resource_698_c_02001674.c, whose header says what it
+// is and what was tried. In the gcse dump PRE inserts (plus sfp -52) on edge
+// (0,1) and deletes it from the loop, while the options pointer (plus sfp -40)
+// is only made redundant, as the native has it; an analysis compile with
+// -fno-gcse shows loop.c hoists the address as well, so neither pass sees it
+// as anything but invariant. Tried today, none keeps it in the loop: the
+// array declared register (4); the loop body as a static inline helper with
+// its own array (4); the array filled by a non-constant initializer (59, a
+// temporary and copy); every access spelled *(velocity + n) (81); Math_Cosine
+// and Math_Sine declared const (110, still hoisted); permute 4 minutes.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

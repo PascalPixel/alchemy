@@ -1,21 +1,23 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 84 in tla-en, instruction
-// order only. As Func_080d5670.
-// Near miss, differ 6 of 84: Func_080d5670 over the heap slot 0xa0 workspace's
-// nodes: finds the used node nearest to a position, within a squared distance
-// of 0x400 (coordinates in 1/256 units, squared with the IWRAM Q16 multiply);
-// NULL when none. Written as 080d5670, with its two tagged barriers. Left, as
-// there: instruction order only (the position's copy, the IWRAM entry's pool
-// load one slot later than the native, the first shift).
+// Near miss, differ 2 of 84 (tla-en, 2026-10-30): instruction order only.
+// sched2 issues the workspace address's first move (movs r3, #192) before the
+// empty result's store (str r2, [sp, #4]); the native stores first. In the
+// sched2 dump the store's priority (6) is below the address chain's (7), so
+// no statement order reaches it; the permuter (4 minutes, 13,715 candidates)
+// found nothing better.
+// Func_080d5670's twin over the heap slot 0xa0 workspace's nodes: finds the
+// used node nearest to a position, within a squared distance of 0x400
+// (coordinates in 1/256 units, squared with the IWRAM Q16 multiply); NULL
+// when none. The first of 080d5670's two barriers is gone: it stored the
+// empty result first but forced the position's copy (mov sl, r0) above it,
+// also differ 2. Without the remaining barrier, if-conversion (ifcvt case 2,
+// the pointer test predicted taken) hoists the loop's set-up above the
+// workspace test, differ 31. `if (work != NULL) { ... } return found;` needs
+// no barrier but returns through the stored result instead of a plain NULL,
+// differ 5. A volatile best or found, or keeping them in a struct or in
+// one-element arrays, does worse.
 #include "types.h"
 #include "iwram_call.h"
 #include "worka0.h"
-
-struct WorkA0NodePosition {
-  u8 unk00[4];
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 struct WorkA0Node *Func_080d5930(s32 *position) {
   struct WorkA0Node *found;
@@ -25,24 +27,21 @@ struct WorkA0Node *Func_080d5930(s32 *position) {
   s32 i;
 
   found = NULL;
-  /* FAKEMATCH: the barrier stores the empty result before the workspace is
-   * loaded (differ 8 without it). */
-  asm("");
   work = WORK_A0;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH: the barrier keeps the loop's set-up (the item pointer, the
-   * best distance, the count and the IWRAM entry) after the workspace test,
-   * where if-conversion otherwise hoists it (differ 35 without it). */
+  /* FAKEMATCH(barrier): the empty asm keeps the loop's set-up (the item
+   * pointer, the best distance, the count and the IWRAM entry) below the
+   * workspace test; as the plain early return, 31 of 84 instructions differ
+   * in tla-en. */
   asm("");
   item = work->items;
   best = 0x10000000;
   for (i = 0; i < 128; i++, item++) {
     if (item->used == 1) {
-      struct WorkA0NodePosition *at = (struct WorkA0NodePosition *)item;
-      s32 dx = (position[0] - at->x) >> 8;
-      s32 dy = (position[1] - at->y) >> 8;
-      s32 dz = (position[2] - at->z) >> 8;
+      s32 dx = (position[0] - item->x) >> 8;
+      s32 dy = (position[1] - item->y) >> 8;
+      s32 dz = (position[2] - item->z) >> 8;
       s32 distance =
           Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz);
 

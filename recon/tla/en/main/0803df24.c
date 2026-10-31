@@ -1,13 +1,26 @@
-// Draft, differ 14 of 641 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Draft, differ 58 of 641: The Broken Seal's SelectionMenu_Draw with this
-// game's three-word projected position (frame 24). Every remaining row is
-// instruction order under the ARM9TDMI scheduling: the halves of split
-// constants and the loads beside them come in another order (first at cnt = 0
-// against the cursor entry's address, then the bitfield masks -4 and -63 in
-// each loop). Assigning cursor and transfer after the head load, and an empty
-// one-pass block after cnt = 0, measured 66 and 62.
+// Near miss, differ 8 of 641 (tla-en, 2026-10-30): sched2 order in four
+// pairs. The draft issues the stack spill of cursorEntry after cnt = 0 at
+// entry, the spill of slot = 240 after the verticalScroll address in the row
+// loop, and in the chosen-icon loop the u16 load of node->scale after its
+// signed compare load, each a slot later than the listing; there the store of
+// the new node->scale comes a slot earlier, before the transform's address.
+// The sched2 dump ranks the listing's order lower in the first three (6
+// against 7, 7 against 8, 1 against 8), which no source order changes; the
+// fourth is a priority tie (61 and 61) that RTL order breaks the other way,
+// because the reload copy of the transform's address sits just before its use.
+// Measured without gain: cnt = 0 after the head load (12) or just before it
+// (8), slot = 240 earlier in the loop (8 to 26), the three record pointers
+// in other orders (22 to 26), the chosen-icon loop as a for loop (8) or with
+// its sprite taken after the moves (12), its scale test reversed (18 and
+// 101), its scale step chained into scaleX (8) or through a temporary (50),
+// cnt and slot as other integer types (8 to 233), and a 4-minute permuter
+// run (8).
+// Earlier: differ 14 under -mthumb-slow-loads (2026-10-26), when no single
+// empty asm, one-pass block, wrapping block or swap of neighbouring statements
+// brought it closer (device search); before that differ 58 as The Broken
+// Seal's SelectionMenu_Draw with this game's three-word projected position
+// (frame 24), where assigning cursor and transfer after the head load, and an
+// empty one-pass block after cnt = 0, measured 66 and 62.
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"

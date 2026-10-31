@@ -1,20 +1,33 @@
+// Near miss, differ 2 of 290 (tla-en, 2026-10-30): after the metadata call
+// the native copies the table pointer (mov r2, sl) straight after the ldrb,
+// before the shift; here it follows mov r1, r8. Both copies tie in sched2
+// (priority 4, same class) and the tie goes to insn order, which puts the
+// height's copy first; storing the record before the height swaps the
+// reload registers (8). Scheduler order, out of reach of the source.
+// 30 October: boxY read into a local and the height and first record stored
+// in a one-pass block (6 to 2, tagged below). Also measured: records =
+// records + 1, &records[1], boxY / 2 (6 each); records++ then records[-1]
+// (91); a one-pass block around the store alone, records++ alone, or with
+// an empty one around the boxY read (4); four minutes of permute (best 4).
+// The Broken Seal's twin in tbs-en schedules these rows a third way
+// (mov r1, r8 before the shift, mov r2, sl after it).
 // Under -mthumb-slow-loads (26 October 2026): differ 6 of 290 in tla-en.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, each local pinned to each register,
 // each call argument copied into its argument register (pinned) at the call
 // or up to three statements before it, five minutes of permute; none reaches
 // 0.
-// Near miss, differ 6 of 290 (one row moved), from The Broken Seal's
-// BattleObject_SpawnObjectsForList (games/tbs/src/battle/battle/objects.c):
-// this game releases the unlisted places only when asked (the third
-// argument), skips a fading actor, has seven two-part sprites, sets the
-// body's palette before its priority and has a sprite record with its scale
-// at 12. Left: after the first part's metadata call the native copies the
-// table pointer (mov r2, sl) before the height's shift and stores the record
-// right after the height; here the copy and the store come after the next
-// pointer is built. Tried: *records++ (6), a byte-step pointer (6), the
-// record stored before the height (10), a one-pass block on either (6, 8), a
-// barrier-held slot pointer (36), five minutes of permute (no gain).
+// From The Broken Seal's BattleObject_SpawnObjectsForList
+// (games/tbs/src/battle/battle/objects.c): this game releases the unlisted
+// places only when asked (the third argument), skips a fading actor, has
+// seven two-part sprites, sets the body's palette before its priority and
+// has a sprite record with its scale at 12. Before 30 October: after the
+// first part's metadata call the native copies the table pointer (mov r2,
+// sl) before the height's shift and stores the record right after the
+// height; here the copy and the store came after the next pointer is built.
+// Tried: *records++ (6), a byte-step pointer (6), the record stored before
+// the height (10), a one-pass block on either (6, 8), a barrier-held slot
+// pointer (36), five minutes of permute (no gain).
 #include "types.h"
 #include "motobj.h"
 #include "sprite.h"
@@ -72,6 +85,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
   struct TlaSpriteRecord **records;
   s32 spriteId;
   s32 releasedUnitId;
+  u8 boxY;
 
   if (releaseOthers) {
     for (unitIndex = 0; unitIndex < 14; unitIndex++) {
@@ -117,8 +131,14 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
       record = ResourceObject_CreateFar(spriteId);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
-        object->height = Resource_GetMetadataRecordFarFar(spriteId)->boxY >> 1;
-        *records = record;
+        boxY = Resource_GetMetadataRecordFarFar(spriteId)->boxY;
+        /* FAKEMATCH(one-pass): the height and the first record stored in a
+         * once-only block; as the two plain statements, 6 of 290
+         * instructions differ in tla-en. */
+        do {
+          object->height = boxY >> 1;
+          *records = record;
+        } while (0);
         records++;
       }
       record->flags = 0;

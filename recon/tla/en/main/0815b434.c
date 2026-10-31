@@ -1,9 +1,22 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 106, one row: the
-// native copies map to r9 before the clear's size multiply (mov r3, sl;
-// muls r3, r1), here after it; the scale reload now matches. Tried
-// (differ): half computed alone before the clear, center and last after it
-// (72), an empty asm after the declarations (14); alchemy permute 5
-// minutes, 2 jobs (nothing below 2).
+// Near miss, differ 2 of 106 (tla-en, 2026-10-30): one row, scheduler
+// order. The native copies map to r9 (mov r9, r0) before the clear's size
+// multiply (mov r3, sl; muls r3, r1), here after it. In the sched2 dump the
+// multiply has priority 7 (its cost of 4 before the size argument's move)
+// and the map copy 6 (through the center's movs, negs, add, mov chain);
+// both are ready together and the higher priority wins. Those dependencies
+// follow from the instructions and registers both versions share, so no
+// source form that keeps this code reorders them (untested reading: a
+// multiply cost of 3 would tie them and the map copy's earlier position
+// would pick the native order). Tried 2026-10-30 (differ): last assigned
+// before center (16); the clear's size in a temporary before center and
+// last (30); map as a void * parameter copied to a u8 * local, the size in
+// a block-scoped temporary (2 each); alchemy permute 4 minutes, 2 jobs,
+// seed 77, 4550 candidates (nothing below 2).
+//
+// Under -mthumb-slow-loads (2026-10-26): differ 2 of 106, the same row;
+// the scale reload now matches. Tried (differ): half computed alone before
+// the clear, center and last after it (72), an empty asm after the
+// declarations (14); alchemy permute 5 minutes, 2 jobs (nothing below 2).
 
 // Near miss of Func_0815b434, decompiled from the listing (106 instructions,
 // draft 106, differ 4, two reordered rows): the native copies map to r9

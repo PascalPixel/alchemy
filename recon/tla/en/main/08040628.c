@@ -1,16 +1,22 @@
-// Draft, differ 4 of 161 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Near miss, differ 6 of 161 (three reordered pairs), 2026-10-15: The
-// Broken Seal's Menu_CreateWorkspaceWindows; this game has three rows (one
-// with flag 0x17e), three more in debug mode, no cursor object (the fixed
-// block B output at 0x5a4) and its icons at 0x610. The three messages
-// (0x1154, 0x1156 and 0x1158 in English) are pool symbols the catalogs must
-// name before adoption (MsgTestA to MsgTestC here). Remaining: when only the
-// settings show the native stores first (2) to its stack slot before it
-// builds rows (1), and it reloads first before it starts the icon offset;
+// Near miss, differ 4 of 161 (tla-en, 2026-10-30): scheduler order. When only
+// the settings show, the native stores first (2) to its stack slot before it
+// sets rows (1): movs r3,#2; str r3,[sp,#8]; movs r2,#1; mov r10,r2. This
+// build interleaves the pair (movs r2,#1; movs r3,#2; mov r10,r2; str). In
+// sched2 the four moves and the store all cost 1 with equal priority, so the
+// tie goes to RTL order and only a block boundary gives the native order;
 // written first = 2 before rows = 1, with a barrier between, the order is
-// right but the two constants trade r2 and r3.
+// right but the round-robin reload registers trade r2 and r3. The Broken
+// Seal's build also interleaves this pair (movs r0,#2; movs r3,#1; str; mov).
+// No single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search, 2026-10-26). Also no closer
+// (2026-10-30): two ifs on settingsOnly (first then rows if-converts, 83
+// differ), a ternary for first, first = 0 before the call, rows -= 2, rows
+// from first, `if (first != 0)`, a volatile first, and a 4-minute permuter run.
+// The Broken Seal's PauseMenu_Open (window/window/settings_menu.c); this game
+// has three rows (one with flag 0x17e), three more in debug mode, no cursor
+// object (the fixed block B output at 0x5a4) and its icons at 0x610. The three
+// messages (0x1154, 0x1156 and 0x1158 in English) are pool symbols the
+// catalogs must name before adoption (MsgTestA to MsgTestC here).
 
 #include "types.h"
 #include "ram_buffer.h"

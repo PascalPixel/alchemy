@@ -1,19 +1,8 @@
-// Draft, differ 4 of 105 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Near miss: differ 4 of 106 (6 with moved set after the window's call: the
-// native builds -1 fully before it copies the window out of r0). Left: it
-// finishes x (subs r1, r3, #4) before it starts the load of the window row,
-// which then reuses r3 (movs r3, #14; ldrsh r2, [r0, r3]); the draft loads the
-// row first through r4. An empty asm barrier after x orders the two but moves
-// mov r0, r8 below it and keeps r4. The exits must be gotos (as breaks the loop
-// is rotated around its first test), and the pressed keys are read again for
-// each test, here through a volatile view.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "uiwindow.h"
+#include "uiflow.h"
 
 struct ScreenWork {
   u8 unk000[0x5a4];
@@ -27,9 +16,6 @@ void Func_08108048(void *panel, s32 x, s32 y);
 void Func_08108040(void *panel, s32 x, s32 y, s32 frames);
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
-#define PRESSED (((volatile struct InputState *)&gInput)->pressed)
-
-void Window_Close(struct Window *window, s32 release);
 
 s32 Func_08040d70(s32 index) {
   struct ScreenWork *work;
@@ -48,7 +34,9 @@ s32 Func_08040d70(s32 index) {
 
       index = (index + 5) % 5;
       x = (s16)window->x * 8 - 4;
-      y = (index * 3 + (s16)window->y) * 8 + 16;
+      // The row is read first: as one expression, 4 of 105 instructions differ.
+      y = (s16)window->y;
+      y = (index * 3 + y) * 8 + 16;
       if (moved == -1)
         Func_08108048(work->panel, x, y);
       else
@@ -56,12 +44,12 @@ s32 Func_08040d70(s32 index) {
       moved = 0;
     }
     wait(1);
-    if (PRESSED & 2) {
+    if (gInput.pressed & 2) {
       Sound_PlayFar(113);
       index = -1;
       goto done;
     }
-    if (PRESSED & 1) {
+    if (gInput.pressed & 1) {
       Sound_PlayFar(112);
       goto done;
     }

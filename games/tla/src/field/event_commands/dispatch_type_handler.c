@@ -59,7 +59,7 @@ void Func_080e0134(void);
 void Func_080dd950(void);
 void Func_080dc978(s32 sourceId, s32 targetId);
 void Func_080dd054(s32 targetId);
-void Func_080ddda0(s32 targetId);
+void FieldEffect_RunLiftOnTarget(s32 targetId);
 void Func_080df1fc(s32 targetId);
 void FieldEffect_RunForceOnTarget(s32 targetId);
 void FieldEffect_RunDouseOnTarget(s32 targetId);
@@ -207,7 +207,7 @@ void BattleEffect_DispatchRequestKind(void) {
   if (animation == FIELD_FX_PUSH)
     Func_080dd054(targetId);
   else if (animation == 7)
-    Func_080ddda0(targetId);
+    FieldEffect_RunLiftOnTarget(targetId);
   else if (animation == 11)
     Func_080df1fc(targetId);
   else if (animation == 4)

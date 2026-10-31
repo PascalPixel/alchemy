@@ -1,13 +1,3 @@
-// Matches: differ 0 of 169 (tla-en, 2026-10-30).
-// Overlay 6a0's copy of the function drafted in resource_698_c_02001674.c
-// (overlay 698's Func_02001674), whose header says what it is and what was
-// tried. The velocity array's address (add r6, sp, #16), which the listing
-// builds after the cosine call in every pass, needed two things: a goto loop,
-// so loop.c has no loop notes to hoist it by, and a test of a flag that is
-// always set around the loop's body, so gcse's PRE finds the address not
-// anticipated at the loop's entry and leaves it in place; gcse's last
-// constant propagation then folds the test away. Without either, the address
-// is hoisted out of the loop (differ 4).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -35,11 +25,18 @@ void Func_02002b3c(s32 a, s32 b, s32 c);
 void Func_02002b44(void);
 void Func_02002b74(void);
 
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
+static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
+                                                   s32 mode) {
+  /* FAKEMATCH(wrapper): the call forwarded through the inline, which keeps
+   * each -1 in its own register; as a direct call, 8 of 169 instructions
+   * differ in tla-en. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
+static __inline__ void Func_02002b3c_(s32 a, s32 b, s32 c) {
+  /* FAKEMATCH(wrapper): the calls forwarded through the inline, which keeps
+   * each call's constants in their own registers; as direct calls, 33 of
+   * 169 instructions differ in tla-en. */
   Func_02002b3c(a, b, c);
 }
 
@@ -53,7 +50,7 @@ void Func_0200273c(void) {
 
   Func_02002b6c();
   Func_02002c0c(0);
-  CamBounds(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   Func_02002afc();
   wait(1);
   actor->y = 0x820000;
@@ -96,8 +93,8 @@ loop:
   Func_02002c5c(188);
   Func_02002bbc(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
-  SetWorkTriple(0x50000, 0x50000, 0x10000);
-  SetWorkTriple(-1, -1, 0xe666);
+  Func_02002b3c_(0x50000, 0x50000, 0x10000);
+  Func_02002b3c_(-1, -1, 0xe666);
   Func_02002b44();
   Func_02002bbc(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;

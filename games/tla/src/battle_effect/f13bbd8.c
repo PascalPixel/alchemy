@@ -1,36 +1,9 @@
-// Near miss, differ 21 of 558.
-//
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 21; an empty asm before
-// the first statement does not help (differ 23).
-
-// Twin: The Broken Seal's BattleEffect_RunIce (effect kind 7 in
-// both games), ported as is apart from ⚓️'s calling conventions: the effect is
-// read from the argument (⚓️ never stores work->effect), the heap blocks are
-// read as Ram_HeapSlots fields, the blitters go through BattleEffect_LoadBlitter with
-// ⚓️'s mode numbers (3 - The Broken Seal's), BattleEffect_ArmWin0HBlankDma arms the WIN0
-// HBlank DMA, the callbacks take order 0xc80 and the results phase is 133.
-
-// Left: the native stores draw[0] before it builds the pair's address, and
-// builds that address as movs r7, #28; add r7, sp with the alternate
-// blitter's load in between; here the two halves sit together and the
-// peephole makes them add r7, sp, #28, one instruction short, which moves the
-// first literal pool and four pc offsets. The rest are single rows where the
-// native issues a constant or a pooled load one slot earlier.
-
-// Tried:
-// the trial port as written                                  47
-// the shard's y stored after x and variant (permute)         41
-// alchemy permute, 6 + 8 minutes (trial 1)                   41
-// alchemy permute, 10 minutes, 2 jobs (2,218 candidates)     41
-
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
-
-typedef DrawRectangle BlitterPair[2];
 
 // The blitter pair's heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BLITTER 104           // unk64[1]
@@ -62,7 +35,8 @@ void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+s32 BattleEffect_ProcessPendingGraphicsTransfer(
+    void);                                // the canvas transfer callback
 void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
 s32 Task_Add(void *func, s32 order);
 s32 Task_Remove(void *func);
@@ -93,7 +67,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   u8 *graphics;
-  BlitterPair draw;
+  void *draw[2];
   struct EffectStep *shard;
   struct EffectStep *puff;
   u16 *line;
@@ -141,15 +115,16 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
     BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                  BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
+                             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
-    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                  BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
+    BattleEffect_LoadBlitter(
+        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
+    BattleEffect_LoadBlitter(
+        SLOT_BLITTER_ALTERNATE,
+        BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
   }
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[0] = Ram_HeapSlots->unk64[1];
+  draw[1] = Ram_HeapSlots->unkb8[1];
 
   // Window 0's left and right edge for each line: a band slanting with the
   // shards' fall, then the targets' full width, then nothing.
@@ -196,7 +171,8 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        draw[effect->variant == 2 ? 1 : 0](canvas, work->sheet, x, y, 32, 32);
+        ((DrawRectangle)draw[effect->variant == 2 ? 1 : 0])(canvas, work->sheet,
+                                                            x, y, 32, 32);
         if (shard->y <= 0x27f) {
           if (effect->side == 0)
             shard->x -= 64;
@@ -220,7 +196,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
         s32 y = shard->y / 8;
 
         if (shard->variant >= 1 && shard->variant <= 14) {
-          draw[effect->variant == 2 ? 1 : 0](
+          ((DrawRectangle)draw[effect->variant == 2 ? 1 : 0])(
               canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
               32, 32);
         }
@@ -250,7 +226,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
           s32 x = puff->x / 8 - (Data_0819745e[image] >> 1);
           s32 y = puff->y / 8 - (Data_0819745e[image] >> 1);
 
-          draw[effect->variant == 2 ? 1 : 0](
+          ((DrawRectangle)draw[effect->variant == 2 ? 1 : 0])(
               canvas, graphics + Data_0819744c[image], x, y,
               Data_0819745e[image], Data_0819745e[image]);
         }

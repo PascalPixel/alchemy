@@ -1,13 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 8 of 145 in tla-en, instruction
-// order only. An empty asm before `leader->priorityFlags |= 1;` lowers it to 6.
-// Near miss, differ 14 of 145: Func_080d57e4 without the scale reset, the
-// motion values stored in the order the native shows (acceleration first):
-// the leader lets go of a grabbed node (Func_080d59dc) toward the held
-// direction, moving onto the free cell ahead with its saved motion flags,
-// frame and priority restored and the render mode back to 0; returns 1 when
-// it moved, 0 otherwise. Left, as in 080d57e4: instruction order only (the
-// vector's y and z copies interleaved with the polar offset's arguments, the
-// table loaded before the 15 mask, an address add one slot later).
 #include "types.h"
 #include "field_sprite.h"
 #include "input.h"
@@ -48,6 +38,10 @@ s32 Func_080d5aa0(void) {
       Func_08020210(leader, position))
     return 0;
   leader->angle = angle;
+  /* FAKEMATCH(barrier): an empty asm between the angle's store and the
+     priority flag; as the plain statements, 2 of 145 instructions differ in
+     tla-en. */
+  asm("");
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->action;
   sprite->nextFrame = leader->unk66;

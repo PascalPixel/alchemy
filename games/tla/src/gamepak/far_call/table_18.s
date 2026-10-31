@@ -12,7 +12,7 @@ Party_ShowJoinedMessageFar:
 	.global Party_ShowPairJoinedMessageFar
 	.thumb_func
 Party_ShowPairJoinedMessageFar:
-	overlay_veneer Func_08044c80
+	overlay_veneer Party_ShowPairJoinedMessage
 	.global Func_08038340
 	.thumb_func
 Func_08038340:

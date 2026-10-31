@@ -385,14 +385,14 @@ Resource_DirectoryTable:
 	resource , BattleEffect_VioletStreakSheet
 	resource , BattleEffect_CrescentMoonSheet
 	resource , BattleEffect_ThornVineSheet
-	resource , BattleEffect_IceShardSheet
+	resource IceShardSheet, BattleEffect_IceShardSheet
 	resource EmberStreakSheet, BattleEffect_EmberStreakSheet
 	resource , BattleEffect_BlueArcSheetA
 	resource , BattleEffect_BlueArcSheetB
 	resource , BattleEffect_GlowOrbSheet
 	resource , BattleEffect_IceChipSheet
 	resource IceBlockSheet, BattleEffect_IceBlockSheet
-	resource , BattleEffect_SparkleDots
+	resource SparkleDots, BattleEffect_SparkleDots
 	resource , BattleEffect_PinkBurstSheet
 	resource , BattleEffect_LightFanSheet
 	resource , Resource_Data181

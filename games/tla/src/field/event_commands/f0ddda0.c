@@ -1,15 +1,6 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 4 of 113 in tla-en, instruction
-// order only. After a store the native builds a constant's half before the next
-// load, where alchemy-gcc issues the load at once (AGENTS.md's recurring row);
-// no empty asm placement lowers it.
-// Near miss, differ 4 of 113 (was 16 through a gEffectWork symbol; this game
-// reads the effect work from its heap slot): two scheduling pairs. The native
-// starts the 0x100000 lift before it loads y, and reloads the first anchor
-// from the frame before it finishes the flag address.
 #include "types.h"
 #include "objdisp.h"
 #include "system.h"
-#include "object_effect_scripts.h"
 
 struct BattleEffectScene {
   u8 reserved00[4];
@@ -30,6 +21,8 @@ struct EffectChild {
 };
 
 #include "ram_buffer.h"
+
+extern const s32 gData_080f0e60[];
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
@@ -59,8 +52,7 @@ void FieldEffect_RunLiftOnTarget(void) {
 
   BattleEffect_InitializeSharedScene();
   *(void **)((u8 *)mainObject + 0x68) = child;
-  Actor_StartScriptFar((struct ActorView *)mainObject,
-                               (u32)(gBattleEffect_SharedParticleScript + 12));
+  Actor_StartScriptFar((struct ActorView *)mainObject, gData_080f0e60);
 
   x = scene->x;
   position[0] = x;
@@ -69,8 +61,8 @@ void FieldEffect_RunLiftOnTarget(void) {
   z = scene->z;
   position[2] = z;
   anchors[0] = BattleEffect_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
-  anchors[1] = BattleEffect_SpawnItemBreakMode3(position[0] - 0x200000, position[1],
-                                            position[2], 0);
+  anchors[1] = BattleEffect_SpawnItemBreakMode3(position[0] - 0x200000,
+                                                position[1], position[2], 0);
 
   wait(15);
   for (index = 0; index < 2; index++) {

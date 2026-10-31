@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/tile_sprite_b.o"(.text)
         "*/games/tla/src/scene/world_map/s03f8.o"(.text)
         "*/games/tla/src/scene/world_map/s050c.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x02008574)
+        "*/games/tla/src/scene/world_map/s0574.o"(.text)
         "*/resource_64b_overlay.o"(.text.x020086d0)
         "*/games/tla/src/scene/world_map/s0918.o"(.text)
         "*/games/tla/src/scene/world_map/s0994.o"(.text)

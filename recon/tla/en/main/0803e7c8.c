@@ -1,5 +1,14 @@
-// Near miss, differ 4 of 140 (tla-en, 2026-10-30): scheduler order on the
-// left side only. The listing issues `movs r4, #255` before the tile pointer's
+// Near miss, differ 4 of 140 (tla-en, 2026-10-31): scheduler order on the
+// left side only, unchanged since 2026-10-30. A left-tiles local like the
+// right side's (loaded first, copied to frames after the store; block- or
+// function-scoped, with or without a one-pass block or empty asm after the
+// store) gives the listing's left-side order, but local allocation puts the
+// local in r2, so reload takes r0 for baseX's offset and makes top's offset
+// with `adds r0, #6`: 17 differ. The listing's order would need the copy to
+// r11 at sched2 priority 5; it is 7 here through its anti-dependence on top's
+// offset. The permuter (4 minutes, 2 jobs, from the empty-asm form at 2)
+// finds nothing better. The right side's local is a device of its own (as in
+// The Broken Seal), now tagged. The listing issues `movs r4, #255` before the tile pointer's
 // literal load and stores the x before it copies the left tiles to r11; this
 // draft loads the literal one slot early and copies to r11 before the store.
 // The plain form (no block) differs in 8. In sched2 the store's only way to
@@ -32,6 +41,9 @@ void Func_0803e7c8(struct SelectionScreen *state, s32 index) {
 
   state->records[index].kind = 0;
   if (index != 0) {
+    /* FAKEMATCH(temporary): the tile pointer in a local, loaded early into r5;
+     * as gData_0805c5c4 where right is read, 56 of 140 instructions differ in
+     * tla-en. */
     u8 *right = gData_0805c5c4;
 
     count = state->count;

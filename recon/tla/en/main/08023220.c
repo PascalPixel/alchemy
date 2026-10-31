@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 181 (tla-en, 2026-10-30), with no device: one
+// Near miss, differ 2 of 181 (tla-en, 2026-10-31), with no device: one
 // reordered row. ☀️'s FieldObject_Create (games/tbs/src/field/field.c) on
 // The Lost Age's object, which also clears the four words at its end. Left:
 // in case 2 the native stores the first sprite (mov r3, r8; str r5, [r3])
@@ -14,6 +14,17 @@
 // + 1, entry[0] and &entry[1], (u8) on boxY, the radius kept in a local and
 // stored after the sprite (22), *entry++ = sprite before the radius (6);
 // five minutes of permute (nothing below 2).
+// Measured (2026-10-31): the copy is ranked first only at priority 3, which
+// needs an in-block successor of the sprite store; the listing has none.
+// Tried: an actor alias for the radius, as ☀️ writes it (2); a dead else
+// (sprite = NULL, kind = 0), gone before sched2 (2); the metadata pointer in
+// a local with the store before the radius (8) or after it (6). Devices: a
+// base variable stepped after the store with asm("" : "+r"(base) : :
+// "memory") and entry = base + 3 gives the listing's order, but base takes
+// r8 and entry sl (37; the same through a copy of base); the asm on the step
+// (asm("" : "=r"(step) : "0"(12) : "memory")) keeps r8 and sl but loads the
+// 12 into r3 after the store (45); without base, 58 and 64. Four minutes of
+// permute: nothing below 2 (most candidates did not compile).
 // Earlier (2026-10-26): no single empty asm, one-pass block, wrapping block
 // or swap of neighbouring statements brings it closer (device search);
 // *entry = sprite; entry++; is the same as *entry++.

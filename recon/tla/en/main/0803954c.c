@@ -1,15 +1,26 @@
-// Draft, differ 4 of 84 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Draft, differ 4 of 84 (2026-10-24): an empty asm after found->unk26 = 0
-// takes one reordered pair off. Left: instruction order only.
-// Near miss, differ 6 of 84: ☀️'s Message_Start. The native
-// starts the text-mode offset 0x138c (movs r1, #152) before the channel
-// stores and finishes it (lsls, adds) after them; agscc builds it whole
-// before them. The zero pinned to r2 behind a barrier loads from the pool
-// before the spacing is addressed (differ 8 without them; the pin alone, or
-// with a one-pass block, 8).
+// Near miss, differ 4 of 84 (tla-en, 2026-10-31): the empty asm is replaced
+// by a one-pass block around the text-mode test, a milder device with the same
+// 4 (movs r1, #152 and the flags store each one row out of place).
+// ☀️'s Message_Start, now read through WindowWork.textMode (the old 0x118c
+// offset was the Japanese one, as EDITION_INTERNATIONAL is only defined for
+// assembly); with that the spacing loops match with no pin or barrier. Left:
+// instruction order only.
+// The native starts the text-mode offset 0x138c (movs r1, #152) before the
+// channel stores and finishes it (lsls, adds) after them. Without a device,
+// sched2 builds it whole before them (differ 6): the flags load and
+// movs r1, #152 tie at priority 8 and the class rule takes the movs, which the
+// native could only skip with that chain at priority 6 or lower; with the asm
+// or the one-pass block it comes whole after them. No statement order,
+// parameter type, local or nested test brings it closer (permuter, 4 minutes,
+// twice, no better candidate). In the plain form's sched2 dump the stores rank
+// 5 and lsls r1 7, so the native order needs the stores to outrank lsls; the
+// tla-ja listing (offset 0x118c) has the same order. Also measured: textMode
+// read through a volatile pointer becomes a plain byte load, which brings
+// lsls r1 nearer the native place but loses the asrs (differ 13); a volatile
+// unk26 or ended store, a local s8 copy, a nested test or a pointer to
+// textMode taken before the stores (34) do no better; with the one-pass block,
+// flags stored before the zero stores swaps it with the window store instead
+// (still 4), and flags moved before the window store reallocates (28).
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -24,19 +35,10 @@
 #include "resource.h"
 #include "iwram_call.h"
 
-#if EDITION_INTERNATIONAL
-#define UI_TEXT_MODE_OFFSET 0x138c
-#define UI_PALETTE_OWNER_OFFSET 0x1360
-#else
-#define UI_TEXT_MODE_OFFSET 0x118c
-#define UI_PALETTE_OWNER_OFFSET 0x1160
-#endif
-
-struct UiChannelSlot *Message_Start(struct Window *window,
-                                                s32 entry, s32 x, s32 y,
-                                                u16 *spacing, s32 flags) {
-  u8 *work = (u8 *)Ram_HeapSlots->windowTiles;
-  struct UiChannelSlot *render = ((struct WindowWork *)work)->channels;
+struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
+                                    s32 y, u16 *spacing, s32 flags) {
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct UiChannelSlot *render = work->channels;
   struct UiChannelSlot *found = NULL;
   u32 i;
 
@@ -59,21 +61,17 @@ struct UiChannelSlot *Message_Start(struct Window *window,
     found->ended = 0;
     found->flags = flags;
     found->unk26 = 0;
-    __asm__ volatile("");
-    if (*(s8 *)(work + UI_TEXT_MODE_OFFSET) != 0 && spacing != NULL)
-      found->unk26 = spacing[3];
+    do {
+      /* FAKEMATCH(one-pass): the form kept; as the bare if, 6 of 84 instructions differ in tla-en. */
+      if (work->textMode != 0 && spacing != NULL)
+        found->unk26 = spacing[3];
+    } while (0);
     if (spacing != NULL) {
       for (i = 0; i < 4; i++)
         found->spacing[i] = *spacing++;
     } else {
-      /* FAKEMATCH: the zero pinned to r2 loads from the pool before the
-       * spacing is addressed; the barrier holds it there. */
-      register u16 zero asm("r2") = 0;
-
-      /* FAKEMATCH: the barrier of the pin above. */
-      asm volatile("" : "+l"(zero));
       for (i = 0; i < 4; i++)
-        found->spacing[i] = zero;
+        found->spacing[i] = 0;
     }
     found->line = 0;
   }

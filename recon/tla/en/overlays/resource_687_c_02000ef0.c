@@ -1,116 +1,103 @@
-// Draft, differ 228 of 165: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+// Near miss, differ 137 of 165 (tla-en, 2026-10-31): control flow, calls,
+// fields, frame layout and constants are the native's; what remains is
+// allocation. Global allocation ranks gFrameCount & 4 (16 refs over 22 insns)
+// above the pos address (34 refs over 71), so pos takes r7 and &gFrameCount,
+// then gFrameCount & 4, take r6: the native has them the other way round.
+// Reload's choice of reload registers runs one step off from the frame block
+// on: the gFrameCount & 3 mask goes through r2 rather than r1, and &options is
+// built in r3, kept in r9 and copied to r5 for the four stores (one
+// instruction more) where the native builds it in r2, stores through r2 and
+// copies it to r9. In the offset block cosine * 12 takes r2 and sine * 12 r1,
+// where the native has r3 and r2, so the actor->x load takes r3, not r1.
+// Measured forms: the loop as a C while is 191 (loop.c hoists 0xb0000 out of
+// it); passing -velocity at the uses is 155 (negs instead of the native's
+// literal-pool loads); passing -0x8000 literally is 186 (GCSE propagates the
+// constant into velocity's uses and its register disappears). Adding the
+// offsets as actor->x + pos[0] and so on measures 132 and puts the mask and
+// &options in the native's r1 and r2, but spills a value to a new stack slot
+// (a 76-byte frame, 169 instructions), so this form is kept. Names are still
+// placeholders.
 #include "types.h"
+#include "actor.h"
+#include "system/field_effect.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+extern u32 gFrameCount;
+struct Actor *Actor_GetById(s32 id);
+void Func_02001fac(void);
+void Func_02001fb4(void);
+void Func_02002044(s32 skip);
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+void Func_02001f6c(struct Actor *actor, s32 x, s32 y, s32 z);
+s32 Func_02001f9c(struct Actor *actor);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   const struct EffectOptions *options);
+void wait(s32 frames);
 
-extern u8 gFrameCount[];
-s32 Actor_GetById();
-void Func_02001fac();
-void Func_02002044();
-void Func_02001f6c();
-s32 Math_Cosine();
-s32 Math_Sine();
-void Func_0200015c();
-void wait();
-s32 Func_02001f9c();
-s32 Func_02001fb4();
+void Func_02000ef0(void) {
+  s32 pos[4];
+  struct EffectOptions options;
+  struct Actor *actor;
+  s32 cosine, sine;
+  s32 x0, y0, z0;
+  s32 velocity, reverse;
 
-s32 Func_02000ef0(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 v0, r8, r5, r7, r10, r9, v1, v2, r6, r4, r11, r2, r1, r0, v3, v4, r3;
-  s32 stack[18];
-
-  /* sub (s32)stack, #72 */
-  v0 = Actor_GetById(8);
-  r8 = v0;
+  actor = Actor_GetById(8);
   Func_02001fac();
-  Call1((void (*)())Func_02002044, 0);
-  r5 = 128;
-  r5 = r5 << 12;
-  Func_02001f6c(r8, FIELD_AT(r8, s32, 8), FIELD_AT(r8, s32, 12),
-                (FIELD_AT(r8, s32, 16)) + r5);
-  goto L_02009036;
-L_02008f26:
-  r7 = (s32)gFrameCount;
-  r10 = FIELD_AT(r7, s32, 0);
-  r10 = r10 & 3;
-  if ((r10 & 3) != 0)
-    goto L_02009030;
-  FIELD_AT((s32)((u8 *)stack + 16), s32, 0) = 2;
-  FIELD_AT((s32)((u8 *)stack + 16), s32, 4) = 7;
-  FIELD_AT((s32)((u8 *)stack + 16), s32, 8) = 0x16666;
-  r9 = (s32)((u8 *)stack + 16);
-  FIELD_AT((s32)((u8 *)stack + 16), s32, 12) = 0x13333;
-  v1 = Math_Cosine(FIELD_AT(r8, u16, 6));
-  r5 = v1;
-  v2 = Math_Sine(FIELD_AT(r8, u16, 6));
-  r6 = (s32)((u8 *)stack + 56);
-  r4 = -(((v2 << 1) + v2) << 2);
-  FIELD_AT(r6, s32, 0) = ((r5 << 1) + r5) << 2;
-  FIELD_AT(r6, s32, 4) = ((v2 << 1) + v2) << 2;
-  FIELD_AT(r6, s32, 8) = -(((r5 << 1) + r5) << 2);
-  FIELD_AT(r6, s32, 12) = r4;
-  r5 = r8;
-  FIELD_AT(r6, s32, 0) = (((r5 << 1) + r5) << 2) + (FIELD_AT(r5, s32, 8));
-  FIELD_AT(r6, s32, 4) = (((v2 << 1) + v2) << 2) + (FIELD_AT(r5, s32, 16));
-  FIELD_AT(r6, s32, 8) = (-(((r5 << 1) + r5) << 2)) + (FIELD_AT(r5, s32, 8));
-  r4 = r4 + (FIELD_AT(r5, s32, 16));
-  FIELD_AT(r6, s32, 12) = r4;
-  r11 = 0x8000;
-  r2 = (((v2 << 1) + v2) << 2) + (FIELD_AT(r5, s32, 16));
-  if (((((v2 << 1) + v2) << 2) + (FIELD_AT(r5, s32, 16))) ==
-      (FIELD_AT(r5, s32, 16)))
-    goto L_02008fac;
-  FIELD_AT(r6, s32, 4) = r2 - 786432;
-  FIELD_AT(r6, s32, 12) = r4 - 786432;
-L_02008fac:
-  r7 = FIELD_AT(r7, s32, 0);
-  r7 = r7 & 4;
-  r1 = FIELD_AT(r8, s32, 12);
-  r2 = FIELD_AT(r6, s32, 4);
-  r0 = FIELD_AT(r6, s32, 0);
-  if (r7 == 0)
-    goto L_02008ffa;
-  r5 = r10;
-  stack[0] = r5;
-  stack[1] = r5;
-  r5 = 176;
-  r5 = r5 << 12;
-  Func_0200015c(r0 + 262144, r1, r2, r11, r5, r5, r5, r9);
-  stack[0] = r10;
-  stack[1] = r10;
-  stack[2] = r5;
-  r5 = r9;
-  Func_0200015c((FIELD_AT(r6, s32, 8)) - 262144, FIELD_AT(r8, s32, 12),
-                FIELD_AT(r6, s32, 12), -0x8000, r10, r10, r5, r5);
-  goto L_02009030;
-L_02008ffa:
-  r5 = 176;
-  r5 = r5 << 12;
-  Func_0200015c(r0 - 262144, r1, r2, -0x8000, r7, r7, r5, r9);
-  Func_0200015c((FIELD_AT(r6, s32, 8)) + 262144, FIELD_AT(r8, s32, 12),
-                FIELD_AT(r6, s32, 12), r11, r7, r7, r5, r9);
-L_02009030:
-  Call1((void (*)())wait, 1);
-L_02009036:
-  v3 = Func_02001f9c(r8);
-  r0 = v3;
-  if (v3 != 0)
-    goto L_02009042;
-  goto L_02008f26;
-L_02009042:
-  v4 = Func_02001fb4(r0, r1, r2, r3);
-  /* add (s32)stack, #72 */
-  return v4;
+  Func_02002044(0);
+  Func_02001f6c(actor, actor->x, actor->y, actor->z + 0x80000);
+  // A goto loop: as while (Func_02001f9c(actor) == 0), loop.c moves 0xb0000
+  // out of the loop and 191 of 165 instructions differ.
+  goto check;
+body:
+  if ((gFrameCount & 3) == 0) {
+    options.priority = 2;
+    options.palette = 7;
+    options.startScaleX = 0x16666;
+    options.startScaleY = 0x13333;
+    cosine = Math_Cosine(actor->angle);
+    sine = Math_Sine(actor->angle);
+    pos[0] = cosine * 12;
+    pos[1] = sine * 12;
+    pos[2] = -(cosine * 12);
+    pos[3] = -(sine * 12);
+    pos[0] += actor->x;
+    pos[1] += actor->z;
+    pos[2] += actor->x;
+    pos[3] += actor->z;
+    velocity = 0x8000;
+    reverse = -velocity;
+    if (pos[1] != actor->z) {
+      pos[1] -= 0xc0000;
+      pos[3] -= 0xc0000;
+    }
+    x0 = pos[0];
+    y0 = actor->y;
+    z0 = pos[1];
+    if (gFrameCount & 4) {
+      Func_0200015c(x0 + 0x40000, y0, z0, velocity, 0, 0,
+                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                        EFFECT_USE_START_SCALE,
+                    &options);
+      Func_0200015c(pos[2] - 0x40000, actor->y, pos[3], reverse, 0, 0,
+                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                        EFFECT_USE_START_SCALE,
+                    &options);
+    } else {
+      Func_0200015c(x0 - 0x40000, y0, z0, reverse, 0, 0,
+                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                        EFFECT_USE_START_SCALE,
+                    &options);
+      Func_0200015c(pos[2] + 0x40000, actor->y, pos[3], velocity, 0, 0,
+                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                        EFFECT_USE_START_SCALE,
+                    &options);
+    }
+  }
+  wait(1);
+check:
+  if (Func_02001f9c(actor) == 0)
+    goto body;
+  Func_02001fb4();
 }

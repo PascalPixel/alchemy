@@ -1,7 +1,15 @@
+// Near miss, differ 8 of 116 (tla-en, 2026-10-31): sched2's order, not the C.
 // Draft, differ 8 of 116 (26 before, 2026-10-26): the index stored before y,
 // and a barrier after the x copy (without it, 16). Left: the active store
 // and the slot's store after Resource_FindFreeEntry each come a row after
 // the native's, and the y byte's load a row before the index store.
+// sched2 (2026-10-31): the slot address chain (priority 8) outranks the 2
+// for active (6), and the r4 restore (3) outranks the slot store (1); the
+// listing's order follows only if a store costs about 3 before a dependent
+// load, as the plain store orders' tail also shows. Measured: x, y, next,
+// index (☀️'s), x, y, index, next and x, index, y, next without the
+// barrier, 16; the slot written as base->glyphResource, 8; a four-minute
+// permuter run, nothing under 8.
 // ☀️'s Window_PutGlyph (the international form) on this game's
 // WindowWork, the tilemap address taken up front.
 #include "types.h"
@@ -69,6 +77,8 @@ void Func_0803c274(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     row = (u8)win->y + (row = (u8)win->height + 254);
     attr->y = row * 8 - 1;
     out->x = attr->x;
+    /* FAKEMATCH(barrier): the empty asm after the x copy; as the plain x,
+     * index, y, next order, 16 of 116 instructions differ in tla-en. */
     asm("");
     out->index = idx;
     out->y = attr->y;

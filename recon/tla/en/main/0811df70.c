@@ -81,6 +81,7 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   u32 i;
   u32 kept;
   struct MotionObject *object;
+  u16 *list;
 
   BattleStaging_BuildTargetList(plan, &work);
   actor = plan->actorId;
@@ -108,8 +109,11 @@ s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(actor)->object;
   REG_BLDCNT = 0x3f40;
-  count = BattleParty_ListActorIds(3, units);
-  for (i = 0; i != count; i++) {
+  list = units;
+  i = 0;
+  asm("");
+  count = BattleParty_ListActorIds(3, list);
+  for (; i != count; i++) {
     if (units[i] == 254)
       continue;
     if ((mode & 2) || units[i] != actor) {

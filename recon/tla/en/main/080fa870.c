@@ -1,19 +1,23 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 10 of 387 in tla-en. First difference: this issues `movs r2, #139` earlier
-// (row 12) than the native does (row 16).
+// Near miss, differ 10 of 387 (tla-en, 2026-10-31): instruction order only.
+// In the first block sched2 issues the 0x215 offset's `movs r2, #139` before
+// `sub sp, #16` (at t=4 the offset chain has priority 52 against sub sp's 50,
+// both through the r3 reuse that follows; the native issues sub sp there). In
+// the label draws the native passes 2 before the window to the number draw and
+// sets the x before the message in the third case: exactly the order three
+// separate Text_DrawCharacterAtOffsetFar calls give, so its shared draw is
+// probably jump2 cross-jumping three calls. As three calls this measures
+// differ 36: the last call ends its block before the join label, so flow adds
+// a (use (const_int 0)) after it and cross-jumping stops there; a dead store
+// after the calls (differ 38) lets only part of the tail merge.
 // First draft of Func_080fa870: the twin of ☀️'s ItemMenu_SelectTarget
 // (games/tbs/src/menu/menu/item.c), choosing the party member to use (mode 0)
 // or give (mode 1) the selected item to. This game pages the members four at a
 // time through the cursor helper Menu_MoveGridCursor, which also replaces the Left
 // and Right tests; the item's owner is restored to the page on the way out.
 //
-// Near miss, differ 12 of 387, instruction order only: the native issues sub
-// sp right after the menu load and the 0x215 offset after the selection load
-// (here the offset's movs comes first); it adds the page x to selection * 3
-// after the marker load, passes 2 before the window to the number draw, and
-// sets the x before the message in the third label case. The window loaded
-// before the count, the label and x chosen in each case before one draw, the
-// marker's x as u16 and selection * 3 written first took differ 127 to 12.
+// The window loaded before the count, the label and x chosen in each case
+// before one draw, the marker's x as u16 and selection * 3 written first took
+// differ 127 to 12, then 10.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

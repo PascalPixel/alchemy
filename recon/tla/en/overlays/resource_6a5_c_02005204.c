@@ -1,6 +1,16 @@
+// Near miss, differ 8 of 131 (tla-en, 2026-10-31): the first four rows, the
+// base of gMainRoutineWork.currentOwner's address in r3 with the 0x214 offset
+// built in r1, where the native leaves the base unallocated and reload builds
+// it in r1 with the offset in r2. resource_698_c_020014dc.c records why: the
+// leader takes r6 from local-alloc's base-and-address pair, and global.c
+// ranks the base below the leader, so the base is allocated again. Tried here
+// without change: the object assigned after the declarations (8), the owner in
+// a local (8), the loop's actor in a second variable (8, the copy propagated
+// away), a one-pass block around the first statement (12); permuter 4 minutes
+// (8, only the two closing calls swapped, branch targets ignored).
 // Draft of overlay 6a5's Func_02005204, the twin of overlay 69c's
 // Func_02001db8: its draft (resource_69c_c_02001db8.c) with this overlay's
-// symbols: differ 8 of 131 under -mthumb-slow-loads. Left: what that draft's header records.
+// symbols. Left: what that draft's header records.
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
 

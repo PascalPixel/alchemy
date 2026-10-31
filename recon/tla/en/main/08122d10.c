@@ -1,8 +1,23 @@
+// Near miss, differ 10 of 870 (tla-en, 2026-10-31, nested function included;
+// 36 of 844 for the parent alone): instruction order only, three pairs one
+// slot from the native, each a sched2 choice the C does not move: sub sp
+// after the entry's two offset constants (priority 7 to their 8); in the
+// defeat event, the flags offset's reload before the actorId store (40 to
+// 39); in the arrow prompt, the copy of x into r2 before the 0xa000 shift
+// (equal priority; the copy has more dependents).
+// QueueIoWriteDelay10 and QueueIoWriteDelay6 were implicit (called for a
+// value): prototyped as io_write_queue.h has them, 14 became 10. The other
+// prototypes follow their definitions (no change in the count). Measured
+// without effect: the arrow's two words stored in the other order (32), x
+// set to 0 at its stores (159) or before the arrowResource test (10), the
+// defeat's actorId as the call's assigned argument (10) or a local (64), the
+// flags read into a local first (10). Permuter (4 minutes, about 4,400
+// candidates, the nested function held out of its rewrites): none better.
 // Under -mthumb-slow-loads (26 October 2026): differ 46 of 844 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, each call argument copied into its
-// argument register (pinned) at the call or up to three statements before it;
-// none reaches 0. One barrier (after line 221 of the draft as it stood)
+// Tried then, one edit at a time: an empty asm barrier after each statement,
+// each adjacent pair of statements swapped, each call argument copied into
+// its argument register (pinned) at the call or up to three statements
+// before it; none reaches 0. One barrier (after line 221 of the draft as it stood)
 // lowers it to 42, and no second one lowers it further.
 // Draft of BattleEvent_Playback with its nested Func_08122cd0 (compare both:
 // alchemy-devtools diff 08122d10.c 08122cd0,08122d10): ☀️'s BattlePlayback_Run
@@ -10,8 +25,6 @@
 // ☀️'s BattleSprite_ClearTiles. ⚓️ adds event 15 (BattleActor_RemoveFromLists),
 // lets gLastFrameVBlanks push a hit's flash on a frame, flashes for 8 frames
 // rather than 9, and keeps the message window in heap slot 0x94.
-// Near miss, differ 44 of 870 (2026-10-24), instruction order only: 22 pairs,
-// a load or a constant one slot from the native, as in ⚓️'s other near misses.
 // Forms measured: the held keys read through a volatile view (as ☀️'s
 // gKeysHeld is volatile; read plainly, the second test reuses the first read:
 // 58), and the fading byte stored as a u8 (tla's battle object splits ☀️'s
@@ -115,18 +128,20 @@ void Sound_PlayFar(s32 cue);
 void Func_080381d0(s32 message);
 s32 Message_AllTypedFar(void);
 void Actor_SetMode(struct MotionObject *object, s32 mode);
-void Func_0812824c(s32 unitId, s32 flags);
-void BattleActor_ResetRuntimeFields(s32 unitId);
+s32 Func_0812824c(s32 unitId, s32 flags);
+s32 BattleActor_ResetRuntimeFields(s32 unitId);
 void Animation_ApplyChildArgumentFar(void *record, s32 value);
 void PartyStatus_DrawFar(s32 flags);
-s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *slot);
+void BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *slot);
 s32 BattleMotion_GetSlotPalette(s32 id);
-void BattleObject_UpdatePose(s32 id);
+s32 BattleObject_UpdatePose(s32 id);
 s32 VramCache_Reload(s32 slot, s32 source);
 s32 Trig_Sin(s32 angle);
 void Oam_AddSpriteAtDepth(void *entry, s32 priority);
 s32 BattleClass_GetDefeatSoundKind(s32 classId);
 void Map_RenderAnimatedTilePictureFar(void *record, s32 step);
+void QueueIoWriteDelay10(u32 address, u32 value);
+void QueueIoWriteDelay6(u32 address, u32 value);
 
 void BattleEvent_Playback(void) {
   u16 selection[2];

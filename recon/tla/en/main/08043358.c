@@ -1,6 +1,14 @@
-// Draft, differ 8 of 179 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
+// Near miss, differ 6 of 179 (tla-en, 2026-10-31): the listing issues
+// `movs r0, #128` (offset 586 of the auto-sleep store) right after the build
+// stamp's store and before `ldr r1, [r3]` of gFrameWaitCount; here that load
+// goes first. The sched2 dump gives the load only a 1-cycle wait after the
+// store (priority 47 against the constant's 42) because the
+// -mthumb-slow-loads read-modify-write test sees the later
+// `str r1, [r3]` to gData_02001000 through the reused r3; worked by hand, a
+// 2-cycle wait gives the listing's order. A scheduler cost the C cannot move.
+// No single empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brings it closer (device search); a 4-minute permuter run found
+// nothing below 6.
 #include "types.h"
 #include "ram_buffer.h"
 #include "save.h"
@@ -75,13 +83,17 @@ s32 Save_BuildFileSummary(void) {
 
     frames = SAVE_GAME_WORDS->buildStamp;
     word = gGameFlagBytes;
-    /* FAKEMATCH: keeps the two loads before the bound (differ 4 more without)
-     */
+    /* FAKEMATCH(barrier): an empty asm reading frames and word, so both load
+     * before the bound; as the same statements without it, 10 of 179
+     * instructions differ in tla-en (a one-pass block around the two loads
+     * leaves 8). */
     __asm__("" : : "r"(frames), "r"(word));
     n = 242;
     i = 0;
     n <<= 2;
     summary->frames = frames;
+    // Entered at its test: as a while loop, 32 of 179 instructions differ (it
+    // counts down and loses the entry jump).
     goto test;
     do {
       sum += *word++;

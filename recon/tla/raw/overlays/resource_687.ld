@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_687_overlay.o"(.text.x0200815c)
         "*/games/tla/src/scene/sea_of_time/map.o"(.text)
         "*/games/tla/src/scene/sea_of_time/scene_tables.o"(.text)
-        "*/resource_687_overlay.o"(.text.x0200843c)
+        "*/games/tla/src/scene/sea_of_time/s043c.o"(.text)
         "*/resource_687_overlay.o"(.text.x0200854c)
         "*/resource_687_overlay.o"(.text.x02008818)
         "*/resource_687_overlay.o"(.text.x02008a80)

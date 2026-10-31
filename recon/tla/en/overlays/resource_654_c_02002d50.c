@@ -1,3 +1,12 @@
+// Near miss, differ 6 of 106 (tla-en, 2026-10-31): both rows come from one
+// insn, the state pointer's add. In the native it is in the jump-table block
+// before sched2: its bb2 uses no call result, so the call keeps a low priority
+// and the work load goes first. Formed before the switch, the add reads r0 in
+// bb2, the call's 32-cycle latency lifts its priority, and sched2 sets the
+// Actor_GetById argument first. Read as actor->state in each case, bb2 comes
+// out in native order but each case forms its own pointer (differ 80). No
+// pass here moves it into that block: Thumb runs no sched1, PRE finds no
+// redundancy (0 insns created), and LCM never inserts on the edge into it.
 // 26 October 2026, under -mthumb-slow-loads: differ 6 of 106: the native issues
 // a load one slot later after a store, where alchemy-gcc issues it at once
 // (one-pass after the work pointer leaves 4); alchemy permute (5 to 6 minutes)

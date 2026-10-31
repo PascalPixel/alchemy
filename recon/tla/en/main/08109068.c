@@ -1,15 +1,25 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 4 of 136 in tla-en. The native spills its arguments to the stack before it
-// builds the heap slots' address; this builds the address first (row 8). No
-// single empty asm or one-pass block reaches 0.
+// Near miss, differ 2 of 136 (tla-en, 2026-10-31): instruction order only.
+// The native spills selected (str r1, [sp, #8]) right after sub sp; here
+// movs r3, #192, the first of the three moves that build the heap slots'
+// address 0x030000dc, comes before it. In sched2 that move has priority 46
+// (three steps ahead of the heap slot load, priority 43) and the spill 45
+// (the same load costs 2 after a store under -mthumb-slow-loads), so the
+// spill's priority always trails the move's by one and no reshaping moves
+// the pair; permute 4 minutes found nothing better. No single empty asm or
+// one-pass block reaches 0 (2026-10-26).
+// Measured 2026-10-31: the spill's other successors (the stock count load,
+// movs r1, #156, the reload for the division) all rank lower, and the move
+// touches no memory, so only a barrier between the two can lift the spill;
+// any barrier also holds the window's parameter copy (mov r9, r0) ahead of
+// it. An empty asm with window copied to a local after it: the copy is
+// propagated away, differ 4; the copy made through an asm output: window
+// moves to r8, differ 30; selected declared volatile: differ 41. Permute 4
+// minutes again (26,340 candidates): nothing beats the draft.
 // First draft of Func_08109068: draws a seven-item stock page of the shop,
 // the selection highlight, page arrows and price sprites; the twin of ☀️'s
-// Shop_DrawStock (games/tbs/src/shop/shop.c), with the page start written
+// Shop_DrawStock (games/tbs/src/shop/shop/buy.c), with the page start written
 // selected / 7 * 7 (the native divides and multiplies) and the zero locals
-// of the twin. Near miss, differ 6 of 136, instruction order only: the
-// native spills selected (str r1, [sp, #8]) before it builds the work
-// address 0x030000dc and the stockCount offset; here the spill comes after
-// their first moves.
+// of the twin.
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"

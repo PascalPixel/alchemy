@@ -1,19 +1,26 @@
+// Near miss, differ 10 of 245 (tla-en, 2026-10-31): only the vine draw's
+// order, where the native loads vine->x and stores both stacked arguments
+// (32 and height) before it finishes the source address; here the address
+// first and the stores later. sched2 ranks those two stores 4: their only
+// long successor is the blitter-pointer load, which -mthumb-slow-loads
+// charges 2 after a store, while the native order needs them at 5 (above
+// the draw[i & 1] index chain); every other pick then follows. No C moves
+// that cost: x, the picture address or the spellings of the source, x and
+// y changed nothing or worse (x in a local: 16); alchemy permute 4 minutes
+// on the vine loop: nothing below 10.
+//
 // Under -mthumb-slow-loads (2026-10-26): differ 12 of 245. The BG2CNT
 // store is plain again and BattleEffect_LoadBlitter is declared returning
 // s32, as nibble_pair.c defines it: the preparer's arguments, BLDCNT's zero
-// and the second blitter's r1 before r0 all match now. Left: the vine draw,
-// where the native loads vine->x and stores both stacked arguments (32 and
-// height) before it finishes the source address; here the address first
-// and the stores later (about six rows). alchemy permute 6 minutes, 3 jobs:
-// nothing below 12.
+// and the second blitter's r1 before r0 all match now.
 
 // Draft of BattleEffect_RunVine, effect kind 202: sixteen green vines spring up
 // around the middle of the targets, two frames apart, and sink back.
 
 // Twin: The Broken Seal's BattleEffect_RunVine (effect.c), the same
 // kind; the Lost Age keeps its frame counts, cue and tables.
-// Listing 245 instructions, draft 245, differ 20 (28 without the tagged
-// BG2CNT pin).
+// Before -mthumb-slow-loads the port reached differ 20 only with a tagged
+// BG2CNT pin (28 without); the draft now has no device.
 
 // Changes from the twin: the canvas layer opens with control 0 and the
 // effect sets BG2CNT itself; the canvas preparer takes its kind, side and
@@ -22,16 +29,7 @@
 // load through BattleEffect_LoadBlitter with the Lost Age's mode numbers (transparent
 // is 2); the task priority is 0xc80.
 
-// What remains (all order, no allocation):
-// - the preparer's arguments: the pin's one-pass block moves the flag's
-// orr before the screen position's address (2 rows; plain they match).
-// - BLDCNT's zero: the native loads it before it starts the sheet
-// address (1 swapped row and its pool offset).
-// - the second blitter load sets r1 before r0 in the native.
-// - the vine draw: the native loads vine->x and stores both stacked
-// arguments before it builds the source address (about 8 rows).
-
-// Tried (differ):
+// Tried before the pin was dropped (differ):
 // trial 0 port as is                                          36
 // the two preparer outputs declared before the positions      28
 // BG2CNT pinned behind a one-pass block (kept)                20

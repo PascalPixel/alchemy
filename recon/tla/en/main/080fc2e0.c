@@ -1,20 +1,33 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 8 of 179 in tla-en. First difference: this issues `lsls r3, r3, #1` earlier
-// (row 25) than the native does (row 27). No single empty asm or one-pass block
+// Near miss, differ 2 of 179 (tla-en, 2026-10-31): instruction order only,
+// sched2 issues `lsls r3, r3, #1`, the second half of the slot offset 362,
+// before the unit's store to [sp, #4]; the native stores between the halves.
+// In the sched2 dump the shift outranks the store by one priority (78 to 77),
+// so no tie is left for the order to settle. In that dump both reach the
+// member's reread (`ldrb r3, [r6]`, priority 76): the store directly at cost
+// 1, the shift through the add (77) and the slot load and `mov sl, r3`, which
+// the reread must follow because it reuses r3. Round 5 (2026-10-31): a
+// 4-minute permuter run (20461 candidates) found nothing under 2; slot as u32,
+// member as u8 or u32, and the owner reread as either argument all measure 2;
+// slot as u16 or read again in the call 53; asm("" : "+m"(paneOwner[1]))
+// before the slot read 316.
+// The size local moves the copy-back's `lsls r2, r2, #1` after `mov r1, fp` as
+// in the native: with 332 written there, its pseudo is set ahead of the call
+// address and wins the tie by order (the permuter found it, 2026-10-31).
+// Reading the slot and member into locals, as the Broken Seal twin does,
+// replaced the permuter's SelectedTargetSlot wrapper (8 with it, 6 without
+// either device); swapping slot and member measured 55, a size local set at
+// the top 120. Earlier (2026-10-26): no single empty asm or one-pass block
 // reaches 0.
 // First draft of Func_080fc2e0: after giving or trading the selected item to
 // the member in pane 1, offers to equip it there; the twin of ☀️'s
-// ItemMenu_ConfirmEquip (games/tbs/src/menu/menu.c) in its first-release
+// ItemMenu_ConfirmEquip (games/tbs/src/menu/menu/item.c) in its first-release
 // layout (Yes and No at x 96, the cursor at 184). Returns 0 when it is
 // equipped; 1 when the player says No, backs out, or the member cannot equip
 // it, and the member is left as before.
 //
-// Near miss, differ 8 of 179, instruction order only: four times the native
-// issues a load between or ahead of a constant's halves (the slot offset 362
-// around the unit store, the 332 copy size around the copy-back loads). The
-// native passes the owner to Func_080fae8c a second time, as its target. With
-// gInput.pressed volatile the form without the helper measured 15 with three
-// arguments and 55 with four; the helper came from the permuter (2026-10-19).
+// The native passes the owner to Func_080fae8c a second time, as its target.
+// With gInput.pressed volatile the form without the locals measured 15 with
+// three arguments and 55 with four.
 #include "types.h"
 #include "heap_release.h"
 #include "input.h"
@@ -39,19 +52,13 @@ void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
-                                    s32 height);
+                                  s32 height);
 void Func_080f8ab4(s32 x, s32 y);
 void Func_080f8a44(s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void Unit_CalculateFar(s32 unit);
 void Unit_RefreshPsynergyFar(s32 unit);
 void wait(s32 frames);
-
-// FAKEMATCH(wrapper): the slot read through a helper at both uses; as
-// menu->selectedSlots[1] in place, 55 of 179 instructions differ in tla-en.
-static inline u16 SelectedTargetSlot(struct InventoryMenuState *menu) {
-  return menu->selectedSlots[1];
-}
 
 s32 Func_080fc2e0(s32 unused) {
   s32 rows = 2;
@@ -62,13 +69,20 @@ s32 Func_080fc2e0(s32 unused) {
   void *unit = Unit_Get(menu->paneOwner[1]);
   void *saved;
   s32 window;
+  s32 slot;
+  s32 member;
+  s32 size;
 
-  Func_080fae8c(menu->paneOwner[1], SelectedTargetSlot(menu), 0,
-                menu->paneOwner[1]);
-  saved = Heap_Alloc(332);
-  Iwram_CopyWords(saved, unit, 332);
+  slot = menu->selectedSlots[1];
+  member = menu->paneOwner[1];
+  Func_080fae8c(member, slot, 0, member);
+  /* FAKEMATCH(temporary): the unit size held in size for the allocation and
+   * both copies; as 332 at each, 6 of 179 instructions differ in tla-en. */
+  size = 332;
+  saved = Heap_Alloc(size);
+  Iwram_CopyWords(saved, unit, size);
   window = menu->messageWindow;
-  if ((u32)(Inventory_EquipFar(menu->paneOwner[1], SelectedTargetSlot(menu)) +
+  if ((u32)(Inventory_EquipFar(menu->paneOwner[1], menu->selectedSlots[1]) +
             2) <= 1) {
     selection = 1;
   } else {
@@ -110,7 +124,7 @@ s32 Func_080fc2e0(s32 unused) {
   if (GameFlag_Test(336))
     selection = 1;
   if (selection == 1)
-    Iwram_CopyWords(unit, saved, 332);
+    Iwram_CopyWords(unit, saved, size);
   Heap_Release(saved);
   Unit_RefreshPsynergyFar(menu->paneOwner[1]);
   Unit_CalculateFar(menu->paneOwner[1]);

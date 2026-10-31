@@ -1,14 +1,30 @@
-// Draft, differ 922 of 856: the scheduled callback of the aerie's effect that
-// Func_020017a8 starts, a state machine over its step (word 0xb00) counting
-// frames in word 0xb02: step 0 moves the two trail points over 30 frames from
-// the start toward the start 24 pixels down and to one side; step 1 over 60
-// frames on toward 60 pixels aside, growing the large sprite; step 2 sweeps
-// both points along x until frame 14; step 3 (sound 131) carries the event's
-// object from the start to the end over 96 frames; step 4 (sound 220 and the
-// first object's reaction) shrinks the large sprite away; step 5 waits 16
-// frames and sets the step to 999. Each frame it draws the large sprite at the
-// carried point and the 8 small sparks, each restarting at one of the trail
-// points with a random drift.
+// Near miss, differ 126 of 856 (tla-en, 2026-10-31): the control flow, calls,
+// field accesses, stack frame (44 bytes) and allocation now follow the native;
+// what is left is sched2 and GCSE. The native issues each store (the step's
+// strb, the trail-point str after each __divsi3, a[0], position[1]) as soon as
+// its operands are ready, where this compiler builds the next address's
+// constant first. The native reloads spark->age at each of its three tests and
+// the frame at step 5's second test; here GCSE's PRE reuses the first load and
+// inserts a reload on the paths that store (PRE/HOIST edges in the 07.gcse
+// dump), which also turns step 5's test into ldrh/lsl/cmp #0x100000. An
+// analysis-only -fno-gcse compile gives the native's loads in both places.
+// Shaping that got here from 908: ternaries written zero-first, the products as
+// (to - from) * t, a pointer to the large sprite and one read of its scale, a
+// pointer to the position vector taken before the mirror test, position
+// declared before a and b, and the loop's i first in its initializer.
+//
+// The scheduled callback of the aerie's effect that Func_020017a8 starts, a
+// state machine over its step (word 0xb00) counting frames in word 0xb02:
+// step 0 (30 frames) brings the two trail points to the start from 10 pixels
+// to one side (the side byte picks which) and 24 pixels either way along y;
+// step 1 (60 frames) moves them together 30 pixels to that side while the
+// large sprite grows; step 2 sweeps both along x by half a pixel a frame until
+// frame 14; step 3 (sound 131) carries the event's object from the start to
+// the end over 96 frames with the points 16 pixels beside it; step 4 (sound
+// 220 and the second object's reaction) shrinks the large sprite away; step 5
+// stops the sparks restarting and at frame 16 sets the step to 999. Each frame
+// it draws the large sprite at the carried point and the 8 small sparks, each
+// restarting at one of the trail points with a random drift.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -67,25 +83,28 @@ u32 Random16Far(void);
 s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 
-#define LERP(from, to, t, n) ((from) + (t) * ((to) - (from)) / (n))
+#define LERP(from, to, t, n) ((from) + ((to) - (from)) * (t) / (n))
 
 void Func_02001080(void) {
   struct BeamWork *work = Ram_HeapSlots->menuRuntime;
   struct Actor *carrier =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
   s32 t = work->frame;
+  s32 position[3];
   s32 a[3];
   s32 b[3];
   s32 aside;
-  s32 position[3];
+  s32 scale;
+  s32 *pos;
   struct BeamSpark *spark;
   struct BeamSprite *sprite;
+  struct BeamSprite *large;
   s32 i;
 
   switch (work->step) {
   case 0:
     work->duration = 30;
-    aside = work->side != 0 ? -0xa0000 : 0xa0000;
+    aside = work->side == 0 ? 0xa0000 : -0xa0000;
     a[0] = work->from[0] - aside;
     a[1] = work->from[1] + 0x180000;
     a[2] = work->from[2];
@@ -106,7 +125,7 @@ void Func_02001080(void) {
     break;
   case 1:
     work->duration = 60;
-    aside = work->side != 0 ? -0x1e0000 : 0x1e0000;
+    aside = work->side == 0 ? 0x1e0000 : -0x1e0000;
     a[0] = work->from[0];
     a[1] = work->from[1];
     a[2] = work->from[2];
@@ -119,7 +138,8 @@ void Func_02001080(void) {
     work->pointB[0] = work->pointA[0];
     work->pointB[1] = work->pointA[1];
     work->pointB[2] = work->pointA[2];
-    work->large.scaleX = work->large.scaleY = (work->frame << 16) / 60;
+    large = &work->large;
+    large->scaleY = large->scaleX = (work->frame << 16) / 60;
     if (work->frame == work->duration) {
       work->step++;
       work->frame = -1;
@@ -128,7 +148,7 @@ void Func_02001080(void) {
   case 2:
     if (work->frame == 0)
       work->still = 1;
-    aside = work->side != 0 ? -0x8000 : 0x8000;
+    aside = work->side == 0 ? 0x8000 : -0x8000;
     work->pointA[0] += aside;
     work->pointB[0] += aside;
     if (work->frame == 14) {
@@ -140,13 +160,13 @@ void Func_02001080(void) {
     if (t == 0)
       Func_02002b68(131);
     work->carried[0] = ((work->from[0] >> 2) +
-                        t * ((work->to[0] >> 2) - (work->from[0] >> 2)) / 96)
+                        ((work->to[0] >> 2) - (work->from[0] >> 2)) * t / 96)
                        << 2;
     work->carried[1] = LERP(work->from[1], work->to[1], t, 96);
     work->carried[2] = LERP(work->from[2], work->to[2], t, 96);
     Actor_SetPositionAndResetMotion(carrier, work->carried[0],
                                      work->carried[1], work->carried[2]);
-    aside = work->side != 0 ? -0x100000 : 0x100000;
+    aside = work->side == 0 ? 0x100000 : -0x100000;
     work->pointA[0] = work->carried[0] - aside;
     work->pointA[1] = work->carried[1];
     work->pointA[2] = work->carried[2];
@@ -163,9 +183,10 @@ void Func_02001080(void) {
       Func_02002b68(220);
       Func_0200105c(work->second);
     }
-    work->large.scaleX = work->large.scaleY = work->large.scaleX - 0x800;
-    if (work->large.scaleX <= 0x3332) {
-      work->large.scaleX = 0;
+    large = &work->large;
+    large->scaleY = large->scaleX = large->scaleX - 0x800;
+    if (large->scaleX <= 0x3332) {
+      large->scaleX = 0;
       work->step++;
       work->frame = -1;
     }
@@ -177,22 +198,22 @@ void Func_02001080(void) {
       work->step = 999;
     break;
   }
+  large = &work->large;
+  scale = large->scaleX;
+  pos = position;
   if (work->side == 0)
-    work->large.scaleX = work->large.scaleX < 0 ? -work->large.scaleX
-                                                : work->large.scaleX;
+    large->scaleX = scale < 0 ? -scale : scale;
   else
-    work->large.scaleX = -(work->large.scaleX < 0 ? -work->large.scaleX
-                                                  : work->large.scaleX);
-  position[0] = work->carried[0];
-  position[1] = work->carried[1];
-  position[2] = work->carried[2];
-  Func_02002b20(position);
-  work->large.x = position[0];
-  work->large.z = position[2];
-  Func_02002b38(&work->large);
-  spark = work->sparks;
-  sprite = work->sprites;
-  for (i = 0; i <= 7; i++, spark++, sprite++) {
+    large->scaleX = -(scale < 0 ? -scale : scale);
+  pos[0] = work->carried[0];
+  pos[1] = work->carried[1];
+  pos[2] = work->carried[2];
+  Func_02002b20(pos);
+  large->x = pos[0];
+  large->z = pos[2];
+  Func_02002b38(large);
+  for (i = 0, spark = work->sparks, sprite = work->sprites; i <= 7;
+       i++, sprite++, spark++) {
     if (spark->age == 0) {
       if (i & 1) {
         spark->position[0] = work->pointA[0];

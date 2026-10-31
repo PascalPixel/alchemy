@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 @ Abilities: Flora (scene kind 15).
 	.global BattleEffect_RunFlora
 	.thumb_func

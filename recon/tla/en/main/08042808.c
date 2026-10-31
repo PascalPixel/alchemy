@@ -1,13 +1,29 @@
-// Draft, differ 6 of 170 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Near miss, differ 8 of 170 (four reordered pairs), 2026-10-15: The
-// Broken Seal's PartyStatus_DrawBars, the window's x and y read as
-// signed halfwords. Remaining: the native stores x to its stack slot right
-// after sub sp, loads the work's mode byte before it copies the y argument,
-// copies the light mask to r8 one row later, and stores the row's result
-// before it builds the row step 1: each time a load or store one row
-// earlier than here.
+// Near miss, differ 4 of 170 (tla-en, 2026-10-31): two reordered pairs, both
+// sched2 priority. The native copies the y argument (adds r5, r2, #0) before
+// it loads the work's mode byte (ldrb r3, [r3, #5]); here the ldrb is ready a
+// cycle after the store of `filled` (dependence cost 1) and outranks the copy
+// (priority 4 against 1). The native stores the row's result before it builds
+// the row step 1 (movs r2, #1); here the constant outranks the leaf store
+// (priority 2 against 1). Both native orders would follow if a store cost two
+// cycles (untested). The permuter (16,604 candidates) found nothing closer.
+// Devices measured (2026-10-31), none closer: an empty asm after the row's
+// store gives the native order there, but light and row trade r8 and lr
+// (differ 24); a one-pass block around the store, or around row++, puts the
+// store first but r7's step (adds r7, #4, the barrier after the loop note)
+// then leads the movs (differ 4); an empty asm or one-pass block before the
+// mode test moves the y copy ahead of both stores (differ 6); y copied into
+// its own local after `filled` comes after the stores but still after the
+// ldrb, with window and y trading r5 and r6 (differ 68, 70 with the one-pass
+// block); the store in both arms of a test on result, pixels, id or row
+// grows the code to 175 to 179 instructions (differ 111 to 132), and on
+// col > 7 folds away (differ 4). The y copy can only follow the stores
+// if the ldrb waits on it, and a barrier that makes it wait ranks the copy
+// first by its earlier insn number.
+// Earlier: differ 6 under -mthumb-slow-loads (2026-10-26), where no single
+// empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brought it closer (device search).
+// Twin: The Broken Seal's PartyStatus_DrawBars, the window's x and y read as
+// signed halfwords.
 
 #include "types.h"
 #include "ram_buffer.h"

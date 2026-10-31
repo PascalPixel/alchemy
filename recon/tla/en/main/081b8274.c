@@ -1,11 +1,16 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
-// 105: three stores the native issues one row earlier (sp+16 in the
-// prologue, sp+0, and the multiply before the reload of sp+16). An empty asm
-// before or after the heap read: 6 and 10.
-// Draft, differ 10 of 105: draws a number as large digit sprites into the
-// slot machine's sprite table, as Func_081b8180 does: digits places from x,
-// 22 pixels apart, leading zeros skipped, tiles 640 + 16 * digit in the given
-// palette. Returns the next free sprite. The sprite words are volatile, as
+// Near miss, differ 6 of 105 (tla-en, 2026-10-31): scheduler order only,
+// three pairs sched2 orders by its cost model, each a stack access the
+// native issues one place earlier. The x spill (priority 9) loses to
+// value's (10, anti-dependent on the heap address built in r3); x's reload
+// (21, load cost 3) loses to the multiply (22, cost 4); and the y byte's
+// store at [sp] ties at priority 1 with the giv moves, which win by RTL
+// order. The instruction streams are the same, so no C moves the first
+// two. Hoisting the y byte above the loop: 97. An empty asm before or after
+// the heap read (2026-10-25): 6 and 10.
+// Before -mthumb-slow-loads, differ 10 of 105: draws a number as large digit
+// sprites into the slot machine's sprite table, as Func_081b8180 does:
+// digits places from x, 22 pixels apart, leading zeros skipped, tiles 640 +
+// 16 * digit in the given palette. Returns the next free sprite. The sprite words are volatile, as
 // ☀️'s LuckyWheels_Update has its OAM shadow (FAKEMATCH(volatile) when
 // adopted), which gives the native's two offset givs, the per-pass muls and
 // the stack slots; as plain u32 words, 114 of 105 instructions differ in

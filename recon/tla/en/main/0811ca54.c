@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 180 (tla-en, 2026-10-30): one reordered row in the
+// Near miss, differ 2 of 180 (tla-en, 2026-10-31): one reordered row in the
 // reset loop, below. Why it stays (2026-10-30, from the sched2 dump): the
 // actor's ldrsh depends on the spill store before it (str r2, [sp, #4], in
 // the alias set every memory access shares) at a cost of 1, so it is ready
@@ -14,6 +14,15 @@
 // pinned to each register, each call argument copied into its argument
 // register (pinned) at the call or up to three statements before it, five
 // minutes of permute; none reaches 0.
+// Measured 31 October 2026: the reset loop as a while loop, or with its
+// argument in a named s32 or s16 temporary, keeps differ 2 (the same row);
+// the test written work.count != i, 4; a do-while behind an if, a goto loop,
+// *(work.actors + i), a pointer cast on actors, a work pointer, an index
+// declared in an inner block, a volatile read of the actor or of count, 65
+// to 77; four more minutes of permute, best 2. The only Thumb ldrsh pattern
+// (*thumb_extendhisi2_insn) sets a sign_extend, so in this compiler a ldrsh
+// after any store waits 1, and caller-save always puts its store directly
+// before the call: the load, one cycle closer to the call, then outranks it.
 // Near miss, differ 2 of 180 (one reordered row): The Broken Seal's
 // BattleStaging_RunUnitAction with its one-pass block, this game's heap slots and
 // Actor_SetMode for the dispatch argument. In the reset loop the native stores

@@ -1,13 +1,20 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 6 of 104 in tla-en, instruction
-// order and register choice. An empty asm before the loop lowers it to 4.
-// Draft of Func_080cb1dc (UpdateMapRegionAtPosition here): differ 8 of 104
-// (tla-en, 2026-10-18). It asks the overlay for the map's region list and,
-// at the first region whose condition holds and whose box holds the
-// position, stores the region's value in the event work, plays cue 123 and
-// prepares the current object.
-//
-// Left: instruction order only (the overlay table's load, a negation and two
-// register copies each sit one or two places apart).
+// Near miss, differ 6 of 104 (tla-en, 2026-10-31): sched2 order only, three
+// pairs. (1) The overlay table's pool load goes before the three argument
+// spills here and after them in the listing: the load's +1 priority (38)
+// beats the spills' 37. A one-pass block around the x and y copies, or an
+// empty asm before the loop, moves it and lowers the count to 4. (2, 3) At
+// both reads of minX the listing waits a cycle after the store of runtime's
+// stack slot before the ldrsh and fills it with the -1's movs or negs;
+// -mthumb-slow-loads gives that wait to a plain load but not to a
+// sign-extending one, so here the ldrsh issues at once. Local widths, a
+// const gOverlayArea, the copies' removal and moving runtime's reload change
+// nothing or add differences; a 4-minute permute reached 4 (the one-pass).
+// Draft of Func_080cb1dc (UpdateMapRegionAtPosition here). It asks the
+// overlay for the map's region list and, at the first region whose condition
+// holds and whose box holds the position, stores the region's value in the
+// event work, plays cue 123 and prepares the current object. The Broken
+// Seal's Field_CheckExitRegions (games/tbs/src/field/field_sequence/
+// walking.c) has the same shape.
 
 #include "types.h"
 #include "ram_buffer.h"

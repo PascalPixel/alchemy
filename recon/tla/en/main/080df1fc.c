@@ -1,8 +1,17 @@
-// Near miss, differ 20 of 551 (2026-10-26): the twin of The Broken Seal's
-// FieldEffect_SteerLiftedTarget, now with its 20 shard pointers kept on the
-// stack (the native's 128-byte stack frame). Only instruction order is left: after
-// a store the native issues another instruction before the next load, in the
-// position setups and the steering loop.
+// Near miss, differ 14 of 551 (tla-en, 2026-10-31): only instruction order is
+// left, at five places (the first position setup, the lift loop, the hands'
+// speeds, the mode store before the steering loop and the shard loop's setup).
+// Each is a load or store that depends on the store before it: the native
+// issues another instruction in between, while sched2 here makes the second
+// access ready one cycle after the store and gives it the higher priority (the
+// lift loop's load, priority 43, goes ahead of the spill store, priority 33).
+// Swapping the target's speed and lift, its mode and steering stores, or
+// writing the hands' speeds through object and right does not move it (14,
+// 299 and 113 differ), nor does setting p earlier (28 or 61). The permuter's
+// best (4 minutes) wraps the shard loop in a one-pass block: 12 differ, the
+// shard setup half fixed and the other four places unchanged. The twin of The
+// Broken Seal's FieldPsynergy_SteerLiftedTarget, with its 20 shard pointers
+// kept on the stack (the native's 128-byte stack frame).
 #include "types.h"
 #include "actor_view.h"
 #include "input.h"
@@ -116,9 +125,10 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   source->linked = target;
   Actor_StartScriptFar((struct ActorView *)source,
                                (u32)gData_080f0e60);
-  /* FAKEMATCH: the position is reached through this pointer everywhere but
-     in the steering loop's first part, which names the position itself;
-     that keeps the pointer in r10 and gives the loop its own copy. */
+  /* FAKEMATCH(temporary): the position reached through p everywhere but the
+     steering loop's first part, which keeps p in r10 and gives the loop its
+     own copy; as position itself throughout, 22 of 551 instructions differ in
+     tla-en. */
   p = &position;
   p->x = work->x;
   p->y = work->y + 0x100000;
@@ -196,8 +206,9 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     position.z = target->z;
     Vector_AddPolarOffset(0x100000, angle, &position);
     i = ScriptObject_CheckOverlapFar(target, &position);
-    /* FAKEMATCH: entering the blocked path from both tests keeps it ahead
-       of the drop path, as the ROM lays them out. */
+    // Both tests jump into the blocked path, which keeps it ahead of the drop
+    // path as the ROM lays them out; written as one || test, 389 of 551
+    // instructions differ in tla-en.
     if (i != 0)
       goto blocked;
     if (Actor_ProbeRaised(target, p) > 0) {
@@ -250,6 +261,9 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   p->y = target->y + 0x100000;
   p->z = target->z;
   {
+    // The shards are stored through a walking pointer, so the counter runs
+    // down from 19 as the ROM's does; as shards[i], 22 of 551 instructions
+    // differ in tla-en.
     struct FxObject **walk = shards;
 
     for (i = 0; i < 20; i++) {
@@ -273,18 +287,12 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   Animation_ApplyChildValuesFar((struct ActorView *)target, work->palette);
   Actor_StartScriptFar((struct ActorView *)target,
                                (u32)(work->script));
-  {
-    /* FAKEMATCH: one zero, set before these stores, clears the mode
-       byte and the source's callback from the same register. */
-    s32 zero = 0;
-
-    target->callback = work->callback;
-    target->flag = 3;
-    target->velocityY = 0xa0000;
-    target->gravity = 0x3333;
-    target->mode = zero;
-    source->callback = (void *)zero;
-  }
+  target->callback = work->callback;
+  target->flag = 3;
+  target->velocityY = 0xa0000;
+  target->gravity = 0x3333;
+  target->mode = 0;
+  source->callback = NULL;
   Animation_ApplyChildValuesFar((struct ActorView *)source, 0);
   if ((s8)work->falls != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)

@@ -1,10 +1,18 @@
-// Near miss: its instructions match under -mthumb-slow-loads (differ 0 of
-// 74, 2026-10-25), but its literal pool does not: the u16 temporary is
-// promoted, so 0xf01e is pooled as the word 0xfffff01e, where the native
-// holds 0x0000f01e (a halfword pool entry and its two bytes of padding, as
-// consttable_2 writes one). Adopted in en and de it compared 2 bytes short
-// of the ROM there. Without the temporary the constant is built in three
-// instructions (differ 6); as s16, differ 2 with the same pool word.
+// Near miss, differ 0 of 74 instructions but one pool word (tla-en,
+// 2026-10-31): every instruction matches, but the literal pool does not: the
+// u16 temporary is promoted to a signed SImode constant (-4066), so 0xf01e is
+// pooled as the word 0xfffff01e, where the native holds 0x0000f01e, 88 bytes
+// after its load. Adopted in en and de it compared 2 bytes short of the ROM
+// there. Without the temporary the constant is built in three instructions
+// (differ 6); as s16, differ 2 with the same pool word; as a u32 temporary,
+// differ 6 (re-measured 2026-10-31). Stored as a halfword constant (index =
+// 1; output[index] = 0xf01e) the pool word is 0x0000f01e, but alchemy-gcc's
+// halfword load reaches only 64 bytes, so the pool moves behind a new branch
+// after the store (differ 5, re-measured 2026-10-31); a word-sized 0xf01e is
+// always built by -mthumb-split-constants, whose split runs again after
+// reload, so no plain C form or device found moves the pool word: the
+// native's zero-extended word 88 bytes on needs a halfword pool load with a
+// longer reach than alchemy-gcc's movhi gives (a compiler question).
 // The Broken Seal's Text_DrawPrefixedNumberAtOffset in the form of its
 // English edition (its Spanish, French and Italian ones set both halfwords
 // in the branches; this game's Japanese edition has another layout),
@@ -41,8 +49,12 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
   } else {
     output[0] = 0xf01f;
   }
+  /* FAKEMATCH(temporary): 0xf01e held in a u16 local before the store; as
+     output[1] = 0xf01e, 6 of 74 instructions differ in tla-en. */
   second = 0xf01e;
   output[1] = second;
+  /* FAKEMATCH(barrier): an empty asm after the second halfword's store; as
+     the plain store, 2 of 74 instructions differ in tla-en. */
   asm("");
   for (index = 0; index <= 4; index++) {
     output[index + 2] = text[index];

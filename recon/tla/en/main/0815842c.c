@@ -1,3 +1,8 @@
+// Near miss, differ 12 of 422 (tla-en, 2026-10-31): only the order of stack
+// rows around four calls: the reload of a spilled frame address (&screen at
+// sp+12, &blit at sp+8) issued before the call's argument stores, where the
+// native issues it after them (sched2's store-then-load cost; the permuter,
+// 4 min, 2 jobs, found nothing below 12).
 // Draft of BattleEffect_RunHail, effect kind 207: a spray of ice chips over a
 // rising wave.
 
@@ -41,6 +46,9 @@
 // store-then-load scheduling limit); barriers and one-pass blocks at each
 // statement, statement moves and each local scoped to a block gain only
 // the prologue's row or rows of that kind.
+// 2026-10-31: the three cel tables declared without const, as ☀️ declares
+// its twins: 16 -> 12. As const, their loads no longer order the chip
+// blit's argument stores, which then move up.
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -69,9 +77,9 @@ extern char ResourceId_IceChipSheet;
 extern char ResourceId_MercuryDjinnSmallSheet;
 // The ice chip's four cels: ☀️'s gProjectileVolley_PelletOffsets,
 // gHail_CellWidths and gHail_CellHeights.
-extern const u16 Data_0819851c[];
-extern const u8 Data_08198513[];
-extern const u8 Data_08198517[];
+extern u16 Data_0819851c[];
+extern u8 Data_08198513[];
+extern u8 Data_08198517[];
 
 u32 Random16(void);
 void wait(s32 frames);

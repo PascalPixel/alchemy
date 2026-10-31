@@ -1,9 +1,17 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
-// 464 with two empty asm: one before the heap reads stores the argument at
-// sp+24 first, as the native, and one before the frame loop (10 without
-// either). Left: the stack frame's 0 stored before &caster is built, and the spark
-// loop's 0 after the shake store (an empty asm there moves the
-// gMapCellBuffer pool load: 12).
+// Near miss, differ 6 of 464 (tla-en, 2026-10-31), with no empty asm: two
+// reordered pairs, each a store ending a block before a loop. The stack
+// frame's 0 is stored before &caster is built (the native: movs r6, #0
+// first), and the shake store comes before the spark loop's 0 (the native:
+// str r3, [r2] first). The sched2 dump gives each store chain the lower
+// priority: frame's r6=0 -> str is 2 against r0=28 -> add -> mov r8's 3,
+// and the leaf shake store 1 against r6=0 -> mov sl's 2. No C moves those
+// costs; the native schedules both stores as if they cost more.
+// 2026-10-31: Task_Add through task.h (s32, as defined) and
+// BattleEffect_LoadBlitter as s32 (as nibble_pair.c defines it): the
+// Task_Add call now sets r0, which puts transferValue's store before the
+// call's pool load as in the native, so neither empty asm of 2026-10-25 is
+// needed (the one before the heap reads already was not: 8 without both).
+// An empty asm after the shake store moves the gMapCellBuffer pool load (12).
 // Draft (tla-en): listing 464 instructions, draft 464, common 447, differ 34.
 // Written from the listing (☀️'s BattleEffect_RunRushingStrike is only
 // a hint). A five-cell burst drawn on the actor's side for 30 frames;
@@ -45,6 +53,7 @@
 #include "io_reg.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
+#include "task.h"
 #include "types.h"
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
@@ -73,8 +82,6 @@ extern const u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
-void Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);
 u32 Random16(void);
@@ -83,7 +90,7 @@ s32 Trig_Cos(s32 angle);
 void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
-void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void HeapSlot_Release(s32 slot);
@@ -108,13 +115,12 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
    * as one two-word DImode pseudo its spill takes sp+12 and the unused sp+16
    * the native stack frame has. As a single DrawRectangle the stack frame is 36 bytes
-   * and the allocation moves (285 of 464 instructions differ in tla-en, 34
-   * with the pair). */
+   * and the allocation moves (281 of 464 instructions differ in tla-en, 6
+   * with the pair; an unused u32[1] or u8[4] beside it: 279 and 275). */
   DrawRectangle draw[2];
   u8 *sparkCels;
   s32 i;
 
-  __asm__("");
   heap = Ram_HeapSlots;
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
@@ -135,8 +141,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
                   128);
   work->transferMode = 2;
   work->transferValue = 50;
-  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  __asm__("");
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != SWING_FRAMES; frame++) {
     // The slash, its cels anchored to the caster's front.
@@ -234,7 +239,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
     wait(1);
   }
 
-  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

@@ -1,7 +1,13 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 6 of 184 in tla-en. First difference: the native issues `mov fp, r3` earlier
-// (row 17) than this does (row 20). No single empty asm or one-pass block
-// reaches 0.
+// Near miss, differ 6 of 184 (tla-en, 2026-10-31): scheduler order in the
+// setup. Once the selection's store is issued, sched2 has both the count's
+// ldrsb (priority 23) and pending's `mov fp, r3` (priority 18) ready and takes
+// the ldrsb; the native takes the move first, as if that load were not yet
+// ready, and the shift and window base slots follow from it. Not a tie, and
+// no C form found moves it: pending set later (differ 27, 32), count as s8
+// (66), page as u16 (54), assignments after the declarations (6), and four
+// more minutes of permute over the setup are no nearer. First difference: the
+// native issues `mov fp, r3` earlier (row 17) than this does (row 20). No
+// single empty asm or one-pass block reaches 0.
 // Near miss, differ 6 of 184 (2026-10-19): the twin of The Broken Seal's
 // PsynergyMenu_SelectOwner. Written as while (1) the loop keeps the native's
 // order (as for (;;), jump.c moves the B test and the cursor call above the

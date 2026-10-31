@@ -1,5 +1,13 @@
-// Near miss, differ 60 of 1490 (summon 5, the thorn vines), with one
-// tagged forced temporary (355 without).
+// Near miss, differ 32 of 1490 (tla-en, 2026-10-31): no device left; every
+// row is a scheduling pair, a load sched2 issues one slot earlier (or later)
+// than the native, as in the explosion's spark test, where the load of
+// spark->variant (priority 3) beats spark->y's subtract (priority 2) on the
+// ready list. Summon 5, the thorn vines.
+//
+// 2026-10-31: the forced temporary at the second explosion blitter is gone;
+// the slot read spelled *(Ram_HeapSlots->unkb8 + 1) gives the allocation it
+// gave (40 with the temporary, 36 with the slot pointer assigned after the
+// call, 32 with the plain pointer spelling).
 //
 // Measured 2026-10-25 under -mthumb-slow-loads: differ 60. Most rows left are
 // loads from memory or the stack that alchemy-gcc issues one slot earlier than
@@ -16,15 +24,18 @@
 // middle phase where ☀️ has (2, 2), and the effect argument for every
 // target loop.
 
-// Same frame and instruction count. What is left: register choice and
-// spill slots in the explosion block (frame > 301), and neighbouring rows
-// in the other order elsewhere, with the pool offsets that follow them.
+// Same frame and instruction count. What is left: neighbouring rows in the
+// other order, with the pool offsets that follow them.
 
 // Tried (differ):
 // trial 2's port, no device (effects trial, 2026-10-15)              363
 // trial 2 with the forced temporary at the second explosion blitter   158
 // BattleEffect_LoadBlitter declared returning s32 (plan 0c): with the temporary
 // 150, without it 355
+// the slot read as Ram_HeapSlots->unkb8[1], no temporary (2026-10-31)    267
+// the temporary held across the call (2026-10-31)                     40
+// slot pointer assigned after the call                                36
+// *(Ram_HeapSlots->unkb8 + 1), or through *(DrawRectangle *)&unkb8[1]   32
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -482,18 +493,11 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       BattleEffect_LoadBlitter(HEAP_BLITTER,
                     BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      /* FAKEMATCH: forced temporary: the blitter slot's address held across
-       * the call moves the allocation of the whole explosion block toward the
-       * native's (differ 355 without, 150 with); found by alchemy permute.
-       * Plain forms measured: the slot read after the call (355). */
-      {
-        void **slots = Ram_HeapSlots->unkb8;
-
-        BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                      BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                          COMPOSITE_FLIP_X);
-        draw[1] = (DrawRectangle)slots[1];
-      }
+      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+                    BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                        COMPOSITE_FLIP_X);
+      // As Ram_HeapSlots->unkb8[1], 267 of 1490 instructions differ.
+      draw[1] = (DrawRectangle)*(Ram_HeapSlots->unkb8 + 1);
       REG_BLDCNT = 0x3f46;
       REG_BG2PA = 0x80;
       REG_BG2X = 0;

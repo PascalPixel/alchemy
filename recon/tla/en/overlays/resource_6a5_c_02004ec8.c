@@ -1,6 +1,17 @@
-// Draft of overlay 6a5's Func_02004ec8, the twin of overlay 698's
-// Func_020011a0: its draft (resource_698_c_020011a0.c) with this overlay's
-// symbols: differ 288 of 268. Left: what that draft's header records.
+// Near miss, differ 303 of 268 (tla-en, 2026-10-31): the shape matches; what
+// differs is register allocation. The native keeps the table in r8, `last` in
+// r10, the entry in r9, the cell in r11, j + z0 in r6 and i + x0 in r7, and
+// leaves i on the stack; here global.c ranks `last` second (9 refs over 14
+// insns, one call crossed) and gives it r6, j + z0 is caller-saved in r4, and
+// the entry, cell, table and i rank in that order for r8, r10, r9 and r11.
+// The native's order needs `last` ranked below the table and too costly to
+// caller-save, as when it stays live across the else arm's calls. GCSE also
+// moves the leader search's count load into the arm that stores `current`
+// (ldrh and shifts), where the native reloads it with ldrsh at the loop's
+// end, and the fill pointer and counter take r2 and r1 for the native's r1
+// and r2.
+// Overlay 6a5's copy of overlay 698's Func_020011a0, drafted in
+// resource_698_c_020011a0.c with this overlay's symbols.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -70,14 +81,13 @@ void Func_02004d9c(void);
 s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &Data_02006b74;
   struct CellTargetEntry *entry = table->entries;
-  struct CellTargetEntry *entries = entry;
   struct CellMapWork *map;
   struct CellMapLayer *layer;
   struct CellMapCell *rows;
   struct CellMapCell *cell;
-  s32 minX, minZ, x0, z0, width, height, i, j;
+  s32 x0, z0, width, height, i, j;
   u32 *buffer;
-  u32 last;
+  u32 event, last;
 
   Iwram_ClearWords(table, 4);
   table->kind = kind;
@@ -89,48 +99,59 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->count = 0;
   map = (struct CellMapWork *)Ram_HeapSlots->mapWork;
   layer = &map->layers[0];
-  minX = map->minX;
-  x0 = (layer->originX + minX) >> 20;
-  minZ = map->minZ;
-  z0 = (layer->originZ + minZ) >> 20;
-  width = (map->maxX - minX) >> 20;
-  height = (map->maxZ - minZ) >> 20;
-  rows = layer->cells + ((minZ >> 20) << 7) + (minX >> 20);
-  for (j = 0; j < height; j++) {
+  x0 = (layer->originX + map->minX) >> 20;
+  z0 = (layer->originZ + map->minZ) >> 20;
+  width = (map->maxX - map->minX) >> 20;
+  height = (map->maxZ - map->minZ) >> 20;
+  rows = layer->cells + ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  // Goto loops: as for loops (either one) loop.c moves the 64 of the cell
+  // copy's masks out of them and 321 of 268 instructions differ.
+  j = 0;
+  if (j < height) {
+  row:
     cell = rows + (j << 7);
-    for (i = 0; i < width; i++, cell++) {
-      u32 event = cell->event;
-
-      if (event == 0 || event < kind)
-        continue;
-      last = kind + 1;
-      if (event > last)
-        continue;
-      entry->x = i + x0;
-      entry->z = j + z0;
-      entry->flag = flag;
-      flag++;
-      if (!GameFlag_Test(0x109)) {
-        if (event == last)
-          GameFlag_SetBit(entry->flag);
-      } else if (GameFlag_Test(entry->flag)) {
-        Func_0200579c(table->x, table->z + 1, 1, 1,
-                      (i + x0) | (s16)(table->x & 64),
-                      (j + z0) | (s16)(table->z & 64));
+    i = 0;
+    if (i < width) {
+    column:
+      event = cell->event;
+      if (event != 0 && event >= kind) {
+        last = kind + 1;
+        if (event <= last) {
+          entry->x = i + x0;
+          entry->z = j + z0;
+          entry->flag = flag;
+          flag++;
+          if (!GameFlag_Test(0x109)) {
+            if (event == last)
+              GameFlag_SetBit(entry->flag);
+          } else if (GameFlag_Test(entry->flag)) {
+            Func_0200579c(table->x, table->z + 1, 1, 1,
+                          (i + x0) | (s16)(table->x & 64),
+                          (j + z0) | (s16)(table->z & 64));
+          }
+          table->count++;
+          entry++;
+        }
       }
-      table->count++;
-      entry++;
+      i++;
+      cell++;
+      if (i < width)
+        goto column;
     }
+    j++;
+    if (j < height)
+      goto row;
   }
   if (GameFlag_Test(0x109)) {
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
     s32 leaderX = leader->x >> 20;
     s32 leaderZ = leader->z >> 20;
+    s32 k;
 
-    entry = entries;
-    for (i = 0; i < table->count; i++, entry++) {
+    entry = table->entries;
+    for (k = 0; k < table->count; k++, entry++) {
       if (entry->x == leaderX && entry->z == leaderZ)
-        table->current = i;
+        table->current = k;
     }
   }
   buffer = Heap_Alloc(0x100);

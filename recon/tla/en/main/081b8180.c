@@ -1,6 +1,18 @@
+// Near miss, differ 8 of 119 (tla-en, 2026-10-31): four pairs sched2 orders
+// differently, each a stack store against its neighbour. In the sched2 dump:
+// the sprite argument's spill (str r0, [sp, #20]) has priority 10 against the
+// work load's constant at 11 (a store to load costs 2, the constant's chain
+// 3), so no C order lifts it; the y + 256 spill (str r3, [sp, #4]) ties at 7
+// with adds r2, #10 and wins on its three dependents; the y byte's store
+// (str r2, [sp, #4]) and the sprite count's store (str r3, [sp, #20]) tie at 1
+// and lose on insn order to mov sl, r1, adds r7, #196 and add sl, r2 (the
+// giv increment loop.c inserts before sprite++). Tried 2026-10-31: started
+// = 0 or x -= digits * 10 first (16, 20), sprite++ inside the attr2 index
+// (8), seven orders of the attr01 operands (8 or 122), four permuter minutes
+// (8).
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 8 of
 // 119; a greedy device search found nothing lower.
-// Draft, differ 12 of 119: draws a number as digit sprites into the slot
+// Draws a number as digit sprites into the slot
 // machine's sprite table, right-aligned to end at x: each of digits places
 // takes value's digit there, leading zeros skipped but the last digit always
 // drawn, tiles 816 + 4 * digit in the given palette. Returns the next free
@@ -8,10 +20,7 @@
 // OAM shadow (FAKEMATCH(volatile) when adopted): loop.c then keeps the two
 // offset givs (sprite * 8 + 196 in r7, + 200 in r10) and the work pointer
 // and sprite count in stack slots, as the native does; as plain u32 words,
-// 86 of 119 instructions differ in tla-en. Left: instruction order only, six
-// single moves, each a stack store or load the native issues a place
-// earlier (the sprite argument's spill, the y byte's slot, the sprite
-// count's store) or a register copy (mov r9, r3). Tried: an empty asm at the
+// 86 of 119 instructions differ in tla-en. Tried earlier: an empty asm at the
 // top of the body (16), after the work load (12) and after sprite++ (12);
 // the divide loop guarded by its own digits - i != 1 test (88, before the
 // volatile words); six permuter minutes (12).

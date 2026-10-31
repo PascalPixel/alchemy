@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 80 (tla-en, 2026-10-30): scheduler order. After the
+// Near miss, differ 2 of 80 (tla-en, 2026-10-31): scheduler order. After the
 // branches join, the native builds the first instruction of the cursor's
 // 0x39e offset (movs r1, #192) before the status store; this builds all of it
 // after. Plain C gives 6 (the two offsets interleaved), and the sched2 dump
@@ -10,6 +10,14 @@
 // top and cursor already compiles to the native's one word load (GCC merges
 // adjacent field compares), and the upScroll store needs no block any more.
 // Permuter (4 minutes): best differ 2, a one-pass block after the store.
+// Why three exactly (sched2 priorities, 2026-10-31): the status chain and the
+// cursor chain meet at the cursor load, so the cursor offset outranks the
+// status address by one unless that store-to-load cost is three; at two
+// (a plain HImode load) movs r1 still lands before adds r2, and any region
+// split leaves the whole offset ahead of movs r3, #1. Measured then: a
+// volatile cursor read 4, a volatile status store 7, inline wrappers around
+// the store, the load or both 6, a pointer temporary for the cursor 6.
+// downArrow = 1 without the cursor local compiles the same as storing it.
 // Draft, differ 2 of 80 in tla-en under -mthumb-slow-loads (2026-10-26). No
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer, nor any pair of empty asm statements or
@@ -71,23 +79,20 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, u32 down);
 void Menu_OpenSelectionWindow(u16 type, u32 value);
 
 void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
-  u32 cursor;
-
   if (screen->top == 0 && screen->cursor == 0) {
     return;
   }
   Menu_ReloadNodeResource(screen, screen->cursor);
   screen->status = NODE_STATUS_SCROLLING;
   wait(1);
-  cursor = screen->cursor;
-  if (cursor == 1 && screen->top != 0) {
+  if (screen->cursor == 1 && screen->top != 0) {
     screen->upScroll = ARROW_SCROLL_FRAMES;
     screen->top--;
     Menu_ScrollSelectionList(screen, 0);
     if (screen->top == 0) {
       screen->upArrow = 0;
     }
-    screen->downArrow = cursor;
+    screen->downArrow = 1;
   } else {
     screen->cursor--;
   }

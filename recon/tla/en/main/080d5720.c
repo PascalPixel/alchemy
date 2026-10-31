@@ -1,6 +1,16 @@
-// Near miss, differ 2 of 87 (tla-en, 2026-10-30): instruction order only, a
+// Near miss, differ 2 of 87 (tla-en, 2026-10-31): instruction order only, a
 // sched2 priority no source form reaches. No empty asm before any one
-// statement lowers it.
+// statement lowers it. Round 2026-10-31: the flags clear in both arms of a
+// test (the dead form of Vault_SpawnDriftingEffect) measured 29 to 64: a test
+// on item folds, since item is known nonzero there; one on leader or sprite
+// lets the else arm fold its base to zero; on any other value CSE drops
+// sprite byte 9 and the grab state's zero at the join, so both are rebuilt.
+// With the tail and return in both arms they are scheduled apart and stay
+// unmerged (49 to 67).
+// Asms with operands (leader laundered under a memory clobber, the saved
+// byte as an "m" input, or the flags base passed through one) measured 18 to
+// 31. In the sched2 dump anti and output dependences cost 0 and a load 3, so
+// the flags chain sets both priorities.
 // The leader grabs the nearest workspace item
 // (Func_080d5670): with none it returns 0; otherwise cue 152, the leader is
 // moved onto the item and linked to it, its motion flags, sprite picture and

@@ -1,10 +1,17 @@
-// Draft of overlay 6a5's Func_02003f60, the palette cycle of overlay 69f's
-// Func_020002e8 with this overlay's symbols: differ 6 of 83 in tla-en. The
-// colours' address goes through p, set before the loop, so it takes r7 as the
-// native's does (as colors throughout: 14). Left: the native builds that
-// address (mov r7, sp) inside the loop, before the __modsi3 call, where gcse's
-// PRE hoists it out of the goto loop here; and it loads the table word as
-// [table, offset] where this has [offset, table], however the sum is written.
+// Near miss, differ 4 of 83 (tla-en, 2026-10-31): the native builds the
+// colours' address (mov r7, sp) inside the loop, before the __modsi3 call,
+// where gcse's PRE hoists it out of the goto loop here (the --rtl gcse dump:
+// "PRE: redundant insn ... in bb 8"); the rest is the loop branch's offset.
+// This is the palette cycle of overlay 69f's Func_020002e8 with this
+// overlay's symbols. The colours' address goes through p, set before the
+// loop, so it takes r7 as the native's does (as colors throughout: 14; with
+// colors after the loop and the init moved above the checks: 28 to 30). The
+// table word loads as [table, offset] only when the slot is computed first
+// and the table is a pointer variable set after it (written inline: 6). A
+// for or do-while loop lets loop.c hoist the table and reduce phase + i
+// (14 to 36); entering the goto loop at its test keeps the mov in the loop
+// but adds a branch. The permuter found nothing under differ 6 from the
+// previous form (4 minutes).
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_6/jupiter_lighthouse_room_6.h"
 #include "iwram_call.h"
 #include "dma.h"
@@ -30,6 +37,8 @@ void Func_02003f60(void) {
   s32 phase;
   s32 i;
   s32 offset;
+  s32 slot;
+  u8 *table;
   u16 *p;
 
   phase = (gData_020069f4 / 4) % 5;
@@ -47,7 +56,9 @@ void Func_02003f60(void) {
   i = 0;
   offset = 4;
 next:
-  colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02006a2c + offset);
+  slot = (phase + i) % 5;
+  table = (u8 *)gData_02006a2c;
+  colors[slot] = *(u16 *)(table + offset);
   i++;
   offset += 2;
   if (i <= 4)

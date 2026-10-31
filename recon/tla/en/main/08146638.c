@@ -1,10 +1,16 @@
-// Near miss, differ 18 of 480.
+// Near miss, differ 10 of 480 (tla-en, 2026-10-31): sched2 order at two
+// spill stores, nothing the C moves.
 //
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 18. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 16).
+// The argument's spill and the earlier rows now match without any device;
+// what is left is two spots where the native ranks a reload's spill store
+// (and the constant or shift feeding it) above a load or move beside it:
+// after target's GetBattleObjectSlotFar the native sets i = 0 (r3) and
+// stores it before `mov fp, r0`; before the mote loop it stores size / 2
+// ([sp, #28]) right after its asrs, ahead of size * 2's lsls and j = 0. The
+// sched2 dump gives those stores priority 1 (the load 1614 beside the first
+// has 4), so the order follows the cost model, not the source. Tried
+// without gain: point = work->particles or i = 0 before the two calls (12,
+// 20), the loop's init swapped (10), size / 2 folded into x (267).
 
 // Twin: The Broken Seal's BattleEffect_RunAstralBlast (effect kind 68 there and
 // here), ported call for call. The Lost Age's changes: the effect argument is
@@ -18,10 +24,7 @@
 // BattleEffect_LoadBlitter is declared to return s32, as The Lost Age's LoadWork
 // returns its store-flag and The Broken Seal's returns s32: void it is 36.
 
-// Left: order only. Same frame, registers and instructions; at about fifteen
-// rows the native issues a memory access (the argument's spill, a heap slot,
-// a spill reload or a field read) one instruction ahead of the constant or
-// move beside it.
+// Left: order only. Same frame, registers and instructions.
 
 #include "battle.h"
 #include "graphics.h"

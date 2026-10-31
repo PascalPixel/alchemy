@@ -1,10 +1,10 @@
-// Near miss, differ 12 of 312.
+// Near miss, differ 8 of 312 (tla-en, 2026-10-31): scheduler order in the
+// landed dagger's draw (the else branch), below.
 //
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 12. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 10).
+// Measured 2026-10-25 under -mthumb-slow-loads: differ 12. On 2026-10-31 the
+// same C measures 8 with no device: the argument's spill, the r11 move and
+// the first pool's pad all match now, and so does everything outside the
+// landed dagger's draw.
 
 // Twin: The Broken Seal's BattleEffect_RunBladeRain. ⚓️ keeps the effect but no
 // handler or caller reaches it. It rains crossed daggers instead of swords:
@@ -12,15 +12,24 @@
 // and a landed dagger is drawn whole. The rest is the twin with ⚓️'s
 // calling conventions.
 
-// Left: the native moves the blitter pair's address into r11 after the
-// first literal pool, where this moves it before the branch around the
-// pool; one row's place flips the pool's alignment pad, which shifts every
-// pc offset and branch until the next pool (about 30 of the rows). The rest
-// are single rows where the native builds a constant or issues a load one
-// slot earlier (the landed dagger's sheet address and its flip index).
+// Left (8 rows, all in the landed dagger's draw): the native loads the
+// dagger's x (movs r6, #2; ldrsh r2) right after movs r4, #224, before
+// lsls r4 / add r1, r9 / adds r1, r4 finish the sheet address, and shifts
+// the drift's sign (lsrs r0) after the two stack stores. Registers and
+// instructions are identical; only sched2 differs. Its dump gives the x
+// load priority 5 and lsls r4 and add r1, r9 priority 6: their chain runs
+// through y's ldrsh, whose scratch r4 follows adds r1, r4, and that load
+// counts 3 to its subs. The listing's order is the one sched2 picks with
+// that chain one lower, so no C over these registers reaches it. The same
+// call in the falling branch matches.
 
 // Tried:
 // the twin, cell tables replaced by 32x32 cells              38
+// the else call through draw[] instead of blit               8
+// &work->sheet[cell << 10], cell * 1024, sheet added last    8
+// x - 16 or x and y read into locals first                   12, 20
+// blit[drift < 0]                                            123
+// the permuter, 4 minutes (16432 candidates)                 8
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -42,15 +51,13 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #define TASK_PASS_FRAME 0xc80
 
-// The pixel half of a 16.16 value.
-#define HI(value) (((s16 *)&(value))[1])
-
 extern char ResourceId_CrossedDaggersSheet;
 
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 BattleEffect_ProcessPendingGraphicsTransfer(void); // the canvas transfer callback
+// The canvas transfer callback.
+s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Task_Add(void *func, s32 order);
 s32 Task_Remove(void *func);
 void HeapSlot_Release(s32 slot);
@@ -90,7 +97,7 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
+                           BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
@@ -159,14 +166,16 @@ void Func_0813e114(struct BattleEffectArgument *effect) {
       cell = speed >> 17;
       if (frame < i * 4 + 25) {
         blit[(u32)drift >> 31](canvas, work->sheet + (cell << 10),
-                               HI(dagger->x) - 16, HI(dagger->y) - 16, 32, 32);
+                               (dagger->x >> 16) - 16, (dagger->y >> 16) - 16,
+                               32, 32);
         if (frame >= i * 4 + 16) {
           dagger->x += dagger->velocityX;
           dagger->y += dagger->velocityY;
         }
       } else {
         blit[(u32)drift >> 31](canvas, work->sheet + (cell << 10),
-                               HI(dagger->x) - 16, HI(dagger->y) - 16, 32, 32);
+                               (dagger->x >> 16) - 16, (dagger->y >> 16) - 16,
+                               32, 32);
       }
     }
 

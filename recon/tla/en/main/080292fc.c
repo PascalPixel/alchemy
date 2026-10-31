@@ -1,19 +1,28 @@
-// Draft, differ 14 of 300 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 10
-// with an empty asm after `sprite = object->animation;`, and finds nothing
-// closer.
-// Near miss, differ 30 of 300, all instruction order but one register (127
-// is built in r0, the native r1): script command 0x1c, a sibling of
-// Actor_MoveByKeys that moves an object along the nearest rail point within
-// 32 pixels of the direction pad's step. The native issues the opening
-// loads and constant halves in source order where sched2 here interleaves
-// them, and copies positions as in Func_08025698. Measured: the spilled
-// locals take their stack slots in reverse declaration order (declared in
-// code order, differ 66); the rail loop counts up (counting down, loop.c
-// keeps IwramMulQ16 in fp and spills the count, differ 128); the turn is an
-// s32 (as u16, differ 141). Permute 18 minutes: a one-pass block after the
-// sprite load, differ 26 by weight only.
+// Near miss, differ 4 of 300 (tla-en, 2026-10-31): only the register that
+// carries the rail loop's starting count of 127 into fp (built in r0, the
+// native r1), reload's round-robin choice of spill register; every other
+// instruction matches. Script command 0x1c, a sibling of Actor_MoveByKeys
+// that moves an object along the nearest rail point within 32 pixels of the
+// direction pad's step; it copies positions as in Func_08025698. The empty
+// asm after the sprite load keeps its spill store ahead of RAIL_WORK's
+// address, as the native orders them: without it sched2 ranks the address
+// chain first (priority 24 against 23). Measured: the spilled locals take
+// their stack slots in reverse declaration order (declared in code order,
+// differ 66); the rail loop counts up (counting down, loop.c keeps
+// IwramMulQ16 in fp and spills the count, differ 128 then, 110 now); the
+// turn is an s32 (as u16, differ 141). Tried without gain (2026-10-31):
+// count <= 127, a while loop, point++ in the body (4); rail indexed by
+// count (35); best, bestDistance, point and the null check reordered (14 to
+// 35); value set before watchedObject or after the position (12, 16).
+// Permute 4 minutes from here: nothing below 4 (twice).
+// Measured 2026-10-31 (second pass): the 127 is a reload into the next of
+// the spill registers r0 to r3 in turn after r1 (268), r2 (best's NULL) and
+// r3 (bestDistance); without best = NULL it lands in r3, so the null check
+// on rail takes no spill register here, and the native spends one more
+// between bestDistance and the count. Without the null check (12), or with
+// if (rail != NULL) around the loop (6), it stays r0; an empty asm before
+// the null check (4), after it (19) or between best and bestDistance (10)
+// does not move it; count as u32 or the loop to != 128 (105), as u16 (161).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -97,6 +106,9 @@ s32 Func_080292fc(struct Actor *object) {
   struct KeyMoveWork *work;
 
   sprite = object->animation;
+  /* FAKEMATCH(barrier): an empty asm after the sprite load; without it, 6
+   * of 300 instructions differ in tla-en. */
+  asm("");
   rail = RAIL_WORK;
   speed = 0x10000;
   collisionFlags = 0;

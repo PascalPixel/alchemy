@@ -1,15 +1,22 @@
-// Draft, differ 6 of 113 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Draft, differ 16 of 113, instruction order only: the perspective map's
-// HBlank setup each frame, ☀️'s WorldMap_ApplyAffinePage
+// Near miss, differ 2 of 113 (tla-en, 2026-10-31): one pair in sched2's
+// order. The listing stores the cleared DMA 0 enable bit, then moves 128
+// into r4 to build affineRegisters (0x04000020); the draft builds it first.
+// In sched2 both are ready with priority 3, the same class against the last
+// insn scheduled (the mask's ands) and two dependants each, so RTL order
+// picks the address (its constant load sits at the declaration). The address
+// keeps r4 only while it is born before the heap-slot base in r1 dies (at
+// the perspective load): declared after perspective or after dma0, or
+// assigned before, between or after the two DMA stores, it takes r1 and dma0
+// moves to r4 (56 differ); inside the if, 83. Declaring it first, &REG_BG2PA
+// or a volatile u32 target change nothing (2). Devices tried (2026-10-31):
+// the late assignment pinned to r4, 9; an empty volatile asm before the
+// read, 8; an early empty asm use with the late assignment, 64. Permute 4
+// minutes from here: nothing below 2.
+// The perspective map's HBlank setup each frame, ☀️'s WorldMap_ApplyAffinePage
 // (games/tbs/src/field/field/world_map.c) written over ⚓️'s heap slots:
 // stops HBlank DMA 0, loads the first scanline's BG2 and BG3 affine
 // registers from this frame's page and starts the HBlank DMA for the rest,
-// then sets the window bits of DISPCNT. Left: eight single rows placed one or
-// two slots apart (the heap slot load, the DISPCNT mask, the second DMA
-// control read, a word copy and the window bottom read).
+// then sets the window bits of DISPCNT.
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"
@@ -68,8 +75,13 @@ void Func_0802c088(void) {
   }
   perspective->shownTop = perspective->windowTop;
   perspective->shownBottom = perspective->windowBottom;
+  /* FAKEMATCH(one-pass): mode cleared in a one-pass block before shownTop is
+   * read back, which sets the zero before that load; as plain statements, 4
+   * of 113 instructions differ in tla-en. */
+  do {
+    mode = 0;
+  } while (0);
   windowTop = perspective->shownTop;
-  mode = 0;
   if (windowTop < 200) {
     u16 bottom = perspective->shownBottom;
 

@@ -1,9 +1,13 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 39; left: the parameter's
-// copy (adds r5, r0) comes first, after the first store in the native.
-// Draft, differ 2 of 39: the listing copies the object out of r0 after it
-// stores params.kind (add r4; movs; str; adds r5, r0); this draft copies it
-// first. Tried: a pointer local for the params (same); permute 3 minutes found
-// nothing.
+// Near miss, differ 2 of 39 (tla-en, 2026-10-31): scheduler order. The
+// listing copies the object out of r0 after it stores params.kind (add r4;
+// movs; str; adds r5, r0); this draft copies it first. In sched2 the copy
+// (insn 4), add r4, sp and movs r3, #2 tie at priority 110 and the copy's
+// earlier RTL place wins; the listing's order needs the str -> ldrb memory
+// dependence to cost one cycle more, a cost the C cannot move.
+// Tried: a pointer local for the params (same); a local copy of the object
+// after the first store (CSE merges it, same); u8 * for the object (same); an
+// s32 array for the params (same); reading the byte before storing kind (10
+// to 12 differ); permute 3 minutes, then 4 minutes, found nothing.
 #include "types.h"
 #include "actor.h"
 

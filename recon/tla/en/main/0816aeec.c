@@ -1,5 +1,12 @@
-// Draft of Func_0816aeec, decompiled from the listing: differ 955 of 902 (draft
-// 903), the same 55 calls and control flow; allocation differs.
+// Near miss, differ 879 of 902 (tla-en, 2026-10-31): the same 55 calls,
+// control flow and data accesses; allocation differs. The wave loop's column
+// takes r4 with caller-saves where the native gives it r8; pinned to r8
+// (measured only: 861), frame moves to the stack and model, phase and row
+// take r9, r10 and r11 as in the native. The grid loop still differs: the
+// native reduces 8 * column - 60 and forms column * 8 + 7 from it (+ 67),
+// keeps v + column + 16 as its own induction variable, spills v + column + 17
+// and the row's z, and has a 132-byte frame (sp+12 and sp+80 unused) against
+// the draft's 112. Decompiled from the listing.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -114,22 +121,19 @@ extern const u8 gData_08199210[]; // its corners
 // at frames 17 and 46 while bubbles rise from the deep.
 void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
+  s32 frame;
+  DrawRectangle blit;
   void *canvas;
   s16 *camera;
-  DrawRectangle blit;
+  s16 savedYaw;
+  s32 frames;
   struct EffectPosition screen;
   struct EffectPosition target;
   struct ModelTexture texture;
   struct RenderModel *model;
   struct EffectStep *bubble;
-  void *vertices;
-  s16 savedYaw;
-  s32 frames;
-  s32 frame;
-  s32 scroll;
   s32 height;
   s32 phase;
-  s32 shade;
   s32 row;
   s32 column;
   s32 i;
@@ -205,15 +209,24 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
   }
-  gData_02014000[105 * 24] = 0;
-  gData_02014000[105 * 24 + 1] = 0;
-  gData_02014000[105 * 24 + 2] = 0;
+  {
+    u8 *end = gData_02014000 + 105 * 24;
+
+    end[0] = 0;
+    end[1] = 0;
+    end[2] = 0;
+  }
   frames = 48;
   if (mode != 0) {
     frames = 81;
   }
 
-  for (frame = 0, scroll = 0; frame != frames; frame++, scroll += 8) {
+  for (frame = 0; frame != frames; frame++) {
+    void *vertices;
+    s32 shade;
+    s32 angle;
+    s32 offset;
+
     if (frame == 0) {
       camera[27] = savedYaw;
       for (i = 0; i != 64; i++) {
@@ -273,7 +286,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
           height = 64;
         }
       } else {
-        height = 320 - scroll;
+        height = 320 - frame * 8;
         if (height < 0) {
           height = 0;
         }
@@ -284,19 +297,20 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         height = 64;
       }
     } else {
-      height = 576 - scroll;
+      height = 576 - frame * 8;
       if (height < 0) {
         height = 0;
       }
     }
     phase = frame * 2;
-    for (row = 1; row != 7; row++) {
-      s8 *vertex = (s8 *)gMapCellBuffer + row * 64 + 1;
+    angle = frame << 11;
+    for (row = 1, offset = 64; row != 7; row++, offset += 64) {
+      s8 *vertex = (s8 *)gMapCellBuffer + offset + 1;
 
       for (column = 0; column != WATER_COLUMNS; column++) {
         s32 amplitude = height * (16 - column) / 32;
 
-        *vertex = ((amplitude * Trig_Sin((frame << 11) + column * 5000 +
+        *vertex = ((amplitude * Trig_Sin(angle + column * 5000 +
                                          Trig_Sin(row * 3553))) >>
                    16) -
                   amplitude + 64;
@@ -307,7 +321,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
       if (bubble->variant == 0) {
         bubble->y =
-            (((height * Trig_Sin((frame << 11) + Trig_Sin(3552 + i * 888))) >>
+            (((height * Trig_Sin(angle + Trig_Sin(3552 + i * 888))) >>
               16) -
              height + 64)
             << 16;
@@ -327,7 +341,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       SceneTransform_ApplyYaw(camera[27] + 0x8000);
     }
     {
-      s32 shift = 128 - scroll;
+      s32 shift = 128 - frame * 8;
 
       if (shift < -64) {
         shift = -64;
@@ -345,33 +359,34 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     Render_DrawModelList(model);
 
     if (frame == 0) {
-      s32 z = -0x3c0000;
+      s32 bubbleZ = -0x3c0000;
 
       for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
         bubble->variant = Random16() % 6;
-        bubble->z = z;
+        bubble->z = bubbleZ;
         bubble->x = -0x3c0000;
         bubble->velocityX = 0;
         bubble->velocityY = 0;
         bubble->velocityZ = 0;
-        z += 0x60000;
+        bubbleZ += 0x60000;
       }
     }
     if (mode == 1) {
       for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
         s32 picture = bubble->variant;
+        struct EffectPosition *position = &screen;
 
         if (picture < 0) {
           continue;
         }
-        if (EffectPosition_ProjectPoint(bubble, &screen) == 0 &&
-            HI(screen.depth) > 10) {
-          s32 x = HI(screen.x);
+        if (EffectPosition_ProjectPoint(bubble, position) == 0 &&
+            HI(position->depth) > 10) {
+          s32 x = HI(position->x);
           s32 y;
 
-          screen.x = x + 64;
-          y = HI(screen.y);
-          screen.y = y + 64;
+          position->x = x + 64;
+          y = HI(position->y);
+          position->y = y + 64;
           blit(canvas, work->sheet + 0x3000 + picture * 0x480, x + 52, y + 40,
                24, 48);
           BattleEffectKernels_IntegrateVector3(bubble, 62, -0x2000);
@@ -382,7 +397,6 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else {
       s32 t;
-      s32 scale;
 
       EffectPosition_ProjectBattler(effect->actors[0], &target);
       texture.logWidth = 6;
@@ -391,8 +405,8 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
-      for (i = 0, t = frame - 16, scale = frame * 3 * 0x1000 - 0x30000; i != 2;
-           i++, t -= 4, scale -= 0xc000) {
+      for (i = 0; i != 2; i++) {
+        t = frame - 16 - i * 4;
         if (t < 0) {
           continue;
         }
@@ -409,8 +423,8 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         Func_080151e4(0x8000, 0x10000, 0x8000);
         Func_080150e4((i << 14) + 0x2000);
         SceneTransform_ApplyPitch(0x1000);
-        SceneTransform_ApplyYaw(frame << 11);
-        Func_0801521c(scale);
+        SceneTransform_ApplyYaw(angle);
+        Func_0801521c(t * 0x3000);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);
       }

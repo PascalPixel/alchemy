@@ -1,4 +1,4 @@
-// Near miss, differ 4 of 161 (tla-en, 2026-10-30): scheduler order. When only
+// Near miss, differ 4 of 161 (tla-en, 2026-10-31): scheduler order. When only
 // the settings show, the native stores first (2) to its stack slot before it
 // sets rows (1): movs r3,#2; str r3,[sp,#8]; movs r2,#1; mov r10,r2. This
 // build interleaves the pair (movs r2,#1; movs r3,#2; mov r10,r2; str). In
@@ -12,6 +12,12 @@
 // (2026-10-30): two ifs on settingsOnly (first then rows if-converts, 83
 // differ), a ternary for first, first = 0 before the call, rows -= 2, rows
 // from first, `if (first != 0)`, a volatile first, and a 4-minute permuter run.
+// Also no closer (2026-10-31): an else arm for first = 0 (jump folds it back
+// to this form, or 8 differ with first written first), and a test with
+// identical two-statement arms inside the block (jump2 cross-jumps the arms
+// and deletes the test, whose reload shifts the round robin so first takes r3
+// and rows r2, but the test's copy mov r2,r9 stays and the pair still
+// interleaves: 23 differ).
 // The Broken Seal's PauseMenu_Open (window/window/settings_menu.c); this game
 // has three rows (one with flag 0x17e), three more in debug mode, no cursor
 // object (the fixed block B output at 0x5a4) and its icons at 0x610. The three

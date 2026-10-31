@@ -1,3 +1,5 @@
+// Near miss, differ 22 of 753 (tla-en, 2026-10-31): only the store-then-load
+// scheduling rows under Left below.
 // Draft of BattleEffect_RunFrost, effect kind 6.
 
 // Twin: The Broken Seal's BattleEffect_RunFrost (effect.c), call for
@@ -8,7 +10,7 @@
 // are rows 0x17c and 0x17e of directory.s (assets BattleEffect_IceChipSheet and
 // BattleEffect_SparkleDots), not yet named there.
 
-// Draft: differ 34 of 753 (draft 753), tla-en, 2026-10-26 (78 under
+// Earlier: differ 34 of 753 (draft 753), tla-en, 2026-10-26 (78 under
 // -mthumb-slow-loads before the tagged dead store below).
 
 // What moved it: the native shares one call between the two pillar draws
@@ -19,10 +21,10 @@
 // life analysis deletes after the blocks are made, leaves the call last
 // and the two calls shared: 78 to 34, the instruction count exact.
 
-// Left: the prologue's argument spill before the heap base and single
-// rows where the native issues a store before a load (the frame loop's
-// setup, the draws' stacked arguments): the known store-then-load
-// scheduling limit.
+// Left: rows where the native issues a store before a load (the frame
+// loop's setup, ymin and ymax after the motes, three draws' stacked
+// arguments): the known store-then-load scheduling limit. The prologue
+// now matches.
 
 // Tried (2026-10-15):
 // - greedy declaration-order sweep, two passes: no gain.
@@ -31,6 +33,11 @@
 // arrays (no change); the second draw through draw[0] (97); the MAX draw
 // followed by continue (no change), or wrapped in a one-pass block (no
 // change: its labels are gone before flow makes the blocks).
+// Tried (2026-10-31): ymax cleared before ymin (26); a four-minute
+// permuter run (6,666 candidates, none under 22). The sched2 dump shows
+// each remaining row is a priority order: the native issues the store
+// (frame = 0, ymax and ymin, the stacked draw arguments) before a
+// spill-slot load the draft lifts above it.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -224,7 +231,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
             /* FAKEMATCH(dead): a store flow deletes once the blocks are made,
              * so this block ends in its call with no no-op after it and jump2
              * shares the call with the MAX draw, as the native does; as plain
-             * C, 78 of 753 instructions differ in tla-en. */
+             * C, 68 of 753 instructions differ in tla-en. */
             height = 0;
           }
         }

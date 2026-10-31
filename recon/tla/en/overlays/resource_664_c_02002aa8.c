@@ -1,12 +1,19 @@
-// Draft, differ 8 of 77 (was 27): a burst of eight effects that shrink from
-// twice to half size, scattered over 64 by 16 pixels around (x, z) and rising
-// at random speeds, then two screen shakes (Func_02005dcc). The loop counts
+// Near miss, differ 8 of 77 (tla-en, 2026-10-31; was 27): the spawn
+// position's address and the parameter copies. A burst of eight effects that
+// shrink from twice to half size, scattered over 64 by 16 pixels around
+// (x, z) and rising at random speeds, then two screen shakes
+// (Func_02005dcc). The loop counts
 // up as a goto loop (as a for loop loop.c reverses it) and the scales are
 // stored in field order. Left: the native copies x and z to r10 and r8 after
 // the options' stores and builds the spawn position's address after the first
 // random call, where this draft does both earlier (the parameter spill before
 // the base address that no C form has changed); 12 minutes of permute found
-// nothing better.
+// nothing better. The RTL dumps (31 October) show why: the draft builds the
+// address after the first random call too (insn 51), but gcse's PRE inserts
+// sfp - 52 on the loop's entry edge, and cse2 rewrites the loop's uses to the
+// hoisted register, so the copy dies. Tried: spawn declared in the loop's
+// block (8), every access through a pointer set in the loop (8), an empty asm
+// at four places in the loop (8 to 10), a one-pass block (12).
 #include "types.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"

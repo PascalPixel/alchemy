@@ -27,7 +27,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/s2618.o"(.text)
         "*/games/tla/src/scene/world_map/s2640.o"(.text)
         "*/games/tla/src/scene/world_map/s2698.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x0200a8cc)
+        "*/games/tla/src/scene/world_map/s28cc.o"(.text)
         "*/games/tla/src/scene/world_map/s29a4.o"(.text)
         "*/resource_64b_overlay.o"(.text.x0200aab0)
         "*/games/tla/src/scene/world_map/s2e78.o"(.text)

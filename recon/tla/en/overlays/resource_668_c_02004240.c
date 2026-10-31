@@ -1,13 +1,29 @@
-// Draft, differ 235 of 171: measures a push: finds the pushable object ahead of
-// the leader (Func_020043a8, recording its number and kind in the push
-// state), then steps the object's box one cell at a time along the leader's
-// direction until a cell of it is blocked (Func_02004a64 returns 2); with
-// at least one free step it records the end position in the push state and
-// returns 1, else 0. The object stays on layer 2 while it is measured. The
-// same listing as overlay 674's Func_020037d8 and 662's Func_020001d4.
-// Left: registers from the start (the native keeps the push state in r6 and
-// the object in r4, spilled around the cell test, and the box sizes and the
-// kind on the stack), which moves nearly every row.
+// Near miss, differ 219 of 171 (tla-en, 2026-10-31): the same control flow,
+// calls, accesses and constants as the native; what is left is GCSE and
+// allocation. Measures a push: finds the pushable object ahead of the leader
+// (Func_020043a8, recording its number and kind in the push state), then
+// steps the object's box one cell at a time along the leader's direction
+// until a cell of it is blocked (Func_02004a64 returns 2); with at least one
+// free step it records the end position in the push state and returns 1,
+// else 0. The object stays on layer 2 while it is measured. The same listing
+// as overlay 674's Func_020037d8 and 662's Func_020001d4.
+// Left: gcse's PRE (07.gcse: expressions kind << 2 and sfp - 12) carries the
+// box row's kind * 4 and the cell's address from before the loops through
+// every pass, where the native recomputes kind * 4 at each pass's top (sp+4)
+// and the cell's address in each row (r5), after the row (r2) and for the
+// call (r1), and keeps kind itself on the stack (sp+20). The long-lived
+// copies then take the native's registers: the native keeps the push state
+// in r6, the object in r4 (saved around the cell test), j and i in r8 and r7,
+// dx, dz and the step count in r9, r10 and r11, and spills the box sizes;
+// here the push state takes r7, the object r8, kind * 4 r10, the cell's
+// address r6, j r4 (saved around the call), the box sizes r9 and r11, and
+// dx, dz and the step count are spilled. An
+// analysis-only compile with -fno-gcse keeps the recomputations but not the
+// native's registers (push state r8, object r10, frame 48 bytes).
+// Tried 31 October: the loops as for loops (235) or only the outer one as
+// for (;;) (221); the loops reading push->kind (213, but the native reads
+// its stack copy, not the push state); the cell as an s32[3] or through a
+// pointer (223, 229, with push->kind); steps * dx (no change).
 #include "types.h"
 #include "actor.h"
 #include "system/vector3.h"
@@ -50,21 +66,33 @@ s32 Func_02004240(struct PushState *push) {
   push->x = object->x + dx;
   push->z = object->z + dz;
   cell.y = object->y;
-  for (;;) {
-    cell.z = push->z + (gData_02004cb0[kind][1] << 16);
-    for (j = 0; j < height; j++) {
-      cell.x = push->x + (gData_02004cb0[kind][0] << 16);
-      for (i = 0; i < width; i++) {
-        if (Func_02004a64(object, &cell) == 2)
-          goto blocked;
-        cell.x += 0x100000;
-      }
-      cell.z += 0x100000;
-    }
-    push->x += dx;
-    steps++;
-    push->z += dz;
-  }
+nextStep:
+  cell.z = push->z + (gData_02004cb0[kind][1] << 16);
+  j = 0;
+  if (j >= height)
+    goto stepFree;
+nextRow:
+  cell.x = push->x + (gData_02004cb0[kind][0] << 16);
+  i = 0;
+  if (i >= width)
+    goto rowFree;
+nextCell:
+  if (Func_02004a64(object, &cell) == 2)
+    goto blocked;
+  cell.x += 0x100000;
+  i++;
+  if (i < width)
+    goto nextCell;
+rowFree:
+  cell.z += 0x100000;
+  j++;
+  if (j < height)
+    goto nextRow;
+stepFree:
+  push->x += dx;
+  steps++;
+  push->z += dz;
+  goto nextStep;
 blocked:
   *layer = 0;
   if (steps == 0)

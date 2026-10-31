@@ -1,3 +1,15 @@
+// Near miss, differ 2 of 31 (tla-en, 2026-10-31): after the byte store the
+// native steps the source pointer (adds r1, #1) before it reloads outTotal;
+// here the reload comes first. The sched2 dump settles the cause: the reload
+// is stored back to [r4] two insns later, so -mthumb-slow-loads treats it as
+// opening a read-modify-write and its dependence on the strb costs 1, not 2.
+// At t=4 the reload (priority 10) and the pointer step (priority 1) are both
+// ready and the reload wins; the native order needs that cost to be 2, which
+// only the compiler's cost rule can change. Also tried 2026-10-31: pointer
+// arithmetic spellings with += 1, a u32 index, a while loop through an out
+// pointer with the index stepped first (2 each); an empty asm between the
+// store and outTotal++ (4); outTotal through a pointer local (12); four
+// permuter minutes (nothing below 2).
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
 // 31 as below. An empty asm after the byte store with the for loop's own
 // step: the pointer step comes before the store (2); a do-while with the

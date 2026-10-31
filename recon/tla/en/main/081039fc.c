@@ -1,4 +1,15 @@
-// Near miss, differ 38 of 1244 (2026-10-26; 148 before), instruction order
+// Near miss, differ 26 of 1244 (tla-en, 2026-10-31; 28 with the draft's own
+// window work struct): instruction order only. The window work is the tree's
+// struct WindowWork (window.h), whose alias set orders the busy flag's store
+// before the menu window's load, as the native has it. Left: seven pairs where
+// the native puts a stack store (the mode spill, the first pass's cleared
+// element and index and its gained/lost addresses, the tutorial's cleared keys,
+// an outgoing argument) ahead of a constant or load that sched2 ranks one
+// higher; the sched2 dump gives the constant chain priority one above the
+// store's (store to load costs 2), so the C does not reach it. The permuter's
+// best on the earlier form (4 minutes) was 26 through a new one-pass block
+// around the two redraw calls, a device, so not kept.
+// Earlier (2026-10-26), differ 38 of 1244 (148 before), instruction order
 // only. What changed, each from the twin's shape: the page row marked through
 // UiRender_MarkRow (136); Start's cue played before result = -2, so its tail
 // joins the other cancel's (the listing's jump into it); row cleared before
@@ -28,6 +39,7 @@
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "uiwindow.h"
+#include "window.h"
 
 struct DjinnMenuBackdrop {
   u16 ids[8][10];
@@ -80,15 +92,6 @@ struct DjinnMenuWork {
   u8 pairIndex[2];
   u8 pairElement[2];
   u8 pairMember[2];
-};
-
-struct DjinnWindowWork {
-  u8 unk0[3];
-  u8 dirty;
-  u8 unk4[2];
-  u8 holdTilemapUpload;
-  u8 unk7;
-  u8 tilemap[0x200];
 };
 
 extern u8 MsgDjinnCompareSet[];
@@ -161,7 +164,7 @@ static __inline__ void FillWords(FillFn fill, void *dst, s32 size, u32 value) {
 s32 Func_081039fc(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
-  struct DjinnWindowWork *work;
+  struct WindowWork *work;
   struct DjinnPreviewWindow *list;
   s32 pageCounts[2];
   s32 selectedPages[2];
@@ -341,7 +344,7 @@ s32 Func_081039fc(u32 mode) {
     u32 pressed;
     u32 repeat;
 
-    work = (struct DjinnWindowWork *)Ram_HeapSlots->windowTiles;
+    work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
     backdrop = menu->backdrop;
     pressed = gInput.pressed;
     repeat = gInput.repeat;
@@ -373,8 +376,8 @@ s32 Func_081039fc(u32 mode) {
           window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 3,
                                                8, 0, 1);
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
-           * Broken Seal's twin has it; as a plain statement (both cases), 46 of
-           * 1244 instructions differ in tla-en rather than 38. */
+           * Broken Seal's twin has it; as a plain statement (both cases), 34 of
+           * 1244 instructions differ in tla-en rather than 26. */
           do {
             menu->cursor->active = 1;
           } while (0);
@@ -390,8 +393,8 @@ s32 Func_081039fc(u32 mode) {
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 11;
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
-           * Broken Seal's twin has it; as a plain statement (both cases), 44 of
-           * 1244 instructions differ in tla-en rather than 38. */
+           * Broken Seal's twin has it; as a plain statement (both cases), 32 of
+           * 1244 instructions differ in tla-en rather than 26. */
           do {
             menu->cursor->active = 13;
           } while (0);
@@ -405,8 +408,8 @@ s32 Func_081039fc(u32 mode) {
           window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 2,
                                                8, 0, 1);
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
-           * Broken Seal's twin has it; as a plain statement (both cases), 46 of
-           * 1244 instructions differ in tla-en rather than 38. */
+           * Broken Seal's twin has it; as a plain statement (both cases), 34 of
+           * 1244 instructions differ in tla-en rather than 26. */
           do {
             menu->cursor->active = 1;
           } while (0);
@@ -423,8 +426,8 @@ s32 Func_081039fc(u32 mode) {
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 12;
           /* FAKEMATCH(one-pass): the cursor's store in a one-pass block, as The
-           * Broken Seal's twin has it; as a plain statement (both cases), 44 of
-           * 1244 instructions differ in tla-en rather than 38. */
+           * Broken Seal's twin has it; as a plain statement (both cases), 32 of
+           * 1244 instructions differ in tla-en rather than 26. */
           do {
             menu->cursor->active = 13;
           } while (0);
@@ -446,7 +449,7 @@ s32 Func_081039fc(u32 mode) {
           Text_DrawCharacterAtOffsetFar((s32)MsgDjinnPsyHelp, help, 128, 16);
         }
       }
-      work->holdTilemapUpload = 1;
+      work->menuBusy = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
       if ((redraw >> 1) != 0)
@@ -483,7 +486,7 @@ s32 Func_081039fc(u32 mode) {
                       addPairSlot, previewMode, selectedPages[0] + 1, 1);
         break;
       }
-      work->holdTilemapUpload = 0;
+      work->menuBusy = 0;
     }
 
     if (page <= 1) {
@@ -593,7 +596,7 @@ s32 Func_081039fc(u32 mode) {
   Func_08105350(0, 0);
   Func_08105350(1, 0);
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
-  ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
@@ -602,7 +605,7 @@ s32 Func_081039fc(u32 mode) {
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
   WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
   wait(1);
   return result;
 }

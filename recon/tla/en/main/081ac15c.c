@@ -1,3 +1,15 @@
+// Near miss, differ 74 of 2055 (tla-en, 2026-10-31): scheduling rows (the
+// setup's VRAM base load, stack reloads and stores one row early or late, the
+// affine loop's two zero loads after rather than before its adds), the shadow
+// loop's two OAM offsets in swapped registers (the native keeps attr2's +200
+// in sl and attr01's +196 in r8, as the die loop does), and the affine loop's
+// literal pool split one store later, which shifts six pc-relative offsets.
+// Measured this pass (from 88): the sort loop runs while index != 2 (84);
+// held is read as volatile after the two discarded repeat reads (74); the
+// affine halfwords take The Broken Seal's taken-address form instead of
+// volatile locals (same code). Putting state = 0 before resetDice = 1 after
+// a loss: 78; index = 0 before gRenderOamEnabled = 0: 78; a 4-minute
+// permuter run found nothing better.
 // 2026-10-26 (round 5): differ 104 of 2055 (draft 2055); resetDice set before
 // the state after a loss (a statement-move search): 108 to 104. Both decodes go
 // through Call2 with Ram_MapCellBuffer as an integer, as The Broken Seal's
@@ -109,10 +121,10 @@ void LuckyDice_Run(void) {
   s32 groundPoint[3];
   s32 screen[3];
   s32 unused[8];
-  volatile u16 affineA;
-  volatile u16 affineB;
-  volatile u16 affineC;
-  volatile u16 affineD;
+  u16 affineA;
+  u16 affineB;
+  u16 affineC;
+  u16 affineD;
   s32 spinRate[2];
   s32 flashTimer[2];
   s32 luckyNumbers[2];
@@ -156,6 +168,14 @@ void LuckyDice_Run(void) {
   s32 pairCount;
   s16 affineScale;
 
+  /* FAKEMATCH(dead): the four affine halfwords' addresses taken, so each is
+   * stored to sp+166..160 and reloaded with ldrh, as The Broken Seal's
+   * LuckyDice_Run keeps them; as plain u16 locals, 902 of 2055 instructions
+   * differ in tla-en. */
+  (void)&affineA;
+  (void)&affineB;
+  (void)&affineC;
+  (void)&affineD;
   HeapSlot_Alloc(100, 0x60e);
   spritePalette = HeapSlot_Alloc(96, 0x200);
   diceWork = HeapSlot_AllocEwram(92, 0x7b7c);
@@ -388,7 +408,11 @@ void LuckyDice_Run(void) {
     } else if (state == 0 && frame > 17) {
       (void)gInput.repeat;
       (void)gInput.repeat;
-      if (gInput.held & 0x40) {
+      /* FAKEMATCH(volatile): held read afresh after the two discarded repeat
+       * reads, as The Broken Seal's gKeysHeld is declared; as plain
+       * gInput.held, 84 rather than 74 of 2055 instructions differ in
+       * tla-en. */
+      if (*(volatile u32 *)&gInput.held & 0x40) {
         diceWork->particles[0].y += 0x40000;
         diceWork->particles[1].y += 0x40000;
       }
@@ -460,7 +484,7 @@ void LuckyDice_Run(void) {
     for (index = 0; index != 2; index++) {
       drawOrder[index] = index;
     }
-    for (index = 1; index < 2; index++) {
+    for (index = 1; index != 2; index++) {
       sortedDie = drawOrder[index];
       for (otherIndex = index - 1;
            otherIndex >= 0 && diceWork->particles[drawOrder[otherIndex]].z >

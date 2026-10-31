@@ -1,13 +1,20 @@
-// Near miss, differ 2 of 82 (tla-en, 2026-10-30): scheduler order only. After
-// storing the fifth argument (42) through r3, the native sets Window_Create's
-// fourth argument (r3 = 4) before its second (r1 = 7). In sched2 here, r3 = 4
-// is anti-dependent on that store, which arm_adjust_cost prices at 0, so it
-// ranks below the independent r1 = 7; were that dependence 1, its four
-// dependents would put it first and give the native's r3, r1, r2, r0. No
-// source form reaches it: The Broken Seal's if form (kept here), u8/u16,
-// unprototyped and variadic Window_Create prototypes, a single empty asm and
+// Matches: differ 0 of 82 (tla-en, 2026-10-31), through a one-pass block
+// that sets the fifth argument (tagged below). The plain call leaves differ 2
+// (tla-en, 2026-10-30), scheduler order only: after storing the fifth
+// argument (42) through r3, the native sets Window_Create's fourth argument
+// (r3 = 4) before its second (r1 = 7). In sched2, r3 = 4 is anti-dependent
+// on that store, which arm_adjust_cost prices at 0, so it ranks below the
+// independent r1 = 7; were that dependence 1, its four dependents would put
+// it first and give the native's r3, r1, r2, r0. No plain form reaches it:
+// The Broken Seal's if form (kept here), u8/u16, unprototyped and variadic
+// Window_Create prototypes, a named temporary alone, a single empty asm and
 // 1 + 4 minutes of permute all leave differ 2; an empty asm cannot sit
-// between a call's stack store and its register loads.
+// between a call's stack store and its register loads. The Broken Seal's
+// tuning gets r3 first because its store takes two cycles and the call's
+// trailing (use (const_int 0)) fills the stall; here the one-pass block's
+// loop-end note before the stack store makes that store a scheduling
+// barrier, so every argument load depends on it and r3 = 4, with the most
+// dependents, goes first.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -44,6 +51,7 @@ s32 Message_ShowLocalizedAndWait(void) {
   s32 result;
   void *state;
   s32 mode;
+  s32 attrs;
 
   state = Ram_HeapSlots->battleWork;
   mode = gMainRoutineWork[0x24B];
@@ -56,7 +64,14 @@ s32 Message_ShowLocalizedAndWait(void) {
     }
   }
   if (result != 0) {
-    work = Window_Create(0, 7, 30, 4, 42);
+    /* FAKEMATCH(one-pass): the window attributes set in a once-only block,
+     * whose loop-end note makes the stack store a scheduling barrier; as
+     * Window_Create(0, 7, 30, 4, 42), 2 of 82 instructions differ in
+     * tla-en. */
+    do {
+      attrs = 42;
+    } while (0);
+    work = Window_Create(0, 7, 30, 4, attrs);
     Vram_FillWindowBlockPattern();
     Message_CopyExpanded((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
     Text_DrawWideStringAtOffset(buffer, work, 0, 4);

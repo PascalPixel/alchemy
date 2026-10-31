@@ -1,10 +1,22 @@
-// Near miss, differ 4 of 736 (tla-en, 2026-10-30), two swaps, both sched2
-// ranking: (1) gInput's literal load issues before the acceleration store
-// here (priority 15, a load ranked a cycle slower, against the store's 14)
-// and after it natively; the empty asm after the store below still gives 2;
-// (2) before the angle loop, angleIndex's movs r4, #0 (priority 2) issues
-// before count's spill store of 6 to [sp, #4] (priority 1) here, and after
-// it natively. Tried (2026-10-30): held read through a u32 view (4), angle
+// Near miss, differ 2 of 736 (tla-en, 2026-10-31): one sched2 swap before
+// the angle loop, (2) below; the empty asm after the acceleration store
+// settles (1) (4 without it). Natively both stores issue earlier than this
+// compiler ranks them. (2) cannot move by splitting regions: the reload of
+// &position (ldr r0, [sp]) sits after angleIndex = 0 in RTL and must issue
+// first, so an empty asm or one-pass block anywhere around count = 6 or
+// angleIndex = 0 breaks it. Tried (2026-10-31): count = 6 written out after
+// the six offsets (2), placed before any of them (30 to 79); angleIndex = 0
+// before the offsets (228) or between them (26); a constant bound 6 (176);
+// count int (2), u32 (4), s16 (36); angleIndex u32 (457); for (1), a
+// one-pass block (16) or a volatile acceleration, speedLimit or held access
+// (4); four minutes of permute on the barrier form, 9,431 candidates, none
+// below 2.
+// Differ 4 (2026-10-30), two swaps, both sched2 ranking: (1) gInput's
+// literal load issues before the acceleration store here (priority 15, a
+// load ranked a cycle slower, against the store's 14) and after it
+// natively; (2) before the angle loop, angleIndex's movs r4, #0 (priority
+// 2) issues before count's spill store of 6 to [sp, #4] (priority 1) here,
+// and after it natively. Tried (2026-10-30): held read through a u32 view (4), angle
 // and direction set in one statement (4), collision = 0 after the stores
 // (68), motionFlags cleared after collision (10); five minutes of permute,
 // 6,421 candidates, none below 4.
@@ -125,6 +137,9 @@ s32 Func_08028aac(struct Actor *object) {
   collision = 0;
   object->speedLimit = object->y / 16 + 0x14000;
   object->acceleration = 0x8000;
+  /* FAKEMATCH(barrier): an empty asm after the acceleration store; as plain
+   * C without it, 4 of 736 instructions differ in tla-en. */
+  __asm__ volatile("");
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {

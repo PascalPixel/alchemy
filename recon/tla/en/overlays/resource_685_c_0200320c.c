@@ -1,6 +1,12 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 4 of 68; left: 999 is built
-// before the 0x14ccc store's last add, after it in the native; a barrier after
-// the store puts it after the store (differ 2).
+// Near miss, differ 4 of 68 (tla-en, 2026-10-31): scheduler order. In sched2
+// the 0x14ccc store is a leaf of cost 1 (store1 under arm9tdmi tuning), so its
+// chain ranks 4-3-2-1 against 999's 3-2-1 and 999 starts before the store's
+// last add; the native order (add, then 999's first, then the store) needs the
+// store ranked 2 or 3, which only a following dependant or a dearer store
+// gives. A barrier after the store puts 999 after it (differ 2). Also tried
+// (all 4): a for loop with wait(1) as its step, a default case, the sum in a
+// temporary, `<= ... break` before the clamp, a break inside the if, an exit
+// test inside the loop; permute 4 minutes again found only the one-pass block.
 // Draft of overlay 685's Func_0200320c, differ 4 of 68: allocates the
 // 0x1078-byte work in heap slot 55, starts Func_02002de4 and raises field106c
 // in two steps until it reaches 0x14ccc. The priority temporary is needed (the

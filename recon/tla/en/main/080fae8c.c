@@ -1,7 +1,17 @@
-// Near miss, differ 2 of 217 (tla-en, 2026-10-30): scheduler order only. After
+// Near miss, differ 2 of 217 (tla-en, 2026-10-31): scheduler order only. After
 // the first Unit_Get the native stores the unit spill (`str r0, [sp]`) before
 // `lsls r3, r2, #1` (row 23); here the shift comes first (row 21): sched2 ranks
-// the shift 8 and the store 7, since the store leads only to the ldrh.
+// the shift 8 and the store 7, since the store leads only to the ldrh. The
+// store-to-ldrh edge costs 1: arm_adjust_cost's -mthumb-slow-loads rule charges
+// 2 for a load after a store only when the load's source is a plain MEM, and
+// this ldrh is a zero_extend. At 2 the store would tie the shift at 8 and, with
+// four dependents to the shift's two, rank_for_schedule should place it first
+// as the native does (not measured: no source form gets there). Tried
+// 2026-10-31: a HImode struct temporary (padded to 4 bytes, still a
+// zero_extend; through a cast, differ 126); a copy of slot pinned to r2 behind
+// an empty asm (the asm moves allocation, differ 121); the copy inside a
+// one-pass block (the barrier lands on reload's `mov r2, r9`, differ 6); the
+// permuter, 24,448 candidates, none below 2.
 // First draft of Func_080fae8c: the twin of ☀️'s ItemMenu_DrawEquipPreview
 // (games/tbs/src/menu/menu/item.c). Shows in the status panel what the item in
 // owner's slot would mean to member target, previewing it in a copy of

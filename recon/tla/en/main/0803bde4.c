@@ -1,5 +1,12 @@
-// Near miss, differ 2 of 292 (tla-en, 2026-10-30): one row of scheduling
-// remains, with no device. The native stores glyphSpacing's spill a row
+// Near miss, differ 2 of 292 (tla-en, 2026-10-31): one row of scheduling
+// remains, with no device. The lsls's priority is the lineSpacing load's
+// plus 3 and the store's at most plus 2 (with a true memory dependence), so
+// no form of these same instructions ties them. Measured on 2026-10-31:
+// volatile or raw-offset reads of either spacing (differ 2), an empty asm
+// before or after the lineSpacing read (2, 4), a one-pass block or u16
+// temporary around it (4, 2), volatile spacing locals (123, 119), one or
+// two asm "+r" ties on spacingX (24, 113).
+// The native stores glyphSpacing's spill a row
 // earlier, between the movs and the lsls that build 0xf38. In sched2 that
 // store has priority 5 (its successors are the reuse of r3 and the
 // lineSpacing load), the lsls 7, so it cannot go first; no order or type of

@@ -1,4 +1,7 @@
-// Draft, differ 16 of 367: a scene in Yallam (message MsgHereLetMe on): actors
+// Near miss, differ 16 of 367 (tla-en, 2026-10-31): the action field's address
+// is built before the leader is fetched, where the native builds it inside the
+// first wait loop, and a few loads around it follow.
+// A scene in Yallam (message MsgHereLetMe on): actors
 // 9 and 10 run off, actor 5 walks to the controlled character, the party is
 // placed, Func_02001688 is scheduled and actor 8 is walked through three steps
 // (its action count reaching 34, 42 and 108, its phase 1, 2 and 3), then actor
@@ -8,6 +11,17 @@
 // field's address r6 as the native has it. Left: the native computes that
 // address inside the first wait loop (the GCSE hoist seen in overlay 698's
 // landing burst) and orders a few loads around it differently.
+// Tried 31 October: read from actor, the gcse dump shows PRE inserting the
+// address on the first loop's entry edge (PRE/HOIST: edge (2,3)), since the
+// later loops anticipate it on every path. A dead early return before the
+// first read (s32 check = 1; if (!check) return;, folded only after PRE)
+// leaves the address in the loop, built at its head, and the later loops
+// reuse it, as the native has them; but the in-loop pointer's loop-weighted
+// refs (8, the phase pointer's 7) rank it first in global, so it takes r5 and
+// the phase pointer r6, the native's swapped (30). Also 30: a dead test around
+// the read alone (the exit still anticipates it), the test at the loop head,
+// the count pointer set in the loop, and a copy p = actor at the loop head
+// (cse folds it). Permute 4 minutes on the dead-return form: 28, a block wrap.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

@@ -34,7 +34,7 @@ SECTIONS
         "*/resource_6a0_overlay.o"(.text.x02009514)
         "*/resource_6a0_overlay.o"(.text.x020096d4)
         "*/games/tla/src/scene/jupiter_lighthouse_room_7/s17ac.o"(.text)
-        "*/resource_6a0_overlay.o"(.text.x0200984c)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_7/s184c.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_7/s19dc.o"(.text)
         "*/resource_6a0_overlay.o"(.text.x02009a48)
         "*/games/tla/src/scene/jupiter_lighthouse_room_7/s1acc.o"(.text)

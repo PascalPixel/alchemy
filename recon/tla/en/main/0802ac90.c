@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 114 (tla-en, 2026-10-30): scheduler order only. The
+// Near miss, differ 2 of 114 (tla-en, 2026-10-31): scheduler order only. The
 // Broken Seal's Map_RenderCellPictureColumn with the layer window of
 // Func_0802abbc (adopted in field/map/layer_render.c, whose forms this follows)
 // and its CopyCellPictureHalfColumn helper (94 before, 2026-10-26). Left: the
@@ -13,6 +13,19 @@
 // first (10), array indexing (77), both loads before the stores (52), a u16
 // screen pointer with [32], `screenTile += 64` and `screenTile = screenMap;
 // +=` (2 each) do not move it; permute (4 minutes, 2 jobs) best differ 2.
+// 2026-10-31: the literal's path to the second ldrh is 3 + 1 (add) and the
+// screen add's is 1 + 2 (store to load), so in this dependence graph the
+// literal always outranks the add by one; no priority tie is reachable. A
+// barrier works only between the add and the literal, and then the first
+// ldrh must precede the add in RTL: the picture read into a temporary
+// before the screen address, then an empty asm or one-pass block after the
+// add, puts the literal where the native has it but local allocation swaps
+// index * 2 into r2 and the entry into r1 (66; 64 to 75 for other one-pass
+// spots, u16 temporary 75 to 81). Also measured: the helper inlined (2),
+// volatile screen or entry pointers (2), the second entry as `+= 2` or a byte
+// offset (86), computed before the first store (72, 76), array-indexed
+// temporaries (79 to 89), sourceRow or screenRowOffset updated between the
+// stores (48, 44) or before the first store (12).
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

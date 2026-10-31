@@ -66,9 +66,7 @@ s32 Battle_Run(s32 enemyGroup) {
   view = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
   HeapSlot_AllocEwram(11, 640);
   focus = camera->focus;
-  /* FAKEMATCH(dead): result set to 0, a store no read sees, whose register
-   * CSE takes the setup's zeros from; without it, 122 of 645 instructions
-   * differ in tbs-en. */
+  // Default: 0 until the battle's outcome is known.
   result = 0;
   Iwram_ClearWords(enemyUnits, ENEMY_UNITS_SIZE);
   Task_ResetAll();

@@ -164,9 +164,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
       redraw = 0;
       if (djinnCount != 0) {
-        /* FAKEMATCH(dead): k set to 0 before the loop sets it again, so cse2
-         * gives the second set redraw's register, which the native reloads;
-         * as one set, 27 of 1201 instructions differ in tbs-en. */
+        // Default: 0, though the loop below sets it again.
         s32 k = 0;
         MessageArgument_ClearAll();
         alreadySelected = 0;

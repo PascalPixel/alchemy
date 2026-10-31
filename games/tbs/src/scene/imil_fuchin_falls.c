@@ -1530,10 +1530,8 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     }
   } else if (gMainRoutineWork.next ==
              (s32)&SceneId_FuchinFallsCaveDragonStatue) {
-    /* FAKEMATCH(dead): fade set to NULL, which nothing reads, so the zero
-     * stores below take its register (r5) and the entrance from the south
-     * half's middle stores a fresh 0; as no such set, 51 of 144 instructions
-     * differ in tbs-en. */
+    // Default: NULL unless the arrival from the south half's middle takes the
+    // fade overlay.
     fade = NULL;
     actor = Actor_Get(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE);
     gImilFuchinFalls_TrackLeader = 0;

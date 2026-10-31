@@ -778,9 +778,6 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     MapGrid_CopyCellsTo(39, 51, sourceColumn, 32, 1, copyHeight);
     column = step + 106;
     stripHeight = 4;
-    /* FAKEMATCH(temporary): the strip's width and height in locals, so loop.c
-     * hoists the 2 into r9; as the literals 2 and 4, 11 of 90 instructions
-     * differ in tbs-en. */
     MapGrid_CopyCellPictureIndicesRect(105, 51, column, 32, copyWidth,
                                        stripHeight);
     if (delayFrames != 0) {

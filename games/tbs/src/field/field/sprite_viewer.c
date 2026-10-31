@@ -408,9 +408,6 @@ s32 SpriteViewer_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
       continue;
     }
     {
-      /* FAKEMATCH(temporary): the bound in a local compares as cmp against
-       * 512 with blt, as native; as spriteId >= UI_SPRITE_VIEWER_SPRITE_LIMIT,
-       * 3 of 25 instructions differ in tbs-en. */
       s32 spriteLimit = UI_SPRITE_VIEWER_SPRITE_LIMIT;
       if (spriteId >= spriteLimit) {
         spriteId = -1;

@@ -205,9 +205,6 @@ static void Colosso_UpdateMarker(void) {
     gColosso_MarkerBlink = 0;
   }
   if (++gColosso_MarkerBlink <= 13) {
-    /* FAKEMATCH(temporary): the size bit (0x40000000) in a local puts the
-     * priority after it; as the literal in the expression, 3 of 124
-     * instructions differ in tbs-en. */
     s32 size = 0x40000000;
 
     x = gColosso_MarkerX;

@@ -41,13 +41,11 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 drawPanel;
   s32 panelColumn;
   s32 panelRow;
-  s32 zero;
+  s32 transferValue;
   s32 frame;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  /* FAKEMATCH(temporary): zero holds the transfer value in sl through the
-   * setup calls; as the literal 0, 31 of 580 instructions differ in tbs-en. */
-  zero = 0;
+  transferValue = 0;
   work->args = args;
   BattleEffect_StartTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
@@ -73,7 +71,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // Redraw from blank each frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
   // swing is the point the panel sways about, in 16.16 pixels: the first
   // pass high up on the near side.
   drawPanel = 1;

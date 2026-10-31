@@ -1,8 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 10 of 124; left: the object's z
-// load and the copies out of r11 are scheduled otherwise.
-// Near miss (16 of 120 instructions differ): three loads of the object's
-// position sit one slot earlier or later than the native's, and the native
-// stores the turned x after it sums z.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 
 void Func_0200043c(void) {
@@ -39,7 +34,9 @@ void Func_0200043c(void) {
     dz = object->z - center[2];
     x = Iwram_MulQ16(dx, turn[0]) - Iwram_MulQ16(dz, sine);
     z = Iwram_MulQ16(dx, sine) + Iwram_MulQ16(dz, turn[0]);
-    object->x = x + center[0];
-    object->z = z + center[2];
+    x += center[0];
+    z += center[2];
+    object->x = x;
+    object->z = z;
   }
 }

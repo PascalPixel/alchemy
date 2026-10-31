@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/lemuria/entry.o"(.text)
         "*/games/tla/src/scene/lemuria/distance.o"(.text)
-        "*/resource_68b_overlay.o"(.text.x02008070)
+        "*/games/tla/src/scene/lemuria/s0070.o"(.text)
         "*/games/tla/src/scene/lemuria/s00e8.o"(.text)
         "*/games/tla/src/scene/lemuria/scene_tables.o"(.text)
         "*/games/tla/src/scene/lemuria/s0308.o"(.text)

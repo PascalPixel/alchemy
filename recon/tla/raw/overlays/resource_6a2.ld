@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_6a2_overlay.o"(.text.x02008750)
         "*/resource_6a2_overlay.o"(.text.x02008910)
         "*/games/tla/src/scene/jupiter_lighthouse_room_9/s09e8.o"(.text)
-        "*/resource_6a2_overlay.o"(.text.x02008a88)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_9/s0a88.o"(.text)
         "*/resource_6a2_overlay.o"(.text.x02008c18)
         "*/games/tla/src/scene/jupiter_lighthouse_room_9/light.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_9/lightcue.o"(.text)

@@ -1,37 +1,3 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
-// 467: the native issues the work pointer's copy to r9 before the third heap
-// load, and in both bursts adds the speed's 32 between the x store and the y
-// load. An empty asm reading the speed after the x store disturbs the whole
-// allocation (227). A greedy device search found nothing lower.
-// Draft of BattleEffect_RunPlumeEdge, effect kind 85 (Plume Edge), written from the
-// listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleEffect_RunImpactBurst 0.566, call order BattleEffect_RunJupiter
-// 0.677); the pillar's two-piece scroll is BattleEffect_RunNereid'.
-
-// Listing 467 instructions, draft 467, differ 36.
-// Left: order rows only. The native moves the work pointer to r9 before
-// it loads the sheet slot, starts REG_BLDALPHA's address before loading
-// its value, adds the 32 to each spark's speed before it loads the
-// position's y (both bursts), and sets r1 (32) after the flash's y; it
-// also places the first literal pool straight after the
-// GetBattleObjectSlotFar call, one instruction earlier than here, which
-// moves every pool offset after it (about 20 rows).
-// Tried (differ):
-// first draft                                                        94
-// locals declared in the order of the native's stack slots
-// (canvas, frame, sheet, target, pillarY)                          60
-// work read before canvas                                            52
-// HI as *(s16 *)((u8 *)&v + 2), (s32)((s16 *)&v)[1], a struct of
-// two halves                                                       52
-// the cell table through a local pointer before the spark loop       51
-// the spark loop stepped by pointer (step++): loop.c then hoists
-// the cell table into r10 as the native does                       36
-// HI through an inline helper (BattleEffect_RunStoneJustice's device)               135
-// alchemy permute 8 minutes, 2 jobs: 25 only with a forced
-// temporary for the FlashBurstSheet id taken before the pillar
-// load, 33 with an unsigned char picture index (a false type);
-// neither kept
-
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -68,17 +34,17 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);            // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
+                                    s32 percent);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
                                     s32 speed);
-void EffectPosition_ProjectBattler(
-    s32 actor, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *position);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Sound_PlayFar(s32 cue);
 
 // Plume Edge: the user dashes at the target, which a fan of white flashes

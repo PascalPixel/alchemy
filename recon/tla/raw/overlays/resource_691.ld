@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_691_overlay.o"(.text.x020083b4)
         "*/games/tla/src/field/map/cell_fill_byte.o"(.text)
         "*/games/tla/src/scene/magma_rock/distance.o"(.text)
-        "*/resource_691_overlay.o"(.text.x020085cc)
+        "*/games/tla/src/scene/magma_rock/s05cc.o"(.text)
         "*/games/tla/src/field/map/cell_get.o"(.text)
         "*/resource_691_overlay.o"(.text.x02008668)
         "*/resource_691_overlay.o"(.text.x020086cc)

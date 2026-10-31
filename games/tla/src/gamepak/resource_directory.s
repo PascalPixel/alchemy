@@ -228,7 +228,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0D7
 	resource , Resource_Data0D8
 	resource , BattleEffect_ImpFaceSheet
-	resource , Resource_Data0DA
+	resource Data0DA, Resource_Data0DA
 	resource , BattleEffect_GreatSwordSheet
 	resource , Resource_Data0DC
 	resource , Resource_Data0DD
@@ -328,7 +328,7 @@ Resource_DirectoryTable:
 	resource FlameColumnSheet, BattleEffect_FlameColumnSheet
 	resource , BattleEffect_EarthWallSheet
 	resource , BattleEffect_OrangePaletteA
-	resource , BattleEffect_FlashBurstSheet
+	resource FlashBurstSheet, BattleEffect_FlashBurstSheet
 	resource , BattleEffect_ThornSheet
 	resource , BattleEffect_CometSheetA
 	resource , BattleEffect_CometSheetB
@@ -336,7 +336,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_WhirlwindSheet
 	resource , BattleEffect_GreenPillarSheet
 	resource , BattleEffect_VineSheet
-	resource , BattleEffect_FirePillarSheetA
+	resource FirePillarSheetA, BattleEffect_FirePillarSheetA
 	resource , BattleEffect_RedPaletteB
 	resource , BattleEffect_OrangePaletteB
 	resource , BattleEffect_EffectPalette02
@@ -351,7 +351,7 @@ Resource_DirectoryTable:
 	resource JupiterDjinnSheet, BattleEffect_JupiterDjinnSheet
 	resource , BattleEffect_JupiterDjinnSmallSheet
 	resource MercuryDjinnSheet, BattleEffect_MercuryDjinnSheet
-	resource , BattleEffect_MercuryDjinnSmallSheet
+	resource MercuryDjinnSmallSheet, BattleEffect_MercuryDjinnSmallSheet
 	resource VenusDjinnSheet, BattleEffect_VenusDjinnSheet
 	resource , BattleEffect_VenusDjinnSmallSheet
 	resource , BattleEffect_FireBlobSheet

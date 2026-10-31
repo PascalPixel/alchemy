@@ -739,9 +739,6 @@ prompt:
   }
   Window_Close(window, 2);
 #else
-  /* FAKEMATCH(barrier): message kept in r10 and the coin label in r9; as a
-   * plain local, the two swap and 8 of 290 instructions differ in tbs-ja. */
-  __asm__("" : "+r"(message));
   for (;;) {
     text = MsgTolbiCoins;
     state = &gMainRoutineWork;
@@ -752,17 +749,12 @@ prompt:
     window = Window_Create(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
     Text_DrawMessageAsTiles(text, window, 0, 0);
     Text_DrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
-    Text_DrawMessageAsTiles(MsgTolbiCounterMarker, window, 104, 0);
-    {
-      /* FAKEMATCH(temporary): the medal label through a 64-bit local, whose
-       * register pair keeps the coin label in r9 and the marker in the pool;
-       * as text + 1, 20 of 290 instructions differ in tbs-ja. */
-      s64 label = text;
-
-      Text_DrawMessageAsTiles(label + 1, window, 0, 8);
-    }
+    // The marker after each count, MsgTolbiCounterMarker, follows the medal
+    // label.
+    Text_DrawMessageAsTiles(text + 2, window, 104, 0);
+    Text_DrawMessageAsTiles(text + 1, window, 0, 8);
     Text_DrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
-    Text_DrawMessageAsTiles(MsgTolbiCounterMarker, window, 104, 8);
+    Text_DrawMessageAsTiles(text + 2, window, 104, 8);
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
     Message_CloseFinishedWindows();

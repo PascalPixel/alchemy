@@ -35,23 +35,16 @@ void ScreenFade_Update(void) {
       *blendControl = control;
     }
     {
-      u8 *remaining = &gScreenFadeVBlanksLeft;
-      s32 delta;
       s32 level;
-      s32 step;
 
       // level = target + (start - target) * remaining / duration: BLDY moves
       // in a straight line and reaches the target as remaining reaches 0
-      (*remaining)--;
+      gScreenFadeVBlanksLeft--;
       level = gScreenFadeTargetLevel;
-      delta = gScreenFadeStartLevel - gScreenFadeTargetLevel;
-      step = *remaining;
-      /* FAKEMATCH(wrapper): the division as a call to __divsi3, which clobbers
-       * memory, so the zero test reloads *remaining; as delta * step /
-       * gScreenFadeVBlanks, 8 of 46 instructions differ in tbs-en. */
-      level += __divsi3(delta * step, gScreenFadeVBlanks);
+      level += (gScreenFadeStartLevel - gScreenFadeTargetLevel) *
+               gScreenFadeVBlanksLeft / gScreenFadeVBlanks;
       REG_BLDY = level;
-      if (*remaining == 0)
+      if (gScreenFadeVBlanksLeft == 0)
         gScreenFadeVBlanks = 0;
     }
   }

@@ -531,12 +531,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
   struct MainRoutineWork *state;
   s32 ticketPrice;
 
-#if !TBS_PATCH_1
-  /* FAKEMATCH(temporary): coinLabel keeps the first label in r5 and steps it
-   * to the second; as two MSGNO arguments, 24 of 152 instructions differ in
-   * tbs-ja. */
   s32 coinLabel;
-#endif
 
   ticketPrice = 600;
   Event_Start();
@@ -555,20 +550,15 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
       // Keep the balance visible while the player confirms the purchase.
       coinsWindow =
           Window_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
-#if TBS_PATCH_1
-      Text_DrawMessageAsTiles(MSGNO(MsgYourCoins), coinsWindow, 0, 0);
-#else
       coinLabel = MSGNO(MsgYourCoins);
       Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
-#endif
       state = &gMainRoutineWork;
-#if LANGUAGE == LANGUAGE_JAPANESE
-      coinLabel += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
-#endif
       Text_DrawNumberInWindow(state->coins, 6, coinsWindow, TICKET_COUNTER_X,
                               8);
 #if LANGUAGE == LANGUAGE_JAPANESE
-      Text_DrawMessageAsTiles(coinLabel, coinsWindow, 48, 8);
+      Text_DrawMessageAsTiles(coinLabel +
+                                  (MSGNO(MsgCoins) - MSGNO(MsgYourCoins)),
+                              coinsWindow, 48, 8);
 #endif
       if (Event_AskYesNoWithActorAnimation(-1, 0) == 1) {
         Window_Close(coinsWindow, 2);

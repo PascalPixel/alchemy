@@ -129,7 +129,7 @@ s32 WorldMap_InitializePerspective(void) {
   s32 *distance;
   u16 *yaw;
   u16 *pitch;
-  u16 *zoomTransitionFrames;
+  s16 *zoomTransitionFrames;
   s32 farPlane;
   s32 tileIndex;
 

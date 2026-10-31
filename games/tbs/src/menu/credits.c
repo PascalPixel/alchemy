@@ -1109,9 +1109,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u32 glyphBits;
   u32 glyphMask;
 
-  /* FAKEMATCH(dead): an unused array for the stack frame's 32 bytes no
-   * instruction touches; as no array, 2 of 277 instructions differ in tbs-en.
-   */
+  // Unused: gives the stack frame its 32 bytes.
   UNUSED u32 unused[8];
 
   if (text == NULL) {

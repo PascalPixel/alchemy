@@ -55,7 +55,7 @@ struct WorldMapView {
   s32 distance;             ///< farPlane scaled by the zoom
   s32 previousZoom;         ///< the zoom a transition starts from
   s32 zoom;                 ///< 16.16 fixed point, Q16_ONE full size
-  u16 zoomTransitionFrames; ///< a zoom transition's length; 0 when none
+  s16 zoomTransitionFrames; ///< a zoom transition's length; 0 when none
   s16 zoomTransitionStep;   ///< frames of the transition done
 };
 

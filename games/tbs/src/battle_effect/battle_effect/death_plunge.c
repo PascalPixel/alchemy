@@ -38,9 +38,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(dead): draw as a BlitterPair whose second word nothing uses,
-   * for 4 bytes of frame; as one DrawRectangle, 7 of 363 instructions differ
-   * in tbs-en. */
+  // Only draw[0] is used; the second blitter gives the stack frame 4 bytes.
   BlitterPair draw;
   struct BattleObject *first;
   struct BattleObject *second;
@@ -558,8 +556,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 ///
 /// args : only args->targets[0], the unit that flashes, is read.
 void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
-  /* FAKEMATCH(dead): an unused position for the stack frame's 12 bytes at
-   * sp+44; without it, 2 of 1051 instructions differ in tbs-en. */
+  // Unused: gives the stack frame its 12 bytes at sp+44.
   UNUSED struct ScreenPoint position;
   struct BattleEffectWork *work;
   void *canvas;

@@ -481,8 +481,6 @@ s32 DebugBrowser_Portraits(void) {
   /* FAKEMATCH(dead): a zero from the count keeps the mask in r9 and work in
    * fp; as cancelKey = KEY_B, 7 of 179 instructions differ in tbs-en. */
   cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
-  /* FAKEMATCH(temporary): the offset defined before the loop keeps its load in
-   * r1; as work->portraitSprites[1], 3 of 179 instructions differ in tbs-en. */
   slotOffset = WINDOW_WORK_PORTRAIT_SPRITES_OFFSET + 2;
   while (1) {
     if (gKeysRepeat & KEY_LEFT) {

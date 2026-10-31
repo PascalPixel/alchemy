@@ -120,9 +120,8 @@ const u8 gTitle_PromptBlendLevels[60] = {
 /// sets every other VBlank so twice as many show, hides the rest and copies the
 /// list to OAM.
 void Title_UpdateIntroSprites(void) {
-  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
-   * words are volatile (oam_words.h); as plain u32 words, 157 of 496
-   * instructions differ in tbs-en. */
+  // The OAM shadow it builds is struct OamWords, whose words are volatile
+  // (oam_words.h).
   struct IntroWork *work;
   u32 spriteCount;
   s32 slopeBaseY;

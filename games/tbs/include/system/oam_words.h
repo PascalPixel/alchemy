@@ -6,9 +6,11 @@
 
 #include "types.h"
 
-/// One sprite's two OAM words. Both are volatile: LuckyDice_Run,
-/// LuckyWheels_Update and Title_UpdateIntroSprites, which build lists of
-/// them, each tag what that steers.
+/// One sprite's two OAM words.
+// volatile: the original declared both words so; LuckyDice_Run,
+// LuckyWheels_Update and Title_UpdateIntroSprites, unrelated routines that
+// build lists of them, each keep the loads and store order only a volatile
+// keeps.
 struct OamWords {
   volatile u32 attr01; ///< attr0 | attr1 << 16
   volatile u32 attr2;  ///< attr2 | affine value << 16

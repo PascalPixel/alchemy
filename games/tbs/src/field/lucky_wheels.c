@@ -353,9 +353,8 @@ struct LuckyWheelsWonPrizesView {
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
 /// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_Update(void) {
-  /* FAKEMATCH(volatile): struct OamWords's volatile words (oam_words.h) keep
-   * each list loop's offset givs; as plain u32 words, 1242 of 1729
-   * instructions differ in tbs-en. */
+  // struct OamWords's volatile words (oam_words.h) keep each list loop's
+  // offset givs.
   struct LuckyWheelsWork *work;
   struct BattleEffectWork *fx;
   volatile u16 *dma;

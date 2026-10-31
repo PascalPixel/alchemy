@@ -280,9 +280,8 @@ void LuckyDice_Run(void) {
 #endif
   u16 *spritePalette;
   struct BattleEffectWork *diceWork;
-  /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamWords, whose
-   * words are volatile (oam_words.h); as plain u32 words, 1550 of 2046
-   * instructions differ in tbs-en. */
+  // The OAM shadow it builds is struct OamWords, whose words are volatile
+  // (oam_words.h).
   struct LuckyDiceSprites *sprites;
   struct BattleCamera *camera;
   s32 frame;

@@ -1139,11 +1139,6 @@ Func_080dd054:
 	.thumb_func
 Func_080ddbd8:
 	.incbin "baserom.gba", 0x000ddbcc, 0x000001c8
-	.global FieldEffect_RunLiftOnTarget
-	.type FieldEffect_RunLiftOnTarget, %function
-	.thumb_func
-FieldEffect_RunLiftOnTarget:
-	.incbin "baserom.gba", 0x000ddd94, 0x00000108
 	.section .rom.000de210, "ax"
 	.global Func_080de21c
 	.type Func_080de21c, %function
@@ -1567,8 +1562,8 @@ Func_0810106c:
 	.global DjinnMenu_DrawPage
 DjinnMenu_DrawPage:
 	.incbin "baserom.gba", 0x00101be4, 0x00000148
-	.section .rom.00101e7c, "ax"
-	.incbin "baserom.gba", 0x00101e7c, 0x000012fc
+	.section .rom.00102128, "ax"
+	.incbin "baserom.gba", 0x00102128, 0x00001050
 	.global Func_08103064
 	.type Func_08103064, %function
 	.thumb_func
@@ -1856,12 +1851,7 @@ Func_08127308:
 	.section .rom.001284d8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001284d8, 0x00000304
-	.section .rom.0013bbd8, "ax"
-	.global BattleEffect_RunIce
-	.type BattleEffect_RunIce, %function
-	.thumb_func
-BattleEffect_RunIce:
-	.incbin "baserom.gba", 0x0013bbd8, 0x000004e0
+	.section .rom.0013c0b8, "ax"
 	.global BattleEffect_RunDouse
 	.type BattleEffect_RunDouse, %function
 	.thumb_func

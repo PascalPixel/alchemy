@@ -1,184 +1,191 @@
-// Draft, differ 266 of 260: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+// Near miss, differ 69 of 260 (tla-en, 2026-10-31): the control flow, calls,
+// fields and frame (68 bytes: config at sp+16, position at sp+56) are the
+// native's; what is left is allocation and scheduling. GCSE merges every
+// computation of the position's address into one register (r7) from the
+// first copy on; the native computes it again for the first copy (r2), at the
+// head of the advance loop and at stop (add r7, sp, #56), as this compiler
+// does only with -fno-gcse. In the spawn block local allocation gives the
+// config's address r6 and the mask 31 r8; the native has the config in r8
+// (copied to r0 for each store) and the mask in r6. CSE keeps flag 0x2f0 in
+// r5 across Func_02000c08 where the native builds it for each call (through
+// flag_call.h's Flag_Set and Flag_Clear, differ 63). sched2 places the
+// motionFlags store's movs r3, #0 and stop's lsls r1, r1, #7 one step off.
+// Measured forms: the creation's x, y and z read into locals first (passed
+// straight, the loads come after the 403 and go through copies of r8: 150 to
+// 134); `if (c) goto A; goto B;` comes out inverted (beq B; b A), so the
+// search's end is written with the native's tests turned round (130); one
+// local for the step and, later, the frame's parity, as the native's r10
+// holds both (69; a separate parity variable is caller-saved in r4 and
+// spilled, and the step and the counter swap r9 and r10). As a for loop the
+// search lets loop.c hoist 0x110 and the allocation cascades (226).
+//
+// Creates actor 403 at the source's position and moves it along x by twice
+// the cosine of the source's angle until the layer 2 cell under it has
+// attribute 212 or 222, or an active object 8 to 63 in another cell is within
+// 8 of it (Func_020005a0) on its height row. When it stops on the cell or on
+// an object whose animation value is 0x110, it settles, and effect 403 is
+// thrown every other frame for 16 frames; on any other object it calls
+// Func_02000c08 with that object's index while flag 0x2f0 is set.
 #include "types.h"
+#include "actor.h"
+#include "field/event_work.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct MagmaRockEffectConfig {
+  s32 kind;
+  s32 variant;
+  s32 unk08;
+  s32 unk0c;
+  u8 unk10[8];
+  u16 id;
+  u8 unk1a[2];
+  const void *data;
+  u8 unk20[4];
+  void (*unk24)(void);
+};
 
-extern u8 Func_02000d40[];
-extern u8 gFrameCount[];
-extern u8 Func_020011b8[];
-extern u8 gData_02003d50[];
-s32 Import_ActorCreate();
-s32 Math_Cosine();
-void Func_02003a54();
-void Actor_SetSingleChildFlags();
-void Func_02003aec();
-void Func_02003bcc();
-s32 MapCell_GetAttributes();
-s32 Func_020005a0();
-void Func_02003a84();
-void Func_02003b5c();
-void Camera_MoveWithinMapBounds();
-void Func_02003a8c();
-void Func_02003a6c();
-s32 Random16Far();
-void Func_0200015c();
-void wait();
-void Camera_FollowActor();
-void Func_02003b6c();
-s32 Func_02003af4();
-void GameFlag_SetBit();
-void Func_02000c08();
-void GameFlag_ClearBit();
+extern u32 gFrameCount;
+extern u32 gData_02003d50[];
 
-s32 Func_020011e4(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r8, v0, r6, v1, r10, v2, r7, v3, r0, r9, r5, r2, r3, r1, v4, v5, v6, r4,
-      v7, v8, v9, v10, v11, v12;
-  s32 stack[17];
+struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+s32 Math_Cosine(s32 angle);
+s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void Camera_FollowActor(s32 id, s32 flag);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+u32 Random16Far(void);
+void wait(s32 frames);
+void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   struct MagmaRockEffectConfig *config);
+s32 Func_020005a0(s32 *a, s32 *b);
+void Func_02000c08(u32 index);
+void Func_02000d40(void);
+void Func_020011b8(void);
+void Func_02003a54(struct Actor *object, s32 a);
+void Func_02003a6c(struct Actor *object);
+void Func_02003a84(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02003a8c(struct Actor *object);
+void Func_02003aec(void);
+s32 Func_02003af4(void);
+void Func_02003b5c(s32 a, s32 b);
+void Func_02003b6c(void);
+void Func_02003bcc(s32 value);
 
-  r8 = a0;
-  /* sub (s32)stack, #68 */
-  v0 = Import_ActorCreate(0x193, FIELD_AT(a0, s32, 8), FIELD_AT(a0, s32, 12),
-                           FIELD_AT(a0, s32, 16));
-  r6 = v0;
-  v1 = Math_Cosine(FIELD_AT(r8, u16, 6));
-  FIELD_AT(r6, u8, 85) = 0;
-  r10 = v1 << 1;
-  Call2((void (*)())Func_02003a54, r6, 1);
-  Call2((void (*)())Actor_SetSingleChildFlags, r6, 0);
-  Func_02003aec();
-  Call1((void (*)())Func_02003bcc, 0);
-  FIELD_AT((s32)((u8 *)stack + 56), s32, 0) = FIELD_AT(r6, s32, 8);
-  FIELD_AT((s32)((u8 *)stack + 56), s32, 4) = FIELD_AT(r6, s32, 12);
-  FIELD_AT((s32)((u8 *)stack + 56), s32, 8) = FIELD_AT(r6, s32, 16);
-L_0200923e:
-  r7 = (s32)((u8 *)stack + 56);
-  FIELD_AT(r7, s32, 0) = (FIELD_AT(r7, s32, 0)) + r10;
-  v3 = MapCell_GetAttributes(
-      2, ((FIELD_AT(r7, s32, 0)) + r10) >> 20,
-      ((FIELD_AT(r7, s32, 8)) - (FIELD_AT(r7, s32, 4))) >> 20);
-  r0 = v3 >> 8;
-  if ((v3 >> 8) == 212)
-    goto L_020092d6;
-  if (r0 == 222)
-    goto L_020092d6;
-  r9 = 8;
-L_02009264:
-  r5 = *(s32 *)(((s32)Ram_HeapSlots->eventWork) + ((r9 << 2) + 20));
-  if ((FIELD_AT(r5, s32, 0)) == 0)
-    goto L_020092ca;
-  r2 = (FIELD_AT(r8, s32, 8)) >> 20;
-  r3 = (FIELD_AT(r5, s32, 8)) >> 20;
-  r1 = r8;
-  if (((FIELD_AT(r8, s32, 8)) >> 20) != ((FIELD_AT(r5, s32, 8)) >> 20))
-    goto L_0200929e;
-  r2 = (FIELD_AT(r1, s32, 12)) >> 20;
-  r3 = (FIELD_AT(r5, s32, 12)) >> 20;
-  if (((FIELD_AT(r1, s32, 12)) >> 20) != ((FIELD_AT(r5, s32, 12)) >> 20))
-    goto L_0200929e;
-  r2 = (FIELD_AT(r1, s32, 16)) >> 20;
-  r3 = (FIELD_AT(r5, s32, 16)) >> 20;
-  if (((FIELD_AT(r1, s32, 16)) >> 20) == ((FIELD_AT(r5, s32, 16)) >> 20))
-    goto L_020092ca;
-L_0200929e:
-  v4 = Func_020005a0(r5 + 8, r7);
-  if (v4 > 8)
-    goto L_020092ca;
-  if (((FIELD_AT(r5, s32, 12)) >> 20) != ((FIELD_AT(r7, s32, 4)) >> 20))
-    goto L_020092ca;
-  if ((FIELD_AT(FIELD_AT(FIELD_AT(r5, s32, 80), s32, 40), s16, 0)) != 0x110)
-    goto L_020093ae;
-  goto L_020092d6;
-L_020092ca:
-  r9 = r9 + 1;
-  if (r9 != 64)
-    goto L_02009264;
-  goto L_0200923e;
-L_020092d6:
-  r5 = 128;
-  r5 = r5 << 10;
-  r7 = (s32)((u8 *)stack + 56);
-  FIELD_AT(r6, s32, 52) = r5;
-  FIELD_AT(r6, s32, 48) = r5;
-  FIELD_AT(r6, s32, 108) = (s32)Func_02000d40;
-  Func_02003a84(r6, FIELD_AT(r7, s32, 0), FIELD_AT(r7, s32, 4),
-                FIELD_AT(r7, s32, 8));
-  Call2((void (*)())Func_02003b5c, r5, 0x4000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, FIELD_AT(r7, s32, 0),
-        FIELD_AT(r7, s32, 4), FIELD_AT(r7, s32, 8), 1);
-  Func_02003a8c(r6);
-  FIELD_AT(r6, s32, 108) = 0;
-  Func_02003a6c(r6);
-  r9 = 0;
-L_0200931a:
-  r10 = FIELD_AT((s32)gFrameCount, s32, 0);
-  r10 = r10 & 1;
-  r2 = 1;
-  if ((r10 & 1) == 0) {
-    r8 = (s32)((u8 *)stack + 16);
-    FIELD_AT(r8, u16, 24) = 0x193;
-    FIELD_AT(r8, s32, 0) = r2;
-    FIELD_AT(r8, s32, 36) = (s32)Func_020011b8;
-    r6 = 31;
-    FIELD_AT(r8, s32, 28) = (s32)gData_02003d50;
-    v5 = Random16Far();
-    r5 = v5;
-    v6 = Random16Far();
-    r4 = FIELD_AT(r7, s32, 0);
-    r5 = r5 & r6;
-    r5 = r5 - 16;
-    stack[1] = r10;
-    r5 = r5 << 13;
-    Func_0200015c(r4, FIELD_AT(r7, s32, 4), FIELD_AT(r7, s32, 8), r5,
-                  ((v6 & r6) - 16) << 13, r10, 0x1320000, r8);
+s32 Func_020011e4(struct Actor *source) {
+  s32 position[3];
+  struct MagmaRockEffectConfig config;
+  struct Actor *object;
+  struct Actor *other;
+  s32 step;
+  s32 i;
+  s32 attributes;
+
+  {
+    s32 x = source->x;
+    s32 y = source->y;
+    s32 z = source->z;
+
+    object = (struct Actor *)Import_ActorCreate(403, x, y, z);
   }
-  Call1((void (*)())wait, 1);
-  r9 = r9 + 1;
-  if (r9 != 16)
-    goto L_0200931a;
-  Call1((void (*)())wait, 24);
-  Call2((void (*)())Camera_FollowActor,
-        FIELD_AT((s32)(s32)&gMainRoutineWork, s32, 532), 1);
+  step = Math_Cosine(source->angle) << 1;
+  object->motionFlags = 0;
+  Func_02003a54(object, 1);
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02003aec();
+  Func_02003bcc(0);
+  position[0] = object->x;
+  position[1] = object->y;
+  position[2] = object->z;
+advance:
+  position[0] += step;
+  attributes = MapCell_GetAttributes(2, position[0] >> 20,
+                                     (position[2] - position[1]) >> 20) >>
+               8;
+  if (attributes == 212 || attributes == 222)
+    goto stop;
+  i = 8;
+search:
+  other = ((struct EventWork *)Ram_HeapSlots->eventWork)->objects[i];
+  if (other->script == NULL)
+    goto next;
+  if (source->x >> 20 == other->x >> 20 && source->y >> 20 == other->y >> 20 &&
+      source->z >> 20 == other->z >> 20)
+    goto next;
+  if (Func_020005a0(&other->x, position) > 8)
+    goto next;
+  if (other->y >> 20 != position[1] >> 20)
+    goto next;
+  if (*((struct ObjectAnimationState *)other->animation)->value28 == 0x110)
+    goto stop;
+  goto hit;
+next:
+  i++;
+  if (i == 64)
+    goto advance;
+  goto search;
+
+stop:
+  object->acceleration = 0x20000;
+  object->speedLimit = 0x20000;
+  object->update = Func_02000d40;
+  Func_02003a84(object, position[0], position[1], position[2]);
+  Func_02003b5c(0x20000, 0x4000);
+  Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
+  Func_02003a8c(object);
+  object->update = NULL;
+  Func_02003a6c(object);
+  i = 0;
+spawn:
+  {
+    // The native keeps the frame's parity in the step's variable (r10).
+    step = gFrameCount & 1;
+
+    if (step == 0) {
+      s32 dx;
+      s32 dz;
+      s32 mask;
+
+      config.id = 403;
+      config.kind = 1;
+      config.unk24 = Func_020011b8;
+      mask = 31;
+      config.data = gData_02003d50;
+      dx = Random16Far();
+      dz = Random16Far();
+      Func_0200015c(position[0], position[1], position[2],
+                    ((dx & mask) - 16) << 13, ((dz & mask) - 16) << 13, step,
+                    0x1320000, &config);
+    }
+  }
+  wait(1);
+  i++;
+  if (i != 16)
+    goto spawn;
+  wait(24);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
-  Call1((void (*)())wait, 10);
-  v9 = Func_02003af4();
-  r0 = v9;
-  goto L_02009424;
-L_020093ae:
-  r5 = 128;
-  r5 = r5 << 10;
-  FIELD_AT(r6, s32, 52) = r5;
-  FIELD_AT(r6, s32, 48) = r5;
-  FIELD_AT(r6, s32, 108) = (s32)Func_02000d40;
-  Func_02003a84(r6, FIELD_AT(r7, s32, 0), FIELD_AT(r7, s32, 4),
-                FIELD_AT(r7, s32, 8));
-  Call2((void (*)())Func_02003b5c, r5, 0x4000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, FIELD_AT(r7, s32, 0),
-        FIELD_AT(r7, s32, 4), FIELD_AT(r7, s32, 8), 1);
-  Func_02003a8c(r6);
-  FIELD_AT(r6, s32, 108) = 0;
-  Func_02003a6c(r6);
-  Call1((void (*)())GameFlag_SetBit, 0x2f0);
-  Func_02000c08((u32)(r9 << 16) >> 16);
-  Call1((void (*)())GameFlag_ClearBit, 0x2f0);
-  Call2((void (*)())Camera_FollowActor,
-        FIELD_AT((s32)(s32)&gMainRoutineWork, s32, 532), 1);
+  wait(10);
+  return Func_02003af4();
+
+hit:
+  object->acceleration = 0x20000;
+  object->speedLimit = 0x20000;
+  object->update = Func_02000d40;
+  Func_02003a84(object, position[0], position[1], position[2]);
+  Func_02003b5c(0x20000, 0x4000);
+  Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
+  Func_02003a8c(object);
+  object->update = NULL;
+  Func_02003a6c(object);
+  GameFlag_SetBit(0x2f0);
+  Func_02000c08((u16)i);
+  GameFlag_ClearBit(0x2f0);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();
-  Call1((void (*)())wait, 10);
-  v12 = Func_02003af4();
-  r0 = v12;
-L_02009424:
-  /* add (s32)stack, #68 */
-  return r0;
+  wait(10);
+  return Func_02003af4();
 }

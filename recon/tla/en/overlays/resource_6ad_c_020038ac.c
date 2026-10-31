@@ -1,6 +1,15 @@
+// Near miss, differ 321 of 268 (tla-en, 2026-10-31): register allocation.
+// Control flow, calls, fields and the stack layout follow the native. Left:
+// global.c ranks kind + 1 above the cell coordinates, so z takes r4 with
+// caller saves and the column counter keeps a register, where the native has
+// table r8, kind + 1 r10, entry r9, cell r11 and the counter on the stack; and
+// GCSE keeps the leader loop's count in a register, reloaded after the current
+// store, where the native reloads it at each test. Sharing one counter between
+// the two loops measures 284, but cannot be the native's form: its leader loop
+// counts in r2 while the column counter lives on the stack. Re-deriving entry
+// from the table gives the native's late entries temporary (its sp[8] slot).
 // Draft of overlay 6ad's Func_020038ac, the twin of overlay 698's
-// Func_020011a0: its draft (resource_698_c_020011a0.c) with this overlay's
-// symbols: differ 288 of 268. Left: what that draft's header records.
+// Func_020011a0 (resource_698_c_020011a0.c) with this overlay's symbols.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -70,7 +79,6 @@ void Func_02003780(void);
 s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gData_020070a8;
   struct CellTargetEntry *entry = table->entries;
-  struct CellTargetEntry *entries = entry;
   struct CellMapWork *map;
   struct CellMapLayer *layer;
   struct CellMapCell *rows;
@@ -126,11 +134,12 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
     s32 leaderX = leader->x >> 20;
     s32 leaderZ = leader->z >> 20;
+    s32 k;
 
-    entry = entries;
-    for (i = 0; i < table->count; i++, entry++) {
+    entry = table->entries;
+    for (k = 0; k < table->count; k++, entry++) {
       if (entry->x == leaderX && entry->z == leaderZ)
-        table->current = i;
+        table->current = k;
     }
   }
   buffer = Heap_Alloc(0x100);

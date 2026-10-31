@@ -1,17 +1,25 @@
-// Draft, differ 277 of 260 (was 279, i now u32 as the native's bhi shows):
-// shows the world map's placed objects that come within the view and whose
+// Near miss, differ 253 of 260 (tla-en, 2026-10-31): register allocation.
+// The control flow, calls, field widths and constants follow the native; the
+// native ranks leader (r10) and work (r9) above slot (r11) and spills i, where
+// this compiler gives slot r10, i r9 and leader r11 and spills work, which
+// moves nearly every register. The native also loads the first placement's
+// kind before the view bounds' if and copies it at the loop's first test.
+// Shows the world map's placed objects that come within the view and whose
 // flags allow them, hides those that leave it, and starts a placement's
 // event when the leader touches it. Overlay 64c has the same code (its
-// Func_02000d64). Left: the native spills the four view bounds and i to the
-// stack, loads the first placement's kind and gData_02006c08 before the
-// bounds' if (so in the block before it) and keeps the work pointer in r9;
-// it reaches gMainRoutineWork's fields from its address plus a built offset (a
-// rematerialized &gMainRoutineWork, as from a local pointer under pressure).
-// Register allocation differs throughout. Tried: slot initialized at its
-// declaration (281), a local party pointer (289).
+// Func_02000d64). Measured: zoom read as MapWork.zoom; the leader's reach as
+// scale * radius (radius * scale 257); the flag in an s32 local (as the
+// field read four times 287); gMainRoutineWork through a local pointer, so
+// its fields take the native's base plus built offset; gData_02006c08 in a
+// local before the if copied into slot at the loop start, as the native's
+// pool load before the if and copy after it (slot set before the if also
+// 253); indexing placements[i] and gData_02006c08[i] 262; a kind local read
+// before the if and reused by the first test 257; slot initialized at its
+// declaration (281, before this round), a local party pointer (289).
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
+#include "map.h"
 #include "actor.h"
 #include "event_work.h"
 #include "iwram_call.h"
@@ -49,16 +57,18 @@ void Func_020036a8(void) {
   struct WorldMapPlacement *placement = Func_02004e08();
   struct Actor *leader = Actor_GetById(Func_02004e10());
   s32 leaderReach =
-      leader->radius * ((struct WorldMapSprite *)leader->animation)->scale;
+      ((struct WorldMapSprite *)leader->animation)->scale * leader->radius;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *center = work->viewCenter;
-  struct Actor **slot;
   s32 x = center->x;
   s32 z = center->z;
   s32 left, right, top, bottom;
   u32 i;
+  struct Actor **slot;
+  struct Actor **objects = gData_02006c08;
+  struct MainRoutineWork *routine = &gMainRoutineWork;
 
-  if (*(s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x960) <= 0x10000) {
+  if (Ram_HeapSlots->mapWork->zoom <= 0x10000) {
     left = x - 0xa00000;
     right = x + 0xa00000;
     top = z - 0x12c0000;
@@ -69,8 +79,8 @@ void Func_020036a8(void) {
     top = z - 0x1c20000;
     bottom = z + 0x12c0000;
   }
-  slot = gData_02006c08;
-  for (i = 0; i < 128 && placement->kind != 0; i++, slot++, placement++) {
+  for (i = 0, slot = objects; i < 128 && placement->kind != 0;
+       i++, slot++, placement++) {
     struct Actor *object;
     s32 px, pz;
 
@@ -81,12 +91,13 @@ void Func_020036a8(void) {
     pz = placement->z << 16;
     if (px > left && px < right && pz > top && pz < bottom) {
       s32 shown = 1;
+      s32 flag = placement->flag;
 
-      if (placement->flag != -1) {
-        if (placement->flag & 0x1000)
-          shown = GameFlag_Test(placement->flag);
+      if (flag != -1) {
+        if (flag & 0x1000)
+          shown = GameFlag_Test(flag);
         else
-          shown = !GameFlag_Test(placement->flag);
+          shown = !GameFlag_Test(flag);
       }
       if (shown) {
         if (object == NULL) {
@@ -104,7 +115,7 @@ void Func_020036a8(void) {
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
           *slot = object;
         }
-        if (gMainRoutineWork.ownerOverride == 0) {
+        if (routine->ownerOverride == 0) {
           s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 dx = object->x - leader->x;
           s32 reach, dz;
@@ -116,7 +127,7 @@ void Func_020036a8(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Test(0x104) == 0) {
-              if (gMainRoutineWork.renderMode == 9)
+              if (routine->renderMode == 9)
                 work->unk166 = 0x208b;
               else
                 work->exit = i + 100;

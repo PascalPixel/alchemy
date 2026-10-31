@@ -1,16 +1,3 @@
-// Matches: differ 0 of 895 (tla-en, 2026-10-30).
-// The long scene in the Gabomba Statue's chamber (message MsgOhYoungWitch on):
-// the statue object rises 40 pixels, actors 9, 10, 12, 13 and 14 move, emote
-// and speak, the screen flashes white, the party gets item 242 (Func_02001d48
-// lifts the statue object above the leader), two yes-or-no questions count up
-// the event work's halfword 0x1c4, the screen fades out to
-// MsgCarriedTheMessage, flags 0x8ff, 0x86b and 0x8f2 change and the retreat
-// and saved places become Kibombo. The rise loop is a goto loop that counts up
-// in its test after wait(), as the native has it. The white flash's palette
-// entry address is taken before the fade's wait, which keeps it in r5 as the
-// native does (FAKEMATCH(temporary)); written plainly after the wait, 4 of 895
-// instructions differ. Earlier attempts (an empty asm after the rise loop's
-// wait(), permute runs) are superseded.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -287,8 +274,8 @@ void Func_02000184(void) {
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x6000, 0);
   Call3(Actor_ArmCallback, 9, 0xd000, 40);
   Value2(FieldMessage_ShowAtActor, 9, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Call2(Actor_SetModeById, 9, 4);
     Call2(Func_02001e60, 9, 0);
     *(u16 *)(EVENT_WORK + 0x1c4) += 1;
@@ -302,8 +289,8 @@ void Func_02000184(void) {
   Call2(Func_02001e60, 9, 0);
   Call2(Func_02001e70, 9, 0xd000);
   Value2(FieldMessage_ShowAtActor, 9, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Call2(Func_02001e60, 9, 0);
     *(u16 *)(EVENT_WORK + 0x1c4) += 1;
   } else {

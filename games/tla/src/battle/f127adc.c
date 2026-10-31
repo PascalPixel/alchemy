@@ -1,11 +1,3 @@
-// Matches: differ 0 of 96 (tla-en, 2026-10-30), through one barrier. Plain, the
-// retry loop ties the stored channel (strb r0) with the used mask's address copy
-// (adds r3, r7) at equal priority in sched2, and the tie-break issues the copy
-// first (differ 2). Tried before: an empty asm at the top (differ 4), an empty
-// one-pass block there (2), alchemy permute 4 minutes (2). Tried 2026-10-30: a
-// one-pass block around the store or the test (94, 99: loop notes inside the
-// retry loop), the same store in both arms of a test (81), a volatile store
-// (115), temporaries for the mask or the bit (12, 2).
 #include "types.h"
 #include "ram_buffer.h"
 

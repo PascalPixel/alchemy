@@ -1,11 +1,3 @@
-// Matches: differ 0 of 138 (tla-en, 2026-10-30).
-// Draft of overlay 6aa's Func_02002860, rewritten from its listing as C over
-// the ride's state (the four Mars Lighthouse overlays keep one copy each).
-// The flag calls go through the scene layer's Flag_Set and Flag_Clear (as
-// direct GameFlag calls: 37). Three tagged devices hold the match: the function
-// typed int, the -10 call declared returning s32 and Ride_CarSteps; each tag
-// gives its plain form's count. frame is never read but gives the native's
-// 12-byte frame (without it: 10). Permute 4 minutes found the int return type.
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 
 s32 Func_020024c0(s32 a, s32 b);

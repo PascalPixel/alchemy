@@ -766,11 +766,6 @@ Func_080ccec8:
 	.thumb_func
 Func_080cd808:
 	.incbin "baserom.gba", 0x000cd800, 0x00000114
-	.section .rom.000cdab8, "ax"
-	.balign 4
-	.global Func_080cdac0
-Func_080cdac0:
-	.incbin "baserom.gba", 0x000cdab8, 0x00000138
 	.section .rom.000cdc6a, "ax"
 	.incbin "baserom.gba", 0x000cdc6a, 0x00000002
 	.section .rom.000cdc6c, "ax"
@@ -1121,12 +1116,6 @@ Func_080ddda0:
 	.thumb_func
 Func_080de21c:
 	.incbin "baserom.gba", 0x000de1d8, 0x00000334
-	.section .rom.000dec74, "ax"
-	.global Func_080decb8
-	.type Func_080decb8, %function
-	.thumb_func
-Func_080decb8:
-	.incbin "baserom.gba", 0x000dec74, 0x000000cc
 	.section .rom.000deda4, "ax"
 	.global FieldEffect_RunDouse
 FieldEffect_RunDouse:

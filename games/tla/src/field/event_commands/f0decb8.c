@@ -1,18 +1,3 @@
-// Matches: differ 0 of 91 (tla-en, 2026-10-30).
-// The Broken Seal's FieldPsynergy_StartCloak: Cloak. ⚓️ takes the caster from
-// the effect scene, sets its mode directly and schedules the ground check in
-// TASK_PASS_VBLANK where ☀️ uses TASK_PASS_FRAME.
-// The last two instructions (r1's shift before r0's copy) came from declaring
-// Task_Add with its real s32 return (system/task.h) instead of void: the call
-// then sets r0, so the check's copy into r0 loses one dependant and sched2's
-// tie falls to the native order (was differ 2 of 91, 2026-10-26).
-// The task priority through a local set before the stores after the loop
-// (found by alchemy-devtools permute, tagged) gives the native's allocation: the
-// flicker count in r5, the 2 in r6.
-// Tried (with the s32 return, 2026-10-30): the priority as a literal, 18; the
-// count as s32 (counts down), 10; as u8 (masks), 6; direct calls without the
-// check pointer, 18; the check set at its declaration, 78; ☀️'s do/while with
-// n reused as the zero after the loop, 55.
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_psynergy_work.h"
@@ -52,8 +37,8 @@ void wait(s32 frames);
 // The caster's palette while it flickers.
 #define CLOAK_FLICKER_PALETTE 7
 
-// What the ground check (FieldEffect_CheckCloakTile) requests when the caster does not
-// stand on a tile it can hide on.
+// What the ground check (FieldEffect_CheckCloakTile) requests when the caster
+// does not stand on a tile it can hide on.
 #define CLOAK_END 0x2092
 
 // Cloak the caster: flicker it ten times, leave it half transparent, then

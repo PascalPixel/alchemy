@@ -294,86 +294,8 @@ Func_020001f8:
 	.2byte 0x0000
 	.section .text.x0200847e,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x020086f8,"ax",%progbits
-	.global Func_020006f8
-	.thumb_func
-Func_020006f8:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r7, r0, #0
-	ldr r2, [r7, #76]
-	ldr r3, [r7, #48]
-	movs r0, #0
-	cmp r2, r3
-	blt .L_0200878c
-	movs r3, #102
-	adds r3, r3, r7
-	ldrh r2, [r3]
-	adds r5, r7, #0
-	adds r5, #100
-	mov r8, r3
-	ldrh r3, [r5]
-	lsls r2, r2, #16
-	asrs r2, r2, #17
-	adds r3, r3, r2
-	strh r3, [r5]
-	ldr r3, [r7, #68]
-	adds r6, r7, #0
-	str r3, [r7, #8]
-	ldr r3, [r7, #52]
-	adds r6, #8
-	str r3, [r7, #12]
-	ldr r3, [r7, #72]
-	adds r2, r6, #0
-	str r3, [r7, #16]
-	ldr r0, [r7, #76]
-	movs r3, #0
-	ldrsh r1, [r5, r3]
-	bl Vector_AddPolarOffsetFar
-	adds r0, r7, #0
-	bl Func_020006a4
-	ldr r2, [r7, #48]
-	ldr r3, [r7, #76]
-	asrs r2, r2, #1
-	subs r3, r3, r2
-	str r3, [r7, #76]
-	mov r3, r8
-	ldrh r2, [r3]
-	ldrh r3, [r5]
-	lsls r2, r2, #16
-	asrs r2, r2, #17
-	adds r3, r3, r2
-	strh r3, [r5]
-	ldr r3, [r7, #68]
-	adds r2, r6, #0
-	str r3, [r6]
-	ldr r3, [r7, #52]
-	ldr r0, [r7, #76]
-	str r3, [r7, #12]
-	ldr r3, [r7, #72]
-	str r3, [r7, #16]
-	movs r3, #0
-	ldrsh r1, [r5, r3]
-	bl Vector_AddPolarOffsetFar
-	adds r0, r7, #0
-	bl Func_020006a4
-	ldr r2, [r7, #48]
-	ldr r3, [r7, #76]
-	asrs r2, r2, #1
-	subs r3, r3, r2
-	str r3, [r7, #76]
-	ldr r2, [r7, #20]
-	ldr r3, [r7, #52]
-	movs r0, #1
-	subs r3, r3, r2
-	str r3, [r7, #52]
-.L_0200878c:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02008794,"ax",%progbits
+	.balign 4
 	.global Func_02000794
 	.thumb_func
 Func_02000794:

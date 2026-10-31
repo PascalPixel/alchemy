@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue_chamber/exits.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/s0070.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/s0100.o"(.text)
-        "*/resource_672_overlay.o"(.text.x02008184)
+        "*/games/tla/src/scene/gabomba_statue_chamber/s0184.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/s0a98.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/call_b60.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/s0b70.o"(.text)

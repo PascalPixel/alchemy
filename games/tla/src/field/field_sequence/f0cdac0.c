@@ -1,13 +1,3 @@
-// Matches: differ 0 of 148 (tla-en, 2026-10-30).
-// The test inside The Broken Seal's Field_FindNearbyPsynergyTarget
-// (field_sequence/targets.c), taken out into a function of its own: ⚓️'s
-// BattleEffect_FindNearestObject (play_cue_and_start_emitter_on_target.c)
-// calls it for each object, and the per-animation limits come from a table
-// (Field_GetPsynergyTargetRule) instead of ☀️'s literals. Belongs after
-// descriptor_range.c's Func_080cda84.
-// The height test is ABS(difference) > height, which GCC splits into the two
-// arms the native shows; written out as nested ifs (☀️'s form) it differs in 23
-// of 148, and needed a one-pass block to reach 4.
 #include "types.h"
 #include "actor.h"
 #include "iwram_call.h"

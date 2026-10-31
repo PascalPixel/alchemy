@@ -1,9 +1,3 @@
-// Matches: differ 0 of 223 (tla-en, 2026-10-30): the rooms' second setup.
-// Task_Add now has its own declaration from task.h, returning s32: declared
-// void, its call did not set r0, so the flag test's argument stayed
-// output-dependent on the task routine's address load and sched2 issued that
-// load before the mode store (differ 2). The terrain calls and the second
-// flag test need no wrapper; the wrappers left are tagged below.
 #include "../../../../games/tla/src/scene/alhafran_cave/local.h"
 #include "call.h"
 #include "task.h"

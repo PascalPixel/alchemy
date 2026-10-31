@@ -1,19 +1,9 @@
-// Matches: differ 0 of 146 (tla-en, 2026-10-30), with no device. The empty
-// asm after the affine index store, which the 2026-10-24 and 2026-10-26
-// drafts kept, now costs one reordered pair (differ 2 with it); the x read
-// through a u16 pointer is The Broken Seal's spelling (as (u16)output->x,
-// differ 2). Other editions not measured.
-// Draft of WindowSprite_UpdateScaleAnimation. Its ☀️ twin is
-// games/tbs/src/window/window/sprites.c's function of the same name: it steps
-// a window output's bounce or grow scale and builds the sprite's affine matrix
-// for it.
-
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
 
-// games/tla/include/system/affine.h's transform, written out: the stale affine.h
-// beside these drafts would shadow it.
+// games/tla/include/system/affine.h's transform, written out: the stale
+// affine.h beside these drafts would shadow it.
 struct AffineTransform {
   u16 scaleX;
   u16 scaleY;
@@ -36,7 +26,7 @@ struct OutputSprite {
 };
 extern u16 gWindowSprite_BounceScales[];
 
-void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
+void Func_0803c40c(struct WindowSprite *output) {
   s32 scale = 256;
   struct OutputSprite *sprite = (struct OutputSprite *)output->unk10;
   struct AffineTransform effect;

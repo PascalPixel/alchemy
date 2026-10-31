@@ -1,8 +1,3 @@
-// Matches: differ 0 of 68 (tla-en, 2026-10-30).
-// Reading the control mode through struct EventWork gives that load the
-// struct's alias set, so it no longer waits on the sprite's color store and
-// the scheduler keeps the listing's order; as *(s8 *)(event + 394), 2 of 68
-// instructions differ (instruction order only).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -52,7 +47,7 @@ void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void BattleEffect_IntegrateVector2(struct EffectParticle *particle, s32 frames,
-                               s32 flags);
+                                   s32 flags);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 

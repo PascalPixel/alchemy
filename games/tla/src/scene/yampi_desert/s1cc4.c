@@ -1,15 +1,3 @@
-// Matches: differ 0 of 174 (tla-en, 2026-10-30), with one tagged one-pass block
-// after the sprite mode store (the remaining site the 26 October notes left).
-// Pushing a block through sand: on even frames a dust effect rises at the
-// block, thrown faster while a key is held, then the block steps on and is
-// pulled toward its cell centre across the push. gInput is read as
-// input.h's InputState (held at offset 0).
-// Earlier (26 October 2026, under -mthumb-slow-loads): differ 4 of 174, the
-// native issuing gInput's address load one slot later after a store, where
-// alchemy-gcc issues it at once (two sites); an empty asm after the sprite
-// mode store also matches, but the one-pass block is the milder device;
-// volatile on the sprite pointer or on the gInput read leaves 2; alchemy
-// permute (5 to 6 minutes) found nothing.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

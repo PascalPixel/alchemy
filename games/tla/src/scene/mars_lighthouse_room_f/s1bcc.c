@@ -1,20 +1,3 @@
-// Matches: differ 0 of 165 (tla-en, 2026-10-30), with three tagged barriers.
-// Overlay 6ad's Func_02001bcc: calls Func_02005598 for actors 24, 23, 9
-// and 10, zeroes actor 24's scaleX, sets 23, 9 and 10 to their terrain height
-// with motion flags 0, then with flag 0xa0a raises 9, raises 23, moves its x
-// back and turns its sprite a 32nd of a turn (child values 4 for actors 9 and
-// 11); with flag 0xa0b the same for 10, x forward and turned back (10 and
-// 12); with both, raises all three further and sets their motion flags to 4.
-// Actor 23's x is read through FieldCoordinate (union FieldCoordinate, as
-// The Broken Seal's actors keep their coordinates): its accesses then alias
-// everything, so the sprite rotation's load waits for the x store and its
-// pointer is copied out of r8 after the store, as the native has it; with
-// plain s32 coordinates both flag branches copy it first (differ 4).
-// What the barriers steer: the native loads each rise for actor 23 from the
-// pool before 23's y, where alchemy-gcc's -mthumb-slow-loads lets the y load
-// (which opens a read-modify-write) go first after the store before it.
-// The earlier draft (differ 4 of 165, 26 October) pinned each rise to r2 as
-// well; the pins are no longer needed.
 #include "types.h"
 #include "call.h"
 #include "field_coordinate.h"

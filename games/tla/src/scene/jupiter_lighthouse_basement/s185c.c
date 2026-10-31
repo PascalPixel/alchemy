@@ -1,9 +1,3 @@
-// Matches: differ 0 of 169 (tla-en, 2026-10-30), with the pinned i and one
-// dead test (both tagged).
-// Overlay 699's copy of the landing burst drafted in
-// resource_698_c_02001674.c (overlay 698's Func_02001674), whose header says
-// what it is and how the goto loop and the dead test keep the velocity
-// array's address in the loop; before them, 4 of 169 differed here too.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

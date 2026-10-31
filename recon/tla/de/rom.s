@@ -498,12 +498,6 @@ Func_08043cd8:
 	.thumb_func
 Func_08044558:
 	.incbin "baserom.gba", 0x000445ac, 0x0000051c
-	.section .rom.00044acc, "ax"
-	.global Func_08044a58
-	.type Func_08044a58, %function
-	.thumb_func
-Func_08044a58:
-	.incbin "baserom.gba", 0x00044acc, 0x00000128
 	.section .rom.00044e3c, "ax"
 	.global Func_08044dc8
 	.type Func_08044dc8, %function
@@ -627,12 +621,6 @@ Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000bbc68, 0x0000003c
 	.section .rom.000bc0e2, "ax"
 	.incbin "baserom.gba", 0x000bc0e2, 0x00000002
-	.section .rom.000bd084, "ax"
-	.global Unit_CalculateBaseElements
-	.type Unit_CalculateBaseElements, %function
-	.thumb_func
-Unit_CalculateBaseElements:
-	.incbin "baserom.gba", 0x000bd084, 0x000000c0
 	.section .rom.000bd144, "ax"
 	.global Class_Determine
 	.type Class_Determine, %function
@@ -652,12 +640,6 @@ DjinnRecovery_Remove:
 	.thumb_func
 Func_080b1088:
 	.incbin "baserom.gba", 0x000be088, 0x00000170
-	.section .rom.000be1f8, "ax"
-	.global Func_080b11f8
-	.type Func_080b11f8, %function
-	.thumb_func
-Func_080b11f8:
-	.incbin "baserom.gba", 0x000be1f8, 0x00000084
 	.section .rom.000d6fd8, "ax"
 	.global Encounter_SelectEnemyGroup
 	.type Encounter_SelectEnemyGroup, %function
@@ -794,12 +776,6 @@ Func_080d1840:
 	.thumb_func
 Func_080d1f20:
 	.incbin "baserom.gba", 0x000def20, 0x00000164
-	.section .rom.000df60c, "ax"
-	.global PartyInventory_GiveItem
-	.type PartyInventory_GiveItem, %function
-	.thumb_func
-PartyInventory_GiveItem:
-	.incbin "baserom.gba", 0x000df60c, 0x000001e0
 	.section .rom.000e0376, "ax"
 	.incbin "baserom.gba", 0x000e0376, 0x00000002
 	.section .rom.000e0378, "ax"
@@ -900,12 +876,6 @@ Func_080d7524:
 	.incbin "baserom.gba", 0x000e4524, 0x00000264
 	.section .rom.000e484c, "ax"
 	.incbin "baserom.gba", 0x000e484c, 0x000000f0
-	.section .rom.000e4b04, "ax"
-	.global Func_080d7b04
-	.type Func_080d7b04, %function
-	.thumb_func
-Func_080d7b04:
-	.incbin "baserom.gba", 0x000e4b04, 0x00000100
 	.section .rom.000e4dbc, "ax"
 	.global BattleEffect_UpdatePhasedRadialParticle
 	.type BattleEffect_UpdatePhasedRadialParticle, %function

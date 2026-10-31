@@ -50,7 +50,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo/s54e0.o"(.text)
         "*/games/tla/src/scene/kibombo/s5594.o"(.text)
         "*/games/tla/src/scene/kibombo/s57e0.o"(.text)
-        "*/resource_670_overlay.o"(.text.x0200d898)
+        "*/games/tla/src/scene/kibombo/s5898.o"(.text)
         "*/games/tla/src/scene/kibombo/s5994.o"(.text)
         "*/games/tla/src/scene/kibombo/import.o"(.text)
         "*/games/tla/src/scene/kibombo/data.o"(.data)

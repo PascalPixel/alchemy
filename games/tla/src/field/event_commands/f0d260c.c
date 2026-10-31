@@ -2,6 +2,13 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "main_routine_work.h"
+#include "edition.h"
+
+#if LANGUAGE == LANGUAGE_GERMAN
+#define ITEM_GIVEN_MODE 1
+#else
+#define ITEM_GIVEN_MODE 3
+#endif
 
 struct ItemHead {
   u8 unk00[3];
@@ -85,7 +92,10 @@ s32 PartyInventory_GiveItem(s32 item) {
       } else {
         MessageArgument_PushFar(item, 2);
         MessageArgument_PushFar(owner, 1);
-        FieldMessage_ShowFar((s32)&MsgItemGiven, 3);
+#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_FRENCH) &&         \
+    (LANGUAGE != LANGUAGE_ITALIAN)
+        FieldMessage_ShowFar((s32)&MsgItemGiven, ITEM_GIVEN_MODE);
+#endif
       }
     }
   done:

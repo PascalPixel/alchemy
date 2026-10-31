@@ -1,7 +1,14 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
 
+// The letters cycle through CH_CNT values: 26 in the Japanese release, 9
+// elsewhere, as first_digit.c reads them back.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define CH_CNT 26
+#else
 #define CH_CNT 9
+#endif
 
 struct SummonChargeState {
   u8 unk00[0x10];

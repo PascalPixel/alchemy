@@ -225,7 +225,7 @@ msgstr ""
 "{argument_actor_name:1} et {argument_actor_name:1} ont\n"
 "rejoint votre groupe.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFoundVenusDjinni"
 msgid "00046"
 msgstr ""
 "Le Djinn de Vénus\n"

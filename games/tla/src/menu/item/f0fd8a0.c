@@ -34,7 +34,9 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 wait(s32 frames);
 void WindowSprite_RedrawSavedRectFar(s32 window);
+void WindowSprite_ClearListFar(s32 window);
 s32 Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 s32 Render_SetTilemapFlagRect(s32 window, s32 x, s32 y, s32 width, s32 height,
                               s32 value);
 
@@ -50,7 +52,12 @@ s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state) {
   state->selectedIndex = combined;
 
   if (GameFlag_Test(0x151) == 0) {
+    // Japanese clears and draws the description as its item list does.
+#if LANGUAGE == LANGUAGE_JAPANESE
+    WindowSprite_ClearListFar(menu->infoWindow);
+#else
     WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#endif
     wait(1);
 
     combined = state->selectedIndex;
@@ -58,7 +65,11 @@ s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state) {
       s32 masked =
           (s32)(MsgAbilityDescription + (menu->psynergies[combined] & 0x1ff));
 
+#if LANGUAGE == LANGUAGE_JAPANESE
+      Text_DrawMessageFar(masked, menu->infoWindow, 0, 0);
+#else
       Text_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
+#endif
 #if LANGUAGE >= LANGUAGE_GERMAN
       wait(1);
 #endif

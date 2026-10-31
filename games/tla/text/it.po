@@ -227,7 +227,7 @@ msgstr ""
 "{argument_actor_name:1} e {argument_actor_name:1}\n"
 "sono in squadra ora.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFoundVenusDjinni"
 msgid "00046"
 msgstr ""
 "Il Djinn Venere {text_color:5}{argument_ability_name}{text_color:16}\n"

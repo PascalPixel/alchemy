@@ -837,9 +837,6 @@ s32 BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   struct Sprite *record;
   struct SpriteAnimation *child;
   struct SpriteAnimation **children;
-  /* FAKEMATCH(temporary): the mask in a variable and the frame read into
-   * another, so 255 stays in a register across the calls and is or-ed in;
-   * as child->frame |= 0xff, 10 of 46 instructions differ in tbs-en. */
   u8 lastPictureMask = 0xff;
   u8 previousPicture;
 

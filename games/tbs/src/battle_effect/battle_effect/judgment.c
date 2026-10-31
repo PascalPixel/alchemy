@@ -187,12 +187,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // up; only the dead stage in the frame loop reads them, but their
     // random numbers still count.
     s32 angle = Random16() & TRIG_ANGLE_MASK;
-    /* FAKEMATCH(temporary): amp holds 255, which the native hoists into sl;
-     * as 255 at both multiplies, 59 of 2455 instructions differ in tbs-en. */
     s32 amp = 255;
-    /* FAKEMATCH(temporary): speed holds the velocities' 0, which loop.c
-     * hoists into r8; as 0 stored directly, 57 of 2455 instructions differ in
-     * tbs-en. */
     s32 speed = 0;
     JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
     JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
@@ -425,9 +420,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         // The 8x16 mote of dimmed copy n in JudgmentWork's ramp.
         s32 cell = n * MOTE_SET_BYTES + gBattleEffect_MoteCells[7] +
                    JUDGMENT_SHEET_BYTES;
-        /* FAKEMATCH(temporary): high holds the mote's height 8, so high / 2
-         * is hoisted into fp; as the literals 4, 8 and 16, 331 of 2455
-         * instructions differ in tbs-en. */
         s32 high = 8;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
@@ -761,8 +753,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // (60, 50), from radius 16 to 64 by 16 a frame, half as tall as wide.
     if (frame >= 72 && frame < 76) {
       s32 r2 = (frame << 4) - 1136;
-      /* FAKEMATCH(temporary): size holds 10, so 5 and 20 are hoisted into fp
-       * and sl; as the literals, 33 of 2455 instructions differ in tbs-en. */
       s32 size = 10;
       for (i = 0; i != 256; i++) {
         s32 angle = i << 8;

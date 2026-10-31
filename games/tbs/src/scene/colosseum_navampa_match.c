@@ -978,8 +978,6 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Import_ActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(10);
-  /* FAKEMATCH(temporary): last, set to 4 at the top, keeps the + 1 unfolded;
-   * as 4 - place + 1, 1 of 106 instructions differ in tbs-en. */
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
                                         last - place + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);

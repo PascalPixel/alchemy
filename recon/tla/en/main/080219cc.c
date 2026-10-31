@@ -1,7 +1,13 @@
-// Draft, differ 2 of 56 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
+// Near miss, differ 2 of 56 (tla-en, 2026-10-31): scheduler order. In sched2
+// the first byte's shift (insn 59, priority 8: lsls, lsrs, ldrb) outranks the
+// position store (insn 56, priority 7: strb, ldrb), one step shorter on the
+// same path; the second byte's pair ties at 3 and keeps the native's order.
+// An explicit script or position local, an index read before the increment,
+// pointer arithmetic, both bytes from one position, s32 or u32 command and
+// argument, and u32 i measure the same or worse; 17,000 permuter candidates
+// (4 minutes) found nothing closer. No single empty asm, one-pass block,
+// wrapping block or swap of neighbouring statements brings it closer, nor any
+// pair of empty asm statements or one-pass blocks (device search, 2026-10-26).
 // Draft, differ 2 of 56, instruction order only: steps each channel's byte
 // script by command and argument pairs until a wait command (0xef, 0xf1,
 // 0xfd, 0xfe), which backs up over itself and flags the player and the

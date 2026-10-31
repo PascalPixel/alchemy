@@ -1,7 +1,14 @@
-// Near miss, differ 28 of 652.
+// Near miss, differ 14 of 652 (tla-en, 2026-10-31): order only, five places
+// where sched2 sets a constant or a reload one slot off the native (the
+// Djinn's 40, the motes' 24, &point in the motes' loop preheader, the
+// spilled &draw before draw[1] twice); the sched2 dump shows priority and
+// tie choices the C does not reach (scheduler-order).
 //
 // Measured 2026-10-25 under -mthumb-slow-loads: differ 28; an empty asm before
-// the first statement does not help (differ 34).
+// the first statement does not help (differ 34). 2026-10-31: declaring
+// Transform_SetLookAt (transform.h) rather than leaving it implicit, 16 to 14;
+// the blitters or BattleEffect_LoadBlitter declared void, 16 and 18; the
+// permuter (4 minutes) found nothing better.
 
 // The body of three effect kinds (the wrappers in series_c.c pass modes 0 to
 // 2). Twin: The Broken Seal's BattleEffect_RunMemberBeam, ported call for call.
@@ -13,16 +20,14 @@
 // pair; the callback at 0xc80; the effect argument read directly; the camera
 // read each frame.
 
-// Left: order only: single swaps of a load (the effect's fields, the work
-// pointer's spill, a table) with the constant beside it, about thirty
-// places.
-
 // Tried (2026-10-15): the plain port 182; the Djinn arrays declared first
 // (the native's slots 128 and 116) 170; the prelude in its own local, not
 // The Broken Seal's reuse of k (the native keeps it in r7 within the Djinn
 // block) 152; the tagged heap pointer 62.
 
 #include "battle.h"
+#include "battle_display.h"
+#include "fixed_math.h"
 #include "graphics.h"
 #include "lib.h"
 #include "resource.h"
@@ -35,6 +40,8 @@
 #include "io_reg.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+#include "task.h"
+#include "transform.h"
 
 // Heap blocks are named by their byte offset in Ram_HeapSlots.
 #define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
@@ -102,10 +109,10 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  /* FAKEMATCH: a pointer to the heap slots held from here, used only for
-   * the second blitter's read: spilled, it makes reload rebuild the
-   * 0x03000000 base there, as the native does (see BattleEffect_RunTriangleStrike).
-   * Measured (2026-10-15): 152 without it, 62 with it. */
+  /* FAKEMATCH(temporary): a pointer to the heap slots held from here, used
+   * only for the second blitter's read, so that reload rebuilds the
+   * 0x03000000 base there (see BattleEffect_RunTriangleStrike); as
+   * Ram_HeapSlots->unkb8[1], 108 of 652 instructions differ in tla-en. */
   heap = Ram_HeapSlots;
 
   // Set up: the canvas for the Djinn when there is a prelude, then the beam,
@@ -150,10 +157,10 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
   REG_BG2X = offsetX << 8;
   work->transferMode = 2;
   work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   for (frame = 0; frame != effect->count * 16 + 116; frame++) {
-    s32 *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
     s32 prelude;
 
     if (frame == 64)
@@ -191,7 +198,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
       s32 start = k * 16;
 
       Render_ResetTransformState();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->pos);
       point[0] = target->x;
       point[1] = 0;
       point[2] = target->z;
@@ -233,7 +240,7 @@ void Func_08144b14(struct BattleEffectArgument *effect, s32 mode) {
             GetBattleObjectSlotFar(effect->actors[i])->object;
 
         Render_ResetTransformState();
-        Transform_SetLookAt(camera, camera + 3);
+        Transform_SetLookAt(camera->eye, camera->pos);
         if (frame == start + 72)
           Func_0814cd48(effect->actors[i], 1, -1, -1, 0);
         if (frame == start + 88)

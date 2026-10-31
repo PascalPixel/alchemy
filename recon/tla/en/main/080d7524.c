@@ -1,15 +1,21 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 10 of 263 in tla-en,
-// instruction order only. An empty asm before `copy->actionFlags |= 1;` lowers
-// it to 8.
-// Near miss, differ 14 of 263: The Broken Seal twin (Djinn_RunBattleStartHop):
+// Near miss, differ 10 of 263 (tla-en, 2026-10-31): instruction order only,
+// five reordered pairs the sched2 dump shows the C cannot move. The leader's
+// angle ldrh outranks `movs r1, #128` by one priority point (load cost 2);
+// the sprite's reload copy to r8 and the `djinni->angle` strh tie, and RTL
+// order puts the copy first; the hoisted `copies` address store is placed
+// after `prev = djinni` and `i = 0` by loop.c and loses the LUID tie; in the
+// loop, `adds r1, r5, #0` (actionFlags address) is the only insn independent
+// of the motionFlags store, and the watchedObject store depends on the
+// sharedSprite spill store, so `prev = copy` goes first. Reordering the
+// statements, u16/u32 locals and a 4-minute permuter run found nothing better.
+// An empty asm before `copy->actionFlags |= 1;` lowers it to 8.
+// The Broken Seal twin (Djinn_RunBattleStartHop):
 // the Djinni bounces twice, turns away from the leader, spins up and falls
 // back three times (Func_080d47b4's effect 0x103 first), then leaps 16 pixels
 // at the party trailing eight afterimages tinted for its sprite (243, 244 and
 // 245) and waits up to 120 frames to come within 20 pixels of the leader's
-// height. Left: instruction order only, seven reordered pairs (the leader's
-// angle load, the 0x8000, the sprite copy to r8, the copies' address store,
-// three in the afterimage loop). Through a cached u8 pointer the motion flags
-// cost an extra zero (differ 33).
+// height. Through a cached u8 pointer the motion flags cost an extra zero
+// (differ 25).
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

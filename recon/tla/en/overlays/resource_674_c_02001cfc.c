@@ -1,15 +1,17 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 2 of 65; left: as recorded
-// below; no single barrier or one-pass block after any statement changes it.
-// Near miss, differ 2 of 65: the wave scanline table of map layer 2, from its
-// sibling in overlay 68b. The sine and the counter live on the stack as an
-// array (sp and sp + 4), the counter through a pointer, as the native reloads
-// it after each call; a one-pass block stores the sine before the layer pointer
-// is reloaded (alchemy permute found the same block). Left: the native stores
-// the counter's 0 before it copies the layer and line pointers to r10 and r8;
-// here the reload copies go first (all three tie at priority 1 and the copies
-// come first in insn order). The counter set before the pointers are formed
-// (differ 16) and the pointers copied through an operand asm after it (52) were
-// worse.
+// Near miss, differ 2 of 65 (tla-en, 2026-10-31): the counter's 0 is stored
+// after the reload copies of the layer and line pointers to r10 and r8, not
+// before them; sched2 ties all three at priority 1 and reload emits each copy
+// right after the add that forms its pointer, so insn order puts them first.
+// The wave scanline table of map layer 2, from its sibling in overlay 68b. The
+// sine and the counter live on the stack as an array (sp and sp + 4), the
+// counter through a pointer, as the native reloads it after each call; a
+// one-pass block stores the sine before the layer pointer is reloaded (alchemy
+// permute found the same block). No single barrier or one-pass block after any
+// statement changes the order. Worse: the counter set before the pointers are
+// formed (differ 14), between them (14), the pointers copied in the loop's
+// init (8) or through an operand asm (52); while, do-while and goto loops stay
+// at 2, and four more minutes of alchemy permute (9,934 candidates) found
+// nothing better.
 #include "../../../../games/tla/src/scene/islets/islets.h"
 
 extern u8 gData_02004f04;
@@ -26,8 +28,8 @@ void Func_02001cfc(void) {
   s32 sine;
 
   for (*count = 0; *count != 160; (*count)++) {
-    /* FAKEMATCH: the one-pass block stores the sine before the layer pointer is
-     * reloaded into r3 (differ 4 without it). */
+    /* FAKEMATCH(one-pass): the one-pass block kept; as plain statements, 4 of
+     * 65 instructions differ in tla-en. */
     do {
       sine = Math_Sine((*count + *(u8 *)&gFrameCount + layer[3]) << 9);
       v[0] = sine;

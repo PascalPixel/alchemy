@@ -1,29 +1,32 @@
+// Near miss, differ 10 of 453 (tla-en, 2026-10-31): two sched2 orderings in the pillar loop, the instructions and registers otherwise the native's.
+// - Preheader: the native loads the table pointer, then frame, and sets age
+// (frame - 8, into sl) after the three stack stores; ours loads frame first
+// and subtracts before the stores, because sched2 ranks frame's load at
+// priority 5 against the pointer's 4 (the reload registers already agree).
+// - Step: the native reloads the effect argument (for the count test) after
+// the three induction-variable stores; ours reloads it first, at priority
+// 10 against the stores' 9.
+// Both are the store-then-load limit of the 2026-10-26 note below.
+
 // Draft of BattleEffect_RunThorn, effect kind 5: thorns burst out of the ground one
 // after another, eight frames apart, each throwing up two frames of dust.
 
 // Twin: The Broken Seal's BattleEffect_RunThorn (effect.c), the same kind.
-// Listing 453 instructions, draft 453, differ 50 with two tagged devices
-// (the heap base barrier and the spelled-out lean); 61 with the barrier
-// removed, 84 with age stepped as its own induction variable instead of
-// the lean's spelling.
+// 2026-10-31: differ 10 with the heap base barrier and the spelled-out
+// lean; 29 with the barrier removed, 225 with lean = age * 6, 42 with age
+// stepped as its own induction variable (age -= 8 in the for step).
 
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), blitters load through BattleEffect_LoadBlitter with
 // the Lost Age's mode numbers, the task priority is 0xc80 and the cues are
 // 133 where the twin has 132.
 
-// What remains (order only; the instructions and registers agree):
-// - the prologue stores the effect argument before it builds the heap
-// base (1 row; the plan's "str r0 after sub sp" shape).
-// - pool loads issued one slot before the register address they store
-// to: BG2PA, BLDALPHA, BG2X, the free-puff fill, BLDCNT's fade (each 1
-// row, with the pool offsets that follow).
-// - the pillar loop's preheader loads frame before the table pointer,
-// and the step reloads the effect argument one slot later.
-// - the puff draws: sign-extension shifts and pool loads interleave
-// differently around the two blitter calls (about 12 rows).
+// Tried 2026-10-31 (differ): age computed before start, as frame - i * 8
+// - 8, frame - (i * 8 + 8) or frame - (i + 1) * 8, 30; start as (i + 1) *
+// 8, 8 + i * 8 or 8 * (i + 1), 10; age > 0 for frame > start, 57; the
+// flinch loop as j < count, 16; one permuter run, nothing better reported.
 
-// Tried (differ):
+// Tried before slow-loads (differ):
 // the twin's age = frame - (i * 8 + 8)                         256
 // age as its own induction variable, age -= 8 per pillar       99
 // heap slots read as fields                                    95
@@ -116,11 +119,11 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   // Set up: the canvas layer at full alpha, the thorn sheet, and the canvas
   // moved 112 pixels right for the other side.
   heap = (u32 *)Ram_HeapSlots;
-  /* FAKEMATCH: the native keeps the heap slot base in r5 until the flipped
-   * blitter and reads that slot as base + 188; without the barrier gcse
-   * propagates the constant into the second read and the base is rebuilt
-   * (differ 61 -> 50 with it). Slots read as fields, as bytes, or by walking
-   * the pointer to slot 47 rebuild it as well. */
+  /* FAKEMATCH(barrier): the heap slot base kept in r5 until the flipped
+   * blitter, whose slot is read as base + 188 (gcse otherwise propagates the
+   * constant into that read and rebuilds the base); as plain reads with no
+   * barrier, 29 of 453 instructions differ in tla-en. Slots read as fields,
+   * as bytes, or by walking the pointer to slot 47 rebuild it as well. */
   __asm__("" : "+r"(heap));
   work = (struct BattleEffectWork *)heap[23];
   canvas = (void *)heap[24];
@@ -168,12 +171,10 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
 
         if (Data_08198432[i] < 2) {
           height = age * 16;
-          /* FAKEMATCH: six times the age, spelled as the shifts and add the
-           * native computes from age in r10 each frame. Written age * 6,
-           * loop.c strength-reduces age * 3 into a spilled induction
-           * variable of its own (differ 241); with age stepped as its own
-           * induction variable instead, the pillar loop's setup comes
-           * before its count test (84). */
+          // Six times the age, spelled as the shifts and add the native
+          // computes from age in r10 each frame. Written age * 6, loop.c
+          // strength-reduces age * 3 into a spilled induction variable of
+          // its own: 225 of 453 instructions differ in tla-en.
           lean = (age * 2 + age) * 2;
           if (height > 80) {
             height = 80;

@@ -1,3 +1,12 @@
+// Near miss, differ 6 of 255 (tla-en, 2026-10-31): only mode's slot; its
+// store and two reloads use sp+0 where the native uses sp+4. Without the
+// unused u8[4] the frame is 4 bytes and 10 differ. A declared local always
+// sits above mode, which reload spills last, so no declaration can put the
+// native's spare word below it: that word is a slot reload allocates after
+// mode's (a caller-save area left unused once its pseudo is spilled is one
+// candidate) or outgoing argument space, which no call here needs. Also
+// measured: radius or angle shared by both loops (10, 39), 0x200 in a local
+// (85), the sheet pointer apart from the palette pointer (45).
 // Under -mthumb-slow-loads (26 October 2026): differ 10 of 255 in tla-en.
 // Tried, one edit at a time: an empty asm barrier after each statement, each
 // adjacent pair of statements swapped, each local pinned to each register,
@@ -16,13 +25,12 @@
 // ResourceId_ names in games/tla/src/gamepak/resource_directory.s before
 // adoption.
 
-// Left: the frame. The native reserves 8 bytes and keeps mode at sp+4, a
-// slot allocated after another 4 bytes that nothing uses; here mode is
-// the only slot (sub sp, #4; 4 rows with its two reloads). Then the
-// multiply entry's pool load comes two rows earlier in the native before
-// the ring loop. Tried for the frame: an unused s32[1] or one-word struct
-// (no slot), a u8[4] (it takes sp+4 and leaves mode sp+0). alchemy permute 8
-// minutes from 89: best 14 (the helper).
+// Left: the frame. The native reserves 8 bytes and keeps mode at sp+4,
+// with the 4 bytes below it unused; without the u8[4] mode is the only
+// slot (sub sp, #4). Tried for the frame: an unused s32[1] or one-word
+// struct (no slot), a u8[4] or volatile short (it takes sp+4 and leaves
+// mode sp+0, differ 6). alchemy permute 8 minutes from 89: best 14 (the
+// helper).
 
 #include "types.h"
 #include "dma.h"
@@ -98,6 +106,8 @@ s32 Func_08127068(s32 mode) {
   s32 i;
   u8 *data;
   s32 zero;
+  // Unused: gives the stack frame its 8 bytes, above mode rather than below.
+  UNUSED u8 unused[4];
 
   ((s32 *)Ram_HeapSlots->transitionWork)[2] = 1;
   work = HeapSlot_AllocEwram(92, sizeof *work);

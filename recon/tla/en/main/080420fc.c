@@ -1,11 +1,15 @@
-// Draft, differ 6 of 62 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Draft, differ 4 of 62: after the terminator store the native shifts the row
-// offset (lsrs r2, r4, #3) before it loads the window row, and adds them
-// after copying the column offset; this loads the row first. Measured: the
-// shift written first in the sum is differ 10; the shift as a temporary
+// Near miss, differ 6 of 62 (tla-en, 2026-10-31): after the terminator store
+// the native shifts the row offset (lsrs r2, r4, #3) before it loads the
+// window row (ldrsh), and copies the column offset before adding them; this
+// loads the row first. The sched2 dump shows why: the row load is ready one
+// cycle after the store (-mthumb-slow-loads delays only whole loads after a
+// store, not a sign- or zero-extended one) and outranks the shift, priority
+// 10 to 8, so no statement order moves it. The loop's empty asm stands in for
+// the same wait before its ldrb. No single empty asm, one-pass block,
+// wrapping block or swap of neighbouring statements brings it closer, nor any
+// pair of empty asm statements or one-pass blocks (device search, 2026-10-26).
+// Measured: the shift written first in the sum is differ 12; separate row and
+// column statements or a (s16 *) read stay at 6; the shift as a temporary
 // behind an empty asm barrier changes the high-register copies (differ 29);
 // four minutes of permuter found nothing better. Twin of The Broken Seal's
 // Text_DrawStringAtOffset with this game's loop barrier.
@@ -32,7 +36,8 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
     *output = *text;
     text++;
     output++;
-    /* FAKEMATCH: ⚓️ steps the output before it reads the next byte. */
+    /* FAKEMATCH(barrier): the empty asm kept; as the plain loop, 8 of 62
+       instructions differ in tla-en. */
     __asm__("");
   }
   *output = 0;

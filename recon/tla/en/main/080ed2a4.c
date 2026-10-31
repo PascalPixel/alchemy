@@ -1,26 +1,50 @@
-// Draft, differ 645 of 548: runs the world map screen (mode 0 to look, nonzero
-// to choose a destination) until A or B. In event mode 3 with mode 0 the
-// field stays loaded: the map work's sixteen layer flags are set aside and
-// the screen is drawn over it; otherwise the field is snapshotted and
-// closed, the task table reset and BG1's map numbered for the picture. Each
-// frame runs Func_080ed0a0 and Func_080ec4d4; Start glides the cursor to the
-// leader's place until released, R and L step to the next and previous shown
-// place (Func_080ec2b8), Select toggles the whole-map view, and the first
-// time flag 284 or 286 is set message 0xe2a is shown. Choosing with A stores
-// the place in gMainRoutineWork and calls Func_080ca368; B stores -1. The
-// field is then restored (mode 0 in event mode 3) or flag 265 set and the
-// event work's 0x158 set to 999.
-// Same calls, offsets and control flow; left: the native spills mode and the
-// zoom flag (sp 28 and 0, read back with ldrh for the halfword stores) and
-// keeps the world map work in r11; its frame is 56 bytes against 48.
+// Near miss, differ 496 of 548 (tla-en, 2026-10-31): same calls, fields,
+// control flow and block order; what is left is allocation and CSE (below).
+// Runs the world map screen (mode 0 to look, nonzero to choose a destination)
+// until A or B. In event mode 3 the field stays loaded: the map work's sixteen
+// animation flags are set aside and the screen is drawn over it (a nonzero
+// mode still snapshots the objects first); otherwise the objects are
+// snapshotted, the field closed, the task table reset and BG1's map numbered
+// for the picture. Each frame runs Func_080ed0a0 and Func_080ec4d4; Start
+// glides the cursor to the leader's place until released, R and L step to the
+// next and previous shown place (Func_080ec2b8), Select toggles the whole-map
+// view, and the first time flag 284 or 286 is set message 0xe2a is shown.
+// Choosing with A stores the place in gMainRoutineWork and calls
+// Func_080ca368; B stores -1. The field is then restored (mode 0 in event
+// mode 3) or flag 265 set and the event work's countdown set to 999.
+// Shape, as ☀️'s WorldPicture_Show: register writes through Io_Write16 (the
+// native builds 0x682, 0x1340, 0x8682 and 64 inline; a plain halfword store
+// loads them from the pool), the flags saved by an index loop (its ble), the
+// mode-3 setup before the full one, the closing test inverted (its else
+// first), the redraw an outer loop, and the declarations in the order of the
+// native's spill slots.
+// Left: the native hoists gInput (r10, copied to r5, which is reloaded after
+// the Start and release bodies), Data_0202a64c (r8), Data_0202a644 (r6) and
+// Data_0202a648 (r7) out of the frame loop, keeps gliding in r9 and the work
+// in r11, and spills mode (sp 28, ldrh for the halfword store); alchemy-gcc's
+// loop pass hoists only 644 and 648 (gInput's first load lives 3 insns, 64c's
+// 3, "not desirable" in a 185-insn loop), so mode and the event work keep
+// registers. The native also re-reads 644 and 648 after storing them (R, L),
+// the work's z after storing Data_0202a630 and 630 after storing 634 (then
+// clamps it in a register), where alchemy-gcc forwards the stored values;
+// tried symbols, ram_buffer.h's constant addresses and the work as a constant
+// address: unchanged. The six globals volatile give the reloads (496 to 453)
+// but read 644 three times in Select where the native reads it once, so that
+// is not the form.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "main_routine_work.h"
 #include "bg_scroll.h"
 #include "io_reg.h"
+#include "io_write.h"
 #include "io_write_queue.h"
 #include "scene_ids.h"
+#include "event_work.h"
+#include "actor.h"
+#include "map.h"
+#include "field/sprite.h"
+#include "flag_call.h"
 
 struct WorldMapWork {
   u16 vramBlock;
@@ -47,11 +71,6 @@ struct WorldMapPlace {
   s16 entrance;
 };
 
-struct MapLayerFlags {
-  u8 unk00[10];
-  u16 flag;
-};
-
 extern struct WorldMapWork gWorldMapWork;
 extern s16 Data_0202a640;
 extern s32 Data_0202a644;
@@ -60,14 +79,11 @@ extern s32 Data_0202a64c;
 extern s32 Data_0202a650;
 extern s32 Data_0202a630;
 extern s32 Data_0202a634;
-extern u16 Data_02000500;
+extern s16 Data_02000500;
 
 void ObjectTable_Snapshot(void);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Task_ResetAll(void);
 void WindowSystem_InitFieldFar(void);
+void Task_ResetAll(void);
 void wait(s32 frames);
 void Func_080ebf94(void);
 void Func_080ece20(void);
@@ -75,8 +91,6 @@ void Func_080ed0a0(void);
 void Func_080ec4d4(void);
 void Func_080ec1d0(s32 *screenX, s32 *screenY);
 void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void FieldMessage_ShowFar(s32 message, s32 mode);
 void WindowSprite_PrepareForRedrawFar(void *window);
 struct WorldMapPlace *FlagEntries_GetTable(void);
@@ -85,188 +99,184 @@ void BattleEffect_CleanupResourcesAndWindow(void);
 void Func_08020270(void);
 
 s32 Func_080ed2a4(s32 mode) {
-  u8 *mapWork = (u8 *)Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->eventWork;
-  u8 *objects = (u8 *)Ram_HeapSlots->objectSystem;
-  struct MapLayerFlags *layer;
-  struct WorldMapPlace *place;
   u8 savedFlags[16];
-  u32 *map;
-  s32 zoomed = 0;
-  s32 messageShown = 0;
-  s32 gliding = 0;
-  s32 savedMode;
-  s32 blend;
   s32 screenX;
   s32 screenY;
-  u32 tiles;
-  u8 *saved;
+  s32 savedDelay;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  struct ObjectSystemWork *objects = Ram_HeapSlots->objectSystem;
+  s16 blend;
+  s32 messageShown = 0;
+  s32 zoomed = 0;
+  s32 gliding = 0;
+  struct WorldMapWork *world = &gWorldMapWork;
+  struct MapAnimation *layer;
+  struct WorldMapPlace *place;
+  u32 *tiles;
+  u32 tile;
   s32 row;
   s32 column;
+  s32 i;
 
-  gWorldMapWork.mode = mode;
-  if (mode != 0 || ((s8 *)event)[394] != 3) {
+  world->mode = mode;
+  if (mode != 0 || event->controlMode != 3)
     ObjectTable_Snapshot();
-    if (((s8 *)event)[394] != 3)
-      goto full;
-  }
-  savedMode = *(s32 *)(event + 436);
-  *(s32 *)(event + 436) = 6;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  layer = (struct MapLayerFlags *)(mapWork + 24);
-  for (saved = savedFlags; saved <= &savedFlags[15]; saved++) {
-    *saved = layer->flag;
-    layer->flag = 1;
-    layer = (struct MapLayerFlags *)((u8 *)layer + 12);
-  }
-  *(u16 *)(objects + 4) = 1;
-  wait(1);
-  mapWork[0x972] = 1;
-  blend = (s16)REG_BLDALPHA;
-  goto setup;
-
-full:
-  (*(u8 **)(event + 460))[91] = 1;
-  savedMode = *(s32 *)(event + 436);
-  *(s32 *)(event + 436) = 6;
-  *(s32 *)(event + 428) = 0;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  Task_ResetAll();
-  WindowSystem_InitFieldFar();
-  *(u16 *)(objects + 4) = 1;
-  wait(1);
-  blend = (s16)REG_BLDALPHA;
-  map = (u32 *)0x06003000;
-  tiles = 0x01810180;
-  for (row = 0; row < 20; row++) {
-    for (column = 0; column < 16; column++) {
-      *map++ = tiles;
-      tiles += 0x20002;
+  if (event->controlMode == 3) {
+    savedDelay = event->delay;
+    event->delay = 6;
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    layer = map->anim;
+    for (i = 0; i < 16; i++) {
+      savedFlags[i] = layer->paused;
+      layer->paused = 1;
+      layer++;
     }
-  }
-  tiles = 0x01010100;
-  for (row = 0; row < 24; row++) {
-    for (column = 0; column < 16; column++) {
-      *map++ = tiles;
-      tiles += 0x20002;
-    }
-  }
-  tiles = 0x01010100;
-  for (row = 0; row < 4; row++) {
-    for (column = 0; column < 16; column++) {
-      *map++ = tiles;
-      tiles += 0x20002;
-    }
-  }
-  *(s32 *)mapWork = 0;
-  gBgScroll[1].x = 0;
-  gBgScroll[1].y = 0;
-  REG_BG1CNT = 0x682;
-  REG_DISPCNT = 0x1340;
-setup:
-  Func_080ebf94();
-redraw:
-  Data_0202a640 = zoomed;
-  Func_080ece20();
-  wait(1);
-  REG_BG1CNT = 0x8682;
-  REG_DISPCNT = 0x1340;
-  if ((GameFlag_Test(284) || GameFlag_Test(286)) && !messageShown) {
-    FieldMessage_ShowFar(0xe2a, 1);
-    messageShown = 1;
-  }
-  for (;;) {
-    Func_080ed0a0();
-    Func_080ec4d4();
+    objects->suspended = 1;
     wait(1);
-    if ((gInput.repeat & 8) && !gliding) {
-      Func_080ec1d0(&screenX, &screenY);
-      Data_0202a644 = screenX << 16;
-      Data_0202a648 = screenY << 16;
-      gliding = 1;
-    }
-    if (!(gInput.held & 8) && gliding == 1) {
-      Data_0202a644 = Data_0202a64c;
-      gliding = 0;
-      Data_0202a648 = Data_0202a650;
-    }
-    if (gInput.repeat & 0x100) {
-      Func_080ec2b8(&screenX, &screenY, 1);
-      Data_0202a644 = screenX << 16;
-      Data_0202a648 = screenY << 16;
-      Data_0202a64c = Data_0202a644;
-      Data_0202a650 = Data_0202a648;
-    }
-    if (gInput.repeat & 0x200) {
-      Func_080ec2b8(&screenX, &screenY, -1);
-      Data_0202a644 = screenX << 16;
-      Data_0202a648 = screenY << 16;
-      Data_0202a64c = Data_0202a644;
-      Data_0202a650 = Data_0202a648;
-    }
-    if (gInput.repeat & 4) {
-      gWorldMapWork.shown = -1;
-      WindowSprite_PrepareForRedrawFar(gWorldMapWork.window);
-      REG_DISPCNT = 64;
-      zoomed ^= 1;
-      if (Data_0202a644 != 0) {
-        gWorldMapWork.x = Data_0202a644;
-        gWorldMapWork.z = Data_0202a648;
-        Data_0202a630 = Data_0202a644 - 0x780000;
-        Data_0202a634 = gWorldMapWork.z - 0x500000;
-        if (Data_0202a630 < 0)
-          Data_0202a630 = 0;
-        if (Data_0202a630 > 0x1100000)
-          Data_0202a630 = 0x1100000;
-        if (Data_0202a634 < 0)
-          Data_0202a634 = 0;
-        if (Data_0202a634 > 0xe00000)
-          Data_0202a634 = 0xe00000;
+    ((struct MapViewWork *)map)->picturePending = 1;
+    blend = REG_BLDALPHA;
+  } else {
+    event->viewCenter->movementState = 1;
+    savedDelay = event->delay;
+    event->delay = 6;
+    event->screenEffect = 0;
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Task_ResetAll();
+    WindowSystem_InitFieldFar();
+    objects->suspended = 1;
+    wait(1);
+    blend = REG_BLDALPHA;
+    tiles = (u32 *)0x06003000;
+    tile = 0x01810180;
+    for (row = 0; row < 20; row++)
+      for (column = 0; column < 16; column++) {
+        *tiles++ = tile;
+        tile += 0x20002;
       }
-      goto redraw;
-    }
-    if (gInput.repeat & 1) {
-      if (mode == 0)
-        break;
-      if (gWorldMapWork.shown == -1)
-        continue;
-      place = &FlagEntries_GetTable()[gWorldMapWork.shown];
-      *(s16 *)gMainRoutineWork.unk2be = (s32)&SceneId_Ov64a;
-      Data_02000500 = place->flag;
-      Func_080ca368(place->scene, place->entrance);
-      break;
-    }
-    if (!(gInput.repeat & 2))
-      continue;
-    if (mode == 0)
-      break;
-    *(s16 *)gMainRoutineWork.unk2be = -1;
-    Data_02000500 = -1;
-    break;
-  }
-  BattleEffect_CleanupResourcesAndWindow();
-  REG_DISPCNT = 64;
-  if (mode == 0 && ((s8 *)event)[394] == 3) {
-    Func_08020270();
-    IO_WRITE_QUEUE_PUSH(0x04000052, (u16)blend, 0x20000);
-    layer = (struct MapLayerFlags *)(mapWork + 24);
-    for (saved = savedFlags; saved <= &savedFlags[15]; saved++) {
-      layer->flag = *saved;
-      layer = (struct MapLayerFlags *)((u8 *)layer + 12);
-    }
-    *(u16 *)(objects + 4) = 0;
+    tile = 0x01010100;
+    for (row = 0; row < 24; row++)
+      for (column = 0; column < 16; column++) {
+        *tiles++ = tile;
+        tile += 0x20002;
+      }
+    tile = 0x01010100;
+    for (row = 0; row < 4; row++)
+      for (column = 0; column < 16; column++) {
+        *tiles++ = tile;
+        tile += 0x20002;
+      }
+    map->origin = 0;
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
-    mapWork[0x972] = 0;
+    Io_Write16(0x682, &REG_BG1CNT);
+    Io_Write16(0x1340, &REG_DISPCNT);
+  }
+  Func_080ebf94();
+  for (;;) {
+    Data_0202a640 = zoomed;
+    Func_080ece20();
+    wait(1);
+    Io_Write16(0x8682, &REG_BG1CNT);
+    Io_Write16(0x1340, &REG_DISPCNT);
+    if ((GameFlag_Test(284) || GameFlag_Test(286)) && !messageShown) {
+      FieldMessage_ShowFar(0xe2a, 1);
+      messageShown = 1;
+    }
+    for (;;) {
+      Func_080ed0a0();
+      Func_080ec4d4();
+      wait(1);
+      if ((gInput.repeat & 8) && gliding == 0) {
+        Func_080ec1d0(&screenX, &screenY);
+        Data_0202a644 = screenX << 16;
+        Data_0202a648 = screenY << 16;
+        gliding = 1;
+      }
+      if (!(gInput.held & 8) && gliding == 1) {
+        Data_0202a644 = Data_0202a64c;
+        Data_0202a648 = Data_0202a650;
+        gliding = 0;
+      }
+      if (gInput.repeat & 0x100) {
+        Func_080ec2b8(&screenX, &screenY, 1);
+        Data_0202a644 = screenX << 16;
+        Data_0202a648 = screenY << 16;
+        Data_0202a64c = Data_0202a644;
+        Data_0202a650 = Data_0202a648;
+      }
+      if (gInput.repeat & 0x200) {
+        Func_080ec2b8(&screenX, &screenY, -1);
+        Data_0202a644 = screenX << 16;
+        Data_0202a648 = screenY << 16;
+        Data_0202a64c = Data_0202a644;
+        Data_0202a650 = Data_0202a648;
+      }
+      if (gInput.repeat & 4) {
+        world->shown = -1;
+        WindowSprite_PrepareForRedrawFar(world->window);
+        Io_Write16(64, &REG_DISPCNT);
+        zoomed ^= 1;
+        if (Data_0202a644 != 0) {
+          world->x = Data_0202a644;
+          world->z = Data_0202a648;
+          Data_0202a630 = Data_0202a644 - 0x780000;
+          Data_0202a634 = world->z - 0x500000;
+          if (Data_0202a630 < 0)
+            Data_0202a630 = 0;
+          if (Data_0202a630 > 0x1100000)
+            Data_0202a630 = 0x1100000;
+          if (Data_0202a634 < 0)
+            Data_0202a634 = 0;
+          if (Data_0202a634 > 0xe00000)
+            Data_0202a634 = 0xe00000;
+        }
+        break;
+      }
+      if (gInput.repeat & 1) {
+        if (mode == 0)
+          goto done;
+        if (world->shown == -1)
+          continue;
+        place = &FlagEntries_GetTable()[world->shown];
+        *(u16 *)gMainRoutineWork.unk2be = (s32)&SceneId_Ov64a;
+        Data_02000500 = place->flag;
+        Func_080ca368(place->scene, place->entrance);
+        goto done;
+      }
+      if (gInput.repeat & 2) {
+        if (mode != 0) {
+          *(u16 *)gMainRoutineWork.unk2be = 0xffff;
+          Data_02000500 = -1;
+        }
+        goto done;
+      }
+    }
+  }
+done:
+  BattleEffect_CleanupResourcesAndWindow();
+  Io_Write16(64, &REG_DISPCNT);
+  if (mode != 0 || event->controlMode != 3) {
+    event->countdown = 999;
+    GameFlag_SetBit(265);
+  } else {
+    Func_08020270();
+    IO_WRITE_QUEUE_PUSH(0x04000052, (u16)blend, 0x20000);
+    layer = map->anim;
+    for (i = 0; i < 16; i++) {
+      layer->paused = savedFlags[i];
+      layer++;
+    }
+    objects->suspended = 0;
+    gBgScroll[1].x = 0;
+    gBgScroll[1].y = 0;
+    ((struct MapViewWork *)map)->picturePending = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    *(s32 *)(event + 436) = savedMode;
-    (*(u8 **)(event + 460))[91] = 0;
-  } else {
-    *(s16 *)(event + 344) = 999;
-    GameFlag_SetBit(265);
+    event->delay = savedDelay;
+    event->viewCenter->movementState = 0;
   }
   return 0;
 }

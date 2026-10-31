@@ -1,18 +1,23 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 8 of 200 in tla-en, instruction
-// order and register choice. No empty asm before any one statement lowers it.
-// Near miss, differ 14 of 200: ☀️'s FadeOverlay_DrawMarks. The native loads
-// the terrain layer byte (ldrb r3, [r3, #0]) a slot before movs r2, #189 and
-// the resource table after lsls, issues mov r0, r8 for the first terrain call
-// before its add, and loads attribute byte 9 before movs r1, #13 in each mark:
-// loads a slot earlier than agscc's ARM9TDMI model. The unused halfwords are
-// ☀️'s frame device: without them the stack frame is 12 bytes, not 16.
+// Near miss, differ 4 of 200 (tla-en, 2026-10-31): the actor's x load
+// (ldr r7, [r3, #8]) and adds r3, #34 issue two slots late, after the
+// floor's spill store (str r2, [sp, #0]): -mthumb-slow-loads makes that
+// whole load wait a cycle after a store it may read. Read with x before the
+// floor (this draft's earlier order or ☀️'s), x loads early but the terrain
+// layer's ldrb issues before movs r2, #189 and mov r0, r8 sinks to the first
+// call: differ 8. The native's ldrb waits after the store although it is
+// zero-extended, which the model exempts; the layer as u8 (field.h's
+// prototype) or s32, and every other type and statement order tried keep 4
+// or more; two permuter runs found nothing better. No empty asm before any
+// one statement lowers it.
+// ☀️'s FadeOverlay_DrawMarks. The unused halfwords give the stack frame its
+// 16 bytes, as in ☀️: without them it is 12.
 #include "types.h"
 #include "ram_buffer.h"
 #include "sprite.h"
 #include "resource.h"
 #include "vram_tab.h"
 
-s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 void Func_080140d8(void *entry, s32 priority);
 
 struct FadeActor {
@@ -49,7 +54,7 @@ void Func_080d1840(void) {
   s32 x;
   s32 z;
   s32 terrainFloor;
-  s32 terrainLayer;
+  u8 terrainLayer;
   u32 tile;
   s32 height;
   s32 secondHeight;
@@ -59,8 +64,8 @@ void Func_080d1840(void) {
   if (actor == 0)
     return;
   z = actor->z;
-  x = actor->x;
   terrainFloor = actor->floor;
+  x = actor->x;
   terrainLayer = actor->terrainId;
   tile = gResourceTableEntries[94].offset >> 5;
   x -= 0x80000;

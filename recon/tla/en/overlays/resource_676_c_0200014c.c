@@ -1,9 +1,7 @@
-// Japanese draft (compare with --edition tla-ja), differ 4 of 64: the other
-// editions' Func_0200014c, adopted in yallam/s014c.c, without the stop beside
-// the leader. The native loads the window tiles before it copies the object
-// to r5, and the flags before the event work; here both pairs come the other
-// way round. Tried 2026-10-19: the flags read into a local ahead of the event
-// work (10), an empty asm holding the tiles (37).
+// Matches: differ 0 of 64 (tla-ja, 2026-10-31), its literal pool included.
+// Japanese draft (compare with --edition tla-ja): the other editions'
+// Func_0200014c, adopted in yallam/s014c.c, without the stop beside the
+// leader. Its default tla-en diff (46 of 82) measures that other function.
 #include "../../../../games/tla/src/scene/yallam/yallam.h"
 
 s32 Func_0200014c(struct Actor *object) {

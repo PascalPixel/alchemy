@@ -1,14 +1,18 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 2 of
-// 102: only the cursor's store, which the native issues before the limit
-// offset's shift. A greedy device search found nothing lower.
-// Near miss: differ 6 of 102, The Broken Seal's LzPack_ConsumeSlotBytes.
-// The two one-pass blocks (found by a greedy device search, differ 10 without
-// them) fix the byte read and the removal call; three swaps remain, each a load
-// the native issues earlier: the cursor store before the limit offset's shift,
-// the work pointer's pool load before 0x3ff's shift, and the root's load inside
-// the bucket offset's split constant. Also tried: the root pinned to r9 (16)
-// or, declared before the mask, to r0 (29), and declared before the mask
-// unpinned (16).
+// Near miss, differ 2 of 102 (tla-en, 2026-10-31): only the cursor's store,
+// which the native issues before the limit offset's shift. In sched2 both are
+// ready together on the dependences the native has, and the shift ranks first
+// (priority 7, the store 6: shift, add, the limit's address, its load); only a
+// dearer store or anti-dependence would put the store first, so the C cannot
+// move it. Also tried for it, none lower: the cursor read as cursor++ or
+// ++readOffset, the compare on a reread cursor or with swapped operands,
+// *(input + readOffset), and a four-minute permuter run; a greedy device
+// search earlier found nothing lower either. The second loop's removal call
+// needs no one-pass block any more (differ 2 with or without it).
+// The Broken Seal's LzPack_ConsumeSlotBytes. An earlier measurement differed
+// in 6 with three such swaps (also the work pointer's pool load before 0x3ff's
+// shift and the root's load inside the bucket offset's split constant); then
+// the root pinned to r9 (16) or, declared before the mask, to r0 (29), and
+// declared before the mask unpinned (16) did no better.
 #include "lucky_wheels_lzpack.h"
 
 void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
@@ -30,6 +34,8 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
       LzPack_RemoveSlotNode(removal & mask);
       state = gFlash_Handler3;
       readOffset = state->inputCursor;
+      /* FAKEMATCH(one-pass): the byte read in a once-only block; as a plain
+         statement, 4 of 102 instructions differ in tla-en. */
       do {
         value = input[readOffset];
       } while (0);
@@ -57,9 +63,7 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
       u32 slot = (base + current) & mask;
       struct LzPackWork *state;
 
-      do {
-        LzPack_RemoveSlotNode(slot);
-      } while (0);
+      LzPack_RemoveSlotNode(slot);
       state = *root;
       current++;
       state->bucketBySlot[slot] = empty;

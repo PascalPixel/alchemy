@@ -1,3 +1,4 @@
+// Near miss, differ 18 of 1827 (tla-en, 2026-10-31): sched2 order only.
 // Draft of Func_0812381c with its nested Func_08123648 (compare both:
 // alchemy-devtools diff 0812381c.c 08123648,0812381c): ☀️'s BattleActionRun_Build
 // and BattleActionRun_SetTargets (games/tbs/src/battle/battle/action.c), ported.
@@ -15,17 +16,24 @@
 // counts targets twice for effect 75, the second time with range 11.
 // Message names are ours where en.po has none: the enemy abilities' are
 // numbered (MsgEnemyAbility0d53 and on), the rest ☀️'s.
-// Near miss, differ 84 of 1827 (2026-10-24), instruction order only: 20 in the
-// nested function, the rest in the parent, each a load the native issues one
-// slot earlier, a store the native lets one instruction pass before the next
-// load, or a constant's register (the plan's first stores, command 9's).
-// Forms measured: the enemy ability messages switched in ☀️'s order (the case
-// bodies' layout follows it), the Psynergy messages as a switch on ranges
-// (if-else chains fold into a range test or split the default's call), the
-// attack's distance through abs() (the native's compare and negate around a
-// byte load), the held keys through a volatile view, the animation table
-// const (its value is reused after the store), one amount and chance for the
-// two blow cases and one index for their loops.
+// Remaining: where the native waits after a store before an extended load
+// (ldrb, ldrh, ldrsb) that -mthumb-slow-loads lets go first: the four target
+// loops' targetCount reload after their store (the native steps the index or
+// pointer first), actor->enemyId after the attack's presentationFlags = 0,
+// and the nested function's mode load after the ability is saved; two ties
+// (the nested function's request slot load after enemyCount's spill, ranked
+// one higher by the load rule; the parent's battle work constant before the
+// actor's frame store, by sched2's last-insn class).
+// Forms measured: the plan's first stores in ☀️'s order (actorId read between
+// hauntDamage and targetCount, 56 to 30), case 0's count before its offset,
+// command 9's target id before its multiplier (28 to 18); the enemy ability
+// messages switched in ☀️'s order (the case bodies' layout follows it), the
+// Psynergy messages as a switch on ranges (if-else chains fold into a range
+// test or split the default's call), the attack's distance through abs()
+// (the native's compare and negate around a byte load), the held keys through
+// a volatile view, the animation table const (its value is reused after the
+// store), one amount and chance for the two blow cases and one index for
+// their loops.
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -164,8 +172,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       includeDowned = 1;
     switch (mode) {
     case 0:
-      plan->targetOffset[0] = mode;
       plan->targetCount = 1;
+      plan->targetOffset[0] = mode;
       plan->targetIds[0] = selectedTargetId;
       plan->targetMultiplier[0] = 1;
       break;
@@ -241,10 +249,10 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   BattlePlayback_Reset();
   ((s32 *)plan)[25] = 0;
   plan->hauntDamage = 0;
+  plan->actorId = request->unitId;
   plan->targetCount = 0;
   plan->presentationFlags = 0;
   plan->failure = 0;
-  plan->actorId = request->unitId;
   plan->actorId2 = request->unitId;
   plan->element = 4;
   MessageArgument_ClearAllFar();
@@ -347,8 +355,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       return -2;
     plan->targetCount = 1;
     plan->targetOffset[0] = 0;
-    plan->targetMultiplier[0] = 1;
     plan->targetIds[0] = selectedTargetId;
+    plan->targetMultiplier[0] = 1;
     break;
 
   case COMMAND_PSYNERGY: {

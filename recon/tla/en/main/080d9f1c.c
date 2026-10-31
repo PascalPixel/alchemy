@@ -1,6 +1,12 @@
-// Near miss, differ 6 of 151 (2026-10-26), each delta shifted as soon as it is
-// built. Left: the argument spills; the native stores r1, r2, r3 and r0 before it
-// builds the work's address in r3, where this stores r3 first.
+// Near miss, differ 4 of 151 (tla-en, 2026-10-31): only the argument spills'
+// order. The native stores r1, r2, r3 and r0 before it builds the work's address
+// in r3, where this stores r3 first. In sched2 the store of r3 has priority 197
+// and the other three 196: the address is three split insns that anti-depend on
+// it, while the stores reach the work's load through one memory dependence; at
+// equal priority the native order would follow (fewer dependents put r0 last).
+// Unmoved by putting result or the differences before the work's load (worse),
+// a u32 index, reading the slot through a cast, the loop counter's placement or
+// the angle's mask; a 4-minute permuter run found nothing better.
 // Builds a slot's chain of nodes in the heap slot 0xa0 work, one node
 // for each 6 units of the distance between two points, spread evenly along
 // the line; the last node is kind 2, the others kind 1, and each records its

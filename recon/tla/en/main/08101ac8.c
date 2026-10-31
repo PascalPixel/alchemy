@@ -1,15 +1,20 @@
-// Draft of DjinnMenu_DrawPage, differ 8 of 146 (2026-10-26; 69 before): draws four
-// party members' djinn from page onward in the menu's list window, one column
-// of 56 pixels each, grouped by element; each name is coloured by its state
-// (Func_08101a04: 0 grey, 1 normal, otherwise set) and drawn with
-// Func_08101a54. With few enough djinn per member (at most 7) it also draws
-// message 0x10de and a divider under the list. No ☀️ twin. The lists indexed
-// by page + column (the native keeps the count's offset apart from the list
-// and counts the column up), the djinn total in its own local, x stepped in
-// the for and the menu read before the tiles give the native's shape and
-// registers. Left: the column's entries address (page * 20 + list) is
-// scheduled two rows from the native's before the loop (permuter 5 minutes:
-// nothing).
+// Near miss, differ 8 of 146 (tla-en, 2026-10-31; 69 before): scheduler order.
+// Before the loop, sched2 issues the column's entries address (page * 20 +
+// list: lsl, add, lsl, add fp) as soon as x's store frees r3, because its
+// chain ranks first (priority 5, against 3 for page + 160 and 2 for the rest);
+// the native interleaves it with column = 0, page + 160 and menu + 248 and
+// adds the list after the three stores. Every register already matches, so the
+// dependences, and with them the priorities, are fixed: no C reshaping moves
+// it (permuter 5 minutes: nothing; a hoisted column or entries pointer: 59).
+// DjinnMenu_DrawPage draws four party members' djinn from page onward in the
+// menu's list window, one column of 56 pixels each, grouped by element; each
+// name is coloured by its state (Func_08101a04: 0 grey, 1 normal, otherwise
+// set) and drawn with Func_08101a54. With few enough djinn per member (at most
+// 7) it also draws message 0x10de and a divider under the list. No ☀️ twin.
+// The lists indexed by page + column (the native keeps the count's offset
+// apart from the list and counts the column up), the djinn total in its own
+// local, x stepped in the for and the menu read before the tiles give the
+// native's shape and registers.
 #include "types.h"
 #include "ram_buffer.h"
 

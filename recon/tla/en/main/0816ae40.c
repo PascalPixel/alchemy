@@ -1,8 +1,16 @@
+// Near miss, differ 4 of 73 (tla-en, 2026-10-31): only the outer
+// preheader's order is left, a sched2 cost the C cannot move. Its seven
+// insns and their dependences are the same as the native's: 4 * height - 2
+// heads a chain of three (lsls r3, subs r3, mov lr; priority 3), the width's
+// shift a chain of two (lsls r2 and its spill store, which costs 1 under
+// the arm9tdmi model; priority 2), so sched2 issues 4 * height first and
+// the spill after the copies into r8 and r9. The native order (lsls r2,
+// lsls r3, str r2, subs r3) needs the store to cost 2; nothing in the block
+// can depend on it. Permute 4 minutes on 2026-10-31: nothing below 4.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 4 of
-// 73: only the outer preheader's order is left (the width's shift and its
-// spill before 4 * height); the inner preheader now matches. A greedy device
-// search found nothing lower.
-// Draft, differ 6 of 73: mirrors a width x height block of bytes into a
+// 73: the inner preheader now matches. A greedy device search found nothing
+// lower.
+// Earlier draft, differ 6 of 73: mirrors a width x height block of bytes into a
 // 2*width x 2*height one, each byte written to all four quadrants (no
 // twin: The Broken Seal has none). Left, all scheduling: in the outer
 // preheader the native shifts the width (lsls r2, r6, #1) before

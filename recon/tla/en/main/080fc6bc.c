@@ -1,19 +1,22 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 8 of 466 in tla-en. First difference: this issues `add r4, sp, #32` earlier
-// (row 14) than the native does (row 17). No single empty asm or one-pass block
-// reaches 0.
+// Near miss, differ 4 of 466 (tla-en, 2026-10-31): one scheduling tie in the
+// L/R branch. After the strb of the selected index, the native builds the
+// pane's paneIndex offset (mov r2, fp; adds r2, #28; str r2, [sp, #16]) before
+// the rest of the partyCount offset (lsls r4, r4, #1; adds r4, #255); here
+// sched2 ranks mov r2, fp and lsls r4 both at priority 7 and takes the lsls,
+// since mov r2, fp is anti-dependent on that strb (the pre-sched2 RTL order is
+// the native's). ItemMenu_PageResult returns s32 (games/tla/src/menu/item/
+// page.c): declared void, its two argument moves came out in the wrong order.
 // First draft of Func_080fc6bc: the twin of ☀️'s ItemMenu_RunList
 // (games/tbs/src/menu/menu/item.c), the item list of the member in pane
 // (0: the owner, 1: the receiver of a trade), five items a page. This game
 // tests the party slots at 0x158 (-1 when empty) for the equip animation and
 // redraws the member page after L or R.
 //
-// Near miss, differ 22 of 466, instruction order only: eight times the native
-// issues a stack or register load ahead of the first half of a constant
-// (movs r4, #182 after ldr r3, [sp, #8], and so on), and passes the pane before
-// the result pointer to ItemMenu_PageResult. The slot read into a local before
-// its -1 test keeps the -1 from being hoisted and spilled (293 to 149), the
-// member read before the count 32, the previous icon through the icon local 22.
+// Earlier reshaping, measured before the prototype fix: the slot read into a
+// local before its -1 test keeps the -1 from being hoisted and spilled (293 to
+// 149), the member read before the count 32 (still 125 worse the other way
+// round), the previous icon through the icon local 22. On 2026-10-26 no single
+// empty asm or one-pass block reached 0.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -85,7 +88,7 @@ s32 Window_UpdateOrCreate(void **window, s32 x, s32 y, s32 width, s32 height,
 void *Unit_Get(s32 owner);
 s32 ItemMenu_CollectItems(void *owner, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
-void ItemMenu_PageResult(struct MenuResult *state, s32 pane);
+s32 ItemMenu_PageResult(struct MenuResult *state, s32 pane);
 void Func_080f8a44(s32 x, s32 y);
 void Icon_PrepareActor(struct ListIcon *icon);
 void wait(s32 frames);

@@ -1,10 +1,16 @@
-// Draft, differ 345 of 333 (2026-10-15, written from the listing; ☀️ has no
-// twin): the structure, calls, constants and work layout follow the ROM, but
-// the stack frame is 52 bytes where the ROM's is 56 (as in Func_080e9090: one more
-// slot for the shake phase's copy in the object loop), the work pointer stays
-// in r11 where the ROM spills it to sp+52, and every slot after it moves.
-// Declaration order does not move it (345). The resource row 0x1ee
-// (Resource_Data1EE) needs a name in directory.s before adoption; it is
+// Near miss, differ 16 of 333 (tla-en, 2026-10-31): the same instructions
+// and registers, eight of them scheduled elsewhere by sched2: the work's
+// spill after HeapSlot_Alloc, the loop's starting values (the sprite
+// pointer's reload, the zero and the phase * 3 slot), the shake angle's copy
+// into r11 before the object loop, and the offset's ldrh, which here goes
+// ahead of the object's word load that -mthumb-slow-loads delays behind the
+// walk pointer's spill. Written from the listing; ☀️ has no twin. The ROM's
+// 56-byte frame comes from no shake-phase variable: the angle is phase * 3,
+// which loop.c hoists out of the object loop (the r11 copy) and then
+// strength-reduces into its own slot that grows by 3 a frame (sp+8). The
+// scene is read before the event, the offset is an s32, the sprites are set
+// through a pointer and the particles walked with one. The resource row
+// 0x1ee (Resource_Data1EE) needs a name in directory.s before adoption; it is
 // ResourceId_ShakeTiles here.
 #include "types.h"
 #include "ram_buffer.h"
@@ -98,8 +104,8 @@ void Sound_PlayFar(s32 cue);
 void Func_080e8db0(void) {
   struct ShakeWork *work =
       HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, sizeof(*work));
-  struct EventWork *event = Ram_HeapSlots->eventWork;
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
+  struct EventWork *event = Ram_HeapSlots->eventWork;
   struct Actor *target = scene->target;
   struct ObjectSprite *targetSprite = target->animation;
   s32 tiles;
@@ -108,12 +114,12 @@ void Func_080e8db0(void) {
   s32 showing;
   s32 frameCount;
   s32 phase;
-  s32 shakePhase;
   s32 i;
   s32 tile;
   s32 amplitude;
   s32 state;
   s32 frames;
+  struct ShakeParticle *particle;
 
   if (target != NULL && targetSprite != NULL &&
       targetSprite->width * targetSprite->height > PICTURE_MAX_PIXELS)
@@ -124,13 +130,16 @@ void Func_080e8db0(void) {
                         work->picture);
   tiles = Resource_FindFreeEntry();
   tile = VramCache_Load(tiles, 64, work->picture);
-  for (i = 0; i < SHAKE_SPRITE_COUNT; i++) {
-    Func_080eaf98(&work->sprites[i], 4, 4, 0, tile + (i & 1));
-    work->sprites[i].oam.palette256 = 0;
-    work->sprites[i].oam.palette = 14;
-    work->sprites[i].oam.priority = 0;
-    work->sprites[i].depth = 240;
-    work->particles[i].timer = -1;
+  for (i = 0, particle = work->particles; i < SHAKE_SPRITE_COUNT;
+       i++, particle++) {
+    struct EffectSprite *sprite = &work->sprites[i];
+
+    Func_080eaf98(sprite, 4, 4, 0, tile + (i & 1));
+    sprite->oam.palette256 = 0;
+    sprite->oam.palette = 14;
+    sprite->oam.priority = 0;
+    sprite->depth = 240;
+    particle->timer = -1;
   }
   BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   if (target != NULL && targetSprite != NULL) {
@@ -147,7 +156,6 @@ void Func_080e8db0(void) {
   showing = 0;
   phase = 0;
   frameCount = 0;
-  shakePhase = 0;
   amplitude = SWAY_START;
   state = SWAY_GROW;
   frames = 0;
@@ -159,17 +167,16 @@ void Func_080e8db0(void) {
     if (event->controlMode == 2) {
       for (i = 0; i < work->view.count; i++) {
         struct ObjectSprite *sprite = work->view.objects[i]->animation;
-        u16 offset = work->view.spriteOffsets[i];
+        s32 offset = work->view.spriteOffsets[i];
 
         if (amplitude > SWAY_SHAKE)
           sprite->offsetX =
-              offset + Iwram_MulQ16(Trig_Sin(shakePhase << 11),
+              offset + Iwram_MulQ16(Trig_Sin(phase * 3 << 11),
                                     (amplitude - SWAY_SHAKE) / 128);
         else
           sprite->offsetX = offset;
       }
     }
-    shakePhase += 3;
 
     Func_080e8b44(VIEW_MOVE_X, phase++, amplitude);
     switch (state) {
@@ -211,8 +218,8 @@ void Func_080e8db0(void) {
       shown -= 2;
 
     wait(1);
-    frameCount++;
     frames++;
+    frameCount++;
   } while (state != SWAY_DONE);
 
   if (target != NULL && targetSprite != NULL) {

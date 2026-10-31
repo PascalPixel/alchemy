@@ -1,16 +1,17 @@
-// Near miss, differ 8 of 168 (five reordered pairs): The Broken Seal's
-// BattleEffect_DrawStreaks, with this game's effect work, Random16's
-// values stored unmasked and Func_080150e4 for the roll. Left are ARM9
-// schedule swaps: the frame counter's load against the work pointer's
-// reload from its stack slot, gMapCellBuffer's pool load before and after
-// the zero it sits beside (twice), the tail load against the point's store,
-// and the fade's add against the head's load. Measured: the counter as a
-// read and a store, or a ++ (same 12); the seed's two stores swapped (20);
-// the point's zeros after i (48).
+// Near miss, differ 4 of 168 (tla-en, 2026-10-31): two pairs sched2 orders
+// by its load costs. The work pointer's reload from its stack slot and the
+// frame counter's load become ready together after the spill store, and the
+// counter's load wins on priority (8 to 5); the listing reloads first. Then
+// Ram_MapCellBuffer's pool load costs 2 under -mthumb-slow-loads, so its
+// priority (4) issues it before the point's zeros; the listing issues it
+// third, where a cost-1 load would fall by RTL order.
 //
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 8. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early.
+// The Broken Seal's BattleEffect_DrawStreaks, with this game's effect work,
+// Random16's values stored unmasked and Func_080150e4 for the roll. Measured:
+// the counter as a read and a store, or a ++ after the read, or `for (i = 0;`
+// in the drawing loop (all 4); the seed's two stores swapped (12); the
+// point's zeros after i (44). A four-minute permuter run found nothing below
+// 4.
 #include "types.h"
 #include "ram_buffer.h"
 #include "system.h"

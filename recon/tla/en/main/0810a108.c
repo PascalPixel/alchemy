@@ -1,17 +1,20 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 6 of 167 in tla-en. The native spills its arguments to the stack before it
-// builds the heap slots' address; this builds the address first (row 8). No
-// single empty asm or one-pass block reaches 0.
-// Near miss, differ 6 of 167 (2026-10-19; was 8):
-// sells count of a unit's item at slot (count -1
-// sells the whole old item), ☀️'s Shop_SellItem in games/tbs/src/shop/shop.c,
-// rewritten with ⚓️'s calls (Unit_Get, Shop_GetSellPrice, MessageArgument_PushFar,
-// the shop message and choice routines Func_0810857c and Func_08108630,
-// Inventory_DiscardFar, then Unit_RefreshPsynergyFar and Unit_CalculateFar, which ☀️
-// does not call) and numbered messages, their ☀️ names beside them. Instruction
-// order only: the work pointer's address build against the frame setup, the
-// slot offset's copy and the 0x1ff mask's first move against their neighbours.
-// buy.c's barrier before the 0x1ff mask now orders the mask (8 to 6).
+// Near miss, differ 2 of 167 (tla-en, 2026-10-31): sched2 order only. The
+// native spills the slot argument (str r1) before it builds the heap slots'
+// address; this builds the address first. In sched2 both are ready in the
+// second cycle, and the address chain (movs, lsls, adds, then the load) has
+// priority 90 against the spill's 89, so its movs goes first; the drafts
+// 08109068 and 080da660 keep the same swap. No single empty asm
+// or one-pass block reaches 0 (2026-10-26); a 4-minute permuter run found
+// nothing better (2026-10-31).
+// Sells count of a unit's item at slot (count -1 sells the whole old item),
+// ☀️'s Shop_SellItem in games/tbs/src/shop/shop/sell.c, rewritten with ⚓️'s
+// calls (Unit_Get, Shop_GetSellPrice, MessageArgument_PushFar, the shop
+// message and choice routines Func_0810857c and Func_08108630,
+// Inventory_DiscardFar, then Unit_RefreshPsynergyFar and Unit_CalculateFar,
+// which ☀️ does not call) and numbered messages, their ☀️ names beside them.
+// Reading the item id as ☀️ does (inventory[slot] & 0x1ff in its initializer)
+// orders the slot offset's spill and the 0x1ff mask with no barrier (4 to 2;
+// the earlier draft's empty asm measured 4 either way).
 #include "battle_system.h"
 #include "battle_unit.h"
 #include "item.h"
@@ -51,21 +54,14 @@ void Shop_DrawItemCount(s32 window, s32 unitId);
 void Func_0810a108(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
-  u32 raw = unit->inventory[slot];
-  s32 itemId;
-  struct ItemDefinition *item;
-  u8 rare;
-  s32 all;
+  s32 itemId = unit->inventory[slot] & 0x1ff;
+  struct ItemDefinition *item = Item_Get(itemId);
+  u8 rare = item->flags & 4;
+  s32 all = 0;
   s32 total;
   s32 message;
   s32 i;
 
-  asm volatile("");
-  itemId = 0x1ff;
-  itemId &= raw;
-  item = Item_Get(itemId);
-  rare = item->flags & 4;
-  all = 0;
   if (count == -1) {
     all = 1;
     count = 1;

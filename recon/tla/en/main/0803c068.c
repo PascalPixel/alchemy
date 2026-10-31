@@ -1,15 +1,20 @@
-// Draft, differ 8 of 119 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
+// Near miss, differ 2 of 119 (tla-en, 2026-10-31): one instruction, the
+// glyph spacing's spill (str r3, [sp]), comes after the line spacing's
+// constant (lsls, adds r2) instead of between its first two instructions.
+// sched2 ranks the constant at priority 40 and the spill at 38, both chains
+// ending at the call through the line spacing's load, so the spill can only
+// follow; scheduler order. Tried at 2: the Broken Seal's declaration order
+// and tiles declared after the spacings (same); spacingY read first (14);
+// both spacings u16 (53), s32 (21), spacingY s32 (19), spacingX s32 (4);
+// the permuter, 4 minutes (nothing better).
+// Earlier, at 8 of 119 under -mthumb-slow-loads (2026-10-26): no single
+// empty asm, one-pass block, wrapping block or swap of neighbouring
+// statements brought it closer, nor any pair of empty asm statements or
 // one-pass blocks (device search).
-// Draft, differ 12 of 119: draws one text glyph as a 16x16 sprite carried by
-// the window, as the sprite branch of ☀️ Glyph_Draw
-// (games/tbs/src/window/window.c) with no text style animation and sentinel
-// 253. Left: instruction order only, in three places: the y argument's spill
-// against the frame's first stores, the line spacing's constant built before
-// the glyph spacing's spill, and the sprite cell pointer (output + 16) set
-// up after the tile store instead of before it. Tried: the cell pointer
-// taken before the tile store (same).
+// Draws one text glyph as a 16x16 sprite carried by the window, as the
+// sprite branch of ☀️ Glyph_Draw (games/tbs/src/window/window/sprites.c)
+// with no text style animation and sentinel 253. Tried at 12: the cell
+// pointer taken before the tile store (same).
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"

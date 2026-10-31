@@ -1,9 +1,8 @@
-// Near miss, differ 10 of 75 (16 before the cell was written as byte
-// offsets from u8 tables, as Actor_GetTriggerCellAheadOfCurrent's draft
-// 080cc54c is): the native starts the 0x100000 radius (movs r0, #128)
-// before it copies y, and outside the world map builds the cell table's
-// offset (movs #156) in r0 where agscc takes r1; reading x before the cell
-// table changes nothing.
+// Matches: differ 0 of 75 (tla-en, 2026-10-31). The world map reads its cell
+// table at its fixed address (Ram_MapBlocks), as the twin draft 080cc54c
+// (Actor_GetTriggerCellAheadOfCurrent) does: the constant's reload turns
+// reload's register rotation so the map cells offset (movs #156) takes r0 as
+// in the native; as the symbol gMapBlocks it took r1 and differed 6.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -16,8 +15,6 @@ struct DisplayBlock {
   u8 unk18c[0x40];
   u8 *object;
 };
-
-extern u8 gMapBlocks[];
 
 struct Actor *Func_080cb8e8(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
@@ -40,7 +37,7 @@ s32 Func_080cb09c(void) {
 
     x = position[0];
     z = position[2];
-    cell = gMapBlocks +
+    cell = Ram_MapBlocks +
            ((((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)) << 2);
   } else {
     s32 x, z;

@@ -1,10 +1,14 @@
-// Near miss, differ 52 of 1355 (2026-10-26): the item menu's command loop (use,
-// give, drop, equip, swap, trade, remove), the twin of The Broken Seal's
-// ItemMenu_RunCommands (games/tbs/src/menu/menu/item.c), with The Lost Age's
-// work layout (Ram_HeapSlots->menuRuntime), its calls and its own steps. Left:
-// the trade's restoring copies rebuild their 0x14c size for each call (the
-// native keeps IwramCopyWords in r5, not the size), and instruction order in
-// the argument setups (the message number after the window height). Its
+// Near miss, differ 34 of 1355 (tla-en, 2026-10-31): the item menu's command
+// loop (use, give, drop, equip, swap, trade, remove), the twin of The Broken
+// Seal's ItemMenu_RunCommands (games/tbs/src/menu/menu/item.c), with The Lost
+// Age's work layout (Ram_HeapSlots->menuRuntime), its calls and its own steps.
+// The trade's allocations and copies share one size variable, which lets the
+// restoring copies rebuild 0x14c for each call as the native does (48 differ
+// with the literal at each call). Left: only instruction order, each
+// difference the same instruction a few slots off: the menu load at entry, the
+// message loads against the constant arguments, the owner byte loads, the
+// icon's x store and the snapshot's IwramCopyWords load. The volatile on
+// selectedItemIcon (69 differ without it) still needs its evidence. Its
 // messages are numbered here (Msg04103 ...), their names in The Broken Seal
 // beside them; they need names in the catalogs before it links.
 #include "heap_release.h"
@@ -102,6 +106,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   u8 movedSource;
   u8 movedTarget;
   s8 stack;
+  s32 size;
 
   done = 0;
   selection = 0;
@@ -319,8 +324,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
         stack = (menu->selectedItem >> 11) + 1;
         if (aborted == 0) {
-          /* FAKEMATCH: the loop only places a label between the
-             count and its sign-extended use. */
+          /* FAKEMATCH(one-pass): the loop only places a label between the
+             count and its sign-extended use; as a plain assignment, 104 of
+             1355 instructions differ in tla-en. */
           do {
             amount = stack;
           } while (0);
@@ -412,10 +418,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       source = Unit_GetFar(menu->itemOwner);
       target = Unit_GetFar(menu->targetOwner);
-      sourceCopy = Heap_Alloc(0x14c);
-      targetCopy = Heap_Alloc(0x14c);
-      Iwram_CopyWords(sourceCopy, source, 0x14c);
-      Iwram_CopyWords(targetCopy, target, 0x14c);
+      size = BATTLE_UNIT_SIZE;
+      sourceCopy = Heap_Alloc(size);
+      targetCopy = Heap_Alloc(size);
+      Iwram_CopyWords(sourceCopy, source, size);
+      Iwram_CopyWords(targetCopy, target, size);
       movedSource = 0;
       while (movedSource <= 29) {
         result = Inventory_RemoveFar(menu->itemOwner, menu->selectedSlot);
@@ -470,8 +477,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       wait(1);
       if (aborted == 1) {
-        Iwram_CopyWords(source, sourceCopy, 0x14c);
-        Iwram_CopyWords(target, targetCopy, 0x14c);
+        Iwram_CopyWords(source, sourceCopy, size);
+        Iwram_CopyWords(target, targetCopy, size);
         WindowSprite_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage((s32)&Msg04277, 15, 14);
       } else {

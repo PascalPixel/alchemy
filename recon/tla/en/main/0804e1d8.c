@@ -1,3 +1,11 @@
+// Near miss, differ 10 of 238 (tla-en, 2026-10-31): scheduler order only.
+// In sched2 each decrement's -1 (movs #1; negs; add) outranks redraw's reload
+// and spill store, priority 3 against 2; at entry redraw's store ties the
+// zero's reload (priority 7, class 3, five dependents each) and loses on
+// insn order. The listing stores redraw first in all three places. redraw as
+// u8, u16, s8, s16 or u32 changes nothing; set before the zeros, its reload
+// takes r2 and the zero r3 (differ 20); a 4-minute permute found nothing
+// under 10.
 // Under -mthumb-slow-loads (2026-10-26): differ 10 of 238 in tla-en,
 // instruction order only. An empty asm before the loop lowers it to 8. Written
 // with redraw set first, the decrements' -1 comes from the mask's 32 (subs r2,

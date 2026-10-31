@@ -1,12 +1,17 @@
+// Near miss, differ 4 of 110 (tla-en, 2026-10-31): sched2 places movs r2, #100
+// and muls one step early; the multiply's cost 4 decides it (scheduler order).
 // Under -mthumb-slow-loads (2026-10-26): differ 4 of 110 in tla-en, instruction
 // order only. No empty asm before any one statement lowers it.
 // Near miss, differ 4 of 110: The Broken Seal twin (BattleEffect_UpdateStormFlash).
 // After the second Random16 the native interleaves the two products as a*3,
 // 100, <<3, muls, +a, <<4 (movs r2, #100 one step later and muls one step later
 // than here). In sched2 the multiply has cost 4, which gives the 100 priority
-// 15, level with the first shift; the native order is what a multiply cost of 3
-// would give. Signed operands are the same differ 4; a barrier after a*25
-// changes the allocation of the offset constants (differ 58).
+// 16, level with the first shift and above a*3 (15); the native order is what
+// a multiply cost of 3 would give (100 at 15, muls at 14, ties broken by
+// luid). Signed operands are the same differ 4; a barrier after a*25
+// changes the allocation of the offset constants (differ 58). The same
+// differ 4: a + 150 - b, the sum through a temporary. A 4-minute permuter run
+// (13,560 candidates) found nothing better.
 #include "types.h"
 #include "battle.h"
 #include "graphics.h"

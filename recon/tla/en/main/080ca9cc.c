@@ -1,5 +1,16 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 4 of 43 in tla-en, instruction
-// order only. Read through the constant address (FIXED_ADDRESS((u8 *),
+// Near miss, differ 4 of 43 (tla-en, 2026-10-31): sched2 order only. Both key
+// loads are zero-extended ldrb's straight after a store to the cursor's slot.
+// The native waits a cycle before each one (adds r6, r1 at the top, adds r3, #5
+// in the loop go first). Here sched2 readies the load one cycle after the
+// store (cost 1), because -mthumb-slow-loads' store rule skips extended loads.
+// A whole QImode load would wait, but only a sign-extending read gives one,
+// since a char local is promoted and loaded zero-extended: s32 key =
+// (s8)*cursor++ waits in the loop but becomes ldrsb at the top and drops the
+// per-compare asrs (differ 31). The FIXED_ADDRESS read with this loop's asm
+// and no top barrier: differ 6. Every loop shape tried (while with the read
+// in the condition, for (;;) with break, a for with the step, key =
+// *(cursor += 4)) measures the same as the plain form, symbol or constant.
+// Read through the constant address (FIXED_ADDRESS((u8 *),
 // 0x0202e008, gData_0202e008), as the Ram_ buffers are), plain `key = *cursor;
 // cursor++;` keeps both of the cursor's stores with no device: differ 8 of 43,
 // the two key loads one slot early.

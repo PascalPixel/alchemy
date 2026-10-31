@@ -1,3 +1,5 @@
+// Near miss, differ 10 of 409 (tla-en, 2026-10-31): four single-row orders
+// set by sched2's costs, the instructions and registers otherwise the native's.
 // Draft of BattleEffect_RunSpire, effect kind 2: shattering rocks.
 
 // On screen: boulders drop out of the sky onto the targets, one after
@@ -47,6 +49,22 @@
 // store-then-load scheduling limit); barriers and one-pass blocks at each
 // statement, statement moves and each local scoped to a block gain only
 // the prologue's row or rows of that kind.
+
+// 2026-10-31: differ 10 of 409, the same draft. The sched2 dump (--rtl)
+// shows each remaining row is a cost this compiler gives that the native's
+// did not:
+// - rocks' reload right after its spill: a stack load is queued 2 cycles
+//   behind the store, so i = 0's movs r2, #0 (ready, nothing else is) goes
+//   between; the native reloads first.
+// - Data_081985ab[rocks - 1] after the [sp, #12] spill: here the load
+//   follows the store at cost 1; the native puts movs r4, #65 between.
+// - the Data_081985ab reload closing the crash block: here it has no
+//   dependence on the shakeFrames store and outranks its address (priority
+//   3 to 2); the native issues it after the store.
+// - the i * 4 spill before j = 0: movs r0, #0 ties lsls at priority 2 and
+//   wins by RTL order, and outranks the spill; no RTL order gives the
+//   native's lsls, str, movs, mov under these costs.
+// alchemy permute, 4 minutes (8,500 candidates): nothing below 10.
 
 #include "types.h"
 #include "ram_buffer.h"

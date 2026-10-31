@@ -1,13 +1,32 @@
-// Draft of overlay 698's Func_020014dc, in 18 overlays of the 698 family:
-// differ 16 of 131. The leader's cell copied with sound 229, the party walks
-// off it shrinking while REG_WINOUT shows the sprite window, then the screen
-// transition. The frame count is the column variable set to 0 just before
-// its loop and counted after the wait, which gives the leader r6 and the count
-// r7 as the native has them (54 with the count set before the stores). Left:
-// gMainRoutineWork's base and its offset take each other's registers when the
-// owner's address is first built, and the table is copied out of r8 before
-// the last flag store. Tried: the owner's address in a local (66), the
-// declarations split from their initialisers, permute 6 minutes.
+// Near miss, differ 12 of 131 (tla-en, 2026-10-31): the base of
+// gMainRoutineWork.currentOwner's address takes r3 where the native leaves it
+// unallocated. Draft of overlay 698's Func_020014dc, in 18 overlays of the 698
+// family. The leader's cell copied with sound 229, the party walks off it
+// shrinking while REG_WINOUT shows the sprite window, then the screen
+// transition. The frame count is the column variable set to 0 by its loop
+// and counted after the wait, which gives the leader r6 and the count r7 as
+// the native has them (54 with the count set before the stores, 67 with a
+// separate counter); as a for loop, a while loop or a goto loop it measures
+// the same. Left (8 + 4): global.c ranks the base's pseudo (2 refs, live
+// length 2 doubled by its constant REG_EQUIV) below the leader's (17 refs over
+// 79 insns), so after the leader takes r6 from local-alloc's base-and-address
+// pair the base is allocated again and gets r3; left unallocated (checked by
+// skipping its allocation in the compiler under a debugger), reload builds it
+// in r1 with the offset in r2 and the table's copy for table->x moves after
+// the column shift, exactly as the native. Unknown: what C makes the base
+// rank first or the leader rank below it. Tried without change: Actor_GetById
+// taking u32 or int (s16 51, u16 30, u8 22), the declarations split or
+// reordered in five orders, register on each local, the column expressions
+// split or commuted (80 commuted), one or three parameters, the window write
+// as a block (18) or plain (36), gMainRoutineWork through a local pointer
+// (44), the owner's address in a local (66). The last flag store needs the
+// one-pass block below: the native orders the actor's byte store before
+// copying the table out of r8, as when the two stores may alias; tried
+// without it: shown as u16 or volatile (46), stored through an s16 pointer,
+// the chained assignment either way round (16, 20), after the event work
+// store (20), the actor in a local (16), a zero temporary (36), the byte
+// through a u8 pointer (21, the order right but its zero loaded again).
+// Permuter 8 minutes: only the one-pass block (12).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -59,18 +78,22 @@ void Func_020014dc(struct CellTarget *table, struct CellTargetEntry *entry) {
   table->shown = 1;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(16);
-  x = 0;
-  do {
+  for (x = 0; x < 40; x++) {
     if (x == 5)
       Func_02001b44(204);
     leader->scaleX += -0x400;
     leader->scaleY += -0x300;
     leader->y += -0x9999;
     wait(1);
-    x++;
-  } while (x <= 39);
+  }
   Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
-  table->shown = 0;
+  do {
+    /* FAKEMATCH(one-pass): the flag cleared behind a loop-end note, so the
+     * table is copied out of r8 after the actor's byte store, as in the
+     * native; as table->shown = 0, 16 of 131 instructions differ in
+     * tla-en. */
+    table->shown = 0;
+  } while (0);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

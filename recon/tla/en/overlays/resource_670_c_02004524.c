@@ -1,13 +1,15 @@
-// 26 October 2026, under -mthumb-slow-loads: differ 6 of 65: the native issues
-// a load one slot later after a store, where alchemy-gcc issues it at once (an
-// empty asm after the motion flags store leaves 4); alchemy permute (5 to 6
-// minutes) and an empty asm or one-pass block after any one statement do not
-// move it.
-// near miss: differ 6 (listing 65 instructions, draft 65); scheduling after
-// Func_02005bbc: the native loads the owner's address (ldr r5) between the
-// zero's offset and its store; the task add now goes through KIBOMBO_TASK_ADD
-// (was differ 8). Tried: an empty asm after the store (differ 4, but it swaps
-// the camera call's negs), a one-pass block (6), a u8 zero (8)
+// Near miss, differ 4 of 65 (tla-en, 2026-10-31): sched2 order after
+// Func_02005bbc. The native issues movs r3, adds r0, ldr r5, strb, movs r1;
+// alchemy-gcc issues ldr r5 first and movs r1 before the strb. Its sched2
+// priorities (pool load 18; zero, offset and movs r1 17; strb 16) give the
+// native order only if the strb costs 3 rather than 2 before the owner load
+// (its priority 17, the tie then broken by dependents): a cost the C cannot
+// move. A local for the returned object (4) and a pointer local for
+// currentOwner (7) do not move it.
+// Earlier (26 October 2026, then measured as differ 6 or 8): alchemy permute
+// (5 to 6 minutes) did not move it; tried an empty asm after the store (it
+// swaps the camera call's negs), a one-pass block, a u8 zero; the task add
+// goes through KIBOMBO_TASK_ADD.
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 extern const u8 gData_0200613c[];

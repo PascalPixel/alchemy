@@ -1,11 +1,17 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 6 of
-// 320: the canvas spill before movs r0, #0, movs r4, #0 after the REG_BG2X
-// store and mov r9, r4 after the stores to sp+12 and sp+8, each a store the
-// native issues one row earlier. A greedy search over an empty asm after, or
-// a one-pass block around, each statement, and six permuter minutes: nothing
-// lower.
-// Draft, differ 10 of 320: BattleEffect_RunUndeadSword, effect kind 320, The Broken Seal's
+// Near miss, differ 4 of 320 (tla-en, 2026-10-31): two rows sched2 orders
+// differently. movs r4, #0 (the reload for i = 0, priority 2 through mov r8,
+// r4) goes before the REG_BG2X store (priority 1), which the native issues
+// first; and mov r9, r4 (frame = 0) wins its priority-1 tie with the stores to
+// sp+12 and sp+8 by RTL order, frame's init preceding the &draw and frame * 6
+// set-up loop.c places before the loop, where the native issues it after both.
+// Unmoved (differ): the spark loop as a do-while (4), frame = 0 before the
+// shake or the frame loop as a do-while (4), the spark pointer set before its
+// loop (6), frame * 6 as its own variable (20); permute 4 minutes, 2 jobs: no
+// candidate beat it.
+// BattleEffect_RunUndeadSword, effect kind 320, The Broken Seal's
 // BattleEffect_RunUndeadSword.
+// 2026-10-25: a greedy search over an empty asm after, or a one-pass block
+// around, each statement, and six permuter minutes: nothing lower.
 
 // Twin: ☀️ BattleEffect_RunUndeadSword (games/tbs/src/effect/effect.c), ported:
 // the heap blocks read from Ram_HeapSlots, the effect kept as the argument (the
@@ -18,12 +24,6 @@
 // one-pass block loads from the pool before the register address is started and
 // keeps the first pool where the native has it (an empty asm there moves the
 // pool 4 bytes early; differ 26 as a plain store).
-
-// Left, five reordered rows: the canvas spill (str r4, [sp, #16]) before
-// movs r0, #0 (here the spill is anti-dependent on the work's load, so the
-// argument wins its tie); movs r4, #0 after the REG_BG2X store; mov r9, r4
-// after the stores to sp+12 and sp+8; and the frame * 6 reload (ldr from sp+8)
-// before movs r3, #136 and before movs r2, #1.
 
 // Tried (differ): the three heap reads in each order (20 to 102), const heap
 // reads (22, 99), a one-pass block or an empty asm around the REG_BG2X store

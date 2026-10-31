@@ -1,16 +1,18 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 8 of 138 in tla-en, instruction
-// order and register choice. No empty asm before any one statement lowers it.
-// Near miss, differ 8 of 138: ☀️'s Actor_GetTriggerCellAheadOfCurrent
-// (far stub Actor_GetTriggerTileAheadOfCurrentFar in table_26), with ⚓️'s
-// leader lookup Func_080cb8e8, a 16-pixel height window, the search event
-// test Func_080ccd78(3, code) and, on the world map with ownerOverride set,
-// 99 where the world map collision is 3. The one-pass block (FAKEMATCH on
-// adoption) loads gMainRoutineWork before ownerOverride's offset (differ 10
-// without it). Left: the native sets the probe argument (adds r2, r5)
-// before loading the angle (ldrh r1), where sched2 ties them at priority 7
-// and takes RTL order; and outside the world map it builds the cells
-// offset in r0 where agscc takes r2 (z and cells read first, or z kept in
-// a function-wide local, differ 24 or 8; a struct copy of the position 79).
+// Near miss, differ 2 of 138 (tla-en, 2026-10-31): the native sets the probe
+// argument (adds r2, r5) before loading the angle (ldrh r1); sched2 ties them
+// (same priority, both independent of the last store, two dependents each)
+// and takes RTL order, where the call's arguments load r0, r1, r2 in turn.
+// No u16, s32 or void * prototype, angle local or position pointer moves it.
+// ☀️'s Actor_GetTriggerCellAheadOfCurrent (far stub
+// Actor_GetTriggerTileAheadOfCurrentFar in table_26), with ⚓️'s leader lookup
+// Func_080cb8e8, a 16-pixel height window, the search event test
+// Func_080ccd78(3, code) and, on the world map with ownerOverride set, 99
+// where the world map collision is 3. The world map reads its cell table at
+// its fixed address (Ram_MapBlocks): the constant's reload turns reload's
+// register rotation so the map cells offset takes r0 as in the native (as the
+// symbol gMapBlocks, r2 and differ 8). With it the one-pass block before
+// ownerOverride is no longer needed. The twin's cells local, or the
+// positions read inline, differ 29 and 21.
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -34,8 +36,6 @@ struct Object {
   u8 kind;
 };
 
-extern u8 gMapBlocks[];
-
 struct Object *Func_080cb8e8(void);
 void Vector_AddPolarOffset(s32 distance, u32 angle, s32 *position);
 s32 Map_GetTerrainHeightFar(s32 kind, s32 x, s32 z);
@@ -48,7 +48,6 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct Object *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
-  u8 *cells;
   s32 collisionCode;
   s32 terrainHeight;
   s32 result;
@@ -67,7 +66,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
       x = probePosition.vector.x;
       z = probePosition.vector.z;
-      cell = gMapBlocks +
+      cell = Ram_MapBlocks +
              ((((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)) << 2);
     } else {
       s32 x, z;
@@ -89,11 +88,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
       result = collisionCode;
     }
     if (result == 0 && (s8)workBytes[0x18a] == 3) {
-      struct MainRoutineWork *party = &gMainRoutineWork;
-
-      do {
-      } while (0);
-      if (party->ownerOverride != 0 &&
+      if (gMainRoutineWork.ownerOverride != 0 &&
           GetWorldMapCollisionFar(probePosition.coordinates) == 3)
         result = 99;
     }

@@ -1,3 +1,12 @@
+// Near miss, differ 6 of 82 (tla-en, 2026-10-31): the native forms the view's
+// address twice (mov r1, sp for the transform, mov r6, sp after it); here CSE
+// merges both into one copy, as nothing in plain C ends its block between
+// them. An operand barrier after the call (__asm__ volatile("" :)) flushes
+// CSE and gives both native forms, still 6: sched2 then puts adds r7, r1
+// before the transform's address and the projection's load before view.z
+// (ties at priority 10 and 7). Under that barrier, depth before projection:
+// 12 (projection to r8); projection read straight from the global, no
+// barrier: 43; projection set before the call: 37.
 // Draft, differ 6 of 82 in tla-en under -mthumb-slow-loads (2026-10-26). No
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer, nor any pair of empty asm statements or

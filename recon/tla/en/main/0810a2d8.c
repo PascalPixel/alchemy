@@ -1,22 +1,24 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 8 of 170 in tla-en. The native spills its arguments to the stack before it
-// builds the heap slots' address; this builds the address first (row 8). An
-// empty asm after `equipped = Inventory_FindEquippedFar(unitId, item->type);`
-// measured 6. No single empty asm or one-pass block reaches 0.
-// Near miss, differ 8 of 170 (2026-10-19; was 10):
-// the shop repairs a unit's damaged item at slot
-// (refusing other kinds, undamaged items, cursed equipped items and a price
-// over the party's coins), then offers to equip it. ☀️'s Shop_RepairItem in
-// games/tbs/src/shop/shop.c, rewritten with ⚓️'s calls (Unit_Get,
-// Shop_GetItemPrice, MessageArgument_PushFar, the shop message and choice routines
-// Func_0810857c and Func_08108630, Inventory_RepairFar, Func_08109188 for the
-// coins) and numbered messages, their ☀️ names beside them. Instruction order
-// only, the same pattern as Shop_SellItem (0810a108): the work pointer's
-// address build against the frame setup, the slot offset's copy and the 0x1ff
-// mask's first move, and one register copy against the equipped slot's spill.
-// buy.c's barrier before the 0x1ff mask now orders the mask (10 to 8); a
-// barrier ahead of the work's load puts its build after sub sp as native but
-// swaps r5 and r6 and two spill slots (differ 20).
+// Near miss, differ 4 of 170 (tla-en, 2026-10-31): sched2 order only, two
+// pairs. The native spills the slot argument (str r1) before it builds the
+// heap slots' address; in sched2 the address chain (movs, lsls, adds, then the
+// load) has priority 151 against the spill's 150, so its movs goes first, the
+// same swap as Shop_SellItem (0810a108). After Inventory_FindEquippedFar the
+// native spills the equipped slot (str r0) before it copies the unit pointer
+// for the price's halfword load (mov r3, r8); both have priority 35, and
+// sched2 prefers the copy, which depends on the call only through r3's
+// clobber, over the spill that waits on the call's result. Reading the item id
+// as ☀️ does (inventory[slot] & 0x1ff in its initializer) orders the slot
+// offset's copy and the 0x1ff mask with no barrier (6 to 4; the earlier draft
+// kept an untagged empty asm before the mask). Prototype variants for
+// Shop_GetItemPrice (u16, unprototyped) change nothing, and a 4-minute
+// permuter run found nothing better (2026-10-31).
+// The shop repairs a unit's damaged item at slot (refusing other kinds,
+// undamaged items, cursed equipped items and a price over the party's coins),
+// then offers to equip it. ☀️'s Shop_RepairItem in
+// games/tbs/src/shop/shop/repair.c, rewritten with ⚓️'s calls (Unit_Get,
+// Shop_GetItemPrice, MessageArgument_PushFar, the shop message and choice
+// routines Func_0810857c and Func_08108630, Inventory_RepairFar, Func_08109188
+// for the coins) and numbered messages, their ☀️ names beside them.
 #include "main_routine_work.h"
 #include "battle_system.h"
 #include "battle_unit.h"
@@ -36,8 +38,8 @@ extern u8 Msg04718[]; // MsgNotEnoughMoney
 extern u8 Msg04719[]; // MsgShopRepairConfirm, then its three replies
 
 struct BattleUnit *Unit_Get(s32 unitId);
-s32 Inventory_FindEquippedFar(s32 unitId, u8 kind);
-u32 Shop_GetItemPrice(s32 item);
+s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
+s32 Shop_GetItemPrice(s32 item);
 void MessageArgument_PushFar(s32 value, s32 slot);
 void Func_0810857c(s32 message);
 s32 Func_08108630(s32 value);
@@ -45,30 +47,23 @@ void Message_CloseFinishedWindowsFar(void);
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void Inventory_RepairFar(s32 unitId, s32 slot);
-void Party_AdjustCoinsFar(s32 amount);
+s32 Party_AdjustCoinsFar(s32 amount);
 void Func_08109188(void);
 void Shop_DrawItemCount(s32 window, s32 unitId);
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
-void Shop_SellOld(s32 unitId, s32 slot);
+s32 Shop_SellOld(s32 unitId, s32 slot);
 
 void Func_0810a2d8(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
-  u32 raw = unit->inventory[slot];
-  s32 itemId;
-  struct ItemDefinition *item;
-  s32 equipped;
-  u32 price;
+  s32 itemId = unit->inventory[slot] & 0x1ff;
+  struct ItemDefinition *item = Item_Get(itemId);
+  s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
+  u32 price = Shop_GetItemPrice(unit->inventory[slot]);
   s32 message;
   u8 kind;
   u32 saved;
 
-  asm volatile("");
-  itemId = 0x1ff;
-  itemId &= raw;
-  item = Item_Get(itemId);
-  equipped = Inventory_FindEquippedFar(unitId, item->type);
-  price = Shop_GetItemPrice(unit->inventory[slot]);
   kind = item->useType;
   if (kind != 2) {
     MessageArgument_PushFar(itemId, 2);

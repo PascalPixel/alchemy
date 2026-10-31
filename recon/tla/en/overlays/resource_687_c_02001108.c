@@ -1,217 +1,162 @@
-// Draft, differ 376 of 350: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
-#include "actor.h"
+// Near miss, differ 269 of 350 (tla-en, 2026-10-31): the control flow, calls,
+// frame (the fill word at sp+98 above the two effect options at sp+56 and
+// sp+16) and data accesses now follow the listing; what is left is loop
+// motion and allocation. In the fade, the native keeps gData_020026c0 in r11
+// from the outer loop's body and rematerializes the shifted-field mask 31
+// from the pool inside the inner loop; here the mask is hoisted out of both
+// loops into r9 and the table address is reloaded inside instead. The native
+// also keeps each colour component sign-extended (lsls/asrs) at its stores,
+// where GCSE here moves the join's zero-extension into the branches and
+// combine drops the asrs. The spark and shower loops are goto loops because
+// the native moves nothing out of them; the shower's options address is
+// still hoisted here by GCSE. The rest is reload's choice of low registers
+// for the counter in r8. Destined for scene/sea_of_time.
+#include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 #include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
-#include "types.h"
+#include "io_reg.h"
+#include "call.h"
+#include "scene_ids.h"
+#include "scene_tables.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+/// The 14 colours of background palette 3 (entries 1 to 14) that the fade
+/// returns to, copied from palette RAM by Func_02001cdc.
+extern u16 gData_020026c0[];
 
-extern u8 gData_020026c0[];
-extern u8 Func_020010a8[];
-void Func_02001fac();
-void Func_02002044();
-void GameFlag_SetBit();
-void Actor_SetSpeedParameters();
-s32 Actor_GetById();
-void Actor_ResetAndSetPositionInMode2();
-void Func_02001fec();
-void Camera_MoveWithinMapBounds();
-void Func_02001ffc();
-void Actor_WaitForMoveById();
-void Func_02002054();
-void Func_02001f74();
-void wait();
-void FieldEvent_Wait();
-s32 Random16Far();
-void Func_0200015c();
-s32 Import_ActorCreate();
-void Func_02001f4c();
-void Party_SetFields1eeAnd1f0();
-s32 Func_0200200c();
-s32 Func_02001fb4();
+void Func_020010a8(struct SeaOfTimeObject *object);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_WaitForMoveById(s32 id);
+void Func_02001f74(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02001f4c(struct SeaOfTimeObject *object, s32 value);
+void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
+void Func_0200200c(s32 a, s32 b);
+void wait(s32 frames);
 
-s32 Func_02001108(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 v0, v1, r4, r8, r11, r9, r10, r5, r6, r7, r1, r0, r2, r3, ip, v2, v3, v4,
-      v5, v6, v7, v8, lr;
-  s32 stack[25];
+void Func_02001108(void) {
+  volatile u16 fill;
+  struct SeaOfTimeSpark burst;
+  struct SeaOfTimeSpark rain;
+  struct SeaOfTimeObject *object;
+  s32 changed;
+  u32 i;
 
-  /* sub (s32)stack, #100 */
   Func_02001fac();
-  Call1((void (*)())Func_02002044, 0);
-  Call1((void (*)())GameFlag_SetBit, 0x8dd);
+  Func_02002044(0);
+  GameFlag_SetBit(0x8dd);
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
-  v0 = Actor_GetById(8);
-  FIELD_AT(v0, u16, 6) = 0xc000;
-  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 0x160, 0x108);
-  Call2((void (*)())Func_02001fec, 0x10000, 0x2000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, 0x1600000, -1, 0xc40000, 1);
+  Actor_GetById(8)->facing = FACING_NORTH;
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 352, 264);
+  Func_02001fec(0x10000, 0x2000);
+  Camera_MoveWithinMapBounds(352 << 16, -1, 196 << 16, 1);
   Func_02001ffc();
-  Call1((void (*)())Actor_WaitForMoveById, 8);
-  Call1((void (*)())Func_02002054, 78);
-  Call1((void (*)())Func_02002054, 0x22c);
-  FIELD_AT((s32)((u8 *)stack + 98), u16, 0) = 23755;
-  /* stmia r3!, {r0, r1, r2} */
-  Call6((void (*)())Func_02001f74, 49, 70, 19, 73, 6, 6);
-  goto L_020091c0;
-L_020091c0:
-  Call1((void (*)())wait, 10);
-  r4 = 160;
-  r4 = r4 << 19;
-  r4 = r4 + 98;
-  r8 = 1;
-  r11 = (s32)gData_020026c0;
-  r9 = 0;
-  r10 = r4;
-L_020091dc:
-  r4 = 31;
-  r5 = r4;
-  r5 = r5 & (FIELD_AT(r10, u16, 0));
-  r6 = (u32)((*(s16 *)(r9 + r11)) << 16) >> 21;
-  r7 = (u32)((*(s16 *)(r9 + r11)) << 16) >> 26;
-  r6 = r6 & (31);
-  r7 = r7 & (31);
-  r1 = ((u32)((FIELD_AT(r10, u16, 0)) << 16) >> 21) & (31);
-  r0 = ((u32)((FIELD_AT(r10, u16, 0)) << 16) >> 26) & (31);
-  r2 = ((u32)((*(s16 *)(r9 + r11)) << 16) >> 16) & r4;
-  r3 = r5;
-  if ((u32)r5 >= (u32)(((u32)((*(s16 *)(r9 + r11)) << 16) >> 16) & r4))
-    goto L_0200921c;
-  r5 = r3 + 1;
-  goto L_0200921c;
-L_0200921c:
-  r3 = (u32)(r5 << 16) >> 16;
-  if ((u32)((u32)(r5 << 16) >> 16) > (u32)r2) {
-    r4 = 255;
-    r4 = r4 << 8;
-    r4 = r4 + 255;
-    r5 = ((r3 + r4) << 16) >> 16;
+  Actor_WaitForMoveById(8);
+  Func_02002054(78);
+  Func_02002054(556);
+  // Fills palette 3's entries 1 to 14 with one colour.
+  fill = RGB(11, 6, 23);
+  Dma_Set((const void *)&fill, (void *)&BG_PLTT_COLOR(3, 1),
+          (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 14, REG_DMA3);
+  Func_02001f74(49, 70, 19, 73, 6, 6);
+  // Steps each colour's red, green and blue by one toward the saved palette
+  // every 10 frames until none changes. As a goto loop the palette pointer
+  // loses the strength reduction the native shows (differ 265).
+  do {
+    wait(10);
+    changed = 0;
+    for (i = 1; i != 15; i++) {
+      u16 color = BG_PLTT_COLOR(3, i);
+      u16 target = gData_020026c0[i - 1];
+      u16 r = color & 31;
+      u16 g = (color >> 5) & 31;
+      u16 b = (color >> 10) & 31;
+      u16 tr = target & 31;
+      u16 tg = (target >> 5) & 31;
+      u16 tb = (target >> 10) & 31;
+
+      if (r < tr) {
+        r++;
+        changed = 1;
+      }
+      if (r > tr) {
+        r--;
+        changed = 1;
+      }
+      if (g < tg) {
+        g++;
+        changed = 1;
+      }
+      if (g > tg) {
+        g--;
+        changed = 1;
+      }
+      if (b < tb) {
+        b++;
+        changed = 1;
+      }
+      if (b > tb) {
+        b--;
+        changed = 1;
+      }
+      BG_PLTT_COLOR(3, i) = r | (g << 5) | (b << 10);
+    }
+  } while (changed);
+  FieldEvent_Wait(30);
+  // For 360 frames, spawns an effect every 16 frames, then every 8, then
+  // every other frame, and plays sound 164 every 64 frames. As a C loop,
+  // loop.c moves the mask, the palette and the options address out of it,
+  // which the native does not (differ 310).
+  i = 0;
+sparks:
+  if ((i & 63) == 0)
+    Func_02002054(164);
+  if (i < 120) {
+    if (i & 15)
+      goto next;
+  } else if (i < 240) {
+    if (i & 7)
+      goto next;
+  } else if (i & 1)
+    goto next;
+  {
+    s32 x = Random16Far();
+    s32 z = Random16Far();
+
+    burst.kind = 7;
+    Func_0200015c(((x & 31) << 16) + 0x1500000, 0, ((z & 31) << 16) + 0xb00000,
+                  0, 0, 0, 0x10000, &burst);
+    wait(1);
   }
-  ip = r6;
-  r3 = (u32)(r1 << 16) >> 16;
-  if ((u32)((u32)(r1 << 16) >> 16) < (u32)r6) {
-    r1 = ((r3 + 1) << 16) >> 16;
+next:
+  i++;
+  if (i != 360)
+    goto sparks;
+  // Then 16 larger effects, one a frame. As a C loop, loop.c also moves the
+  // mask and the options address out, which the native does not (differ 265).
+  i = 0;
+shower:
+  {
+    s32 x = Random16Far();
+    s32 z = Random16Far();
+
+    rain.scaleX = 0x18000;
+    rain.scaleY = 0x18000;
+    rain.kind = 7;
+    rain.mode = 1;
+    Func_0200015c(((x & 31) << 16) + 0x1500000, 0, ((z & 31) << 16) + 0xb00000,
+                  0, 0x10000, 0, 0xb0000, &rain);
+    wait(1);
   }
-  r3 = (u32)(r1 << 16) >> 16;
-  if ((u32)((u32)(r1 << 16) >> 16) > (u32)ip) {
-    r4 = 255;
-    r4 = r4 << 8;
-    r4 = r4 + 255;
-    r1 = ((r3 + r4) << 16) >> 16;
-  }
-  ip = r7;
-  r3 = (u32)(r0 << 16) >> 16;
-  if ((u32)((u32)(r0 << 16) >> 16) < (u32)r7) {
-    r0 = ((r3 + 1) << 16) >> 16;
-  }
-  r3 = (u32)(r0 << 16) >> 16;
-  if ((u32)((u32)(r0 << 16) >> 16) > (u32)ip) {
-    r4 = 255;
-    r4 = r4 << 8;
-    r4 = r4 + 255;
-    r0 = ((r3 + r4) << 16) >> 16;
-  }
-  r8 = r8 + 1;
-  r4 = 2;
-  FIELD_AT(r10, u16, 0) = ((u32)(r5 << 16) >> 16) |
-                          (((u32)(r0 << 16) >> 6) | ((u32)(r1 << 16) >> 11));
-  r10 = r10 + r4;
-  r9 = r9 + r4;
-  if (r8 != 15)
-    goto L_020091dc;
-  if (lr == 0)
-    goto L_020092b8;
-  goto L_020091c0;
-L_020092b8:
-  Call1((void (*)())FieldEvent_Wait, 30);
-  r4 = 0;
-  r8 = r4;
-L_020092c2:
-  r3 = 63 & r8;
-  if ((63 & r8) == 0) {
-    Call1((void (*)())Func_02002054, 164);
-  }
-  r2 = r8;
-  if ((u32)r8 > (u32)119)
-    goto L_020092e2;
-  if ((15 & r2) == 0)
-    goto L_020092fe;
-  goto L_02009344;
-L_020092e2:
-  if ((u32)r8 > (u32)239)
-    goto L_020092f4;
-  r4 = r8;
-  if ((7 & r4) == 0)
-    goto L_020092fe;
-  goto L_02009344;
-L_020092f4:
-  if ((1 & r8) != 0)
-    goto L_02009344;
-L_020092fe:
-  v2 = Random16Far();
-  r5 = v2;
-  v3 = Random16Far();
-  r6 = 31;
-  FIELD_AT((s32)((u8 *)stack + 56), s32, 4) = 7;
-  r5 = r5 & r6;
-  r5 = r5 << 16;
-  r5 = r5 + 22020096;
-  stack[0] = 0;
-  stack[1] = 0;
-  r4 = 176;
-  r4 = r4 << 16;
-  Func_0200015c(r5, 0, ((v3 & r6) << 16) + r4, 0, 0, 0, 0x10000,
-                (s32)((u8 *)stack + 56));
-  Call1((void (*)())wait, 1);
-L_02009344:
-  r8 = r8 + 1;
-  r2 = 0x168;
-  if (r8 != 0x168)
-    goto L_020092c2;
-  r8 = 0;
-L_02009354:
-  v4 = Random16Far();
-  r5 = v4;
-  v5 = Random16Far();
-  FIELD_AT((s32)((u8 *)stack + 16), s32, 8) = 0x18000;
-  FIELD_AT((s32)((u8 *)stack + 16), s32, 12) = 0x18000;
-  FIELD_AT((s32)((u8 *)stack + 16), s32, 4) = 7;
-  FIELD_AT((s32)((u8 *)stack + 16), s32, 0) = 1;
-  r6 = 31;
-  stack[0] = 0x10000;
-  r5 = r5 & r6;
-  r4 = 168;
-  r4 = r4 << 17;
-  stack[1] = 0;
-  r5 = r5 << 16;
-  r5 = r5 + r4;
-  Func_0200015c(r5, 0, ((v5 & r6) << 16) + 11534336, 0, 0x10000, 0, 0xb0000,
-                (s32)((u8 *)stack + 16));
-  Call1((void (*)())wait, 1);
-  r8 = r8 + 1;
-  if (r8 != 16)
-    goto L_02009354;
-  v6 = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
-  r5 = v6;
-  FIELD_AT(r5, s32, 108) = (s32)Func_020010a8;
-  Call1((void (*)())FieldEvent_Wait, 60);
-  Call2((void (*)())Func_02001f4c, r5, 1);
-  Call1((void (*)())FieldEvent_Wait, 40);
-  r4 = 166;
-  r4 = r4 << 1;
-  r4 = r4 + 255;
-  FIELD_AT((s32)(s32)&gMainRoutineWork + r4, u8, 0) = 2;
-  Call2((void (*)())Party_SetFields1eeAnd1f0, 198, 4);
-  v7 = Func_0200200c(12, 6);
-  v8 = Func_02001fb4();
-  /* add (s32)stack, #100 */
-  return v8;
+  i++;
+  if (i != 16)
+    goto shower;
+  object = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
+  // The object's per-frame hook, struct Actor's update.
+  *(void (**)(struct SeaOfTimeObject *))((u8 *)object + 0x6c) = Func_020010a8;
+  FieldEvent_Wait(60);
+  Func_02001f4c(object, 1);
+  FieldEvent_Wait(40);
+  gMainRoutineWork.battleRule24b = 2;
+  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov687Room2, 4);
+  Func_0200200c(12, 6);
+  Func_02001fb4();
 }

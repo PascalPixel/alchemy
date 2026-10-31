@@ -1,4 +1,20 @@
-// Draft, differ 694 of 629: builds a random board for the Gabomba floor puzzle
+// Near miss, differ 478 of 629 (tla-en, 2026-10-31): the control flow, calls,
+// arguments and loads are the native's; what is left is allocation. The
+// native keeps gSceneState in r11, row and z in r7, col and x in r8, failed
+// and n in r9, mode and cell in r10, left and tries on the stack; here row
+// takes r4 saved around every call, gSceneState r10, tries r11 and n the
+// stack, because gcse's PRE hoists gSceneState + 152 (the first fixed cell)
+// out of the retry loop into r9, where the native recomputes it each time.
+// Tried: the grid walks as for loops (loop.c strength-reduces the cell
+// address, 607); the retry as for (;;) with state reloaded at its top (the
+// hoist goes, but loop.c hoists the argument constants 1, 3 and 2, 592);
+// gSceneState used directly (reloaded at every use, 649); x and z shared
+// with col and row (516 to 570); failed and n as one variable (536).
+// The cells are read through struct PuzzleCell: the native loads the piece
+// as [state + index] and then adds state for the shape or mark, which a
+// u8 pointer expression does not give.
+//
+// Builds a random board for the Gabomba floor puzzle
 // in gSceneState's 8 by 11 grid of 4-byte cells (byte 0 the piece, byte 2
 // its channel shape, byte 3 marked to be drawn turned) from the seed after
 // the one given, kept at gSceneState + 0x160: it clears the grid, places
@@ -10,13 +26,30 @@
 // cells in use), marks plain pieces for whatever count is left, turns
 // each marked piece at random (Func_02004380) and draws every cell
 // (Func_0200566c). Returns the seed it used.
-// Left: a rough reading: the alignment is poor; the native keeps gSceneState in
-// r11, the cell's column and row in r8 and r7, the tries and the count left on
-// the stack, and rebuilds each loop's constants inside it as a goto loop would.
 #include "types.h"
 #include "iwram_call.h"
 
-extern u8 gSceneState[];
+struct PuzzleCell {
+  u8 piece;
+  u8 unk1;
+  u8 shape;
+  u8 marked;
+};
+
+struct SceneState {
+  struct PuzzleCell cells[88];
+  s32 count;
+  s16 firstId;
+  s16 endId;
+  u16 tileEntry;
+  s8 redrawA;
+  s8 redrawB;
+  s16 originX;
+  s16 originZ;
+  u8 unk170[0x80];
+};
+
+extern struct SceneState gSceneState;
 extern s32 gRandomState;
 u32 Random16Far(void);
 void Func_0200566c(s32 marked, s32 piece, s32 width, s32 height, s32 x, s32 z);
@@ -25,30 +58,33 @@ void Func_02004270(s32 x, s32 z, s32 a, s32 b);
 s32 Func_02003934(s32 col, s32 row);
 s32 Func_02004380(s32 col, s32 row, s32 turn);
 
-#define CELL(row, col) (gSceneState + ((row) * 11 + (col)) * 4)
-#define SEED (*(s32 *)(gSceneState + 0x160))
-
-s32 Func_02003a64(s32 seed) {
-  s32 row, col, failed, straight, corner, cross, tries, left, n, mode;
+s32 Func_02003a64(s32 value) {
+  struct SceneState *state = &gSceneState;
+  s32 row, col, x, z, failed, straight, corner, cross, tries, left, n, mode;
   u32 piece, shape;
-  u8 *cell;
+  struct PuzzleCell *cell;
 
-  SEED = seed - 1;
+  state->count = value - 1;
 retry:
-  gRandomState = ++SEED;
-  Iwram_ClearWords(gSceneState, 0x160);
-  gSceneState[152] = 10;
-  gSceneState[312] = 10;
-  gSceneState[344] = 10;
-  gSceneState[309] = 1;
-  gSceneState[317] = 1;
-  gSceneState[341] = 1;
-  gSceneState[349] = 1;
-  for (row = 0; row <= 7; row++)
-    for (col = 0; col <= 10; col++)
-      Func_0200566c(0, CELL(row, col)[0], 1, 1,
-                    *(s16 *)(gSceneState + 364) + col,
-                    *(s16 *)(gSceneState + 366) + row);
+  gRandomState = ++state->count;
+  Iwram_ClearWords(state, sizeof(state->cells));
+  state->cells[3 * 11 + 5].piece = 10;
+  state->cells[7 * 11 + 1].piece = 10;
+  state->cells[7 * 11 + 9].piece = 10;
+  state->cells[7 * 11 + 0].unk1 = 1;
+  state->cells[7 * 11 + 2].unk1 = 1;
+  state->cells[7 * 11 + 8].unk1 = 1;
+  state->cells[7 * 11 + 10].unk1 = 1;
+  row = 0;
+draw_row:
+  col = 0;
+draw_col:
+  Func_0200566c(0, state->cells[row * 11 + col].piece, 1, 1,
+                state->originX + col, state->originZ + row);
+  if (++col <= 10)
+    goto draw_col;
+  if (++row <= 7)
+    goto draw_row;
   failed = 0;
   if (Random16Far() < 0x8000) {
     failed = Func_02003fc0(2, 7, 5, 7, 4, 0, 3, 2);
@@ -65,22 +101,29 @@ retry:
   }
   if (failed != 0)
     goto retry;
-  if ((Func_02003fc0(0, 7, 5, 4, 19, 2, 3, 0) |
-       Func_02003fc0(10, 7, 6, 3, 17, 0, 2, 1)) != 0)
+  failed = Func_02003fc0(0, 7, 5, 4, 19, 2, 3, 0);
+  failed |= Func_02003fc0(10, 7, 6, 3, 17, 0, 2, 1);
+  if (failed != 0)
     goto retry;
-  straight = corner = cross = 0;
-  for (row = 0; row <= 7; row++) {
-    for (col = 0; col <= 10; col++) {
-      piece = CELL(row, col)[0];
-      shape = CELL(row, col)[2];
-      if (shape == 5)
-        straight++;
-      if (shape == 10)
-        corner++;
-      if (shape == 12 && piece - 8 <= 1)
-        cross++;
-    }
-  }
+  straight = 0;
+  corner = 0;
+  cross = 0;
+  row = 0;
+count_row:
+  col = 0;
+count_col:
+  piece = state->cells[row * 11 + col].piece;
+  shape = state->cells[row * 11 + col].shape;
+  if (shape == 5)
+    straight++;
+  if (shape == 10)
+    corner++;
+  if (shape == 12 && piece - 8 <= 1)
+    cross++;
+  if (++col <= 10)
+    goto count_col;
+  if (++row <= 7)
+    goto count_row;
   if (straight == 0)
     goto retry;
   if (corner == 0)
@@ -89,101 +132,123 @@ retry:
     goto retry;
   mode = (Random16Far() * 2) >> 16;
   left = 7;
-  for (tries = 1; tries <= 88; tries++) {
-    col = (Random16Far() * 11) >> 16;
-    row = ((Random16Far() * 3) >> 16) + 5;
-    if (Func_02003934(col, row) != 0)
-      continue;
-    if (CELL(row, col)[0] - 1 > 1)
-      continue;
-    shape = CELL(row, col)[2];
-    if ((mode == 0 && (shape & 6) != 0) || (mode == 1 && (shape & 9) != 0)) {
-      CELL(row, col)[0] = 10;
-      CELL(row, col)[3] = 1;
-      left = 6;
-      break;
-    }
-  }
-  for (n = 3; n >= 0; n--) {
-    for (tries = 1; tries <= 88; tries++) {
-      col = (Random16Far() * 11) >> 16;
-      row = (Random16Far() * 8) >> 16;
-      if (Func_02003934(col, row) != 0)
-        continue;
-      piece = CELL(row, col)[0];
-      if (piece != 3 && piece != 8 && piece != 9)
-        continue;
-      cell = CELL(row, col);
-      shape = cell[2];
-      if (shape == 6 || shape == 9)
-        continue;
-      switch (piece) {
-      case 3:
-        cell[0] = ((Random16Far() * 2) >> 16) + 1;
-        break;
-      case 8:
-        cell[0] = (((Random16Far() * 2) >> 16) << 1) + 4;
-        break;
-      case 9:
-        cell[0] = (((Random16Far() * 2) >> 16) << 1) + 5;
-        break;
-      }
-      CELL(row, col)[3] = 1;
-      left--;
-      break;
-    }
-  }
-  for (tries = 1; tries <= 88; tries++) {
-    col = (Random16Far() * 11) >> 16;
-    row = (Random16Far() * 8) >> 16;
-    if (Func_02003934(col, row) != 0)
-      continue;
-    piece = CELL(row, col)[0];
-    if (piece == 4 || piece == 6 || piece == 5 || piece == 7) {
-      CELL(row, col)[3] = 1;
-      left--;
-      break;
-    }
-  }
-  if (left > 0) {
-    for (n = left; n != 0; n--) {
-      for (tries = 1; tries <= 88; tries++) {
-        col = (Random16Far() * 11) >> 16;
-        row = (Random16Far() * 8) >> 16;
-        if (Func_02003934(col, row) != 0)
-          continue;
-        if (CELL(row, col)[0] - 1 <= 1) {
-          CELL(row, col)[3] = 1;
-          break;
-        }
+  tries = 1;
+start_try:
+  x = (Random16Far() * 11) >> 16;
+  z = ((Random16Far() * 3) >> 16) + 5;
+  if (Func_02003934(x, z) == 0) {
+    piece = state->cells[z * 11 + x].piece;
+    if (piece - 1 <= 1) {
+      shape = state->cells[z * 11 + x].shape;
+      if ((mode == 0 && (shape & 6) != 0) || (mode == 1 && (shape & 9) != 0)) {
+        state->cells[z * 11 + x].piece = 10;
+        state->cells[z * 11 + x].marked = 1;
+        left = 6;
+        goto start_done;
       }
     }
   }
-  for (row = 0; row <= 7; row++) {
-    for (col = 0; col <= 10; col++) {
-      piece = CELL(row, col)[0];
-      shape = CELL(row, col)[3];
-      if (shape != 0) {
-        switch ((Random16Far() * 8) >> 16) {
-        case 0:
-        case 1:
-        case 2:
-          piece = Func_02004380(col, row, 0);
-          break;
+  if (++tries <= 88)
+    goto start_try;
+start_done:
+  n = 3;
+corner_next:
+  tries = 1;
+corner_try:
+  x = (Random16Far() * 11) >> 16;
+  z = (Random16Far() * 8) >> 16;
+  if (Func_02003934(x, z) == 0) {
+    piece = state->cells[z * 11 + x].piece;
+    if (piece == 3 || piece == 8 || piece == 9) {
+      cell = &state->cells[z * 11 + x];
+      shape = cell->shape;
+      if (shape != 6 && shape != 9) {
+        switch (piece) {
         case 3:
-        case 4:
-        case 5:
-          piece = Func_02004380(col, row, 1);
+          cell->piece = ((Random16Far() * 2) >> 16) + 1;
           break;
-        case 6:
-          Func_02004380(col, row, 0);
-          piece = Func_02004380(col, row, 0);
+        case 8:
+          cell->piece = (((Random16Far() * 2) >> 16) << 1) + 4;
+          break;
+        case 9:
+          cell->piece = (((Random16Far() * 2) >> 16) << 1) + 5;
           break;
         }
+        state->cells[z * 11 + x].marked = 1;
+        left--;
+        goto corner_done;
       }
-      Func_0200566c(shape, piece, 1, 1, *(s16 *)(gSceneState + 364) + col,
-                    *(s16 *)(gSceneState + 366) + row);
     }
   }
-  return SEED;
+  if (++tries <= 88)
+    goto corner_try;
+corner_done:
+  if (--n >= 0)
+    goto corner_next;
+  tries = 1;
+straight_try:
+  x = (Random16Far() * 11) >> 16;
+  z = (Random16Far() * 8) >> 16;
+  if (Func_02003934(x, z) == 0) {
+    piece = state->cells[z * 11 + x].piece;
+    if (piece == 4 || piece == 6 || piece == 5 || piece == 7) {
+      state->cells[z * 11 + x].marked = 1;
+      left--;
+      goto straight_done;
+    }
+  }
+  if (++tries <= 88)
+    goto straight_try;
+straight_done:
+  if (left > 0) {
+    n = left;
+  plain_next:
+    tries = 1;
+  plain_try:
+    x = (Random16Far() * 11) >> 16;
+    z = (Random16Far() * 8) >> 16;
+    if (Func_02003934(x, z) == 0) {
+      piece = state->cells[z * 11 + x].piece;
+      if (piece - 1 <= 1) {
+        state->cells[z * 11 + x].marked = 1;
+        goto plain_done;
+      }
+    }
+    if (++tries <= 88)
+      goto plain_try;
+  plain_done:
+    if (--n != 0)
+      goto plain_next;
+  }
+  row = 0;
+turn_row:
+  col = 0;
+turn_col:
+  piece = state->cells[row * 11 + col].piece;
+  shape = state->cells[row * 11 + col].marked;
+  if (shape != 0) {
+    switch ((Random16Far() * 8) >> 16) {
+    case 0:
+    case 1:
+    case 2:
+      piece = Func_02004380(col, row, 0);
+      break;
+    case 3:
+    case 4:
+    case 5:
+      piece = Func_02004380(col, row, 1);
+      break;
+    case 6:
+      Func_02004380(col, row, 0);
+      piece = Func_02004380(col, row, 0);
+      break;
+    }
+  }
+  Func_0200566c(shape, piece, 1, 1, state->originX + col,
+                state->originZ + row);
+  if (++col <= 10)
+    goto turn_col;
+  if (++row <= 7)
+    goto turn_row;
+  return state->count;
 }

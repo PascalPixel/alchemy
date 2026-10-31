@@ -1,5 +1,11 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 8 of 129 in tla-en, instruction
-// order only. No empty asm before any one statement lowers it.
+// Near miss, differ 14 of 129 (tla-en, 2026-10-31): sched2 order of the
+// pointer setup before the loop only. The sched2 dump ranks the frames chain
+// (r2: movs #128, priority 11) above the indices chain (r3: negs, 10); the
+// stores to the two stack slots cost the first ldrb from indices only 1,
+// since the -mthumb-slow-loads store rule skips extended loads, and the
+// listing's order needs the indices chain ranked at least two higher. No
+// empty asm before any one statement lowers it, nor does any order of the
+// five pointer initializations, a u8 or u32 index, or a 4-minute permuter run.
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -7,6 +13,7 @@
 #include "field_sprite.h"
 #include "map.h"
 #include "dma.h"
+#include "io_reg.h"
 
 void Actor_SetSingleChildFlagsFar(struct Actor *object,
                                            s32 value);
@@ -31,14 +38,11 @@ void ObjectTable_Restore(void) {
 
   count = 0;
   index = *indices++;
-  /* FAKEMATCH: a scheduling barrier the native order needs. */
-  __asm__("");
   while (index != 255) {
     object = ObjectTable_Get(index);
     if (object != NULL) {
       sprite = object->animation;
-      Dma_Set(copy, object, 0x84000000 | (sizeof(struct Actor) / 4),
-              (volatile u32 *)0x040000d4);
+      Dma_Set(copy, object, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
       object->animation = sprite;
       Actor_SetMode(object, *frames);
       Actor_SetSingleChildFlagsFar(object, *nextFrames);

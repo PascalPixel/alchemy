@@ -1,15 +1,23 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 8 of 132 in tla-en, instruction
-// order only. Empty asms before the angle's rounding, the first
-// SetMapCellCollisionFar and the priority flags lower it to 2: the native then
-// stores x between movs r3, #128 and its shift, where this stores it first.
-// Near miss, differ 14 of 132: turns an object to one of the four facings
-// (angle rounded to the nearest quarter turn), optionally setting its mode,
-// marks its cell and the cell ahead of it blocked, and nudges its position and
-// sprite offsets for that facing. No ☀️ twin found. Left: instruction order
-// only: the native stores x to the vector between the two halves of 0x2000 and
-// starts 34 before the stack store of z, and four constants and an address copy
-// sit one slot apart. The cases are in the native's block order (0, 0x8000,
-// 0xc000, 0x4000) and the sprite offsets are signed bytes (subs #4).
+// Near miss, differ 8 of 132 (tla-en, 2026-10-31): instruction order only,
+// three pairs sched2 ranks one priority apart. The native issues mov r5, sp
+// before movs r3, #128 (ranked 15 against 16 here, the constant's chain
+// running through the ands' anti-dependence on r2, the z load), the store of
+// z (str r2, [r5, #8]) before movs r3, #34 (9 against 10), and the strb of
+// the zero into collisionFlags before adds r1, r6, #0 (9 against 10). Each
+// store ranked low is followed by a load whose wait after a store
+// -mthumb-slow-loads does not count: the ldrb of terrainId is an extended
+// load, and the priorityFlags |= 2 load opens a read-modify-write. Scheduler
+// order the C does not move: a struct Vector3 for the position, the rounding
+// before x is read, the angle in a separate local, terrainId read through a
+// pointer and either flag store moved all measured 8 or worse. Empty asms
+// before the angle's rounding, after the read of z and before the priority
+// flags lower it to 2 (only the x store left), so the plain form stays.
+// Func_080d3940 (080d3940.c) keeps the same pattern.
+// Turns an object to one of the four facings (angle rounded to the nearest
+// quarter turn), optionally setting its mode, marks its cell and the cell
+// ahead of it blocked, and nudges its position and sprite offsets for that
+// facing. No ☀️ twin found. The cases are in the native's block order (0,
+// 0x8000, 0xc000, 0x4000) and the sprite offsets are signed bytes (subs #4).
 #include "types.h"
 #include "field_sprite.h"
 #include "actor.h"

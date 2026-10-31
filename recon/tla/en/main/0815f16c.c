@@ -259,21 +259,10 @@ struct Model *Render_AllocateModelList(s32);
 void Render_DrawModelList(struct Model *);
 void Sound_PlayFar(s32);
 
-struct IoRegisters {
-  u8 unk00[0x20];
-  u16 bg2pa;
-  u8 unk22[6];
-  s32 bg2x;
-  u8 unk2c[0x24];
-  u16 bldcnt;
-  u16 bldalpha;
-};
-
-#define REG ((volatile struct IoRegisters *)0x04000000)
-#define REG_BLDCNT (REG->bldcnt)
-#define REG_BLDALPHA (REG->bldalpha)
-#define REG_BG2PA (REG->bg2pa)
-#define REG_BG2X (REG->bg2x)
+#define REG_BG2PA (*(volatile u16 *)0x04000020)
+#define REG_BG2X (*(volatile s32 *)0x04000028)
+#define REG_BLDCNT (*(volatile u16 *)0x04000050)
+#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 #define DMA3 ((volatile u32 *)0x040000d4)
 #define PLTT ((void *)0x05000000)
 #define PLTT_U16 ((volatile u16 *)0x05000000)
@@ -294,14 +283,6 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   s32 scrollA;
   s32 scrollB;
   s32 duration;
-  s32 save24;
-  s32 save28;
-  s32 save2c;
-  s32 save34;
-  s32 save48;
-  struct BattleObject *object;
-  struct BattleObject *object2;
-  struct BattleObject *object3;
   s32 base[3];
   s32 target[3];
   s32 origin[3];
@@ -318,38 +299,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   s32 i;
   s32 j;
   s32 k;
-  s32 n;
-  s32 m;
-  s32 t;
-  s32 r;
-  s32 x;
-  s32 y;
-  s32 h;
-  s32 count;
-  s32 start;
-  s32 half;
-  s32 height;
-  s32 angle;
-  s32 amp;
-  s32 off;
-  s32 top;
-  s32 scroll;
-  s32 life;
-  s32 row;
-  s32 limit;
-  s32 dx;
-  s32 dy;
-  s32 dz;
-  s32 size;
-  s32 fade;
-  s32 scale;
-  void *matrix;
-  struct Model *model;
-  const u8 *table;
   u8 *src;
   u8 *dst;
   s32 v;
-  struct Particle *p;
 
   work = IWRAM->summon;
   screen = IWRAM->screen;
@@ -378,7 +330,6 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Resource_LoadAndDecompress((s32)&Value_000000d9, EWRAM_BUF, 1, 0);
     for (i = 1; i != 8; i++) {
       src = EWRAM_BUF;
-      dst = EWRAM_BUF + i * 0x400;
       for (j = 0; j != 0x400; j++) {
         v = *src++;
         if (v != 0) {
@@ -386,7 +337,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           if (v <= 0)
             v = 1;
         }
-        *dst++ = v;
+        EWRAM_BUF[i * 0x400 + j] = v;
       }
     }
   } else if (kind == 10) {
@@ -590,6 +541,39 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   EffectPosition_ProjectScaledBattler(action->actor, target);
   EffectPosition_ProjectScaledBattler(action->target, base);
   BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
+  {
+  struct BattleObject *object;
+  s32 save24;
+  s32 save28;
+  s32 save2c;
+  s32 save34;
+  s32 save48;
+  struct BattleObject *object2;
+  s32 n;
+  s32 m;
+  s32 t;
+  s32 r;
+  s32 x;
+  s32 y;
+  s32 h;
+  s32 count;
+  s32 start;
+  s32 half;
+  s32 height;
+  s32 angle;
+  s32 top;
+  s32 scroll;
+  s32 life;
+  s32 row;
+  s32 limit;
+  s32 size;
+  s32 fade;
+  s32 scale;
+  void *matrix;
+  struct Model *model;
+  const u8 *table;
+  struct Particle *p;
+
   work->unk77b4 = 24;
   work->unk77b8 = 0;
   object = *GetBattleObjectSlotFar(action->target);
@@ -1034,6 +1018,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
     if (kind == 7 || kind == 43 || kind == 48 || kind == 73 || kind == 77 ||
         kind == 78 || kind == 49 || kind == 12 || kind == 82) {
+      s32 start;
+      struct BattleObject *object3;
+      s32 half;
+      s32 dx;
+      s32 dy;
+      s32 dz;
+
       start = 12;
       if (frame == 12)
         Sound_PlayFar(142);
@@ -1129,6 +1120,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       if (frame >= 8 && frame < 24) {
+        s32 off;
+        s32 amp;
+
         if (kind == 14) {
           amp = 12;
           off = 24;
@@ -2304,4 +2298,5 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
+  }
 }

@@ -185,7 +185,6 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       scrollSpeed = scrollSpeed * 60 / 64;
     }
     scrollX = scroll >> 16;
-  __asm__("");
     REG_BG2X = (64 - (userPosition.x - scrollX)) << 8;
     /* FAKEMATCH: the native stores REG_BG2X before it clears the hit flag
      * (differ 16 without the barrier). */

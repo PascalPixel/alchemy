@@ -1,3 +1,11 @@
+// Near miss, differ 4 of 109 (tla-en, 2026-10-31): only `mov r8, r2`, the
+// copy of the velocity zero that `messageShown = 0` reuses, sits after the
+// y load instead of after the sound byte's sign extension. cse2 merges that
+// zero with the velocity zero (one pseudo, r8), so its copy stays ahead of
+// the one-pass block's loop-end barrier (sched2 priority 7); native keeps a
+// separate zero set after the barrier. A `u8` zero local set after the block
+// is merged the same way (4); targets then velocities inside the block, 6.
+// The permuter (4 minutes, 23224 candidates) found nothing below 4.
 // Under -mthumb-slow-loads (2026-10-26): differ 4 of 109 in tla-en, instruction
 // order only. An empty asm before `object->velocityY = 0;` lowers it to 2; no
 // second one closes it.
@@ -49,7 +57,8 @@ void Func_080dc6d8(void) {
   s32 quantity = work->quantity;
 
   Actor_SetMode(object, 20);
-  /* FAKEMATCH: the one-pass block ends the stores before the sound test. */
+  /* FAKEMATCH(one-pass): the one-pass block ends the stores before the
+   * sound test; as a plain block, 8 of 109 instructions differ in tla-en. */
   do {
     object->targetX = object->x;
     object->velocityX = 0;

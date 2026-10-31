@@ -1,5 +1,13 @@
-// Draft, differ 7 of 61: the copy of overlay 671's Func_02005428 (whose draft
-// holds the notes), calling Izumo Ruins' Func_02000128.
+// Near miss, differ 5 of 61 (tla-en, 2026-10-31): the native's entry block
+// starts the end mark (movs r1, #255) before its jump to the test and copies
+// the count to r10 after the mode, both left by a first test that jump2
+// merged into the loop's own test (see overlay 671's Func_02005428). Written
+// with that first test (if (*list == 0xffff) return; before a goto loop), the
+// entry block matches the native's row for row, but gcse hoists the id's
+// load onto the loop's entry edge (35). Reading the list word into a local
+// before the id puts its load ahead of the id's, as the native does (the id
+// first, 7). The copy of overlay 671's Func_02005428 (whose draft holds the
+// notes), calling Izumo Ruins' Func_02000128.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -18,11 +26,12 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
 
   goto test;
   do {
+    s32 entry = *list;
     s32 id = work->objectId;
 
-    if (id == *list) {
+    if (id == entry) {
       /* FAKEMATCH(pin): the object in r6, as the native keeps it; as a plain
-       * local, 27 of 61 instructions differ in tla-en. */
+       * local, 23 of 61 instructions differ in tla-en. */
       register struct Actor *object asm("r6") = Actor_GetById(id);
       s32 a;
       s32 flag;

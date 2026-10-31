@@ -1,4 +1,5 @@
-// Near miss, differ 8 of 178 (80 before, 2026-10-26). The per-frame routine
+// Near miss, differ 6 of 178 (tla-en, 2026-10-31; 80 before, 2026-10-26):
+// two sched2 priority orders. The per-frame routine
 // Func_080da9a8 schedules second: for each of the eight chains in the heap-
 // offset-164 work (worka0.h's WorkA4 slots), advance its phase and hang its
 // five links from the anchor in a swinging arc, then ease the swing towards
@@ -8,10 +9,14 @@
 // and stops); this keeps that.
 // Each slot starts with the object id (stride 28 from work + 4), and the
 // links' phase is slot->phase - i * 800, which loop.c strength-reduces to
-// the native's spilled step. Left: the native computes the first slot's
-// address after storing the target, and loads x before the leader's x in
-// the first distance test; a one-pass block found by permute (6) was not
-// kept.
+// the native's spilled step. Left, both sched2 priority (the --rtl dump):
+// the native stores the leader and the target before it computes the first
+// slot's address (adds r5, #4 has priority 2 over the stores' 1; a one-pass
+// block around the leader and target lines ends the region there, differ 4,
+// not kept), and stores the first step (800, loop.c's giv init, emitted
+// before the link loop's LOOP_BEG, after i = 1 and sway = swing) before it
+// sets i to 1 (movs r3, #1 feeding mov r9, r3 outranks it); an explicit step
+// variable (20) and a do-while link loop (no change) did not move it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

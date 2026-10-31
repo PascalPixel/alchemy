@@ -1,11 +1,17 @@
-// Near misses, one draft for the two listings (alchemy-devtools diff on a copy that
-// keeps one function). Func_080d3940, differ 6 of 99: the native loads
-// object->z (ldr r2, [r2, #16]) before lsls r3, r3, #8 and stores it before
-// the ands, and builds the flags' address (mov r1, r8) after the strb of the
-// zero; Func_080d3a10, differ 14 of 132: the same two kinds, the first
-// position store issued before lsls r3, r3, #6. Each is a load or store the
-// native issues a slot earlier than agscc's ARM9TDMI model. Func_080d3b28,
-// once a third function here, is adopted in field/object/active.c.
+// Near miss, differ 12 of 231 (tla-en, 2026-10-31; diff 080d3940,080d3a10):
+// Func_080d3940 differ 4 of 99, Func_080d3a10 differ 8 of 132, each measured
+// on a copy that keeps one function. Every difference is a store the native
+// issues one slot earlier: in Func_080d3940 the store of object->z
+// (str r2, [r5, #8]) before the ands, and the strb of the zero into
+// collisionFlags before mov r1, r8; in Func_080d3a10 the same two, plus the
+// store of object->x (str r1, [r5]) before lsls r3, r3, #6. The sched2 dump
+// ranks each store one priority below the insn the native puts after it
+// (z store 9 against the ands and mov r9, r3 at 10; zero strb 8 against
+// mov r1, r8 at 9): its memory dependence on the next load costs 1 here, and
+// a tie would go to the store, which has more dependents. Scheduler order the
+// C does not move; the permuter (4 minutes each) found nothing better.
+// Func_080d3b28, once a third function here, is adopted in
+// field/object/active.c.
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"

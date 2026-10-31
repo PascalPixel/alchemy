@@ -14,7 +14,7 @@
 // arguments the values are masked (and r8, r3, #255).
 #include "types.h"
 
-void Func_08021826(u32 width, u32 height, u8 *grid, s32 inner, s32 edge) {
+void Func_08021828(u32 width, u32 height, u8 *grid, s32 inner, s32 edge) {
   u32 size = width * height;
   u8 *cell = grid + width + 1;
   u8 *end;

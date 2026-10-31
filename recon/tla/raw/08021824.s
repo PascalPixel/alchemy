@@ -6,3 +6,4 @@ Func_08021824:
 	.global Data_08021824
 Data_08021824:
 	bx pc
+	.2byte 0x0200

@@ -4,3 +4,4 @@
 	.thumb_func
 Func_080212d8:
 	bx pc
+	.2byte 0x0200

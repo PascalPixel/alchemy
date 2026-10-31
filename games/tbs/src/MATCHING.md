@@ -101,9 +101,12 @@ written. A device may be replaced only by milder ones, as many as it takes.
   where several unrelated functions each reread a global the way only a
   volatile allows, reloading it straight after storing it or keeping a read
   whose value they discard, the qualifier is the source's form, and a note
-  beside the declaration names those functions. Rereads in one function alone
-  are still a device: `gTasksRunning`'s discarded read shows only in
-  `Task_Add`.
+  beside the declaration names those functions. The same holds for a type
+  whose members are volatile, such as `struct OamWords`: where several
+  unrelated functions that use it each show the loads or the order of stores
+  only a volatile keeps, the type is declared that way in the source too.
+  Rereads in one function alone are still a device: `gTasksRunning`'s
+  discarded read shows only in `Task_Add`.
 - `wrapper` is a call made through a helper, a cast or a library routine in
   place of the plain call or operator. Calling a declared function through a
   cast to another function type is a `wrapper`, with the declared call behind

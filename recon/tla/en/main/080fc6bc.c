@@ -17,6 +17,20 @@
 // 149), the member read before the count 32 (still 125 worse the other way
 // round), the previous icon through the icon local 22. On 2026-10-26 no single
 // empty asm or one-pass block reached 0.
+//
+// Measured 2026-10-31: in sched2 the tie is lsls r4 against mov r2, fp, both
+// priority 7, and mov r2, fp loses as anti-dependent on the strb. The native
+// also puts adds r2, #28 (priority 6) and the spill str (5) before lsls r4
+// (7). That order needs a longer chain after the paneIndex ldrsb, and nothing
+// in this block uses it. Tried: u8 count 4; a (s8) cast of a u8 field 4; the
+// count read first 125; either read moved across the selected-index store 51
+// to 157; a pointer temporary for partyCount 203 or paneIndex 134; an empty
+// asm between the two reads 4, after the store 6 or after both reads 6;
+// one-pass blocks around the store, the member read, the count read or store
+// and member 4 to 6; volatile reads of paneIndex 47, of the store 23, and of
+// partyCount 2 (as a cast or the field: the spill str still follows lsls r4),
+// plus an empty asm or one-pass block on the member read 4. A four-minute
+// permuter run, 14,133 candidates, found nothing below 4.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

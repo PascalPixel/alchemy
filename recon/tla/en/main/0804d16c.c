@@ -9,6 +9,14 @@
 // barrier-free form found nothing under differ 6; nested for (;;) loops in
 // place of the goto: differ 161; a pointer local for the selection: 85;
 // count <= selection: 8.
+// 2026-10-31, fifth round: the store ties with the address chain only with a
+// true dependent of its own in that block (a jump jump2 later deletes would
+// do; an empty asm's links cost nothing); the count load must wait for the
+// shift. Tried: ++ inside the test, (s32) on the count: differ 4; an s16
+// local for the incremented value: 23, s32 (s16) local: 6, s32 local with
+// (s16) in the test: 19; volatile count: 27, volatile reread of the
+// selection: 17, volatile increment: 10. A 4-minute permuter run on the
+// barrier form found nothing under differ 4.
 // Under -mthumb-slow-loads (2026-10-26): differ 4 of 133 in tla-en, instruction
 // order only. No empty asm before any one statement lowers it.
 // 2026-10-15: The Broken Seal's IconMenu_Run on this game's menu work, cues

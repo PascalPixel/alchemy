@@ -159,6 +159,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     // When the first target's animation kind is 2 the formation stands 8
     // pixels further right and lower, with its sparks and flashes.
     alternate = 0;
+    asm("");
     if (((struct Actor *)GetBattleObjectSlotFar(effect->actors[0])
              ->object)
             ->animationKind == 2)

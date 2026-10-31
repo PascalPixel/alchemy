@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 374 (tla-en, 2026-10-30): one reordered row, below.
+// Near miss, differ 2 of 374 (tla-en, 2026-10-31): one reordered row, below.
 // Draft: picks items from one unit's five-column inventory grid for the shop's
 // item action (sell, repair or forge) and runs it, until B or the inventory is
 // empty. As ☀️'s Shop_SelectSell (games/tbs/src/shop/shop.c), with ⚓️'s
@@ -22,6 +22,15 @@
 // r2 first, as the barrier depended on r2's set: 4); an empty one-pass block
 // replaces the barrier before the shop work's load (same 2; without
 // either, 4); five minutes of permute (nothing below 2).
+// Measured (2026-10-31): the store reaches the anchor's address only
+// through its load (cost 2) and lsls reaches that load in three steps, and no
+// other instruction of the block depends on the store, so no priority puts it
+// first. An operand barrier between the split constant's halves (offset =
+// 128; asm volatile("" : "+r"(offset)); then (offset << 3) + 220) puts the
+// store in place, but fold moves the 220 last, so add fp comes before
+// adds #220, and movs r1, #5 moves up in the call's arguments: 4. With the
+// sum in its own statement the load becomes ldr [r3, r1] (40); as integers,
+// 19 or 40; four minutes of permute on the barrier form (nothing below 4).
 // Earlier: the locals declared in reverse of their native stack slots give
 // those slots (84 to 46); the plain-name message as a symbol, which the
 // native loads from the pool (32); slot set before the count gives their

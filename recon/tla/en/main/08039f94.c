@@ -1,108 +1,86 @@
-// Near miss, differ 2 of 92 (tla-en, 2026-10-30): sched2's tie-break after
+// Near miss, differ 2 of 92 (tla-en, 2026-10-31): sched2's tie-break after
 // the second call. There the ready list holds the width shift (asrs r0) and
 // the next part's multiply at equal priority (118 each under
 // -mthumb-slow-loads); the class rule prefers the multiply, independent of
 // the store just issued, over the shift, anti-dependent on it (it rewrites
-// r0). The instructions and their dependences are the native's, so no source
-// form seen moves it. Measured 2026-10-30: a barrier after the shift with the
-// width copied after the part (the copy is propagated away and the move to
-// fp still precedes the multiply: differ 2); size as u16 (differ 9); the
-// duration's address or the shift moved after the part (differ 2); permuter,
-// 4 minutes: nothing better.
-// Earlier (2026-10-26): no single empty asm, one-pass block, wrapping block
-// or swap of neighbouring statements brings it closer, nor any pair of empty
-// asm statements or one-pass blocks (device search).
-// Near miss of Window_UpdateInterpolatedGeometry (The Broken Seal twin in
-// window/window.c; first written 2026-10-12): differ 2 of 92. After
-// each of three ratio calls the native loads the next operand (window->x,
-// window->height, window->y) before it stores the result to the scratch
-// (ldrsh; str r0, [r5, #8]); the twin's form stores first each time (differ
-// 10). The ratio and the operand held in temporaries, loaded in the native's
-// order, fix all three; the pointer to the duration (found by the permuter)
-// keeps the third part's registers. Left: after the second call the native
-// shifts the width out before it multiplies the next part; agscc multiplies
-// first. Measured: function-level temporaries reused at the later sites
-// (differ 44 and 46: the allocation changes), a barrier after the width
-// (differ 6).
+// r0). Both reach the third call by paths of equal cost, so no source form
+// with these instructions moves it.
+// 2026-10-31: the plain form of the Broken Seal twin (Window_DrawZoomBorder in
+// window/window/borders.c) now leaves only this, with the tree's struct Window
+// (uiwindow.h) and prototypes in place of the draft's own struct: its fields
+// no longer alias the scratch, so sched2 itself loads each next operand
+// before the scratch store, and the forced temporaries and the pointer to
+// the duration are gone. Measured devices: a one-pass block from the width
+// shift through the third part's stores, with the height loaded first
+// (differ 4: the block takes over stage's later uses as dependants, and the
+// duration load then wins the entry tie over the frame load); that plus a
+// one-pass block around the frame load, or one block from the entry to the
+// shift (differ 2: the window copy and save_position's stack store swap at
+// entry, sched2 then ranking them by RTL order); the copy to the width under
+// a test whose two arms are the same (differ 87 to 102: the frame grows by
+// a spill); an empty asm with operands reading the width (differ 46: the
+// width takes r6); the frame read through a union (differ 4). Permuter: did
+// not run (it found no listing for the copied draft).
+// Earlier, with the draft's own struct (2026-10-12 to 2026-10-30): there the
+// twin's form differed in 10; a barrier after the shift, the width copied
+// after the part, size as u16 (differ 9), function-level temporaries (differ
+// 44 and 46), single and paired empty asm statements or one-pass blocks, and
+// a 4-minute permuter run never got below 2.
 #include "types.h"
 #include "iwram_call.h"
+#include "uiwindow.h"
 
-struct Window {
-  s32 unk00;
-  s32 unk04;
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-  u16 unk10;
-  u16 unk12;
-  u16 state;
-  u16 flags;
-  s16 frame;
-  s16 duration;
-  s16 previousX;
-  s16 previousY;
-  s16 previousWidth;
-  s16 previousHeight;
+/// Scratch values for a stage of a window's zoom, as in The Broken Seal: the
+/// scaled part of a side, the scaled duration and their ratio.
+struct WindowZoomScratch {
+  s32 scaledPart;
+  s32 scaledDuration;
+  s32 result;
 };
 
-void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
+void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);
 
-// Draw the window partway through opening or closing.
-void Window_UpdateInterpolatedGeometry(void *arg, s32 savePosition) {
-  struct Window *window = arg;
-  s32 scratch[3];
-  s32 frame;
+void Func_08039f94(struct Window *window, s32 save_position) {
+  struct WindowZoomScratch scratch;
+  s32 stage;
   s32 duration;
   s32 remaining;
   s32 x;
   s32 y;
   s32 width;
   s32 height;
-  s32 r;
-  s32 origin;
-  s16 *durationField;
 
-  frame = (s16)window->frame;
+  stage = (s16)window->frame;
   duration = window->duration;
-  remaining = duration - frame;
-  scratch[0] = (frame * window->width) << 16;
-  scratch[1] = duration << 17;
-  /* FAKEMATCH: forced temporaries: the operand loads before the store. */
-  r = Iwram_RatioMulQ14(scratch[1], scratch[0]);
-  origin = window->x;
-  scratch[2] = r;
-  x = (r >> 16) + origin;
+  remaining = duration - stage;
+  // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point, as in The Broken
+  // Seal: the left edge moves in by stage / duration of half the width
+  // (result >> 16), and the width is (duration - stage) / duration of the
+  // whole (result >> 15); the same for the top and the height.
+  scratch.scaledPart = (stage * window->width) << 16;
+  scratch.scaledDuration = duration << 17;
+  scratch.result =
+      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  x = (scratch.result >> 16) + (s16)window->x;
 
-  scratch[0] = (remaining * window->width) << 16;
-  /* FAKEMATCH: forced temporaries, as above, and the duration's address
-   * taken early. */
-  {
-    s32 result = Iwram_RatioMulQ14(scratch[1], scratch[0]);
-    s32 size = window->height;
+  scratch.scaledPart = (remaining * window->width) << 16;
+  scratch.result =
+      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  width = scratch.result >> 15;
 
-    scratch[2] = result;
-    width = result >> 15;
-    durationField = &window->duration;
+  scratch.scaledPart = (stage * window->height) << 16;
+  scratch.scaledDuration = window->duration << 17;
+  scratch.result =
+      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  y = (scratch.result >> 16) + (s16)window->y;
 
-    scratch[0] = (frame * size) << 16;
-  }
-  scratch[1] = (*durationField) << 17;
-  /* FAKEMATCH: forced temporaries, as above. */
-  {
-    s32 result = Iwram_RatioMulQ14(scratch[1], scratch[0]);
-    s32 originY = window->y;
-
-    scratch[2] = result;
-    y = (result >> 16) + originY;
-  }
-
-  scratch[0] = (remaining * window->height) << 16;
-  scratch[2] = Iwram_RatioMulQ14(scratch[1], scratch[0]);
-  height = scratch[2] >> 15;
+  scratch.scaledPart = (remaining * window->height) << 16;
+  scratch.result =
+      Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
+  height = scratch.result >> 15;
 
   Window_DrawBorder(x, y, width, height);
-  if (savePosition != 0) {
+  if (save_position != 0) {
     window->previousX = x;
     window->previousY = y;
     window->previousWidth = width;

@@ -1,5 +1,13 @@
-// Near miss, differ 2 of 268 (tla-en, 2026-10-30): one swap in the rewind
-// clear (own->active = 0, then gSerialBlockNumber &= 0x7f). The native copies
+// Near miss, differ 2 of 268 (tla-en, 2026-10-31): one swap in the rewind
+// clear (own->active = 0, then gSerialBlockNumber &= 0x7f). In sched2 the load
+// of the block number waits a cycle after the own->active store only when no
+// store back to [r0] follows it before a jump or label; the strb back makes it
+// an exempt read-modify-write, so it issues at once and outranks mov r3, lr.
+// Tried 2026-10-31: an unused label before the store (the first jump pass
+// deletes it); the masked value in a temporary stored in both arms of a test
+// on dest, peer, own or id (CSE gives both arms one address and value, cse2's
+// jump pass merges them: differ 2); arms that differ in the value (differ 2 or
+// 102). The native copies
 // the 127 mask from lr before it reads the block number byte; this compiler
 // reads the byte first. That read opens a read-modify-write, so
 // -mthumb-slow-loads lets it issue straight after the own->active store, and

@@ -1,5 +1,17 @@
-// Near miss, differ 2 of 138 (tla-en, 2026-10-30): one reordered row in the
-// entry block, instruction order only. The native stores the leader to its
+// Near miss, differ 2 of 138 (tla-en, 2026-10-31): one reordered row in the
+// entry block, instruction order only. No plain C reaches it: the entry
+// block's instructions and registers are the native's, so its dependences
+// and priorities are fixed, and the store (priority 1) always loses to
+// sl = r3 and r2 += sp (priority 2) at the cycle it becomes ready; only a
+// zero-size insn after the store can raise it. Tried 2026-10-31: the leader
+// volatile (26) or read by an asm "m" operand (32); the work pointer
+// passed through asm("" : "=l"(work) : "0"(heap) : "memory") after the
+// leader read (heap holding the load) fixes the entry order, but work then
+// ranks last for a high register (3 refs over 74 insns) and takes fp, the
+// objects base sl and the mask r9 (16); adding an unused "r"(work) input
+// ranks it first (5 refs over 79 insns, above the pooled zero's 6 over 96)
+// and it takes r8 (10). Work needs 4 refs, or 5 over 81 to 102 insns.
+// Earlier (2026-10-30): The native stores the leader to its
 // stack slot (str r1, [sp, #0]) right after building 4, before mov sl, r3;
 // here it follows adds r6, r0, #0. In the sched2 dump the store is a leaf
 // of that block with priority 1, so it waits behind every other ready insn

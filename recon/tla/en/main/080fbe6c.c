@@ -6,6 +6,14 @@
 // -mthumb-slow-loads), and no reshaping moves either. An empty asm before the
 // first statement puts the stores first but pins mov fp, r0 ahead of them, the
 // same 2 instructions; a 4-minute permuter run found nothing better.
+// Measured again 2026-10-31: both chains run through the menu load (insn
+// 689, priority 77), the address chain 3 cycles ahead of it and the stores
+// 2, so no dependence graph with this code ranks the stores first; their
+// only other successors (movs r1, #128 and the calls) rank 76 and below.
+// The asm barrier with base copied from its own parameter after it puts
+// the stores and mov fp, r0 where the native has them, but the copy spills
+// base and moves value to r7: differ 117 of 298, 119 without the barrier.
+// A second 4-minute permuter run (20,461 candidates) found nothing better.
 // First draft of Func_080fbe6c: "How many?", the item menu's quantity
 // selector for a stack of the selected item. Left and Right move the count
 // from 1 to range, the window shows what the owner in pane 0 keeps and, in

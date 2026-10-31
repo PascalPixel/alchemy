@@ -49,17 +49,27 @@ void Graphics_AdvancePaletteCycle(void) {
       REG_BLDALPHA = (level << 8) | (0x10 - level);
       battle->highlightStep++;
     } else if (battle->highlightMode == 2) {
+      u32 mask;
+
       REG_BLDCNT = 0x3f40;
       REG_BLDALPHA =
           (gBattleEffect_HighlightBlendRamp[battle->highlightStep] << 8) |
           (0x10 - gBattleEffect_HighlightBlendRamp[battle->highlightStep]);
-      battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
+      mask = 0xf;
+      do {
+      } while (0);
+      battle->highlightStep = ((battle->highlightStep + 1) & mask) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
     } else if (battle->highlightMode != 0) {
+      u32 mask;
+
       REG_BLDCNT = 0x3f90;
       REG_BLDALPHA = 0x10;
       REG_BLDY = gBattleEffect_HighlightBlendRamp[battle->highlightStep];
-      battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
+      mask = 0xf;
+      do {
+      } while (0);
+      battle->highlightStep = ((battle->highlightStep + 1) & mask) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
     }
   }

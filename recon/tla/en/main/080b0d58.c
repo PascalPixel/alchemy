@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 85 (tla-en, 2026-10-30): scheduler order only. In
+// Near miss, differ 2 of 85 (tla-en, 2026-10-31): scheduler order only. In
 // the loop's second copy of the found branch the native stores the lowered
 // count before it sets found to 1 in r2; this draft sets r2 first, as both
 // copies do here (the first copy matches). Ported from The Broken Seal's
@@ -15,6 +15,18 @@
 // s16, the match written as a continue, or the count lowered after the loop
 // differ as much or more; permute (3 min, then 4 min on 2026-10-30) found
 // nothing.
+// 2026-10-31: the copy is jump's exit-test duplication of the whole found
+// branch, made before allocation, so any device in it lands in both copies;
+// the copies differ only in the reload register for 1 (r1 above, r2 here, the
+// count's own register). Both copies match only if the store ranks 2 in both
+// and found = 1 comes before the store in RTL, so the first copy's tie goes
+// to r1 = 1 on order. Measured: an empty asm between the count and found
+// (differ 20: right here, wrong in the first copy, r6 and r7 swap); asm
+// "+r" on the new count before the store (2); a volatile store (2); count -
+// 1 kept in a local with found = 1 before the store (11: jump2 then
+// cross-jumps the first copy's store into this one); that plus an asm
+// reading the count as "m" with found, i or the table as "+r" (65 to 118:
+// allocation moves).
 #include "types.h"
 #include "owner_state.h"
 

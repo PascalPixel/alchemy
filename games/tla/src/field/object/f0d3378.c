@@ -1,0 +1,64 @@
+#include "event_work.h"
+#include "actor.h"
+#include "objdisp.h"
+#include "system.h"
+
+extern const s32 Data_080f085c[];
+extern const s32 Data_080f0874[];
+
+struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void FieldEffect_UpdateParticleLinearMotion(struct Actor *object);
+
+struct ParticleSprite {
+  u8 unk00[8];
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[16];
+  u8 flags;
+};
+
+// Kicks up a dust puff (object 285) where source stands, as ☀️'s
+// FieldEffect_SpawnBurstParticle.
+void Func_080d3378(struct Actor *source, s32 param) {
+  struct Actor *object;
+  struct ParticleSprite *child;
+  s32 speed;
+  s32 rate = -0x1999;
+
+  object = Func_080200c0(285, source->x, source->y, source->z);
+  if (object != NULL) {
+    child = object->animation;
+    switch (Random16() & 1) {
+    case 1:
+      Actor_SetMode(object, 2);
+      Actor_StartScriptFar((struct ActorView *)object, Data_080f085c);
+      break;
+    default:
+      Actor_SetMode(object, 1);
+      Actor_StartScriptFar((struct ActorView *)object, Data_080f0874);
+      break;
+    }
+
+    if (param != 0)
+      Actor_SetPartAttribute(object, param);
+
+    object->motionFlags = 0;
+    speed = Random16() % 10 + 5;
+    object->acceleration = rate * speed;
+    speed = Random16() % 15 - 7;
+    speed <<= 1;
+    object->speedLimit = 0x1999 * speed;
+    object->action = 0;
+    /* FAKEMATCH(barrier): an empty asm that reads the cleared action and
+     * rewrites object, so the priority flags' address is copied after the
+     * store; as plain statements, 2 of 94 instructions differ in tla-en. */
+    asm("" : "+r"(object) : "X"(object->action));
+    object->priorityFlags |= 2;
+    ((u8 *)object)[0x61] = 1;
+    object->update = (void (*)(void))FieldEffect_UpdateParticleLinearMotion;
+    child->flags = 0;
+    child->priority = ((struct ParticleSprite *)source->animation)->priority;
+  }
+}

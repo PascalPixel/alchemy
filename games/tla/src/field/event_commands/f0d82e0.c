@@ -1,12 +1,3 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 12 of 292 in tla-en,
-// instruction order only. No empty asm before any one statement lowers it.
-// Near miss, differ 12 of 292: ported from ☀️ (BattleEffect_RunVenusDjinnCapture),
-// with ⚓️'s data: the effect scene keeps its slots at 0x50, the sparks and
-// the spawned objects are kind 672 and the cue is 298. What remains is order:
-// the native builds the slot pointer and the spark count between the
-// position's loads, starts 240 << 15 before the second y load, and clears r7
-// earlier; barriers on the position's address and the count, as in
-// Djinn_RunMarsJoinEffect, measured 36 to 38.
 #include "types.h"
 #include "system.h"
 #include "sprite.h"
@@ -25,7 +16,7 @@ struct EffectVector {
 
 struct BattleFxScene;
 
-#define Actor_SetChildValueUnlessFifteenFar                              \
+#define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define Actor_ReleaseFar Actor_Destroy
 #define gBattleEffect_PulseScales gData_080f0bfc
@@ -135,11 +126,11 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect);
 
 void BattleEffect_ShrinkObjectAndDestroyFast(void *obj);
 
-void BattleEffect_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
+void Func_080d8174(struct DescendingOrbitObject *arg);
 
 void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
-void BattleEffect_RunVenusDjinnCapture(s32 arg) {
+void Func_080d82e0(s32 arg) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
   void *effectSlots;
@@ -222,14 +213,14 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     position[1] = leader->y + 0x780000;
     position[2] = leader->z;
     djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
-                                                  position[2]);
+                                                 position[2]);
     if (djinni != NULL) {
       scale = Random16() / 3 + 0x10000;
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->timer = 100;
       djinni->angle = (remaining << 16) / 24;
-      djinni->callback = (void *)BattleEffect_UpdateDescendingOrbitObject;
+      djinni->callback = (void *)Func_080d8174;
       djinni->mode = 0;
       Actor_SetMode((struct Actor *)djinni, 7);
       Animation_ApplyChildValuesFar(djinni, 11);
@@ -245,7 +236,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
   position[2] = leader->z;
   for (remaining = 0; remaining <= 7; remaining++) {
     djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
-                                                  position[2]);
+                                                 position[2]);
     if (djinni == NULL)
       break;
     djinni->scaleY = 0x9999;
@@ -258,7 +249,7 @@ void BattleEffect_RunVenusDjinnCapture(s32 arg) {
     Animation_ApplyChildValuesFar(djinni, 11);
     djinni->lifetime = 8;
     Actor_StartScriptFar((struct ActorView *)djinni,
-                                 gBattleEffect_SharedParticleScript);
+                         gBattleEffect_SharedParticleScript);
   }
 
   wait(15);

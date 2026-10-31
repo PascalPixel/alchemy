@@ -595,54 +595,6 @@ Func_020003b8:
 	.4byte gMainRoutineWork
 .L_02008608:
 	.4byte 0xffc00000
-	.section .text.x02008a78,"ax",%progbits
-	.global Func_02000a78
-	.thumb_func
-Func_02000a78:
-	push {r5, r6, lr}
-	movs r0, #1
-	bl Actor_GetById
-	cmp r0, #0
-	beq .L_02008ac4
-	ldr r6, .L_02008ac8
-	movs r2, #127
-	ldr r3, [r6]
-	ldr r5, [r0, #80]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02008a9c
-	movs r1, #129
-	movs r0, #29
-	lsls r1, r1, #1
-	bl Func_020048d4
-.L_02008a9c:
-	cmp r5, #0
-	beq .L_02008ac4
-	movs r3, #30
-	strb r3, [r5, #23]
-	movs r3, #252
-	strb r3, [r5, #22]
-	movs r3, #182
-	ldr r2, [r6]
-	lsls r3, r3, #2
-	adds r0, r2, #0
-	muls r0, r3
-	bl Math_Sine
-	cmp r0, #0
-	bge .L_02008abc
-	adds r0, #127
-.L_02008abc:
-	ldr r2, .L_02008acc
-	asrs r3, r0, #7
-	adds r3, r3, r2
-	strh r3, [r5, #18]
-.L_02008ac4:
-	movs r0, #1
-	pop {r5, r6, pc}
-.L_02008ac8:
-	.4byte gFrameCount
-.L_02008acc:
-	.4byte 0xfffff800
 	.section .text.x02009ed0,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.global Func_02001ed0

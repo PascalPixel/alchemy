@@ -1,20 +1,7 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 8 of 289 in tla-en. First difference: this issues `ldr r2, [r2, #60]` earlier
-// (row 15) than the native does (row 18). An empty asm after `selection = 0;`
-// measured 4. No single empty asm or one-pass block reaches 0.
-// First draft of Func_08101d5c: the Djinn menu's help, the twin of ☀️'s
-// DjinnMenu_ShowHelp (games/tbs/src/menu/menu/djinn.c): seven topics in a
-// list, the chosen topic's title and text beside it; right or down and A step
-// forward, left or up back, Start leaves the menu (-2) and B or Select the
-// help (-1). The messages take the twin's names (04456, 04458 and 12235 in
-// the English catalog, still unnamed there). Near miss, differ 16 of 289,
-// instruction order only: in seven places the native issues a load (the
-// window work, gInput and the callback from the pool, the stack's result and
-// render) one or two instructions earlier than agscc, the pattern AGENTS.md
-// records for ⚓️.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
+#include "task.h"
 #include "window.h"
 
 struct UiPanel {
@@ -50,7 +37,6 @@ s32 Message_AllTypedFar(void);
 void Func_080f8a44(s32 x, s32 y);
 s32 Resource_ResetEntry(u32 entry);
 void Window_CloseFar(void *window, s32 mode);
-void Task_Add(void (*func)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
 void wait(s32 frames);
 extern char MsgDjinnInfoPrompt[], MsgDjinnInfoTopic[], MsgDjinnInfoText[];
@@ -68,10 +54,6 @@ s32 Func_08101d5c(void) {
   s32 message;
   s32 helpIndex;
   s32 listMessage;
-  /* FAKEMATCH(volatile): the input read through a volatile pointer, so each
-     key test reloads it as the native does; as a plain pointer, 97 of 289
-     instructions differ in tla-en. */
-  volatile struct InputState *input;
 
   menu = Ram_HeapSlots->menuRuntime;
   selection = 0;
@@ -94,15 +76,16 @@ s32 Func_08101d5c(void) {
   helpIndex = 0;
   listMessage = (s32)MsgDjinnInfoTopic;
   do {
-    Text_DrawCharacterAtOffsetFar(helpIndex + listMessage, list, 0,
-                                    helpIndex * 8);
+    /* FAKEMATCH(temporary): the topic's row held in y before the call; as
+       the argument helpIndex * 8, 2 of 289 instructions differ in tla-en. */
+    s32 y = helpIndex * 8;
+
+    Text_DrawCharacterAtOffsetFar(helpIndex + listMessage, list, 0, y);
     helpIndex++;
   } while (helpIndex <= 6);
-  input = &gInput;
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
-    Text_DrawMessageFar(selection + (s32)MsgDjinnInfoTopic, statusWindow, 0,
-                           0);
+    Text_DrawMessageFar(selection + (s32)MsgDjinnInfoTopic, statusWindow, 0, 0);
     channel = Func_080383d8(helpWindow, selection + (s32)MsgDjinnInfoText);
     UiPanel_SetRectHighlight(list, 0, previous, 6, 1, 15);
     UiPanel_SetRectHighlight(list, 0, selection, 6, 1, 14);
@@ -110,26 +93,26 @@ s32 Func_08101d5c(void) {
     for (;;) {
       Func_080f8a44(-12, (list->y + selection) * 8 + 8);
       wait(1);
-      if (input->repeat & 0x90) {
+      if (gInput.repeat & 0x90) {
         selection++;
         selection = Menu_GetModuloOfSum(selection, 7);
         Sound_PlayFar(111);
         break;
       }
-      if (input->repeat & 0x60) {
+      if (gInput.repeat & 0x60) {
         selection--;
         selection = Menu_GetModuloOfSum(selection, 7);
         Sound_PlayFar(111);
         break;
-      } else if (input->pressed & 8) {
+      } else if (gInput.pressed & 8) {
         Sound_PlayFar(113);
         result = -2;
         break;
-      } else if (input->pressed & 6) {
+      } else if (gInput.pressed & 6) {
         Sound_PlayFar(113);
         result = -1;
         break;
-      } else if (input->pressed & 1) {
+      } else if (gInput.pressed & 1) {
         if (Message_AllTypedFar()) {
           selection++;
           selection = Menu_GetModuloOfSum(selection, 7);
@@ -168,6 +151,6 @@ s32 Func_08101d5c(void) {
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
     ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
+  Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
   return result;
 }

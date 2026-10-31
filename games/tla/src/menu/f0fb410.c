@@ -1,13 +1,3 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 4 of 157 in tla-en. First difference: this issues `ldrh r2, [r6, #0]` earlier
-// (row 84) than the native does (row 86). An empty asm after `commandStates[4]
-// = COMMAND_DISABLED;` measured 2. No single empty asm or one-pass block
-// reaches 0.
-// Near miss, differ 8 of 157: the item menu's command availability (use,
-// equip, give, drop, trade, remove) for the selected item, ☀️'s
-// ItemMenu_BuildCommands in games/tbs/src/menu/menu.c. Instruction order only:
-// four loads and stores (the selected item's halfword, the -1 store to the
-// drop slot, the 0x1ff mask's first move) sit one or two slots apart.
 #include "types.h"
 #include "item.h"
 #include "ram_buffer.h"
@@ -32,7 +22,7 @@ void Func_080fb410(s8 *commandStates) {
   struct ItemDefinition *item;
 
   menu = Ram_HeapSlots->menuRuntime;
-  item = Item_Get(0x1ff & menu->selectedItem);
+  item = Item_Get(ITEM_ID_MASK & menu->selectedItem);
 
   if (item->type == 0) {
     commandStates[0] = COMMAND_AVAILABLE;
@@ -47,10 +37,11 @@ void Func_080fb410(s8 *commandStates) {
   else
     commandStates[0] = COMMAND_DISABLED;
 
-  if (menu->selectedItem & 0x400)
+  if (menu->selectedItem & INVENTORY_BROKEN)
     commandStates[0] = COMMAND_DISABLED;
 
-  if (Item_CanOwnerEquip(menu->itemOwner, menu->selectedItem & 0x1ff) == 0) {
+  if (Item_CanOwnerEquip(menu->itemOwner, menu->selectedItem & ITEM_ID_MASK) ==
+      0) {
     commandStates[1] = COMMAND_DISABLED;
   }
 
@@ -58,27 +49,32 @@ void Func_080fb410(s8 *commandStates) {
   commandStates[5] = COMMAND_AVAILABLE;
   commandStates[2] = COMMAND_AVAILABLE;
 
-  if (menu->selectedItem & 0x200) {
+  if (menu->selectedItem & INVENTORY_EQUIPPED) {
     commandStates[4] = COMMAND_AVAILABLE;
     commandStates[1] = COMMAND_DISABLED;
   } else {
     commandStates[4] = COMMAND_DISABLED;
   }
 
-  if (item->flags & 2) {
+  if (item->flags & ITEM_CANNOT_UNEQUIP) {
     commandStates[4] = COMMAND_DISABLED;
-    if (menu->selectedItem & 0x200) {
-      commandStates[3] = COMMAND_DISABLED;
-      commandStates[5] = COMMAND_DISABLED;
-    }
+    /* FAKEMATCH(one-pass): the equipped test in a once-only block, which
+     * keeps the store above from sinking below the selected item's address;
+     * as the plain if, 2 of 157 instructions differ in tla-en. */
+    do {
+      if (menu->selectedItem & INVENTORY_EQUIPPED) {
+        commandStates[3] = COMMAND_DISABLED;
+        commandStates[5] = COMMAND_DISABLED;
+      }
+    } while (0);
   }
 
-  if (BattleEffect_HasTriggerFar(menu->selectedItem & 0x1ff) != 0)
+  if (BattleEffect_HasTriggerFar(menu->selectedItem & ITEM_ID_MASK) != 0)
     commandStates[0] = COMMAND_AVAILABLE;
 
   if (menu->partyCount <= 1)
     commandStates[3] = COMMAND_DISABLED;
 
-  if (item->flags & 8)
+  if (item->flags & ITEM_INDISPENSABLE)
     commandStates[5] = COMMAND_DISABLED;
 }

@@ -1,14 +1,3 @@
-// Draft, differ 8 of 131 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
-// Near miss, differ 18 of 131 (2026-10-18): The Broken Seal's
-// Map_WriteLayerCellTile; this game clears the block (IwramClearWords)
-// where the tile has no data instead of decoding it, and uses heap slot 56.
-// Left: the native loads the map work, the stack argument update, the block
-// table and the cell buffer each a step earlier, and forms gMapBlocks in r1
-// (here r2) and reloads update into r2 (here r3). Six minutes of permute: no
-// better.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -24,8 +13,6 @@ struct PerspectiveTiles {
   u8 unk118[0x830];
   u16 quarterTiles[8];
 };
-
-extern u8 gMapBlocks[];
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct PerspectiveTiles *perspective =
@@ -54,7 +41,9 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
     Iwram_ClearWords(decodedTile, 0x400);
 
   sourceTiles = decodedTile;
-  quarterCells = gMapBlocks + (((layer * 2 + y) * 32 + x) << 6);
+  // The block table at its fixed address: as the symbol gMapBlocks, its
+  // address forms in r2 rather than r1 and update reloads into r3, not r2.
+  quarterCells = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
   for (rowIndex = 0; rowIndex < 16; rowIndex++) {
     Dma_Set(sourceTiles, quarterCells, 0x84000010, REG_DMA3);
     sourceTiles += 32;

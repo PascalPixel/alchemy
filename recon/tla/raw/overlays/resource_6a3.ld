@@ -32,7 +32,7 @@ SECTIONS
         "*/resource_6a3_overlay.o"(.text.x0200b2b4)
         "*/resource_6a3_overlay.o"(.text.x0200b474)
         "*/games/tla/src/scene/jupiter_lighthouse_room_m/s354c.o"(.text)
-        "*/resource_6a3_overlay.o"(.text.x0200b5ec)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_m/s35ec.o"(.text)
         "*/resource_6a3_overlay.o"(.text.x0200b77c)
         "*/games/tla/src/scene/jupiter_lighthouse_room_m/light.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_m/lightcue.o"(.text)

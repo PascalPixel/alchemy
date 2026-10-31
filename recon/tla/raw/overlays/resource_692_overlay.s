@@ -439,57 +439,6 @@ Func_020003b4:
 	.4byte gData_02004fec
 .L_02008534:
 	.4byte 0xffff0000
-	.section .text.x020085dc,"ax",%progbits
-	.balign 4
-	.global Func_020005dc
-	.thumb_func
-Func_020005dc:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	mov r10, r3
-	movs r3, #192
-	sub sp, #4
-	adds r4, r1, #0
-	lsls r3, r3, #18
-	mov r8, r0
-	str r4, [sp, #0]
-	adds r6, r2, #0
-	ldr r5, [r3, #32]
-	bl Func_02004d20
-	mov r2, r8
-	lsls r3, r2, #3
-	subs r3, r3, r2
-	movs r2, #156
-	lsls r2, r2, #1
-	lsls r3, r3, #3
-	adds r3, r3, r2
-	ldr r5, [r5, r3]
-	ldr r3, .L_02008634
-	ldr r4, [sp, #0]
-	ldr r2, .L_02008638
-	adds r5, r5, r3
-	lsls r6, r6, #7
-	asrs r5, r5, #2
-	adds r1, r0, #0
-	adds r4, r4, r6
-	adds r5, r5, r2
-	mov r0, r8
-	mov r2, r10
-	adds r5, r5, r4
-	bl Func_02004ef0
-	strb r0, [r5]
-	add sp, #4
-	movs r0, #0
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, pc}
-.L_02008634:
-	.4byte 0xfdff0000
-.L_02008638:
-	.4byte gMapShapeGrid
 	.section .text.x020086dc,"ax",%progbits
 	.balign 4
 	.global Func_020006dc

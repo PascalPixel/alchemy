@@ -225,12 +225,6 @@ Map_CopyCellPictureIndicesRect:
 	.thumb_func
 Func_0802b450:
 	.incbin "baserom.gba", 0x0002b450, 0x00000140
-	.section .rom.0002b878, "ax"
-	.global Map_WriteLayerCellTile
-	.type Map_WriteLayerCellTile, %function
-	.thumb_func
-Map_WriteLayerCellTile:
-	.incbin "baserom.gba", 0x0002b878, 0x00000120
 	.section .rom.0002b998, "ax"
 	.global Func_0802b998
 	.type Func_0802b998, %function
@@ -278,12 +272,8 @@ Func_0802de8c:
 	.incbin "baserom.gba", 0x0003939a, 0x00000002
 	.section .rom.00039452, "ax"
 	.incbin "baserom.gba", 0x00039452, 0x00000002
-	.section .rom.00039454, "ax"
-	.global Window_ClearInteriorTiles
-	.type Window_ClearInteriorTiles, %function
-	.thumb_func
-Window_ClearInteriorTiles:
-	.incbin "baserom.gba", 0x00039454, 0x00000094
+	.section .rom.000394e6, "ax"
+	.incbin "baserom.gba", 0x000394e6, 0x00000002
 	.section .rom.0003954c, "ax"
 	.balign 4
 	.global Message_Start
@@ -957,7 +947,15 @@ Func_080d9e98:
 	.type Func_080da0b0, %function
 	.thumb_func
 Func_080da0b0:
-	.incbin "baserom.gba", 0x000df0a4, 0x00000284
+	.incbin "baserom.gba", 0x000df0a4, 0x00000108
+	.section .rom.000df21e, "ax"
+	.incbin "baserom.gba", 0x000df21e, 0x00000002
+	.section .rom.000df220, "ax"
+	.global Func_080da22c
+	.type Func_080da22c, %function
+	.thumb_func
+Func_080da22c:
+	.incbin "baserom.gba", 0x000df220, 0x00000108
 	.section .rom.000df3b0, "ax"
 	.global Func_080da3bc
 	.type Func_080da3bc, %function
@@ -997,7 +995,7 @@ Func_080dbb78:
 	.incbin "baserom.gba", 0x000e0b6c, 0x0000008c
 	.section .rom.000e0ec4, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x000e0ec4, 0x00000174
+	.incbin "baserom.gba", 0x000e0ec4, 0x000000c4
 	.section .rom.000e16cc, "ax"
 	.global Func_080dc6d8
 	.type Func_080dc6d8, %function
@@ -2363,7 +2361,9 @@ BattleEffect_RunRagingHeat:
 	.type BattleEffect_RunJuggle, %function
 	.thumb_func
 BattleEffect_RunJuggle:
-	.incbin "baserom.gba", 0x00179994, 0x00000584
+	.incbin "baserom.gba", 0x00179994, 0x000004d8
+	.section .rom.00179f16, "ax"
+	.incbin "baserom.gba", 0x00179f16, 0x00000002
 	.global BattleEffect_RunFlora
 	.type BattleEffect_RunFlora, %function
 	.thumb_func
@@ -2565,9 +2565,6 @@ BattleEffect_RunOdyssey:
 	.thumb_func
 BattleEffect_RunMoloch:
 	.incbin "baserom.gba", 0x00191d60, 0x000007dc
-	.section .rom.00192648, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00192648, 0x000000f4
 	.section .rom.0019284c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0019284c, 0x00000450

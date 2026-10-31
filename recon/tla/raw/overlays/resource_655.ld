@@ -51,7 +51,7 @@ SECTIONS
         "*/resource_655_overlay.o"(.text.x0200a696)
         "*/resource_655_overlay.o"(.text.x0200a698)
         "*/games/tla/src/scene/dehkan_plateau/s27e0.o"(.text)
-        "*/resource_655_overlay.o"(.text.x0200aa5c)
+        "*/games/tla/src/scene/dehkan_plateau/s2a5c.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s2b68.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/events_i.o"(.text)
         "*/resource_655_overlay.o"(.text.x0200ac14)

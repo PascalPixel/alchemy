@@ -221,7 +221,7 @@ msgstr ""
 "{argument_actor_name:228} {argument_actor_name:150}゙\n"
 "なかまになった{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFoundVenusDjinni"
 msgid "00046"
 msgstr ""
 "{argument_actor_name:234} ヴィーナスのジン\n"

@@ -16,7 +16,7 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x0200865c)
         "*/resource_6a5_overlay.o"(.text.x02008cd0)
         "*/resource_6a5_overlay.o"(.text.x02009388)
-        "*/resource_6a5_overlay.o"(.text.x020096e8)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s16e8.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s1ac4.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x02009bc4)
         "*/resource_6a5_overlay.o"(.text.x0200aae4)

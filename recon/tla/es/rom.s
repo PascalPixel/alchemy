@@ -504,12 +504,6 @@ Func_08043cd8:
 	.thumb_func
 Func_08044558:
 	.incbin "baserom.gba", 0x000445c4, 0x0000051c
-	.section .rom.00044ae4, "ax"
-	.global Func_08044a58
-	.type Func_08044a58, %function
-	.thumb_func
-Func_08044a58:
-	.incbin "baserom.gba", 0x00044ae4, 0x00000128
 	.section .rom.00044e54, "ax"
 	.global Func_08044dc8
 	.type Func_08044dc8, %function
@@ -633,12 +627,6 @@ Item_GetEquipmentGroup:
 	.incbin "baserom.gba", 0x000b7c74, 0x0000003c
 	.section .rom.000b80ee, "ax"
 	.incbin "baserom.gba", 0x000b80ee, 0x00000002
-	.section .rom.000b9090, "ax"
-	.global Unit_CalculateBaseElements
-	.type Unit_CalculateBaseElements, %function
-	.thumb_func
-Unit_CalculateBaseElements:
-	.incbin "baserom.gba", 0x000b9090, 0x000000c0
 	.section .rom.000b9150, "ax"
 	.global Class_Determine
 	.type Class_Determine, %function
@@ -658,12 +646,6 @@ DjinnRecovery_Remove:
 	.thumb_func
 Func_080b1088:
 	.incbin "baserom.gba", 0x000ba094, 0x00000170
-	.section .rom.000ba204, "ax"
-	.global Func_080b11f8
-	.type Func_080b11f8, %function
-	.thumb_func
-Func_080b11f8:
-	.incbin "baserom.gba", 0x000ba204, 0x00000084
 	.section .rom.000d2fd8, "ax"
 	.global Encounter_SelectEnemyGroup
 	.type Encounter_SelectEnemyGroup, %function
@@ -934,12 +916,6 @@ Func_080d7524:
 	.incbin "baserom.gba", 0x000e0518, 0x00000264
 	.section .rom.000e0840, "ax"
 	.incbin "baserom.gba", 0x000e0840, 0x000000f0
-	.section .rom.000e0af8, "ax"
-	.global Func_080d7b04
-	.type Func_080d7b04, %function
-	.thumb_func
-Func_080d7b04:
-	.incbin "baserom.gba", 0x000e0af8, 0x00000100
 	.section .rom.000e0db0, "ax"
 	.global BattleEffect_UpdatePhasedRadialParticle
 	.type BattleEffect_UpdatePhasedRadialParticle, %function

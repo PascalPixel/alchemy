@@ -74,7 +74,7 @@ SECTIONS
         "*/games/tla/src/scene/trial_road/s4a14.o"(.text)
         "*/resource_697_overlay.o"(.text.x0200ca94)
         "*/resource_697_overlay.o"(.text.x0200cbc8)
-        "*/resource_697_overlay.o"(.text.x0200cce0)
+        "*/games/tla/src/scene/trial_road/s4ce0.o"(.text)
         "*/games/tla/src/scene/trial_road/s4d6c.o"(.text)
         "*/games/tla/src/scene/trial_road/s4d84.o"(.text)
         "*/games/tla/src/scene/trial_road/balance.o"(.text)

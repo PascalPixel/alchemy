@@ -1,12 +1,27 @@
+// Func_020001e0 is adopted from this draft (2026-11-01).
 // Draft, differ 80 of 83, skeleton gap 28 (tla-en, 2026-11-01): the worst of
-// Func_0200029c (83 instructions, differ 80, gap 13/15), Func_0200015c (57, 44,
-// 5/5) and Func_020001e0 (88, 4, 2/2). Func_02000358 is adopted in
-// games/tla/src/debug/psynergy_test_2/sparks.c.
+// Func_0200029c (83 instructions, differ 80, gap 13/15) and Func_0200015c (57,
+// 36, 3/3). Func_020001e0 now measures differ 0 under the changed compiler and
+// Func_02000358 is adopted in games/tla/src/debug/psynergy_test_2/sparks.c.
 // The native builds its constants inside the loops, so the first two loops are
 // label and goto loops: a for or do loop hoists them (015c 14/16, 01e0 8/11).
-// Func_020001e0 has only its incoming-argument saves scheduled differently.
-// Func_0200015c has its pool loads scheduled apart; a local for the tile
-// expression gives gap 4/4, but that is a forced temporary (S2) and is left out.
+// Func_0200015c: the u32 storage of the tile field (as battle_effect/f15b290.c
+// spells it) loads tileBase early and took differ from 44 to 36; pictureMask is
+// a one-constant local (S2), and without it the gap is 4/4 at the same differ.
+// All that is left is allocation, from one cause. The native has the timer in
+// r3 and the tileBase address in r1, tied to `ldrh r1, [r1]`. Here the address
+// is alone in its block and takes r3, so the timer takes r2 (or r0). Reload then
+// sees only r3 free and uses it throughout, where the native rotates r2 and r3
+// (0x500 r2, 0xc00 r3, 63 r2, 0x1602 r2, -1 r3, the count r2). The address gets
+// r1 only if the shift (r3) and the 7 (r2) are live across it, with the 7 born
+// after the reload at insn 44: address, shift, 7, load, and. No plain C found
+// gives that order. Separately, the native's `& ~0x3ff` keeps the pool mask in
+// its own register and ands into the ldrh; here combine loads the mask into the
+// result. Func_020005f8 and Func_02000600 returning s32 changed nothing.
+// Tried: a tiles local plus the mask gives differ 16 on u16 fields, but tiles is
+// a forced temporary (S2) and is left out. picture as in growing_particle.c 46,
+// a pointer local for tileBase 18 (gap 5), swapped addends 50, `<< 3` 36, a
+// (u16) cast 47, raw attr2 masks 37 to 57, `>= 0 && < 20` folds the same.
 // Func_0200029c: the count takes r4 and is saved round the call, because its 7
 // weighted refs against one call pass CALLER_SAVE_PROFITABLE; the native has it
 // in r8 and the tile in r10, and rebuilds 0x500 where the draft keeps it in the
@@ -29,9 +44,9 @@ struct SparkSprite {
   u8 unk05_5 : 1;
   u8 unk05_6 : 2;
   u8 unk06[2];
-  u16 tile : 10;
-  u16 unk08_10 : 2;
-  u16 unk08_12 : 4;
+  u32 tile : 10;
+  u32 unk08_10 : 2;
+  u32 unk08_12 : 4;
   u8 unk0a[0x14];
   u16 unk1e;
   u8 unk20[8];
@@ -71,7 +86,9 @@ void Func_0200015c(void) {
 loop:
   {
     if ((u32)spark->timer < 20) {
-      sprite->tile = work->tileBase + ((spark->timer >> 2) & 7) * 8;
+      s32 pictureMask = 7;
+
+      sprite->tile = work->tileBase + ((spark->timer >> 2) & pictureMask) * 8;
       Func_020005f8(sprite, spark);
       Func_02000600(spark, 63, 0xffff8000);
       spark->timer++;
@@ -84,35 +101,7 @@ loop:
     goto loop;
 }
 
-void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
-  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
-  struct Spark *spark;
-  s32 angle;
-  s32 i;
 
-  if (count > 0) {
-    i = count;
-  loop:
-    angle = Random16Far();
-    spark = &work->sparks[work->next];
-    spark->timer = 0;
-    spark->position[0] = x;
-    spark->position[1] = y;
-    spark->position[2] = z;
-    Vector_AddPolarOffsetFar((Random16Far() << 3) + 0x80000, angle,
-                             spark->position);
-    spark->velocity[0] = 0;
-    spark->velocity[1] = 0x50000;
-    spark->velocity[2] = 0;
-    Vector_AddPolarOffsetFar((Random16Far() << 1) + 0x20000, angle,
-                             spark->velocity);
-    work->next++;
-    work->next &= 63;
-    i--;
-    if (i != 0)
-      goto loop;
-  }
-}
 
 void Func_0200029c(void) {
   struct SparkWork *work =

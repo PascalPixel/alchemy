@@ -18,7 +18,7 @@ SECTIONS
         "*/resource_6a5_overlay.o"(.text.x02009388)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s16e8.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s1ac4.o"(.text)
-        "*/resource_6a5_overlay.o"(.text.x02009bc4)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s1bc4.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x0200aae4)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/scene_events.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s3a28.o"(.text)

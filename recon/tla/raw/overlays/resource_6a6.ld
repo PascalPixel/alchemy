@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/scene/loho/regions.o"(.text)
         "*/games/tla/src/scene/loho/exits.o"(.text)
         "*/games/tla/src/scene/loho/s0080.o"(.text)
-        "*/resource_6a6_overlay.o"(.text.x02008198)
+        "*/games/tla/src/scene/loho/s0198.o"(.text)
         "*/games/tla/src/scene/loho/s0bf4.o"(.text)
         "*/games/tla/src/scene/loho/lights.o"(.text)
         "*/games/tla/src/scene/loho/s0c84.o"(.text)

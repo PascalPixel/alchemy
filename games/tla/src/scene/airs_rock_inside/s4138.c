@@ -1,26 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01): a burst of power between two objects in Air's Rock
-// (a = idA, b = idB): the camera centres on a (cues 78, 141) while the
-// screen zooms and fades; a starts its action script (gData_020060e0) and,
-// blended over the background, sixteen sparks (object type 0x2a0) fly out
-// of it while the blend flickers; then sixteen sparks swirl round b at
-// widening distances (gData_020060b0), b starting its own script at the
-// fourth, and fifteen more rise in a column over b (gData_020060c0); the
-// screen fades back, both objects take their closing scripts and b runs
-// Func_020040b0 for 120 frames.
-// All three loops are goto loops (a for loop hoists the blend address and
-// constants), each with its own block-local spark. The pooled zero in the second
-// loop is the mask of the unk66 halfword store, shared by CSE.
-// What closed it: global.c must rank a over i over b over idA over idB, and that
-// holds only when the second loop's refs count once. flow_loops_find sees no
-// natural loop there if an edge enters the loop's middle before combine, so the
-// tagged never-true test does that and combine folds it to nothing. It is the
-// one found way to the native's ranking, not a claim about the source; another
-// form that lowers those refs would retire it. The rest is plain: sub sp, #12 is
-// an unused array; Value4 sets r0 last so r0 is free as a reload register for
-// b->z; unk62 and unk63 go through a union with struct Actor so that the load of
-// spark->x depends on those stores; call.h forwarding orders the arguments.
-// The one-pass block and the empty asm each fix one scheduling pair; no plain
-// form tried did (Call2, Value2, a script local, a one-pass block for the second).
 #include "types.h"
 #include "actor.h"
 #include "call.h"
@@ -57,8 +34,7 @@ u32 Random16Far(void);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02005d5c(struct Actor *object, s32 mode);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Func_02005d6c(struct Actor *object, const u8 *script);
 void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
@@ -77,27 +53,24 @@ void Func_02004138(s32 idA, s32 idB) {
 
   Func_02005f94(78);
   FieldEvent_Wait(30);
-  Call2(Func_02005ed4, 0x8000, 0x1000);
-  Call4(Camera_MoveWithinMapBounds, ((s16 *)&a->x)[1] << 16,
-        ((s16 *)&a->y)[1] << 16, ((s16 *)&a->z)[1] << 16, 1);
+  Func_02005ed4(0x8000, 0x1000);
+  Camera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16, ((s16 *)&a->y)[1] << 16,
+                             ((s16 *)&a->z)[1] << 16, 1);
   Func_02005f94(141);
   Call3(Func_02005dcc, 0x20000, 0x20000, 0x10000);
-  Call2(Func_02005f0c, 0x10000, 0);
-  Value2(Func_02005f04, 0x10003, 1);
-  Value1(Func_02005f14, 60);
+  Func_02005f0c(0x10000, 0);
+  Func_02005f04(0x10003, 1);
+  Func_02005f14(60);
   a->motionFlags = 0;
   a->acceleration = 0x3333;
   a->speedLimit = 0x3333;
   Actor_SetMovementTypeById(idA, gData_020060e0);
   Func_02005f94(194);
   FieldEvent_Wait(45);
-  Call2(Func_02005e94, idA, 0x100);
+  Func_02005e94(idA, 0x100);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
-  /* FAKEMATCH(one-pass): the block round i = 0; as a plain i = 0, 2 of 402 instructions differ in tla-en. */
-  do {
-    i = 0;
-  } while (0);
+  i = 0;
 first:
   {
     struct Actor *spark = Import_ActorCreate(0x2a0, a->x, a->y, a->z);
@@ -127,7 +100,8 @@ first:
     goto first;
   REG_BLDALPHA = 0x1008;
   wait(30);
-  /* FAKEMATCH(dead): the never-true jump into the loop; as no test at all, 200 of 402 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the never-true jump into the loop; as no test at all, 200
+   * of 402 instructions differ in tla-en. */
   never = idB << 1;
   i = 0;
   if (never & 1) {
@@ -136,8 +110,8 @@ first:
   }
 second:
   {
-    struct Actor *spark = (struct Actor *)Value4(
-        (s32 (*)())Import_ActorCreate, 0x2a0, b->x, b->y, b->z);
+    struct Actor *spark = (struct Actor *)Value4((s32 (*)())Import_ActorCreate,
+                                                 0x2a0, b->x, b->y, b->z);
     Func_02005f94(195);
     angle = &spark->action;
     *angle = (Random16Far() & 0x7fff) + 0x8000;
@@ -158,7 +132,8 @@ second:
       b->motionFlags = 0;
       b->acceleration = 0x3333;
       b->speedLimit = 0x3333;
-      /* FAKEMATCH(barrier): the empty asm before the call; as no asm, 2 of 402 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the empty asm before the call; as no asm, 2 of 402
+       * instructions differ in tla-en. */
       asm("");
       Actor_SetMovementTypeById(idB, gData_02006104);
     }
@@ -173,9 +148,9 @@ second:
   i = 2;
 third:
   {
-    struct Actor *spark = (struct Actor *)Value4(
-        (s32 (*)())Import_ActorCreate, 0x2a0, b->x, b->y + i * 65536 - 0x80000,
-        b->z);
+    struct Actor *spark =
+        (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 0x2a0, b->x,
+                               b->y + i * 65536 - 0x80000, b->z);
     spark->action = Random16Far();
     spark->unk66 = 0x800;
     ((union SparkView *)spark)->bytes.unk62 = i;
@@ -197,15 +172,15 @@ third:
     goto third;
   Func_02005f94(220);
   wait(50);
-  Value2(Func_02005f04, 0x7fff, 0);
-  Value1(Func_02005f14, 8);
+  Func_02005f04(0x7fff, 0);
+  Func_02005f14(8);
   wait(16);
-  Call3(Func_02005dcc, 0, 0, 0);
+  Func_02005dcc(0, 0, 0);
   Func_02005e94(idA, 0);
   Func_02005e94(idB, 0);
   Func_02005f94(574);
-  Value2(Func_02005f04, 0x10000, 0);
-  Value1(Func_02005f14, 80);
+  Func_02005f04(0x10000, 0);
+  Func_02005f14(80);
   Actor_SetMovementTypeById(idA, gData_02006128);
   Actor_SetMovementTypeById(idB, gData_02006158);
   b->update = Func_020040b0;

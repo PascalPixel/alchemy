@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/magma_rock/create.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/resource_691_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/magma_rock/s015c.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/distance.o"(.text)
         "*/games/tla/src/field/object/find_in_cell.o"(.text)
         "*/resource_691_overlay.o"(.text.x020083b4)

@@ -1,30 +1,4 @@
-// Matches: differ 0 (tla-en, 2026-11-01): a Magma Rock scene between objects a
-// and b: sound 78, the camera to a, a shake and flash (sound 141), a rises on
-// its action script (sound 194); sixteen blended objects of type 672 burst from
-// a with sound 246 while the blend flickers; sixteen more spiral in around b
-// (sound 195), b starting its own script at the fourth; then fifteen rise in a
-// column above b (sound 220); the blend fades, the shaking stops, both take
-// their closing scripts with sound 574, b takes the rising-effect update
-// (Func_02002c48) for 120 frames and the scene ends with sound 390.
-// What settled it, for the next function of this shape:
-// - The native's allocation (a r9, b r11, first r7, second r10, i r8) needs the
-//   spiral's refs at weight 1, burst and column at weight 2: first, then i,
-//   second, a, b. flow.c counts a loop only if its header dominates its latch,
-//   so a jump into the spiral's middle that exists at flow and is gone after
-//   makes it an irreducible, depth-0 loop. The native leaves no trace of that
-//   jump; here it is the dead test below, which only combine can fold (nonzero
-//   bits of a byte), so it must have a body, or jump.c threads it and it stays.
-// - The same weight 1 gives script its 2 refs, so update_equiv_regs moves the
-//   pool load to the use, after r0; that needs the load in an earlier block.
-// - Value4, Call2 and Call3 from call.h give the argument orders, with reload's
-//   spill set r0, r2, r3 (672 set first would hold r0 and bring in r1 and r4).
-// - u16 noMotion and (u16)0 are the pooled zeros (halfword constants).
-// - Bytes 0x62 and 0x63 read through a union with Actor: address after value,
-//   and an alias set conflicting with Actor's keeps the store's order.
-// - i * 0x10000 ties the sum to the shift, where << 16 ties it to the load.
-// Devices: one dead test, one one-pass block, each tagged; both reach differ 0
-// only together. call.h's wrappers carry their own tags.
-#include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
+#include "local.h"
 #include "io_reg.h"
 #include "call.h"
 
@@ -81,7 +55,7 @@ void Func_02002cd0(s32 a, s32 b) {
                              ((s16 *)&first->z)[1] << 16, 1);
   Func_02004f30(141);
   Call3((void (*)())Func_02004d10, 0x20000, 0x20000, 0x10000);
-  Call2((void (*)())Func_02004e48, 0x10000, 0);
+  Func_02004e48(0x10000, 0);
   Func_02004e40(0x10003, 1);
   Func_02004e50(60);
   first->motionFlags = 0;
@@ -90,17 +64,13 @@ void Func_02002cd0(s32 a, s32 b) {
   Actor_SetMovementTypeById(a, gData_02005590);
   Func_02004f30(194);
   FieldEvent_Wait(45);
-  Call2((void (*)())Func_02004dc0, a, 256);
+  Func_02004dc0(a, 256);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
-  /* FAKEMATCH(one-pass): the empty block keeps i's zero after the blend store; as
-   * i = 0 with no block, 2 of 402 instructions differ in tla-en. */
-  do {
-  } while (0);
   i = 0;
 burst:
-  object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 672, first->x,
-                                  first->y, first->z);
+  object =
+      (struct Actor *)Import_ActorCreate(672, first->x, first->y, first->z);
   Func_02004f30(246);
   object->x += ((Random16Far() & 31) - 16) << 16;
   object->y += ((Random16Far() & 15) - 8) << 16;
@@ -128,7 +98,7 @@ burst:
   wait(30);
   i = 0;
   /* FAKEMATCH(dead): the never-taken jump into the spiral keeps its refs at
-   * weight 1; as the spiral alone, 201 of 402 instructions differ in tla-en. */
+   * weight 1; as the spiral alone, 174 of 402 instructions differ in tla-en. */
   probe = second->unk57;
   if (probe & 0x100) {
     wait(1);

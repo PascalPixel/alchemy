@@ -1,21 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01): the Psynergy Stone's power passing
-// between two objects: the first rises glowing while sixteen sparks burst from it
-// with the screen flashing, sixteen sparks then spiral down onto the second as it
-// rises, fifteen more stand in a column over it, the screen whitens and both
-// settle back while the second keeps sparkling for two seconds.
-// The listing equals overlay 681's Func_020015d0 and 692's Func_02002cd0 but for
-// addresses; 664's Func_02004138 is the same shape. This is 692's form, which has
-// no asm, where 681 needs three barriers.
-// What closed it: all three loops are goto loops. The native's allocation (first
-// r7, second r10, i r8, firstId r9, secondId r11) needs the spiral's refs at
-// weight 1, so a jump into its middle has to exist at flow and be gone after: the
-// tagged dead test, which only combine can fold. The same weight gives script its
-// two refs, so its pool load moves to the use; that needs the load in an earlier
-// block. Bytes 0x62 and 0x63 read through a union with struct Actor so the store
-// order holds; noMotion and (u16)0 are the pooled zeros; unused[3] is the frame.
-// Tried for the one-pass block, none better than 2: i = 0 above the blend stores,
-// the stores swapped, a zero local, a block after the label, a static inline for
-// the stores or the zero, a forced temporary for the values.
 #include "types.h"
 #include "actor.h"
 #include "call.h"
@@ -72,12 +54,11 @@ void Func_02001620(s32 firstId, s32 secondId) {
   Func_02003ef4(78);
   FieldEvent_Wait(30);
   Func_02003e44(0x8000, 0x1000);
-  Camera_MoveWithinMapBounds((first->x >> 16) << 16,
-                             (first->y >> 16) << 16,
+  Camera_MoveWithinMapBounds((first->x >> 16) << 16, (first->y >> 16) << 16,
                              (first->z >> 16) << 16, 1);
   Func_02003ef4(141);
-  /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x20000; as a
-   * direct call, 17 of 402 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x20000; as
+   * a direct call, 17 of 402 instructions differ in tla-en. */
   Call3((void (*)())Func_02003d44, 0x20000, 0x20000, 0x10000);
   Func_02003e7c(0x10000, 0);
   Func_02003e74(0x10003, 1);
@@ -88,15 +69,9 @@ void Func_02001620(s32 firstId, s32 secondId) {
   Actor_SetMovementTypeById(firstId, gData_02004034);
   Func_02003ef4(194);
   FieldEvent_Wait(45);
-  /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2 of
-   * 402 instructions differ in tla-en. */
-  Call2((void (*)())Func_02003e04, firstId, 256);
+  Func_02003e04(firstId, 256);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
-  /* FAKEMATCH(one-pass): the empty block keeps i's zero after the blend store; as
-   * i = 0 with no block, 2 of 402 instructions differ in tla-en. */
-  do {
-  } while (0);
   i = 0;
 burst:
   object = Import_ActorCreate(672, first->x, first->y, first->z);
@@ -151,14 +126,14 @@ spiral:
   Func_02003cc4(spark, 7);
   Actor_SetSingleChildFlags(spark, 0);
   Animation_SetStateFlags(spark, 1);
-  /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2 of
-   * 402 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
+   * of 402 instructions differ in tla-en. */
   Call3((void (*)())Vector_AddPolarOffsetFar, spark->unk4c, spark->action,
         (s32)&spark->x);
   Func_02003ccc(spark, gData_02004004);
   if (i == 3) {
-    /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2 of
-     * 402 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
+     * of 402 instructions differ in tla-en. */
     Call2((void (*)())Func_02003e04, secondId, 256);
     second->motionFlags = noMotion;
     second->acceleration = 0x3333;

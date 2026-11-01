@@ -1,17 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Held by three tagged barrier sites. They stand in for a missing cause: the
-// native's register order (event r5, cz r6, cx r7, table r8, last r10, entry r9,
-// cell r11, i on the stack) fits refs counted without loop depth, which is how
-// the compiler ranks pseudos under optimize_size (flow.c's REG_N_REFS). As
-// compiled, loop-depth weights rank last second, and cz and cx below it. The
-// asm operands only add refs and live length to restore that order. Whether The
-// Lost Age's weighting differs is a compiler question for Pascal (K3); an answer
-// would retire all three. Plain shapes that closed the rest: no count reload
-// merge in the leader search (the guard reads through s16), cells rebuilt in
-// place and copied to rows after j = 0, entry++ before table->count++ (the
-// reload order gives r5 to the 8 first), and k shared with the fill loop.
-// Overlay 6a5's copy of overlay 698's Func_020011a0, drafted in
-// resource_698_c_020011a0.c with this overlay's symbols.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -132,19 +118,25 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
             if (event == last)
               GameFlag_SetBit(entry->flag);
           } else if (GameFlag_Test(entry->flag)) {
-            /* FAKEMATCH(barrier): the empty asm reading cz, which ranks cz above cx; as no asm, 16 of 268 instructions differ in tla-en. */
+            /* FAKEMATCH(barrier): the empty asm reading cz, which ranks cz
+             * above cx; as no asm, 16 of 268 instructions differ in tla-en. */
             asm("" : : "r"(cz));
-            Func_0200579c(table->x, table->z + 1, 1, 1, cx | (s16)(table->x & 64),
-                          cz | (s16)(table->z & 64));
+            Func_0200579c(table->x, table->z + 1, 1, 1,
+                          cx | (s16)(table->x & 64), cz | (s16)(table->z & 64));
           }
           entry++;
           table->count++;
-          /* FAKEMATCH(barrier): the memory asm pair, which keeps the store above the 8; as no pair, 6 of 268 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): the memory asm pair, which keeps the store
+           * above the 8; as no pair, 6 of 268 instructions differ in tla-en. */
           asm("" : "=r"(mark) : : "memory");
           asm("" : "=r"(mark) : "0"(mark) : "memory");
-          /* FAKEMATCH(barrier): the empty asm reading last and table, which ranks table above last and last above entry; as reading mark alone, 175 of 268 instructions differ in tla-en. */
-          asm("" : : "r"(mark), "r"(last), "r"(table), "r"(table), "r"(table),
-              "r"(table), "r"(table));
+          /* FAKEMATCH(barrier): the empty asm reading last and table, which
+           * ranks table above last and last above entry; as reading mark alone,
+           * 175 of 268 instructions differ in tla-en. */
+          asm(""
+              :
+              : "r"(mark), "r"(last), "r"(table), "r"(table), "r"(table),
+                "r"(table), "r"(table));
         }
       }
       i++;
@@ -163,8 +155,8 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
 
     entry = table->entries;
     k = 0;
-    // Read through s16: as table->count GCSE moves the loop end's reload into the
-    // arm that stores current.
+    // Read through s16: as table->count GCSE moves the loop end's reload into
+    // the arm that stores current.
     if (k < *(s16 *)&table->count) {
     search:
       if (entry->x == leaderX && entry->z == leaderZ)

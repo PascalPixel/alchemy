@@ -1,36 +1,3 @@
-// Draft, differ 2 of 329, skeleton gap 1 (tla-en, 2026-11-01): the twin of ☀️'s
-// BattleArena_EnterBattle, confirmed call for call (the same flags tests, the
-// same walk to (216, 168), the EXEC payload and the 1992-byte copy). A near
-// miss: one scheduling pair is left. In the native, table[3]'s store sits
-// between the bound's movs r4 and lsls r4, ahead of table[0] and table[2], so
-// it must rank 2 with an earlier luid; here it ranks 1 because no instruction
-// after it in its block touches r3 or memory, and none does in the native
-// either. Tried 2026-11-01 without gain: all 24 store orders with the bound set
-// before, among and after the stores (2 at best), *(table + n) spellings, the
-// payload's address written again for table[3] (2 each), 0x43 in a local (20),
-// i and src set before the stores (4 to 16), and the twin's do/while, as
-// pointer or index, and a for loop (16 each).
-// Near miss, differ 2 of 329 (tla-en, 2026-10-30): after the bound's movs r4,
-// #217 the native stores 0x43 (strh r3, [r2, #6]) before lsls r4; here sched2
-// ranks the bound's lsls r4 at priority 2 against the store's 1 (the store has
-// nothing after it in its block), so the 0x43 store falls after the other two.
-// The battle rule is now a plain store: the one-pass block before it no longer
-// changes anything (2 either way). Five more minutes of alchemy permute,
-// randomizing only the payload and copy statements, found nothing below 2.
-// Earlier (2026-10-26): no single barrier or one-pass block after any
-// statement changes it.
-// Draft of overlay 6b5's Func_02000864 (0x02008864), ported from ☀️'s
-// EV10_TOUCH: differ 4 of 329. Devices in place, each measured: the 0x173
-// test's result kept while the scene symbol is loaded once for both
-// branches; (then) a one-pass block loading gMainRoutineWork before the battle
-// rule's offset; the copy loop as a goto loop with its bound in a variable and the
-// byte read ahead of the increments (as ☀️'s do/while or a for loop, loop.c
-// hoists and strength-reduces the destination, differ 18-20). Left: after
-// the payload's first store the native loads 0x43 and stores it before the
-// bound's movs r4, #217; sched2 here ties them at priority 3 and prefers the
-// bound, which does not depend on the store just scheduled. One-pass blocks
-// between the stores, store orders and five minutes of alchemy permute did
-// not find it.
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -69,18 +36,17 @@ void Func_02001ab4(s32 skip);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Task_RemoveFar(void *func);
-struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y,
-                                          s32 flags);
+struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 
-extern char SceneId_LinkLobby;
+extern char SceneId_Ov6b5;
 
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters build each speed
-   * again at each call; direct calls share registers */
+  /* FAKEMATCH(wrapper): Actor_SetSpeed forwarded inline; as direct calls to
+   * Actor_SetSpeedParameters, 45 of 329 instructions differ in tla-en. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
@@ -188,14 +154,14 @@ s32 Func_02000864(void) {
         Func_02001a1c();
         return;
       }
-      Actor_SetSpeed(4, 0x8000, 0x4000);
+      Actor_SetSpeedParameters(4, 0x8000, 0x4000);
       Actor_WaitForMoveById(4);
     }
     /* FAKEMATCH(temporary): the flag test's result kept while the scene
-     * symbol is loaded once for both branches; as if (Flag_IsSet(0x173)), 4 of
+     * symbol is loaded once for both branches; as if (Flag_IsSet(0x173)), 2 of
      * 329 instructions differ in tla-en. */
     set = Flag_IsSet(0x173);
-    scene = (s32)&SceneId_LinkLobby;
+    scene = (s32)&SceneId_Ov6b5;
     if (set) {
       Party_SetFields1eeAnd1f0(scene, 8);
       Party_SetFields1f2And1f4(scene, 9);
@@ -211,8 +177,6 @@ s32 Func_02000864(void) {
     table[2] = 0x45;
     table[3] = 0x43;
     {
-      /* FAKEMATCH(temporary): the copy's bound in a variable; as i <= 0x7c7, 16
-       * of 329 instructions differ in tla-en. */
       u32 last = 0x7c7;
 
       i = 0;

@@ -1,48 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01), with four tagged devices.
-// Two of the devices stand in for something not yet understood, so the proof
-// below is worth more than the form: compare it before adopting.
-// The native allocates as if no loop in this function weighted its register
-// references. Its layout constants take r5, r6, r8 and sl across one to three
-// calls where any weighted count finds caller-save r4 profitable, row outranks
-// col although the inner loop's counter has more weighted references, and r4
-// stays free for reload. flow_loops_find sets the weights at the life pass, and
-// a natural loop's header must dominate its latch, so the dead test below
-// (mark is a u8, so the mask folds to zero, which combine finds only after the
-// life pass) gives each loop nest a second entry for that pass alone: every
-// loop stops counting, combine deletes the test, and no byte of it survives.
-// Tested: all seven edges are needed (without straight_miss.s the skeleton
-// stays closed and differ is 114; without any other, differ is 331 to 577); a
-// combine fold inside a loop does not reset the depths, because
-// find_basic_blocks reuses the blocks. Whether the source had
-// such a test, or the compiler counted goto loops differently, is a compiler
-// question left to Pascal (K3); these loops are goto loops, and 64a_18e0's
-// note says the same of goto loops.
-// The barrier: sched2 ties the store and sub sp, and only a dependent of the
-// store breaks the tie. asm cannot raise its priority (an unrecognised insn
-// costs nothing), so this one is non-volatile and reads the store, which wins
-// on dependent count. It writes state so that it stays live, and reads n to
-// keep n ahead of state in global.c. It holds no instructions and places no
-// bytes, but it is more than the empty asm S2 describes, so check that before
-// counting it. Two asms lose the pool placement (each counts 4 bytes).
-// The rest is plain: x and z are col and row, one variable n serves every
-// counter from the failure flag on (both as the listing's registers show),
-// state is one pointer, n = 0 follows the draw grid so the first |= folds and
-// the zero argument comes from n, and the seed's increment and store are two
-// statements (the store's address loads after the increment). row = 0 before
-// Iwram_ClearWords is sched2 pulling it into the pool load's stall.
-//
-// Builds a random board for the Gabomba floor puzzle
-// in gSceneState's 8 by 11 grid of 4-byte cells (byte 0 the piece, byte 2
-// its channel shape, byte 3 marked to be drawn turned) from the seed after
-// the one given, kept at gSceneState + 0x160: it clears the grid, places
-// the fixed pieces, lays the channels with Func_02003fc0 and Func_02004270
-// in one of two layouts (by a coin toss) and starts over with the next
-// seed until every channel fits and the board holds a piece of each kind
-// the puzzle needs; then it marks a start piece among the bottom three
-// rows, four corner pieces and one straight piece (Func_02003934 rejects
-// cells in use), marks plain pieces for whatever count is left, turns
-// each marked piece at random (Func_02004380) and draws every cell
-// (Func_0200566c). Returns the seed it used.
 #include "types.h"
 #include "iwram_call.h"
 
@@ -69,7 +24,8 @@ struct SceneState {
 extern struct SceneState gSceneState;
 extern s32 gRandomState;
 u32 Random16Far(void);
-void Func_0200566c(s32 marked, s32 piece, s32 width, s32 height, s32 col, s32 row);
+void Func_0200566c(s32 marked, s32 piece, s32 width, s32 height, s32 col,
+                   s32 row);
 s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
 void Func_02004270(s32 col, s32 row, s32 a, s32 b);
 s32 Func_02003934(s32 col, s32 row);
@@ -82,19 +38,25 @@ s32 Func_02003a64(s32 value) {
   struct PuzzleCell *cell;
 
   state->count = value - 1;
-  /* FAKEMATCH(barrier): the form kept; as no asm here, 2 of 629 instructions differ in tla-en. */
-  asm("" : "=r"(state) : "m"(state->count), "r"(n));
-  /* FAKEMATCH(dead): the form kept; as no such test, 580 of 629 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the form kept; as no such test, 580 of 629 instructions
+   * differ in tla-en. */
   {
     s32 mark = state->cells[0].marked;
     if (mark & 0x100) {
-      if (value == 1) goto draw_next;
-      if (value == 2) goto count_next;
-      if (value == 3) goto turn_next;
-      if (value == 4) goto start_miss;
-      if (value == 5) goto corner_miss;
-      if (value == 6) goto straight_miss;
-      if (value == 7) goto plain_miss;
+      if (value == 1)
+        goto draw_next;
+      if (value == 2)
+        goto count_next;
+      if (value == 3)
+        goto turn_next;
+      if (value == 4)
+        goto start_miss;
+      if (value == 5)
+        goto corner_miss;
+      if (value == 6)
+        goto straight_miss;
+      if (value == 7)
+        goto plain_miss;
     }
   }
 retry:
@@ -112,7 +74,8 @@ retry:
 draw_row:
   col = 0;
 draw_col:
-  /* FAKEMATCH(temporary): the form kept; as plain arguments, 231 of 629 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept; as plain arguments, 231 of 629
+   * instructions differ in tla-en. */
   {
     s32 drawn = state->cells[row * 11 + col].piece;
     s32 drawZ, drawX = state->originX;
@@ -258,7 +221,7 @@ straight_done:
       }
     }
   plain_miss:
-  if (++tries <= 88)
+    if (++tries <= 88)
       goto plain_try;
   plain_done:
     if (--n != 0)
@@ -288,7 +251,8 @@ turn_col:
       break;
     }
   }
-  /* FAKEMATCH(temporary): the form kept; as plain arguments, 12 of 629 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept; as plain arguments, 12 of 629
+   * instructions differ in tla-en. */
   {
     s32 drawZ, drawX = state->originX;
     drawZ = state->originZ + row;

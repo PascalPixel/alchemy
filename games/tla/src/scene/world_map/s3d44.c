@@ -1,25 +1,3 @@
-// Near miss, differ 6 of 593 (tla-en, 2026-10-30): the world map's fade:
-// queues the world map palette for mode and its pictures, then steps the blend
-// through 0xe00 down to 0x800 and back. Overlay 64c has the same code (its
-// Func_02001400, which includes this file). Mode 1's Func_02004b78 goes
-// through Call3, as the native builds its two 0x20000 arguments apart.
-// Measured steps (was 35, then 16, 14 at the start of this pass): the plain
-// IO_WRITE_QUEUE_PUSH in place of IO_WRITE_QUEUE_PUSH_IME with an ime local
-// loads the queue's address before IME's, as the native does (14 to 12);
-// gData_02006e08 read into blend before each QueueIoWriteDelay2 puts its load
-// between 0x04000052's halves (12 to 8, tagged); Func_02004aa8 typed s32, as
-// its veneer's target Resource_DecodeType01 returns (graphics/resource.h),
-// puts the pool load after the pictures' add (8 to 6).
-// Left: the second push (the frames' tiles, value buffer itself): the native
-// computes the entry's address before the count's increment and stores the
-// count after the buffer word. Here the scheduler gives the increment priority
-// 8 (the count store frees r2 for 0x06001000) over the address's 7, and the
-// count and entry stores do not alias, so no statement order reaches it:
-// measured at 8, before the s32 return, the count stored after the value
-// changed nothing and after all three words gave 22; at 6, the macro with
-// q->count, a u16 or u32 count, the entry taken after the increment, or
-// indexed stores gave 34 to 134 (all pushes). Scheduler order. The permuter
-// (4 minutes, at 8) found only a volatile return type on Func_02004aa8.
 #include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -123,7 +101,7 @@ void Func_02003d44(s32 mode) {
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
     /* FAKEMATCH(wrapper): Func_02004b78 called through Call3; as
-     * Func_02004b78(0x20000, 0x20000, 0x10000), 25 of 593 instructions
+     * Func_02004b78(0x20000, 0x20000, 0x10000), 19 of 593 instructions
      * differ in tla-en. */
     Call3((void (*)())Func_02004b78, 0x20000, 0x20000, 0x10000);
     Func_02004e30(141);
@@ -139,7 +117,7 @@ void Func_02003d44(s32 mode) {
     Func_02004ac8();
     /* FAKEMATCH(temporary): the blend read into blend before each of the two
      * QueueIoWriteDelay2 calls; as QueueIoWriteDelay2((u32)&REG_BLDALPHA,
-     * gData_02006e08) at both, 10 of 593 instructions differ in tla-en. */
+     * gData_02006e08) at both, 2 of 593 instructions differ in tla-en. */
     blend = gData_02006e08;
     QueueIoWriteDelay2((u32)&REG_BLDALPHA, blend);
     QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);

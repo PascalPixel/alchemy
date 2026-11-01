@@ -59,7 +59,7 @@ SECTIONS
         "*/resource_6ab_overlay.o"(.text.x0200adc4)
         "*/resource_6ab_overlay.o"(.text.x0200b070)
         "*/games/tla/src/scene/mars_lighthouse_star_room/set_data.o"(.text)
-        "*/resource_6ab_overlay.o"(.text.x0200b390)
+        "*/games/tla/src/scene/mars_lighthouse_star_room/s3390.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/resource_6ab_overlay.o"(.text.x0200b602)
         "*/games/tla/src/field/field_effect/move.o"(.text)

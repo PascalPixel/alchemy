@@ -40,7 +40,7 @@ SECTIONS
         "*/resource_670_overlay.o"(.text.x0200c524)
         "*/games/tla/src/scene/kibombo/s45d0.o"(.text)
         "*/games/tla/src/scene/kibombo/s489c.o"(.text)
-        "*/resource_670_overlay.o"(.text.x0200ca28)
+        "*/games/tla/src/scene/kibombo/s4a28.o"(.text)
         "*/games/tla/src/scene/kibombo/s4cf4.o"(.text)
         "*/games/tla/src/scene/kibombo/s5034.o"(.text)
         "*/games/tla/src/scene/kibombo/prepare.o"(.text)

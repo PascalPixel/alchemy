@@ -1,26 +1,3 @@
-// Draft, differ 2 of 438, skeleton gap 1 (tla-en, 2026-11-01)
-// Twin of ☀️'s BattleArena_RunRoundResult (overlay resource_3cb, scene/
-// battle_arena.c): overlay 6b5's lobby set-up by entrance, same order of
-// statements, entrances 8 to 11 and the fall-through arrival, same tallies,
-// slot writes, party flags and "TALK" name stores. ⚓️ adds Flag_Set(0x17e) and
-// two more cleared halfwords at the top.
-// Left: one sched2 tie in entrance 8: linkTallies[3]'s offset, split after
-// reload, puts its shift before the first tally's store; the native has it
-// after. Seven spellings of the two increments (+= 1, = x + 1, ++x, pointer
-// forms) leave the pair as it is, one shared pointer is worse (74); it stays
-// a near miss.
-// Tried for the flag loop, which needs the counter in r5 and the flag number
-// in r6, the reverse of the twin's r6 and r5: the counter (priority 33/28)
-// loses to the flag number (12/8) in global allocation, and sched2 then
-// hoists the counter's clear past the calls. Direct calls, a named flag
-// local in the loop and inline wrappers change nothing (differ 18). The
-// counter holding the entrance (differ 12) gave it the priority but moved
-// the entrance from r3 to r5; the counter as score is worse (76), and earlier
-// notes measured it as wins, msg or v at 18 to 55.
-// Sharing the variable that later holds the wins lengthens the flag number's
-// live range enough, so that reuse replaces the entrance one.
-// Devices in place: one scalar holds the score row's address, then its score,
-// in entrances 8 and 9, and entrance 10's best streak reuses that slot.
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -74,14 +51,22 @@ void Task_Add(void *func, s32 priority);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 
-static inline s32 Flag_GetByte(s32 flag) { return GameFlag_GetByte(flag); }
+static inline s32 Flag_GetByte(s32 flag) {
+  /* FAKEMATCH(wrapper): Flag_GetByte forwarded inline; as direct calls to
+   * GameFlag_GetByte, 60 of 438 instructions differ in tla-en. */
+  return GameFlag_GetByte(flag);
+}
 
 static inline void Flag_SetByte(s32 flag, s32 value) {
+  /* FAKEMATCH(wrapper): Flag_SetByte forwarded inline; as direct calls to
+   * GameFlag_SetByte, 17 of 438 instructions differ in tla-en. */
   GameFlag_SetByte(flag, value);
 }
 
 static inline void Map_CopyCells(s32 x, s32 y, s32 width, s32 height, s32 destX,
                                  s32 destY) {
+  /* FAKEMATCH(wrapper): Map_CopyCells forwarded inline; as direct calls to
+   * Func_0200199c, 6 of 438 instructions differ in tla-en. */
   Func_0200199c(x, y, width, height, destX, destY);
 }
 
@@ -114,7 +99,7 @@ s32 Func_0200145c(void) {
   }
   for (i = 0; i < 8; i++) {
     /* FAKEMATCH(temporary): wins, reused, holds the flag number; as a separate
-     * value, 18 of 438 instructions differ in tla-en. */
+     * value, 16 of 438 instructions differ in tla-en. */
     wins = 0x2f0 + i;
     Flag_Clear(wins);
     if (Func_02000f6c(i))
@@ -131,13 +116,13 @@ s32 Func_0200145c(void) {
     LinkLobby_WriteSlotValue(5);
     gMainRoutineWork.linkTallies[0]++;
     gMainRoutineWork.linkTallies[3]++;
-    wins = (s8)Flag_GetByte(0x3f8);
+    wins = (s8)GameFlag_GetByte(0x3f8);
     msg = wins * 2 + 2;
     if (msg > 14)
       msg = 14;
     v = Flag_GetByte(1000);
     if (v == 2) {
-      Flag_SetByte(1000, 0);
+      GameFlag_SetByte(1000, 0);
       wins++;
       msg++;
     } else {
@@ -149,12 +134,13 @@ s32 Func_0200145c(void) {
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       if (wins > 90)
         wins = 90;
-      Flag_SetByte(0x3f8, wins);
+      GameFlag_SetByte(0x3f8, wins);
     } else {
       Flag_Clear(0x173);
-      Flag_SetByte(0x3f8, -1);
-      /* FAKEMATCH: one scalar holds the row address, then its score, as in ☀️'s
-       * entrance 9 */
+      GameFlag_SetByte(0x3f8, -1);
+      /* FAKEMATCH(temporary): one scalar holds the row address, then its score;
+       * as the row read directly in entrances 8 and 9, 36 of 438 instructions
+       * differ in tla-en. */
       score = (u32)&gMainRoutineWork.linkTallies[3];
       Func_020019e4(*(u16 *)score, 5);
       score = *(u16 *)score;
@@ -178,8 +164,9 @@ s32 Func_0200145c(void) {
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
     Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
-    /* FAKEMATCH: one scalar holds the row address, then its score, as in ☀️'s
-     * entrance 9 */
+    /* FAKEMATCH(temporary): one scalar holds the row address, then its score;
+     * as the row read directly in entrances 8 and 9, 36 of 438 instructions
+     * differ in tla-en. */
     score = (u32)&gMainRoutineWork.linkTallies[3];
     Func_020019e4(*(u16 *)score, 5);
     score = *(u16 *)score;
@@ -194,7 +181,7 @@ s32 Func_0200145c(void) {
     }
     gMainRoutineWork.linkTallies[3] = 0;
     Flag_Clear(0x173);
-    Flag_SetByte(0x3f8, -1);
+    GameFlag_SetByte(0x3f8, -1);
     LinkLobby_WriteSlotValue(0);
     Func_02001a1c();
   } else if (gMainRoutineWork.entrance == 10) {
@@ -219,7 +206,8 @@ s32 Func_0200145c(void) {
       gMainRoutineWork.linkTallies[4]++;
       v = gMainRoutineWork.linkTallies[7] + 1;
       gMainRoutineWork.linkTallies[7] = v;
-      /* FAKEMATCH: reuse the other score branches' address slot, as ☀️ does */
+      /* FAKEMATCH(temporary): the other score branches' address slot reused; as
+       * the row read directly, 8 of 438 instructions differ in tla-en. */
       score = (u32)&gMainRoutineWork.linkTallies[6];
       if (*(u16 *)score < (u16)v)
         *(u16 *)score = v;
@@ -249,7 +237,7 @@ s32 Func_0200145c(void) {
   } else {
     Func_02001914();
     Flag_Clear(0x172);
-    Flag_SetByte(0x3f8, -1);
+    GameFlag_SetByte(0x3f8, -1);
     if (gMainRoutineWork.unk244[6] != 0) {
       Func_02001a14();
       Func_02001ab4(0);

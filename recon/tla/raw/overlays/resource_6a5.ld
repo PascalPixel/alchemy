@@ -43,7 +43,7 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s4bd4.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s4d9c.o"(.text)
-        "*/resource_6a5_overlay.o"(.text.x0200cec8)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s4ec8.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s510c.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x0200d204)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)

@@ -1,19 +1,4 @@
-// Near miss, differ 4 of 360 (tla-en, 2026-10-30): only the opening's order
-// is left: sched2 issues the pool load of gMainRoutineWork (r5) right after
-// `movs r2, #188`, where the native issues it after the third layer's
-// `adds r2, r3, r2`, and the 133 of the 0x214 offset before the third layer's
-// spill to [sp, #12], where the native issues it after. The sched2 dump shows
-// why: the native order needs the spill store's link to the leader-id load
-// `ldr r0, [r5]` to cost 3, as a pool load's link to its use does, where
-// -mthumb-slow-loads costs it 2; with the same instructions no source form
-// changes those costs, and no barrier can sit between the spill and its add.
-// Permute (4 minutes, 6068 candidates) found nothing better.
-// 26 October 2026: alchemy permute (5 to 6 minutes) and an empty asm or
-// one-pass block after any one statement do not move it.
-// The Shrine of the Sea God's descent: the map's three layers and the party
-// move down while the blend steps from 0x80c to 0x1000 and Func_0200094c draws
-// the steps.
-#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
+#include "shrine_of_the_sea_god.h"
 #include "io_reg.h"
 #include "io_write.h"
 #include "call.h"
@@ -42,20 +27,20 @@ void Func_02000994(void) {
   u32 i;
 
   Func_020039d8();
-  Call1((void (*)())Func_02003b08, 0);
+  Func_02003b08(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Call2((void (*)())Actor_SetSpritePriority, gMainRoutineWork.currentOwner, 1);
-  Call2((void (*)())Actor_SetSpritePriority, 8, 1);
-  Call2((void (*)())Actor_SetSpritePriority, 9, 1);
-  Call2((void (*)())Actor_SetSpritePriority, 10, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSpritePriority(8, 1);
+  Actor_SetSpritePriority(9, 1);
+  Actor_SetSpritePriority(10, 1);
   Func_020039a0();
-  Call1((void (*)())wait, 1);
+  wait(1);
   ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(84, 100, 6, 56, 18, 6);
   ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
   Io_Write16(0x80c, &REG_BLDALPHA);
-  Call1((void (*)())wait, 1);
+  wait(1);
   layer0->y += -0x440000;
   layer1->y += -0x140000;
   layer2->y += 0xc0000;
@@ -65,13 +50,13 @@ void Func_02000994(void) {
   b->z += -0xc0000;
   c->z += -0xc0000;
   Func_02003988();
-  Call1((void (*)())wait, 4);
+  wait(4);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
-  Call1((void (*)())Func_02003b48, 245);
+  Func_02003b48(245);
   i = 0;
   do {
     i++;
@@ -82,49 +67,49 @@ void Func_02000994(void) {
     i++;
     Func_0200092c();
   } while (i <= 24);
-  Call2((void (*)())Func_0200094c, 84, 93);
-  Call2((void (*)())Func_0200094c, 84, 86);
+  Func_0200094c(84, 93);
+  Func_0200094c(84, 86);
   Io_Write16(0x90b, &REG_BLDALPHA);
-  Call2((void (*)())Func_0200094c, 84, 79);
-  Call2((void (*)())Func_0200094c, 84, 72);
+  Func_0200094c(84, 79);
+  Func_0200094c(84, 72);
   Io_Write16(0xa0a, &REG_BLDALPHA);
-  Call2((void (*)())Func_0200094c, 84, 65);
-  Call2((void (*)())Func_0200094c, 84, 58);
+  Func_0200094c(84, 65);
+  Func_0200094c(84, 58);
   Io_Write16(0xb09, &REG_BLDALPHA);
-  Call2((void (*)())Func_0200094c, 84, 51);
-  Call2((void (*)())Func_0200094c, 65, 100);
+  Func_0200094c(84, 51);
+  Func_0200094c(65, 100);
   Io_Write16(0xc08, &REG_BLDALPHA);
-  Call2((void (*)())Func_0200094c, 65, 93);
-  Call2((void (*)())Func_0200094c, 65, 86);
+  Func_0200094c(65, 93);
+  Func_0200094c(65, 86);
   Io_Write16(0xd07, &REG_BLDALPHA);
-  Call2((void (*)())Func_0200094c, 65, 79);
-  Call2((void (*)())Func_0200094c, 65, 72);
+  Func_0200094c(65, 79);
+  Func_0200094c(65, 72);
   Io_Write16(0xe06, &REG_BLDALPHA);
-  Call2((void (*)())Func_0200094c, 65, 65);
-  Call2((void (*)())Func_0200094c, 65, 58);
+  Func_0200094c(65, 65);
+  Func_0200094c(65, 58);
   Io_Write16(0xf05, &REG_BLDALPHA);
-  Call2((void (*)())Func_0200094c, 65, 51);
+  Func_0200094c(65, 51);
   Call3((void (*)())Func_020039b8, 0, 0x10000, 0x10000);
   Io_Write16(0x1004, &REG_BLDALPHA);
-  Call1((void (*)())wait, 10);
-  Call1((void (*)())Func_02003b48, 390);
+  wait(10);
+  Func_02003b48(390);
   Call3((void (*)())Func_020039b8, -1, -1, 0xe666);
   Io_Write16(0x1003, &REG_BLDALPHA);
-  Call1((void (*)())wait, 10);
+  wait(10);
   Io_Write16(0x1002, &REG_BLDALPHA);
-  Call1((void (*)())wait, 10);
+  wait(10);
   Io_Write16(0x1001, &REG_BLDALPHA);
-  Call1((void (*)())wait, 10);
+  wait(10);
   Io_Write16(0x1000, &REG_BLDALPHA);
   ShrineOfTheSeaGod_CopyRect(103, 51, 6, 56, 18, 25);
   ShrineOfTheSeaGod_CopyRect(46, 108, 9, 12, 12, 3);
-  Call1((void (*)())wait, 10);
+  wait(10);
   Func_020039c0();
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 0x204;
-  Call1((void (*)())Func_02003854, 8);
-  Call1((void (*)())Func_02003854, 9);
-  Call1((void (*)())Func_02003854, 10);
+  Func_02003854(8);
+  Func_02003854(9);
+  Func_02003854(10);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   leader->motionFlags = 3;
   leader->y = 0;

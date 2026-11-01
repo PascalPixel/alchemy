@@ -50,7 +50,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/actor_call.o"(.text)
         "*/games/tla/src/scene/world_map/s3c50.o"(.text)
         "*/games/tla/src/scene/world_map/s3ca8.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x0200bd44)
+        "*/games/tla/src/scene/world_map/s3d44.o"(.text)
         "*/resource_64b_overlay.o"(.text.x0200c2e0)
         "*/games/tla/src/scene/world_map/s4500.o"(.text)
         "*/games/tla/src/scene/world_map/s4538.o"(.text)

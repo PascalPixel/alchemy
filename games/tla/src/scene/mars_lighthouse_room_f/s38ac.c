@@ -1,27 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 6ad's Func_020038ac, the twin of overlay 698's Func_020011a0. Fills
-// the cell table from the map's cells whose event byte is the given kind or
-// the next one, restores the copied cells of those already flagged, finds the
-// leader's entry and loads the sprite's tiles for Func_02003780.
-// Matched only through ten tagged devices, which all stand in for one thing.
-// The native's allocation fits refs not weighted by loop depth: event r5, cz r6,
-// cx r7, then table r8, last r10, entry r9, cell r11 and i on the stack. Flow
-// weights refs by natural-loop depth, so a plain build ranks last and i above
-// the table. That weight is skipped under optimize_size, or for loops flow
-// cannot see as natural. Each always-false entry into a loop's tail (dead) makes
-// that loop irreducible while flow runs; combine folds the test and the stub
-// goes before allocation. A compiler question for Pascal (K1, K3): if the
-// compiler ever explains these ranks, the four entries go and the six barriers
-// should go with them, leaving the 698 family's plain form.
-// The barriers exist because the devices leave sched2 one tie: the native has
-// count's store before entry's constant, which fits a block-ending jump keeping
-// the store early. The two table asms give the store and the add more forward
-// dependents. They cost the table refs, so the four empty asms lengthen its life
-// to keep it below cz.
-// The native's plain forms: rows set then added to (reload inherits r5 and its
-// first store dies), sourceX and sourceZ read before the masks (read later they
-// merge with the masks' ldrh), cx masked before cz (cx then outlives cz, so cz
-// ranks first), and entry++ before count (reload's turn gives r5, r0, r1).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -120,7 +96,8 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   // copy's masks out of them and 321 of 268 instructions differ.
   j = 0;
   if (j < height) {
-    /* FAKEMATCH(dead): an always-false entry into the row loop's tail; as no entry, 73 of 268 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an always-false entry into the row loop's tail; as no
+     * entry, 73 of 268 instructions differ in tla-en. */
     if (!((height << 1) & 1))
       goto row;
     j = height;
@@ -129,7 +106,8 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     cell = rows + (j << 7);
     i = 0;
     if (i < width) {
-      /* FAKEMATCH(dead): an always-false entry into the column loop's tail; as no entry, 85 of 268 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an always-false entry into the column loop's tail; as
+       * no entry, 85 of 268 instructions differ in tla-en. */
       if (!((width << 1) & 1))
         goto column;
       i = width;
@@ -158,20 +136,26 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
           }
           entry++;
           table->count++;
-          /* FAKEMATCH(barrier): an empty asm on the stored count; as no asm, 2 of 268 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm on the stored count; as no asm, 2
+           * of 268 instructions differ in tla-en. */
           asm("" : "=m"(table->count) : "m"(table->count) : "r3");
-          /* FAKEMATCH(barrier): an empty asm on the word over the count; as no asm, 2 of 268 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): an empty asm on the word over the count; as no
+           * asm, 2 of 268 instructions differ in tla-en. */
           asm("" : "=m"(*(s32 *)&table->z));
         }
       }
     columnNext:
-      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no asm, 224 of 268 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no
+       * asm, 224 of 268 instructions differ in tla-en. */
       asm("");
-      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no asm, 224 of 268 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no
+       * asm, 224 of 268 instructions differ in tla-en. */
       asm("");
-      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no asm, 224 of 268 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no
+       * asm, 224 of 268 instructions differ in tla-en. */
       asm("");
-      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no asm, 224 of 268 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): an empty asm lengthening the table's life; as no
+       * asm, 224 of 268 instructions differ in tla-en. */
       asm("");
       i++;
       cell++;
@@ -192,7 +176,8 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     entry = table->entries;
     k = 0;
     if (k < table->count) {
-      /* FAKEMATCH(dead): an always-false entry into the leader loop's tail; as no entry, 236 of 268 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): an always-false entry into the leader loop's tail; as
+       * no entry, 236 of 268 instructions differ in tla-en. */
       if (!((leaderX << 1) & 1))
         goto leaderRow;
       k = leaderX;
@@ -213,7 +198,8 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     u32 *word = buffer;
     s32 count = 63;
 
-    /* FAKEMATCH(dead): an always-false entry into the fill loop's tail; as no entry, 10 of 268 instructions differ in tla-en. */
+    /* FAKEMATCH(dead): an always-false entry into the fill loop's tail; as no
+     * entry, 10 of 268 instructions differ in tla-en. */
     if (!(((s32)buffer << 1) & 1))
       goto fill;
     count = (s32)buffer;

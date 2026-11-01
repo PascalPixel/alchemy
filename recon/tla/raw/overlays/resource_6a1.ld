@@ -23,7 +23,7 @@ SECTIONS
         "*/games/tla/src/field/map/cellfill.o"(.text)
         "*/resource_6a1_overlay.o"(.text.x02008c44)
         "*/resource_6a1_overlay.o"(.text.x02008dac)
-        "*/resource_6a1_overlay.o"(.text.x02008ec8)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_8/s0ec8.o"(.text)
         "*/resource_6a1_overlay.o"(.text.x02009178)
         "*/resource_6a1_overlay.o"(.text.x02009200)
         "*/games/tla/src/scene/jupiter_lighthouse_room_8/light.o"(.text)

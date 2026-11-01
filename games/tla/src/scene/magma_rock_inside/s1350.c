@@ -1,36 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Every instruction agrees in tla-en; it carries tagged devices, so review them
-// under S2 before adoption. What each one does:
-// - dead: srcX and srcZ start from a zero only combine can see. A plain 0 gets a
-//   constant REG_EQUAL note from cse, update_equiv_regs doubles the live length
-//   (744 for 372), and baseX and the layer take r9 and r11 from them. The native's
-//   first sets are plain zeros, so the note's absence there is still unexplained;
-//   siblings 692_1828 and 69c_1050 show the same kind of zero. Two different
-//   masks, because two equal ones are shared by cse.
-// - barrier with the sfp clobber (burst, spark, frame, last): gcse records sfp as
-//   set, so PRE no longer joins the position's address across the loop and the
-//   native's add rN, sp, #24 stays in each pass, as in 686_0418. The same kill
-//   would rebuild &options in the loop, so that address lives in effectOptions.
-// - barrier on row: keeps row << 18 out of PRE, so row can take r5 and leave r8
-//   to effectOptions.
-// - temporary on the random values: puts the barrier between the two calls.
-// - barrier and one-pass at the end: place the layer's store. The native loads
-//   the spilled layer, then the pool, then stores; sched2 here takes the pool
-//   load first (class 2 against 1 after the call) and the store last.
-// Plain forms that are the native's: one counter i in r7 for every loop but the
-// row, i++ after the call in the column and spark loops (sched2 raises it),
-// roomPosition set again in the frame loop, which ranks it over scene (r2, r1),
-// closing apart from scene, mask for the 31 kept in r5, and lastOptions in r6.
-// Forwarding is scene_call.h's layer, written out here.
-// A Magma Rock room's event at cell 222 (reached from Func_02000ed0), by room
-// (2, 3 or 4) with its place and flag (768 to 770): sixteen effects burst with
-// sound 145 and shaking, eight rise (sound 148), the cells are copied open and
-// closed again; with the flag set the effects carry on briefly, otherwise
-// twelve rows of six rise as the opening widens, then over 160 frames the
-// map's layer 1 scrolls, the blend fades and the cells step back, with more
-// effects every fourth frame; finally sounds 288 and 136 with six more
-// effects, the cells close, layer 1 returns and the room's own closing runs
-// (Func_020034bc, Func_020034f0 or Func_02003548).
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -61,13 +28,15 @@ void Func_020034f0(void);
 void Func_02003548(void);
 
 static __inline__ void Func_02004d10_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline; as the direct call, 110 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Func_02004d10_ forwarded inline; as direct calls to
+   * Func_02004d10, 110 of 537 instructions differ in tla-en. */
   Func_02004d10(a, b, c);
 }
 
 static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline; as the direct call, 20 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Func_02004cd8_ forwarded inline; as direct calls to
+   * Func_02004cd8, 20 of 537 instructions differ in tla-en. */
   Func_02004cd8(a, b, c, d, e, f);
 }
 
@@ -93,10 +62,12 @@ void Func_02001350(void) {
   u32 i;
   u32 row;
 
-  /* FAKEMATCH(dead): srcX and srcZ start from a zero only combine sees; as srcX = 0 and srcZ = 0, 140 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): srcX and srcZ start from a zero only combine sees; as srcX
+   * = 0 and srcZ = 0, 138 of 537 instructions differ in tla-en. */
   srcX = ((u32)layer & 3) >> 2;
   srcZ = ((u32)layer & 7) >> 3;
-  /* FAKEMATCH(temporary): t holds 212 for a set flag, then the frame count, in r10; as two variables, 197 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): t holds 212 for a set flag, then the frame count, in
+   * r10; as two variables, 197 of 537 instructions differ in tla-en. */
   t = 0;
   effectOptions = &options;
   effectOptions->type = 403;
@@ -136,10 +107,12 @@ void Func_02001350(void) {
   // native; as for loops, 431 of 537 instructions differ in tla-en.
   i = 0;
 burst:
-  /* FAKEMATCH(temporary): burstRandom holding the first call's value; as the call inside the sum, 4 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): burstRandom holding the first call's value; as the
+   * call inside the sum, 4 of 537 instructions differ in tla-en. */
   burstRandom = Random16Far();
   mask = 31;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 230 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 230 of 537
+   * instructions differ in tla-en. */
   asm("" : : : "sfp");
   burstPosition = position;
   burstPosition[0] = baseX + ((burstRandom & mask) << 16);
@@ -173,13 +146,13 @@ rise:
   Func_02004d10_(0x50000, 0x70000, 0x10000);
   Func_02004d10_(-1, -1, 0xe666);
   FieldEvent_Wait(30);
-  Func_02004cd8_(71, 70, srcX, srcZ, 3, 6);
+  Func_02004cd8(71, 70, srcX, srcZ, 3, 6);
   effectOptions->type = 403;
   effectOptions->priority = 1;
   effectOptions->palette = 10;
   effectOptions->script = gData_0200502c;
   if (t != 0) {
-    Func_02004cd8_(68, 70, srcX, srcZ, 3, 6);
+    Func_02004cd8(68, 70, srcX, srcZ, 3, 6);
     FieldEvent_Wait(30);
     burstPosition[2] -= 0x280000;
   } else {
@@ -189,33 +162,38 @@ rise:
   row:
     i = 0;
   column:
-    /* FAKEMATCH(barrier): the empty asm rewriting row; as no asm, 111 of 537 instructions differ in tla-en. */
+    /* FAKEMATCH(barrier): the empty asm rewriting row; as no asm, 111 of 537
+     * instructions differ in tla-en. */
     asm("" : "+r"(row));
     burstPosition[0] = baseX + ((Random16Far() % 48) << 16);
-    Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2] + (row << 18) + 0x80000,
-                  0, 0x10000, 0, 0x330000, effectOptions);
+    Func_0200015c(burstPosition[0], burstPosition[1],
+                  burstPosition[2] + (row << 18) + 0x80000, 0, 0x10000, 0,
+                  0x330000, effectOptions);
     i++;
     if (i != 6)
       goto column;
     wait(3);
-    Func_02004cd8_(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
+    Func_02004cd8(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
     row++;
     if (row != 12)
       goto row;
-    Func_02004cd8_(74, 70, srcX, srcZ, 3, 8);
+    Func_02004cd8(74, 70, srcX, srcZ, 3, 8);
     t = 0;
   frame:
     if ((t & 3) == 0) {
       i = 0;
     spark:
-      /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call inside the sum, 2 of 537 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call
+       * inside the sum, 2 of 537 instructions differ in tla-en. */
       sparkRandom = Random16Far();
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 379 of 537 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 379 of 537
+       * instructions differ in tla-en. */
       asm("" : : : "sfp");
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
-      Func_0200015c(sparkPosition[0], sparkPosition[1], sparkPosition[2] + 0x300000, 0,
-                    0x10000, 0, 0x330000, effectOptions);
+      Func_0200015c(sparkPosition[0], sparkPosition[1],
+                    sparkPosition[2] + 0x300000, 0, 0x10000, 0, 0x330000,
+                    effectOptions);
       i++;
       if (i != 4)
         goto spark;
@@ -231,7 +209,8 @@ rise:
       REG_BLDCNT = 0;
     } else if (t <= 127) {
       *(s32 *)&layer->unk08[4] += 0x8000;
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 347 of 537 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 347 of 537
+       * instructions differ in tla-en. */
       asm("" : : : "sfp");
       roomPosition = position;
       roomPosition[2] -= 0x8000;
@@ -252,29 +231,26 @@ rise:
   lastOptions->startScaleX = 0x1cccc;
   i = 0;
 last:
-  /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call inside the sum, 2 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call
+   * inside the sum, 2 of 537 instructions differ in tla-en. */
   sparkRandom = Random16Far();
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 404 of 537 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 404 of 537
+   * instructions differ in tla-en. */
   asm("" : : : "sfp");
   sparkPosition = position;
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
   i++;
-  Func_0200015c(sparkPosition[0], sparkPosition[1], sparkPosition[2] + 0x300000, 0, 0, 0,
-                0x3b0000, lastOptions);
+  Func_0200015c(sparkPosition[0], sparkPosition[1], sparkPosition[2] + 0x300000,
+                0, 0, 0, 0x3b0000, lastOptions);
   if (i != 6)
     goto last;
-  Func_02004d10_(0x50000, 0x70000, 0x10000);
+  Func_02004d10(0x50000, 0x70000, 0x10000);
   Func_02004d10_(-1, -1, 0xe666);
-  Func_02004cd8_(68, 64, srcX, srcZ, 3, 6);
+  Func_02004cd8(68, 64, srcX, srcZ, 3, 6);
   Func_02004d18();
   FieldEvent_Wait(30);
-  /* FAKEMATCH(barrier): the empty asm after the call; as no asm, 4 of 537 instructions differ in tla-en. */
-  asm("");
   work = &gMainRoutineWork;
   *(s32 *)&layer->unk08[4] = 0;
-  /* FAKEMATCH(one-pass): the empty block after the store; as no block, 2 of 537 instructions differ in tla-en. */
-  do {
-  } while (0);
   closing = work->scene;
   if (closing == (s32)&SceneId_Ov692Room2)
     Func_020034bc();

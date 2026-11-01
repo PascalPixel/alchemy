@@ -1,21 +1,3 @@
-// Near miss, differ 4 of 522 (tla-en, 2026-10-31): only the copy pointers' two
-// literal loads differ: the native schedules them last in the first block,
-// after the fourth grid load; this compiler gives those loads (no consumer in
-// the block) priority 3 and places them before the frame setup. Registers,
-// the grid offsets' reload registers and every case match.
-// It copies gData_02005910's twelve words to
-// Data_0202c001 + 0x1cf, then for objects 8 to 63 with one sprite whose
-// sprite's picture list (its word 0x28) begins with picture 357 to 362 marks
-// the cells under it in both map layers (the map work's layers at 0x13c
-// and 0x174, cell pictures 116 to 127) and ORs its shapes into both shape
-// grids (0x138 and 0x170): a 3 by 3 platform for 357, one cell for 358, a
-// row of five for 359, a column of five for 360 and 361 (361 ending in
-// 126 instead of 127), none for 362. Each such object is then made
-// still, its flags cleared. Then it schedules Func_02001b98.
-// Each cell index is set afresh from x + (z << 7) and the shape words are
-// reached through one pointer, which is what gives the native its index in r6,
-// its address in r7 and the base-first adds; the tree's s32 Task_Add puts the
-// order's constant before the routine's address.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

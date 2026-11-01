@@ -1,17 +1,4 @@
-// Near miss, differ 2 of 288 (tla-en, 2026-10-30): in the rising loop the
-// native loads the scale step (ldr r2, -0x2000) before object->scaleY, so that load
-// waits a cycle after the store to gData_02007950->y; alchemy-gcc's
-// -mthumb-slow-loads exempts it (the load opens a read-modify-write), and
-// sched2 then ranks the data-dependent load first. A scheduler cost-model
-// difference; no source form tried moves it.
-// Reading the fields through struct KibomboObject rather than byte offsets
-// gives its loads and stores one alias set, which settled every other
-// difference and cleared the five empty asms (was differ 8); the scene's
-// inline wrappers keep the call constants unshared. alchemy permute (4 minutes,
-// 8,024 candidates, 30 October) found nothing better.
-// 26 October 2026: an empty asm or one-pass block after any one statement
-// and alchemy permute (5 to 6 minutes) did not move this load.
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "kibombo.h"
 
 void Func_02004a28(void) {
   struct KibomboObject *object;

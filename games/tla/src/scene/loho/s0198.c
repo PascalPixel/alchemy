@@ -1,20 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// One tagged device, FAKEMATCH(dead), on the branch after the palette copy. Its
-// test can never pass. combine folds it to an unconditional jump, so no code is
-// left, but until then the extra edge into the loop means the CFG finds no
-// natural loop, and refs in both loops lose their depth weight. That is what
-// gives entry r8 over tiles and lets the tile value beat the halfword read to
-// r3. Without it, 28 of 1050 differ; those two register choices are all that is
-// left. Before removing it, try the same allocation another way.
-// The native looks as if goto loops carry no depth weight at all, which would be
-// a compiler question for Pascal (K1 to K3), not a source one.
-// The read of unk_0c through long keeps PRE from merging it with the read after
-// the call; through s32 it merges and 2 instructions differ.
-// struct Unk16 is 16 bytes, an OAM entry at +4 as in AnimationSpritePart; +12
-// counts up to 31, and (+12 >> 2) * 4 picks the tile. The -0x200 and -0x400
-// masks are written out through halves[] because the pool holds them whole and
-// the bitfield form ties the mask to the result register. This draft is only
-// measured in tla-en; other editions are unchecked.
 #include "types.h"
 #include "dma.h"
 #include "call.h"
@@ -77,7 +60,7 @@ s32 Heap_AllocEwram();
 s32 FieldMessage_ShowAtActor();
 s32 VramCache_Load();
 s32 wait();
-extern char ResourceId_Data1E8;
+extern char ResourceId_FieldEffectExplosion;
 extern u8 Field_Palette685[];
 extern u8 MsgLoho28[];
 extern u8 gData_02001470[];
@@ -89,6 +72,8 @@ extern u8 gData_02001638[];
 extern u8 gData_0200166c[];
 
 static __inline__ void W_Func_020013a8(s32 a0, s32 a1, s32 a2) {
+  /* FAKEMATCH(wrapper): W_Func_020013a8 forwarded inline; as direct calls to
+   * Func_020013a8, 70 of 1050 instructions differ in tla-en. */
   Func_020013a8(a0, a1, a2);
 }
 
@@ -121,9 +106,9 @@ void Func_02000198(void) {
   s32 t190, t193, t194, t226, t233, t234;
   u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
 
-  t0 = Value1(Actor_GetById, 4);
+  t0 = Actor_GetById(4);
   Func_020012e0();
-  Call1(Func_020013f8, 0);
+  Func_020013f8(0);
   p = (struct Unk16 *)t0;
   goto L_020081ec;
 L_020081b6:
@@ -164,45 +149,45 @@ L_0200821a:
     goto L_020081b6;
 L_0200821e:
   Call4(Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1740000, 1);
-  Call1(GameFlag_SetBit, 0xa5f);
+  GameFlag_SetBit(0xa5f);
   Call3(Actor_SetPositionAndCommit, 4, 0x1e7, 0x179);
   Call2(Func_020013a0, 4, 0xc000);
-  Call1(FieldEvent_Wait, 30);
-  Call1(Func_02001448, 140);
+  FieldEvent_Wait(30);
+  Func_02001448(140);
   Call2(Actor_StartRepeatedMotion, 16, 2);
   Call2(Actor_StartRepeatedMotion, 18, 2);
   Call2(Motion_SetVarCbAndRefresh, 17, 2);
   Call3(Actor_SetAngleToward, 16, 4, 0);
   Call3(Actor_SetAngleToward, 17, 4, 0);
-  Call3(Actor_ArmCallback, 18, 0x5000, 0);
-  Call1(FieldEvent_Wait, 25);
+  Actor_ArmCallback(18, 0x5000, 0);
+  FieldEvent_Wait(25);
   Call2(Actor_StartRepeatedMotion, 4, 3);
   Call2(Func_020013b0, 4, 0x102);
   Call3(Actor_CommitPositionAndActivate, 4, 24, 12);
-  Call2(Func_020013a0, 4, 0xc000);
-  Call1(FieldEvent_Wait, 30);
-  Call1(Func_02001448, 144);
+  Func_020013a0(4, 0xc000);
+  FieldEvent_Wait(30);
+  Func_02001448(144);
   Call2(Func_02001428, 21, 0x1cc);
   Call3(Func_02001348, 21, 0x1e80000, 0x14a0000);
   Call3(Actor_OffsetPositionAndResetMotion, 20, 0, 8);
   Call3(Actor_SetSpeedParameters, 21, 0x30000, 0x18000);
   Call3(Func_020012c8, 0x20000, 0x20000, 0x10000);
   Call3(Actor_ResetAndSetPosition, 21, 0x1e8, 0x12c);
-  Call4(Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1340000, 1);
-  Call1(Actor_WaitForMoveById, 21);
+  Camera_MoveWithinMapBounds(0x1e80000, -1, 0x1340000, 1);
+  Actor_WaitForMoveById(21);
   Call3(Func_02001348, 21, 0, 0);
   Call3(Func_020012c8, 0x70000, 0x70000, 0x10000);
-  table = (struct Unk16 *)Value1(Heap_AllocEwram, 0x600);
-  p = (struct Unk16 *)Value1(Heap_Alloc, 0x1000);
-  t38 = Value1(Resource_GetTableEntry, (s32)&ResourceId_Data1E8);
-  Call2(Func_02001248, t38, p);
-  entry = Value0(Resource_FindFreeEntry);
-  tiles = Value3(VramCache_Load, entry, 0x400, p);
-  Call1(Heap_Release, p);
+  table = (struct Unk16 *)Heap_AllocEwram(0x600);
+  p = (struct Unk16 *)Heap_Alloc(0x1000);
+  t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
+  Func_02001248(t38, p);
+  entry = Resource_FindFreeEntry();
+  tiles = VramCache_Load(entry, 0x400, p);
+  Heap_Release(p);
   p = (struct Unk16 *)&table->unk_0c;
   i = 95;
 L_0200838c:
-  *(s32 *)p = -((u32)(Value0(Random16Far) << 5) >> 16);
+  *(s32 *)p = -((u32)(Random16Far() << 5) >> 16);
   i = (i - 1);
   p = (struct Unk16 *)((s32)p + 16);
   if (i >= 0)
@@ -210,7 +195,9 @@ L_0200838c:
   Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
           (volatile u32 *)0x40000d4);
   i = 0;
-  /* FAKEMATCH(dead): this test that never passes, with its edge into the loop, which combine folds away; as the loop entered only at its top, 28 of 1050 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): this test that never passes, with its edge into the loop,
+   * which combine folds away; as the loop entered only at its top, 28 of 1050
+   * instructions differ in tla-en. */
   if (((entry & 255) >> 8) == 0)
     goto L_020083b6;
   i = 1;
@@ -218,12 +205,12 @@ L_0200838c:
 L_020083b6:
   if ((31 & i) != 0)
     goto L_020083c4;
-  Call1(Func_02001448, 145);
+  Func_02001448(145);
 L_020083c4:
   if (i != 30)
     goto L_020083d4;
-  Call1(Func_02001278, 90);
-  Call1(Func_02001448, 141);
+  Func_02001278(90);
+  Func_02001448(141);
 L_020083d4:
   p = table;
 L_020083d6:
@@ -231,10 +218,10 @@ L_020083d6:
     goto L_02008430;
   p->sprite.words[0] = 0x40000000;
   p->sprite.words[1] = 0;
-  t47 = (u16)((((u32)(Value0(Random16Far) * 96) >> 16) + 72) & 0x1ff);
+  t47 = (u16)((((u32)(Random16Far() * 96) >> 16) + 72) & 0x1ff);
   t48 = p->sprite.halves[1];
   p->sprite.halves[1] = (t48 & -0x200) | t47;
-  p->sprite.oam.y = (u32)Value0(Random16Far) >> 10;
+  p->sprite.oam.y = (u32)Random16Far() >> 10;
   t51 = p->sprite.bytes[5];
   t51 |= 240;
   p->sprite.bytes[5] = t51 & -13;
@@ -246,38 +233,38 @@ L_02008430:
   t49 = (u16)(((value >> 2) * 4 + tiles) & 0x3ff);
   t50 = p->sprite.halves[2];
   p->sprite.halves[2] = (t50 & -0x400) | t49;
-  Call2(Func_02001268, p, 100);
+  Func_02001268(p, 100);
 L_02008452:
   p->unk_0c += 1;
   if (p->unk_0c <= 31)
     goto L_02008474;
-  p->unk_0c = -((u32)(Value0(Random16Far) * 7) >> 16);
+  p->unk_0c = -((u32)(Random16Far() * 7) >> 16);
 L_02008474:
   p++;
   if ((s32)p <= (s32)&table[95])
     goto L_020083d6;
-  Call1(wait, 1);
+  wait(1);
   i = (i + 1);
   if (i <= 119)
     goto L_020083b6;
-  Call1(Resource_ResetEntry, entry);
-  Call1(Heap_Release, table);
+  Resource_ResetEntry(entry);
+  Heap_Release(table);
   Call4(Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1860000, 1);
   Call4(Func_02001350, 14, 0xf80000, 0x1e00000, 0);
   Func_020000ac();
   Call3(Func_020012c8, 0, 0, 0x10000);
-  Call1(Func_02001448, 0x186);
-  Call1(FieldEvent_Wait, 180);
-  Call1(Func_02001280, 120);
-  Call1(Func_02001380, (s32)MsgLoho28);
-  Call1(FieldEvent_Wait, 120);
+  Func_02001448(0x186);
+  FieldEvent_Wait(180);
+  Func_02001280(120);
+  Func_02001380((s32)MsgLoho28);
+  FieldEvent_Wait(120);
   Call2(Motion_SetVarCbAndRefresh, 18, 2);
   Call2(Func_020013a0, 18, 0x8000);
   Call2(Func_02001390, 18, 0);
   Call3(Actor_ArmCallback, 17, 0x2000, 0);
   Call2(Actor_SetModeById, 17, 3);
-  Call2(Actor_SetModeById, 16, 3);
-  Call1(FieldEvent_Wait, 30);
+  Actor_SetModeById(16, 3);
+  FieldEvent_Wait(30);
   W_Func_020013a8(17, 0x102, 35);
   Call2(Func_02001390, 17, 0);
   Func_020013a8(16, 0x107, 35);
@@ -286,26 +273,26 @@ L_02008474:
   Call2(Func_02001390, 16, 0);
   Call2(Actor_SetModeById, 4, 3);
   Call2(Func_020013a0, 18, 0xb000);
-  Call1(FieldEvent_Wait, 30);
+  FieldEvent_Wait(30);
   W_Func_020013a8(18, 0x100, 35);
   Call2(Func_02001390, 18, 0);
   W_Func_020013a8(16, 0x101, 0);
   Func_020013a8(17, 0x101, 35);
   Call3(Actor_SetAngleToward, 16, 18, 0);
   Call3(Actor_ArmCallback, 17, 0x2000, 0);
-  Call1(FieldEvent_Wait, 60);
+  FieldEvent_Wait(60);
   Call3(Actor_ArmCallback, 18, 0x8000, 0);
-  Call1(FieldEvent_Wait, 60);
+  FieldEvent_Wait(60);
   W_Func_020013a8(18, 0x105, 50);
   W_Func_020013a8(18, 0x102, 35);
   Call2(Func_02001390, 18, 0);
-  Call3(Actor_TurnToFaceEachOther, 16, 17, 0);
-  Call1(FieldEvent_Wait, 40);
+  Actor_TurnToFaceEachOther(16, 17, 0);
+  FieldEvent_Wait(40);
   Call3(Actor_ArmCallback, 16, 0xc000, 0);
   Call3(Actor_ArmCallback, 17, 0xc000, 0);
   Call3(Actor_ArmCallback, 18, 0xb000, 0);
   Call4(Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1460000, 1);
-  Call1(FieldEvent_Wait, 60);
+  FieldEvent_Wait(60);
   W_Func_020013a8(16, 0x100, 0);
   Func_020013a8(17, 0x100, 50);
   W_Func_020013a8(17, 0x102, 35);
@@ -319,8 +306,8 @@ L_02008474:
   Call3(Actor_ArmCallback, 18, 0x5000, 0);
   Call2(Func_02001390, 18, 0);
   Call3(Actor_SetSpeedParameters, 17, 0xcccc, 0x6666);
-  Call3(Actor_OffsetPositionAndReset, 17, 0, 16);
-  Call1(Actor_WaitForMoveById, 17);
+  Actor_OffsetPositionAndReset(17, 0, 16);
+  Actor_WaitForMoveById(17);
   Call2(Func_020013a0, 17, 0x2000);
   Call2(Actor_SetModeById, 17, 4);
   Call2(Func_02001390, 17, 0);
@@ -329,11 +316,11 @@ L_02008474:
   Call2(Actor_SetModeById, 18, 3);
   Call3(Actor_ArmCallback, 17, 0x3000, 0);
   Call2(Func_02001390, 17, 0);
-  W_Func_020013a8(4, 0x102, 35);
-  Call1(FieldEvent_Wait, 60);
-  Call1(FieldEvent_Wait, 10);
+  Func_020013a8(4, 0x102, 35);
+  FieldEvent_Wait(60);
+  FieldEvent_Wait(10);
   Call2(Func_020013a0, 16, 0x4000);
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call2(Motion_SetVarCbAndRefresh, 16, 2);
   Call2(Func_02001390, 16, 0);
   W_Func_020013a8(18, 0x105, 0);
@@ -341,62 +328,62 @@ L_02008474:
   Func_020013a8(16, 0x105, 60);
   W_Func_020013a8(18, 0x106, 35);
   Call2(Func_02001390, 18, 0);
-  Call2(Actor_SetModeById, 17, 3);
-  Call1(FieldEvent_Wait, 40);
+  Actor_SetModeById(17, 3);
+  FieldEvent_Wait(40);
   Func_020013a8(17, 0x106, 35);
   Call2(Func_02001390, 17, 0);
-  Call2(Actor_SetModeById, 16, 3);
-  Call1(FieldEvent_Wait, 30);
+  Actor_SetModeById(16, 3);
+  FieldEvent_Wait(30);
   Call2(Func_020013b8, 0x8000, 0x1000);
   Call4(Camera_MoveWithinMapBounds, 0x21e0000, -1, 0x1000000, 1);
   zero = 0;
-  t147 = Value1(Actor_GetById, 16);
+  t147 = Actor_GetById(16);
   FIELD_AT(t147, u8, 85) = zero;
   Actor_SetSpeedParameters(16, 0x18000, 0xc000);
-  Call2(Actor_SetMovementTypeById, 16, (s32)gData_02001470);
+  Actor_SetMovementTypeById(16, (s32)gData_02001470);
   Call3(Actor_SetSpeedParameters, 18, 0x8000, 0x4000);
-  Call2(Actor_SetMovementTypeById, 18, (s32)gData_0200151c);
+  Actor_SetMovementTypeById(18, (s32)gData_0200151c);
   Call3(Actor_SetSpeedParameters, 17, 0x6666, 0x3333);
-  Call2(Actor_SetMovementTypeById, 17, (s32)gData_0200154c);
-  Call1(Actor_RefreshSelectorById, 16);
-  Call2(Func_020013a0, 16, 0x6000);
-  Call1(FieldEvent_Wait, 10);
+  Actor_SetMovementTypeById(17, (s32)gData_0200154c);
+  Actor_RefreshSelectorById(16);
+  Func_020013a0(16, 0x6000);
+  FieldEvent_Wait(10);
   Call2(Func_020013a0, 16, 0x8000);
-  Call1(FieldEvent_Wait, 10);
-  Call2(Func_020013a0, 16, 0xa000);
-  Call1(FieldEvent_Wait, 10);
-  Call2(Func_020013a0, 16, 0xe000);
-  Call1(FieldEvent_Wait, 10);
-  Call2(Func_020013a0, 16, 0);
-  Call1(FieldEvent_Wait, 10);
-  Call2(Func_020013a0, 16, 0x2000);
-  Call1(FieldEvent_Wait, 10);
-  Call2(Func_020013a0, 16, 0x5000);
-  Call1(FieldEvent_Wait, 40);
-  Call2(Actor_SetModeById, 16, 3);
-  Call1(FieldEvent_Wait, 60);
-  Call2(Func_02001390, 16, 0);
-  Call1(Actor_RefreshSelectorById, 17);
-  Call1(Actor_RefreshSelectorById, 18);
-  Call3(Actor_TurnToFaceEachOther, 17, 18, 0);
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(10);
+  Func_020013a0(16, 0xa000);
+  FieldEvent_Wait(10);
+  Func_020013a0(16, 0xe000);
+  FieldEvent_Wait(10);
+  Func_020013a0(16, 0);
+  FieldEvent_Wait(10);
+  Func_020013a0(16, 0x2000);
+  FieldEvent_Wait(10);
+  Func_020013a0(16, 0x5000);
+  FieldEvent_Wait(40);
+  Actor_SetModeById(16, 3);
+  FieldEvent_Wait(60);
+  Func_02001390(16, 0);
+  Actor_RefreshSelectorById(17);
+  Actor_RefreshSelectorById(18);
+  Actor_TurnToFaceEachOther(17, 18, 0);
+  FieldEvent_Wait(20);
   goto L_020088f0;
 L_020088f0:
   Call2(Actor_SetModeById, 18, 3);
-  Call2(Actor_SetModeById, 17, 3);
-  Call1(FieldEvent_Wait, 30);
+  Actor_SetModeById(17, 3);
+  FieldEvent_Wait(30);
   Call3(Actor_SetAngleToward, 17, 4, 0);
   Call3(Actor_SetSpeedParameters, 16, 0x10000, 0x8000);
-  Call2(Actor_SetMovementTypeById, 16, (s32)gData_0200158c);
+  Actor_SetMovementTypeById(16, (s32)gData_0200158c);
   Call2(Func_020013b8, 0x1cccc, 0x3999);
   Call4(Camera_MoveWithinMapBounds, 0x21e0000, -1, 0x15e0000, 1);
   Func_020013c8();
   FieldMessage_ShowAtActor(17, 0);
-  t186 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
+  t186 = Event_AskYesNoWithActorAnimation(4, 0);
   if (t186 != 0)
     goto L_02008992;
   Call2(Actor_SetModeById, 18, 3);
-  Call2(Func_02001390, 18, 0);
+  Func_02001390(18, 0);
   t189 = FIELD_AT(0x3000000, s32, 108);
   t190 = FIELD_AT(t189, u16, 452);
   FIELD_AT(t189, u16, 452) = (t190 + 1);
@@ -411,45 +398,45 @@ L_02008992:
   FIELD_AT(t193, u16, 452) = (t194 + 1);
   Call2(Func_02001390, 17, 0);
   Call2(Actor_SetModeById, 18, 3);
-  Call2(Func_02001390, 18, 0);
+  Func_02001390(18, 0);
 L_020089c4:
   Call3(Actor_OffsetPositionAndReset, 18, 0, 24);
   Call3(Actor_CommitPositionAndActivate, 17, 0, 24);
   Call3(Actor_ArmCallback, 17, 0, 0);
-  Call3(Actor_ArmCallback, 18, 0xd000, 0);
-  Call1(Actor_RefreshSelectorById, 16);
-  Call2(Actor_SetMovementTypeById, 16, (s32)gData_020015e0);
-  Call1(Actor_RefreshSelectorById, 16);
+  Actor_ArmCallback(18, 0xd000, 0);
+  Actor_RefreshSelectorById(16);
+  Actor_SetMovementTypeById(16, (s32)gData_020015e0);
+  Actor_RefreshSelectorById(16);
   Call3(Actor_ArmCallback, 18, 0xc000, 0);
   Call3(Actor_ArmCallback, 17, 0, 0);
-  Call3(Actor_ArmCallback, 16, 0x6000, 0);
-  Call1(FieldEvent_Wait, 50);
+  Actor_ArmCallback(16, 0x6000, 0);
+  FieldEvent_Wait(50);
   Call2(Actor_SetModeById, 18, 3);
   Call2(Actor_SetModeById, 17, 3);
-  Call2(Actor_SetModeById, 16, 3);
-  Call1(FieldEvent_Wait, 60);
+  Actor_SetModeById(16, 3);
+  FieldEvent_Wait(60);
   Call2(Actor_WatchAndSetScript, 4, 16);
   Call3(Actor_ResetAndSetPositionInMode2, 18, 0x1f8, 0x172);
   Call3(Actor_ResetAndSetPositionInMode2, 17, 0x1f8, 0x160);
-  Call2(Actor_SetMovementTypeById, 16, (s32)gData_02001638);
-  Call1(Actor_WaitForMoveById, 17);
-  Call1(Actor_WaitForMoveById, 18);
-  Call1(Actor_RefreshSelectorById, 16);
+  Actor_SetMovementTypeById(16, (s32)gData_02001638);
+  Actor_WaitForMoveById(17);
+  Actor_WaitForMoveById(18);
+  Actor_RefreshSelectorById(16);
   Call2(Func_020013a0, 16, 0);
   Call3(Actor_SetSpeedParameters, 16, 0x4ccc, 0x2666);
   Call3(Actor_SetSpeedParameters, 17, 0x4ccc, 0x2666);
   Call3(Actor_SetSpeedParameters, 18, 0x4ccc, 0x2666);
-  Call1(FieldEvent_Wait, 40);
-  Call3(Actor_SetSpeedParameters, 20, 0x1999, 0xccc);
-  t226 = Value1(Actor_GetById, 20);
+  FieldEvent_Wait(40);
+  Actor_SetSpeedParameters(20, 0x1999, 0xccc);
+  t226 = Actor_GetById(20);
   FIELD_AT(t226, u8, 85) = 0;
-  Call2(Actor_SetMovementTypeById, 20, (s32)gData_0200166c);
-  Call1(Actor_RefreshSelectorById, 20);
+  Actor_SetMovementTypeById(20, (s32)gData_0200166c);
+  Actor_RefreshSelectorById(20);
   Call3(Actor_SetSpeedParameters, 20, 0x4ccc, 0x2666);
   Call2(Func_020013b8, 0x4ccc, 0x999);
-  Call4(Camera_MoveWithinMapBounds, 0x1cc0000, -1, 0x15e0000, 1);
-  Call1(FieldEvent_Wait, 30);
-  t233 = Value1(Actor_GetById, 16);
+  Camera_MoveWithinMapBounds(0x1cc0000, -1, 0x15e0000, 1);
+  FieldEvent_Wait(30);
+  t233 = Actor_GetById(16);
   FIELD_AT(t233, u8, 90) &= 254;
   Call3(Actor_OffsetPositionAndReset, 18, -0x28, -0x14);
   Call3(Actor_OffsetPositionAndReset, 17, -0x28, -0x14);

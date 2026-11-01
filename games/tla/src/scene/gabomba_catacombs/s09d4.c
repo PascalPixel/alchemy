@@ -1,30 +1,3 @@
-// Draft, differ 2 of 388, skeleton gap 1 (tla-en, 2026-11-01)
-// A Gabomba Catacombs scene: the camera moves to the
-// statue (cue 26), object 8 starts (cue 0x240), MsgByReachingThis is shown
-// and object 0x40 is raised 16 pixels (cue 220) while a glow (object type
-// 412, its update Func_020009bc) sits above it for 15 frames; the leader
-// and object 9 (the follower) are placed side by side, turn, emote (258,
-// 261, 265, 257) and talk in turn, each line the next of the event work's
-// halfword 0x1c4 (Func_0200118c), then object 9 joins the leader again;
-// sets flag 0x9ce.
-// Left: one swap at statue->terrainHeight += 0x100000: the native issues
-// movs r2, #128 between the strb of motionFlags and ldr r3, [r6, #20]; the
-// draft loads first. sched2 ranks the load 216 and the constant 215, and
-// arm_adjust_cost lets the load follow the store at once because it opens a
-// read-modify-write (thumb_load_stored_back_p). So this is -mthumb-slow-loads
-// against the native at one site, a compiler question for Pascal (K2), out of
-// scope here. No device reached differ 0: a rise local, a separate h local,
-// rise << 13 change nothing; empty asm or one-pass forms either fold the
-// constant or lose allocation (differ 44 to 56).
-// Allocation, all closed: r6 statue, r8 the zero, r10 work and r9 follower
-// follow local-alloc's priority, a near tie (statue 24/157, zero 12/79, work
-// 84/565 in QTY_CMP_PRI's units), so insn counts matter. The zero is no local:
-// it is the pseudo the motionFlags store expands (a mask of 0), and the glow's
-// zeros reuse it. Value2 and Call1 on the three pooled arguments drop a copy
-// each and put statue ahead of it; `work += 0x1c4` keeps one pseudo. speed is
-// a one-constant local, set where it is first used; sched2 lifts it into r6
-// right after statue's last read. The union gives the counter's load the
-// alias set of s32 stores: it waits for the glow's x, y, z but not update.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -65,7 +38,8 @@ union EventLine {
   u16 line;
 };
 
-#define TALK() Call3(Func_0200118c, (s16)((union EventLine *)work)->line++, 0, -3)
+#define TALK()                                                                 \
+  Call3(Func_0200118c, (s16)((union EventLine *)work)->line++, 0, -3)
 
 void Func_020009d4(void) {
   struct Actor *follower = Actor_GetById(9);
@@ -83,9 +57,9 @@ void Func_020009d4(void) {
   Func_02001284(26);
   FieldEvent_Wait(60);
   Actor_SetModeById(8, 2);
-  Call1(Func_02001284, 0x240);
+  Func_02001284(0x240);
   FieldEvent_Wait(60);
-  Call1(Func_020011e4, (s32)MsgByReachingThis);
+  Func_020011e4((s32)MsgByReachingThis);
   work += 0x1c4;
   TALK();
   Call3(Func_020011cc, 0x40, 0xa80000, 0x980000);
@@ -116,11 +90,11 @@ void Func_020009d4(void) {
   Actor_WaitForMoveById(9);
   Call3(Actor_ArmCallback, 9, 0x8000, 0);
   Func_020011ec(9, 0);
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
   TALK();
-  Value3(Func_020011fc, 9, 258, 0);
+  Func_020011fc(9, 258, 0);
   Call3(Actor_ArmCallback, 9, 0xb000, 0);
   FieldEvent_Wait(30);
   Func_020011ec(9, 0);
@@ -128,21 +102,21 @@ void Func_020009d4(void) {
   Value3(Func_020011fc, 9, 261, 0);
   FieldEvent_Wait(30);
   TALK();
-  Value3(Func_020011fc, 9, 265, 0);
+  Func_020011fc(9, 265, 0);
   FieldEvent_Wait(30);
   Func_020011ec(9, 0);
   TALK();
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0, 0);
-  Call3(Actor_ArmCallback, 9, 0x8000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_ArmCallback(9, 0x8000, 0);
   FieldEvent_Wait(10);
   Value3(Func_020011fc, gMainRoutineWork.currentOwner, 257, 0);
-  Value3(Func_020011fc, 9, 257, 0);
+  Func_020011fc(9, 257, 0);
   FieldEvent_Wait(60);
   TALK();
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
   Call3(Actor_ArmCallback, 9, 0xb000, 0);
   Value3(Func_020011fc, gMainRoutineWork.currentOwner, 261, 0);
-  Value3(Func_020011fc, 9, 261, 0);
+  Func_020011fc(9, 261, 0);
   FieldEvent_Wait(60);
   TALK();
   FieldEvent_Wait(40);
@@ -158,7 +132,7 @@ void Func_020009d4(void) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(9, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
   Func_020011cc(9, 0, 0);
   Actor_WaitForMoveById(9);

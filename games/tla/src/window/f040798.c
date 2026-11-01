@@ -1,18 +1,3 @@
-// Draft, differ 6 of 222, skeleton gap 3/3 (tla-en, 2026-11-01)
-// Twin of ☀️'s PauseMenu_Choose (games/tbs/src/window/window/settings_menu.c),
-// the Pause menu's selection loop, here starting from `initial`; in debug
-// mode L and R pick entries 20 and 21. Taken from the twin: declaration order,
-// rows before first. The reload registers rotate r1, r2, r3, r0, so redraw's
-// -1 is set while r0 still holds the parameter: `selected` is copied from it
-// afterwards, which closed the reload registers (differ 24 to 6).
-// Left: two scheduling pairs, no register differs. The native issues the
-// title's -16 ahead of storing the window, and stores first = 2 ahead of
-// rows = 1, though rows must be reloaded first for r0 and r1 to come out so.
-// Tried without gain: y or top holding -16, y set before the window call
-// (differ 90), the assignment inside the argument, first before rows (10),
-// separate tests of settingsOnly, an inverted goto, first from rows, a
-// ternary (37), wait before the work read (10), twelve declaration orders
-// (none below 6). Earlier permuter minutes found nothing lower either.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -33,9 +18,8 @@ s32 GameFlag_Test(s32 flag);
 void Func_080405dc(void);
 void Func_08040614(void);
 struct RenderInput *Func_08040628(void);
-struct WindowSprite *RenderResource_CreatePair(s32 group,
-                                               struct RenderInput *input,
-                                               s32 x, s32 y);
+struct WindowSprite *
+RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y);
 void Func_08045018(struct WindowSprite *pair);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag);
@@ -45,7 +29,7 @@ void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void Window_Close(struct RenderInput *window, s32 release);
 
-#define PRESSED (((volatile struct InputState *)&gInput)->pressed)
+#define PRESSED (((struct InputState *)&gInput)->pressed)
 
 s32 Func_08040798(s32 initial) {
   struct RenderInput *window;
@@ -99,8 +83,8 @@ s32 Func_08040798(s32 initial) {
           dimmed = 0;
           if (i != work->page)
             dimmed = 1;
-          RenderResource_LoadCommandIcon(*(s8 *)(j + (s32)pauseIcons), resourceIndex,
-                                   dimmed);
+          RenderResource_LoadCommandIcon(*(s8 *)(j + (s32)pauseIcons),
+                                         resourceIndex, dimmed);
           i++;
           j++;
         } while (i < rows);

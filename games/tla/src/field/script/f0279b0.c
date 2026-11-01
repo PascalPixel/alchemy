@@ -1,25 +1,3 @@
-// Near miss, differ 12 of 503 (tla-en, 2026-10-30): instruction order only,
-// three scheduling choices under -mthumb-slow-loads. The opening issues
-// gMainRoutineWork's pool load and collision's store before the parameter
-// copy (native: the copy, that load, then both opening stores together); the
-// else branch's collision reset loads its 0 after the probe address's spill
-// (native before it); and the retry loop's angleIndex = 0 store follows the
-// copy of the right probe's address into r8 (native before it; in sched2's
-// dump both are ready at priority 1 and the copy is chosen).
-// Script command 0x1a, the twin of The Broken Seal's Actor_MoveOnWorldMap in
-// its Japanese layout (three probes 30 degrees apart, six retry headings),
-// with this game's dash keys, flag 0x163 beside the debug L key, and
-// Field_CheckConfiguredKeys' shortcut setting the event work's unk16a.
-// Measured: angleOffsets[22] as ☀️'s (as [6] the stack frame is 32 bytes
-// short), the ripple sprite's mode and priority as 2-bit fields (as byte
-// masks, differ 70); the opening assignments in other orders (differ 12 to
-// 243, never fewer). On 2026-10-30, 12 or worse: the earlier empty asm after
-// the declarations (12 with or without it), the parameter copied into a local
-// as ☀️'s, collision, movementAnimation, count or angleIndex as other integer
-// types, the dash test's operands swapped or read as unk23c, the retry loop as
-// a do-while or with its index set before the list, the else branch's reset
-// after the probe's copy, and other declaration orders. Permute 8 minutes,
-// then 4 more: nothing better by differ.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -71,8 +49,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802db64(struct Actor *object, struct FieldPosition *position);
 s32 GameFlag_Test(s32 flag);
-void Actor_SelectAnimation(struct Actor *object,
-                                            s32 argument);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
 s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);

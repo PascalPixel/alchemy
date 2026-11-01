@@ -1,58 +1,3 @@
-// Draft, differ 2 of 736, skeleton gap 1 (tla-en, 2026-11-01). Twin of
-// ☀️'s Actor_MoveOnWorldMap (games/tbs/src/field/field/player_control.c), in
-// its TBS_PATCH_1 layout: the same probe ladder, the same angle fan cut to
-// six offsets, the same camera turn and shallow-water ripple, with terrain
-// tracking, the object-overlap loop, height and climbing added. Left: one
-// sched2 swap before the angle loop, (2) below. Tried from the twin
-// (2026-11-01), none below 2 with the barrier, 4 without: an actor alias of
-// the parameter; if/else in place of the goto past the probes; the debug
-// test nested as the twin has it, alone and with that if/else; a
-// movementAnimation local holding 2; a second collision = 0 before the
-// probes; collision as the zero stored in the ripple. Worse: count = 0
-// directly before the offsets as the twin has it, or after the terrain tests
-// (160, eight instructions short: native count lives from the top);
-// collision = 0 at the top (158); motionFlags = collision (8); (u16)angle
-// passed to Vector_AddPolarOffset as the twin does (136).
-// Differ 2 (2026-10-31): one sched2 swap before
-// the angle loop, (2) below; the empty asm after the acceleration store
-// settles (1) (4 without it). Natively both stores issue earlier than this
-// compiler ranks them. (2) cannot move by splitting regions: the reload of
-// &position (ldr r0, [sp]) sits after angleIndex = 0 in RTL and must issue
-// first, so an empty asm or one-pass block anywhere around count = 6 or
-// angleIndex = 0 breaks it. Tried (2026-10-31): count = 6 written out after
-// the six offsets (2), placed before any of them (30 to 79); angleIndex = 0
-// before the offsets (228) or between them (26); a constant bound 6 (176);
-// count int (2), u32 (4), s16 (36); angleIndex u32 (457); for (1), a
-// one-pass block (16) or a volatile acceleration, speedLimit or held access
-// (4); four minutes of permute on the barrier form, 9,431 candidates, none
-// below 2.
-// Differ 4 (2026-10-30), two swaps, both sched2 ranking: (1) gInput's
-// literal load issues before the acceleration store here (priority 15, a
-// load ranked a cycle slower, against the store's 14) and after it
-// natively; (2) before the angle loop, angleIndex's movs r4, #0 (priority
-// 2) issues before count's spill store of 6 to [sp, #4] (priority 1) here,
-// and after it natively. Tried (2026-10-30): held read through a u32 view (4), angle
-// and direction set in one statement (4), collision = 0 after the stores
-// (68), motionFlags cleared after collision (10); five minutes of permute,
-// 6,421 candidates, none below 4.
-// Draft, differ 6 of 736 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 2 with
-// an empty asm after `object->acceleration = 0x8000;`, and finds nothing
-// closer.
-// Near miss, differ 46 of 736, instruction order only: script command 0x21,
-// the flying sibling of Func_08028534. Moves an object over the world map by
-// the direction pad at a pace that grows with its height, refuses steps into
-// other solid objects, climbs while either of two shortcut keys is held and
-// sinks otherwise (posting request 254 on landing), and scales the camera's
-// turn by the height. Left: the native loads object->y and literal pool
-// words before it builds nearby constants (movs/lsls), where agscc builds
-// the constant first, at each of about a dozen sites. Measured: the object
-// loop reuses angleIndex counting down from 63, as ☀️'s player control does
-// (a separate index, differ 351: it lands in r4 and is saved around the
-// call); the animation kind in a local, the high branch written last
-// (differ 173 testing the field twice); separate locals for the two event
-// work loads (as one, the stack frame grows by a word).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -103,8 +48,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802dbd0(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
-void Actor_SelectAnimation(struct Actor *object,
-                                            s32 argument);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetChildByteValue(struct Actor *object, s32 value);
 s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
@@ -152,9 +96,6 @@ s32 Func_08028aac(struct Actor *object) {
   collision = 0;
   object->speedLimit = object->y / 16 + 0x14000;
   object->acceleration = 0x8000;
-  /* FAKEMATCH(barrier): an empty asm after the acceleration store; as plain
-   * C without it, 4 of 736 instructions differ in tla-en. */
-  __asm__ volatile("");
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   direction = angle;
   if (direction == 0xffff) {
@@ -242,7 +183,7 @@ check_objects:
     if (other->script != NULL && (other->collisionFlags & 1) &&
         other != object &&
         Field_CheckSpheresOverlap(&other->x, other->radius, &position.x,
-                                   object->radius) >= 0)
+                                  object->radius) >= 0)
       collision |= 2;
   }
 

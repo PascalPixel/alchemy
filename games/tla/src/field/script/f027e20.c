@@ -1,17 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Script command 0x1f, a relative of Actor_UpdatePlayerControl (and of
-// SC_PLAYER, Func_08027064): the statements, declarations and headingCount
-// table are the twin's, minus running and footprints. It takes two tagged
-// one-pass devices; volatile, wrapper, temporary and eight plain reshapes did
-// not move those sites. The one at the table also keeps the block that clears
-// collision inside the first loop placed after the retry loop.
-// It has longer reach: steps 19 pixels ahead (with the four probes 22.5 and
-// 45 degrees off and six retry headings), pushes from 15 pixels and tests 21
-// pixels past a pushed object; with flag 0x17f, B moves
-// at 4 pixels a frame. The first shortcut key posts request 252 in the event
-// work; turns at most 0x400 a step, and an object with one sprite reads the
-// world map's ground under it afterwards. Structure and frame follow the
-// listing, the angle a u16 as in Func_08027064; as s32 a second copy spills.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -68,10 +54,6 @@ s32 Func_08027e20(struct Actor *interpreter) {
 
   collision = 0;
   pushed = 0;
-  /* FAKEMATCH(one-pass): the empty block keeps gDebugMode's address load after
-   * the two stores; as no block, 2 of 827 instructions differ in tla-en. */
-  do {
-  } while (0);
   // Debug: holding L spins through four empty loops, a short stall each
   // frame.
   if (gDebugMode != 0) {
@@ -190,9 +172,9 @@ s32 Func_08027e20(struct Actor *interpreter) {
   angleOffsets[headingCount++] = direction - 0x2000;
   angleOffsets[headingCount++] = direction + 0x3000;
   angleOffsets[headingCount++] = direction - 0x3000;
-  /* FAKEMATCH(one-pass): the empty block keeps the last store before the counter
-   * and places the first loop's exit block after this loop; as no block, 243 of
-   * 827 instructions differ in tla-en. */
+  /* FAKEMATCH(one-pass): the empty block keeps the last store before the
+   * counter and places the first loop's exit block after this loop; as no
+   * block, 243 of 827 instructions differ in tla-en. */
   do {
   } while (0);
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
@@ -250,7 +232,7 @@ push_objects:
     if (other == object)
       continue;
     if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
-                                   other->radius - 2) < 0)
+                                  other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->movementState == 0) {
       direction = ArcTan2(other->z - object->z, other->x - object->x);

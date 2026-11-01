@@ -1,18 +1,3 @@
-// Draft, differ 35 of 246, skeleton gap 5 (tla-en, 2026-11-01)
-// The Broken Seal's MapGrid_UpdateLayerScroll for this game's layers: no phase
-// masks or enabled flags, the view's vertical motion clamped to 16 pixels a
-// frame, and the layer-window renderers 0802abbc and 0802ac90. Allocation
-// agrees; the differ is mostly pool and branch offsets shifted by the extra
-// bl. Two gaps are left, both from scheduling:
-// - Before the loop the native orders the two view stores, then 0, r11, r8.
-//   That needs a barrier after the stores, with the loop's view-X address a
-//   hoisted copy of the store's. A one-pass block round the stores gives it
-//   (gap 3, differ 33), but that is a device; no plain form found yet.
-// - The native shares 0802ac90's bl between its two arms and stops at the
-//   str r4. Here cross-jumping merges only the ldr r4, stopped by the USE nop
-//   flow.c puts after the else arm's call; the native must have that USE
-//   between the str and the bl. Its cause is unknown: loop form, a u32
-//   tile x, and one-pass blocks round the arms or the whole if did not help.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

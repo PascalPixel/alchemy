@@ -1,40 +1,3 @@
-// Near miss, differ 2 of 258 (tla-en, 2026-10-31): one reordered pair, the
-// native's `movs r3, #63` before `ldrb r2, [r0, #7]` (the affine index's
-// read-modify-write right after matrix's masked value is stored back to
-// sp+28). sched2 orders the pair as the native does not: the ROM waits before
-// that byte load after the store, while -mthumb-slow-loads exempts an
-// extended load and one that opens a read-modify-write, so it ranks first.
-// The sched2 dump (2026-10-31) shows the whole of it: the byte load is ready
-// one cycle after the store-back (cost 1, the exemption), and its priority,
-// 13 (latency 2 plus the slow-loads ranking), beats the mask constant's 12,
-// so it issues first whenever it is ready; only a cost of 2 on that store
-// would give the ROM's order, and the store rule never charges a load
-// followed in its block by a store to its own address. No device moves it
-// either (2026-10-31): `matrix &= 31;` before the store, differ 23, with an
-// empty asm between them 31; an empty asm before the store's statement or
-// an operand asm on part, 10; the store through a volatile part, 2.
-// No source form moves it (store order, matrix or affine unsigned, x and y
-// swapped; 5,792 permuter candidates); the rest is exact. The pin is gone:
-// one `part` for the shadow and the image, as in The Broken Seal, takes r0
-// by itself (differ 2 with or without the pin).
-// Earlier: differ 4 of 258 under -mthumb-slow-loads (2026-10-26); no single
-// empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brought it closer (device search).
-// Near miss of Render_ApplyProjectedPlacement: differ 8 of 258 (four
-// reordered pairs; 214 before this pass, 332 as The Broken Seal's C). The
-// Broken Seal's function of the same name
-// (games/tbs/src/field/field/sprite_draw.c) as The
-// Lost Age reworked it: the object keeps its shadow's sprite after its own
-// fields (so the shared AnimationObject does not fit), the shadow is an 8 by 4
-// sprite at a fixed offset, the sprite's anchor turns with the object (sine and
-// cosine of its rotation), a zero scale draws nothing, and both sprites go into
-// the depth list by their depth (Func_080140d8). The twin's two unused arrays
-// stay: they make the native 64-byte stack frame.
-
-// The allocation came from the locals declared in the order of the native's
-// spill slots (matrix at sp+28 down to pz at sp+4) and the anchor products
-// written value times scale (differ 192 to 30).
-
 #include "types.h"
 #include <affine.h>
 #include "sprite.h"
@@ -83,9 +46,7 @@ void Render_ApplyProjectedPlacement(struct PlacedObject *object, s32 *pos,
   s32 pw;
   s32 scaleX;
   s32 scaleY;
-  /* FAKEMATCH(dead): two unused arrays, as in The Broken Seal, for 24 bytes
-   * of the native 64-byte stack frame; without them, 6 of 258 instructions
-   * differ in tla-en. */
+  // Unused: gives the stack frame its 24 bytes.
   s32 ground[3];
   s32 screen[3];
   s32 flip;

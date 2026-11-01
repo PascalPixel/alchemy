@@ -1,20 +1,3 @@
-// Draft, differ 2 of 142, skeleton gap 1 (tla-en, 2026-11-01)
-// Twin of The Broken Seal's MapGrid_CopyCellPictureIndicesRect: same layer
-// scroll read, same 16x12 window test on three layers, same 2,048-byte BG map
-// step from screen block 5, the same two word copies from the cell pictures.
-// Left: one scheduling pair. The native copies x for the mask straight after
-// the stmia (adds r2, r1 first, then the destination spill, mov r3, sl and
-// mov r4, ip); here that copy comes last of the four. Allocation, frame and
-// everything else agree. In the sched2 dump all three copies and mov r4, ip
-// have priority 4; the destination copy is taken first, the mask copy last.
-// The gain from differ 150 came from using ram_buffer.h's Ram_MapBlocks, the
-// fixed integer address the twin uses: as an extern symbol CSE derived +4 from
-// a hoisted base, which took a register and pushed dstX onto the stack. The
-// volatile casts on the two word copies are gone; they changed nothing.
-// Tried, all still differ 2 or worse: the mask before, after or split around
-// the store, 15 & x, swapped dst++ and tmp6, *dst++, the ior swapped, i = 0
-// and pos = tile moved, tmp12, tmp6 and x/y declaration order, y % 16.
-// Worse: x % 16 (8), tmp6 = x & 15 directly (8), no s32 casts (10).
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -24,10 +7,10 @@ struct TilePos {
 };
 
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
-                                 u32 width, u32 height) {
+                                    u32 width, u32 height) {
   /* FAKEMATCH(temporary): the twin's chains of temporaries set the registers
-   * and the schedule of the cell loop; as a plain body, 96 of 141 instructions
-   * differ in tbs-en (the twin's measure, on its own function). */
+   * and the schedule of the cell loop; as a plain body, 208 of 142 instructions
+   * differ in tla-en. */
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;

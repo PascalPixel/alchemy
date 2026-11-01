@@ -1,25 +1,3 @@
-// Draft, differ 10 of 206, skeleton gap 5 (tla-en, 2026-11-01)
-// Twin of The Broken Seal's SelectionMenu_StepLeft
-// (games/tbs/src/window/window/selection.c): same calls, same fields, same
-// gather, refill and fan-out of the node row; the Lost Age's fields are named
-// here as the draft had them. Taken from the twin on this pass: its kind local,
-// which carries moreBelow's 0 in r0 and the head's id at the end (12 to 10), and
-// its -12 for the fan-out speed.
-// Left, all scheduling with the listing's registers: the -1 constant comes
-// before the top load after the scrollUp store; the 0 for moreBelow comes before
-// the nodes load; the cursor offset starts before the status store and finishes
-// after it, where the draft builds both offsets together. Earlier notes put
-// these at the same three rows.
-// Tried, no change: top as - 1, += 0xffff, += -1, prefix, -1 +, a u16 cast and
-// through a pointer; the 0, 64 and nodes statements in five orders and a comma
-// expression; the cursor through a local.
-// Tried, worse: a local for the status 1 reaches skeleton gap 3 but moves the
-// tail's registers off the listing (differ 24; i reused for it is 16 and a new
-// temporary device), and the same one row stays off; the status store through a
-// u16 pointer loads the 1 from a literal pool (differ 9, one instruction more).
-// A barrier after moreBelow and the last status store reached differ 6 in an
-// earlier pass; it is no plain form, so it is left out.
-
 #include "types.h"
 
 struct StepNode {
@@ -89,8 +67,8 @@ void Menu_StepLeft(struct StepMenu *state) {
     } else {
       node = state->nodes;
       i = 64;
-      /* FAKEMATCH(temporary): the 0 through kind, which carries the head's id at
-       * the end, so it keeps r0 across the loop; as a plain 0 and a direct
+      /* FAKEMATCH(temporary): the 0 through kind, which carries the head's id
+       * at the end, so it keeps r0 across the loop; as a plain 0 and a direct
        * argument, 28 of 206 instructions differ in tla-en. */
       kind = 0;
       state->moreBelow = kind;

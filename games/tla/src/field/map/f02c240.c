@@ -1,12 +1,3 @@
-// Draft, differ 18 of 295 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer (device search).
-// Near miss, differ 16 of 295 (2026-10-18): The Broken Seal's
-// WorldMap_UpdateView with this game's flat view (byte 0x971 scrolls BG1 by
-// the shake instead of projecting), its paused view (0x972) and the eye
-// offset skipped while 0x976 is set. Left: instruction order only, in the
-// prologue's heap-slot loads and constants, the view x reload and the flat
-// test's offset. Six minutes of permute: no better.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

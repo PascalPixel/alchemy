@@ -319,12 +319,7 @@ main	rom_main_01	games/tla/src/field/script/call	.text
 main	rom_main_01	games/tla/src/field/script/overlap	.text
 main	rom_main_01	games/tla/src/field/script/apply_relative_position	.text
 main	rom_main_01	games/tla/src/field/script/offset	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00025160	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00025160	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00025160	es
-main	rom_main_01	recon/tla/de/rom	.rom.00025160	de
-main	rom_main_01	recon/tla/raw/08025160	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00025160	ja
+main	rom_main_01	games/tla/src/field/script/f025160	.text	en de es fr it ja
 main	rom_main_01	games/tla/src/field/script/f025428	.text
 main	rom_main_01	games/tla/src/field/script/approach_watched	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00025698	it
@@ -1732,19 +1727,14 @@ main	rom_main_05	recon/tla/de/rom	.rom.000e307c	de
 main	rom_main_05	recon/tla/raw/080d607c	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d605c	ja
 main	rom_main_05	games/tla/src/field/field_effect/dmafx	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d64e4	it
+main	rom_main_05	games/tla/src/field/field_effect/f0d64f0	.text	en de es fr it ja
+main	rom_main_05	recon/tla/ja/rom	.rom.000d6654	ja
 main	rom_main_05	recon/tla/it/rom	.rom.000d6668	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000db4e4	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000db668	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000df4e4	es
 main	rom_main_05	recon/tla/es/rom	.rom.000df668	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e34f0	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e3674	de
-main	rom_main_05	recon/tla/raw/080d64f0	.text	en
 main	rom_main_05	recon/tla/raw/080d6674	.text	en
 main	rom_main_05	games/tla/src/field/field_effect/f0d67e8	.text	en de es fr it
-main	rom_main_05	recon/tla/ja/rom	.rom.000d64d0	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d6654	ja
 main	rom_main_05	games/tla/src/field/field_effect/f0d67e8	.text	ja
 main	rom_main_05	games/tla/src/field/field_effect/ground_particles	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d69e8	it

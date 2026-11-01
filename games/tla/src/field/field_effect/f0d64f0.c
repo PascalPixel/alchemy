@@ -1,14 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01): updates the 64 ground particles of the
-// heap slot 0x74 workspace. Each counts down its frame (held a frame longer
-// while flag 358 is set), is drawn from its picture's offsets, tile, shape and
-// size when on screen, and when its count runs out is placed again at a random
-// point within 128 pixels of the map's focus, on the ground, for 16 frames.
-// Twin of ☀️'s Weather_UpdateRain: the port took its store order (x, y, tile,
-// shape, size; then posX, posZ, posY, timer), its reads of the frame table
-// through u16 and u8, and its reuse of x and y for the new position, which
-// settled the 63 mask, the spill and the allocation (39 of 176 before). The
-// one change of behaviour from the twin is kept: the height call here takes
-// and returns 16.16 values, with no shifts.
 #include "types.h"
 #include "flag_call.h"
 #include "ram_buffer.h"

@@ -1,13 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Shapes that decide it: the camera comes through a copy of the parameter, as
-// in ☀️'s twin; dx and dz also hold the nearer edges in the region push, which
-// ranks them above x and z; the MulQ16 calls use the linked symbol, because the
-// fixed address makes reload write subs r5, #20; ratio and mulQ16 are locals so
-// the address loads after the first ratio call and before the argument move.
-// SC_CAMERA, ☀️'s Camera_FollowLeaderInBounds (games/tbs/src/field/
-// field.c) with The Lost Age's keep-out regions: after the map bounds, a
-// target inside one of the map's rectangles (a list of s16 x0, z0, x1, z1 in
-// pixels, ended by x0 == -1) is pushed out to its nearest edge.
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"

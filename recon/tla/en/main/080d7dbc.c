@@ -1,7 +1,16 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 14 of 208 in tla-en,
-// instruction order only. No empty asm before any one statement lowers it.
-// differ 16: ported from the twin in ☀️ radpart.c; native leaves several loads
-// after independent moves
+// Draft, differ 4 of 208, skeleton gap 2 (tla-en, 2026-11-01)
+// Twin of FieldEffect_UpdatePhasedRadialParticle in the Broken Seal (the same
+// five states, constants, calls and order), already ported statement for
+// statement. Left: two scheduling pairs, register allocation identical. In
+// state 0 the listing stores age before loading gVBlankCount's address; in
+// state 2 it builds the -13 mask before loading the sprite's attribute byte.
+// The draft has each pair the other way round; state 1's same store matches.
+// Tried without gain: a sprite local in or before state 2's block, a plain u8
+// mask (worse), swapping flags and priority (worse), a count local, the test
+// as if (x & 1), x % 2 and an early return, zero from state, the locals'
+// declaration order, gVBlankCount as s32.
+// Earlier: under -mthumb-slow-loads (2026-10-26) differ 14 of 208, instruction
+// order only; no empty asm before any one statement lowers it.
 #include "types.h"
 #include "system.h"
 #include "sprite.h"

@@ -1,11 +1,27 @@
-// Draft, differ 254 of 713: script command 0x24, a slow sibling of SC_PLAYER
-// (Func_08027064): walks at one pixel a frame with a gentle acceleration
-// (0xccc), the dash keys choosing only the running animation; steps 8
-// pixels with the same probes, retries and pushing, but neither sets the
-// velocity's heading nor records the held keys, and a refused step keeps
-// the velocity. Structure and frame follow the listing, the angle a u16 and the
-// heading an s16 (as s32, differ 388). Left: scheduling and register choice,
-// most of it in the object loops.
+// Draft, differ 60 of 713, skeleton gap 11 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Actor_UpdatePlayerControl
+// (games/tbs/src/field/field/player_control.c), script command 0x24 in both
+// games: the same 8-pixel step with five probes, the same six fallback
+// headings, the same push test with its probe tested twice, the same blocked
+// count, animations and turn. This game drops the debug stalls, the fast walk,
+// the velocity rewrite and the footprints, walks at one pixel a frame with a
+// gentle acceleration (0xccc), and adds a still-object check on priorityFlags
+// bits 6 and 7 before the step. The angle is a u16 and the heading an s16 (the
+// twin's s32 angle, differ 627).
+// From the twin: headingCount filling angleOffsets, which keeps the loop's
+// compare as cmp 6 and blt; the heading set after the last probe; the absolute
+// difference written as 0x100000 - delta; the bound in a local so it stays a
+// hoisted 0x7ffff (a literal compares as >= 0x80000); the clear block between
+// the loop and the blocked block. Differ 191 before.
+// Left: the opening's constants and stores in another order; r4 and r6 swapped
+// between the bound and onObject in the object loop; in the first two probes
+// the object is read through r1 and r0, not r2 and r1, moving the 0x1000
+// constant from r0 to r3; one movs r1, #0 a place early after angleOffsets.
+// Tried without gain: every order of the three opening values
+// (movementAnimation first is the best), the mask operands swapped, a pointer
+// to the keys, an interpreter copy of the argument, declaration order and scope
+// of onObject, the bound, direction and headingCount, the twin's declaration
+// order, and a u8 onObject.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -62,9 +78,9 @@ s32 Func_080267bc(struct Actor *object) {
   struct Actor *other;
   struct EventWork *work;
 
+  movementAnimation = 2;
   collision = 0;
   pushed = 0;
-  movementAnimation = 2;
   if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->keys23c) {
     object->speedLimit = 0x10000;
     object->acceleration = 0xccc;
@@ -85,9 +101,13 @@ s32 Func_080267bc(struct Actor *object) {
   position.z = object->z;
   Vector_AddPolarOffset(0x80000, (u16)angle, &position);
   if (object->priorityFlags & 0x40) {
-    onObject = 0;
+    s32 withinHalfCell;
+
     other = (struct Actor *)Ram_HeapSlots->scriptObjects;
+    withinHalfCell = 0x7ffff;
+    onObject = 0;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
+      s32 delta;
       s32 dy;
 
       if (other->script == NULL)
@@ -96,10 +116,11 @@ s32 Func_080267bc(struct Actor *object) {
         continue;
       if (other == object)
         continue;
-      dy = object->y - other->y - 0x100000;
+      delta = object->y - other->y;
+      dy = delta - 0x100000;
       if (dy < 0)
-        dy = -dy;
-      if (dy > 0x7ffff)
+        dy = 0x100000 - delta;
+      if (dy > withinHalfCell)
         continue;
       if (SAME_CELL(object->x, other->x) && SAME_CELL(object->z, other->z))
         onObject = 1;
@@ -133,65 +154,69 @@ s32 Func_080267bc(struct Actor *object) {
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
-          heading = angle;
-          if (!Func_0802d87c(object, &testPosition))
+          if (!Func_0802d87c(object, &testPosition)) {
+            heading = angle;
             goto push_objects;
+          }
         }
       }
     }
   }
   {
     u16 direction = angle;
+    s32 headingCount = 0;
 
-    angleOffsets[0] = direction + 0x1000;
-    angleOffsets[1] = direction - 0x1000;
-    angleOffsets[2] = direction + 0x2000;
-    angleOffsets[3] = direction - 0x2000;
-    angleOffsets[4] = direction + 0x3000;
-    angleOffsets[5] = direction - 0x3000;
+    angleOffsets[headingCount++] = direction + 0x1000;
+    angleOffsets[headingCount++] = direction - 0x1000;
+    angleOffsets[headingCount++] = direction + 0x2000;
+    angleOffsets[headingCount++] = direction - 0x2000;
+    angleOffsets[headingCount++] = direction + 0x3000;
+    angleOffsets[headingCount++] = direction - 0x3000;
+    for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
+      heading = angleOffsets[angleIndex];
+      position.x = object->x;
+      position.y = object->y;
+      position.z = object->z;
+      Vector_AddPolarOffset(0x80000, (u16)heading, &position);
+      if (Func_0802d87c(object, &position))
+        continue;
+      testPosition.x = object->x;
+      testPosition.y = object->y;
+      testPosition.z = object->z;
+      Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
+      if (Func_0802d87c(object, &testPosition))
+        continue;
+      testPosition.x = object->x;
+      testPosition.y = object->y;
+      testPosition.z = object->z;
+      Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
+      if (Func_0802d87c(object, &testPosition))
+        continue;
+      testPosition.x = object->x;
+      testPosition.y = object->y;
+      testPosition.z = object->z;
+      Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
+      if (Func_0802d87c(object, &testPosition))
+        continue;
+      testPosition.x = object->x;
+      testPosition.y = object->y;
+      testPosition.z = object->z;
+      Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
+      if (!Func_0802d87c(object, &testPosition))
+        goto push_objects;
+    }
   }
-  for (angleIndex = 0; angleIndex < 6; angleIndex++) {
-    heading = angleOffsets[angleIndex];
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading, &position);
-    if (Func_0802d87c(object, &position))
-      continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
-      continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
-      continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
-      continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
-    if (!Func_0802d87c(object, &testPosition))
-      goto push_objects;
-  }
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
-  collision |= 1;
-  goto push_objects;
+  goto blocked;
 
 clear:
   collision = 0;
   goto counted;
+
+blocked:
+  position.x = object->x;
+  position.y = object->y;
+  position.z = object->z;
+  collision |= 1;
 
 push_objects:
   contact.x = object->x;
@@ -210,7 +235,7 @@ push_objects:
     if (other == object)
       continue;
     if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
-                                   other->radius - 2) < 0)
+                                  other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->movementState == 0) {
       u16 direction;

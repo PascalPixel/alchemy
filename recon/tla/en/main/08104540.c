@@ -1,25 +1,26 @@
-// Near miss, differ 36 of 436 (2026-10-26; 93 before). The twin's result = 0
-// before frame, with selectedPages cleared from it (80); the page row marked
-// through UiRender_MarkRow with the signed row (54); the help window's
-// address kept in its own slot pointer beside the left and right ones, and
-// pageCount declared before counts (36): the stack frame's spill slots now follow
-// the native's for the declared pointers. Left: the heap slot's load before
-// sub sp in the prologue, and the three loop-invariant addresses (the pair
-// owner's, the selected page's and the page count's) spilled in another order
-// (the native keeps the page count's lowest, at sp+20, as if it were made
-// last, by loop.c rather than a declaration).
-// First draft of Func_08104540: the Djinn menu's view of the shown member's
-// current status, the twin of ☀️'s DjinnMenu_ShowOwnerStatus
-// (games/tbs/src/menu/menu/djinn_preview.c), without its blink phase: both
-// panes of Func_08103218 for the pair's first member, page arrows over the
-// right one, left and right page through, Start leaves the menu (-2) and A,
-// B, L or R the view (-1). MsgCurrentStatus takes the twin's name (04315 in
-// the English catalog, still unnamed there). Differ 95 of 436, register
-// and stack slot choice mostly: the native gives r11 the selected page's
-// address and keeps the frame's eleven spills in another order (the page
-// count's address lowest at sp+20, the redraw flag highest at sp+60). The
-// count's address taken at the top of the loop matters (232 with
-// pageCounts[side] at each use).
+// Draft, differ 28 of 436, skeleton gap 5 (tla-en, 2026-11-01)
+// Twin of ☀️'s DjinnMenu_ShowMemberStatus
+// (games/tbs/src/menu/menu/djinn_preview.c): same calls, windows, keys, sounds
+// and MsgCurrentStatus, without the phase step and with the page digit's
+// bound at 8 where the twin has 9. Both panes of Func_08103218 for the pair's
+// first member, page arrows over the right one, left and right page through,
+// Start leaves the menu (-2) and A, B, L or R the view (-1).
+// Left, three sites: the heap slot's load is placed before sub sp where the
+// native has it after (no opening order tried moves it without losing more;
+// the twin's phase changes nothing); Task_Add's literal load comes before the
+// lsls of its second argument; and the four loop-invariant addresses before
+// the loop get their reload registers two along (draft r3 r0 r1 r2, native
+// r1 r2 r3 r0, in the order page count, pair owner, zero, selected page).
+// All frame slots now agree with the native: selected, a pointer like the
+// twin's counts, takes sp+24; pairOwner, declared before counts and taken
+// inside the loop after the page count, takes sp+32; pageCount, declared in
+// the loop, takes sp+20 and must stay &pageCounts[side], the array (217 with
+// counts[side] at the wrap calls, 47 through counts).
+// Tried and closer by differ but worse by skeleton: an s32 *selectedPage =
+// &selected[side] first at the top of the loop, with the page turns through
+// *selectedPage, gives every register but schedules the selected address too
+// early: differ 14, skeleton 7. Its other orders of the three: 20 to 28,
+// skeleton 6 to 9. Declaration order and the two forms' mixes do not move it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -96,8 +97,9 @@ s32 Func_08104540(void) {
   s32 tile;
   s32 pageIndex;
   s32 side;
-  s32 *pageCount;
+  u8 *pairOwner;
   s32 *counts;
+  s32 *selected;
   s32 blink;
 
   menu = Ram_HeapSlots->menuRuntime;
@@ -105,7 +107,8 @@ s32 Func_08104540(void) {
   result = 0;
   frame = 0;
   menu->cursor->active = 13;
-  selectedPages[1] = selectedPages[0] = result;
+  selected = selectedPages;
+  selected[1] = selected[0] = result;
   for (side = 3; side >= 0; side--)
     menu->ownerY[side] = 200;
   WindowSprite_ClearListFar(menu->listWindow);
@@ -138,16 +141,18 @@ s32 Func_08104540(void) {
                                   0, 16);
   side = 0;
   while (1) {
+    s32 *pageCount;
     render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
     pageCount = &pageCounts[side];
+    pairOwner = menu->pairOwner;
     if (redraw) {
       render->menuBusy = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar(menu->secondWindow);
-      Func_08103218(menu->window, 0, 0, menu->pairOwner[0], 0, 0, 3, 0, 1);
-      Func_08103218(menu->secondWindow, 0, 0, menu->pairOwner[0], 0, 0, 3,
+      Func_08103218(menu->window, 0, 0, *pairOwner, 0, 0, 3, 0, 1);
+      Func_08103218(menu->secondWindow, 0, 0, *pairOwner, 0, 0, 3,
                     selectedPages[0] + 1, 1);
       render->menuBusy = 0;
     }
@@ -157,7 +162,7 @@ s32 Func_08104540(void) {
         tile = 0xf031 + pageIndex;
         if (pageIndex > 8)
           tile = 0xf03f;
-        if (pageIndex == selectedPages[side])
+        if (pageIndex == selected[side])
           tile -= 0x1000;
         Window_SetTilemapEntryFar(
             window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
@@ -190,16 +195,16 @@ s32 Func_08104540(void) {
       break;
     }
     if (repeatedKeys & 0x20) {
-      selectedPages[side]--;
-      selectedPages[side] =
-          Menu_GetModuloOfSum(selectedPages[side], *pageCount);
+      selected[side]--;
+      selected[side] =
+          Menu_GetModuloOfSum(selected[side], *pageCount);
       Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & 0x10) {
-      selectedPages[side]++;
-      selectedPages[side] =
-          Menu_GetModuloOfSum(selectedPages[side], *pageCount);
+      selected[side]++;
+      selected[side] =
+          Menu_GetModuloOfSum(selected[side], *pageCount);
       Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       redraw = 1;

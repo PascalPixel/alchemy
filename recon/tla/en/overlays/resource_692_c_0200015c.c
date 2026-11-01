@@ -1,87 +1,18 @@
-// Draft, differ 30 of 219: overlay 692's copy of the function drafted in
-// resource_663_c_0200015c.c (overlay 663's Func_0200015c, differ 30 there), whose
-// header says what it is, what still differs and what was tried.
-#include "types.h"
-#include "main_routine_work.h"
-#include "field_effect.h"
-
-extern const s32 *gData_02005698[];
-
-struct FieldActor *Actor_GetById(s32 id);
-struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Func_02004c98(struct FieldActor *object, s32 mode);
-void Func_02004ca0(void *object, const s32 *script);
-void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
-void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
-void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
-
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags_,
-                   const struct EffectOptions *options) {
-  register u32 flags __asm__("r10") = flags_;
-  struct FieldActor *party = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
-  else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Func_02004c98((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_02004ca0(effect, gData_02005698[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSingleChildFlags((struct FieldActor *)effect, 0);
-  effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority((struct FieldActor *)effect,
-                           party->sprite->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    Actor_SetPartAttribute((struct FieldActor *)effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    sprite->priority = (u8)options->priority;
-    Scene_SetActorSpritePriority((struct FieldActor *)effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 targetX;
-    s32 count;
-
-    script = gData_02005698[flags & EFFECT_SCRIPT_MASK];
-    targetX = options->targetScaleX;
-    count = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (targetX - effect->scaleX) / count;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Func_02004c98((struct FieldActor *)effect, 1);
-    Func_02004ca0(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's FieldEffect_SpawnResident (EFFECT_SPAWN in
+// scene/shared/field_effect_spawn.h), and overlay 692's own copy of the spawner
+// already adopted for other overlays in
+// games/tla/src/field/field_effect/spawn.c. Taken whole with
+// EFFECT_SPRITE_PRIORITY, as overlays 663, 664, 66b, 679 and 67b do; without
+// it, 78 of 219 differ. This replaces the untagged r10 pin of the earlier
+// draft (differ 24, skeleton gap 7). It carries that file's two tagged devices
+// (wrapper, one-pass). Nothing is left but adoption: a scene file of these same
+// lines, as games/tla/src/scene/aqua_rock/s015c.c is. Differ compares
+// instructions only; the twelve-edition compare still has to confirm the pool.
+#define EFFECT_SPAWN Func_0200015c
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Func_02004c98
+#define EFFECT_SET_SCRIPT Func_02004ca0
+#define EFFECT_SCRIPTS gData_02005698
+#define EFFECT_SPRITE_PRIORITY
+#include "../../../../games/tla/src/field/field_effect/spawn.c"

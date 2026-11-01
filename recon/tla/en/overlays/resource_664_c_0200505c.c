@@ -1,16 +1,22 @@
-// Draft, differ 10 of 172 (was 83): inside an event, the leader drops from
-// height 130 after a screen transition (cue 204), lands in a ring of
-// seventeen dust effects, plays cue 188 and mode 22 while the screen shakes
-// twice, then gets its normal gravity back. The same listing as overlay 68f's
-// Func_020011e0; the ring is written as overlay 655's Func_02003764. The
-// count is cleared between the options' palette and update, so global.c
-// ranks &options above it and they take r8 and r10 as the native's do (with
-// the count cleared in the loop's own first clause they swap).
-// Left: the native clears the count after the options' stores and builds the
-// velocity's address after the first call of each pass (here once, before
-// the loop). Measured: the count cleared at its declaration, before the
-// options or after them (16 to 40), the loop as do, while or goto, an options
-// pointer; permute found nothing better.
+// Draft, differ 16 of 172, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's VenusLighthouse_LandWithRadialDust: inside an
+// event, the leader drops from height 130 after a screen transition (cue 204),
+// lands in a ring of seventeen dust effects, plays cue 188 and mode 22 while
+// the screen shakes twice, then gets its normal gravity back. This game adds
+// random spread to the velocity and the screen effect stores. The same listing
+// as overlay 68f's Func_020011e0 and overlay 655's Func_02003764.
+// The loop is the twin's: for from 0, angle set first, so the count is cleared
+// after the options' stores as in the native (gap 3 to 1). Differ rose from
+// 10 because that form swaps the registers: the native keeps &options in r8
+// and the count in r10; with the count cleared between palette and update
+// they fall right (differ 10) but the clear is in the wrong place (gap 3).
+// Left: that swap, and the native builds the velocity's address after the
+// first call of each pass. Here it leaves the loop: loop.c moves it in the
+// for form and gcse's PRE before a goto loop (TBS's hoists too).
+// Measured without gain: do, while and goto loops, an options pointer set
+// at the top, after the stores or after the count, a velocity pointer set
+// after the first call, struct Vector3, angle and velocity declared outside
+// the loop or in either order, a u16 count; permute, three minutes.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -63,16 +69,17 @@ void Func_0200505c(void) {
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   options.palette = 7;
-  i = 0;
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
-  for (; i <= 16; i++) {
+  for (i = 0; i <= 16; i++) {
+    s32 angle;
     s32 velocity[3];
 
-    velocity[0] = Math_Cosine(i << 12);
+    angle = i << 12;
+    velocity[0] = Math_Cosine(angle);
     velocity[1] = 0;
-    velocity[2] = Math_Sine(i << 12);
+    velocity[2] = Math_Sine(angle);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16Far() * 3) << 14) >> 16;
     velocity[0] += -0x6000;

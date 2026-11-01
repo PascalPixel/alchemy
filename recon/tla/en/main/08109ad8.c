@@ -1,13 +1,17 @@
-// Draft: picks the party member whose items the shop works on (sell, repair or
-// the third action), four members a page, as ☀️'s Shop_PickUnit
-// (games/tbs/src/shop/shop.c) with ⚓️'s party cursor helper (Func_08108690)
-// in place of the left and right tests. Draft, differ 77 of 205 (2026-10-19):
-// the native keeps redraw in r7 apart from the result in r5, which leaves the
-// list window in r10 and the mode's address in r9; here redraw shares r5
-// with the result and the window takes r7. The A and B tests also differ: the
-// native ands into the pressed word's register and reloads it for B. Tried:
-// the style 2 as literals, the input through a pointer; five minutes of
-// alchemy-devtools permute found nothing better.
+// Draft, differ 24 of 205, skeleton gap 0 (tla-en, 2026-11-01)
+// Twin of ☀️'s Shop_ChooseMember (games/tbs/src/shop/shop/sell.c): picks the
+// party member whose items the shop works on (sell, repair or the third
+// action), four members a page, with ⚓️'s party cursor helper (Func_08108690)
+// in place of the left and right tests. Taken from the twin: redraw starts at
+// 1 where it is declared. The window style became its own local (one constant
+// for its whole life, no device); the result sharing it had kept redraw out of
+// its own register.
+// Left: only unitId and listWindow are swapped, r10 and r8 here against r8 and
+// r10 in the native; all 24 differing rows are those two. Tried: every order
+// of the declarations and of the opening assignments, for and do loops, the
+// twin's continue, a chained store of the window, reading the window back
+// through the struct, chained zero initializers (three instructions longer);
+// three minutes of alchemy-devtools permute found nothing better.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -56,21 +60,21 @@ void Window_CloseFar(void *window, s32 style);
 
 s32 Func_08109ad8(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
-  s32 memberIndex = 0;
-  s32 result = 2;
   s32 unitId = 0;
+  s32 memberIndex = 0;
+  s32 style = 2;
   void *listWindow;
-  s32 redraw;
+  s32 redraw = 1;
+  s32 result;
 
-  shop->moneyWindow = Window_CreateFar(0, 9, 12, 4, result);
+  shop->moneyWindow = Window_CreateFar(0, 9, 12, 4, style);
   Func_08109188();
-  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, result);
-  listWindow = Window_CreateFar(0, 14, 13, 3, result);
+  shop->itemWindow = Window_CreateFar(16, 12, 14, 8, style);
+  listWindow = Window_CreateFar(0, 14, 13, 3, style);
   shop->listWindow = listWindow;
   shop->cursorAnchor->active = 4;
   shop->mode = 12;
   Func_080f8060(listWindow, 2, 0);
-  redraw = 1;
   while (1) {
     struct InputState *input;
 

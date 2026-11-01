@@ -1,16 +1,24 @@
-// Draft, differ 403 (501 before statements reordered 2026-10-26) of 444 (2026-10-25): Move cast on a target, The Broken
-// Seal's FieldEffect_SteerPushedTarget with this game's calls. The hand
-// (BattleEffect_StartItemBreak) appears 16 pixels above the target on the
-// caster's side and pushes it 16 pixels the way the d-pad points, for as long
-// as the player pushes; A, B, L or R end it unless the effect scene's mode is
-// set. Where it cannot go, cue 114 plays every 16 frames. This game adds the
-// scene's direction hook (its 0xffff ends the effect), the target's layer
-// kept and restored, the push's pending event (Func_080ce458) run once the
-// target has moved, and its own test of the cell beyond the caster
-// (Func_080202f0). The blocks follow the native's layout (each refusal
-// written out, as The Broken Seal writes them); left: register allocation
-// (the native keeps the target in r10, the hand in r9, the push's direction
-// in r7).
+// Draft, differ 4 of 444, skeleton gap 2 (tla-en, 2026-11-01): Move cast on a
+// target, the twin of The Broken Seal's FieldPsynergy_SteerPushedTarget (same
+// locals in the same order, the same blocks and the same push, with this
+// game's calls). The hand (BattleEffect_StartItemBreak) appears 16 pixels above
+// the target on the caster's side and pushes it 16 pixels the way the d-pad
+// points, for as long as the player pushes; A, B, L or R end it unless the
+// effect scene's mode is set. Where it cannot go, cue 114 plays every 16
+// frames. This game adds the scene's direction hook (its 0xffff ends the
+// effect), the target's layer kept and restored, the push's pending event
+// (Func_080ce458) run once the target has moved, a target that lands on its
+// cell only with no event, and the palette byte read from 0x40 rather than the
+// shared struct's savedPalette at 0x44. Func_080202f0 takes the layer and
+// beyond's x and z, as the twin's cell test does. Stack slots follow the
+// declaration order, so the declarations are the twin's.
+// Left: two scheduling pairs, each a byte load one slot early: *layer's ldrb
+// before mov fp (the listing has it after), and moved's ldrb before adds r3
+// #51. Registers, slots and blocks all agree. Tried without gain: seven orders
+// of the opening assignments, three of the target's field stores, user and
+// target swapped, s32 and u32 local types, target->actionFlags = 0, a direct
+// read of terrainId and a combined layer assignment. Both are load-order ties,
+// so -mthumb-slow-loads (K2's approximation) is the likely cause; not proven.
 #include "types.h"
 #include "ram_buffer.h"
 #include "field/field_psynergy_work.h"
@@ -41,7 +49,7 @@ s32 Func_08020210(struct Actor *object, struct Vec3 *position);
 struct Actor *
 ScriptObject_FindOverlappingEntryFar(struct Actor *object,
                                      struct Vec3 *position);
-s32 Func_080202f0(s32 layer);
+s32 Func_080202f0(s32 layer, s32 x, s32 z);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
                                          s32 y, s32 z);
@@ -58,25 +66,38 @@ extern const u8 Data_080f0ee4[];
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
 
 void Func_080dd054(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct Actor *user = scene->mainObject;
-  struct Actor *target = scene->child;
-  s32 angle = (u16)scene->angle + 0x8000;
-  s32 moved = 0;
-  u8 *layer = &target->terrainId;
-  s32 pushed = 0;
-  u8 savedLayer = *layer;
-  struct Actor *pusher;
   struct Vec3 position;
   struct Vec3 beyond;
+  struct BattleFxScene *scene;
+  struct Actor *user;
+  struct Actor *target;
+  struct Actor *pusher;
   struct Actor *hit;
-  u8 *pusherFlags;
-  struct PendingEvent *event;
+  s32 x;
+  s32 z;
+  s32 angle;
+  s32 moved;
   s32 direction;
-  s32 value;
-  s32 cellX, cellZ;
-  s32 x, z;
+  s32 cellX;
+  s32 cellZ;
+  struct Vec3 *candidate;
+  s32 (*callback)(void);
+  u8 savedLayer;
+  u8 *layer;
+  struct PendingEvent *event;
+  s32 pushed;
+  u8 *pusherFlags;
+  u8 *userFlags;
+  const u8 *modes;
 
+  scene = Ram_HeapSlots->effectWork;
+  user = scene->mainObject;
+  target = scene->child;
+  angle = (u16)scene->angle + 0x8000;
+  moved = 0;
+  layer = &target->terrainId;
+  savedLayer = *layer;
+  pushed = 0;
   if (target == NULL)
     return;
   BattleEffect_InitializeSharedScene();
@@ -90,16 +111,16 @@ void Func_080dd054(void) {
 
   event = Func_080ce458(0x50000005, scene->fieldKind,
                         Func_080ce31c(scene->fieldKind));
-  position.x = target->x;
   pusher->watchedObject = target;
-  position.y = target->y + 0x100000;
-  position.z = target->z;
-  Vector_AddPolarOffset(0x100000, angle, &position);
-  Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
+  candidate = &position;
+  candidate->x = target->x;
+  candidate->y = target->y + 0x100000;
+  candidate->z = target->z;
+  Vector_AddPolarOffset(0x100000, angle, candidate);
+  Actor_SetTargetPosition(pusher, candidate->x, candidate->y, candidate->z);
   BattleEffect_SnapScaleToFull(pusher);
-  value = 0x8000;
   pusher->speedLimit = 0x40000;
-  pusher->acceleration = value;
+  pusher->acceleration = 0x8000;
   pusherFlags = &pusher->motionFlags;
   *pusherFlags = 4;
   target->update = Actor_ApplyRandomChildValues;
@@ -113,8 +134,9 @@ void Func_080dd054(void) {
       break;
 
     direction = (u16)BattleEffect_GetCycledTableWord(gInput.held);
-    if (scene->finishCallback != NULL) {
-      direction = ((s32 (*)(void))scene->finishCallback)();
+    callback = (s32 (*)(void))scene->finishCallback;
+    if (callback != NULL) {
+      direction = callback();
       if (direction == 0xffff)
         break;
     } else if (direction == 0xffff) {
@@ -124,27 +146,23 @@ void Func_080dd054(void) {
       Vector_AddPolarOffset(0x100000, angle, &position);
       Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
       Actor_SetMode(pusher, 1);
-      // XXX: the hand's velocity is set from a variable the function reuses
-      // (0x8000, 16 pixels or the cell mask), where The Broken Seal clears
-      // it; likely a slip, because nothing reads the value as a speed.
-      pusher->velocityX = value;
-      pusher->velocityY = value;
-      pusher->velocityZ = value;
+      pusher->velocityX = 0;
+      pusher->velocityY = 0;
+      pusher->velocityZ = 0;
       continue;
     }
 
     position.x = target->x;
-    value = 0x100000;
-    position.y = target->y + value;
+    position.y = target->y + 0x100000;
     position.z = target->z;
-    Vector_AddPolarOffset(value, angle, &position);
+    Vector_AddPolarOffset(0x100000, angle, &position);
     Vector_AddPolarOffset(0x20000, direction, &position);
     Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
     Actor_CommitPosition(pusher);
     position.x = target->x;
     position.y = target->y;
     position.z = target->z;
-    Vector_AddPolarOffset(value, direction, &position);
+    Vector_AddPolarOffset(0x100000, direction, &position);
     beyond.x = target->x;
     beyond.y = target->y;
     beyond.z = target->z;
@@ -155,7 +173,7 @@ void Func_080dd054(void) {
         Sound_PlayFar(114);
       continue;
     }
-    hit = ScriptObject_FindOverlappingEntryFar(target, &position);
+    hit = ScriptObject_FindOverlappingEntryFar(target, candidate);
     if (hit != NULL) {
       if (hit != user) {
         Actor_SetMode(pusher, 4);
@@ -163,18 +181,18 @@ void Func_080dd054(void) {
           Sound_PlayFar(114);
         continue;
       }
-      cellZ = user->z & MOVE_CELL_MASK;
       cellX = user->x & MOVE_CELL_MASK;
-      if (cellX == (position.x & MOVE_CELL_MASK) &&
-          cellZ == (position.z & MOVE_CELL_MASK)) {
+      cellZ = user->z & MOVE_CELL_MASK;
+      if (cellX == (candidate->x & MOVE_CELL_MASK) &&
+          cellZ == (candidate->z & MOVE_CELL_MASK)) {
         Actor_SetMode(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(114);
         continue;
       }
-      value = MOVE_CELL_MASK;
-      if (cellX == (beyond.x & value) && cellZ == (beyond.z & value)) {
-        if (Func_080202f0(user->terrainId) != 0) {
+      if (cellX == (beyond.x & MOVE_CELL_MASK) &&
+          cellZ == (beyond.z & MOVE_CELL_MASK)) {
+        if (Func_080202f0(user->terrainId, beyond.x, beyond.z) != 0) {
           Actor_SetMode(pusher, 4);
           if ((gFrameCount & 15) == 0)
             Sound_PlayFar(114);
@@ -188,18 +206,19 @@ void Func_080dd054(void) {
     pushed = 1;
     x = position.x;
     z = position.z;
-    Actor_SetMode(pusher, Data_080f0ee4[(u16)(angle - direction) >> 14]);
+    modes = Data_080f0ee4;
+    Actor_SetMode(pusher, modes[(u16)(angle - direction) >> 14]);
     wait(15);
     target->movementState = 0;
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
-    *pusherFlags = 0;
     Actor_SetTargetPosition(target, position.x, position.y, position.z);
+    *pusherFlags = 0;
     pusher->speedLimit = 0x3333;
     pusher->acceleration = 0x3333;
-    value = 0x100000;
-    Vector_AddPolarOffset(value, direction, &position);
-    Actor_SetTargetPosition(pusher, position.x, position.y + value, position.z);
+    Vector_AddPolarOffset(0x100000, direction, &position);
+    Actor_SetTargetPosition(pusher, position.x, position.y + 0x100000,
+                            position.z);
     if (moved == 1) {
       Actor_GetById(scene->firstObjectId)->actionFlags &= 0xfe;
       user->speedLimit = 0x3333;
@@ -209,15 +228,16 @@ void Func_080dd054(void) {
     Actor_CommitPosition(target);
     if (event == NULL) {
       target->x = x;
-      target->velocityX = 0;
       target->z = z;
+      target->velocityX = 0;
       target->velocityZ = 0;
     }
     break;
   }
 
   *layer = savedLayer;
-  Animation_ApplyChildValuesFar(target, scene->savedPalette);
+  // The palette byte sits at 0x40 here, not the struct's savedPalette at 0x44.
+  Animation_ApplyChildValuesFar(target, scene->unk40[0]);
   Actor_StartScriptFar(target, scene->savedScript);
   target->update = (void (*)(void))scene->savedCallback;
   if (pushed) {
@@ -229,8 +249,10 @@ void Func_080dd054(void) {
                                  scene->secondObjectId);
   }
   BattleEffect_StopMainActor();
-  if (moved == 1)
-    Actor_GetById(scene->firstObjectId)->actionFlags |= 1;
+  if (moved == 1) {
+    userFlags = &Actor_GetById(scene->firstObjectId)->actionFlags;
+    *userFlags |= 1;
+  }
   BattleEffect_PrepareBufferInterpolation();
   UpdateRisingParticleBurst(pusher);
 }

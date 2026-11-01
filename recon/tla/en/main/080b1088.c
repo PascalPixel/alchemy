@@ -1,15 +1,20 @@
-// Draft, differ 79 of 165: once (marker 0x6774 at gData_020023c4) backs up
-// units 4 to 7's inventories with gMainRoutineWork halfwords at 0x240 and
-// 0x242 and two from Data_02000458, and strips each of those units' unequipped
-// items of types 1 to 4 and every item Func_080b106c picks, compacts the
-// inventory and refreshes the unit; always sets flag 0x9ff, runs
-// Func_080ae16c(1) and clears flags 0xe50 to 0xe59. Left: the compaction
-// loop tests each item as (item << 16) != 0 after its ldrh in the native,
-// where the draft compares the loaded halfword directly; the count and the
-// read pointer swap registers (r4/r5) from there; and the four closing
-// stores of the backup are scheduled differently. Tried: the item as a u16
-// local (ldrsh, differ 98); the inventory pointer taken once (differ 79,
-// from 82).
+// Draft, differ 4 of 165, skeleton gap 2 (tla-en, 2026-11-01)
+// Twin of InventorySnapshot_Save (games/tbs/src/game/game/snapshot.c): the same
+// 0x6774 sentinel at gData_020023c4 and backup layout, for units 4 to 7 rather
+// than 0 to 3, with the two gMainRoutineWork shortcuts (0x240, 0x242) and two
+// halfwords of Data_02000458 kept after them. Each unit's unequipped items of
+// types 1 to 4 and every item Func_080b106c picks are stripped, the inventory
+// closes up through the twin's inline Inventory_CompactSlots, and the unit is
+// refreshed. Always sets flag 0x9ff, runs Func_080ae16c(1) and clears flags
+// 0xe50 to 0xe59, reusing the slot counter as the flag number.
+// Left: one scheduling pair at the first store. The native has mov r1, r8; ldr
+// r3 (gMainRoutineWork); strh; movs r0, #144, where the draft has ldr r3; mov
+// r1, r8; movs r0, #144; strh. Everything else, registers included, matches.
+// Tried, all differ 4 or worse: the store as save[0] or *save with save += 1;
+// save as s16 *; gData_020023c4 as s16; the shortcuts declared first, in the
+// if block, as s32, or read through a work pointer, a byte offset or
+// inventory (the last two differ 103); an empty if with the work in its else;
+// the flag counter's declaration moved (differ 14 unless it reuses i).
 #include "types.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"
@@ -27,28 +32,36 @@ void Func_080ae16c(s32 mode);
 extern u16 gData_020023c4[];
 extern u16 Data_02000458[];
 
+static inline void Inventory_CompactSlots(s16 *inventory) {
+  s32 usedSlots = 0;
+  s32 slot;
+
+  for (slot = 0; slot < 15; slot++) {
+    if (inventory[slot] != 0)
+      inventory[usedSlots++] = inventory[slot];
+  }
+  for (; usedSlots < 15; usedSlots++)
+    inventory[usedSlots] = 0;
+}
+
 void Func_080b1088(void) {
-  u16 *backup = gData_020023c4;
+  u16 *save;
+  struct BattleUnit *unit;
+  s16 *inventory;
   s32 owner;
   s32 i;
-  s32 count;
-  s32 flag;
+  s16 first;
+  s16 second;
 
-  if (*backup != 0x6774) {
-    s16 first;
-    s16 second;
-
-    *backup++ = 0x6774;
+  save = gData_020023c4;
+  if (*save != 0x6774) {
+    *save++ = 0x6774;
     first = gMainRoutineWork.packedEvents[0];
     second = gMainRoutineWork.packedEvents[1];
     for (owner = 4; owner < 8; owner++) {
-      struct BattleUnit *unit = Unit_Get(owner);
-      u16 *inventory;
-      u16 *from;
-      u16 *to;
-
+      unit = Unit_Get(owner);
       for (i = 0; i < 15; i++)
-        *backup++ = unit->inventory[i];
+        *save++ = unit->inventory[i];
       for (i = 0; i < 15; i++) {
         struct ItemDefinition *item = Item_GetDirect(unit->inventory[i]);
 
@@ -57,29 +70,19 @@ void Func_080b1088(void) {
         if (Func_080b106c(unit->inventory[i]))
           unit->inventory[i] = 0;
       }
-      count = 0;
-      inventory = unit->inventory;
-      from = to = inventory;
-      for (i = 0; i < 15; i++) {
-        s32 item = *from++;
-
-        if ((u16)item != 0) {
-          *to++ = item;
-          count++;
-        }
-      }
-      for (; count < 15; count++)
-        inventory[count] = 0;
+      inventory = (s16 *)unit->inventory;
+      Inventory_CompactSlots(inventory);
       Unit_UpdateClass(owner);
       Unit_Calculate(owner);
     }
-    *backup++ = first;
-    *backup++ = second;
-    backup[0] = Data_02000458[0];
-    backup[1] = Data_02000458[1];
+    *save++ = first;
+    *save++ = second;
+    inventory = (s16 *)Data_02000458;
+    save[0] = inventory[0];
+    save[1] = inventory[1];
   }
   GameFlag_SetBit(0x9ff);
   Func_080ae16c(1);
-  for (flag = 0xe50; flag <= 0xe59; flag++)
-    GameFlag_ClearBit(flag);
+  for (i = 0xe50; i <= 0xe59; i++)
+    GameFlag_ClearBit(i);
 }

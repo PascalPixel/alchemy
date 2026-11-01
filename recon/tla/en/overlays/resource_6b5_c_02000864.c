@@ -1,3 +1,15 @@
+// Draft, differ 2 of 329, skeleton gap 1 (tla-en, 2026-11-01): the twin of ☀️'s
+// BattleArena_EnterBattle, confirmed call for call (the same flags tests, the
+// same walk to (216, 168), the EXEC payload and the 1992-byte copy). A near
+// miss: one scheduling pair is left. In the native, table[3]'s store sits
+// between the bound's movs r4 and lsls r4, ahead of table[0] and table[2], so
+// it must rank 2 with an earlier luid; here it ranks 1 because no instruction
+// after it in its block touches r3 or memory, and none does in the native
+// either. Tried 2026-11-01 without gain: all 24 store orders with the bound set
+// before, among and after the stores (2 at best), *(table + n) spellings, the
+// payload's address written again for table[3] (2 each), 0x43 in a local (20),
+// i and src set before the stores (4 to 16), and the twin's do/while, as
+// pointer or index, and a for loop (16 each).
 // Near miss, differ 2 of 329 (tla-en, 2026-10-30): after the bound's movs r4,
 // #217 the native stores 0x43 (strh r3, [r2, #6]) before lsls r4; here sched2
 // ranks the bound's lsls r4 at priority 2 against the store's 1 (the store has

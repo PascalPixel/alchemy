@@ -1,9 +1,13 @@
-// Near miss, differ 6 of 593 (tla-en, 2026-10-30): instruction order only,
-// in the second push. The native puts the queue count's increment and store
-// after the entry address and the first entry word; sched2 ranks the
-// increment higher here (its chain runs through r2's reuse for 0x06001000),
-// and storing the entry first or reading the count as q->count changes
-// nothing.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's WorldMap_PlayLighthouseTransition: the same seven
+// pictures at the same offsets, the same palette row per lighthouse and the
+// same blend steps, with the setup in another order and the ending split on
+// mode. The last difference was instruction order in the second push, closed
+// by the twin's lesson on the count store: there the store's spelling decides
+// its place. Here the count is stored through the struct after the first
+// entry word, so the store conflicts with the entry words and stays behind
+// the first (either change alone left 6 of 593 differing). That one push is
+// written out because IO_WRITE_QUEUE_PUSH stores through count_ and first.
 // The world map's fade, overlay 64b's Func_02003d44 (resource_64b_c_02003d44.c)
 // instruction for instruction under this overlay's names: queues the world
 // map palette for mode and its pictures, then steps the blend through 0xe00
@@ -59,7 +63,7 @@ void Func_02001400(s32 mode) {
 
   /* FAKEMATCH(temporary): the blend level is read into level, a u32 local,
    * before each QueueIoWriteDelay2 call; as QueueIoWriteDelay2(0x04000052,
-   * gData_02003fc0), 10 of 593 instructions differ in tla-en. */
+   * gData_02003fc0), 4 of 593 instructions differ in tla-en. */
   wait(1);
   GameFlag_ClearBit(0x109);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
@@ -77,7 +81,23 @@ void Func_02001400(s32 mode) {
   Func_02001f54(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH(0x050001c0, (u32)(gWorldMapPalettes + mode * 32),
                       0x80000010);
-  IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
+  {
+    struct IoWriteQueue *q = &gIoWriteQueue;
+    u32 saved;
+    s32 count;
+
+    IRQ_LOCK(saved);
+    count = q->count;
+    if (count <= 31) {
+      u32 *entry = q->entries[count];
+
+      *entry++ = (u32)buffer;
+      q->count = count + 1;
+      *entry++ = 0x06001000;
+      *entry = 0x84000400;
+    }
+    IRQ_UNLOCK(saved);
+  }
   Task_Add(Func_0200130c, 0x480);
   Func_02002024();
   Func_02002084(0);

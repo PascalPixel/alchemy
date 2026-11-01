@@ -1,23 +1,26 @@
-// Differ 12 of 438 (was 18): the flag loop's counter also holds the entrance
-// (i = gMainRoutineWork.entrance), which raises its allocation priority over the
-// flag number, so the loop takes the native's registers; but the entrance
-// then lives in r5 where the native compares it in r3, the four compares
-// differing. A one-pass block after the name stores keeps the counter's zero
-// apart from the earlier stores' (differ 20, so not kept); reusing i as wins,
-// msg or v is worse (18 to 55); ten minutes of permute found nothing better.
-// Older notes:
-// Draft of overlay 6b5's Func_0200145c (0x0200945c, 0x46c bytes with its
-// pool), the lobby's set-up by entrance: differ 28 of 438. Devices in place:
-// one scalar holds the score row's address, then its score, in entrances 8
-// and 9, and entrance 10's best streak reuses that slot. Left: the flag
-// loop's counter and its flag number swap registers (native: the counter in
-// r5, cleared after the name pointer loads, and 0x2f0 + i in r6; here the
-// counter takes r6, cleared at the top beside the stores' zero, and the
-// flag number r5), and four sched2 ties of one or two instructions each:
-// linkTallies[3]'s offset is built before the first tally's store, not
-// after; in entrance 9 the 0x80 of its offset comes before the pool load;
-// in entrance 10 1000 is built before Ram_HeapSlots loads; and the streak's
-// shift comes before the best streak's load.
+// Draft, differ 2 of 438, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of ☀️'s BattleArena_RunRoundResult (overlay resource_3cb, scene/
+// battle_arena.c): overlay 6b5's lobby set-up by entrance, same order of
+// statements, entrances 8 to 11 and the fall-through arrival, same tallies,
+// slot writes, party flags and "TALK" name stores. ⚓️ adds Flag_Set(0x17e) and
+// two more cleared halfwords at the top.
+// Left: one sched2 tie in entrance 8: linkTallies[3]'s offset, split after
+// reload, puts its shift before the first tally's store; the native has it
+// after. Seven spellings of the two increments (+= 1, = x + 1, ++x, pointer
+// forms) leave the pair as it is, one shared pointer is worse (74); it stays
+// a near miss.
+// Tried for the flag loop, which needs the counter in r5 and the flag number
+// in r6, the reverse of the twin's r6 and r5: the counter (priority 33/28)
+// loses to the flag number (12/8) in global allocation, and sched2 then
+// hoists the counter's clear past the calls. Direct calls, a named flag
+// local in the loop and inline wrappers change nothing (differ 18). The
+// counter holding the entrance (differ 12) gave it the priority but moved
+// the entrance from r3 to r5; the counter as score is worse (76), and earlier
+// notes measured it as wins, msg or v at 18 to 55.
+// Sharing the variable that later holds the wins lengthens the flag number's
+// live range enough, so that reuse replaces the entrance one.
+// Devices in place: one scalar holds the score row's address, then its score,
+// in entrances 8 and 9, and entrance 10's best streak reuses that slot.
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -84,6 +87,7 @@ static inline void Map_CopyCells(s32 x, s32 y, s32 width, s32 height, s32 destX,
 
 s32 Func_0200145c(void) {
   s32 i;
+  s32 wins;
   u32 score;
   struct LobbyEventWork *work;
   void *func;
@@ -109,13 +113,14 @@ s32 Func_0200145c(void) {
     name[7] = 'K';
   }
   for (i = 0; i < 8; i++) {
-    Flag_Clear(0x2f0 + i);
+    /* FAKEMATCH(temporary): wins, reused, holds the flag number; as a separate
+     * value, 18 of 438 instructions differ in tla-en. */
+    wins = 0x2f0 + i;
+    Flag_Clear(wins);
     if (Func_02000f6c(i))
-      Flag_Set(0x2f0 + i);
+      Flag_Set(wins);
   }
-  i = gMainRoutineWork.entrance;
-  if (i == 8) {
-    s32 wins;
+  if (gMainRoutineWork.entrance == 8) {
     s32 msg;
     s32 v;
 

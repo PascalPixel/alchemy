@@ -1,11 +1,26 @@
-// Near miss, differ 2 of 92 (tla-en, 2026-10-30): as overlay 69e's
-// Func_020001a4 (resource_69e_c_020001a4.c), the sprite's priority byte loads
-// before the radius store, where the native loads it after the store and the
-// zero's copy out of r8: -mthumb-slow-loads's read-modify-write exception
-// gives the load no wait after the store (that draft's header has the sched2
-// reading). The random value needs no pin (it was pinned to r2 here) and the
-// frame count no __umodsi3 wrapper: written as overlay 6a5's Func_020004c8,
-// both differ 2 as before.
+// Draft, differ 2 of 92, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's VenusLighthouseAerie_SpawnUpperOrbitParticles
+// (games/tbs/src/scene/venus_lighthouse_aerie.c), statement for statement:
+// the same flag test and gFrameCount % 3, the same two branches with shifts
+// of 8 and 6, the same created type, offset, script, colour-mode call, masks
+// and radius; here the actor is 23 and the priority 2, there 1. That game's
+// CreateOrbitEffect is FieldActor_Create, an inline in its field/event.h, so
+// the wrapper below is the twin's own form as well as a tagged device.
+// Left: as overlay 69e's Func_020001a4 (resource_69e_c_020001a4.c), the
+// sprite's priority byte loads before the radius store, where the native
+// loads it after the store and the zero's copy out of r8: -mthumb-slow-loads's
+// read-modify-write exception gives the load no wait after the store (that
+// draft's header has the sched2 reading). The native's order needs that wait,
+// and the write-back to the same address is what the listing shows, so no
+// source form earns it. Tried 2026-11-01: a direct call as the twin's body
+// reads once its inline is gone (4, with u32 type too); the byte read through
+// s8 and written through u8 (2: the load follows the store, the copy still
+// follows the load, and the form is no gain on the bit-field); that read in a
+// temporary (22); through a u8 pointer (8); through an s8 pointer (7); priority
+// in a u32 bit-field (2); the sine in a temporary (2); 24 as 3 * 8 (2).
+// The random value needs no pin (it was pinned to r2 here) and the frame count
+// no __umodsi3 wrapper: written as overlay 6a5's Func_020004c8, both differ 2
+// as before.
 // History: adopted in ee174ba9e6 and exact under the old options; with
 // -mthumb-slow-loads (2026-10-26) it no longer compiles exactly, so it is back
 // on its listing.

@@ -1,11 +1,20 @@
-// Near miss, differ 14 of 129 (tla-en, 2026-10-31): sched2 order of the
-// pointer setup before the loop only. The sched2 dump ranks the frames chain
-// (r2: movs #128, priority 11) above the indices chain (r3: negs, 10); the
-// stores to the two stack slots cost the first ldrb from indices only 1,
-// since the -mthumb-slow-loads store rule skips extended loads, and the
-// listing's order needs the indices chain ranked at least two higher. No
-// empty asm before any one statement lowers it, nor does any order of the
-// five pointer initializations, a u8 or u32 index, or a 4-minute permuter run.
+// Draft, differ 14 of 129, skeleton gap 7 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Actor_Restore (games/tbs/src/field/field_sequence/
+// actors.c): same snapshot layout, same loop, same camera re-anchor for the
+// leader. This game adds the x, z and Actor_ResetMotion on that path, always
+// sets the animation, and asks Party_GetLeaderActor rather than reading it.
+// Left: sched2 order of the pointer setup before the loop only. The sched2
+// dump ranks the frames chain (r2: movs #128, priority 11) above the indices
+// chain (r3: negs, 10). The listing's order needs the store to [sp] to cost
+// the first ldrb from indices about 3 cycles, which puts indices above frames
+// and also explains the listing's movs #129 before sub sp; the
+// -mthumb-slow-loads store rule skips extended loads, so it costs 1.
+// Tried, all still differ 14: Actor_Restore's struct ActorSnapshot and its
+// initializers, its temporary for the animation byte, u8 or u32 index, split
+// or combined index reads, count initialized at its declaration, no empty asm
+// before any one statement, any order of the five pointer initializations,
+// and a 4-minute permuter run. Moving indices first or the index read before
+// count = 0 is worse.
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"

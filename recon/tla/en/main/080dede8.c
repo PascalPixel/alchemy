@@ -1,11 +1,24 @@
-// Near miss, differ 194 of 409 (206 before statements reordered 2026-10-26) (2026-10-15): ⚓️'s FieldEffect_RunDouse, the
-// form of ☀️'s: an orb grows from the target to the effect's point over
-// eleven frames, sheds falling motes (10 or 24) or drifting ones (10 or
-// 30), and shrinks back. The native's stack frame is 52 bytes, this one 56 (one
-// more spill slot, 411 instructions against 409); the work and the anchor
-// take each other's registers (the native keeps the work in r8 and the
-// anchor in sl), and the order follows from there. Belongs between
-// fall.c's FieldEffect_RunDouseOnTarget and particles.c's BattleEffect_SpawnFallingParticles.
+// Draft, differ 16 of 409, skeleton gap 7 (tla-en, 2026-11-01)
+// FieldEffect_RunDouse, the twin of the Broken Seal's FieldPsynergy_Douse: an
+// orb grows from the target to the effect's point over eleven frames, sheds
+// falling motes (10 or 24) or drifting ones (10 or 30), and shrinks back. This
+// game adds the raised case (Func_08020330 of the anchor is 380), the wait of
+// 20 rather than 25, and the psynergy event at the thirteenth mote.
+// Frame, instruction count and allocation now agree: the mote loop's anchor
+// read is a local of its own, since reusing `anchor` kept its pseudo alive
+// across the function and cost a spill. What is left is two scheduling sites.
+// After the first Vector_AddPolarOffset the listing reloads `from` right after
+// its spill, one cycle sooner than -mthumb-slow-loads lets it (a load from the
+// address just stored waits), so the block slides by one (14 lines); no source
+// form reaches that, since r0, r1 and r2's setups are always ready. At the
+// drop loop's entry `add r6, sp, #40` follows the hoisted `count - 1` in the
+// listing and comes before it here (2 lines). Tried without gain: the start
+// vector as one comma expression, y, z swapped, its sum reversed or through a
+// local, `to` set first; the target through union FieldCoordinate; pos declared
+// last; a body-scoped `last`; `n + 1 == count`; a while loop; the twin's
+// `i * (e - t) / 10`, which is worse here (40).
+// Belongs between fall.c's FieldEffect_RunDouseOnTarget and particles.c's
+// BattleEffect_SpawnFallingParticles.
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
@@ -122,8 +135,8 @@ void FieldEffect_RunDouse(void) {
       t = a->y;
       t += (e - t) * i / 10;
       orb->y = t;
-      t = a->z;
       e = b->z;
+      t = a->z;
       t += (e - t) * i / 10;
       orb->z = t;
     }
@@ -151,11 +164,12 @@ void FieldEffect_RunDouse(void) {
       }
       mote = Actor_Spawn(301, pos.x, pos.y, pos.z);
       if (mote != 0) {
-        anchor = work->anchor;
-        if (anchor != 0) {
-          mote->terrainHeight = anchor->y;
+        struct Actor *ground = work->anchor;
+
+        if (ground != 0) {
+          mote->terrainHeight = ground->y;
           if (raised == 1)
-            mote->terrainHeight = anchor->y + (32 << 16);
+            mote->terrainHeight = ground->y + (32 << 16);
         } else {
           mote->terrainHeight = pos.y - (32 << 16);
         }

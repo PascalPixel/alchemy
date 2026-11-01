@@ -1,17 +1,25 @@
-// Near miss, differ 4 of 169 (tla-en, 2026-10-30): the velocity array's
-// address (add r6, sp, #16) and the loop branch's offset. Overlay 6ab's copy
-// of the landing burst drafted in resource_698_c_02001674.c (the leader drops
-// from 130 pixels while the screen transition runs, then seventeen effects
-// burst outward and the leader bounces), with this overlay's symbols. Left, as
-// there: the address is built once before the loop, where the native builds it
-// after the cosine call in every pass; GCSE hoists it whatever the loop's form
-// (07.gcse: "PRE/HOIST: edge (0,1)" for sfp - 52), and an asm-tied pointer
-// only copies the hoisted register (differ 110). Tried 30 October (all 4
-// unless noted): the three stores as one comma expression (SET_VECTOR's
-// form); the cosine taken into a local and velocity declared in a block after
-// it; the loop body as an inline helper taking the angle and &options; i
-// unpinned with options through a named pointer (16: i still takes r8 and the
-// options pointer sl).
+// Draft, differ 4 of 169, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's VenusLighthouse_LandWithRadialDust: the same drop
+// from 130 pixels, transition, seventeen radial effects and bounce; this game
+// drops the 30-frame wait and adds each effect's random spread. Overlay 6ab's
+// copy of the landing burst drafted in resource_698_c_02001674.c, with this
+// overlay's symbols. Left: the velocity array's address (add r6, sp, #16) and
+// the loop branch's offset. The address is built once before the loop, where
+// the native builds it after the cosine call in every pass; GCSE hoists it
+// whatever the loop's form (07.gcse: "PRE/HOIST: edge (0,1)" for sfp - 52),
+// and an asm-tied pointer only copies the hoisted register (differ 110). The
+// twin gives no way out: its own build hoists the same address before its
+// loop. Tried 30 October (all 4 unless noted): the three stores as one comma
+// expression (SET_VECTOR's form); the cosine taken into a local and velocity
+// declared in a block after it; the loop body as an inline helper taking the
+// angle and &options; i unpinned with options through a named pointer (16: i
+// still takes r8 and the options pointer sl). Tried 1 November: the twin's
+// declarations and for loop, i unpinned, with or without the comma expression
+// (16); a label and goto loop with the cosine in a local (4). The adopted
+// copies (jupiter_lighthouse_entrance/s1674.c) close the gap with that goto
+// loop and a tagged FAKEMATCH(dead) guard, `if (spawn)` on a local always 1:
+// on a scratch copy of this draft that form measures differ 0, skeleton 0. It
+// is not applied here because it adds a device.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

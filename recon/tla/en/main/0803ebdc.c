@@ -1,4 +1,11 @@
-// Near miss, differ 6 of 212 (tla-en, 2026-10-31): scheduler order, three
+// Draft, differ 6 of 212, skeleton gap 3 (tla-en, 2026-11-01)
+// Twin of SelectionMenu_StepRight in The Broken Seal: same statements, locals,
+// loops and row logic, already ported, so the transfer gained nothing. Tried
+// on 2026-11-01, none below 6: a count local (149), a count pointer (19),
+// `++` in `end`'s assignment (196), a u16 cursor temporary (18), a cursor
+// local at the end (10, 20), a head local at the end (10), the twin's plain
+// records[1].base store (8), `top += 1` and `cursor = cursor + 1` (6, no gain).
+// Near miss: scheduler order, three
 // single instructions, each where the native waits longer after a store than
 // -mthumb-slow-loads charges. (1) After the cursor's increment the native
 // stores it before shifting the count's 0x394 offset: the sched2 dump ranks

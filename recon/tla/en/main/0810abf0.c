@@ -1,14 +1,27 @@
-// Draft: the sanctum's service for one party member at a time, four a page:
-// asks who to treat, shows the donation, and on yes and enough coins applies
-// the service (BattleUnit_ResetStateByMode), plays the icon burst
-// (Func_0810b1b4) and takes the coins, until nobody needs it or B. As ☀️'s
-// Shop_ServeParty loop in Shop_ConfirmAct's family (games/tbs/src/shop/shop.c,
-// after Shop_ConfirmAct), with ⚓️'s calls: Func_0810a9ac and Func_0810a9fc to
-// show a message, Func_08108660 for the choice, Shop_DrawServiceParty for the party
-// page, Func_08108690 for the page cursor and Func_08109188 for the coins.
-// Draft, differ 167 of 297 (2026-10-19), the shape following the listing:
-// the native keeps chooseAgain on the stack (sp + 4, its frame 16 bytes) and
-// the work in r7, here chooseAgain takes r7 and the work r6.
+// Draft, differ 134 of 297, skeleton gap 18/8 (tla-en, 2026-11-01)
+// Twin of ☀️'s Sanctum_RunPartyService (games/tbs/src/shop/shop/sanctum.c):
+// the sanctum's service for one party member at a time, four a page. It asks
+// who to treat, shows the donation, and on yes and enough coins applies the
+// service (BattleUnit_ResetStateByMode), plays the icon burst (Func_0810b1b4)
+// and takes the coins, until nobody needs it or B. ⚓️ adds the page: the
+// member's slot is memberIndex % 4, Func_080f8058 turns to a new page, and
+// Func_08108690 moves the cursor where ☀️ reads left and right itself. Its
+// calls: Func_0810a9ac and Func_0810a9fc show a message, Func_08108660 the
+// choice, Shop_DrawServiceParty the party page, Func_08109188 the coins.
+// Ported from the twin's declaration order and loops, which puts shop in r7,
+// messageBase in r6, price in r5 and every other register where the native
+// has it. Left: the native spills chooseAgain to sp + 4 (frame 16 bytes);
+// here it shares r6 with messageBase (frame 12), since it is dead on every
+// path where messageBase lives. That one difference shifts the stack offsets,
+// and with no stores to the stack cross-jumping merges two chooseAgain = 1
+// tails. The native's r6 at the top is not a variable: it is the reload
+// register for chooseAgain's spill, which later zeros inherit.
+// Tried: chooseAgain and memberIndex set at the top (allocation falls back
+// to shop in r6, differ 158 to 161); a local holding 0 (CSE folds it);
+// messageBase = 0 (dead, deleted); memberIndex = chooseAgain at the second
+// loop and price and messageBase in the inner block (no change); volatile
+// chooseAgain, as a diagnostic only (differ 194: it is no memory variable).
+// Nothing plain found yet makes chooseAgain conflict with messageBase.
 #include "types.h"
 #include "input.h"
 #include "main_routine_work.h"
@@ -62,41 +75,51 @@ void Window_CloseFar(void *window, s32 style);
 
 s32 Func_0810abf0(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
-  s32 memberIndex = 0;
-  s32 chooseAgain = 0;
-  s32 serviceKind = shop->partyAction;
-  s32 redraw = 1;
-  void *listWindow;
   void *priceWindow;
+  s32 redraw;
+  s32 serviceKind;
+  void *listWindow;
+  s32 memberIndex;
   s32 unitId;
+  s32 chooseAgain;
   s32 price;
   s32 messageBase;
 
+  redraw = 1;
+  serviceKind = shop->partyAction;
   Func_0810a9ac((s32)Msg04823);
+
   listWindow = Window_CreateFar(1, 12, 13, 3, 2);
   shop->cursorAnchor->active = 4;
   shop->mode = redraw;
   Func_080f8060(listWindow, 2, 0);
   priceWindow = Window_CreateFar(1, 16, 23, 3, 2);
+
+  memberIndex = 0;
   unitId = 0;
-  for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+  chooseAgain = 0;
+  while (memberIndex < shop->partyMemberCount) {
     unitId = shop->partyMemberIds[memberIndex];
     if (Shop_CanServe(unitId, serviceKind) != 0)
       break;
+    memberIndex++;
   }
+
   redraw = 2;
-  while (1) {
+  for (;;) {
     if (chooseAgain != 0) {
       chooseAgain = 0;
       Func_0810a9ac((s32)Msg04823);
       redraw = 2;
-      for (memberIndex = chooseAgain; memberIndex < shop->partyMemberCount;
-           memberIndex++) {
+      memberIndex = 0;
+      while (memberIndex < shop->partyMemberCount) {
         unitId = shop->partyMemberIds[memberIndex];
         if (Shop_CanServe(unitId, serviceKind) != 0)
           break;
+        memberIndex++;
       }
     }
+
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
       Shop_PlaceCursor(listWindow, (memberIndex % 4) * 24 - 12, 0);
@@ -109,7 +132,8 @@ s32 Func_0810abf0(void) {
       Shop_DrawSelectMsg(priceWindow, unitId);
       redraw = 0;
     }
-    if (gInput.pressed & 1) {
+
+    if ((gInput.pressed & 1) != 0) {
       wait(1);
       price = Shop_ServicePrice(unitId, serviceKind);
       if (Shop_CanServe(unitId, serviceKind) == 0) {
@@ -146,14 +170,16 @@ s32 Func_0810abf0(void) {
         continue;
       }
       break;
-    } else if (gInput.pressed & 2) {
+    }
+    if ((gInput.pressed & 2) != 0) {
       Sound_PlayFar(113);
       break;
-    } else {
-      redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);
-      wait(1);
     }
+    redraw = Func_08108690(&memberIndex, shop->partyMemberCount, 4);
+    wait(1);
+    continue;
   }
+
   Menu_ReleaseEntryObjectsFar();
   Window_CloseFar(priceWindow, 2);
   Window_CloseFar(listWindow, 2);

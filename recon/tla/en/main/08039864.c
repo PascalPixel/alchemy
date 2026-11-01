@@ -1,4 +1,6 @@
-// Near miss, differ 12 of 697 (tla-en, 2026-10-30): three one-slot
+// Draft, differ 12 of 697, skeleton gap 6 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Message_Type (confirmed: same control codes,
+// channel fields, glyph pairing and voice blips). Near miss: three one-slot
 // scheduling ties in the page code's window refit, which no source form
 // reaches. The old height's ldrh issues before the page-arrow flag's split
 // constant ends (the native fills the store-to-load slot); the first
@@ -14,7 +16,13 @@
 // (12), and 4 minutes of the permuter (3652 candidates, none below 12).
 // Earlier: no single empty asm, one-pass block, wrapping block or swap of
 // neighbouring statements brings it closer (device search, 2026-10-26).
-// The Broken Seal's English Message_StepScript with ⚓️'s changes: the
+// Tried 2026-11-01, port from Message_Type, none closer: the arrow flag
+// cleared first (20), height | width (16), sizes read before x and y (40),
+// reads through s16 pointers (12), a local pointer to the flag (14), locals
+// for &x, &y, &newWidth and &newHeight (12, or 65 in reverse order),
+// oldHeight declared first (20), entryIndex declared later (12), s32 size
+// and flag parameters (12), width != 0 || height != 0 (60).
+// The Broken Seal's English Message_Type with ⚓️'s changes: the
 // VBlanks the last frame took clamp at 3, the page and wait codes take their
 // countdown from gData_080aa0df by text speed and clear the pending presses
 // in a window mode, the page arrow is skipped for an empty window, code 176

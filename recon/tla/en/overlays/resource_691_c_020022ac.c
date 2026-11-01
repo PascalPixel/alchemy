@@ -1,7 +1,21 @@
-// Draft, differ 28 of 174 (left uncommitted by an earlier worker, kept under
-// S4): the leader lands and 17 dust effects spread around it. Left: the
-// options pointer and the loop counter take r10 and r8 the other way round,
-// and the two random terms' pool constants load one row late.
+// Draft, differ 18 of 174, skeleton gap 1 (tla-en, 2026-11-01): the leader
+// lands and 17 dust effects spread around it. Twin of
+// VenusLighthouse_LandWithRadialDust in The Broken Seal: the same calls in the
+// same order, the same 17 particles (i << 12) and the same effect options; this
+// game adds the event work's 0x1ac writes and the two random velocity terms.
+// Left: gcse's PRE and loop.c hoist the velocity array's address to before the
+// loop where the native builds it after the cosine call in every pass
+// (resource_69c_c_02001f50.c records the same gap), and i and the options
+// address take r8 and r10 the wrong way round (global.c ranks i 9 refs over 110
+// insns just above the address's 7 over 62).
+// Tried 1 November, none better: the twin's for loop with inner-scope angle and
+// velocity, do/while, ++i in the test, the leader assigned after its
+// declaration (all 18, gap 1); an options pointer local (18 at best); a named
+// scale constant (10, gap 4); a dead early return before the loop (18).
+// Moving i = 0 up to just after options.palette lengthens i's life enough to
+// fix the swap and gives differ 6, but sched2 then places mov r10 before the
+// scale stores, gap 2, so it is not kept. The sibling reaches differ 4 only
+// with a pin, which this draft does not take.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"

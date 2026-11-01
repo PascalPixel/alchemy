@@ -1,7 +1,13 @@
-// Near miss, differ 2 of 114 (tla-en, 2026-10-31): scheduler order only. The
-// Broken Seal's Map_RenderCellPictureColumn with the layer window of
-// Func_0802abbc (adopted in field/map/layer_render.c, whose forms this follows)
-// and its CopyCellPictureHalfColumn helper (94 before, 2026-10-26). Left: the
+// Draft, differ 2 of 114, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's MapGrid_RenderCellPictureColumn: same 11 row loop,
+// tileHalf and bounds of 10, with the layer window of Func_0802abbc (adopted in
+// field/map/layer_render.c, whose forms this follows) and its
+// MapGrid_CopyCellPictureHalfColumn helper (94 before, 2026-10-26). Near miss:
+// scheduler order only, one load swapped with one add. 2026-11-01, on this
+// draft's forms: the twin's sourceCell in a loop block (4), a separate pointer
+// for the lower entry, in the function or a block (82), one-expression entry
+// pointers, the index declared first, a screen offset temporary, screenMap
+// second in the sum, `[32]` (2 each). Left: the
 // native loads the second cell picture row's literal (Data_02020004) one slot
 // later, after `add r3, r9`, just before the first store. In sched2 that
 // literal's reload has priority 9 (load latency 3 into the add, ldrh, strh

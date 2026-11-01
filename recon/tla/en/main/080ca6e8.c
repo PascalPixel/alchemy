@@ -1,14 +1,20 @@
-// Draft of Event_SpawnObjectTable, differ 33 of 347 (43 before, 2026-10-26: the
-// row loop tests the table's sprite and reads the id in its body; 321
-// before the rewrite from the listing):
-// it records the placement table in the event work, then creates or moves
-// each row's object whose condition holds, links paired sprites and sets each
-// actor's home, facing and terrain height.
-// Left: the row loop. Both enter it by a jump to the test at its foot, but the
-// native first reads the id and the signed sprite and jumps into the test
-// past its constant (its copy of the test cross-jumped), and at the foot
-// reads the sprite once and sign-extends the id from it; here the foot reads
-// it twice. The table search above then branches the long way.
+// Draft, differ 2 of 347, skeleton gap 2 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Event_SpawnActorPlacements: it records the
+// placement table in the event work, then creates or moves each row's object
+// whose condition holds, links paired sprites and sets each actor's home,
+// facing and terrain height. This game adds the Djinn group lookup, the
+// computed position (flag 2) and the random frames of the sprite's parts, and
+// drops the twin's tunic overlay and its second animation selection. The
+// twin's loop header (a u16 copy of the sprite, tested as s16) with the body
+// still reading entry->sprite took this from differ 33 to 2: entry and foot
+// now cross-jump as the native does.
+// Left: one sched2 swap, the same pair in the twin's own code: after the
+// motion flags' store the native sets up the constant 0x8000 (movs #128)
+// before loading object->y, here after it. Tried: every spelling of the sum,
+// the sum's operands swapped, the twin's FieldCoordinate union, a local for
+// the height or the constant, the two statements swapped (differ 8), a byte
+// pointer for the store, and the permuter for three minutes (16803
+// candidates, none better). This is a scheduling near miss (W4).
 #include "types.h"
 #include "ram_buffer.h"
 #include "scene_tables.h"
@@ -69,7 +75,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
   s32 index = 0;
   s32 i;
-  s16 id;
+  u16 id;
 
   for (i = 0; i < 4; i++) {
     if (work->tables[i] == entry)
@@ -79,16 +85,16 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       break;
     }
   }
-  for (; entry->sprite != -1 && slot <= 63; entry++) {
+  for (id = entry->sprite; (s16)id != -1 && slot <= 63;
+       entry++, id = entry->sprite) {
     struct Actor *object;
     struct SpawnSprite *sprite;
     s32 condition;
     s32 character;
 
-    id = entry->sprite;
-    if (id <= 7)
-      index = id;
-    else if (id <= 0x2705)
+    if (entry->sprite <= 7)
+      index = entry->sprite;
+    else if (entry->sprite <= 0x2705)
       index = slot++;
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))

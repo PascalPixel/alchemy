@@ -1,15 +1,22 @@
-// First draft of MenuIcon_UpdateTransforms: task that, while
-// the menu's byte at 0x50a is set, places its four figures each frame through
-// the projected placement (Func_08020018, depth from a table and mode 250),
-// easing each figure's scale a quarter of the way to 1.0 per frame (a
-// negative scale is used negated and kept). Built as Func_080f89a4
-// (recon/tla/en/main/080f89a4.c), ☀️'s Menu_UpdateEntryObjectTransforms.
-// Differ 12 of 108, instruction order only: the native issues the menu load
-// before the 0x50a offset, and builds the walking offsets 0x230 and 0x220
-// and the spill of the second (str r1, [sp, #4], reloaded at once) as one
-// chain ahead of the other setup, the load and store pattern AGENTS.md
-// records for ⚓️. The new scale in its own local, stored to x and then y,
-// orders the stores as the native does (differ 18 with x = y = value).
+// Draft, differ 12 of 108, skeleton gap 6 (tla-en, 2026-11-01)
+// MenuIcon_UpdateTransforms: task that, while the menu's byte at 0x50a is
+// set, places its four figures each frame through the projected placement
+// (Func_08020018, depth from a table and mode 250), easing each figure's scale
+// a quarter of the way to 1.0 per frame (a negative scale is used negated and
+// kept). Twin of ☀️'s DjinnFigures_UpdateBottomRow: same work layout (figures
+// at 0x220, then x, y, scale phases), same (16, 200) and 1.0 start in
+// Func_081051a8, same negative-phase rule; here a third becomes a quarter, the
+// height 482 becomes 458, and the page arrows and facing are gone.
+// Left: instruction order in the loop's setup only. The native builds the
+// walking offsets 0x230 and 0x220 and the spill of the second (str r1,
+// [sp, #4], reloaded at once) as one chain ahead of the other setup, the load
+// and store pattern AGENTS.md records for ⚓️.
+// Tried: the twin's whole form (differ 25: scale.y = scale.x reloads, so the
+// new scale stays in its own local, stored to x and then y; differ 18 with
+// x = y = value); do-while and while (1) loops, i < 4, guard wrapping the
+// loop, the twin's declaration order, function-scope locals, u32 height (all
+// 12); placeY before the null test (18); explicit walking pointers (47);
+// shared scale writes after the if (97).
 #include "types.h"
 #include "ram_buffer.h"
 #include "sprite.h"

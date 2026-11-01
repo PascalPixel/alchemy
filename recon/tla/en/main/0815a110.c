@@ -1,3 +1,10 @@
+// Draft, differ 34 of 989, skeleton gap 17 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's BattleEffect_RunFlurry (flurry.c): the same
+// approach, packed orb sheet, strike loop, motes and teardown, with the
+// additions listed below.
+// Left: only scheduling and spill-reload order (a store and a stack load
+// one place apart), the known store-then-load limit; no structural gap.
+
 // Draft of BattleEffect_RunBurstScene, the burst family's body (ten kinds
 // through eight wrappers): blow after blow lands on the first target.
 
@@ -14,7 +21,7 @@
 // through an H-blank line table and lets 16 puffs of smoke rise from the
 // target. With its Djinn prelude the canvas preparer runs first.
 
-// Each variant has an eight-byte record (☀️'s gBurstScene_Records had
+// Each variant has an eight-byte record (☀️'s gFlurry_Styles had
 // seven):
 // [0] the arc's sheet (0 BlueArcSheetA, else B; 1 also draws every blow
 // as an arc)
@@ -36,7 +43,7 @@
 // Teardown: the callbacks are removed and the canvas layer is closed; the
 // blitters are built and released every frame.
 
-// Port of The Broken Seal's BattleEffect_RunBurstScene, reworked in The Lost
+// Port of The Broken Seal's BattleEffect_RunFlurry, reworked in The Lost
 // Age: an eighth record byte and its two extras, the orb packed into the
 // map cell buffer, 256 motes where ☀️ has 768, the approach by variant,
 // The Lost Age's heap slots, blitter modes (3 minus ☀️'s) and callback
@@ -79,6 +86,15 @@
 // 2026-10-26, under -mthumb-slow-loads (173): cel set inside the glint
 // loop (377: the 3 is hoisted, the frame four bytes short), with the
 // one-pass block (123), and the width table without const (74)
+// 2026-11-01, measured against the twin: the puffs' position stores in
+// x, y, z order, as ☀️'s SET_POSITION spells them (50 -> 48; the macro's
+// comma form itself: 100); the line table through a walking pointer
+// (48 -> 36) and its angle as (frame + i) * 0x800 (36 -> 34).
+// No gain: the twin's palette local; a block-scoped line index (174);
+// blows set at its declaration (606) or declared at the top (144); the
+// frame loop as do-while (125); the sound before the line table (128); a
+// phase local; split glint coordinates; a draw local for the motes (114);
+// draw[1] set first (94); two declaration-order sweeps.
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -309,9 +325,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   for (i = 0; i != 64; i++) {
     struct EffectStep *puff = &work->particles[i];
 
-    puff->z = 0;
     puff->x = (targetPos.x / 2) << 16;
     puff->y = 0x580000;
+    puff->z = 0;
     puff->velocityX = ((Random16() & 255) - 128) << 9;
     puff->velocityY = ((Random16() & 255) - 128) << 9;
     puff->variant = -i;
@@ -319,11 +335,13 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
   }
 
   for (frame = 0; frame != RECORD(RECORD_FRAMES); frame++) {
+    s32 *lines;
     s32 blows;
 
     // The ripple's line table: BG2 swings six pixels on a sine wave.
+    lines = work->bg2xLines;
     for (i = 0; i != 160; i++)
-      work->bg2xLines[i] = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
+      *lines++ = (0x60000 - Trig_Sin((frame + i) * 0x800) * 6) >> 10;
     if (variant == 10 && frame == 8)
       Sound_PlayFar(221);
     blows = RECORD(RECORD_BLOWS);

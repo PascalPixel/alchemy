@@ -1,4 +1,19 @@
-// Near miss, differ 2 of 736 (tla-en, 2026-10-31): one sched2 swap before
+// Draft, differ 2 of 736, skeleton gap 1 (tla-en, 2026-11-01). Twin of
+// ☀️'s Actor_MoveOnWorldMap (games/tbs/src/field/field/player_control.c), in
+// its TBS_PATCH_1 layout: the same probe ladder, the same angle fan cut to
+// six offsets, the same camera turn and shallow-water ripple, with terrain
+// tracking, the object-overlap loop, height and climbing added. Left: one
+// sched2 swap before the angle loop, (2) below. Tried from the twin
+// (2026-11-01), none below 2 with the barrier, 4 without: an actor alias of
+// the parameter; if/else in place of the goto past the probes; the debug
+// test nested as the twin has it, alone and with that if/else; a
+// movementAnimation local holding 2; a second collision = 0 before the
+// probes; collision as the zero stored in the ripple. Worse: count = 0
+// directly before the offsets as the twin has it, or after the terrain tests
+// (160, eight instructions short: native count lives from the top);
+// collision = 0 at the top (158); motionFlags = collision (8); (u16)angle
+// passed to Vector_AddPolarOffset as the twin does (136).
+// Differ 2 (2026-10-31): one sched2 swap before
 // the angle loop, (2) below; the empty asm after the acceleration store
 // settles (1) (4 without it). Natively both stores issue earlier than this
 // compiler ranks them. (2) cannot move by splitting regions: the reload of

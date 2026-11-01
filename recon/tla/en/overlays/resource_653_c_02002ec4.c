@@ -1,10 +1,19 @@
-// Draft, differ 16 of 177 (was 49): the leader drops in with a burst of 17
-// effects. The two camera shakes go through Call3, as the native builds each
-// call's constants afresh. Left: register choice in the burst loop (the
-// native keeps the options' address in r8 and the counter in r10, here the
-// other way round) and the velocity's address, which the native forms after
-// the cosine call in each pass; Func_02001474 in overlay 654 has the same
-// pair. Five permuter minutes found nothing closer.
+// Draft, differ 16 of 177, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's VenusLighthouse_LandWithRadialDust: the same drop
+// from 130 pixels, 17-effect ring with the same options, thump, two shakes and
+// settle; here each velocity also gets a random jitter. The leader drops in
+// with a burst of 17 effects. The two camera shakes go through Call3, as the
+// native builds each call's constants afresh. Left: register choice in the
+// burst loop (the native keeps the options' address in r8 and the counter in
+// r10, here the other way round) and the velocity's address, which the native
+// forms after the cosine call in each pass, while loop.c hoists it here (life
+// 39, savings 1); Func_02001474 in overlay 654 has the same pair. Five
+// permuter minutes found nothing closer. Porting the twin changes nothing: its
+// locals in order, an angle variable in the inner or outer scope, the counter
+// before the options, and leader assigned apart all give 16, as do a
+// velocity struct, a pointer to it, a temporary for the cosine, the velocity
+// in the outer scope, an options pointer, merged random statements and do or
+// goto loops, which hoist the address too.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "field_effect.h"
 #include "event_work.h"

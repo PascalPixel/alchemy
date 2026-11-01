@@ -1,14 +1,19 @@
-// Draft, differ 153 (157 before statements reordered 2026-10-26) of 167: Func_080d64f0's sibling for the same 64 ground
-// particles with fixed sprites: each counts down its frame (held while flag
-// 358 is set), is drawn at its picture's offset (Data_080f0b50, pairs) with the
-// work's tile, shape 1 and size 2 when on screen, and when its count runs out
-// is placed again at a random point (x within -64 to +192, z within -128 to
-// +128 pixels of the map's focus), on the ground, for 12 frames. No ☀️ twin
-// found. The statements and blocks follow the native one for one; register
-// choice differs throughout: the native keeps the particle in r6 (here r7),
-// x in r7 and y in r4, so every particle access and the screen tests carry a
-// different register, and it rebuilds 0xffff in the second rounding where
-// this draft reuses a register.
+// Draft, differ 2 of 167, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of ☀️'s Weather_UpdateRain (games/tbs/src/field/event_commands/weather.c)
+// and Func_080d64f0's sibling for the same 64 ground particles, here with
+// fixed sprites: each counts down its frame (held while flag 358 is set), is
+// drawn at its picture's offset (Data_080f0b50, pairs) with the work's tile,
+// shape 1 and size 2 when on screen, and when its count runs out is placed
+// again at a random point (x within -64 to +192, z within -128 to +128 pixels
+// of the map's focus), on the ground, for 12 frames.
+// Porting the twin's forms took differ from 153 to 4: x and y reused for the
+// new point, its screen test, and the bare terrain call. Declaring particle
+// before originZ, unlike the twin, fixed the next pair.
+// Left: one scheduling pair, the native's mov r2, r8 (for work->tile) comes
+// before strh r3, [r6, #6] (particle->x). Tried without gain: orders of the
+// sprite field stores, a local for the tile, tile and x casts, the tile's
+// type, the declaration order of frame, x and y, spellings of the screen
+// test, const off frame, and splitting the frame additions (far worse).
 #include "types.h"
 #include "flag_call.h"
 #include "ram_buffer.h"
@@ -47,11 +52,11 @@ extern const s16 Data_080f0b50[];
 
 void Func_080d6674(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  s32 *origin = (s32 *)(map + 228);
   struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
+  s32 *origin = (s32 *)(map + 228);
   s32 originX = origin[0];
-  s32 originZ = origin[1];
   struct GroundParticle *particle = work->particles;
+  s32 originZ = origin[1];
   u32 i;
 
   for (i = 0; i < 64; i++, particle++) {
@@ -63,10 +68,10 @@ void Func_080d6674(void) {
       continue;
     if (GameFlag_Test(358))
       particle->timer++;
-    frame = &Data_080f0b50[particle->timer * 2];
+    frame = &Data_080f0b50[2 * particle->timer];
     x = (particle->posX - originX) / 0x10000 + *frame++;
     y = (particle->posZ - particle->posY - originZ) / 0x10000 + *frame++;
-    if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
+    if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
@@ -77,12 +82,12 @@ void Func_080d6674(void) {
     }
     if (particle->timer == 0) {
       s32 *focus = *(s32 **)map;
-      s32 newX = focus[0] + (Random16() << 8) - 0x400000;
-      s32 newZ = focus[2] + (Random16() << 8) - 0x800000;
 
-      particle->posX = newX;
-      particle->posZ = newZ;
-      particle->posY = Map_GetTerrainHeightFar(0, newX, newZ);
+      x = focus[0] + (Random16() << 8) - 0x400000;
+      y = focus[2] + (Random16() << 8) - 0x800000;
+      particle->posX = x;
+      particle->posZ = y;
+      particle->posY = Map_GetTerrainHeightFar(0, x, y);
       particle->timer = 12;
     }
   }

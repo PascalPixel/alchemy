@@ -1,14 +1,23 @@
-// Draft, differ 150 of 142: The Broken Seal twin with this game layer type. The
-// native keeps the destination x in r11 and a 36-byte stack frame (three positions
-// and three spills: the row end, the destination and the source cursors); this
-// draft spills the destination x as a fourth and keeps the position array in
-// r11 (40-byte frame). A plain rewrite without the twin devices is differ 211.
+// Draft, differ 2 of 142, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's MapGrid_CopyCellPictureIndicesRect: same layer
+// scroll read, same 16x12 window test on three layers, same 2,048-byte BG map
+// step from screen block 5, the same two word copies from the cell pictures.
+// Left: one scheduling pair. The native copies x for the mask straight after
+// the stmia (adds r2, r1 first, then the destination spill, mov r3, sl and
+// mov r4, ip); here that copy comes last of the four. Allocation, frame and
+// everything else agree. In the sched2 dump all three copies and mov r4, ip
+// have priority 4; the destination copy is taken first, the mask copy last.
+// The gain from differ 150 came from using ram_buffer.h's Ram_MapBlocks, the
+// fixed integer address the twin uses: as an extern symbol CSE derived +4 from
+// a hoisted base, which took a register and pushed dstX onto the stack. The
+// volatile casts on the two word copies are gone; they changed nothing.
+// Tried, all still differ 2 or worse: the mask before, after or split around
+// the store, 15 & x, swapped dst++ and tmp6, *dst++, the ior swapped, i = 0
+// and pos = tile moved, tmp12, tmp6 and x/y declaration order, y % 16.
+// Worse: x % 16 (8), tmp6 = x & 15 directly (8), no s32 casts (10).
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
-
-extern u8 gMapBlocks[];
-#define Ram_MapBlocks gMapBlocks
 
 struct TilePos {
   s32 x, y;
@@ -16,8 +25,9 @@ struct TilePos {
 
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
-  /* FAKEMATCH: needed to match: temporary sharing preserves register allocation
-   * and scheduling without changing the frame or instructions. */
+  /* FAKEMATCH(temporary): the twin's chains of temporaries set the registers
+   * and the schedule of the cell loop; as a plain body, 96 of 141 instructions
+   * differ in tbs-en (the twin's measure, on its own function). */
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * 128 + dstX);
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
@@ -52,31 +62,6 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
       dst[0] = cell | tmp3;
       tmp6 = tmp12;
       dst++;
-      /* FAKEMATCH: cell and i are ordinary locals; three measured forms
-       * replace the r5 pin on cell and the asm barrier on its scale.
-       * 1. i = 0 here, not after the offset: i's live length (54 -> 60
-       *    insns, 22 refs) drops its global-allocation priority below
-       *    cell's (15 refs over 30), so cell takes r5 and i r6 as the
-       *    native does (i = 0 after the offset: differ 59; at the top of
-       *    the body: 32).
-       * 2. The scale goes into the x-loop scratch tmp11 inside the layer
-       *    loop: tmp11's first reference is outside that loop, so loop.c
-       *    (reg_in_basic_block_p under maybe_never) leaves the shift in
-       *    the conditional block; a fresh `u32 bytes = cell * 8` is
-       *    invariant and hoisted before the window tests (differ 158).
-       * 3. The scale comes after the first destination: cell's r5 is
-       *    still live when reload materializes 0x6002800 for the folded
-       *    add, so reload picks r2 (scale first: r5, differ 4).
-       * The scr/blk variables and the dest = (u8 *)scr / tiles = (u8 *)blk
-       * copies keep the layer loop at 31 real insns, above loop.c's
-       * threshold of 30, so the four address constants and the 0x800
-       * step stay in the loop (plain expressions: 29 insns, hoisted,
-       * differ 113-153).
-       * 4. The two word copies read and write through volatile casts: the
-       *    VRAM store is hardware, and the volatile load from the block
-       *    buffer keeps its add apart from the load (a non-volatile load
-       *    combines into ldr [r, r]); these four volatiles replaced two pins
-       *    and two barriers and raised the volatile count (2026-10-11). */
       i = 0;
       tmp15 = y & 15;
       tmp3 = tmp15;
@@ -102,7 +87,7 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
           blk = (u32)Ram_MapBlocks;
           tiles = (u8 *)blk;
           tiles += tmp11;
-          *(volatile u32 *)dest = *(volatile u32 *)tiles;
+          *(u32 *)dest = *(u32 *)tiles;
 
           blk = (u32)Ram_MapBlocks + 4;
           tiles = (u8 *)blk;
@@ -110,7 +95,7 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
           scr = 0x06002840;
           dest = (u8 *)scr;
           dest += offset;
-          *(volatile u32 *)dest = *(volatile u32 *)tiles;
+          *(u32 *)dest = *(u32 *)tiles;
           break;
         }
         offset += 0x800;

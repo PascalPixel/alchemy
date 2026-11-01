@@ -1,5 +1,27 @@
-// Draft, differ 90 of 185: overlay 67b's copy of overlay 679's Func_02001940
-// (the same listing), whose draft holds its notes.
+// Draft, differ 62 of 185, skeleton gap 3 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Weather_UpdateRain (same frame table walk, same
+// bounds, same sprite fields, same 16-frame timer); overlay 67b's copy of
+// overlay 679's Func_02001940 (the same listing). Three forms of the twin or
+// the listing closed the gap from 8: the for loop (a label loop lets CSE fold
+// the -13 mask's copy; the count-down register seen earlier no longer appears),
+// timer = 16 set in each arm of the leader test, and particle declared before
+// cameraX, which puts its adds #8 where the listing has it.
+// Left, all allocation: the listing has frame in r4 and y in r6, this has them
+// swapped, and the priority store's field and mask copy are r3/r2 here r2/r3.
+// r4 is call-used, so frame and y race for it: global.c ranks y 1.615 (14 refs,
+// live 26) over frame 1.600 (24 refs, live 60). Both this and the local
+// allocator's field-over-mask order would come out as the listing's if these
+// blocks had loop depth 0 (y 0.538, frame 0.600; field 2.4, mask 2), but they
+// are in a natural loop. Separately, with y stored after the size, frame takes
+// r4 and differ falls to 34 at gap 4 (the y store then sits after the b.n over
+// the pool, not in the x store's load slot).
+// Measured, no gain: every placement of the priority, x and y stores (120);
+// y stored after the tile, or after a tile or tileBase temporary; new variables
+// for the new position (differ 113, 177); frame, x, y declared in either order
+// or outside the loop; frame built in two steps, from a [][5] table or by bytes;
+// x or y split or their terms swapped; u32, s16 and u8 bit-fields; leader
+// assigned apart; unsigned bounds tests. priority = 0 before priority = 1 gets
+// differ 25 at gap 6 but is a dead store.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -45,20 +67,18 @@ void Func_020025d4(void) {
   struct MapWork *view = Ram_HeapSlots->mapWork;
   struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
   s32 *camera = &view->viewX;
+  struct GroundParticle *particle = work->particles;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
-  struct GroundParticle *particle = work->particles;
   u32 i;
 
-  i = 0;
-loop:
-  {
+  for (i = 0; i < 64; i++, particle++) {
     s16 *frame;
     s32 x;
     s32 y;
 
     if (--particle->timer == 0xffff)
-      goto next;
+      continue;
     if (GameFlag_Test(0x166))
       particle->timer++;
     frame = &gData_02002cd4[5 * particle->timer];
@@ -83,17 +103,13 @@ loop:
         particle->posX = x;
         particle->posZ = y;
         particle->posY = Map_GetTerrainHeight(0, x, y);
+        particle->timer = 16;
       } else {
         particle->posX = 0;
         particle->posZ = 0;
         particle->posY = 0;
+        particle->timer = 16;
       }
-      particle->timer = 16;
     }
   }
-next:
-  i++;
-  particle++;
-  if (i < 64)
-    goto loop;
 }

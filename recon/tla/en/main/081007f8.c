@@ -1,18 +1,25 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 18 of 501 in tla-en. First difference: the native issues `str r1, [sp, #12]`
-// earlier (row 9) than this does (row 14).
-// First draft of BattleEffect_ApplyToTargets: applies healing, revival or
-// permanent-stat effects of a menu action to one member or the whole party,
-// the twin of The Broken Seal's function of the same name
-// (games/tbs/src/menu/menu/use.c). ⚓️ takes the whole party's first target
-// from gMainRoutineWork.currentOwner and draws the changed Attack or Defense with
-// MessageArgument_PushFar. The result message offset is kept in the menu work;
-// -1 reports that nothing changed.
-// Differ 38 of 501 (2026-10-19), instruction order only: the native spills
-// sourceId and effectId before it builds the heap address, and loads the menu
-// from its stack slot before the offsets' moves throughout; the whole-party
-// test is written == 9 first, as the native falls through to it (differ 46
-// the other way round).
+// Draft, differ 18 of 501, skeleton gap 8 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Ability_ApplyToTargets
+// (games/tbs/src/menu/menu/use.c): the same locals in the same order, the same
+// switches and result messages. It applies healing, revival or permanent-stat
+// effects of a menu action to one member or the whole party. The Lost Age takes
+// the whole party's first target from gMainRoutineWork.currentOwner and draws
+// the changed Attack or Defense with MessageArgument_PushFar. It reads the menu
+// work before BattleAction_Get, where the twin reads it after Ability_Get, and
+// tests == 9 first (differ 46 the other way round). The result message offset
+// is kept in the menu work; -1 reports that nothing changed.
+// What is left is instruction order only, four pairs and no register: the
+// native stores sourceId, fixedScale and effectId before it builds the heap
+// address; movs #0 and its spill of targetIndex, and the increment's spill, sit
+// among the 0x215 constant's moves at the first loop's guard, latch and the
+// second loop's guard; the second loop's latch reloads targetIndex before the
+// count. In all but the last, the constant's chain ranks one place higher here
+// than in the native, which reads as the compiler's order, not the source's.
+// Tried, none better: a while loop for the second loop, += 1, reversed
+// comparison, s32 targetIndex with a (u8) cast, targetIndex declared first,
+// reordered zero assignments, one messageOffset store before the test, seven
+// forms of the dead test. Permuter, 4 minutes: its one gain, differ 16, wraps
+// the dead test's body in do { } while (0), a new one-pass device, not taken.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"

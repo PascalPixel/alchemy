@@ -1,115 +1,107 @@
-// Draft, differ 210 of 175: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
+// Draft, differ 6 of 175, skeleton gap 3 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's PushedActor_AdvancePair (scene/shared/staged_actor.h):
+// the leader pushes the actor in front of it one cell, same calls, offsets,
+// animation 8, 15 frames, sound 185 and rate 65536 / 5. Actor_FindInCell is the
+// twin's PushedActor_FindAtTile.
+// Left: allocation and everything else match; only the scheduling of three
+// instructions after Func_02003bdc differs: the native loads dst.z before
+// next->velocityX's store, and stores next->velocityZ and copies lead to r2
+// around the 0x80000000 build. The twin's store order gave 8; velocityX beside
+// x gives 6.
+// Tried: all 720 orders of next's four stores with lead's two target stores
+// (best 6), dst as s32[3] and as a union array, a local for the rise byte and
+// for zero (all 6), dst.x and dst.z through locals (10), a chained zero (8).
 #include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+#include "system/main_routine_work.h"
 #include "types.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct FieldPosition {
+  s32 x;
+  s32 y;
+  s32 z;
+};
 
-extern u8 gData_02003d10[];
-s32 Actor_GetById();
-s32 Actor_FindInCell();
-s32 Func_02003aac();
-s32 Func_02003a54();
-void wait();
-void Func_02003c54();
-void Func_02003a84();
-s32 Func_02003a8c();
-void Func_02003bdc();
+extern u32 gData_02003d10[];
+struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_FindInCell(struct FieldPosition *position,
+                               struct Actor *self);
+s32 Func_02003aac(struct Actor *actor, struct FieldPosition *position);
+void Func_02003a54(struct Actor *actor, s32 animation);
+void wait(s32 frames);
+void Func_02003c54(s32 sound);
+void Func_02003a84(struct Actor *actor, s32 x, s32 y, s32 z);
+void Func_02003a8c(struct Actor *actor);
+void Func_02003bdc(void);
 
-s32 Func_020003b4(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 v0, r5, r9, r10, r7, r8, v1, r6, r0, v2, r3, v3, v4, v5, v6;
-  s32 stack[3];
+void Func_020003b4(void) {
+  struct FieldPosition dst;
+  struct Actor *lead;
+  struct Actor *next;
+  struct Actor *blocker;
+  s32 dir;
+  u32 step;
+  s32 rate;
 
-  /* sub (s32)stack, #12 */
-  v0 = Actor_GetById(FIELD_AT((s32)(s32)&gMainRoutineWork, s32, 532));
-  r5 = ((u32)(FIELD_AT(v0, u16, 6)) >> 12) << 2;
-  r9 = (s32)gData_02003d10;
-  r10 = -0x10000;
-  r7 = (s32)stack;
-  FIELD_AT(r7, s32, 0) =
-      (FIELD_AT(v0, s32, 8)) + ((*(s32 *)(((s32)gData_02003d10) + r5)) & r10);
-  r8 = v0;
-  FIELD_AT(r7, s32, 4) = FIELD_AT(v0, s32, 12);
-  FIELD_AT(r7, s32, 8) =
-      (FIELD_AT(v0, s32, 16)) + ((*(s32 *)(((s32)gData_02003d10) + r5)) << 16);
-  v1 = Actor_FindInCell(r7, r8);
-  r6 = v1;
-  r0 = v1;
-  if (r6 != 0)
-    goto L_0200840a;
-  goto L_02008520;
-L_0200840a:
-  FIELD_AT(r7, s32, 0) = (FIELD_AT(r6, s32, 8)) + ((*(s32 *)(r9 + r5)) & r10);
-  FIELD_AT(r7, s32, 4) = FIELD_AT(r6, s32, 12);
-  FIELD_AT(r7, s32, 8) = (FIELD_AT(r6, s32, 16)) + ((*(s32 *)(r9 + r5)) << 16);
-  v2 = Actor_FindInCell(r7, r6);
-  r0 = v2;
-  if (v2 != 0) {
-    r3 = 1 & (FIELD_AT(r0, u8, 89));
-    if ((1 & (FIELD_AT(r0, u8, 89))) != 0)
-      goto L_02008520;
-  }
-  FIELD_AT(r7, s32, 0) = FIELD_AT(r6, s32, 8);
-  FIELD_AT(r7, s32, 4) = (FIELD_AT(r6, s32, 12)) + 1048576;
-  FIELD_AT(r7, s32, 8) = FIELD_AT(r6, s32, 16);
-  v3 = Actor_FindInCell(r7, r6);
-  r0 = v3;
-  if (v3 != 0) {
-    r3 = 1 & (FIELD_AT(r0, u8, 89));
-    if ((1 & (FIELD_AT(r0, u8, 89))) != 0)
-      goto L_02008520;
-  }
-  FIELD_AT(r6, u8, 34) = 2;
-  FIELD_AT(r7, s32, 0) = (FIELD_AT(r6, s32, 8)) + ((*(s32 *)(r9 + r5)) & r10);
-  FIELD_AT(r7, s32, 4) = FIELD_AT(r6, s32, 12);
-  FIELD_AT(r7, s32, 8) = (FIELD_AT(r6, s32, 16)) + ((*(s32 *)(r9 + r5)) << 16);
-  v4 = Func_02003aac(r6, r7);
-  r0 = v4;
-  if (v4 > 0)
-    goto L_02008520;
-  r10 = FIELD_AT(r6, u8, 98);
-  r3 = FIELD_AT(r6, u8, 98);
-  if ((FIELD_AT(r6, u8, 98)) != 0)
-    goto L_02008520;
-  r5 = 204;
-  Call2((void (*)())Func_02003a54, r8, 8);
-  r5 = r5 << 6;
-  Call1((void (*)())wait, 15);
-  r5 = r5 + 51;
-  Call1((void (*)())Func_02003c54, 185);
-  FIELD_AT(r6, s32, 48) = r5;
-  FIELD_AT(r6, s32, 52) = r5;
-  Func_02003a84(r6, FIELD_AT(r7, s32, 0), FIELD_AT(r7, s32, 4),
-                FIELD_AT(r7, s32, 8));
-  FIELD_AT(r8, s32, 48) = r5;
-  FIELD_AT(r8, s32, 52) = r5;
-  Func_02003a84(r8, FIELD_AT(r7, s32, 0), FIELD_AT(r7, s32, 4),
-                FIELD_AT(r7, s32, 8));
-  v5 = Func_02003a8c(r6);
+  lead = Actor_GetById(gMainRoutineWork.currentOwner);
+  dir = lead->angle >> 12;
+  step = gData_02003d10[dir];
+  dst.x = lead->x + (step & 0xffff0000);
+  dst.y = lead->y;
+  step <<= 16;
+  dst.z = lead->z + step;
+  next = Actor_FindInCell(&dst, lead);
+  if (next == 0)
+    return;
+
+  step = gData_02003d10[dir];
+  dst.x = next->x + (step & 0xffff0000);
+  dst.y = next->y;
+  step <<= 16;
+  dst.z = next->z + step;
+  blocker = Actor_FindInCell(&dst, next);
+  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+    return;
+
+  dst.x = next->x;
+  dst.y = next->y + 0x100000;
+  dst.z = next->z;
+  blocker = Actor_FindInCell(&dst, next);
+  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+    return;
+
+  next->terrainId = 2;
+  step = gData_02003d10[dir];
+  dst.x = next->x + (step & 0xffff0000);
+  dst.y = next->y;
+  step <<= 16;
+  dst.z = next->z + step;
+  if (Func_02003aac(next, &dst) > 0)
+    return;
+
+  if (((u8 *)next)[98] != 0)
+    return;
+
+  Func_02003a54(lead, 8);
+  rate = 0x10000 / 5;
+  wait(15);
+  Func_02003c54(185);
+  next->speedLimit = rate;
+  next->acceleration = rate;
+  Func_02003a84(next, dst.x, dst.y, dst.z);
+  lead->speedLimit = rate;
+  lead->acceleration = rate;
+  Func_02003a84(lead, dst.x, dst.y, dst.z);
+  Func_02003a8c(next);
   Func_02003bdc();
-  FIELD_AT(r6, s32, 8) = FIELD_AT(r7, s32, 0);
-  FIELD_AT(r6, s32, 36) = r10;
-  FIELD_AT(r6, s32, 16) = FIELD_AT(r7, s32, 8);
-  FIELD_AT(r6, s32, 44) = r10;
-  FIELD_AT(r8, s32, 56) = -0x80000000;
-  FIELD_AT(r8, s32, 64) = -0x80000000;
-  FIELD_AT(r8, s32, 36) = r10;
-  FIELD_AT(r8, s32, 44) = r10;
-  FIELD_AT(r8, s32, 8) = (*(s16 *)(r8 + 10)) << 16;
-  FIELD_AT(r8, s32, 16) = (*(s16 *)(r8 + 18)) << 16;
-  v6 = Func_02003a54(r8, 1);
-  r0 = v6;
-L_02008520:
-  /* add (s32)stack, #12 */
-  return r0;
+  next->x = dst.x;
+  next->velocityX = 0;
+  next->z = dst.z;
+  next->velocityZ = 0;
+  lead->targetX = 0x80000000;
+  lead->targetZ = 0x80000000;
+  lead->velocityX = 0;
+  lead->velocityZ = 0;
+  lead->x = ((s16 *)&lead->x)[1] << 16;
+  lead->z = ((s16 *)&lead->z)[1] << 16;
+  Func_02003a54(lead, 1);
 }

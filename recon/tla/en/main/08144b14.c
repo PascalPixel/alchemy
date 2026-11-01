@@ -1,4 +1,4 @@
-// Near miss, differ 14 of 652 (tla-en, 2026-10-31): order only, five places
+// Draft, differ 14 of 652, skeleton gap 7 (tla-en, 2026-11-01): order only, five places
 // where sched2 sets a constant or a reload one slot off the native (the
 // Djinn's 40, the motes' 24, &point in the motes' loop preheader, the
 // spilled &draw before draw[1] twice); the sched2 dump shows priority and
@@ -9,9 +9,16 @@
 // Transform_SetLookAt (transform.h) rather than leaving it implicit, 16 to 14;
 // the blitters or BattleEffect_LoadBlitter declared void, 16 and 18; the
 // permuter (4 minutes) found nothing better.
+// 2026-11-01, against the twin as it now stands: its cursor read of work and
+// canvas 33; k for the prelude 155; named sizes for the 40 and 24, 152 and 252;
+// a local for the Djinn's picture 132; SET_VECTOR 400; a local for &point 247;
+// point[2] before point[1] 18; start before target 52; heap for the first
+// blitter 116. No gain, and no change at all from operand order, &sheet[n],
+// *(draw + 1), 24 * 24, EFFECT_FOR_EACH_TARGET, a u8 canvas or start assigned
+// apart from its declaration.
 
 // The body of three effect kinds (the wrappers in series_c.c pass modes 0 to
-// 2). Twin: The Broken Seal's BattleEffect_RunMemberBeam, ported call for call.
+// 2). Twin: The Broken Seal's BattleEffect_RunDjinnBeams, ported call for call.
 // The Lost Age's changes: a third mode (the Mars Djinn); every picture
 // unpacked with its palette by Resource_LoadAndDecompress; the canvas
 // prepared by Func_0815585c (mode | (side ^ prelude) << 4, then two

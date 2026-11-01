@@ -1,17 +1,19 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 4 of 261 in tla-en. The native spills its arguments to the stack before it
-// builds the heap slots' address; this builds the address first (row 8). No
-// single empty asm or one-pass block reaches 0.
-// First draft of Func_080ff370: draws member ownerId's status page, the twin
-// of The Broken Seal's CharacterMenu_DrawStatusAilments
-// (games/tbs/src/menu/menu/status.c). ⚓️ draws the ailments with
-// Func_081054e0. MsgDjinnLabel and MsgPowerLabel are messages 4140 and 4141
-// in English; they need their names in the six catalogs before this links.
-// Differ 12 of 261 (2026-10-19), instruction order only: the native stores
-// the two spilled parameters before it builds the heap address, reloads mode
-// before the 0x100 mask, and starts the power pointer before the window x.
-// The locals are declared in the order that gives the native stack slots
-// (hasDjinn 8, djinnRow 12, element 16; otherwise differ 56).
+// Draft, differ 2 of 261, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's StatusScreen_DrawStatusAilments
+// (games/tbs/src/menu/menu/status.c): the same calls, rows and mode tests,
+// with the status list moved out to Func_081054e0. Draws member ownerId's
+// status page. MsgDjinnLabel and MsgPowerLabel are messages 4140 and 4141 in
+// English; they need their names in the six catalogs before this links.
+// Left: one instruction's order at the top. The native stores both spilled
+// parameters before it builds the heap slots' address; this builds it first.
+// In sched2 the address's first insn has priority 78 and the two stores 77,
+// and every form below keeps that one-step gap.
+// Tried without gain (2026-11-01): separate assignment, a slots or void *
+// local, menu declared last or after unit, u32 mode or ownerId, a pointer
+// window, unit initialized, register menu. The twin's declaration order
+// gives differ 46 and a hasDjinn expression or ternary differ 19, so the
+// locals keep the native slots (hasDjinn 8, djinnRow 12, element 16). No
+// single empty asm or one-pass block reaches 0 (2026-10-26).
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_unit.h"

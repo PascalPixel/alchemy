@@ -1,14 +1,26 @@
-// Draft, differ 437 of 1094: script command 0x19 (SC_PLAYER), The Broken
-// Seal's Actor_UpdateLeaderControl
-// (games/tbs/src/field/field/player_control.c) with this game's changes: no
-// fast walk; standing on another object a cell below (priorityFlags bit 6) lets
-// the step through when a still object (bit 7) fills the step and both its
-// sides; wading ground (map byte 0x17 bits 2-3, cell attribute bit 4) hides the
-// sprite's lower half and leaves Func_08026fc8's effect. Structure and frame
-// follow the listing: the angle is a u16 (as s32, differ 584; the native spills
-// it as angle << 16), the locals are declared in frame order and the
-// one-cell-below test is written as an absolute difference (differ 875 before).
-// Left: scheduling and some register choice throughout.
+// Draft, differ 12 of 1094, skeleton gap 4 (tla-en, 2026-11-01)
+// Script command 0x19 (SC_PLAYER), the twin of The Broken Seal's
+// Actor_UpdatePlayerControl (games/tbs/src/field/field/player_control.c), with
+// this game's changes: no fast walk; standing on another object a cell below
+// (priorityFlags bit 6) lets the step through when a still object (bit 7) fills
+// the step and both its sides; wading ground (map byte 0x17 bits 2-3, cell
+// attribute bit 4) hides the sprite's lower half and leaves Func_08026fc8's
+// effect. Taken from the twin: headingCount, whose folded 6 gives cmp #6 and
+// blt; footprintAngle set before the footprint test; the signed reads of unk66;
+// flags before rotation. The angle stays a u16 (as s32, differ 251) and the
+// locals keep frame order.
+// oldFlags is an s32 so that gcse carries the flags byte across the wading
+// branches (the listing's copy into r1); the stores narrow it with (u8) to get
+// the listing's #254 and #251 masks. One pointer, cells, steps to the cell (as
+// a separate cell, differ 26).
+// Left, four pairs: three scheduling swaps (collision's store against lsls r0
+// at the top; angleIndex's store against mov r7, sl before the heading loop and
+// against adds r6, r7 before the push loop) and ands r3, r2 for ands r2, r3 at
+// the wading test.
+// Tried: all 720 orders of the opening assignments, every declaration order and
+// inner scope, loop inits outside the for, and moving the read of oldFlags.
+// Reading attributeB into a local before oldFlags gives ands r2, r3 and differ
+// 8, but it is a forced temporary, so it stays out.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -88,19 +100,22 @@ s32 Func_08027064(struct Actor *object) {
   s16 heading;
   s32 angleIndex;
   s32 movementAnimation;
+  s32 headingCount;
+  s32 footprintAngle;
   s32 onObject;
   struct EventWork *work;
   struct MapFlagsWork *map;
   u16 angle;
+  u16 direction;
   struct Actor *other;
-  u8 oldFlags;
+  s32 oldFlags;
 
   sprite = object->animation;
   movementAnimation = 2;
   onObject = 0;
   work = Ram_HeapSlots->eventWork;
-  collision = 0;
   map = (struct MapFlagsWork *)Ram_HeapSlots->mapWork;
+  collision = 0;
   pushed = 0;
   if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->keys23c) {
     object->speedLimit = 0x18000;
@@ -132,8 +147,9 @@ s32 Func_08027064(struct Actor *object) {
     contact.y = position.y;
     contact.z = position.z;
     Vector_AddPolarOffset(0x20000, (u16)angle - 0x4000, &contact);
+    angleIndex = 0;
     other = (struct Actor *)Ram_HeapSlots->scriptObjects;
-    for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
+    for (; angleIndex < 64; angleIndex++, other++) {
       s32 dy;
 
       if (other->script == NULL)
@@ -155,14 +171,14 @@ s32 Func_08027064(struct Actor *object) {
         goto clear;
     }
     if (onObject && !Func_0802d87c(object, &position)) {
-      heading = angle;
       collision = 0;
+      heading = angle;
       goto push_objects;
     }
   }
   if (gDebugMode != 0 && (gInput.held & 0x200)) {
-    heading = angle;
     collision = 0;
+    heading = angle;
     goto counted;
   }
   if (!Func_0802d87c(object, &position)) {
@@ -193,17 +209,15 @@ s32 Func_08027064(struct Actor *object) {
       }
     }
   }
-  {
-    u16 direction = angle;
-
-    angleOffsets[0] = direction + 0x1000;
-    angleOffsets[1] = direction - 0x1000;
-    angleOffsets[2] = direction + 0x2000;
-    angleOffsets[3] = direction - 0x2000;
-    angleOffsets[4] = direction + 0x3000;
-    angleOffsets[5] = direction - 0x3000;
-  }
-  for (angleIndex = 0; angleIndex < 6; angleIndex++) {
+  direction = angle;
+  headingCount = 0;
+  angleOffsets[headingCount++] = direction + 0x1000;
+  angleOffsets[headingCount++] = direction - 0x1000;
+  angleOffsets[headingCount++] = direction + 0x2000;
+  angleOffsets[headingCount++] = direction - 0x2000;
+  angleOffsets[headingCount++] = direction + 0x3000;
+  angleOffsets[headingCount++] = direction - 0x3000;
+  for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
     position.x = object->x;
     position.y = object->y;
@@ -243,8 +257,8 @@ s32 Func_08027064(struct Actor *object) {
   goto push_objects;
 
 clear:
-  heading = angle;
   collision = 0;
+  heading = angle;
 
 push_objects:
   // Push the movable objects just ahead a quarter pixel further, when they
@@ -268,8 +282,6 @@ push_objects:
                                    other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->movementState == 0) {
-      u16 direction;
-
       direction = ArcTan2(other->z - object->z, other->x - object->x);
       testPosition.x = other->x;
       testPosition.y = other->y;
@@ -370,21 +382,20 @@ counted:
   // leave the wading effect as the leader moves.
   if (map->groundEffects & 12) {
     struct MapCell *cells;
-    struct MapCell *cell;
 
     if (object->terrainId <= 2)
       cells = ((struct MapWork *)map)->layers[object->terrainId].cells;
     else
       cells = gMapCellBuffer;
-    cell = &cells[object->x / 0x100000 + (object->z / 0x100000) * 128];
+    cells += object->x / 0x100000 + (object->z / 0x100000) * 128;
     oldFlags = sprite->flags;
-    if (cell->attributeB & 16) {
+    if (cells->attributeB & 16) {
       if (!(oldFlags & 8)) {
         sprite->shape11 = (sprite->shape11 & 3) | 16;
-        sprite->flags = (oldFlags | 4) & ~1;
+        sprite->flags = ((u8)oldFlags | 4) & ~1;
       }
       if (object->action == 0 && collision == 0 && !onObject) {
-        Func_08026fc8(object, (map->groundEffects << 28) >> 30);
+        Func_08026fc8(object, (u32)(map->groundEffects << 28) >> 30);
         if (movementAnimation == 5)
           object->action = 8;
         else
@@ -392,16 +403,16 @@ counted:
         object->unk66 ^= 1;
       }
     } else if (!(oldFlags & 8)) {
-      sprite->flags = (oldFlags | 1) & ~4;
+      sprite->flags = ((u8)oldFlags | 1) & ~4;
     }
     if (oldFlags != sprite->flags)
       sprite->dirty = 1;
   }
 
   // Footprints on maps that show them, alternating left and right.
+  footprintAngle = (u16)angle;
   if ((map->groundEffects & 3) && object->action == 0 && collision == 0) {
     struct Actor *effect;
-    u16 footprintAngle = angle;
 
     effect = Func_08023220(0x10e, object->x, object->y, object->z);
     if (effect != NULL) {
@@ -414,15 +425,15 @@ counted:
       effect->motionFlags = collision;
       if (effectSprite != NULL) {
         Animation_ApplyChildArgument(effectSprite, 1);
-        effectSprite->rotation = footprintAngle + 0x4000;
         effectSprite->flags = collision;
+        effectSprite->rotation = footprintAngle + 0x4000;
         effectSprite->priority = 3;
       }
-      if (object->unk66 == 2) {
+      if (*(s16 *)&object->unk66 == 2) {
         Animation_ApplyChildArgument(effectSprite, 2);
         object->unk66 = collision;
       }
-      if (object->unk66 != 0)
+      if (*(s16 *)&object->unk66 != 0)
         effect->angle = 0x8000;
       if (movementAnimation == 5)
         object->action = 12;

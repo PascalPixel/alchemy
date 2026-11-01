@@ -1,5 +1,12 @@
-// Pin-free trial (tla-en): listing 141 instructions, draft 138, common 106,
-// differ 67. Earlier register-allocation notes describe the prior pinned form.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Title_ShowCamelotLogo: the same resource, BG2 set-up,
+// DMA copies, 120-frame tile cycle and A or Start exit. Ported from its C: the
+// `result` local (zero, stored to gBgScroll[2].y and returned), the one buffer
+// local and `* 1024 + buffer`; the two earlier FAKEMATCH notes are gone with
+// the forced forms. The listing's next word, Data_081a786c, is a no-op
+// `void f(void) {}` (Title_NoOpColor there): outside this extent, so it left
+// this draft and returns at adoption. Pool: the listing names gMapCellBuffer
+// and resource 0x21; check both against the build at adoption.
 
 #include "resource.h"
 #include "types.h"
@@ -25,16 +32,13 @@ void DebugText_Clear(void);
 void Window_LoadGraphics(void);
 
 s32 Title_ShowAnimatedSplash(void) {
+  s32 result;
   u32 i;
-  /* FAKEMATCH: separate the post-decode buffer carrier from the resource-number
-   * carrier. */
   u8 *buffer;
-  /* FAKEMATCH: keep the decode destination carrier distinct until the buffer
-   * copy. */
-  u8 *decode;
   s32 resource;
 
   gRenderOamEnabled = 1;
+  result = 0;
   resource = (s32)&ResourceId_CamelotLogo;
   Task_ResetAll();
   Fade_ToBlack(1);
@@ -42,10 +46,10 @@ s32 Title_ShowAnimatedSplash(void) {
   wait(1);
   REG_BG2CNT = 0x685;
   REG_DISPCNT = 0x1440;
-  gBgScroll[2].y = 0;
-  decode = Ram_MapCellBuffer;
-  Resource_DecodeType01(Resource_GetTableEntry(resource), decode);
-  buffer = decode;
+  gBgScroll[2].y = result;
+  buffer = Resource_GetTableEntry(resource);
+  Resource_DecodeType01(buffer, Ram_MapCellBuffer);
+  buffer = Ram_MapCellBuffer;
   Dma_Set(buffer, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1c0 / 4,
           REG_DMA3);
   buffer += 0x1c0;
@@ -66,16 +70,12 @@ s32 Title_ShowAnimatedSplash(void) {
   Fade_Wait();
   REG_DISPCNT = 0x1540;
   for (i = 0; i < 120; i++) {
-    /* FAKEMATCH: the unsigned address sum retains the DMA source operand order.
-     */
-    Dma_Set((void *)((((gFrameCount >> 3) & 3) << 10) + (u32)buffer),
+    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + buffer,
             BG_CHAR_BLOCK(1) + 0x100,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x340 / 4, REG_DMA3);
     if (gInput.pressed & (KEY_A | KEY_START))
       break;
     wait(1);
   }
-  return 0;
+  return result;
 }
-
-void Title_NoOpPalette(void) {}

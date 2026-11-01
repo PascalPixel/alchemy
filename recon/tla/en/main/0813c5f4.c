@@ -1,32 +1,34 @@
-// Near miss, differ 44 of 580.
+// Draft, differ 30 of 580, skeleton gap 11 (tla-en, 2026-11-01)
 //
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 44. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 42).
-
-// Twin: The Broken Seal's BattleEffect_RunFiveMode, the body of its five
-// coloured streak effects. ⚓️ adds one thing: when each target's streaks
+// Twin: The Broken Seal's BattleEffect_RunStreakVolley, the body of its five
+// coloured streak effects: the same calls, resources, particle sums and hit
+// logic, in the same order. ⚓️ adds one thing: when each target's streaks
 // start, modes 1 to 4 play their own cry. The rest is the twin with ⚓️'s
 // calling conventions (the effect read from the argument, heap blocks as
 // Ram_HeapSlots fields, BattleEffect_LoadBlitter with ⚓️'s mode numbers, callback
 // order 0xc80, BattleEffectKernels_IntegrateVector3 for
-// EffectStep_AdvanceWithGravity3D).
+// Particle_AdvanceWithGravity3D).
 
-// Left: the native keeps the heap base 0x03000000 in r5 from the prologue
-// to the alternate blitter's read after the side branch (adds r3, r5, #0);
-// here its last use is the first blitter's read, which then lands in r5,
-// and the join builds the base again (two instructions, and the two arms
-// merge one store more). The rest are single rows where the native issues
-// a load or a constant one slot earlier.
+// Left, two things. The native keeps the heap base 0x03000000 in r5 up to the
+// alternate blitter's read at the join (adds r3, r5, #0; adds r3, #188): GCSE's
+// const-prop folds heap + 188 here into a constant, so the base dies at the
+// first blitter read, that read lands in r5 and the join builds the base again
+// (the skeleton's first two hunks, 6 of the 11). The rest are single rows of
+// scheduling: reloads of the spilled effect, and a constant, one slot from
+// where the native issues them against the stores round them.
 
 // Tried:
 // the twin as ported                                         365
 // alchemy permute, 10 minutes: the start frame kept in lift's local
-// (tagged; as its own local 365, without lift 388)          56
-// the heap base through a local (heap)                       no change
-// the alternate blitter read once after the side branch      66
+// (tagged; as its own local 365, without lift 388)            56
+// the alternate blitter read once after the side branch       40
+// 2026-11-01, none moves differ 30 / skeleton 11 unless noted:
+// the twin's slots and cursor locals; the heap base as a local, a second local,
+// an initializer, a local in each arm, or Ram_HeapSlots directly; the read
+// through a pointer, or through a pointer set before the side branch (41);
+// the twin's plain start frame check, as its own local at either place, or
+// with an unused local (351); lift before streaks; j before frame; row set
+// apart; a local for effect in the loop tests.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -53,7 +55,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #define TASK_PASS_FRAME 0xc80
 
-// Four signed bytes for each mode (The Broken Seal's gStreaks_Records).
+// Four signed bytes for each mode (The Broken Seal's gStreaks_Styles).
 extern s8 Data_08197533[];
 #define RECORD(mode, field) Data_08197533[(mode) * 4 + (field)]
 #define RECORD_ANIMATE 0 // cycle the streak through its three pictures
@@ -211,11 +213,10 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
         }
         if (frame >= k * 32) {
           for (j = 0; j != streaks; j++) {
-            /* FAKEMATCH: the streak's start frame is kept in lift's local,
-             * which is dead by now. As a local of its own (start) or as an
-             * expression, the allocation of every loop differs (differ 365
-             * against 56): the merged local is what gives the native's
-             * registers and its 88-byte stack frame. */
+            /* FAKEMATCH(temporary): the streak's start frame kept in lift's
+             * local, dead by now, which gives the native's registers and its
+             * 88-byte frame; as a local of its own or as the twin's expression,
+             * 351 of 580 instructions differ in tla-en. */
             lift = k * 32 + j * 6;
             if (frame >= lift) {
               struct EffectStep *streak = &work->particles[k * streaks + j];

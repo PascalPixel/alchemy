@@ -1,20 +1,21 @@
-// 2026-10-26: read through typed structs as The Broken Seal's twin is (the
-// shop work's icons, positions, action, burst member and its 24 sparks, each
-// a 0x48-byte field effect sprite); differ unchanged at 18.
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 18 of 194 in tla-en. First difference: this issues `ldr r2, [r1, #0]` earlier
-// (row 25) than the native does (row 27).
-// Near miss, differ 18 of 194: the sanctum's revival burst for a party member.
-// It hides the cursor, plays the service's sound, darkens the member's icon,
-// spawns 18 radial sparks around the member's position
-// (BattleEffect_UpdateRadialMotion), then fades them, restores the icon and the
-// cursor. ☀️'s Shop_RunPartyMemberIconBurst in games/tbs/src/shop/shop.c, with
-// ⚓️'s work-block offsets (icons 0xf8, positions 0x118 and 0x128, burst flag
-// 0x508, sparks from 0x50c), effect mode 0x2a0 and callback flags 0x480.
-// Instruction order only: the anchor's reload against the 13 store, the
-// member's save to r10, the sound id's signed load past the frame setup, and
-// the spark position's constants against their stores. The ☀️ draft's FAKEMATCH
-// union on the x store is gone: the plain store gives the same differ here.
+// Draft, differ 10 of 194, skeleton gap 5 (tla-en, 2026-11-01)
+// Twin of Sanctum_RunMemberIconBurst in The Broken Seal
+// (games/tbs/src/shop/shop/sanctum.c): the sanctum's burst on a party member.
+// Same statements in the same order: cursor hidden, the service's cue, palette
+// tint, icon stilled, 18 sparkles three frames apart, the jingle waited for, 24
+// slots told to finish, SE 126, slots freed, palette and cursor restored. This
+// game's work block has icons at 0xf8, positions at 0x118 and 0x128, the burst
+// member at 0x508, sparks from 0x50c; particle mode 0x2a0, task flags 0x480.
+// Left: two scheduling runs, nothing else; the RTL before sched2 is already in
+// the listing's order. After each ldrsh of a position, sched2 pulls a split
+// constant forward: movs/lsls #148 past the sp copy and x store, and the
+// effects offset (#160) past the shift and add of z. Both happen because the
+// constant's chain outranks the store and is ready while the load's result is
+// queued for two cycles, so this is the model of load timing (K2), not source.
+// Tried, no gain: z stored first, effect before effectIndex, position as an
+// array or a union, pointers to the coordinate arrays, values in locals, z
+// subtracted before the shift or in a second statement, padded Position, the
+// twin's constant spellings (equal, kept).
 #include "types.h"
 #include "fixed_math.h"
 #include "ram_buffer.h"
@@ -112,7 +113,7 @@ void Func_0810b1b4(s32 member) {
   Task_Add(Shop_ResetEffects, callbackPriority);
 
   position.x = shop->partyMemberX[member] << 16;
-  position.z = (shop->partyMemberY[member] << 16) + 0xfff40000;
+  position.z = (shop->partyMemberY[member] << 16) - (12 << 16);
 
   effectIndex = 0;
   effect = shop->effects;
@@ -123,8 +124,8 @@ void Func_0810b1b4(s32 member) {
                   BattleEffect_UpdateRadialMotion);
     Func_0808a518((struct Effect_080b2f4c *)effect, 7);
     Func_08009248(effect->object, (Random16() * 7) >> 16);
-    effect->scaleY = 0xb333;
-    effect->scaleX = 0xb333;
+    effect->scaleY = Q16_ONE * 7 / 10;
+    effect->scaleX = Q16_ONE * 7 / 10;
     wait(3);
     if (effectIndex == 5) {
       shop->burstMember = member;
@@ -159,7 +160,7 @@ void Func_0810b1b4(s32 member) {
 
       flag <<= 24;
 
-      flagEntry += 0x48;
+      flagEntry += sizeof(struct BurstSprite);
       if (flag != 0) {
         Func_0808a530((struct Effect_080b2f4c *)effectSlot);
       }

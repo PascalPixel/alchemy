@@ -1,5 +1,13 @@
-// Near miss, differ 4 of 140 (tla-en, 2026-10-31): scheduler order on the
-// left side only, unchanged since 2026-10-30. A left-tiles local like the
+// Draft, differ 4 of 140, skeleton gap 2 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's SelectionMenu_SetupArrow, confirmed: same record
+// layout, flow, calls and sprite fields, with this game's cursor tiles. The
+// body is already that port, plus the one-pass block after the left x, which
+// The Broken Seal does not need. What is left is the two swapped pairs on the
+// left side. On 2026-11-01 eighteen plain spellings of the left side moved
+// nothing: records->x, (*records).x, records[index].x, + -9, -9 +, + 0xfff7,
+// casts on baseX and records[index].kind all stay at 4 with the block and 8
+// without it; assigning frames after the x gives 63.
+// Scheduler order on the left side only, unchanged since 2026-10-30. A left-tiles local like the
 // right side's (loaded first, copied to frames after the store; block- or
 // function-scoped, with or without a one-pass block or empty asm after the
 // store) gives the listing's left-side order, but local allocation puts the

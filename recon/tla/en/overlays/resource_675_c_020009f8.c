@@ -1,5 +1,13 @@
-// Near miss, differ 2 of 103 (tla-en, 2026-10-30), now with no device: The
-// Broken Seal's StagedActor_PlacePairAtOffsetAndRun with this overlay's stubs.
+// Draft, differ 2 of 103, skeleton gap 2 (tla-en, 2026-11-01), with no device:
+// the twin of The Broken Seal's ColosseumAzartMatch_MoveActorPairByOffset (same
+// leader-and-actor moves, animations 27, 4 or 3, then 2, waits and two cues)
+// with this overlay's stubs and one added Func_02001324(0) call.
+// The twin's forms change nothing (2026-11-01): its plain blocks, its
+// declaration order and either swap of it, initializers at the declarations, the
+// owner in an outer or block local before the call or K&R parameters stay at 2;
+// a local for the owner after the declarations (10), block-scope x and z (33),
+// dx and dz shifted once ahead (32), a ternary for the animation (15) and the
+// condition's operands swapped (6) are worse.
 // Left: the parameter spills. The native order is sub sp; ldr r3,
 // =gMainRoutineWork; str r1, [sp, #4]; str r2, [sp]; movs r2, #133; here dx's
 // spill (str r1) falls after movs r2, #133. In sched2, dz's spill takes its

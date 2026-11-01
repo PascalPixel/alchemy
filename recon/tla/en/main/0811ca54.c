@@ -1,3 +1,14 @@
+// Draft, differ 2 of 180, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's AutoBattle_RunAttackOrItem: same camera turn, wait
+// of 40, action fields, side lists, pose, four element pillars and the table
+// effect, then the units sent back. Left: one reordered row in the reset loop,
+// a scheduling pair under -mthumb-slow-loads (below).
+// Measured 1 November 2026, all differ 2 unless given: the twin's own form
+// (plain statements, then a tagged empty once-only loop after the pose), that
+// loop twice, the twin's nested work struct, ++i, the index declared first, the
+// object declared last; the empty loop before the pose (4), in the reset loop
+// (65), after it (103); the count in a local (73); the list through a pointer
+// (72). The body stays as it was, as nothing gained.
 // Near miss, differ 2 of 180 (tla-en, 2026-10-31): one reordered row in the
 // reset loop, below. Why it stays (2026-10-30, from the sched2 dump): the
 // actor's ldrsh depends on the spill store before it (str r2, [sp, #4], in
@@ -24,7 +35,7 @@
 // after any store waits 1, and caller-save always puts its store directly
 // before the call: the load, one cycle closer to the call, then outranks it.
 // Near miss, differ 2 of 180 (one reordered row): The Broken Seal's
-// BattleStaging_RunUnitAction with its one-pass block, this game's heap slots and
+// AutoBattle_RunAttackOrItem with its one-pass block, this game's heap slots and
 // Actor_SetMode for the dispatch argument. In the reset loop the native stores
 // both copies of the work pointer (str r2, [sp, #4]; str r2, [sp]) before it
 // loads the actor (ldrsh r0, [r2, r6]); this draft loads between them. sched2:

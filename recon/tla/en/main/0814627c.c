@@ -1,22 +1,33 @@
-// Near miss, differ 30 of 428.
+// Draft, differ 4 of 428, skeleton gap 2 (tla-en, 2026-11-01)
 //
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 30. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 28).
-
-// Effect kind 67. Twin: The Broken Seal's BattleEffect_RunTriangleStrike, ported
-// call for call. The Lost Age's changes: three Resource_LoadAndDecompress
-// loads (the rune picture with its palette into the work sheet, resource
-// 0x134 into the sheet slot, ParticleSpritesD after the rune picture), the
-// callback at 0xc80, BattleEffect_LoadBlitter for the two blitters, the landed picture
-// drawn from work->sheet, and the effect argument read directly.
-
-// Left: order only. The frame is the native's (132 bytes); the prologue's
-// argument spill, the object's three stores and about a dozen more places
-// are a load one row from its neighbour.
-
+// Twin of The Broken Seal's BattleEffect_RunUnusedTriangleStrike (bind.c):
+// effect kind 67, ported call for call. The twin's body is the same loop,
+// frame numbers, scale, flare and rune drawing. The Lost Age's changes: three
+// Resource_LoadAndDecompress loads (the rune picture with its palette into the
+// work sheet, resource 0x134 into the sheet slot, ParticleSpritesD after the
+// rune picture), the callback at 0xc80, BattleEffect_LoadBlitter for the two
+// blitters, the landed picture drawn from work->sheet, and the effect argument
+// read directly. Unlike the twin, the actor is read before memberFrame is
+// computed: that orders the member loop's step-end additions as the listing
+// does (differ 14 to 4).
+//
+// Left: two pairs, both a store the listing issues one slot earlier than the
+// draft. The first loop's `str r4, [sp, #68]` (frame = 0) comes before the
+// reload `ldr r5, [sp, #80]`; the member loop's `str r5, [sp, #12]` (the actors
+// offset) comes before `mov r9, r4` (memberFrame). The second conflicts with
+// the first swap: strength reduction emits the giv inits and increments in one
+// order, and the listing has them in opposite orders.
+//
+// Tried (2026-11-01), none below differ 4: memberFrame as its own induction
+// variable (82, in four forms); memberFrame as `frame - (member << 3)`,
+// `frame + member * -8` or `-(member * 8) + frame`; an actor id temporary before
+// memberFrame; memberFrame scoped to the loop; the assignment inside the if (25);
+// the range test as one unsigned compare; `*(effect->actors + member)` (72);
+// the member loop as do/while; the frame loop as while, `20 * effect->count`;
+// member declared before frame (36); heap taken first, or used for all four
+// first reads (both 4, no gain); the heap temporary removed (36). The rows may
+// be the -mthumb-slow-loads approximation (K2), not the source.
+//
 // Tried (2026-10-15): alchemy permute 10 minutes (56, through four
 // rewrites: REG_BG2PA written before StartCanvasLayer, which would undo the
 // layer's own 0x80 and was rejected; the work pointer copied; &vector
@@ -143,8 +154,8 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
       work->transferValue += 0x01010101;
 
     for (member = 0; member != 1; member++) {
-      memberFrame = frame - member * 8;
       object = GetBattleObjectSlotFar(effect->actors[member])->object;
+      memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Render_ResetTransformState();
         Transform_SetLookAt(camera, camera + 3);

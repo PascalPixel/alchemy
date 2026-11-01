@@ -1,3 +1,13 @@
+// Draft, differ 2 of 138, skeleton gap 1 (tla-en, 2026-11-01)
+// The twin of The Broken Seal's FieldEffect_SpawnDescendingArcParticles (same
+// flow, arc pair, sprite writes and update callbacks); the code below already
+// has its statement shapes. Left: one spill store of the leader, scheduled two
+// rows later than the listing. The Broken Seal's build puts that store between
+// the two (after movs r3, #63), so the three orders differ by game, not by
+// source. Tried 2026-11-01, none closer: the twin's parameter copy, a typed
+// work struct with mainActor, the leader assigned after the declarations, the
+// leader as a u32, zero scoped in the loop, the declaration order (all 2); i
+// unsigned or a pointer to objects (4).
 // Near miss, differ 2 of 138 (tla-en, 2026-10-31): one reordered row in the
 // entry block, instruction order only. No plain C reaches it: the entry
 // block's instructions and registers are the native's, so its dependences

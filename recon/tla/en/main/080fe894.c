@@ -1,17 +1,25 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 4 of 306 in tla-en. First difference: the native issues `mov r9, r3` earlier
-// (row 17) than this does (row 20). No single empty asm or one-pass block
-// reaches 0.
-// First draft of Func_080fe894: the member chooser of the Djinn menu, the
-// twin of The Broken Seal's CharacterMenu_SelectOwner
-// (games/tbs/src/menu/menu/status.c). A chooses (1), B backs out (-1); R
-// and L move the member along the party order (Func_080fecfc), Select shows
-// the list of Djinn found (Func_080fe638) once the first is; the cursor moves
-// through Menu_MoveGridCursor. MsgRearrangeHelp and MsgDjinnListHelp are messages
-// 4156 and 4165 in English; they need their names in the six catalogs before
-// this links. Differ 16 of 306 (2026-10-19): the literal pool after the first
-// DMA comes one instruction later, which shifts later pool offsets, and the
-// redraw 2 and the selection offset are one slot off.
+// Draft, differ 4 of 306, skeleton gap 2 (tla-en, 2026-11-01)
+// Func_080fe894: the party row of the Status menu, the twin of The Broken
+// Seal's PartyMemberChooser_RunRearrange (games/tbs/src/menu/menu/status.c):
+// same opening, same four palette DMAs, same loop to the flag that Start sets,
+// same help lines. A chooses (1), B backs out (-1); R and L move the member
+// along the party order (Func_080fecfc), Select shows the list of Djinn found
+// (Func_080fe638) once the first is. This game has up to eight members in rows
+// of four, so it adds the page of the row (Func_08104ef8, ownerIndex / 4 * 4),
+// the cursor goes through Menu_MoveGridCursor, redraw starts at 2 and the two
+// arrows are cleared on the way out. MsgRearrangeHelp and MsgDjinnListHelp are
+// messages 4156 and 4165 in English; they need their names in the six catalogs
+// before this links.
+// Left: one scheduling pair at the head. The native issues `mov r9, r3` (redraw
+// = 2) before the ownerCount load, row 17, not row 20, and `lsls r2, r2, #1`
+// (ownerIds[ownerIndex]) right after that load, not after the page load.
+// Tried on 2026-11-01, none better than 4: all 120 orders of the five opening
+// statements (the twin's order is the best, the next is 8), all 5,040
+// declaration orders, and page, ownerCount, redraw and result as other integer
+// types, a block-scoped id or pointer, *(p + n), Unit_Get's argument and return
+// types, initializers in the declarations, and the page, result or redraw
+// statement after the first Unit_Get. No single empty asm or one-pass block
+// reaches 0 (2026-10-26).
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"

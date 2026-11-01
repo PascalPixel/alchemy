@@ -1,9 +1,21 @@
-// Draft, differ 16 of 172: the leader drops onto the floor below with sixteen
-// sparks thrown around it in a ring (Func_020000b8), then the camera shakes
-// and the leader lands. Left: the native keeps the spark loop's count in r10
-// and the options in r8 (here the other way round) and builds the velocity's
-// address inside the loop; a goto loop, the velocity declared in the loop and
-// a six-minute permute do not reproduce it.
+// Draft, differ 16 of 172, skeleton gap 1 (tla-en, 2026-11-01)
+// The leader drops onto the floor below with sixteen sparks thrown around it
+// in a ring (Func_020000b8), then the camera shakes and the leader lands. Twin
+// of VenusLighthouse_LandWithRadialDust in The Broken Seal: same calls in the
+// same order, the same drop height, scale, loop and shake; this game adds the
+// random spread on the velocity and the screen effect writes.
+// Left: the native builds the velocity's address inside the loop, after the
+// first call, and keeps the loop's count in r10 and the options in r8. Here,
+// as in the twin's own build, the address is hoisted out of the loop and
+// those two registers swap; every one of the 16 differing lines is that pair.
+// The address is hoisted even with no loop notes: a goto loop loses the loop
+// pass's move and GCSE still does it. The swap is allocation order: i ranks
+// 3 * 9 / 110, the options' address 2 * 7 / 62, so one ref fewer on i, or one
+// more on the address, would turn it; the source shows neither yet.
+// Tried without gain: the twin's for loop, declaration order and scopes;
+// while and goto loops; an options pointer and a velocity pointer, in and out
+// of the loop; ++i in the test; i = 0 set earlier (worse); and a six-minute
+// permute.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

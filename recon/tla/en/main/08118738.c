@@ -1,4 +1,15 @@
-// Near miss, differ 2 of 240 (tla-en, 2026-10-30): the native stores the set
+// Draft, differ 2 of 240, skeleton gap 2 (tla-en, 2026-11-01)
+// Twin of ☀️'s DebugParameterSet_Load (battle/battle/debug.c): the same row
+// walk, resets and Djinn, ability and item loops, and already in its statement
+// shapes, loop forms and declaration order, so a port changes nothing. ⚓️ adds
+// the recovery table's count store, three more party members and the set-69
+// rule. What is left is the pair below: the zero before the two spill stores.
+// Also tried from the twin (2026-11-01), no gain at 2: do-while, pre-increment
+// and while forms of the zeroing loop, j or an inner-block counter, a named
+// zero, a table temporary, u32 done, u32 nextDjinn, a struct-wrapped array, a
+// cast or s32 count store. Worse: a pointer loop (47 to 49), *(nextDjinn + i)
+// (89), an initialized set (32).
+// (2026-10-30) The native stores the set
 // counter and the Djinn array's address to their stack slots before it builds
 // the zeroing loop's 0 in r2; here the 0 comes first. The sched2 dump shows
 // why: both spill stores carry an output dependence on the table count's

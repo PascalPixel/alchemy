@@ -1,3 +1,13 @@
+// Draft, differ 10 of 749, skeleton gap 5 (tla-en, 2026-11-01)
+// The twin of The Broken Seal's FileList_SelectFile, written from its Japanese
+// layout with this game's modes; nothing in the twin's other forms comes
+// closer. Tried 2026-11-01 against the two spills below: the name pointer set
+// first in the for, set before the for, i set before it, a while loop, or
+// declared after save (10, 10, 10, 10, 54); the loop's steps swapped (20);
+// the name read as save->summary[i].name (107); summaryDirty cleared in each
+// arm (98), tested without != 0 (10), or declared after buildStamp (22);
+// modePicture before summary (20); y before i, result last or spriteWork
+// first (10).
 // Near miss, differ 10 of 749 (tla-en, 2026-10-30): two spill stores the
 // native issues earlier, instruction order only. After the file list window
 // is made the native stores the name pointer (save + 0x303c, [sp, #20])

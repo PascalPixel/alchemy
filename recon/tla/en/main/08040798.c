@@ -1,13 +1,18 @@
-// Near miss, differ 26 of 222, 2026-10-18: written from the listing. Rows
-// set before the redraw flag (differ 32 the other way) and the window's y
-// read into y first (differ 103 inline) bring it here. Remaining: the reload
-// registers of the spilled row count and slot constants (the native builds
-// the row count in r2 behind the flag's argument, this in r0 before it), and
-// the native's loads issued ahead of constants. Ten permuter minutes found
-// nothing lower.
-// The system menu's selection loop, as ☀️'s
-// Menu_RunWorkspaceSelectionLoop (games/tbs/src/window/window.c), starting
-// from `selected`; in debug mode L and R pick entries 20 and 21.
+// Draft, differ 6 of 222, skeleton gap 3/3 (tla-en, 2026-11-01)
+// Twin of ☀️'s PauseMenu_Choose (games/tbs/src/window/window/settings_menu.c),
+// the Pause menu's selection loop, here starting from `initial`; in debug
+// mode L and R pick entries 20 and 21. Taken from the twin: declaration order,
+// rows before first. The reload registers rotate r1, r2, r3, r0, so redraw's
+// -1 is set while r0 still holds the parameter: `selected` is copied from it
+// afterwards, which closed the reload registers (differ 24 to 6).
+// Left: two scheduling pairs, no register differs. The native issues the
+// title's -16 ahead of storing the window, and stores first = 2 ahead of
+// rows = 1, though rows must be reloaded first for r0 and r1 to come out so.
+// Tried without gain: y or top holding -16, y set before the window call
+// (differ 90), the assignment inside the argument, first before rows (10),
+// separate tests of settingsOnly, an inverted goto, first from rows, a
+// ternary (37), wait before the work read (10), twelve declaration orders
+// (none below 6). Earlier permuter minutes found nothing lower either.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -42,7 +47,7 @@ void Window_Close(struct RenderInput *window, s32 release);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
-s32 Func_08040798(s32 selected) {
+s32 Func_08040798(s32 initial) {
   struct RenderInput *window;
   s32 redraw;
   struct WindowSprite *pair;
@@ -52,17 +57,19 @@ s32 Func_08040798(s32 selected) {
   s32 rows;
   s32 settingsOnly;
   s32 dimmed;
+  s32 y;
   s32 result;
+  s32 selected;
+  s32 resourceIndex;
+  s32 x;
+  s32 top;
+  const s8 *pauseIcons;
   struct WindowSprite *icon;
   struct WorkspaceScreen *work;
-  const s8 *pauseIcons;
-  s32 resourceIndex;
-  s32 top;
-  s32 x;
-  s32 y;
 
-  rows = 3;
   redraw = -1;
+  selected = initial;
+  rows = 3;
   settingsOnly = GameFlag_Test(0x17e);
   first = 0;
   Func_080405dc();
@@ -71,8 +78,8 @@ s32 Func_08040798(s32 selected) {
   window = Func_08040628();
   pair = RenderResource_CreatePair(7, window, 40, -16);
   if (settingsOnly != 0) {
-    first = 2;
     rows = 1;
+    first = 2;
   }
   if (gDebugMode != 0)
     rows += 3;

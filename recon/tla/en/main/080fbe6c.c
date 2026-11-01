@@ -1,3 +1,12 @@
+// Draft, differ 2 of 298, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's ItemMenu_SelectGiveQuantity: the same calls in the
+// same order, the same data and the same control flow. The draft already has
+// the twin's shape. Its declaration order and statements, in four arrangements,
+// and its operand order leave the same pair; so do reading the slot through a
+// local or a byte cast, the load in a comma expression, and register or unsigned
+// parameters. Allocating the tiles later is far worse (132). What is left is
+// the near miss below, a scheduling pair that stays a draft (W4).
+//
 // Near miss, differ 2 of 298 (tla-en, 2026-10-31): scheduler order only. The
 // native stores range and mode to their stack slots before the movs r3, #192
 // that starts the heap slots' address; this starts the address first. In

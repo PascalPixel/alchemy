@@ -1,15 +1,23 @@
-// Draft, differ 81 of 488 (87 before; 2026-10-26, the event work read after the
-// controlled owner): written from the listing in the form of The
-// Broken Seal's Field_ProcessStep. One step of the leader onto the cell at
+// Draft, differ 4 of 488, skeleton gap 4 (tla-en, 2026-11-01)
+// The twin of The Broken Seal's Field_UpdateWalking (field_sequence/walking.c),
+// confirmed by its calls and data. One step of the leader onto the cell at
 // (x, y, z) of layer: records the cell (exit code, push attributes), checks
 // warp regions, and while walking rolls encounters, regains PP and recovers
 // Djinn every 0x10000 of distance, counts the hazard and wears Avoid off; a
 // hazard or poison that hurts the party lists who fell. This game has no
-// flinch and counts the hazard on cells with attribute bit 3. Left: the
-// native reloads the leader from its stack slot after the targetX test (one
-// instruction more, which also moves the literal pool's padding), the
-// temporaries of the layer's cells and the 0x80000000 test take other low
-// registers, and the usual order differences (pool loads and stores early).
+// flinch and counts the hazard on cells with attribute bit 3.
+// Taken from the twin: the two heap slots read before the first call, work
+// first, its declaration order, and the cell tables as fixed addresses
+// (Ram_MapBlocks, Ram_MapCellBuffer), which alone took differ from 85 to 22.
+// Left: one scheduling pair at Avoid's end. The native finishes the store of 1
+// before it builds work->psynergy's address; here the address's movs comes
+// first (movs #179 / movs #1 / lsls / str).
+// Tried: != and ! tests, an else form, u16 psynergy, a local for the distance,
+// a local for the request's address, reading psynergy first, swapping the
+// outer tests, unions for alias set 0 (no help, and they pad), 520 declaration
+// orders. alchemy-devtools permute reaches differ 0 with a one-pass block
+// around the store alone; that is a new FAKEMATCH(one-pass) device, not taken
+// here, though S2 lets this game add it tagged.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -66,8 +74,6 @@ struct PartyStepView {
   s32 avoidDistance;
 };
 #define gPartyStep (*(struct PartyStepView *)&gMainRoutineWork)
-extern struct MapCell gMapBlocks[];
-extern struct MapCell gMapCellBuffer[];
 
 s32 Party_GetLeaderActor(void);
 struct Actor *Func_080cb8e8(void);
@@ -86,9 +92,9 @@ void Func_080d489c(s32 owner, s32 mode);
 void BattleParty_ApplyHealthDelta(s32 amount, s32 percent);
 
 void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
+  struct StepWork *work = Ram_HeapSlots->eventWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 leaderId = Party_GetLeaderActor();
-  struct StepWork *work = Ram_HeapSlots->eventWork;
   struct Actor *leader = Func_080cb8e8();
   s16 previousHp[8];
   struct MapCell *tile;
@@ -98,11 +104,11 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
   u32 i;
   u32 event;
   u32 attributes;
-  s32 zone;
   s32 speed;
   s32 step;
-  s32 distance;
   s32 amount;
+  s32 distance;
+  s32 zone;
 
   partyHurt = 0;
   if (work == NULL)
@@ -113,14 +119,15 @@ void Func_080cb2b8(u32 layer, s32 x, s32 y, s32 z) {
     previousHp[i] = Unit_Get(gPartyStep.activeOwners[i])->hp;
 
   if (*((s8 *)work + 0x18a) == 3) {
-    tile = &gMapBlocks[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)];
+    tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
+                                              (((z / 0x200000) & 31) << 5)];
     event = tile->collisionCode;
     attributes = 0;
   } else {
     if (layer <= 2)
       tile = map->layers[layer].cells;
     else
-      tile = gMapCellBuffer;
+      tile = (struct MapCell *)Ram_MapCellBuffer;
     tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
     event = tile->collisionCode;
     attributes = tile->attributeB;

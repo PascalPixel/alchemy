@@ -1,4 +1,5 @@
-// Near miss, differ 8 of 217 (tla-en, 2026-10-31): only the prologue's order.
+// Draft, differ 8 of 217, skeleton gap 3 (tla-en, 2026-11-01): only the
+// prologue's order. Twin of The Broken Seal's Text_MeasureDecoded.
 // The listing builds the lineWidths address and spills it to [sp, #8] before
 // it copies height into r9 and starts the lineSpacingCounts address; sched2
 // ranks the height copy (priority 3, through the r2 it shares with the
@@ -8,8 +9,11 @@
 // same without it. No single empty asm, one-pass block, wrapping block or
 // swap of neighbouring statements brings it closer (device search, 26
 // October); neither do signed locals, a [2][4] line array or 4 minutes of
-// the permuter (31 October).
-// The Broken Seal's international Text_MeasureEntry with ⚓️'s changes: code
+// the permuter (31 October); neither do the 119 other orders of the
+// initialising statements, with work first or last, or locals holding either
+// array's address set at any point among them, the best at differ 20
+// (1 November).
+// The Broken Seal's international Text_MeasureDecoded with ⚓️'s changes: code
 // 176 is a control code, a page break (1) resets the counters before it ends
 // the text, a text mode window taller than 44 pixels keeps two lines and
 // flags spacing[3], and the counters are reset at the end. With case 1

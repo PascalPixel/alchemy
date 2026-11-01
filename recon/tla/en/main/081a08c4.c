@@ -1,13 +1,15 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 12 of
-// 131; a greedy device search found nothing lower.
-// Draft, differ 12 of 131: the credits' per-frame update. It lays the 16 rows
-// of six text sprites at the scroll's fine offset, copies the sprite table to
-// OAM by DMA, ends a page pause on A or B, and advances the scroll every
-// fourth frame, every frame while B is held. Left: instruction order only:
-// the native builds the wrap limit 768 after 16 - fine in the preheader, and
-// steps the object pointer between the two stores where the draft steps it
-// at the loop's end (also with object++ written between the stores).
-// Tried: a y variable stepped by 8 per row (differ 62).
+// Draft, differ 2 of 131, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Credits_UpdateTextSprites (menu/credits.c): the
+// credits' per-frame update, with the same 16 rows of six text sprites over
+// the same 32-row tile ring, DMA to OAM and fourth-frame scroll; only the end
+// differs: here A or B ends a page pause, and B held scrolls every frame. The
+// twin's loop forms took the draft from differ 12 to 2.
+// Left: one scheduling pair: the native steps the pointer (adds #8) between
+// the two stores; here it lands after the tile step. Tried without gain:
+// words[0]/[1] with a late step (differ 89), the step between the stores
+// through a second pointer or object++, object->attr01/attr2 with object++ in
+// either store, a value temporary, the tile step and wrap respelled, a u32
+// column (18), words declared first (38).
 #include "types.h"
 #include "dma.h"
 #include "input.h"
@@ -24,28 +26,21 @@ extern s16 Data_02007500;
 extern u32 gVBlankCount;
 
 void Func_081a08c4(void) {
-  struct DisplayScrollObject *object;
-  u32 fine;
-  u32 tile;
-  u32 x;
+  u32 fine = gDisplayScroll_Position & 7;
+  u32 tile = (((s16)gDisplayScroll_Position / 8) & 31) * 24;
+  u32 *words = (u32 *)(gDisplayScroll_Objects + 24);
   s32 row;
-  s32 column;
 
-  fine = gDisplayScroll_Position & 7;
-  tile = (((s16)gDisplayScroll_Position / 8) & 31) * 24;
-  object = gDisplayScroll_Objects + 24;
   for (row = 0; row < 16; row++) {
-    x = 24 << 16;
-    for (column = 0; column < 6; column++) {
-      u32 *q = (u32 *)object;
+    s32 column;
 
-      *q++ = (row * 8 + 16 - fine) | x | 0x40004000;
-      *q = tile;
+    for (column = 0; column < 6; column++) {
+      *words++ =
+          (row * 8 + 16 - fine) | ((column * 32 + 24) << 16) | 0x40004000;
+      *words++ = tile;
       tile += 4;
       if (tile == 768)
         tile = 0;
-      object++;
-      x += 32 << 16;
     }
   }
   Dma_Set(gDisplayScroll_Objects, (void *)0x07000000, 0x84000100,

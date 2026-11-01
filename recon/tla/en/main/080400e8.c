@@ -1,20 +1,21 @@
-// Draft, differ 30 of 535 (2026-10-26, 38 before): preset stepped after redraw
-// is set, as the device search found. Earlier notes follow.
-// Draft, differ 38 of 535 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 30
-// with the volatile reads made plain; `work->preset++;` moved after `redraw =
-// 1;`, and finds nothing closer.
-// Draft, differ 52 of 535 (145 before the saved settings were written as
-// gMainRoutineWork's fields rather than through a byte pointer, 2026-10-25): the
-// option screen, as ☀️'s Menu_RunWorkspaceOptions
-// (games/tbs/src/window/window.c). The five messages (0x113b, 0x1141, 0x1144,
-// 0x1146 and 0x1161 in English) are pool symbols the catalogs must name before
-// adoption (MsgOptionA to MsgOptionE here). Remaining: mostly the native's
-// loads issued ahead of constants (each icon loop's reload of the icon before
-// the option offset, the slider rows), the cursor row's registers and the
-// offsets of the cursor and the preset, which the native builds in the other
-// register.
+// Draft, differ 6 of 535, skeleton gap 2 (tla-en, 2026-11-01): the option
+// screen, the twin of ☀️'s SettingsMenu_Run
+// (games/tbs/src/window/window/settings_menu.c), the same loops, rows, preset
+// stepping and returns; this game adds the sleep notice (MsgOptionE) before
+// saving. The five messages (0x113b, 0x1141, 0x1144, 0x1146 and 0x1161 in
+// English) are pool symbols the catalogs must name before adoption (MsgOptionA
+// to MsgOptionE here). Ported from the twin: choiceIcons as [3][3], which
+// places the third row at 0x604, and `work->preset++` before `redraw = 1`,
+// replacing the reorder an earlier device search had kept (30 before).
+// Remaining: two pairs. The cursor row's sum lands in the register of the
+// window's y rather than the temporary's (`y` split into three statements
+// loads the window's y first, as the native does; one expression loads it last
+// and adds an instruction, differ 63); the second preset's table address is
+// loaded after work->preset instead of before, though the first preset's order
+// agrees. Tried without gain: other operand orders and splits of the y sum, a
+// shift, `i` as a holder, table element types and const, casts, `*(p + n)`,
+// and option[] in place of the hue and brightness pointers. The saved settings
+// are gMainRoutineWork's fields; a byte pointer there costs over a hundred.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -34,9 +35,7 @@ struct OptionScreen {
   u8 cursor[0x10];
   u8 marker[2][0x10];
   u8 unk5d4[0x18];
-  struct WindowSprite *icons0[3];
-  struct WindowSprite *icons1[2];
-  struct WindowSprite *icons2[2];
+  struct WindowSprite *choiceIcons[3][3];
 };
 
 extern u8 MsgOptionA[], MsgOptionB[], MsgOptionC[], MsgOptionD[], MsgOptionE[];
@@ -110,10 +109,10 @@ s32 Func_080400e8(void) {
         work->option[4] = 0;
 
       for (i = 0; i <= 2; i++) {
-        icon = work->icons0[i];
+        icon = work->choiceIcons[0][i];
         icon->sentinel = 0xfb;
         Icon_PrepareActorFar(icon);
-        resourceIndex = (u8)work->icons0[i]->index;
+        resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
         if (i != work->option[2])
           dimmed = 1;
@@ -121,10 +120,10 @@ s32 Func_080400e8(void) {
                                  dimmed);
       }
       for (i = 0; i <= 1; i++) {
-        icon = work->icons1[i];
+        icon = work->choiceIcons[1][i];
         icon->sentinel = 0xfb;
         Icon_PrepareActorFar(icon);
-        resourceIndex = (u8)work->icons1[i]->index;
+        resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
         if (i != work->option[3])
           dimmed = 1;
@@ -132,10 +131,10 @@ s32 Func_080400e8(void) {
                                  dimmed);
       }
       for (i = 0; i <= 1; i++) {
-        icon = work->icons2[i];
+        icon = work->choiceIcons[2][i];
         icon->sentinel = 0xfb;
         Icon_PrepareActorFar(icon);
-        resourceIndex = (u8)work->icons2[i]->index;
+        resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
         if (i != work->option[4])
           dimmed = 1;
@@ -164,7 +163,9 @@ s32 Func_080400e8(void) {
       Func_0803f9c0(*hue, *brightness);
 
       x = (s16)settingsWindow->x * 8;
-      y = (selectedOption * 3 + (s16)settingsWindow->y) * 8 + 4;
+      y = (s16)settingsWindow->y;
+      y += selectedOption * 3;
+      y = y * 8 + 4;
       if (selectedOption == 0)
         y += 8;
       Func_08108040(work->cursor, x, y, 3);
@@ -176,8 +177,8 @@ s32 Func_080400e8(void) {
 
     if (PRESSED & 4) {
       Sound_PlayFar(112);
-      redraw = 1;
       work->preset++;
+      redraw = 1;
       if (work->preset > 5)
         work->preset = 0;
       *hue = gOptionMenu_FirstColorPresets[work->preset];

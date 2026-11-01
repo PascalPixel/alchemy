@@ -1,4 +1,6 @@
-// Draft of Func_0815c970, the two-resource family's body (two kinds
+// Matches: differ 0 (tla-en, 2026-11-01)
+
+// Func_0815c970, the two-resource family's body (two kinds
 // through two wrappers): a magenta swirl strikes the first target.
 
 // On screen: a swirl uncoils over the first target in six cels, four
@@ -18,25 +20,26 @@
 // Teardown: the callback and the blitter are released and the canvas
 // layer is closed.
 
-// Port of The Broken Seal's BattleEffect_RunTwoResource, with The Lost Age's
-// heap slots, blitter mode (3 minus ☀️'s) and task priority, and no
-// work->effect store.
+// Twin of The Broken Seal's BattleEffect_RunSwirlSwipe, with The Lost Age's
+// heap slots, blitter mode (3 minus the other game's) and task priority, and
+// no work->args store.
 
-// Listing 260 instructions, draft 252, differ 202. The logic and constants
-// agree; the remaining rows are register allocation. The native keeps
-// effect in r8, work in r10, mode in r11, the blitter in r6 and the heap
-// base in r5 across the first two calls, spills canvas and frames to the
-// stack (28-byte frame) and leaves r7 unused (pushed only to save the high
-// registers: reload took it back as a spill register); here effect, work
-// and canvas take r6, r7 and fp.
+// Two forms from the port carry the match. draw is the twin's two-blitter
+// array: eight bytes make it a double-word pseudo, so it outranks effect and
+// work and takes r6 and r7 whole though only draw[0] is used, which sends them
+// to the high registers and canvas to the stack. copy is a local holding the
+// fixed entry, which loads the entry between the destination's two
+// instructions; called directly (differ 2), or with destination or size as
+// locals, the pair stays swapped.
 
-// Tried:
+// Tried on the way:
 // the heap base through a local (the native keeps it in r5)  matched rows
 // the blitter load in each branch, which cross-jumps the
 // two loader calls into one, as the native has it          matched rows
 // a conditional argument for the loader (trial 0)            213
-// BattleEffect_LoadBlitter returning s32                                202
+// BattleEffect_LoadBlitter returning s32                     202
 // declaration order, a greedy sweep of 9 locals              202
+// draw as one DrawRectangle against draw[2]                  200, 2
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -99,7 +102,8 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   void *canvas;
   struct MotionObject *object;
   struct EffectPosition position;
-  DrawRectangle draw;
+  // Only draw[0] is used; the pair takes two registers (see the header).
+  DrawRectangle draw[2];
   s32 frames;
   s32 frame;
   s32 cel;
@@ -114,12 +118,12 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   if (effect->side == 1) {
     BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT,
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-    draw = (DrawRectangle)slots->unk64[1];
+    draw[0] = (DrawRectangle)slots->unk64[1];
   } else {
     BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT,
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                             COMPOSITE_FLIP_X));
-    draw = (DrawRectangle)slots->unk64[1];
+    draw[0] = (DrawRectangle)slots->unk64[1];
   }
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
                              1);
@@ -127,7 +131,8 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
                              Ram_MapCellBuffer, 1, 0);
   if (mode == 0) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
-    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+    copy((void *)0x05000000, palette, 128);
   }
   work->transferMode = 2;
   work->transferValue = 75;
@@ -149,11 +154,11 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
     cel = frame / 4;
     if (cel <= 5) {
       if (cel <= 3)
-        draw(canvas, work->sheet + gData_081986d4[cel],
+        draw[0](canvas, work->sheet + gData_081986d4[cel],
              gData_081986e0[cel + effect->side * 6], gData_081986ec[cel] + 32,
              gData_081986c8[cel], gData_081986ce[cel]);
       else
-        draw(canvas, Ram_MapCellBuffer + gData_081986d4[cel],
+        draw[0](canvas, Ram_MapCellBuffer + gData_081986d4[cel],
              gData_081986e0[cel + effect->side * 6], gData_081986ec[cel] + 32,
              gData_081986c8[cel], gData_081986ce[cel]);
     }

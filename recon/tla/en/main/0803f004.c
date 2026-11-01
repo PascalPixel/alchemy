@@ -1,5 +1,12 @@
-// Draft, differ 18 of 223 (2026-10-26, 20 before): the forward branch sets the
-// new node's dx right after its y. Earlier notes follow.
+// Draft, differ 12 of 223, skeleton gap 6 (tla-en, 2026-11-01): twin of The
+// Broken Seal's SelectionMenu_Scroll; the same statements, locals and loops. The
+// gap is five split constants (230 and 210 << 2) finishing either side of a
+// neighbouring store. The one departure from the twin stays: its `dx` after
+// `scaleEnd` gives differ 14, gap 7. Tried without gain: u32, u16 and s16 row
+// locals; swapped declarations; reading baseY before the x store or at each use;
+// a local for baseX in the back branch; swapped scale stores (differ 14 to 136);
+// 22,000 permute candidates. Permute's one smaller gap (5) sets p->prev and
+// screen->head through the old head, which changes the program, so it is refused.
 // Draft, differ 20 of 223 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 6 with

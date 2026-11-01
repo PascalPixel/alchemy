@@ -1,12 +1,27 @@
-// First draft, differ 136 of 189 (189 instructions each): give an item, and
-// when no one can carry it, prompt for an item to drop and retry. Left:
-// allocation and frame. The native keeps the event work in sl, the message
-// field's address in r8 and the saved message in r9 (r8 to r10 saved, frame
-// 8), and the owner in r7; this draft keeps the work in fp, the field address
-// in r7 and the owner in r8, spills the saved message to sp (r8 to fp saved,
-// frame 12), which moves member and slot from sp+4 and sp to sp+8 and sp+4.
-// The native holds the drop prompt's address in r8 and recomputes the field
-// address from sl (226 * 2) at the retry path's two returns.
+// Draft, differ 136 of 189, skeleton gap 25 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's PartyInventory_GiveItem: give an item, and when no
+// one can carry it, prompt for an item to drop and retry. Same flow, same
+// message order and the same cap of 30; this game also refreshes the member's
+// Psynergy and stats after the discard, and has no drop counter call.
+// Left: allocation and frame. The native keeps the event work in sl, the
+// message field's address in r8 and the saved message in r9 (r8 to r10 saved,
+// frame 8), and the owner in r7; this draft keeps the work in fp, the field
+// address in r7 and the owner in r8, spills the saved message to sp (r8 to fp
+// saved, frame 12), which moves member and slot from sp+4 and sp to sp+8 and
+// sp+4. The native holds the drop prompt's address in r8 and recomputes the
+// field address from sl (226 * 2) at the retry path's two returns, and it does
+// not cross-jump the first return into the second as this draft does.
+// The cause is one step: the gcse pass hoists &member and &slot over the entry
+// edge to the retry label, and with three back edges the label sits at loop
+// depth 3, so those two pseudos outrank the saved message, which is spilled.
+// The twin's matched bytes do exactly this (fp used, saved on the stack, both
+// addresses set before the label), so this draft already has the twin's shape
+// and the native differs from it here: it computes both addresses in the loop.
+// Tried without gain: for (;;) and do with continue (184 instructions, gap 34
+// and 29; the addresses still hoist), member and slot in an inner scope or
+// swapped, an array or a struct for them (195 instructions), saved as s16 or
+// u16, a pointer to the message field, an unprototyped picker. One exit for
+// all paths, dropping the inner returns, gives differ 133 but gap 26 and 25.
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

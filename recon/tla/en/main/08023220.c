@@ -1,6 +1,7 @@
-// Near miss, differ 2 of 181 (tla-en, 2026-10-31), with no device: one
-// reordered row. ☀️'s FieldObject_Create (games/tbs/src/field/field.c) on
-// The Lost Age's object, which also clears the four words at its end. Left:
+// Draft, differ 2 of 181, skeleton gap 2 (tla-en, 2026-11-01), with no device:
+// one reordered row. The twin of Actor_Create
+// (games/tbs/src/field/field/actors.c) on The Lost Age's object, without its
+// first dropped search and also clearing the four words at its end. Left:
 // in case 2 the native stores the first sprite (mov r3, r8; str r5, [r3])
 // before it steps entry (add r2, sl; mov r8, r2); here the add comes first.
 // In sched2 both are ranked 2 after the radius's strh; the step is
@@ -25,6 +26,11 @@
 // (asm("" : "=r"(step) : "0"(12) : "memory")) keeps r8 and sl but loads the
 // 12 into r3 after the store (45); without base, 58 and 64. Four minutes of
 // permute: nothing below 2 (most candidates did not compile).
+// Measured (2026-11-01), the twin's forms, all 2 with this same row:
+// struct Sprite * for sprite and for entry, its declaration order, its actor,
+// motion and scripted aliases, the store through a cast lvalue, entry scoped
+// to case 2, zero declared earlier, a goto around the first sprite, Dma_Fill32,
+// an indexed entry, *entry++ and &entry[1].
 // Earlier (2026-10-26): no single empty asm, one-pass block, wrapping block
 // or swap of neighbouring statements brings it closer (device search);
 // *entry = sprite; entry++; is the same as *entry++.

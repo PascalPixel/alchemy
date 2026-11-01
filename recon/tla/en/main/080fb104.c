@@ -1,17 +1,25 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 16 of 338 in tla-en. First difference: this issues `mov r8, r1` earlier (row
-// 10) than the native does (row 12).
-// First draft of Func_080fb104: the twin of ☀️'s ItemMenu_ChooseCmd
-// (games/tbs/src/menu/menu/item.c) in its first-release form (the cursor at
-// column * 40 + 86, row * 8 + 30), choosing a command in the item command grid:
-// Use, Equip and Details on the top row, Give, Remove and Drop below. This
-// game draws no item name in the info window here. Returns the command chosen,
-// or -1 when the player backs out.
+// Draft, differ 10 of 338, skeleton gap 5 (tla-en, 2026-11-01)
+// The twin of ☀️'s ItemMenu_ChooseCommand (games/tbs/src/menu/menu/item.c) in
+// its first-release form (the cursor at column * 40 + 86, row * 8 + 30),
+// choosing a command in the item command grid: Use, Equip and Details on the
+// top row, Give, Remove and Drop below. This game draws no item name in the
+// info window here. Returns the command chosen, or -1 when the player backs
+// out.
 //
-// Near miss, differ 22 of 338, instruction order only: the native issues a
-// load or move ahead of the first half of a constant six times (the 0x261 last
-// command offset after the flag pointer reload, the 0x216 owner offset after
-// the 0x260 store, and so on), as in Func_080fc6bc.
+// Left, instruction order only, three pairs in sched2, all the family
+// Func_080fc6bc records: the native takes a store or a move ahead of a
+// constant's second half. After the bl of Func_080fb410 it issues movs r7, #0
+// before ldrh of flags; at *redrawFlag = 0 it has mov r3, r8 and strh before
+// lsls r2 of the 0x1ff listMode offset; in the Equip and Details arm it has
+// strb before lsls r2 of the 0x216 owner offset.
+//
+// Reading menu first, ahead of commandIndex, column and row, took differ from
+// 16 to 10 (best of all 720 orders of the opening assignments). Tried, no
+// gain: 500 random declaration orders (all 10); u8 listMode with the twin's
+// (s8) cast; lastCommand as s8 or in an inner scope; menu->flags = 0 for
+// *redrawFlag = 0; s8 equipPreview. Worse: column = 0 anywhere later (67);
+// reading listMode before the store (34); s8 paneOwner (47); s16 flags (45);
+// s16 selectedSlots (258).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -72,10 +80,10 @@ s32 Func_080fb104(void) {
   s32 redraw;
   s8 *commandStates;
 
+  menu = Ram_HeapSlots->menuRuntime;
   commandIndex = 0;
   column = 0;
   row = 0;
-  menu = Ram_HeapSlots->menuRuntime;
   redraw = 1;
   commandStates = commandStorage;
   Func_080fb410(commandStates);

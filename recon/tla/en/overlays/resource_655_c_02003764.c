@@ -1,9 +1,20 @@
-// Draft, differ 10 of 177 (was 49): overlay 653's Func_02002ec4 (the leader
-// drops in with a burst of 17 effects) with this overlay's calls and 0xa3d7
-// as the effects' scale. Left: as overlay 664's Func_0200505c (the count
-// cleared between the options' palette and update there and here): the
-// native clears the count after the options' stores and builds the
-// velocity's address after the first call of each pass.
+// Draft, differ 12 of 177, skeleton gap 0 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's VenusLighthouse_LandWithRadialDust: the leader drops
+// from height 130 onto the floor, lands in a ring of seventeen effects, the
+// screen shakes twice, then its normal gravity comes back. This game adds the
+// random jitter on the velocity, scales the effects by 0xa3d7 for 4/5, and sets
+// mode 1 at the end. Overlay 653's Func_02002ec4 is the same listing.
+// Left: only r8 and r10 swapped; the native gives &options r8 and the count r10.
+// global.c ranks the count first (9 refs across 112, the constant start doubling
+// its length, against 7 across 63 for &options). The count flips with its clear
+// at least two insns earlier, after the palette's store (differ 6), but that
+// moves the clear's two instructions, skeleton gap 2, and reload's r3 keeps them
+// there; the flip needs the clear about five insns before the label.
+// Tried, no gain: the twin's for loop with SET_VECTOR and plain options, do and
+// while forms, a pointer local for the velocity. All of those hoist the
+// velocity's address out of the loop (skeleton gap 1), which `spawn` prevents;
+// `spawn` is the kept form, not the twin's. Also register on either local, a
+// copy of &options, plain &options as the argument: differ 12 each.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

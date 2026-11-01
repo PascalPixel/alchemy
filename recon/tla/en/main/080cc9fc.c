@@ -1,12 +1,19 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 29 of 320 in tla-en,
-// instruction order and register choice. No empty asm before any one statement
-// lowers it.
-// Draft, differ 39 of 320 (2026-10-18): the twin of ☀️'s
-// Debug_RunPaletteEditor, reading this game's gInput (repeat for the keys,
-// held for Start's blink) and closing with Func_08014b70. Left: when L wraps
-// the palette to 13 the native repeats the redraw's first two shifts and
-// the tile store before it jumps back (as it does for R's wrap to 0, which
-// this draft matches), and a few scheduling swaps in the redraw.
+// Draft, differ 29 of 320, skeleton gap 13 (tla-en, 2026-11-01)
+// The twin of ☀️'s PaletteEditor_Run: same keys, ranges, swatch tiles, map and
+// RGB editing, reading this game's gInput (repeat for the keys, held for Start's
+// blink), without the twin's unused gFrameCount read, and closing with
+// Func_08014b70. The C is already the twin's form; the gap is one cause, not a
+// shape. sched2's dump shows the redraw head's block holds only its two chains,
+// (mov, lsl, str tile) and (mov, lsl, mov fp), at equal priority (3, 2, 1) here,
+// so they alternate; the str costs 2 in the twin's build, priority 4, 3, 2, and
+// the listing's mov, lsl, mov, str, lsl, mov fp needs such a chain. With the head
+// identical to the L wrap's copy, jump2 cross-jumps the whole copy, losing the 5
+// instructions the listing keeps (it merges only mov fp, as for R's wrap), and
+// shifting the branches and one pool load. Also left: adds r2, r1 before the
+// colour's ldrh in the swatch loop, a load cost too. Nothing in C reaches the
+// block. Tried: statement order at the head and in the loop, declaration order,
+// types, spellings of the shifts and of L's and R's wraps, no gain; a permute run
+// reached skeleton 8 only with a forced temporary, a new device, refused.
 #include "types.h"
 #include "io_reg.h"
 

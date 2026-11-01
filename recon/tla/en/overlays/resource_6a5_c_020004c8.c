@@ -1,3 +1,14 @@
+// Draft, differ 2 of 94, skeleton gap 1 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's VenusLighthouseAerie_SpawnUpperOrbitParticles
+// (games/tbs/src/scene/venus_lighthouse_aerie.c), the same function statement
+// for statement; the tagged wrapper below stands where that game has its
+// FieldActor_Create inline. Left: the one scheduling pair below. Tried
+// 2026-11-01 against the twin: its nested random calls (differ 2, the same
+// pair, no closer), the direct create call (18), the angle stored without its
+// local (29), the priority through u8 and u32 bit-fields (2), sprite read after
+// the script starts or in the inner scope (2), one zero local for both stores
+// (2), the frame store before the radius (24), the priority byte by hand (21),
+// the radius in a temporary (6).
 // Near miss, differ 2 of 94 (tla-en, 2026-10-30): as overlay 69e's
 // Func_020001a4 (resource_69e_c_020001a4.c), the same function, the sprite's
 // priority byte loads before the radius store, where the native loads it after

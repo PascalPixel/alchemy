@@ -1,6 +1,14 @@
-// Draft of overlay 6a5's Func_0200539c, the twin of overlay 6aa's Func_020042f8
-// (resource_6aa_c_020042f8.c), whose header says what differs: differ 16 of 169
-// (was 63).
+// Draft, differ 16 of 169, skeleton gap 2 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's VenusLighthouse_LandWithRadialDust (same drop from
+// 130 pixels, sounds 204 and 188, 17 particles, shake) and of overlay 6aa's
+// Func_020042f8 (resource_6aa_c_020042f8.c); this game adds the random spread.
+// Left: one moved instruction. gcse's PRE hoists the velocity's frame address
+// out of the loop into r6, and the counter and options address swap (r8, sl);
+// the native rebuilds sp+16 after each Math_Cosine. The twin's own compiled code
+// hoists it just as this draft does, so its forms cannot close the gap.
+// Tried, no change: the twin's s32 velocity[3] with SET_VECTOR, its declaration
+// order, angle assigned apart, SET_POSITION on a struct, a pointer to the
+// velocity, do-while and goto loops. An initializer gives differ 71.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"

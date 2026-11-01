@@ -1,11 +1,16 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 28 of 364 in tla-en,
-// instruction order only. No empty asm before any one statement lowers it.
-// Near miss, differ 32 of 364 (2026-10-15): ⚓️'s form of ☀️'s
-// FieldEffect_RunForce. Every instruction and register is the native's; the
-// 32 differ only in order: in the five position copies the next field's
-// load and the offset constant's build are swapped, the native builds the
-// growth loop's two limits after it loads the scale, and the copy loop's
-// start (sp + 24) and the last loop's r7 are set at other places.
+// Draft, differ 10 of 364, skeleton gap 5 (tla-en, 2026-11-01)
+// Twin of ☀️'s FieldPsynergy_Force (games/tbs/src/field/event_commands/force.c):
+// same sound, twelve sparks, shot with three copies, push and script ends; the
+// draft already has its statements, so every register and all but order match.
+// Left, four sites, order only: at both 8- and 56-pixel Vector_AddPolarOffset
+// calls the listing loads scene->angle later (after the constant's lsls, after
+// mov r2,sl); before the copy loop it stores sp+24 ahead of movs #0 and #2,
+// though sched2's priorities put those first; before the last loop it stores
+// [sp] ahead of mov r7,sl. All load/store timing, so likely -mthumb-slow-loads'
+// approximation (K2), not the C.
+// Tried with no change: the twin's declaration order and inline position
+// helper, u16, u32 and void * parameters, casts, loop bounds and init orders,
+// assignments inside conditions. A pos pointer local and s16 angle are far worse.
 // effect04_entry.c's FieldEffect_RunForceOnTarget declares it taking the effect argument.
 // Belongs between FieldEffect_RunForceOnTarget and update_orbiting_particle_main.c's
 // BattleEffect_UpdateOrbitingParticleMain.

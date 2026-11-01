@@ -1,23 +1,29 @@
-// Near miss, differ 10 of 238 (tla-en, 2026-10-31): scheduler order only.
-// In sched2 each decrement's -1 (movs #1; negs; add) outranks redraw's reload
-// and spill store, priority 3 against 2; at entry redraw's store ties the
-// zero's reload (priority 7, class 3, five dependents each) and loses on
-// insn order. The listing stores redraw first in all three places. redraw as
-// u8, u16, s8, s16 or u32 changes nothing; set before the zeros, its reload
-// takes r2 and the zero r3 (differ 20); a 4-minute permute found nothing
+// Draft, differ 10 of 238, skeleton gap 10 (tla-en, 2026-11-01): scheduler
+// order only, five reordered pairs.
+// Twin of The Broken Seal's DebugBrowser_Icons (games/tbs/src/window/screens/
+// debug.c), confirmed: same calls, labels, keys and loops, statement for
+// statement, with twelve pages for eight, gData_0805f8f0 to gData_0805f910
+// for the labels and the object system's suspend flag.
+// Remaining: the native stores redraw (spilled to [sp, #4]) before it builds
+// the zero for page, mode and the window, and in the two decrement cases
+// builds redraw's 1, then the -1's 1, then stores redraw before it negates;
+// this negates and adds first. In sched2 each decrement's -1 (movs #1; negs;
+// add) outranks redraw's reload and spill store, priority 3 against 2; at
+// entry redraw's store ties the zero's reload (priority 7, class 3, five
+// dependents each) and loses on insn order. The listing stores redraw first
+// in all three places. Its registers (redraw r2, the -1 r3) are the ones the
+// twin's order gives, so the source order looks right and the listing ranks
+// the spill store higher.
+// Tried: redraw as u8, u16, s8, s16 or u32, and redraw's declaration moved:
+// no change. page -= 1, page += -1, --page, and page or mode declared first:
+// no change. for (;;): differ 114. Set before the zeros, its reload takes r2
+// and the zero r3 (differ 20). Set first in both decrements, the -1 comes
+// from the mask's 32 (subs r2, #33; differ 29, 237 instructions); in page's
+// alone differ 27; in mode's alone differ 12 and skeleton gap 8, but with
+// redraw r3 and the -1 r2, the listing's order on the wrong registers, so
+// it is not kept. Both, plus set before the zeros: differ 39. An empty asm
+// before the loop gives 8 and is no answer. A 4-minute permute found nothing
 // under 10.
-// Under -mthumb-slow-loads (2026-10-26): differ 10 of 238 in tla-en,
-// instruction order only. An empty asm before the loop lowers it to 8. Written
-// with redraw set first, the decrements' -1 comes from the mask's 32 (subs r2,
-// #33) and the registers swap (differ 29).
-// Near miss, differ 10 of 238 (five reordered pairs), 2026-10-15: The
-// Broken Seal's DebugMenu_BrowseIcons with twelve pages, gData_0805f8f0 to
-// gData_0805f910 for the labels and the object system's suspend flag.
-// Remaining: the native stores redraw (spilled to [sp, #4]) before it
-// builds the zero for page, mode and the window, and in the two decrement
-// cases builds redraw's 1, then the -1's 1, then stores redraw before it
-// negates; this negates and adds first. Written with redraw set first the
-// constants are shared (differ 29 and 39).
 
 #include "types.h"
 #include "ram_buffer.h"

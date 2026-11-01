@@ -1,16 +1,33 @@
-// Draft, differ 436 of 564: the name entry screen for party member member,
-// The Broken Seal's NameEntry_EditOwnerName on this game's keyboard: names
-// of up to five letters in a fourteen-byte buffer, the current palette glow
-// restored first, and the screen left only once every key is released. The
-// code follows the listing block for block; the difference is register
-// choice. The native reloads gInput's address into r5 at the end of each
-// key test's body, so the B and A tests read it from r5 and nothing holds it
-// across the calls; here one pseudo holds it and is spilled to [sp, #8]
-// around each call, which pushes the end pointer to [sp, #12], frees the
-// key cursor's address from its stack slot into r11 and moves the column,
-// row, keyboard and redraw flag down one register each (the native keeps
-// them in r7, r8, r10 and r11). The resource ids 0x1fa and 0x202 are
-// placeholders for their table names.
+// Draft, differ 8 of 564, skeleton gap 4 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's NameEntry_EditMemberName: the name entry screen
+// for party member member, on this game's keyboard, with names of up to five
+// letters in a fourteen-byte buffer, the current palette glow restored first
+// and the screen left only once every key is released. Control flow, stack
+// slots and registers all agree with the listing.
+//
+// Left: four scheduling pairs, each one instruction swapped with its
+// neighbour and no register or slot changed: the str of originalName and
+// movs #192 after Unit_Get; the store of keyCursor's sprite and mov r0, sl;
+// movs #255 and the ldrb of the sprite's oam; ldr of end and movs #0 in
+// *--end = 0.
+//
+// Tried without gain on those pairs: Unit_Get returning void * or a struct
+// with name, end-- and *end = 0 as two statements and in either order with
+// letterCount--, end[0], the store through keyMotion, keyMotion set after
+// the store, the caret's stores through nameCaret.sprite, nameCaret.sprite
+// set after them, originalName and render set in statements after the
+// declarations, end declared earlier or later. All tie or lose.
+//
+// Forms this took: keyMotion is declared before end and set in both arms
+// because that puts the address in [sp, #12] and end in [sp, #8]; set once
+// after the if or only in its arm, the two slots swap (differ 28) or the
+// address is no longer rebuilt (differ 157). It holds the one address for
+// its whole life, so it is no device, but the else arm is an odd shape and
+// another form that gives those slots should replace it. The letter's
+// address needs the shifts and tx spelled as here: the twin's cell form,
+// and *(u8 *)&render->tilemap[y][x], give a different sum order.
+//
+// The resource ids 0x1fa and 0x202 are placeholders for their table names.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
@@ -25,9 +42,19 @@
 #define NAME_MAX_LETTERS 5
 #define NAME_COMMAND_COLUMN 18
 
-struct NameCursor {
-  struct WindowSprite *output;
-  u8 rest[12];
+struct NameCursorMotion {
+  struct WindowSprite *anchor;
+  u16 x;
+  u16 y;
+  s16 targetX;
+  s16 targetY;
+  s8 active;
+  s8 kind;
+};
+
+union NameCursor {
+  struct WindowSprite *sprite;
+  struct NameCursorMotion cursor;
 };
 
 extern u32 gVBlankCount;
@@ -47,10 +74,10 @@ void Window_DrawDividerLine(struct Window *window, s32 x0, s32 y0, s32 x1,
 void Text_DrawPaddedLabel(struct Window *window, u8 *name);
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadResourceFar(s32 slot, s32 size, s32 resource);
-void Func_08108048(struct NameCursor *cursor, s32 x, s32 y);
-void Func_08108040(struct NameCursor *cursor, s32 x, s32 y, s32 speed);
-void Func_08108030(struct NameCursor *cursor);
-void Func_08108038(struct NameCursor *cursor);
+void Func_08108048(struct NameCursorMotion *cursor, s32 x, s32 y);
+void Func_08108040(struct NameCursorMotion *cursor, s32 x, s32 y, s32 speed);
+void Func_08108030(struct NameCursorMotion *cursor);
+void Func_08108038(struct NameCursorMotion *cursor);
 s32 Text_SetString(const u8 *str);
 void WindowSprite_PrepareForRedraw(struct Window *window);
 void wait(s32 frames);
@@ -72,10 +99,11 @@ s32 Func_08044558(s32 member) {
   s32 textDirty = 1;
   s32 cursorDirty = 1;
   struct Window *keyboardWindow;
-  struct NameCursor keyCursor;
-  struct NameCursor nameCaret;
+  union NameCursor keyCursor;
+  union NameCursor nameCaret;
   s32 keyColumn, keyRow, vramSlot;
   struct WindowSprite *output;
+  struct NameCursorMotion *keyMotion;
   u8 *end;
   u16 *palette;
 
@@ -110,19 +138,22 @@ s32 Func_08044558(s32 member) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_01fa);
     output = WindowSprite_Create(vramSlot, 0x40000000,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
-    keyCursor.output = output;
-    Func_08108048(&keyCursor, (s16)keyboardWindow->x * 8 + 140,
+    keyMotion = &keyCursor.cursor;
+    keyCursor.sprite = output;
+    Func_08108048(keyMotion, (s16)keyboardWindow->x * 8 + 140,
                   (s16)keyboardWindow->y * 8 + 52);
+  } else {
+    keyMotion = &keyCursor.cursor;
   }
   vramSlot = Resource_FindFreeEntry();
   if (vramSlot <= 95) {
     VramBlock_LoadResourceFar(vramSlot, 128, (s32)&ResourceId_0202);
     output = WindowSprite_Create(vramSlot, 0x40000000,
                                  (struct RenderInput *)keyboardWindow, 0, 0);
-    nameCaret.output = output;
+    nameCaret.sprite = output;
     output->sentinel = 255;
     output->oam.priority = 0;
-    Func_08108048(&nameCaret, Text_SetString(editedName) + 70, 22);
+    Func_08108048(&nameCaret.cursor, Text_SetString(editedName) + 70, 22);
   }
   palette = (u16 *)0x050001c0;
   Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
@@ -144,19 +175,19 @@ s32 Func_08044558(s32 member) {
                                 15);
     if (cursorDirty) {
       cursorDirty = 0;
-      Func_08108040(&keyCursor, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
+      Func_08108040(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
                     ((s16)keyboardWindow->y + keyRow) * 8 + 15, 3);
     }
     if (textDirty) {
       textDirty = 0;
-      Func_08108040(&nameCaret, Text_SetString(editedName) + 70, 22, 3);
+      Func_08108040(&nameCaret.cursor, Text_SetString(editedName) + 70, 22, 3);
     }
-    Func_08108030(&keyCursor);
-    Func_08108038(&nameCaret);
+    Func_08108030(keyMotion);
+    Func_08108038(&nameCaret.cursor);
     {
       u32 frame = (gVBlankCount >> 1) & 7;
 
-      output = nameCaret.output;
+      output = nameCaret.sprite;
       output->oam.x = output->x + gNameEntry_CaretWave[frame];
       output->oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
@@ -189,8 +220,9 @@ s32 Func_08044558(s32 member) {
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
-        keyColumn = NAME_COMMAND_COLUMN;
-        if (keyRow < 4 || keyRow > 5)
+        if (keyRow >= 4 && keyRow <= 5)
+          keyColumn = NAME_COMMAND_COLUMN;
+        else
           keyColumn = 16;
       } else if (keyColumn == 5 || keyColumn == 11 || keyColumn == 17) {
         keyColumn--;
@@ -233,7 +265,7 @@ s32 Func_08044558(s32 member) {
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
         if (letterCount == 0) {
-          nameCaret.output->active = 13;
+          nameCaret.sprite->active = 13;
           WindowSprite_PrepareForRedraw(nameWindow);
           Text_DrawPaddedLabel(nameWindow, originalName);
           wait(10);
@@ -252,8 +284,9 @@ s32 Func_08044558(s32 member) {
       continue;
     }
     {
-      u32 letter = render->tilemap[(s16)keyboardWindow->y + keyRow + 1]
-                                  [(s16)keyboardWindow->x + keyColumn + 1];
+      u32 tx = (s16)keyboardWindow->x + keyColumn + 1;
+      u32 letter = ((u8 *)render->tilemap +
+                    (((s16)keyboardWindow->y + keyRow + 1) << 6))[tx << 1];
 
       if (letterCount == NAME_MAX_LETTERS)
         continue;

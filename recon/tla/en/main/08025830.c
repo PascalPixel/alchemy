@@ -1,16 +1,22 @@
-// Draft, differ 52 of 370 (2026-10-26, 58 before): two probes copy y after z.
-// Earlier notes follow.
-// Near miss, differ 60 of 370, all instruction order (the same 370
-// instructions): The Broken Seal's ScriptObject_WanderNearHome
-// (SC_WANDER_HOME) on this game's headers. As in Func_08025698, where a
-// position is copied field by field before a call the native puts an
-// argument or heading instruction between each store and the next load;
-// here each load follows its store at once. Also order only: the square of
-// the limit before the zero, and the shift of each home delta after its
-// home load. The angle is an s16 (ldrsh, and asrs after ArcTan2) widened to
-// u16 in a separate s32 turn: as one u16 expression the inner widening
-// folds away (differ 140); ArcTan2's result is cast to u16 before 0x8000 is
-// added (as an s16 sum the constant loads from the pool, differ 73).
+// Draft, differ 14 of 370, skeleton gap 7 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's ActorScript_WanderNearHome (SC_WANDER_HOME): the
+// same operands, probes, retries, home check and flag bit, on this game's
+// headers. Every probe now copies x, y, z in the twin's order (the z-first
+// probes were what held this at differ 30). What is left is instruction order
+// alone, same instructions and registers: the ldrsh of the angle before the
+// square of the limit, the asrs of each home delta before its home load, one
+// mov fp before the subs, and in the first turn the lsrs of the second draw
+// before the store of y. The twin's own build has the draft's order at the
+// first three, so same-source scheduling differs between the games here.
+// Tried: naming the first draw in a local (s32 spread) gives differ 10, but
+// that is a forced temporary, so it is not kept; turn built by statements
+// (differ 30 to 115), turn at function scope (56), angle before the division
+// (24), tries before the square (22 to 28), dx in two statements (67), dz
+// before dx (121), an s32 angle (14, no gain).
+// The angle is an s16 (ldrsh, and asrs after ArcTan2) widened to u16 in a
+// separate s32 turn: as one u16 expression the inner widening folds away
+// (differ 140); ArcTan2's result is cast to u16 before 0x8000 is added (as an
+// s16 sum the constant loads from the pool, differ 73).
 #include "types.h"
 #include "system.h"
 #include "actor.h"
@@ -94,14 +100,14 @@ s32 Func_08025830(struct ActorScriptView *object) {
       if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
-      probePosition.z = object->z;
       probePosition.y = object->y;
+      probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading - 0x2000, &probePosition);
       if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
         goto roam;
       probePosition.x = object->x;
-      probePosition.z = object->z;
       probePosition.y = object->y;
+      probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading + 0x4000, &probePosition);
       if (Func_0802d87c((struct Actor *)object, &probePosition) != 0)
         goto roam;

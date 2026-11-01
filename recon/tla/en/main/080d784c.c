@@ -1,11 +1,20 @@
-// Draft, differ 34 of 107 (ported from The Broken Seal's
-// FieldObject_PlaceSceneActors; ⚓️ places ids 8 to 79 and calls
-// Actor_SetMode): the native copies the 0xfff mask into r10 before it ands
-// the scene (regmove's subreg form), and loop.c hoists the selected owner's
-// address, derived from the 0x256 offset (subs r2, #66), into r9 just before
-// the loop; here the owner's address is hoisted by hand at the top. With
-// the owner read plainly in the loop it differs 70; a u16 field for the
-// pending event read as (s16) for the flags changes nothing.
+// Draft, differ 57 of 107, skeleton gap 9 (tla-en, 2026-11-01)
+// Twin of The Broken Seal's Actor_PlaceMapActors (the same pending-event test,
+// flag 0x109, range 300 to 380, placement match and 32-pixel lift); ⚓️ places
+// ids 8 to 79 and calls Actor_SetMode. Both natives share the head's
+// "mov sl, r3; mov r0, sl; ands r0, r2; mov sl, r0".
+// Left: here reload inherits the 0xfff mask's r3, so the head is two
+// instructions short and every later reload register runs one behind. That is
+// the 57: the owner's offset lands in r0, not the 0x256 constant's register, so
+// move2add's "subs r2, #66" does not form (it would with the rotation back).
+// Owner's address set after id = 8, as loop.c's hoist leaves it; set before the
+// loop's counter the gap is 11, set at the top of the function the gap is 10
+// and differ 32 (the rotation happens to line up), read plainly in the loop
+// it is not hoisted, differ 68.
+// Tried without gain: a pending pointer, a held mask, a shared s32 or s16 read,
+// scene first, scene assigned apart from its read, (u16) casts, signed scene,
+// 0xfff on the left, unsigned flags, the twin's plain global (the pool then
+// holds the work's 0x254 and differs 64), locals at the block's top.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -26,16 +35,17 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
 
 void Func_080d784c(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 flags = *(s16 *)&party->unk24c[8] & 0xf000;
-  u32 scene = *(s16 *)&party->unk24c[8] & 0xfff;
+  s32 flags = party->pendingDjinnEvent & 0xf000;
+  u32 scene = party->pendingDjinnEvent & 0xfff;
   s32 id;
-  s32 *owner = &party->currentOwner;
 
   if (GameFlag_Test(0x109) != 0 && flags == 0) {
     flags = scene & 0x800;
     scene &= 0x7ff;
     if (scene - 300 <= 80 && party->sequenceResult > 0) {
-      for (id = 8; id <= 79; id++) {
+      s32 *owner;
+
+      for (id = 8, owner = &party->currentOwner; id <= 79; id++) {
         struct ActorDescriptor *desc = Scene_FindActorPlacement(id);
         struct Actor *obj;
 

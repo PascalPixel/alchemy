@@ -1,19 +1,30 @@
-// Draft, differ 101 of 294 (the draft has 297).
+// Draft, differ 13 of 294, skeleton gap 3 removed, 2 added (tla-en, 2026-11-01)
 
-// Effect kind 34. Twin: The Broken Seal's BattleEffect_RunMemberOrbit, ported
-// call for call. The Lost Age's changes: the effect argument read directly,
-// the spiral sheet unpacked with its palette by Resource_LoadAndDecompress,
-// two blitters from BattleEffect_LoadBlitter (max, then max clipped and flipped both
-// ways), both callbacks at 0xc80 and Func_0814cd48 for the members' timers.
+// Effect kind 34. Twin: The Broken Seal's BattleEffect_RunUnusedOrbitingSpirals
+// (planet_diver.c), the same calls, data and control flow, ported call for
+// call; the declaration order is the twin's. The Lost Age's changes: the
+// effect argument read directly, the spiral sheet unpacked with its palette by
+// Resource_LoadAndDecompress, two blitters from BattleEffect_LoadBlitter (max,
+// then max clipped and flipped both ways), both callbacks at 0xc80 and
+// Func_0814cd48 for the members' timers.
 
-// Left: allocation. The instructions are the native's. The native keeps the
-// effect argument in r9, the point array's address in r10, and takes the
-// screen position's address inside the member loop (add r5, sp, #44, then
-// r11 for the four cels), in a 68-byte stack frame; here the screen address is
-// hoisted out of the frame loop and spilled (72 bytes) and the argument takes
-// r11. Tried: BattleEffect_LoadBlitter returning s32 (123 -> 119); screen declared in
-// the member block (no change); a greedy scan of the declaration order
-// (canvas before work, offsetX before member) 119 -> 101.
+// Left: one scheduling pair, nothing else. Before the member loop the native
+// has movs r3, #36; movs r2, #56; str r3, [sp, #12]; add r2, sp; mov sl, r2.
+// Here the point's address comes first, so its two reload instructions sit
+// side by side and become add r2, sp, #56, one instruction shorter; every
+// other difference is a branch distance or pool offset that follows from it.
+// The 36 is strength reduction's start for effect->actors, added after the
+// point's hoisted address, so the order is not the source's to choose directly.
+//
+// The spin is (frame + i * 32) << 9, not the twin's (frame << 9) + (i << 14):
+// the twin's form lengthens the screen address's life by one instruction, and
+// with this game's shorter member loop loop.c then hoists it out and spills it
+// (72-byte frame, skeleton 7/10). Measured from there: this form 95 -> 47, the
+// twin's declaration order 47 -> 13.
+// Tried on the last pair, no change: point and screen in the frame, member and
+// if blocks; screen before point; a for or do loop for the members and the
+// cels; the if around the member loop dropped; &point[0], *point, a pointer
+// local and a struct for the point; the other spellings of the spin.
 
 #include "battle.h"
 #include "graphics.h"
@@ -56,13 +67,13 @@ extern char ResourceId_SpiralSheet;
 // spirals circle a point 40 pixels above it for 60 frames, the blitter
 // flipping every sixteen frames; the background waves line by line.
 void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
-  void *canvas;
   struct BattleEffectWork *work;
+  void *canvas;
   DrawRectangle draw[2];
   s32 point[3];
   struct EffectPosition screen;
-  s32 offsetX;
   s32 member;
+  s32 offsetX;
   s32 frame;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -142,7 +153,7 @@ void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
             s32 y;
             s32 half;
 
-            spin = (frame << 9) + (i << 14);
+            spin = (frame + i * 32) << 9;
             x = (screen.x + ((Trig_Sin(spin) << 4) >> 16)) + offsetX;
             y = screen.y + ((Trig_Cos(spin) << 4) >> 16);
             half = frame / 16;

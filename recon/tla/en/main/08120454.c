@@ -1,9 +1,10 @@
-// BattleTarget_Execute, tla-en 0x08120454.
-// alchemy diff: listing 3450 instructions, draft 3450, common 3426,
-// differ 48 (2026-10-08; 56 before the HP drain below, 70 before the
-// order devices).
-// This draft is The Broken Seal's source (0x080bbb0c,
-// games/tbs/src/battle/battle.c) with this game's differences written in,
+// Draft, differ 8 of 3451, skeleton gap 3 (tla-en, 2026-11-01)
+// BattleTarget_Execute, tla-en 0x08120454: the twin of
+// BattleAbility_ApplyToTarget (games/tbs/src/battle/battle/ability.c).
+// Left: three single swaps, listed in the 2026-11-01 note at the end of this
+// header. The dated notes before it describe older compilers' scores.
+// This draft is The Broken Seal's source (0x080bbb0c)
+// with this game's differences written in,
 // where they stay until every edition of this game matches and it becomes this
 // game's own source. Not real differences, to settle against ☀️'s form then:
 // the locals block (this one orders offset, actionId, range, scale and pass
@@ -336,6 +337,31 @@
 // movs after it as one strb.w, not a difference; so all six editions
 // share this source as it stands. With the drain: no single asm("")
 // after any statement improves on 48.
+// 2026-11-01, 16 to 8 (common 3447). The draft measured 16 before this pass,
+// its load model having moved since the notes above. Seven devices now cost
+// nothing and went: the barriers after bonus = 0, cur = target->hp and
+// work->unk858 = tid, the "+r" ties at both enemyId tests (their locals e
+// too), and the barriers in the 60% and 30% branches. Cases 76, 71, 78 and the 7%
+// read through the walk the 60/30 branch already uses (pt--; maxu = *pt--;
+// x = *(s16 *)(pt + 1);) in place of their four memory barriers: the two
+// loads stay apart and sched2 can now move the ldrh after the ldrsh, 16 to
+// 10; the 7%'s last barrier then costs nothing, 8. Two asm remain: the
+// scan's after hit = 0 (12 without, against 8) and the "+r" tie in case 70
+// (34 without, against 16).
+// Left at 8, each one swap of neighbours:
+// - head: adds r3, #28 for targetMultiplier issues before str r1 of element;
+// - the gHpDmgTable multiply: ours loads adj (sp 52) before dist
+//   (sp 60) and multiplies before the lsls #2, the listing the reverse;
+// - the drain: ldr r7 (ap) issues before adds r2, r5 (the hp copy).
+// Tried against 16 or 8, no gain. Multiply: one statement 85, tbl * (adj * dmg) 81,
+// (adj * dmg) * tbl 77, the table read first into a block local 223, a
+// local dist copy no change, through a pointer 14. Head: every other order of
+// abilityId, element, adj, crit 34 to 55, slot + 28 spelling no change. Drain:
+// an explicit copy of hp in hp 429 to 527, tmp 56 to 339, value 54 and 259,
+// guard 128, cnt 81; kind for ap 119, ap read after hp 259. Volatile reads
+// for maxu (a milder device) leave a copy, 37, and a u16 maxu 67. Case 70
+// without its tie: s16 local 53, maxv 83, target->maxHp / 2 53. The scan
+// without its barrier as a while, a local work or hit in the for 12.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -458,9 +484,6 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   s32 tmp;
   s32 size;
   bonus = 0;
-  /* FAKEMATCH: barrier; sched2 otherwise hoists movs r3, #192 for Ram_HeapSlots
-   * above the stores of plan, slot and bonus, 72 without, 70 with. */
-  asm("");
   work = Ram_HeapSlots->battleWork;
   half = 0;
   dealt = 0;
@@ -780,17 +803,9 @@ power_end:
       if (hp <= 0) {
         hp = 0;
         BattleEvent_Push(BATTLE_EVENT_DEFEAT, tid);
-        {
-          s32 e;
-
-          e = target->enemyId;
-          /* FAKEMATCH: tie; sched2 otherwise issues movs #114 for 369 before
-           * the ldrh of enemyId, where the ROM loads first, 2 instructions. */
-          asm volatile("" : "+r"(e));
-          if (e != 369 && e != 373) {
-            BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
-            MESSAGE_SIDE(MsgGoesDown, MsgFelled);
-          }
+        if (target->enemyId != 369 && target->enemyId != 373) {
+          BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+          MESSAGE_SIDE(MsgGoesDown, MsgFelled);
         }
       } else
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
@@ -912,9 +927,6 @@ power_end:
       if (action->power == 0)
         break;
       cur = target->hp;
-      /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #1 for round
-       * before the ldrsh of hp, where the ROM loads first, 2 instructions. */
-      asm("");
       round = 1;
       do {
         ELEMENT_BONUS();
@@ -1116,18 +1128,10 @@ power_end:
           cur = 1;
         if (cur <= 0) {
           BattleEvent_Push(BATTLE_EVENT_DEFEAT, tid);
-          {
-            s32 e;
-
-            e = target->enemyId;
-            /* FAKEMATCH: tie; as in case 3, and cur = 0 after it so movs r6, #0
-             * follows the 369 as in the ROM, 2 instructions. */
-            asm volatile("" : "+r"(e));
-            cur = 0;
-            if (e != 369 && e != 373) {
-              BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
-              MESSAGE_SIDE(MsgGoesDown, MsgFelled);
-            }
+          cur = 0;
+          if (target->enemyId != 369 && target->enemyId != 373) {
+            BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, tid);
+            MESSAGE_SIDE(MsgGoesDown, MsgFelled);
           }
         } else
           BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
@@ -1247,19 +1251,14 @@ power_end:
       if (action->effect == 76) {
         s32 m;
 
-        maxu = (u16)target->maxHp;
-        /* FAKEMATCH: barrier; with maxu read first it keeps cse from sharing
-         * one load between the two reads, so reload takes the base before the
-         * offset as the ROM does (96 to 90); sched2 then keeps the ldrh first,
-         * where the ROM moves it after the ldrsh. */
-        asm("" ::: "memory");
-        m = target->maxHp;
+        pt--;
+        maxu = *pt--;
+        m = *(s16 *)(pt + 1);
         heal += m * 2 / 5;
       } else if (action->effect == 71) {
-        maxu = (u16)target->maxHp;
-        /* FAKEMATCH: barrier; the same for case 71 (90 to 82). */
-        asm("" ::: "memory");
-        maxv = target->maxHp;
+        pt--;
+        maxu = *pt--;
+        maxv = *(s16 *)(pt + 1);
         heal += maxv * 7 / 10;
       } else if (action->effect == 70) {
         maxu = (u16)target->maxHp;
@@ -1274,16 +1273,9 @@ power_end:
         maxv = *(s16 *)(pt + 1);
         if (action->effect == 61) {
           s32 p = maxv * 60;
-          /* FAKEMATCH: barrier; sched2 otherwise puts movs r1, #100 before the
-           * product's last shift and jump2 cannot share it with the division,
-           * 142 without, 139 with. */
-          asm("");
           heal += p / 100;
         } else {
           s32 p = maxv * 30;
-          /* FAKEMATCH: barrier; the same for the 30% branch, whose tail jump2
-           * shares with the 60% one. */
-          asm("");
           heal += p / 100;
         }
       }
@@ -1322,20 +1314,14 @@ power_end:
         maxu = (u16)target->maxPp;
         heal += (s16)maxv / 10;
       } else if (action->effect == 78) {
-        maxu = (u16)target->maxPp;
-        /* FAKEMATCH: barrier; the same for case 78 (82 to 76). */
-        asm("" ::: "memory");
-        maxv = target->maxPp;
+        pt--;
+        maxu = *pt--;
+        maxv = *(s16 *)(pt + 1);
         heal += maxv * 3 / 10;
       } else {
-        maxu = (u16)target->maxPp;
-        /* FAKEMATCH: barrier; the same for the 7% (76 to 72). */
-        asm("" ::: "memory");
-        maxv = target->maxPp;
-        /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #100 before the
-         * 7% product's shifts, where the ROM issues it last, as at 60 and 30, 2
-         * instructions. */
-        asm("");
+        pt--;
+        maxu = *pt--;
+        maxv = *(s16 *)(pt + 1);
         heal += maxv * 7 / 100;
       }
       if (heal > (s16)maxu)
@@ -1780,10 +1766,6 @@ done:
   if (plan->command != 9 && (s8)target->equipBonus[1] != 0 &&
       action->targetMode == 1 && target->hp != 0) {
     work->unk858 = tid;
-    /* FAKEMATCH: barrier; sched2 otherwise issues movs r1, #128 for unk85c's
-     * address before the store to unk858, where the ROM stores first, 2
-     * instructions. */
-    asm("");
     work->unk85c = aid;
   }
 

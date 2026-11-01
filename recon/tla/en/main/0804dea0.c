@@ -1,4 +1,10 @@
-// Near miss, differ 8 of 87 (tla-en, 2026-10-31): instruction order only, in
+// Draft, differ 8 of 87, skeleton gap 4 (tla-en, 2026-11-01). Twin of
+// DebugFlagEditor_DrawTable: the same calls, strings, loops and locals, so its
+// C already is this draft. Pointer prototypes, s8 buffers, flag in the for
+// init or before the first draw, row last among the locals, (row + 2) * 8 and
+// no val local leave differ at 8; a pointer clear, y += 8, a while loop,
+// row < 16, i < 5 and bits[16] = 0 are all worse.
+// Instruction order only, in
 // the loop setup after the second draw. sched2 ties row = 0 (r1, priority 3,
 // two dependents) with the copy of bits into r8 (priority 3, one dependent) and
 // takes row = 0 first; the listing takes the bits copy and the label end

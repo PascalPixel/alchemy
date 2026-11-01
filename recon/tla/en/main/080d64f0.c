@@ -1,18 +1,14 @@
-// Draft, differ 47 of 176 (142 before; 2026-10-26: the bitfield y stored after
-// the shape and the new z after the timer, plain reorders that give the
-// native's invariants and allocation; left, instruction order and the new
-// position's sum, which the native forms through r1 and a spill): updates the 64 ground particles of the heap slot
-// 0x74 workspace. Each counts down its frame (held a frame longer while flag
-// 358 is set), is drawn from its picture's offsets, tile, shape and size when on
-// screen, and when its count runs out is placed again at a random point within
-// 128 pixels of the map's focus, on the ground, for 16 frames. No ☀️ twin
-// found. The statements and blocks follow the native one for one; what
-// differs is loop.c's choice of invariants: the native hoists the bitfields'
-// 63 mask into r11 and keeps 0xff800000 in the loop, agscc the reverse (63
-// built in place, 0xff800000 in r6 across the loop). That moves the rest of
-// the allocation: the native keeps the frame pointer in r0, x in r1 and y in
-// r4, spills the new x across Random16 (frame 12, here 8), and keeps the work
-// in r8 and the map in r10 where this draft swaps them.
+// Matches: differ 0 (tla-en, 2026-11-01): updates the 64 ground particles of the
+// heap slot 0x74 workspace. Each counts down its frame (held a frame longer
+// while flag 358 is set), is drawn from its picture's offsets, tile, shape and
+// size when on screen, and when its count runs out is placed again at a random
+// point within 128 pixels of the map's focus, on the ground, for 16 frames.
+// Twin of ☀️'s Weather_UpdateRain: the port took its store order (x, y, tile,
+// shape, size; then posX, posZ, posY, timer), its reads of the frame table
+// through u16 and u8, and its reuse of x and y for the new position, which
+// settled the 63 mask, the spill and the allocation (39 of 176 before). The
+// one change of behaviour from the twin is kept: the height call here takes
+// and returns 16.16 values, with no shifts.
 #include "types.h"
 #include "flag_call.h"
 #include "ram_buffer.h"
@@ -73,21 +69,22 @@ void Func_080d64f0(void) {
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
       particle->priority = 1;
       particle->x = x;
-      particle->tile = work->tile + *frame++;
-      particle->shape = *frame;
       particle->y = y;
-      particle->size = frame[1];
+      particle->tile = work->tile + *(u16 *)frame;
+      frame++;
+      particle->shape = *(u8 *)frame;
+      particle->size = *(u8 *)(frame + 1);
       Func_080140d8(particle, 240);
     }
     if (particle->timer == 0) {
       s32 *focus = *(s32 **)map;
-      s32 newX = focus[0] + (Random16() << 8) - 0x800000;
-      s32 newZ = focus[2] + (Random16() << 8) - 0x800000;
 
-      particle->posX = newX;
-      particle->posY = Map_GetTerrainHeightFar(0, newX, newZ);
+      x = focus[0] + (Random16() << 8) - 0x800000;
+      y = focus[2] + (Random16() << 8) - 0x800000;
+      particle->posX = x;
+      particle->posZ = y;
+      particle->posY = Map_GetTerrainHeightFar(0, x, y);
       particle->timer = 16;
-      particle->posZ = newZ;
     }
   }
 }

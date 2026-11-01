@@ -1,13 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The listing's far branches are literal pool islands inside one long block, so
-// the source runs straight through. Calls go through call.h's wrappers: each
-// constant argument is rebuilt at its call, as the native does. Func_02005714
-// and Func_02005704 (where its first argument is the leader) are read through
-// Value3 and Value2: the value-returning form loads the argument registers in
-// the native's order. actor is one variable for the three actors it holds; work
-// is taken again after the two yes/no questions, as the native reloads it; the
-// callback at offset 108 is cleared as a pointer, which stops it aliasing the
-// leader's load. Offsets 85, 90 and 0x24b await their structs.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \

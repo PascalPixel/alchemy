@@ -55,7 +55,7 @@ SECTIONS
         "*/resource_697_overlay.o"(.text.x0200a42c)
         "*/resource_697_overlay.o"(.text.x0200ac30)
         "*/games/tla/src/scene/trial_road/mirror.o"(.text)
-        "*/resource_697_overlay.o"(.text.x0200adec)
+        "*/games/tla/src/scene/trial_road/s2dec.o"(.text)
         "*/games/tla/src/scene/trial_road/s322c.o"(.text)
         "*/games/tla/src/scene/trial_road/s34b4.o"(.text)
         "*/games/tla/src/scene/trial_road/s37c8.o"(.text)

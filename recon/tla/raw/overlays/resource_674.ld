@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/islets/s0da0.o"(.text)
         "*/resource_674_overlay.o"(.text.x02008e38)
         "*/games/tla/src/scene/islets/s1278.o"(.text)
-        "*/resource_674_overlay.o"(.text.x0200929c)
+        "*/games/tla/src/scene/islets/s129c.o"(.text)
         "*/resource_674_overlay.o"(.text.x020094e0)
         "*/games/tla/src/scene/islets/s1bf4.o"(.text)
         "*/games/tla/src/scene/islets/s1cac.o"(.text)

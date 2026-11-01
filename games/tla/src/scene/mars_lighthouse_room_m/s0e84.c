@@ -1,22 +1,3 @@
-// Matches: differ 0 of 237 (tla-en, 2026-10-30); assembled with the build's as,
-// its bytes equal the listing's but for the pool words the listing writes as
-// numbers, and its pool has the listing's eleven words, SceneId_Ov6ACRoom3 twice.
-// The palette's scene id is a second extern name of SceneId_Ov6ACRoom3 (an
-// __asm__ label, as Resource_LoadTableEntry names its table four times), so the
-// two uses no longer share one pool entry. Still carried: the signature, the
-// memory-clobber asm and the volatile asm below, none of them tagged by kind yet.
-// Earlier: differ 4 of 237: rewritten from the listing. Sets the blend in rooms 2
-// to 6, places objects 8 and 9 by the entrance in room 6, sets up room 1's
-// cells for its entrances, and under flag 0xa30 loads the room's palette as
-// Mars Lighthouse entrance's Func_02001930 does. Func_02000058 is declared
-// returning s32 (it returns nothing; as void, its arguments are set r0 first:
-// 36), which would be a signature device; an empty asm with a memory clobber
-// between the two scene tests stops GCSE sharing room 6's id between them (22
-// without), and a volatile asm on the task's priority builds it before the
-// callback's pool load (6 without). Left: the native's pool holds
-// SceneId_Ov6ACRoom3 twice, once for the first test and once for the palette,
-// where this compile shares one entry, so the closing loads differ and the pool
-// is a word short; a different symbol for one of them would explain it.
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
 extern char SceneId_Ov6a8Room2;

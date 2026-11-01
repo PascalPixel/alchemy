@@ -1,13 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// An Islets scene, the payoff of a gift: actor 9
-// speaks (MsgAtLongLast) and walks over, the object is set down by its
-// spot, item 455 leaves the inventory, a byte of block 88 is set to 99, the
-// leader is launched over to the guide, the guide steps aside, the object
-// moves again and the screen fades out to Func_02003f7c with flag 0xaa5
-// set. The Japanese edition sets the transition word to 521, the others
-// to 513. The call layer (call.h) marks the calls that keep their constants
-// to themselves; the direct calls share 0xcccc and 0x19999 with the gift's
-// stores. Japanese (the listing's other arm) is not measured here.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

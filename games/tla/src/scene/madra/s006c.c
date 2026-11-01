@@ -1,12 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Twin of the first game's Kalay_OpenDoorAndExit: everyone stops, the door's
-// cells animate from a table of 8-byte entries indexed by step trigger - 1, the
-// leader walks in and the exit is requested with the same trigger. The twin's
-// trigger pointer, x and y locals and Actor_CenterAndWalk inline closed it; that
-// inline is an untagged layer in the first game's event.h, kept here without a
-// tag and defined here because this game's headers do not have it. Left from the
-// earlier draft: the goto loop, since a for loop moves the zero out of it and
-// costs a register (differ 22).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

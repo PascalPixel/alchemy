@@ -1,13 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// One forced form to judge at adoption: the local heading holds the angle for
-// the first call only. With the plain (s16)*angle argument, differ 2 of 89 and
-// skeleton gap 1: the radius load moves ahead of the movs and ldrsh of the
-// angle. Unchanged by a block s32 radius local, an s32 cast, an s16 field or
-// parameter, or heading = *angle inside the argument list; an unprototyped call
-// gives differ 4. It carries no FAKEMATCH tag because this round adds none, and
-// it may count as temporary under S2 when adopted.
-// position is set inside the first call's argument list: assigned before the
-// call, differ 15.
 #include "types.h"
 
 struct Orbiter {

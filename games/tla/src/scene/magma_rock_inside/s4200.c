@@ -1,9 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 692's copy of overlay 697's Func_020045ac (resource_697/0200c5ac.c).
-// The loop is built from labels and goto: with loop notes, as while, for or
-// do-while, the end marker 0xffff is shared and hoisted (differ 12), where the
-// native builds it again for the test at the bottom. The call forwarded through
-// Func_02005838_ stays: called directly, differ 20.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 
 struct TrapEntry {

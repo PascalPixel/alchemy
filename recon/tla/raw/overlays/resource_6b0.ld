@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/anemos_inner_sanctum/entry.o"(.text)
-        "*/resource_6b0_overlay.o"(.text.x02008038)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s0038.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s00f4.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0158.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0178.o"(.text)

@@ -1,20 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Twin of The Broken Seal's Kalay_OpenDoorAndExit: the same door-exit event
-// (stop every actor from id 8, trigger number - 1 picks an 8-byte cell-animation
-// entry, a sound, the door animates, the leader walks in, the exit is requested
-// with the trigger number). It matched before the twin was compared, so no form
-// was ported. The twin's two locals and Sound_Play order agree; here the
-// FAKEMATCH(temporary) stays because the twin's plain reads differ by 4 (below).
-// The native reads position[0]
-// straight from the table, then reads position[1] through a pointer built from
-// the table and the same scaled offset (adds r3, r3, r0; ldrh r2, [r3, #2]);
-// the FAKEMATCH(temporary) below keeps that order. Read straight from the
-// table, position[1] folds into [table + index * 8 + 6] (differ 4); a pointer
-// from &gData_020019ec[index].position folds the 4 into the table's literal
-// (12); the offset added inline also folds (4); the pointer built before
-// position[0] is read takes both reads (2).
-// Earlier: the (owner, 0, -4) call and the table call go through call.h,
-// which fixes the -4 halves.
 #include "types.h"
 #include "stddef.h"
 #include "ram_buffer.h"

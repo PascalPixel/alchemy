@@ -1,7 +1,3 @@
-// Near miss, differ 6 of 34: the native starts 0x10000 (movs r2, #128) before
-// it reads the anchor x and finishes it after (lsls r2, r2, #9), and sets the
-// return value before the add; this draft reads x first. A step temporary
-// and the y statement before the x statement do not move it.
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"

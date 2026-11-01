@@ -1,10 +1,3 @@
-// Matches: differ 0 of 61 (tla-en, 2026-10-31).
-// Overlay 6a0's copy of the function drafted in resource_671_c_02005428.c
-// (overlay 671's Func_02005428), whose header says what it is and what was
-// tried. The native's entry is a first test that jump2's cross-jumping merged
-// into the loop's own test, as that header describes; written so, gcse's PRE
-// hoists the id load onto the edge into the loop unless the effect work is
-// read through its own address, which keeps the id load inside the loop.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

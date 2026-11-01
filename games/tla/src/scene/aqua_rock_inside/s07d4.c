@@ -1,11 +1,3 @@
-// Near miss of Func_020007d4 (overlay 67C, 388 bytes), differ 2 of 154: inside
-// the cell loop the native loads the table address right after the 1 of the
-// mask (movs r3, #1; ldr r2; bics r3, r5), this draft after the bics.
-// Measured: the mask and the sum as two statements, the same; the table as
-// rows of two bytes, differ 4; the table address in a local, taken before the
-// index or between its two steps, differ 8 and 12 (the second byte is then
-// read through base + index). With for loops the two stack arguments and the
-// table address are hoisted (differ 38).
 #include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 extern const u8 gData_02003fb8[];

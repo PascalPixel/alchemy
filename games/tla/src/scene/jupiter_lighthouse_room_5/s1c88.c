@@ -1,4 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
 #include "types.h"
 #include "field_effect.h"
 #include "field_sprite.h"

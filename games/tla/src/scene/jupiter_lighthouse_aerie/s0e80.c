@@ -1,10 +1,3 @@
-// Matches: differ 0 of 165 (tla-en, 2026-10-31).
-// Overlay 6a4's copy of overlay 698's Func_0200091c, written as that draft
-// (resource_698_c_0200091c.c) and its adopted copy in Mars Lighthouse
-// (games/tla/src/scene/mars_lighthouse_room_f/s1bcc.c): the PositionedActor
-// view with x and y as FieldCoordinate, the call layer and the three
-// barriers that draft's header explains. The earlier draft here (s32 fields,
-// plain calls) was differ 10 of 165.
 #include "types.h"
 #include "call.h"
 #include "field_coordinate.h"

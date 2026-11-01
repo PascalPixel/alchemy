@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/madra/entry.o"(.text)
         "*/games/tla/src/scene/madra/scene_tables.o"(.text)
-        "*/resource_658_overlay.o"(.text.x0200806c)
+        "*/games/tla/src/scene/madra/s006c.o"(.text)
         "*/games/tla/src/scene/madra/events_a.o"(.text)
         "*/games/tla/src/scene/madra/s02bc.o"(.text)
         "*/games/tla/src/scene/madra/events_b.o"(.text)

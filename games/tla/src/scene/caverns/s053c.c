@@ -1,9 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// One height variable serves every cell, so it lives across blocks: the shift
-// stays in r0 and the sum goes to r3. The inlines keep each call's constants
-// rematerialized and are needed, the flag ones included. Half reads the
-// halfword as an int: a shortened s16 compare leaves 536 << 16, equal to
-// 134 << 18, for GCSE to hoist above the branch.
 #include "../../../../games/tla/src/scene/caverns/caverns.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

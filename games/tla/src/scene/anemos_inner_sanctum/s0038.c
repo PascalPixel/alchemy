@@ -1,15 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 6b0's Func_02000038, the twin of overlay 662's Func_020007dc. It
-// records the four lists, writes each listed palette entry from its red, green
-// and blue, then copies two palettes from block32 and starts the blend.
-// The loop is written with its test at the entry and after the body: as a while
-// loop loop.c hoists 0x05000000 and the end marker and jump2 no longer joins the
-// two tests as the native does. The store goes through a statement macro: its
-// loop notes end the scheduling block on both sides, which keeps both pointer
-// steps ahead of the colour and the marker load straight after the store. In
-// plain braces or written out, both drift later (skeleton gap 8). The index is
-// read first and the colour built into a local, or the shifts and registers
-// swap.
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "dma.h"
 #include "io_reg.h"

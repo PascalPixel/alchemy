@@ -1,10 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 6aa's effect spawner, ☀️'s EFFECT_SPAWN
-// (scene/shared/field_effect_spawn.h) with the leader from
-// gMainRoutineWork.currentOwner, Actor_SetSingleChildFlags for the sprite
-// flags, the leader's sprite priority through Actor_SetSpritePriorityB, and
-// the scale-to-target target and frame count read before the start-scale test.
-// The velocity goes through struct FieldEffect's velocity vector.
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"

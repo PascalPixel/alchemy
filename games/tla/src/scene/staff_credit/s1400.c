@@ -1,25 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Twin of The Broken Seal's WorldMap_PlayLighthouseTransition: the same seven
-// pictures at the same offsets, the same palette row per lighthouse and the
-// same blend steps, with the setup in another order and the ending split on
-// mode. The last difference was instruction order in the second push, closed
-// by the twin's lesson on the count store: there the store's spelling decides
-// its place. Here the count is stored through the struct after the first
-// entry word, so the store conflicts with the entry words and stays behind
-// the first (either change alone left 6 of 593 differing). That one push is
-// written out because IO_WRITE_QUEUE_PUSH stores through count_ and first.
-// The world map's fade, overlay 64b's Func_02003d44 (resource_64b_c_02003d44.c)
-// instruction for instruction under this overlay's names: queues the world
-// map palette for mode and its pictures, then steps the blend through 0xe00
-// down to 0x800 and back. Written out here rather than included, as it now
-// differs from that draft in three ways, together worth 8 instructions here
-// (from 14): Func_02001f54, the veneer to Resource_DecodeType01, returns its
-// s32 size as that function does (declared void, the pictures' address loads
-// before their destination: 2 more differ); the pushes take IME through
-// IO_WRITE_QUEUE_PUSH's own lock rather than a held ime pointer (which loaded
-// IME's address before the queue's); and the blend level reaches
-// QueueIoWriteDelay2 through a u32 local. Mode 1's Func_02001ff4 goes through
-// Call3, as the native builds its two 0x20000 arguments apart.
 #include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
